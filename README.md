@@ -1,75 +1,8 @@
-
 <div align="center">
-
-![logo](https://lolicode.gitee.io/scui-doc/logo.png)
-
-<p align="center">
-	<a href="https://v3.vuejs.org/" target="_blank">
-		<img src="https://img.shields.io/badge/VueCLI-5-green" alt="VueCLI">
-	</a>
-	<a href="https://v3.vuejs.org/" target="_blank">
-		<img src="https://img.shields.io/badge/Vue.js-3.x-green" alt="Vue">
-	</a>
-	<a href="https://element-plus.gitee.io/#/zh-CN/component/changelog" target="_blank">
-		<img src="https://img.shields.io/badge/element--plus-latest-blue" alt="element plus">
-	</a>
-</p>
-
-<h1>SCUI Admin</h1>
-
+    <h1>Meta LowCode</h1>
 </div>
 
 ## 介绍
-SCUI 是一个中后台前端解决方案，基于VUE3和elementPlus实现。
-使用最新的前端技术栈，提供各类实用的组件方便在业务开发时的调用，并且持续性的提供丰富的业务模板帮助你快速搭建企业级中后台前端任务。
+美乐是一个低代码开发平台（快速开发框架），包含一个前端项目Meta LowCode和一个后端项目Meta Server，美乐致力于提升业务逻辑开发效率、减少软件开发中的非必要重复劳动。美乐为前端工程师提供强大的后端接口定制能力，美乐同样也为后端工程师提供开放、灵活的前端快速开发体验。
 
-SCUI的宗旨是 让一切复杂的东西傻瓜化。
-
-![logo](https://lolicode.gitee.io/scui-doc/g_1.jpg)
-
-## 演示和文档
-
-| 类型 | 链接 |
-| -------- | -------- |
-| 文档地址 | https://lolicode.gitee.io/scui-doc/ |
-| 演示地址  | https://lolicode.gitee.io/scui-doc/demo/#/login |
-
-
-
-## 特点
-
-- **组件** 多个独家组件、业务模板
-- **权限** 完整的鉴权体系和高精度权限控制
-- **布局** 提供多套布局模式，满足各种视觉需求
-- **API** 完善的API管理，使用真实网络MOCK
-- **配置** 统一的全局配置和组件配置，支持build后配置热更新
-- **性能** 在减少带宽请求和前端算力上多次优化，并且持续着
-- **其他** 多功能视图标签、动态权限菜单、控制台组态化、统一异常处理等等
-
-
-## 部分截图
-
-![logo](https://lolicode.gitee.io/scui-doc/g_2.jpg)
-
-## 安装教程
-``` sh
-# 克隆项目
-git clone https://gitee.com/lolicode/scui.git
-
-# 进入项目目录
-cd scui
-
-# 安装依赖
-npm i
-
-# 启动项目(开发模式)
-npm run serve
-```
-启动完成后浏览器访问 http://localhost:2800
-
-## 鸣谢
-
-<img src="https://www.fastmock.site/resource/images/logo.png" style="height:40px"/>
-
-## 支持
-如果觉得本项目还不错或在工作中有所启发，请在Gitee(码云)帮开发者点亮星星，这是对开发者最大的支持和鼓励！
+借助美乐低代码开发平台，<b>不需要设计数据库，几分钟之内即可完成提交表单和数据展示列表，完善的权限控制，可视化搭建的表单系统，自由定义的导航路由，简洁易懂的数据交互逻辑。</b>如果在半小时内完成了一个简单的客户/订单管理系统的搭建，请不要感到过分惊奇。
