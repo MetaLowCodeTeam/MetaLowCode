@@ -1,0 +1,24 @@
+.el-container.field-props-container {
+  min-width: 500px;
+}
+
+.el-header.field-props-header {
+  background: #c1cbd7;
+  /* background: $--color-primary; */
+  color: #ffffff;
+  text-align: center;
+  line-height: 36px !important;
+  height: 36px !important;
+}
+
+.el-main.field-props-pane {
+  padding: 20px 20px 10px 20px;
+  border: 1px solid #e5e5e5;
+}
+
+/* 必须设置el-select组件的popper-append-to-body属性为false，以下样式才生效！！ */
+/* 解决el-select组件在IE浏览器中默认出现水平、垂直滚动条的问题 */
+.el-select :deep(.el-select-dropdown__wrap) {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}

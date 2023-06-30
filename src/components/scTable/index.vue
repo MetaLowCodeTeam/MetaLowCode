@@ -119,7 +119,7 @@
 		data() {
 			return {
 				scPageSize: this.pageSize,
-				isActivat: true,
+				isActivated: true,
 				emptyText: "暂无数据",
 				toggleIndex: 0,
 				tableData: [],
@@ -156,12 +156,12 @@
 			}
 		},
 		activated(){
-			if(!this.isActivat){
+			if(!this.isActivated){
 				this.$refs.scTable.doLayout()
 			}
 		},
 		deactivated(){
-			this.isActivat = false;
+			this.isActivated = false;
 		},
 		methods: {
 			//获取列

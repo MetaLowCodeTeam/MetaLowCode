@@ -29,6 +29,8 @@ import scTable from './components/scTable'
 import scTableColumn from './components/scTable/column.js'
 import scQrCode from './components/scQrCode'
 
+import SimpleTable from './components/simpleTable/index'
+
 import auth from './directives/auth'
 import auths from './directives/auths'
 import authsAll from './directives/authsAll'
@@ -74,6 +76,8 @@ export default {
 		app.component('scTable', scTable);
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);
+
+		app.component('simpleTable', SimpleTable)
 
 		//注册全局指令
 		app.directive('auth', auth)

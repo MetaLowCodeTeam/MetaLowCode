@@ -1,0 +1,134 @@
+
+.el-aside {
+  background-color: #ffffff;
+}
+
+.layout-container {
+  min-width: 720px;
+  border-left: 2px solid #eeeeee;
+  border-right: 2px solid #eeeeee;
+}
+
+.layout-main {
+  padding: 5px;
+  background-color: #ffffff;
+  border-top: 1px dashed #eeeeee;
+}
+
+.toolbar-panel {
+  height: 54px !important;  /* 解决内部按钮居中问题 */
+  line-height: 54px;  /* 解决内部按钮居中问题 */
+}
+
+.header-toolbar {
+  display: block;
+}
+
+.header-toolbar:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.header-toolbar-left {
+  float: left;
+}
+
+.header-toolbar-right {
+  float: right;
+}
+
+.grid-cell:not(:last-of-type) {
+  min-height: 36px;
+  border-right: 1px dotted #cccccc;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
+.fields-list {
+  height: 100%;
+  overflow-y: hidden;
+
+  .fields-list-header {
+    font-size: 14px;
+    text-align: center;
+    height: 54px;
+    line-height: 54px;
+    border-bottom: 1px dashed #eeeeee;
+  }
+
+  .slots-drag-area {
+    padding-left: 10px;
+  }
+
+  .fields-drag-area {
+    padding-left: 10px;
+    //height: calc(100% - 80px);
+    //height: calc(100% - 100px);
+    height: calc(100% - 150px);
+    overflow-y: auto;
+  }
+
+  .field-drag-item {
+    font-size: 12px;
+    height: 28px;
+    line-height: 28px;
+    cursor: move;
+    overflow: hidden;
+    white-space: nowrap;
+
+    .edit-field-action {
+      color: $--color-primary;
+      cursor: default;
+    }
+  }
+
+  .field-drag-item.unDraggable {
+    font-style: italic;
+    color: #cccccc;
+    cursor: no-drop;
+  }
+
+  .add-field-dropdown {
+    /* float: right; */
+    margin-left: 150px;
+
+    .el-dropdown-link {
+      font-size: 12px;
+      cursor: pointer;
+      color: $--color-primary;
+    }
+
+    .el-icon-arrow-dow {
+      font-size: 12px;
+    }
+
+    .el-dropdown-menu {
+      font-size: 12px;
+    }
+  }
+
+}
+
+:deep(.no-padding .el-dialog__body) {
+  padding: 0;
+}
+
+:deep(.small-padding .el-dialog__body) {
+  padding: 15px;
+}
+
+/* 必须设置el-select组件的popper-append-to-body属性为false，以下样式才生效！！ */
+/* 解决el-select组件在IE浏览器中默认出现水平、垂直滚动条的问题 */
+.el-select :deep(.el-select-dropdown__wrap) {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.data-bind-hint {
+  margin-left: 3px;
+  color: #aaaaaa;
+}
+

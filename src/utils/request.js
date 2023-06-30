@@ -213,3 +213,5 @@ var http = {
 }
 
 export default http;
+
+export const request = axios

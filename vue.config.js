@@ -27,6 +27,15 @@ module.exports = defineConfig({
 		}
 	},
 
+	css: {
+		loaderOptions: {
+			scss: {
+				/* 自动引入全局scss文件 */
+				additionalData: `@import "./src/style/global.scss";`
+			}
+		}
+	},
+
 	chainWebpack: config => {
 		// 移除 prefetch 插件
 		config.plugins.delete('preload');

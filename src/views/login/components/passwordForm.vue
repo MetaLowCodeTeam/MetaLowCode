@@ -116,6 +116,9 @@
 					menu = await this.$API.system.menu.myMenus.get()
 					menu.data = JSON.parse(menu.data)
 				}
+
+				console.info('menu', menu.data)
+
 				if(menu.code == 200){
 					if(menu.data.menu.length==0){
 						this.islogin = false
