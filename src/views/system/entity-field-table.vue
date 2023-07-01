@@ -177,7 +177,7 @@
   } from '@/api/system-manager'
   import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
   import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor";
-  import {Message} from "element-plus";
+  import { ElMessage  } from "element-plus";
 
   export default {
     name: "EntityFieldTable",
@@ -456,7 +456,7 @@
             this.$message({ message: res.message, type: 'error' })
           })
         }).catch(() => {
-          Message.info('已取消')
+          ElMessage.info('已取消')
         })
       },
 

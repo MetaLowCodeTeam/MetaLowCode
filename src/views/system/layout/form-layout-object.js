@@ -1,5 +1,5 @@
 import {generateId} from '@/utils/util'
-import {Message, ElMessageBox as MessageBox} from 'element-plus'
+import {ElMessage, ElMessageBox as MessageBox} from 'element-plus'
 
 export function createLayoutObj(eventBus) {
 
@@ -91,7 +91,7 @@ export function createLayoutObj(eventBus) {
           this.doAddNewTab(tabTitle)
         }).catch((e) => {
           console.log(e)
-          Message.info('已取消')
+          ElMessage.info('已取消')
         })
       } else {
         this.doAddNewTab(tabTitle, skipSaveTip)
@@ -132,7 +132,7 @@ export function createLayoutObj(eventBus) {
 
     removeTab (targetName) {
       if (this.formTabs.length === 1) {
-        Message.info('至少保留一个页签')
+        ElMessage.info('至少保留一个页签')
         return
       }
 
@@ -190,7 +190,7 @@ export function createLayoutObj(eventBus) {
         parentTabItem.sections[sectionIndex - 1] = tempSection
         eventHub.$emit(layoutChangedEventName)
       } else {
-        Message.info('已到最上')
+        ElMessage.info('已到最上')
       }
     },
 
@@ -204,7 +204,7 @@ export function createLayoutObj(eventBus) {
         parentTabItem.sections[sectionIndex + 1] = tempSection
         eventHub.$emit(layoutChangedEventName)
       } else {
-        Message.info('已到最下')
+        ElMessage.info('已到最下')
       }
     },
 
@@ -212,7 +212,7 @@ export function createLayoutObj(eventBus) {
       MessageBox.confirm('确定删除该区块?', '提示').then(() => {
         const sectionIndex = parentTabItem.sections.indexOf(sectionItem)
         parentTabItem.sections.splice(sectionIndex, 1)
-        Message.success('已删除')
+        ElMessage.success('已删除')
         eventHub.$emit(layoutChangedEventName)
       }).catch(() => {
         //
@@ -256,7 +256,7 @@ export function createLayoutObj(eventBus) {
         parentSectionItem.rows[rowIndex - 1] = tempRow
         eventHub.$emit(layoutChangedEventName)
       } else {
-        Message.info('已到最上')
+        ElMessage.info('已到最上')
       }
     },
 
@@ -270,20 +270,20 @@ export function createLayoutObj(eventBus) {
         parentSectionItem.rows[rowIndex + 1] = tempRow
         eventHub.$emit(layoutChangedEventName)
       } else {
-        Message.info('已到最下')
+        ElMessage.info('已到最下')
       }
     },
 
     deleteRow (rowItem, parentSectionItem) {
       if (parentSectionItem.rows.length === 1) {
-        Message.info('该区块仅剩一行，如需删除行请直接删除该区块')
+        ElMessage.info('该区块仅剩一行，如需删除行请直接删除该区块')
         return
       }
 
       MessageBox.confirm('确定删除该行?', '提示').then(() => {
         const rowIndex = parentSectionItem.rows.indexOf(rowItem)
         parentSectionItem.rows.splice(rowIndex, 1)
-        Message.success('已删除')
+        ElMessage.success('已删除')
         eventHub.$emit(layoutChangedEventName)
       }).catch(() => {
         //

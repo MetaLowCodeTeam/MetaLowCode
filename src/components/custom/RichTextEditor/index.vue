@@ -1,17 +1,17 @@
 <template>
   <el-form-item :prop="propField">
     <div class="custom-component-label">{{label}}</div>
-    <vue-editor v-model="content"></vue-editor>
+    <quill-editor v-model="content"></quill-editor>
   </el-form-item>
 </template>
 
 <script>
-  import { VueEditor, Quill } from "vue2-editor";
+  import { Quill, quillEditor } from 'vue3-quill';
 
   export default {
     name: "RichTextEditor",
     components: {
-      VueEditor
+      quillEditor
     },
     props: {
       formModel: Object,

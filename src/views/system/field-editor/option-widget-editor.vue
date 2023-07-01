@@ -71,7 +71,7 @@
 
 <script>
   import {addOptionField, updateOptionField, getField, getOptionItems} from '@/api/system-manager'
-  import {Message, ElMessageBox as MessageBox} from "element-plus"
+  import {ElMessage, ElMessageBox as MessageBox} from "element-plus"
   import {copyObj, generateId} from '@/utils/util'
   import FieldState from "@/views/system/field-state-variables";
   import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
@@ -223,7 +223,7 @@
             this.$message.warning('选项已存在')
           }
         }).catch(() => {
-          Message.info('已取消')
+          ElMessage.info('已取消')
         })
       },
 
@@ -245,7 +245,7 @@
             this.$message.warning('选项已存在')
           }
         }).catch(() => {
-          Message.info('已取消')
+          ElMessage.info('已取消')
         })
       },
 
@@ -290,7 +290,7 @@
             this.$message.warning('选项已存在')
           }
         }).catch(() => {
-          Message.info('已取消')
+          ElMessage.info('已取消')
         })
       },
 
