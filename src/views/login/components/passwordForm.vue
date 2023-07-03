@@ -80,7 +80,7 @@
 				}
 
 				//eslint-disable-next-line
-				debugger
+				//debugger
 
 				//获取token
 				var user = await this.$API.auth.token.post(data)
@@ -128,7 +128,8 @@
 						})
 						return false
 					}
-					this.$TOOL.data.set("MENU", menu.data.menu)
+					this.$TOOL.data.set("MENU", null)
+					//this.$TOOL.data.set("MENU", menu.data.menu)
 					this.$TOOL.data.set("PERMISSIONS", menu.data.permissions)
 					this.$TOOL.data.set("DASHBOARDGRID", menu.data.dashboardGrid)
 				}else{

@@ -26,6 +26,133 @@
 // 	}
 // ]
 
-const routes = []
+const routes = [
+  {
+    "name": "home",
+    "path": "/home",
+    "meta": {
+      "title": "首页",
+      "icon": "el-icon-eleme-filled",
+      "type": "menu"
+    },
+    "children": [
+      {
+        "name": "dashboard",
+        "path": "/dashboard",
+        "meta": {
+          "title": "控制台",
+          "icon": "el-icon-menu",
+          "affix": true
+        },
+        "component": "home"
+      },
+      {
+        "name": "userCenter",
+        "path": "/usercenter",
+        "meta": {
+          "title": "帐号信息",
+          "icon": "el-icon-user",
+          "tag": "NEW"
+        },
+        "component": "userCenter"
+      }
+    ]
+  },
+
+  //*****
+
+  {
+    path: '/system',
+    name: 'SystemManager',
+    meta: { title: '系统管理', icon: 'el-icon-setting', svgIcon: 'setting' },
+    children: [
+      {
+        path: '/field-manager/:entity',
+        name: 'FieldManager',
+        component: 'system/entity-field-table',
+        props: true,
+        hidden: true,
+        meta: { title: '字段管理', icon: '', activeRoute: '/system/metadata/entity-list', hidden: true },
+      },
+
+      {
+        path: '/form-layout/:entity',
+        name: 'FormLayout',
+        component: 'system/form-layout',
+        hidden: true,
+        props: true,
+        meta: { title: '表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
+      },
+
+      {
+        path: '/list-setting/:entity',
+        name: 'ListSetting',
+        component: 'business/data-list-view',
+        hidden: true,
+        props: true,
+        meta: { title: '列表设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
+      },
+
+      {
+        path: '/metadata',
+        name: 'Metadata',
+        meta: { group: true, title: '元数据设置' },
+        children: [
+          {
+            path: 'entity-list',
+            name: 'EntityList',
+            component: 'system/entity-list',
+            meta: { title: '实体管理', icon: 'el-icon-coin' }
+          },
+
+        ]
+      },
+
+      {
+        path: '/user-manager',
+        name: 'UserManager',
+        meta: { group: true, title: '组织架构' },
+        children: [
+          {
+            path: '/user-list',
+            name: 'UserList',
+            component: 'user/user-tree-table',
+            meta: { title: '用户管理', icon: 'el-icon-user'}
+          },
+
+          {
+            path: '/role-list',
+            name: 'RoleList',
+            component: 'user/role-list-view',
+            meta: { title: '权限角色', icon: 'el-icon-key'}
+          },
+        ]
+      },
+
+      {
+        path: '/data-dict',
+        name: 'DataDict',
+        meta: { group: true, title: '数据字典' },
+        children: [
+          {
+            path: '/option-manager',
+            name: 'OptionManager',
+            component: 'system/data-dict/option-manager',
+            meta: { title: '单选项管理', icon: 'el-icon-operation' }
+          },
+
+          {
+            path: '/tag-manager',
+            name: 'TagManager',
+            component: 'system/data-dict/tag-manager',
+            meta: { title: '多选项管理', icon: 'el-icon-files' }
+          },
+        ]
+      },
+
+    ]
+  },
+
+]
 
 export default routes;

@@ -77,7 +77,7 @@ export default {
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);
 
-		app.component('simpleTable', SimpleTable)
+		app.component('SimpleTable', SimpleTable)
 
 		//注册全局指令
 		app.directive('auth', auth)

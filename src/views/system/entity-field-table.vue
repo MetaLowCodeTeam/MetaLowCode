@@ -264,12 +264,12 @@
       }
     },
     mounted() {
-      this.$nextTick(() => {
-        this.resizeTableHeight()
-      })
-      window.onresize = () => {
-        this.resizeTableHeight()
-      }
+      // this.$nextTick(() => {
+      //   this.resizeTableHeight()
+      // })
+      // window.onresize = () => {
+      //   this.resizeTableHeight()
+      // }
 
       this.initPageData()
     },
