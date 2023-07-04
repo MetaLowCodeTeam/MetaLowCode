@@ -2,7 +2,7 @@ const { defineConfig } = require('@vue/cli-service')
 
 module.exports = defineConfig({
 	//设置为空打包后不分更目录还是多级目录
-	publicPath:'',
+	// publicPath:'',
 	//build编译后存放静态文件的目录
 	//assetsDir: "static",
     // 是否使用包含运行时编译器的 Vue 构建版本
