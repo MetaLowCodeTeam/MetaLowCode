@@ -129,6 +129,7 @@ function filterAsyncRouter(routerMap) {
 			meta: item.meta,
 			redirect: item.redirect,
 			children: item.children ? filterAsyncRouter(item.children) : null,
+            hidden:item.hidden,
 			component: loadComponent(item.component)
 		}
 		accessedRouters.push(route)

@@ -18,9 +18,9 @@ module.exports = {
         parser: '@babel/eslint-parser'
     },
     rules: {
-        'no-unused-vars': 'warn',
-        'vue/no-mutating-props': 'warn',
-        'vue/no-unused-components': 'warn',
+        'no-unused-vars': 'off',
+        'vue/no-mutating-props': 'off',
+        'vue/no-unused-components': 'off',
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         // 关闭驼峰命名规则

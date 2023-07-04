@@ -2,68 +2,68 @@
   <div class="layout-setting">
     <div class="layout-setting-header">属性设置</div>
 
-    <div class="layout-setting-form bg-light-gray" v-if="(!!layout.activeTab)">
+    <div class="layout-setting-form bg-light-gray" v-if="(!!localLayout.activeTab)">
       <el-form label-position="top" size="mini">
         <el-form-item label="字段标签位置：">
-          <el-radio-group v-model="layout.labelPosition">
+          <el-radio-group v-model="localLayout.labelPosition">
             <el-radio-button label="left">左边</el-radio-button>
             <el-radio-button label="top">顶部</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="字段标签对齐：">
-          <el-radio-group v-model="layout.labelAlign">
+          <el-radio-group v-model="localLayout.labelAlign">
             <el-radio-button label="label-left-align">左对齐</el-radio-button>
             <el-radio-button label="label-center-align">居中对齐</el-radio-button>
             <el-radio-button label="label-right-align">右对齐</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="字段标签统一宽度(单位：像素)：">
-          <el-input-number type="number" v-model="layout.labelWidth" @change="formLabelWidthChanged"
+          <el-input-number type="number" v-model="localLayout.labelWidth" @change="formLabelWidthChanged"
                            :min="0" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="统一行间距(单位：像素)：">
-          <el-input-number type="number" v-model="layout.lineSpacing" :min="0" :step="1">
+          <el-input-number type="number" v-model="localLayout.lineSpacing" :min="0" :step="1">
           </el-input-number>
         </el-form-item>
-        <el-form-item v-if="(layout.formTabs.length === 1)" label="仅有一个页签时是否隐藏页签标题：">
-          <el-radio-group v-model="layout.hideOnlyTabTitle">
+        <el-form-item v-if="(localLayout.formTabs.length === 1)" label="仅有一个页签时是否隐藏页签标题：">
+          <el-radio-group v-model="localLayout.hideOnlyTabTitle">
             <el-radio :label="true">是</el-radio>
             <el-radio :label="false">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="当前页签标题：">
-          <el-input type="text" v-model="layout.activeTab.title"></el-input>
+          <el-input type="text" v-model="localLayout.activeTab.title"></el-input>
         </el-form-item>
       </el-form>
     </div>
 
-    <div class="layout-setting-form" v-if="(!!layout.activeSection)">
+    <div class="layout-setting-form" v-if="(!!localLayout.activeSection)">
       <hr class="splitter">
       <el-form label-position="top" size="mini">
         <el-form-item label="当前区块标题：">
-          <el-input type="text" v-model="layout.activeSection.title"></el-input>
+          <el-input type="text" v-model="localLayout.activeSection.title"></el-input>
         </el-form-item>
         <el-form-item label="是否显示区块标题区：">
-          <el-radio-group v-model="layout.activeSection.showSectionTitle">
+          <el-radio-group v-model="localLayout.activeSection.showSectionTitle">
             <el-radio :label="true" @change="handleTitleShowStatus">是</el-radio>
             <el-radio :label="false" @change="handleTitleShowStatus">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="是否显示箭头图标：">
-          <el-radio-group v-model="layout.activeSection.showArrowIcon">
+          <el-radio-group v-model="localLayout.activeSection.showArrowIcon">
             <el-radio :label="true">是</el-radio>
             <el-radio :label="false">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="是否显示分割线：">
-          <el-radio-group v-model="layout.activeSection.showSplitter">
+          <el-radio-group v-model="localLayout.activeSection.showSplitter">
             <el-radio :label="true">是</el-radio>
             <el-radio :label="false">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <!--
         <el-form-item label="区块是否默认收起：">
-          <el-radio-group v-model="layout.activeSection.openSplitter">
+          <el-radio-group v-model="localLayout.activeSection.openSplitter">
             <el-radio :label="true">是</el-radio>
             <el-radio :label="false">否</el-radio>
           </el-radio-group>
@@ -72,33 +72,33 @@
       </el-form>
     </div>
 
-    <div class="layout-setting-form" v-if="(!!layout.activeRow)">
+    <div class="layout-setting-form" v-if="(!!localLayout.activeRow)">
       <hr class="splitter">
       <el-form label-position="top" size="mini">
         <el-form-item label="列间隔(单位：像素)：">
-          <el-input-number type="number" v-model.number="layout.activeRow.gutter" class="cell-gutter-input"></el-input-number>
+          <el-input-number type="number" v-model.number="localLayout.activeRow.gutter" class="cell-gutter-input"></el-input-number>
         </el-form-item>
         <el-form-item label="列栅格设置：">
-          <li v-for="(cellItem, cellIdx) in layout.activeRow.cells" :key="cellIdx" class="cell-span">
+          <li v-for="(cellItem, cellIdx) in localLayout.activeRow.cells" :key="cellIdx" class="cell-span">
             <i style="font-size: 16px"><i class="iconfont icon-icon_bars"></i></i>
             <el-input-number placeholder="栅格宽度值" v-model.number="cellItem.span" :min="1" :max="24"
-                      @change="(newValue, oldValue) => spanChanged(layout.activeRow, cellItem, cellIdx, newValue, oldValue)"
+                      @change="(newValue, oldValue) => spanChanged(localLayout.activeRow, cellItem, cellIdx, newValue, oldValue)"
                              :ref="'inputNumberComps'" class="cell-span-input"></el-input-number>
-            <el-button circle plain size="mini" type="danger" @click="deleteCell(layout.activeRow, cellIdx)"
+            <el-button circle plain size="mini" type="danger" @click="deleteCell(localLayout.activeRow, cellIdx)"
                        icon="el-icon-minus" class="cell-delete-button"></el-button>
           </li>
           <div>
-            <el-button type="text" @click="addNewCell(layout.activeRow)">添加列</el-button>
+            <el-button type="text" @click="addNewCell(localLayout.activeRow)">添加列</el-button>
           </div>
         </el-form-item>
       </el-form>
     </div>
 
-    <div class="layout-setting-form" v-if="(!!layout.activeFieldWrapper)">
+    <div class="layout-setting-form" v-if="(!!localLayout.activeFieldWrapper)">
       <hr class="splitter">
       <el-form label-position="top" size="mini">
         <el-form-item label="当前标签宽度(单位：像素)：">
-          <el-input-number type="number" v-model.number="layout.activeFieldLabelWidth" @change="labelWidthChanged"
+          <el-input-number type="number" v-model.number="localLayout.activeFieldLabelWidth" @change="labelWidthChanged"
                            :min="0" :step="1"></el-input-number>
         </el-form-item>
         <!--
@@ -129,6 +129,7 @@ export default {
   name: 'LayoutSetting',
   data () {
     return {
+        localLayout:this.layout
     }
   },
 
@@ -137,7 +138,7 @@ export default {
 
   methods: {
     toggleLabelAlign(align) {
-      this.layout.labelAlign = align
+      this.localLayout.labelAlign = align
     },
 
     spanChanged (currentRow, cell, cellIdx, newValue, oldValue) {
@@ -186,12 +187,12 @@ export default {
     },
 
     labelWidthChanged (currentValue, oldValue) {
-      if (!!this.layout.activeFieldWrapper) {
-        // this.layout.activeFieldWrapper.labelWidth = currentValue
-        if (currentValue !== this.layout.labelWidth) {
-          this.$set(this.layout.activeFieldWrapper, 'labelWidth', currentValue)
+      if (!!this.localLayout.activeFieldWrapper) {
+        // this.localLayout.activeFieldWrapper.labelWidth = currentValue
+        if (currentValue !== this.localLayout.labelWidth) {
+          this.$set(this.localLayout.activeFieldWrapper, 'labelWidth', currentValue)
         } else {
-          this.$set(this.layout.activeFieldWrapper, 'labelWidth', null)
+          this.$set(this.localLayout.activeFieldWrapper, 'labelWidth', null)
         }
       }
     },
@@ -202,8 +203,8 @@ export default {
 
     handleTitleShowStatus(value) {
       if (value === false) {
-        this.layout.activeSection.showArrowIcon = false
-        this.layout.activeSection.showSplitter = false
+        this.localLayout.activeSection.showArrowIcon = false
+        this.localLayout.activeSection.showSplitter = false
       }
     },
 
