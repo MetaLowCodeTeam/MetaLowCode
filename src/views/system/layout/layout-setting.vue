@@ -3,7 +3,7 @@
     <div class="layout-setting-header">属性设置</div>
 
     <div class="layout-setting-form bg-light-gray" v-if="(!!layout.activeTab)">
-      <el-form label-position="top" size="mini">
+      <el-form label-position="top" size="small">
         <el-form-item label="字段标签位置：">
           <el-radio-group v-model="layout.labelPosition">
             <el-radio-button label="left">左边</el-radio-button>
@@ -39,7 +39,7 @@
 
     <div class="layout-setting-form" v-if="(!!layout.activeSection)">
       <hr class="splitter">
-      <el-form label-position="top" size="mini">
+      <el-form label-position="top" size="small">
         <el-form-item label="当前区块标题：">
           <el-input type="text" v-model="layout.activeSection.title"></el-input>
         </el-form-item>
@@ -74,7 +74,7 @@
 
     <div class="layout-setting-form" v-if="(!!layout.activeRow)">
       <hr class="splitter">
-      <el-form label-position="top" size="mini">
+      <el-form label-position="top" size="small">
         <el-form-item label="列间隔(单位：像素)：">
           <el-input-number type="number" v-model.number="layout.activeRow.gutter" class="cell-gutter-input"></el-input-number>
         </el-form-item>
@@ -84,7 +84,7 @@
             <el-input-number placeholder="栅格宽度值" v-model.number="cellItem.span" :min="1" :max="24"
                       @change="(newValue, oldValue) => spanChanged(layout.activeRow, cellItem, cellIdx, newValue, oldValue)"
                              :ref="'inputNumberComps'" class="cell-span-input"></el-input-number>
-            <el-button circle plain size="mini" type="danger" @click="deleteCell(layout.activeRow, cellIdx)"
+            <el-button circle plain size="small" type="danger" @click="deleteCell(layout.activeRow, cellIdx)"
                        icon="el-icon-minus" class="cell-delete-button"></el-button>
           </li>
           <div>
@@ -96,7 +96,7 @@
 
     <div class="layout-setting-form" v-if="(!!layout.activeFieldWrapper)">
       <hr class="splitter">
-      <el-form label-position="top" size="mini">
+      <el-form label-position="top" size="small">
         <el-form-item label="当前标签宽度(单位：像素)：">
           <el-input-number type="number" v-model.number="layout.activeFieldLabelWidth" @change="labelWidthChanged"
                            :min="0" :step="1"></el-input-number>

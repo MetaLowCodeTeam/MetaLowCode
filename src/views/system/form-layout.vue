@@ -5,7 +5,7 @@
         <div class="fields-list-header">&lt;{{labelOfEntity}}&gt;实体字段列表</div>
 
         <div>
-          <el-dropdown @command="handleNewFieldCommand" class="add-field-dropdown" size="mini">
+          <el-dropdown @command="handleNewFieldCommand" class="add-field-dropdown" size="small">
           <span class="el-dropdown-link">
             <i class="el-icon-plus"></i>&nbsp;添加字段<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -123,7 +123,7 @@
     <el-dialog title="插槽属性设置" v-model="showSlotFieldDialogFlag" v-if="showSlotFieldDialogFlag" :show-close="true"
                :close-on-click-modal="false" :close-on-press-escape="false" class="small-padding" width="620px">
       <el-form :model="slotModel" :rules="slotRules" ref="slotPropsForm" label-position="left"
-               label-width="180px" size="mini">
+               label-width="180px" size="small">
         <el-form-item label="插槽名称" prop="name"> <!-- prop必须跟v-model名称一致！！ -->
           <el-input v-focus v-model="slotModel.name" minlength="2"></el-input>
         </el-form-item>
@@ -151,7 +151,7 @@
     <el-dialog title="自定义组件属性设置" v-model="showCustomFieldDialogFlag" v-if="showCustomFieldDialogFlag" :show-close="true"
                :close-on-click-modal="false" :close-on-press-escape="false" class="small-padding" width="620px">
       <el-form :model="customModel" :rules="customRules" ref="customPropsForm" label-position="left"
-               label-width="180px" size="mini">
+               label-width="180px" size="small">
         <el-form-item label="组件标签" prop="label"> <!-- prop必须跟v-model名称一致！！ -->
           <el-input v-focus v-model="customModel.label"></el-input>
         </el-form-item>
@@ -209,6 +209,7 @@ import LayoutSetting from './layout/layout-setting'
 import {copyNew, generateId} from "@/utils/util"
 import {allComponentNames, getComponentDescription} from "@/components/custom";
 import {ElCollapse, ElCollapseItem} from "element-plus";
+import eventBus from "@/utils/event-bus";
 
 export default {
   name: 'FormLayout',
@@ -357,8 +358,7 @@ export default {
   },
   methods: {
     buildLayoutObj() {
-      let eventHub = new Vue()
-      let layoutObj = createLayoutObj(eventHub)
+      let layoutObj = createLayoutObj(eventBus)
       eventHub.$on('actEvent', (elementName) => {
         if (!!layoutObj.eventHubHandler) {
           layoutObj.eventHubHandler(elementName)

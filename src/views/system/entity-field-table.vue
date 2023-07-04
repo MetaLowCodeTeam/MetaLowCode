@@ -5,7 +5,7 @@
       <div class="entity-property">
         <div class="entity-property-header">&lt;{{entityProps.label}}&gt;实体属性</div>
         <div class="entity-property-form">
-          <el-form label-position="left" :label-width="'120px'" size="mini">
+          <el-form label-position="left" :label-width="'120px'" size="small">
             <el-form-item label="实体名称：">
               <el-input type="text" v-model="entityProps.name" disabled></el-input>
             </el-form-item>
@@ -49,7 +49,7 @@
 
         <!--
         <div style="text-align: center">
-          <el-button type="" size="mini" @click="modifyEntity">修改实体设置</el-button>
+          <el-button type="" size="small" @click="modifyEntity">修改实体设置</el-button>
         </div>
         -->
       </div>
@@ -111,8 +111,8 @@
             <template #table_operation="scope">
               <el-table-column align="center" label="操作" width="130" :resizable="false" fixed="right">
                 <template v-if="!scope.row['reserved']">
-                  <el-button type="text" size="mini" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
-                  <el-button type="text" size="mini" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
+                  <el-button type="text" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
+                  <el-button type="text" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </template>

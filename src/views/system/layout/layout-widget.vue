@@ -1,5 +1,5 @@
 <template>
-  <el-form size="mini" :label-position="layout.labelPosition">
+  <el-form size="small" :label-position="layout.labelPosition">
   <el-tabs type="card" ref="formTabs" closable @tab-click="onTabClick" :value="layout.activeTabName"
            @tab-remove="removeTab">
 

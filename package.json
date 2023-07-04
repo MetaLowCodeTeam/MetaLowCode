@@ -18,6 +18,7 @@
 		"crypto-js": "4.1.1",
 		"echarts": "5.4.1",
 		"element-plus": "2.2.32",
+		"mitt": "^3.0.0",
 		"nprogress": "0.2.0",
 		"qrcodejs2": "0.0.2",
 		"sortablejs": "1.15.0",

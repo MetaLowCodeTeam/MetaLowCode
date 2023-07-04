@@ -29,7 +29,9 @@ const routes = [
 		meta: {
 			title: "重置密码"
 		}
-	}
+	},
+
+
 ]
 
 export default routes;

@@ -2,7 +2,7 @@
   <el-container class="entity-props-container">
     <el-header v-if="showTitle" class="entity-props-header">&lt;实体&gt;属性设置</el-header>
     <el-main class="entity-props-pane">
-      <el-form :model="entityProps" :rules="rules" ref="entityPropsForm" label-position="left" label-width="360px" size="mini">
+      <el-form :model="entityProps" :rules="rules" ref="entityPropsForm" label-position="left" label-width="360px" size="small">
         <el-form-item label="实体名称" prop="name"> <!-- prop必须跟v-model名称一致！！ -->
           <el-input v-model="entityProps.name" minlength="2"></el-input>
         </el-form-item>

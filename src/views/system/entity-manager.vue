@@ -13,7 +13,7 @@
       </div>
 
       <div class="fields-category">普通字段
-        <el-dropdown @command="handleNewFieldCommand" class="add-field-dropdown" size="mini">
+        <el-dropdown @command="handleNewFieldCommand" class="add-field-dropdown" size="small">
           <span class="el-dropdown-link">
             <i class="el-icon-plus"></i>&nbsp;添加字段<i class="el-icon-arrow-down el-icon--right"></i>
           </span>

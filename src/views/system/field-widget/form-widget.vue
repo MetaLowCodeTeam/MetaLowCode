@@ -1,5 +1,5 @@
 <template>
-  <el-form size="mini" ref="dataForm" :label-position="layout.labelPosition" :model="formModel" :rules="rules"
+  <el-form size="small" ref="dataForm" :label-position="layout.labelPosition" :model="formModel" :rules="rules"
            :validate-on-rule-change="false">
     <el-tabs type="card" ref="formTabs" :value="layout.activeTabName" :class="{'hide-tab-header': hideTabHeader}">
       <el-tab-pane v-for="tabItem in layout.formTabs" :key="tabItem.id" :name="tabItem.name" :label="tabItem.title">

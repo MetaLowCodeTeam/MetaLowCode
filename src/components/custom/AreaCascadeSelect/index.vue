@@ -128,7 +128,7 @@
 </style>
 
 <style lang="scss">
-  .hide-x-scroll-bar .el-cascader-menu__wrap { //此处不能用::v-deep
+  .hide-x-scroll-bar .el-cascader-menu__wrap { //此处不能用:deep
     overflow-x: hidden; /* IE浏览器隐藏水平滚动条！！ */
   }
 </style>
