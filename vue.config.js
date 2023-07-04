@@ -5,7 +5,8 @@ module.exports = defineConfig({
 	publicPath:'',
 	//build编译后存放静态文件的目录
 	//assetsDir: "static",
-
+    // 是否使用包含运行时编译器的 Vue 构建版本
+    runtimeCompiler: true, 
 	// build编译后不生成资源MAP文件
 	productionSourceMap: false,
 
@@ -20,9 +21,8 @@ module.exports = defineConfig({
 				//ws: true,
 				ws: false,
 				pathRewrite: {
-					//'^/api': '/'
-					'^/api': ''
-				}
+                    "^/domain": "",
+                }
 			}
 		}
 	},

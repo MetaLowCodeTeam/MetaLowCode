@@ -7,22 +7,24 @@
  https://blog.csdn.net/weixin_57649833/article/details/120757938
  */
 module.exports = {
-  root: true,
-  env: {
-    node: true
-  },
-  extends: [
-    'plugin:vue/vue3-essential'
-  ],
-  parserOptions: {
-    ecmaVersion: 2020
-  },
-  rules: {
-    'no-unused-vars': 'warn',
+    root: true,
+    env: {
+        node: true
+    },
+    extends: [
+        'plugin:vue/vue3-essential'
+    ],
+    parserOptions: {
+        parser: '@babel/eslint-parser'
+    },
+    rules: {
+        'no-unused-vars': 'warn',
+        'vue/no-mutating-props': 'warn',
+        'vue/no-unused-components': 'warn',
+        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        // 关闭驼峰命名规则
+        'vue/multi-word-component-names': 0
 
-    'vue/no-mutating-props': 'warn',
-    'vue/multi-word-component-names': 'warn',
-    'vue/no-unused-components': 'warn',
-
-  }
+    }
 }
