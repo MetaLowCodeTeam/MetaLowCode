@@ -4,7 +4,8 @@ import sysConfig from "@/config";
 import tool from '@/utils/tool';
 import router from '@/router';
 
-axios.defaults.baseURL = ''
+//axios.defaults.baseURL = ''
+axios.defaults.baseURL = process.env.VUE_APP_API_BASEURL
 
 axios.defaults.timeout = sysConfig.TIMEOUT
 

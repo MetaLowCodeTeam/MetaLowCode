@@ -285,7 +285,7 @@
             return
           }
 
-          this.entityProps = res.data
+          this.entityProps = res.data.data
         }).catch(res => {
           this.$message({message: res.message, type: 'error'})
         })
@@ -303,7 +303,7 @@
             return
           }
 
-          this.tableData = res.data
+          this.tableData = res.data.data
           this.filteredData = copyNew(this.tableData)
           this.searchText = ''
         }).catch(res => {

@@ -4,15 +4,15 @@ import http from "@/utils/request"
 export default {
 	menu: {
 		myMenus: {
-			//url: `${config.API_URL}/system/menu/my/1.6.1`,
-			url: `${config.SERVER_API_URL}/systemManager/getNavMenus`,
+			//url: `system/menu/my/1.6.1`,
+			url: `/systemManager/getNavMenus`,
 			name: "获取我的菜单",
 			get: async function(){
 				return await http.get(this.url);
 			}
 		},
 		list: {
-			url: `${config.API_URL}/system/menu/list`,
+			url: `system/menu/list`,
 			name: "获取菜单",
 			get: async function(){
 				return await http.get(this.url);
@@ -21,21 +21,21 @@ export default {
 	},
 	dic: {
 		tree: {
-			url: `${config.API_URL}/system/dic/tree`,
+			url: `system/dic/tree`,
 			name: "获取字典树",
 			get: async function(){
 				return await http.get(this.url);
 			}
 		},
 		list: {
-			url: `${config.API_URL}/system/dic/list`,
+			url: `system/dic/list`,
 			name: "字典明细",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
 		},
 		get: {
-			url: `${config.API_URL}/system/dic/get`,
+			url: `system/dic/get`,
 			name: "获取字典数据",
 			get: async function(params){
 				return await http.get(this.url, params);
@@ -44,7 +44,7 @@ export default {
 	},
 	role: {
 		list: {
-			url: `${config.API_URL}/system/role/list2`,
+			url: `system/role/list2`,
 			name: "获取角色列表",
 			get: async function(params){
 				return await http.get(this.url, params);
@@ -53,7 +53,7 @@ export default {
 	},
 	dept: {
 		list: {
-			url: `${config.API_URL}/system/dept/list`,
+			url: `system/dept/list`,
 			name: "获取部门列表",
 			get: async function(params){
 				return await http.get(this.url, params);
@@ -62,7 +62,7 @@ export default {
 	},
 	user: {
 		list: {
-			url: `${config.API_URL}/system/user/list`,
+			url: `system/user/list`,
 			name: "获取用户列表",
 			get: async function(params){
 				return await http.get(this.url, params);
@@ -71,7 +71,7 @@ export default {
 	},
 	app: {
 		list: {
-			url: `${config.API_URL}/system/app/list`,
+			url: `system/app/list`,
 			name: "应用列表",
 			get: async function(){
 				return await http.get(this.url);
@@ -80,7 +80,7 @@ export default {
 	},
 	log: {
 		list: {
-			url: `${config.API_URL}/system/log/list`,
+			url: `system/log/list`,
 			name: "日志列表",
 			get: async function(params){
 				return await http.get(this.url, params);
@@ -89,14 +89,14 @@ export default {
 	},
 	table: {
 		list: {
-			url: `${config.API_URL}/system/table/list`,
+			url: `system/table/list`,
 			name: "表格列管理列表",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
 		},
 		info: {
-			url: `${config.API_URL}/system/table/info`,
+			url: `system/table/info`,
 			name: "表格列管理详情",
 			get: async function(params){
 				return await http.get(this.url, params);
@@ -105,7 +105,7 @@ export default {
 	},
 	tasks: {
 		list: {
-			url: `${config.API_URL}/system/tasks/list`,
+			url: `system/tasks/list`,
 			name: "系统任务管理",
 			get: async function(params){
 				return await http.get(this.url, params);

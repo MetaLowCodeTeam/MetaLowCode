@@ -5,7 +5,7 @@ const SERVER_URL = config.FILE_SERVER_URL
 
 export function getEntitySet() {
   return request({
-    url: `${config.SERVER_API_URL}/systemManager/getEntitySet`,
+    url: 'systemManager/getEntitySet',
     method: 'get'
   })
 }

@@ -3,7 +3,7 @@ import http from "@/utils/request"
 
 export default {
 	// token: {
-	// 	url: `${config.API_URL}/token`,
+	// 	url: `token`,
 	// 	name: "登录获取TOKEN",
 	// 	post: async function(data={}){
 	// 		return await http.post(this.url, data);
@@ -11,7 +11,7 @@ export default {
 	// },
 
 	token: {
-		url: `${config.SERVER_API_URL}/user/login`,
+		url: `user/login`,
 		name: "登录获取TOKEN",
 		post: async function(data={}){
 			return await http.post(this.url, data);
