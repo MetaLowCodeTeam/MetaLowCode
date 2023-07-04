@@ -129,7 +129,7 @@ export default {
         // 设置条件
         setCondition() {
             let { filter } = this.$cloneDeep(this.form);
-            filter = this.$API.system.setConditions.initFilter(filter);
+            filter = this.$API.approval.setConditions.initFilter(filter);
             this.conditionConf = filter;
             this.dialogIsShow = true;
         },

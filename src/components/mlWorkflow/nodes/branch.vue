@@ -139,7 +139,7 @@ export default {
                 this.lastNodes = true;
             }
             let { filter } = this.$cloneDeep(this.form);
-            filter = this.$API.system.setConditions.initFilter(filter);
+            filter = this.$API.approval.setConditions.initFilter(filter);
             this.conditionConf = filter;
             this.drawer = true;
         },

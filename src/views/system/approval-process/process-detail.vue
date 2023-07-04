@@ -31,7 +31,7 @@ export default {
         async getApprovalConfig() {
             let { approvalConfigId } = this;
             this.loading = true;
-            let res = await this.$API.system.approval.get({ approvalConfigId });
+            let res = await this.$API.approval.approval.get({ approvalConfigId });
             if (res.code === 200) {
                 this.data = JSON.parse(res.data);
                 this.$route.meta.title = "张三啊";
@@ -41,7 +41,7 @@ export default {
         async saveApprovalConfig() {
             let { data } = this;
             this.loading = true;
-            let res = await this.$API.system.approval.save(data);
+            let res = await this.$API.approval.approval.save(data);
             if (res.code === 200) {
                 this.$message.success("保存成功");
             }else {

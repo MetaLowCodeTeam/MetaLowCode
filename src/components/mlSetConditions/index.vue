@@ -268,7 +268,7 @@ export default {
             let param = {
                 entity: "DemoCompany",
             };
-            let res = await this.$API.system.setConditions.getFieldSet(param);
+            let res = await this.$API.approval.setConditions.getFieldSet(param);
             if (res.data.code == 200) {
                 this.fieldList = res.data.data;
                 this.fieldList.push(

@@ -8,4 +8,7 @@ files.keys().forEach((key) => {
 	modules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default
 })
 
+// 审批流程
+const approval = require('./approval');
+modules.approval = approval.default;
 export default modules

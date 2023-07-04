@@ -144,7 +144,7 @@ export default {
             // 当前默认选中的IDs
             let cutSelectedIds = this.defaultValue ? this.defaultValue.map(el=> el.id) : [];
             // 获取当前tab接口
-            let res = await this.$API.system.selectUser["get" + this.cutTabs](
+            let res = await this.$API.approval.selectUser["get" + this.cutTabs](
                 param
             );
             if (res.data.code == 200) {
