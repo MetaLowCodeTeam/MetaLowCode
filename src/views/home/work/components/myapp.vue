@@ -76,27 +76,11 @@
 				//这里可用改为读取远程数据
 				this.myModsName = this.$TOOL.data.get("my-mods") || []
 				var menuTree = this.$TOOL.data.get("MENU")
-				this.filterMenu(menuTree)
 				this.myMods = this.mods.filter(item => {
 					return this.myModsName.includes(item.name)
 				})
 				this.filterMods =  this.mods.filter(item => {
 					return !this.myModsName.includes(item.name)
-				})
-			},
-			filterMenu(map){
-				map.forEach(item => {
-					if(item.meta.hidden || item.meta.type=="button"){
-						return false
-					}
-					if(item.meta.type=='iframe'){
-						item.path = `/i/${item.name}`
-					}
-					if(item.children&&item.children.length > 0){
-						this.filterMenu(item.children)
-					}else{
-						this.mods.push(item)
-					}
 				})
 			},
 			saveMods(){

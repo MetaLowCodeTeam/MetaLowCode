@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory} from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import { ElNotification } from 'element-plus';
 import config from "@/config"
 import NProgress from 'nprogress'
@@ -9,7 +9,13 @@ import userRoutes from '@/config/route';
 import {beforeEach, afterEach} from './scrollBehavior';
 
 //系统路由
-const routes = systemRouter
+const routes = systemRouter;
+
+const router = createRouter({
+	history: createWebHistory(process.env.BASE_URL),
+	routes: routes
+})
+
 
 //系统特殊路由
 const routes_404 = {
@@ -18,11 +24,6 @@ const routes_404 = {
 	component: () => import(/* webpackChunkName: "404" */ '@/layout/other/404'),
 }
 let routes_404_r = ()=>{}
-
-const router = createRouter({
-	history: createWebHashHistory(),
-	routes: routes
-})
 
 //设置标题
 document.title = config.APP_NAME
@@ -176,5 +177,8 @@ function treeFilter(tree, func) {
 		return func(node) || (node.children && node.children.length)
 	})
 }
+
+
+
 
 export default router

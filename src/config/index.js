@@ -13,7 +13,7 @@ const DEFAULT_CONFIG = {
 
 	//接口地址
 	API_URL: process.env.NODE_ENV === 'development' && process.env.VUE_APP_PROXY === 'true' ? "/api" : process.env.VUE_APP_API_BASEURL,
-	SERVER_API_URL: 'http://localhost:2800/api',
+	SERVER_API_URL: '',
 	FILE_SERVER_URL: 'http://localhost:8080',
 
 	//请求超时
