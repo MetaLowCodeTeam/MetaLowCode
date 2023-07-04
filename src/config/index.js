@@ -12,7 +12,7 @@ const DEFAULT_CONFIG = {
 	CORE_VER: "1.0.0",
 
 	//接口地址
-	API_URL: process.env.NODE_ENV === 'development' && process.env.VUE_APP_PROXY === 'true' ? "/api" : process.env.VUE_APP_API_BASEURL,
+	API_URL: process.env.NODE_ENV === 'development' && process.env.VUE_APP_PROXY === 'true' ? "/api" : process.env.DEV_API_SERVER,
 	SERVER_API_URL: '',
 	FILE_SERVER_URL: 'http://localhost:8080',
 
