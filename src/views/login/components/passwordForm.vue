@@ -141,42 +141,6 @@ export default {
                 this.$message.warning(user.message);
                 return false;
             }
-            //获取菜单
-            var menu = null;
-            if (this.form.user == "admin") {
-                menu = await this.$API.system.menu.myMenus.get();
-                menu.data = JSON.parse(menu.data);
-            } else {
-                //menu = await this.$API.demo.menu.get()
-
-                menu = await this.$API.system.menu.myMenus.get();
-                menu.data = JSON.parse(menu.data);
-            }
-
-            console.info("menu", menu.data);
-
-            if (menu.code == 200) {
-                if (menu.data.menu.length == 0) {
-                    this.islogin = false;
-                    this.$alert(
-                        "当前用户无任何菜单权限，请联系系统管理员",
-                        "无权限访问",
-                        {
-                            type: "error",
-                            center: true,
-                        }
-                    );
-                    return false;
-                }
-                this.$TOOL.data.set("MENU", null);
-                //this.$TOOL.data.set("MENU", menu.data.menu)
-                this.$TOOL.data.set("PERMISSIONS", menu.data.permissions);
-                this.$TOOL.data.set("DASHBOARDGRID", menu.data.dashboardGrid);
-            } else {
-                this.islogin = false;
-                this.$message.warning(menu.message);
-                return false;
-            }
 
             this.$router.replace({
                 path: "/",
