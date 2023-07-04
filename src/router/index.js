@@ -130,6 +130,7 @@ function filterAsyncRouter(routerMap) {
 			redirect: item.redirect,
 			props: item.props,
 			children: item.children ? filterAsyncRouter(item.children) : null,
+            hidden:item.hidden,
 			component: loadComponent(item.component)
 		}
 		accessedRouters.push(route)

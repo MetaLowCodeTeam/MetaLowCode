@@ -42,9 +42,14 @@ import errorHandler from './utils/errorHandler'
 import * as elIcons from '@element-plus/icons-vue'
 import * as scIcons from './assets/icons'
 
+import mlSelectUser from './components/mlSelectUser';
+import mlSetConditions from './components/mlSetConditions';
+import mlDialog from './components/mlDialog';
+
 export default {
 	install(app) {
 		//挂载全局对象
+        app.config.globalProperties.$CloneDeep = data => JSON.parse(JSON.stringify(data));
 		app.config.globalProperties.$CONFIG = config;
 		app.config.globalProperties.$TOOL = tool;
 		app.config.globalProperties.$HTTP = http;
@@ -52,31 +57,13 @@ export default {
 		app.config.globalProperties.$AUTH = permission;
 		app.config.globalProperties.$ROLE = rolePermission;
 
-		/*
-		//注册全局组件
-		app.component('scTable', scTable);
-		app.component('scTableColumn', scTableColumn);
-		app.component('scFilterBar', scFilterBar);
-		app.component('scUpload', scUpload);
-		app.component('scUploadMultiple', scUploadMultiple);
-		app.component('scUploadFile', scUploadFile);
-		app.component('scFormTable', scFormTable);
-		app.component('scTableSelect', scTableSelect);
-		app.component('scPageHeader', scPageHeader);
-		app.component('scSelect', scSelect);
-		app.component('scDialog', scDialog);
-		app.component('scForm', scForm);
-		app.component('scTitle', scTitle);
-		app.component('scWaterMark', scWaterMark);
-		app.component('scQrCode', scQrCode);
-		app.component('scStatusIndicator', scStatusIndicator);
-		app.component('scTrend', scTrend);
-		*/
-
+		// 注册全局组件
+        app.component('mlSelectUser', mlSelectUser);
+        app.component('mlSetConditions', mlSetConditions);
+        app.component('mlDialog', mlDialog);
 		app.component('scTable', scTable);
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);
-
 		app.component('SimpleTable', SimpleTable)
 
 		//注册全局指令

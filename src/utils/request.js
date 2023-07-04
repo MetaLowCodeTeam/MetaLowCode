@@ -5,9 +5,12 @@ import tool from '@/utils/tool';
 import router from '@/router';
 
 //axios.defaults.baseURL = ''
-axios.defaults.baseURL = process.env.VUE_APP_API_BASEURL
+axios.defaults.baseURL = process.env.VUE_APP_BASE_API
 
 axios.defaults.timeout = sysConfig.TIMEOUT
+
+// post请求头
+axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 // HTTP request 拦截器
 axios.interceptors.request.use(
