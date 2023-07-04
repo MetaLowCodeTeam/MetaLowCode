@@ -150,7 +150,7 @@ export default {
             return await http.get("/approval/getFlowDefinitionByConfigId", data);
         },
         save: async (data) => {
-            return await http.post("/approval/saveLastApprovalFlow", data);
+            return await http.post("/approval/saveLastApprovalFlow", data); 
         }
     },
 }
