@@ -1,298 +1,184 @@
-import { request } from '@/utils/request'
+import http, { request } from '@/utils/request'
 import config from "@/config"
 
 const SERVER_URL = config.FILE_SERVER_URL
 
 export function getEntitySet() {
-  return request({
-    url: 'systemManager/getEntitySet',
-    method: 'get'
-  })
+  return http.get('systemManager/getEntitySet')
 }
 
 export function getFieldSet(entity) {
-  return request({
-    url: 'systemManager/getFieldSet',
-    method: 'get',
-    params: { entity: entity }
-  })
+  return http.get('systemManager/getFieldSet', { entity })
 }
 
 export function getFieldListOfEntity(entity) {
-  return request({
-    url: 'systemManager/getFieldListOfEntity',
-    method: 'get',
-    params: { entity: entity }
-  })
+  return http.get('systemManager/getFieldListOfEntity', { entity })
 }
 
 export function getEntityProps(entity) {
-  return request({
-    url: 'systemManager/getEntityProps',
-    method: 'get',
-    params: { entity: entity }
-  })
+  return http.get('systemManager/getEntityProps', { entity })
 }
 
 export function createEntity(entity, maineEntityName) {
-  return request({
-    url: 'systemManager/createEntity',
-    method: 'post',
-    params: {'mainEntity': maineEntityName},
-    data: entity
+  return http.post('systemManager/createEntity', entity, {
+    params: {'mainEntity': maineEntityName}
   })
 }
 
 export function updateEntityLabel(entity, entityLabel) {
-  return request({
-    url: 'systemManager/updateEntityLabel',
-    method: 'post',
-    params: {entity, entityLabel},
+  return http.post('systemManager/updateEntityLabel', {}, {
+    params: {entity, entityLabel}
   })
 }
 
 export function entityCanBeDeleted(entity) {
-  return request({
-    url: 'systemManager/entityCanBeDeleted',
-    method: 'get',
-    params: {entity},
-  })
+  return http.get('systemManager/entityCanBeDeleted', { entity })
 }
 
 export function deleteEntity(entity) {
-  return request({
-    url: 'systemManager/deleteEntity',
-    method: 'post',
-    params: {entity},
+  return http.post('systemManager/deleteEntity', {}, {
+    params: {entity}
   })
 }
 
 export function getTextFieldList(entity) {
-  return request({
-    url: 'systemManager/getTextFieldListOfEntity',
-    method: 'get',
-    params: {entity},
-  })
+  return http.get('systemManager/getTextFieldListOfEntity', { entity })
 }
 
 export function updateEntityNameField(entity, nameField) {
-  return request({
-    url: 'systemManager/updateEntityNameField',
-    method: 'post',
-    params: {entity, nameField},
+  return http.post('systemManager/updateEntityNameField', {}, {
+    params: {entity, nameField}
   })
 }
 
 export function addField(field, entity) {
-  return request({
-    url: 'systemManager/addField',
-    method: 'post',
-    params: {'entity': entity},
-    data: field
+  return http.post('systemManager/addField', field, {
+    params: {entity}
   })
 }
 
 export function updateField(field, entity) {
-  return request({
-    url: 'systemManager/updateField',
-    method: 'post',
-    params: {'entity': entity},
-    data: field
+  return http.post('systemManager/updateField', field, {
+    params: {entity}
   })
 }
 
 export function fieldCanBeEdited(field, entity) {
-  return request({
-    url: 'systemManager/fieldCanBeEdited',
-    method: 'get',
-    params: {entity, field},
-  })
+  return http.get('systemManager/fieldCanBeEdited', { entity, field })
 }
 
 export function fieldCanBeDeleted(field, entity) {
-  return request({
-    url: 'systemManager/fieldCanBeDeleted',
-    method: 'get',
-    params: {entity, field},
-  })
+  return http.get('systemManager/fieldCanBeDeleted', { entity, field })
 }
 
 export function deleteField(field, entity) {
-  return request({
-    url: 'systemManager/deleteField',
-    method: 'post',
-    params: {entity, field},
+  return http.post('systemManager/deleteField', {}, {
+    params: {entity, field}
   })
 }
 
 export function addOptionField(field, entity, optionList) {
-  return request({
-    url: 'systemManager/addOptionField',
-    method: 'post',
-    params: {'entity': entity},
-    data: {'field': field, 'optionList': optionList}
+  return http.post('systemManager/addOptionField', {field, optionList}, {
+    params: {entity}
   })
 }
 
 export function updateOptionField(field, entity, optionList) {
-  return request({
-    url: 'systemManager/updateOptionField',
-    method: 'post',
-    params: {'entity': entity},
-    data: {'field': field, 'optionList': optionList}
+  return http.post('systemManager/updateOptionField', {field, optionList}, {
+    params: {entity}
   })
 }
 
 export function addTagField(field, entity, tagList) {
-  return request({
-    url: 'systemManager/addTagField',
-    method: 'post',
-    params: {'entity': entity},
-    data: {'field': field, 'tagList': tagList}
+  return http.post('systemManager/addTagField', {field, tagList}, {
+    params: {entity}
   })
 }
 
 export function updateTagField(field, entity, tagList) {
-  return request({
-    url: 'systemManager/updateTagField',
-    method: 'post',
-    params: {'entity': entity},
-    data: {'field': field, 'tagList': tagList}
+  return http.post('systemManager/updateTagField', {field, tagList}, {
+    params: {entity}
   })
 }
 
 export function addRefField(field, entity, refEntity) {
-  return request({
-    url: 'systemManager/addRefField',
-    method: 'post',
-    params: {'entity': entity, 'refEntity': refEntity},
-    data: field
+  return http.post('systemManager/addRefField', field, {
+    params: {entity, refEntity}
   })
 }
 
 export function addAnyRefField(field, entity, referTo) {
-  return request({
-    url: 'systemManager/addAnyRefField',
-    method: 'post',
-    params: {'entity': entity, 'referTo': referTo},
-    data: field
+  return http.post('systemManager/addAnyRefField', field, {
+    params: {entity, referTo}
   })
 }
 
 export function updateRefField(field, entity, refEntity) {
-  return request({
-    url: 'systemManager/updateRefField',
-    method: 'post',
-    params: {'entity': entity, 'refEntity': refEntity},
-    data: field
+  return http.post('systemManager/updateRefField', field, {
+    params: {entity, refEntity}
   })
 }
 
 export function updateAnyRefField(field, entity, referTo) {
-  return request({
-    url: 'systemManager/updateAnyRefField',
-    method: 'post',
-    params: {'entity': entity, 'referTo': referTo},
-    data: field
+  return http.post('systemManager/updateAnyRefField', field, {
+    params: {entity, referTo}
   })
 }
 
 export function getField(field, entity) {
-  return request({
-    url: 'systemManager/getField',
-    method: 'get',
-    params: {'entity': entity, 'field': field},
-  })
+  return http.get('systemManager/getField', { entity, field })
 }
 
 export function getRefFieldExtras(field, entity) {
-  return request({
-    url: 'systemManager/getRefFieldExtras',
-    method: 'get',
-    params: {'entity': entity, 'field': field},
-  })
+  return http.get('systemManager/getRefFieldExtras', { entity, field })
 }
 
 
 export function createFormLayout(entity, layoutJson) {
-  return request({
-    url: 'formLayout/save',
-    method: 'post',
-    params: {'entity': entity},
-    data: layoutJson
+  return http.post('formLayout/save', layoutJson, {
+    params: {entity}
   })
 }
 
 export function updateFormLayout(layoutId, layoutJson) {
-  return request({
-    url: 'formLayout/update',
-    method: 'post',
-    params: {'layoutId': layoutId},
-    data: layoutJson
+  return http.post('formLayout/update', layoutJson, {
+    params: {layoutId}
   })
 }
 
 export function getFormLayout(entity) {
-  return request({
-    url: 'formLayout/get',
-    method: 'get',
-    params: { entity: entity }
-  })
+  return http.get('formLayout/get', { entity })
 }
 
 export function previewLayout(entity) {
-  return request({
-    url: 'formLayout/previewLayout',
-    method: 'get',
-    params: { entity: entity }
-  })
+  return http.get('formLayout/previewLayout', { entity })
 }
 
 export function getOptionFields() {
-  return request({
-    url: 'systemManager/getOptionFields',
-    method: 'get'
-  })
+  return http.get('systemManager/getOptionFields')
 }
 
 export function getOptionItems(entity, field) {
-  return request({
-    url: 'systemManager/getOptionItems',
-    method: 'get',
-    params: { entity: entity, field: field }
-  })
+  return http.get('systemManager/getOptionItems', { entity, field })
 }
 
 export function saveOptionItems(entity, field, optionItems) {
-  return request({
-    url: 'systemManager/saveOptionItems',
-    method: 'post',
-    params: { entity: entity, field: field },
-    data: optionItems
+  return http.post('systemManager/saveOptionItems', optionItems, {
+    params: {entity, field}
   })
 }
 
 export function getTagFields(entity) {
-  return request({
-    url: 'systemManager/getTagFields',
-    method: 'get'
-  })
+  return http.get('systemManager/getTagFields')
 }
 
 export function getTagItems(entity, field) {
-  return request({
-    url: 'systemManager/getTagItems',
-    method: 'get',
-    params: { entity: entity, field: field }
-  })
+  return http.get('systemManager/getTagItems', { entity, field })
 }
 
 export function saveTagItems(entity, field, tagItems) {
-  return request({
-    url: 'systemManager/saveTagItems',
-    method: 'post',
-    params: { entity: entity, field: field },
-    data: tagItems
+  return http.post('systemManager/saveTagItems', tagItems, {
+    params: {entity, field}
   })
 }
 

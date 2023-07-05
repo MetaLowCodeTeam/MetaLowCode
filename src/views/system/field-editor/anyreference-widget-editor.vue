@@ -67,8 +67,8 @@
         </el-form-item>
         <hr style="border: 0;border-top: 1px dotted #cccccc" />
         <el-form-item>
-          <el-button type="primary" size="medium" style="width: 120px" @click="saveField">保存字段</el-button>
-          <el-button size="medium" v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
+          <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
+          <el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
         </el-form-item>
       </el-form>
     </el-main>
@@ -116,12 +116,11 @@
 
     <el-dialog ref="entityListDlg" title="选择引用实体" v-model="showEntityListDialogFlag" :append-to-body="true"
                class="entity-list-dialog" width="560px">
-      <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'mini'" :columns="columns" :data="tableData"
+      <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'"
+                   :columns="columns" :data="tableData" :show-operation-column="true"
                    :max-height="420">
-        <template #table_operation="scope">
-          <el-table-column align="center" label="" width="150" :resizable="false">
-            <el-button class="" icon="el-icon-check" @click="selectEntity(scope.row)">选择</el-button>
-          </el-table-column>
+        <template #table_operation="{scope}">
+          <el-button class="" icon="el-icon-check" @click="selectEntity(scope.row)">选择</el-button>
         </template>
       </SimpleTable>
     </el-dialog>

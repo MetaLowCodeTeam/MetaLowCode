@@ -47,8 +47,9 @@
 </template>
 
 <script>
+  import { h } from 'vue';
   import {getEntitySet, createEntity, entityCanBeDeleted, deleteEntity} from '@/api/system-manager'
-import EntityPropEditor from './entity-editor/entity-property-editor'
+  import EntityPropEditor from './entity-editor/entity-property-editor'
 
 export default {
   name: 'EntityList',
@@ -91,9 +92,8 @@ export default {
           this.$message({ message: res.error, type: 'error' })
           return
         }
-        //this.entityItems = res.data
+        this.entityItems = res.data
         //debugger
-        this.entityItems = res.data.data
       }).catch(res => {
         this.$message({ message: res.message, type: 'error' })
       })
@@ -195,7 +195,6 @@ export default {
 
         let confirmText = ['实体删除后不能恢复，是否确认删除?', '1. 删除实体会清空该实体的所有数据，包括实体所有字段、表单布局和列表设置，且不能恢复；’',
           '2. 如该实体包含明细实体，请先删除明细实体；', '3. 如有其他实体引用字段指向该实体，请手工删除引用字段；']
-        const h = this.$createElement
         let pTags = []
         confirmText.forEach(ct => {
           pTags.push(h('p', null, ct))

@@ -14,9 +14,9 @@
           <span class="custom-tree-node" @mouseenter="hoverNodeId = node.id" @mouseleave="hoverNodeId = -1">
             <span>{{ node.label }}</span>
             <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
-              <el-button type="text" size="small" @click="addDepartment(node, data)">添加</el-button>
-              <el-button type="text" size="small" @click="editDepartment(node, data)">编辑</el-button>
-              <el-button type="text" size="small" @click="deleteDepartment(node, data)">删除</el-button>
+              <el-button link type="primary" size="small" @click="addDepartment(node, data)">添加</el-button>
+              <el-button link type="primary" size="small" @click="editDepartment(node, data)">编辑</el-button>
+              <el-button link type="primary" size="small" @click="deleteDepartment(node, data)">删除</el-button>
             </span>
           </span>
         </template>
@@ -48,7 +48,7 @@
           <el-button size="small">修改登录密码</el-button>
         </div>
         <div class="search-panel-right">
-          <el-input type="text" size="small" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
+          <el-input link type="primary" size="small" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
                     v-model="keyword" @keyup.enter="searchData" @clear="clearSearch" suffix-icon="el-icon-search">
             <template #append>
               <el-button icon="el-icon-refresh-right" title="刷新" @click="refreshTableData"></el-button>
@@ -61,12 +61,11 @@
         <div style="height: 100%">
           <SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="true" :height="tableHeight + 'px'"
                        @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+                       :show-operation-column="true"
                        table-size="small" table-width="100% !important">
-            <template #table_operation="scope">
-              <el-table-column align="center" label="操作" width="150" :resizable="false">
-                <el-button type="text" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
-                <el-button type="text" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
-              </el-table-column>
+            <template #table_operation="{scope}">
+              <el-button link type="primary" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
+              <el-button link type="primary" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
             </template>
           </SimpleTable>
         </div>

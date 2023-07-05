@@ -32,7 +32,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="当前页签标题：">
-          <el-input type="text" v-model="layout.activeTab.title"></el-input>
+          <el-input link type="primary" v-model="layout.activeTab.title"></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -41,7 +41,7 @@
       <hr class="splitter">
       <el-form label-position="top" size="small">
         <el-form-item label="当前区块标题：">
-          <el-input type="text" v-model="layout.activeSection.title"></el-input>
+          <el-input link type="primary" v-model="layout.activeSection.title"></el-input>
         </el-form-item>
         <el-form-item label="是否显示区块标题区：">
           <el-radio-group v-model="layout.activeSection.showSectionTitle">
@@ -88,7 +88,7 @@
                        icon="el-icon-minus" class="cell-delete-button"></el-button>
           </li>
           <div>
-            <el-button type="text" @click="addNewCell(layout.activeRow)">添加列</el-button>
+            <el-button link type="primary" @click="addNewCell(layout.activeRow)">添加列</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -112,7 +112,7 @@
         -->
         <!--
         <el-form-item label="字段占位内容：">
-          <el-input type="text" class="field-placeholder-input"></el-input>
+          <el-input link type="primary" class="field-placeholder-input"></el-input>
         </el-form-item>
         -->
       </el-form>

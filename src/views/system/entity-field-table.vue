@@ -7,23 +7,23 @@
         <div class="entity-property-form">
           <el-form label-position="left" :label-width="'120px'" size="small">
             <el-form-item label="实体名称：">
-              <el-input type="text" v-model="entityProps.name" disabled></el-input>
+              <el-input link type="primary" v-model="entityProps.name" disabled></el-input>
             </el-form-item>
             <el-form-item label="显示名称：">
-              <el-input type="text" v-model="entityProps.label" :readonly="true">
+              <el-input link type="primary" v-model="entityProps.label" :readonly="true">
                 <template #suffix>
                   <i class="el-icon-edit primary-color" title="修改显示名称" @click="modifyEntityLabel"></i>
                 </template>
               </el-input>
             </el-form-item>
             <el-form-item label="实体编码：">
-              <el-input type="text" v-model="entityProps.entityCode" disabled></el-input>
+              <el-input link type="primary" v-model="entityProps.entityCode" disabled></el-input>
             </el-form-item>
             <el-form-item label="数据库表名：">
-              <el-input type="text" v-model="entityProps.physicalName" disabled></el-input>
+              <el-input link type="primary" v-model="entityProps.physicalName" disabled></el-input>
             </el-form-item>
             <el-form-item label="名称字段：">
-              <el-input type="text" v-model="entityProps.nameField" :readonly="true">
+              <el-input link type="primary" v-model="entityProps.nameField" :readonly="true">
                 <template #suffix>
                   <i class="el-icon-edit primary-color" title="修改名称字段" @click="modifyEntityNameField"></i>
                 </template>
@@ -42,7 +42,7 @@
               <el-switch v-model="entityProps.detailEntityFlag" style="float: right" disabled></el-switch>
             </el-form-item>
             <el-form-item label="所属主实体：" v-if="!!entityProps.detailEntityFlag">
-              <el-input type="text" v-model="entityProps.mainEntity.label" disabled></el-input>
+              <el-input link type="primary" v-model="entityProps.mainEntity.label" disabled></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -60,8 +60,8 @@
       <el-header class="list-search-panel">
         <div class="search-panel-left">
           <el-dropdown @command="handleNewFieldCommand" size="small">
-          <el-button type="primary" size="small">
-            新建字段<i class="el-icon-arrow-down el-icon--right"></i>
+          <el-button type="primary" size="small" icon="el-icon-ArrowDown">
+            新建字段
           </el-button>
             <template #dropdown>
             <el-dropdown-menu>
@@ -95,7 +95,7 @@
           </el-dropdown>
         </div>
         <div class="search-panel-right">
-          <el-input type="text" v-model="searchText" :clearable="true" @clear="clearTableSearch" class="v-middle"
+          <el-input link type="primary" v-model="searchText" :clearable="true" @clear="clearTableSearch" class="v-middle"
                     @keyup.enter="searchTableData" size="small" placeholder="请输入关键词搜索">
             <template #append>
               <el-button icon="el-icon-search" @click="searchTableData"></el-button>
@@ -105,37 +105,36 @@
       </el-header>
 
       <el-main ref="tableContainer">
-        <div style="height: 100%">
+        <div>
           <SimpleTable :columns="columns" :data="filteredData" :show-pagination="false" :show-check-box="false"
-                       :height="tableHeight + 'px'" table-size="small" table-width="100% !important">
-            <template #table_operation="scope">
-              <el-table-column align="center" label="操作" width="130" :resizable="false" fixed="right">
-                <template v-if="!scope.row['reserved']">
-                  <el-button type="text" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
-                  <el-button type="text" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
+                       :show-operation-column="true"
+                       :height="'100%'" table-size="small" table-width="100% !important">
+            <template #table_operation="{scope}">
+              <template v-if="!scope.row['reserved']">
+                <el-button type="primary" link size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
+                <el-button type="primary" link size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
+              </template>
             </template>
           </SimpleTable>
         </div>
 
       </el-main>
 
-      <el-footer style="height: 32px; line-height: 32px; font-size: 13px; background-color: white">
-        <div>字段列表：当前实体共 {{tableData.length}} 个字段</div>
+      <el-footer>
+        <div style="height: 32px; line-height: 32px; font-size: 13px; background-color: white">
+          字段列表：当前实体共 {{tableData.length}} 个字段</div>
       </el-footer>
 
       <el-dialog title="修改名称字段" v-model="showNameFieldDialogFlag" v-if="showNameFieldDialogFlag"
                  :append-to-body="true" :destroy-on-close="true" class="name-field-dialog" width="460px">
         <div class="name-field-hint"><i class="el-icon-bell"></i>提示：只有文本(Text)类型字段可设置为名称字段。</div>
-        <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'mini'"
+        <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'"
+                     :show-operation-column="true"
                      :columns="nameFieldColumns" :data="nameFieldData" :max-height="420">
-          <template #table_operation="scope">
-            <el-table-column align="center" label="" width="150" :resizable="false">
-              <el-button v-if="!scope.row.nameFieldFlag" class="" icon="el-icon-check"
-                         @click="selectNameField(scope.row)">选择</el-button>
-              <el-button v-else :disabled="true">当前名称字段</el-button>
-            </el-table-column>
+          <template #table_operation="{scope}">
+            <el-button v-if="!scope.row.nameFieldFlag" class="" icon="el-icon-check"
+                       @click="selectNameField(scope.row)">选择</el-button>
+            <el-button v-else :disabled="true">当前名称字段</el-button>
           </template>
         </SimpleTable>
       </el-dialog>
@@ -178,6 +177,30 @@
   import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
   import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor";
   import { ElMessage  } from "element-plus";
+  import BooleanWE from '@/views/system/field-editor/boolean-widget-editor';
+  import IntegerWE from '@/views/system/field-editor/integer-widget-editor';
+  import DecimalWE from '@/views/system/field-editor/decimal-widget-editor';
+  import PercentWE from '@/views/system/field-editor/percent-widget-editor';
+  import MoneyWE from '@/views/system/field-editor/money-widget-editor';
+  //
+  import TextWE from '@/views/system/field-editor/text-widget-editor';
+  import EmailWE from '@/views/system/field-editor/email-widget-editor';
+  import UrlWE from '@/views/system/field-editor/url-widget-editor';
+  import TextAreaWE from '@/views/system/field-editor/textarea-widget-editor';
+  import PasswordWE from '@/views/system/field-editor/password-widget-editor';
+  //
+  import OptionWE from '@/views/system/field-editor/option-widget-editor';
+  import TagWE from '@/views/system/field-editor/tag-widget-editor';
+  //
+  import DateWE from '@/views/system/field-editor/date-widget-editor';
+  import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor';
+  //
+  import PictureWE from '@/views/system/field-editor/picture-widget-editor';
+  import FileWE from '@/views/system/field-editor/file-widget-editor';
+  //
+  import ReferenceWE from '@/views/system/field-editor/reference-widget-editor';
+  import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor';
+  import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor';
 
   export default {
     name: "EntityFieldTable",
@@ -189,31 +212,25 @@
     },
     components: {
       EntityPropEditor,
-      BooleanWE: () => import('@/views/system/field-editor/boolean-widget-editor'),
-      IntegerWE: () => import('@/views/system/field-editor/integer-widget-editor'),
-      DecimalWE: () => import('@/views/system/field-editor/decimal-widget-editor'),
-      PercentWE: () => import('@/views/system/field-editor/percent-widget-editor'),
-      MoneyWE: () => import('@/views/system/field-editor/money-widget-editor'),
-
-      TextWE: () => import('@/views/system/field-editor/text-widget-editor'),
-      EmailWE: () => import('@/views/system/field-editor/email-widget-editor'),
-      UrlWE: () => import('@/views/system/field-editor/url-widget-editor'),
-      TextAreaWE: () => import('@/views/system/field-editor/textarea-widget-editor'),
-      PasswordWE: () => import('@/views/system/field-editor/password-widget-editor'),
-
-      OptionWE: () => import('@/views/system/field-editor/option-widget-editor'),
-      TagWE: () => import('@/views/system/field-editor/tag-widget-editor'),
-
-      DateWE: () => import('@/views/system/field-editor/date-widget-editor'),
-      DateTimeWE: () => import('@/views/system/field-editor/datetime-widget-editor'),
-
-      PictureWE: () => import('@/views/system/field-editor/picture-widget-editor'),
-      FileWE: () => import('@/views/system/field-editor/file-widget-editor'),
-
-      ReferenceWE: () => import('@/views/system/field-editor/reference-widget-editor'),
-      AnyReferenceWE: () => import('@/views/system/field-editor/anyreference-widget-editor'),
-      ReferenceListWE: () => import('@/views/system/field-editor/referencelist-widget-editor'),
-
+      BooleanWE,
+      IntegerWE,
+      DecimalWE,
+      PercentWE,
+      MoneyWE,
+      TextWE,
+      EmailWE,
+      UrlWE,
+      TextAreaWE,
+      PasswordWE,
+      OptionWE,
+      TagWE,
+      DateWE,
+      DateTimeWE,
+      PictureWE,
+      FileWE,
+      ReferenceWE,
+      AnyReferenceWE,
+      ReferenceListWE,
     },
     data() {
       return {
@@ -285,7 +302,7 @@
             return
           }
 
-          this.entityProps = res.data.data
+          this.entityProps = res.data
         }).catch(res => {
           this.$message({message: res.message, type: 'error'})
         })
@@ -303,7 +320,7 @@
             return
           }
 
-          this.tableData = res.data.data
+          this.tableData = res.data
           this.filteredData = copyNew(this.tableData)
           this.searchText = ''
         }).catch(res => {
@@ -569,6 +586,7 @@
     line-height: 62px;
     border-left: 1px solid #EBEEF5;
     margin-bottom: 0;
+    justify-content: space-between;
   }
 
   .list-search-panel:after {
@@ -578,6 +596,7 @@
   }
 
   .search-panel-left {
+    display: flex;
     float: left;
   }
 

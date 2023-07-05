@@ -60,13 +60,11 @@
     </el-main>
 
     <el-dialog ref="selectMainEntityDlg" title="选择主实体" v-model="showMainEntityDialogFlag" :append-to-body="true"
-               custom-class="no-padding" width="560px">
-      <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'mini'" :columns="columns" :data="tableData"
-          :max-height="420">
-        <template #table_operation="scope">
-          <el-table-column align="center" label="" width="150" :resizable="false">
-            <el-button class="" icon="el-icon-check" @click="selectMainEntity(scope.row)">选择</el-button>
-          </el-table-column>
+               class="no-padding" width="560px">
+      <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'" :columns="columns"
+                   :show-operation-column="true" :data="tableData" :max-height="420">
+        <template #table_operation="{scope}">
+          <el-button class="" icon="el-icon-check" @click="selectMainEntity(scope.row)">选择</el-button>
         </template>
       </SimpleTable>
     </el-dialog>

@@ -10,7 +10,7 @@
         <!-- TODO: 此处应该增加按钮插槽!! -->
       </div>
       <div class="search-panel-right">
-        <el-input type="text" size="small" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
+        <el-input link type="primary" size="small" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
                   v-model="keyword" @keyup.enter="searchData" @clear="clearSearch"
                   suffix-icon="el-icon-search">
           <template #append>
@@ -24,12 +24,11 @@
       <div style="height: 100%">
         <SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="true" :height="tableHeight + 'px'"
                      @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+                     :show-operation-column="true"
                      table-size="small" table-width="100% !important">
-          <template #table_operation="scope">
-            <el-table-column align="center" label="操作" width="150" :resizable="false" fixed="right">
-              <el-button type="text" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
-              <el-button type="text" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
-            </el-table-column>
+          <template #table_operation="{scope}">
+            <el-button link type="primary" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
+            <el-button link type="primary" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
           </template>
         </SimpleTable>
       </div>

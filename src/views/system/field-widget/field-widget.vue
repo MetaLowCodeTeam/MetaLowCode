@@ -41,19 +41,19 @@
     </template>
 
     <template v-if="field.type === 'Text'">
-      <el-input type="text" v-model="fieldValue" :readonly="isReadOnly" :ref="field.name"
+      <el-input link type="primary" v-model="fieldValue" :readonly="isReadOnly" :ref="field.name"
                 :minLength="minLength" :maxLength="maxLength"
                 style="width: 100%"></el-input>
     </template>
 
     <template v-if="field.type === 'Email'">
-      <el-input type="text" v-model="fieldValue" :readonly="isReadOnly"
+      <el-input link type="primary" v-model="fieldValue" :readonly="isReadOnly"
                 :minLength="minLength" :maxLength="maxLength"
                 style="width: 100%"></el-input>
     </template>
 
     <template v-if="field.type === 'Url'">
-      <el-input type="text" v-model="fieldValue" :readonly="isReadOnly"
+      <el-input link type="primary" v-model="fieldValue" :readonly="isReadOnly"
                 :minLength="minLength" :maxLength="maxLength"
                 style="width: 100%"></el-input>
     </template>
@@ -65,7 +65,7 @@
     </template>
 
     <template v-if="field.type === 'Password'">
-      <el-input type="text" v-model="fieldValue" :readonly="isReadOnly"
+      <el-input link type="primary" v-model="fieldValue" :readonly="isReadOnly"
                 :minLength="minLength" :maxLength="maxLength"
                 show-password style="width: 100%"></el-input>
     </template>

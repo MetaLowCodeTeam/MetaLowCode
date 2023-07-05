@@ -55,8 +55,8 @@
         </el-form-item>
         <hr style="border: 0;border-top: 1px dotted #cccccc" />
         <el-form-item>
-          <el-button type="primary" size="medium" style="width: 120px" @click="saveField">保存字段</el-button>
-          <el-button size="medium" v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
+          <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
+          <el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
         </el-form-item>
       </el-form>
     </el-main>

@@ -359,12 +359,12 @@ export default {
   methods: {
     buildLayoutObj() {
       let layoutObj = createLayoutObj(eventBus)
-      eventHub.$on('actEvent', (elementName) => {
+      eventBus.$on('actEvent', (elementName) => {
         if (!!layoutObj.eventHubHandler) {
           layoutObj.eventHubHandler(elementName)
         }
       })
-      eventHub.$on('layoutChangedEvent', (data) => {
+      eventBus.$on('layoutChangedEvent', (data) => {
         this.onLayoutChanged()
       })
       return layoutObj

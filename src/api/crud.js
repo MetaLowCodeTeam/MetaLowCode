@@ -1,58 +1,37 @@
-import { request } from '@/utils/request'
+import http, { request } from '@/utils/request'
 
 export function refFieldQuery(entity, field, pageNo, pageSize) {
-  return request({
-    url: 'crud/refFieldQuery',
-    method: 'get',
-    params: {entity, 'refField': field, pageNo, pageSize},
-  })
+  return http.get('crud/refFieldQuery', {entity, 'refField': field, pageNo, pageSize})
 }
 
 export function createRecord(entity) {
-  return request({
-    url: 'crud/formCreateQuery',
-    method: 'get',
-    params: {entity},
-  })
+  return http.get('crud/formCreateQuery', {entity})
 }
 
 export function updateRecord(entity, id) {
-  return request({
-    url: 'crud/formUpdateQuery',
-    method: 'get',
-    params: {entity, id},
-  })
+  return http.get('crud/formUpdateQuery', {entity, id})
 }
 
 export function saveRecord(entity, id, formModel) {
-  return request({
-    url: 'crud/saveRecord',
-    method: 'post',
+  return http.post('crud/saveRecord', formModel, {
     params: {entity, id},
-    data: formModel,
   })
 }
 
 export function deleteRecord(id) {
-  return request({
-    url: 'crud/deleteRecord',
-    method: 'post',
-    params: { id }
+  return http.post('crud/deleteRecord', {}, {
+    params: {id},
   })
 }
 
 export function getDataList(entity, fields, filter, pageSize, pageNo) {
-  return request({
-    url: 'crud/listQuery',
-    method: 'post',
-    data: { 'mainEntity': entity, 'fieldsList': fields, 'filter': filter, 'pageSize': pageSize, 'pageNo': pageNo }
+  return http.post('crud/listQuery', {
+    'mainEntity': entity,
+    'fieldsList': fields,
+    filter, pageSize, pageNo
   })
 }
 
 export function initDataList(entity) {
-  return request({
-    url: 'crud/initDataList',
-    method: 'get',
-    params: {entity},
-  })
+  return http.get('crud/initDataList', {entity})
 }

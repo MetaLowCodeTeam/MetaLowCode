@@ -6,7 +6,7 @@
         <div>
           <ul v-for="(tflItem, idx) in tagFieldList" :key="idx" class="entity-item">{{tflItem.entityLabel}}
             <li v-for="(flItem, flIdx) in tflItem.fieldList" :key="flIdx" class="field-item">
-              <el-button type="text" @click="selectTagField(tflItem.entityName, flItem.fieldName)">
+              <el-button link type="primary" @click="selectTagField(tflItem.entityName, flItem.fieldName)">
                 {{flItem.fieldLabel}}</el-button></li>
           </ul>
         </div>
@@ -22,7 +22,7 @@
             <template #header>
               <div class="clear-fix">
                 <span>选项管理</span>
-                <el-button style="float: right; padding: 3px 0" type="text" @click="addTag">新增选项</el-button>
+                <el-button style="float: right; padding: 3px 0" link type="primary" @click="addTag">新增选项</el-button>
               </div>
             </template>
             <div class="clear-fix">(空值)</div>
@@ -30,22 +30,22 @@
                  @mouseleave="hoverIdx = -1">
               {{tagItem.value}}
               <div class="tag-item" v-show="!!tagItem.value && (hoverIdx === idx)">
-                <el-button type="text" class="tag-item-insert" title="插入" icon="el-icon-plus"
+                <el-button link type="primary" class="tag-item-insert" title="插入" icon="el-icon-plus"
                            @click="insertTag(idx)"></el-button>
-                <el-button type="text" class="tag-item-up" title="上移" icon="el-icon-top"
+                <el-button link type="primary" class="tag-item-up" title="上移" icon="el-icon-top"
                            @click="upTag(idx)"></el-button>
-                <el-button type="text" class="tag-item-down" title="下移" icon="el-icon-bottom"
+                <el-button link type="primary" class="tag-item-down" title="下移" icon="el-icon-bottom"
                            @click="downTag(idx)"></el-button>
-                <el-button type="text" class="tag-item-edit" title="编辑" icon="el-icon-edit"
+                <el-button link type="primary" class="tag-item-edit" title="编辑" icon="el-icon-edit"
                            @click="editTag(idx)"></el-button>
-                <el-button type="text" class="tag-item-delete" title="删除" icon="el-icon-delete"
+                <el-button link type="primary" class="tag-item-delete" title="删除" icon="el-icon-delete"
                            @click="deleteTag(idx)"></el-button>
               </div>
             </div>
           </el-card>
           <hr style="border: 0;border-top: 1px dotted #cccccc" />
           <el-form-item>
-            <el-button type="primary" size="medium" style="width: 120px;" @click="saveTags">保 存</el-button>
+            <el-button type="primary" style="width: 120px;" @click="saveTags">保 存</el-button>
           </el-form-item>
         </el-form>
         <div v-else>请选择左侧选项字段</div>

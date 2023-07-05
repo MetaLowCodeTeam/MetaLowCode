@@ -6,7 +6,7 @@
         <div>
           <ul v-for="(oflItem, idx) in optionFieldList" :key="idx" class="entity-item">{{oflItem.entityLabel}}
             <li v-for="(flItem, flIdx) in oflItem.fieldList" :key="flIdx" class="field-item">
-              <el-button type="text" @click="selectOptionField(oflItem.entityName, flItem.fieldName)">
+              <el-button link type="primary" @click="selectOptionField(oflItem.entityName, flItem.fieldName)">
                 {{flItem.fieldLabel}}</el-button></li>
           </ul>
         </div>
@@ -22,7 +22,7 @@
             <template #header>
               <div class="clear-fix">
                 <span>选项管理</span>
-                <el-button style="float: right; padding: 3px 0" type="text" @click="addOption">新增选项</el-button>
+                <el-button style="float: right; padding: 3px 0" link type="primary" @click="addOption">新增选项</el-button>
               </div>
             </template>
             <div class="clear-fix">(空值)</div>
@@ -30,22 +30,22 @@
                  @mouseleave="hoverIdx = -1">
               {{optionItem.label}}
               <div class="option-item" v-show="!!optionItem.value && (hoverIdx === idx)">
-                <el-button type="text" class="option-item-insert" title="插入" icon="el-icon-plus"
+                <el-button link type="primary" class="option-item-insert" title="插入" icon="el-icon-plus"
                            @click="insertOption(idx)"></el-button>
-                <el-button type="text" class="option-item-up" title="上移" icon="el-icon-top"
+                <el-button link type="primary" class="option-item-up" title="上移" icon="el-icon-top"
                            @click="upOption(idx)"></el-button>
-                <el-button type="text" class="option-item-down" title="下移" icon="el-icon-bottom"
+                <el-button link type="primary" class="option-item-down" title="下移" icon="el-icon-bottom"
                            @click="downOption(idx)"></el-button>
-                <el-button type="text" class="option-item-edit" title="编辑" icon="el-icon-edit"
+                <el-button link type="primary" class="option-item-edit" title="编辑" icon="el-icon-edit"
                            @click="editOption(idx)"></el-button>
-                <el-button type="text" class="option-item-delete" title="删除" icon="el-icon-delete"
+                <el-button link type="primary" class="option-item-delete" title="删除" icon="el-icon-delete"
                            @click="deleteOption(idx)"></el-button>
               </div>
             </div>
           </el-card>
           <hr style="border: 0;border-top: 1px dotted #cccccc" />
           <el-form-item>
-            <el-button type="primary" size="medium" style="width: 120px;" @click="saveOptions">保 存</el-button>
+            <el-button type="primary" style="width: 120px;" @click="saveOptions">保 存</el-button>
           </el-form-item>
         </el-form>
         <div v-else>请选择左侧选项字段</div>

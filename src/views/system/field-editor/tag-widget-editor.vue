@@ -49,7 +49,7 @@
           <template #header>
             <div class="clear-fix">
               <span>选项管理</span>
-              <el-button style="float: right; padding: 3px 0" type="text" @click="addTag">新增选项</el-button>
+              <el-button style="float: right; padding: 3px 0" link type="primary" @click="addTag">新增选项</el-button>
             </div>
           </template>
           <div class="clear-fix">(空值)</div>
@@ -57,23 +57,23 @@
                @mouseleave="hoverIdx = -1">
             {{tagItem.label}}
             <div class="tag-item" v-if="!!tagItem.value && (hoverIdx === idx)">
-              <el-button type="text" class="tag-item-insert" title="插入" icon="el-icon-plus"
+              <el-button link type="primary" class="tag-item-insert" title="插入" icon="el-icon-plus"
                          @click="insertTag(idx)"></el-button>
-              <el-button type="text" class="tag-item-up" title="上移" icon="el-icon-top"
+              <el-button link type="primary" class="tag-item-up" title="上移" icon="el-icon-top"
                          @click="upTag(idx)"></el-button>
-              <el-button type="text" class="tag-item-down" title="下移" icon="el-icon-bottom"
+              <el-button link type="primary" class="tag-item-down" title="下移" icon="el-icon-bottom"
                          @click="downTag(idx)"></el-button>
-              <el-button type="text" class="tag-item-edit" title="编辑" icon="el-icon-edit"
+              <el-button link type="primary" class="tag-item-edit" title="编辑" icon="el-icon-edit"
                          @click="editTag(idx)"></el-button>
-              <el-button type="text" class="tag-item-delete" title="删除" icon="el-icon-delete"
+              <el-button link type="primary" class="tag-item-delete" title="删除" icon="el-icon-delete"
                          @click="deleteTag(idx)"></el-button>
             </div>
           </div>
         </el-card>
         <hr style="border: 0;border-top: 1px dotted #cccccc" />
         <el-form-item>
-          <el-button type="primary" size="medium" style="width: 120px" @click="saveField">保存字段</el-button>
-          <el-button size="medium" v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
+          <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
+          <el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
         </el-form-item>
       </el-form>
     </el-main>

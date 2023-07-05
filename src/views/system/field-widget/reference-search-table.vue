@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <div class="search-panel-top">
-        <el-input type="text" size="small" placeholder="请输入关键词搜索">
+        <el-input link type="primary" size="small" placeholder="请输入关键词搜索">
           <template #append>
             <el-button icon="el-icon-search"></el-button>
           </template>
@@ -12,11 +12,10 @@
     <el-main>
       <SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="false" :height="tableHeight"
                    @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+                   :show-operation-column="true"
                    table-size="small" table-width="100% !important">
-        <template #table_operation="scope">
-          <el-table-column align="center" label="操作" width="100" :resizable="true" fixed="right">
-            <el-button class="" icon="el-icon-check" @click="selectRecord(scope.row)">选择</el-button>
-          </el-table-column>
+        <template #table_operation="{scope}">
+          <el-button class="" icon="el-icon-check" @click="selectRecord(scope.row)">选择</el-button>
         </template>
       </SimpleTable>
     </el-main>

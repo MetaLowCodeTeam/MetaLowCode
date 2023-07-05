@@ -3,7 +3,6 @@
     <el-main>
       <el-table :data="data" :height="height" :max-height="maxHeight" border stripe tooltip-effect="light"
                 @selection-change="handleSelectionChange" :size="tableSize" :style="{width: tableWidth}"
-                v-scrollBar="'elTable'"
                 :header-cell-style="{background: '#f6f8f9'}">
         <el-table-column v-if="showCheckBox" type="selection" width="45"></el-table-column>
         <template v-for="(item, index) in columns">
@@ -19,7 +18,13 @@
                   :formatter="item.formatter ? item.formatter : formatterValue">
           </el-table-column>
         </template>
-        <slot name="table_operation"/>
+        <template v-if="showOperationColumn">
+          <el-table-column fixed="right" label="操作" width="130">
+            <template #default="scope">
+              <slot name="table_operation" :scope="scope" />
+            </template>
+          </el-table-column>
+        </template>
       </el-table>
     </el-main>
 
@@ -68,6 +73,10 @@
         type: String,
         default: 'medium'
       },
+      showOperationColumn: {
+        type: Boolean,
+        default: false
+      }
     },
     methods: {
       handleSelectionChange(val) {

@@ -12,15 +12,15 @@
         </el-form-item>
         <!--
         <el-form-item label="True显示值">
-          <el-input type="text" v-model="fieldProps.fieldViewModel.trueLabel"
+          <el-input link type="primary" v-model="fieldProps.fieldViewModel.trueLabel"
                     maxlength="10" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="False显示值">
-          <el-input type="text" v-model="fieldProps.fieldViewModel.falseLabel"
+          <el-input link type="primary" v-model="fieldProps.fieldViewModel.falseLabel"
                     maxlength="10" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="Null显示值">
-          <el-input type="text" v-model="fieldProps.fieldViewModel.nullLabel"
+          <el-input link type="primary" v-model="fieldProps.fieldViewModel.nullLabel"
                     maxlength="10" show-word-limit></el-input>
         </el-form-item>
         -->
@@ -61,8 +61,8 @@
         </el-form-item>
         <hr style="border: 0;border-top: 1px dotted #cccccc" />
         <el-form-item>
-          <el-button type="primary" size="medium" style="width: 120px" @click="saveField">保存字段</el-button>
-          <el-button size="medium" v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
+          <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
+          <el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
         </el-form-item>
       </el-form>
     </el-main>
