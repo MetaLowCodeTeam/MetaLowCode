@@ -70,7 +70,7 @@
                 <div class="mt-10">
                     <el-radio-group class="radio-need-block" v-model="form.multiPersonApproval">
                         <el-radio :label="1">会签 (需所有审批人同意)</el-radio>
-                        <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
+                        <el-radio :label="0">或签 (一名审批人同意或拒绝)</el-radio>
                     </el-radio-group>
                 </div>
                 <div class="lable-title mb-10 mt-20">可修改字段</div>
