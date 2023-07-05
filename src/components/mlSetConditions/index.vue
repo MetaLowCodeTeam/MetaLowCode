@@ -25,16 +25,16 @@
                     </div>
                     <el-select
                         class="field-select"
-                        v-model="item.filedName"
+                        v-model="item.fieldName"
                         @change="fieldChange(item)"
                         filterable
                         no-match-text="无匹配文本"
                     >
                         <el-option
                             v-for="op in fieldList"
-                            :key="op.filedName"
+                            :key="op.fieldName"
                             :label="op.label"
-                            :value="op.filedName"
+                            :value="op.fieldName"
                         />
                     </el-select>
                 </el-col>
@@ -317,7 +317,7 @@ export default {
                 let list = res.data || [];
                 this.fieldList = list.map((el) => {
                     return {
-                        filedName: el.name,
+                        fieldName: el.name,
                         op: this.getSelectOp(el)[0],
                         value: "",
                         value2: "",
@@ -343,7 +343,7 @@ export default {
             let conditionList = [];
             this.fieldList.forEach(el=>{
                 this.conditionConf.items.forEach(subEl => {
-                    if(el.filedName === subEl.filedName){
+                    if(el.fieldName === subEl.fieldName){
                         let newItem = Object.assign(el,subEl);
                         newItem.valueType = this.showValueType(newItem);
                         conditionList.push(newItem);
@@ -356,7 +356,7 @@ export default {
         },
         // 字段切换
         fieldChange(item) {
-            let metadata = this.fieldList.filter(res=> res.filedName === item.filedName);
+            let metadata = this.fieldList.filter(res=> res.fieldName === item.fieldName);
             Object.assign(item,metadata[0]);
             item.op = this.getSelectOp(item)[0];
             item.valueType = this.showValueType(item); 
