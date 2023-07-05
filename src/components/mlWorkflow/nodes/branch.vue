@@ -24,10 +24,7 @@
                                     </el-icon>
                                 </div>
                                 <div class="content">
-                                    <span
-                                        v-if="toText(nodeConfig, index)"
-                                    >{{ toText(nodeConfig, index) }}</span>
-                                    <span v-else class="placeholder">请设置条件</span>
+                                    <span>{{ toText(nodeConfig, index) }}</span>
                                 </div>
                                 <div
                                     class="sort-right"
@@ -138,7 +135,7 @@ export default {
             if (index === this.nodeConfig.conditionNodes.length - 1) {
                 this.lastNodes = true;
             }
-            let { filter } = this.$cloneDeep(this.form);
+            let { filter } = this.$CloneDeep(this.form);
             filter = this.$API.approval.setConditions.initFilter(filter);
             this.conditionConf = filter;
             this.drawer = true;
@@ -211,24 +208,13 @@ export default {
             });
             this.$emit("update:modelValue", this.nodeConfig);
         },
-        addConditionList() {
-            this.form.conditionList.push({
-                label: "",
-                field: "",
-                operator: "=",
-                value: "",
-            });
-        },
-        deleteConditionList(index) {
-            this.form.conditionList.splice(index, 1);
-        },
         toText(nodeConfig, index) {
-            var { conditionList } = nodeConfig.conditionNodes[index];
+            var { filter } = nodeConfig.conditionNodes[index];
             if (index === nodeConfig.conditionNodes.length - 1) {
                 return `其他条件`;
             }
-            if (conditionList && conditionList.length > 0) {
-                return `已设置条件（${conditionList.length}）`;
+            if (filter.items && filter.items.length > 0) {
+                return `已设置条件（${filter.items.length}）`;
             } else {
                 return `请设置条件`;
             }

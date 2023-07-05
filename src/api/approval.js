@@ -17,7 +17,7 @@ export default {
     // 设置条件
     setConditions: {
         getFieldSet: async (data) => {
-            return await http.get("/systemManager/getFieldSet", data);
+            return await http.get("/systemManager/getFieldListOfFilter", data);
         },
         initFilter: (filter) => {
             let { equation } = filter;
@@ -33,6 +33,10 @@ export default {
 
             return filter
         },
+        // 高级表达式是否OK
+        isEquation: async (data) => {
+            return await http.get("/crud/testEquation", data);
+        }
     },
     // 审批流程
     approval: {
@@ -40,7 +44,7 @@ export default {
             return await http.get("/approval/getFlowDefinitionByConfigId", data);
         },
         save: async (data) => {
-            return await http.post("/approval/saveLastApprovalFlow", data); 
+            return await http.post("/approval/saveLastApprovalFlow", data);
         }
     },
 }

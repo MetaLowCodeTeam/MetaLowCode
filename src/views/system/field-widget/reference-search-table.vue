@@ -78,7 +78,7 @@
               setColumnFormatter(cl)
             })
             this.columns = columnList
-            this.tableData = res.data.dataList
+            this.tableData = res.dataList
             //console.log(this.tableData)
             this.page.total = res.data.pagination.total
           }

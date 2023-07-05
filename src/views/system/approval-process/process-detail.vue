@@ -33,7 +33,7 @@ export default {
             this.loading = true;
             let res = await this.$API.approval.approval.get({ approvalConfigId });
             if (res.code === 200) {
-                this.data = JSON.parse(res.data);
+                this.data = res.data;
             }
             this.loading = false;
         },

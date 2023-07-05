@@ -147,8 +147,8 @@ export default {
             let res = await this.$API.approval.selectUser["get" + this.cutTabs](
                 param
             );
-            if (res.data.code == 200) {
-                this.tabData = res.data.data.map((el) => {
+            if (res.code == 200) {
+                this.tabData = res.data.map((el) => {
                     el.isActive = false;
                     // 如果该ID已在选中集里，默认选中
                     if(cutSelectedIds.includes(el[cutTab.itemId])){
@@ -157,7 +157,6 @@ export default {
                     return el;
                 });
             } else {
-                console.log(res.data.message);
                 this.$message.error("获取数据失败，请尝试刷新页面后重试");
             }
             this.loading = false;

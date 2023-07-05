@@ -45,14 +45,14 @@
             <div class="work-flow-conditions mb-20">
                 <div class="lable-title mb-3">由谁审批</div>
                 <div class="mt-10">
-                    <el-radio-group class="radio-need-block" v-model="form.nodeRoleType">
-                        <el-radio :label="1">发起人自己</el-radio>
-                        <el-radio :label="2">指定审批人</el-radio>
+                    <el-radio-group class="radio-need-block" v-model="form.nodeRoleType" @change="nodeRoleTypeChange">
+                        <el-radio :label="2">发起人自己</el-radio>
+                        <el-radio :label="3">指定审批人</el-radio>
                     </el-radio-group>
                 </div>
                 <mlSelectUser
                     class="mt-5 mb-5"
-                    v-if="form.nodeRoleType == 2"
+                    v-if="form.nodeRoleType == 3"
                     v-model="form.nodeRoleList"
                     multiple
                     clearable
@@ -160,7 +160,7 @@ export default {
         },
         save() {
             let { nodeRoleType, nodeRoleList } = this.form;
-            if (nodeRoleType == 2 && nodeRoleList.length < 1) {
+            if (nodeRoleType == 3 && nodeRoleList.length < 1) {
                 this.$message.error("请选择用户");
                 return;
             }
@@ -179,8 +179,13 @@ export default {
         selectHandle(type, data) {
             this.select(type, data);
         },
+        nodeRoleTypeChange(){
+            if(this.form.nodeRoleType !== 3){
+                this.form.nodeRoleList = [];
+            }
+        },
         toText(nodeConfig) {
-            if (nodeConfig.nodeRoleType == 1) {
+            if (nodeConfig.nodeRoleType == 2) {
                 return "发起人自己";
             } else {
                 if (

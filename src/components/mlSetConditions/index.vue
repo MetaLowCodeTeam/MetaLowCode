@@ -32,17 +32,17 @@
                     >
                         <el-option
                             v-for="op in fieldList"
-                            :key="op.name"
+                            :key="op.filedName"
                             :label="op.label"
-                            :value="op.name"
+                            :value="op.filedName"
                         />
                     </el-select>
                 </el-col>
                 <!-- 条件类型 -->
                 <el-col :span="4">
-                    <el-select v-model="item.op">
+                    <el-select v-model="item.op" @change="opChange(item)">
                         <el-option
-                            v-for="op in getSelectOp()"
+                            v-for="op in getSelectOp(item)"
                             :key="op"
                             :label="op_type[op]"
                             :value="op"
@@ -52,7 +52,7 @@
                 <!-- 条件值 -->
                 <el-col :span="10">
                     <!-- 日期选择器 -->
-                    <div v-if="showValueType(item.op) === 'datePicker'">
+                    <div v-if="item.valueType === 'datePicker'">
                         <el-date-picker
                             v-model="item.value"
                             type="date"
@@ -64,7 +64,7 @@
                         />
                     </div>
                     <!-- 日期区间 -->
-                    <div v-else-if="showValueType(item.op) === 'datePickerBw'">
+                    <div v-else-if="item.valueType === 'datePickerBw'">
                         <el-date-picker
                             v-model="item.value"
                             type="date"
@@ -89,7 +89,7 @@
                         />
                     </div>
                     <!-- 数字输入框 -->
-                    <div v-else-if="showValueType(item.op) === 'numberInput'">
+                    <div v-else-if="item.valueType === 'numberInput'">
                         <el-input-number
                             v-model="item.value"
                             :controls="false"
@@ -99,7 +99,7 @@
                         />
                     </div>
                     <!-- 数字输入框区间 -->
-                    <div v-else-if="showValueType(item.op) === 'numberInputBw'">
+                    <div v-else-if="item.valueType === 'numberInputBw'">
                         <el-input-number
                             v-model="item.value"
                             :controls="false"
@@ -118,7 +118,7 @@
                         />
                     </div>
                     <!-- 文本输入框 -->
-                    <div v-else-if="showValueType(item.op) === 'textInput'">
+                    <div v-else-if="item.valueType === 'textInput'">
                         <el-input
                             v-model="item.value"
                             :class="{'is-error':item.isError}"
@@ -126,7 +126,7 @@
                         />
                     </div>
                     <!-- 布尔类型 -->
-                    <div v-else-if="showValueType(item.op) === 'booleanSelect'">
+                    <div v-else-if="item.valueType === 'booleanSelect'">
                         <el-select
                             v-model="item.value"
                             class="w-100"
@@ -136,6 +136,44 @@
                         >
                             <el-option label="是" value="1" />
                             <el-option label="否" value="0" />
+                        </el-select>
+                    </div>
+                    <!-- 用户下拉框 -->
+                    <div v-else-if="item.valueType === 'userSelect'">
+                        <el-select
+                            v-model="item.value"
+                            class="w-100"
+                            :class="{'is-error':item.isError}"
+                            @focus="clearError(item)"
+                            placeholder=" "
+                            filterable
+                            no-match-text="无匹配文本"
+                        >
+                            <el-option
+                                v-for="(userOp,userInx) of userList"
+                                :label="userOp.userName"
+                                :value="userOp.userId"
+                                :key="userInx"
+                            />
+                        </el-select>
+                    </div>
+                    <!-- 部门下拉框 -->
+                    <div v-else-if="item.valueType === 'departmentSelect'">
+                        <el-select
+                            v-model="item.value"
+                            class="w-100"
+                            :class="{'is-error':item.isError}"
+                            @focus="clearError(item)"
+                            placeholder=" "
+                            filterable
+                            no-match-text="无匹配文本"
+                        >
+                            <el-option
+                                v-for="(departmentOp,departmentInx) of departmentList"
+                                :label="departmentOp.departmentName"
+                                :value="departmentOp.departmentId"
+                                :key="departmentInx"
+                            />
                         </el-select>
                     </div>
                 </el-col>
@@ -161,6 +199,7 @@
                 v-model="conditionConf.equation"
                 clearable
                 :placeholder="getPlaceholder()"
+                :class="{'is-error':errorEquation}"
             ></el-input>
         </div>
         <div class="mlconditions-footer mt-10" v-if="footer">
@@ -234,19 +273,18 @@ export default {
             ],
             // 数组类型的字段
             numberFieldType: ["Money", "Integer", "Decimal", "Percent"],
-            conditions: {
-                filedName: "",
-                op: "",
-                value: "",
-                value2: "",
-                isError: false,
-            },
             conditionConf: {},
             fieldList: [],
             loading: false,
             fieldType: "",
             // 最多可添加多少个条件
             maxConditionsLength: 9,
+            // 无效高级表达式
+            errorEquation: false,
+            // 所有用户
+            userList: [],
+            // 所有部门
+            departmentList: [],
         };
     },
     watch: {
@@ -266,56 +304,73 @@ export default {
             this.loading = true;
             // 获取条件字段接口
             let param = {
-                entity: "DemoCompany",
+                entity: "DemoContact",
             };
             let res = await this.$API.approval.setConditions.getFieldSet(param);
-            if (res.data.code == 200) {
-                this.fieldList = res.data.data;
-                this.fieldList.push(
-                    {
-                        label: "是否禁用",
-                        name: "isDisabled",
-                        reserved: true,
-                        type: "Boolean",
-                    },
-                    {
-                        label: "认领状态",
-                        name: "renling",
-                        reserved: true,
-                        type: "Option",
-                    },
-                    {
-                        label: "测试金额",
-                        name: "jine",
-                        reserved: true,
-                        type: "Money",
-                    }
-                );
+            let resUser = await this.$API.approval.selectUser.getUser(param);
+            let resDepartment =
+                await this.$API.approval.selectUser.getDepartment(param);
+            this.userList = resUser.code === 200 ? resUser.data || [] : [];
+            this.departmentList =
+                resDepartment.code === 200 ? resDepartment.data || [] : [];
+            if (res.code == 200) {
+                let list = res.data || [];
+                this.fieldList = list.map((el) => {
+                    return {
+                        filedName: el.name,
+                        op: this.getSelectOp(el)[0],
+                        value: "",
+                        value2: "",
+                        isError: false,
+                        referTo: el.referTo,
+                        type: el.type,
+                        // 值类型
+                        valueType: "",
+                        label: el.label,
+                    };
+                });
+                // 初始化已有字段
+                if(this.conditionConf.items && this.conditionConf.items.length > 0){
+                    this.initConditionList();
+                }
             } else {
-                console.log(res.data.message);
                 this.$message.error("获取数据失败，请尝试刷新页面后重试");
             }
             this.loading = false;
         },
+        // 初始化已有字段
+        initConditionList(){
+            let conditionList = [];
+            this.fieldList.forEach(el=>{
+                this.conditionConf.items.forEach(subEl => {
+                    if(el.filedName === subEl.filedName){
+                        let newItem = Object.assign(el,subEl);
+                        newItem.valueType = this.showValueType(newItem);
+                        conditionList.push(newItem);
+                    }
+                })
+            })
+            this.conditionConf.items = conditionList;
+            // let { items, equation } = this.conditionConf;
+
+        },
         // 字段切换
         fieldChange(item) {
-            let filterField = this.fieldList.filter((el) => {
-                if (el.name == item.filedName) {
-                    return el.type;
-                }
-            });
-            this.fieldType = filterField[0].type;
-            console.log(this.fieldType, "this.fieldType");
-            item.op = this.getSelectOp()[0];
-            item.value = null;
-            item.value2 = null;
-            item.isError = false;
+            let metadata = this.fieldList.filter(res=> res.filedName === item.filedName);
+            Object.assign(item,metadata[0]);
+            item.op = this.getSelectOp(item)[0];
+            item.valueType = this.showValueType(item); 
+        },
+        // op切换
+        opChange(item){
+            item.valueType = this.showValueType(item); 
         },
         clearError(item) {
             item.isError = false;
         },
         // 条件类型切换
         conditionTypeChange(type) {
+            this.errorEquation = false;
             if (type === 1) {
                 this.conditionConf.equation = "OR";
             } else if (type === 2) {
@@ -325,10 +380,11 @@ export default {
             }
         },
         // 获取条件op
-        getSelectOp() {
-            let { fieldType, numberFieldType } = this;
+        getSelectOp(item) {
+            let { type } = item;
+            let { numberFieldType } = this;
             let op = [];
-            if (fieldType === "Date" || fieldType === "DateTime") {
+            if (type === "Date" || type === "DateTime") {
                 op = [
                     "TDA",
                     "YTA",
@@ -354,21 +410,21 @@ export default {
                     "CUQ",
                     "CUY",
                 ];
-            } else if (fieldType === "Tag") {
+            } else if (type === "Tag") {
                 op = ["IN", "NIN"];
-            } else if (numberFieldType.includes(fieldType)) {
+            } else if (numberFieldType.includes(type)) {
                 op = ["GT", "LT", "EQ", "BW", "GE", "LE"];
-            } else if (fieldType === "Reference") {
+            } else if (type === "Reference") {
                 op = ["IN", "NIN", "SFU", "SFB", "SFT"];
-            } else if (fieldType === "Boolean") {
+            } else if (type === "Boolean") {
                 op = ["EQ", "NL", "NT"];
-            } else if (fieldType === "Option") {
+            } else if (type === "Option") {
                 op = ["IN", "NIN", "NL", "NT"];
             } else if (
-                fieldType === "Email" ||
-                fieldType === "Url" ||
-                fieldType === "TextArea" ||
-                fieldType === "Text"
+                type === "Email" ||
+                type === "Url" ||
+                type === "TextArea" ||
+                type === "Text"
             ) {
                 op = ["LK", "NLK", "EQ", "NEQ", "NL", "NT"];
             } else {
@@ -394,17 +450,15 @@ export default {
                 );
                 return;
             }
-            let conditions = this.$cloneDeep(this.conditions);
-            conditions.filedName = this.fieldList[0].name;
-            this.fieldType = this.fieldList[0].type;
-            conditions.type = this.fieldType;
-            conditions.op = this.getSelectOp()[0];
-            this.conditionConf.items.push(conditions);
+            let condition = this.$CloneDeep(this.fieldList[0]);
+            this.conditionConf.items.push(condition);
+            this.fieldChange(condition);
         },
         // 删除条件
         delConditions(inx) {
             this.conditionConf.items.splice(inx, 1);
         },
+        // 检测条件
         checkConditionList() {
             let flag = true;
             if (this.conditionConf.items.length > 0) {
@@ -426,12 +480,28 @@ export default {
             }
             return flag;
         },
+        // 检测高级表达式是否成立
+        async checkEquation() {
+            let param = {
+                equation: this.conditionConf.equation,
+            };
+            let res = await this.$API.approval.setConditions.isEquation(param);
+            this.errorEquation = !(res.code === 200);
+        },
         // 确认
-        confirm() {
-            if (this.checkConditionList()) {
-                let { items, equation } = this.conditionConf;
-                this.$emit("confirm", { equation, items });
+        async confirm() {
+            let { items, equation, type } = this.conditionConf;
+            if (!this.checkConditionList()) {
+                return;
             }
+            if (type === 3 && equation) {
+                await this.checkEquation();
+                if (this.errorEquation) {
+                    this.$message.error("无效高级表达式");
+                    return;
+                }
+            }
+            this.$emit("confirm", { equation, items });
         },
         // 取消
         cancel() {
@@ -450,36 +520,38 @@ export default {
          * 条件value显示逻辑
          *
          */
-        showValueType(op) {
-            let { fieldType, numberFieldType, op_no_value } = this;
+        showValueType(item) {
+            let { op, type, referTo } = item;
+            let { numberFieldType, op_no_value } = this;
             // 时间选择框
             let op_date_picker = ["EQ", "GT", "LT"];
             if (
-                (fieldType === "DateTime" || fieldType === "Date") &&
+                (type === "DateTime" || type === "Date") &&
                 op_date_picker.includes(op)
             ) {
                 return "datePicker";
             }
             // 区间显示
             if (op === "BW") {
-                if (fieldType === "DateTime" || fieldType === "Date") {
+                if (type === "DateTime" || type === "Date") {
                     return "datePickerBw";
                 }
-                if (numberFieldType.includes(fieldType)) {
+                if (numberFieldType.includes(type)) {
                     return "numberInputBw";
                 }
             }
             // 数字输入框
             let op_numer_input = ["GT", "LT", "EQ", "GE", "LE"];
-            if (
-                numberFieldType.includes(fieldType) &&
-                op_numer_input.includes(op)
-            ) {
+            if (numberFieldType.includes(type) && op_numer_input.includes(op)) {
                 return "numberInput";
             }
             // 如果是布尔类型，并且条件不是不为空
-            if (fieldType === "Boolean" && op === "EQ") {
+            if (type === "Boolean" && op === "EQ") {
                 return "booleanSelect";
+            }
+            // 如果类型是引用
+            if (type === "Reference") {
+                return referTo === "User" ? "userSelect" : "departmentSelect";
             }
             // 不需要value条件
             if (op_no_value.includes(op)) {
@@ -490,12 +562,13 @@ export default {
         },
         // 区间值变化
         bwChange(item) {
+            let { type } = item;
             let defaultV1 = item.value;
             let defaultV2 = item.value2;
             let v1;
             let v2;
             // 时间区间
-            if (this.fieldType === "DateTime" || this.fieldType === "Date") {
+            if (type === "DateTime" || type === "Date") {
                 v1 = new Date(item.value).getTime();
                 v2 = new Date(item.value2).getTime();
             }

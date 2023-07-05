@@ -41,7 +41,11 @@
             <div class="work-flow-conditions mb-20">
                 <div class="lable-title mb-3">谁可以发起此审批</div>
                 <div class="mb-10 mt-10">
-                    <el-radio-group class="radio-need-block" v-model="form.nodeRoleType">
+                    <el-radio-group
+                        class="radio-need-block"
+                        v-model="form.nodeRoleType"
+                        @change="nodeRoleTypeChange"
+                    >
                         <el-radio :label="1">所有人</el-radio>
                         <el-radio :label="2">记录所属用户</el-radio>
                         <el-radio :label="3">指定用户</el-radio>
@@ -64,14 +68,16 @@
                 </div>
             </template>
         </el-drawer>
-        <mlDialog title="发起条件" append-to-body width="37%" v-model="dialogIsShow">
-            <mlSetConditions
-                v-model="conditionConf"
-                footer
-                @cancel="dialogIsShow = false"
-                @confirm="conditionConfirm"
-            />
-        </mlDialog>
+        <div v-if="dialogIsShow">
+            <mlDialog title="发起条件" append-to-body width="37%" v-model="dialogIsShow">
+                <mlSetConditions
+                    v-model="conditionConf"
+                    footer
+                    @cancel="dialogIsShow = false"
+                    @confirm="conditionConfirm"
+                />
+            </mlDialog>
+        </div>
     </div>
 </template>
 
@@ -120,6 +126,11 @@ export default {
         saveTitle() {
             this.isEditTitle = false;
         },
+        nodeRoleTypeChange() {
+            if (this.form.nodeRoleType !== 3) {
+                this.form.nodeRoleList = [];
+            }
+        },
         // 获取设置条件文案
         getSetConditionText() {
             let { filter } = this.form;
@@ -128,7 +139,7 @@ export default {
         },
         // 设置条件
         setCondition() {
-            let { filter } = this.$cloneDeep(this.form);
+            let { filter } = this.$CloneDeep(this.form);
             filter = this.$API.approval.setConditions.initFilter(filter);
             this.conditionConf = filter;
             this.dialogIsShow = true;

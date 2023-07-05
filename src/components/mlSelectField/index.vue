@@ -55,12 +55,12 @@ export default {
             this.loading = true;
             // 获取条件字段接口
             let param = {
-                entity: "DemoCompany",
+                entity: "DemoContact",
             };
             let hasFields = this.selectedFields.map((el) => el.name);
             let res = await this.$API.approval.setConditions.getFieldSet(param);
-            if (res.data.code == 200) {
-                this.fieldList = res.data.data.map((el) => {
+            if (res.code == 200) {
+                this.fieldList = res.data.map((el) => {
                     el.isSelected = false;
                     el.required = false;
                     if (hasFields.includes(el.name)) {
@@ -69,7 +69,6 @@ export default {
                     return el;
                 });
             } else {
-                console.log(res.data.message);
                 this.$message.error("获取数据失败，请尝试刷新页面后重试");
             }
             this.loading = false;
