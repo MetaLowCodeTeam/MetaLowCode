@@ -19,6 +19,9 @@ export default {
         getFieldSet: async (data) => {
             return await http.get("/systemManager/getFieldListOfFilter", data);
         },
+        getFieldListOfEntity: async (data) => {
+            return await http.get("/systemManager/getFieldListOfEntity", data);
+        },
         initFilter: (filter) => {
             let { equation } = filter;
             if (!equation || equation === 'OR') {

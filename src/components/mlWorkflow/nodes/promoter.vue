@@ -85,7 +85,6 @@
 import addNode from "./addNode";
 
 export default {
-    inject: ["select"],
     props: {
         modelValue: { type: Object, default: () => {} },
     },

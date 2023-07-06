@@ -45,7 +45,11 @@
             <div class="work-flow-conditions mb-20">
                 <div class="lable-title mb-3">由谁审批</div>
                 <div class="mt-10">
-                    <el-radio-group class="radio-need-block" v-model="form.nodeRoleType" @change="nodeRoleTypeChange">
+                    <el-radio-group
+                        class="radio-need-block"
+                        v-model="form.nodeRoleType"
+                        @change="nodeRoleTypeChange"
+                    >
                         <el-radio :label="2">发起人自己</el-radio>
                         <el-radio :label="3">指定审批人</el-radio>
                     </el-radio-group>
@@ -73,7 +77,7 @@
                         <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
                     </el-radio-group>
                 </div>
-                <div class="lable-title mb-10 mt-20">可修改字段</div>
+                <div class="lable-title mb-10 mt-20">可查看字段</div>
                 <div class="edit-field-list-box">
                     <div
                         class="edit-field-list"
@@ -90,8 +94,19 @@
                             </el-icon>
                         </span>
 
-                        <span class="required-icon fr">
-                            <el-checkbox v-model="field.required" label="必填" />
+                        <span class="required-icon fr" :title="field.reserved ? '系统字段无法修改' : ''">
+                            <el-checkbox
+                                @change="fieldEditChange(field)"
+                                :disabled="field.reserved"
+                                v-model="field.isEdit"
+                                label="允许修改"
+                            />
+                            <el-checkbox
+                                @change="fieldRequiredChange(field)"
+                                :disabled="field.reserved"
+                                v-model="field.isRequired"
+                                label="必填"
+                            />
                         </span>
                     </div>
                 </div>
@@ -109,7 +124,7 @@
             <mlSelectField
                 ref="SelectFieldDialog"
                 v-model="form.modifiableFields"
-                title="选择可修改字段"
+                title="选择可查看/修改字段"
             />
         </el-drawer>
     </div>
@@ -119,7 +134,6 @@
 import addNode from "./addNode";
 import mlSelectField from "@/components/mlSelectField";
 export default {
-    inject: ["select"],
     props: {
         modelValue: { type: Object, default: () => {} },
     },
@@ -176,11 +190,8 @@ export default {
         delRole(index) {
             this.form.nodeRoleList.splice(index, 1);
         },
-        selectHandle(type, data) {
-            this.select(type, data);
-        },
-        nodeRoleTypeChange(){
-            if(this.form.nodeRoleType !== 3){
+        nodeRoleTypeChange() {
+            if (this.form.nodeRoleType !== 3) {
                 this.form.nodeRoleList = [];
             }
         },
@@ -207,6 +218,18 @@ export default {
         // 删除选择字段
         delSelectedField(inx) {
             this.form.modifiableFields.splice(inx, 1);
+        },
+        // 字段是否允许修改切换
+        fieldEditChange(field) {
+            if (!field.isEdit && field.isRequired) {
+                field.isRequired = false;
+            }
+        },
+        // 字段是否必填切换
+        fieldRequiredChange(field) {
+            if (!field.isEdit && field.isRequired) {
+                field.isEdit = true;
+            }
         },
     },
 };

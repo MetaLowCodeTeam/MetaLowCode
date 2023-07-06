@@ -2,14 +2,14 @@
     <mlDialog :title="title" append-to-body width="37%" v-model="dialogIsShow">
         <div class="mlfield-box">
             <el-row :gutter="10">
-                <el-col :span="6" v-for="(field,inx) of fieldList" :key="inx">
+                <el-col :span="6" v-for="(field,inx) of fieldList" :key="inx" >
                     <div class="mlfield-item">
                         <div class="mlfield-check-box fl">
-                            <el-checkbox v-model="field.isSelected" />
+                            <el-checkbox v-model="field.isSelected"/>
                         </div>
                         <div
                             class="mlfield-label fr"
-                            @click="field.isSelected = !field.isSelected"
+                            @click="fieldSelect(field)"
                         >{{ field.label }}</div>
                     </div>
                 </el-col>
@@ -61,21 +61,31 @@ const getAllFields = async () => {
     loading.value = true;
     let param = { entity: "DemoContact" };
     let hasFields = selectedFields.value.map((el) => el.name);
-    let res = await api.approval.setConditions.getFieldSet(param);
+    let res = await api.approval.setConditions.getFieldListOfEntity(param);
     if (res.code == 200) {
-        fieldList.value = res.data.map((el) => {
-            el.isSelected = false;
-            el.required = false;
-            if (hasFields.includes(el.name)) {
-                el.isSelected = true;
+        let resList = [];
+        res.data.forEach(el=>{
+            if(el.type !== 'PrimaryKey'){
+                el.isSelected = false;
+                if (hasFields.includes(el.name)) {
+                    el.isRequired = false,
+                    el.isEdit = false,
+                    el.isSelected = true;
+                }
+                resList.push(el)
             }
-            return el;
-        });
+        })
+        fieldList.value = resList;
     } else {
         message.error("获取数据失败，请尝试刷新页面后重试");
     }
     loading.value = false;
 };
+
+// 选择字段
+const fieldSelect = (field) => {
+    field.isSelected = !field.isSelected;
+}
 
 // 确认
 const confirm = () => {
@@ -98,7 +108,7 @@ defineExpose({
         .mlfield-label {
             display: inline-block;
             width: calc(100% - 20px);
-            margin-top: -1px;
+            margin-top: -3px;
         }
     }
 }
