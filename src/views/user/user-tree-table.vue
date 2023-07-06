@@ -279,7 +279,7 @@ export default {
       },
 
       loadTableData(filter) {
-        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
+        let realFilter = isEmptyStr(filter) ? null : filter
         getDataList('User', this.fieldsList, realFilter, this.page.limit, this.page.pageNo).then(res => {
           if (res.error != null) {
             this.$message({message: res.error, type: 'error'})
@@ -307,7 +307,7 @@ export default {
       },
 
       initTableData() {
-        this.loadTableData('(1=1)')
+        this.loadTableData(null)
       },
 
       buildLayoutObj() {
@@ -374,7 +374,7 @@ export default {
       searchData() {
         if (isEmptyStr(this.keyword)) {
           if (!isEmptyStr(this.searchFilter)) {
-            this.loadTableData('(1=1)')
+            this.loadTableData(null)
           }
 
           return

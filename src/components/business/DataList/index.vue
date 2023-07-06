@@ -195,7 +195,7 @@
 
       /* 保持查询条件，重新当前页加载数据 */
       loadTableData(filter) {
-        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
+        let realFilter = isEmptyStr(filter) ? null : filter
         let fieldsList = ''
         this.columns.forEach(col => {
           fieldsList += col.prop + ','

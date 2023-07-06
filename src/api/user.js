@@ -1,96 +1,60 @@
-import { request } from '@/utils/request'
+import http from '@/utils/request'
 
 export function login(data) {
-  return request({
-    url: 'user/login',
-    method: 'post',
-    data
-  })
+  return http.post('user/login', data)
 }
 
 export function logout() {
-  return request({
-    url: 'user/logout',
-    method: 'post',
-  })
+  return http.post('user/logout')
 }
 
 export function saveUser(entity, id, formModel) {
-  return request({
-    url: 'user/saveUser',
-    method: 'post',
-    params: {entity, id},
-    data: formModel,
+  return http.post('user/saveUser', formModel, {
+    params: {entity, id}
   })
 }
 
 export function deleteUserById(userId) {
-  return request({
-    url: 'user/deleteUser',
-    method: 'post',
+  return http.post('user/deleteUser', {}, {
     params: { userId }
   })
 }
 
 export function getDepartmentTree() {
-  return request({
-    url: 'department/treeData',
-    method: 'get',
-  })
+  return http.get('department/treeData')
 }
 
 export function saveDepartment(entity, id, formModel) {
-  return request({
-    url: 'department/saveDepartment',
-    method: 'post',
-    params: {entity, id},
-    data: formModel,
+  return http.post('department/saveDepartment', formModel, {
+    params: {entity, id}
   })
 }
 
 export function deleteDepartmentById(departmentId) {
-  return request({
-    url: 'department/deleteDepartment',
-    method: 'post',
+  return http.post('department/deleteDepartment', {}, {
     params: { departmentId }
   })
 }
 
 export function getBlankRoleData() {
-  return request({
-    url: 'role/getBlankRoleData',
-    method: 'get',
-  })
+  return http.get('role/getBlankRoleData')
 }
 
 export function getRoleData(roleId) {
-  return request({
-    url: 'role/getRoleData',
-    method: 'get',
-    params: { roleId }
-  })
+  return http.get('role/getRoleData', { roleId })
 }
 
 
 export function saveRoleData(roleDTO) {
-  return request({
-    url: 'role/saveRole',
-    method: 'post',
-    data: roleDTO
-  })
+  return http.post('role/saveRole', roleDTO)
 }
 
 export function deleteRoleById(roleId) {
-  return request({
-    url: 'role/deleteRole',
-    method: 'post',
+  return http.post('role/deleteRole', {}, {
     params: { roleId }
   })
 }
 
 export function listRole() {
-  return request({
-    url: 'role/listRole',
-    method: 'get',
-  })
+  return http.get('role/listRole')
 }
