@@ -23,42 +23,40 @@
     </el-dialog>
 </template>
 
-<script>
-import { useSlots } from "vue";
-export default {
-    props: {
-        title: { type: String, defalut: "123" },
-        modelValue: null,
-        appendToBody: { type: Boolean, default: false },
-        width: { type: String, default: "50%" },
+<script setup>
+import { useSlots, watch, ref, reactive, onMounted } from "vue";
+const props = defineProps({
+    modelValue: null,
+    title: { type: String, defalut: "" },
+    appendToBody: { type: Boolean, default: false },
+    width: { type: String, default: "50%" },
+});
+const emit = defineEmits(["update:modelValue"]);
+watch(
+    () => props.modelValue,
+    () => {
+        isShow.value = props.modelValue;
     },
-    watch: {
-        modelValue: {
-            handler() {
-                this.isShow = this.modelValue;
-            },
-            deep: true,
-        },
-    },
-    data() {
-        return {
-            isShow: null,
-            isShowFooter: false,
-        };
-    },
-    mounted() {
-        this.isShow = this.modelValue;
-        this.slots = useSlots();
-        if(this.slots.footer){
-            this.isShowFooter = true;
-        }
-    },
-    methods: {
-        close() {
-            this.isShow = false;
-            this.$emit("update:modelValue", this.isShow);
-        },
-    },
+    { deep: true }
+);
+
+// 弹框是否显示
+let isShow = ref(null);
+// 弹框footer是否显示
+let isShowFooter = ref(false);
+// 嵌入内容
+let contentSlots = reactive({});
+onMounted(() => {
+    isShow.value = props.modelValue;
+    contentSlots = useSlots();
+    if (contentSlots.footer) {
+        isShowFooter.value = true;
+    }
+});
+// 关闭弹框
+const close = () => {
+    isShow.value = false;
+    emit("update:modelValue", isShow.value);
 };
 </script>
 

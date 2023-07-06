@@ -45,6 +45,7 @@ import * as scIcons from './assets/icons'
 import mlSelectUser from './components/mlSelectUser';
 import mlSetConditions from './components/mlSetConditions';
 import mlDialog from './components/mlDialog';
+import { ElMessage } from 'element-plus'
 
 export default {
 	install(app) {
@@ -56,6 +57,10 @@ export default {
 		app.config.globalProperties.$API = api;
 		app.config.globalProperties.$AUTH = permission;
 		app.config.globalProperties.$ROLE = rolePermission;
+        app.provide('$CloneDeep', (data) => JSON.parse(JSON.stringify(data)));
+        app.provide('$API', api);
+        app.provide('$ElMessage', ElMessage);
+        
 
 		// 注册全局组件
         app.component('mlSelectUser', mlSelectUser);

@@ -22,64 +22,72 @@
     </mlDialog>
 </template>
 
-<script>
-export default {
-    props: {
-        modelValue: { type: Object, default: () => {} },
-        title: { type: String, defalut: "123" },
-    },
-    watch: {
-        modelValue() {
-            this.selectedFields = this.modelValue;
-        },
-    },
-    data() {
-        return {
-            dialogIsShow: false,
-            loading: false,
-            fieldList: [],
-            selectedFields: [],
-        };
-    },
-    mounted() {
-        this.selectedFields = this.modelValue;
-    },
-    methods: {
-        // 打开弹框
-        openDialg() {
-            this.dialogIsShow = true;
-            this.getAllFields();
-        },
-        // 获取所有字符
-        async getAllFields() {
-            this.loading = true;
-            // 获取条件字段接口
-            let param = {
-                entity: "DemoContact",
-            };
-            let hasFields = this.selectedFields.map((el) => el.name);
-            let res = await this.$API.approval.setConditions.getFieldSet(param);
-            if (res.code == 200) {
-                this.fieldList = res.data.map((el) => {
-                    el.isSelected = false;
-                    el.required = false;
-                    if (hasFields.includes(el.name)) {
-                        el.isSelected = true;
-                    }
-                    return el;
-                });
-            } else {
-                this.$message.error("获取数据失败，请尝试刷新页面后重试");
-            }
-            this.loading = false;
-        },
-        confirm() {
-            this.selectedFields = this.fieldList.filter((el) => el.isSelected);
-            this.$emit("update:modelValue", this.selectedFields);
-            this.dialogIsShow = false;
-        },
-    },
+<script setup>
+import { watch, ref, onMounted, inject } from "vue";
+const api = inject("$API");
+const message = inject("$ElMessage");
+const props = defineProps({
+    modelValue: { type: Object, default: () => {} },
+    title: { type: String, defalut: "123" },
+});
+const emit = defineEmits(["update:modelValue"]);
+// 选中的数据列表
+let selectedFields = ref([]);
+// 弹框是否显示
+let dialogIsShow = ref(false);
+// 加载loadin
+let loading = ref(false);
+// 数据库字段列表
+let fieldList = ref([]);
+watch(
+    () => props.modelValue,
+    () => {
+        selectedFields.value = props.modelValue;
+    }
+);
+onMounted(() => {
+    selectedFields.value = props.modelValue;
+});
+
+// 打开弹框
+const openDialg = () => {
+    dialogIsShow.value = true;
+    getAllFields();
 };
+
+// 获取所有字段
+const getAllFields = async () => {
+    loading.value = true;
+    let param = { entity: "DemoContact" };
+    let hasFields = selectedFields.value.map((el) => el.name);
+    let res = await api.approval.setConditions.getFieldSet(param);
+    if (res.code == 200) {
+        fieldList.value = res.data.map((el) => {
+            el.isSelected = false;
+            el.required = false;
+            if (hasFields.includes(el.name)) {
+                el.isSelected = true;
+            }
+            return el;
+        });
+    } else {
+        message.error("获取数据失败，请尝试刷新页面后重试");
+    }
+    loading.value = false;
+};
+
+// 确认
+const confirm = () => {
+    selectedFields.value = fieldList.value.filter((el) => el.isSelected);
+    emit("update:modelValue", selectedFields.value);
+    dialogIsShow.value = false;
+};
+
+// 暴露方法给父组件调用
+defineExpose({
+    openDialg,
+});
+
 </script>
 
 <style lang="scss" scoped>
