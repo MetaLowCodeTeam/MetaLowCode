@@ -79,7 +79,6 @@
 import addNode from "./addNode";
 
 export default {
-    inject: ["select"],
     props: {
         modelValue: { type: Object, default: () => {} },
     },
@@ -123,12 +122,6 @@ export default {
         },
         delNode() {
             this.$emit("update:modelValue", this.nodeConfig.childNode);
-        },
-        delUser(index) {
-            this.form.nodeUserList.splice(index, 1);
-        },
-        selectHandle(type, data) {
-            this.select(type, data);
         },
         toText(nodeConfig) {
             if (nodeConfig.nodeUserList && nodeConfig.nodeUserList.length > 0) {

@@ -16,31 +16,21 @@
 				<div class="end-node-text">流程结束</div>
 			</div>
 		</div>
-		<use-select v-if="selectVisible" ref="useselect" @closed="selectVisible=false"></use-select>
 	</div>
 </template>
 
 <script>
 	import nodeWrap from './nodeWrap'
-	import useSelect from './select'
-
 	export default {
-		provide(){
-			return {
-				select: this.selectHandle
-			}
-		},
 		props: {
 			modelValue: { type: Object, default: () => {} }
 		},
 		components: {
-			nodeWrap,
-			useSelect
+			nodeWrap
 		},
 		data() {
 			return {
 				nodeConfig: this.modelValue,
-				selectVisible: false
 			}
 		},
 		watch:{
@@ -51,17 +41,6 @@
 				this.$emit("update:modelValue", val)
 			}
 		},
-		mounted() {
-
-		},
-		methods: {
-			selectHandle(type, data){
-				this.selectVisible = true
-				this.$nextTick(() => {
-					this.$refs.useselect.open(type, data)
-				})
-			}
-		}
 	}
 </script>
 
