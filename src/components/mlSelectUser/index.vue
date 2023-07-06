@@ -151,7 +151,7 @@ let getData = async () => {
         ? defaultValue.value.map((el) => el.id)
         : [];
     // 获取当前tab接口
-    let res = await api.approval.selectUser["get" + cutTab.value](param);
+    let res = await api.common["get" + cutTab.value](param);
     if (res.code == 200) {
         tabData.value = res.data.map((el) => {
             el.isActive = false;

@@ -306,10 +306,10 @@ export default {
             let param = {
                 entity: "DemoContact",
             };
-            let res = await this.$API.approval.setConditions.getFieldSet(param);
-            let resUser = await this.$API.approval.selectUser.getUser(param);
+            let res = await this.$API.common.getFieldListOfFilter(param);
+            let resUser = await this.$API.common.getUser(param);
             let resDepartment =
-                await this.$API.approval.selectUser.getDepartment(param);
+                await this.$API.common.getDepartment(param);
             this.userList = resUser.code === 200 ? resUser.data || [] : [];
             this.departmentList =
                 resDepartment.code === 200 ? resDepartment.data || [] : [];
@@ -485,7 +485,7 @@ export default {
             let param = {
                 equation: this.conditionConf.equation,
             };
-            let res = await this.$API.approval.setConditions.isEquation(param);
+            let res = await this.$API.common.isEquation(param);
             this.errorEquation = !(res.code === 200);
         },
         // 确认

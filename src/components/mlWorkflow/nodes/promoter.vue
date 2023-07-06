@@ -139,9 +139,22 @@ export default {
         // 设置条件
         setCondition() {
             let { filter } = this.$CloneDeep(this.form);
-            filter = this.$API.approval.setConditions.initFilter(filter);
+            filter = this.initFilter(filter);
             this.conditionConf = filter;
             this.dialogIsShow = true;
+        },
+        initFilter: (filter) => {
+            let { equation } = filter;
+            if (!equation || equation === 'OR') {
+                filter.type = 1;
+                filter.equation = 'OR';
+            } else if (equation === 'AND') {
+                filter.type = 2;
+                filter.equation = 'AND';
+            } else {
+                filter.type = 3;
+            }
+            return filter
         },
         // 确认条件
         conditionConfirm(conf) {

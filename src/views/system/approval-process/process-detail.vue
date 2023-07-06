@@ -31,7 +31,7 @@ export default {
         async getApprovalConfig() {
             let { approvalConfigId } = this;
             this.loading = true;
-            let res = await this.$API.approval.approval.get({ approvalConfigId });
+            let res = await this.$API.approval.detial.get({ approvalConfigId });
             if (res.code === 200) {
                 this.data = res.data;
             }
@@ -40,7 +40,7 @@ export default {
         async saveApprovalConfig() {
             let { data } = this;
             this.loading = true;
-            let res = await this.$API.approval.approval.save(data);
+            let res = await this.$API.approval.detial.save(data);
             if (res.code === 200) {
                 this.$message.success("保存成功");
             }else {

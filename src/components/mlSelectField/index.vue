@@ -61,7 +61,7 @@ const getAllFields = async () => {
     loading.value = true;
     let param = { entity: "DemoContact" };
     let hasFields = selectedFields.value.map((el) => el.name);
-    let res = await api.approval.setConditions.getFieldListOfEntity(param);
+    let res = await api.common.getFieldListOfEntity(param);
     if (res.code == 200) {
         let resList = [];
         res.data.forEach(el=>{
