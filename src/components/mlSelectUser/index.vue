@@ -8,7 +8,7 @@
 -->
 <template>
     <el-select
-        ref="select"
+        ref="selectRefs"
         v-model="defaultValue"
         :size="size"
         :clearable="clearable"
@@ -23,6 +23,7 @@
         @visible-change="visibleChange"
         @clear="clear"
         :style="{'width': cardWidth}"
+        class="ml-select-user"
     >
         <template #empty>
             <div class="mlselect-user-content" v-loading="loading">
@@ -44,7 +45,7 @@
                     <el-tabs
                         type="border-card"
                         class="mlselect-user-tabs"
-                        v-model="cutTabs"
+                        v-model="cutTab"
                         @tab-change="getData"
                     >
                         <el-tab-pane
@@ -74,152 +75,164 @@
     </el-select>
 </template>
 
-<script>
-export default {
-    props: {
-        modelValue: null,
-        cardWidth: { type: String, default: "100%" },
-        size: { type: String, default: "default" },
-        clearable: { type: Boolean, default: false },
-        placeholder: { type: String, default: "请选择" },
-        multiple: { type: Boolean, default: false },
-        filterable: { type: Boolean, default: false },
-        collapseTags: { type: Boolean, default: false },
-        collapseTagsTooltip: { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
+<script setup>
+import { ref, watch, onMounted, inject, nextTick, reactive } from "vue";
+const api = inject("$API");
+const message = inject("$ElMessage");
+const props = defineProps({
+    modelValue: null,
+    cardWidth: { type: String, default: "100%" },
+    size: { type: String, default: "default" },
+    clearable: { type: Boolean, default: false },
+    placeholder: { type: String, default: "请选择" },
+    multiple: { type: Boolean, default: false },
+    filterable: { type: Boolean, default: false },
+    collapseTags: { type: Boolean, default: false },
+    collapseTagsTooltip: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
+});
+const emit = defineEmits(["change", "update:modelValue"]);
+// 加载状态
+let loading = ref(false);
+// 默认数据
+let defaultValue = ref([]);
+// 搜索值
+let keyword = ref("");
+// 页签
+let tabList = ref([
+    {
+        label: "角色",
+        name: "Role",
+        itemId: "roleId",
+        itemName: "roleName",
     },
-    watch: {
-        modelValue: {
-            handler() {
-                this.defaultValue = this.modelValue;
-                this.autoCurrentLabel();
-            },
-            deep: true,
-        },
+    {
+        label: "用户",
+        name: "User",
+        itemId: "userId",
+        itemName: "userName",
     },
-    data() {
-        return {
-            loading: false,
-            defaultValue: [],
-            selectedUser: [],
-            keyword: "",
-            cutTabs: "Role",
-            tabList: [
-                {
-                    label: "角色",
-                    name: "Role",
-                    itemId: "roleId",
-                    itemName: "roleName",
-                },
-                {
-                    label: "用户",
-                    name: "User",
-                    itemId: "userId",
-                    itemName: "userName",
-                },
-                {
-                    label: "部门",
-                    name: "Department",
-                    itemId: "departmentId",
-                    itemName: "departmentName",
-                },
-            ],
-            tabData: [],
-        };
+    {
+        label: "部门",
+        name: "Department",
+        itemId: "departmentId",
+        itemName: "departmentName",
     },
-    mounted() {
-        this.defaultValue = this.modelValue;
-        this.autoCurrentLabel();
+]);
+// 页签数据
+let tabData = ref([]);
+// 当前页签
+let cutTab = ref("Role");
+watch(
+    () => props.modelValue,
+    () => {
+        defaultValue.value = props.modelValue;
+        autoCurrentLabel();
     },
-    methods: {
-        // 获取数据
-        async getData() {
-            this.loading = true;
-            // 查询参数
-            let param = {
-                search: this.keyword,
-            };
-            // 当前tab
-            let cutTab = this.tabList.filter(el=> this.cutTabs == el.name)[0];
-            // 当前默认选中的IDs
-            let cutSelectedIds = this.defaultValue ? this.defaultValue.map(el=> el.id) : [];
-            // 获取当前tab接口
-            let res = await this.$API.approval.selectUser["get" + this.cutTabs](
-                param
-            );
-            if (res.code == 200) {
-                this.tabData = res.data.map((el) => {
-                    el.isActive = false;
-                    // 如果该ID已在选中集里，默认选中
-                    if(cutSelectedIds.includes(el[cutTab.itemId])){
-                        el.isActive = true;
-                    }
-                    return el;
-                });
-            } else {
-                this.$message.error("获取数据失败，请尝试刷新页面后重试");
+    { deep: true }
+);
+
+onMounted(() => {
+    defaultValue.value = props.modelValue;
+    autoCurrentLabel();
+});
+
+// 获取数据
+let getData = async () => {
+    loading.value = true;
+    // 查询参数
+    let param = {
+        search: keyword.value,
+    };
+    // 当前tab
+    let cutTabs = tabList.value.filter((el) => cutTab.value == el.name)[0];
+    // 当前默认选中的IDs
+    let cutSelectedIds = defaultValue.value
+        ? defaultValue.value.map((el) => el.id)
+        : [];
+    // 获取当前tab接口
+    let res = await api.approval.selectUser["get" + cutTab.value](param);
+    if (res.code == 200) {
+        tabData.value = res.data.map((el) => {
+            el.isActive = false;
+            // 如果该ID已在选中集里，默认选中
+            if (cutSelectedIds.includes(el[cutTabs.itemId])) {
+                el.isActive = true;
             }
-            this.loading = false;
-        },
-        //自动模拟options赋值
-        autoCurrentLabel() {
-            this.$nextTick(() => {
-                if (this.multiple) {
-                    this.$refs.select.selected.forEach((item) => {
-                        item.currentLabel = item.value.name;
-                    });
-                } else {
-                    this.$refs.select.selectedLabel = this.defaultValue.name;
-                }
+            return el;
+        });
+    } else {
+        message.error("获取数据失败，请尝试刷新页面后重试");
+    }
+    loading.value = false;
+};
+
+let selectRefs = reactive({});
+
+// 自动模拟options赋值
+let autoCurrentLabel = () => {
+    nextTick(() => {
+        if (props.multiple) {
+            selectRefs.selected.forEach((item) => {
+                item.currentLabel = item.value.name;
             });
-        },
-        // 选择用户
-        selectUser(item, tab) {
-            if (!item.isActive) {
-                item.isActive = true;
-                this.defaultValue.push({
-                    name: item[tab.itemName],
-                    id: item[tab.itemId],
-                });
-            }else{
-                item.isActive = false;
-                this.defaultValue.forEach((el,inx)=>{
-                    if(el.id === item[tab.itemId]){
-                        this.defaultValue.splice(inx,1);
-                    }
-                })
+        }
+    });
+};
+// 选择用户
+let selectUser = (item, tab) => {
+    if (!item.isActive) {
+        item.isActive = true;
+        defaultValue.value.push({
+            name: item[tab.itemName],
+            id: item[tab.itemId],
+        });
+    } else {
+        item.isActive = false;
+        defaultValue.value.forEach((el, inx) => {
+            if (el.id === item[tab.itemId]) {
+                defaultValue.value.splice(inx, 1);
             }
-            this.autoCurrentLabel()
-            this.$emit("update:modelValue", this.defaultValue);
-            this.$emit('change', this.defaultValue);
-        },
-        //表格显示隐藏回调
-        visibleChange(visible) {
-            if (visible) {
-                this.keyword = null;
-                this.getData();
-            } else {
-                this.autoCurrentLabel();
-            }
-        },
-        // tags删除后回调
-        removeTag() {
-            this.$emit("update:modelValue", this.defaultValue);
-        },
-        //清空后的回调
-        clear() {
-            this.$emit("update:modelValue", this.defaultValue);
-        },
-        // 自定义搜索方法
-        filterMethod(keyword) {
-            if (!keyword) {
-                this.keyword = null;
-                return false;
-            }
-            this.keyword = keyword;
-            this.getData();
-        },
-    },
+        });
+    }
+    emit("update:modelValue", defaultValue.value);
+    emit("change", defaultValue.value);
+};
+// 表格显示隐藏回调
+let visibleChange = (visible) => {
+    if (visible) {
+        keyword.value = null;
+        getData();
+    } else {
+        autoCurrentLabel();
+    }
+};
+
+// tags删除后回调
+let removeTag = (item) => {
+    let cutTabs = tabList.value.filter((el) => cutTab.value == el.name)[0];
+    tabData.value.forEach((el) => {
+        if (item.id == el[cutTabs.itemId]) {
+            el.isActive = false;
+        }
+    });
+    emit("update:modelValue", defaultValue.value);
+};
+//清空后的回调
+let clear = () => {
+    tabData.value.forEach((el) => {
+        el.isActive = false;
+    });
+    emit("update:modelValue", defaultValue.value);
+};
+// 自定义搜索方法
+let filterMethod = (keyword) => {
+    if (!keyword) {
+        keyword.value = null;
+        return false;
+    }
+    keyword.value = keyword;
+    getData();
 };
 </script>
 

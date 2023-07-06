@@ -342,3 +342,10 @@ body .tox-tinymce-aux {
 		text-align: left;
 	}
 }
+
+.ml-select-user {
+    .el-select__tags-text {
+        height: 17px;
+        line-height: 19px;
+    }
+}

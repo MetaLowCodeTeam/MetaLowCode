@@ -43,7 +43,8 @@ watch(
     () => props.modelValue,
     () => {
         selectedFields.value = props.modelValue;
-    }
+    },
+    { deep: true }
 );
 onMounted(() => {
     selectedFields.value = props.modelValue;
