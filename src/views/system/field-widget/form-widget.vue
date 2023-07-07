@@ -56,7 +56,7 @@
 
 <script>
   import { ElCollapse, ElCollapseItem } from 'element-plus'
-  import FieldWidget from '@/views/system/field-widget/field-widget'
+  import FieldWidget from '@/views/system/field-widget/field-widget.vue'
   import FormState from '@/views/system/form-state-variables'
   import { isNotNull, isEmptyStr } from '@/utils/util'
   import FormValidators from '@/utils/validators'

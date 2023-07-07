@@ -175,41 +175,35 @@
     updateEntityNameField, fieldCanBeDeleted, deleteField, fieldCanBeEdited
   } from '@/api/system-manager'
   import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
-  import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor";
+  import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor.vue";
   import { ElMessage  } from "element-plus";
-  import BooleanWE from '@/views/system/field-editor/boolean-widget-editor';
-  import IntegerWE from '@/views/system/field-editor/integer-widget-editor';
-  import DecimalWE from '@/views/system/field-editor/decimal-widget-editor';
-  import PercentWE from '@/views/system/field-editor/percent-widget-editor';
-  import MoneyWE from '@/views/system/field-editor/money-widget-editor';
+  import BooleanWE from '@/views/system/field-editor/boolean-widget-editor.vue';
+  import IntegerWE from '@/views/system/field-editor/integer-widget-editor.vue';
+  import DecimalWE from '@/views/system/field-editor/decimal-widget-editor.vue';
+  import PercentWE from '@/views/system/field-editor/percent-widget-editor.vue';
+  import MoneyWE from '@/views/system/field-editor/money-widget-editor.vue';
   //
-  import TextWE from '@/views/system/field-editor/text-widget-editor';
-  import EmailWE from '@/views/system/field-editor/email-widget-editor';
-  import UrlWE from '@/views/system/field-editor/url-widget-editor';
-  import TextAreaWE from '@/views/system/field-editor/textarea-widget-editor';
-  import PasswordWE from '@/views/system/field-editor/password-widget-editor';
+  import TextWE from '@/views/system/field-editor/text-widget-editor.vue';
+  import EmailWE from '@/views/system/field-editor/email-widget-editor.vue';
+  import UrlWE from '@/views/system/field-editor/url-widget-editor.vue';
+  import TextAreaWE from '@/views/system/field-editor/textarea-widget-editor.vue';
+  import PasswordWE from '@/views/system/field-editor/password-widget-editor.vue';
   //
-  import OptionWE from '@/views/system/field-editor/option-widget-editor';
-  import TagWE from '@/views/system/field-editor/tag-widget-editor';
+  import OptionWE from '@/views/system/field-editor/option-widget-editor.vue';
+  import TagWE from '@/views/system/field-editor/tag-widget-editor.vue';
   //
-  import DateWE from '@/views/system/field-editor/date-widget-editor';
-  import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor';
+  import DateWE from '@/views/system/field-editor/date-widget-editor.vue';
+  import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor.vue';
   //
-  import PictureWE from '@/views/system/field-editor/picture-widget-editor';
-  import FileWE from '@/views/system/field-editor/file-widget-editor';
+  import PictureWE from '@/views/system/field-editor/picture-widget-editor.vue';
+  import FileWE from '@/views/system/field-editor/file-widget-editor.vue';
   //
-  import ReferenceWE from '@/views/system/field-editor/reference-widget-editor';
-  import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor';
-  import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor';
+  import ReferenceWE from '@/views/system/field-editor/reference-widget-editor.vue';
+  import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor.vue';
+  import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
 
   export default {
     name: "EntityFieldTable",
-    props: {
-      entity: {
-        type: String,
-        default: null
-      },
-    },
     components: {
       EntityPropEditor,
       BooleanWE,
@@ -277,7 +271,8 @@
           authorizable: false,
           assignable: false,
           shareable: false,
-        }
+        },
+        entity:"",
       }
     },
     mounted() {
@@ -287,7 +282,7 @@
       // window.onresize = () => {
       //   this.resizeTableHeight()
       // }
-
+      this.entity = this.$route.query.entity;
       this.initPageData()
     },
     methods: {

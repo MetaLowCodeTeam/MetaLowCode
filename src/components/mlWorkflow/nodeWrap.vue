@@ -16,10 +16,10 @@
 </template>
 
 <script>
-	import approver from './nodes/approver'
-	import promoter from './nodes/promoter'
-	import branch from './nodes/branch'
-	import send from './nodes/send'
+	import approver from './nodes/approver.vue'
+	import promoter from './nodes/promoter.vue'
+	import branch from './nodes/branch.vue'
+	import send from './nodes/send.vue'
 
 	export default {
 		props: {

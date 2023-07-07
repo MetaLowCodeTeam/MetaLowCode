@@ -1,18 +1,19 @@
 <template>
   <el-form-item :prop="propField">
     <div class="custom-component-label">{{label}}</div>
-    <quill-editor v-model="content"></quill-editor>
+    123
+    <!-- <quill-editor v-model="content"></quill-editor> -->
   </el-form-item>
 </template>
 
 <script>
-  import { Quill, quillEditor } from 'vue3-quill';
+//   import { quillEditor } from 'vue3-quill';
 
   export default {
     name: "RichTextEditor",
-    components: {
-      quillEditor
-    },
+    // components: {
+    //   quillEditor
+    // },
     props: {
       formModel: Object,
       dataFields: {

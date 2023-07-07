@@ -305,11 +305,12 @@ export default {
             this.loading = true;
             // 获取条件字段接口
             let param = {
-                entity: this.entityName
+                entity: this.entityName,
             };
             let res = await this.$API.common.getFieldListOfFilter(param);
             let resUser = await this.$API.common.getUser(param);
-            let resDepartment = await this.$API.common.getDepartment(param);
+            let resDepartment =
+                await this.$API.common.getDepartment(param);
             this.userList = resUser.code === 200 ? resUser.data || [] : [];
             this.departmentList =
                 resDepartment.code === 200 ? resDepartment.data || [] : [];
@@ -330,10 +331,7 @@ export default {
                     };
                 });
                 // 初始化已有字段
-                if (
-                    this.conditionConf.items &&
-                    this.conditionConf.items.length > 0
-                ) {
+                if(this.conditionConf.items && this.conditionConf.items.length > 0){
                     this.initConditionList();
                 }
             } else {
@@ -342,32 +340,31 @@ export default {
             this.loading = false;
         },
         // 初始化已有字段
-        initConditionList() {
+        initConditionList(){
             let conditionList = [];
-            this.fieldList.forEach((el) => {
-                this.conditionConf.items.forEach((subEl) => {
-                    if (el.fieldName === subEl.fieldName) {
-                        let newItem = Object.assign(el, subEl);
+            this.fieldList.forEach(el=>{
+                this.conditionConf.items.forEach(subEl => {
+                    if(el.fieldName === subEl.fieldName){
+                        let newItem = Object.assign(el,subEl);
                         newItem.valueType = this.showValueType(newItem);
                         conditionList.push(newItem);
                     }
-                });
-            });
+                })
+            })
             this.conditionConf.items = conditionList;
             // let { items, equation } = this.conditionConf;
+
         },
         // 字段切换
         fieldChange(item) {
-            let metadata = this.fieldList.filter(
-                (res) => res.fieldName === item.fieldName
-            );
-            Object.assign(item, metadata[0]);
+            let metadata = this.fieldList.filter(res=> res.fieldName === item.fieldName);
+            Object.assign(item,metadata[0]);
             item.op = this.getSelectOp(item)[0];
-            item.valueType = this.showValueType(item);
+            item.valueType = this.showValueType(item); 
         },
         // op切换
-        opChange(item) {
-            item.valueType = this.showValueType(item);
+        opChange(item){
+            item.valueType = this.showValueType(item); 
         },
         clearError(item) {
             item.isError = false;

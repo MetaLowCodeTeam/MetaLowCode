@@ -12,7 +12,7 @@
 </template>
 
 <script>
-	import myapp from './components/myapp';
+	import myapp from './components/myapp.vue';
 
 	export default {
 		components: {

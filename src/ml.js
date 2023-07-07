@@ -25,11 +25,11 @@ import scStatusIndicator from './components/scMini/scStatusIndicator'
 import scTrend from './components/scMini/scTrend'
 */
 
-import scTable from './components/scTable'
+import scTable from './components/scTable/index.vue'
 import scTableColumn from './components/scTable/column.js'
-import scQrCode from './components/scQrCode'
+import scQrCode from './components/scQrCode/index.vue'
 
-import SimpleTable from './components/simpleTable/index'
+import SimpleTable from './components/simpleTable/index.vue'
 
 import auth from './directives/auth'
 import auths from './directives/auths'
@@ -42,9 +42,9 @@ import errorHandler from './utils/errorHandler'
 import * as elIcons from '@element-plus/icons-vue'
 import * as scIcons from './assets/icons'
 
-import mlSelectUser from './components/mlSelectUser';
-import mlSetConditions from './components/mlSetConditions';
-import mlDialog from './components/mlDialog';
+import mlSelectUser from './components/mlSelectUser/index.vue';
+import mlSetConditions from './components/mlSetConditions/index.vue';
+import mlDialog from './components/mlDialog/index.vue';
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -57,6 +57,7 @@ export default {
 		app.config.globalProperties.$API = api;
 		app.config.globalProperties.$AUTH = permission;
 		app.config.globalProperties.$ROLE = rolePermission;
+        app.provide('$TOOL', tool);
         app.provide('$CloneDeep', (data) => JSON.parse(JSON.stringify(data)));
         app.provide('$API', api);
         app.provide('$ElMessage', ElMessage);

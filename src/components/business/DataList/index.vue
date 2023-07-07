@@ -51,7 +51,7 @@
 </template>
 
 <script>
-  import FormWidget from "@/views/system/field-widget/form-widget";
+  import FormWidget from "@/views/system/field-widget/form-widget.vue";
   import FormState from "@/views/system/form-state-variables";
   import {initDataList, createRecord, updateRecord, saveRecord, deleteRecord, getDataList} from "@/api/crud";
   import {arrayContain, isEmptyStr, setColumnFormatter} from "@/utils/util";
@@ -195,7 +195,7 @@
 
       /* 保持查询条件，重新当前页加载数据 */
       loadTableData(filter) {
-        let realFilter = isEmptyStr(filter) ? null : filter
+        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
         let fieldsList = ''
         this.columns.forEach(col => {
           fieldsList += col.prop + ','

@@ -201,11 +201,11 @@
 <script>
 import draggable from 'vuedraggable'
 
-import FormWidget from '@/views/system/field-widget/form-widget'
+import FormWidget from '@/views/system/field-widget/form-widget.vue'
 import { createLayoutObj } from './layout/form-layout-object.js'
 import { getFieldSet, createFormLayout, updateFormLayout, getFormLayout, previewLayout } from '@/api/system-manager'
-import LayoutWidget from './layout/layout-widget'
-import LayoutSetting from './layout/layout-setting'
+import LayoutWidget from './layout/layout-widget.vue'
+import LayoutSetting from './layout/layout-setting.vue'
 import {copyNew, generateId} from "@/utils/util"
 import {allComponentNames, getComponentDescription} from "@/components/custom";
 import {ElCollapse, ElCollapseItem} from "element-plus";
@@ -217,32 +217,31 @@ export default {
     'LayoutSection': ElCollapse,
     'LayoutSectionItem': ElCollapseItem,
     LayoutWidget, LayoutSetting, FormWidget,
-    BooleanWE: () => import('@/views/system/field-editor/boolean-widget-editor'),
-    IntegerWE: () => import('@/views/system/field-editor/integer-widget-editor'),
-    DecimalWE: () => import('@/views/system/field-editor/decimal-widget-editor'),
-    PercentWE: () => import('@/views/system/field-editor/percent-widget-editor'),
-    MoneyWE: () => import('@/views/system/field-editor/money-widget-editor'),
+    BooleanWE: () => import('@/views/system/field-editor/boolean-widget-editor.vue'),
+    IntegerWE: () => import('@/views/system/field-editor/integer-widget-editor.vue'),
+    DecimalWE: () => import('@/views/system/field-editor/decimal-widget-editor.vue'),
+    PercentWE: () => import('@/views/system/field-editor/percent-widget-editor.vue'),
+    MoneyWE: () => import('@/views/system/field-editor/money-widget-editor.vue'),
 
-    TextWE: () => import('@/views/system/field-editor/text-widget-editor'),
-    EmailWE: () => import('@/views/system/field-editor/email-widget-editor'),
-    UrlWE: () => import('@/views/system/field-editor/url-widget-editor'),
-    TextAreaWE: () => import('@/views/system/field-editor/textarea-widget-editor'),
-    PasswordWE: () => import('@/views/system/field-editor/password-widget-editor'),
+    TextWE: () => import('@/views/system/field-editor/text-widget-editor.vue'),
+    EmailWE: () => import('@/views/system/field-editor/email-widget-editor.vue'),
+    UrlWE: () => import('@/views/system/field-editor/url-widget-editor.vue'),
+    TextAreaWE: () => import('@/views/system/field-editor/textarea-widget-editor.vue'),
+    PasswordWE: () => import('@/views/system/field-editor/password-widget-editor.vue'),
 
-    OptionWE: () => import('@/views/system/field-editor/option-widget-editor'),
-    TagWE: () => import('@/views/system/field-editor/tag-widget-editor'),
+    OptionWE: () => import('@/views/system/field-editor/option-widget-editor.vue'),
+    TagWE: () => import('@/views/system/field-editor/tag-widget-editor.vue'),
 
-    DateWE: () => import('@/views/system/field-editor/date-widget-editor'),
-    DateTimeWE: () => import('@/views/system/field-editor/datetime-widget-editor'),
+    DateWE: () => import('@/views/system/field-editor/date-widget-editor.vue'),
+    DateTimeWE: () => import('@/views/system/field-editor/datetime-widget-editor.vue'),
 
-    PictureWE: () => import('@/views/system/field-editor/picture-widget-editor'),
-    FileWE: () => import('@/views/system/field-editor/file-widget-editor'),
+    PictureWE: () => import('@/views/system/field-editor/picture-widget-editor.vue'),
+    FileWE: () => import('@/views/system/field-editor/file-widget-editor.vue'),
 
-    ReferenceWE: () => import('@/views/system/field-editor/reference-widget-editor'),
-    AnyReferenceWE: () => import('@/views/system/field-editor/anyreference-widget-editor'),
-    ReferenceListWE: () => import('@/views/system/field-editor/referencelist-widget-editor'),
+    ReferenceWE: () => import('@/views/system/field-editor/reference-widget-editor.vue'),
+    AnyReferenceWE: () => import('@/views/system/field-editor/anyreference-widget-editor.vue'),
+    ReferenceListWE: () => import('@/views/system/field-editor/referencelist-widget-editor.vue'),
   },
-  props: ['entity', 'entityLabel'],
   data () {
     return {
       fieldItems: [],
@@ -332,7 +331,8 @@ export default {
         ],
         */
       },
-
+      entity:"",
+      entityLabel:"",
     }
   },
   computed: {
@@ -351,7 +351,8 @@ export default {
     //this.initFormLayout(() => {
     //  this.getEntityFields(true, true) /* refreshLayoutFlag传入true，设置布局已删除字段标志 */
     //})
-
+    this.entity = this.$route.query.entity;
+    this.entityLabel = this.$route.query.entityLabel;   
     this.getEntityFields(false, () => {
       this.initFormLayout(true)
     })

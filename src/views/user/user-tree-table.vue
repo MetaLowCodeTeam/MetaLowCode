@@ -96,7 +96,7 @@ import {deleteDepartmentById, deleteUserById, getDepartmentTree, saveDepartment,
 import {createRecord, getDataList, updateRecord} from '@/api/crud'
 import {createLayoutObj} from '@/views/system/layout/form-layout-object.js'
 import FormState from '@/views/system/form-state-variables'
-import FormWidget from '@/views/system/field-widget/form-widget'
+import FormWidget from '@/views/system/field-widget/form-widget.vue'
 import eventBus from "@/utils/event-bus"
 
 export default {
@@ -279,7 +279,7 @@ export default {
       },
 
       loadTableData(filter) {
-        let realFilter = isEmptyStr(filter) ? null : filter
+        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
         getDataList('User', this.fieldsList, realFilter, this.page.limit, this.page.pageNo).then(res => {
           if (res.error != null) {
             this.$message({message: res.error, type: 'error'})
@@ -307,7 +307,7 @@ export default {
       },
 
       initTableData() {
-        this.loadTableData(null)
+        this.loadTableData('(1=1)')
       },
 
       buildLayoutObj() {
@@ -374,7 +374,7 @@ export default {
       searchData() {
         if (isEmptyStr(this.keyword)) {
           if (!isEmptyStr(this.searchFilter)) {
-            this.loadTableData(null)
+            this.loadTableData('(1=1)')
           }
 
           return

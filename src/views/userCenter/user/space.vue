@@ -27,7 +27,7 @@
 </template>
 
 <script>
-	import scStatistic from '@/components/scStatistic';
+	import scStatistic from '@/components/scStatistic/index.vue';
 
 	export default {
 		components: {

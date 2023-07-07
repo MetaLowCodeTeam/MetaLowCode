@@ -124,15 +124,15 @@
             <mlSelectField
                 ref="SelectFieldDialog"
                 v-model="form.modifiableFields"
-                title="选择可查看/修改字段"
+                title="选择可查看/修改字段111"
             />
         </el-drawer>
     </div>
 </template>
 
 <script>
-import addNode from "./addNode";
-import mlSelectField from "@/components/mlSelectField";
+import addNode from "./addNode.vue";
+import mlSelectField from "@/components/mlSelectField/index.vue";
 export default {
     props: {
         modelValue: { type: Object, default: () => {} },

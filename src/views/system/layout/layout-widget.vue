@@ -219,7 +219,7 @@ export default {
   }
 
   :deep(.el-collapse.selected) {
-    outline: 2px solid $--color-primary;
+    outline: 2px solid #409EFF;
 
     .section-select-action {
       position: absolute;
@@ -228,7 +228,7 @@ export default {
       /* bottom: 2px; */
       height: 28px;
       line-height: 28px;
-      background: $--color-primary;
+      background: #409EFF;
       z-index: 9;
 
       i{
@@ -283,7 +283,7 @@ export default {
     }
 
     .el-row.selected {
-      outline: 2px solid $--color-primary;
+      outline: 2px solid #409EFF;
 
       .row-select-action{
         position: absolute;
@@ -292,7 +292,7 @@ export default {
         /* bottom: 0; */
         height: 28px;
         line-height: 28px;
-        background: $--color-primary;
+        background: #409EFF;
         z-index: 9;
 
         i{
@@ -343,7 +343,7 @@ export default {
   }
 
   .field-wrapper.selected {
-    outline: 2px solid $--color-primary;
+    outline: 2px solid #409EFF;
 
     .field-select-action{
       position: absolute;
@@ -352,7 +352,7 @@ export default {
       /* bottom: 0; */
       height: 22px;
       line-height: 22px;
-      background: $--color-primary;
+      background: #409EFF;
       z-index: 9;
 
       i{

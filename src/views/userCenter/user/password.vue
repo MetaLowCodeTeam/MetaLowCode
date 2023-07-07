@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import scPasswordStrength from '@/components/scPasswordStrength'
+	import scPasswordStrength from '@/components/scPasswordStrength/index.vue'
 
 	export default {
 		components: {

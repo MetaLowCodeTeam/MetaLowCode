@@ -49,7 +49,7 @@
 <script>
   import { h } from 'vue';
   import {getEntitySet, createEntity, entityCanBeDeleted, deleteEntity} from '@/api/system-manager'
-  import EntityPropEditor from './entity-editor/entity-property-editor'
+  import EntityPropEditor from './entity-editor/entity-property-editor.vue'
 
 export default {
   name: 'EntityList',
@@ -141,11 +141,18 @@ export default {
     },
 
     gotoEntityManager(selectedEntityObj) {
-      this.$router.push({name: 'FieldManager',
-        params: {
-          entity: selectedEntityObj.name,
-          entityLabel: selectedEntityObj.label,
-        }
+    //   this.$router.push({name: 'FieldManager',
+    //   params: {
+    //       entity: selectedEntityObj.name,
+    //       entityLabel: selectedEntityObj.label,
+    //     }
+    //   })
+      this.$router.push({
+        name: "FieldManager",
+        query: {
+            entity: selectedEntityObj.name,
+            entityLabel: selectedEntityObj.label,
+        },
       })
     },
 
@@ -156,7 +163,7 @@ export default {
       }
 
       this.$router.push({name: 'FormLayout',
-        params: {
+      query: {
           'entity': selectedEntityObj.name,
           'entityLabel': selectedEntityObj.label
         }
@@ -175,7 +182,7 @@ export default {
       }
 
       this.$router.push({name: 'ListSetting',
-        params: {
+        query: {
           'entity': selectedEntityObj.name,
         }
       })
@@ -429,7 +436,7 @@ export default {
 
   .context-menu__item:hover {
     cursor: pointer;
-    background: $--color-primary;
+    background: #409EFF;
     border-color: #66b1ff;
     color: #fff;
   }

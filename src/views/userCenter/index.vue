@@ -42,13 +42,13 @@
 	export default {
 		name: 'userCenter',
 		components: {
-			account: defineAsyncComponent(() => import('./user/account')),
-			seting: defineAsyncComponent(() => import('./user/seting')),
-			pushSettings: defineAsyncComponent(() => import('./user/pushSettings')),
-			password: defineAsyncComponent(() => import('./user/password')),
-			space: defineAsyncComponent(() => import('./user/space')),
-			logs: defineAsyncComponent(() => import('./user/logs')),
-			upToEnterprise: defineAsyncComponent(() => import('./user/upToEnterprise'))
+			account: defineAsyncComponent(() => import('./user/account.vue')),
+			seting: defineAsyncComponent(() => import('./user/seting.vue')),
+			pushSettings: defineAsyncComponent(() => import('./user/pushSettings.vue')),
+			password: defineAsyncComponent(() => import('./user/password.vue')),
+			space: defineAsyncComponent(() => import('./user/space.vue')),
+			logs: defineAsyncComponent(() => import('./user/logs.vue')),
+			upToEnterprise: defineAsyncComponent(() => import('./user/upToEnterprise.vue'))
 		},
 		data() {
 			return {

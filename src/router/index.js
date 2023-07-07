@@ -7,12 +7,12 @@ import tool from '@/utils/tool';
 import systemRouter from './systemRouter';
 import userRoutes from '@/config/route';
 import {beforeEach, afterEach} from './scrollBehavior';
-
+let modules = import.meta.glob('../views/**/*.vue')
+const empty = () => () => import('../layout/other/empty.vue');
 //系统路由
 const routes = systemRouter;
-
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
+	history: createWebHistory(),
 	routes: routes
 })
 
@@ -21,7 +21,7 @@ const router = createRouter({
 const routes_404 = {
 	path: "/:pathMatch(.*)*",
 	hidden: true,
-	component: () => import(/* webpackChunkName: "404" */ '@/layout/other/404'),
+	component: () => import(/* webpackChunkName: "404" */ '@/layout/other/404.vue'),
 }
 let routes_404_r = ()=>{}
 
@@ -139,9 +139,9 @@ function filterAsyncRouter(routerMap) {
 }
 function loadComponent(component){
 	if(component){
-		return () => import(/* webpackChunkName: "[request]" */ `@/views/${component}`)
+		return modules[`../views/${component}.vue`]
 	}else{
-		return () => import(`@/layout/other/empty`)
+		return empty()
 	}
 
 }

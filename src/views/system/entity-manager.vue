@@ -81,46 +81,36 @@
 
 <script>
 import { getFieldSet, getField } from '@/api/system-manager'
-import EntityPropEditor from './entity-editor/entity-property-editor'
+import EntityPropEditor from './entity-editor/entity-property-editor.vue'
 
 export default {
   name: 'EntityManager',
-  props: {
-    entity: {
-      type: String,
-      default: null
-    },
-    entityLabel: {
-      type: String,
-      default: ''
-    }
-  },
   components: {
     EntityPropEditor,
-    BooleanWE: () => import('@/views/system/field-editor/boolean-widget-editor'),
-    IntegerWE: () => import('@/views/system/field-editor/integer-widget-editor'),
-    DecimalWE: () => import('@/views/system/field-editor/decimal-widget-editor'),
-    PercentWE: () => import('@/views/system/field-editor/percent-widget-editor'),
-    MoneyWE: () => import('@/views/system/field-editor/money-widget-editor'),
+    BooleanWE: () => import('@/views/system/field-editor/boolean-widget-editor.vue'),
+    IntegerWE: () => import('@/views/system/field-editor/integer-widget-editor.vue'),
+    DecimalWE: () => import('@/views/system/field-editor/decimal-widget-editor.vue'),
+    PercentWE: () => import('@/views/system/field-editor/percent-widget-editor.vue'),
+    MoneyWE: () => import('@/views/system/field-editor/money-widget-editor.vue'),
 
-    TextWE: () => import('@/views/system/field-editor/text-widget-editor'),
-    EmailWE: () => import('@/views/system/field-editor/email-widget-editor'),
-    UrlWE: () => import('@/views/system/field-editor/url-widget-editor'),
-    TextAreaWE: () => import('@/views/system/field-editor/textarea-widget-editor'),
-    PasswordWE: () => import('@/views/system/field-editor/password-widget-editor'),
+    TextWE: () => import('@/views/system/field-editor/text-widget-editor.vue'),
+    EmailWE: () => import('@/views/system/field-editor/email-widget-editor.vue'),
+    UrlWE: () => import('@/views/system/field-editor/url-widget-editor.vue'),
+    TextAreaWE: () => import('@/views/system/field-editor/textarea-widget-editor.vue'),
+    PasswordWE: () => import('@/views/system/field-editor/password-widget-editor.vue'),
 
-    OptionWE: () => import('@/views/system/field-editor/option-widget-editor'),
-    TagWE: () => import('@/views/system/field-editor/tag-widget-editor'),
+    OptionWE: () => import('@/views/system/field-editor/option-widget-editor.vue'),
+    TagWE: () => import('@/views/system/field-editor/tag-widget-editor.vue'),
 
-    DateWE: () => import('@/views/system/field-editor/date-widget-editor'),
-    DateTimeWE: () => import('@/views/system/field-editor/datetime-widget-editor'),
+    DateWE: () => import('@/views/system/field-editor/date-widget-editor.vue'),
+    DateTimeWE: () => import('@/views/system/field-editor/datetime-widget-editor.vue'),
 
-    PictureWE: () => import('@/views/system/field-editor/picture-widget-editor'),
-    FileWE: () => import('@/views/system/field-editor/file-widget-editor'),
+    PictureWE: () => import('@/views/system/field-editor/picture-widget-editor.vue'),
+    FileWE: () => import('@/views/system/field-editor/file-widget-editor.vue'),
 
-    ReferenceWE: () => import('@/views/system/field-editor/reference-widget-editor'),
-    AnyReferenceWE: () => import('@/views/system/field-editor/anyreference-widget-editor'),
-    ReferenceListWE: () => import('@/views/system/field-editor/referencelist-widget-editor'),
+    ReferenceWE: () => import('@/views/system/field-editor/reference-widget-editor.vue'),
+    AnyReferenceWE: () => import('@/views/system/field-editor/anyreference-widget-editor.vue'),
+    ReferenceListWE: () => import('@/views/system/field-editor/referencelist-widget-editor.vue'),
 
   },
   data() {
@@ -136,12 +126,16 @@ export default {
       curFWEditor: 'TagWE',
       selectedFieldItemIdx: -1,
       editState: 1,
+      entity:"",
+      entityLabel:"",
     }
   },
   created () {
   },
 
   mounted () {
+    this.entity = this.$route.query.entity;
+    this.entityLabel = this.$route.query.entityLabel;
     this.getEntityFields()
   },
 
@@ -242,7 +236,7 @@ li.field-item {
 }
 
 li.field-item.selected {
-  outline: 1px $--color-primary solid;
+  outline: 1px #409EFF solid;
 }
 
 .add-field-dropdown {
@@ -252,7 +246,7 @@ li.field-item.selected {
   .el-dropdown-link {
     font-size: 12px;
     cursor: pointer;
-    color: $--color-primary;
+    color: #409EFF;
   }
 
   .el-icon-arrow-dow {

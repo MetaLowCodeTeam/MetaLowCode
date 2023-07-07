@@ -66,8 +66,8 @@
 </template>
 
 <script>
-	import scPasswordStrength from '@/components/scPasswordStrength';
-	import commonPage from './components/commonPage'
+	import scPasswordStrength from '@/components/scPasswordStrength/index.vue';
+	import commonPage from './components/commonPage.vue'
 
 	export default {
 		components: {

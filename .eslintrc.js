@@ -21,8 +21,8 @@ module.exports = {
         'no-unused-vars': 'off',
         'vue/no-mutating-props': 'off',
         'vue/no-unused-components': 'off',
-        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        'no-console': import.meta.env.VITE_NODE_ENV === 'production' ? 'warn' : 'off',
+        'no-debugger': import.meta.env.VITE_NODE_ENV === 'production' ? 'warn' : 'off',
         // 关闭驼峰命名规则
         'vue/multi-word-component-names': 0
 

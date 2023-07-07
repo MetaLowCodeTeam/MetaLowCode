@@ -39,7 +39,7 @@
 </template>
 
 <script>
-	import commonPage from './components/commonPage'
+	import commonPage from './components/commonPage.vue'
 
 	export default {
 		components: {

@@ -1,5 +1,5 @@
-import RichTextEditor from './RichTextEditor/index'
-import AreaCascadeSelect from './AreaCascadeSelect/index'
+import RichTextEditor from './RichTextEditor/index.vue'
+import AreaCascadeSelect from './AreaCascadeSelect/index.vue'
 
 export default {
   install(Vue) {

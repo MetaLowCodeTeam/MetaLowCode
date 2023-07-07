@@ -1,7 +1,7 @@
 <template>
 	<div class="router-err">
 		<div class="router-err__icon">
-			<img src="img/404.png" />
+			<img src="~@/assets/imgs/404.png" />
 		</div>
 		<div class="router-err__content">
 			<h2>无权限或找不到页面</h2>

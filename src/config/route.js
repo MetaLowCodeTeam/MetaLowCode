@@ -46,7 +46,7 @@ const routes = [
                     "icon": "el-icon-menu",
                     "affix": true
                 },
-                "component": "home"
+                "component": "home/index"
             },
             {
                 "name": "userCenter",
@@ -56,7 +56,7 @@ const routes = [
                     "icon": "el-icon-user",
                     "tag": "NEW"
                 },
-                "component": "userCenter"
+                "component": "userCenter/index"
             }
         ]
     },
@@ -69,7 +69,7 @@ const routes = [
         meta: { title: '系统管理', icon: 'el-icon-setting', svgIcon: 'setting' },
         children: [
             {
-                path: '/field-manager/:entity',
+                path: '/field-manager',
                 name: 'FieldManager',
                 component: 'system/entity-field-table',
                 props: true,
@@ -78,7 +78,7 @@ const routes = [
             },
 
             {
-                path: '/form-layout/:entity',
+                path: '/form-layout',
                 name: 'FormLayout',
                 component: 'system/form-layout',
                 hidden: true,
@@ -87,7 +87,7 @@ const routes = [
             },
 
             {
-                path: '/list-setting/:entity',
+                path: '/list-setting',
                 name: 'ListSetting',
                 component: 'business/data-list-view',
                 hidden: true,

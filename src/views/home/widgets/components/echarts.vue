@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import scEcharts from '@/components/scEcharts';
+	import scEcharts from '@/components/scEcharts/index.vue';
 
 	export default {
 		title: "实时收入",

@@ -160,7 +160,7 @@
 </template>
 
 <script>
-  import DataList from '@/components/business/DataList'
+  import DataList from '@/components/business/DataList/index.vue'
   import {copyNew, formatRefColumn, isEmptyStr} from "@/utils/util";
   import {getDataList} from "@/api/crud";
   import {deleteRoleById, getBlankRoleData, getRoleData, saveRoleData} from "@/api/user";
@@ -263,7 +263,7 @@
       },
 
       loadRoleData(filter) {
-        let realFilter = isEmptyStr(filter) ? null : filter
+        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
         getDataList(this.entity, this.fieldsList, realFilter, this.page.limit, this.page.pageNo).then(res => {
           if (res.error != null) {
             this.$message({message: res.error, type: 'error'})

@@ -5,18 +5,19 @@
 </template>
 
 <script>
-  import DataList from '@/components/business/DataList'
+  import DataList from '@/components/business/DataList/index.vue'
 
   export default {
     name: "DataListView",
     components: { DataList },
-    props: {
-      entity: {
-        type: String,
-        //default: 'Account'
-      },
+    data(){
+        return {
+            entity:"",
+        }
     },
-
+    mounted(){
+        this.entity = this.$route.query.entity;
+    }
   }
 </script>
 

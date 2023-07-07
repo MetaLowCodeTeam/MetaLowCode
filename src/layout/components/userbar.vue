@@ -76,6 +76,7 @@
 	import tasks from './tasks.vue'
 
 	export default {
+        inject:['$TOOL'],
 		components: {
 			search,
 			tasks

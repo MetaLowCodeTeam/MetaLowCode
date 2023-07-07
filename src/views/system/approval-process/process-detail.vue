@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import mlWorkflow from "@/components/mlWorkflow";
+import mlWorkflow from "@/components/mlWorkflow/index.vue";
 export default {
     components: {
         mlWorkflow,

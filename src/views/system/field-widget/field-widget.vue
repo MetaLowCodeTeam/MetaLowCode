@@ -198,7 +198,7 @@
 <script>
   /* 表单状态formState: 0预览，1新建，2编辑，3查看 */
 
-  import ReferenceSearchTable from '@/views/system/field-widget/reference-search-table'
+  import ReferenceSearchTable from '@/views/system/field-widget/reference-search-table.vue'
   import FormState from '@/views/system/form-state-variables'
   import { isDefinedNull, isNull, isNotNull, isEmptyStr } from '@/utils/util'
   import * as SYS from "@/api/system-manager";
@@ -874,7 +874,7 @@
   }
 
   :deep(.el-upload.el-upload--text) {
-    color: $--color-primary;
+    color: #409EFF;
     font-size: 12px;  //TODO
     .el-icon-plus:after {
       content: '选择文件';
@@ -939,7 +939,7 @@
     }
 
     .file-action {
-      color: $--color-primary;
+      color: #409EFF;
       margin-left: 5px;
       margin-right: 5px;
     }

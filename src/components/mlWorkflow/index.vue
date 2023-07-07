@@ -20,7 +20,7 @@
 </template>
 
 <script>
-	import nodeWrap from './nodeWrap'
+	import nodeWrap from './nodeWrap.vue'
 	export default {
 		props: {
 			modelValue: { type: Object, default: () => {} }

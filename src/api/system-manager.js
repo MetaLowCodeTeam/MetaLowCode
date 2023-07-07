@@ -183,7 +183,7 @@ export function saveTagItems(entity, field, tagItems) {
 }
 
 export function getPictureUploadAction() {
-  return process.env.VUE_APP_BASE_API + '/picture/upload'
+  return import.meta.env.VITE_APP_BASE_API + '/picture/upload'
 }
 
 export function getPictureUrlPrefix() {
@@ -191,7 +191,7 @@ export function getPictureUrlPrefix() {
 }
 
 export function getFileUploadAction() {
-  return process.env.VUE_APP_BASE_API + '/file/upload'
+  return import.meta.env.VITE_APP_BASE_API + '/file/upload'
 }
 
 export function getFileUrlPrefix() {

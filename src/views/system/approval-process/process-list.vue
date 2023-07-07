@@ -30,7 +30,7 @@
 import { getEntitySet } from "@/api/system-manager";
 import { inject, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-const message = inject("$ELMessage");
+const message = inject('$ElMessage');
 const router = useRouter();
 let loading = ref(false);
 let defaultCoode = ref("");
@@ -181,7 +181,7 @@ const test = () => {
                 background: #eee;
             }
             &.is-active {
-                background: $--color-primary;
+                background: var(--el-color-primary);
                 color: #fff;
             }
         }

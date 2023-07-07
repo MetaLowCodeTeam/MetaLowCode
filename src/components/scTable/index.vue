@@ -64,9 +64,9 @@
 
 <script>
 	import config from "@/config/table";
-	import columnSetting from './columnSetting'
+	import columnSetting from './columnSetting.vue'
 
-	export default {
+	export default {  
 		name: 'scTable',
 		components: {
 			columnSetting

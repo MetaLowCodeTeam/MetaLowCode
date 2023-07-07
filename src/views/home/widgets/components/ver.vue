@@ -1,7 +1,7 @@
 <template>
 	<el-card shadow="hover" header="版本信息">
 		<div style="height: 210px;text-align: center;">
-			<img src="img/ver.svg" style="height:140px"/>
+			<!-- <img src="img/ver.svg" style="height:140px"/> -->
 			<h2 style="margin-top: 15px;">SCUI {{$CONFIG.CORE_VER}}</h2>
 			<p style="margin-top: 5px;">最新版本 {{ver}}</p>
 		</div>
@@ -20,6 +20,7 @@
 		data() {
 			return {
 				ver: 'loading...'
+
 			}
 		},
 		mounted() {

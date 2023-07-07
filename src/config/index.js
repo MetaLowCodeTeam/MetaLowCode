@@ -1,6 +1,6 @@
 const DEFAULT_CONFIG = {
 	//标题
-	APP_NAME: process.env.VUE_APP_TITLE,
+	APP_NAME: import.meta.env.VITE_APP_TITLE,
 
 	//首页地址
 	DASHBOARD_URL: "/dashboard",
@@ -12,7 +12,7 @@ const DEFAULT_CONFIG = {
 	CORE_VER: "1.0.0",
 
 	//接口地址
-	API_URL: process.env.NODE_ENV === 'development' && process.env.VUE_APP_PROXY === 'true' ? "/api" : process.env.DEV_API_SERVER,
+	API_URL: import.meta.env.VITE_NODE_ENV === 'development' && import.meta.env.VITE_APP_PROXY === 'true' ? "/api" : import.meta.env.VITE_API_SERVER,
 	SERVER_API_URL: '',
 	FILE_SERVER_URL: 'http://localhost:8080',
 
@@ -77,7 +77,7 @@ Object.assign(DEFAULT_CONFIG, MY_CONFIG)
 
 // 如果生产模式，就合并动态的APP_CONFIG
 // public/config.js
-if(process.env.NODE_ENV === 'production'){
+if(import.meta.env.NODE_ENV === 'production'){
 	Object.assign(DEFAULT_CONFIG, APP_CONFIG)
 }
 
