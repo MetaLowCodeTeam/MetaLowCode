@@ -4,26 +4,39 @@ import 'nprogress/nprogress.css'
 import router from '@/router'
 import store from '@/store'
 
+import useViewTagsStore from "@/sotre/modules/viewTags";
+import useKeepAliveStore from "@/sotre/modules/keepAlive";
+import useIframeStore from "@/sotre/modules/iframe";
+import { storeToRefs } from "pinia";
+const { viewTags } = storeToRefs(viewTagsStore);
+const viewTagsStore = useViewTagsStore();
+const keepAliveStore = useKeepAliveStore();
+const iframeStore = useIframeStore();
+const { removeViewTags,updateViewTagsTitle } = viewTagsStore;
+const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
+const { removeIframeList } = iframeStore;
+
+
 export default {
 	//刷新标签
 	refresh() {
 		NProgress.start()
 		const route = router.currentRoute.value
-		store.commit("removeKeepLive", route.name)
-		store.commit("setRouteShow", false)
+		removeKeepLive(route.name)
+		setRouteShow(false)
 		nextTick(() => {
-			store.commit("pushKeepLive", route.name)
-			store.commit("setRouteShow", true)
+			pushKeepLive(route.name)
+			setRouteShow(true)
 			NProgress.done()
 		})
 	},
 	//关闭标签
 	close(tag) {
 		const route = tag || router.currentRoute.value
-		store.commit("removeViewTags", route)
-		store.commit("removeIframeList", route)
-		store.commit("removeKeepLive", route.name)
-		const tagList = store.state.viewTags.viewTags
+        removeViewTags(route);
+		removeIframeList(route)
+		removeKeepLive(route.name)
+		const tagList = viewTags.value;
 		const latestView = tagList.slice(-1)[0]
 		if (latestView) {
 			router.push(latestView)
@@ -34,18 +47,18 @@ export default {
 	//关闭标签后处理
 	closeNext(next) {
 		const route = router.currentRoute.value
-		store.commit("removeViewTags", route)
-		store.commit("removeIframeList", route)
-		store.commit("removeKeepLive", route.name)
+		removeViewTags(route);
+		removeIframeList(route)
+		removeKeepLive(route.name)
 		if(next){
-			const tagList = store.state.viewTags.viewTags
+			const tagList = viewTags.value;
 			next(tagList)
 		}
 	},
 	//关闭其他
 	closeOther() {
 		const route = router.currentRoute.value
-		const tagList = [...store.state.viewTags.viewTags]
+		const tagList = [...viewTags.value]
 		tagList.forEach(tag => {
 			if(tag.meta&&tag.meta.affix || route.fullPath==tag.fullPath){
 				return true
@@ -56,6 +69,6 @@ export default {
 	},
 	//设置标题
 	setTitle(title){
-		store.commit("updateViewTagsTitle", title)
+        updateViewTagsTitle(title)
 	}
 }

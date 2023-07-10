@@ -12,7 +12,7 @@
         v-model="defaultValue"
         :size="size"
         :clearable="clearable"
-        :multiple="multiple"
+        multiple
         :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip"
         :filterable="filterable"
@@ -45,8 +45,9 @@
                     <el-tabs
                         type="border-card"
                         class="mlselect-user-tabs"
-                        v-model="cutTab"
+                        v-model="cutTabCode"
                         @tab-change="getData"
+                        v-if="tabList.length > 1"
                     >
                         <el-tab-pane
                             :name="tab.name"
@@ -69,6 +70,21 @@
                             </div>
                         </el-tab-pane>
                     </el-tabs>
+                    <div class="mlselect-tab" v-else>
+                        <div
+                            class="tab-item-li"
+                            v-for="(item,itemInx) of tabData"
+                            :key="itemInx"
+                            @click="selectUser(item,cutTabItem)"
+                        >
+                            {{ item[cutTabItem.itemName] }}
+                            <div class="tab-item-icon fr" v-if="item.isActive">
+                                <el-icon class="tab-item-icon-el">
+                                    <ElIconSelect />
+                                </el-icon>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>
@@ -78,6 +94,7 @@
 <script setup>
 import { ref, watch, onMounted, inject, nextTick, reactive } from "vue";
 const api = inject("$API");
+const cloneDeep = inject("$CloneDeep");
 const message = inject("$ElMessage");
 const props = defineProps({
     modelValue: null,
@@ -90,6 +107,7 @@ const props = defineProps({
     collapseTags: { type: Boolean, default: false },
     collapseTagsTooltip: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
+    type: { type: String, default: "all" },
 });
 const emit = defineEmits(["change", "update:modelValue"]);
 // 加载状态
@@ -99,7 +117,7 @@ let defaultValue = ref([]);
 // 搜索值
 let keyword = ref("");
 // 页签
-let tabList = ref([
+let tabConfing = ref([
     {
         label: "角色",
         name: "Role",
@@ -119,23 +137,42 @@ let tabList = ref([
         itemName: "departmentName",
     },
 ]);
+let tabList = ref([]);
 // 页签数据
 let tabData = ref([]);
 // 当前页签
-let cutTab = ref("Role");
+let cutTabCode = ref("Role");
+let cutTabItem = reactive({});
 watch(
     () => props.modelValue,
     () => {
-        defaultValue.value = props.modelValue;
-        autoCurrentLabel();
+        initData();
     },
     { deep: true }
 );
 
 onMounted(() => {
+    initData();
+});
+
+// 初始化数据
+const initData = () => {
     defaultValue.value = props.modelValue;
     autoCurrentLabel();
-});
+    if (props.type === "all") {
+        tabList.value = cloneDeep(tabConfing.value);
+    } else {
+        let types = props.type.split();
+        tabList.value = [];
+        tabConfing.value.forEach((el) => {
+            types.forEach((subEl) => {
+                if (el.name == subEl) {
+                    tabList.value.push(el);
+                }
+            });
+        });
+    }
+};
 
 // 获取数据
 let getData = async () => {
@@ -145,18 +182,18 @@ let getData = async () => {
         search: keyword.value,
     };
     // 当前tab
-    let cutTabs = tabList.value.filter((el) => cutTab.value == el.name)[0];
+    cutTabItem = tabList.value.filter((el) => cutTabCode.value == el.name)[0];
     // 当前默认选中的IDs
     let cutSelectedIds = defaultValue.value
         ? defaultValue.value.map((el) => el.id)
         : [];
     // 获取当前tab接口
-    let res = await api.common["get" + cutTab.value](param);
+    let res = await api.common["get" + cutTabCode.value](param);
     if (res.code == 200) {
         tabData.value = res.data.map((el) => {
             el.isActive = false;
             // 如果该ID已在选中集里，默认选中
-            if (cutSelectedIds.includes(el[cutTabs.itemId])) {
+            if (cutSelectedIds.includes(el[cutTabItem.itemId])) {
                 el.isActive = true;
             }
             return el;
@@ -172,21 +209,30 @@ let selectRefs = reactive({});
 // 自动模拟options赋值
 let autoCurrentLabel = () => {
     nextTick(() => {
-        if (props.multiple) {
-            selectRefs.selected.forEach((item) => {
-                item.currentLabel = item.value.name;
-            });
-        }
+        selectRefs.selected.forEach((item) => {
+            item.currentLabel = item.value.name;
+        });
     });
 };
 // 选择用户
 let selectUser = (item, tab) => {
     if (!item.isActive) {
         item.isActive = true;
-        defaultValue.value.push({
+        let value = {
             name: item[tab.itemName],
             id: item[tab.itemId],
-        });
+        };
+        if (props.multiple) {
+            defaultValue.value.push(value);
+        } else {
+            tabData.value.forEach((el) => {
+                el.isActive = false;
+                if (value.id === el[tab.itemId]) {
+                    el.isActive = true;
+                }
+            });
+            defaultValue.value[0] = value;
+        }
     } else {
         item.isActive = false;
         defaultValue.value.forEach((el, inx) => {
@@ -195,6 +241,7 @@ let selectUser = (item, tab) => {
             }
         });
     }
+    cutTabCode;
     emit("update:modelValue", defaultValue.value);
     emit("change", defaultValue.value);
 };
@@ -210,9 +257,11 @@ let visibleChange = (visible) => {
 
 // tags删除后回调
 let removeTag = (item) => {
-    let cutTabs = tabList.value.filter((el) => cutTab.value == el.name)[0];
+    let cutTabItem = tabList.value.filter(
+        (el) => cutTabCode.value == el.name
+    )[0];
     tabData.value.forEach((el) => {
-        if (item.id == el[cutTabs.itemId]) {
+        if (item.id == el[cutTabItem.itemId]) {
             el.isActive = false;
         }
     });
@@ -239,6 +288,9 @@ let filterMethod = (keyword) => {
 <style lang="scss" scoped>
 .mlselect-user-content {
     padding: 20px;
+    .mlselect-tab {
+        border: 1px solid #dcdfe6;
+    }
     .tab-item-li {
         font-size: 14px;
         cursor: pointer;

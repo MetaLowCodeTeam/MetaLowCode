@@ -6,9 +6,9 @@
                 <div class="fields-list-box">
                     <div
                         class="fields-list-item text-ellipsis"
-                        v-for="(field,inx) of fieldsList"
+                        v-for="(field,inx) of entityList"
                         :key="inx"
-                        :class="{'is-active':field.name == defaultCoode}"
+                        :class="{'is-active':field.entityCode == defaultCode}"
                         @click="fieldCheck(field)"
                         :title="field.label"
                     >{{ field.label }}</div>
@@ -17,140 +17,200 @@
         </el-aside>
 
         <el-container class="main-container">
-            <el-header class="props-action-section">操作区</el-header>
+            <el-header class="props-action-section">
+                <span class="section-title">审批流程</span>
+                <div class="section-fr fr">
+                    <el-input
+                        class="section-search"
+                        v-model="keyword"
+                        placeholder="查询"
+                        :suffix-icon="Search"
+                        @keyup.enter="getApprovalList"
+                    ></el-input>
+                    <el-dropdown
+                        split-button
+                        type="primary"
+                        @click="editApproval('add')"
+                        @command="referral"
+                    >
+                        <el-icon size="14">
+                            <ElIconPlus />
+                        </el-icon>
+                        <span class="ml-5">添加</span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item command="referral">
+                                    <el-icon>
+                                        <ElIconAvatar />
+                                    </el-icon>
+                                    <span class="ml-5">批量转审</span>
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </div>
+            </el-header>
 
-            <el-main style="margin: 0 auto">
-                <el-button @click="test">点击查看审核流程（demo）</el-button>
+            <el-main>
+                <el-table
+                    class="ml-el-table"
+                    :data="approvalList"
+                    style="width: 100%;"
+                    :border="true"
+                    ref="meTable"
+                    @sort-change="sortChange"
+                >
+                    <el-table-column label="名称" prop="flowName" sortable>
+                        <template #default="scope">
+                            <span
+                                class="highlight"
+                                @click="goDetial(scope.row)"
+                            >{{ scope.row.flowName }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column sortable prop="label" label="应用实体" />
+                    <el-table-column label="启用" :align="'center'" width="60">
+                        <template #default="scope">
+                            <span class="enable false" v-if="scope.row.disabled">否</span>
+                            <span class="enable true" v-else>是</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="createdOn" label="创建时间" :align="'center'" width="100">
+                        <template #default="scope">{{ $fromNow(scope.row.createdOn) }}</template>
+                    </el-table-column>
+
+                    <el-table-column label="操作" :align="'center'" width="150">
+                        <template #default="scope">
+                            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button
+                                size="small"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)"
+                            >删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="table-footer">共 {{ approvalList.length }} 项</div>
             </el-main>
         </el-container>
     </el-container>
 </template>
   
 <script setup>
-import { getEntitySet } from "@/api/system-manager";
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, reactive, ref } from "vue";
+import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
-const message = inject('$ElMessage');
+import { $fromNow } from "@/utils/util";
+const message = inject("$ElMessage");
+const api = inject("$API");
 const router = useRouter();
+// 加载状态
 let loading = ref(false);
-let defaultCoode = ref("");
-let fieldsList = ref([]);
+// 默认值
+let defaultCode = ref("");
+// 实体列表
+let entityList = ref([]);
+// 流程列表
+let approvalList = ref([]);
+// 搜索值
+let keyword = ref("");
+let page = reactive({
+    size: 10,
+    no: 1,
+    total: 0,
+});
 
 onMounted(() => {
-    getEntitySet()
-        .then((res) => {
-            if (res.code === 200) {
-                fieldsList.value = res.data || [];
-                defaultCoode.value = fieldsList.value[0].name;
-            } else {
-                message.error("获取实体数据失败：" + res.message);
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            message.error("接口调用失败，请尝试刷新页面后重试");
-        });
+    getEntityList();
 });
+
+// 获取左侧实体列表
+const getEntityList = async () => {
+    loading.value = true;
+    let res = await api.approval.list.getEntityList();
+    if (res.code === 200) {
+        entityList.value = res.data;
+        entityList.value.unshift({
+            label: "全部实体",
+            entityCode: "all",
+        });
+        defaultCode.value = entityList.value[0].entityCode;
+        getApprovalList();
+    } else {
+        loading.value = false;
+        message.error("获取实体列表数据失败：" + res.error);
+    }
+};
+
+// 获取右侧流程列表
+const getApprovalList = async () => {
+    loading.value = true;
+    let param = {
+        pageSize: page.size,
+        pageNo: page.no,
+        keyword: keyword.value,
+    };
+    param.entityCode = defaultCode.value === "all" ? "" : defaultCode.value;
+    let res = await api.approval.list.getApprovalList(param);
+    if (res.code === 200) {
+        approvalList.value = res.data.pageData;
+        page.total = res.data.total;
+        loading.value = false;
+    } else {
+        loading.value = false;
+        message.error("获取实体列表数据失败：" + res.error);
+    }
+};
+
+// 添加流程
+const editApproval = (target) => {
+    console.log(target);
+};
+
+// 批量转审
+const referral = () => {
+    console.log("批量转审");
+};
+
+// 表格排序
+const sortChange = (column, prop, order) => {
+    console.log(column, prop, order);
+};
 
 // 字段点击触发
 const fieldCheck = (item) => {
-    console.log("字段点击：", item);
-    defaultCoode.value = item.name;
+    defaultCode.value = item.entityCode;
+    page.no = 1;
+    getApprovalList();
 };
 
-const test = () => {
+const handleEdit = (inx, row) => {
+    // console.log(inx, row);
+    message.info("编辑流程：" + row.flowName);
+};
+
+const handleDelete = (inx, row) => {
+    // console.log(inx, row);
+    message.info("删除流程：" + row.flowName);
+};
+
+
+const goDetial = (row) => {
     router.push({
         path: "/process-detail",
         query: {
-            approvalConfigId: "0000030-b105364997e64227b6f567bbd900a78b",
+            approvalConfigId: row.approvalConfigId,
         },
     });
 };
-// export default {
-//     name: "OptionManager",
-//     data() {
-//         return {
-//             loading: false,
-//             defaultCoode: "all",
-//             fieldsList: [
-//                 {
-//                     name: "全部实体",
-//                     code: "all",
-//                 },
-//                 {
-//                     name: "企业-股东信息股东信息股东信息股东信息股东信息",
-//                     code: "1",
-//                 },
-//                 {
-//                     name: "企业列表",
-//                     code: "2",
-//                 },
-//                 {
-//                     name: "企业认领管理",
-//                     code: "3",
-//                 },
-//                 {
-//                     name: "合同管理",
-//                     code: "4",
-//                 },
-//                 {
-//                     name: "园区咨询",
-//                     code: "5",
-//                 },
-//                 {
-//                     name: "批量消息通知",
-//                     code: "6",
-//                 },
-//                 {
-//                     name: "招商服务",
-//                     code: "7",
-//                 },
-//                 {
-//                     name: "物业管理",
-//                     code: "8",
-//                 },
-//             ],
-//         };
-//     },
-//     mounted() {
-//         this.getFieldList();
-//     },
-//     methods: {
-//         getFieldList() {
-//             this.loading = true;
-//             setTimeout(() => {
-//                 this.getTableData();
-//             }, 1000);
-//         },
-//         fieldCheck(item) {
-//             this.defaultCoode = item.code;
-//             this.getTableData();
-//         },
-//         getTableData() {
-//             this.loading = true;
-//             setTimeout(() => {
-//                 this.loading = false;
-//             }, 1000);
-//         },
-//         test() {
-//             this.$router.push({
-//                 path: "/process-detail",
-//                 query: {
-//                     approvalConfigId:
-//                         "0000030-b105364997e64227b6f567bbd900a78b",
-//                 },
-//             });
-//         },
-//     },
-// };
-//
 </script>
   
-  <style lang="scss" scoped>
+<style lang="scss" scoped>
 .main-container {
     min-width: 720px;
     border-left: 2px solid #eeeeee;
     background: #ffffff;
+    font-size: 14px;
 }
 
 .el-aside {
@@ -186,6 +246,44 @@ const test = () => {
             }
         }
     }
+}
+
+.props-action-section {
+    .section-title {
+        font-size: 16px;
+    }
+    .section-fr {
+        .section-search {
+            display: inline-block;
+            width: 224px;
+        }
+    }
+}
+
+.enable {
+    display: inline-block;
+    width: 28px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    &.true {
+        background: #34a853;
+        color: #fff;
+    }
+    &.false {
+        background: #ccc;
+        color: #212529;
+    }
+}
+.table-footer {
+    height: 41px;
+    line-height: 41px;
+    background: #f7f7f7;
+    border: 1px solid #ebeef5;
+    border-top: 0;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #616161;
 }
 </style>
   

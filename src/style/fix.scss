@@ -349,3 +349,14 @@ body .tox-tinymce-aux {
         line-height: 19px;
     }
 }
+
+.ml-el-table {
+    font-size: 14px;
+    .highlight {
+        color: #409eff;
+        cursor: pointer;
+        &:hover {
+            color: #0d5bdd;
+        }
+    }
+}

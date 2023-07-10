@@ -5,12 +5,10 @@ import 'element-plus/theme-chalk/display.css'
 import scui from './ml'
 import i18n from './locales'
 import router from './router'
-import store from './store'
 import App from './App.vue'
-
+import pinia from './sotre'
 const app = createApp(App);
-
-app.use(store);
+app.use(pinia);
 app.use(router);
 app.use(ElementPlus);
 app.use(i18n);

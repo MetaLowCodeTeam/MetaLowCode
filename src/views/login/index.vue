@@ -74,7 +74,15 @@
 <script>
 	import passwordForm from './components/passwordForm.vue'
 	import phoneForm from './components/phoneForm.vue'
-
+    import useViewTagsStore from "@/sotre/modules/viewTags";
+    import useKeepAliveStore from "@/sotre/modules/keepAlive";
+    import useIframeStore from "@/sotre/modules/iframe";
+    const viewTagsStore = useViewTagsStore();
+    const keepAliveStore = useKeepAliveStore();
+    const iframeStore = useIframeStore();
+    const { clearViewTags } = viewTagsStore;
+    const { clearKeepLive } = keepAliveStore;
+    const { clearIframeList } = iframeStore;
 	export default {
 		components: {
 			passwordForm,
@@ -123,9 +131,9 @@
 			this.$TOOL.data.remove("PERMISSIONS")
 			this.$TOOL.data.remove("DASHBOARDGRID")
 			this.$TOOL.data.remove("grid")
-			this.$store.commit("clearViewTags")
-			this.$store.commit("clearKeepLive")
-			this.$store.commit("clearIframeList")
+			clearViewTags();
+			clearKeepLive();
+			clearIframeList();
 			console.log('%c SCUI %c Gitee: https://gitee.com/lolicode/scui', 'background:#666;color:#fff;border-radius:3px;', '')
 		},
 		methods: {

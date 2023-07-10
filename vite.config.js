@@ -50,6 +50,8 @@ export default ({
         },
         define: define,
         server: {
+            // 局域网访问
+            host: '0.0.0.0',
             allowedHosts: 'all',
             open: false, //运行后自动打开浏览器
 		    port: env.VITE_APP_PORT, //挂载端口
