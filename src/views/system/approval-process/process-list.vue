@@ -68,7 +68,9 @@
                             >{{ scope.row.flowName }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column sortable prop="label" label="应用实体" />
+                    <el-table-column sortable prop="label" label="应用实体">
+                        <template #default="scope">{{ entityLable[scope.row.entityCode] }}</template>
+                    </el-table-column>
                     <el-table-column label="启用" :align="'center'" width="60">
                         <template #default="scope">
                             <span class="enable false" v-if="scope.row.disabled">否</span>
@@ -97,13 +99,17 @@
 </template>
   
 <script setup>
+import useCommonStore from "@/sotre/modules/common";
 import { inject, onMounted, reactive, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { $fromNow } from "@/utils/util";
+import { storeToRefs } from "pinia";
 const message = inject("$ElMessage");
 const api = inject("$API");
 const router = useRouter();
+const { entityLable } = storeToRefs(useCommonStore());
+const { getEntityLable } = useCommonStore();
 // 加载状态
 let loading = ref(false);
 // 默认值
@@ -119,9 +125,11 @@ let page = reactive({
     no: 1,
     total: 0,
 });
-
 onMounted(() => {
     getEntityList();
+    if(JSON.stringify(entityLable.value)=='{}'){
+        getEntityLable()
+    }
 });
 
 // 获取左侧实体列表
@@ -151,15 +159,16 @@ const getApprovalList = async () => {
         keyword: keyword.value,
     };
     param.entityCode = defaultCode.value === "all" ? "" : defaultCode.value;
-    let res = await api.approval.list.getApprovalList(param);
-    if (res.code === 200) {
-        approvalList.value = res.data.pageData;
-        page.total = res.data.total;
-        loading.value = false;
-    } else {
-        loading.value = false;
-        message.error("获取实体列表数据失败：" + res.error);
-    }
+    console.log(api.common.getList('123'))
+    // let res = await api.approval.list.getApprovalList(param);
+    // if (res.code === 200) {
+    //     approvalList.value = res.data.pageData;
+    //     page.total = res.data.total;
+    //     loading.value = false;
+    // } else {
+    //     loading.value = false;
+    //     message.error("获取实体列表数据失败：" + res.error);
+    // }
 };
 
 // 添加流程

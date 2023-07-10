@@ -2,9 +2,8 @@ import config from "@/config";
 import { defineStore } from 'pinia';
 import { ref } from 'vue'
 // import useGlobalStore from "@/sotre/modules/global";
-// const globalStore = useGlobalStore();
-// const { clearViewTags } = globalStore;
-// const { iframeList } = storeToRefs(useGlobalStore());
+// const { clearViewTags } = useGlobalStore();
+// const { ismobile } = storeToRefs(useGlobalStore());
 const useGlobalStore = defineStore('globalStore', () => {
     //移动端布局
     let ismobile = ref(false);
