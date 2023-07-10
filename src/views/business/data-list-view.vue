@@ -15,7 +15,7 @@
             entity:"",
         }
     },
-    mounted(){
+    created(){
         this.entity = this.$route.query.entity;
     }
   }

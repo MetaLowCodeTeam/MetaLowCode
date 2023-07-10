@@ -275,6 +275,9 @@
         entity:"",
       }
     },
+    created() {
+      this.entity = this.$route.query.entity;
+    },
     mounted() {
       // this.$nextTick(() => {
       //   this.resizeTableHeight()
@@ -282,7 +285,6 @@
       // window.onresize = () => {
       //   this.resizeTableHeight()
       // }
-      this.entity = this.$route.query.entity;
       this.initPageData()
     },
     methods: {
