@@ -68,17 +68,19 @@
                             >{{ scope.row.flowName }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column sortable prop="label" label="应用实体">
+                    <el-table-column sortable prop="entityCode" label="应用实体">
                         <template #default="scope">{{ entityLable[scope.row.entityCode] }}</template>
                     </el-table-column>
+                    <el-table-column label="运行中的流程统计" prop="runningTotal" :align="'center'"></el-table-column>
+                    <el-table-column label="结束的流程统计" prop="completeTotal" :align="'center'"></el-table-column>
                     <el-table-column label="启用" :align="'center'" width="60">
                         <template #default="scope">
                             <span class="enable false" v-if="scope.row.disabled">否</span>
                             <span class="enable true" v-else>是</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="createdOn" label="创建时间" :align="'center'" width="100">
-                        <template #default="scope">{{ $fromNow(scope.row.createdOn) }}</template>
+                    <el-table-column prop="createdOn" label="修改时间" :align="'center'" width="100">
+                        <template #default="scope">{{ $fromNow(scope.row.modifiedOn) }}</template>
                     </el-table-column>
 
                     <el-table-column label="操作" :align="'center'" width="150">
@@ -125,10 +127,12 @@ let page = reactive({
     no: 1,
     total: 0,
 });
+// 排序值
+let tableSort= ref([]);
 onMounted(() => {
     getEntityList();
-    if(JSON.stringify(entityLable.value)=='{}'){
-        getEntityLable()
+    if (JSON.stringify(entityLable.value) == "{}") {
+        getEntityLable();
     }
 });
 
@@ -153,22 +157,41 @@ const getEntityList = async () => {
 // 获取右侧流程列表
 const getApprovalList = async () => {
     loading.value = true;
-    let param = {
-        pageSize: page.size,
-        pageNo: page.no,
-        keyword: keyword.value,
-    };
-    param.entityCode = defaultCode.value === "all" ? "" : defaultCode.value;
-    console.log(api.common.getList('123'))
-    // let res = await api.approval.list.getApprovalList(param);
-    // if (res.code === 200) {
-    //     approvalList.value = res.data.pageData;
-    //     page.total = res.data.total;
-    //     loading.value = false;
-    // } else {
-    //     loading.value = false;
-    //     message.error("获取实体列表数据失败：" + res.error);
-    // }
+    let mainEntity = "ApprovalConfig";
+    let fieldsList =
+        "entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal";
+    let pageSize = page.size;
+    let pageNo = page.no;
+    let filter = {};
+    if (defaultCode.value != "all") {
+        filter = {
+            equation: "AND",
+            items: [
+                {
+                    fieldName: "entityCode",
+                    op: "EQ",
+                    value: defaultCode.value,
+                },
+            ],
+        };
+    }
+    let sortFields = tableSort.value;
+    let res = await api.common.getGeneralQuery(
+        mainEntity,
+        fieldsList,
+        pageSize,
+        pageNo,
+        filter,
+        sortFields
+    );
+    if (res.code === 200) {
+        approvalList.value = res.data.dataList;
+        page.total = res.data.pagination.total;
+        loading.value = false;
+    } else {
+        loading.value = false;
+        message.error("获取实体列表数据失败：" + res.error);
+    }
 };
 
 // 添加流程
@@ -183,7 +206,21 @@ const referral = () => {
 
 // 表格排序
 const sortChange = (column, prop, order) => {
-    console.log(column, prop, order);
+    let sortType;
+    if (column.order && column.order === "ascending") {
+        sortType = "ASC";
+    } else if (column.order && column.order === "descending") {
+        sortType = "DESC";
+    } else {
+        sortType = "";
+    }
+    tableSort.value = [
+        {
+            fieldName: column.prop,
+            type: sortType,
+        },
+    ];
+    getApprovalList();
 };
 
 // 字段点击触发
@@ -202,7 +239,6 @@ const handleDelete = (inx, row) => {
     // console.log(inx, row);
     message.info("删除流程：" + row.flowName);
 };
-
 
 const goDetial = (row) => {
     router.push({

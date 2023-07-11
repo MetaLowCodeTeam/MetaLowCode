@@ -249,6 +249,9 @@ export const $moment = function (date) {
 }
 
 export const $fromNow = function (date) {
+    if(!date){
+        return '暂无时间'
+    }
     const m = $moment(date)
     return Math.abs(moment().diff(m)) < 6000 ? '刚刚' : m.fromNow()
 }

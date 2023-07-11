@@ -50,7 +50,7 @@ export default {
             filter,
             sortFields
         }
-        return await http.get("/crud/testEquation", params);
+        return await http.post("/crud/listQuery", params);
     }
 
 }
