@@ -23,19 +23,6 @@ export default {
             data: {
                 approvalConfigId: "0000030-b105364997e64227b6f567bbd900a78b",
                 flowName: "请假审批",
-                nodeConfig: {
-                    nodeName: "发起人",
-                    type: 0,
-                    // 谁可以审批
-                    nodeRoleType: 2,
-                    // 指定用户
-                    nodeRoleList: [],
-                    // 发起条件
-                    filter: {
-                        equation: "",
-                        items: [],
-                    },
-                },
             },
         };
     },
@@ -49,7 +36,25 @@ export default {
             this.loading = true;
             let res = await this.$API.approval.detial.get({ approvalConfigId });
             if (res.code === 200) {
-                this.data = Object.assign(this.data,res.data);
+                this.data = Object.assign(this.data, res.data);
+                // 新建的
+                if (!this.data.nodeConfig) {
+                    this.data.nodeConfig = {
+                        nodeName: "发起人",
+                        type: 0,
+                        // 谁可以审批
+                        nodeRoleType: 2,
+                        // 指定用户
+                        nodeRoleList: [],
+                        // 发起条件
+                        filter: {
+                            equation: "",
+                            items: [],
+                        },
+                    };
+                }
+            } else {
+                this.$message.error("获取审核流程失败：" + res.error);
             }
             this.loading = false;
         },

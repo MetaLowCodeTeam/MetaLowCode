@@ -103,7 +103,14 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="table-footer">共 {{ approvalList.length }} 项</div>
+                <div class="table-footer">
+                    <mlPagination
+                        :no="page.no"
+                        :total="page.total"
+                        :sizes="page.sizes"
+                        @pageChange="pageChange"
+                    />
+                </div>
             </el-main>
         </el-container>
         <EditApprovalDialog
@@ -132,7 +139,7 @@ const { getEntityLable } = useCommonStore();
 // 加载状态
 let loading = ref(false);
 // 默认值
-let defaultCode = ref("");
+let defaultCode = ref("all");
 // 实体列表
 let entityList = ref([]);
 // 流程列表
@@ -171,7 +178,6 @@ const getEntityList = async () => {
     let res = await api.approval.list.getEntityList();
     if (res.code === 200) {
         entityList.value = res.data;
-        defaultCode.value = entityList.value[0].entityCode;
         getApprovalList();
     } else {
         loading.value = false;
@@ -240,6 +246,12 @@ const referral = () => {
     console.log("批量转审");
 };
 
+// 分页切换
+const pageChange = (v) => {
+    page.no = v;
+    getApprovalList();
+};
+
 // 表格排序
 const sortChange = (column, prop, order) => {
     let sortType;
@@ -276,10 +288,10 @@ const saveProcess = async (val) => {
 const deleteProcess = async (row) => {
     let res = await deleteRecord(row.approvalConfigId);
     loading.value = true;
-    if(res.code === 200){
+    if (res.code === 200) {
         message.success("删除成功");
         getApprovalList();
-    }else {
+    } else {
         loading.value = false;
         message.error("删除失败：" + res.error);
     }
@@ -374,6 +386,7 @@ const goDetial = (row) => {
     padding: 0 12px;
     font-size: 13px;
     color: #616161;
+    justify-content: center;
 }
 </style>
   
