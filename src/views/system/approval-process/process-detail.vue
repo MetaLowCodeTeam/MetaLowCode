@@ -1,7 +1,7 @@
 <template>
     <el-container class="process-detail" v-loading="loading">
         <el-header class="process-title">
-            {{ data.name }}
+            {{ data.flowName }}
             <el-button type="primary" class="fr" @click="saveApprovalConfig">保存</el-button>
         </el-header>
         <el-container class="main-container">
@@ -20,7 +20,23 @@ export default {
         return {
             loading: false,
             approvalConfigId: null,
-            data: {},
+            data: {
+                approvalConfigId: "0000030-b105364997e64227b6f567bbd900a78b",
+                flowName: "请假审批",
+                nodeConfig: {
+                    nodeName: "发起人",
+                    type: 0,
+                    // 谁可以审批
+                    nodeRoleType: 2,
+                    // 指定用户
+                    nodeRoleList: [],
+                    // 发起条件
+                    filter: {
+                        equation: "",
+                        items: [],
+                    },
+                },
+            },
         };
     },
     mounted() {
@@ -33,7 +49,7 @@ export default {
             this.loading = true;
             let res = await this.$API.approval.detial.get({ approvalConfigId });
             if (res.code === 200) {
-                this.data = res.data;
+                this.data = Object.assign(this.data,res.data);
             }
             this.loading = false;
         },
@@ -43,7 +59,7 @@ export default {
             let res = await this.$API.approval.detial.save(data);
             if (res.code === 200) {
                 this.$message.success("保存成功");
-            }else {
+            } else {
                 this.$message.error(res.error);
             }
             this.loading = false;

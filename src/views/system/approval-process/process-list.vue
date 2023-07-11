@@ -84,7 +84,7 @@
                     <el-table-column label="结束的流程统计" prop="completeTotal" :align="'center'"></el-table-column>
                     <el-table-column label="启用" :align="'center'" width="60">
                         <template #default="scope">
-                            <span class="enable false" v-if="scope.row.disabled">否</span>
+                            <span class="enable false" v-if="scope.row.isDisabled">否</span>
                             <span class="enable true" v-else>是</span>
                         </template>
                     </el-table-column>
@@ -98,7 +98,7 @@
                             <el-button
                                 size="small"
                                 type="danger"
-                                @click="handleDelete(scope.$index, scope.row)"
+                                @click="deleteProcess(scope.row)"
                             >删除</el-button>
                         </template>
                     </el-table-column>
@@ -110,6 +110,7 @@
             v-model="dialogIsShow"
             :entityList="entityList"
             :dialogForm="dialogForm"
+            @saveProcess="saveProcess"
         />
     </el-container>
 </template>
@@ -122,7 +123,7 @@ import { useRouter } from "vue-router";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import EditApprovalDialog from "./process-edit.vue";
-import { getDataList } from "@/api/crud";
+import { getDataList, deleteRecord } from "@/api/crud";
 const message = inject("$ElMessage");
 const api = inject("$API");
 const router = useRouter();
@@ -144,11 +145,17 @@ let page = reactive({
     total: 0,
 });
 // 排序值
-let tableSort = ref([]);
+let tableSort = ref([
+    {
+        fieldName: "modifiedOn",
+        type: "DESC",
+    },
+]);
 // 编辑弹框
 let dialogIsShow = ref(false);
 let dialogForm = reactive({
     title: "添加审批流程",
+    type: "add",
     form: {},
 });
 onMounted(() => {
@@ -216,17 +223,15 @@ const getApprovalList = async () => {
 
 // 添加流程
 const editApproval = (target, row) => {
-    // console.log(target);
     dialogIsShow.value = true;
     if (target === "add") {
         dialogForm.title = "添加审批流程";
         dialogForm.form = {};
+        dialogForm.type = "add";
     } else {
         dialogForm.title = "编辑审批流程";
-        dialogForm.form = {
-            entityCode: row.entityCode,
-            flowName: row.flowName,
-        };
+        dialogForm.type = "edit";
+        dialogForm.form = { ...row };
     }
 };
 
@@ -245,12 +250,10 @@ const sortChange = (column, prop, order) => {
     } else {
         sortType = "";
     }
-    tableSort.value = [
-        {
-            fieldName: column.prop,
-            type: sortType,
-        },
-    ];
+    tableSort.value[1] = {
+        fieldName: column.prop,
+        type: sortType,
+    };
     getApprovalList();
 };
 
@@ -261,14 +264,25 @@ const fieldCheck = (item) => {
     getApprovalList();
 };
 
-const handleEdit = (inx, row) => {
-    // console.log(inx, row);
-    message.info("编辑流程：" + row.flowName);
+// 保存流程
+const saveProcess = async (val) => {
+    if (val) {
+        goDetial(val);
+    } else {
+        getApprovalList();
+    }
 };
 
-const handleDelete = (inx, row) => {
-    // console.log(inx, row);
-    message.info("删除流程：" + row.flowName);
+const deleteProcess = async (row) => {
+    let res = await deleteRecord(row.approvalConfigId);
+    loading.value = true;
+    if(res.code === 200){
+        message.success("删除成功");
+        getApprovalList();
+    }else {
+        loading.value = false;
+        message.error("删除失败：" + res.error);
+    }
 };
 
 const goDetial = (row) => {
