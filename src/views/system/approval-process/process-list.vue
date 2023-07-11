@@ -128,7 +128,7 @@ let page = reactive({
     total: 0,
 });
 // 排序值
-let tableSort= ref([]);
+let tableSort = ref([]);
 onMounted(() => {
     getEntityList();
     if (JSON.stringify(entityLable.value) == "{}") {
@@ -157,14 +157,17 @@ const getEntityList = async () => {
 // 获取右侧流程列表
 const getApprovalList = async () => {
     loading.value = true;
-    let mainEntity = "ApprovalConfig";
-    let fieldsList =
-        "entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal";
-    let pageSize = page.size;
-    let pageNo = page.no;
-    let filter = {};
+    let param = {
+        mainEntity: "ApprovalConfig",
+        fieldsList:
+            "entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal",
+        pageSize: page.size,
+        pageNo: page.no,
+        filter: {},
+        sortFields: tableSort.value,
+    };
     if (defaultCode.value != "all") {
-        filter = {
+        param.filter = {
             equation: "AND",
             items: [
                 {
@@ -175,15 +178,7 @@ const getApprovalList = async () => {
             ],
         };
     }
-    let sortFields = tableSort.value;
-    let res = await api.common.getGeneralQuery(
-        mainEntity,
-        fieldsList,
-        pageSize,
-        pageNo,
-        filter,
-        sortFields
-    );
+    let res = await api.common.getGeneralQuery(param);
     if (res.code === 200) {
         approvalList.value = res.data.dataList;
         page.total = res.data.pagination.total;

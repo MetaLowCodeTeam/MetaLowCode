@@ -34,23 +34,17 @@ export default {
      * @param {*} filter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  过滤
      * @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
      */
-    getGeneralQuery: async (
-        mainEntity = "",
-        fieldsList = "",
-        pageSize = 10,
-        pageNo = 1,
-        filter = {},
-        sortFields = []
-    ) => {
-        let params = {
-            mainEntity,
-            fieldsList,
-            pageSize,
-            pageNo,
-            filter,
-            sortFields
-        }
-        return await http.post("/crud/listQuery", params);
+    getGeneralQuery: async (data) => {
+        let param = {
+            mainEntity: "",
+            fieldsList: "",
+            pageSize: 10,
+            pageNo: 1,
+            filter: {},
+            sortFields: []
+        };
+        Object.assign(param, data);
+        return await http.post("/crud/listQuery", param);
     }
 
 }
