@@ -94,11 +94,10 @@ const routes = [
                 props: true,
                 meta: { title: '列表设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
             },
-
             {
                 path: '/metadata',
                 name: 'Metadata',
-                meta: { group: true, title: '元数据设置' },
+                meta: { group: true, title: '元数据设置', icon: "el-icon-coin", },
                 children: [
                     {
                         path: 'entity-list',
@@ -113,7 +112,7 @@ const routes = [
             {
                 path: '/user-manager',
                 name: 'UserManager',
-                meta: { group: true, title: '组织架构' },
+                meta: { group: true, title: '组织架构', icon: 'el-icon-user' },
                 children: [
                     {
                         path: '/user-list',
@@ -130,11 +129,10 @@ const routes = [
                     },
                 ]
             },
-
             {
                 path: '/data-dict',
                 name: 'DataDict',
-                meta: { group: true, title: '数据字典' },
+                meta: { group: true, title: '数据字典', icon: 'el-icon-management' },
                 children: [
                     {
                         path: '/option-manager',
@@ -155,7 +153,7 @@ const routes = [
             {
                 path: '/approval-process',
                 name: 'ApprovalProcess',
-                meta: { group: true, title: '审批流程' },
+                meta: { group: true, title: '审批流程', icon: 'el-icon-operation' },
                 children: [
                     {
                         path: '/process-list',
@@ -168,7 +166,7 @@ const routes = [
                         name: 'ProcessDetail',
                         component: 'system/approval-process/process-detail',
                         hidden: true,
-                        meta: { title: '流程设计',hidden: true}
+                        meta: { title: '流程设计', hidden: true }
                     },
                 ]
             },
