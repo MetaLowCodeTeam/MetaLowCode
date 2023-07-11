@@ -24,11 +24,21 @@ export function deleteRecord(id) {
   })
 }
 
-export function getDataList(entity, fields, filter, pageSize, pageNo) {
+ /**
+ * 
+ * 通用查询接口
+ * @param {*} mainEntity 实体名称
+ * @param {*} fieldsList 要显示的字段名称
+ * @param {*} pageSize 默认页数大小
+ * @param {*} pageNo 页数大小
+ * @param {*} filter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  过滤
+ * @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
+ */
+export function getDataList(entity, fields, filter, pageSize, pageNo,sortFields) {
   return http.post('crud/listQuery', {
     'mainEntity': entity,
     'fieldsList': fields,
-    filter, pageSize, pageNo
+    filter, pageSize, pageNo,sortFields
   })
 }
 

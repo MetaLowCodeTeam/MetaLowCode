@@ -2,9 +2,6 @@ import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue'
 import { getEntitySet } from '@/api/system-manager'
 import { ElMessage } from 'element-plus'
-// import useCommonStore from "@/sotre/modules/common";
-// const { clearViewTags } = useCommonStore();
-// const { ismobile } = storeToRefs(useCommonStore());
 const useCommonStore = defineStore('commonStore', () => {
     let entityLable = reactive({});
     const getEntityLable = () => {

@@ -6,6 +6,15 @@
                 <div class="fields-list-box">
                     <div
                         class="fields-list-item text-ellipsis"
+                        :class="{'is-active': defaultCode === 'all'}"
+                        @click="fieldCheck({
+                            label: '全部实体',
+                            entityCode: 'all',
+                        })"
+                        title="全部实体"
+                    >全部实体</div>
+                    <div
+                        class="fields-list-item text-ellipsis"
                         v-for="(field,inx) of entityList"
                         :key="inx"
                         :class="{'is-active':field.entityCode == defaultCode}"
@@ -85,7 +94,7 @@
 
                     <el-table-column label="操作" :align="'center'" width="150">
                         <template #default="scope">
-                            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button size="small" @click="editApproval('edit',scope.row)">编辑</el-button>
                             <el-button
                                 size="small"
                                 type="danger"
@@ -97,6 +106,11 @@
                 <div class="table-footer">共 {{ approvalList.length }} 项</div>
             </el-main>
         </el-container>
+        <EditApprovalDialog
+            v-model="dialogIsShow"
+            :entityList="entityList"
+            :dialogForm="dialogForm"
+        />
     </el-container>
 </template>
   
@@ -107,6 +121,8 @@ import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
+import EditApprovalDialog from "./process-edit.vue";
+import { getDataList } from "@/api/crud";
 const message = inject("$ElMessage");
 const api = inject("$API");
 const router = useRouter();
@@ -129,6 +145,12 @@ let page = reactive({
 });
 // 排序值
 let tableSort = ref([]);
+// 编辑弹框
+let dialogIsShow = ref(false);
+let dialogForm = reactive({
+    title: "添加审批流程",
+    form: {},
+});
 onMounted(() => {
     getEntityList();
     if (JSON.stringify(entityLable.value) == "{}") {
@@ -142,10 +164,6 @@ const getEntityList = async () => {
     let res = await api.approval.list.getEntityList();
     if (res.code === 200) {
         entityList.value = res.data;
-        entityList.value.unshift({
-            label: "全部实体",
-            entityCode: "all",
-        });
         defaultCode.value = entityList.value[0].entityCode;
         getApprovalList();
     } else {
@@ -178,7 +196,14 @@ const getApprovalList = async () => {
             ],
         };
     }
-    let res = await api.common.getGeneralQuery(param);
+    let res = await getDataList(
+        param.mainEntity,
+        param.fieldsList,
+        param.filter,
+        param.pageSize,
+        param.pageNo,
+        param.sortFields
+    );
     if (res.code === 200) {
         approvalList.value = res.data.dataList;
         page.total = res.data.pagination.total;
@@ -190,8 +215,19 @@ const getApprovalList = async () => {
 };
 
 // 添加流程
-const editApproval = (target) => {
-    console.log(target);
+const editApproval = (target, row) => {
+    // console.log(target);
+    dialogIsShow.value = true;
+    if (target === "add") {
+        dialogForm.title = "添加审批流程";
+        dialogForm.form = {};
+    } else {
+        dialogForm.title = "编辑审批流程";
+        dialogForm.form = {
+            entityCode: row.entityCode,
+            flowName: row.flowName,
+        };
+    }
 };
 
 // 批量转审
