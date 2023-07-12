@@ -170,6 +170,53 @@ const routes = [
                     },
                 ]
             },
+            // 审批中心
+            {
+                path: '/approval-center',
+                name: 'ApprovalCenter',
+                meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
+                children: [
+                    {
+                        path: '/process-handle',
+                        name: 'ProcessHandle',
+                        component: 'system/approval-process/process-handle',
+                        meta: { title: '待我处理', }
+                    },
+                    {
+                        path: `/process-submit`,
+                        name: 'ProcessSubmit',
+                        component: 'system/approval-process/process-submit',
+                        meta: { title: '我提交的',  }
+                    },
+                    {
+                        path: `/process-cc`,
+                        name: 'ProcessCc',
+                        component: 'system/approval-process/process-cc',
+                        meta: { title: '抄送我的', }
+                    },
+                ]
+            },
+            // 报表模板
+            {
+                path: '/report-templates',
+                name: 'ReportTemplates',
+                meta: { group: true, title: '报表模板', icon: 'el-icon-memo' },
+                children: [
+                    {
+                        path: '/templates-list',
+                        name: 'TemplatesList',
+                        component: 'system/report-templates/templates-list',
+                        meta: { title: '模板列表', icon: 'el-icon-operation' }
+                    },
+                    {
+                        path: `/templates-detail`,
+                        name: 'TemplatesDetail',
+                        component: 'system/report-templates/templates-detail',
+                        hidden: true,
+                        meta: { title: '模板设计', hidden: true }
+                    },
+                ]
+            },
         ]
     },
 

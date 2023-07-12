@@ -64,8 +64,8 @@
                 <el-table
                     class="ml-el-table"
                     :data="approvalList"
-                    style="width: 100%;"
                     stripe
+                    style="width: 100%;"
                     ref="meTable"
                     @sort-change="sortChange"
                 >
@@ -92,37 +92,25 @@
                         <template #default="scope">{{ $fromNow(scope.row.modifiedOn) }}</template>
                     </el-table-column>
 
-                    <el-table-column label="操作" :align="'center'" width="170">
+                    <el-table-column label="操作" :align="'center'" width="150">
                         <template #default="scope">
-                            <el-button size="small" @click="editApproval('edit',scope.row)">
-                                <span class="mr-3">
-                                    <el-icon>
-                                        <Edit />
-                                    </el-icon>
-                                </span>
-                                <span>编辑</span>
-                            </el-button>
+                            <el-button size="small" @click="editApproval('edit',scope.row)">编辑</el-button>
                             <el-button
-                                class="ml-delete-btn"
                                 size="small"
+                                type="danger"
                                 @click="deleteProcess(scope.row)"
-                            >
-                                <span class="mr-3">
-                                    <el-icon color="#f56c6c">
-                                        <Delete />
-                                    </el-icon>
-                                </span>
-                                <span style="color: #f56c6c;">删除</span>
-                            </el-button>
+                            >删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <mlPagination
-                    :no="page.no"
-                    :total="page.total"
-                    :sizes="page.sizes"
-                    @pageChange="pageChange"
-                />
+                <div class="table-footer">
+                    <mlPagination
+                        :no="page.no"
+                        :total="page.total"
+                        :sizes="page.sizes"
+                        @pageChange="pageChange"
+                    />
+                </div>
             </el-main>
         </el-container>
         <EditApprovalDialog
@@ -137,13 +125,12 @@
 <script setup>
 import useCommonStore from "@/sotre/modules/common";
 import { inject, onMounted, reactive, ref } from "vue";
-import { Search, Delete, Edit } from "@element-plus/icons-vue";
+import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
-import EditApprovalDialog from "./process-edit.vue";
+import EditApprovalDialog from "./templates-edit.vue";
 import { getDataList, deleteRecord } from "@/api/crud";
-import { ElMessageBox } from "element-plus";
 const message = inject("$ElMessage");
 const api = inject("$API");
 const router = useRouter();
@@ -298,25 +285,16 @@ const saveProcess = async (val) => {
     }
 };
 
-// 删除流程
-const deleteProcess = (row) => {
-    ElMessageBox.confirm("是否确认删除?", "提示：", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "warning",
-    })
-        .then(async () => {
-            let res = await deleteRecord(row.approvalConfigId);
-            loading.value = true;
-            if (res.code === 200) {
-                message.success("删除成功");
-                getApprovalList();
-            } else {
-                loading.value = false;
-                message.error("删除失败：" + res.error);
-            }
-        })
-        .catch(() => {});
+const deleteProcess = async (row) => {
+    let res = await deleteRecord(row.approvalConfigId);
+    loading.value = true;
+    if (res.code === 200) {
+        message.success("删除成功");
+        getApprovalList();
+    } else {
+        loading.value = false;
+        message.error("删除失败：" + res.error);
+    }
 };
 
 const goDetial = (row) => {
@@ -398,6 +376,17 @@ const goDetial = (row) => {
         background: #ccc;
         color: #212529;
     }
+}
+.table-footer {
+    height: 41px;
+    line-height: 41px;
+    background: #f7f7f7;
+    border: 1px solid #ebeef5;
+    border-top: 0;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #616161;
+    justify-content: center;
 }
 </style>
   

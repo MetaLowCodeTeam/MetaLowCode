@@ -344,19 +344,23 @@ body .tox-tinymce-aux {
 }
 
 .ml-select-user {
-    .el-select__tags-text {
-        height: 17px;
-        line-height: 19px;
-    }
+	.el-select__tags-text {
+		height: 17px;
+		line-height: 19px;
+	}
 }
 
 .ml-el-table {
-    font-size: 14px;
-    .highlight {
-        color: #409eff;
-        cursor: pointer;
-        &:hover {
-            color: #0d5bdd;
-        }
-    }
+	font-size: 14px;
+	.highlight {
+		color: #409eff;
+		cursor: pointer;
+		&:hover {
+			color: #0d5bdd;
+		}
+	}
+}
+.ml-delete-btn {
+	border-color: #f56c6c !important;
+	background: #fafafa !important;
 }

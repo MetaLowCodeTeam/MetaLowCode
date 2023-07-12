@@ -29,6 +29,13 @@ const routes = [
 			title: "重置密码"
 		}
 	},
+    {
+		path: "/luckysheet",
+		component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/luckysheet.vue'),
+		meta: {
+			title: "表单模板设计"
+		}
+	},
 
 ]
 

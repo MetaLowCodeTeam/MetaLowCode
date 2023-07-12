@@ -1,12 +1,14 @@
 <template>
-    <el-pagination
-        :total="total"
-        :current-page="no"
-        :page-size="sizes"
-        :layout="layout"
-        :style="{'justify-content': algin}"
-        @current-change="pageChange"
-    />
+    <div class="table-footer">
+        <el-pagination
+            :total="total"
+            :current-page="no"
+            :page-size="sizes"
+            :layout="layout"
+            :style="{'justify-content': algin}"
+            @current-change="pageChange"
+        />
+    </div>
 </template>
 
 <script setup>
@@ -23,5 +25,16 @@ const pageChange = (v) => {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.table-footer {
+    height: 41px;
+    line-height: 41px;
+    background: #f7f7f7;
+    border: 1px solid #ebeef5;
+    border-top: 0;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #616161;
+    justify-content: center;
+}
 </style>
