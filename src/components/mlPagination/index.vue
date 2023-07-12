@@ -36,5 +36,9 @@ const pageChange = (v) => {
     font-size: 13px;
     color: #616161;
     justify-content: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 </style>

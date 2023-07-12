@@ -39,14 +39,12 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="table-footer">
-                <mlPagination
-                    :no="page.no"
-                    :total="page.total"
-                    :sizes="page.sizes"
-                    @pageChange="pageChange"
-                />
-            </div>
+            <mlPagination
+                :no="page.no"
+                :total="page.total"
+                :sizes="page.sizes"
+                @pageChange="pageChange"
+            />
         </el-main>
     </el-container>
 </template>
@@ -58,16 +56,16 @@ const props = defineProps({
     type: { type: String, default: "" },
 });
 let pageType = reactive({
-    handle:{
-        title:"待我处理",
+    handle: {
+        title: "待我处理",
     },
-    submit:{
-        title:"我提交的",
+    submit: {
+        title: "我提交的",
     },
-    cc:{
-        title:"抄送我的",
+    cc: {
+        title: "抄送我的",
     },
-})
+});
 // 加载状态
 let loading = ref(false);
 // 待我处理列表

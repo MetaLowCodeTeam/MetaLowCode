@@ -60,7 +60,7 @@
                 </div>
             </el-header>
 
-            <el-main>
+            <el-main style="position: relative;">
                 <el-table
                     class="ml-el-table"
                     :data="approvalList"

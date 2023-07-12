@@ -60,7 +60,7 @@
                 </div>
             </el-header>
 
-            <el-main>
+            <el-main style="position: relative;">
                 <el-table
                     class="ml-el-table"
                     :data="approvalList"
@@ -103,14 +103,12 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="table-footer">
-                    <mlPagination
-                        :no="page.no"
-                        :total="page.total"
-                        :sizes="page.sizes"
-                        @pageChange="pageChange"
-                    />
-                </div>
+                <mlPagination
+                    :no="page.no"
+                    :total="page.total"
+                    :sizes="page.sizes"
+                    @pageChange="pageChange"
+                />
             </el-main>
         </el-container>
         <EditApprovalDialog
