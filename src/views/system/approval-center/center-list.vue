@@ -42,7 +42,6 @@
             <mlPagination
                 :no="page.no"
                 :total="page.total"
-                :sizes="page.size"
                 @pageChange="pageChange"
             />
         </el-main>

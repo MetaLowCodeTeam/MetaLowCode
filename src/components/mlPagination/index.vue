@@ -3,7 +3,7 @@
         <el-pagination
             :total="total"
             :current-page="no"
-            :page-size="sizes"
+            :page-size="size"
             :layout="layout"
             :style="{'justify-content': algin}"
             @current-change="pageChange"
@@ -15,7 +15,7 @@
 const props = defineProps({
     total: { type: Number, default: 0 },
     no: { type: Number, default: 1 },
-    sizes: { type: Number, default: 10 },
+    size: { type: Number, default: 20 },
     layout: { type: String, default: "total, prev, pager, next" },
     algin: { type: String, default: "center" },
 });
