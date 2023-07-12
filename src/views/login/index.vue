@@ -74,9 +74,9 @@
 <script>
 	import passwordForm from './components/passwordForm.vue'
 	import phoneForm from './components/phoneForm.vue'
-    import useViewTagsStore from "@/sotre/modules/viewTags";
-    import useKeepAliveStore from "@/sotre/modules/keepAlive";
-    import useIframeStore from "@/sotre/modules/iframe";
+    import useViewTagsStore from "@/store/modules/viewTags";
+    import useKeepAliveStore from "@/store/modules/keepAlive";
+    import useIframeStore from "@/store/modules/iframe";
     const viewTagsStore = useViewTagsStore();
     const keepAliveStore = useKeepAliveStore();
     const iframeStore = useIframeStore();

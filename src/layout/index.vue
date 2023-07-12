@@ -200,8 +200,8 @@
 	import setting from './components/setting.vue';
 	import iframeView from './components/iframeView.vue';
 	import autoExit from './other/autoExit.js';
-    import useKeepAliveStore from "@/sotre/modules/keepAlive";
-    import useGlobalStore from "@/sotre/modules/global";
+    import useKeepAliveStore from "@/store/modules/keepAlive";
+    import useGlobalStore from "@/store/modules/global";
     import { storeToRefs } from "pinia";
     const { keepLiveRoute,routeShow } = storeToRefs(useKeepAliveStore());
     const { ismobile,layout,layoutTags,menuIsCollapse } = storeToRefs(useGlobalStore());

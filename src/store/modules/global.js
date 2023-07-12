@@ -1,7 +1,7 @@
 import config from "@/config";
 import { defineStore } from 'pinia';
 import { ref } from 'vue'
-// import useGlobalStore from "@/sotre/modules/global";
+// import useGlobalStore from "@/store/modules/global";
 // const { clearViewTags } = useGlobalStore();
 // const { ismobile } = storeToRefs(useGlobalStore());
 const useGlobalStore = defineStore('globalStore', () => {

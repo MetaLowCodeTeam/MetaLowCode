@@ -123,7 +123,7 @@
 </template>
   
 <script setup>
-import useCommonStore from "@/sotre/modules/common";
+import useCommonStore from "@/store/modules/common";
 import { inject, onMounted, reactive, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";

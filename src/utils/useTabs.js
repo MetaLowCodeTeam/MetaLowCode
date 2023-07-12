@@ -4,9 +4,9 @@ import 'nprogress/nprogress.css'
 import router from '@/router'
 import store from '@/store'
 
-import useViewTagsStore from "@/sotre/modules/viewTags";
-import useKeepAliveStore from "@/sotre/modules/keepAlive";
-import useIframeStore from "@/sotre/modules/iframe";
+import useViewTagsStore from "@/store/modules/viewTags";
+import useKeepAliveStore from "@/store/modules/keepAlive";
+import useIframeStore from "@/store/modules/iframe";
 import { storeToRefs } from "pinia";
 const { viewTags } = storeToRefs(viewTagsStore);
 const viewTagsStore = useViewTagsStore();

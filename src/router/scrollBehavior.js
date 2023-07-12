@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import useViewTagsStore from '@/sotre/modules/viewTags';
+import useViewTagsStore from '@/store/modules/viewTags';
 import { storeToRefs } from "pinia";
 
 export function beforeEach(to, from) {

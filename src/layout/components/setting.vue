@@ -40,7 +40,7 @@
 
 <script>
 import colorTool from "@/utils/color";
-import useGlobalStore from "@/sotre/modules/global";
+import useGlobalStore from "@/store/modules/global";
 import { storeToRefs } from "pinia";
 const { layout, menuIsCollapse, layoutTags } = storeToRefs(useGlobalStore());
 const { SET_layout } = useGlobalStore();

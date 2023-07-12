@@ -177,21 +177,21 @@ const routes = [
                 meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
                 children: [
                     {
-                        path: '/process-handle',
-                        name: 'ProcessHandle',
-                        component: 'system/approval-process/process-handle',
+                        path: '/center-handle',
+                        name: 'CenterHandle',
+                        component: 'system/approval-center/center-handle',
                         meta: { title: '待我处理', }
                     },
                     {
-                        path: `/process-submit`,
-                        name: 'ProcessSubmit',
-                        component: 'system/approval-process/process-submit',
+                        path: `/center-submit`,
+                        name: 'CenterSubmit',
+                        component: 'system/approval-center/center-submit',
                         meta: { title: '我提交的',  }
                     },
                     {
-                        path: `/process-cc`,
-                        name: 'ProcessCc',
-                        component: 'system/approval-process/process-cc',
+                        path: `/center-cc`,
+                        name: 'CenterCc',
+                        component: 'system/approval-center/center-cc',
                         meta: { title: '抄送我的', }
                     },
                 ]

@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import useIframeStore from "@/sotre/modules/iframe";
-import useGlobalStore from "@/sotre/modules/global";
+import useIframeStore from "@/store/modules/iframe";
+import useGlobalStore from "@/store/modules/global";
 import { storeToRefs } from 'pinia';
 const iframeStore = useIframeStore();
 const { iframeList } = storeToRefs(useIframeStore());
