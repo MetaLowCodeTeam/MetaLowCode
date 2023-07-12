@@ -42,7 +42,7 @@
             <mlPagination
                 :no="page.no"
                 :total="page.total"
-                :sizes="page.sizes"
+                :sizes="page.size"
                 @pageChange="pageChange"
             />
         </el-main>
@@ -73,7 +73,7 @@ let handleList = ref([]);
 // 分页
 let page = reactive({
     no: 1,
-    sizes: 10,
+    size: 20,
     total: 0,
 });
 

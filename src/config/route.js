@@ -208,13 +208,6 @@ const routes = [
                         component: 'system/report-templates/templates-list',
                         meta: { title: '模板列表', icon: 'el-icon-operation' }
                     },
-                    {
-                        path: `/templates-detail`,
-                        name: 'TemplatesDetail',
-                        component: 'system/report-templates/templates-detail',
-                        hidden: true,
-                        meta: { title: '模板设计', hidden: true }
-                    },
                 ]
             },
         ]

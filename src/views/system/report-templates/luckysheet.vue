@@ -2,10 +2,8 @@
     <div>表单设计</div>
 </template>
 
-<script>
-export default {
+<script setup>
 
-}
 </script>
 
 <style>

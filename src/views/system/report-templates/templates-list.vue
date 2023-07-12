@@ -106,7 +106,7 @@
                 <mlPagination
                     :no="page.no"
                     :total="page.total"
-                    :sizes="page.sizes"
+                    :sizes="page.size"
                     @pageChange="pageChange"
                 />
             </el-main>
@@ -145,7 +145,7 @@ let approvalList = ref([]);
 // 搜索值
 let keyword = ref("");
 let page = reactive({
-    size: 10,
+    size: 20,
     no: 1,
     total: 0,
 });

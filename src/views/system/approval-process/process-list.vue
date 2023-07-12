@@ -25,7 +25,7 @@
             </div>
         </el-aside>
 
-        <el-container class="main-container">
+        <el-container class="main-container" style="position: relative;padding-bottom: 50px;">
             <el-header class="props-action-section">
                 <span class="section-title">审批流程</span>
                 <div class="section-fr fr">
@@ -59,8 +59,7 @@
                     </el-dropdown>
                 </div>
             </el-header>
-
-            <el-main style="position: relative;">
+            <el-main>
                 <el-table
                     class="ml-el-table"
                     :data="approvalList"
@@ -120,7 +119,7 @@
                 <mlPagination
                     :no="page.no"
                     :total="page.total"
-                    :sizes="page.sizes"
+                    :sizes="page.size"
                     @pageChange="pageChange"
                 />
             </el-main>
@@ -160,7 +159,7 @@ let approvalList = ref([]);
 // 搜索值
 let keyword = ref("");
 let page = reactive({
-    size: 10,
+    size: 20,
     no: 1,
     total: 0,
 });
