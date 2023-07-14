@@ -9,20 +9,25 @@
 
 <template>
     <div class="sc-workflow-design">
+        <div class="edit-zoom">
+            <el-button size="small" style="width: 24px;" @click="editZoom('inc')">
+                <el-icon>
+                    <ElIconPlus></ElIconPlus>
+                </el-icon>
+            </el-button>
+            <span class="span-zoom ml-5 mr-5">{{ defaultZoom }}%</span>
+            <el-button size="small" style="width: 24px;" @click="editZoom('dec')">
+                <el-icon>
+                    <ElIconMinus></ElIconMinus>
+                </el-icon>
+            </el-button>
+            <el-button size="small" style="width: 24px;">
+                <el-icon>
+                    <ElIconSetting></ElIconSetting>
+                </el-icon>
+            </el-button>
+        </div>
         <div class="box-scale">
-            <div class="edit-zoom">
-                <el-button size="small" style="width: 24px;" @click="editZoom('inc')">
-                    <el-icon>
-                        <ElIconPlus></ElIconPlus>
-                    </el-icon>
-                </el-button>
-                <span class="span-zoom ml-5 mr-5">{{ defaultZoom }}%</span>
-                <el-button size="small" style="width: 24px;" @click="editZoom('dec')">
-                    <el-icon>
-                        <ElIconMinus></ElIconMinus>
-                    </el-icon>
-                </el-button>
-            </div>
             <node-wrap v-if="nodeConfig" v-model="nodeConfig"></node-wrap>
             <div class="end-node">
                 <div class="end-node-circle"></div>
@@ -45,6 +50,9 @@ export default {
         return {
             nodeConfig: this.modelValue,
             defaultZoom: 100,
+            maxZoom: 200,
+            minZoom: 10,
+            setupZoom:10,
         };
     },
     watch: {
@@ -58,11 +66,18 @@ export default {
     methods: {
         editZoom(target) {
             if (target === "inc") {
-                this.defaultZoom += 10;
+                if (this.defaultZoom === this.maxZoom) {
+                    return;
+                }
+                this.defaultZoom += this.setupZoom;
             } else {
-                this.defaultZoom -= 10;
+                if (this.defaultZoom === this.minZoom) {
+                    return;
+                }
+                this.defaultZoom -= this.setupZoom;
             }
-            document.body.style.zoom = this.defaultZoom + "%";
+            let dom = document.querySelectorAll(".box-scale")[0];
+            dom.style.zoom = this.defaultZoom + "%";
         },
     },
 };
@@ -523,10 +538,9 @@ export default {
 }
 
 .edit-zoom {
-    float:right;
-    position: sticky;
+    position: fixed;
     z-index: 6;
-    top: 55px;
+    top: 255px;
     right: 50px;
     height: 24px;
     .span-zoom {
@@ -534,6 +548,8 @@ export default {
         position: relative;
         top: 1px;
         color: #666;
+        width: 34px;
+        text-align: center;
     }
 }
 </style>
