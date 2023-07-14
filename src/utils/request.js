@@ -42,6 +42,10 @@ let MessageBox_401_show = false
 // HTTP response 拦截器
 axios.interceptors.response.use(
 	(response) => {
+        if(response.data.code === 403){
+            router.replace({path: '/login'});
+            return {}
+        }
 		return response;
 	},
 	(error) => {

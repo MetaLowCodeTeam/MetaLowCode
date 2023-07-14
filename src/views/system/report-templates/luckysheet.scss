@@ -1,0 +1,186 @@
+.hello[data-1684916215247] {
+    min-height: 100vh;
+    $sidebarWidth: 220px;
+    background: #fff;
+    .db-div {
+        width: $sidebarWidth;
+        height: 100vh;
+        position: absolute;
+        left: 0;
+        top: 0;
+        .db-title {
+            box-sizing: border-box;
+            padding-left: 24px;
+            // padding: 0 16px;
+            width: $sidebarWidth;
+            height: 60px;
+            background: #ffffff;
+            .db-title-span {
+                font-weight: bold;
+                font-size: 14px;
+                color: #1890ff;
+                float: left;
+                line-height: 60px;
+            }
+            .side-icon {
+                width: 32px;
+                height: 32px;
+                float: left;
+                margin-top: 14px;
+                margin-right: 12px;
+            }
+        }
+        .db-dbs {
+            height: calc(100% - 60px);
+            width: $sidebarWidth;
+            overflow-y: auto;
+            // .el-menu-item,
+            // .el-submenu__title {
+            //     &:hover {
+            //         background: #e6f7ff!important;
+            //     }
+            // }
+            .el-menu-item,
+            .el-submenu__title {
+                height: 40px;
+                line-height: 40px;
+            }
+            .el-menu-item.is-active {
+                color: #409eff !important;
+            }
+            .erItem-title,
+            .item-title {
+                font-weight: bold;
+            }
+            .menu-item-list {
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                color: #888;
+                cursor: all-scroll;
+                &:hover {
+                    // background-color: #ecf5ff;
+                }
+            }
+        }
+        .db-dbs::-webkit-scrollbar {
+            width: 6px; // 横向滚动条
+            height: 6px; // 纵向滚动条 必写
+        }
+        .db-dbs::-webkit-scrollbar-thumb {
+            background-image: linear-gradient(135deg, #ccc 0%, #ccc 100%);
+            border-radius: 3px;
+        }
+        .db-dbs::-webkit-scrollbar-track {
+            border-radius: 0;
+            background: #f2f7fb;
+        }
+    }
+
+    .center {
+        position: absolute;
+        left: $sidebarWidth;
+        top: 0;
+        width: calc(100% - 220px);
+        height: 100vh;
+        transition: 0.1s all;
+        #luckysheet {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0px;
+            height: 100%;
+        }
+        .luckysheet-postil-overshow {
+            word-break: break-all;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    }
+    .bd-right {
+        width: 240px;
+        position: fixed;
+        height: 100vh;
+        right: -240px;
+        top: 0;
+        &.rightContentShow {
+            right: 0px;
+        }
+        transition: 0.6s all;
+        box-sizing: border-box;
+        padding: 0 20px;
+        background: #fff;
+        z-index: 1999;
+        box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2),
+            0 16px 24px 2px rgba(0, 0, 0, 0.14),
+            0 6px 30px 5px rgba(0, 0, 0, 0.12);
+        .bd-r-title {
+            font-weight: bold;
+            height: 60px;
+            line-height: 60px;
+            color: #06a4fd;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .mb-28 {
+            margin-bottom: 20px;
+        }
+        .filed {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: rgba(0, 0, 0, 0.85);
+        }
+    }
+    .down-loading {
+        position: absolute;
+        z-index: 1000000;
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        background: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        font-size: 40px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        .loading-suffix {
+            display: inline-block;
+            width: 100px;
+            text-align: left;
+            padding-left: 5px;
+            position: relative;
+            top: 5px;
+        }
+    }
+    // .el-loading-mask {
+    //     // position: fixed;
+    //     height: 100vh;
+    //     // width: 100vh;
+    // }
+    .save-loading {
+        position: fixed;
+        left: 0;
+        height: 0;
+        // width: calc(100% - 20px);
+        width: 100%;
+        height: 100vh;
+        background: hsla(0, 0%, 100%, 0.9);
+        z-index: 2000;
+        .loading-div {
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            margin-top: -30px;
+            color: #409eff;
+            font-size: 14px;
+            .loading-icon {
+                .el-icon-loading {
+                    font-size: 25px;
+                }
+                margin-bottom: 5px;
+            }
+        }
+    }
+}

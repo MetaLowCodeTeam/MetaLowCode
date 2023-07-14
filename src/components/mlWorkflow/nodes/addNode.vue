@@ -86,6 +86,7 @@ export default {
                 node = {
                     nodeName: "条件路由",
                     type: 4,
+
                     conditionNodes: [
                         {
                             nodeName: "条件1",
@@ -93,6 +94,10 @@ export default {
                             conditionMode: 1,
                             conditionList: [],
                             conditionExpression: "",
+                            filter: {
+                                equation: "",
+                                items: [],
+                            },
                         },
                         {
                             nodeName: "条件2",
@@ -100,6 +105,10 @@ export default {
                             conditionMode: 1,
                             conditionList: [],
                             conditionExpression: "",
+                            filter: {
+                                equation: "",
+                                items: [],
+                            },
                         },
                     ],
                     childNode: this.modelValue,

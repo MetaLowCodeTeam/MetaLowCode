@@ -25,7 +25,7 @@
             </div>
         </el-aside>
 
-        <el-container class="main-container">
+        <el-container class="main-container" style="position: relative;padding-bottom: 50px;">
             <el-header class="props-action-section">
                 <span class="section-title">审批流程</span>
                 <div class="section-fr fr">
@@ -60,7 +60,7 @@
                 </div>
             </el-header>
 
-            <el-main style="position: relative;">
+            <el-main>
                 <el-table
                     class="ml-el-table"
                     :data="approvalList"
@@ -296,10 +296,10 @@ const deleteProcess = async (row) => {
 
 const goDetial = (row) => {
     router.push({
-        path: "/process-detail",
-        query: {
-            approvalConfigId: row.approvalConfigId,
-        },
+        path: "/luckysheet",
+        query:{
+            gridKey:"0000045-b0452891521045c09806647ccd8d8509"
+        }
     });
 };
 </script>

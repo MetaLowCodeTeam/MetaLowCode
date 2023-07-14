@@ -227,7 +227,7 @@ export default {
             if (index === nodeConfig.conditionNodes.length - 1) {
                 return `其他条件`;
             }
-            if (filter.items && filter.items.length > 0) {
+            if (filter && filter.items && filter.items.length > 0) {
                 return `已设置条件（${filter.items.length}）`;
             } else {
                 return `请设置条件`;
