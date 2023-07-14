@@ -55,15 +55,15 @@ export default {
             this.$emit("update:modelValue", val);
         },
     },
-    methods:{
-        editZoom(target){
-            if(target === 'inc'){
+    methods: {
+        editZoom(target) {
+            if (target === "inc") {
                 this.defaultZoom += 10;
-            }else {
+            } else {
                 this.defaultZoom -= 10;
             }
-            document.body.style.zoom = this.defaultZoom + "%"
-        }
+            document.body.style.zoom = this.defaultZoom + "%";
+        },
     },
 };
 </script>
@@ -72,6 +72,7 @@ export default {
 .sc-workflow-design {
     width: 100%;
     font-size: 13px;
+    position: relative;
 }
 .sc-workflow-design .box-scale {
     display: inline-block;
@@ -522,10 +523,11 @@ export default {
 }
 
 .edit-zoom {
-    position: absolute;
-    right: 40px;
-    top: 40px;
+    float:right;
+    position: sticky;
     z-index: 6;
+    top: 55px;
+    right: 50px;
     height: 24px;
     .span-zoom {
         display: inline-block;
