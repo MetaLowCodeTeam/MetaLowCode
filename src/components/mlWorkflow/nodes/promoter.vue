@@ -1,14 +1,15 @@
 <template>
     <div class="node-wrap">
         <div class="node-wrap-box start-node" @click="show">
-            <div class="title" style="background: #576a95;">
+            <div class="title promoter">
+                <div v-if="style === 'weCom'" class="we-com-hr"></div>
                 <el-icon class="icon">
                     <el-icon-user-filled />
                 </el-icon>
                 <span>{{ nodeConfig.nodeName }}</span>
             </div>
-            <div class="content">
-                <span>{{ toText(nodeConfig) }}</span>
+            <div class="content promoter">
+                <div class="default-div">{{ toText(nodeConfig) }}</div>
             </div>
         </div>
         <add-node v-model="nodeConfig.childNode"></add-node>
@@ -81,113 +82,108 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import addNode from "./addNode.vue";
+import usePpprovalProcessStore from "@/store/modules/approvalProcess";
+import { storeToRefs } from "pinia";
+let message = inject("$ElMessage");
+const { style } = storeToRefs(usePpprovalProcessStore());
+const props = defineProps({
+    modelValue: { type: Object, default: () => {} },
+});
+const emit = defineEmits(["update:modelValue"]);
+let nodeConfig = reactive({});
+let drawer = ref(false);
+let isEditTitle = ref(false);
+let form = reactive({});
+let dialogIsShow = ref(false);
+let conditionConf = reactive({});
+const nodeTitle = ref();
+watch(
+    () => props.modelValue,
+    () => {
+        nodeConfig = Object.assign(nodeConfig,props.modelValue);
+    },
+    {
+        deep: true,
+    }
+);
+onMounted(() => {
+    nodeConfig = Object.assign(nodeConfig,props.modelValue);
+});
 
-export default {
-    props: {
-        modelValue: { type: Object, default: () => {} },
-    },
-    components: {
-        addNode,
-    },
-    data() {
-        return {
-            nodeConfig: {},
-            drawer: false,
-            isEditTitle: false,
-            form: {},
-            dialogIsShow: false,
-            conditionConf: {},
-        };
-    },
-    watch: {
-        modelValue() {
-            this.nodeConfig = this.modelValue;
-        },
-    },
-    mounted() {
-        this.nodeConfig = this.modelValue;
-    },
-    methods: {
-        show() {
-            this.form = {};
-            this.form = JSON.parse(JSON.stringify(this.nodeConfig));
-            this.isEditTitle = false;
-            this.drawer = true;
-        },
-        editTitle() {
-            this.isEditTitle = true;
-            this.$nextTick(() => {
-                this.$refs.nodeTitle.focus();
-            });
-        },
-        saveTitle() {
-            this.isEditTitle = false;
-        },
-        nodeRoleTypeChange() {
-            if (this.form.nodeRoleType !== 3) {
-                this.form.nodeRoleList = [];
-            }
-        },
-        // 获取设置条件文案
-        getSetConditionText() {
-            let { filter } = this.form;
-            let length = filter.items.length;
-            return length > 0 ? `已设置条件（${length}）` : "点击设置";
-        },
-        // 设置条件
-        setCondition() {
-            let { filter } = this.$CloneDeep(this.form);
-            filter = this.initFilter(filter);
-            this.conditionConf = filter;
-            this.dialogIsShow = true;
-        },
-        initFilter: (filter) => {
-            let { equation } = filter;
-            if (!equation || equation === 'OR') {
-                filter.type = 1;
-                filter.equation = 'OR';
-            } else if (equation === 'AND') {
-                filter.type = 2;
-                filter.equation = 'AND';
-            } else {
-                filter.type = 3;
-            }
-            return filter
-        },
-        // 确认条件
-        conditionConfirm(conf) {
-            Object.assign(this.form.filter, conf);
-            this.$emit("update:modelValue", this.form);
-            this.dialogIsShow = false;
-        },
-        save() {
-            let { nodeRoleType, nodeRoleList } = this.form;
-            if (nodeRoleType == 3 && nodeRoleList.length < 1) {
-                this.$message.error("请选择用户");
-                return;
-            }
-            this.$emit("update:modelValue", this.form);
-            this.drawer = false;
-        },
-        toText(nodeConfig) {
-            if (nodeConfig.nodeRoleType == 2) {
-                return "记录所属用户";
-            } else if (nodeConfig.nodeRoleType == 3) {
-                if (
-                    nodeConfig.nodeRoleList &&
-                    nodeConfig.nodeRoleList.length > 0
-                ) {
-                    return nodeConfig.nodeRoleList
-                        .map((item) => item.name)
-                        .join("、");
-                }
-            } else {
-                return "所有人";
-            }
-        },
-    },
+const show = () => {
+    form = {};
+    form = JSON.parse(JSON.stringify(nodeConfig));
+    isEditTitle.value = false;
+    drawer.value = true;
+};
+const editTitle = async () => {
+    isEditTitle.value = true;
+    await nextTick();
+    nodeTitle.value.focus();
+};
+
+const saveTitle = () => {
+    isEditTitle.value = false;
+};
+const nodeRoleTypeChange = () => {
+    if (form.nodeRoleType !== 3) {
+        form.nodeRoleList = [];
+    }
+};
+// 获取设置条件文案
+const getSetConditionText = () => {
+    let { filter } = form;
+    let length = filter.items.length;
+    return length > 0 ? `已设置条件（${length}）` : "点击设置";
+};
+// 设置条件
+const setCondition = () => {
+    let { filter } = this.$CloneDeep(form);
+    filter = initFilter(filter);
+    conditionConf = filter;
+    dialogIsShow.value = true;
+};
+const initFilter = (filter) => {
+    let { equation } = filter;
+    if (!equation || equation === "OR") {
+        filter.type = 1;
+        filter.equation = "OR";
+    } else if (equation === "AND") {
+        filter.type = 2;
+        filter.equation = "AND";
+    } else {
+        filter.type = 3;
+    }
+    return filter;
+};
+// 确认条件
+const conditionConfirm = (conf) => {
+    Object.assign(form.filter, conf);
+    emit("update:modelValue", form);
+    dialogIsShow.value = false;
+};
+const save = () => {
+    let { nodeRoleType, nodeRoleList } = form;
+    if (nodeRoleType == 3 && nodeRoleList.length < 1) {
+        message.error("请选择用户");
+        return;
+    }
+    emit("update:modelValue", form);
+    drawer.value = false;
+};
+const toText = (nodeConfig) => {
+    if (nodeConfig.nodeRoleType == 2) {
+        return "记录所属用户";
+    } else if (nodeConfig.nodeRoleType == 3) {
+        if (nodeConfig.nodeRoleList && nodeConfig.nodeRoleList.length > 0) {
+            return nodeConfig.nodeRoleList.map((item) => item.name).join("、");
+        }
+    } else {
+        return "所有人";
+    }
 };
 </script>
 

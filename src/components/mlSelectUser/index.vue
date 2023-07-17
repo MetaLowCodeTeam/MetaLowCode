@@ -187,6 +187,7 @@ let getData = async () => {
     let cutSelectedIds = defaultValue.value
         ? defaultValue.value.map((el) => el.id)
         : [];
+    tabData.value = [];
     // 获取当前tab接口
     let res = await api.common["get" + cutTabCode.value](param);
     if (res.code == 200) {
@@ -241,7 +242,7 @@ let selectUser = (item, tab) => {
             }
         });
     }
-    cutTabCode;
+    autoCurrentLabel();
     emit("update:modelValue", defaultValue.value);
     emit("change", defaultValue.value);
 };

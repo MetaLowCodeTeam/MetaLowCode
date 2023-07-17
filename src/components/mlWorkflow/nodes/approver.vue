@@ -1,7 +1,8 @@
 <template>
     <div class="node-wrap">
         <div class="node-wrap-box" @click="show">
-            <div class="title" style="background: #ff943e;">
+            <div class="title reviewed">
+                <div v-if="style === 'weCom'" class="we-com-hr"></div>
                 <el-icon class="icon">
                     <el-icon-user-filled />
                 </el-icon>
@@ -10,9 +11,11 @@
                     <el-icon-close />
                 </el-icon>
             </div>
-            <div class="content">
-                <span v-if="toText(nodeConfig)">{{ toText(nodeConfig) }}</span>
-                <span v-else class="placeholder">请选择</span>
+            <div class="content reviewed">
+                <div class="default-div">
+                    <span v-if="toText(nodeConfig)">{{ toText(nodeConfig) }}</span>
+                    <span v-else class="placeholder">请选择</span>
+                </div>
             </div>
         </div>
         <add-node v-model="nodeConfig.childNode"></add-node>
@@ -130,108 +133,101 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import addNode from "./addNode.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
-export default {
-    props: {
-        modelValue: { type: Object, default: () => {} },
+import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
+import usePpprovalProcessStore from "@/store/modules/approvalProcess";
+import { storeToRefs } from "pinia";
+let message = inject("$ElMessage");
+const { style } = storeToRefs(usePpprovalProcessStore());
+const props = defineProps({
+    modelValue: { type: Object, default: () => {} },
+});
+const emit = defineEmits(["update:modelValue"]);
+let nodeConfig = reactive({});
+let isEditTitle = ref(false);
+let form = reactive({});
+let drawer = ref(false);
+let SelectFieldDialog = ref();
+let nodeTitle = ref();
+watch(
+    () => props.modelValue,
+    () => {
+        nodeConfig = Object.assign(nodeConfig,props.modelValue);
     },
-    components: {
-        addNode,
-        mlSelectField,
-    },
-    data() {
-        return {
-            nodeConfig: {},
-            drawer: false,
-            isEditTitle: false,
-            form: {},
-        };
-    },
-    watch: {
-        modelValue() {
-            this.nodeConfig = this.modelValue;
-        },
-    },
-    mounted() {
-        this.nodeConfig = this.modelValue;
-    },
-    methods: {
-        show() {
-            this.form = {};
-            this.form = JSON.parse(JSON.stringify(this.nodeConfig));
-            this.drawer = true;
-        },
-        editTitle() {
-            this.isEditTitle = true;
-            this.$nextTick(() => {
-                this.$refs.nodeTitle.focus();
-            });
-        },
-        saveTitle() {
-            this.isEditTitle = false;
-        },
-        save() {
-            let { nodeRoleType, nodeRoleList } = this.form;
-            if (nodeRoleType == 3 && nodeRoleList.length < 1) {
-                this.$message.error("请选择用户");
-                return;
-            }
-            this.$emit("update:modelValue", this.form);
-            this.drawer = false;
-        },
-        delNode() {
-            this.$emit("update:modelValue", this.nodeConfig.childNode);
-        },
-        delUser(index) {
-            this.form.nodeUserList.splice(index, 1);
-        },
-        delRole(index) {
-            this.form.nodeRoleList.splice(index, 1);
-        },
-        nodeRoleTypeChange() {
-            if (this.form.nodeRoleType !== 3) {
-                this.form.nodeRoleList = [];
-            }
-        },
-        toText(nodeConfig) {
-            if (nodeConfig.nodeRoleType == 2) {
-                return "发起人自己";
-            } else {
-                if (
-                    nodeConfig.nodeRoleList &&
-                    nodeConfig.nodeRoleList.length > 0
-                ) {
-                    return nodeConfig.nodeRoleList
-                        .map((item) => item.name)
-                        .join("、");
-                }
-            }
-        },
-        /**
-         * 添加字段
-         */
-        openSelectFieldDialog() {
-            this.$refs.SelectFieldDialog.openDialg();
-        },
-        // 删除选择字段
-        delSelectedField(inx) {
-            this.form.modifiableFields.splice(inx, 1);
-        },
-        // 字段是否允许修改切换
-        fieldEditChange(field) {
-            if (!field.isEdit && field.isRequired) {
-                field.isRequired = false;
-            }
-        },
-        // 字段是否必填切换
-        fieldRequiredChange(field) {
-            if (!field.isEdit && field.isRequired) {
-                field.isEdit = true;
-            }
-        },
-    },
+    {
+        deep: true,
+    }
+);
+onMounted(() => {
+    nodeConfig = Object.assign(nodeConfig,props.modelValue);
+});
+
+const show = () => {
+    form = {};
+    form = JSON.parse(JSON.stringify(nodeConfig));
+    isEditTitle.value = false;
+    drawer.value = true;
+};
+const editTitle = async () => {
+    isEditTitle.value = true;
+    await nextTick();
+    nodeTitle.value.focus();
+};
+const saveTitle = () => {
+    isEditTitle.value = false;
+};
+
+const save = () => {
+    let { nodeRoleType, nodeRoleList } = form;
+    if (nodeRoleType == 3 && nodeRoleList.length < 1) {
+        message.error("请选择用户");
+        return;
+    }
+    emit("update:modelValue", form);
+    drawer.value = false;
+};
+const delNode = () => {
+    emit("update:modelValue", nodeConfig.childNode);
+};
+
+
+const nodeRoleTypeChange = () => {
+    if (form.nodeRoleType !== 3) {
+        form.nodeRoleList = [];
+    }
+};
+const toText = (nodeConfig) => {
+    if (nodeConfig.nodeRoleType == 2) {
+        return "发起人自己";
+    } else {
+        if (nodeConfig.nodeRoleList && nodeConfig.nodeRoleList.length > 0) {
+            return nodeConfig.nodeRoleList.map((item) => item.name).join("、");
+        }
+    }
+};
+/**
+ * 添加字段
+ */
+const openSelectFieldDialog = () => {
+    SelectFieldDialog.value.openDialg();
+};
+// 删除选择字段
+const delSelectedField = (inx) => {
+    form.modifiableFields.splice(inx, 1);
+};
+// 字段是否允许修改切换
+const fieldEditChange = (field) => {
+    if (!field.isEdit && field.isRequired) {
+        field.isRequired = false;
+    }
+};
+// 字段是否必填切换
+const fieldRequiredChange = (field) => {
+    if (!field.isEdit && field.isRequired) {
+        field.isEdit = true;
+    }
 };
 </script>
 

@@ -8,7 +8,10 @@
 -->
 
 <template>
-    <div class="sc-workflow-design">
+    <div
+        class="sc-workflow-design"
+        :class="{'is-default' : style === 'default','is-wecom': style === 'weCom'}"
+    >
         <div class="edit-zoom">
             <el-button size="small" style="width: 24px;" @click="editZoom('inc')">
                 <el-icon>
@@ -21,11 +24,30 @@
                     <ElIconMinus></ElIconMinus>
                 </el-icon>
             </el-button>
-            <el-button size="small" style="width: 24px;">
-                <el-icon>
-                    <ElIconSetting></ElIconSetting>
-                </el-icon>
-            </el-button>
+            <el-popover placement="bottom" :width="200" :visible="isShowSetting">
+                <template #reference>
+                    <el-button
+                        size="small"
+                        style="width: 24px;"
+                        @click="isShowSetting = !isShowSetting"
+                    >
+                        <el-icon>
+                            <ElIconSetting></ElIconSetting>
+                        </el-icon>
+                    </el-button>
+                </template>
+                <div class="pt-10">
+                    <el-form label-position="top" label-width="100px">
+                        <el-form-item label="切换风格">
+                            <el-select v-model="style">
+                                <el-option label="默认" value="default"></el-option>
+                                <el-option label="仿钉钉" value="dingding"></el-option>
+                                <el-option label="仿企业微信" value="weCom"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </el-popover>
         </div>
         <div class="box-scale">
             <node-wrap v-if="nodeConfig" v-model="nodeConfig"></node-wrap>
@@ -37,49 +59,59 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch } from "vue";
 import nodeWrap from "./nodeWrap.vue";
-export default {
-    props: {
-        modelValue: { type: Object, default: () => {} },
+import usePpprovalProcessStore from "@/store/modules/approvalProcess";
+import { storeToRefs } from "pinia";
+const { style } = storeToRefs(usePpprovalProcessStore());
+
+const props = defineProps({
+    modelValue: { type: Object, default: () => {} },
+});
+const emit = defineEmits(["update:modelValue"]);
+let nodeConfig = ref(null);
+// 流程比例
+let defaultZoom = ref(100);
+// 最大比例
+let maxZoom = ref(200);
+// 最小比例
+let minZoom = ref(10);
+// 比例步数
+let setupZoom = ref(10);
+// 是否显示设置
+let isShowSetting = ref(false);
+watch(
+    () => props.modelValue,
+    (v) => {
+        nodeConfig.value = v;
     },
-    components: {
-        nodeWrap,
+    {
+        deep: true,
+    }
+);
+watch(
+    nodeConfig,
+    (v) => {
+        emit("update:modelValue", v);
     },
-    data() {
-        return {
-            nodeConfig: this.modelValue,
-            defaultZoom: 100,
-            maxZoom: 200,
-            minZoom: 10,
-            setupZoom:10,
-        };
-    },
-    watch: {
-        modelValue(val) {
-            this.nodeConfig = val;
-        },
-        nodeConfig(val) {
-            this.$emit("update:modelValue", val);
-        },
-    },
-    methods: {
-        editZoom(target) {
-            if (target === "inc") {
-                if (this.defaultZoom === this.maxZoom) {
-                    return;
-                }
-                this.defaultZoom += this.setupZoom;
-            } else {
-                if (this.defaultZoom === this.minZoom) {
-                    return;
-                }
-                this.defaultZoom -= this.setupZoom;
-            }
-            let dom = document.querySelectorAll(".box-scale")[0];
-            dom.style.zoom = this.defaultZoom + "%";
-        },
-    },
+    { deep: true }
+);
+
+const editZoom = (target) => {
+    if (target === "inc") {
+        if (defaultZoom.value === maxZoom.value) {
+            return;
+        }
+        defaultZoom.value += setupZoom.value;
+    } else {
+        if (defaultZoom.value === minZoom.value) {
+            return;
+        }
+        defaultZoom.value -= setupZoom.value;
+    }
+    let dom = document.querySelectorAll(".box-scale")[0];
+    dom.style.zoom = defaultZoom.value + "%";
 };
 </script>
 
@@ -148,6 +180,18 @@ export default {
         position: relative;
         display: flex;
         align-items: center;
+        // 发起人
+        &.promoter {
+            background: #4a94ff;
+        }
+        // 审批人
+        &.reviewed {
+            background: #fcad22;
+        }
+        // 抄送人
+        &.ccto {
+            background: #3cb4b2;
+        }
     }
     .node-wrap-box .title .icon {
         margin-right: 5px;
@@ -550,6 +594,77 @@ export default {
         color: #666;
         width: 34px;
         text-align: center;
+    }
+}
+
+/**
+*  仿企业微信
+**/
+.sc-workflow-design.is-wecom {
+    .node-wrap-box .title {
+        height: 34px;
+        line-height: 34px;
+        padding-top: 4px;
+        .we-com-hr {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 4px;
+
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+        }
+        // 发起人
+        &.promoter {
+            color: #4a94ff;
+            background: #e9f2ff;
+            .we-com-hr {
+                background: #4a94ff;
+            }
+        }
+        // 审批人
+        &.reviewed {
+            color: #fcad22;
+            background: #fff9ee;
+            .we-com-hr {
+                background: #fcad22;
+            }
+        }
+        // 抄送人
+        &.ccto {
+            color: #3cb4b2;
+            background: #e6f8f8;
+            .we-com-hr {
+                background: #3cb4b2;
+            }
+        }
+    }
+}
+/**
+*  默认
+**/
+.sc-workflow-design.is-default {
+    .node-wrap-box .content {
+        border-radius: 0 0 4px 4px;
+        padding: 0 5px;
+        .default-div{
+            padding: 15px 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            background: #fff;
+        }
+        // 发起人
+        &.promoter {
+            background: #4a94ff;
+        }
+        // 审批人
+        &.reviewed {
+            background: #fcad22;
+        }
+        // 抄送人
+        &.ccto {
+            background: #3cb4b2;
+        }
     }
 }
 </style>
