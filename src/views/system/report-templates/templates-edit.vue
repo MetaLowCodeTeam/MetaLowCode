@@ -16,7 +16,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="名称">
-                <el-input v-model="dialogForm.form.flowName" style="width: 80%;"></el-input>
+                <el-input v-model="dialogForm.form.reportName" style="width: 80%;"></el-input>
             </el-form-item>
             <el-form-item v-if="dialogForm.type == 'edit'">
                 <el-checkbox v-model="dialogForm.form.isDisabled" label="是否禁用" />
@@ -78,27 +78,27 @@ onMounted(() => {
 
 const saveProcess = async () => {
     let { type, form } = props.dialogForm;
-    let { entityCode, flowName, approvalConfigId, isDisabled } = form;
+    let { entityCode, reportName, reportConfigId, isDisabled } = form;
     if (type == "add") {
         if (!entityCode) {
             message.error("请选择应用实体");
             return;
         }
     }
-    if (!flowName) {
-        message.error("请输入审批流程名称");
+    if (!reportName) {
+        message.error("请输入模板名称");
         return;
     }
     loading.value = true;
-    let res = await saveRecord("ApprovalConfig", approvalConfigId || "", {
+    let res = await saveRecord("ReportConfig", reportConfigId || "", {
         entityCode,
-        flowName,
-        isDisabled,
+        reportName,
+        isDisabled: isDisabled || false,
     });
     if (res.code == 200) {
         if (type === "add") {
-            let approvalConfigId = res.data.formData.approvalConfigId;
-            emit("saveProcess", { approvalConfigId });
+            let reportConfigId = res.data.formData.reportConfigId;
+            emit("saveProcess", { reportConfigId });
         } else {
             emit("saveProcess");
             message.success("修改成功");

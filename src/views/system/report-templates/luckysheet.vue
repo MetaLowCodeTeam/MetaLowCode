@@ -124,6 +124,7 @@ import { onMounted, onBeforeUnmount, reactive, ref, inject } from "vue";
 import { useRouter } from "vue-router";
 import { Document } from "@element-plus/icons-vue";
 import { VueDraggableNext } from "vue-draggable-next";
+import { saveRecord } from "@/api/crud";
 const message = inject("$ElMessage");
 const cloneDeep = inject("$CloneDeep");
 const router = useRouter();
@@ -165,35 +166,10 @@ let gridKey = ref("");
 let rightContentShow = ref(false);
 // 左侧菜单列表
 let dbList = ref([]);
+// 实体CODE
+let entityCode = ref("");
 
 onMounted(() => {
-    // let head = document.querySelectorAll("head")[0];
-    // let pluginsCss = document.createElement("link");
-    // pluginsCss.href = "./luckysheet/plugins/css/pluginsCss.css";
-    // pluginsCss.rel = "stylesheet";
-    // let plugins = document.createElement("link");
-    // plugins.href = "./luckysheet/plugins/plugins.css";
-    // plugins.rel = "stylesheet";
-    // let luckysheet = document.createElement("link");
-    // luckysheet.href = "./luckysheet/css/luckysheet";
-    // luckysheet.rel = "stylesheet";
-    // let iconfont = document.createElement("link");
-    // iconfont.href = "./luckysheet/assets/iconfont/iconfont.css";
-    // iconfont.rel = "stylesheet";
-    // let customiconfont = document.createElement("link");
-    // customiconfont.href = "./luckysheet/assets/customiconfont/iconfont.css";
-    // customiconfont.rel = "stylesheet";
-    // let pluginJs = document.createElement("script");
-    // pluginJs.src = "./luckysheet/plugins/js/plugin.js";
-    // let luckysheetJs = document.createElement("script");
-    // luckysheetJs.src = "./luckysheet/luckysheet.umd.js";
-    // head.append(pluginsCss);
-    // head.append(plugins);
-    // head.append(luckysheet);
-    // head.append(iconfont);
-    // head.append(customiconfont);
-    // head.append(pluginJs);
-    // head.append(luckysheetJs);
     gridKey.value = router.currentRoute.value.query.gridKey;
     // 监听点击和按键
     window.addEventListener("keydown", handleKeydownEvent);
@@ -261,7 +237,7 @@ const initLuckysheet = (gridKey, title, sheets) => {
         status: "1", //激活状态
         order: "0", //工作表的顺序
         hide: "0", //是否隐藏
-        myFolderUrl: "https://www.hhrchina.com/",
+        myFolderUrl: '/templates-list',
         data: sheets || defaultSheetData,
         showtoolbarConfig: {
             save: true,
@@ -407,11 +383,12 @@ const getWorkBook = async () => {
     isMaskShow.show = true;
     let res = await http.get("/crud/queryById", {
         entityId: gridKey.value,
-        fieldNames:"reportConfigId,reportName,reportJson,entityCode",
+        fieldNames: "reportConfigId,reportName,reportJson,entityCode",
     });
     if (res.code === 200) {
         let resData = res.data;
         let sheets = JSON.parse(resData.reportJson);
+        entityCode.value = resData.entityCode;
         initLuckysheet(resData.reportConfigId, resData.reportName, sheets);
     } else {
         message.error("获取内容失败：" + res.error);
@@ -450,8 +427,25 @@ const handleDocumentClick = (event) => {
 };
 
 // 保存
-const onSave = () => {
-    console.log("执行了onsave保存方法");
+const onSave =async () => {
+    // saveRecord
+    let params = {
+        entity: "ReportConfig",
+        id: gridKey.value,
+        formModel: {
+            reportName: luckysheet.getWorkbookName(),
+            reportJson: JSON.stringify(luckysheet.getAllSheets()),
+            entityCode: entityCode.value,
+        },
+    };
+    saveLoading.value = true;
+    let res = await saveRecord(params.entity,params.id,params.formModel);
+    if(res.code === 200){
+        message.success("保存成功");
+    }else {
+        message.error('保存失败：' + res.error);
+    }
+    saveLoading.value = false;
 };
 
 // 在页面销毁的时候解除

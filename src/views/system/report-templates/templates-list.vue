@@ -19,8 +19,8 @@
                         :key="inx"
                         :class="{'is-active':field.entityCode == defaultCode}"
                         @click="fieldCheck(field)"
-                        :title="field.label"
-                    >{{ field.label }}</div>
+                        :title="entityLable[field.entityCode]"
+                    >{{ entityLable[field.entityCode] }}</div>
                 </div>
             </div>
         </el-aside>
@@ -36,27 +36,12 @@
                         :suffix-icon="Search"
                         @keyup.enter="getApprovalList"
                     ></el-input>
-                    <el-dropdown
-                        split-button
-                        type="primary"
-                        @click="editApproval('add')"
-                        @command="referral"
-                    >
+                    <el-button type="primary" @click="editApproval('add')">
                         <el-icon size="14">
                             <ElIconPlus />
                         </el-icon>
                         <span class="ml-5">添加</span>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item command="referral">
-                                    <el-icon>
-                                        <ElIconAvatar />
-                                    </el-icon>
-                                    <span class="ml-5">批量转审</span>
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    </el-button>
                 </div>
             </el-header>
 
@@ -67,21 +52,18 @@
                     stripe
                     style="width: 100%;"
                     ref="meTable"
-                    @sort-change="sortChange"
                 >
-                    <el-table-column label="名称" prop="flowName" sortable>
+                    <el-table-column label="名称">
                         <template #default="scope">
                             <span
                                 class="highlight"
                                 @click="goDetial(scope.row)"
-                            >{{ scope.row.flowName }}</span>
+                            >{{ scope.row.reportName }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column sortable prop="entityCode" label="应用实体">
+                    <el-table-column label="应用实体">
                         <template #default="scope">{{ entityLable[scope.row.entityCode] }}</template>
                     </el-table-column>
-                    <el-table-column label="运行中的流程统计" prop="runningTotal" :align="'center'"></el-table-column>
-                    <el-table-column label="结束的流程统计" prop="completeTotal" :align="'center'"></el-table-column>
                     <el-table-column label="启用" :align="'center'" width="60">
                         <template #default="scope">
                             <span class="enable false" v-if="scope.row.isDisabled">否</span>
@@ -103,11 +85,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <mlPagination
-                    :no="page.no"
-                    :total="page.total"
-                    @pageChange="pageChange"
-                />
+                <mlPagination :no="page.no" :total="page.total" @pageChange="pageChange" />
             </el-main>
         </el-container>
         <EditApprovalDialog
@@ -163,18 +141,21 @@ let dialogForm = reactive({
     form: {},
 });
 onMounted(() => {
-    getEntityList();
     if (JSON.stringify(entityLable.value) == "{}") {
         getEntityLable();
     }
+    getEntityList();
 });
 
 // 获取左侧实体列表
 const getEntityList = async () => {
     loading.value = true;
-    let res = await api.approval.list.getEntityList();
+    let res = await api.reportTemplates.list.getEntityList();
     if (res.code === 200) {
-        entityList.value = res.data;
+        entityList.value = res.data.map((el) => {
+            el.label = entityLable.value[el.entityCode];
+            return el;
+        });
         getApprovalList();
     } else {
         loading.value = false;
@@ -186,9 +167,8 @@ const getEntityList = async () => {
 const getApprovalList = async () => {
     loading.value = true;
     let param = {
-        mainEntity: "ApprovalConfig",
-        fieldsList:
-            "entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal",
+        mainEntity: "ReportConfig",
+        fieldsList: "reportName,entityCode,isDisabled,modifiedOn,modifiedBy",
         pageSize: page.size,
         pageNo: page.no,
         filter: {},
@@ -228,41 +208,19 @@ const getApprovalList = async () => {
 const editApproval = (target, row) => {
     dialogIsShow.value = true;
     if (target === "add") {
-        dialogForm.title = "添加审批流程";
+        dialogForm.title = "添加报表";
         dialogForm.form = {};
         dialogForm.type = "add";
     } else {
-        dialogForm.title = "编辑审批流程";
+        dialogForm.title = "编辑报表";
         dialogForm.type = "edit";
         dialogForm.form = { ...row };
     }
 };
 
-// 批量转审
-const referral = () => {
-    console.log("批量转审");
-};
-
 // 分页切换
 const pageChange = (v) => {
     page.no = v;
-    getApprovalList();
-};
-
-// 表格排序
-const sortChange = (column, prop, order) => {
-    let sortType;
-    if (column.order && column.order === "ascending") {
-        sortType = "ASC";
-    } else if (column.order && column.order === "descending") {
-        sortType = "DESC";
-    } else {
-        sortType = "";
-    }
-    tableSort.value[1] = {
-        fieldName: column.prop,
-        type: sortType,
-    };
     getApprovalList();
 };
 
@@ -283,7 +241,7 @@ const saveProcess = async (val) => {
 };
 
 const deleteProcess = async (row) => {
-    let res = await deleteRecord(row.approvalConfigId);
+    let res = await deleteRecord(row.reportConfigId);
     loading.value = true;
     if (res.code === 200) {
         message.success("删除成功");
@@ -297,9 +255,9 @@ const deleteProcess = async (row) => {
 const goDetial = (row) => {
     router.push({
         path: "/luckysheet",
-        query:{
-            gridKey:"0000045-b0452891521045c09806647ccd8d8509"
-        }
+        query: {
+            gridKey: row.reportConfigId,
+        },
     });
 };
 </script>

@@ -279,8 +279,9 @@ export default {
       },
 
       loadTableData(filter) {
-        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
-        getDataList('User', this.fieldsList, realFilter, this.page.limit, this.page.pageNo).then(res => {
+        // let realFilter = isEmptyStr(filter) ? '(1=1)' : filter;
+        // let realFilter = [];
+        getDataList('User', this.fieldsList, null, this.page.limit, this.page.pageNo).then(res => {
           if (res.error != null) {
             this.$message({message: res.error, type: 'error'})
           } else {

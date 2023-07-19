@@ -18,7 +18,7 @@
             </div>
         </el-header>
 
-        <el-main>
+        <el-main style="position: relative;">
             <el-table
                 class="ml-el-table"
                 :data="handleList"
@@ -49,7 +49,7 @@
 </template>
   
 <script setup>
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 const props = defineProps({
     type: { type: String, default: "" },
@@ -76,6 +76,10 @@ let page = reactive({
     total: 0,
 });
 
+onMounted(()=>{
+    getCenterList();
+})
+
 const editRow = (target, row) => {
     console.log("编辑");
 };
@@ -88,7 +92,9 @@ const pageChange = (page) => {
 };
 
 // 获取数据列表
-const getCenterList = () => {};
+const getCenterList = () => {
+    console.log(1);
+};
 </script>
 <style lang="scss" scoped>
 .props-action-section {

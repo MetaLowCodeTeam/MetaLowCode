@@ -1,4 +1,7 @@
 
+/**
+ * 审批流程Api
+ */
 import http from "@/utils/request"
 
 export default {
@@ -17,9 +20,5 @@ export default {
         getEntityList: async (data) => {
             return await http.get("/approval/getAllApprovalConfigEntity", data);
         },
-        // 获取流程列表
-        getApprovalList: async (data) => {
-            return await http.post("/approval/getAllApprovalConfig", data);
-        }
     },
 }
