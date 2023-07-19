@@ -29,13 +29,12 @@
             <el-header class="props-action-section">
                 <span class="section-title">审批流程</span>
                 <div class="section-fr fr">
-                    <el-input
+                    <mlSearchInput
                         class="section-search"
                         v-model="keyword"
                         placeholder="查询"
-                        :suffix-icon="Search"
-                        @keyup.enter="getApprovalList"
-                    ></el-input>
+                        @confirm="getApprovalList"
+                    />
                     <el-dropdown
                         split-button
                         type="primary"
@@ -116,11 +115,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <mlPagination
-                    :no="page.no"
-                    :total="page.total"
-                    @pageChange="pageChange"
-                />
+                <mlPagination :no="page.no" :total="page.total" @pageChange="pageChange" />
             </el-main>
         </el-container>
         <EditApprovalDialog
@@ -205,19 +200,23 @@ const getApprovalList = async () => {
             "entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal",
         pageSize: page.size,
         pageNo: page.no,
-        filter: {},
-        sortFields: tableSort.value,
-    };
-    if (defaultCode.value != "all") {
-        param.filter = {
+        filter: {
             equation: "AND",
             items: [
                 {
-                    fieldName: "entityCode",
-                    op: "EQ",
-                    value: defaultCode.value,
+                    fieldName: "flowName",
+                    op: "LK",
+                    value: keyword.value,
                 },
             ],
+        },
+        sortFields: tableSort.value,
+    };
+    if (defaultCode.value != "all") {
+        param.filter.items[1] = {
+            fieldName: "entityCode",
+            op: "EQ",
+            value: defaultCode.value,
         };
     }
     let res = await getDataList(

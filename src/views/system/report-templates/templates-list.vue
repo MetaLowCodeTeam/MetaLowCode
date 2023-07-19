@@ -29,13 +29,7 @@
             <el-header class="props-action-section">
                 <span class="section-title">审批流程</span>
                 <div class="section-fr fr">
-                    <el-input
-                        class="section-search"
-                        v-model="keyword"
-                        placeholder="查询"
-                        :suffix-icon="Search"
-                        @keyup.enter="getApprovalList"
-                    ></el-input>
+                    <mlSearchInput class="section-search" v-model="keyword" placeholder="查询" @confirm="getApprovalList" />
                     <el-button type="primary" @click="editApproval('add')">
                         <el-icon size="14">
                             <ElIconPlus />
@@ -106,6 +100,7 @@ import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import EditApprovalDialog from "./templates-edit.vue";
 import { getDataList, deleteRecord } from "@/api/crud";
+import { ElMessageBox } from "element-plus";
 const message = inject("$ElMessage");
 const api = inject("$API");
 const router = useRouter();
@@ -171,19 +166,24 @@ const getApprovalList = async () => {
         fieldsList: "reportName,entityCode,isDisabled,modifiedOn,modifiedBy",
         pageSize: page.size,
         pageNo: page.no,
-        filter: {},
-        sortFields: tableSort.value,
-    };
-    if (defaultCode.value != "all") {
-        param.filter = {
+        filter: {
             equation: "AND",
             items: [
                 {
-                    fieldName: "entityCode",
-                    op: "EQ",
-                    value: defaultCode.value,
+                    fieldName: "reportName",
+                    op: "LK",
+                    value: keyword.value,
                 },
             ],
+        },
+        sortFields: tableSort.value,
+    };
+
+    if (defaultCode.value != "all") {
+        param.filter.items[1] = {
+            fieldName: "entityCode",
+            op: "EQ",
+            value: defaultCode.value,
         };
     }
     let res = await getDataList(
@@ -241,15 +241,23 @@ const saveProcess = async (val) => {
 };
 
 const deleteProcess = async (row) => {
-    let res = await deleteRecord(row.reportConfigId);
-    loading.value = true;
-    if (res.code === 200) {
-        message.success("删除成功");
-        getApprovalList();
-    } else {
-        loading.value = false;
-        message.error("删除失败：" + res.error);
-    }
+    ElMessageBox.confirm("是否确认删除?", "提示：", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(async () => {
+            let res = await deleteRecord(row.reportConfigId);
+            loading.value = true;
+            if (res.code === 200) {
+                message.success("删除成功");
+                getApprovalList();
+            } else {
+                loading.value = false;
+                message.error("删除失败：" + res.error);
+            }
+        })
+        .catch(() => {});
 };
 
 const goDetial = (row) => {

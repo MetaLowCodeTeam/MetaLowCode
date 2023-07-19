@@ -46,6 +46,7 @@ import mlSelectUser from './components/mlSelectUser/index.vue';
 import mlSetConditions from './components/mlSetConditions/index.vue';
 import mlDialog from './components/mlDialog/index.vue';
 import mlPagination from './components/mlPagination/index.vue';
+import mlSearchInput from './components/mlSearchInput/index.vue';
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -69,6 +70,7 @@ export default {
         app.component('mlSetConditions', mlSetConditions);
         app.component('mlDialog', mlDialog);
         app.component('mlPagination', mlPagination);
+        app.component('mlSearchInput', mlSearchInput);
 		app.component('scTable', scTable);
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);
