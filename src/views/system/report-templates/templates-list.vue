@@ -99,7 +99,6 @@
 <script setup>
 import useCommonStore from "@/store/modules/common";
 import { inject, onMounted, reactive, ref } from "vue";
-import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";

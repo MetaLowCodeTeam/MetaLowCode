@@ -94,6 +94,7 @@ export default {
                             conditionMode: 1,
                             conditionList: [],
                             conditionExpression: "",
+                            priorityLevel:1,
                             filter: {
                                 equation: "",
                                 items: [],
@@ -105,6 +106,7 @@ export default {
                             conditionMode: 1,
                             conditionList: [],
                             conditionExpression: "",
+                            priorityLevel:2,
                             filter: {
                                 equation: "",
                                 items: [],

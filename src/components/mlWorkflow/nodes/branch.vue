@@ -181,6 +181,11 @@ export default {
                 priorityLevel: len,
                 conditionMode: 1,
                 conditionList: [],
+                conditionExpression: "",
+                filter: {
+                    equation: "",
+                    items: [],
+                },
             });
         },
         delTerm(index) {
