@@ -88,12 +88,13 @@ import addNode from "./addNode.vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
 let message = inject("$ElMessage");
+let cloneDeep = inject("$CloneDeep");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
 });
 const emit = defineEmits(["update:modelValue"]);
-let nodeConfig = reactive({});
+let nodeConfig = ref({});
 let drawer = ref(false);
 let isEditTitle = ref(false);
 let form = reactive({});
@@ -103,19 +104,18 @@ const nodeTitle = ref();
 watch(
     () => props.modelValue,
     () => {
-        nodeConfig = Object.assign(nodeConfig,props.modelValue);
+        nodeConfig.value = props.modelValue;
     },
     {
         deep: true,
     }
 );
 onMounted(() => {
-    nodeConfig = Object.assign(nodeConfig,props.modelValue);
+    nodeConfig.value = props.modelValue;
 });
 
 const show = () => {
-    form = {};
-    form = JSON.parse(JSON.stringify(nodeConfig));
+    form = Object.assign(form, nodeConfig.value);
     isEditTitle.value = false;
     drawer.value = true;
 };
@@ -141,7 +141,7 @@ const getSetConditionText = () => {
 };
 // 设置条件
 const setCondition = () => {
-    let { filter } = this.$CloneDeep(form);
+    let { filter } = cloneDeep(form);
     filter = initFilter(filter);
     conditionConf = filter;
     dialogIsShow.value = true;

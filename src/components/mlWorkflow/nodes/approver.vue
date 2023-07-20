@@ -145,7 +145,7 @@ const props = defineProps({
     modelValue: { type: Object, default: () => {} },
 });
 const emit = defineEmits(["update:modelValue"]);
-let nodeConfig = reactive({});
+let nodeConfig = ref({});
 let isEditTitle = ref(false);
 let form = reactive({});
 let drawer = ref(false);
@@ -154,19 +154,18 @@ let nodeTitle = ref();
 watch(
     () => props.modelValue,
     () => {
-        nodeConfig = Object.assign(nodeConfig,props.modelValue);
+        nodeConfig.value = props.modelValue;
     },
     {
         deep: true,
     }
 );
 onMounted(() => {
-    nodeConfig = Object.assign(nodeConfig,props.modelValue);
+    nodeConfig.value = props.modelValue;
 });
 
 const show = () => {
-    form = {};
-    form = JSON.parse(JSON.stringify(nodeConfig));
+    form = Object.assign(form, nodeConfig.value);
     isEditTitle.value = false;
     drawer.value = true;
 };
@@ -191,7 +190,6 @@ const save = () => {
 const delNode = () => {
     emit("update:modelValue", nodeConfig.childNode);
 };
-
 
 const nodeRoleTypeChange = () => {
     if (form.nodeRoleType !== 3) {
