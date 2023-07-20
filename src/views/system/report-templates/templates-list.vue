@@ -29,7 +29,12 @@
             <el-header class="props-action-section">
                 <span class="section-title">审批流程</span>
                 <div class="section-fr fr">
-                    <mlSearchInput class="section-search" v-model="keyword" placeholder="查询" @confirm="getApprovalList" />
+                    <mlSearchInput
+                        class="section-search"
+                        v-model="keyword"
+                        placeholder="查询"
+                        @confirm="getApprovalList"
+                    />
                     <el-button type="primary" @click="editApproval('add')">
                         <el-icon size="14">
                             <ElIconPlus />
@@ -261,12 +266,13 @@ const deleteProcess = async (row) => {
 };
 
 const goDetial = (row) => {
-    router.push({
+    const to = router.resolve({
         path: "/luckysheet",
         query: {
             gridKey: row.reportConfigId,
         },
     });
+    window.open(to.href, "_blank");
 };
 </script>
   
