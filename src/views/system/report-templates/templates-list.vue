@@ -268,7 +268,7 @@ const goDetial = (row) => {
     const to = router.resolve({
         path: "/luckysheet",
         query: {
-            gridKey: row.reportConfigId,
+            reportConfigId: row.reportConfigId,
         },
     });
     window.open(to.href, "_blank");

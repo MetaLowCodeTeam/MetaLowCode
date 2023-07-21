@@ -161,7 +161,7 @@ let cutSelectCell = reactive({});
 // 当前格子的批注
 let cellPs = reactive({});
 // 当前表唯一值
-let gridKey = ref("");
+let reportConfigId = ref("");
 // 右侧内容是否显示
 let rightContentShow = ref(false);
 // 左侧菜单列表
@@ -170,7 +170,7 @@ let dbList = ref([]);
 let entityCode = ref("");
 
 onMounted(() => {
-    gridKey.value = router.currentRoute.value.query.gridKey;
+    reportConfigId.value = router.currentRoute.value.query.reportConfigId;
     // 监听点击和按键
     window.addEventListener("keydown", handleKeydownEvent);
     window.addEventListener("click", handleDocumentClick);
@@ -183,7 +183,7 @@ onMounted(() => {
 });
 
 // 初始化表格
-const initLuckysheet = (gridKey, title, sheets) => {
+const initLuckysheet = (reportConfigId, title, sheets) => {
     let defaultSheetData = [
         {
             name: "Cell", //工作表名称
@@ -226,7 +226,7 @@ const initLuckysheet = (gridKey, title, sheets) => {
         },
     ];
     luckysheet.create({
-        gridKey: gridKey,
+        gridKey: reportConfigId,
         container: "luckysheet", // 设定DOM容器的id
         title: title || "Luckysheet Demo", // 设定表格名称
         lang: "zh", // 设定表格语言
@@ -361,7 +361,7 @@ const initCellFormat = (ps) => {
 const getEntityData = async () => {
     isMaskShow.value = true;
     let res = await http.get("/report/getEntityList", {
-        reportConfigId: gridKey.value,
+        reportConfigId: reportConfigId.value,
     });
     if (res.code === 200) {
         let resDataList = res.data || [];
@@ -382,7 +382,7 @@ const getEntityData = async () => {
 const getWorkBook = async () => {
     isMaskShow.show = true;
     let res = await http.get("/crud/queryById", {
-        entityId: gridKey.value,
+        entityId: reportConfigId.value,
         fieldNames: "reportConfigId,reportName,reportJson,entityCode",
     });
     if (res.code === 200) {
@@ -431,7 +431,7 @@ const onSave =async () => {
     // saveRecord
     let params = {
         entity: "ReportConfig",
-        id: gridKey.value,
+        id: reportConfigId.value,
         formModel: {
             reportName: luckysheet.getWorkbookName(),
             reportJson: JSON.stringify(luckysheet.getAllSheets()),
