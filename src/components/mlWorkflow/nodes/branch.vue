@@ -16,15 +16,18 @@
                                         <el-icon-arrow-left />
                                     </el-icon>
                                 </div>
-                                <div class="title">
+                                <div class="title branch">
+                                    <div v-if="style === 'weCom'" class="we-com-hr"></div>
                                     <span class="node-title">{{ item.nodeName }}</span>
-                                    <span class="priority-title">优先级{{item.priorityLevel}}</span>
+                                    <span class="priority-title">优先级{{index + 1}}</span>
                                     <el-icon class="close" @click.stop="delTerm(index)">
                                         <el-icon-close />
                                     </el-icon>
                                 </div>
-                                <div class="content">
-                                    <span>{{ toText(nodeConfig, index) }}</span>
+                                <div class="content branch">
+                                    <div class="default-div">
+                                        <span>{{ toText(nodeConfig, index) }}</span>
+                                    </div>
                                 </div>
                                 <div
                                     class="sort-right"
@@ -82,7 +85,7 @@
             </template>
             <div class="last-nodes" v-if="lastNodes">该分支将作为最终分支匹配其他条件</div>
             <div class="work-flow-conditions mb-20" :class="{'mt-30':lastNodes}">
-                <mlSetConditions ref="mlSetConditions" v-model="conditionConf" />
+                <mlSetConditions ref="mlSetConditionsRef" v-model="conditionConf" />
             </div>
             <template #footer>
                 <div style="flex: auto">
@@ -94,151 +97,145 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import addNode from "./addNode.vue";
+import mlSetConditions from '@/components/mlSetConditions/index.vue';
+import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
+import usePpprovalProcessStore from "@/store/modules/approvalProcess";
+import { storeToRefs } from "pinia";
+let message = inject("$ElMessage");
+const { style } = storeToRefs(usePpprovalProcessStore());
+const props = defineProps({
+    modelValue: { type: Object, default: () => {} },
+});
+const emit = defineEmits(["update:modelValue"]);
+let nodeConfig = ref({});
+let drawer = ref(false);
+let isEditTitle = ref(false);
+let cutIndex = ref(0);
+let form = reactive({});
+let conditionConf = reactive({});
+let mlSetConditionsRef = ref();
+// 最终分支
+let lastNodes = ref(false);
+watch(
+    () => props.modelValue,
+    () => {
+        nodeConfig.value = props.modelValue;
+    },
+    {
+        deep: true,
+    }
+);
+onMounted(() => {
+    nodeConfig.value = props.modelValue;
+});
 
-export default {
-    props: {
-        modelValue: { type: Object, default: () => {} },
-    },
-    components: {
-        addNode,
-    },
-    data() {
-        return {
-            nodeConfig: {},
-            drawer: false,
-            isEditTitle: false,
-            index: 0,
-            form: {},
-            conditionConf: {},
-            // 最终分支
-            lastNodes: false,
-        };
-    },
-    watch: {
-        modelValue() {
-            this.nodeConfig = this.modelValue;
-        },
-    },
-    mounted() {
-        this.nodeConfig = this.modelValue;
-    },
-    methods: {
-        show(index) {
-            this.index = index;
-            this.form = {};
-            this.form = JSON.parse(
-                JSON.stringify(this.nodeConfig.conditionNodes[index])
-            );
-            this.lastNodes = false;
-            if (index === this.nodeConfig.conditionNodes.length - 1) {
-                this.lastNodes = true;
-            }
-            let { filter } = this.$CloneDeep(this.form);
-            filter = this.initFilter(filter);
-            this.conditionConf = filter;
-            this.drawer = true;
-        },
-        initFilter: (filter) => {
-            let { equation } = filter;
-            if (!equation || equation === "OR") {
-                filter.type = 1;
-                filter.equation = "OR";
-            } else if (equation === "AND") {
-                filter.type = 2;
-                filter.equation = "AND";
-            } else {
-                filter.type = 3;
-            }
+const show = (index) => {
+    cutIndex.value = index;
+    form = Object.assign(form, nodeConfig.value.conditionNodes[index]);
+    lastNodes.value = false;
+    if (index === nodeConfig.value.conditionNodes.length - 1) {
+        lastNodes.value = true;
+    }
+    let { filter } = JSON.parse(JSON.stringify(form));
+    filter = initFilter(filter);
+    conditionConf = filter;
+    drawer.value = true;
+};
+const initFilter = (filter) => {
+    let { equation } = filter;
+    if (!equation || equation === "OR") {
+        filter.type = 1;
+        filter.equation = "OR";
+    } else if (equation === "AND") {
+        filter.type = 2;
+        filter.equation = "AND";
+    } else {
+        filter.type = 3;
+    }
 
-            return filter;
+    return filter;
+};
+const editTitle = async () => {
+    isEditTitle.value = true;
+    await nextTick();
+    nodeTitle.value.focus();
+};
+const saveTitle = () => {
+    isEditTitle.value = false;
+};
+const save = () => {
+    if (!mlSetConditionsRef.value.checkConditionList()) {
+        return;
+    }
+    let { items, equation } = conditionConf;
+    Object.assign(form.filter, { equation, items });
+    nodeConfig.value.conditionNodes[cutIndex.value] = form;
+    emit("update:modelValue", nodeConfig.value);
+    drawer.value = false;
+};
+const addTerm = () => {
+    let len = nodeConfig.value.conditionNodes.length + 1;
+    nodeConfig.value.conditionNodes.push({
+        nodeName: "条件" + len,
+        type: 3,
+        priorityLevel: len,
+        conditionMode: 1,
+        conditionList: [],
+        conditionExpression: "",
+        filter: {
+            equation: "",
+            items: [],
         },
-        editTitle() {
-            this.isEditTitle = true;
-            this.$nextTick(() => {
-                this.$refs.nodeTitle.focus();
-            });
-        },
-        saveTitle() {
-            this.isEditTitle = false;
-        },
-        save() {
-            if (!this.$refs.mlSetConditions.checkConditionList()) {
-                return;
-            }
-            let { items, equation } = this.conditionConf;
-            Object.assign(this.form.filter, { equation, items });
-            this.nodeConfig.conditionNodes[this.index] = this.form;
-            this.$emit("update:modelValue", this.nodeConfig);
-            this.drawer = false;
-        },
-        addTerm() {
-            let len = this.nodeConfig.conditionNodes.length + 1;
-            this.nodeConfig.conditionNodes.push({
-                nodeName: "条件" + len,
-                type: 3,
-                priorityLevel: len,
-                conditionMode: 1,
-                conditionList: [],
-                conditionExpression: "",
-                filter: {
-                    equation: "",
-                    items: [],
-                },
-            });
-        },
-        delTerm(index) {
-            this.nodeConfig.conditionNodes.splice(index, 1);
-            if (this.nodeConfig.conditionNodes.length == 1) {
-                if (this.nodeConfig.childNode) {
-                    if (this.nodeConfig.conditionNodes[0].childNode) {
-                        this.reData(
-                            this.nodeConfig.conditionNodes[0].childNode,
-                            this.nodeConfig.childNode
-                        );
-                    } else {
-                        this.nodeConfig.conditionNodes[0].childNode =
-                            this.nodeConfig.childNode;
-                    }
-                }
-                this.$emit(
-                    "update:modelValue",
-                    this.nodeConfig.conditionNodes[0].childNode
+    });
+};
+const delTerm = (index) => {
+    nodeConfig.value.conditionNodes.splice(index, 1);
+    if (nodeConfig.value.conditionNodes.length == 1) {
+        if (nodeConfig.value.childNode) {
+            if (nodeConfig.value.conditionNodes[0].childNode) {
+                this.reData(
+                    nodeConfig.value.conditionNodes[0].childNode,
+                    nodeConfig.value.childNode
                 );
-            }
-        },
-        reData(data, addData) {
-            if (!data.childNode) {
-                data.childNode = addData;
             } else {
-                this.reData(data.childNode, addData);
+                nodeConfig.value.conditionNodes[0].childNode =
+                    nodeConfig.value.childNode;
             }
-        },
-        arrTransfer(index, type = 1) {
-            this.nodeConfig.conditionNodes[index] =
-                this.nodeConfig.conditionNodes.splice(
-                    index + type,
-                    1,
-                    this.nodeConfig.conditionNodes[index]
-                )[0];
-            this.nodeConfig.conditionNodes.map((item, index) => {
-                item.priorityLevel = index + 1;
-            });
-            this.$emit("update:modelValue", this.nodeConfig);
-        },
-        toText(nodeConfig, index) {
-            var { filter } = nodeConfig.conditionNodes[index];
-            if (index === nodeConfig.conditionNodes.length - 1) {
-                return `其他条件`;
-            }
-            if (filter && filter.items && filter.items.length > 0) {
-                return `已设置条件（${filter.items.length}）`;
-            } else {
-                return `请设置条件`;
-            }
-        },
-    },
+        }
+        emit("update:modelValue", nodeConfig.value.conditionNodes[0].childNode);
+    }
+};
+const reData = (data, addData) => {
+    if (!data.childNode) {
+        data.childNode = addData;
+    } else {
+        this.reData(data.childNode, addData);
+    }
+};
+const arrTransfer = (index, type = 1) => {
+    nodeConfig.value.conditionNodes[index] =
+        nodeConfig.value.conditionNodes.splice(
+            index + type,
+            1,
+            nodeConfig.value.conditionNodes[index]
+        )[0];
+    nodeConfig.value.conditionNodes.map((item, index) => {
+        item.priorityLevel = index + 1;
+    });
+    emit("update:modelValue", nodeConfig.value);
+};
+const toText = (nodeConfig, index) => {
+    var { filter } = nodeConfig.conditionNodes[index];
+    if (index === nodeConfig.conditionNodes.length - 1) {
+        return `其他条件`;
+    }
+    if (filter && filter.items && filter.items.length > 0) {
+        return `已设置条件（${filter.items.length}）`;
+    } else {
+        return `请设置条件`;
+    }
 };
 </script>
 

@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import nodeWrap from "./nodeWrap.vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
@@ -97,6 +97,10 @@ watch(
     },
     { deep: true }
 );
+
+onMounted(() => {
+    // window.addEventListener("click", handleDocumentClick);
+});
 
 const editZoom = (target) => {
     if (target === "inc") {
@@ -333,7 +337,7 @@ const editZoom = (target) => {
         min-height: 72px;
         background: rgb(255, 255, 255);
         border-radius: 4px;
-        padding: 15px 15px;
+        // padding: 15px 15px;
         cursor: pointer;
         box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
     }
@@ -597,11 +601,33 @@ const editZoom = (target) => {
     }
 }
 
+.sc-workflow-design .auto-judge .title {
+    height: 24px;
+    line-height: 24px;
+    padding: 0 20px;
+    background: #88939f;
+    border-radius: 4px 4px 0 0;
+    .node-title {
+        color: #fff;
+    }
+    .priority-title {
+        top: 0px;
+        color: #fff;
+    }
+    .close {
+        top: 4px;
+        color: #fff;
+    }
+}
+.sc-workflow-design .auto-judge .content {
+    padding: 15px 20px;
+}
 /**
 *  仿企业微信
 **/
 .sc-workflow-design.is-wecom {
-    .node-wrap-box .title {
+    .node-wrap-box .title,
+    .auto-judge .title {
         height: 34px;
         line-height: 34px;
         padding-top: 4px;
@@ -610,7 +636,6 @@ const editZoom = (target) => {
             left: 0;
             top: 0;
             height: 4px;
-
             width: 100%;
             border-radius: 4px 4px 0 0;
         }
@@ -638,16 +663,35 @@ const editZoom = (target) => {
                 background: #3cb4b2;
             }
         }
+        &.branch {
+            color: #88939f;
+            background: #eef4fb;
+            .node-title {
+                color: #88939f;
+            }
+            .we-com-hr {
+                background: #88939f;
+            }
+            .priority-title {
+                top: 4px;
+                color: #88939f;
+            }
+            .close {
+                top: 12px;
+                color: #88939f;
+            }
+        }
     }
 }
 /**
 *  默认
 **/
 .sc-workflow-design.is-default {
-    .node-wrap-box .content {
+    .node-wrap-box .content,
+    .auto-judge .content {
         border-radius: 0 0 4px 4px;
         padding: 0 5px;
-        .default-div{
+        .default-div {
             padding: 15px 10px;
             margin-bottom: 5px;
             border-radius: 4px;
@@ -664,6 +708,31 @@ const editZoom = (target) => {
         // 抄送人
         &.ccto {
             background: #3cb4b2;
+        }
+        &.branch {
+            background: #88939f;
+            padding-bottom: 1px;
+            // margin-bottom: 0;
+        }
+    }
+    .auto-judge .title {
+        border-radius: 4px 4px 0 0;
+        background: #88939f;
+        .node-title {
+            color: #fff;
+        }
+        .priority-title {
+            top: 0px;
+            color: #fff;
+        }
+        .close {
+            top: 4px;
+            color: #fff;
+        }
+    }
+    .auto-judge .content {
+        .default-div {
+            padding: 15px 15px;
         }
     }
 }
