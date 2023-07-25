@@ -21,6 +21,7 @@
 import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";
 const COMMON_CONFIG = inject("COMMON_CONFIG");
+const $ElMessage = inject('$ElMessage')
 // 默认排序
 let sortFields = ref([
     {
@@ -78,8 +79,9 @@ let tableColumn = ref([
     },
 ]);
 
+
 function activeRow(row) {
-    console.log(row);
+    $ElMessage.info('点击了查看')
 }
 </script>
 <style>
