@@ -195,7 +195,7 @@ const delTerm = (index) => {
     if (nodeConfig.value.conditionNodes.length == 1) {
         if (nodeConfig.value.childNode) {
             if (nodeConfig.value.conditionNodes[0].childNode) {
-                this.reData(
+                reData(
                     nodeConfig.value.conditionNodes[0].childNode,
                     nodeConfig.value.childNode
                 );
@@ -211,7 +211,7 @@ const reData = (data, addData) => {
     if (!data.childNode) {
         data.childNode = addData;
     } else {
-        this.reData(data.childNode, addData);
+        reData(data.childNode, addData);
     }
 };
 const arrTransfer = (index, type = 1) => {

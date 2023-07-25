@@ -3,6 +3,7 @@ import api from './api'
 import tool from './utils/tool'
 import http from "./utils/request"
 import { permission, rolePermission } from './utils/permission'
+import COMMON_CONFIG from './config/common';
 
 /*
 import scTable from './components/scTable'
@@ -47,6 +48,7 @@ import mlSetConditions from './components/mlSetConditions/index.vue';
 import mlDialog from './components/mlDialog/index.vue';
 import mlPagination from './components/mlPagination/index.vue';
 import mlSearchInput from './components/mlSearchInput/index.vue';
+import mlSingleList from './components/mlSingleList/index.vue';
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -59,10 +61,12 @@ export default {
 		app.config.globalProperties.$API = api;
 		app.config.globalProperties.$AUTH = permission;
 		app.config.globalProperties.$ROLE = rolePermission;
+        app.provide('$CONFIG',config)
         app.provide('$TOOL', tool);
         app.provide('$CloneDeep', (data) => JSON.parse(JSON.stringify(data)));
         app.provide('$API', api);
         app.provide('$ElMessage', ElMessage);
+        app.provide('COMMON_CONFIG',COMMON_CONFIG);
         
 
 		// 注册全局组件
@@ -71,10 +75,12 @@ export default {
         app.component('mlDialog', mlDialog);
         app.component('mlPagination', mlPagination);
         app.component('mlSearchInput', mlSearchInput);
+        app.component('mlSingleList', mlSingleList);
 		app.component('scTable', scTable);
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);
 		app.component('SimpleTable', SimpleTable)
+
 
 		//注册全局指令
 		app.directive('auth', auth)

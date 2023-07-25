@@ -1,0 +1,86 @@
+<template>
+    <mlSingleList
+        title="消息中心"
+        mainEntity="Notification"
+        fieldsList="toUser,fromUser,unread,type,relatedRecord,message,createdOn"
+        :sortFields="sortFields"
+        fieldName="message"
+        :tableColumn="tableColumn"
+    >
+        <template #activeRow>
+            <el-table-column label="操作" :align="'center'" width="100">
+                <template #default="scope">
+                    <el-button size="small" @click="activeRow(scope.row)">查看</el-button>
+                </template>
+            </el-table-column>
+        </template>
+    </mlSingleList>
+</template>
+  
+<script setup>
+import { ref, inject } from "vue";
+import { $fromNow } from "@/utils/util";
+const COMMON_CONFIG = inject("COMMON_CONFIG");
+// 默认排序
+let sortFields = ref([
+    {
+        fieldName: "createdOn",
+        type: "DESC",
+    },
+]);
+let tableColumn = ref([
+    {
+        prop: "message",
+        label: "消息",
+    },
+    {
+        prop: "relatedRecord",
+        label: "相关记录",
+    },
+    {
+        prop: "fromUser.name",
+        label: "发送人",
+        width: "120",
+        align: "center",
+    },
+    {
+        prop: "toUser.name",
+        label: "接收人",
+        width: "120",
+        align: "center",
+    },
+    {
+        prop: "type",
+        label: "消息分类",
+        width: "120",
+        align: "center",
+        formatter: (row) => {
+            return COMMON_CONFIG.notificationType[row.type];
+        },
+    },
+    {
+        prop: "unread",
+        label: "是否已读",
+        width: "100",
+        align: "center",
+        formatter: (row) => {
+            return row.unread ? "否" : "是";
+        },
+    },
+    {
+        prop: "createdOn",
+        label: "创建时间",
+        width: "120",
+        align: "center",
+        formatter: (row) => {
+            return $fromNow(row.createdOn);
+        },
+    },
+]);
+
+function activeRow(row) {
+    console.log(row);
+}
+</script>
+<style>
+</style>

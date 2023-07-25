@@ -188,7 +188,7 @@ const save = () => {
     drawer.value = false;
 };
 const delNode = () => {
-    emit("update:modelValue", nodeConfig.childNode);
+    emit("update:modelValue", nodeConfig.value.childNode);
 };
 
 const nodeRoleTypeChange = () => {

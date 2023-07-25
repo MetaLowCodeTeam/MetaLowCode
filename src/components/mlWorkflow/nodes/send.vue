@@ -70,11 +70,9 @@
 
 <script setup>
 import addNode from "./addNode.vue";
-import mlSelectField from "@/components/mlSelectField/index.vue";
 import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
-let message = inject("$ElMessage");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
@@ -117,7 +115,7 @@ const save = () => {
     drawer.value = false;
 };
 const delNode = () => {
-    emit("update:modelValue", nodeConfig.childNode);
+    emit("update:modelValue", nodeConfig.value.childNode);
 };
 const toText = (nodeConfig) => {
     if (nodeConfig.nodeUserList && nodeConfig.nodeUserList.length > 0) {

@@ -210,6 +210,13 @@ const routes = [
                     },
                 ]
             },
+            // 消息中心
+            {
+                path: '/notification',
+                name: 'Notification',
+                meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
+                component: 'system/notification/index',
+            },
         ]
     },
 
