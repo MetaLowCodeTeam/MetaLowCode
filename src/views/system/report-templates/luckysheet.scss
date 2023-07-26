@@ -98,10 +98,10 @@
         }
     }
     .bd-right {
-        width: 240px;
+        width: 270px;
         position: fixed;
         height: 100vh;
-        right: -240px;
+        right: -270px;
         top: 0;
         &.rightContentShow {
             right: 0px;
@@ -131,56 +131,29 @@
             color: rgba(0, 0, 0, 0.85);
         }
     }
-    .down-loading {
-        position: absolute;
-        z-index: 1000000;
-        left: 0px;
-        top: 0px;
-        bottom: 0px;
-        right: 0px;
-        background: rgba(255, 255, 255, 0.8);
-        text-align: center;
-        font-size: 40px;
-        align-items: center;
-        justify-content: center;
-        display: flex;
-        .loading-suffix {
-            display: inline-block;
-            width: 100px;
-            text-align: left;
-            padding-left: 5px;
-            position: relative;
-            top: 5px;
-        }
-    }
-    // .el-loading-mask {
-    //     // position: fixed;
-    //     height: 100vh;
-    //     // width: 100vh;
+    // .down-loading {
+    //     position: absolute;
+    //     z-index: 1000000;
+    //     left: 0px;
+    //     top: 0px;
+    //     bottom: 0px;
+    //     right: 0px;
+    //     background: rgba(255, 255, 255, 0.8);
+    //     text-align: center;
+    //     font-size: 40px;
+    //     align-items: center;
+    //     justify-content: center;
+    //     display: flex;
+    //     .loading-suffix {
+    //         display: inline-block;
+    //         width: 100px;
+    //         text-align: left;
+    //         padding-left: 5px;
+    //         position: relative;
+    //         top: 5px;
+    //     }
     // }
-    .save-loading {
-        position: fixed;
-        left: 0;
-        height: 0;
-        // width: calc(100% - 20px);
-        width: 100%;
-        height: 100vh;
-        background: hsla(0, 0%, 100%, 0.9);
-        z-index: 2000;
-        .loading-div {
-            width: 100%;
-            text-align: center;
-            position: absolute;
-            top: 50%;
-            margin-top: -30px;
-            color: #409eff;
-            font-size: 14px;
-            .loading-icon {
-                .el-icon-loading {
-                    font-size: 25px;
-                }
-                margin-bottom: 5px;
-            }
-        }
+    .el-select .el-input__inner{
+        border: 0;
     }
 }

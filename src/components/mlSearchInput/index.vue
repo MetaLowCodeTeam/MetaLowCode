@@ -3,7 +3,6 @@
         class="ml-input-search"
         v-model="keyword"
         :placeholder="placeholder"
-        :suffix-icon="Search"
         @keyup.enter="confirm"
     >
         <template #suffix>

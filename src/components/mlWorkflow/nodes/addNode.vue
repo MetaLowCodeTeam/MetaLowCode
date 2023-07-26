@@ -54,7 +54,7 @@ export default {
                 node = {
                     nodeName: "审批人",
                     type: 1,
-                    nodeRoleType: 1,
+                    nodeRoleType: 2,
                     nodeRoleList: [],
                     // 同时允许自选
                     userSelectFlag: true,

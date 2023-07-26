@@ -14,9 +14,9 @@
                 </template>
             </el-table-column>
         </template>
-    </mlSingleList>
+    </mlSingleList> 
 </template>
-  
+   
 <script setup>
 import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";

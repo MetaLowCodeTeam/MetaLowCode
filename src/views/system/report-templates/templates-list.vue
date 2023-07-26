@@ -89,7 +89,7 @@
         </el-container>
         <EditApprovalDialog
             v-model="dialogIsShow"
-            :entityList="entityList"
+            :entityList="allEntityList"
             :dialogForm="dialogForm"
             @saveProcess="saveProcess"
         />
@@ -108,7 +108,7 @@ import { ElMessageBox } from "element-plus";
 const message = inject("$ElMessage");
 const api = inject("$API");
 const router = useRouter();
-const { entityLable } = storeToRefs(useCommonStore());
+const { entityLable,allEntityList } = storeToRefs(useCommonStore());
 const { getEntityLable } = useCommonStore();
 // 加载状态
 let loading = ref(false);

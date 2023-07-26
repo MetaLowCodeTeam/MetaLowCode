@@ -49,10 +49,10 @@ export default {
         iframeList(){
             return iframeList.value
         },
-        ismobile(){
+        ismobileFn(){
             return ismobile.value
         },
-        layoutTags(){
+        layoutTagsFn(){
             return layoutTags.value
         }
     },
@@ -60,13 +60,13 @@ export default {
     methods: {
         push(route) {
             if (route.meta.type == "iframe") {
-                if (this.ismobile || !this.layoutTags) {
+                if (this.ismobileFn || !this.layoutTagsFn) {
                     setIframeList(route);
                 } else {
                     pushIframeList(route);
                 }
             } else {
-                if (this.ismobile || !this.layoutTags) {
+                if (this.ismobileFn || !this.layoutTagsFn) {
                     clearIframeList();
                 }
             }

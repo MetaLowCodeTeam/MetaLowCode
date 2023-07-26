@@ -118,6 +118,7 @@ async function getTableList() {
 .one-list {
     background: #fff;
     position: relative;
+    padding-bottom: 50px;
 }
 .props-action-section {
     .section-title {

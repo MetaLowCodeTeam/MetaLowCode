@@ -3,7 +3,10 @@ import { reactive, ref } from 'vue'
 import { getEntitySet } from '@/api/system-manager'
 import { ElMessage } from 'element-plus'
 const useCommonStore = defineStore('commonStore', () => {
+    // 所有实体label
     let entityLable = reactive({});
+    // 全部实体列表
+    let allEntityList = ref([]);
     const getEntityLable = () => {
         getEntitySet().then(res => {
             if (res.error != null) {
@@ -14,6 +17,7 @@ const useCommonStore = defineStore('commonStore', () => {
                 res.data.forEach(el => {
                     entityLable[el.entityCode] = el.label;
                 })
+                allEntityList.value = res.data;
             }
         }).catch(res => {
             ElMessage({ message: res.message, type: 'error' })
@@ -22,6 +26,7 @@ const useCommonStore = defineStore('commonStore', () => {
     return {
         entityLable,
         getEntityLable,
+        allEntityList
     }
 })
 
