@@ -188,7 +188,7 @@ const getMsgList = async () => {
 // 消息点击
 const msgClick = (item, inx) => {
     msgList.value.splice(inx, 1);
-    setNewMsgNum(msgRes.data.length);
+    setNewMsgNum(msgList.length);
 };
 //标记已读
 const markRead = () => {
