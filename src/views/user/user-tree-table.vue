@@ -301,7 +301,7 @@ export default {
             return
           }
 
-          this.treeData = res.data
+          this.treeData = res.data.data
         }).catch(res => {
           this.$message({message: res.message, type: 'error'})
         })

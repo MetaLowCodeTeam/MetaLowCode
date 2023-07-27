@@ -263,7 +263,7 @@
       },
 
       loadRoleData(filter) {
-        let realFilter = isEmptyStr(filter) ? '(1=1)' : filter
+        let realFilter = isEmptyStr(filter) ? null : filter
         getDataList(this.entity, this.fieldsList, realFilter, this.page.limit, this.page.pageNo).then(res => {
           if (res.error != null) {
             this.$message({message: res.error, type: 'error'})
