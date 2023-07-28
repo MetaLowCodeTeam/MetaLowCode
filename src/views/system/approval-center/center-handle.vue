@@ -3,6 +3,7 @@
 </template>
   
 <script setup>
+
 import centerList from "./center-list.vue";
 
 </script>

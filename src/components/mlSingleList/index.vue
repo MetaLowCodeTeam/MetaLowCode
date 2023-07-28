@@ -51,6 +51,8 @@ const props = defineProps({
     sortFields: { type: Object, default: () => {} },
     // 默认过滤字段
     fieldName: { type: String, default: "" },
+    // 添加过滤list
+    filterItems: { type: Array, default: () => [] },
     // 表格列
     tableColumn: { type: Array, default: () => [] },
 });
@@ -78,7 +80,7 @@ const pageChange = (page) => {
 // 获取表格数据
 async function getTableList() {
     loading.value = true;
-    let { mainEntity, fieldsList, fieldName, sortFields } = props;
+    let { mainEntity, fieldsList, fieldName, sortFields, filterItems } = props;
     let param = {
         mainEntity,
         fieldsList,
@@ -92,6 +94,7 @@ async function getTableList() {
                     op: "LK",
                     value: keyword.value,
                 },
+                ...filterItems,
             ],
         },
         sortFields,

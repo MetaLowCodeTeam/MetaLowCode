@@ -2,10 +2,11 @@
     <mlSingleList
         :title="pageType[type].title"
         mainEntity="ApprovalTask"
-        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus"
+        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser"
         :sortFields="sortFields"
         fieldName="approvalConfigId.flowName"
         :tableColumn="tableColumn"
+        :filterItems="pageType[type].filterItems"
     >
         <template #activeRow>
             <el-table-column label="操作" :align="'center'" width="100">
@@ -19,23 +20,52 @@
 </template>
   
 <script setup>
-import { reactive, ref, inject } from "vue";
+import { reactive, ref, inject, onBeforeMount } from "vue";
 import { $fromNow } from "@/utils/util";
 import mlApprove from "@/components/mlApprove/index.vue";
+const $TOOL = inject("$TOOL");
 
 const props = defineProps({
     type: { type: String, default: "" },
 });
-let pageType = reactive({
-    handle: {
-        title: "待我处理",
-    },
-    submit: {
-        title: "我提交的",
-    },
-    cc: {
-        title: "抄送我的",
-    },
+let pageType = reactive({});
+
+onBeforeMount(() => {
+    const USER_INFO = $TOOL.data.get("USER_INFO");
+    pageType = {
+        handle: {
+            title: "待我处理",
+            filterItems: [
+                {
+                    fieldName: "approver",
+                    op: "REF",
+                    value: "approvalTaskId",
+                    value2: USER_INFO.userId,
+                },
+            ],
+        },
+        submit: {
+            title: "我提交的",
+            filterItems: [
+                {
+                    fieldName: "createdBy",
+                    op: "EQ",
+                    value: USER_INFO.userId,
+                },
+            ],
+        },
+        cc: {
+            title: "抄送我的",
+            filterItems: [
+                {
+                    fieldName: "ccTo",
+                    op: "REF",
+                    value: "approvalTaskId",
+                    value2: USER_INFO.userId,
+                },
+            ],
+        },
+    };
 });
 
 // 审核弹框是否显示
@@ -60,9 +90,13 @@ let tableColumn = ref([
         label: "关联记录",
     },
     {
+        prop: "remark",
+        label: "最近审批备注",
+    },
+    {
         prop: "approvalStatus.label",
         label: "审批状态",
-        width: "150",
+        width: "120",
         align: "center",
         formatter: (row) => {
             return row.approvalStatus.label;
@@ -71,10 +105,11 @@ let tableColumn = ref([
     {
         prop: "approver",
         label: "最近审核人",
-    },
-    {
-        prop: "remark",
-        label: "最近审批备注",
+        width: "150",
+        align: "center",
+        formatter: (row) => {
+            return row.approvalUser.name;
+        },
     },
     {
         prop: "approvalOn",

@@ -5,8 +5,8 @@ import { ElMessage } from 'element-plus'
 const useCommonStore = defineStore('commonStore', () => {
     // 所有实体label
     let entityLable = reactive({});
-    // 全部实体列表
-    let allEntityList = ref([]);
+    // 审核弹框选择应用实体---已过滤
+    let approveDialogEntityList = ref([]);
     const getEntityLable = () => {
         getEntitySet().then(res => {
             if (res.error != null) {
@@ -14,10 +14,13 @@ const useCommonStore = defineStore('commonStore', () => {
                 return
             }
             if (res.data && res.data.length > 0) {
+                approveDialogEntityList.value = [];
                 res.data.forEach(el => {
                     entityLable[el.entityCode] = el.label;
+                    if(!el.systemEntityFlag){
+                        approveDialogEntityList.value.push(el);
+                    }
                 })
-                allEntityList.value = res.data;
             }
         }).catch(res => {
             ElMessage({ message: res.message, type: 'error' })
@@ -26,7 +29,7 @@ const useCommonStore = defineStore('commonStore', () => {
     return {
         entityLable,
         getEntityLable,
-        allEntityList
+        approveDialogEntityList
     }
 })
 
