@@ -13,7 +13,7 @@
                 <template #default="scope">
                     <el-tag
                         type="success"
-                        v-if="scope.row.restoreBy && scope.row.restoreBy.name"
+                        v-if="scope.row.restoreBy && !!scope.row.restoreBy.name"
                     >已恢复</el-tag>
                     <el-tag type="info" v-else>未恢复</el-tag>
                 </template>
