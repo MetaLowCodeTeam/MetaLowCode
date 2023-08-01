@@ -60,7 +60,7 @@ onBeforeMount(() => {
     }
     getNewMsgNum();
     // 轮循
-    roundRobin(5000);
+    // roundRobin(5000);
 });
 const getNewMsgNum = async () => {
     let checkStatusRes = await http.get("/crud/checkStatus");

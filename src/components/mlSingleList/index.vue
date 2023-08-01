@@ -116,6 +116,11 @@ async function getTableList() {
         message.error("获取表格数据失败：" + res.error);
     }
 }
+
+defineExpose({
+    loading,
+    getTableList
+})
 </script>
 <style lang="scss" scoped>
 .one-list {

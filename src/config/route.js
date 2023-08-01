@@ -217,6 +217,13 @@ const routes = [
                 meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
                 component: 'system/notification/index',
             },
+            // 回收站
+            {
+                path: '/recycle-bin',
+                name: 'RecycleBin',
+                meta: { title: '回收站', icon: 'el-icon-delete' },
+                component: 'system/recycle-bin/index',
+            },
         ]
     },
 

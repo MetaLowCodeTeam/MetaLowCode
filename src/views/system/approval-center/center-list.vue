@@ -7,16 +7,30 @@
         fieldName="approvalConfigId.flowName"
         :tableColumn="tableColumn"
         :filterItems="pageType[type].filterItems"
+        ref="mlSingleListRef"
     >
-        <template #activeRow>
+        <template #activeRow v-if="type === 'handle'">
             <el-table-column label="操作" :align="'center'" width="100">
                 <template #default="scope">
-                    <el-button size="small" @click="approveRow(scope.row)">审批</el-button>
+                    <el-button
+                        :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
+                        size="small"
+                        type="primary"
+                        @click="approveRow(scope.row)"
+                    >审批</el-button>
                 </template>
             </el-table-column>
         </template>
     </mlSingleList>
-    <mlApprove v-model="approveDialogIsShow" :taskId="approvalTaskId" title="审批" />
+    <div v-if="approveDialogIsShow">
+        <mlApprove
+            v-model="approveDialogIsShow"
+            :taskId="approvalTaskId"
+            :entityId="entityId"
+            @confirm="confirm"
+            title="审批"
+        />
+    </div>
 </template>
   
 <script setup>
@@ -72,6 +86,8 @@ onBeforeMount(() => {
 let approveDialogIsShow = ref(false);
 // 审批任务Id
 let approvalTaskId = ref("");
+// 实体ID
+let entityId = ref("");
 // 默认排序
 let sortFields = ref([
     {
@@ -124,7 +140,12 @@ let tableColumn = ref([
 
 function approveRow(row) {
     approveDialogIsShow.value = true;
-    approvalTaskId.value = row.approveDialogIsShow;
+    approvalTaskId.value = row.approvalTaskId;
+    entityId.value = row.entityId.id;
+}
+let mlSingleListRef = ref();
+function confirm(){
+    mlSingleListRef.value.getTableList();
 }
 </script>
 <style lang="scss">

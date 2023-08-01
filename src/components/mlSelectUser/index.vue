@@ -171,6 +171,7 @@ const initData = () => {
                 }
             });
         });
+        cutTabCode.value = tabList.value[0].name;
     }
 };
 
