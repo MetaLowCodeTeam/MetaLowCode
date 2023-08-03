@@ -125,6 +125,13 @@ watch(
     },
     { deep: true }
 );
+watch(
+    () => isShow.value,
+    (v) => {
+        emit("update:modelValue", v);
+    },
+    { deep: true }
+);
 onMounted(() => {
     isShow.value = props.modelValue;
     getApprovalTaskById();
@@ -192,7 +199,6 @@ async function getApprovalTaskById() {
 // 关闭弹框
 function canner() {
     isShow.value = false;
-    emit("update:modelValue", false);
 }
 </script>
 

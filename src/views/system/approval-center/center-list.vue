@@ -10,12 +10,17 @@
         ref="mlSingleListRef"
     >
         <template #activeRow v-if="type === 'handle'">
-            <el-table-column label="操作" :align="'center'" width="100">
+            <el-table-column label="操作" :align="'center'" width="160">
                 <template #default="scope">
+                    <el-button
+                        size="small"
+                        @click="approveHistory(scope.row)"
+                        type="primary"
+                    >审批历史</el-button>
                     <el-button
                         :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
                         size="small"
-                        type="primary"
+                        type="success"
                         @click="approveRow(scope.row)"
                     >审批</el-button>
                 </template>
@@ -31,12 +36,21 @@
             title="审批"
         />
     </div>
+    <div v-if="approvalHistoryDialog">
+        <mlApproveHistory
+            v-model="approvalHistoryDialog"
+            :entityId="entityId"
+            @confirm="confirm"
+            title="审批历史"
+        />
+    </div>
 </template>
   
 <script setup>
 import { reactive, ref, inject, onBeforeMount } from "vue";
 import { $fromNow } from "@/utils/util";
 import mlApprove from "@/components/mlApprove/index.vue";
+import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
 const $TOOL = inject("$TOOL");
 
 const props = defineProps({
@@ -144,8 +158,19 @@ function approveRow(row) {
     entityId.value = row.entityId.id;
 }
 let mlSingleListRef = ref();
+
 function confirm(){
     mlSingleListRef.value.getTableList();
+}
+
+
+// 审批历史弹框
+let approvalHistoryDialog = ref(false);
+// 审批历史
+function approveHistory(row) {
+    approvalHistoryDialog.value = true;
+    entityId.value = row.entityId.id;
+    // console.log(row.entityId.id,'row')
 }
 </script>
 <style lang="scss">
