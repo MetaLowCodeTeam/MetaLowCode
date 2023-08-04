@@ -30,8 +30,8 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="toggleMenuIsCollapse">
-					<el-icon><el-icon-expand v-if="menuIsCollapseFn"/><el-icon-fold v-else /></el-icon>
+				<div class="adminui-side-bottom" @click="setMenuFn">
+					<el-icon><el-icon-menu/></el-icon>
 				</div>
 			</div>
 			<Side-m v-if="ismobileFn"></Side-m>
@@ -72,8 +72,8 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="toggleMenuIsCollapse">
-					<el-icon><el-icon-expand v-if="menuIsCollapseFn"/><el-icon-fold v-else /></el-icon>
+				<div class="adminui-side-bottom" @click="setMenuFn">
+					<el-icon><el-icon-menu/></el-icon>
 				</div>
 			</div>
 			<Side-m v-if="ismobileFn"></Side-m>
@@ -158,8 +158,8 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="toggleMenuIsCollapse">
-					<el-icon><el-icon-expand v-if="menuIsCollapseFn"/><el-icon-fold v-else /></el-icon>
+				<div class="adminui-side-bottom" @click="setMenuFn">
+					<el-icon><el-icon-menu/></el-icon>
 				</div>
 			</div>
 			<Side-m v-if="ismobileFn"></Side-m>
@@ -272,8 +272,8 @@
 			onLayoutResize(){
 				SET_ismobile(document.body.clientWidth < 992)
 			},
-            toggleMenuIsCollapse(){
-                TOGGLE_menuIsCollapse();
+            setMenuFn(){
+                console.log('点击设置导航');
             },
 			//路由监听高亮
 			showThis(){

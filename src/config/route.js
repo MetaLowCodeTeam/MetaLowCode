@@ -217,6 +217,13 @@ const routes = [
                 meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
                 component: 'system/notification/index',
             },
+             // 变更历史
+             {
+                path: '/revision-history',
+                name: 'RevisionHistory',
+                meta: { title: '变更历史', icon: 'el-icon-histogram' },
+                component: 'system/revision-history/index',
+            },
             // 回收站
             {
                 path: '/recycle-bin',
@@ -224,6 +231,7 @@ const routes = [
                 meta: { title: '回收站', icon: 'el-icon-delete' },
                 component: 'system/recycle-bin/index',
             },
+           
         ]
     },
 
