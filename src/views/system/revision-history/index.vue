@@ -69,8 +69,9 @@ let tableColumn = ref([
         align: "center",
     },
     {
-        prop: "revisionType",
+        prop: "revisionType.label",
         label: "变更类型",
+        align: "center",
     },
     {
         prop: "revisionBy.name",

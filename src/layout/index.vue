@@ -189,6 +189,7 @@
 	</el-drawer>
 
 	<auto-exit></auto-exit>
+    <setMen v-model="setMenDialog"/>
 </template>
 
 <script>
@@ -202,6 +203,7 @@
 	import autoExit from './other/autoExit.js';
     import useKeepAliveStore from "@/store/modules/keepAlive";
     import useGlobalStore from "@/store/modules/global";
+    import setMen from './components/setMen.vue';
     import { storeToRefs } from "pinia";
     const { keepLiveRoute,routeShow } = storeToRefs(useKeepAliveStore());
     const { ismobile,layout,layoutTags,menuIsCollapse } = storeToRefs(useGlobalStore());
@@ -216,7 +218,8 @@
 			userbar,
 			setting,
 			iframeView,
-			autoExit
+			autoExit,
+            setMen
 		},
 		data() {
 			return {
@@ -225,6 +228,7 @@
 				nextMenu: [],
 				pmenu: {},
 				active: '',
+                setMenDialog:false,
 			}
 		},
         computed:{
@@ -273,7 +277,7 @@
 				SET_ismobile(document.body.clientWidth < 992)
 			},
             setMenuFn(){
-                console.log('点击设置导航');
+                this.setMenDialog = true;
             },
 			//路由监听高亮
 			showThis(){
