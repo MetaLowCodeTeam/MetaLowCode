@@ -17,7 +17,7 @@
         </template>
     </mlSingleList>
     <mlDialog v-model="historyDialog" title="变更详情" width="35%">
-        <div v-loading="historyLoading">
+        <div>
             <el-table :data="historyData" style="width: 100%" stripe size="large">
                 <el-table-column prop="label" label="字段" />
                 <el-table-column prop="before" label="变更前" />
@@ -36,6 +36,7 @@ import http from "@/utils/request";
 const { entityLable } = storeToRefs(useCommonStore());
 const { getEntityLable } = useCommonStore();
 const $ElMessage = inject("$ElMessage");
+let mlSingleListRef = ref("");
 // 默认排序
 let sortFields = ref([
     {
@@ -90,22 +91,24 @@ let tableColumn = ref([
 
 // 历史详情弹框是否显示
 let historyDialog = ref(false);
-let historyLoading = ref(false);
 let historyData = ref([]);
 async function activeRow(row) {
-    historyDialog.value = true;
-    historyLoading.value = true;
+    mlSingleListRef.value.loading = true;
     let res = await http.get(
         "/revisionHistory/detailsById?revisionHistoryId=" +
             row.revisionHistoryId
     );
     if (res.code === 200) {
-        historyData.value = res.data;
+        if (res.data && res.data.length > 0) {
+            historyData.value = res.data;
+            historyDialog.value = true;
+        } else {
+            $ElMessage.info("暂无变更详情");
+        }
     } else {
-        $ElMessage.error("获取详情失败：" + res.error);
-        historyDialog.value = false;
+        $ElMessage.error(res.error);
     }
-    historyLoading.value = false;
+    mlSingleListRef.value.loading = false;
 }
 </script>
 <style>

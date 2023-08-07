@@ -33,11 +33,16 @@
 </template>
    
 <script setup>
-import { ref } from "vue";
+import { ref,inject } from "vue";
 import { $fromNow } from "@/utils/util";
 import { ElMessageBox } from "element-plus";
 import http from "@/utils/request";
+const $ElMessage = inject("$ElMessage");
 let mlSingleListRef = ref("");
+
+
+
+
 // 默认排序
 let sortFields = ref([
     {
@@ -55,12 +60,6 @@ let tableColumn = ref([
         label: "删除渠道",
     },
     {
-        prop: "deletedBy.name",
-        label: "删除人",
-        width: "120",
-        align: "center",
-    },
-    {
         prop: "deletedOn",
         label: "删除时间",
         width: "120",
@@ -70,8 +69,8 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "restoreBy.name",
-        label: "恢复人",
+        prop: "deletedBy.name",
+        label: "删除人",
         width: "120",
         align: "center",
     },
@@ -84,23 +83,30 @@ let tableColumn = ref([
             return $fromNow(row.restoreOn);
         },
     },
+    {
+        prop: "restoreBy.name",
+        label: "恢复人",
+        width: "120",
+        align: "center",
+    },
 ]);
 
-function activeRow(row) {
+async function activeRow(row) {
     ElMessageBox.confirm("是否确认恢复?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning",
     })
         .then(async () => {
-            let res = await http.post("/crud/restore?id=" + row.entityId);
             mlSingleListRef.value.loading = true;
+            let res = await http.post("/crud/restore?id=" + row.entityId);
             if (res.code === 200) {
-                message.success("恢复成功");
+                $ElMessage.success("恢复成功");
                 mlSingleListRef.value.getTableList();
+                mlSingleListRef.value.loading = false;
             } else {
                 mlSingleListRef.value.loading = false;
-                message.error("恢复失败：" + res.error);
+                $ElMessage.error("恢复失败：" + res.error);
             }
         })
         .catch(() => {});
