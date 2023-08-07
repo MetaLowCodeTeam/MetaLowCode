@@ -91,7 +91,7 @@ let tableColumn = ref([
     },
 ]);
 
-async function activeRow(row) {
+function activeRow(row) {
     ElMessageBox.confirm("是否确认恢复?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",

@@ -9,20 +9,38 @@
         :filterItems="pageType[type].filterItems"
         ref="mlSingleListRef"
     >
-        <template #activeRow v-if="type === 'handle'">
-            <el-table-column label="操作" :align="'center'" width="160">
+        <template #activeRow>
+            <el-table-column
+                label="操作"
+                :align="'center'"
+                width="160"
+                key="1"
+                v-if="type === 'handle'"
+            >
                 <template #default="scope">
-                    <el-button
-                        size="small"
-                        @click="approveHistory(scope.row)"
-                        type="primary"
-                    >审批历史</el-button>
+                    <el-button size="small" @click="approveHistory(scope.row)" type="primary">审批历史</el-button>
                     <el-button
                         :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
                         size="small"
                         type="success"
                         @click="approveRow(scope.row)"
                     >审批</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="操作"
+                :align="'center'"
+                width="100"
+                key="2"
+                v-if="type === 'submit'"
+            >
+                <template #default="scope">
+                    <el-button
+                        :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value == 1)"
+                        size="small"
+                        type="primary"
+                        @click="revokeRow(scope.row)"
+                    >撤销</el-button>
                 </template>
             </el-table-column>
         </template>
@@ -51,13 +69,17 @@ import { reactive, ref, inject, onBeforeMount } from "vue";
 import { $fromNow } from "@/utils/util";
 import mlApprove from "@/components/mlApprove/index.vue";
 import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
+import { ElMessageBox } from "element-plus";
+import http from "@/utils/request";
+const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
+
 
 const props = defineProps({
     type: { type: String, default: "" },
 });
 let pageType = reactive({});
-
+let mlSingleListRef = ref();
 onBeforeMount(() => {
     const USER_INFO = $TOOL.data.get("USER_INFO");
     pageType = {
@@ -152,17 +174,40 @@ let tableColumn = ref([
     },
 ]);
 
+// 撤销
+const revokeRow = (row) => {
+    ElMessageBox.confirm("是否确认撤销?", "提示：", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(async () => {
+            mlSingleListRef.value.loading = true;
+            let res = await http.post("/approval/approvalRevocation?entityId=" + row.entityId.id);
+            if (res.code === 200) {
+                $ElMessage.success("撤销成功");
+                mlSingleListRef.value.getTableList();
+                mlSingleListRef.value.loading = false;
+            } else {
+                mlSingleListRef.value.loading = false;
+                $ElMessage.error(res.error);
+            }
+        })
+        .catch(() => {});
+};
+
+// 审批
 function approveRow(row) {
     approveDialogIsShow.value = true;
     approvalTaskId.value = row.approvalTaskId;
     entityId.value = row.entityId.id;
 }
-let mlSingleListRef = ref();
 
-function confirm(){
+
+
+function confirm() {
     mlSingleListRef.value.getTableList();
 }
-
 
 // 审批历史弹框
 let approvalHistoryDialog = ref(false);
