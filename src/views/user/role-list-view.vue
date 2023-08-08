@@ -10,7 +10,7 @@
     <el-dialog :title="formTitle" v-model="showRoleFormDialogFlag" v-if="showRoleFormDialogFlag"
                :destroy-on-close="true" :close-on-click-modal="false" class="small-padding"
                :show-close="true" :close-on-press-escape="false">
-      <el-form label-position="left" :label-width="'120px'" size="small" ref="roleForm"
+      <el-form label-position="left" :label-width="'120px'" size="" ref="roleForm"
                :model="formModel" :rules="formRules">
         <el-row :gutter="12">
           <el-col :span="12">
@@ -280,17 +280,19 @@
 
       addNewRole() {
         getBlankRoleData().then(res => {
+          //debugger
           if (res.error != null) {
             this.$message({ message: res.error, type: 'error' })
             return
           }
 
+          let resData = res.data.data
           this.formModel.roleId = ''
-          this.formModel.roleName = res.data.roleName
-          this.formModel.disabled = res.data.disabled
-          this.formModel.description = res.data.description
-          this.formModel.rightValueMap = res.data.rightValueMap
-          this.rightEntityList = copyNew(res.data.rightEntityList)
+          this.formModel.roleName = resData.roleName
+          this.formModel.disabled = resData.disabled
+          this.formModel.description = resData.description
+          this.formModel.rightValueMap = resData.rightValueMap
+          this.rightEntityList = copyNew(resData.rightEntityList)
           this.showRoleFormDialogFlag = true
         }).catch(res => {
           this.$message({ message: res.message, type: 'error' })

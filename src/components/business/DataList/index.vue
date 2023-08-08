@@ -2,7 +2,7 @@
   <el-container>
     <el-header class="list-search-panel">
       <div class="search-panel-left">
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="addNewRecord">新建{{entityLabel}}</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="addNewRecord">新建{{entityLabel}}</el-button>
         <!--
         <el-button type="danger" size="small" icon="el-icon-delete">删除</el-button>
         <el-button size="small">修改登录密码</el-button>
@@ -10,7 +10,7 @@
         <!-- TODO: 此处应该增加按钮插槽!! -->
       </div>
       <div class="search-panel-right">
-        <el-input link type="primary" size="small" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
+        <el-input link type="primary" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
                   v-model="keyword" @keyup.enter="searchData" @clear="clearSearch"
                   suffix-icon="el-icon-search">
           <template #append>
@@ -25,7 +25,7 @@
         <SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="true" :height="tableHeight + 'px'"
                      @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
                      :show-operation-column="true"
-                     table-size="small" table-width="100% !important">
+                     table-width="100% !important">
           <template #table_operation="{scope}">
             <el-button link type="primary" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
             <el-button link type="primary" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
@@ -41,8 +41,8 @@
                     :labels-model="labelsModel" :form-state="formState" ref="formWidget"></FormWidget>
         <template #footer>
           <div class="dialog-footer">
-            <el-button type="primary" @click="saveFormData" size="small" style="width: 90px">保 存</el-button>
-            <el-button @click="showFormDialogFlag = false" size="small">取 消</el-button>
+            <el-button type="primary" @click="saveFormData" style="width: 90px">保 存</el-button>
+            <el-button @click="showFormDialogFlag = false">取 消</el-button>
           </div>
         </template>
       </el-dialog>

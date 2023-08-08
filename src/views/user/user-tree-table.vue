@@ -14,9 +14,9 @@
           <span class="custom-tree-node" @mouseenter="hoverNodeId = node.id" @mouseleave="hoverNodeId = -1">
             <span>{{ node.label }}</span>
             <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
-              <el-button link type="primary" size="small" @click="addDepartment(node, data)">添加</el-button>
-              <el-button link type="primary" size="small" @click="editDepartment(node, data)">编辑</el-button>
-              <el-button link type="primary" size="small" @click="deleteDepartment(node, data)">删除</el-button>
+              <el-button link type="primary" @click="addDepartment(node, data)">添加</el-button>
+              <el-button link type="primary" @click="editDepartment(node, data)">编辑</el-button>
+              <el-button link type="primary" @click="deleteDepartment(node, data)">删除</el-button>
             </span>
           </span>
         </template>
@@ -31,8 +31,8 @@
         </FormWidget>
         <template #footer>
           <div class="dialog-footer">
-            <el-button type="primary" @click="saveDepartment" size="small" style="width: 90px">保 存</el-button>
-            <el-button @click="showDepartmentFormDialogFlag = false" size="small">取 消</el-button>
+            <el-button type="primary" @click="saveDepartment" style="width: 90px">保 存</el-button>
+            <el-button @click="showDepartmentFormDialogFlag = false">取 消</el-button>
           </div>
         </template>
       </el-dialog>
@@ -41,14 +41,14 @@
     <el-container>
       <el-header class="list-search-panel">
         <div class="search-panel-left">
-          <el-button type="primary" size="small" icon="el-icon-plus" @click="addUser">新建用户</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="addUser">新建用户</el-button>
           <!--
-          <el-button type="danger" size="small" icon="el-icon-delete">删除</el-button>
+          <el-button type="danger" icon="el-icon-delete">删除</el-button>
           -->
-          <el-button size="small">修改登录密码</el-button>
+          <el-button>修改登录密码</el-button>
         </div>
         <div class="search-panel-right">
-          <el-input link type="primary" size="small" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
+          <el-input link type="primary" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
                     v-model="keyword" @keyup.enter="searchData" @clear="clearSearch" suffix-icon="el-icon-search">
             <template #append>
               <el-button icon="el-icon-refresh-right" title="刷新" @click="refreshTableData"></el-button>
@@ -80,8 +80,8 @@
           </FormWidget>
           <template #footer>
             <div class="dialog-footer">
-              <el-button type="primary" @click="saveFormData" size="small" style="width: 90px">保 存</el-button>
-              <el-button @click="showFormDialogFlag = false" size="small">取 消</el-button>
+              <el-button type="primary" @click="saveFormData" style="width: 90px">保 存</el-button>
+              <el-button @click="showFormDialogFlag = false">取 消</el-button>
             </div>
           </template>
         </el-dialog>
