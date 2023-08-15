@@ -45,3 +45,12 @@ export function getDataList(entity, fields, filter, pageSize, pageNo,sortFields)
 export function initDataList(entity) {
   return http.get('crud/initDataList', {entity})
 }
+
+
+/**
+ * 通用获取实体列表接口（实体+列表页面的实体列表）
+ * @param {*} entityName 实体名称
+ */
+export function getEntityCodeList(entityName) {
+    return http.get('/crud/getEntityCodeList', {entityName})
+}

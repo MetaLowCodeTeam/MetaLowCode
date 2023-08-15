@@ -196,6 +196,13 @@ const routes = [
                     },
                 ]
             },
+             // 触发器
+             {
+                path: '/trigger-list',
+                name: 'RriggerList',
+                meta: { group: true, title: '触发器', icon: 'el-icon-cpu' },
+                component: 'system/trigger/trigger-list',
+            },
             // 报表模板
             {
                 path: '/report-templates',

@@ -49,6 +49,8 @@ import mlDialog from './components/mlDialog/index.vue';
 import mlPagination from './components/mlPagination/index.vue';
 import mlSearchInput from './components/mlSearchInput/index.vue';
 import mlSingleList from './components/mlSingleList/index.vue';
+import mlActiveDialog from "./components/mlActiveDialog/index.vue";
+import mlEntityMenuAndList from "./components/mlEntityMenuAndList/index.vue";
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -76,6 +78,8 @@ export default {
         app.component('mlPagination', mlPagination);
         app.component('mlSearchInput', mlSearchInput);
         app.component('mlSingleList', mlSingleList);
+        app.component('mlActiveDialog', mlActiveDialog);
+        app.component('mlEntityMenuAndList', mlEntityMenuAndList);
 		app.component('scTable', scTable);
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);

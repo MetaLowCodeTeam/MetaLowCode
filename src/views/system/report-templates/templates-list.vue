@@ -1,269 +1,68 @@
 <template>
-    <el-container v-loading="loading" element-loading-text="加载中...">
-        <el-aside width="280px">
-            <div class="fields-list">
-                <div class="fields-list-header">实体列表</div>
-                <div class="fields-list-box">
-                    <div
-                        class="fields-list-item text-ellipsis"
-                        :class="{'is-active': defaultCode === 'all'}"
-                        @click="fieldCheck({
-                            label: '全部实体',
-                            entityCode: 'all',
-                        })"
-                        title="全部实体"
-                    >全部实体</div>
-                    <div
-                        class="fields-list-item text-ellipsis"
-                        v-for="(field,inx) of entityList"
-                        :key="inx"
-                        :class="{'is-active':field.entityCode == defaultCode}"
-                        @click="fieldCheck(field)"
-                        :title="entityLable[field.entityCode]"
-                    >{{ entityLable[field.entityCode] }}</div>
-                </div>
-            </div>
-        </el-aside>
-
-        <el-container class="main-container" style="position: relative;padding-bottom: 50px;">
-            <el-header class="props-action-section">
-                <span class="section-title">审批流程</span>
-                <div class="section-fr fr">
-                    <mlSearchInput
-                        class="section-search"
-                        v-model="keyword"
-                        placeholder="查询"
-                        @confirm="getApprovalList"
-                    />
-                    <el-button type="primary" @click="editApproval('add')">
-                        <el-icon size="14">
-                            <ElIconPlus />
-                        </el-icon>
-                        <span class="ml-5">添加</span>
-                    </el-button>
-                </div>
-            </el-header>
-
-            <el-main>
-                <el-table
-                    class="ml-el-table"
-                    :data="approvalList"
-                    stripe
-                    style="width: 100%;"
-                    ref="meTable"
-                >
-                    <el-table-column label="名称">
-                        <template #default="scope">
-                            <span
-                                class="highlight"
-                                @click="goDetial(scope.row)"
-                            >{{ scope.row.reportName }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="应用实体">
-                        <template #default="scope">{{ entityLable[scope.row.entityCode] }}</template>
-                    </el-table-column>
-                    <el-table-column label="启用" :align="'center'" width="60">
-                        <template #default="scope">
-                            <span class="enable false" v-if="scope.row.isDisabled">否</span>
-                            <span class="enable true" v-else>是</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="createdOn" label="修改时间" :align="'center'" width="100">
-                        <template #default="scope">{{ $fromNow(scope.row.modifiedOn) }}</template>
-                    </el-table-column>
-
-                    <el-table-column label="操作" :align="'center'" width="150">
-                        <template #default="scope">
-                            <el-button size="small" @click="editApproval('edit',scope.row)">编辑</el-button>
-                            <el-button
-                                size="small"
-                                type="danger"
-                                @click="deleteProcess(scope.row)"
-                            >删除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <mlPagination :no="page.no" :total="page.total" @pageChange="pageChange" />
-            </el-main>
-        </el-container>
-        <EditApprovalDialog
-            v-model="dialogIsShow"
-            :entityList="approveDialogEntityList"
-            :dialogForm="dialogForm"
-            @saveProcess="saveProcess"
-        />
-    </el-container>
+    <mlEntityMenuAndList
+        ref="mlEntityMenuAndListRef"
+        entityName="ReportConfig"
+        aciveId="reportConfigId"
+        fieldsList="reportName,entityCode,isDisabled,modifiedOn,modifiedBy"
+        @goDetial="goDetial"
+        :checkCodes="['reportName']"
+        :codeErrMsg="['请输入模板名称']"
+        :tableColumn="tableColumn"
+        :showFormItem="[{'label':'名称','code':'reportName','type':'1'}]"
+        defalutSortField="modifiedOn"
+        defaultFilter="reportName"
+    >
+        <template #addbutton>
+            <el-button type="primary" @click="addClick">
+                <el-icon size="14">
+                    <ElIconPlus />
+                </el-icon>
+                <span class="ml-5">添加</span>
+            </el-button>
+        </template>
+    </mlEntityMenuAndList>
 </template>
-  
+
 <script setup>
-import useCommonStore from "@/store/modules/common";
-import { inject, onMounted, reactive, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { $fromNow } from "@/utils/util";
-import { storeToRefs } from "pinia";
-import EditApprovalDialog from "./templates-edit.vue";
-import { getDataList, deleteRecord } from "@/api/crud";
-import { ElMessageBox } from "element-plus";
-const message = inject("$ElMessage");
-const api = inject("$API");
 const router = useRouter();
-const { entityLable,approveDialogEntityList } = storeToRefs(useCommonStore());
-const { getEntityLable } = useCommonStore();
-// 加载状态
-let loading = ref(false);
-// 默认值
-let defaultCode = ref("all");
-// 实体列表
-let entityList = ref([]);
-// 流程列表
-let approvalList = ref([]);
-// 搜索值
-let keyword = ref("");
-let page = reactive({
-    size: 20,
-    no: 1,
-    total: 0,
-});
-// 排序值
-let tableSort = ref([
+let mlEntityMenuAndListRef = ref("");
+let tableColumn = ref([
     {
-        fieldName: "modifiedOn",
-        type: "DESC",
+        prop: "reportName",
+        label: "名称",
+        sortable: true,
+        highlight: true,
+    },
+    {
+        prop: "entityCode",
+        label: "应用实体",
+        entityCode: true,
+        sortable: true,
+    },
+    {
+        prop: "isDisabled",
+        label: "启用",
+        align: "center",
+        width: 60,
+        isDisabled: true,
+    },
+    {
+        prop: "modifiedOn",
+        label: "修改时间",
+        align: "center",
+        width: 100,
+        fromNow: true,
     },
 ]);
-// 编辑弹框
-let dialogIsShow = ref(false);
-let dialogForm = reactive({
-    title: "添加审批流程",
-    type: "add",
-    form: {},
-});
-onMounted(() => {
-    if (JSON.stringify(entityLable.value) == "{}") {
-        getEntityLable();
-    }
-    getEntityList();
-});
 
-// 获取左侧实体列表
-const getEntityList = async () => {
-    loading.value = true;
-    let res = await api.reportTemplates.list.getEntityList();
-    if (res.code === 200) {
-        entityList.value = res.data.map((el) => {
-            el.label = entityLable.value[el.entityCode];
-            return el;
-        });
-        getApprovalList();
-    } else {
-        loading.value = false;
-        message.error("获取实体列表数据失败：" + res.error);
-    }
+// 添加触发
+const addClick = () => {
+    mlEntityMenuAndListRef.value.editApproval("add");
 };
 
-// 获取右侧流程列表
-const getApprovalList = async () => {
-    loading.value = true;
-    let param = {
-        mainEntity: "ReportConfig",
-        fieldsList: "reportName,entityCode,isDisabled,modifiedOn,modifiedBy",
-        pageSize: page.size,
-        pageNo: page.no,
-        filter: {
-            equation: "AND",
-            items: [
-                {
-                    fieldName: "reportName",
-                    op: "LK",
-                    value: keyword.value,
-                },
-            ],
-        },
-        sortFields: tableSort.value,
-    };
-
-    if (defaultCode.value != "all") {
-        param.filter.items[1] = {
-            fieldName: "entityCode",
-            op: "EQ",
-            value: defaultCode.value,
-        };
-    }
-    let res = await getDataList(
-        param.mainEntity,
-        param.fieldsList,
-        param.filter,
-        param.pageSize,
-        param.pageNo,
-        param.sortFields
-    );
-    if (res.code === 200) {
-        approvalList.value = res.data.dataList;
-        page.total = res.data.pagination.total;
-        loading.value = false;
-    } else {
-        loading.value = false;
-        message.error("获取实体列表数据失败：" + res.error);
-    }
-};
-
-// 添加流程
-const editApproval = (target, row) => {
-    dialogIsShow.value = true;
-    if (target === "add") {
-        dialogForm.title = "添加报表";
-        dialogForm.form = {};
-        dialogForm.type = "add";
-    } else {
-        dialogForm.title = "编辑报表";
-        dialogForm.type = "edit";
-        dialogForm.form = { ...row };
-    }
-};
-
-// 分页切换
-const pageChange = (v) => {
-    page.no = v;
-    getApprovalList();
-};
-
-// 字段点击触发
-const fieldCheck = (item) => {
-    defaultCode.value = item.entityCode;
-    page.no = 1;
-    getApprovalList();
-};
-
-// 保存流程
-const saveProcess = async (val) => {
-    if (val) {
-        goDetial(val);
-    } else {
-        getApprovalList();
-    }
-};
-
-const deleteProcess = async (row) => {
-    ElMessageBox.confirm("是否确认删除?", "提示：", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "warning",
-    })
-        .then(async () => {
-            let res = await deleteRecord(row.reportConfigId);
-            loading.value = true;
-            if (res.code === 200) {
-                message.success("删除成功");
-                getApprovalList();
-            } else {
-                loading.value = false;
-                message.error("删除失败：" + res.error);
-            }
-        })
-        .catch(() => {});
-};
-
+// 跳转详情
 const goDetial = (row) => {
     const to = router.resolve({
         path: "/luckysheet",
@@ -273,88 +72,12 @@ const goDetial = (row) => {
     });
     window.open(to.href, "_blank");
 };
+
+// 批量转审
+const referral = () => {
+    console.log("批量转审");
+};
 </script>
-  
-<style lang="scss" scoped>
-.main-container {
-    min-width: 720px;
-    border-left: 2px solid #eeeeee;
-    background: #ffffff;
-    font-size: 14px;
-}
 
-.el-aside {
-    background-color: #ffffff;
-}
-
-.fields-list {
-    height: 100%;
-    .fields-list-header {
-        font-size: 14px;
-        height: 54px;
-        line-height: 54px;
-        border-bottom: 1px dashed #eeeeee;
-        padding-left: 20px;
-    }
-    .fields-list-box {
-        height: calc(100% - 55px);
-        overflow-y: auto;
-        padding: 10px 20px;
-        font-size: 14px;
-        .fields-list-item {
-            height: 36px;
-            line-height: 36px;
-            cursor: pointer;
-            border-radius: 2px;
-            padding: 0 20px;
-            &:hover {
-                background: #eee;
-            }
-            &.is-active {
-                background: var(--el-color-primary);
-                color: #fff;
-            }
-        }
-    }
-}
-
-.props-action-section {
-    .section-title {
-        font-size: 16px;
-    }
-    .section-fr {
-        .section-search {
-            display: inline-block;
-            width: 224px;
-        }
-    }
-}
-
-.enable {
-    display: inline-block;
-    width: 28px;
-    height: 20px;
-    line-height: 20px;
-    font-size: 12px;
-    &.true {
-        background: #34a853;
-        color: #fff;
-    }
-    &.false {
-        background: #ccc;
-        color: #212529;
-    }
-}
-.table-footer {
-    height: 41px;
-    line-height: 41px;
-    background: #f7f7f7;
-    border: 1px solid #ebeef5;
-    border-top: 0;
-    padding: 0 12px;
-    font-size: 13px;
-    color: #616161;
-    justify-content: center;
-}
+<style>
 </style>
-  
