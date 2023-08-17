@@ -161,7 +161,7 @@
 
 <script>
   import DataList from '@/components/business/DataList/index.vue'
-  import {copyNew, formatRefColumn, isEmptyStr} from "@/utils/util";
+  import {copyNew, isEmptyStr} from "@/utils/util";
   import {getDataList} from "@/api/crud";
   import {deleteRoleById, getBlankRoleData, getRoleData, saveRoleData} from "@/api/user";
 
@@ -376,12 +376,13 @@
             return
           }
 
-          this.formModel.roleId = res.data.roleId
-          this.formModel.roleName = res.data.roleName
-          this.formModel.disabled = res.data.disabled
-          this.formModel.description = res.data.description
-          this.formModel.rightValueMap = res.data.rightValueMap
-          this.rightEntityList = copyNew(res.data.rightEntityList)
+          const resData = res.data.data
+          this.formModel.roleId = resData.roleId
+          this.formModel.roleName = resData.roleName
+          this.formModel.disabled = resData.disabled
+          this.formModel.description = resData.description
+          this.formModel.rightValueMap = resData.rightValueMap
+          this.rightEntityList = copyNew(resData.rightEntityList)
           this.showRoleFormDialogFlag = true
         }).catch(res => {
           this.$message({ message: res.message, type: 'error' })
