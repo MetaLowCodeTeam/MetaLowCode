@@ -10,7 +10,7 @@
     <el-dialog :title="formTitle" v-model="showRoleFormDialogFlag" v-if="showRoleFormDialogFlag"
                :destroy-on-close="true" :close-on-click-modal="false" class="small-padding"
                :show-close="true" :close-on-press-escape="false">
-      <el-form label-position="left" :label-width="'120px'" size="" ref="roleForm"
+      <el-form label-position="left" :label-width="'150px'" size="" ref="roleForm"
                :model="formModel" :rules="formRules">
         <el-row :gutter="12">
           <el-col :span="12">
@@ -460,7 +460,7 @@
     margin-top: 0;
     margin-bottom: 0;
 
-    :deep(.el-form-item--mini.el-form-item) {
+    :deep(.el-form-item) {
       margin-bottom: 6px;
     }
   }
