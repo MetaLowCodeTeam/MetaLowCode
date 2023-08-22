@@ -18,6 +18,7 @@
 		"china-area-data": "^5.0.1",
 		"codemirror": "5.65.5",
 		"core-js": "3.29.0",
+		"cron-parser": "^4.9.0",
 		"cropperjs": "1.5.13",
 		"crypto-js": "4.1.1",
 		"echarts": "5.4.1",

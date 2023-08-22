@@ -180,7 +180,6 @@ const ListTile = reactive({
     TriggerConfig: "触发器",
 });
 const { entityLable, approveDialogEntityList } = storeToRefs(useCommonStore());
-const { getEntityLable } = useCommonStore();
 // 加载状态
 let loading = ref(false);
 // 默认值
@@ -212,9 +211,6 @@ let dialogForm = reactive({
 });
 onMounted(() => {
     getEntityList();
-    if (JSON.stringify(entityLable.value) == "{}") {
-        getEntityLable();
-    }
 });
 
 // 获取左侧实体列表
@@ -285,6 +281,12 @@ const editApproval = (target, row) => {
     } else {
         dialogForm.title = "编辑" + ListTile[props.entityName];
         dialogForm.type = "edit";
+        if(props.entityName == "TriggerConfig"){
+            let tempForm = {...row};
+            tempForm.actionType = tempForm.actionType.value;
+            dialogForm.form = { ...tempForm };
+            return
+        }
         dialogForm.form = { ...row };
     }
 };

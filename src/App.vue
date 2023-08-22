@@ -18,10 +18,13 @@ import {
     inject,
 } from "vue";
 import useCheckStatusStore from "@/store/modules/checkStatus";
+import useCommonStore from "@/store/modules/common";
+
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const { setNewMsgNum } = useCheckStatusStore();
+const { getEntityLable } = useCommonStore();
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
@@ -58,14 +61,20 @@ onBeforeMount(() => {
             );
         }
     }
+    // 获取新消息
     getNewMsgNum();
-    // 轮循
+    // 轮循获取新消息
     // roundRobin(5000);
+    // 获取所有实体并格式化Label
+    getEntityLable();
 });
+
+
+// 获取新消息
 const getNewMsgNum = async () => {
     let checkStatusRes = await http.get("/crud/checkStatus");
-    if(!checkStatusRes){
-        return
+    if (!checkStatusRes) {
+        return;
     }
     if (checkStatusRes.code === 200) {
         setNewMsgNum(checkStatusRes.data.noteCount);
@@ -73,6 +82,7 @@ const getNewMsgNum = async () => {
         router.replace({ path: "/login" });
     }
 };
+// 轮循获取新消息
 const roundRobin = (ms) => {
     setInterval(() => {
         getNewMsgNum();

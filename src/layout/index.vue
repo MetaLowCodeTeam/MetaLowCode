@@ -203,7 +203,7 @@
 	import autoExit from './other/autoExit.js';
     import useKeepAliveStore from "@/store/modules/keepAlive";
     import useGlobalStore from "@/store/modules/global";
-    import setMen from './components/setMen.vue';
+    import setMen from './components/setMenu.vue';
     import { storeToRefs } from "pinia";
     const { keepLiveRoute,routeShow } = storeToRefs(useKeepAliveStore());
     const { ismobile,layout,layoutTags,menuIsCollapse } = storeToRefs(useGlobalStore());

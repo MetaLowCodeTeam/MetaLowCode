@@ -6,7 +6,7 @@
         v-model="isShow"
         :show-close="false"
         @close="close"
-        :close-on-click-modal="false"
+        :close-on-click-modal="closeOnClickModal"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
@@ -30,6 +30,7 @@ const props = defineProps({
     title: { type: String, defalut: "" },
     appendToBody: { type: Boolean, default: false },
     width: { type: String, default: "50%" },
+    closeOnClickModal: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 watch(

@@ -17,10 +17,13 @@ Object.keys(modules).forEach(item => {
 import approval from './approval.js'
 import common from './common.js'
 import reportTemplates from './reportTemplates.js';
+import trigger from './trigger.js';
 // 审批流程
 modules.approval = approval;
 // 通用接口
 modules.common = common;
 // 报表模板
 modules.reportTemplates = reportTemplates;
+// 触发器
+modules.trigger = trigger;
 export default modules

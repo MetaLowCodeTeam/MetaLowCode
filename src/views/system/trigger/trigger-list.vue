@@ -22,7 +22,7 @@
             </el-button>
         </template>
         <template #formitem="{dialogForm}">
-            <el-form-item label="选择触发器">
+            <el-form-item label="选择触发器" v-if="dialogForm.type == 'add'">
                 <el-select
                     v-model="dialogForm.form.actionType"
                     placeholder="请选择触发器"
@@ -62,13 +62,19 @@ let tableColumn = ref([
         prop: "actionType",
         label: "触发类型",
         align: "center",
-        needField:"label",
+        needField: "label",
     },
     {
         prop: "actionContent",
         label: "触发动作",
         align: "center",
         customSolt: "actionContent",
+    },
+    {
+        prop: "priority",
+        label: "优先级",
+        align: "center",
+        customSolt: "priority",
     },
     {
         prop: "isDisabled",
@@ -126,7 +132,12 @@ const addClick = () => {
 
 // 跳转详情
 const goDetial = (row) => {
-    console.log(row)
+    router.push({
+        path: "/trigger-detail",
+        query: {
+            triggerConfigId: row.triggerConfigId,
+        },
+    });
 };
 </script>
 

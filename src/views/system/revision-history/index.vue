@@ -28,13 +28,12 @@
 </template>
    
 <script setup>
-import { inject, onBeforeMount, ref } from "vue";
+import { inject, ref } from "vue";
 import { $fromNow } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import http from "@/utils/request";
 const { entityLable } = storeToRefs(useCommonStore());
-const { getEntityLable } = useCommonStore();
 const $ElMessage = inject("$ElMessage");
 let mlSingleListRef = ref("");
 // 默认排序
@@ -45,11 +44,7 @@ let sortFields = ref([
     },
 ]);
 
-onBeforeMount(() => {
-    if (JSON.stringify(entityLable.value) == "{}") {
-        getEntityLable();
-    }
-});
+
 
 // const revisionType = ref({
 //     1: "更新",
