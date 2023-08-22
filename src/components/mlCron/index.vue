@@ -126,7 +126,7 @@
             }}
         </el-button>-->
         <el-tabs type="border-card" v-model="activeTab">
-            <el-tab-pane name="second">
+            <!-- <el-tab-pane name="second">
                 <template #label>
                     <span>
                         <i class="el-icon-date"></i>
@@ -210,7 +210,7 @@
                         </el-radio>
                     </el-row>
                 </div>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane name="minute">
                 <template #label>
                     <span>
@@ -666,90 +666,7 @@
                     </el-row>
                 </div>
             </el-tab-pane>
-            <el-tab-pane name="year">
-                <template #label>
-                    <span>
-                        <i class="el-icon-date"></i>
-                        {{ state.text.Year.name }}
-                    </span>
-                </template>
-                <div class="tabBody myScroller" :style="{ 'max-height': maxHeight }">
-                    <el-row>
-                        <el-radio v-model="state.year.cronEvery" label="1" :disabled="disabled">
-                            {{
-                            state.text.Year.every
-                            }}
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio v-model="state.year.cronEvery" label="2" :disabled="disabled">
-                            {{ state.text.Year.interval[0] }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.year.incrementIncrement"
-                                :min="1"
-                                :max="99"
-                                :disabled="disabled"
-                            ></el-input-number>
-                            {{ state.text.Year.interval[1] }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.year.incrementStart"
-                                :min="2018"
-                                :max="2118"
-                                :disabled="disabled"
-                            ></el-input-number>
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio
-                            class="long"
-                            v-model="state.year.cronEvery"
-                            label="3"
-                            :disabled="disabled"
-                        >
-                            {{
-                            state.text.Year.specific
-                            }}
-                            <el-select
-                                size="small"
-                                filterable
-                                multiple
-                                v-model="state.year.specificSpecific"
-                                :disabled="disabled"
-                                
-                            >
-                                <el-option
-                                    v-for="(val, index) in 100"
-                                    :key="index"
-                                    :label="2017 + val"
-                                    :value="2017 + val"
-                                ></el-option>
-                            </el-select>
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio v-model="state.year.cronEvery" label="4" :disabled="disabled">
-                            {{ state.text.Year.cycle[0] }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.year.rangeStart"
-                                :min="2018"
-                                :max="2118"
-                                :disabled="disabled"
-                            ></el-input-number>
-                            {{ state.text.Year.cycle[1] }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.year.rangeEnd"
-                                :min="2018"
-                                :max="2118"
-                                :disabled="disabled"
-                            ></el-input-number>
-                        </el-radio>
-                    </el-row>
-                </div>
-            </el-tab-pane>
+            
         </el-tabs>
         <div class="preview">
             <div class="title">
@@ -796,7 +713,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const { i18n } = toRefs(props);
-        const activeTab = ref("second");
+        const activeTab = ref("minute");
         const state = reactive({
             previewTime: 10,
             language: i18n.value,
@@ -851,14 +768,7 @@ export default defineComponent({
                 rangeEnd: 0,
                 specificSpecific: [],
             },
-            year: {
-                cronEvery: "1",
-                incrementStart: 2017,
-                incrementIncrement: 1,
-                rangeStart: 0,
-                rangeEnd: 0,
-                specificSpecific: [],
-            },
+    
             output: {
                 second: "",
                 minute: "",
@@ -866,7 +776,6 @@ export default defineComponent({
                 day: "",
                 month: "",
                 Week: "",
-                year: "",
             },
             text: computed(() => Language[state.language || "cn"]),
             secondsText: computed({
@@ -1284,76 +1193,13 @@ export default defineComponent({
                     }
                 },
             }),
-            yearsText: computed({
-                get: () => {
-                    let years = "";
-                    let cronEvery = state.year.cronEvery;
-                    switch (cronEvery.toString()) {
-                        case "1":
-                            years = "*";
-                            break;
-                        case "2":
-                            years =
-                                state.year.incrementStart +
-                                "/" +
-                                state.year.incrementIncrement;
-                            break;
-                        case "3":
-                            state.year.specificSpecific.map((val) => {
-                                years += val + ",";
-                            });
-                            years = years.slice(0, -1);
-                            break;
-                        case "4":
-                            years =
-                                state.year.rangeStart +
-                                "-" +
-                                state.year.rangeEnd;
-                            break;
-                    }
-                    return years;
-                },
-                set: (value) => {
-                    if (value === "*") {
-                        state.year.cronEvery = "1";
-                        return;
-                    }
-                    if (value.includes("/")) {
-                        state.year.cronEvery = "2";
-                        const valueArr = value.split("/");
-                        state.year.incrementStart = Number(valueArr[0]);
-                        state.year.incrementIncrement = Number(valueArr[1]);
-                        return;
-                    }
-                    if (
-                        value.includes(",") ||
-                        (value.length > 0 &&
-                            !Number.isNaN(Number(value)) &&
-                            Number(value) <= 2118 &&
-                            Number(value) >= 2018)
-                    ) {
-                        state.year.cronEvery = "3";
-                        const valueArr = value.split(",");
-                        state.year.specificSpecific = valueArr.map((item) =>
-                            Number(item)
-                        );
-                        return;
-                    }
-                    if (value.includes("-")) {
-                        state.year.cronEvery = "4";
-                        const valueArr = value.split("-");
-                        state.year.rangeStart = Number(valueArr[0]);
-                        state.year.rangeEnd = Number(valueArr[1]);
-                        return;
-                    }
-                },
-            }),
+            
             cron: computed(() => {
-                return `${state.secondsText || "*"} ${
+                return `0 ${
                     state.minutesText || "*"
                 } ${state.hoursText || "*"} ${state.daysText || "*"} ${
                     state.monthsText || "*"
-                } ${state.weeksText || "?"} ${state.yearsText || "*"}`;
+                } ${state.weeksText || "?"}`;
             }),
 
             // 日期时间字段补零.
@@ -1438,7 +1284,6 @@ export default defineComponent({
             state.daysText = cronArr[3];
             state.monthsText = cronArr[4];
             state.weeksText = cronArr[5];
-            state.yearsText = cronArr[6];
 
             if (
                 ["*", "?"].includes(cronArr[3]) &&

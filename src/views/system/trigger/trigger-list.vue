@@ -3,7 +3,7 @@
         ref="mlEntityMenuAndListRef"
         entityName="TriggerConfig"
         aciveId="triggerConfigId"
-        fieldsList="name,entityCode,actionType,actionContent,priority,isDisabled,modifiedOn"
+        fieldsList="name,entityCode,actionType,actionContent,priority,isDisabled,modifiedOn,whenNum"
         @goDetial="goDetial"
         :checkCodes="['actionType','name']"
         :codeErrMsg="['请选择触发器','请输入名称']"
@@ -65,10 +65,10 @@ let tableColumn = ref([
         needField: "label",
     },
     {
-        prop: "actionContent",
+        prop: "whenNum",
         label: "触发动作",
         align: "center",
-        customSolt: "actionContent",
+        customSolt: "whenNum",
     },
     {
         prop: "priority",

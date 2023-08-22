@@ -7,6 +7,8 @@
         :show-close="false"
         @close="close"
         :close-on-click-modal="closeOnClickModal"
+        :class="{'not-header':notHeader}"
+        :top="top"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
@@ -31,6 +33,8 @@ const props = defineProps({
     appendToBody: { type: Boolean, default: false },
     width: { type: String, default: "50%" },
     closeOnClickModal: { type: Boolean, default: false },
+    notHeader: { type: Boolean, default: false },
+    top: { type: String, default: "15vh" },
 });
 const emit = defineEmits(["update:modelValue"]);
 watch(

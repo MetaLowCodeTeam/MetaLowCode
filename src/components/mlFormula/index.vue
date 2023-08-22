@@ -1,6 +1,6 @@
 <template>
     <!-- 计算公式 -->
-    <mlDialog v-model="isShow" width="550" title="计算公式">
+    <mlDialog v-model="isShow" width="550" title="计算公式" v-if="!isError">
         <div class="input-box" v-if="showAdvanced">
             <el-input
                 v-model="formulaVal"
@@ -31,12 +31,12 @@
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item command="无">无</el-dropdown-item>
-                                <el-dropdown-item command="求和">求和</el-dropdown-item>
-                                <el-dropdown-item command="计数">计数</el-dropdown-item>
-                                <el-dropdown-item command="去重计数">去重计数</el-dropdown-item>
-                                <el-dropdown-item command="平均值">平均值</el-dropdown-item>
-                                <el-dropdown-item command="最大值">最大值</el-dropdown-item>
-                                <el-dropdown-item command="最小值">最小值</el-dropdown-item>
+                                <el-dropdown-item command="sum">求和</el-dropdown-item>
+                                <el-dropdown-item command="count">计数</el-dropdown-item>
+                                <el-dropdown-item command="countSet">去重计数</el-dropdown-item>
+                                <el-dropdown-item command="average">平均值</el-dropdown-item>
+                                <el-dropdown-item command="max">最大值</el-dropdown-item>
+                                <el-dropdown-item command="min">最小值</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -100,11 +100,27 @@
             >{{ item.fieldLabel }}</div>
         </el-popover>
     </mlDialog>
+    <ml-dialog v-model="isError" width="500" not-header top="30vh" v-if="isError">
+        <div class="save-success">
+            <div>
+                <el-icon class="save-icon" size="50">
+                    <ElIconWarning />
+                </el-icon>
+            </div>
+            <div class="mt-5 save-info">计算公式可能存在错误，这会导致触发器执行失败。是否继续？</div>
+            <div class="mt-20">
+                <el-button @click="isError = false;">取消</el-button>
+                <el-button type="warning" @click="isConfirm">确定</el-button>
+            </div>
+        </div>
+    </ml-dialog>
 </template>
 
 <script setup>
-import { onMounted, ref, watch, unref } from "vue";
+import { onMounted, ref, watch, unref, reactive, inject } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
+const $API = inject("$API");
+const $ElMessage = inject("$ElMessage");
 const buttonRef = ref();
 const popoverRef = ref();
 const props = defineProps({
@@ -194,18 +210,24 @@ const activeRClick = (item) => {
 const onClickOutside = () => {
     unref(popoverRef).popperRef?.delayHide?.();
 };
+
+let final = reactive({
+    sum: "求和",
+    count: "计数",
+    countSet: "去重计数",
+    average: "平均值",
+    max: "最大值",
+    min: "最小值",
+});
+
 // 字段选择
 const fieldSelect = (item) => {
-    if (props.isFormulaNum) {
+    if (!props.isAdvanced) {
         let formulaNumItem = {
             value: "field",
+            label: `{${item.fieldLabel}`,
+            dropdownText: "(求和)}",
         };
-        if (props.isNeeddropdown) {
-            formulaNumItem.label = `{${item.fieldLabel}`;
-            formulaNumItem.dropdownText = "(求和)}";
-        } else {
-            formulaNumItem.label = `{${item.fieldLabel}}`;
-        }
         formulaNumList.value.push(formulaNumItem);
     } else {
         formulaVal.value += `{${item.fieldName}}`;
@@ -215,13 +237,35 @@ const fieldSelect = (item) => {
 
 // 下拉选择
 const handleCommand = (e, item) => {
-    item.dropdownText = `(${e})`;
+    if (e === "无") {
+        item.dropdownText = "}";
+    } else {
+        item.dropdownText = `(${final[e]})`;
+    }
 };
+
+// 效验计算公式是否错误
+let isError = ref(false);
 // 确认
-const confirm = () => {
+const confirm = async () => {
+    if (formulaVal.value) {
+        let res = await $API.trigger.detial.aviatorValidate(formulaVal.value);
+        if (res.code == 200) {
+            if (res.data) {
+                isConfirm();
+            } else {
+                isError.value = true;
+            }
+        } else {
+            $ElMessage.error(res.error);
+        }
+    }
+};
+const isConfirm = () => {
     isShow.value = false;
-    emits("update:modelValue", isShow.value);
+    isError.value = false;
     emits("confirm", formulaVal.value);
+    emits("update:modelValue", isShow.value);
 };
 </script>
 <style lang='scss' scoped>
@@ -236,7 +280,8 @@ const confirm = () => {
         height: 30px;
         line-height: 30px;
         color: #2c2c2c;
-        .lt,.rt {
+        .lt,
+        .rt {
             float: left;
             margin-top: 8px;
         }
@@ -391,6 +436,20 @@ const confirm = () => {
                 color: #fff;
             }
         }
+    }
+}
+
+.save-success {
+    text-align: center;
+    .save-icon {
+        color: #e6a23c;
+        position: relative;
+        left: 12px;
+    }
+    .save-info {
+        font-size: 13px;
+        font-weight: bold;
+        color: #404040;
     }
 }
 </style>

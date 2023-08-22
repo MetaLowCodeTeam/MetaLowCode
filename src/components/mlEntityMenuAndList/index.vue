@@ -82,9 +82,12 @@
                             <!-- 需要深入拿字段 -->
                             <span v-else-if="column.needField">{{ scope.row[column.prop][column.needField] }}</span>
                             <!-- 自定义 -->
-                            <span v-else-if="column.customSolt === 'actionContent'">
-                                <span v-if="scope.row.actionContent">{{ scope.row.actionContent }}</span>
+                            <span v-else-if="column.customSolt === 'whenNum'">
+                                <span v-if="scope.row.whenNum > 0">{{ formatterWhenNum(scope.row.whenNum) }}</span>
                                 <span v-else style="color: #fbbc05;">(无触发动作)</span>
+                            </span>
+                            <span v-else-if="column.customSolt === 'priority'">
+                                <span class="num-span">{{ scope.row.priority }}</span>
                             </span>
                             <!-- 默认 -->
                             <span v-else>{{ scope.row[column.prop]}}</span>
@@ -329,6 +332,68 @@ const fieldCheck = (item) => {
     page.no = 1;
     getApprovalList();
 };
+
+// 触发动作合集
+let actionList = ref([
+    {
+        label: "新建",
+        code: 2,
+    },
+    {
+        label: "删除",
+        code: 4,
+    },
+    {
+        label: "更新",
+        code: 8,
+        span: 18,
+    },
+    {
+        label: "分配",
+        code: 16,
+    },
+    {
+        label: "共享",
+        code: 32,
+    },
+    {
+        label: "取消共享",
+        code: 64,
+        span: 18,
+    },
+    {
+        label: "审批通过",
+        code: 128,
+    },
+    {
+        label: "审批撤销",
+        code: 256,
+    },
+    {
+        label: "审批提交",
+        code: 1024,
+    },
+    {
+        label: "审批驳回/撤回",
+        code: 2048,
+        span: 15,
+    },
+    {
+        label: "定期执行",
+        code: 512,
+    },
+]);
+
+// 格式化触发动作
+const formatterWhenNum = (whenNum)=>{
+    let actions = [];
+    actionList.value.forEach(el => {
+        if((whenNum & el.code) > 0){
+            actions.push(el.label)
+        }
+    })
+    return `当 ${actions.join('/')} 时`
+}
 
 // 保存流程
 const saveProcess = async (val) => {

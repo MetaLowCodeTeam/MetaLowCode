@@ -15,6 +15,7 @@
                                     filterable
                                     class="w-100"
                                     @change="targetFieldChange"
+                                    :disabled="trigger.tagEntityIsDisabled"
                                 >
                                     <el-option
                                         v-for="(op,inx) in trigger.dataUpdateEntityList"
@@ -183,6 +184,9 @@
                 />
                 <div class="w-100 info-text" style="line-height: 24px;">优先级高 (数字大) 的会被先执行</div>
             </el-form-item>
+            <el-form-item label=" " class="mt-30">
+                <el-button type="primary" @click="onSave" style="width:100px;height: 36px;">保存</el-button>
+            </el-form-item>
         </el-form>
         <div v-if="mlFormulaIsShow">
             <mlFormula
@@ -214,7 +218,7 @@ const $ElMessage = inject("$ElMessage");
 const props = defineProps({
     modelValue: null,
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "onSave"]);
 // 操作内容loading
 let contentLoading = ref(false);
 
@@ -252,6 +256,8 @@ let uptadeRule = reactive({
     updateMode: "forField",
     // 源字段
     sourceField: "",
+    // 如果更新方式是 计算公式  判断是否是高级公式
+    SimpleFormula: false,
 });
 
 // 当前选择的目标字段
@@ -288,6 +294,12 @@ const targetFieldChange = () => {
     // 获取当前选中的目标实体数据
     let inx = trigger.value.selectTagEntity;
     let cutEntity = trigger.value.dataUpdateEntityList[inx];
+    // 目标实体
+    trigger.value.entityName = cutEntity.entityName;
+    // 关联字段
+    trigger.value.fieldName = cutEntity.fieldName;
+    // 是否一对多
+    trigger.value.N = cutEntity.N;
     // 清空已添加的更新规则
     trigger.value.uptadeRuleList = [];
     // 如果目标实体数据的code不存在，拿当前实体的所有字段
@@ -331,7 +343,7 @@ const uptadeModeChange = (e) => {
 // 添加更新规则
 const addUptadeRule = () => {
     // console.log(uptadeRule, "uptadeRule");
-    let { targetField, updateMode, sourceField } = uptadeRule;
+    let { targetField, updateMode, sourceField, SimpleFormula } = uptadeRule;
     if (!sourceField) {
         return;
     }
@@ -358,6 +370,7 @@ const addUptadeRule = () => {
         targetField,
         updateMode,
         sourceField,
+        SimpleFormula,
     });
 };
 
@@ -393,8 +406,7 @@ const getTargeFieldLabel = (fieldName) => {
     let filterVal = targetFieldList.value.filter(
         (el) => el.fieldName == fieldName
     );
-    return filterVal[0]?.fieldLabel;
-    // return fieldName
+    return filterVal[0]?.fieldLabel || "（该字段已删除）";
 };
 
 // 获取更新方式显示label
@@ -479,9 +491,9 @@ const checkMlFormula = () => {
         let numTypeFields = [];
         // 循环源字段，把所有的数字类型字段遍历出来
         trigger.value.entityFields.forEach((el) => {
-            if (numType.value.includes(el.fieldType)) {
-                numTypeFields.push(el);
-            }
+            // if (numType.value.includes(el.fieldType)) {
+            numTypeFields.push(el);
+            // }
         });
         // 如果源字段没有数字类型 显示 高级计算公式
         if (numTypeFields.length < 1) {
@@ -516,6 +528,7 @@ const showAdvancedFormula = (sourceFields, isAdvanced, value) => {
     mlFormulaFields.value = sourceFields;
     mlIsAdvanced.value = isAdvanced;
     mlFormulaVal.value = isAdvanced ? value : "";
+    uptadeRule.SimpleFormula = isAdvanced;
 };
 /**
  * ********************************************** 计算公式显示相关 end
@@ -570,6 +583,18 @@ const conditionConfirm = (e) => {
 /**
  * ********************************************** 聚合规则 设置条件相关 end
  */
+
+// 保存调用
+const onSave = () => {
+    // 需要定期执行
+    // if ((trigger.whenNum & 512) > 0) {
+    //     trigger.cron = triggerTakeActionRef.value.getCronVal();
+    // }
+
+    // console.log(trigger.value, "保存调用...");
+    emit("onSave");
+    // saveRecord
+};
 
 defineExpose({
     contentLoading,

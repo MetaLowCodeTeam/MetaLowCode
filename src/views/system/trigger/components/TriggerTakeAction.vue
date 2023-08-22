@@ -35,7 +35,8 @@
                     <el-input
                         style="width: 200px;margin-right:5px;"
                         v-model="trigger.cron"
-                        placeholder="* * * * * ? *"
+                        placeholder="0 * * * * ?"
+                        @blur="cronFormat"
                         clearable
                     ></el-input>
                     <el-button type="primary" @click="cronDialogIsShow=true">配置</el-button>
@@ -47,7 +48,10 @@
                             @close="cronDialogIsShow = false"
                         ></mlCron>
                     </mlDialog>
-                    <div class="info-text mt-5">注意：定期执行将会对 <span class="blod">{{ entityLable[trigger.entityCode] }}</span> 中所有数据执行操作。设置的执行周期请勿过于频繁！</div>
+                    <div class="info-text mt-5">
+                        注意：定期执行将会对
+                        <span class="blod">{{ entityLable[trigger.entityCode] }}</span> 中所有数据执行操作。设置的执行周期请勿过于频繁！
+                    </div>
                 </div>
             </el-form-item>
             <el-form-item></el-form-item>
@@ -86,13 +90,7 @@ const props = defineProps({
     modelValue: null,
 });
 const emit = defineEmits(["update:modelValue"]);
-watch(
-    () => props.modelValue,
-    () => {
-        trigger.value = props.modelValue;
-    },
-    { deep: true }
-);
+
 let trigger = ref({});
 // 触发动作合集
 let actionList = ref([
@@ -150,7 +148,15 @@ let actionSelecteds = ref([]);
 let dialogIsShow = ref(false);
 // 条件框传值
 let conditionConf = ref({});
-
+watch(
+    () => props.modelValue,
+    () => {
+        trigger.value = props.modelValue;
+        // 格式化触发动作
+        formatActionType();
+    },
+    { deep: true }
+);
 onMounted(() => {
     trigger.value = props.modelValue;
     // 格式化触发动作
@@ -165,7 +171,7 @@ onMounted(() => {
 const formatActionType = () => {
     actionSelecteds.value = [];
     actionList.value.forEach((el) => {
-        if ((trigger.value.actionNum & el.code) > 0) {
+        if ((trigger.value.whenNum & el.code) > 0) {
             actionSelecteds.value.push(el.code);
         }
     });
@@ -173,11 +179,11 @@ const formatActionType = () => {
 
 // 触发动作切换
 const actionTypeChange = () => {
-    let actionNum = 0;
+    let whenNum = 0;
     actionSelecteds.value.forEach((el) => {
-        actionNum = actionNum | el;
+        whenNum = whenNum | el;
     });
-    trigger.value.actionNum = actionNum;
+    trigger.value.whenNum = whenNum;
     cronPopoverIsShow();
     emit("update:modelValue", trigger.value);
 };
@@ -204,6 +210,13 @@ const setCron = (v) => {
     emit("update:modelValue", trigger.value);
 };
 
+// 格式化CRON  第一位默认0
+const cronFormat = () => {
+    let myCron = trigger.value.cron.slice(1);
+    // console.log(myCron,'myCron')
+    trigger.value.cron = "0" + myCron;
+};
+
 /***
  *  ****************************************** cron表达式相关 end
  */
@@ -213,7 +226,7 @@ const setCron = (v) => {
  */
 // 设置条件
 const setCondition = () => {
-    let { filter } = Object.assign({},trigger.value);
+    let { filter } = Object.assign({}, trigger.value);
     filter = initFilter(filter);
     conditionConf.value = filter;
     dialogIsShow.value = true;
