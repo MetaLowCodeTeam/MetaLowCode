@@ -1,7 +1,7 @@
 <template>
     <!-- 就执行操作 -->
     <div class="perform-operations">
-        <el-form label-width="120px">
+        <el-form label-width="124px">
             <el-form-item label="执行操作">
                 <span class="blod">{{ trigger.actionType?.label}}</span>
             </el-form-item>

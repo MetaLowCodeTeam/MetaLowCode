@@ -124,7 +124,7 @@ const initDetailData = async () => {
         if (trigger.actionContent.items.length > 0) {
             trigger.isOnSave = true;
         }
-        // 如果是数据效验 
+        // 如果是数据效验
         if (trigger.actionType.value == 4) {
             // 禁用定期执行
             trigger.disabledActive = [512];
@@ -132,7 +132,7 @@ const initDetailData = async () => {
         // 如果是自动分配
         if (trigger.actionType.value == 8) {
             // 禁用删除时、分配时
-            trigger.disabledActive = [4,16];
+            trigger.disabledActive = [4, 16];
         }
     } else {
         $ElMessage.error(detailRes.error);
@@ -232,6 +232,25 @@ const onSave = async (target) => {
         }
         if (!content) {
             $ElMessage.warning("请输入通知内容");
+            return;
+        }
+    }
+    // 如果是自动分配
+    if (trigger.actionType.value == 8) {
+        let { assignType, allocationWhos, cascades } = actionContent;
+        if (assignType == 2 && allocationWhos.length < 1) {
+            $ElMessage.warning("请选择分配给谁");
+            return;
+        }
+        if (assignType == 2 && allocationWhos.length > 0) {
+            actionContent.assignTo = [];
+            allocationWhos.forEach((el) => {
+                actionContent.assignTo.push(el.id);
+            });
+        }
+        console.log(cascades,'cascades')
+        if (cascades.length < 1) {
+            $ElMessage.warning("请选择同时分配关联记录");
             return;
         }
     }

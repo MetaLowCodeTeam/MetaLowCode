@@ -193,10 +193,13 @@ const fieldSelect = (item) => {
         blurIndex.value,
         `{${item.fieldName}}`
     );
-    let setSelectionRange = blurIndex.value + item.fieldName.length + 2
+    let setSelectionRange = blurIndex.value + item.fieldName.length + 2;
     contentInputRef.value.focus();
     setTimeout(() => {
-        contentInputRef.value.ref.setSelectionRange(setSelectionRange, setSelectionRange);
+        contentInputRef.value.ref.setSelectionRange(
+            setSelectionRange,
+            setSelectionRange
+        );
     }, 0);
     popoverRef.value.hide();
 };
@@ -227,11 +230,16 @@ const getCutEntityFields = async () => {
         querySendState.smsState = querySendStateRes.data?.smsState;
         // 如果是内部用户
         if (trigger.value.actionContent.userType == 1) {
-            let idToIdNameRes = await $API.trigger.detial.idToIdName(
-                trigger.value.actionContent.sendTo
-            );
-            if (idToIdNameRes.code == 200) {
-                trigger.value.actionContent.inUserList = idToIdNameRes.data;
+            if (trigger.value.actionContent.sendTo?.length > 0) {
+                let idToIdNameRes = await $API.trigger.detial.idToIdName(
+                    trigger.value.actionContent.sendTo
+                );
+                if (idToIdNameRes.code == 200) {
+                    trigger.value.actionContent.inUserList = idToIdNameRes.data;
+                    trigger.value.actionContent.outUserList = [];
+                }
+            } else {
+                trigger.value.actionContent.inUserList = [];
                 trigger.value.actionContent.outUserList = [];
             }
         } else {
