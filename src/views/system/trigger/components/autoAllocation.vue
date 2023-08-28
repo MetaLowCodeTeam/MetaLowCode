@@ -54,7 +54,7 @@ const getAssignEntityList = async () => {
         trigger.value.entityCode
     );
     if (res.code === 200) {
-        assignEntityList.value = res.data.filter((el) => el.fieldName);
+        assignEntityList.value = res.data;
     } else {
         $ElMessage.error("获取同时分配关联记录实体列表数据失败：" + res.error);
     }

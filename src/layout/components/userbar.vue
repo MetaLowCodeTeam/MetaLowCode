@@ -38,7 +38,7 @@
                                             </el-badge>
                                         </div>
                                         <div class="msg-list__main">
-                                            <h2>{{COMMON_CONFIG.notificationType[item.type]}}</h2>
+                                            <h2>{{item.fromUser.name}}</h2>
                                             <p>{{item.message}}</p>
                                         </div>
                                         <div class="msg-list__time">
@@ -197,14 +197,13 @@ const markRead = () => {
     setNewMsgNum(0);
 };
 // 去消息中心
-function goNotification(){
+function goNotification() {
     let { currentRoute } = router;
-    if(currentRoute.value.name === "Notification"){
+    if (currentRoute.value.name === "Notification") {
         msg.value = false;
-    }else {
-        router.push('/notification')
+    } else {
+        router.push("/notification");
     }
-    
 }
 //搜索
 const searchFn = () => {

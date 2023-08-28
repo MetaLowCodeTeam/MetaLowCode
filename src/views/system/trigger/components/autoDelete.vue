@@ -50,7 +50,7 @@ const getDataDeleteEntityList = async () => {
         trigger.value.entityCode
     );
     if (res.code === 200) {
-        dataDeleteEntityList.value = res.data.filter((el) => el.fieldName);
+        dataDeleteEntityList.value = res.data;
     } else {
         $ElMessage.error("获取删除记录实体列表数据失败：" + res.error);
     }
