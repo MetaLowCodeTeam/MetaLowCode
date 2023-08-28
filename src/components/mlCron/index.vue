@@ -727,7 +727,7 @@ export default defineComponent({
             },
             minute: {
                 cronEvery: "1",
-                incrementStart: 3,
+                incrementStart: 0,
                 incrementIncrement: 5,
                 rangeStart: 0,
                 rangeEnd: 0,

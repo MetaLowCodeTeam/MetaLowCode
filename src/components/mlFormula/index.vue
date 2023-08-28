@@ -50,14 +50,6 @@
             <div class="formula-val mb-10" v-else>
                 <span class="not-val">计算公式</span>
             </div>
-            <div class="change-span" @click="showAdvanced = !showAdvanced">
-                <el-icon class="lt">
-                    <ElIconArrowLeftBold />
-                </el-icon>
-                <el-icon class="rt">
-                    <ElIconArrowRightBold />
-                </el-icon>
-            </div>
             <div class="active-box">
                 <div class="active-l fl">
                     <div
@@ -107,6 +99,7 @@
                     <ElIconWarning />
                 </el-icon>
             </div>
+            <div class="mt-5 error-content">{{ errorContent }}</div>
             <div class="mt-5 save-info">计算公式可能存在错误，这会导致触发器执行失败。是否继续？</div>
             <div class="mt-20">
                 <el-button @click="isError = false;">取消</el-button>
@@ -186,7 +179,7 @@ const activeRClick = (item) => {
         formulaNumList.value.forEach((el) => {
             formulaVal.value += el.label + (el.dropdownText || "");
         });
-        formulaNumList.value = [];
+
         confirm();
     } else if (item == "清空") {
         formulaNumList.value = [];
@@ -227,10 +220,12 @@ const fieldSelect = (item) => {
             value: "field",
             label: `{${item.fieldLabel}`,
             dropdownText: "(求和)}",
+            checkField: item.fieldName,
+            checkDropdown: "sum",
         };
         formulaNumList.value.push(formulaNumItem);
     } else {
-        formulaVal.value += `{${item.fieldName}}`;
+        formulaVal.value = `${formulaVal.value || ""}{${item.fieldName}}`;
         popoverRef.value.hide();
     }
 };
@@ -239,22 +234,51 @@ const fieldSelect = (item) => {
 const handleCommand = (e, item) => {
     if (e === "无") {
         item.dropdownText = "}";
+        item.checkDropdown = "";
     } else {
         item.dropdownText = `(${final[e]})`;
+        item.checkDropdown = `(${e})`;
     }
 };
 
 // 效验计算公式是否错误
 let isError = ref(false);
+// 计算公式错误内容
+let errorContent = ref("");
+// 简易的val
+let numFormulaVal = ref("");
+
 // 确认
 const confirm = async () => {
-    if (formulaVal.value) {
-        let res = await $API.trigger.detial.aviatorValidate(formulaVal.value);
+    let checkVal = "";
+    if (!showAdvanced) {
+        checkVal = formulaVal.value;
+    } else {
+        formulaNumList.value.forEach((el) => {
+            if (el.checkField) {
+                checkVal +=
+                    "{" +
+                    el.checkField +
+                    (el.checkDropdown ? `$${el.checkDropdown}` : "") +
+                    "}";
+            }else {
+                checkVal += el.label
+            }
+        });
+        formulaNumList.value = [];
+    }
+    numFormulaVal.value = checkVal;
+    if (checkVal) {
+        let res = await $API.trigger.detial.aviatorValidate(checkVal);
         if (res.code == 200) {
+            // 错误的
             if (res.data) {
-                isConfirm();
-            } else {
                 isError.value = true;
+                errorContent.value = res.data;
+            }
+            // 正确的
+            else {
+                isConfirm();
             }
         } else {
             $ElMessage.error(res.error);
@@ -264,7 +288,10 @@ const confirm = async () => {
 const isConfirm = () => {
     isShow.value = false;
     isError.value = false;
-    emits("confirm", formulaVal.value);
+    emits("confirm", {
+        label: formulaVal.value,
+        value: numFormulaVal.value,
+    });
     emits("update:modelValue", isShow.value);
 };
 </script>
@@ -316,10 +343,10 @@ const isConfirm = () => {
         word-wrap: break-word;
         word-break: break-all;
         overflow: hidden;
-
+        line-height: 16px;
         .v {
             font-style: normal;
-            line-height: 20px;
+
             &.oper {
                 margin: 0 3px;
             }
@@ -451,5 +478,13 @@ const isConfirm = () => {
         font-weight: bold;
         color: #404040;
     }
+}
+.error-content {
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: auto;
+    height: 128px;
+    padding: 20px;
+    color: #ea4335;
 }
 </style>

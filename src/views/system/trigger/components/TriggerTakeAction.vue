@@ -8,13 +8,14 @@
             <el-form-item label="触发动作">
                 <div>
                     <el-checkbox-group v-model="actionSelecteds" @change="actionTypeChange">
+                       
                         <el-row :gutter="20">
                             <el-col
                                 :span="item.span ? item.span : 3"
                                 v-for="(item,inx) of actionList"
                                 :key="inx"
                             >
-                                <el-checkbox :label="item.code">
+                                <el-checkbox :label="item.code" :disabled="trigger.disabledActive?.includes(item.code)">
                                     {{ item.label }}
                                     <el-tooltip
                                         effect="dark"
@@ -34,7 +35,7 @@
                 <div class="w-100 mt-10" v-if="cronPopoverIsShow()">
                     <el-input
                         style="width: 200px;margin-right:5px;"
-                        v-model="trigger.cron"
+                        v-model="trigger.whenCron"
                         placeholder="0 * * * * ?"
                         @blur="cronFormat"
                         clearable
@@ -69,7 +70,7 @@
         <div v-if="dialogIsShow">
             <mlDialog title="附加过滤条件" append-to-body width="37%" v-model="dialogIsShow">
                 <mlSetConditions
-                    v-model="trigger.filter"
+                    v-model="conditionConf"
                     footer
                     @cancel="dialogIsShow = false"
                     @confirm="conditionConfirm"
@@ -205,16 +206,18 @@ const cronPopoverIsShow = () => {
 
 // 确认设置表达式
 const setCron = (v) => {
-    trigger.value.cron = v;
+    trigger.value.whenCron = v;
     cronDialogIsShow.value = false;
     emit("update:modelValue", trigger.value);
 };
 
 // 格式化CRON  第一位默认0
 const cronFormat = () => {
-    let myCron = trigger.value.cron.slice(1);
-    // console.log(myCron,'myCron')
-    trigger.value.cron = "0" + myCron;
+    if (trigger.value.whenCron) {
+        let myCron = trigger.value.whenCron.slice(1);
+        // console.log(myCron,'myCron')
+        trigger.value.whenCron = "0" + myCron;
+    }
 };
 
 /***
@@ -226,9 +229,10 @@ const cronFormat = () => {
  */
 // 设置条件
 const setCondition = () => {
-    let { filter } = Object.assign({}, trigger.value);
-    filter = initFilter(filter);
-    conditionConf.value = filter;
+    let { actionFilter } = Object.assign({}, trigger.value);
+    actionFilter = initFilter(actionFilter);
+
+    conditionConf.value = actionFilter;
     dialogIsShow.value = true;
 };
 // 初始化条件
@@ -248,14 +252,15 @@ const initFilter = (filter) => {
 
 // 获取设置条件文案
 const getSetConditionText = () => {
-    let { filter } = trigger.value;
-    let length = filter && filter.items ? filter.items.length : 0;
+    let { actionFilter } = trigger.value;
+    let length =
+        actionFilter && actionFilter.items ? actionFilter.items.length : 0;
     return length > 0 ? `已设置条件（${length}）` : "点击设置";
 };
 
 // 确认设置条件
 const conditionConfirm = (e) => {
-    trigger.value.filter = e;
+    trigger.value.actionFilter = Object.assign({}, e);
     dialogIsShow.value = false;
     emit("update:modelValue", trigger.value);
 };

@@ -69,6 +69,7 @@
 import { queryById, queryEntityFields, saveRecord } from "@/api/crud";
 import { onBeforeMount, ref, inject, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { ElMessageBox } from "element-plus";
 // 当发生动作
 import TriggerTakeAction from "./components/TriggerTakeAction.vue";
 // 就执行操作
@@ -82,28 +83,14 @@ let initLoading = ref(false);
 let trigger = reactive({
     // 实体ID
     triggerConfigId: "",
-    // 触发动作
-    whenNum: 0,
-    // 过滤条件
-    filter: {
-        items: [],
-    },
     // cron表达式
-    cron: "",
-    // 目标实体数据
-    dataUpdateEntityList: [],
-    // 选择的目标实体
-    selectTagEntity: "",
-    // 禁用目标实体
-    tagEntityIsDisabled: false,
-    // 当前实体所有字段
-    entityFields: [],
-    // 更新规则
-    uptadeRuleList: [],
-    // 聚合条件
-    polymerization: {
-        items: [],
-    },
+    whenCron: null,
+    // 操作内容
+    actionContent: "",
+    // 是否保存过
+    isOnSave: false,
+    // 禁用触发动作
+    disabledActive: [],
 });
 onBeforeMount(() => {
     trigger.triggerConfigId = router.currentRoute.value.query.triggerConfigId;
@@ -127,96 +114,25 @@ const initDetailData = async () => {
     if (detailRes.code == 200) {
         trigger = Object.assign(trigger, detailRes.data);
         trigger.priority = trigger.priority || 1;
+        trigger.actionContent = trigger.actionContent
+            ? JSON.parse(trigger.actionContent)
+            : { items: [] };
+        trigger.actionFilter = trigger.actionFilter
+            ? JSON.parse(trigger.actionFilter)
+            : { items: [] };
         // 编辑回显
-        if (trigger.actionContent) {
-            let actionContent = JSON.parse(trigger.actionContent);
-            trigger.entityName = actionContent.entityName;
-            trigger.fieldName = actionContent.fieldName;
-            trigger.N = actionContent.N;
-            trigger.uptadeRuleList = [...actionContent.items];
-            trigger.tagEntityIsDisabled = true;
+        if (trigger.actionContent.items.length > 0) {
+            trigger.isOnSave = true;
         }
-        if (trigger.actionFilter) {
-            trigger.filter = JSON.parse(trigger.actionFilter);
+        // 禁用触发动作
+        if (trigger.actionType.value == 4) {
+            trigger.disabledActive = [512];
         }
-        if (trigger.whenCron) {
-            trigger.cron = trigger.whenCron;
-        }
-        // console.log(trigger, "触发器详情数据...");
-        // 获取操作内容数据
-        getActionContentData();
     } else {
         $ElMessage.error(detailRes.error);
     }
     initLoading.value = false;
 };
-
-/**
- * *************************************** 获取操作内容数据相关 beg
- */
-let performOperationsRef = ref();
-
-// 获取操作内容数据
-const getActionContentData = async () => {
-    performOperationsRef.value.contentLoading = true;
-    let { value } = trigger.actionType;
-    // 字段更新、字段聚合
-    if (value == 1 || value == 2) {
-        Promise.all([getDataUpdateEntityList(), getEntityFields()]).then(() => {
-            performOperationsRef.value.contentLoading = false;
-        });
-    }
-};
-// 获取目标实体所有字段
-const getDataUpdateEntityList = () => {
-    return new Promise(async (resolve, reject) => {
-        let res = await $API.trigger.detial.dataUpdateEntityList(
-            trigger.entityCode
-        );
-        if (res.code === 200) {
-            trigger.dataUpdateEntityList = res.data;
-            // 目标实体默认选中第1个
-            let defalutInx = 0;
-            // 如果是编辑过的，找到之前选中的数据
-            if (trigger.tagEntityIsDisabled) {
-                trigger.dataUpdateEntityList.forEach((el, elInx) => {
-                    if (
-                        el.fieldName == trigger.fieldName &&
-                        el.entityName == trigger.entityName
-                    ) {
-                        defalutInx = elInx;
-                    }
-                });
-            }
-            // 设置选中
-            trigger.selectTagEntity = defalutInx;
-            // 获取选中实体的所有字段
-            performOperationsRef.value.getTargetFieldList(
-                res.data[defalutInx].entityCode
-            );
-            resolve();
-        } else {
-            $ElMessage.error("获取目标实体数据失败：" + res.error);
-            resolve();
-        }
-    });
-};
-const getEntityFields = () => {
-    return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.entityCode);
-        if (res.code === 200) {
-            trigger.entityFields = res.data;
-            // console.log(res.data, "获取当前实体所有字段");
-            resolve();
-        } else {
-            $ElMessage.error("获取当前实体字段数据失败：" + res.error);
-            resolve();
-        }
-    });
-};
-/**
- * *************************************** 获取操作内容数据相关 end
- */
 
 // 返回列表
 const goTriggerList = () => {
@@ -233,64 +149,107 @@ let notTitleDialog = reactive({
 });
 
 // 保存调用
-const onSave = async () => {
-    let {
-        uptadeRuleList,
-        triggerConfigId,
-        whenNum,
-        filter,
-        priority,
-        entityName,
-        fieldName,
-        N,
-    } = trigger;
+const onSave = async (target) => {
+    let { triggerConfigId, whenNum, priority, actionContent } = trigger;
     // 如果是更新规则
-    if (trigger.actionType.value == 1 && uptadeRuleList.length < 1) {
+    if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
         $ElMessage.warning("请至少添加 1 个更新规则");
         return;
     }
+    // 如果是聚合规则
+    if (trigger.actionType.value == 2 && actionContent.items.length < 1) {
+        $ElMessage.warning("请至少添加 1 个聚合规则");
+        return;
+    }
     let params = {
-        entity: "TriggerConfig",
         id: triggerConfigId,
         formModel: {
             triggerConfigId,
             priority,
+            whenCron: null,
         },
     };
     // 如果有触发动作
-    if (whenNum > 0) {
+    if (whenNum > 0 && !target) {
         // 如果触发动作勾选了定期执行
-        if ((whenNum & 512) > 0) {
-            params.formModel.whenCron = trigger.cron;
+        if ((whenNum & 512) > 0 && !trigger.whenCron) {
+            $ElMessage.warning("请配置定期执行cron表达式");
+            return;
         }
+        params.formModel.whenCron = trigger.whenCron;
         params.formModel.whenNum = whenNum;
     }
-
     // 如果有附加过滤条件
-    if (filter.items.length > 0) {
-        params.formModel.actionFilter = JSON.stringify(filter);
+    if (trigger.actionFilter.items.length > 0) {
+        params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
-    // 如果是 更新规则 保存
-    if (trigger.actionType.value == 1 && uptadeRuleList.length > 0) {
-        let actionContent = {
-            entityName,
-            fieldName,
-            N,
-            items: uptadeRuleList,
-        };
-        params.formModel.actionContent = JSON.stringify(actionContent);
+    // 如果是数据效验
+    if (trigger.actionType.value == 4) {
+        if (actionContent.filter.items.length < 1) {
+            $ElMessage.warning("请至少选择一个效验条件");
+            return;
+        }
+        if (!actionContent.tipContent) {
+            $ElMessage.warning("请填写提示内容");
+            return;
+        }
     }
+    // 如果是回调URL
+    if (trigger.actionType.value == 14) {
+        if (!actionContent.hookUrl) {
+            $ElMessage.warning("请数要推送到的URL");
+            return;
+        }
+    }
+    params.formModel.actionContent = JSON.stringify(actionContent);
+    if (target == "execute") {
+        actionExecute(params);
+        return;
+    }
+
     initLoading.value = true;
-    let res = await saveRecord(params.entity, params.id, params.formModel);
+
+    let res = await $API.trigger.detial.triggerSave(
+        params.id,
+        params.formModel
+    );
     if (res.code == 200) {
         notTitleDialog.isShow = true;
         notTitleDialog.type = 1;
         // 禁用目标实体
-        trigger.tagEntityIsDisabled = true;
+        trigger.isOnSave = true;
     } else {
         $ElMessage.error("保存失败：" + res.error);
     }
     initLoading.value = false;
+};
+
+// 立即执行
+const actionExecute = (params) => {
+    ElMessageBox.confirm(
+        "此操作将直接执行此触发器，数据过多耗时会较长，请耐心等待。是否继续？?",
+        "",
+        {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+        }
+    )
+        .then(async () => {
+            initLoading.value = true;
+            let res = await $API.trigger.detial.execute({
+                entityCode: trigger.entityCode,
+                actionFilter: params.formModel.actionFilter || null,
+                actionContent: params.formModel.actionContent || null,
+                actionType: trigger.actionType.value,
+            });
+            if (res.code == 200) {
+            } else {
+                $ElMessage.error("保存失败：" + res.error);
+            }
+            initLoading.value = false;
+        })
+        .catch(() => {});
 };
 </script>
 

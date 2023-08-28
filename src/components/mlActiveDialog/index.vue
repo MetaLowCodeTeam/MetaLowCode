@@ -9,6 +9,7 @@
                     v-model="dialogForm.form.entityCode"
                     :placeholder="fromEntityLabel"
                     style="width: 80%;"
+                    filterable
                 >
                     <el-option
                         :label="op.label"
