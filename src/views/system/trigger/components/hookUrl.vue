@@ -41,10 +41,15 @@
                     @click="hookUrlTest"
                 >推送测试</el-button>
             </el-row>
-            <div class="text-div mt-5" v-if="testRes.code">
+            <div class="text-div mt-5" v-if="testRes.code == 200">
                 <div>STATUS : {{ testRes.code }}</div>
                 <div>MESSAGE : {{ testRes.message }}</div>
                 <div class="pre-div">{{ testRes.data }}</div>
+            </div>
+            <div class="text-div mt-5" v-else>
+                <div>STATUS : {{ testRes.code }}</div>
+                <div>MESSAGE : {{ testRes.message }}</div>
+                <div class="pre-div">{{ testRes.error }}</div>
             </div>
         </el-form-item>
     </div>

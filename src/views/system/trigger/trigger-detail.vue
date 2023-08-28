@@ -194,6 +194,44 @@ const onSave = async (target) => {
             return;
         }
     }
+    // 如果是发送通知
+    if (trigger.actionType.value == 5) {
+        let { type, title, content, outUserList, userType, inUserList } =
+            actionContent;
+        if (type < 1) {
+            $ElMessage.warning("请至少选择一个通知类型");
+            return;
+        }
+        if (userType == 1 && inUserList.length < 1) {
+            $ElMessage.warning("请选择要发送到的内部用户");
+            return;
+        }
+        if (userType == 2 && outUserList.length < 1) {
+            $ElMessage.warning("请选择要发送到的外部人员");
+            return;
+        }
+        // 如果是内部用户，只要用户ID
+        if (userType == 1) {
+            actionContent.sendTo = [];
+            inUserList.forEach((el) => {
+                actionContent.sendTo.push(el.id);
+            });
+            actionContent.sendTo = JSON.stringify(actionContent.sendTo);
+        } else {
+            actionContent.sendTo = JSON.stringify(outUserList);
+        }
+        // 如果勾选了邮件，但是没填标题
+        if ((type & 8) > 0 && !title) {
+            $ElMessage.warning("请输入邮件标题");
+            return;
+        }
+        if (!content) {
+            $ElMessage.warning("请输入通知内容");
+            return;
+        }
+        // console.log(actionContent, "actionContent");
+        // return;
+    }
     // 如果是回调URL
     if (trigger.actionType.value == 14) {
         if (!actionContent.hookUrl) {

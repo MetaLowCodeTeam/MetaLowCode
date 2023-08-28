@@ -160,7 +160,7 @@ const props = defineProps({
 let contentLoading = ref(false);
 // 数据源
 let trigger = ref({
-    actionContent:{}
+    actionContent: {},
 });
 onMounted(() => {
     trigger.value = props.modelValue;
@@ -242,7 +242,7 @@ const getTagEntitys = () => {
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.value.entityCode, true);
+        let res = await queryEntityFields(trigger.value.entityCode, true, true);
         if (res.code === 200) {
             cutEntityFields.value = res.data;
             res.data.forEach((el) => {
@@ -741,7 +741,7 @@ const targetEntityChange = () => {
             }
         }
     }
-    &:hover .uptade-rule-col-last .uptade-rule-span{
+    &:hover .uptade-rule-col-last .uptade-rule-span {
         .del-icon {
             z-index: 1;
         }

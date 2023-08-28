@@ -2,13 +2,51 @@
     <!--  -->
     <div class="action-div" v-loading="contentLoading">
         <el-form-item class="mt-20" label="通知类型">
-            <el-checkbox-group v-model="actionSelecteds" @change="typeChange">
-                <el-checkbox label="2">通知</el-checkbox>
-                <el-checkbox label="4">邮件(不可用)</el-checkbox>
-                <el-checkbox label="8">短信(不可用)</el-checkbox>
+            <el-checkbox-group v-model="typeSelecteds" @change="typeChange">
+                <el-checkbox
+                    v-for="(item,inx) of typeList"
+                    :key="inx"
+                    :label="item.value"
+                    :disabled=" trigger.actionContent.userType == 2 && item.value == 2"
+                >
+                    {{ item.label }}
+                    <span
+                        v-if="item.code"
+                    >({{ querySendState[item.code] ? '可用' : "不可用"}})</span>
+                </el-checkbox>
             </el-checkbox-group>
         </el-form-item>
-        <el-form-item class="mt-20" label="标题">
+        <el-form-item class="mt-20" label="发送给谁">
+            <el-radio-group v-model="trigger.actionContent.userType" @change="userTypeChange">
+                <el-radio :label="1">内部用户</el-radio>
+                <el-radio :label="2">外部人员</el-radio>
+            </el-radio-group>
+            <div class="w-100 mt-5">
+                <mlSelectUser
+                    v-if="trigger.actionContent.userType == 1"
+                    v-model="trigger.actionContent.inUserList"
+                    multiple
+                    clearable
+                />
+                <el-select
+                    v-model="trigger.actionContent.outUserList"
+                    multiple
+                    placeholder="请选择"
+                    style="width: 100%"
+                    clearable
+                    filterable
+                    v-else
+                >
+                    <el-option
+                        v-for="(op,opInx) in sendToFields"
+                        :key="opInx"
+                        :label="op.fieldLabel"
+                        :value="op.fieldName"
+                    />
+                </el-select>
+            </div>
+        </el-form-item>
+        <el-form-item class="mt-20" v-if="typeSelecteds.includes(8)" label="邮件标题">
             <el-input v-model="trigger.actionContent.title" placeholder="你有一条新通知"></el-input>
         </el-form-item>
         <el-form-item class="mt-20" label="内容">
@@ -47,7 +85,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, unref, inject } from "vue";
+import { onMounted, ref, unref, inject, reactive } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
 import { queryEntityFields } from "@/api/crud";
 const buttonRef = ref();
@@ -63,19 +101,77 @@ let contentLoading = ref(false);
 let trigger = ref({
     actionContent: {},
 });
-// 默认选中集合
-let actionSelecteds = ref([]);
+// 通知类型list
+let typeList = ref([
+    {
+        label: "通知",
+        value: 2,
+    },
+    {
+        label: "邮件",
+        value: 8,
+        code: "emailState",
+    },
+    {
+        label: "短信",
+        value: 4,
+        code: "smsState",
+    },
+]);
+// 选中集合
+let typeSelecteds = ref([]);
+
 onMounted(() => {
     trigger.value = props.modelValue;
-    // 获取当前实体所有字段
+    // 初始化 发送给谁
+    if (!trigger.value.actionContent.userType) {
+        trigger.value.actionContent.userType = 1;
+    }
+    // 初始化通知类型（二进制状态）
+    initSendType();
     getCutEntityFields();
 });
 
+// 初始化通知类型（二进制状态）
+const initSendType = () => {
+    if (
+        !trigger.value.actionContent.type &&
+        trigger.value.actionContent.userType == 1
+    ) {
+        trigger.value.actionContent.type = 2;
+    } else {
+        trigger.value.actionContent.type = 8;
+    }
+    setTypeSelecteds();
+};
+
+// 设置通知类型选中
+const setTypeSelecteds = () => {
+    typeSelecteds.value = [];
+    let { type } = trigger.value.actionContent;
+    typeList.value.forEach((el) => {
+        if ((type & el.value) > 0) {
+            typeSelecteds.value.push(el.value);
+        }
+    });
+};
 
 // 通知类型切换
-const typeChange = (e)=>{
-    console.log(e);
-}
+const typeChange = (e) => {
+    let selectNum = 0;
+    typeSelecteds.value.forEach((el) => {
+        selectNum = selectNum | el;
+    });
+    trigger.value.actionContent.type = selectNum;
+};
+// 发送给谁切换
+const userTypeChange = (e) => {
+    // 如果选择外部人员，并且通知类型是勾选的。需要取消勾选
+    if (e == 2 && (trigger.value.actionContent.type & 2) > 0) {
+        trigger.value.actionContent.type = trigger.value.actionContent.type - 2;
+        setTypeSelecteds();
+    }
+};
 
 // 字段弹出
 const onClickOutside = () => {
@@ -84,21 +180,48 @@ const onClickOutside = () => {
 
 // 字段选择
 const fieldSelect = (item) => {
-    trigger.value.actionContent.tipContent = `${
-        trigger.value.actionContent.tipContent || ""
+    trigger.value.actionContent.content = `${
+        trigger.value.actionContent.content || ""
     }{${item.fieldName}}`;
     popoverRef.value.hide();
 };
 
 // 源实体所有字段
 let cutEntityFields = ref([]);
-
+// 通知类型是否可用
+let querySendState = reactive({
+    // 邮件是否可用
+    emailState: false,
+    // 短信是否可用
+    smsState: false,
+});
+// 外部人员字段
+let sendToFields = ref([]);
 const getCutEntityFields = async () => {
-    let res = await queryEntityFields(trigger.value.entityCode, true);
+    contentLoading.value = true;
+    let res = await queryEntityFields(trigger.value.entityCode, true, true);
     if (res.code === 200) {
         cutEntityFields.value = res.data;
+        sendToFields.value = res.data.filter((el) => el.fieldType == "Text");
+        let querySendStateRes = await $API.trigger.detial.querySendState();
+        querySendState.emailState = querySendStateRes.data?.emailState;
+        querySendState.smsState = querySendStateRes.data?.smsState;
+        // 如果是内部用户
+        if (trigger.value.actionContent.userType == 1) {
+            let idToIdNameRes = await $API.trigger.detial.idToIdName(
+                JSON.parse(trigger.value.actionContent.sendTo)
+            );
+            if (idToIdNameRes.code == 200) {
+                trigger.value.actionContent.inUserList = idToIdNameRes.data;
+                trigger.value.actionContent.outUserList = [];
+            }
+        } else {
+            trigger.value.actionContent.inUserList = [];
+        }
+        contentLoading.value = false;
     } else {
         $ElMessage.error("获取当前实体字段数据失败：" + res.error);
+        contentLoading.value = false;
     }
 };
 </script>

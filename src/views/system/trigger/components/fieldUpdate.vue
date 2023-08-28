@@ -243,7 +243,7 @@ const getTagEntitys = () => {
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.value.entityCode, true);
+        let res = await queryEntityFields(trigger.value.entityCode, true, true);
         if (res.code === 200) {
             cutEntityFields.value = res.data;
             res.data.forEach((el) => {
@@ -437,7 +437,6 @@ const formatUpdateMode = (updateMode) => {
     return uptadeModeLabel[updateMode];
 };
 
-
 // 格式化 源字段
 const formatSourceField = (item) => {
     if (item.updateMode == "forCompile") {
@@ -461,7 +460,12 @@ const regSourceField = (sourceField) => {
         let formatStr = el.substring(1);
         formatStr = formatStr.substring(0, formatStr.length - 1);
         let splitStr = formatStr.split("$");
-        str = str.replace(el,`{${cutEntityFieldLable.value[splitStr[0]]}(${uptadeModeLabel[splitStr[1]]})`)
+        str = str.replace(
+            el,
+            `{${cutEntityFieldLable.value[splitStr[0]]}(${
+                uptadeModeLabel[splitStr[1]]
+            })`
+        );
     });
     return str;
 };

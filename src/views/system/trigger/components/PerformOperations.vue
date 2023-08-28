@@ -10,7 +10,8 @@
                 <fieldAggregation v-model="trigger" v-if="trigger.actionType?.value == 2" />
                 <dataValidation v-model="trigger" v-if="trigger.actionType?.value == 4" />
                 <sendNotifications v-model="trigger" v-if="trigger.actionType?.value == 5" />
-                <hookUrl v-model="trigger" v-if="trigger.actionType?.value == 14"/>
+                <autoDelete v-model="trigger" v-if="trigger.actionType?.value == 12" />
+                <hookUrl v-model="trigger" v-if="trigger.actionType?.value == 14" />
             </el-form-item>
             <el-form-item label="执行优先级">
                 <el-input-number
@@ -23,7 +24,11 @@
             </el-form-item>
             <el-form-item label=" " class="mt-30">
                 <el-button type="primary" @click="onSave" style="width:100px;height: 36px;">保存</el-button>
-                <el-dropdown trigger="click" @command="handleCommand" v-if="trigger.actionType?.value == 1 || trigger.actionType?.value == 2">
+                <el-dropdown
+                    trigger="click"
+                    @command="handleCommand"
+                    v-if="trigger.actionType?.value == 1 || trigger.actionType?.value == 2"
+                >
                     <el-button style="width:40px;height: 36px;">
                         <el-icon>
                             <ElIconMoreFilled />
@@ -47,11 +52,13 @@ import fieldUpdate from "./fieldUpdate.vue";
 // 字段聚合
 import fieldAggregation from "./fieldAggregation.vue";
 // 数据效验
-import dataValidation from './dataValidation.vue';
+import dataValidation from "./dataValidation.vue";
 // 发送通知
-import sendNotifications from './sendNotifications.vue';
+import sendNotifications from "./sendNotifications.vue";
+// 自动删除
+import autoDelete from "./autoDelete.vue";
 // 回调URL
-import hookUrl from './hookUrl.vue';
+import hookUrl from "./hookUrl.vue";
 const props = defineProps({
     modelValue: null,
 });
@@ -74,7 +81,6 @@ onMounted(() => {
 const priorityChange = () => {
     emit("update:modelValue", trigger.value);
 };
-
 
 // 保存调用
 const onSave = () => {

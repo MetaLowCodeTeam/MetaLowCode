@@ -29,5 +29,17 @@ export default {
         hookUrlTest: async (params) => {
             return await http.post("/trigger/hookUrlTest", params);
         },
+        // 判断通知类型是否可用
+        querySendState: async () => {
+            return await http.get("/note/querySendState");
+        },
+        // 转换用户信息
+        idToIdName: async (idList) => {
+            return await http.post("/trigger/idToIdName", idList);
+        },
+        // 删除记录实体
+        getDataDeleteEntityList: async (entityCode) => {
+            return await http.get("/trigger/dataDelete/entityList", { entityCode });
+        },
     },
 }
