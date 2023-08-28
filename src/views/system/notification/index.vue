@@ -2,10 +2,11 @@
     <mlSingleList
         title="消息中心"
         mainEntity="Notification"
-        fieldsList="toUser,fromUser,unread,type,relatedRecord,message,createdOn"
+        fieldsList="fromUser,unread,type,relatedRecord,message,createdOn"
         :sortFields="sortFields"
         fieldName="message"
         :tableColumn="tableColumn"
+        :filterItems="filterItems"
     >
         <template #activeRow>
             <el-table-column label="操作" :align="'center'" width="100">
@@ -14,19 +15,29 @@
                 </template>
             </el-table-column>
         </template>
-    </mlSingleList> 
+    </mlSingleList>
 </template>
    
 <script setup>
 import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";
 const COMMON_CONFIG = inject("COMMON_CONFIG");
-const $ElMessage = inject('$ElMessage')
+const $ElMessage = inject("$ElMessage");
+const $TOOL = inject("$TOOL");
+
 // 默认排序
 let sortFields = ref([
     {
         fieldName: "createdOn",
         type: "DESC",
+    },
+]);
+// 过滤条件
+let filterItems = ref([
+    {
+        fieldName: "toUser",
+        op: "EQ",
+        value: $TOOL.data.get("USER_INFO").userId,
     },
 ]);
 let tableColumn = ref([
@@ -41,12 +52,6 @@ let tableColumn = ref([
     {
         prop: "fromUser.name",
         label: "发送人",
-        width: "120",
-        align: "center",
-    },
-    {
-        prop: "toUser.name",
-        label: "接收人",
         width: "120",
         align: "center",
     },
@@ -79,10 +84,8 @@ let tableColumn = ref([
     },
 ]);
 
-
-
 function activeRow(row) {
-    $ElMessage.info('点击了查看')
+    $ElMessage.info("点击了查看");
 }
 </script>
 <style>

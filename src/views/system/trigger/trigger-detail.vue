@@ -124,9 +124,15 @@ const initDetailData = async () => {
         if (trigger.actionContent.items.length > 0) {
             trigger.isOnSave = true;
         }
-        // 禁用触发动作
+        // 如果是数据效验 
         if (trigger.actionType.value == 4) {
+            // 禁用定期执行
             trigger.disabledActive = [512];
+        }
+        // 如果是自动分配
+        if (trigger.actionType.value == 8) {
+            // 禁用删除时、分配时
+            trigger.disabledActive = [4,16];
         }
     } else {
         $ElMessage.error(detailRes.error);

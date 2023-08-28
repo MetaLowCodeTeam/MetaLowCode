@@ -117,6 +117,10 @@ let triggerList = ref([
         code: 7,
     },
     {
+        label: "自动分配",
+        code: 8,
+    },
+    {
         label: "自动删除",
         code: 12,
     },

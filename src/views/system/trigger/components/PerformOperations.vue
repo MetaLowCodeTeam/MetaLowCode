@@ -10,6 +10,7 @@
                 <fieldAggregation v-model="trigger" v-if="trigger.actionType?.value == 2" />
                 <dataValidation v-model="trigger" v-if="trigger.actionType?.value == 4" />
                 <sendNotifications v-model="trigger" v-if="trigger.actionType?.value == 5" />
+                <autoAllocation v-model="trigger" v-if="trigger.actionType?.value == 8" />
                 <autoDelete v-model="trigger" v-if="trigger.actionType?.value == 12" />
                 <hookUrl v-model="trigger" v-if="trigger.actionType?.value == 14" />
             </el-form-item>
@@ -55,6 +56,8 @@ import fieldAggregation from "./fieldAggregation.vue";
 import dataValidation from "./dataValidation.vue";
 // 发送通知
 import sendNotifications from "./sendNotifications.vue";
+// 自动分配
+import autoAllocation from './autoAllocation.vue';
 // 自动删除
 import autoDelete from "./autoDelete.vue";
 // 回调URL

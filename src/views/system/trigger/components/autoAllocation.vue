@@ -1,23 +1,29 @@
 <template>
     <div class="action-div" v-loading="contentLoading">
-        <el-form-item label="删除记录">
+        <el-form-item label="分配类型">
+            <el-radio-group v-model="trigger.actionContent.assignType">
+                <el-radio :label="1">轮询分配</el-radio>
+                <el-radio :label="6">Option B</el-radio>
+                <el-radio :label="9">Option C</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="同时分配关联记">
             <el-select
-                v-model="trigger.actionContent.items"
+                v-model="trigger.actionContent.cascades"
                 multiple
-                placeholder="选择删除记录"
+                placeholder="选择关联实体"
                 style="width: 100%"
                 clearable
                 filterable
                 value-key="label"
             >
                 <el-option
-                    v-for="(op,inx) of dataDeleteEntityList"
+                    v-for="(op,inx) of assignEntityList"
                     :key="inx"
                     :value="op"
                     :label="op.label"
                 ></el-option>
             </el-select>
-            <div class="w-100 info-text mt-5">可删除源实体记录或其关联记录</div>
         </el-form-item>
     </div>
 </template>
@@ -35,24 +41,22 @@ let contentLoading = ref(false);
 let trigger = ref({
     actionContent: {},
 });
-let dataDeleteEntityList = ref([]);
+let assignEntityList = ref([]);
 onMounted(() => {
     trigger.value = props.modelValue;
-    getDataDeleteEntityList();
+    getAssignEntityList();
 });
 
-
-
-// 获取删除记录实体列表
-const getDataDeleteEntityList = async () => {
+// 获取 同时分配关联记录 实体列表
+const getAssignEntityList = async () => {
     contentLoading.value = true;
-    let res = await $API.trigger.detial.getDataDeleteEntityList(
+    let res = await $API.trigger.detial.getAssignEntityList(
         trigger.value.entityCode
     );
     if (res.code === 200) {
-        dataDeleteEntityList.value = res.data.filter((el) => el.fieldName);
+        assignEntityList.value = res.data.filter((el) => el.fieldName);
     } else {
-        $ElMessage.error("获取删除记录实体列表数据失败：" + res.error);
+        $ElMessage.error("获取同时分配关联记录实体列表数据失败：" + res.error);
     }
     contentLoading.value = false;
 };

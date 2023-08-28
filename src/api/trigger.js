@@ -41,5 +41,10 @@ export default {
         getDataDeleteEntityList: async (entityCode) => {
             return await http.get("/trigger/dataDelete/entityList", { entityCode });
         },
+        // 同时分配关联记录实体
+        getAssignEntityList: async (entityCode) => {
+            return await http.get("/trigger/assign/entityList", { entityCode });
+        },
+        
     },
 }
