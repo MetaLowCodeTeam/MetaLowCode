@@ -28,6 +28,23 @@
 // 	}
 // ]
 
+
+
+
+// 测试接口动态路由
+let menuData = localStorage.getItem('menuData');
+let testRoutes = [];
+if (menuData) {
+    testRoutes = JSON.parse(menuData).content;
+    console.log(testRoutes, 'testRoutes')
+}
+
+
+
+
+
+
+
 const routes = [
     {
         "name": "home",
@@ -57,7 +74,24 @@ const routes = [
                     "tag": "NEW"
                 },
                 "component": "userCenter/index"
-            }
+            },
+            // {
+            //     "name": "testList",
+            //     "path": "/test-list/:name",
+            //     "meta": {
+            //         hidden: true
+            //     },
+            //     "component": "customize-menu/list"
+            // },
+            // {
+            //     "name": "test2List",
+            //     "path": "/test2-list/:name",
+            //     "meta": {
+            //         hidden: true
+            //     },
+            //     "component": "customize-menu/list2"
+            // },
+            ...testRoutes
         ]
     },
 
@@ -186,7 +220,7 @@ const routes = [
                         path: `/center-submit`,
                         name: 'CenterSubmit',
                         component: 'system/approval-center/center-submit',
-                        meta: { title: '我提交的',  }
+                        meta: { title: '我提交的', }
                     },
                     {
                         path: `/center-cc`,
@@ -207,7 +241,7 @@ const routes = [
             {
                 path: '/trigger-detail',
                 name: 'RriggerDetail',
-                meta: { title: '触发器详情',hidden: true},
+                meta: { title: '触发器详情', hidden: true },
                 component: 'system/trigger/trigger-detail',
             },
             // 报表模板
@@ -231,8 +265,8 @@ const routes = [
                 meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
                 component: 'system/notification/index',
             },
-             // 变更历史
-             {
+            // 变更历史
+            {
                 path: '/revision-history',
                 name: 'RevisionHistory',
                 meta: { title: '变更历史', icon: 'el-icon-histogram' },
@@ -245,7 +279,7 @@ const routes = [
                 meta: { title: '回收站', icon: 'el-icon-delete' },
                 component: 'system/recycle-bin/index',
             },
-           
+
         ]
     },
 

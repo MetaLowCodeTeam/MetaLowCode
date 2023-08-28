@@ -189,7 +189,7 @@
 	</el-drawer>
 
 	<auto-exit></auto-exit>
-    <setMen v-model="setMenDialog"/>
+    <setMen v-model="setMenDialog" v-if="setMenDialog"/>
 </template>
 
 <script>

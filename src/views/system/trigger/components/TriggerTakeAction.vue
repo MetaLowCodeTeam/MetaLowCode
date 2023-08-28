@@ -90,7 +90,7 @@ import mlCron from "@/components/mlCron/index.vue";
 const props = defineProps({
     modelValue: null,
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue","actionTypeChange"]);
 
 let trigger = ref({});
 // 触发动作合集
@@ -187,6 +187,7 @@ const actionTypeChange = () => {
     trigger.value.whenNum = whenNum;
     cronPopoverIsShow();
     emit("update:modelValue", trigger.value);
+    emit('actionTypeChange')
 };
 
 /***

@@ -47,6 +47,12 @@
             </div>
             <div class="fl right-div">点击左侧菜单项进行编辑</div>
         </div>
+        <template #footer>
+            <div class="footer-div">
+                <el-button @click="isShow = false">取消</el-button>
+                <el-button type="primary" @click="textSave">保存</el-button>
+            </div>
+        </template>
     </mlDialog>
 </template>
 
@@ -57,6 +63,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 const $ElMessage = inject("$ElMessage");
+const $TOOL = inject("$TOOL");
 import { VueDraggableNext } from "vue-draggable-next";
 
 // 弹框是否显示
@@ -65,13 +72,7 @@ let isShow = ref(false);
 let loading = ref(false);
 // 菜单数据
 let menuData = ref([]);
-watch(
-    () => props.modelValue,
-    () => {
-        isShow.value = props.modelValue;
-    },
-    { deep: true }
-);
+
 watch(
     () => isShow.value,
     (v) => {
@@ -87,99 +88,66 @@ onMounted(() => {
 
 function getMenuFn() {
     loading.value = true;
+    // console.log($TOOL.data.get('menuData'),'m')
+    // if()
     setTimeout(() => {
         console.log("获取导航菜单");
+        // [...$TOOL.data.get('menuData')]
         menuData.value = [
             {
-                name: "测试",
-                path: "/home",
+                name: "test",
+                redirect:"/test-list/ceshi1-1",
+                "path": "/test-list/:name",
                 meta: {
-                    title: "测试父级测试父级测试父级测试父级测试父级测试父级",
+                    title: "测试父级",
                 },
-                child: [
+                children: [
                     {
-                        name: "测试",
-                        path: "/home",
+                        name: "test1-1",
+                        path: "/test-list/ceshi1-1",
                         meta: {
                             title: "测试1-1",
                         },
+                        component: "customize-menu/list"
                     },
                     {
-                        name: "测试",
-                        path: "/home",
+                        name: "test1-2",
+                        path: "/test2-list/ceshi1-2",
                         meta: {
                             title: "测试1-2",
                         },
+                        component: "customize-menu/list2"
                     },
-                    // {
-                    //     name: "测试",
-                    //     path: "/home",
-                    //     meta: {
-                    //         title: "测试耳机3",
-                    //     },
-                    // },
-                    // {
-                    //     name: "测试",
-                    //     path: "/home",
-                    //     meta: {
-                    //         title: "测试耳机4",
-                    //     },
-                    // },
-                    // {
-                    //     name: "测试",
-                    //     path: "/home",
-                    //     meta: {
-                    //         title: "测试耳机5",
-                    //     },
-                    // },
-                    // {
-                    //     name: "测试",
-                    //     path: "/home",
-                    //     meta: {
-                    //         title: "测试耳机6",
-                    //     },
-                    // },
-                    // {
-                    //     name: "测试",
-                    //     path: "/home",
-                    //     meta: {
-                    //         title: "测试耳机7",
-                    //     },
-                    // },
                 ],
             },
             {
-                name: "测试",
-                path: "/home",
+                name: "test1",
+                path: "/test-list/xxx-xxxxxxxxxx",
                 meta: {
                     title: "测试父级1",
                 },
+                component: "customize-menu/list"
             },
             {
-                name: "测试",
-                path: "/home",
+                name: "test2",
+                path: "/test-list/ceshi2-1",
                 meta: {
                     title: "测试父级2",
                 },
-            },
-            {
-                name: "测试",
-                path: "/home",
-                meta: {
-                    title: "测试父级3",
-                },
-            },
-            {
-                name: "测试",
-                path: "/home",
-                meta: {
-                    title: "测试父级4",
-                },
+                component: "customize-menu/list"
             },
         ];
 
         loading.value = false;
-    }, 1000);
+    }, 300);
+}
+
+
+// 测试保存
+const textSave = ()=>{
+    localStorage.setItem('menuData',JSON.stringify({content:menuData.value}));
+    isShow.value = false;
+    location.reload();
 }
 
 //拖拽开始的事件

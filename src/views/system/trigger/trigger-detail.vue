@@ -17,14 +17,7 @@
                         </el-timeline-item>
                         <el-timeline-item type="warning" hollow>
                             <div class="timeline-item-title">就执行操作</div>
-                            <PerformOperations
-                                ref="performOperationsRef"
-                                v-model="trigger"
-                                @onSave="onSave"
-                            />
-                            <!-- <div class="footer-box">
-                                <el-button type="primary" @click="onSave">保存</el-button>
-                            </div>-->
+                            <PerformOperations v-model="trigger" @onSave="onSave" />
                         </el-timeline-item>
                         <el-timeline-item>
                             <div style="height: 10px;"></div>
@@ -132,7 +125,7 @@ const initDetailData = async () => {
         // 如果是自动分配
         if (trigger.actionType.value == 8) {
             // 禁用删除时、分配时
-            trigger.disabledActive = [4, 16];
+            trigger.disabledActive = [4];
         }
     } else {
         $ElMessage.error(detailRes.error);
@@ -249,7 +242,7 @@ const onSave = async (target) => {
                 actionContent.assignTo.push(el.id);
             });
         }
-        console.log(cascades,'cascades')
+        console.log(cascades, "cascades");
         if (cascades.length < 1) {
             $ElMessage.warning("请选择同时分配关联记录");
             return;

@@ -49,6 +49,10 @@ let sortFields = ref([
         fieldName: "deletedOn",
         type: "DESC",
     },
+    {
+        fieldName: "recycleBinId",
+        type: "ASC",
+    },
 ]);
 let tableColumn = ref([
     {

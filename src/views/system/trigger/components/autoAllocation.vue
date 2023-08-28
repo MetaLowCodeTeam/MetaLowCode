@@ -3,7 +3,7 @@
         <el-form-item label="分配类型">
             <el-radio-group v-model="trigger.actionContent.assignType">
                 <el-radio :label="1">跟随主实体</el-radio>
-                <el-radio :label="2">自定义</el-radio>
+                <el-radio :label="2" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 自定义">自定义</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item class="mt-20" label="分配给谁" v-if="trigger.actionContent.assignType == 2">
@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, watch } from "vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -45,10 +45,23 @@ const props = defineProps({
 });
 // 内容加载loading
 let contentLoading = ref(false);
+
 // 数据源
 let trigger = ref({
     actionContent: {},
 });
+watch(
+    () => trigger.value.whenNum,
+    () => {
+        if (
+            (trigger.value.whenNum & 16) > 0 &&
+            trigger.value.actionContent.assignType == 2
+        ) {
+            trigger.value.actionContent.assignType = 1;
+        }
+    },
+    { deep: true }
+);
 let assignEntityList = ref([]);
 onMounted(() => {
     trigger.value = props.modelValue;

@@ -57,7 +57,7 @@ import dataValidation from "./dataValidation.vue";
 // 发送通知
 import sendNotifications from "./sendNotifications.vue";
 // 自动分配
-import autoAllocation from './autoAllocation.vue';
+import autoAllocation from "./autoAllocation.vue";
 // 自动删除
 import autoDelete from "./autoDelete.vue";
 // 回调URL
@@ -103,6 +103,8 @@ const handleCommand = (e) => {
         emit("onSave", "execute");
     }
 };
+
+
 </script>
 <style lang="scss" scoped>
 .action-div {

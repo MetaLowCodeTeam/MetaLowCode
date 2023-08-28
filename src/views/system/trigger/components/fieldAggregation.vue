@@ -213,25 +213,27 @@ const getTagEntitys = () => {
         );
         if (res.code === 200) {
             tagEntitys.value = res.data;
-            // 目标实体默认选中第1个
-            let defalutInx = 0;
-            // 如果是编辑过的，找到之前选中的数据
-            if (trigger.value.isOnSave) {
-                let { actionContent } = trigger.value;
-                tagEntitys.value.forEach((el, elInx) => {
-                    if (
-                        el.fieldName == actionContent.fieldName &&
-                        el.entityName == actionContent.entityName
-                    ) {
-                        defalutInx = elInx;
-                    }
-                });
-            }
+            if (res.data && res.data.length > 0) {
+                // 目标实体默认选中第1个
+                let defalutInx = 0;
+                // 如果是编辑过的，找到之前选中的数据
+                if (trigger.value.isOnSave) {
+                    let { actionContent } = trigger.value;
+                    tagEntitys.value.forEach((el, elInx) => {
+                        if (
+                            el.fieldName == actionContent.fieldName &&
+                            el.entityName == actionContent.entityName
+                        ) {
+                            defalutInx = elInx;
+                        }
+                    });
+                }
 
-            // 设置选中
-            trigger.value.defaultTargetEntity = res.data[defalutInx];
-            // 获取选中实体的所有字段
-            getTagEntityFields(res.data[defalutInx].entityCode);
+                // 设置选中
+                trigger.value.defaultTargetEntity = res.data[defalutInx];
+                // 获取选中实体的所有字段
+                getTagEntityFields(res.data[defalutInx].entityCode);
+            }
             resolve();
         } else {
             $ElMessage.error("获取目标实体数据失败：" + res.error);
