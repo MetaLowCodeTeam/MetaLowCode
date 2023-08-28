@@ -186,6 +186,7 @@ const onSave = async (target) => {
         params.formModel.whenNum = whenNum;
     }
     // 如果有附加过滤条件
+    params.formModel.actionFilter = "";
     if (trigger.actionFilter.items.length > 0) {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
