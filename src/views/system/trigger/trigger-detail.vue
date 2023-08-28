@@ -216,9 +216,8 @@ const onSave = async (target) => {
             inUserList.forEach((el) => {
                 actionContent.sendTo.push(el.id);
             });
-            actionContent.sendTo = JSON.stringify(actionContent.sendTo);
         } else {
-            actionContent.sendTo = JSON.stringify(outUserList);
+            actionContent.sendTo = outUserList;
         }
         // 如果勾选了邮件，但是没填标题
         if ((type & 8) > 0 && !title) {

@@ -56,6 +56,8 @@
                     placeholder="数据效验未通过"
                     :autosize="{ minRows: 3}"
                     type="textarea"
+                    @blur="formulaBlur"
+                    ref="contentInputRef"
                 ></el-input>
                 <span ref="buttonRef" v-click-outside="onClickOutside" class="field-span">{&nbsp;}</span>
             </div>
@@ -139,8 +141,6 @@ const initSendType = () => {
         trigger.value.actionContent.userType == 1
     ) {
         trigger.value.actionContent.type = 2;
-    } else {
-        trigger.value.actionContent.type = 8;
     }
     setTypeSelecteds();
 };
@@ -178,12 +178,31 @@ const onClickOutside = () => {
     unref(popoverRef).popperRef?.delayHide?.();
 };
 
+// 获取内容Input
+let contentInputRef = ref("");
+// 获取input光标位置
+let blurIndex = ref(0);
+const formulaBlur = (val) => {
+    blurIndex.value = val.srcElement.selectionStart;
+};
+
 // 字段选择
 const fieldSelect = (item) => {
-    trigger.value.actionContent.content = `${
-        trigger.value.actionContent.content || ""
-    }{${item.fieldName}}`;
+    trigger.value.actionContent.content = insertStr(
+        trigger.value.actionContent.content,
+        blurIndex.value,
+        `{${item.fieldName}}`
+    );
+    let setSelectionRange = blurIndex.value + item.fieldName.length + 2
+    contentInputRef.value.focus();
+    setTimeout(() => {
+        contentInputRef.value.ref.setSelectionRange(setSelectionRange, setSelectionRange);
+    }, 0);
     popoverRef.value.hide();
+};
+
+const insertStr = (source, start, newStr) => {
+    return source.slice(0, start) + newStr + source.slice(start);
 };
 
 // 源实体所有字段
@@ -209,7 +228,7 @@ const getCutEntityFields = async () => {
         // 如果是内部用户
         if (trigger.value.actionContent.userType == 1) {
             let idToIdNameRes = await $API.trigger.detial.idToIdName(
-                JSON.parse(trigger.value.actionContent.sendTo)
+                trigger.value.actionContent.sendTo
             );
             if (idToIdNameRes.code == 200) {
                 trigger.value.actionContent.inUserList = idToIdNameRes.data;

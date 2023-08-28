@@ -2,14 +2,15 @@
     <div class="action-div" v-loading="contentLoading">
         <el-form-item label="删除记录">
             <el-select
-                v-model="trigger.actionContent.sendTo"
+                v-model="trigger.actionContent.delInfos"
                 multiple
                 placeholder="选择删除记录"
                 style="width: 100%"
                 clearable
                 filterable
+                @change="delChange"
             >
-                <el-option v-for="(op,inx) of dataDeleteEntityList" :key="inx" :value="op" :label="op.label"></el-option>
+                <el-option v-for="(op,inx) of dataDeleteEntityList" :key="inx" :value="op.fieldName" :label="op.label"></el-option>
             </el-select>
         </el-form-item>
     </div>
@@ -39,7 +40,7 @@ const getDataDeleteEntityList= async ()=>{
     contentLoading.value = true;
     let res =await $API.trigger.detial.getDataDeleteEntityList(trigger.value.entityCode);
     if (res.code === 200) {
-        dataDeleteEntityList.value = res.data;
+        dataDeleteEntityList.value = res.data.filter(el => el.fieldName);
     } else {
         $ElMessage.error("获取删除记录实体列表数据失败：" + res.error);
     }

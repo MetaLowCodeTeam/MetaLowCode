@@ -18,6 +18,8 @@
                     placeholder="数据效验未通过"
                     :autosize="{ minRows: 3}"
                     type="textarea"
+                    @blur="formulaBlur"
+                    ref="contentInputRef"
                 ></el-input>
                 <span ref="buttonRef" v-click-outside="onClickOutside" class="field-span">{&nbsp;}</span>
             </div>
@@ -90,19 +92,40 @@ const onClickOutside = () => {
     unref(popoverRef).popperRef?.delayHide?.();
 };
 
+// 获取内容Input
+let contentInputRef = ref("");
+// 获取input光标位置
+let blurIndex = ref(0);
+const formulaBlur = (val) => {
+    blurIndex.value = val.srcElement.selectionStart;
+};
+
 // 字段选择
 const fieldSelect = (item) => {
-    trigger.value.actionContent.tipContent = `${
-        trigger.value.actionContent.tipContent || ""
-    }{${item.fieldName}}`;
+    trigger.value.actionContent.tipContent = insertStr(
+        trigger.value.actionContent.tipContent,
+        blurIndex.value,
+        `{${item.fieldName}}`
+    );
+    let setSelectionRange = blurIndex.value + item.fieldName.length + 2;
+    contentInputRef.value.focus();
+    setTimeout(() => {
+        contentInputRef.value.ref.setSelectionRange(
+            setSelectionRange,
+            setSelectionRange
+        );
+    }, 0);
     popoverRef.value.hide();
+};
+const insertStr = (source, start, newStr) => {
+    return source.slice(0, start) + newStr + source.slice(start);
 };
 
 // 源实体所有字段
 let cutEntityFields = ref([]);
 
 const getCutEntityFields = async () => {
-    let res = await queryEntityFields(trigger.value.entityCode, true);
+    let res = await queryEntityFields(trigger.value.entityCode, true, true);
     if (res.code === 200) {
         cutEntityFields.value = res.data;
     } else {

@@ -7,6 +7,8 @@
                 placeholder="// 支持 AviatorScript"
                 :autosize="{ minRows: 8}"
                 type="textarea"
+                @blur="formulaBlur"
+                ref="contentInputRef"
             ></el-input>
             <span ref="buttonRef" v-click-outside="onClickOutside" class="field-span">{&nbsp;}</span>
         </div>
@@ -213,6 +215,18 @@ let final = reactive({
     min: "最小值",
 });
 
+// 获取内容Input
+let contentInputRef = ref("");
+// 获取input光标位置
+let blurIndex = ref(0);
+const formulaBlur = (val) => {
+    blurIndex.value = val.srcElement.selectionStart;
+};
+
+const insertStr = (source, start, newStr) => {
+    return source.slice(0, start) + newStr + source.slice(start);
+};
+
 // 字段选择
 const fieldSelect = (item) => {
     if (!props.isAdvanced) {
@@ -225,7 +239,16 @@ const fieldSelect = (item) => {
         };
         formulaNumList.value.push(formulaNumItem);
     } else {
-        formulaVal.value = `${formulaVal.value || ""}{${item.fieldName}}`;
+        formulaVal.value = insertStr(
+            formulaVal.value,
+            blurIndex.value,
+            `{${item.fieldName}}`
+        );
+        let setSelectionRange = blurIndex.value + item.fieldName.length + 2
+        contentInputRef.value.focus();
+        setTimeout(() => {
+            contentInputRef.value.ref.setSelectionRange(setSelectionRange, setSelectionRange);
+        }, 0);
         popoverRef.value.hide();
     }
 };
@@ -261,8 +284,8 @@ const confirm = async () => {
                     el.checkField +
                     (el.checkDropdown ? `$${el.checkDropdown}` : "") +
                     "}";
-            }else {
-                checkVal += el.label
+            } else {
+                checkVal += el.label;
             }
         });
         formulaNumList.value = [];
