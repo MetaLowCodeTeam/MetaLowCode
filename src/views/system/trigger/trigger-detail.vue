@@ -228,8 +228,11 @@ const onSave = async (target) => {
             $ElMessage.warning("请输入通知内容");
             return;
         }
-        // console.log(actionContent, "actionContent");
-        // return;
+    }
+    // 如果是自动删除
+    if (trigger.actionType.value == 12 && actionContent.items.length < 1) {
+        $ElMessage.warning("请选择删除记录");
+        return;
     }
     // 如果是回调URL
     if (trigger.actionType.value == 14) {

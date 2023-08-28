@@ -2,22 +2,28 @@
     <div class="action-div" v-loading="contentLoading">
         <el-form-item label="删除记录">
             <el-select
-                v-model="trigger.actionContent.delInfos"
+                v-model="trigger.actionContent.items"
                 multiple
                 placeholder="选择删除记录"
                 style="width: 100%"
                 clearable
                 filterable
-                @change="delChange"
+                value-key="label"
             >
-                <el-option v-for="(op,inx) of dataDeleteEntityList" :key="inx" :value="op.fieldName" :label="op.label"></el-option>
+                <el-option
+                    v-for="(op,inx) of dataDeleteEntityList"
+                    :key="inx"
+                    :value="op"
+                    :label="op.label"
+                ></el-option>
             </el-select>
+            <div class="w-100 info-text mt-5">可删除源实体记录或其关联记录</div>
         </el-form-item>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted,inject } from "vue";
+import { ref, onMounted, inject } from "vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -35,17 +41,24 @@ onMounted(() => {
     getDataDeleteEntityList();
 });
 
+// 删除记录切换
+const delChange = () => {
+    // trigger.value.actionContent.items = [];
+};
+
 // 获取删除记录实体列表
-const getDataDeleteEntityList= async ()=>{
+const getDataDeleteEntityList = async () => {
     contentLoading.value = true;
-    let res =await $API.trigger.detial.getDataDeleteEntityList(trigger.value.entityCode);
+    let res = await $API.trigger.detial.getDataDeleteEntityList(
+        trigger.value.entityCode
+    );
     if (res.code === 200) {
-        dataDeleteEntityList.value = res.data.filter(el => el.fieldName);
+        dataDeleteEntityList.value = res.data.filter((el) => el.fieldName);
     } else {
         $ElMessage.error("获取删除记录实体列表数据失败：" + res.error);
     }
     contentLoading.value = false;
-}
+};
 </script>
 
 <style>
