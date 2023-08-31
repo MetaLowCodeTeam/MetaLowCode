@@ -67,12 +67,13 @@ router.beforeEach(async (to, from, next) => {
 	}
 	//加载动态/静态路由
 	if(!isGetRouter){
-		let apiMenu = tool.data.get("MENU") || []
+		let apiMenu = tool.data.get("formatRoutrs") || []
 		let userInfo = tool.data.get("USER_INFO")
 		let userMenu = treeFilter(userRoutes, node => {
 			return node.meta.role ? node.meta.role.filter(item=>userInfo.role.indexOf(item)>-1).length > 0 : true
 		})
-		let menu = [...userMenu, ...apiMenu]
+        userMenu[0].children.push(...apiMenu)
+		let menu = [...userMenu]
 		var menuRouter = filterAsyncRouter(menu)
 		menuRouter = flatAsyncRoutes(menuRouter)
 		menuRouter.forEach(item => {

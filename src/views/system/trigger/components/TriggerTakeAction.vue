@@ -233,7 +233,7 @@ const setCondition = () => {
     let { actionFilter } = Object.assign({}, trigger.value);
     actionFilter = initFilter(actionFilter);
 
-    conditionConf.value = actionFilter;
+    conditionConf.value = JSON.parse(JSON.stringify(actionFilter));
     dialogIsShow.value = true;
 };
 // 初始化条件

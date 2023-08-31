@@ -2,7 +2,7 @@
     <mlSingleList
         title="回收站"
         mainEntity="RecycleBin"
-        fieldsList="entityId,entityName,deletedBy,deletedOn,deletedWith,restoreBy,restoreOn"
+        fieldsList="entityCode,entityId,entityName,deletedBy,deletedOn,deletedWith,restoreBy,restoreOn"
         :sortFields="sortFields"
         fieldName="entityName"
         :tableColumn="tableColumn"
@@ -33,15 +33,15 @@
 </template>
    
 <script setup>
-import { ref,inject } from "vue";
+import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";
 import { ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 const $ElMessage = inject("$ElMessage");
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { entityLable } = storeToRefs(useCommonStore());
 let mlSingleListRef = ref("");
-
-
-
 
 // 默认排序
 let sortFields = ref([
@@ -57,16 +57,27 @@ let sortFields = ref([
 let tableColumn = ref([
     {
         prop: "entityName",
+        label: "数据名称",
+    },
+    {
+        prop: "entityCode",
         label: "实体名称",
+        width: "150",
+        align: "center",
+        formatter: (row) => {
+            return entityLable.value[row.entityCode];
+        },
     },
     {
         prop: "deletedWith",
         label: "删除渠道",
+        width: "150",
+        align: "center",
     },
     {
         prop: "deletedOn",
         label: "删除时间",
-        width: "120",
+        width: "150",
         align: "center",
         formatter: (row) => {
             return $fromNow(row.deletedOn);
@@ -75,13 +86,13 @@ let tableColumn = ref([
     {
         prop: "deletedBy.name",
         label: "删除人",
-        width: "120",
+        width: "150",
         align: "center",
     },
     {
         prop: "restoreOn",
         label: "恢复时间",
-        width: "120",
+        width: "150",
         align: "center",
         formatter: (row) => {
             return $fromNow(row.restoreOn);
@@ -90,7 +101,7 @@ let tableColumn = ref([
     {
         prop: "restoreBy.name",
         label: "恢复人",
-        width: "120",
+        width: "150",
         align: "center",
     },
 ]);

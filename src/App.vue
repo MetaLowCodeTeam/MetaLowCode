@@ -19,15 +19,17 @@ import {
 } from "vue";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import useCommonStore from "@/store/modules/common";
-
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 const router = useRouter();
+const { setNavigationList } = useLayoutConfigStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { getEntityLable } = useCommonStore();
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
+const $API = inject("$API");
 let { proxy } = instance;
 let config = reactive({
     size: "default",
@@ -67,8 +69,17 @@ onBeforeMount(() => {
     // roundRobin(5000);
     // 获取所有实体并格式化Label
     getEntityLable();
+    // 获取默认导航
+    getNavigationList();
 });
 
+// 获取导航配置
+const getNavigationList = async () => {
+    let navRes = await $API.layoutConfig.getNavigationList();
+    if(navRes && navRes.code == 200){
+        setNavigationList(navRes.data);
+    }
+};
 
 // 获取新消息
 const getNewMsgNum = async () => {

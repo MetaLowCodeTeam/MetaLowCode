@@ -132,6 +132,10 @@ onMounted(() => {
     // 初始化通知类型（二进制状态）
     initSendType();
     getCutEntityFields();
+    // 初始化通知内容
+    if(!trigger.value.actionContent.content){
+        trigger.value.actionContent.content = ""
+    }
 });
 
 // 初始化通知类型（二进制状态）

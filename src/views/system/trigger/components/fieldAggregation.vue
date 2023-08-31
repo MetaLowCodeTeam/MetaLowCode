@@ -652,7 +652,7 @@ let conditionConf = ref({});
 const setCondition = () => {
     let { filter } = trigger.value.actionContent;
     filter = initFilter(filter);
-    conditionConf.value = filter;
+    conditionConf.value = JSON.parse(JSON.stringify(filter));
     dialogIsShow.value = true;
 };
 // 初始化条件

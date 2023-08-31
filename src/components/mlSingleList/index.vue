@@ -73,8 +73,8 @@ onMounted(() => {
 });
 
 // 分页切换
-const pageChange = (page) => {
-    page.on = page;
+const pageChange = (cutPage) => {
+    page.no = cutPage;
     getTableList();
 };
 // 获取表格数据

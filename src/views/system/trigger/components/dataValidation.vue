@@ -85,6 +85,10 @@ onMounted(() => {
     }
     // 获取当前实体所有字段
     getCutEntityFields();
+    // 初始化提示内容
+    if (!trigger.value.actionContent.tipContent) {
+        trigger.value.actionContent.tipContent = "";
+    }
 });
 
 // 字段弹出
@@ -144,7 +148,7 @@ let conditionConf = ref({});
 const setCondition = () => {
     let { filter } = trigger.value.actionContent;
     filter = initFilter(filter);
-    conditionConf.value = filter;
+    conditionConf.value = JSON.parse(JSON.stringify(filter));
     dialogIsShow.value = true;
 };
 // 初始化条件

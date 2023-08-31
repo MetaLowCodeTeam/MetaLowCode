@@ -18,6 +18,7 @@ import approval from './approval.js'
 import common from './common.js'
 import reportTemplates from './reportTemplates.js';
 import trigger from './trigger.js';
+import layoutConfig from './layoutConfig.js';
 // 审批流程
 modules.approval = approval;
 // 通用接口
@@ -26,4 +27,6 @@ modules.common = common;
 modules.reportTemplates = reportTemplates;
 // 触发器
 modules.trigger = trigger;
+// 界面设置
+modules.layoutConfig = layoutConfig;
 export default modules

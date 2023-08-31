@@ -30,9 +30,7 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="setMenuFn">
-					<el-icon><el-icon-menu/></el-icon>
-				</div>
+				<navigation />
 			</div>
 			<Side-m v-if="ismobileFn"></Side-m>
 			<div class="aminui-body el-container">
@@ -72,9 +70,7 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="setMenuFn">
-					<el-icon><el-icon-menu/></el-icon>
-				</div>
+				<navigation />
 			</div>
 			<Side-m v-if="ismobileFn"></Side-m>
 			<div class="aminui-body el-container">
@@ -158,9 +154,7 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="setMenuFn">
-					<el-icon><el-icon-menu/></el-icon>
-				</div>
+				<navigation />
 			</div>
 			<Side-m v-if="ismobileFn"></Side-m>
 			<div class="aminui-body el-container">
@@ -189,7 +183,7 @@
 	</el-drawer>
 
 	<auto-exit></auto-exit>
-    <setMen v-model="setMenDialog" v-if="setMenDialog"/>
+    
 </template>
 
 <script>
@@ -203,11 +197,15 @@
 	import autoExit from './other/autoExit.js';
     import useKeepAliveStore from "@/store/modules/keepAlive";
     import useGlobalStore from "@/store/modules/global";
-    import setMen from './components/setMenu.vue';
+ 
+    import navigation from './components/navigationList.vue';
     import { storeToRefs } from "pinia";
+
     const { keepLiveRoute,routeShow } = storeToRefs(useKeepAliveStore());
     const { ismobile,layout,layoutTags,menuIsCollapse } = storeToRefs(useGlobalStore());
+
     const { SET_ismobile,TOGGLE_menuIsCollapse } = useGlobalStore();
+
 	export default {
 		name: 'index',
 		components: {
@@ -219,7 +217,7 @@
 			setting,
 			iframeView,
 			autoExit,
-            setMen
+            navigation
 		},
 		data() {
 			return {
@@ -228,7 +226,6 @@
 				nextMenu: [],
 				pmenu: {},
 				active: '',
-                setMenDialog:false,
 			}
 		},
         computed:{
@@ -276,9 +273,6 @@
 			onLayoutResize(){
 				SET_ismobile(document.body.clientWidth < 992)
 			},
-            setMenuFn(){
-                this.setMenDialog = true;
-            },
 			//路由监听高亮
 			showThis(){
 				this.pmenu = this.$route.meta.breadcrumb ? this.$route.meta.breadcrumb[0] : {}

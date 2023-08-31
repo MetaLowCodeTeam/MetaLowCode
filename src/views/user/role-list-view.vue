@@ -114,6 +114,24 @@
         </el-row>
         <el-row :gutter="12" class="function-right-row">
           <el-col :span="12">
+            <el-form-item label="允许配置导航" title="r6007">
+              <el-radio-group v-model="formModel.rightValueMap['r6007']">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="允许配置列" title="r6008">
+              <el-radio-group v-model="formModel.rightValueMap['r6008']">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="12" class="function-right-row">
+          <el-col :span="12">
             <el-form-item label="允许设计表单布局" title="r6003">
               <el-radio-group v-model="formModel.rightValueMap['r6003']">
                 <el-radio :label="true">是</el-radio>
@@ -231,6 +249,8 @@
             'r6004': false,
             'r6005': false,
             'r6006': false,
+            'r6007': false,
+            'r6008': false,
           },
         },
 
