@@ -5,7 +5,7 @@
                 class="nav-item text-ellipsis"
                 v-for="(item,inx) of navigationList"
                 :key="inx"
-                :class="{'is-active':useNav.layoutConfigId == item.layoutConfigId}"
+                :class="{'is-active':chosenNavigationId == item.layoutConfigId}"
                 @click="navClick(item)"
             >
                 {{ item.configName }}
@@ -15,19 +15,7 @@
                             <ElIconEditPen />
                         </el-icon>
                     </span>
-                    <el-popover :visible="visible" placement="top" :width="160">
-                        <p>Are you sure to delete this?</p>
-                        <div style="text-align: right; margin: 0">
-                        <el-button size="small" text @click="visible = false">cancel</el-button>
-                        <el-button size="small" type="primary" @click="visible = false"
-                            >confirm</el-button
-                        >
-                        </div>
-                        <template #reference>
-                        <el-button @click="visible = true">Delete</el-button>
-                        </template>
-                    </el-popover>
-                    <span class="icon-span" @click.stop="delMenu(item)">
+                    <span class="icon-span" @click.stop="delMenu(item,inx)">
                         <el-icon size="16">
                             <ElIconCloseBold />
                         </el-icon>
@@ -58,29 +46,28 @@ import { onMounted, ref, inject } from "vue";
 import setMen from "./setMenu.vue";
 import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
+import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
+const router = useRouter();
+const { navigationList, chosenNavigationId } = storeToRefs(
+    useLayoutConfigStore()
+);
+const { setNavigationList } = useLayoutConfigStore();
 
-const { navigationList } = storeToRefs(useLayoutConfigStore());
 const $API = inject("$API");
-// 使用的导航
-let useNav = ref({});
-onMounted(() => {
-    if (navigationList.value && navigationList.value.length > 0) {
-        useNav.value = Object.assign({}, navigationList.value[0]);
-    }
-});
+const $ElMessage = inject("$ElMessage");
+
+onMounted(() => {});
 // 导航点击
 const navClick = (item) => {
-    useNav.value = Object.assign({}, item);
-    $API.layoutConfig.useNavChang(item.layoutConfigId);
+    $API.layoutConfig.useNavChang(item.layoutConfigId, "NAV");
+    router.go(0);
 };
-
-let visible = ref(false);
 
 // 设置菜单弹框
 let setMenDialog = ref(false);
 // 弹框需要的数据
-let menuInfo = ref();
+let menuInfo = ref({});
 
 // 编辑导航
 const editMenu = (item) => {
@@ -88,18 +75,29 @@ const editMenu = (item) => {
     menuInfo.value = Object.assign({}, item);
 };
 // 删除导航
-// const delMenu = (item) => {
+const delMenu = (item, inx) => {
     // deleteConfig
-    // ElMessageBox.confirm("是否确认删除?", "提示：", {
-    //     confirmButtonText: "确认",
-    //     cancelButtonText: "取消",
-    //     type: "warning",
-    // })
-    //     .then(async () => {
-           
-    //     })
-    //     .catch(() => {});
-// };
+    ElMessageBox.confirm("是否确认删除?", "提示：", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(async () => {
+            let res = await $API.layoutConfig.deleteConfig(item.layoutConfigId);
+            if (res && res.code == 200) {
+                // 如果删除的是选中导航
+                if (chosenNavigationId.value == item.layoutConfigId) {
+                    router.go(0);
+                }
+                let copyList = [...navigationList.value];
+                copyList.splice(inx, 1);
+                setNavigationList(copyList)
+            } else {
+                $ElMessage.error("删除失败：" + res.error);
+            }
+        })
+        .catch(() => {});
+};
 </script>
 <style lang='scss' scoped>
 .nav-list {

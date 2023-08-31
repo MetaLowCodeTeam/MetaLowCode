@@ -1,6 +1,11 @@
 <template>
     <mlDialog title="设置导航菜单" v-model="isShow" width="680px">
         <div v-loading="loading">
+            <el-form label-width="70px" label-position="left">
+                <el-form-item label="菜单名称">
+                    <el-input v-model="menuData.configName" placeholder="输入菜单名称" clearable />
+                </el-form-item>
+            </el-form>
             <div class="clearfix">
                 <div class="sortable-box fl">
                     <VueDraggableNext
@@ -9,9 +14,9 @@
                         animation="300"
                         :force-fallback="false"
                         handle=".mover"
-                        :list="menuData"
+                        :list="menuData.list"
                     >
-                        <div class="parent-li" v-for="(parent,inx) of menuData" :key="inx">
+                        <div class="parent-li" v-for="(parent,inx) of menuData.list" :key="inx">
                             <div
                                 class="paren-idv"
                                 @click="nodeClick(parent)"
@@ -133,25 +138,40 @@
 <script setup>
 import { watch, ref, onMounted, inject, reactive } from "vue";
 import useCommonStore from "@/store/modules/common";
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const $ElMessage = inject("$ElMessage");
+const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { setNavigationList, setChosenNavigationId, setDefaultMenuList } =
+    useLayoutConfigStore();
 
+const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
 const props = defineProps({
     modelValue: null,
     // 菜单信息
     menuInfo: { type: Object, default: () => {} },
 });
 const emit = defineEmits(["update:modelValue"]);
-const $ElMessage = inject("$ElMessage");
-const $TOOL = inject("$TOOL");
-// const $API = inject("$API");
+
 import { VueDraggableNext } from "vue-draggable-next";
 
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);
 // 菜单数据
-let menuData = ref([]);
+let menuData = reactive({
+    layoutConfigId: "",
+    // 导航名字
+    configName: "",
+    // 导航数据
+    list: [],
+    // 要分享给谁
+    shareTo: "ALL",
+});
 
 watch(
     () => isShow.value,
@@ -163,36 +183,8 @@ watch(
 
 onMounted(() => {
     isShow.value = props.modelValue;
-    console.log("进来");
     getMenuFn();
 });
-
-// 测试保存
-const textSave = () => {
-    let saveMenu = [];
-    // 循环菜单
-    menuData.value.forEach((el) => {
-        // 必须存在关联或者外部链接才是菜单
-        if (el.association || el.outLink) {
-            let isMenu = { ...el };
-            // 如果存在子节点
-            if (el.children && el.children.length > 0) {
-                isMenu.children = [];
-                el.children.forEach((subEl) => {
-                    // 子节点也必须存在关联或者外部链接才是菜单
-                    if (subEl.association || subEl.outLink) {
-                        isMenu.children.push(subEl);
-                    }
-                });
-            }
-            saveMenu.push(isMenu);
-        }
-    });
-    // console.log(saveMenu,'saveMenu')
-    localStorage.setItem("menuData", JSON.stringify({ content: saveMenu }));
-    isShow.value = false;
-    location.reload();
-};
 
 // 节点选中
 const nodeClick = (node) => {
@@ -242,7 +234,7 @@ const associationChange = (entityCode) => {
 // 添加父菜单
 const addMenu = () => {
     defaultMenu.guid = getGuid();
-    menuData.value.push(Object.assign({}, defaultMenu));
+    menuData.list.push(Object.assign({}, defaultMenu));
     cutMenu.value = Object.assign({}, defaultMenu);
 };
 // 添加子菜单
@@ -268,36 +260,36 @@ const confirmMenu = () => {
     }
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
-        let inx = getMenuInx(menuData.value, cutMenu.value.guid);
+        let inx = getMenuInx(menuData.list, cutMenu.value.guid);
         // 如果节点被删掉了
         if (inx == -1) {
-            menuData.value.push(Object.assign({}, cutMenu.value));
+            menuData.list.push(Object.assign({}, cutMenu.value));
         } else {
-            menuData.value[inx] = Object.assign(
-                menuData.value[inx],
+            menuData.list[inx] = Object.assign(
+                menuData.list[inx],
                 cutMenu.value
             );
         }
     }
     // 子集菜单
     else {
-        let parentInx = getMenuInx(menuData.value, cutMenu.value.parentGuid);
+        let parentInx = getMenuInx(menuData.list, cutMenu.value.parentGuid);
         // 如果父节点被删掉了
         if (parentInx == -1) {
             cutMenu.value.parentGuid = "";
-            menuData.value.push(Object.assign({}, cutMenu.value));
+            menuData.list.push(Object.assign({}, cutMenu.value));
         } else {
             let inx = getMenuInx(
-                menuData.value[parentInx].children,
+                menuData.list[parentInx].children,
                 cutMenu.value.guid
             );
             // 如果子节点被删掉了
             if (inx == -1) {
-                menuData.value[parentInx].children.push(
+                menuData.list[parentInx].children.push(
                     Object.assign({}, cutMenu.value)
                 );
             } else {
-                menuData.value[parentInx].children[inx] = Object.assign(
+                menuData.list[parentInx].children[inx] = Object.assign(
                     {},
                     cutMenu.value
                 );
@@ -321,76 +313,104 @@ const getMenuInx = (array, guid) => {
 const delMenu = (menu, inx, subInx) => {
     // 父级菜单删除
     if (!menu.parentGuid) {
-        menuData.value.splice(inx, 1);
+        menuData.list.splice(inx, 1);
     }
     // 子级菜单删除
     else {
-        menuData.value[inx].children.splice(subInx, 1);
+        menuData.list[inx].children.splice(subInx, 1);
     }
 };
 
 /**
  * ********************************************** 添加、编辑 菜单项相关  end
  */
+// 源数据
+let sourceData = reactive({});
 
-function getMenuFn() {
-    console.log(props.menuInfo,'menuInfo')
-    let config = JSON.parse(props.menuInfo.config);
-    console.log(config);
-    // console.log($TOOL.data.get('menuData'),'m')
-    // if()
-    // loading.value = true;
-    // console.log("获取导航菜单");
-    // setTimeout(() => {
-    //     menuData.value = [...$TOOL.data.get("menuData")];
-    //     loading.value = false;
-    // }, 1000);
+// 获取数据
+const getMenuFn = () => {
+    menuData = Object.assign(menuData, props.menuInfo);
+    sourceData = Object.assign({}, props.menuInfo);
+    menuData.list = menuData.config ? JSON.parse(menuData.config) : [];
+};
 
-    // menuData.value = [
-    // {
-    //     name: "test",
-    //     redirect: "/test-list/ceshi1-1",
-    //     path: "/test-list/:name",
-    //     meta: {
-    //         title: "测试父级",
-    //     },
-    //     children: [
-    //         {
-    //             name: "test1-1",
-    //             path: "/test-list/ceshi1-1",
-    //             meta: {
-    //                 title: "测试1-1",
-    //             },
-    //             component: "customize-menu/list",
-    //         },
-    //         {
-    //             name: "test1-2",
-    //             path: "/test2-list/ceshi1-2",
-    //             meta: {
-    //                 title: "测试1-2",
-    //             },
-    //             component: "customize-menu/list2",
-    //         },
-    //     ],
-    // },
-    // {
-    //     name: "test1",
-    //     path: "/test-list/xxx-xxxxxxxxxx",
-    //     meta: {
-    //         title: "测试父级1",
-    //     },
-    //     component: "customize-menu/list",
-    // },
-    // {
-    //     name: "test2",
-    //     path: "/test-list/ceshi2-1",
-    //     meta: {
-    //         title: "测试父级2",
-    //     },
-    //     component: "customize-menu/list",
-    // },
-    // ];
-}
+// 测试保存
+const textSave = async () => {
+    let { layoutConfigId, configName } = menuData;
+    if (!configName) {
+        $ElMessage.warning("请输入菜单名称");
+        return;
+    }
+    if (formatMenuList().length < 1) {
+        $ElMessage.warning("请至少添加一个菜单项");
+        return;
+    }
+    menuData.config = JSON.stringify(formatMenuList());
+
+    let param = {};
+    // 检测数据有没变化
+    if ($TOOL.checkIsEdit(sourceData.configName, menuData.configName)) {
+        param.configName = menuData.configName;
+    }
+    // 检测数据有没变化
+    if ($TOOL.checkIsEdit(sourceData.config, menuData.config)) {
+        param.config = menuData.config;
+    }
+    if ($TOOL.checkIsEdit(sourceData.shareTo, menuData.shareTo)) {
+        param.shareTo = menuData.shareTo;
+    }
+    loading.value = true;
+    let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
+    if (res && res.code == 200) {
+        // 如果默认选中导航就是当前修改导航 并且 如果数据有变化
+        if (
+            chosenNavigationId.value &&
+            chosenNavigationId.value == menuData.layoutConfigId &&
+            $TOOL.checkIsEdit(sourceData.config, menuData.config)
+        ) {
+            
+            router.go(0);
+        } else {
+            let navRes = await $API.layoutConfig.getNavigationList();
+            if (navRes && navRes.code == 200) {
+                setNavigationList(navRes.data.navigationList);
+                setChosenNavigationId(navRes.data.chosenNavigationId);
+                setDefaultMenuList();
+                loading.value = false;
+                isShow.value = false;
+            }
+        }
+    } else {
+        $ElMessage.error("菜单保存：" + res.error);
+    }
+
+    // console.log(menuData, "保存数据");
+};
+
+// 格式化菜单数据
+const formatMenuList = () => {
+    let saveMenu = [];
+    // 循环菜单
+    menuData.list.forEach((el) => {
+        // 必须存在关联或者外部链接才是菜单
+        if (el.association || el.outLink) {
+            let isMenu = { ...el };
+            // 如果存在子节点
+            if (el.children && el.children.length > 0) {
+                isMenu.children = [];
+                el.children.forEach((subEl) => {
+                    // 子节点也必须存在关联或者外部链接才是菜单
+                    if (subEl.association || subEl.outLink) {
+                        isMenu.children.push(subEl);
+                    }
+                });
+            }
+            saveMenu.push(isMenu);
+        }
+    });
+
+    return saveMenu;
+};
 </script>
 
 <style lang="scss" scoped>

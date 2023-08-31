@@ -31,53 +31,7 @@
 
 
 
-// 测试接口动态路由
-let menuData = localStorage.getItem('menuData');
-let testRoutes = [];
-let formatRoutrs = [
-];
-if (menuData) {
-    testRoutes = JSON.parse(menuData).content;
-    testRoutes.forEach(el => {
-        let initMenu = {
-            meta: {}
-        };
-        initMenu.name = el.guid;
-        initMenu.meta.title = el.name;
-        initMenu.meta.entityCode = el.entityCode;
-        initMenu.meta.entityName = el.entityName;
-        if (el.children && el.children.length > 0) {
-            initMenu.children = [];
-            initMenu.path = "";
 
-            el.children.forEach(subEl => {
-                initMenu.children.push({
-                    name: subEl.guid,
-                    meta: {
-                        title: subEl.name,
-                        type: subEl.type == 2 ? 'link' : '',
-                        entityCode: subEl.entityCode,
-                        entityName: subEl.entityName
-                    },
-                    path: subEl.type == 1 ? "/" + subEl.param + "/list" : subEl.outLink,
-                    component: "customize-menu/list"
-                })
-            })
-        } else {
-            initMenu.meta.type = el.type == 2 ? 'link' : '';
-            if (el.type == 1) {
-                initMenu.path = "/" + el.param + "/list"
-            } else {
-                initMenu.path = el.outLink
-            }
-
-            initMenu.component = "customize-menu/list"
-        }
-        formatRoutrs.push(initMenu)
-    })
-    // localStorage.setItem('formatRoutrs',JSON.stringify({content:formatRoutrs}))
-    // console.log(formatRoutrs, 'formatRoutrs')
-}
 
 
 
