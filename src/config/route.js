@@ -90,12 +90,12 @@ const routes = [
             },
 
             {
-                path: '/form-layout',
-                name: 'FormLayout',
-                component: 'system/form-layout',
+                path: '/form-design',
+                name: 'FormDesign',
+                component: 'system/form-design',
                 hidden: true,
                 props: true,
-                meta: { title: '表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
+                meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
             },
 
             {

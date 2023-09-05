@@ -162,8 +162,8 @@ export default {
         return
       }
 
-      this.$router.push({name: 'FormLayout',
-      query: {
+      this.$router.push({name: 'FormDesign',
+        query: {
           'entity': selectedEntityObj.name,
           'entityLabel': selectedEntityObj.label
         }

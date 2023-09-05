@@ -11,10 +11,15 @@ import i18n from './locales'
 import router from './router'
 import App from './App.vue'
 import pinia from './store'
+
+import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+import '@/../lib/visual-design/designer.style.css'
+
 const app = createApp(App);
 app.use(router);
 app.use(pinia);
 app.use(ElementPlus);
+app.use(VisualDesign)
 app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);
