@@ -53,5 +53,6 @@ const handleSizeChange = (v) => {
     bottom: 0;
     width: 100%;
     z-index: 2001;
+    box-sizing: border-box;
 }
 </style>

@@ -405,6 +405,7 @@ const editColumn = (type) => {
     padding: 20px;
     position: relative;
     height: 100%;
+    box-sizing: border-box;
     // background: #fff;
     .table-box {
         border-top: 3px solid #409eff;
@@ -414,6 +415,7 @@ const editColumn = (type) => {
             height: 60px;
             line-height: 60px;
             padding: 0 20px;
+            
             .table-setting {
                 margin-top: 5px;
                 .el-dropdown-link {
