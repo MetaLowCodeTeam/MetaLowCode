@@ -11,9 +11,9 @@ export default ({
     const env = loadEnv(mode, process.cwd());
     let rollupOptions = {};
 
-
-    let optimizeDeps = {};
-
+    let optimizeDeps = {
+        include: ['@/../lib/visual-design/designer.umd.js']
+    };
 
     let alias = {
         '.git': path.resolve(__dirname, './.git'),
@@ -65,6 +65,9 @@ export default ({
             sourcemap: false, // 是否产出soucemap.json
             outDir: 'build', // 产出目录
             rollupOptions,
+            commonjsOptions: {
+                include: /node_modules|lib/  //这里记得把lib目录加进来，否则生产打包会报错！！
+            }
         },
         esbuild,
         optimizeDeps,
