@@ -80,10 +80,14 @@
                             <!-- 需要转换时间的 -->
                             <span v-else-if="column.fromNow">{{ $fromNow(scope.row[column.prop]) }}</span>
                             <!-- 需要深入拿字段 -->
-                            <span v-else-if="column.needField">{{ scope.row[column.prop][column.needField] }}</span>
+                            <span
+                                v-else-if="column.needField"
+                            >{{ scope.row[column.prop][column.needField] }}</span>
                             <!-- 自定义 -->
                             <span v-else-if="column.customSolt === 'whenNum'">
-                                <span v-if="scope.row.whenNum > 0">{{ formatterWhenNum(scope.row.whenNum) }}</span>
+                                <span
+                                    v-if="scope.row.whenNum > 0"
+                                >{{ formatterWhenNum(scope.row.whenNum) }}</span>
                                 <span v-else style="color: #fbbc05;">(无触发动作)</span>
                             </span>
                             <span v-else-if="column.customSolt === 'priority'">
@@ -118,7 +122,13 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <mlPagination :no="page.no" :total="page.total" @pageChange="pageChange" />
+                <mlPagination
+                    :size="page.size"
+                    :no="page.no"
+                    :total="page.total"
+                    @pageChange="pageChange"
+                    @handleSizeChange="handleSizeChange"
+                />
             </el-main>
         </el-container>
         <mlActiveDialog
@@ -284,11 +294,11 @@ const editApproval = (target, row) => {
     } else {
         dialogForm.title = "编辑" + ListTile[props.entityName];
         dialogForm.type = "edit";
-        if(props.entityName == "TriggerConfig"){
-            let tempForm = {...row};
+        if (props.entityName == "TriggerConfig") {
+            let tempForm = { ...row };
             tempForm.actionType = tempForm.actionType.value;
             dialogForm.form = { ...tempForm };
-            return
+            return;
         }
         dialogForm.form = { ...row };
     }
@@ -297,6 +307,11 @@ const editApproval = (target, row) => {
 // 分页切换
 const pageChange = (v) => {
     page.no = v;
+    getApprovalList();
+};
+
+const handleSizeChange = (size) => {
+    page.size = size;
     getApprovalList();
 };
 
@@ -385,15 +400,15 @@ let actionList = ref([
 ]);
 
 // 格式化触发动作
-const formatterWhenNum = (whenNum)=>{
+const formatterWhenNum = (whenNum) => {
     let actions = [];
-    actionList.value.forEach(el => {
-        if((whenNum & el.code) > 0){
-            actions.push(el.label)
+    actionList.value.forEach((el) => {
+        if ((whenNum & el.code) > 0) {
+            actions.push(el.label);
         }
-    })
-    return `当 ${actions.join('/')} 时`
-}
+    });
+    return `当 ${actions.join("/")} 时`;
+};
 
 // 保存流程
 const saveProcess = async (val) => {

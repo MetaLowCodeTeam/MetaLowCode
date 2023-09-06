@@ -95,7 +95,7 @@ router.beforeEach(async (to, from, next) => {
             return node.meta.role ? node.meta.role.filter(item => userInfo.role.indexOf(item) > -1).length > 0 : true
         })
         // let dongtai = localStorage.getItem("formatRoutrs");
-        console.log(apiMenu, '加载动态路由')
+        // console.log(apiMenu, '加载动态路由')
         userMenu[0].children.push(...apiMenu)
         let menu = [...userMenu]
         var menuRouter = filterAsyncRouter(menu)

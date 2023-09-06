@@ -112,7 +112,7 @@ const routes = [
                 meta: { group: true, title: '元数据设置', icon: "el-icon-coin", },
                 children: [
                     {
-                        path: 'entity-list',
+                        path: '/entity-list',
                         name: 'EntityList',
                         component: 'system/entity-list',
                         meta: { title: '实体管理', icon: 'el-icon-coin' }

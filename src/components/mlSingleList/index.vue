@@ -31,7 +31,13 @@
                 ></el-table-column>
                 <slot name="activeRow"></slot>
             </el-table>
-            <mlPagination :no="page.no" :total="page.total" @pageChange="pageChange" />
+            <mlPagination
+                :no="page.no"
+                :size="page.size"
+                :total="page.total"
+                @pageChange="pageChange"
+                @handleSizeChange="handleSizeChange"
+            />
         </el-main>
     </el-container>
 </template>
@@ -77,6 +83,10 @@ const pageChange = (cutPage) => {
     page.no = cutPage;
     getTableList();
 };
+const handleSizeChange = (size) => {
+    page.size = size;
+    getTableList();
+};
 // 获取表格数据
 async function getTableList() {
     loading.value = true;
@@ -119,8 +129,8 @@ async function getTableList() {
 
 defineExpose({
     loading,
-    getTableList
-})
+    getTableList,
+});
 </script>
 <style lang="scss" scoped>
 .one-list {

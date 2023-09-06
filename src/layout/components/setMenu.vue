@@ -2,8 +2,8 @@
     <mlDialog title="设置导航菜单" v-model="isShow" width="680px">
         <div v-loading="loading">
             <el-form label-width="70px" label-position="left">
-                <el-form-item label="菜单名称">
-                    <el-input v-model="menuData.configName" placeholder="输入菜单名称" clearable />
+                <el-form-item label="导航名称">
+                    <el-input v-model="menuData.configName" placeholder="输入导航名称" clearable />
                 </el-form-item>
             </el-form>
             <div class="clearfix">
@@ -81,7 +81,7 @@
                         </div>
                     </VueDraggableNext>
                 </div>
-                <div class="fl right-div" v-if="!cutMenu">点击左侧菜单项进行编辑</div>
+                <div class="fl right-div" v-if="!cutMenu">点击左侧导航项进行编辑</div>
                 <div class="fl right-div" v-else>
                     <el-tabs v-model="cutMenu.type">
                         <el-tab-pane label="关联项" :name="1"></el-tab-pane>
@@ -128,8 +128,8 @@
         </div>
         <template #footer>
             <div class="footer-div">
-                <el-button @click="isShow = false">取消</el-button>
-                <el-button type="primary" @click="textSave">保存</el-button>
+                <el-button @click="isShow = false" :loading="loading">取消</el-button>
+                <el-button type="primary" @click="textSave" :loading="loading">保存</el-button>
             </div>
         </template>
     </mlDialog>
@@ -381,7 +381,8 @@ const textSave = async () => {
             }
         }
     } else {
-        $ElMessage.error("菜单保存：" + res.error);
+        $ElMessage.error("导航保存：" + res.error);
+        loading.value = false;
     }
 
     // console.log(menuData, "保存数据");

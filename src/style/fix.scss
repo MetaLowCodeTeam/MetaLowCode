@@ -299,7 +299,7 @@ body .tox-tinymce-aux {
 			}
 		}
 	}
-    
+
 	.el-dialog__footer {
 		padding: 0;
 		border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -307,14 +307,14 @@ body .tox-tinymce-aux {
 		line-height: 50px;
 		padding-right: 20px;
 	}
-    &.not-header {
-        .el-dialog__header {
-            height: 0;
-        }
-        .el-dialog__body {
-            padding-top: 50px;
-        }
-    }
+	&.not-header {
+		.el-dialog__header {
+			height: 0;
+		}
+		.el-dialog__body {
+			padding-top: 50px;
+		}
+	}
 }
 
 .mlfield-check-box {
@@ -375,13 +375,17 @@ body .tox-tinymce-aux {
 }
 
 .el-select__popper {
-    z-index: 2200!important;
+	z-index: 2200 !important;
 }
 
 .formula-popover {
-    padding: 20px 0!important;
-    padding-bottom: 15px!important;
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
+	padding: 20px 0 !important;
+	padding-bottom: 15px !important;
+	max-height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.advfilter-popper {
+	z-index: 3001!important;
 }

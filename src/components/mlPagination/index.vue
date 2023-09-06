@@ -7,6 +7,8 @@
             :layout="layout"
             :style="{'justify-content': algin}"
             @current-change="pageChange"
+            :page-sizes="pageSizes"
+            @size-change="handleSizeChange"
         />
     </div>
 </template>
@@ -16,12 +18,22 @@ const props = defineProps({
     total: { type: Number, default: 0 },
     no: { type: Number, default: 1 },
     size: { type: Number, default: 20 },
-    layout: { type: String, default: "total, prev, pager, next" },
+    layout: {
+        type: String,
+        default: "total, prev, pager, next, jumper, sizes",
+    },
     algin: { type: String, default: "center" },
+    pageSizes: {
+        type: Array,
+        default: () => [20, 40, 80, 100, 200, 300, 400, 500],
+    },
 });
-const emit = defineEmits(["pageChange"]);
+const emit = defineEmits(["pageChange", "handleSizeChange"]);
 const pageChange = (v) => {
     emit("pageChange", v);
+};
+const handleSizeChange = (v) => {
+    emit("handleSizeChange", v);
 };
 </script>
 

@@ -12,14 +12,19 @@ export default {
     },
     // 切换使用导航
     useNavChang: async (layoutConfigId, cacheKey) => {
-        return http.post('/user/saveUserCache', {}, {
+        return http.post('/layout/saveUserLayoutCache', {}, {
             params: { cacheValue: layoutConfigId, cacheKey },
         })
     },
     // 删除布局配置
     deleteConfig: async (layoutConfigId) => {
         return http.post('/layout/deleteConfig', {}, {
-            params: { recordId:layoutConfigId },
+            params: { recordId: layoutConfigId },
         })
-    }
+    },
+    // 获取实体布局配置
+    getLayoutList: async (entityName) => {
+        return await http.get("/layout/getLayoutList", { entityName });
+    },
+
 }
