@@ -98,6 +98,7 @@ router.beforeEach(async (to, from, next) => {
         // console.log(apiMenu, '加载动态路由')
         userMenu[0].children.push(...apiMenu)
         let menu = [...userMenu]
+        console.log(menu,'menu')
         var menuRouter = filterAsyncRouter(menu)
         menuRouter = flatAsyncRoutes(menuRouter)
         menuRouter.forEach(item => {

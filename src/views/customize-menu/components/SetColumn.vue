@@ -298,6 +298,7 @@ const onSave = async () => {
     margin-bottom: 12px;
     overflow-x: auto;
     width: 48%;
+    box-sizing: border-box;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -314,6 +315,7 @@ const onSave = async () => {
     border: 1px solid #eee;
     padding: 2px;
     height: 388px;
+    box-sizing: border-box;
 }
 .parent-li {
     // height: 888px;

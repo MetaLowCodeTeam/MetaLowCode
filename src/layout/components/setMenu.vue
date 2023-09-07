@@ -87,9 +87,11 @@
                         <el-tab-pane label="关联项" :name="1"></el-tab-pane>
                         <el-tab-pane label="外部地址" :name="2"></el-tab-pane>
                     </el-tabs>
-                    <div v-if="cutMenu.type == 1">
+                    <div
+                        v-if="cutMenu.type == 1 && (!cutMenu.children || (cutMenu.children && cutMenu.children.length < 1))"
+                    >
                         <el-select
-                            v-model="cutMenu.association"
+                            v-model="cutMenu.entityCode"
                             filterable
                             placeholder="选择关联项"
                             class="w-100"
@@ -103,6 +105,17 @@
                             />
                         </el-select>
                     </div>
+                    <div
+                        v-if="cutMenu.type == 1 && (cutMenu.children && cutMenu.children.length > 0)"
+                    >
+                        <el-select
+                            v-model="parentMenu"
+                            filterable
+                            placeholder="选择关联项"
+                            class="w-100"
+                            disabled
+                        ></el-select>
+                    </div>
                     <div v-if="cutMenu.type == 2">
                         <el-input
                             v-model="cutMenu.outLink"
@@ -112,6 +125,9 @@
                     </div>
                     <div class="mt-10">
                         <el-input v-model="cutMenu.name" placeholder="菜单名称" clearable></el-input>
+                    </div>
+                    <div class="mt-5" v-if="cutMenu.children && cutMenu.children.length > 0">
+                        <el-checkbox v-model="cutMenu.isOpeneds" label="默认展开" />
                     </div>
                     <div class="mt-10">
                         <el-button @click="confirmMenu">确定</el-button>
@@ -128,6 +144,9 @@
         </div>
         <template #footer>
             <div class="footer-div">
+                <div class="share-to fl">
+                    <mlShareTo v-model="menuData.shareTo" />
+                </div>
                 <el-button @click="isShow = false" :loading="loading">取消</el-button>
                 <el-button type="primary" @click="textSave" :loading="loading">保存</el-button>
             </div>
@@ -141,6 +160,7 @@ import useCommonStore from "@/store/modules/common";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import mlShareTo from "@/components/mlShareTo/index.vue";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
@@ -186,6 +206,8 @@ onMounted(() => {
     getMenuFn();
 });
 
+let parentMenu = ref("父级菜单");
+
 // 节点选中
 const nodeClick = (node) => {
     cutMenu.value = Object.assign({}, node);
@@ -201,13 +223,15 @@ let defaultMenu = reactive({
     // 1 关联性  2 外部地址
     type: 1,
     // 关联项
-    association: "",
+    entityCode: "",
     // 外部地址
     outLink: "",
     // key
     guid: "",
     // 父节点
     parentGuid: "",
+    // 是否默认展开
+    isOpeneds: false,
 });
 
 const getGuid = () => {
@@ -226,7 +250,6 @@ const associationChange = (entityCode) => {
         (el) => el.entityCode == entityCode
     );
     cutMenu.value.name = linkEntity[0].label;
-    cutMenu.value.param = linkEntity[0].name;
     cutMenu.value.entityCode = linkEntity[0].entityCode;
     cutMenu.value.entityName = linkEntity[0].name;
 };
@@ -250,7 +273,7 @@ const addChildrenMenu = (menu) => {
 };
 // 确认菜单
 const confirmMenu = () => {
-    if (cutMenu.value.type == 1 && !cutMenu.value.association) {
+    if (cutMenu.value.type == 1 && !cutMenu.value.entityCode && (!cutMenu.value.children || cutMenu.value.children.length < 1)) {
         $ElMessage.warning("请选择关联项");
         return;
     }
@@ -319,6 +342,14 @@ const delMenu = (menu, inx, subInx) => {
     else {
         menuData.list[inx].children.splice(subInx, 1);
     }
+    // 如果删除的是当前选中
+    if (
+        cutMenu.value &&
+        cutMenu.value.guid &&
+        menu.guid == cutMenu.value.guid
+    ) {
+        cutMenu.value = null;
+    }
 };
 
 /**
@@ -368,7 +399,6 @@ const textSave = async () => {
             chosenNavigationId.value == menuData.layoutConfigId &&
             $TOOL.checkIsEdit(sourceData.config, menuData.config)
         ) {
-            
             router.go(0);
         } else {
             let navRes = await $API.layoutConfig.getNavigationList();
@@ -394,14 +424,18 @@ const formatMenuList = () => {
     // 循环菜单
     menuData.list.forEach((el) => {
         // 必须存在关联或者外部链接才是菜单
-        if (el.association || el.outLink) {
+        if (
+            el.entityCode ||
+            el.outLink ||
+            (el.children && el.children.length > 0)
+        ) {
             let isMenu = { ...el };
             // 如果存在子节点
             if (el.children && el.children.length > 0) {
                 isMenu.children = [];
                 el.children.forEach((subEl) => {
                     // 子节点也必须存在关联或者外部链接才是菜单
-                    if (subEl.association || subEl.outLink) {
+                    if (subEl.entityCode || subEl.outLink) {
                         isMenu.children.push(subEl);
                     }
                 });
@@ -409,7 +443,12 @@ const formatMenuList = () => {
             saveMenu.push(isMenu);
         }
     });
-
+    saveMenu.forEach((el, inx) => {
+        if (!el.entityCode && !el.outLink && el.children.length < 1) {
+            saveMenu.splice(inx, 1);
+        }
+    });
+    console.log(saveMenu, "saveMenu");
     return saveMenu;
 };
 </script>
@@ -423,6 +462,7 @@ const formatMenuList = () => {
     margin-bottom: 12px;
     overflow-x: auto;
     width: 42%;
+    box-sizing: border-box;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -436,6 +476,7 @@ const formatMenuList = () => {
 .right-div {
     width: calc(58% - 20px);
     margin-left: 20px;
+    box-sizing: border-box;
 }
 
 .parent-li {
@@ -550,5 +591,10 @@ const formatMenuList = () => {
     .item {
         opacity: 0;
     }
+}
+.share-to {
+    font-size: 13px;
+    padding-left: 20px;
+    text-align: left;
 }
 </style>

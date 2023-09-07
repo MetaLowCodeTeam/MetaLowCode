@@ -60,7 +60,7 @@ const $ElMessage = inject("$ElMessage");
 onMounted(() => {});
 // 导航点击
 const navClick = (item) => {
-    $API.layoutConfig.useNavChang(item.layoutConfigId, "NAV");
+    $API.layoutConfig.saveUserLayoutCache("NAV",item.layoutConfigId);
     router.go(0);
 };
 

@@ -76,6 +76,7 @@
                     footer
                     @cancel="dialogIsShow = false"
                     @confirm="conditionConfirm"
+                    entityName="ApprovalFlow"
                 />
             </mlDialog>
         </div>

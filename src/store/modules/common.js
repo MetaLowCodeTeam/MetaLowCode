@@ -5,6 +5,8 @@ import { ElMessage } from 'element-plus'
 const useCommonStore = defineStore('commonStore', () => {
     // 所有实体label
     let entityLable = reactive({});
+    // 所有实体Name
+    let entityName = reactive({});
     // 审核弹框选择应用实体---已过滤
     let approveDialogEntityList = ref([]);
     const getEntityLable = () => {
@@ -17,6 +19,7 @@ const useCommonStore = defineStore('commonStore', () => {
                 approveDialogEntityList.value = [];
                 res.data.forEach(el => {
                     entityLable[el.entityCode] = el.label;
+                    entityName[el.entityCode] = el.entityName
                     if(!el.systemEntityFlag){
                         approveDialogEntityList.value.push(el);
                     }

@@ -285,6 +285,7 @@ body .tox-tinymce-aux {
 		line-height: 60px;
 		box-sizing: border-box;
 		padding: 0 20px;
+        box-sizing: border-box;
 		.my-title {
 			font-size: 20px;
 			color: #fff;
@@ -315,6 +316,9 @@ body .tox-tinymce-aux {
 			padding-top: 50px;
 		}
 	}
+    div {
+        box-sizing: border-box;
+    }
 }
 
 .mlfield-check-box {

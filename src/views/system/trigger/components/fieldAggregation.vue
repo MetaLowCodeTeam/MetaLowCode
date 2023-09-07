@@ -141,6 +141,7 @@
                     footer
                     @cancel="dialogIsShow = false"
                     @confirm="conditionConfirm"
+                    :entityName="trigger.entityCode"
                 />
             </mlDialog>
         </div>

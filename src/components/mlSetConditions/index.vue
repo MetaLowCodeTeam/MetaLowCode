@@ -139,7 +139,7 @@
                         </el-select>
                     </div>
                     <!-- 用户下拉框 -->
-                    <div v-else-if="item.valueType === 'userSelect'">
+                    <div v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT'">
                         <el-select
                             v-model="item.value"
                             class="w-100"
@@ -214,12 +214,13 @@ export default {
     props: {
         modelValue: null,
         footer: { type: Boolean, default: false },
-        entityName: { type: String, default: "DemoContact" },
+        entityName: { type: String, default: "" },
     },
     data() {
         return {
             // 所有类型
             op_type: {
+                REF:"包含",
                 LK: "包含",
                 NLK: "不包含",
                 IN: "包含",
@@ -309,8 +310,7 @@ export default {
             };
             let res = await this.$API.common.getFieldListOfFilter(param);
             let resUser = await this.$API.common.getUser(param);
-            let resDepartment =
-                await this.$API.common.getDepartment(param);
+            let resDepartment = await this.$API.common.getDepartment(param);
             this.userList = resUser.code === 200 ? resUser.data || [] : [];
             this.departmentList =
                 resDepartment.code === 200 ? resDepartment.data || [] : [];
@@ -331,40 +331,44 @@ export default {
                     };
                 });
                 // 初始化已有字段
-                if(this.conditionConf.items && this.conditionConf.items.length > 0){
+                if (
+                    this.conditionConf.items &&
+                    this.conditionConf.items.length > 0
+                ) {
                     this.initConditionList();
                 }
             } else {
-                this.$message.error("获取数据失败，请尝试刷新页面后重试");
+                this.$message.error("获取实体数据失败，请尝试刷新页面后重试");
             }
             this.loading = false;
         },
         // 初始化已有字段
-        initConditionList(){
+        initConditionList() {
             let conditionList = [];
-            this.fieldList.forEach(el=>{
-                this.conditionConf.items.forEach(subEl => {
-                    if(el.fieldName === subEl.fieldName){
-                        let newItem = Object.assign(el,subEl);
+            this.fieldList.forEach((el) => {
+                this.conditionConf.items.forEach((subEl) => {
+                    if (el.fieldName === subEl.fieldName) {
+                        let newItem = Object.assign({...el}, subEl);
                         newItem.valueType = this.showValueType(newItem);
                         conditionList.push(newItem);
                     }
-                })
-            })
+                });
+            });
             this.conditionConf.items = conditionList;
             // let { items, equation } = this.conditionConf;
-
         },
         // 字段切换
         fieldChange(item) {
-            let metadata = this.fieldList.filter(res=> res.fieldName === item.fieldName);
-            Object.assign(item,metadata[0]);
+            let metadata = this.fieldList.filter(
+                (res) => res.fieldName === item.fieldName
+            );
+            Object.assign(item, metadata[0]);
             item.op = this.getSelectOp(item)[0];
-            item.valueType = this.showValueType(item); 
+            item.valueType = this.showValueType(item);
         },
         // op切换
-        opChange(item){
-            item.valueType = this.showValueType(item); 
+        opChange(item) {
+            item.valueType = this.showValueType(item);
         },
         clearError(item) {
             item.isError = false;
@@ -382,7 +386,7 @@ export default {
         },
         // 获取条件op
         getSelectOp(item) {
-            let { type } = item;
+            let { type,referTo } = item;
             let { numberFieldType } = this;
             let op = [];
             if (type === "Date" || type === "DateTime") {
@@ -416,7 +420,13 @@ export default {
             } else if (numberFieldType.includes(type)) {
                 op = ["GT", "LT", "EQ", "BW", "GE", "LE"];
             } else if (type === "Reference") {
-                op = ["IN", "NIN", "SFU", "SFB", "SFT"];
+                op = ["REF", "NL", "NT"];
+                if (referTo == "User") {
+                    op = ["LK", "NLK", "SFU","NL","NT"];
+                }
+                if (referTo == "Department") {
+                    op = ["LK", "NLK", "SFB", "SFD","NL","NT"];
+                }
             } else if (type === "Boolean") {
                 op = ["EQ", "NL", "NT"];
             } else if (type === "Option") {
@@ -452,6 +462,7 @@ export default {
                 return;
             }
             let condition = this.$CloneDeep(this.fieldList[0]);
+            // console.log(condition,'condition')
             this.conditionConf.items.push(condition);
             this.fieldChange(condition);
         },

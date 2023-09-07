@@ -134,7 +134,7 @@ export default {
 
                 sessionStorage.setItem("userId", user.data); // 保存用户Id到本地会话
                 this.$TOOL.cookie.set("uid", user.data, {
-                    expires: 0.5 * 60 * 60,
+                    expires: 24 * 60 * 60,
                 });
             } else {
                 this.islogin = false;

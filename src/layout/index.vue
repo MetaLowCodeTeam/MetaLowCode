@@ -25,7 +25,7 @@
 				</div>
 				<div class="adminui-side-scroll">
 					<el-scrollbar>
-						<el-menu :default-active="active" router :collapse="menuIsCollapseFn" :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
+						<el-menu :default-openeds="defaultOpeneds" :default-active="active" router :collapse="menuIsCollapseFn" :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
 							<NavMenu :navMenus="nextMenu"></NavMenu>
 						</el-menu>
 					</el-scrollbar>
@@ -65,7 +65,7 @@
 			<div v-if="!ismobileFn" :class="menuIsCollapseFn?'aminui-side isCollapse':'aminui-side'">
 				<div class="adminui-side-scroll">
 					<el-scrollbar>
-						<el-menu :default-active="active" router :collapse="menuIsCollapseFn" :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
+						<el-menu :default-openeds="defaultOpeneds" :default-active="active" router :collapse="menuIsCollapseFn" :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
 							<NavMenu :navMenus="menu"></NavMenu>
 						</el-menu>
 					</el-scrollbar>
@@ -99,7 +99,7 @@
 			</div>
 			<div class="adminui-header-right">
 				<div v-if="!ismobileFn" class="adminui-header-menu">
-					<el-menu mode="horizontal" :default-active="active" router background-color="#222b45" text-color="#fff" active-text-color="var(--el-color-primary)">
+					<el-menu :default-openeds="defaultOpeneds" mode="horizontal" :default-active="active" router background-color="#222b45" text-color="#fff" active-text-color="var(--el-color-primary)">
 						<NavMenu :navMenus="menu"></NavMenu>
 					</el-menu>
 				</div>
@@ -149,7 +149,7 @@
 				</div>
 				<div class="adminui-side-scroll">
 					<el-scrollbar>
-						<el-menu :default-active="active" router :collapse="menuIsCollapseFn" :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
+						<el-menu :default-openeds="defaultOpeneds" :default-active="active" router :collapse="menuIsCollapseFn" :unique-opened="$CONFIG.MENU_UNIQUE_OPENED">
 							<NavMenu :navMenus="nextMenu"></NavMenu>
 						</el-menu>
 					</el-scrollbar>
@@ -226,6 +226,7 @@
 				nextMenu: [],
 				pmenu: {},
 				active: '',
+                defaultOpeneds:[],
 			}
 		},
         computed:{
@@ -253,6 +254,7 @@
 			window.addEventListener('resize', this.onLayoutResize);
 			var menu = this.$router.sc_getMenu();
 			this.menu = this.filterUrl(menu);
+            this.getDefaultOpeneds();
 			this.showThis()
 		},
 		watch: {
@@ -267,6 +269,14 @@
 			}
 		},
 		methods: {
+            getDefaultOpeneds(){
+                let needMenu = this.menu[0].children;
+                needMenu.forEach(el=>{
+                    if(el.meta.isOpeneds){
+                        this.defaultOpeneds.push(el.name);
+                    }
+                })
+            },
 			openSetting(){
 				this.settingDialog = true;
 			},

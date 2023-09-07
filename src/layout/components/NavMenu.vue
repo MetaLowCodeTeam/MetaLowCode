@@ -11,7 +11,7 @@
 				<span v-if="navMenu.meta.tag" class="menu-tag">{{navMenu.meta.tag}}</span>
 			</template>
 		</el-menu-item>
-		<el-sub-menu v-else :index="navMenu.path">
+		<el-sub-menu v-else :index="navMenu.path || navMenu.name">
 			<template #title>
 				<el-icon v-if="navMenu.meta&&navMenu.meta.icon"><component :is="navMenu.meta.icon || 'el-icon-menu'"/></el-icon>
 				<span>{{navMenu.meta.title}}</span>

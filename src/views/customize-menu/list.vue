@@ -2,8 +2,36 @@
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
             <div class="table-search-box">
-                <mlListAdvancedQuery v-model="advancedQuery.value" />
+                <mlListAdvancedQuery
+                    v-model="advFilter"
+                    :entityName="entityName"
+                    :entityCode="entityCode"
+                    @queryNow="queryNow"
+                    @refresh="refresh"
+                    @onAddAdv="getLayoutList"
+                    @changeAdvFilter="changeAdvFilter"
+                    :filter="advancedFilter"
+                />
+                <div class="quick-query">
+                    <el-input
+                        v-model="quickQuery"
+                        class="w-50 m-2"
+                        :placeholder="quickQueryPlaceholder"
+                        @keyup.enter="getTableList"
+                        clearable
+                        @clear="getTableList"
+                    >
+                        <template #append>
+                            <el-button @click="getTableList">
+                                <el-icon>
+                                    <ElIconSearch />
+                                </el-icon>
+                            </el-button>
+                        </template>
+                    </el-input>
+                </div>
                 <div class="fr table-setting">
+                    <el-button>打开</el-button>
                     <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}">
                         <div class="table-setting-item-box">
                             <div class="pl-5 item div-disabled">列显示</div>
@@ -86,6 +114,7 @@
             </div>
             <div v-else>
                 <el-table
+                    ref="elTables"
                     :data="tableData"
                     :border="true"
                     stripe
@@ -94,7 +123,9 @@
                     :height="setTableHeight()"
                     @sort-change="sortChange"
                     @header-dragend="headerDragend"
+                    @row-click="handleHighlightChangeTable"
                 >
+                    <el-table-column type="selection" width="50" :align="'center'" />
                     <el-table-column
                         v-for="(column,columnInx) of tableColumn"
                         :key="columnInx"
@@ -149,10 +180,7 @@ let tableColumn = ref([]);
 let allFields = ref([]);
 // 表格数据
 let tableData = ref([]);
-// 高级查询配置
-let advancedQuery = reactive({
-    value: "all",
-});
+
 // 表格多选数据
 let multipleSelection = ref([]);
 // 分页
@@ -174,10 +202,24 @@ let defaultSortFields = ref([
         type: "DESC",
     },
 ]);
+// 表格查询过滤
+let queryFilter = reactive({
+    equation: "AND",
+    items: [],
+});
+// 高级查询过滤
+let advancedFilter = ref([]);
+let advFilter = ref("all");
+let comQueriesList = reactive({});
 // 默认列宽度
 let titleWidthForAll = reactive({});
 // 自定义列宽度
 let titleWidthForSelf = reactive({});
+
+// 快捷查询
+let quickQuery = ref("");
+let quickQueryPlaceholder = ref("");
+
 onBeforeMount(() => {
     entityCode.value = router.currentRoute.value.meta.entityCode;
     entityName.value = router.currentRoute.value.meta.entityName;
@@ -190,6 +232,9 @@ onBeforeMount(() => {
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res && res.code == 200) {
+        advFilter.value = res.data.advFilter || "all";
+        advancedFilter.value = res.data.FILTER;
+        quickQueryPlaceholder.value = res.data.quickFilterLabel;
         let { ALL, SELF } = res.data.LIST;
         titleWidthForAll = res.data.titleWidthForAll
             ? { ...JSON.parse(res.data.titleWidthForAll) }
@@ -247,6 +292,15 @@ const getLayoutList = async () => {
                 ];
                 sortFields.value = [...defaultSortFields.value];
             }
+            // 如果有高级查询
+            if (advFilter.value != "all") {
+                let filterAdvancedFilter = advancedFilter.value.filter(
+                    (el) => el.layoutConfigId == advFilter.value
+                );
+                let config = JSON.parse(filterAdvancedFilter[0].config);
+                comQueriesList = { ...config };
+            }
+            console.log(tableColumn.value, "tableColumn.value");
             getTableList();
         }
     } else {
@@ -267,6 +321,13 @@ const handleSizeChange = (size) => {
 // 表格多选
 const handleSelectionChange = (val) => {
     multipleSelection.value = val;
+};
+let elTables = ref("");
+// 表格行点击选中
+const handleHighlightChangeTable = (row) => {
+    if (!row.disabled) {
+        elTables.value.toggleRowSelection(row);
+    }
 };
 
 // 列排序
@@ -289,17 +350,35 @@ const sortChange = (column) => {
 const headerDragend = (newWidth, oldWidth, column) => {
     if (defaultColumnShow.value == "ALL") {
         titleWidthForAll[column.property] = newWidth;
-        $API.layoutConfig.useNavChang(
-            JSON.stringify(titleWidthForAll),
-            "LIST:" + entityName.value + ":ALL"
+        $API.layoutConfig.saveUserLayoutCache(
+            "LIST:" + entityName.value + ":ALL",
+            JSON.stringify(titleWidthForAll)
         );
     } else {
         titleWidthForSelf[column.property] = newWidth;
-        $API.layoutConfig.useNavChang(
-            JSON.stringify(titleWidthForSelf),
-            "LIST:" + entityName.value + ":SELF"
+        $API.layoutConfig.saveUserLayoutCache(
+            "LIST:" + entityName.value + ":ALL",
+            JSON.stringify(titleWidthForAll)
         );
     }
+};
+
+// 常用查询切换
+const changeAdvFilter = (e) => {
+    comQueriesList = { ...e };
+    getTableList();
+};
+
+// 立即查询
+const queryNow = (e) => {
+    queryFilter = { ...e };
+    getTableList();
+};
+
+// 重置
+const refresh = () => {
+    queryFilter = { equation: "AND", items: [] };
+    getTableList();
 };
 
 const getTableList = async () => {
@@ -309,11 +388,10 @@ const getTableList = async () => {
         fieldsList: allFields.value.join(),
         pageSize: page.size,
         pageNo: page.no,
-        filter: {
-            equation: "AND",
-            items: [],
-        },
+        filter: { ...queryFilter },
+        advFilter: { ...comQueriesList },
         sortFields: sortFields.value,
+        quickFilter: quickQuery.value,
     };
     let res = await getDataList(
         param.mainEntity,
@@ -321,7 +399,9 @@ const getTableList = async () => {
         param.filter,
         param.pageSize,
         param.pageNo,
-        param.sortFields
+        param.sortFields,
+        param.advFilter,
+        param.quickFilter
     );
     if (res.code === 200) {
         tableData.value = res.data.dataList;
@@ -378,7 +458,7 @@ const setColumnWidth = (column) => {
 const changeColumnShow = (type) => {
     defaultColumnShow.value = type;
     tableColumn.value = layoutConfig.value[type].FILTER;
-    $API.layoutConfig.useNavChang(type, "LIST:" + entityName.value);
+    $API.layoutConfig.saveUserLayoutCache("LIST:" + entityName.value, type);
 };
 
 // 编辑列弹框是否显示
@@ -406,7 +486,7 @@ const editColumn = (type) => {
     position: relative;
     height: 100%;
     box-sizing: border-box;
-    // background: #fff;
+
     .table-box {
         border-top: 3px solid #409eff;
         // padding: 20px 0;
@@ -415,10 +495,13 @@ const editColumn = (type) => {
             height: 60px;
             line-height: 60px;
             padding: 0 20px;
-            
+
             .table-setting {
                 margin-top: 5px;
                 .el-dropdown-link {
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
                     cursor: pointer;
                 }
             }
@@ -474,6 +557,18 @@ const editColumn = (type) => {
     .lh-span-a {
         cursor: pointer;
         color: #409eff;
+    }
+}
+.el-table {
+    font-size: 13px !important;
+}
+
+.quick-query {
+    display: inline-block;
+    margin-left: 15px;
+    width: 270px;
+    .quick-query-icon {
+        cursor: pointer;
     }
 }
 </style>

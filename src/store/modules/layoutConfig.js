@@ -59,6 +59,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.title = el.name;
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
+            initMenu.meta.isOpeneds = el.isOpeneds;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
                 initMenu.path = "";
@@ -71,10 +72,11 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             type: subEl.type == 2 ? "link" : "",
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
+                         
                         },
                         path:
                             subEl.type == 1
-                                ? "/" + subEl.param + "/list"
+                                ? "/" + subEl.entityName + "/list"
                                 : subEl.outLink,
                         component: "customize-menu/list",
                     });
@@ -82,7 +84,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
                 if (el.type == 1) {
-                    initMenu.path = "/" + el.param + "/list";
+                    initMenu.path = "/" + el.entityName + "/list";
                 } else {
                     initMenu.path = el.outLink;
                 }

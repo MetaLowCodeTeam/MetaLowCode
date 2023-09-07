@@ -417,7 +417,7 @@ textarea {
 }
 
 .cursor-pointer {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 /*定宽页面*/
@@ -443,13 +443,12 @@ textarea {
 }
 
 .fl {
-    float: left;
+	float: left;
 }
 
 .fr {
-    float: right;
+	float: right;
 }
-
 
 .clearfix {
 	clear: both;
@@ -467,30 +466,38 @@ textarea {
 }
 
 .div-disabled {
-    color: #c8cbd2;
-    &:hover {
-        cursor: not-allowed;
-    }
+	color: #c8cbd2;
+	&:hover {
+		cursor: not-allowed;
+	}
 }
 
-$values: 3, 5, 8, 10, 12, 15, 16, 20, 24,30;
+$values: 3, 5, 8, 10, 12, 15, 16, 20, 24, 30;
 $names: (
-    p: padding,
-    m: margin,
-    pt: padding-top,
-    pr: padding-right,
-    pb: padding-bottom,
-    pl: padding-left,
-    mt: margin-top,
-    mr: margin-right,
-    mb: margin-bottom,
-    ml: margin-left,
+	p: padding,
+	m: margin,
+	pt: padding-top,
+	pr: padding-right,
+	pb: padding-bottom,
+	pl: padding-left,
+	mt: margin-top,
+	mr: margin-right,
+	mb: margin-bottom,
+	ml: margin-left,
 );
 //遍历生成,比如.pl10{padding-left:10px;}
 @each $key, $name in $names {
-    @each $num in $values {
-        .#{$key}-#{$num} {
-            #{$name}: $num * 1px;
-        }
-    }
+	@each $num in $values {
+		.#{$key}-#{$num} {
+			#{$name}: $num * 1px;
+		}
+	}
+}
+
+.ml-a-span {
+	color: #409eff;
+	cursor: pointer;
+	&:hover {
+		color: #a0cfff;
+	}
 }

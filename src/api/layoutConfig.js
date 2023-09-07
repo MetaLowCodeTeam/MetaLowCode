@@ -11,9 +11,9 @@ export default {
         return await http.get("/layout/getNavigationList");
     },
     // 切换使用导航
-    useNavChang: async (layoutConfigId, cacheKey) => {
+    saveUserLayoutCache: async (cacheKey, cacheValue) => {
         return http.post('/layout/saveUserLayoutCache', {}, {
-            params: { cacheValue: layoutConfigId, cacheKey },
+            params: { cacheKey, cacheValue },
         })
     },
     // 删除布局配置
