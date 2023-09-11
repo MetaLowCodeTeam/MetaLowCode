@@ -15,6 +15,10 @@ export function getFieldListOfEntity(entity) {
   return http.get('systemManager/getFieldListOfEntity', { entity })
 }
 
+export function getMDFieldList(entity) {
+  return http.get('systemManager/getMDFieldList', { entity })
+}
+
 export function getEntityProps(entity) {
   return http.get('systemManager/getEntityProps', { entity })
 }

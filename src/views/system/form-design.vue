@@ -1,5 +1,5 @@
 <template>
-  <v-form-designer ref="vfDesigner" :designer-config="designerConfig" :field-list-api="fieldListAPI"
+  <v-form-designer ref="vfDesigner" :designer-config="designerConfig" :field-list-data="fieldListData"
                    class="visual-design">
     <!-- 配置工具按钮 -->
     <template #customToolButtons>
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import {createFormLayout, updateFormLayout, getFormLayout} from '@/api/system-manager'
+import {createFormLayout, updateFormLayout, getFormLayout, getMDFieldList} from '@/api/system-manager'
 
 export default {
   name: "form-design",
@@ -31,7 +31,7 @@ export default {
         generateSFCButton: false,
         toolbarMaxWidth: 300,
       },
-      fieldListAPI: {},
+      fieldListData: {},
       layoutId: null,
     }
   },
@@ -41,10 +41,25 @@ export default {
   },
   mounted() {
     this.loadDesign()
+    this.loadFieldListData()
   },
   methods: {
     quickDesign() {
       this.$message.info('待实现...')
+    },
+
+    loadFieldListData() {
+      getMDFieldList(this.entity).then(res => {
+        if (res.data.fieldList) {
+          this.fieldListData.fieldList = res.data.fieldList
+          if (res.data.subFormList) {
+            this.fieldListData.subFormList = res.data.subFormList
+          }
+          this.$refs.vfDesigner.setFieldListData(this.fieldListData)
+        }
+      }).catch(res => {
+        this.$message({ message: res.message, type: 'error' })
+      })
     },
 
     loadDesign() {
