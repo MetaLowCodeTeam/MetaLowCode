@@ -236,6 +236,13 @@ const routes = [
                     },
                 ]
             },
+            // 数据导入
+            {
+                path: '/data-upload',
+                name: 'DataUpload',
+                meta: { title: '数据导入', icon: 'el-icon-Upload' },
+                component: 'system/data-upload/index',
+            },
             // 消息中心
             {
                 path: '/notification',

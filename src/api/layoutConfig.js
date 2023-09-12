@@ -26,5 +26,8 @@ export default {
     getLayoutList: async (entityName) => {
         return await http.get("/layout/getLayoutList", { entityName });
     },
-
+    // 数据导出
+    excelDataExcel: async (formModel) => {
+        return http.post('/excelData/exportExcel', formModel)
+    }
 }

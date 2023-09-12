@@ -223,7 +223,7 @@ let defaultMenu = reactive({
     // 1 关联性  2 外部地址
     type: 1,
     // 关联项
-    entityCode: "",
+    entityCode: null,
     // 外部地址
     outLink: "",
     // key
@@ -273,7 +273,11 @@ const addChildrenMenu = (menu) => {
 };
 // 确认菜单
 const confirmMenu = () => {
-    if (cutMenu.value.type == 1 && !cutMenu.value.entityCode && (!cutMenu.value.children || cutMenu.value.children.length < 1)) {
+    if (
+        cutMenu.value.type == 1 &&
+        !cutMenu.value.entityCode &&
+        (!cutMenu.value.children || cutMenu.value.children.length < 1)
+    ) {
         $ElMessage.warning("请选择关联项");
         return;
     }
@@ -390,6 +394,12 @@ const textSave = async () => {
     if ($TOOL.checkIsEdit(sourceData.shareTo, menuData.shareTo)) {
         param.shareTo = menuData.shareTo;
     }
+    if (JSON.stringify(param) == "{}") {
+        $ElMessage.success("保存成功")
+        loading.value = false;
+        isShow.value = false;
+        return;
+    }
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
     if (res && res.code == 200) {
@@ -454,6 +464,9 @@ const formatMenuList = () => {
 </script>
 
 <style lang="scss" scoped>
+div {
+    box-sizing: border-box;
+}
 .sortable-box {
     height: 388px;
     border: 1px solid #eee;
@@ -462,7 +475,6 @@ const formatMenuList = () => {
     margin-bottom: 12px;
     overflow-x: auto;
     width: 42%;
-    box-sizing: border-box;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -476,7 +488,7 @@ const formatMenuList = () => {
 .right-div {
     width: calc(58% - 20px);
     margin-left: 20px;
-    box-sizing: border-box;
+    
 }
 
 .parent-li {

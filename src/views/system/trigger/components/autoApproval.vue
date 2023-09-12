@@ -1,0 +1,110 @@
+<template>
+    <div class="action-div" v-loading="contentLoading">
+        <el-form-item label="使用审批流程">
+            <el-select
+                v-model="trigger.actionContent.approvalConfigId"
+                placeholder="Select"
+                style="width: 400px;"
+            >
+                <el-option
+                    v-for="item in approvalList"
+                    :key="item.approvalConfigId"
+                    :label="item.flowName"
+                    :value="item.approvalConfigId"
+                />
+            </el-select>
+            <div class="w-100">
+                <span class="info-text">
+                    需要先添加
+                    <span class="ml-a-span" @click="goProcess">审批流程</span> 才能在此处选择
+                </span>
+            </div>
+            <div class="w-100 mt-5">
+                <el-row>
+                    <el-checkbox v-model="trigger.actionContent.submitMode" label="提交模式" />
+                </el-row>
+                <el-row>
+                    <span class="info-text">仅提交不审批。选择的审批流程至少配置一个审批人，否则会提交失败</span>
+                </el-row>
+            </div>
+        </el-form-item>
+    </div>
+</template>
+
+<script setup>
+import { ref, onMounted, inject } from "vue";
+import { getDataList } from "@/api/crud";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const $API = inject("$API");
+const $ElMessage = inject("$ElMessage");
+const props = defineProps({
+    modelValue: null,
+});
+// 内容加载loading
+let contentLoading = ref(false);
+
+// 数据源
+let trigger = ref({
+    actionContent: {},
+});
+
+let approvalList = ref([]);
+onMounted(() => {
+    trigger.value = props.modelValue;
+
+    getApprovalList();
+});
+
+// 获取 当前实体 审批列表
+const getApprovalList = async () => {
+    let param = {
+        mainEntity: "ApprovalConfig",
+        fieldsList: "approvalConfigId,entityCode,flowName",
+        filter: {
+            equation: "AND",
+            items: [
+                {
+                    fieldName: "entityCode",
+                    op: "EQ",
+                    value: trigger.value.entityCode,
+                },
+            ],
+        },
+        sortFields: [{ fieldName: "modifiedOn", type: "DESC" }],
+    };
+    contentLoading.value = true;
+    let res = await getDataList(
+        param.mainEntity,
+        param.fieldsList,
+        param.filter,
+        null,
+        null,
+        param.sortFields
+    );
+    if (res.code === 200) {
+        approvalList.value = res.data.dataList || [];
+        approvalList.value.unshift({
+            flowName: "不使用",
+            approvalConfigId: "",
+        });
+        if (!trigger.value.actionContent.approvalConfigId) {
+            trigger.value.actionContent.approvalConfigId = "";
+        }
+        contentLoading.value = false;
+    } else {
+        contentLoading.value = false;
+        $ElMessage.error("获取实体审批流程数据失败：" + res.error);
+    }
+};
+
+// 跳转到审批流程列表
+const goProcess = () => {
+    router.push({
+        path: "/process-list",
+    });
+};
+</script>
+
+<style>
+</style>

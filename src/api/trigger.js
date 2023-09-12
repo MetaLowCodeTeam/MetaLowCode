@@ -45,6 +45,10 @@ export default {
         getAssignEntityList: async (entityCode) => {
             return await http.get("/trigger/assign/entityList", { entityCode });
         },
-        
+        // 获取自动撤销审批列表
+        getDataRevokeEntityList: async (entityCode) => {
+            return await http.get("/trigger/dataRevoke/entityList", { entityCode });
+        }
+
     },
 }

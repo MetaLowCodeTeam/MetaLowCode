@@ -19,6 +19,7 @@ import common from './common.js'
 import reportTemplates from './reportTemplates.js';
 import trigger from './trigger.js';
 import layoutConfig from './layoutConfig.js';
+import upload from './upload.js';
 // 审批流程
 modules.approval = approval;
 // 通用接口
@@ -29,4 +30,6 @@ modules.reportTemplates = reportTemplates;
 modules.trigger = trigger;
 // 界面设置
 modules.layoutConfig = layoutConfig;
+// 上传相关
+modules.upload = upload;
 export default modules

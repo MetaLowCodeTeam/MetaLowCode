@@ -123,6 +123,10 @@ const initDetailData = async () => {
             trigger.disabledActive = [512];
         }
         // 如果是自动分配
+        if (trigger.actionType.value == 6) {
+            trigger.disabledActive = [4, 16, 32, 64, 128, 256, 1024, 2048];
+        }
+        // 如果是自动分配
         if (trigger.actionType.value == 8) {
             // 禁用删除时、分配时
             trigger.disabledActive = [4];
@@ -247,6 +251,11 @@ const onSave = async (target) => {
             $ElMessage.warning("请选择同时分配关联记录");
             return;
         }
+    }
+    // 如果是自动撤销审批
+    if (trigger.actionType.value == 7 && actionContent.items.length < 1) {
+        $ElMessage.warning("请选择撤销记录");
+        return;
     }
     // 如果是自动删除
     if (trigger.actionType.value == 12 && actionContent.items.length < 1) {

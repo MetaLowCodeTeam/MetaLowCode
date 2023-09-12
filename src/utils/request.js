@@ -28,6 +28,10 @@ axios.interceptors.request.use(
 			config.params = config.params || {};
 			config.params['_'] = new Date().getTime();
 		}
+        // if(config['Content-Type']){
+        //     config.headers['Content-Type'] = 
+        // }
+        // console.log(config,'config')
 		Object.assign(config.headers, sysConfig.HEADERS)
 		return config;
 	},

@@ -39,7 +39,7 @@
                     </VueDraggableNext>
                 </div>
                 <div class="fl right-div">
-                    <el-input v-model="searchField" placeholder="筛选字段" clearable>
+                    <el-input class="right-div-input" v-model="searchField" placeholder="筛选字段" clearable>
                         <template #prefix>
                             <el-icon class="el-input__icon">
                                 <ElIconSearch />
@@ -290,6 +290,9 @@ const onSave = async () => {
 };
 </script>
 <style lang='scss' scoped>
+div {
+    box-sizing: border-box;
+}
 .sortable-box {
     height: 388px;
     border: 1px solid #eee;
@@ -298,7 +301,7 @@ const onSave = async () => {
     margin-bottom: 12px;
     overflow-x: auto;
     width: 48%;
-    box-sizing: border-box;
+    
     &::-webkit-scrollbar {
         display: none;
     }
@@ -313,9 +316,10 @@ const onSave = async () => {
     width: 48%;
     margin-left: 4%;
     border: 1px solid #eee;
-    padding: 2px;
     height: 388px;
     box-sizing: border-box;
+    line-height: 0;
+    padding: 2px;
 }
 .parent-li {
     // height: 888px;

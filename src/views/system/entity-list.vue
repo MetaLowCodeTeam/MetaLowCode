@@ -20,6 +20,7 @@
         <div v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity"><i title="系统实体">系</i></div>
         <div v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity"><i title="主实体">主</i></div>
         <div v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity"><i title="明细实体">从</i></div>
+        <div v-if="!!entityItem.internalFlag" class="entity-flag detail-entity"><i title="内部实体">内</i></div>
       </el-card>
 
       <el-dialog title="新建实体" v-model="showNewEntityDialogFlag" v-if="showNewEntityDialogFlag" :show-close="false"

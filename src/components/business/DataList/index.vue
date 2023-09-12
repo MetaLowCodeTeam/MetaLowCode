@@ -151,6 +151,9 @@
     },
     methods: {
       resizeTableHeight() {  /* table自适应高度 */
+        if(!this.$refs.tableContainer){
+            return
+        }
         if (!!this.$refs.tableContainer.$el) {
           this.tableHeight = this.$refs.tableContainer.$el.offsetHeight - 42
         }

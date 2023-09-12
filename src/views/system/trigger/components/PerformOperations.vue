@@ -10,6 +10,8 @@
                 <fieldAggregation v-model="trigger" v-if="trigger.actionType?.value == 2" />
                 <dataValidation v-model="trigger" v-if="trigger.actionType?.value == 4" />
                 <sendNotifications v-model="trigger" v-if="trigger.actionType?.value == 5" />
+                <autoApproval v-model="trigger" v-if="trigger.actionType?.value == 6" />
+                <autoRevokeApproval v-model="trigger" v-if="trigger.actionType?.value == 7" />
                 <autoAllocation v-model="trigger" v-if="trigger.actionType?.value == 8" />
                 <autoDelete v-model="trigger" v-if="trigger.actionType?.value == 12" />
                 <hookUrl v-model="trigger" v-if="trigger.actionType?.value == 14" />
@@ -58,6 +60,10 @@ import dataValidation from "./dataValidation.vue";
 import sendNotifications from "./sendNotifications.vue";
 // 自动分配
 import autoAllocation from "./autoAllocation.vue";
+// 自动审批
+import autoApproval from "./autoApproval.vue";
+// 自动撤销审批
+import autoRevokeApproval from './autoRevokeApproval.vue';
 // 自动删除
 import autoDelete from "./autoDelete.vue";
 // 回调URL

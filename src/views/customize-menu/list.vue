@@ -31,53 +31,13 @@
                     </el-input>
                 </div>
                 <div class="fr table-setting">
-                    <el-button>打开</el-button>
-                    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}">
-                        <div class="table-setting-item-box">
-                            <div class="pl-5 item div-disabled">列显示</div>
-                            <div
-                                class="pl-20 item"
-                                :class="{'is-active':defaultColumnShow == 'SELF'}"
-                                @click="changeColumnShow('SELF')"
-                            >
-                                自定义列显示
-                                <div class="action-icon">
-                                    <span
-                                        class="icon-span edit-icon"
-                                        @click.stop="editColumn('SELF')"
-                                    >
-                                        <el-icon>
-                                            <ElIconEditPen />
-                                        </el-icon>
-                                    </span>
-                                </div>
-                            </div>
-                            <div
-                                class="pl-20 item"
-                                :class="{'is-active':defaultColumnShow == 'ALL'}"
-                                @click="changeColumnShow('ALL')"
-                            >
-                                默认列显示
-                                <div class="action-icon">
-                                    <span
-                                        class="icon-span edit-icon"
-                                        @click.stop="editColumn('ALL')"
-                                    >
-                                        <el-icon>
-                                            <ElIconEditPen />
-                                        </el-icon>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <template #reference>
-                            <span class="el-dropdown-link">
-                                <el-icon size="20px">
-                                    <ElIconSetting />
-                                </el-icon>
-                            </span>
-                        </template>
-                    </el-popover>
+                    <el-button class="mr-15">按钮占用</el-button>
+                    <More
+                        :layoutConfig="layoutConfig"
+                        :defaultColumnShow="defaultColumnShow"
+                        @changeColumnShow="changeColumnShow"
+                        @editColumnConfirm="getLayoutList"
+                    />
                 </div>
             </div>
             <!-- 如果是默认列显示，但是默认列没有值 -->
@@ -150,12 +110,8 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <SetColumn
-            v-model="editColumnDialog.isShow"
-            v-if="editColumnDialog.isShow"
-            :editColumnDialog="editColumnDialog"
-            @confirm="getLayoutList"
-        />
+        
+        <DataExport ref="dataExportRefs" />
     </div>
 </template>
 
@@ -164,8 +120,10 @@ import { ref, onBeforeMount, inject, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
-import SetColumn from "./components/SetColumn.vue";
+import More from "./components/More.vue";
+
 import FormatRow from "./components/FormatRow.vue";
+import DataExport from "./components/DataExport.vue";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
@@ -228,6 +186,34 @@ onBeforeMount(() => {
     getLayoutList();
 });
 
+/*
+ * ********************************************************  数据导入导出 beg
+ */
+let dataExportRefs = ref("");
+let dataExportDialog = reactive({
+    queryParm: {},
+    total: 0,
+});
+
+// 数据导出执行
+const dataExportFn = () => {
+    if (tableColumn.value.length < 1) {
+        $ElMessage.warning("没有数据无法导出");
+        return;
+    }
+    dataExportRefs.value.openDialog(dataExportDialog);
+};
+
+// 数据导入
+const dataUploadFn = () => {
+    router.push({
+        path: "/data-upload",
+    });
+};
+
+/*
+ * ********************************************************  数据导入导出 end
+ */
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
@@ -393,6 +379,7 @@ const getTableList = async () => {
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
     };
+    dataExportDialog.queryParm = { ...param };
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,
@@ -406,6 +393,8 @@ const getTableList = async () => {
     if (res.code === 200) {
         tableData.value = res.data.dataList;
         page.total = res.data.pagination.total;
+        dataExportDialog.size = res.data.dataList.length;
+        dataExportDialog.total = res.data.pagination.total;
         pageLoading.value = false;
     } else {
         pageLoading.value = false;
@@ -461,26 +450,19 @@ const changeColumnShow = (type) => {
     $API.layoutConfig.saveUserLayoutCache("LIST:" + entityName.value, type);
 };
 
-// 编辑列弹框是否显示
-let editColumnDialog = reactive({
-    isShow: false,
-});
-// let ColumnDialog
-// 编辑列显示
-const editColumn = (type) => {
-    editColumnDialog.isShow = true;
-    editColumnDialog.chosenListType = type;
-    editColumnDialog = Object.assign(
-        editColumnDialog,
-        layoutConfig.value[type]
-    );
-};
 
 /**
  *
  */
 </script>
 <style lang='scss' scoped>
+div {
+    box-sizing: border-box;
+}
+.icon-t1 {
+    position: relative;
+    top: 1px;
+}
 .customize-menu-list {
     padding: 20px;
     position: relative;
@@ -497,54 +479,16 @@ const editColumn = (type) => {
             padding: 0 20px;
 
             .table-setting {
-                margin-top: 5px;
+                // margin-top: 5px;
                 .el-dropdown-link {
                     display: inline-block;
                     width: 20px;
                     height: 20px;
                     cursor: pointer;
-                }
-            }
-        }
-    }
-}
-.table-setting-item-box {
-    padding: 10px 0;
-    .item {
-        height: 26px;
-        line-height: 26px;
-        cursor: pointer;
-        position: relative;
-        &.is-active {
-            color: #409eff;
-        }
-        .action-icon {
-            position: absolute;
-            right: 10px;
-            top: 4px;
-            display: none;
-            .icon-span {
-                cursor: pointer;
-                display: inline-block;
-                color: #a1a1a1;
-                &:hover {
-                    color: #666;
-                }
-                &.edit-icon {
                     position: relative;
-                    top: -2px;
+                    top: 6px;
                 }
             }
-        }
-        &:hover {
-            background: #dedede;
-            .action-icon {
-                display: block;
-            }
-        }
-        &.div-disabled {
-            background: #fff;
-            cursor: default;
         }
     }
 }

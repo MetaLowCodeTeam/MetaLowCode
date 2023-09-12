@@ -279,12 +279,12 @@
       this.entity = this.$route.query.entity;
     },
     mounted() {
-      // this.$nextTick(() => {
-      //   this.resizeTableHeight()
-      // })
-      // window.onresize = () => {
-      //   this.resizeTableHeight()
-      // }
+      this.$nextTick(() => {
+        this.resizeTableHeight()
+      })
+      window.onresize = () => {
+        this.resizeTableHeight()
+      }
       this.initPageData()
     },
     methods: {

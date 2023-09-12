@@ -101,12 +101,12 @@ let actionList = ref([
         code: 2,
     },
     {
-        label: "删除时",
-        code: 4,
+        label: "更新时",
+        code: 8, 
     },
     {
-        label: "更新时",
-        code: 8,
+        label: "删除时",
+        code: 4,
         span: 18,
     },
     {
@@ -123,7 +123,7 @@ let actionList = ref([
         span: 18,
     },
     {
-        label: "审批通过",
+        label: "审批通过时",
         code: 128,
     },
     {

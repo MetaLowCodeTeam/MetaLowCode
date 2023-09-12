@@ -201,9 +201,9 @@ onBeforeMount(() => {
         let box5 = document.querySelector(".save-dialog");
         let box6 = document.querySelector(".mlselect-user-content");
         if (
-            box.contains(e.target) ||
-            box2.contains(e.target) ||
-            box3.contains(e.target) ||
+            (box &&box.contains(e.target)) ||
+            (box2 &&box2.contains(e.target)) ||
+            (box3 &&box3.contains(e.target)) ||
             (box4 && box4.contains(e.target)) ||
             (box5 && box5.contains(e.target)) ||
             (box6 && box6.contains(e.target))
