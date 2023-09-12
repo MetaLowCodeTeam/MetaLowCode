@@ -224,12 +224,12 @@
 
         oneselfRightLevels: [
           {label: '无权限', value: 0},
-          {label: '本人', value: 10},
+          {label: '允许', value: 10},
         ],
 
         simpleRightLevels: [
           {label: '无权限', value: 0},
-          {label: '全部数据', value: 50},
+          {label: '允许', value: 50},
         ],
 
         formModel: {
