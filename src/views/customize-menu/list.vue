@@ -35,6 +35,9 @@
                     <More
                         :layoutConfig="layoutConfig"
                         :defaultColumnShow="defaultColumnShow"
+                        :tableColumn="tableColumn"
+                        :multipleSelection="multipleSelection"
+                        :dataExportData="dataExportData"
                         @changeColumnShow="changeColumnShow"
                         @editColumnConfirm="getLayoutList"
                     />
@@ -96,7 +99,11 @@
                         show-overflow-tooltip
                     >
                         <template #default="scope">
-                            <FormatRow :row="scope.row" :column="column" />
+                            <FormatRow
+                                :row="scope.row"
+                                :column="column"
+                                @openDetilDialog="openDetilDialog"
+                            />
                         </template>
                     </el-table-column>
                 </el-table>
@@ -110,8 +117,7 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        
-        <DataExport ref="dataExportRefs" />
+        <Detail ref="detailRefs"/>
     </div>
 </template>
 
@@ -121,9 +127,9 @@ import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More.vue";
-
+import Detail from './detail.vue';
 import FormatRow from "./components/FormatRow.vue";
-import DataExport from "./components/DataExport.vue";
+
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
@@ -186,34 +192,6 @@ onBeforeMount(() => {
     getLayoutList();
 });
 
-/*
- * ********************************************************  数据导入导出 beg
- */
-let dataExportRefs = ref("");
-let dataExportDialog = reactive({
-    queryParm: {},
-    total: 0,
-});
-
-// 数据导出执行
-const dataExportFn = () => {
-    if (tableColumn.value.length < 1) {
-        $ElMessage.warning("没有数据无法导出");
-        return;
-    }
-    dataExportRefs.value.openDialog(dataExportDialog);
-};
-
-// 数据导入
-const dataUploadFn = () => {
-    router.push({
-        path: "/data-upload",
-    });
-};
-
-/*
- * ********************************************************  数据导入导出 end
- */
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
@@ -251,47 +229,49 @@ const getLayoutList = async () => {
         }
         // 如果存在列
         if (tableColumn.value.length > 0) {
-            // 获取所有列字段
-            allFields.value = tableColumn.value.map((el) => el.fieldName);
-            // 获取所有列排序
-            let findSortFields = tableColumn.value.filter(
-                (el) => el.columnSort
-            );
-            // 如果有排序
-            if (findSortFields.length > 0) {
-                sortFields.value = [
-                    {
-                        fieldName: findSortFields[0].fieldName,
-                        type: findSortFields[0].columnSort,
-                    },
-                ];
-                // 默认排序赋值为设置的排序
-                defaultSortFields.value = [...sortFields.value];
-            }
-            // 如果没有，拿默认排序
-            else {
-                defaultSortFields.value = [
-                    {
-                        fieldName: "modifiedOn",
-                        type: "DESC",
-                    },
-                ];
-                sortFields.value = [...defaultSortFields.value];
-            }
-            // 如果有高级查询
-            if (advFilter.value != "all") {
-                let filterAdvancedFilter = advancedFilter.value.filter(
-                    (el) => el.layoutConfigId == advFilter.value
-                );
-                let config = JSON.parse(filterAdvancedFilter[0].config);
-                comQueriesList = { ...config };
-            }
-            console.log(tableColumn.value, "tableColumn.value");
-            getTableList();
+            refreshData();
         }
     } else {
         $ElMessage.error("获取配置失败：" + res.error);
     }
+};
+
+// 刷新数据
+const refreshData = () => {
+    // 获取所有列字段
+    allFields.value = tableColumn.value.map((el) => el.fieldName);
+    // 获取所有列排序
+    let findSortFields = tableColumn.value.filter((el) => el.columnSort);
+    // 如果有排序
+    if (findSortFields.length > 0) {
+        sortFields.value = [
+            {
+                fieldName: findSortFields[0].fieldName,
+                type: findSortFields[0].columnSort,
+            },
+        ];
+        // 默认排序赋值为设置的排序
+        defaultSortFields.value = [...sortFields.value];
+    }
+    // 如果没有，拿默认排序
+    else {
+        defaultSortFields.value = [
+            {
+                fieldName: "modifiedOn",
+                type: "DESC",
+            },
+        ];
+        sortFields.value = [...defaultSortFields.value];
+    }
+    // 如果有高级查询
+    if (advFilter.value != "all") {
+        let filterAdvancedFilter = advancedFilter.value.filter(
+            (el) => el.layoutConfigId == advFilter.value
+        );
+        let config = JSON.parse(filterAdvancedFilter[0].config);
+        comQueriesList = { ...config };
+    }
+    getTableList();
 };
 
 // 分页切换
@@ -310,10 +290,18 @@ const handleSelectionChange = (val) => {
 };
 let elTables = ref("");
 // 表格行点击选中
-const handleHighlightChangeTable = (row) => {
+const handleHighlightChangeTable = (row, column) => {
     if (!row.disabled) {
         elTables.value.toggleRowSelection(row);
     }
+};
+let detailRefs = ref("");
+// 打开详情
+const openDetilDialog = (row) => {
+    let detailData = {...row};
+    detailData.entityName = entityName.value;
+    detailData.entityCode = entityCode.value;
+    detailRefs.value.openDialog(detailData);
 };
 
 // 列排序
@@ -367,6 +355,12 @@ const refresh = () => {
     getTableList();
 };
 
+// 导入到出数据
+let dataExportData = reactive({
+    queryParm: {},
+    total: 0,
+});
+
 const getTableList = async () => {
     pageLoading.value = true;
     let param = {
@@ -379,7 +373,7 @@ const getTableList = async () => {
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
     };
-    dataExportDialog.queryParm = { ...param };
+    dataExportData.queryParm = { ...param };
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,
@@ -393,8 +387,8 @@ const getTableList = async () => {
     if (res.code === 200) {
         tableData.value = res.data.dataList;
         page.total = res.data.pagination.total;
-        dataExportDialog.size = res.data.dataList.length;
-        dataExportDialog.total = res.data.pagination.total;
+        dataExportData.size = res.data.dataList.length;
+        dataExportData.total = res.data.pagination.total;
         pageLoading.value = false;
     } else {
         pageLoading.value = false;
@@ -447,9 +441,11 @@ const setColumnWidth = (column) => {
 const changeColumnShow = (type) => {
     defaultColumnShow.value = type;
     tableColumn.value = layoutConfig.value[type].FILTER;
+    if (tableColumn.value.length > 0) {
+        refreshData();
+    }
     $API.layoutConfig.saveUserLayoutCache("LIST:" + entityName.value, type);
 };
-
 
 /**
  *
@@ -470,7 +466,7 @@ div {
     box-sizing: border-box;
 
     .table-box {
-        border-top: 3px solid #409eff;
+        border-top: 3px solid $ml-primary;
         // padding: 20px 0;
         .table-search-box {
             background: #fff;
@@ -500,7 +496,7 @@ div {
     margin-top: 100px;
     .lh-span-a {
         cursor: pointer;
-        color: #409eff;
+        color: $ml-primary;
     }
 }
 .el-table {

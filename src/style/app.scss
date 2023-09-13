@@ -468,7 +468,7 @@ textarea {
 .div-disabled {
 	color: #c8cbd2;
 	&:hover {
-		cursor: not-allowed;
+		cursor: not-allowed !important;
 	}
 }
 

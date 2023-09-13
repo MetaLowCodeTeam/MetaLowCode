@@ -355,7 +355,7 @@ div {
 .action-icon {
     position: absolute;
     right: 10px;
-    top: 10px;
+    top: -6px;
     display: none;
     .icon-span {
         cursor: pointer;

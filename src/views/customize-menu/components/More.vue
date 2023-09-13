@@ -1,8 +1,22 @@
 <template>
     <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}">
         <div class="table-setting-item-box">
+            <!-- 操作 -->
+            <div class="pl-5 item div-disabled">操作</div>
+            <div
+                class="pl-20 item"
+                @click="allocationFn"
+                :class="{'div-disabled':multipleSelection.length < 1}"
+            >
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconShare />
+                    </el-icon>
+                </span>
+                分配
+            </div>
             <!-- 导入导出 -->
-            <!-- <div class="pl-5 item div-disabled">导入导出</div>
+            <div class="pl-5 mt-15 item div-disabled">导入导出</div>
             <div class="pl-20 item" @click="dataExportFn">
                 <span class="icon-t1">
                     <el-icon>
@@ -18,7 +32,7 @@
                     </el-icon>
                 </span>
                 数据导入
-            </div>-->
+            </div>
             <!-- 列显示 -->
             <div class="pl-5 mt-15 div-disabled">列显示</div>
             <div
@@ -59,23 +73,69 @@
             </el-button>
         </template>
     </el-popover>
+    <!-- 列设置 -->
     <SetColumn
         v-model="editColumnDialog.isShow"
         v-if="editColumnDialog.isShow"
         :editColumnDialog="editColumnDialog"
         @confirm="editColumnConfirm"
     />
+    <!-- 数据导入导出 -->
+    <DataExport ref="dataExportRefs" />
+    <!-- 分配 -->
+    <Allocation ref="allocationRefs" />
 </template>
 
 <script setup>
 import { ref, onBeforeMount, inject, reactive } from "vue";
 import SetColumn from "./SetColumn.vue";
+import DataExport from "./DataExport.vue";
+import Allocation from "./Allocation.vue";
 const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
+    tableColumn: { type: Array, default: () => [] },
+    multipleSelection: { type: Array, default: () => [] },
+    dataExportData: { type: Object, default: () => {} },
 });
 const $API = inject("$API");
+/*
+ * ********************************************************  操作 beg
+ */
+let allocationRefs = ref("");
+const allocationFn = () => {
+    if (props.multipleSelection.length > 0) {
+        allocationRefs.value.openDialog(props.multipleSelection);
+    }
+};
+/*
+ * ********************************************************  操作 end
+ */
+/*
+ * ********************************************************  数据导入导出 beg
+ */
+let dataExportRefs = ref("");
+
+// 数据导出执行
+const dataExportFn = () => {
+    if (props.tableColumn.length < 1) {
+        $ElMessage.warning("没有数据无法导出");
+        return;
+    }
+    dataExportRefs.value.openDialog(props.dataExportData);
+};
+
+// 数据导入
+const dataUploadFn = () => {
+    router.push({
+        path: "/data-upload",
+    });
+};
+
+/*
+ * ********************************************************  数据导入导出 end
+ */
 /**
  **************************************************************  列显示 beg
  */
@@ -102,6 +162,14 @@ const editColumnConfirm = () => {
  */
 </script>
 <style lang='scss' scoped>
+.icon-t1 {
+    position: relative;
+    top: 1px;
+}
+.icon-t2 {
+    position: relative;
+    top: 2px;
+}
 .table-setting-item-box {
     padding: 10px 0;
     .hr {
@@ -114,7 +182,7 @@ const editColumnConfirm = () => {
         cursor: pointer;
         position: relative;
         &.is-active {
-            color: #409eff;
+            color: $ml-primary;
         }
         .action-icon {
             position: absolute;

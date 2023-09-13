@@ -303,7 +303,7 @@ let filterMethod = (keyword) => {
             border-bottom: 0;
         }
         &:hover {
-            background: #409eff;
+            background: $ml-primary;
             color: #fff;
         }
         .tab-item-icon {

@@ -78,10 +78,10 @@ const confrimUse = () => {
     top: 2px;
 }
 .a-span {
-    color: #409eff;
+    color: $ml-primary;
     cursor: pointer;
     &:hover {
-        color: #a0cfff;
+        color: $ml-primary-hover;
     }
 }
 </style>

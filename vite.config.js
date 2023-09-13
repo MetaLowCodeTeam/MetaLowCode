@@ -54,7 +54,7 @@ export default ({
             host: '0.0.0.0',
             allowedHosts: 'all',
             open: false, //运行后自动打开浏览器
-		    port: env.VITE_APP_PORT, //挂载端口
+            port: env.VITE_APP_PORT, //挂载端口
             // 代理
             proxy,
         },
@@ -82,6 +82,13 @@ export default ({
                     // 支持内联 JavaScript
                     javascriptEnabled: true,
                 },
+                scss: {
+                    // 定义全局的scss变量
+                    // 给导入的路径最后加上 ; 
+                    additionalData: `@import './src/style/global.scss';`,
+                    javascriptEnabled: true,
+                }
+
             },
         },
     };

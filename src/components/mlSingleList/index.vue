@@ -46,6 +46,7 @@
 import { onMounted, ref, reactive, inject } from "vue";
 import { getDataList } from "@/api/crud";
 const message = inject("$ElMessage");
+const $API = inject("$API");
 const props = defineProps({
     // 表格名字
     title: { type: String, default: "" },
@@ -109,14 +110,27 @@ async function getTableList() {
         },
         sortFields,
     };
-    let res = await getDataList(
-        param.mainEntity,
-        param.fieldsList,
-        param.filter,
-        param.pageSize,
-        param.pageNo,
-        param.sortFields
-    );
+    let res;
+    if (param.mainEntity == "ApprovalTask") {
+        res = await $API.approval.list.getDataList(
+            param.mainEntity,
+            param.fieldsList,
+            param.filter,
+            param.pageSize,
+            param.pageNo,
+            param.sortFields
+        );
+    } else {
+        res = await getDataList(
+            param.mainEntity,
+            param.fieldsList,
+            param.filter,
+            param.pageSize,
+            param.pageNo,
+            param.sortFields
+        );
+    }
+
     if (res.code === 200) {
         tableList.value = res.data.dataList;
         page.total = res.data.pagination.total;

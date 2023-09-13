@@ -427,7 +427,7 @@ const handleCommand = (e) => {
         padding: 0 10px;
 
         &.is-active {
-            color: #409eff;
+            color: $ml-primary;
         }
         height: 34px;
         .item-text {

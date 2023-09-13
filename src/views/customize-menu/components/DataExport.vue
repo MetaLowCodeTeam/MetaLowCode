@@ -19,7 +19,6 @@
 
 <script setup>
 import { reactive, ref, inject } from "vue";
-import axios from "axios";
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 let dialogShow = ref(false);
@@ -61,9 +60,11 @@ defineExpose({
 });
 </script>
 <style lang='scss' scoped>
+
 .lable-title {
     font-size: 14px;
     font-weight: bold;
     color: #666;
+    line-height: 24px;
 }
 </style>

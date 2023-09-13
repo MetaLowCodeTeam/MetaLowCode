@@ -269,6 +269,7 @@ body .tox-tinymce-aux {
 		display: block;
 		white-space: normal;
 		height: 30px;
+        line-height: 30px;
 		.el-radio__input {
 			position: relative;
 			top: -1px;
@@ -393,3 +394,15 @@ body .tox-tinymce-aux {
 .advfilter-popper {
 	z-index: 3001!important;
 }
+
+
+.ml-drawer {
+    *{
+        box-sizing: border-box;
+    }
+    .el-drawer__header {
+        padding: 0;
+        margin-bottom: 0;
+    }
+}
+

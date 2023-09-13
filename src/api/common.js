@@ -24,4 +24,16 @@ export default {
     isEquation: async (data) => {
         return await http.get("/crud/testEquation", data);
     },
+    /**
+     * 获取主实体相关实体数据
+     *
+     * @param entityCode      实体code
+     * @param queryMain       是否查询出主实体
+     * @param queryReference  是否查询主实体引用的实体
+     * @param queryReferenced 是否查询引用主实体的实体
+     * @param querySystem     是否查询系统实体
+     * */
+    queryEntityList: async (entityCode, queryMain = false, queryReference = false, queryReferenced = false, querySystem = false) => {
+        return http.get('/systemManager/queryEntityList', { entityCode, queryMain, queryReference, queryReferenced, querySystem })
+    }
 }

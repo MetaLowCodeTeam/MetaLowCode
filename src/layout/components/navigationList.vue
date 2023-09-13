@@ -113,7 +113,7 @@ const delMenu = (item, inx) => {
         padding: 0 10px;
         position: relative;
         &.is-active {
-            color: #409eff;
+            color: $ml-primary;
         }
         .action-icon {
             position: absolute;

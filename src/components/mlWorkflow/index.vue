@@ -539,10 +539,10 @@ const editZoom = (target) => {
     cursor: pointer;
 }
 .node-wrap-drawer__title label:hover {
-    border-bottom: 1px dashed #409eff;
+    border-bottom: 1px dashed $ml-primary;
 }
 .node-wrap-drawer__title .node-wrap-drawer__title-edit {
-    color: #409eff;
+    color: $ml-primary;
     margin-left: 10px;
     vertical-align: middle;
 }

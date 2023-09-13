@@ -36,11 +36,11 @@ export function deleteRecord(id) {
 * @param {*} quickFilter ""  快速查询
 * @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields,advFilter,quickFilter) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, pageSize, pageNo, sortFields,advFilter,quickFilter
+        filter, pageSize, pageNo, sortFields, advFilter, quickFilter
     })
 }
 
@@ -77,3 +77,9 @@ export function queryEntityFields(entityCode, queryReference, queryReserved) {
     return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved })
 }
 
+/**
+ * 分配
+ */
+export function assignRecord(body) {
+    return http.post('/crud/assignRecord', body)
+}

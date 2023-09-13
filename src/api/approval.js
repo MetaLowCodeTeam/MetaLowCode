@@ -20,5 +20,25 @@ export default {
         getEntityList: async (data) => {
             return await http.get("/approval/getAllApprovalConfigEntity", data);
         },
+        /**
+        * 
+        * 审批流程专用
+        * @param {*} mainEntity 实体名称
+        * @param {*} fieldsList 要显示的字段名称
+        * @param {*} pageSize 默认页数大小
+        * @param {*} pageNo 页数大小
+        * @param {*} filter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  过滤
+        * @param {*} advFilter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  常用查询
+        * @param {*} quickFilter ""  快速查询
+        * @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
+        */
+        getDataList: async (entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter) => {
+            return http.post('approval/listQuery', {
+                'mainEntity': entity,
+                'fieldsList': fields,
+                filter, pageSize, pageNo, sortFields, advFilter, quickFilter
+            })
+        }
+
     },
 }
