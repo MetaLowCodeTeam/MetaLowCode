@@ -1,10 +1,11 @@
 <template>
-    <ml-dialog :title="labelData.label" v-model="dialogShow" width="560px">
+    <ml-dialog :title="labelData.label" v-model="dialogShow" width="560px" append-to-body>
         <div v-loading="loading" class="main" v-if="labelData.type != 'del'">
             <el-form label-width="140px">
                 <el-form-item
                     :label="labelData.label + '哪些记录'"
                     class="mb-10"
+                    v-if="labelData.pageType == 'list'"
                 >选中的记录（{{ formData.list.length }} 条）</el-form-item>
                 <el-form-item
                     :label="labelData.label + '给谁'"
@@ -34,7 +35,7 @@
                         <mlSelectUser
                             v-if="formData.userType == 2"
                             type="all"
-                            v-model="formData.unShareUserList"
+                            v-model="formData.allocationTo"
                             multiple
                             clearable
                         />
@@ -137,13 +138,13 @@ let formData = reactive({
     associatedRecords: [],
     // 取消哪些用户
     userType: 1,
-    unShareUserList: [],
     // 允许编辑
     withUpdate: false,
 });
 let labelData = reactive({
     type: "",
     label: "",
+    pageType:"list",
 });
 const openDialog = (data) => {
     dialogShow.value = true;
@@ -152,9 +153,9 @@ const openDialog = (data) => {
     formData.isAssociatedRecords = false;
     formData.associatedRecords = [];
     formData.userType = 1;
-    formData.unShareUserList = [];
     formData.withUpdate = false;
     labelData.type = data.type;
+    labelData.pageType = data.pageType;
     labelData.label =
         data.type == "allocation"
             ? "分配"

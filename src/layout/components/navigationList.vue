@@ -31,7 +31,7 @@
             </div>
         </div>
         <template #reference>
-            <div class="adminui-side-bottom">
+            <div class="adminui-side-bottom" @click="TOGGLE_menuIsCollapse">
                 <el-icon>
                     <el-icon-menu />
                 </el-icon>
@@ -48,6 +48,8 @@ import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
+import useGlobalStore from "@/store/modules/global";
+const { TOGGLE_menuIsCollapse } = useGlobalStore();
 const router = useRouter();
 const { navigationList, chosenNavigationId } = storeToRefs(
     useLayoutConfigStore()
@@ -60,7 +62,7 @@ const $ElMessage = inject("$ElMessage");
 onMounted(() => {});
 // 导航点击
 const navClick = (item) => {
-    $API.layoutConfig.saveUserLayoutCache("NAV",item.layoutConfigId);
+    $API.layoutConfig.saveUserLayoutCache("NAV", item.layoutConfigId);
     router.go(0);
 };
 
@@ -91,7 +93,7 @@ const delMenu = (item, inx) => {
                 }
                 let copyList = [...navigationList.value];
                 copyList.splice(inx, 1);
-                setNavigationList(copyList)
+                setNavigationList(copyList);
             } else {
                 $ElMessage.error("删除失败：" + res.error);
             }

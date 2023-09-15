@@ -6,7 +6,7 @@
             <div
                 class="pl-20 item"
                 @click="allocationFn('del')"
-                :class="{'div-disabled':multipleSelection.length < 1}"
+                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -18,7 +18,7 @@
             <div
                 class="pl-20 item"
                 @click="allocationFn('allocation')"
-                :class="{'div-disabled':multipleSelection.length < 1}"
+                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -30,7 +30,7 @@
             <div
                 class="pl-20 item"
                 @click="allocationFn('share')"
-                :class="{'div-disabled':multipleSelection.length < 1}"
+                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -42,7 +42,7 @@
             <div
                 class="pl-20 item"
                 @click="allocationFn('unShare')"
-                :class="{'div-disabled':multipleSelection.length < 1}"
+                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -52,53 +52,55 @@
                 取消共享
             </div>
             <!-- 导入导出 -->
-            <div class="pl-5 mt-15 item div-disabled">导入导出</div>
-            <div class="pl-20 item" @click="dataExportFn">
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconDownload />
-                    </el-icon>
-                </span>
-                数据导出
-            </div>
-            <div class="pl-20 item" @click="dataUploadFn">
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconUpload />
-                    </el-icon>
-                </span>
-                数据导入
-            </div>
-            <!-- 列显示 -->
-            <div class="pl-5 mt-15 div-disabled">列显示</div>
-            <div
-                class="pl-20 item"
-                :class="{'is-active':defaultColumnShow == 'SELF'}"
-                @click="changeColumnShow('SELF')"
-            >
-                自定义列显示
-                <div class="action-icon">
-                    <span class="icon-span edit-icon" @click.stop="editColumn('SELF')">
+            <template v-if="type == 'add'">
+                <div class="pl-5 mt-15 item div-disabled">导入导出</div>
+                <div class="pl-20 item" @click="dataExportFn">
+                    <span class="icon-t1">
                         <el-icon>
-                            <ElIconEditPen />
+                            <ElIconDownload />
                         </el-icon>
                     </span>
+                    数据导出
                 </div>
-            </div>
-            <div
-                class="pl-20 item"
-                :class="{'is-active':defaultColumnShow == 'ALL'}"
-                @click="changeColumnShow('ALL')"
-            >
-                默认列显示
-                <div class="action-icon">
-                    <span class="icon-span edit-icon" @click.stop="editColumn('ALL')">
+                <div class="pl-20 item" @click="dataUploadFn">
+                    <span class="icon-t1">
                         <el-icon>
-                            <ElIconEditPen />
+                            <ElIconUpload />
                         </el-icon>
                     </span>
+                    数据导入
                 </div>
-            </div>
+                <!-- 列显示 -->
+                <div class="pl-5 mt-15 div-disabled">列显示</div>
+                <div
+                    class="pl-20 item"
+                    :class="{'is-active':defaultColumnShow == 'SELF'}"
+                    @click="changeColumnShow('SELF')"
+                >
+                    自定义列显示
+                    <div class="action-icon">
+                        <span class="icon-span edit-icon" @click.stop="editColumn('SELF')">
+                            <el-icon>
+                                <ElIconEditPen />
+                            </el-icon>
+                        </span>
+                    </div>
+                </div>
+                <div
+                    class="pl-20 item"
+                    :class="{'is-active':defaultColumnShow == 'ALL'}"
+                    @click="changeColumnShow('ALL')"
+                >
+                    默认列显示
+                    <div class="action-icon">
+                        <span class="icon-span edit-icon" @click.stop="editColumn('ALL')">
+                            <el-icon>
+                                <ElIconEditPen />
+                            </el-icon>
+                        </span>
+                    </div>
+                </div>
+            </template>
         </div>
         <template #reference>
             <el-button>
@@ -119,7 +121,11 @@
     <!-- 数据导入导出 -->
     <DataExport ref="dataExportRefs" />
     <!-- 分配 -->
-    <Allocation ref="allocationRefs" :idFiledName=idFiledName @allocationSuccess="allocationSuccess"/>
+    <Allocation
+        ref="allocationRefs"
+        :idFiledName="idFiledName"
+        @allocationSuccess="allocationSuccess"
+    />
 </template>
 
 <script setup>
@@ -136,6 +142,7 @@ const props = defineProps({
     tableColumn: { type: Array, default: () => [] },
     multipleSelection: { type: Array, default: () => [] },
     dataExportData: { type: Object, default: () => {} },
+    type: { type: String, default: "list" },
 });
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
@@ -145,36 +152,17 @@ const $ElMessage = inject("$ElMessage");
 let allocationRefs = ref("");
 const allocationFn = (type) => {
     if (props.multipleSelection.length > 0) {
-        allocationRefs.value.openDialog({type,list:props.multipleSelection});
+        allocationRefs.value.openDialog({
+            type,
+            pageType: props.type,
+            list: props.multipleSelection,
+        });
     }
 };
 
-const allocationSuccess =()=>{
+const allocationSuccess = () => {
     emits("editColumnConfirm");
-}
-
-// 删除
-const deleteFn = () => {
-    // // $ElMessage.info("点击了删除")
-    // ElMessageBox.confirm(`确认删除选中的 2 条记录？`, "提示：", {
-    //     confirmButtonText: "确认",
-    //     cancelButtonText: "取消",
-    //     type: "warning",
-    // })
-    //     .then(async () => {
-    //         let res = await deleteRecord(row[props.aciveId]);
-    //         loading.value = true;
-    //         if (res.code === 200) {
-    //             message.success("删除成功");
-    //             getApprovalList();
-    //         } else {
-    //             loading.value = false;
-    //             message.error("删除失败：" + res.error);
-    //         }
-    //     })
-    //     .catch(() => {});
-
-}
+};
 
 /*
  * ********************************************************  操作 end

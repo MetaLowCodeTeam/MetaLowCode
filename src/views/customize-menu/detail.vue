@@ -26,13 +26,19 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="18">
-                    <DetailTabs
-                        v-model="detailDialog"
-                    />
+                    <DetailTabs v-model="detailDialog" />
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
-                        <!-- <el-button @click="testBtn">测试按钮</el-button> -->
+                        <el-button>
+                            <span class="mr-5">
+                                <el-icon>
+                                    <ElIconEditPen />
+                                </el-icon>
+                            </span>
+                            编辑
+                        </el-button>
+                        <More type="detail" :multipleSelection="multipleSelection" />
                     </div>
                 </el-col>
             </el-row>
@@ -45,14 +51,16 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { ref, reactive } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
+import More from "./components/More.vue";
 const { entityLable } = storeToRefs(useCommonStore());
 let detailDialog = reactive({
     isShow: false,
 });
 let loading = ref(false);
-
+let multipleSelection = ref([]);
 const openDialog = (row) => {
     detailDialog = Object.assign(detailDialog, row);
+    multipleSelection.value = [row];
     detailDialog.isShow = true;
     initData();
 };
@@ -68,7 +76,6 @@ let tabs = ref([
     },
 ]);
 let cutTab = ref("detail");
-
 
 /**
  * ************************************************************ tab页签相关数据 end
