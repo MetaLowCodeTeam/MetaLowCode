@@ -560,7 +560,7 @@ div {
     width: 32px;
     height: 36px;
     line-height: 36px;
-    background: #4285f4;
+    background: $ml-primary;
     text-align: center;
     color: #fff;
     .icon {

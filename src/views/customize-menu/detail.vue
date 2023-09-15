@@ -26,17 +26,16 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="18">
-                    <DetailTabs :tabs="tabs" />
+                    <DetailTabs
+                        v-model="detailDialog"
+                    />
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
-                        <el-button @click="testBtn">测试按钮</el-button>
+                        <!-- <el-button @click="testBtn">测试按钮</el-button> -->
                     </div>
                 </el-col>
             </el-row>
-            <!-- <div>我是内容</div>
-            <div style="height: 1500px;">我是内容2</div>
-            <div>我是内容3</div>-->
         </div>
     </el-drawer>
 </template>
@@ -70,12 +69,7 @@ let tabs = ref([
 ]);
 let cutTab = ref("detail");
 
-const testBtn = () => {
-    tabs.value.push({
-        label: "详情" + tabs.value.length,
-        name: "detail" + tabs.value.length,
-    });
-};
+
 /**
  * ************************************************************ tab页签相关数据 end
  */
@@ -85,7 +79,7 @@ const initData = () => {
     loading.value = true;
     setTimeout(() => {
         loading.value = false;
-    }, 1000);
+    }, 10);
 };
 
 // 暴露方法给父组件调用

@@ -5,7 +5,19 @@
             <div class="pl-5 item div-disabled">操作</div>
             <div
                 class="pl-20 item"
-                @click="allocationFn"
+                @click="allocationFn('del')"
+                :class="{'div-disabled':multipleSelection.length < 1}"
+            >
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconDelete />
+                    </el-icon>
+                </span>
+                删除
+            </div>
+            <div
+                class="pl-20 item"
+                @click="allocationFn('allocation')"
                 :class="{'div-disabled':multipleSelection.length < 1}"
             >
                 <span class="icon-t1">
@@ -14,6 +26,30 @@
                     </el-icon>
                 </span>
                 分配
+            </div>
+            <div
+                class="pl-20 item"
+                @click="allocationFn('share')"
+                :class="{'div-disabled':multipleSelection.length < 1}"
+            >
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconFolderChecked />
+                    </el-icon>
+                </span>
+                共享
+            </div>
+            <div
+                class="pl-20 item"
+                @click="allocationFn('unShare')"
+                :class="{'div-disabled':multipleSelection.length < 1}"
+            >
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconFolderDelete />
+                    </el-icon>
+                </span>
+                取消共享
             </div>
             <!-- 导入导出 -->
             <div class="pl-5 mt-15 item div-disabled">导入导出</div>
@@ -83,7 +119,7 @@
     <!-- 数据导入导出 -->
     <DataExport ref="dataExportRefs" />
     <!-- 分配 -->
-    <Allocation ref="allocationRefs" />
+    <Allocation ref="allocationRefs" :idFiledName=idFiledName @allocationSuccess="allocationSuccess"/>
 </template>
 
 <script setup>
@@ -91,24 +127,55 @@ import { ref, onBeforeMount, inject, reactive } from "vue";
 import SetColumn from "./SetColumn.vue";
 import DataExport from "./DataExport.vue";
 import Allocation from "./Allocation.vue";
+import { ElMessageBox } from "element-plus";
 const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
+    idFiledName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
     tableColumn: { type: Array, default: () => [] },
     multipleSelection: { type: Array, default: () => [] },
     dataExportData: { type: Object, default: () => {} },
 });
 const $API = inject("$API");
+const $ElMessage = inject("$ElMessage");
 /*
  * ********************************************************  操作 beg
  */
 let allocationRefs = ref("");
-const allocationFn = () => {
+const allocationFn = (type) => {
     if (props.multipleSelection.length > 0) {
-        allocationRefs.value.openDialog(props.multipleSelection);
+        allocationRefs.value.openDialog({type,list:props.multipleSelection});
     }
 };
+
+const allocationSuccess =()=>{
+    emits("editColumnConfirm");
+}
+
+// 删除
+const deleteFn = () => {
+    // // $ElMessage.info("点击了删除")
+    // ElMessageBox.confirm(`确认删除选中的 2 条记录？`, "提示：", {
+    //     confirmButtonText: "确认",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    // })
+    //     .then(async () => {
+    //         let res = await deleteRecord(row[props.aciveId]);
+    //         loading.value = true;
+    //         if (res.code === 200) {
+    //             message.success("删除成功");
+    //             getApprovalList();
+    //         } else {
+    //             loading.value = false;
+    //             message.error("删除失败：" + res.error);
+    //         }
+    //     })
+    //     .catch(() => {});
+
+}
+
 /*
  * ********************************************************  操作 end
  */

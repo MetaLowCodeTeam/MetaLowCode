@@ -40,6 +40,7 @@
                         :dataExportData="dataExportData"
                         @changeColumnShow="changeColumnShow"
                         @editColumnConfirm="getLayoutList"
+                        :idFiledName="idFiledName"
                     />
                 </div>
             </div>
@@ -117,7 +118,7 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs"/>
+        <Detail ref="detailRefs" />
     </div>
 </template>
 
@@ -127,7 +128,7 @@ import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More.vue";
-import Detail from './detail.vue';
+import Detail from "./detail.vue";
 import FormatRow from "./components/FormatRow.vue";
 
 const router = useRouter();
@@ -184,6 +185,11 @@ let titleWidthForSelf = reactive({});
 let quickQuery = ref("");
 let quickQueryPlaceholder = ref("");
 
+// 详情Tab
+let detailTab = reactive({});
+// 实体ID
+let idFiledName = ref("")
+
 onBeforeMount(() => {
     entityCode.value = router.currentRoute.value.meta.entityCode;
     entityName.value = router.currentRoute.value.meta.entityName;
@@ -196,9 +202,11 @@ onBeforeMount(() => {
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res && res.code == 200) {
+        idFiledName.value = res.data.idFiledName;
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
+        detailTab = res.data.TAB ? { ...res.data.TAB } : {};
         let { ALL, SELF } = res.data.LIST;
         titleWidthForAll = res.data.titleWidthForAll
             ? { ...JSON.parse(res.data.titleWidthForAll) }
@@ -298,9 +306,10 @@ const handleHighlightChangeTable = (row, column) => {
 let detailRefs = ref("");
 // 打开详情
 const openDetilDialog = (row) => {
-    let detailData = {...row};
+    let detailData = { ...row };
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;
+    detailData.tab = { ...detailTab };
     detailRefs.value.openDialog(detailData);
 };
 

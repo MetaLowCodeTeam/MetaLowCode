@@ -4,43 +4,103 @@
             <el-tab-pane
                 v-for="(tab,tabInx) of tabs"
                 :key="tabInx"
-                :label="tab.label"
-                :name="tab.name"
+                :label="tab.entityLabel"
+                :name="tab.entityName"
             ></el-tab-pane>
         </el-tabs>
-        <span class="setting-tabs">
+        <span class="setting-tabs" @click="openDialog">
             <el-icon>
                 <ElIconSetting />
             </el-icon>
         </span>
     </div>
+    <DetailTabsSet
+        ref="detailTabsSetRefs"
+        :entityCode="detailDialog.entityCode"
+        :entityName="detailDialog.entityName"
+        @confirm="confirm"
+    />
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
-    tabs: { type: Array, default: () => [] },
-    activeName: { type: String, default: "" },
+    modelValue: null,
 });
-
+const emits = defineEmits(["update:modelValue"]);
+let detailDialog = ref({});
+let tabs = ref();
+watch(
+    () => props.modelValue,
+    () => {
+        detailDialog.value = props.modelValue;
+        initTabs();
+    },
+    { deep: true }
+);
 let activeName = ref("");
 onMounted(() => {
-    activeName.value = props.tabs[0].name;
+    detailDialog.value = props.modelValue;
+    initTabs();
 });
 
-const handleClick = () => {};
+// 初始化tab
+const initTabs = () => {
+    tabs.value = [
+        {
+            entityLabel: "详情",
+            entityName: "detail",
+        },
+    ];
+    let config = detailDialog.value.tab.config;
+    if (config) {
+        config = JSON.parse(config);
+        config.forEach((el) => {
+            tabs.value.push(el);
+        });
+    }
+    activeName.value = tabs.value[0].entityName;
+};
+
+// 打开显示项设置
+let detailTabsSetRefs = ref("");
+const openDialog = () => {
+    detailTabsSetRefs.value.openDialog(detailDialog.value.tab);
+};
+
+const handleClick = (e) => {
+    console.log(e.props.name, "页签变化");
+};
+
+const confirm = (e) => {
+    detailDialog.value.tab.config = e;
+    emits("update:modelValue", detailDialog.value);
+};
 </script>
 <style lang='scss' scoped>
 .detail-tabs {
     position: relative;
+    :deep(.el-tabs__nav-wrap) {
+        padding-right: 40px;
+        .el-tabs__nav-next {
+            right: 20px;
+        }
+    }
     .setting-tabs {
         cursor: pointer;
         font-size: 16px;
         position: absolute;
         top: 12px;
-        right: -18px;
+        right: 0;
+        display: none;
         &:hover {
             color: $ml-primary;
+        }
+    }
+    &:hover {
+        .setting-tabs {
+            display: block;
         }
     }
 }

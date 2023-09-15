@@ -196,7 +196,7 @@ function canner() {
                 top: 2px;
             }
             .item-step-name-span {
-                color: #4285f4;
+                color: $ml-primary;
                 cursor: pointer;
                 &:hover {
                     color: #0d5bdd;
@@ -207,7 +207,7 @@ function canner() {
             position: absolute;
             right: 0px;
             border-radius: 0 4px 4px 0px;
-            border-right: 4px solid #4285f4;
+            border-right: 4px solid $ml-primary;
             .contain-span {
                 float: right;
                 margin-right: -40px;

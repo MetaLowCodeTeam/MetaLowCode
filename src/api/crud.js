@@ -19,9 +19,14 @@ export function saveRecord(entity, id, formModel) {
 }
 
 export function deleteRecord(id) {
-    return http.post('crud/deleteRecord', {}, {
-        params: { id },
+    return http.post('crud/deleteRecord', {
+        recordIds: [id],
+        cascades: []
     })
+}
+
+export function deleteRecords(body) {
+    return http.post('crud/deleteRecord', body)
 }
 
 /**
@@ -83,3 +88,22 @@ export function queryEntityFields(entityCode, queryReference, queryReserved) {
 export function assignRecord(body) {
     return http.post('/crud/assignRecord', body)
 }
+/**
+ * 共享
+ */
+export function shareRecord(body) {
+    return http.post('/crud/shareRecord', body)
+}
+/**
+ * 取消共享
+ */
+export function cancelShareRecord(body, userType) {
+    return http.post('/crud/cancelShareRecord', body, { params: { userType } })
+}
+
+/**
+ * 删除
+ */
+// export function deleteRecord(body) {
+//     return http.post('/crud/deleteRecord', body)
+// }

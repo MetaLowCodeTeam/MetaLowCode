@@ -255,7 +255,7 @@ const reset = () => {
             transition: width 1s linear;
             box-shadow: none;
             height: 22px;
-            background-color: #4285f4;
+            background-color: $ml-primary;
         }
     }
     .error-span {

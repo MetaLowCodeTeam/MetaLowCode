@@ -99,17 +99,17 @@ async function getTableList() {
         pageNo: page.no,
         filter: {
             equation: "AND",
-            items: [
-                {
-                    fieldName,
-                    op: "LK",
-                    value: keyword.value,
-                },
-                ...filterItems,
-            ],
+            items: [...filterItems],
         },
         sortFields,
     };
+    if (keyword.value) {
+        param.filter.items.unshift({
+            fieldName,
+            op: "LK",
+            value: keyword.value,
+        });
+    }
     let res;
     if (param.mainEntity == "ApprovalTask") {
         res = await $API.approval.list.getDataList(

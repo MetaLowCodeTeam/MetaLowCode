@@ -160,12 +160,12 @@ div {
                     }
                 }
                 &.complete {
-                    background: #4285f4;
+                    background: $ml-primary;
                     color: #fff;
                     cursor: default;
                     .chevron {
                         &::before {
-                            border-left-color: #4285f4;
+                            border-left-color: $ml-primary;
                         }
                     }
                     &:hover {
@@ -179,7 +179,7 @@ div {
                 }
                 &.active {
                     background: #fff !important;
-                    color: #4285f4;
+                    color: $ml-primary;
                     cursor: default;
                     .chevron {
                         &::before {

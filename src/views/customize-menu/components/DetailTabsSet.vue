@@ -1,5 +1,5 @@
 <template>
-    <mlDialog title="设置列显示" v-model="isShow" width="650px">
+    <mlDialog title="配置显示项" v-model="isShow" width="650px">
         <div v-loading="loading">
             <div class="clearfix">
                 <div class="sortable-box fl">
@@ -18,7 +18,10 @@
                                         <ElIconRank />
                                     </el-icon>
                                 </div>
-                                <div class="fl item text-ellipsis" :class="{'tag':isShowItemTag(parent)}">{{ parent.fieldLabel }}</div>
+                                <div
+                                    class="fl item text-ellipsis"
+                                    :class="{'tag':isShowItemTag(parent)}"
+                                >{{ parent.entityLabel }}</div>
                                 <div class="action-icon">
                                     <span
                                         class="icon-span add-icon mr-5"
@@ -39,7 +42,12 @@
                     </VueDraggableNext>
                 </div>
                 <div class="fl right-div">
-                    <el-input class="right-div-input" v-model="searchField" placeholder="筛选字段" clearable>
+                    <el-input
+                        class="right-div-input"
+                        v-model="searchField"
+                        placeholder="筛选字段"
+                        clearable
+                    >
                         <template #prefix>
                             <el-icon class="el-input__icon">
                                 <ElIconSearch />
@@ -56,7 +64,7 @@
                             :key="inx"
                             @click="addShowColumn(column)"
                         >
-                            <div class="fl column-item text-ellipsis">{{ column.fieldLabel }}</div>
+                            <div class="fl column-item text-ellipsis">{{ column.entityLabel }}</div>
                             <span class="fr icon-span">
                                 <el-icon size="16">
                                     <ElIconPlus />
@@ -77,73 +85,65 @@
             v-model="editColumnDialogIsShow"
             v-if="editColumnDialogIsShow"
             appendToBody
-            title="列设置"
-            width="450"
+            title="显示项设置"
+            width="510"
             top="25vh"
         >
-            <el-form label-width="120px">
-                <el-form-item label="别名">
-                    <el-input v-model="editColumnDialogData.columnAliasName" />
-                </el-form-item>
-                <el-form-item label="默认宽度">
-                    <el-input-number
-                        v-model="editColumnDialogData.columnWidth"
-                        :min="0"
-                        :max="500"
-                        controls-position="right"
-                        :step="10"
-                    />
-                    <span
-                        class="info-text ml-10"
-                    >{{ editColumnDialogData.columnWidth > 0 ? "宽度 " + editColumnDialogData.columnWidth : '默认' }}</span>
-                </el-form-item>
-                <el-form-item label="默认排序">
-                    <span
-                        class="sort-span"
-                        :class="{'is-active': editColumnDialogData.columnSort != ''}"
-                        @click="changeColumnSort"
-                    >
-                        {{ editColumnDialogData.columnSort == 'ASC' ? '升序' : '降序' }}
-                        <el-icon class="sort-icon">
-                            <ElIconTop v-if="editColumnDialogData.columnSort == 'ASC'" />
-                            <ElIconBottom v-else />
-                        </el-icon>
-                    </span>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="confirmColumnEdit">保存</el-button>
-                    <el-button @click="editColumnDialogIsShow = false">取消</el-button>
-                </el-form-item>
-            </el-form>
+            <div style="padding-right: 50px;">
+                <el-form label-width="120px">
+                    <el-form-item label="别名">
+                        <el-input v-model="editColumnDialogData.columnAliasName" />
+                    </el-form-item>
+                    <el-form-item label="附加过滤条件">
+                        <el-row>
+                            <el-col :span="24">
+                                <div
+                                    class="text-btn"
+                                    @click="setCondition"
+                                >{{ getSetConditionText() }}</div>
+                            </el-col>
+                            <el-col :span="24">
+                                <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="confirmColumnEdit">保存</el-button>
+                        <el-button @click="editColumnDialogIsShow = false">取消</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
         </mlDialog>
+        <div v-if="dialogIsShow">
+            <mlDialog title="附加过滤条件" append-to-body width="37%" v-model="dialogIsShow">
+                <mlSetConditions
+                    v-model="conditionConf"
+                    footer
+                    @cancel="dialogIsShow = false"
+                    @confirm="conditionConfirm"
+                    :entityName="entityName"
+                />
+            </mlDialog>
+        </div>
     </mlDialog>
 </template>
 
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
-import { watch, ref, onMounted, inject, reactive } from "vue";
-import { queryEntityFields } from "@/api/crud";
+import { ref, inject, reactive } from "vue";
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
-    // 数据
-    editColumnDialog: { type: Object, default: () => {} },
+    entityCode: { type: Number, default: 0 },
+    entityName: { type: String, default: "" },
 });
 const emit = defineEmits(["update:modelValue", "confirm"]);
 const $ElMessage = inject("$ElMessage");
 let isShow = ref(false);
 let loading = ref(false);
-watch(
-    () => isShow.value,
-    (v) => {
-        emit("update:modelValue", v);
-    },
-    { deep: true }
-);
-onMounted(() => {
-    isShow.value = props.modelValue;
-    getAllColumn();
-});
+let layoutConfigId = ref("");
+let hasEntityName = ref([]);
+
 
 // 已显示列
 let showColumn = ref([]);
@@ -153,12 +153,15 @@ let sourceColumn = ref([]);
 
 // 筛选字段
 let searchField = ref("");
+
+
+
 const notShowColumn = () => {
     if (!searchField) {
         return sourceColumn.value;
     } else {
         return sourceColumn.value.filter(
-            (el) => el.fieldLabel.indexOf(searchField.value) != -1
+            (el) => el.entityLabel?.indexOf(searchField.value) != -1
         );
     }
 };
@@ -168,7 +171,7 @@ const addShowColumn = (column) => {
     showColumn.value.push(column);
     for (let index = 0; index < sourceColumn.value.length; index++) {
         const el = sourceColumn.value[index];
-        if (column.fieldName == el.fieldName) {
+        if (column.entityName == el.entityName) {
             sourceColumn.value.splice(index, 1);
             return;
         }
@@ -179,50 +182,33 @@ const addShowColumn = (column) => {
 let editColumnDialogIsShow = ref(false);
 // 编辑列数据
 let editColumnDialogData = reactive({
-    columnWidth: 0,
-    columnSort: "",
     columnAliasName: "",
+    filter: {
+        equation: "OR",
+        items: [],
+    },
 });
-// 编辑列排序
-const changeColumnSort = () => {
-    if (editColumnDialogData.columnSort == "") {
-        editColumnDialogData.columnSort = "DESC";
-    } else if (editColumnDialogData.columnSort == "DESC") {
-        editColumnDialogData.columnSort = "ASC";
-    } else {
-        editColumnDialogData.columnSort = "";
-    }
-};
 
 // 编辑显示列
 const editColumn = (column, inx) => {
     editColumnDialogIsShow.value = true;
     let editObj = Object.assign({}, column);
     editObj.columnAliasName = column.columnAliasName || "";
-    editObj.columnSort = column.columnSort || "";
-    editObj.columnWidth = column.columnWidth || 0;
     editObj.columnEditInx = inx;
     editColumnDialogData = Object.assign(editColumnDialogData, editObj);
 };
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {
-    let { columnAliasName,columnSort,columnWidth } = column;
-    if(columnAliasName || columnSort || columnWidth> 0){
-        return true
+    let { columnAliasName, filter } = column;
+    if (columnAliasName || filter?.items.length > 0) {
+        return true;
     }
-    return false
-}
+    return false;
+};
 
 // 确认列修改
 const confirmColumnEdit = () => {
-    let oldData = Object.assign({},showColumn.value[editColumnDialogData.columnEditInx]);
-    // 排序有变化，清空所有排序，只保留当前字段排序
-    if(oldData.columnSort != editColumnDialogData.columnSort){
-        showColumn.value.forEach(el => {
-            el.columnSort = "";
-        })
-    }
     showColumn.value[editColumnDialogData.columnEditInx] = Object.assign(
         {},
         editColumnDialogData
@@ -236,58 +222,126 @@ const delColumn = (column, inx) => {
     sourceColumn.value.push(column);
 };
 
+
+// 打开弹框
+const openDialog = (data) => {
+    layoutConfigId.value = data.layoutConfigId;
+    if(data.config){
+        let config = JSON.parse(data.config)
+        showColumn.value = [];
+        hasEntityName.value = [];
+        config.forEach(el=>{
+            showColumn.value.push(el);
+            hasEntityName.value.push(el.entityName);
+        })
+    }
+    isShow.value = true;
+    getAllColumn();
+};
+
 // 获取所有列数据
 const getAllColumn = async () => {
     loading.value = true;
-    let res = await queryEntityFields(
-        props.editColumnDialog.entityCode,
-        true,
-        false
+    let res = await $API.common.queryEntityList(
+        props.entityCode,
+        false,
+        false,
+        true
     );
     if (res.code === 200) {
-        showColumn.value = [];
-        let hasFieldName = [];
-        if (props.editColumnDialog.config) {
-            JSON.parse(props.editColumnDialog.config).forEach((el) => {
-                showColumn.value.push(el);
-                hasFieldName.push(el.fieldName);
-            });
+        if(res.data && res.data.length > 0){
+            sourceColumn.value = res.data.filter(
+                (el) => !hasEntityName.value.includes(el.entityName)
+            );
         }
-        sourceColumn.value = res.data.filter(el=> !hasFieldName.includes(el.fieldName));
     } else {
-        $ElMessage.error("获取表格列：" + res.error);
+        $ElMessage.error("获取Tab数据失败：" + res.error);
     }
     loading.value = false;
     // console.log(props.entityName);
 };
 
 const onSave = async () => {
-    // console.log(props.editColumnDialog, "editColumnDialog");
-    // console.log(showColumn.value);
     if (showColumn.value.length < 1) {
-        $ElMessage.warning("请至少选择 1 个列显示");
+        $ElMessage.warning("请至少选择 1 个显示项");
         return;
     }
-    let { entityCode, applyType, shareTo, layoutConfigId } =
-        props.editColumnDialog;
+    // let { entityCode, applyType, shareTo, layoutConfigId } =
+    //     props.editColumnDialog;
     let param = {
         config: JSON.stringify([...showColumn.value]),
-        entityCode,
-        applyType,
-        shareTo,
+        entityCode: props.entityCode,
+        applyType: "TAB",
     };
     loading.value = true;
-    let res = await $API.layoutConfig.saveConfig(layoutConfigId, "LIST", param);
+    let res = await $API.layoutConfig.saveConfig(
+        layoutConfigId.value,
+        "TAB",
+        param
+    );
     if (res && res.code == 200) {
         $ElMessage.success("保存成功！");
         loading.value = false;
         isShow.value = false;
-        emit("confirm");
+        emit("confirm",res.data.formData.config);
     } else {
         $ElMessage.error("保存失败：" + res.error);
         loading.value = false;
     }
 };
+
+/***
+ *  ****************************************** 过滤条件相关 beg
+ */
+
+// 选择条件弹框
+let dialogIsShow = ref(false);
+// 条件框传值
+let conditionConf = ref({});
+// 设置条件
+const setCondition = () => {
+    let { filter } = editColumnDialogData;
+    filter = initFilter(filter);
+
+    conditionConf.value = JSON.parse(JSON.stringify(filter));
+    dialogIsShow.value = true;
+};
+// 初始化条件
+const initFilter = (filter) => {
+    let { equation } = filter;
+    if (!equation || equation === "OR") {
+        filter.type = 1;
+        filter.equation = "OR";
+    } else if (equation === "AND") {
+        filter.type = 2;
+        filter.equation = "AND";
+    } else {
+        filter.type = 3;
+    }
+    return filter;
+};
+
+// 获取设置条件文案
+const getSetConditionText = () => {
+    let { filter } = editColumnDialogData;
+    let length = filter && filter.items ? filter.items.length : 0;
+    return length > 0 ? `已设置条件（${length}）` : "点击设置";
+};
+
+// 确认设置条件
+const conditionConfirm = (e) => {
+    editColumnDialogData.filter = { ...e };
+    dialogIsShow.value = false;
+};
+
+/***
+ *  ****************************************** 过滤条件相关 end
+ */
+
+// 暴露方法给父组件调用
+defineExpose({
+    openDialog,
+});
 </script>
 <style lang='scss' scoped>
 div {
@@ -301,7 +355,7 @@ div {
     margin-bottom: 12px;
     overflow-x: auto;
     width: 48%;
-    
+
     &::-webkit-scrollbar {
         display: none;
     }
@@ -355,7 +409,7 @@ div {
 .action-icon {
     position: absolute;
     right: 10px;
-    top: -6px;
+    top: 10px;
     display: none;
     .icon-span {
         cursor: pointer;
