@@ -175,6 +175,14 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="允许修改历史权限" title="r6010">
+              <el-radio-group v-model="formModel.rightValueMap['r6010']">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <template #footer>
@@ -262,6 +270,7 @@
             'r6007': false,
             'r6008': false,
             'r6009': true,
+            'r6010': true,
           },
         },
 
