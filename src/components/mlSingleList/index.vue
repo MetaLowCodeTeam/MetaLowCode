@@ -44,6 +44,7 @@
   
 <script setup>
 import { onMounted, ref, reactive, inject } from "vue";
+import http from "@/utils/request";
 import { getDataList } from "@/api/crud";
 const message = inject("$ElMessage");
 const $API = inject("$API");
@@ -62,6 +63,8 @@ const props = defineProps({
     filterItems: { type: Array, default: () => [] },
     // 表格列
     tableColumn: { type: Array, default: () => [] },
+    // 查询接口
+    queryUrl: { type: String, default: "" },
 });
 let loading = ref(false);
 
@@ -111,24 +114,35 @@ async function getTableList() {
         });
     }
     let res;
-    if (param.mainEntity == "ApprovalTask") {
-        res = await $API.approval.list.getDataList(
-            param.mainEntity,
-            param.fieldsList,
-            param.filter,
-            param.pageSize,
-            param.pageNo,
-            param.sortFields
-        );
+    if (props.queryUrl) {
+        res = await http.post(props.queryUrl, {
+            mainEntity: param.mainEntity,
+            fieldsList: param.fieldsList,
+            filter:param.filter,
+            pageSize:param.pageSize,
+            pageNo:param.pageNo,
+            sortFields:param.sortFields,
+        });
     } else {
-        res = await getDataList(
-            param.mainEntity,
-            param.fieldsList,
-            param.filter,
-            param.pageSize,
-            param.pageNo,
-            param.sortFields
-        );
+        if (param.mainEntity == "ApprovalTask") {
+            res = await $API.approval.list.getDataList(
+                param.mainEntity,
+                param.fieldsList,
+                param.filter,
+                param.pageSize,
+                param.pageNo,
+                param.sortFields
+            );
+        } else {
+            res = await getDataList(
+                param.mainEntity,
+                param.fieldsList,
+                param.filter,
+                param.pageSize,
+                param.pageNo,
+                param.sortFields
+            );
+        }
     }
 
     if (res.code === 200) {

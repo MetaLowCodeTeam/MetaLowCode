@@ -7,6 +7,7 @@
         fieldName="entityName"
         :tableColumn="tableColumn"
         ref="mlSingleListRef"
+        queryUrl="/rb/listQuery"
     >
         <template #activeRow>
             <el-table-column label="恢复状态" :align="'center'" width="100">
@@ -114,7 +115,7 @@ function activeRow(row) {
     })
         .then(async () => {
             mlSingleListRef.value.loading = true;
-            let res = await http.post("/crud/restore?id=" + row.entityId);
+            let res = await http.post("/rb/restore?id=" + row.entityId);
             if (res.code === 200) {
                 $ElMessage.success("恢复成功");
                 mlSingleListRef.value.getTableList();

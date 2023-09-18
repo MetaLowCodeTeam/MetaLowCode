@@ -16,7 +16,7 @@
         v-else-if="column.fieldType == 'Boolean'"
     >{{ row[column.fieldName] == null ? "" : (row[column.fieldName] ? "是" : '否') }}</div>
     <div class="text-ellipsis" v-else-if="column.isNameField">
-        <span class="ml-a-span" @click="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
+        <span class="ml-a-span" @click.stop="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
     <div class="text-ellipsis" v-else>{{ row[column.fieldName] }}</div>
 </template>

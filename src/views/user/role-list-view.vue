@@ -166,6 +166,16 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="12" class="function-right-row">
+          <el-col :span="12">
+            <el-form-item label="允许管理回收站" title="r6009">
+              <el-radio-group v-model="formModel.rightValueMap['r6009']">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -251,6 +261,7 @@
             'r6006': false,
             'r6007': false,
             'r6008': false,
+            'r6009': true,
           },
         },
 
