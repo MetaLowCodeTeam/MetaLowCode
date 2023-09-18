@@ -254,7 +254,7 @@ const routes = [
             {
                 path: '/revision-history',
                 name: 'RevisionHistory',
-                meta: { title: '变更历史', icon: 'el-icon-histogram' },
+                meta: { title: '变更历史', icon: 'el-icon-document-remove' },
                 component: 'system/revision-history/index',
             },
             // 回收站

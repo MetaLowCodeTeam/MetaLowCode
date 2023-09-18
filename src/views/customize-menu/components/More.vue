@@ -52,7 +52,7 @@
                 取消共享
             </div>
             <!-- 导入导出 -->
-            <template v-if="type == 'add'">
+            <template v-if="type == 'list'">
                 <div class="pl-5 mt-15 item div-disabled">导入导出</div>
                 <div class="pl-20 item" @click="dataExportFn">
                     <span class="icon-t1">

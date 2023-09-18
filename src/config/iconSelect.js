@@ -287,22 +287,6 @@ export default {
 				"el-icon-zoom-in",
 				"el-icon-zoom-out"
 			]
-		},
-		{
-			name: '扩展',
-			icons: [
-				'sc-icon-vue',
-				'sc-icon-code',
-				'sc-icon-wechat',
-				'sc-icon-bug-fill',
-				'sc-icon-bug-line',
-				'sc-icon-file-word',
-				'sc-icon-file-excel',
-				'sc-icon-file-ppt',
-				'sc-icon-organization',
-				'sc-icon-upload',
-				'sc-icon-download'
-			]
 		}
 	]
 }

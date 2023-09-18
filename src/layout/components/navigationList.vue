@@ -32,8 +32,11 @@
         </div>
         <template #reference>
             <div class="adminui-side-bottom" @click="TOGGLE_menuIsCollapse">
-                <el-icon>
-                    <el-icon-menu />
+                <el-icon v-if="menuIsCollapse">
+                    <el-icon-expand />
+                </el-icon>
+                <el-icon v-else>
+                    <el-icon-fold />
                 </el-icon>
             </div>
         </template>
@@ -54,7 +57,9 @@ const router = useRouter();
 const { navigationList, chosenNavigationId } = storeToRefs(
     useLayoutConfigStore()
 );
+
 const { setNavigationList } = useLayoutConfigStore();
+const { menuIsCollapse } = storeToRefs(useGlobalStore());
 
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");

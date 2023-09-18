@@ -124,7 +124,27 @@
                         ></el-input>
                     </div>
                     <div class="mt-10">
-                        <el-input v-model="cutMenu.name" placeholder="菜单名称" clearable></el-input>
+                        <el-input
+                            v-model="cutMenu.name"
+                            placeholder="菜单名称"
+                            class="ml-el-select-input"
+                            clearable
+                        >
+                            <template #prepend>
+                                <span
+                                    class="select-icon-span"
+                                    title="选择图标"
+                                    @click="isShowIconDialog = true"
+                                >
+                                    <el-icon class="icon" v-if="!cutMenu.useIcon">
+                                        <SetUp />
+                                    </el-icon>
+                                    <el-icon class="icon" v-else>
+                                        <component :is="cutMenu.useIcon" />
+                                    </el-icon>
+                                </span>
+                            </template>
+                        </el-input>
                     </div>
                     <div class="mt-5" v-if="cutMenu.children && cutMenu.children.length > 0">
                         <el-checkbox v-model="cutMenu.isOpeneds" label="默认展开" />
@@ -152,11 +172,13 @@
             </div>
         </template>
     </mlDialog>
+    <mlSelectIcon v-model="isShowIconDialog" @confirmIcon="selectIcon" />
 </template>
 
 <script setup>
 import { watch, ref, onMounted, inject, reactive } from "vue";
 import useCommonStore from "@/store/modules/common";
+import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -211,6 +233,14 @@ let parentMenu = ref("父级菜单");
 // 节点选中
 const nodeClick = (node) => {
     cutMenu.value = Object.assign({}, node);
+    cutMenu.value.useIcon = cutMenu.value.useIcon || ""
+};
+
+let isShowIconDialog = ref(false);
+// 选择图标
+const selectIcon = (el) => {
+    cutMenu.value.useIcon = el;
+    isShowIconDialog.value = false;
 };
 
 /**
@@ -232,6 +262,8 @@ let defaultMenu = reactive({
     parentGuid: "",
     // 是否默认展开
     isOpeneds: false,
+    // 使用图标
+    useIcon: "",
 });
 
 const getGuid = () => {
@@ -323,6 +355,7 @@ const confirmMenu = () => {
             }
         }
     }
+    console.log(cutMenu.value)
     cutMenu.value = null;
 };
 // 获取数据索引
@@ -395,7 +428,7 @@ const textSave = async () => {
         param.shareTo = menuData.shareTo;
     }
     if (JSON.stringify(param) == "{}") {
-        $ElMessage.success("保存成功")
+        $ElMessage.success("保存成功");
         loading.value = false;
         isShow.value = false;
         return;
@@ -488,7 +521,6 @@ div {
 .right-div {
     width: calc(58% - 20px);
     margin-left: 20px;
-    
 }
 
 .parent-li {
@@ -608,5 +640,25 @@ div {
     font-size: 13px;
     padding-left: 20px;
     text-align: left;
+}
+
+.select-icon-span {
+    // padding: 0 10px;
+    // background: #fff;
+    border-radius: 4px 0 0 4px;
+    cursor: pointer;
+    position: relative;
+    width: 30px;
+    height: 32px;
+    .icon {
+        font-size: 18px;
+        position: absolute;
+        left: 6px;
+        top: 7px;
+        color: #404040;
+    }
+    &:hover {
+        background: #eeeeee;
+    }
 }
 </style>
