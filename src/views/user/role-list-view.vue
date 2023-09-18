@@ -184,6 +184,16 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="12" class="function-right-row">
+          <el-col :span="12">
+            <el-form-item label="允许导入Excel数据" title="r6011">
+              <el-radio-group v-model="formModel.rightValueMap['r6011']">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -271,6 +281,7 @@
             'r6008': false,
             'r6009': true,
             'r6010': true,
+            'r6011': true,
           },
         },
 
