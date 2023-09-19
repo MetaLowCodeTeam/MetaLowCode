@@ -147,7 +147,7 @@ const selectIcon = (icon) => {
 }
 .ml-icon-select__list li:hover {
     box-shadow: 0 0 1px 4px var(--el-color-primary);
-    background: var(--el-color-primary-light-9);
+    background: var(--el-color-primary-light-5);
 }
 .ml-icon-select__list li:hover i {
     color: var(--el-color-primary);

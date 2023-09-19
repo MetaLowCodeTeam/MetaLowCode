@@ -59,7 +59,7 @@
             <el-form-item label="附加过滤条件">
                 <el-row>
                     <el-col :span="24">
-                        <div class="text-btn" @click="setCondition">{{ getSetConditionText() }}</div>
+                        <div class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
                     </el-col>
                     <el-col :span="24">
                         <div class="info-text">符合条件的记录才可以使用/选择此流程</div>

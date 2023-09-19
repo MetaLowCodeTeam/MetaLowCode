@@ -592,7 +592,7 @@ div {
     width: 32px;
     height: 36px;
     line-height: 36px;
-    background: $ml-primary;
+    background: var(--el-color-primary);
     text-align: center;
     color: #fff;
     .icon {

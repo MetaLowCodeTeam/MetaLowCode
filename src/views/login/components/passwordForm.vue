@@ -91,7 +91,7 @@ export default {
                 this.form.user = "admin";
                 this.form.password = "admin";
             } else if (val == "user") {
-                this.form.user = "demo";
+                this.form.user = "test006";
                 this.form.password = "123456";
             }
         },
@@ -147,6 +147,15 @@ export default {
             });
             this.$message.success("Login Success 登录成功");
             this.islogin = false;
+            this.getRightMap();
+        },
+        async getRightMap() {
+            let getRightMapRes = await http.get("/user/getRightMap");
+            if (getRightMapRes.code == 200) {
+                this.$TOOL.data.set("rightMap", getRightMapRes.data || {});
+            } else {
+                router.replace({ path: "/login" });
+            }
         },
     },
 };

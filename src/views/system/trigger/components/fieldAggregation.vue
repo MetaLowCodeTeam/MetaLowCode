@@ -118,7 +118,7 @@
         <el-form-item class="mt-20" label="聚合数据条件">
             <el-row>
                 <el-col :span="24">
-                    <div class="text-btn" @click="setCondition">{{ getSetConditionText() }}</div>
+                    <div class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
                 </el-col>
                 <el-col :span="24">
                     <div class="info-text">仅会聚合符合过滤条件的数据</div>

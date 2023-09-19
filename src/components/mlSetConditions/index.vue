@@ -180,7 +180,7 @@
             </el-row>
         </div>
         <div class="mladd-conditions">
-            <span class="text-btn" @click="addConditions">
+            <span class="ml-a-span" @click="addConditions">
                 <el-icon size="18" class="add-icon">
                     <ElIconCirclePlusFilled />
                 </el-icon>

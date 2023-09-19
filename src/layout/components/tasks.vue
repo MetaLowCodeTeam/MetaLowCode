@@ -75,7 +75,7 @@
 	.user-bar-tasks-item {margin-bottom: 10px;}
 	.user-bar-tasks-item:hover {border-color: var(--el-color-primary);}
 	.user-bar-tasks-item-body {display: flex;}
-	.user-bar-tasks-item-body .taskIcon {width: 45px;height: 45px;background: var(--el-color-primary-light-9);margin-right: 20px;display: flex;justify-content:center;align-items: center;color: var(--el-color-primary);border-radius:20px;}
+	.user-bar-tasks-item-body .taskIcon {width: 45px;height: 45px;background: var(--el-color-primary-light-5);margin-right: 20px;display: flex;justify-content:center;align-items: center;color: var(--el-color-primary);border-radius:20px;}
 	.user-bar-tasks-item-body .taskMain {flex: 1;}
 	.user-bar-tasks-item-body .title h2 {font-size: 15px;}
 	.user-bar-tasks-item-body .title p {font-size: 12px;color: #999;margin-top: 5px;}

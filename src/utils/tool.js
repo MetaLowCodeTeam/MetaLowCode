@@ -238,4 +238,10 @@ tool.checkIsEdit = (oldVal, newVal) => {
     }
     return false;
 };
+
+// 获取权限
+tool.getAuto = (key) => {
+    return tool.data.get('rightMap')[key]
+}
+
 export default tool

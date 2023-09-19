@@ -359,7 +359,7 @@ const isConfirm = () => {
         }
     }
     .formula-val {
-        border: 1px dashed $ml-primary;
+        border: 1px dashed var(--el-color-primary);
         border-radius: 2px;
         padding: 7px 15px;
         padding-right: 34px;
@@ -382,7 +382,7 @@ const isConfirm = () => {
             user-select: none;
         }
         .el-dropdown-link {
-            color: $ml-primary;
+            color: var(--el-color-primary);
             cursor: pointer;
             line-height: 20px;
             .el-icon--right {
@@ -394,7 +394,7 @@ const isConfirm = () => {
             }
             &:hover {
                 color: #fff;
-                background: $ml-primary;
+                background: var(--el-color-primary);
             }
         }
     }
@@ -424,7 +424,7 @@ const isConfirm = () => {
     line-height: 32px;
     .help {
         cursor: pointer;
-        color: $ml-primary;
+        color: var(--el-color-primary);
         &:hover {
             text-decoration: underline;
             color: #0d5bdd;
@@ -460,7 +460,7 @@ const isConfirm = () => {
                 margin-bottom: 0;
             }
             .active-type {
-                color: $ml-primary;
+                color: var(--el-color-primary);
             }
             &:hover {
                 background: #ccc;

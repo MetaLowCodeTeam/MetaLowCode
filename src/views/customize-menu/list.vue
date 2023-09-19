@@ -188,7 +188,7 @@ let quickQueryPlaceholder = ref("");
 // 详情Tab
 let detailTab = reactive({});
 // 实体ID
-let idFiledName = ref("")
+let idFiledName = ref("");
 
 onBeforeMount(() => {
     entityCode.value = router.currentRoute.value.meta.entityCode;
@@ -310,6 +310,7 @@ const openDetilDialog = (row) => {
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;
     detailData.tab = { ...detailTab };
+    detailData.detailId = row[idFiledName.value];
     detailRefs.value.openDialog(detailData);
 };
 
@@ -475,7 +476,7 @@ div {
     box-sizing: border-box;
 
     .table-box {
-        border-top: 3px solid $ml-primary;
+        border-top: 3px solid var(--el-color-primary);
         // padding: 20px 0;
         .table-search-box {
             background: #fff;
@@ -505,7 +506,7 @@ div {
     margin-top: 100px;
     .lh-span-a {
         cursor: pointer;
-        color: $ml-primary;
+        color: var(--el-color-primary);
     }
 }
 .el-table {

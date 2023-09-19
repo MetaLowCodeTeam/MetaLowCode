@@ -9,7 +9,7 @@
                 @click="navClick(item)"
             >
                 {{ item.configName }}
-                <div class="action-icon">
+                <div class="action-icon" v-if="$TOOL.getAuto('r6007')">
                     <span class="icon-span edit-icon mr-5" @click.stop="editMenu(item)">
                         <el-icon>
                             <ElIconEditPen />
@@ -22,7 +22,7 @@
                     </span>
                 </div>
             </div>
-            <div class="add-box">
+            <div class="add-box" v-if="$TOOL.getAuto('r6007')">
                 <el-button class="add-btn mt-5 w-100" size="small" @click="editMenu({})">
                     <el-icon class="top-1 mr-3">
                         <ElIconPlus />
@@ -62,9 +62,11 @@ const { setNavigationList } = useLayoutConfigStore();
 const { menuIsCollapse } = storeToRefs(useGlobalStore());
 
 const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
-
-onMounted(() => {});
+onMounted(() => {
+    // menuOperateAuth.value = $TOOL.data.get("rightMap")['r6007'];
+});
 // 导航点击
 const navClick = (item) => {
     $API.layoutConfig.saveUserLayoutCache("NAV", item.layoutConfigId);
@@ -120,7 +122,7 @@ const delMenu = (item, inx) => {
         padding: 0 10px;
         position: relative;
         &.is-active {
-            color: $ml-primary;
+            color: var(--el-color-primary);
         }
         .action-icon {
             position: absolute;

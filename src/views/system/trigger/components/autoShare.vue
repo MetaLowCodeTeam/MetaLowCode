@@ -7,11 +7,11 @@
         >
             <mlSelectUser v-model="trigger.actionContent.toUsersId" multiple clearable />
         </el-form-item>
-        <el-form-item :label=" trigger.actionType?.value == 9 ? '同时共享关联记录' : '取消共享记录'">
+        <el-form-item :label="trigger.actionType?.value == 9 ? '同时共享关联记录' : '取消共享记录'">
             <el-select
                 v-model="trigger.actionContent.items"
                 multiple
-                placeholder="选择关联实体(可选)"
+                :placeholder="'选择关联实体' + trigger.actionType?.value == 9 ? '(可选)' : ''"
                 style="width: 100%"
                 clearable
                 filterable

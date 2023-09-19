@@ -366,7 +366,7 @@ const actionExecute = (params) => {
     .save-warning {
         text-align: center;
         .save-icon {
-            color: $ml-primary;
+            color: var(--el-color-primary);
             position: relative;
             left: 12px;
         }

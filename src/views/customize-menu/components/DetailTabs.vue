@@ -8,7 +8,7 @@
                 :name="tab.entityName"
             ></el-tab-pane>
         </el-tabs>
-        <span class="setting-tabs" @click="openDialog">
+        <span class="setting-tabs" @click="openDialog" v-if="$TOOL.getAuto('r6008')">
             <el-icon>
                 <ElIconSetting />
             </el-icon>
@@ -23,14 +23,16 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { inject, onMounted, ref, watch } from "vue";
 import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
     modelValue: null,
 });
 const emits = defineEmits(["update:modelValue"]);
+const $TOOL = inject("$TOOL")
 let detailDialog = ref({});
 let tabs = ref();
+
 watch(
     () => props.modelValue,
     () => {
@@ -95,7 +97,7 @@ const confirm = (e) => {
         right: 0;
         display: none;
         &:hover {
-            color: $ml-primary;
+            color: var(--el-color-primary);
         }
     }
     &:hover {

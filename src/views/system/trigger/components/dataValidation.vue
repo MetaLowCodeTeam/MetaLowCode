@@ -4,7 +4,7 @@
         <el-form-item class="mt-20" label="校验条件">
             <el-row>
                 <el-col :span="24">
-                    <div class="text-btn" @click="setCondition">{{ getSetConditionText() }}</div>
+                    <div class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
                 </el-col>
                 <el-col :span="24">
                     <div class="info-text">符合校验条件的数据/记录在操作时会提示失败</div>

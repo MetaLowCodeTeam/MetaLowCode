@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-checkbox v-model="checked" label=" " class="check-box" @change="formatShareTo" />共享给全部用户或
-        <span class="a-span" @click="openUserDialog">
+        <span class="ml-a-span" @click="openUserDialog">
             指定用户
             <span v-if="userList.length > 0">({{userList.length}})</span>
         </span>
@@ -76,12 +76,5 @@ const confrimUse = () => {
 .check-box {
     position: relative;
     top: 2px;
-}
-.a-span {
-    color: $ml-primary;
-    cursor: pointer;
-    &:hover {
-        color: $ml-primary-hover;
-    }
 }
 </style>

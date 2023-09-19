@@ -98,7 +98,7 @@
                         <el-row>
                             <el-col :span="24">
                                 <div
-                                    class="text-btn"
+                                    class="ml-a-span"
                                     @click="setCondition"
                                 >{{ getSetConditionText() }}</div>
                             </el-col>
@@ -430,7 +430,7 @@ div {
     width: 32px;
     height: 36px;
     line-height: 36px;
-    background: $ml-primary;
+    background: var(--el-color-primary);
     text-align: center;
     color: #fff;
     .icon {
@@ -489,7 +489,7 @@ div {
             width: calc(100% - 32px);
         }
         &:hover {
-            background: $ml-primary;
+            background: var(--el-color-primary);
             color: #fff;
             cursor: pointer;
         }
@@ -518,7 +518,7 @@ div {
         left: -3px;
     }
     &.is-active {
-        color: $ml-primary;
+        color: var(--el-color-primary);
     }
 }
 </style>

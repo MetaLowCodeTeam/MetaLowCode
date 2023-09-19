@@ -51,6 +51,14 @@
                 </span>
                 取消共享
             </div>
+            <div class="pl-20 item" @click="openReportForms()" v-if="type != 'list'">
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconMemo />
+                    </el-icon>
+                </span>
+                报表
+            </div>
             <!-- 导入导出 -->
             <template v-if="type == 'list'">
                 <div class="pl-5 mt-15 item div-disabled">导入导出</div>
@@ -62,7 +70,7 @@
                     </span>
                     数据导出
                 </div>
-                <div class="pl-20 item" @click="dataUploadFn">
+                <div class="pl-20 item" @click="dataUploadFn" v-if="$TOOL.getAuto('r6011')">
                     <span class="icon-t1">
                         <el-icon>
                             <ElIconUpload />
@@ -90,6 +98,7 @@
                     class="pl-20 item"
                     :class="{'is-active':defaultColumnShow == 'ALL'}"
                     @click="changeColumnShow('ALL')"
+                    v-if="$TOOL.getAuto('r6008')"
                 >
                     默认列显示
                     <div class="action-icon">
@@ -126,6 +135,8 @@
         :idFiledName="idFiledName"
         @allocationSuccess="allocationSuccess"
     />
+    <!-- 报表 -->
+    <ReportForms ref="reportFormsRefs" />
 </template>
 
 <script setup>
@@ -133,6 +144,7 @@ import { ref, onBeforeMount, inject, reactive } from "vue";
 import SetColumn from "./SetColumn.vue";
 import DataExport from "./DataExport.vue";
 import Allocation from "./Allocation.vue";
+import ReportForms from "./ReportForms.vue";
 import { ElMessageBox } from "element-plus";
 const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
 const props = defineProps({
@@ -143,8 +155,12 @@ const props = defineProps({
     multipleSelection: { type: Array, default: () => [] },
     dataExportData: { type: Object, default: () => {} },
     type: { type: String, default: "list" },
+    entityCode: { type: Number, default: 0 },
+    // 当前详情ID
+    detailId: { type: String, default: "" },
 });
 const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 /*
  * ********************************************************  操作 beg
@@ -162,6 +178,15 @@ const allocationFn = (type) => {
 
 const allocationSuccess = () => {
     emits("editColumnConfirm");
+};
+
+// 打开报表
+let reportFormsRefs = ref("");
+const openReportForms = () => {
+    reportFormsRefs.value.openDialog({
+        entityCode: props.entityCode,
+        detailId: props.detailId,
+    });
 };
 
 /*
@@ -237,7 +262,7 @@ const editColumnConfirm = () => {
         cursor: pointer;
         position: relative;
         &.is-active {
-            color: $ml-primary;
+            color: var(--el-color-primary);
         }
         .action-icon {
             position: absolute;

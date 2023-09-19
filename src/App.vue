@@ -17,6 +17,7 @@ import {
     onBeforeMount,
     inject,
 } from "vue";
+import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import useCommonStore from "@/store/modules/common";
 import http from "@/utils/request";
@@ -50,13 +51,13 @@ onBeforeMount(() => {
         for (let i = 1; i <= 9; i++) {
             document.documentElement.style.setProperty(
                 `--el-color-primary-light-${i}`,
-                color$TOOL.lighten(app_color, i / 10)
+                colorTool.lighten(app_color, i / 10)
             );
         }
         for (let i = 1; i <= 9; i++) {
             document.documentElement.style.setProperty(
                 `--el-color-primary-dark-${i}`,
-                color$TOOL.darken(app_color, i / 10)
+                colorTool.darken(app_color, i / 10)
             );
         }
     }
@@ -66,6 +67,9 @@ onBeforeMount(() => {
     // roundRobin(5000);
     // 获取所有实体并格式化Label
     getEntityLable();
+
+
+
     // 获取默认导航
     // getNavigationList();
 });
@@ -75,6 +79,8 @@ onBeforeMount(() => {
 
 //     console.log(res,"APP先触发");
 // };
+// /crud/getRightMap
+
 
 // 获取新消息
 const getNewMsgNum = async () => {

@@ -426,13 +426,6 @@ textarea {
 	margin: 0 auto;
 }
 
-.text-btn {
-	color: #409eff;
-	cursor: pointer;
-	&:hover {
-		color: #0d5bdd;
-	}
-}
 .info-text {
 	color: #878787;
 	line-height: 1.41;
@@ -495,9 +488,9 @@ $names: (
 }
 
 .ml-a-span {
-	color: #409eff;
+	color: var(--el-color-primary);
 	cursor: pointer;
 	&:hover {
-		color: #a0cfff;
+		color: var(--el-color-primary-light-5);
 	}
 }

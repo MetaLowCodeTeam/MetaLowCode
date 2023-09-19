@@ -59,7 +59,7 @@
                     clearable
                 />
                 <div class="lable-title mb-10 mt-20">发起条件</div>
-                <div class="text-btn mb-3" @click="setCondition">{{ getSetConditionText() }}</div>
+                <div class="ml-a-span mb-3" @click="setCondition">{{ getSetConditionText() }}</div>
                 <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
             </div>
             <template #footer>

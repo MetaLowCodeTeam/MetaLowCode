@@ -38,7 +38,12 @@
                             </span>
                             编辑
                         </el-button>
-                        <More type="detail" :multipleSelection="multipleSelection" />
+                        <More
+                            type="detail"
+                            :multipleSelection="multipleSelection"
+                            :entityCode="detailDialog.entityCode"
+                            :detailId="detailDialog.detailId"
+                        />
                     </div>
                 </el-col>
             </el-row>
@@ -107,7 +112,7 @@ defineExpose({
         .fr-icon {
             cursor: pointer;
             &:hover {
-                color: $ml-primary;
+                color: var(--el-color-primary);
             }
         }
     }
