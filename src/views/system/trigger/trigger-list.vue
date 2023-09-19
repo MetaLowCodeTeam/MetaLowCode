@@ -121,6 +121,14 @@ let triggerList = ref([
         code: 8,
     },
     {
+        label: "自动共享",
+        code: 9,
+    },
+    {
+        label: "自动取消共享",
+        code: 10,
+    },
+    {
         label: "自动删除",
         code: 12,
     },

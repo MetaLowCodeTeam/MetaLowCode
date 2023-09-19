@@ -13,6 +13,8 @@
                 <autoApproval v-model="trigger" v-if="trigger.actionType?.value == 6" />
                 <autoRevokeApproval v-model="trigger" v-if="trigger.actionType?.value == 7" />
                 <autoAllocation v-model="trigger" v-if="trigger.actionType?.value == 8" />
+                <autoShare v-model="trigger" v-if="trigger.actionType?.value == 9" />
+                <autoShare v-model="trigger" v-if="trigger.actionType?.value == 10" />
                 <autoDelete v-model="trigger" v-if="trigger.actionType?.value == 12" />
                 <hookUrl v-model="trigger" v-if="trigger.actionType?.value == 14" />
             </el-form-item>
@@ -68,6 +70,8 @@ import autoRevokeApproval from './autoRevokeApproval.vue';
 import autoDelete from "./autoDelete.vue";
 // 回调URL
 import hookUrl from "./hookUrl.vue";
+// 自动共享、取消共享
+import autoShare from "./autoShare.vue"
 const props = defineProps({
     modelValue: null,
 });

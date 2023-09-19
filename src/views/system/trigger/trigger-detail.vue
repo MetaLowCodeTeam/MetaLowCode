@@ -127,6 +127,10 @@ const initDetailData = async () => {
             trigger.disabledActive = [4, 16, 32, 64, 128, 256, 1024, 2048];
         }
         // 如果是自动分配
+        if (trigger.actionType.value == 9 || trigger.actionType.value == 10) {
+            trigger.disabledActive = [4, 32, 64];
+        }
+        // 如果是自动分配
         if (trigger.actionType.value == 8) {
             // 禁用删除时、分配时
             trigger.disabledActive = [4];
@@ -180,8 +184,8 @@ const onSave = async (target) => {
             return;
         }
         params.formModel.whenCron = trigger.whenCron;
-        params.formModel.whenNum = whenNum;
     }
+    params.formModel.whenNum = whenNum;
     // 如果有附加过滤条件
     params.formModel.actionFilter = "";
     if (trigger.actionFilter.items.length > 0) {
@@ -246,7 +250,6 @@ const onSave = async (target) => {
                 actionContent.assignTo.push(el.id);
             });
         }
-        console.log(cascades, "cascades");
         if (cascades.length < 1) {
             $ElMessage.warning("请选择同时分配关联记录");
             return;
@@ -255,6 +258,16 @@ const onSave = async (target) => {
     // 如果是自动撤销审批
     if (trigger.actionType.value == 7 && actionContent.items.length < 1) {
         $ElMessage.warning("请选择撤销记录");
+        return;
+    }
+    // 如果是自动共享
+    if (trigger.actionType.value == 9 && actionContent.toUsersId.length < 1) {
+        $ElMessage.warning("请选择共享给谁");
+        return;
+    }
+    // 如果是自动取消共享
+    if (trigger.actionType.value == 10 && actionContent.items.length < 1) {
+        $ElMessage.warning("请选择取消共享记录");
         return;
     }
     // 如果是自动删除
