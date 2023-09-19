@@ -92,7 +92,7 @@ const routes = [
             {
                 path: '/form-design',
                 name: 'FormDesign',
-                component: 'system/form-design',
+                component: 'system/form-design/index',
                 hidden: true,
                 props: true,
                 meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }

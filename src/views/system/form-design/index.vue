@@ -114,12 +114,14 @@ export default {
     width: 100%;
   }
 
-  /* TODO: 左右侧边栏收起按钮位置显示错误，待修复 */
-
 </style>
 <style>
   .main-container.visual-design li {
     box-sizing: content-box !important;
+  }
+
+  .ds-setting-drawer .el-drawer__body {
+	  padding: 20px !important;
   }
 
 </style>
