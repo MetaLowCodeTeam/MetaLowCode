@@ -1,0 +1,375 @@
+<template>
+    <el-container class="main-container">
+        <el-aside width="300px">
+            <div class="fields-list" style="height: 100%;">
+                <div class="fields-list-header">{{ title }}</div>
+                <div class="fields-list-box" v-loading="treeLoading">
+                    <el-scrollbar>
+                        <el-tree
+                            ref="treeRefs"
+                            :data="treeList"
+                            :props="treeProps"
+                            highlight-current
+                            empty-text="没有字段数据"
+                            check-strictly
+                            node-key="$inx"
+                            @node-click="handleTreeNodeClick"
+                        />
+                    </el-scrollbar>
+                </div>
+            </div>
+        </el-aside>
+        <el-container class="main-container">
+            <el-header class="main-header w-100">
+                <div class="title fl">{{ cutNode.label }}</div>
+                <div class="section-fr fr">
+                    <!-- <mlSearchInput
+                        class="section-search"
+                        v-model="keyword"
+                        placeholder="查询关键字"
+                        @confirm="getApprovalList"
+                    />-->
+                    <el-button type="primary" @click.stop="operateItem(false,'add')">
+                        <span class="btn-icon-t1">
+                            <el-icon>
+                                <ElIconPlus />
+                            </el-icon>
+                        </span>
+                        新增选项
+                    </el-button>
+                    <el-button type="primary" @click="onSave" :loading="mainLoading">保存</el-button>
+                </div>
+            </el-header>
+            <el-main class="mian-box" v-loading="mainLoading">
+                <el-scrollbar>
+                    <el-empty v-if="mainList.length == 0" description="没有数据" />
+                    <div
+                        class="op-item yichu"
+                        v-for="(item,inx) of mainList"
+                        :key="inx"
+                        :title="item.label"
+                    >
+                        {{ item.label }}
+                        <div class="op-icon-box">
+                            <span title="插入" @click.stop="operateItem(inx,'ins')">
+                                <el-icon>
+                                    <ElIconPlus />
+                                </el-icon>
+                            </span>
+                            <span title="上移" @click.stop="moveItem(inx,'top')">
+                                <el-icon>
+                                    <ElIconTop />
+                                </el-icon>
+                            </span>
+                            <span title="下移" @click.stop="moveItem(inx,'down')">
+                                <el-icon>
+                                    <ElIconBottom />
+                                </el-icon>
+                            </span>
+                            <span title="编辑" @click.stop="operateItem(inx,'edit',item)">
+                                <el-icon>
+                                    <ElIconEdit />
+                                </el-icon>
+                            </span>
+                            <span title="删除" @click.stop="delItem(inx)">
+                                <el-icon>
+                                    <ElIconDelete />
+                                </el-icon>
+                            </span>
+                        </div>
+                    </div>
+                </el-scrollbar>
+            </el-main>
+        </el-container>
+    </el-container>
+</template>
+
+<script setup>
+import { inject, nextTick, onMounted, reactive, ref } from "vue";
+import { ElMessageBox } from "element-plus";
+const props = defineProps({
+    title: { type: String, default: "" },
+    getTreeFn: { type: Function },
+    getMainFn: { type: Function },
+    saveFn: { type: Function },
+});
+const $ElMessage = inject("$ElMessage");
+// 搜索参数
+let keyword = ref("");
+// 左侧树loading
+let treeLoading = ref(false);
+let treeList = ref([]);
+let treeProps = reactive({
+    children: "children",
+    label: "label",
+});
+let treeRefs = ref("");
+// 选中节点
+let cutNode = ref({});
+// 右侧主体loading
+let mainLoading = ref(false);
+let mainList = ref([]);
+onMounted(() => {
+    getTreeList();
+});
+
+// 获取tree数据
+const getTreeList = async () => {
+    treeLoading.value = true;
+    mainLoading.value = true;
+    let res = await props.getTreeFn();
+    if (res.code == 200) {
+        treeList.value = formatTree(res.data || []);
+        if (treeList.value.length > 0) {
+            cutNode.value = treeList.value[0].children[0];
+            nextTick(() => {
+                treeRefs.value.setCurrentKey("1-1");
+                getMainList();
+            });
+        } else {
+            mainLoading.value = false;
+        }
+    } else {
+        $ElMessage.error("获取字段列表数据失败：" + res.error);
+        mainLoading.value = false;
+    }
+    treeLoading.value = false;
+};
+// 格式化Tree数据
+const formatTree = (data) => {
+    let formatArr = [];
+    data.forEach((el, inx) => {
+        let obj = {
+            label: el.entityLabel,
+            name: el.entityName,
+            $inx: `${inx + 1}`,
+            children: [],
+        };
+        el.fieldList.forEach((subEl, subInx) => {
+            let subObj = {
+                label: subEl.fieldLabel,
+                name: subEl.fieldName,
+                parentName: el.entityName,
+                $inx: `${inx + 1}-${subInx + 1}`,
+            };
+            obj.children.push(subObj);
+        });
+        if (obj.children.length > 0) {
+            formatArr.push(obj);
+        }
+    });
+    return formatArr;
+};
+
+// 节点点击
+const handleTreeNodeClick = (node) => {
+    if (!node.children) {
+        cutNode.value = node;
+        getMainList();
+    }
+};
+
+// 获取主体数据
+const getMainList = async () => {
+    mainLoading.value = true;
+    let res = await props.getMainFn(
+        cutNode.value.parentName,
+        cutNode.value.name
+    );
+    if (res.code == 200) {
+        mainList.value = res.data;
+    } else {
+        $ElMessage.error("获取选项列表数据失败：" + res.error);
+    }
+    mainLoading.value = false;
+};
+
+// 新增、插入、编辑
+const operateItem = (inx, targe, item) => {
+    let infoText = "";
+    let inputValue = null;
+    if (targe == "edit") {
+        infoText = "请修改选项名称";
+        inputValue = item.label;
+    } else {
+        infoText = "请输入选项名称";
+    }
+    ElMessageBox.prompt(infoText, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputValue,
+        inputPattern:
+            /^[A-Za-z\u4e00-\u9fa5\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+        inputErrorMessage: "输入不正确",
+        beforeClose: (action, instance, done) => {
+            if (action === "confirm") {
+                if (instance.inputValue) {
+                    let newItem = {
+                        label: instance.inputValue,
+                        value: getOptionMaxValue(),
+                        saved: false,
+                    };
+                    console.log(newItem.label, "label");
+                    //  判断选项是否存在
+                    for (
+                        let index = 0;
+                        index < mainList.value.length;
+                        index++
+                    ) {
+                        const el = mainList.value[index];
+                        if (el.label == newItem.label) {
+                            $ElMessage.warning(
+                                "已存在【" + instance.inputValue + "】选项"
+                            );
+                            return;
+                        }
+                    }
+                    // 插入
+                    if (targe == "ins") {
+                        mainList.value.splice(inx + 1, 0, newItem);
+                    }
+                    // 新增
+                    else if (targe == "add") {
+                        mainList.value.push(newItem);
+                    }
+                    // 编辑
+                    else {
+                        mainList.value[inx].label = newItem.label;
+                    }
+                }
+            }
+            done();
+        },
+    })
+        .then(() => {})
+        .catch(() => {});
+};
+const getOptionMaxValue = () => {
+    let maxValue = 0;
+    mainList.value.forEach((item, idx) => {
+        if (item.value > maxValue) {
+            maxValue = item.value;
+        }
+    });
+    return maxValue + 1;
+};
+// 上移下移
+const moveItem = (inx, target) => {
+    let prevItem = { ...mainList.value[inx - 1] };
+    let nextItem = { ...mainList.value[inx + 1] };
+    if (target == "top") {
+        if (inx == 0) {
+            $ElMessage.warning("已经在最上面了");
+        } else {
+            mainList.value[inx - 1] = mainList.value[inx];
+            mainList.value[inx] = prevItem;
+        }
+    } else {
+        if (inx == mainList.value.length - 1) {
+            $ElMessage.warning("已经在最下面面了");
+        } else {
+            mainList.value[inx + 1] = mainList.value[inx];
+            mainList.value[inx] = nextItem;
+        }
+    }
+};
+
+// 删除
+const delItem = (inx) => {
+    ElMessageBox.confirm("确定删除该选项?", "提示")
+        .then(() => {
+            //TODO：后台需要检查改选项是否已被实体记录所引用！！
+            mainList.value.splice(inx, 1);
+            $ElMessage.success(
+                "模拟删除成功，TODO：后台需要检查改选项是否已被实体记录所引用！！"
+            );
+        })
+        .catch(() => {});
+};
+
+// 保存
+const onSave = async () => {
+    mainLoading.value = true;
+    let res = await props.saveFn(
+        cutNode.value.parentName,
+        cutNode.value.name,
+        mainList.value
+    );
+    if (res.code == 200) {
+        $ElMessage.success("保存成功");
+        getMainList();
+    } else {
+        $ElMessage.error("保存失败：" + res.error);
+    }
+
+    mainLoading.value = false;
+};
+
+// const getApprovalList = () => {};
+</script>
+<style lang="scss" scoped>
+.main-container {
+    background: #fff;
+}
+.main-header,
+.fields-list-header {
+    font-size: 14px;
+    height: 54px;
+    line-height: 54px;
+    border-bottom: 1px dashed #eeeeee;
+}
+.fields-list-header {
+    text-align: center;
+    font-size: 16px;
+}
+.fields-list-box {
+    height: calc(100% - 55px);
+}
+.main-header {
+    padding: 0 20px;
+    .title {
+        font-size: 16px;
+    }
+    .section-search {
+        display: inline-block;
+        width: 224px;
+    }
+    .btn-icon-t1 {
+        position: relative;
+        top: 1px;
+        margin-right: 3px;
+    }
+}
+.mian-box {
+    // background: red;
+    padding: 0;
+    .op-item {
+        height: 32px;
+        line-height: 32px;
+        font-size: 14px;
+        padding-left: 20px;
+        border-bottom: 1px solid #eeeeee;
+        position: relative;
+        padding-right: 120px;
+        .op-icon-box {
+            display: none;
+            position: absolute;
+            top: 2px;
+            right: 20px;
+            & > span {
+                cursor: pointer;
+                margin-left: 5px;
+                &:hover {
+                    color: var(--el-color-primary);
+                }
+            }
+        }
+        &:hover {
+            background: #f5f5f5;
+            .op-icon-box {
+                display: block;
+            }
+        }
+    }
+}
+</style>
