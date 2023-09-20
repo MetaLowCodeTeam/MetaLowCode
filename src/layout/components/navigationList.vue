@@ -68,9 +68,14 @@ onMounted(() => {
     // menuOperateAuth.value = $TOOL.data.get("rightMap")['r6007'];
 });
 // 导航点击
-const navClick = (item) => {
-    $API.layoutConfig.saveUserLayoutCache("NAV", item.layoutConfigId);
-    router.go(0);
+const navClick =async (item) => {
+    let res = await $API.layoutConfig.saveUserLayoutCache("NAV", item.layoutConfigId);
+    if(res.code == 200){
+        router.go(0);
+    }else {
+        $ElMessage.error("切换导航失败：" + res.error);
+    }
+    
 };
 
 // 设置菜单弹框
