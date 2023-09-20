@@ -2,7 +2,7 @@
     <mlSingleList
         :title="pageType[type].title"
         mainEntity="ApprovalTask"
-        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser"
+        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName"
         :sortFields="sortFields"
         fieldName="approvalConfigId.flowName"
         :tableColumn="tableColumn"
@@ -136,6 +136,9 @@ let tableColumn = ref([
     {
         prop: "approvalConfigId.flowName",
         label: "流程名称",
+        formatter: (row) => {
+            return row['approvalConfigId.flowName'] || row.stepName
+        },
     },
     {
         prop: "entityId.name",
