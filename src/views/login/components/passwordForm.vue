@@ -107,7 +107,7 @@ export default {
                 return false;
             }
 
-            this.islogin = true;
+            // this.islogin = true;
             var data = {
                 user: this.form.user,
                 password: this.form.password,
@@ -138,7 +138,7 @@ export default {
                 });
             } else {
                 this.islogin = false;
-                this.$message.warning(user.message);
+                this.$message.warning(user.error);
                 return false;
             }
 

@@ -98,10 +98,9 @@
                     class="pl-20 item"
                     :class="{'is-active':defaultColumnShow == 'ALL'}"
                     @click="changeColumnShow('ALL')"
-                    v-if="$TOOL.getAuto('r6008')"
                 >
                     默认列显示
-                    <div class="action-icon">
+                    <div class="action-icon" v-if="$TOOL.getAuto('r6008')">
                         <span class="icon-span edit-icon" @click.stop="editColumn('ALL')">
                             <el-icon>
                                 <ElIconEditPen />
