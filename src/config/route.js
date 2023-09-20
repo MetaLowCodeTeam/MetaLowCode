@@ -206,12 +206,12 @@ const routes = [
                 meta: { title: '触发器详情', hidden: true },
                 component: 'system/trigger/trigger-detail',
             },
-            // 报表模板
+            // 报表设计
             {
                 path: '/templates-list',
                 name: 'TemplatesList',
                 component: 'system/report-templates/templates-list',
-                meta: { title: '模板列表', icon: 'el-icon-operation' }
+                meta: { title: '报表设计', icon: 'el-icon-operation' }
             },
             // 数据导入
             {
