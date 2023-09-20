@@ -44,12 +44,11 @@
                 <el-scrollbar>
                     <el-empty v-if="mainList.length == 0" description="没有数据" />
                     <div
-                        class="op-item yichu"
+                        class="op-item"
                         v-for="(item,inx) of mainList"
                         :key="inx"
-                        :title="item.label"
                     >
-                        {{ item.label }}
+                        <div class="op-item-text yichu" :title="item.label">{{ item.label }}</div>
                         <div class="op-icon-box">
                             <span title="插入" @click.stop="operateItem(inx,'ins')">
                                 <el-icon>
@@ -308,6 +307,7 @@ const onSave = async () => {
 // const getApprovalList = () => {};
 </script>
 <style lang="scss" scoped>
+
 .main-container {
     background: #fff;
 }
@@ -350,13 +350,18 @@ const onSave = async () => {
         padding-left: 20px;
         border-bottom: 1px solid #eeeeee;
         position: relative;
-        padding-right: 120px;
+        .op-item-text {
+            float: left;
+            max-width: calc(100% - 160px);
+        }
         .op-icon-box {
+            float: left;
+            width: 125px;
+            margin-left: 30px;
             display: none;
-            position: absolute;
-            top: 2px;
-            right: 20px;
             & > span {
+                position: relative;
+                top: 2px;
                 cursor: pointer;
                 margin-left: 5px;
                 &:hover {

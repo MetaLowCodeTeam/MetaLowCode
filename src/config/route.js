@@ -59,16 +59,7 @@ const routes = [
                 },
                 "component": "home/index"
             },
-            {
-                "name": "userCenter",
-                "path": "/usercenter",
-                "meta": {
-                    "title": "帐号信息",
-                    "icon": "el-icon-user",
-                    "tag": "NEW"
-                },
-                "component": "userCenter/index"
-            },
+
             // ...formatRoutrs
         ]
     },
@@ -163,24 +154,17 @@ const routes = [
             },
             // 审批流程
             {
-                path: '/approval-process',
-                name: 'ApprovalProcess',
-                meta: { group: true, title: '审批流程', icon: 'el-icon-operation' },
-                children: [
-                    {
-                        path: '/process-list',
-                        name: 'ProcessList',
-                        component: 'system/approval-process/process-list',
-                        meta: { title: '流程列表', icon: 'el-icon-operation' }
-                    },
-                    {
-                        path: `/process-detail`,
-                        name: 'ProcessDetail',
-                        component: 'system/approval-process/process-detail',
-                        hidden: true,
-                        meta: { title: '流程设计', hidden: true }
-                    },
-                ]
+                path: '/process-list',
+                name: 'ProcessList',
+                component: 'system/approval-process/process-list',
+                meta: { title: '审批流程', icon: 'el-icon-operation' }
+            },
+            {
+                path: `/process-detail`,
+                name: 'ProcessDetail',
+                component: 'system/approval-process/process-detail',
+                hidden: true,
+                meta: { title: '流程设计', hidden: true }
             },
             // 审批中心
             {
@@ -224,17 +208,10 @@ const routes = [
             },
             // 报表模板
             {
-                path: '/report-templates',
-                name: 'ReportTemplates',
-                meta: { group: true, title: '报表模板', icon: 'el-icon-memo' },
-                children: [
-                    {
-                        path: '/templates-list',
-                        name: 'TemplatesList',
-                        component: 'system/report-templates/templates-list',
-                        meta: { title: '模板列表', icon: 'el-icon-operation' }
-                    },
-                ]
+                path: '/templates-list',
+                name: 'TemplatesList',
+                component: 'system/report-templates/templates-list',
+                meta: { title: '模板列表', icon: 'el-icon-operation' }
             },
             // 数据导入
             {
@@ -242,6 +219,16 @@ const routes = [
                 name: 'DataUpload',
                 meta: { title: '数据导入', icon: 'el-icon-Upload' },
                 component: 'system/data-upload/index',
+            },
+            // 账号信息
+            {
+                "name": "userCenter",
+                "path": "/usercenter",
+                "meta": {
+                    "title": "帐号信息",
+                    "icon": "el-icon-user",
+                },
+                "component": "userCenter/index"
             },
             // 消息中心
             {
