@@ -2,6 +2,7 @@
 import legacyPlugin from '@vitejs/plugin-legacy';
 import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -75,6 +76,14 @@ export default ({
             legacyPlugin({
                 targets: ['Android > 39', 'Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15'],
             }), vuePlugin(),
+
+            createSvgIconsPlugin({
+                // Specify the icon folder to be cached
+                iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
+                // Specify symbolId format
+                symbolId: 'icon-[dir]-[name]',
+            }),
+
         ],
         css: {
             preprocessorOptions: {
@@ -84,7 +93,7 @@ export default ({
                 },
                 scss: {
                     // 定义全局的scss变量
-                    // 给导入的路径最后加上 ; 
+                    // 给导入的路径最后加上 ;
                     additionalData: `@import './src/style/global.scss';`,
                     javascriptEnabled: true,
                 }
