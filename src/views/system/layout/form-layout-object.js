@@ -91,7 +91,7 @@ export function createLayoutObj(eventBus) {
           this.doAddNewTab(tabTitle)
         }).catch((e) => {
           console.log(e)
-          ElMessage.info('已取消')
+          this.$message.info('已取消')
         })
       } else {
         this.doAddNewTab(tabTitle, skipSaveTip)

@@ -223,7 +223,7 @@
             this.$message.warning('选项已存在')
           }
         }).catch(() => {
-          ElMessage.info('已取消')
+            this.$message.info('已取消')
         })
       },
 
@@ -245,7 +245,7 @@
             this.$message.warning('选项已存在')
           }
         }).catch(() => {
-          ElMessage.info('已取消')
+            this.$message.info('已取消')
         })
       },
 
@@ -290,7 +290,7 @@
             this.$message.warning('选项已存在')
           }
         }).catch(() => {
-          ElMessage.info('已取消')
+          this.$message.info('已取消')
         })
       },
 

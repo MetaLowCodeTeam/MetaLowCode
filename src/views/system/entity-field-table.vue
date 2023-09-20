@@ -470,7 +470,7 @@
             this.$message({ message: res.message, type: 'error' })
           })
         }).catch(() => {
-          ElMessage.info('已取消')
+            this.$message.info('已取消')
         })
       },
 
