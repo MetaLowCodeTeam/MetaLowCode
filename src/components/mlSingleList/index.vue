@@ -145,7 +145,7 @@ async function getTableList() {
         }
     }
 
-    if (resizeBy) {
+    if (res) {
         tableList.value = res.data.dataList;
         page.total = res.data.pagination.total;
     }
