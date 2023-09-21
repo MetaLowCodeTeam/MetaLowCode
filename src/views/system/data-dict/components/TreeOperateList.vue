@@ -43,11 +43,7 @@
             <el-main class="mian-box" v-loading="mainLoading">
                 <el-scrollbar>
                     <el-empty v-if="mainList.length == 0" description="没有数据" />
-                    <div
-                        class="op-item"
-                        v-for="(item,inx) of mainList"
-                        :key="inx"
-                    >
+                    <div class="op-item" v-for="(item,inx) of mainList" :key="inx">
                         <div class="op-item-text yichu" :title="item.label">{{ item.label }}</div>
                         <div class="op-icon-box">
                             <span title="插入" @click.stop="operateItem(inx,'ins')">
@@ -70,7 +66,7 @@
                                     <ElIconEdit />
                                 </el-icon>
                             </span>
-                            <span title="删除" @click.stop="delItem(inx)">
+                            <span title="删除" @click.stop="delItem(inx,item)">
                                 <el-icon>
                                     <ElIconDelete />
                                 </el-icon>
@@ -86,6 +82,7 @@
 <script setup>
 import { inject, nextTick, onMounted, reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
+import http from "@/utils/request";
 const props = defineProps({
     title: { type: String, default: "" },
     getTreeFn: { type: Function },
@@ -176,7 +173,7 @@ const getMainList = async () => {
         cutNode.value.name
     );
     if (res.code == 200) {
-        mainList.value = res.data;
+        mainList.value = res.data || [];
     } else {
         $ElMessage.error("获取选项列表数据失败：" + res.error);
     }
@@ -274,14 +271,35 @@ const moveItem = (inx, target) => {
 };
 
 // 删除
-const delItem = (inx) => {
+const delItem = (inx, item) => {
     ElMessageBox.confirm("确定删除该选项?", "提示")
-        .then(() => {
+        .then(async () => {
+            if (!item.saved) {
+                mainList.value.splice(inx, 1);
+                $ElMessage.success("删除成功");
+                return;
+            }
             //TODO：后台需要检查改选项是否已被实体记录所引用！！
-            mainList.value.splice(inx, 1);
-            $ElMessage.success(
-                "模拟删除成功，TODO：后台需要检查改选项是否已被实体记录所引用！！"
-            );
+            if (props.title == "单选项管理") {
+                let res = await http.get("/systemManager/optionCanBeDeleted", {
+                    entity: cutNode.value.parentName,
+                    field: cutNode.value.name,
+                    value: item.value,
+                });
+                if(res.code == 200){
+                    if(res.data){
+                        mainList.value.splice(inx, 1);
+                        $ElMessage.success("删除成功");
+                    }else {
+                        $ElMessage.warning("该选项有数据正在使用，无法删除。");
+                    }
+                }else {
+                    $ElMessage.error(res.error);
+                }
+            } else {
+                mainList.value.splice(inx, 1);
+                $ElMessage.success("删除成功");
+            }
         })
         .catch(() => {});
 };
@@ -307,7 +325,6 @@ const onSave = async () => {
 // const getApprovalList = () => {};
 </script>
 <style lang="scss" scoped>
-
 .main-container {
     background: #fff;
 }
