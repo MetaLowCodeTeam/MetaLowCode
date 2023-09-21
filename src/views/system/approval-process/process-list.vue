@@ -85,10 +85,13 @@ const addClick = () => {
 
 // 跳转详情
 const goDetial = (row) => {
+    console.log(row,'row')
     router.push({
         path: "/process-detail",
         query: {
             approvalConfigId: row.approvalConfigId,
+            entityCode:row.entityCode
+            // entityCode:
         },
     });
 };

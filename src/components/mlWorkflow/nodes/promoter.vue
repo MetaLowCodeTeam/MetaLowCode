@@ -76,7 +76,7 @@
                     footer
                     @cancel="dialogIsShow = false"
                     @confirm="conditionConfirm"
-                    entityName="ApprovalFlow"
+                    :entityName="entityCode"
                 />
             </mlDialog>
         </div>
@@ -88,12 +88,15 @@ import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import addNode from "./addNode.vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+const router = useRouter();
 let message = inject("$ElMessage");
 let cloneDeep = inject("$CloneDeep");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
 });
+
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref({});
 let drawer = ref(false);
@@ -102,6 +105,7 @@ let form = reactive({});
 let dialogIsShow = ref(false);
 let conditionConf = reactive({});
 const nodeTitle = ref();
+let entityCode = ref("");
 watch(
     () => props.modelValue,
     () => {
@@ -112,6 +116,7 @@ watch(
     }
 );
 onMounted(() => {
+    entityCode.value = router.currentRoute.value.query.entityCode;
     nodeConfig.value = props.modelValue;
 });
 

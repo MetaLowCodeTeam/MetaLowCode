@@ -85,7 +85,7 @@
             </template>
             <div class="last-nodes" v-if="lastNodes">该分支将作为最终分支匹配其他条件</div>
             <div class="work-flow-conditions mb-20" :class="{'mt-30':lastNodes}">
-                <mlSetConditions ref="mlSetConditionsRef" v-model="conditionConf" entityName="ApprovalFlow"/>
+                <mlSetConditions ref="mlSetConditionsRef" v-model="conditionConf" :entityName="entityCode"/>
             </div>
             <template #footer>
                 <div style="flex: auto">
@@ -103,6 +103,8 @@ import mlSetConditions from '@/components/mlSetConditions/index.vue';
 import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+const router = useRouter();
 let message = inject("$ElMessage");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
@@ -118,6 +120,7 @@ let conditionConf = reactive({});
 let mlSetConditionsRef = ref();
 // 最终分支
 let lastNodes = ref(false);
+let entityCode = ref("");
 watch(
     () => props.modelValue,
     () => {
@@ -129,6 +132,7 @@ watch(
 );
 onMounted(() => {
     nodeConfig.value = props.modelValue;
+    entityCode.value = router.currentRoute.value.query.entityCode;
 });
 
 const show = (index) => {
