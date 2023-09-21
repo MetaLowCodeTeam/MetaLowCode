@@ -241,17 +241,19 @@ tool.checkIsEdit = (oldVal, newVal) => {
 
 // 获取权限
 tool.getRole = (key) => {
-    return tool.data.get('rightMap')[key]
+    let rightMap = tool.data.get('rightMap') || {};
+    return rightMap[key]
 }
 // 获取权限
 tool.checkRole = (key) => {
-    let auto = tool.data.get('rightMap')[key];
-    if(key.indexOf('-') != -1){
+    let rightMap = tool.data.get('rightMap') || {};
+    let auto = rightMap[key];
+    if (key.indexOf('-') != -1) {
         return auto != null && auto != 0
-    }else {
+    } else {
         return !!auto
     }
-    
+
 }
 
 export default tool

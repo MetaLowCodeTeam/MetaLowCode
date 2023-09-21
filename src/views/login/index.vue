@@ -2,20 +2,9 @@
 	<div class="login_bg">
 		<div class="login_adv" style="background-image: url(img/auth_banner.jpg);">
 			<div class="login_adv__title">
-				<h2>{{ $TOOL.data.get('APP_NAME')}}</h2>
-				<h4>{{ $t('login.slogan') }}</h4>
-				<p>{{ $t('login.describe') }}</p>
-				<div>
-					<span>
-						<el-icon><sc-icon-vue /></el-icon>
-					</span>
-					<span>
-						<el-icon class="add"><el-icon-plus /></el-icon>
-					</span>
-					<span>
-						<el-icon><el-icon-eleme-filled /></el-icon>
-					</span>
-				</div>
+				<h2>{{ $TOOL.data.get('APP_TITLE')}}</h2>
+				<h4>{{ $TOOL.data.get('APP_SUB_TITLE') }}</h4>
+				<p>{{ $TOOL.data.get('APP_INTRO') }}</p>
 			</div>
 			<div class="login_adv__mask"></div>
 			<div class="login_adv__bottom">
@@ -34,16 +23,7 @@
 					<el-tab-pane :label="$t('login.accountLogin')" lazy>
 						<password-form></password-form>
 					</el-tab-pane>
-					<el-tab-pane :label="$t('login.mobileLogin')" lazy>
-						<phone-form></phone-form>
-					</el-tab-pane>
 				</el-tabs>
-				<template v-if="$CONFIG.MY_SHOW_LOGIN_OAUTH">
-					<el-divider>{{ $t('login.signInOther') }}</el-divider>
-					<div class="login-oauth">
-						<el-button type="success" icon="sc-icon-wechat" circle @click="wechatLogin"></el-button>
-					</div>
-				</template>
 			</div>
 		</div>
 	</div>

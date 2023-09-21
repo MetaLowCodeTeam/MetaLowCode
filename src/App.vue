@@ -89,7 +89,9 @@ const queryPublicSetting = async () => {
         $TOOL.data.set("APP_VER", res.data.dbVersion);
         $TOOL.data.set("APP_LOGO", res.data.logo);
         $TOOL.data.set("APP_PAGE_FOOTER", res.data.pageFooter);
-        
+        $TOOL.data.set("APP_TITLE", res.data.appTitle);
+        $TOOL.data.set("APP_SUB_TITLE", res.data.appSubtitle);
+        $TOOL.data.set("APP_INTRO", res.data.appIntro);
         colorPrimary(res.data.themeColor);
     }
 };
@@ -117,11 +119,8 @@ const colorPrimary = (val) => {
 // 获取新消息
 const getNewMsgNum = async () => {
     let checkStatusRes = await http.get("/crud/checkStatus");
-    if (!checkStatusRes) {
-        return;
-    }
     if (checkStatusRes) {
-        setNewMsgNum(checkStatusRes.data.noteCount);
+        setNewMsgNum(checkStatusRes.data?.noteCount);
     }
 };
 // 轮循获取新消息

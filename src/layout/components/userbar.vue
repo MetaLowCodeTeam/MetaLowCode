@@ -140,6 +140,7 @@ const handleUser = (command) => {
                     background: "rgba(0, 0, 0, 0.7)",
                 });
                 $TOOL.data.clear();
+                $TOOL.cookie.remove("userInfo");
                 router.replace({ path: "/login" });
                 setTimeout(() => {
                     loading.close();
@@ -156,8 +157,11 @@ const handleUser = (command) => {
             confirmButtonText: "退出",
             confirmButtonClass: "el-button--danger",
         })
-            .then(() => {
-                router.replace({ path: "/login" });
+            .then(async () => {
+                let res = await http.post("/user/logout");
+                if(res){
+                    router.replace({ path: "/login" });
+                }
             })
             .catch(() => {
                 //取消退出
