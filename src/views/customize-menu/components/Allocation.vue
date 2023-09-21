@@ -183,10 +183,8 @@ const showAssociatedRecords = async () => {
         labelData.type == "share" || labelData.type == "del" ? true : false,
         true
     );
-    if (res.code == 200) {
+    if (res) {
         entityList.value = res.data || [];
-    } else {
-        $ElMessage.error("获取相关记录失败：" + res.error);
     }
     loading.value = false;
 };
@@ -246,7 +244,7 @@ const confirm = async () => {
         };
         res = await deleteRecords(param.body);
     }
-    if (res.code == 200) {
+    if (res) {
         if (res.data > 0) {
             $ElMessage.success(`成功${labelData.label} ${res.data} 条记录`);
         } else {
@@ -254,8 +252,6 @@ const confirm = async () => {
         }
         emits("allocationSuccess");
         dialogShow.value = false;
-    } else {
-        $ElMessage.error(`${labelData.label}失败：${res.error}`);
     }
     loading.value = false;
 };

@@ -716,7 +716,7 @@
       },
 
       handlePictureUpload(res, file, fileList) {
-        if (res.code === 200) {
+        if (res) {
           let fileName = res.data
           file.name = fileName
           file.url = SYS.getPictureUrlPrefix() + '/' + fileName
@@ -785,7 +785,7 @@
       },
 
       handleFileUpload(res, file, fileList) {
-        if (res.code === 200) {
+        if (res) {
           let fileName = res.data
           file.name = fileName
           file.url = SYS.getFileUrlPrefix() + '/' + fileName

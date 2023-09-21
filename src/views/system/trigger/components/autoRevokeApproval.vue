@@ -52,10 +52,8 @@ const getApprovalList = async () => {
     let res = await $API.trigger.detial.getDataDeleteEntityList(
         trigger.value.entityCode
     );
-    if (res.code === 200) {
+    if (res) {
         approvalList.value = res.data;
-    } else {
-        $ElMessage.error("获取撤销记录数据失败：" + res.error);
     }
     contentLoading.value = false;
 };

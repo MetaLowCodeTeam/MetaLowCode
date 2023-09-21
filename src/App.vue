@@ -84,15 +84,13 @@ onBeforeMount(() => {
 // 获取公开系统配置
 const queryPublicSetting = async () => {
     let res = await http.get("/setting/queryPublicSetting");
-    if (res.code === 200) {
+    if (res) {
         $TOOL.data.set("APP_NAME", res.data.appName);
         $TOOL.data.set("APP_VER", res.data.dbVersion);
         $TOOL.data.set("APP_LOGO", res.data.logo);
         $TOOL.data.set("APP_PAGE_FOOTER", res.data.pageFooter);
         
         colorPrimary(res.data.themeColor);
-    } else {
-        $ElMessage.error("获取系统信息失败：" + res.error);
     }
 };
 
@@ -122,10 +120,8 @@ const getNewMsgNum = async () => {
     if (!checkStatusRes) {
         return;
     }
-    if (checkStatusRes.code === 200) {
+    if (checkStatusRes) {
         setNewMsgNum(checkStatusRes.data.noteCount);
-    } else if (checkStatusRes.code === 403) {
-        router.replace({ path: "/login" });
     }
 };
 // 轮循获取新消息

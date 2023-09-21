@@ -114,7 +114,7 @@ const getTreeList = async () => {
     treeLoading.value = true;
     mainLoading.value = true;
     let res = await props.getTreeFn();
-    if (res.code == 200) {
+    if (res) {
         treeList.value = formatTree(res.data || []);
         if (treeList.value.length > 0) {
             cutNode.value = treeList.value[0].children[0];
@@ -126,7 +126,6 @@ const getTreeList = async () => {
             mainLoading.value = false;
         }
     } else {
-        $ElMessage.error("获取字段列表数据失败：" + res.error);
         mainLoading.value = false;
     }
     treeLoading.value = false;
@@ -172,11 +171,9 @@ const getMainList = async () => {
         cutNode.value.parentName,
         cutNode.value.name
     );
-    if (res.code == 200) {
+    if (res) {
         mainList.value = res.data || [];
-    } else {
-        $ElMessage.error("获取选项列表数据失败：" + res.error);
-    }
+    } 
     mainLoading.value = false;
 };
 
@@ -286,15 +283,13 @@ const delItem = (inx, item) => {
                     field: cutNode.value.name,
                     value: item.value,
                 });
-                if(res.code == 200){
+                if(res){
                     if(res.data){
                         mainList.value.splice(inx, 1);
                         $ElMessage.success("删除成功");
                     }else {
                         $ElMessage.warning("该选项有数据正在使用，无法删除。");
                     }
-                }else {
-                    $ElMessage.error(res.error);
                 }
             } else {
                 mainList.value.splice(inx, 1);
@@ -312,11 +307,9 @@ const onSave = async () => {
         cutNode.value.name,
         mainList.value
     );
-    if (res.code == 200) {
+    if (res) {
         $ElMessage.success("保存成功");
         getMainList();
-    } else {
-        $ElMessage.error("保存失败：" + res.error);
     }
 
     mainLoading.value = false;

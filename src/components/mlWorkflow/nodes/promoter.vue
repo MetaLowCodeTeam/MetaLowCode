@@ -116,8 +116,9 @@ watch(
     }
 );
 onMounted(() => {
-    entityCode.value = router.currentRoute.value.query.entityCode;
+    
     nodeConfig.value = props.modelValue;
+    entityCode.value = router.currentRoute.value.query?.entityCode;
 });
 
 const show = () => {

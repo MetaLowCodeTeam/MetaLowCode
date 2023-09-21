@@ -86,24 +86,21 @@ const getAssignEntityList = async () => {
     let res = await $API.trigger.detial.getAssignEntityList(
         trigger.value.entityCode
     );
-    if (res.code === 200) {
+    if (res) {
         assignEntityList.value = res.data;
         if (trigger.value.actionContent.assignTo?.length > 0) {
             let idToIdNameRes = await $API.trigger.detial.idToIdName(
                 trigger.value.actionContent.assignTo
             );
-            if (idToIdNameRes.code == 200) {
+            if (idToIdNameRes) {
                 trigger.value.actionContent.allocationWhos = idToIdNameRes.data;
             }
         } else {
             trigger.value.actionContent.allocationWhos = [];
         }
 
-        contentLoading.value = false;
-    } else {
-        $ElMessage.error("获取同时分配关联记录实体列表数据失败：" + res.error);
-        contentLoading.value = false;
-    }
+    } 
+    contentLoading.value = false;
 };
 </script>
 

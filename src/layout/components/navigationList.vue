@@ -70,10 +70,8 @@ onMounted(() => {
 // 导航点击
 const navClick =async (item) => {
     let res = await $API.layoutConfig.saveUserLayoutCache("NAV", item.layoutConfigId);
-    if(res.code == 200){
+    if(res){
         router.go(0);
-    }else {
-        $ElMessage.error("切换导航失败：" + res.error);
     }
     
 };
@@ -98,7 +96,7 @@ const delMenu = (item, inx) => {
     })
         .then(async () => {
             let res = await $API.layoutConfig.deleteConfig(item.layoutConfigId);
-            if (res && res.code == 200) {
+            if (res) {
                 // 如果删除的是选中导航
                 if (chosenNavigationId.value == item.layoutConfigId) {
                     router.go(0);
@@ -106,8 +104,6 @@ const delMenu = (item, inx) => {
                 let copyList = [...navigationList.value];
                 copyList.splice(inx, 1);
                 setNavigationList(copyList);
-            } else {
-                $ElMessage.error("删除失败：" + res.error);
             }
         })
         .catch(() => {});

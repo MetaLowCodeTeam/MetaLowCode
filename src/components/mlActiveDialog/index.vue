@@ -126,7 +126,7 @@ const saveProcess = async () => {
     });
     loading.value = true;
     let res = await saveRecord(saveEntity, form[saveIdCode] || "", params);
-    if (res.code == 200) {
+    if (res) {
         if (type === "add") {
             let emitValue = {};
             emitValue[saveIdCode] = res.data.formData[saveIdCode];
@@ -136,8 +136,6 @@ const saveProcess = async () => {
             message.success("修改成功");
         }
         isShow.value = false;
-    } else {
-        message.error("保存失败：" + res.error);
     }
 
     loading.value = false;

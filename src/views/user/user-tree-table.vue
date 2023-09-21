@@ -45,7 +45,7 @@
           <!--
           <el-button type="danger" icon="el-icon-delete">删除</el-button>
           -->
-          <el-button :disabled="multipleSelection.length != 1">重置登录密码</el-button>
+          <el-button :disabled="multipleSelection.length != 1" @click="resetPasswordDialogIsShow = true">重置登录密码</el-button>
         </div>
         <div class="search-panel-right">
           <el-input link type="primary" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
@@ -87,6 +87,19 @@
         </el-dialog>
       </el-main>
     </el-container>
+    <!-- 重置密码 -->
+    <ml-dialog title="重置密码" v-model="resetPasswordDialogIsShow" appendToBody width="450px">
+        <el-input v-model="newPassword" placeholder="输入密码" clearable>
+            <template #append>
+                <span class="generate-pwd" @click="generatePwd">生成随机密码</span>
+            </template>
+        </el-input>
+        <template #footer >
+            <el-button @click="resetPasswordDialogIsShow = false">取消</el-button>
+            <el-button type="primary" @click="confirm">确定</el-button>
+        </template>
+
+    </ml-dialog>
   </el-container>
 </template>
 
@@ -98,6 +111,7 @@ import {createLayoutObj} from '@/views/system/layout/form-layout-object.js'
 import FormState from '@/views/system/form-state-variables'
 import FormWidget from '@/views/system/field-widget/form-widget.vue'
 import eventBus from "@/utils/event-bus"
+import http from '@/utils/request'
 
 export default {
     name: "UserTreeTable",
@@ -160,6 +174,9 @@ export default {
 
         },
         multipleSelection:[],
+        // 重置密码
+        resetPasswordDialogIsShow:false,
+        newPassword:"",
       }
     },
     computed: {
@@ -195,6 +212,35 @@ export default {
       this.initTableData()
     },
     methods: {
+        // 生成密码
+        generatePwd(){
+            this.newPassword = 'xxxcxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0,
+                    v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+            })
+        },
+        // 确认修改密码
+        async confirm(){
+            if(!this.newPassword){
+                this.$message.error("请输入密码")
+                return
+            }
+            let regEx = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/;
+            if(!regEx.test(this.newPassword)){
+                this.$message.error("必须包含数字、英文。可有字符。密码长度为：6-20位")
+                return
+            }
+            let res = await http.get('/user/resetPassword',{
+                // userId:this.$TOOL.data.get("USER_INFO").userId,
+                password:this.newPassword
+            })
+            if(res){
+                this.$message.success("重置成功");
+                this.newPassword = "";
+                this.resetPasswordDialogIsShow = false;
+            }
+        },
         handleSelectionChange(v){
             this.multipleSelection = v;
         },
@@ -527,6 +573,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.generate-pwd {
+    cursor: pointer;
+}
   .el-container.hidden-x-scrollbar {
     overflow-x: hidden;  /* 注意：IE浏览器中会出现水平滚动条，暂未找到原因！！ */
   }

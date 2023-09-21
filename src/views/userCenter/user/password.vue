@@ -83,12 +83,17 @@ export default {
         save() {
             this.$refs.form.validate(async (valid) => {
                 if (valid) {
+                    let regEx = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/;
+                    if(!regEx.test(this.form.userPassword)){
+                        this.$message.error("必须包含数字、英文。可有字符。密码长度为：6-20位")
+                        return
+                    }
                     let res = await http.get("/user/updatePassword", {
                         userName: tool.data.get("USER_INFO").userName,
                         password: this.form.userPassword,
                         newPassword: this.form.newPassword,
                     });
-                    if (res.code == 200) {
+                    if (res) {
                         this.$alert(
                             "密码修改成功，是否跳转至登录页使用新密码登录",
                             "修改成功",
@@ -103,8 +108,6 @@ export default {
                                 });
                             })
                             .catch(() => {});
-                    } else {
-                        this.$message.error("修改失败：" + res.error);
                     }
                 } else {
                     return false;

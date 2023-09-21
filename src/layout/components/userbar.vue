@@ -177,11 +177,9 @@ const showMsg = () => {
 const getMsgList = async () => {
     msgLoading.value = true;
     let msgRes = await http.get("/note/query?unread=true");
-    if (msgRes.code == 200) {
+    if (msgRes) {
         msgList.value = msgRes.data || [];
         setNewMsgNum(msgList.value.length);
-    } else {
-        $ElMessage.error("获取消息失败", msgRes.error);
     }
     msgLoading.value = false;
 };

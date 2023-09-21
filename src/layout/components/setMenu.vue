@@ -435,7 +435,7 @@ const textSave = async () => {
     }
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
-    if (res && res.code == 200) {
+    if (res) {
         // 如果默认选中导航就是当前修改导航 并且 如果数据有变化
         if (
             chosenNavigationId.value &&
@@ -445,7 +445,7 @@ const textSave = async () => {
             router.go(0);
         } else {
             let navRes = await $API.layoutConfig.getNavigationList();
-            if (navRes && navRes.code == 200) {
+            if (navRes) {
                 setNavigationList(navRes.data.navigationList);
                 setChosenNavigationId(navRes.data.chosenNavigationId);
                 setDefaultMenuList();
@@ -454,7 +454,6 @@ const textSave = async () => {
             }
         }
     } else {
-        $ElMessage.error("导航保存：" + res.error);
         loading.value = false;
     }
 

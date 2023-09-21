@@ -62,7 +62,7 @@ const getAllFields = async () => {
     let param = { entity: "DemoContact" };
     let hasFields = selectedFields.value.map((el) => el.name);
     let res = await api.common.getFieldListOfEntity(param);
-    if (res.code == 200) {
+    if (res) {
         let resList = [];
         res.data.forEach(el=>{
             if(el.type !== 'PrimaryKey'){
@@ -76,8 +76,6 @@ const getAllFields = async () => {
             }
         })
         fieldList.value = resList;
-    } else {
-        message.error("获取数据失败，请尝试刷新页面后重试");
     }
     loading.value = false;
 };

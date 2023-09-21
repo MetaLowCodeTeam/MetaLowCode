@@ -191,7 +191,7 @@ let getData = async () => {
     tabData.value = [];
     // 获取当前tab接口
     let res = await api.common["get" + cutTabCode.value](param);
-    if (res.code == 200) {
+    if (res) {
         tabData.value = res.data.map((el) => {
             el.isActive = false;
             // 如果该ID已在选中集里，默认选中
@@ -200,8 +200,6 @@ let getData = async () => {
             }
             return el;
         });
-    } else {
-        message.error("获取数据失败，请尝试刷新页面后重试");
     }
     loading.value = false;
 };

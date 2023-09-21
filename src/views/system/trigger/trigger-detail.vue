@@ -104,7 +104,7 @@ const initDetailData = async () => {
     let fieldNames =
         "priority,entityCode,name,actionType,actionContent,whenNum,actionFilter,whenCron";
     let detailRes = await queryById(trigger.triggerConfigId, fieldNames);
-    if (detailRes.code == 200) {
+    if (detailRes) {
         trigger = Object.assign(trigger, detailRes.data);
         trigger.priority = trigger.priority || 1;
         trigger.actionContent = trigger.actionContent
@@ -135,9 +135,7 @@ const initDetailData = async () => {
             // 禁用删除时、分配时
             trigger.disabledActive = [4];
         }
-    } else {
-        $ElMessage.error(detailRes.error);
-    }
+    } 
     initLoading.value = false;
 };
 
@@ -294,13 +292,11 @@ const onSave = async (target) => {
         params.id,
         params.formModel
     );
-    if (res.code == 200) {
+    if (res) {
         notTitleDialog.isShow = true;
         notTitleDialog.type = 1;
         // 禁用目标实体
         trigger.isOnSave = true;
-    } else {
-        $ElMessage.error("保存失败：" + res.error);
     }
     initLoading.value = false;
 };
@@ -324,10 +320,6 @@ const actionExecute = (params) => {
                 actionContent: params.formModel.actionContent || null,
                 actionType: trigger.actionType.value,
             });
-            if (res.code == 200) {
-            } else {
-                $ElMessage.error("保存失败：" + res.error);
-            }
             initLoading.value = false;
         })
         .catch(() => {});

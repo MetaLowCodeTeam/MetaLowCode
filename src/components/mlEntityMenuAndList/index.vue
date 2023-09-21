@@ -230,13 +230,11 @@ onMounted(() => {
 const getEntityList = async () => {
     loading.value = true;
     let res = await getEntityCodeList(props.entityName);
-    if (res.code === 200) {
+    if (res) {
         entityList.value = res.data;
         getApprovalList();
-    } else {
-        loading.value = false;
-        message.error("获取实体列表数据失败：" + res.error);
     }
+    loading.value = false;
 };
 
 // 获取右侧流程列表
@@ -274,14 +272,11 @@ const getApprovalList = async () => {
         param.pageNo,
         param.sortFields
     );
-    if (res.code === 200) {
+    if (res) {
         approvalList.value = res.data.dataList;
         page.total = res.data.pagination.total;
-        loading.value = false;
-    } else {
-        loading.value = false;
-        message.error("获取实体列表数据失败：" + res.error);
-    }
+    } 
+    loading.value = false;
 };
 
 // 添加流程
@@ -429,13 +424,11 @@ const deleteProcess = (row) => {
         .then(async () => {
             let res = await deleteRecord(row[props.aciveId]);
             loading.value = true;
-            if (res.code === 200) {
+            if (res) {
                 message.success("删除成功");
                 getApprovalList();
-            } else {
-                loading.value = false;
-                message.error("删除失败：" + res.error);
-            }
+            } 
+            loading.value = false;
         })
         .catch(() => {});
 };

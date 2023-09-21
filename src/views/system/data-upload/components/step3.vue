@@ -108,7 +108,7 @@ const getTaskState = async () => {
         return;
     }
     let res = await $API.upload.taskState(fromData.value.taskId);
-    if (res.code == 200) {
+    if (res) {
         taskData = Object.assign(taskData, res.data);
         if (taskData.interrupted) {
             taskData.progress = 100;
@@ -120,8 +120,6 @@ const getTaskState = async () => {
         setTimeout(() => {
             getTaskState();
         }, 1000);
-    } else {
-        $ElMessage.error("导入失败：" + res.error);
     }
 };
 
@@ -183,12 +181,10 @@ const taskCancel = async () => {
             }
 
             let res = await $API.upload.taskCancel(fromData.value.taskId);
-            if (res.code == 200) {
+            if (res) {
                 taskData.interrupted = true;
                 taskData.progress = 100;
-            } else {
-                $ElMessage.error("中止失败：" + res.error);
-            }
+            } 
         })
         .catch(() => {});
 };
@@ -206,10 +202,8 @@ const showDetail = () => {
 const getImportDetail = async () => {
     detailLoading.value = true;
     let res = await $API.upload.importTrace(fromData.value.taskId);
-    if (res.code == 200) {
+    if (res) {
         detailList.value = res.data;
-    } else {
-        $ElMessage.error("获取导入详情数据失败：" + res.error);
     }
     detailLoading.value = false;
 };

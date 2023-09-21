@@ -131,11 +131,9 @@ let cutEntityFields = ref([]);
 
 const getCutEntityFields = async () => {
     let res = await queryEntityFields(trigger.value.entityCode, true, true);
-    if (res.code === 200) {
+    if (res) {
         cutEntityFields.value = res.data;
-    } else {
-        $ElMessage.error("获取当前实体字段数据失败：" + res.error);
-    }
+    } 
 };
 
 /**

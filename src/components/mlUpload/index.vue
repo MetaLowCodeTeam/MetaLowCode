@@ -58,10 +58,8 @@ const uploadFile = async (data) => {
     let res = await $API.upload.upload(formData, {
         headers: { "Content-Type": "multipart/form-data" },
     });
-    if (res && res.code == 200) {
+    if (res) {
         emits("on-success", res.data);
-    } else {
-        $ElMessage.error("上传失败：" + res.error);
     }
     loading.value = false;
 };

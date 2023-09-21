@@ -35,7 +35,7 @@ export default {
             let { approvalConfigId } = this;
             this.loading = true;
             let res = await this.$API.approval.detial.get({ approvalConfigId });
-            if (res.code === 200) {
+            if (res) {
                 this.data = Object.assign(this.data, res.data);
                 // 新建的
                 if (!this.data.nodeConfig) {
@@ -53,8 +53,6 @@ export default {
                         },
                     };
                 }
-            } else {
-                this.$message.error("获取审核流程失败：" + res.error);
             }
             this.loading = false;
         },
@@ -62,10 +60,8 @@ export default {
             let { data } = this;
             this.loading = true;
             let res = await this.$API.approval.detial.save(data);
-            if (res.code === 200) {
+            if (res) {
                 this.$message.success("保存成功");
-            } else {
-                this.$message.error(res.error);
             }
             this.loading = false;
         },

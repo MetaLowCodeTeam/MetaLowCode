@@ -293,7 +293,7 @@ const confirm = async () => {
     numFormulaVal.value = checkVal;
     if (checkVal) {
         let res = await $API.trigger.detial.aviatorValidate(checkVal);
-        if (res.code == 200) {
+        if (res) {
             // 错误的
             if (res.data) {
                 isError.value = true;
@@ -303,8 +303,6 @@ const confirm = async () => {
             else {
                 isConfirm();
             }
-        } else {
-            $ElMessage.error(res.error);
         }
     }
 };

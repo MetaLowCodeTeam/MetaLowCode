@@ -122,10 +122,8 @@ async function getTaskDetailsById() {
     let res = await http.get("/approval/getTaskDetailsById", {
         entityId: props.entityId,
     });
-    if (res.code === 200) {
+    if (res) {
         approveHistory.value = formatResData(res.data);
-    } else {
-        $ElMessage.error("操作失败：" + res.error);
     }
     loading.value = false;
 }

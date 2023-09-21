@@ -108,12 +108,10 @@
 			async table_del(row, index){
 				var reqData = {id: row.id}
 				var res = await this.$API.<%= api.del %>.post(reqData);
-				if(res.code == 200){
+				if(res){
 					//这里选择刷新整个表格 OR 插入/编辑现有表格数据
 					this.$refs.table.tableData.splice(index, 1);
 					this.$message.success("删除成功")
-				}else{
-					this.$alert(res.message, "提示", {type: 'error'})
 				}
 			},
 			//批量删除
@@ -141,12 +139,10 @@
 					this.isSaveing = true;
 					var res = await this.$API.<%= api.save %>.post(formData);
 					this.isSaveing = false;
-					if(res.code == 200){
+					if(res){
 						//这里选择刷新整个表格 OR 插入/编辑现有表格数据
 						this.saveDialogVisible = false;
 						this.$message.success("操作成功")
-					}else{
-						this.$alert(res.message, "提示", {type: 'error'})
 					}
 				})
 			},

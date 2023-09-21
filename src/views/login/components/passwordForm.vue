@@ -122,7 +122,7 @@ export default {
 
             //获取token
             var user = await this.$API.auth.token.post(data);
-            if (user.code == 200) {
+            if (user) {
                 this.$TOOL.cookie.set("TOKEN", user.data.token, {
                     expires: this.form.autologin ? 24 * 60 * 60 : 0,
                 });
@@ -145,16 +145,11 @@ export default {
                 this.getRightMap();
                 // 获取所有实体并格式化Label
                 this.getEntityLable()
-            } else {
-                this.islogin = false;
-                this.$message.warning(user.error);
-                return false;
-            }
-
-            this.$router.replace({
-                path: "/",
-            });
-            this.$message.success("Login Success 登录成功");
+                this.$router.replace({
+                    path: "/",
+                });
+                this.$message.success("Login Success 登录成功");
+            } 
             this.islogin = false;
             
         },
@@ -163,10 +158,8 @@ export default {
         },
         async getRightMap() {
             let getRightMapRes = await http.get("/user/getRightMap");
-            if (getRightMapRes.code == 200) {
+            if (getRightMapRes) {
                 this.$TOOL.data.set("rightMap", getRightMapRes.data || {});
-            } else {
-                router.replace({ path: "/login" });
             }
         },
     },

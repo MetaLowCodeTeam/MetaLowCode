@@ -94,13 +94,11 @@ async function activeRow(row) {
         "/revisionHistory/detailsById?revisionHistoryId=" +
             row.revisionHistoryId
     );
-    if (res.code === 200) {
+    if (res) {
         if (res.data && res.data.length > 0) {
             historyData.value = res.data;
             historyDialog.value = true;
-        } else {
-            $ElMessage.info("暂无变更详情");
-        }
+        } 
     } else {
         $ElMessage.error(res.error);
     }

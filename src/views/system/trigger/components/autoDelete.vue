@@ -49,11 +49,9 @@ const getDataDeleteEntityList = async () => {
     let res = await $API.trigger.detial.getDataDeleteEntityList(
         trigger.value.entityCode
     );
-    if (res.code === 200) {
+    if (res) {
         dataDeleteEntityList.value = res.data;
-    } else {
-        $ElMessage.error("获取删除记录实体列表数据失败：" + res.error);
-    }
+    } 
     contentLoading.value = false;
 };
 </script>

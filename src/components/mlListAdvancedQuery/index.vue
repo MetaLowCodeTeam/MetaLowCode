@@ -308,14 +308,12 @@ let saveConfirm = async () => {
         "FILTER",
         param
     );
-    if (res && res.code == 200) {
+    if (res) {
         $ElMessage.success("保存成功");
         saveDialog.isShow = false;
         editAdvDailog.isShow = false;
         showAdvfilter.value = false;
         emits("onAddAdv");
-    } else {
-        $ElMessage.error("保存失败：" + res.error);
     }
     saveLoading.value = false;
 };
@@ -357,7 +355,7 @@ const deleteConfig = (op, inx) => {
     })
         .then(async () => {
             let res = await $API.layoutConfig.deleteConfig(op.layoutConfigId);
-            if (res && res.code == 200) {
+            if (res) {
                 // 如果删除的是当前选中
                 if (defaultId.value == op.layoutConfigId) {
                     changeOp({
@@ -367,8 +365,6 @@ const deleteConfig = (op, inx) => {
                     selectRefs.value.visible = false;
                 }
                 opList.value.splice(inx, 1);
-            } else {
-                $ElMessage.error("删除失败：" + res.error);
             }
         })
         .catch(() => {});

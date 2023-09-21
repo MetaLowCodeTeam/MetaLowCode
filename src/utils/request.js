@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox ,ElMessage} from 'element-plus';
 import sysConfig from "@/config";
 import tool from '@/utils/tool';
 import router from '@/router';
@@ -46,11 +46,16 @@ let MessageBox_401_show = false
 // HTTP response 拦截器
 axios.interceptors.response.use(
 	(response) => {
+        if(response.data.code == 200){
+            return response
+        }
         if(response.data.code === 403){
             router.replace({path: '/login'});
             return response
+        }else {
+            ElMessage.error(response.data.error)
         }
-		return response;
+		return {};
 	},
 	(error) => {
 		if (error.response) {

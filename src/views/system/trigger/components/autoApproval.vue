@@ -82,7 +82,7 @@ const getApprovalList = async () => {
         null,
         param.sortFields
     );
-    if (res.code === 200) {
+    if (res) {
         approvalList.value = res.data.dataList || [];
         approvalList.value.unshift({
             flowName: "不使用",
@@ -91,11 +91,8 @@ const getApprovalList = async () => {
         if (!trigger.value.actionContent.approvalConfigId) {
             trigger.value.actionContent.approvalConfigId = "";
         }
-        contentLoading.value = false;
-    } else {
-        contentLoading.value = false;
-        $ElMessage.error("获取实体审批流程数据失败：" + res.error);
-    }
+    } 
+    contentLoading.value = false;
 };
 
 // 跳转到审批流程列表

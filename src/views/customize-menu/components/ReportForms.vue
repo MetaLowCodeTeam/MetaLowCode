@@ -52,10 +52,8 @@ const getReportConfigList = async () => {
     let res = await http.get("/report/getReportConfigList", {
         entityCode: entityCode.value,
     });
-    if (res.code == 200) {
+    if (res) {
         reportList.value = res.data || [];
-    } else {
-        $ElMessage.error("获取报表数据失败：" + res.error);
     }
     loading.value = false;
 };

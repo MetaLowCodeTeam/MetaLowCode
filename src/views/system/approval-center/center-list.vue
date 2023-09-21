@@ -187,14 +187,11 @@ const revokeRow = (row) => {
         .then(async () => {
             mlSingleListRef.value.loading = true;
             let res = await http.post("/approval/approvalRevocation?entityId=" + row.entityId.id);
-            if (res.code === 200) {
+            if (res) {
                 $ElMessage.success("撤销成功");
                 mlSingleListRef.value.getTableList();
-                mlSingleListRef.value.loading = false;
-            } else {
-                mlSingleListRef.value.loading = false;
-                $ElMessage.error(res.error);
-            }
+            } 
+            mlSingleListRef.value.loading = false;
         })
         .catch(() => {});
 };

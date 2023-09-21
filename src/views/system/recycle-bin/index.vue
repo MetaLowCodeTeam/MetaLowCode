@@ -116,14 +116,11 @@ function activeRow(row) {
         .then(async () => {
             mlSingleListRef.value.loading = true;
             let res = await http.post("/rb/restore?id=" + row.entityId);
-            if (res.code === 200) {
+            if (res) {
                 $ElMessage.success("恢复成功");
                 mlSingleListRef.value.getTableList();
-                mlSingleListRef.value.loading = false;
-            } else {
-                mlSingleListRef.value.loading = false;
-                $ElMessage.error("恢复失败：" + res.error);
-            }
+            } 
+            mlSingleListRef.value.loading = false;
         })
         .catch(() => {});
 }

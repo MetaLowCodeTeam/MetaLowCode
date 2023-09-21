@@ -71,11 +71,9 @@ const getAssociatedRecords = async () => {
         true,
         true
     );
-    if (res.code === 200) {
+    if (res) {
         associatedRecords.value = res.data;
-    } else {
-        $ElMessage.error("获取相关记录失败：" + res.error);
-    }
+    } 
     contentLoading.value = false;
 };
 </script>

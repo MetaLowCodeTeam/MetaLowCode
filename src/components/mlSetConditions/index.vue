@@ -311,10 +311,10 @@ export default {
             let res = await this.$API.common.getFieldListOfFilter(param);
             let resUser = await this.$API.common.getUser(param);
             let resDepartment = await this.$API.common.getDepartment(param);
-            this.userList = resUser.code === 200 ? resUser.data || [] : [];
+            this.userList = resUser ? resUser.data || [] : [];
             this.departmentList =
-                resDepartment.code === 200 ? resDepartment.data || [] : [];
-            if (res.code == 200) {
+                resDepartment ? resDepartment.data || [] : [];
+            if (res) {
                 let list = res.data || [];
                 this.fieldList = list.map((el) => {
                     return {
@@ -337,8 +337,6 @@ export default {
                 ) {
                     this.initConditionList();
                 }
-            } else {
-                this.$message.error("获取实体数据失败，请尝试刷新页面后重试");
             }
             this.loading = false;
         },
@@ -498,7 +496,7 @@ export default {
                 equation: this.conditionConf.equation,
             };
             let res = await this.$API.common.isEquation(param);
-            this.errorEquation = !(res.code === 200);
+            this.errorEquation = !(res);
         },
         // 确认
         async confirm() {

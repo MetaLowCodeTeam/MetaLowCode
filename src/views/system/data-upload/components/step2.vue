@@ -97,11 +97,9 @@ const begImport = async () => {
         .then(async () => {
             let res = await await $API.upload.begImport(param);
             loading.value = true;
-            if (res.code === 200) {
+            if (res) {
                 emits("importSuccess", res.data);
-            } else {
-                $ElMessage.error("导入失败：" + res.error);
-            }
+            } 
             loading.value = false;
         })
         .catch(() => {});

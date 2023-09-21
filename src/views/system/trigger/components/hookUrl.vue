@@ -41,7 +41,7 @@
                     @click="hookUrlTest"
                 >推送测试</el-button>
             </el-row>
-            <div class="text-div mt-5" v-if="testRes.code == 200">
+            <div class="text-div mt-5" v-if="testRes">
                 <div>STATUS : {{ testRes.code }}</div>
                 <div>MESSAGE : {{ testRes.message }}</div>
                 <div class="pre-div">{{ testRes.data }}</div>
@@ -88,11 +88,6 @@ const hookUrlTest = async () => {
         trigger.value.actionContent
     );
     testRes.value = res;
-    // if(res.code == 200){
-    //     testRes.value = res.data;
-    // }else {
-    //     testRes.value = res.error;
-    // }
 };
 </script>
 <style lang='scss' scoped>

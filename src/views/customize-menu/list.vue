@@ -130,6 +130,7 @@ import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More.vue";
 import Detail from "./detail.vue";
 import FormatRow from "./components/FormatRow.vue";
+import { resolveBaseUrl } from "vite";
 
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -201,7 +202,7 @@ onBeforeMount(() => {
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
-    if (res && res.code == 200) {
+    if (res) {
         idFiledName.value = res.data.idFiledName;
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
@@ -239,8 +240,6 @@ const getLayoutList = async () => {
         if (tableColumn.value.length > 0) {
             refreshData();
         }
-    } else {
-        $ElMessage.error("获取配置失败：" + res.error);
     }
 };
 
@@ -394,16 +393,13 @@ const getTableList = async () => {
         param.advFilter,
         param.quickFilter
     );
-    if (res.code === 200) {
+    if (resolveBaseUrl) {
         tableData.value = res.data.dataList;
         page.total = res.data.pagination.total;
         dataExportData.size = res.data.dataList.length;
         dataExportData.total = res.data.pagination.total;
-        pageLoading.value = false;
-    } else {
-        pageLoading.value = false;
-        $ElMessage.error("获取表格数据失败：" + res.error);
     }
+    pageLoading.value = false;
 };
 
 // 设置表格高度

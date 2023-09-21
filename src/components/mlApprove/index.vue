@@ -149,7 +149,7 @@ function handleCommand(type) {
 async function confirmApostille() {
     otherLoading.value = true;
     let res = await http.post("/approval/taskOperation", taskOperation.value);
-    if (res.code === 200) {
+    if (res) {
         let { type, title } = taskOperation.value;
         $ElMessage.success(title + "成功");
         otherDialog.value = false;
@@ -158,11 +158,8 @@ async function confirmApostille() {
             canner();
             emit("confirm");
         }
-        otherLoading.value = false;
-    } else {
-        otherLoading.value = false;
-        $ElMessage.error("操作失败：" + res.error);
-    }
+    } 
+    otherLoading.value = false;
 }
 
 // 同意审批
@@ -171,13 +168,11 @@ async function confirmApprove(isBacked) {
     form.value.entityId = props.entityId;
     form.value.isBacked = isBacked;
     let res = await http.post("/approval/approvalProcess", form.value);
-    if (res.code === 200) {
+    if (res) {
         let msg = isBacked ? "驳回" : "审批";
         $ElMessage.success(msg + "成功");
         canner();
         emit("confirm");
-    } else {
-        $ElMessage.error("操作失败：" + res.error);
     }
     loading.value = false;
 }
@@ -188,10 +183,8 @@ async function getApprovalTaskById() {
     let res = await http.get("/approval/getApprovalTaskById", {
         approvalTaskId: props.taskId,
     });
-    if (res.code === 200) {
+    if (res) {
         approvalTask.value = res.data;
-    } else {
-        $ElMessage.error("操作失败：" + res.error);
     }
     loading.value = false;
 }

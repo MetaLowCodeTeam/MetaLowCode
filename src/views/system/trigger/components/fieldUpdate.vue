@@ -210,7 +210,7 @@ const getTagEntitys = () => {
         let res = await $API.trigger.detial.dataUpdateEntityList(
             trigger.value.entityCode
         );
-        if (res.code === 200) {
+        if (res) {
             tagEntitys.value = res.data;
             res.data.forEach((el) => {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
@@ -233,27 +233,22 @@ const getTagEntitys = () => {
             trigger.value.defaultTargetEntity = res.data[defalutInx];
             // 获取选中实体的所有字段
             getTagEntityFields(res.data[defalutInx].entityCode);
-            resolve();
-        } else {
-            $ElMessage.error("获取目标实体数据失败：" + res.error);
-            resolve();
         }
+        resolve();
     });
 };
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
         let res = await queryEntityFields(trigger.value.entityCode, true, true);
-        if (res.code === 200) {
+        if (res) {
             cutEntityFields.value = res.data;
             res.data.forEach((el) => {
                 cutEntityFieldLable.value[el.fieldName] = el.fieldLabel;
             });
-            resolve();
-        } else {
-            $ElMessage.error("获取当前实体字段数据失败：" + res.error);
-            resolve();
-        }
+            
+        } 
+        resolve();
     });
 };
 
@@ -261,7 +256,7 @@ const getCutEntityFields = () => {
 const getTagEntityFields = async (entityCode) => {
     changeTagEntityLoading.value = true;
     let res = await queryEntityFields(entityCode);
-    if (res.code === 200) {
+    if (res) {
         tagEntityFields.value = res.data;
         // 目标字段 默认选中 第一个
         seleteTargetField.value = res.data[0];
@@ -277,9 +272,7 @@ const getTagEntityFields = async (entityCode) => {
         }
         // 格式化规则列表
         formatActionContentItems();
-    } else {
-        $ElMessage.error("获取目标字段数据失败：" + res.error);
-    }
+    } 
     changeTagEntityLoading.value = false;
 };
 

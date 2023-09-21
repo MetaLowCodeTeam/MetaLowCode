@@ -57,14 +57,11 @@ function getEntityData() {
         let menuRes = await http.get("/report/getEntityList", {
             reportConfigId: reportConfigId.value,
         });
-        if (menuRes.code === 200) {
+        if (menuRes) {
             let resDataList = menuRes.data || [];
             menuList.value = resDataList;
-            resolve();
-        } else {
-            message.error("获取菜单失败：" + menuRes.error);
-            resolve();
         }
+        resolve();
     });
 }
 // 获取报表数据
@@ -74,17 +71,14 @@ function getWorkBook() {
             entityId: reportConfigId.value,
             fieldNames: "reportConfigId,reportName,reportJson,entityCode",
         });
-        if (res.code === 200) {
+        if (res) {
             let resData = res.data;
             let reportJson = JSON.parse(resData.reportJson);
             entityCode.value = resData.entityCode;
             reportName.value = resData.reportName;
             sheets.value = reportJson;
-            resolve();
-        } else {
-            message.error("获取内容失败：" + res.error);
-            resolve();
         }
+        resolve();
     });
 }
 // 保存数据
@@ -101,10 +95,8 @@ async function onSave(event) {
         },
     };
     let res = await saveRecord(params.entity, params.id, params.formModel);
-    if (res.code === 200) {
+    if (res) {
         $ElMessage.success("保存成功");
-    } else {
-        $ElMessage.error("保存失败：" + res.error);
     }
     pageLoading.value = false;
     loadingText.value = "加载中...";

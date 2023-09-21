@@ -244,7 +244,7 @@ const getAllColumn = async () => {
         true,
         false
     );
-    if (res.code === 200) {
+    if (res) {
         showColumn.value = [];
         let hasFieldName = [];
         if (props.editColumnDialog.config) {
@@ -254,8 +254,6 @@ const getAllColumn = async () => {
             });
         }
         sourceColumn.value = res.data.filter(el=> !hasFieldName.includes(el.fieldName));
-    } else {
-        $ElMessage.error("获取表格列：" + res.error);
     }
     loading.value = false;
     // console.log(props.entityName);
@@ -278,15 +276,12 @@ const onSave = async () => {
     };
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(layoutConfigId, "LIST", param);
-    if (res && res.code == 200) {
+    if (res ) {
         $ElMessage.success("保存成功！");
-        loading.value = false;
         isShow.value = false;
         emit("confirm");
-    } else {
-        $ElMessage.error("保存失败：" + res.error);
-        loading.value = false;
-    }
+    } 
+    loading.value = false;
 };
 </script>
 <style lang='scss' scoped>

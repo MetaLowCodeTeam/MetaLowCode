@@ -226,7 +226,7 @@ let sendToFields = ref([]);
 const getCutEntityFields = async () => {
     contentLoading.value = true;
     let res = await queryEntityFields(trigger.value.entityCode, true, true);
-    if (res.code === 200) {
+    if (res) {
         cutEntityFields.value = res.data;
         sendToFields.value = res.data.filter((el) => el.fieldType == "Text");
         let querySendStateRes = await $API.trigger.detial.querySendState();
@@ -238,7 +238,7 @@ const getCutEntityFields = async () => {
                 let idToIdNameRes = await $API.trigger.detial.idToIdName(
                     trigger.value.actionContent.sendTo
                 );
-                if (idToIdNameRes.code == 200) {
+                if (idToIdNameRes) {
                     trigger.value.actionContent.inUserList = idToIdNameRes.data;
                     trigger.value.actionContent.outUserList = [];
                 }
@@ -249,11 +249,8 @@ const getCutEntityFields = async () => {
         } else {
             trigger.value.actionContent.inUserList = [];
         }
-        contentLoading.value = false;
-    } else {
-        $ElMessage.error("获取当前实体字段数据失败：" + res.error);
-        contentLoading.value = false;
-    }
+    } 
+    contentLoading.value = false;
 };
 </script>
 <style lang='scss' scoped>

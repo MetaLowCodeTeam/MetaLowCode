@@ -248,15 +248,13 @@ const getAllColumn = async () => {
         false,
         true
     );
-    if (res.code === 200) {
+    if (res) {
         if(res.data && res.data.length > 0){
             sourceColumn.value = res.data.filter(
                 (el) => !hasEntityName.value.includes(el.entityName)
             );
         }
-    } else {
-        $ElMessage.error("获取Tab数据失败：" + res.error);
-    }
+    } 
     loading.value = false;
     // console.log(props.entityName);
 };
@@ -279,15 +277,12 @@ const onSave = async () => {
         "TAB",
         param
     );
-    if (res && res.code == 200) {
+    if (res ) {
         $ElMessage.success("保存成功！");
-        loading.value = false;
         isShow.value = false;
         emit("confirm",res.data.formData.config);
-    } else {
-        $ElMessage.error("保存失败：" + res.error);
-        loading.value = false;
     }
+    loading.value = false;
 };
 
 /***

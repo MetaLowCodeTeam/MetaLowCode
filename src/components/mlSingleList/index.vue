@@ -145,14 +145,11 @@ async function getTableList() {
         }
     }
 
-    if (res.code === 200) {
+    if (resizeBy) {
         tableList.value = res.data.dataList;
         page.total = res.data.pagination.total;
-        loading.value = false;
-    } else {
-        loading.value = false;
-        message.error("获取表格数据失败：" + res.error);
     }
+    loading.value = false;
 }
 
 defineExpose({

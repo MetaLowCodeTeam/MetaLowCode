@@ -136,7 +136,7 @@ const changeEntity = () => {
 const getEntityFields = async () => {
     loading.value = true;
     let res = await queryEntityFields(entityCode.value, false, false);
-    if (res.code === 200) {
+    if (res) {
         fromData.value.fields = res.data || [];
         let importFields = [];
         fromData.value.importFields = [];
@@ -151,9 +151,7 @@ const getEntityFields = async () => {
                 fromData.value.importFields.push(el);
             }
         });
-    } else {
-        $ElMessage.error("获取当前实体所有字段数据失败：" + res.error);
-    }
+    } 
     loading.value = false;
 };
 
@@ -178,12 +176,10 @@ const nextStep = async () => {
     // console.log($API.upload.checkFile,'$API.upload.checkFile')
     loading.value = true;
     let res = await $API.upload.checkFile(filePath);
-    if (res.code == 200) {
+    if (res) {
         fromData.value.columns = res.data;
         emits("update:modelValue", fromData.value);
         emits("fileSuccess");
-    } else {
-        $ElMessage.error("无法进行下一步：" + res.error);
     }
     loading.value = false;
 };
