@@ -93,9 +93,6 @@ router.beforeEach(async (to, from, next) => {
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
             return true
         })
-        console.log(userMenu, 'userMenu')
-        // let dongtai = localStorage.getItem("formatRoutrs");
-        // console.log(apiMenu, '加载动态路由')
         userMenu[0].children.push(...apiMenu)
         let menu = [...userMenu]
         var menuRouter = filterAsyncRouter(menu)

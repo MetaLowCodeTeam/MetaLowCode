@@ -85,7 +85,6 @@ onBeforeMount(() => {
 const queryPublicSetting = async () => {
     let res = await http.get("/setting/queryPublicSetting");
     if (res.code === 200) {
-        console.log(2)
         $TOOL.data.set("APP_NAME", res.data.appName);
         $TOOL.data.set("APP_VER", res.data.dbVersion);
         $TOOL.data.set("APP_LOGO", res.data.logo);

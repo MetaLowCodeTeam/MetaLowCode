@@ -15,7 +15,7 @@
         <el-row :gutter="12">
           <el-col :span="12">
             <el-form-item label="角色名称" prop="roleName">
-              <el-input v-model="formModel.roleName"></el-input>
+              <el-input v-model="formModel.roleName" maxlength="30"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -289,10 +289,8 @@
 
         formRules: {
           roleName: [
-            {required: true, message: '请输入角色名称', trigger: 'blur'},
-            {pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/, message: '请以中文、英文字母、数字开头，中间可输入下划线或横杠', trigger: 'blur'},
-            {min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
-          ],
+                {validator: this.validateRoleName, trigger: 'blur'}
+            ],
         },
       }
     },
@@ -305,6 +303,31 @@
       this.loadRoleData()
     },
     methods: {
+        validateRoleName(rule, value, callback){
+            if(!value){
+                callback(new Error('请输入角色名称'))
+                this.$message.error('请输入角色名称')
+                return
+            }
+            if(value.length < 2){
+                callback(new Error('请输入至少两个字符'))
+                this.$message.error('角色名称至少两个字符')
+                return
+            }
+            if(value.length > 30){
+                callback(new Error('名字最多只能30个字符'))
+                this.$message.error('角色名称最多30字符')
+                return
+            }
+            let regEx = /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/;
+            if(!regEx.test(value)){
+                callback(new Error('请以中文、英文字母、数字开头，中间可输入下划线或横杠'))
+                this.$message.error('请以中文、英文字母、数字开头，中间可输入下划线或横杠')
+                return
+            }
+            callback()
+           
+        },
       getRightLevels(rightEntity) {
         if (rightEntity.authorizable === true) {
           return this.rowRightLevels
@@ -388,31 +411,25 @@
       },
 
       saveRole() {
-        let validResult = false
+
         this.$refs['roleForm'].validate( (valid) => {
-          validResult = valid
-          if (!!!valid) {
-            return false
-          }
+        
+            if(valid){
+                //TODO 检查实体权限是否合理，比如删除权限是否大于读取权限
+                saveRoleData(this.formModel).then(res => {
+                    if (res.error != null) {
+                        this.$message({ message: res.error, type: 'error' })
+                        return
+                    }
+                    this.$message.success('保存成功')
+                    this.showRoleFormDialogFlag = false
+                    this.loadRoleData(this.searchFilter)
+                }).catch(res => {
+                    this.$message({ message: res.message, type: 'error' })
+                })
+            }
         })
-        if (!!!validResult) {
-          return
-        }
-
-        //TODO 检查实体权限是否合理，比如删除权限是否大于读取权限
-
-        saveRoleData(this.formModel).then(res => {
-          if (res.error != null) {
-            this.$message({ message: res.error, type: 'error' })
-            return
-          }
-
-          this.$message.success('保存成功')
-          this.showRoleFormDialogFlag = false
-          this.loadRoleData(this.searchFilter)
-        }).catch(res => {
-          this.$message({ message: res.message, type: 'error' })
-        })
+  
       },
 
       editRole(row) {
