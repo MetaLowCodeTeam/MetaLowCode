@@ -120,10 +120,12 @@ const editZoom = (target) => {
 </script>
 
 <style lang="scss">
+
 .sc-workflow-design {
     width: 100%;
     font-size: 13px;
     position: relative;
+    box-sizing: border-box;
 }
 .sc-workflow-design .box-scale {
     display: inline-block;
@@ -146,6 +148,7 @@ const editZoom = (target) => {
         padding: 0px 50px;
         position: relative;
         z-index: 1;
+        box-sizing: border-box;
     }
     .node-wrap-box {
         display: inline-flex;
@@ -548,6 +551,7 @@ const editZoom = (target) => {
 }
 
 .dark .sc-workflow-design {
+    
     .node-wrap-box,
     .auto-judge {
         background: #2b2b2b;

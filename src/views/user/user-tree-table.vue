@@ -45,7 +45,7 @@
           <!--
           <el-button type="danger" icon="el-icon-delete">删除</el-button>
           -->
-          <el-button>修改登录密码</el-button>
+          <el-button :disabled="multipleSelection.length != 1">重置登录密码</el-button>
         </div>
         <div class="search-panel-right">
           <el-input link type="primary" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
@@ -60,7 +60,7 @@
       <el-main ref="tableContainer">
         <div style="height: 100%">
           <SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="true" :height="tableHeight + 'px'"
-                       @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+                       @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange"
                        :show-operation-column="true"
                        table-size="small" table-width="100% !important">
             <template #table_operation="{scope}">
@@ -158,8 +158,8 @@ export default {
             {min: 5, message: '请至少输入5个字符', trigger: 'blur'}
           ],
 
-        }
-
+        },
+        multipleSelection:[],
       }
     },
     computed: {
@@ -195,6 +195,9 @@ export default {
       this.initTableData()
     },
     methods: {
+        handleSelectionChange(v){
+            this.multipleSelection = v;
+        },
       resizeTableHeight() {  /* table自适应高度 */
         this.tableHeight = this.$refs.tableContainer.$el.offsetHeight - 42
       },

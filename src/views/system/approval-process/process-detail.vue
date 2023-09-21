@@ -74,6 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .process-title {
     font-size: 14px;
     text-align: center;

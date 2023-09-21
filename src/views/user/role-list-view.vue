@@ -306,23 +306,23 @@
         validateRoleName(rule, value, callback){
             if(!value){
                 callback(new Error('请输入角色名称'))
-                this.$message.error('请输入角色名称')
+                // this.$message.error('请输入角色名称')
                 return
             }
             if(value.length < 2){
                 callback(new Error('请输入至少两个字符'))
-                this.$message.error('角色名称至少两个字符')
+                // this.$message.error('角色名称至少两个字符')
                 return
             }
             if(value.length > 30){
                 callback(new Error('名字最多只能30个字符'))
-                this.$message.error('角色名称最多30字符')
+                // this.$message.error('角色名称最多30字符')
                 return
             }
             let regEx = /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/;
             if(!regEx.test(value)){
                 callback(new Error('请以中文、英文字母、数字开头，中间可输入下划线或横杠'))
-                this.$message.error('请以中文、英文字母、数字开头，中间可输入下划线或横杠')
+                // this.$message.error('请以中文、英文字母、数字开头，中间可输入下划线或横杠')
                 return
             }
             callback()
@@ -427,10 +427,25 @@
                 }).catch(res => {
                     this.$message({ message: res.message, type: 'error' })
                 })
+            }else {
+                this.$nextTick(() => {
+                    this.elFormErrorScrollIntoView();
+                });
+                return false;
             }
         })
   
       },
+        elFormErrorScrollIntoView() { 
+            // 获取第一个校验错误的元素 
+            const element = document.querySelectorAll('.el-form-item__error')[0] 
+            // 滚动到错误元素对应位置 
+            element.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            }) 
+        },
+
 
       editRole(row) {
         if (row.roleId === '023-000000000000000000000000000000000001') {
