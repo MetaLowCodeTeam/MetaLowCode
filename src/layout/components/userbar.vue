@@ -205,6 +205,7 @@ function goNotification() {
         msg.value = false;
     } else {
         router.push("/notification");
+        msg.value = false;
     }
 }
 //搜索
