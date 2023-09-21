@@ -19,12 +19,12 @@ import {
 } from "vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
-import useCommonStore from "@/store/modules/common";
+
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const { setNewMsgNum } = useCheckStatusStore();
-const { getEntityLable } = useCommonStore();
+
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
@@ -66,8 +66,7 @@ onBeforeMount(() => {
     getNewMsgNum();
     // 轮循获取新消息
     // roundRobin(5000);
-    // 获取所有实体并格式化Label
-    getEntityLable();
+ 
 
     // 获取公开系统配置
     queryPublicSetting();

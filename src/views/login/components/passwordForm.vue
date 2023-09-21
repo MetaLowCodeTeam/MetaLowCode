@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import useCommonStore from "@/store/modules/common";
+const { getEntityLable } = useCommonStore();
 import http from "@/utils/request";
 export default {
     data() {
@@ -136,6 +138,13 @@ export default {
                 this.$TOOL.cookie.set("uid", user.data, {
                     expires: 24 * 60 * 60,
                 });
+                /**
+                 * 登录成功调用
+                 */
+                // 获取所有权限
+                this.getRightMap();
+                // 获取所有实体并格式化Label
+                this.getEntityLable()
             } else {
                 this.islogin = false;
                 this.$message.warning(user.error);
@@ -147,7 +156,10 @@ export default {
             });
             this.$message.success("Login Success 登录成功");
             this.islogin = false;
-            this.getRightMap();
+            
+        },
+        getEntityLable(){
+            getEntityLable()
         },
         async getRightMap() {
             let getRightMapRes = await http.get("/user/getRightMap");
