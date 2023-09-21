@@ -35,6 +35,7 @@ const props = defineProps({
     closeOnClickModal: { type: Boolean, default: false },
     notHeader: { type: Boolean, default: false },
     top: { type: String, default: "15vh" },
+    draggable: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 watch(
