@@ -33,12 +33,6 @@
 
 
 
-
-
-
-
-
-
 const routes = [
     {
         "name": "home",
@@ -100,7 +94,7 @@ const routes = [
             {
                 path: '/metadata',
                 name: 'Metadata',
-                meta: { group: true, title: '元数据设置', icon: "el-icon-coin", },
+                meta: { group: true, title: '元数据设置', icon: "el-icon-coin", role: 'r6001' },
                 children: [
                     {
                         path: '/entity-list',
@@ -121,14 +115,14 @@ const routes = [
                         path: '/user-list',
                         name: 'UserList',
                         component: 'user/user-tree-table',
-                        meta: { title: '用户管理', icon: 'el-icon-user' }
+                        meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-1' }
                     },
 
                     {
                         path: '/role-list',
                         name: 'RoleList',
                         component: 'user/role-list-view',
-                        meta: { title: '权限角色', icon: 'el-icon-key' }
+                        meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1' }
                     },
                 ]
             },
@@ -141,14 +135,14 @@ const routes = [
                         path: '/option-manager',
                         name: 'OptionManager',
                         component: 'system/data-dict/option-manager',
-                        meta: { title: '单选项管理', icon: 'el-icon-operation' }
+                        meta: { title: '单选项管理', icon: 'el-icon-operation', role: 'r6005' }
                     },
 
                     {
                         path: '/tag-manager',
                         name: 'TagManager',
                         component: 'system/data-dict/tag-manager',
-                        meta: { title: '多选项管理', icon: 'el-icon-files' }
+                        meta: { title: '多选项管理', icon: 'el-icon-files', role: 'r6006' }
                     },
                 ]
             },
@@ -157,7 +151,7 @@ const routes = [
                 path: '/process-list',
                 name: 'ProcessList',
                 component: 'system/approval-process/process-list',
-                meta: { title: '审批流程', icon: 'el-icon-operation' }
+                meta: { title: '审批流程', icon: 'el-icon-operation', role: 'r30-1' }
             },
             {
                 path: `/process-detail`,
@@ -196,7 +190,7 @@ const routes = [
             {
                 path: '/trigger-list',
                 name: 'RriggerList',
-                meta: { group: true, title: '触发器', icon: 'el-icon-cpu' },
+                meta: { group: true, title: '触发器', icon: 'el-icon-cpu', role: 'r48-1' },
                 component: 'system/trigger/trigger-list',
             },
             // 触发器详情
@@ -211,13 +205,13 @@ const routes = [
                 path: '/templates-list',
                 name: 'TemplatesList',
                 component: 'system/report-templates/templates-list',
-                meta: { title: '报表设计', icon: 'el-icon-operation' }
+                meta: { title: '报表设计', icon: 'el-icon-memo', role: 'r45-1' }
             },
             // 数据导入
             {
                 path: '/data-upload',
                 name: 'DataUpload',
-                meta: { title: '数据导入', icon: 'el-icon-Upload' },
+                meta: { title: '数据导入', icon: 'el-icon-Upload', role: 'r6011' },
                 component: 'system/data-upload/index',
             },
             // 账号信息
@@ -241,14 +235,14 @@ const routes = [
             {
                 path: '/revision-history',
                 name: 'RevisionHistory',
-                meta: { title: '变更历史', icon: 'el-icon-document-remove' },
+                meta: { title: '变更历史', icon: 'el-icon-document-remove', role: 'r6010' },
                 component: 'system/revision-history/index',
             },
             // 回收站
             {
                 path: '/recycle-bin',
                 name: 'RecycleBin',
-                meta: { title: '回收站', icon: 'el-icon-delete' },
+                meta: { title: '回收站', icon: 'el-icon-delete', role: 'r6009' },
                 component: 'system/recycle-bin/index',
             },
 
@@ -256,5 +250,6 @@ const routes = [
     },
 
 ]
+
 
 export default routes;

@@ -9,7 +9,7 @@
                 @click="navClick(item)"
             >
                 {{ item.configName }}
-                <div class="action-icon" v-if="$TOOL.getAuto('r6007')">
+                <div class="action-icon" v-if="$TOOL.checkRole('r6007')">
                     <span class="icon-span edit-icon mr-5" @click.stop="editMenu(item)">
                         <el-icon>
                             <ElIconEditPen />
@@ -22,7 +22,7 @@
                     </span>
                 </div>
             </div>
-            <div class="add-box" v-if="$TOOL.getAuto('r6007')">
+            <div class="add-box" v-if="$TOOL.checkRole('r6007')">
                 <el-button class="add-btn mt-5 w-100" size="small" @click="editMenu({})">
                     <el-icon class="top-1 mr-3">
                         <ElIconPlus />

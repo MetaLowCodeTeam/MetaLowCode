@@ -240,8 +240,18 @@ tool.checkIsEdit = (oldVal, newVal) => {
 };
 
 // 获取权限
-tool.getAuto = (key) => {
+tool.getRole = (key) => {
     return tool.data.get('rightMap')[key]
+}
+// 获取权限
+tool.checkRole = (key) => {
+    let auto = tool.data.get('rightMap')[key];
+    if(key.indexOf('-') != -1){
+        return auto != null && auto != 0
+    }else {
+        return !!auto
+    }
+    
 }
 
 export default tool

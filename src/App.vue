@@ -28,6 +28,7 @@ const { getEntityLable } = useCommonStore();
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
+const $ElMessage = inject("$ElMessage");
 let { proxy } = instance;
 let config = reactive({
     size: "default",
@@ -68,7 +69,8 @@ onBeforeMount(() => {
     // 获取所有实体并格式化Label
     getEntityLable();
 
-
+    // 获取公开系统配置
+    queryPublicSetting();
 
     // 获取默认导航
     // getNavigationList();
@@ -80,7 +82,41 @@ onBeforeMount(() => {
 //     console.log(res,"APP先触发");
 // };
 // /crud/getRightMap
+// 获取公开系统配置
+const queryPublicSetting = async () => {
+    let res = await http.get("/setting/queryPublicSetting");
+    if (res.code === 200) {
+        console.log(2)
+        $TOOL.data.set("APP_NAME", res.data.appName);
+        $TOOL.data.set("APP_VER", res.data.dbVersion);
+        $TOOL.data.set("APP_LOGO", res.data.logo);
+        $TOOL.data.set("APP_PAGE_FOOTER", res.data.pageFooter);
+        
+        colorPrimary(res.data.themeColor);
+    } else {
+        $ElMessage.error("获取系统信息失败：" + res.error);
+    }
+};
 
+const colorPrimary = (val) => {
+    if (!val) {
+        val = "#409EFF";
+    }
+    document.documentElement.style.setProperty("--el-color-primary", val);
+    for (let i = 1; i <= 9; i++) {
+        document.documentElement.style.setProperty(
+            `--el-color-primary-light-${i}`,
+            colorTool.lighten(val, i / 10)
+        );
+    }
+    for (let i = 1; i <= 9; i++) {
+        document.documentElement.style.setProperty(
+            `--el-color-primary-dark-${i}`,
+            colorTool.darken(val, i / 10)
+        );
+    }
+    $TOOL.data.set("APP_COLOR", val);
+};
 
 // 获取新消息
 const getNewMsgNum = async () => {

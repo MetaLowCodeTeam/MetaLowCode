@@ -5,7 +5,7 @@
                 <el-empty v-if="reportList.length==0" :image-size="80">
                     <template #description>
                         暂无报表
-                        <span class="ml-a-span" @click="clcikSet" v-if="$TOOL.getAuto('r45-1') == 50">点击配置</span>
+                        <span class="ml-a-span" @click="clcikSet" v-if="$TOOL.checkRole('r45-1')">点击配置</span>
                     </template>
                 </el-empty>
                 <div

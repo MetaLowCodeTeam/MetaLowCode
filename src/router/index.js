@@ -38,7 +38,7 @@ const routes_404 = {
 let routes_404_r = () => { }
 
 //设置标题
-document.title = config.APP_NAME
+document.title = tool.data.get('APP_NAME')
 
 //判断是否已加载过动态/静态路由
 var isGetRouter = false;
@@ -49,7 +49,7 @@ router.beforeEach(async (to, from, next) => {
     // console.log(store,'store')
     NProgress.start()
     //动态标题
-    document.title = to.meta.title ? `${to.meta.title} - ${config.APP_NAME}` : `${config.APP_NAME}`
+    document.title = to.meta.title ? `${to.meta.title} - ${tool.data.get('APP_NAME')}` : `${tool.data.get('APP_NAME')}`
 
     let token = tool.cookie.get("TOKEN");
 
@@ -81,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
     }
     //加载动态/静态路由
     if (!isGetRouter) {
-        const { setNavigationList, setChosenNavigationId,setDefaultMenuList} = useLayoutConfigStore();
+        const { setNavigationList, setChosenNavigationId, setDefaultMenuList } = useLayoutConfigStore();
         let navRes = await layoutConfigApi.getNavigationList();
         if (navRes && navRes.code == 200) {
             setNavigationList(navRes.data.navigationList);
@@ -90,15 +90,14 @@ router.beforeEach(async (to, from, next) => {
         }
         const { useMenuList } = storeToRefs(useLayoutConfigStore());
         let apiMenu = [...useMenuList.value];
-        let userInfo = tool.data.get("USER_INFO")
-        let userMenu = treeFilter(userRoutes, node => {
-            return node.meta.role ? node.meta.role.filter(item => userInfo.role.indexOf(item) > -1).length > 0 : true
+        let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
+            return true
         })
+        console.log(userMenu, 'userMenu')
         // let dongtai = localStorage.getItem("formatRoutrs");
         // console.log(apiMenu, '加载动态路由')
         userMenu[0].children.push(...apiMenu)
         let menu = [...userMenu]
-        console.log(menu,'menu')
         var menuRouter = filterAsyncRouter(menu)
         menuRouter = flatAsyncRoutes(menuRouter)
         menuRouter.forEach(item => {
@@ -131,9 +130,8 @@ router.onError((error) => {
 router.sc_getMenu = () => {
     const { useMenuList } = storeToRefs(useLayoutConfigStore());
     let apiMenu = [...useMenuList.value];
-    let userInfo = tool.data.get("USER_INFO")
-    let userMenu = treeFilter(userRoutes, node => {
-        return node.meta.role ? node.meta.role.filter(item => userInfo.role.indexOf(item) > -1).length > 0 : true
+    let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
+        return true
     })
     userMenu[0].children.push(...apiMenu)
     var menu = [...userMenu]
@@ -213,6 +211,27 @@ function treeFilter(tree, func) {
 }
 
 
+const routerCheckRole = (routeList) => {
+    let res = [];
+    routeList.forEach(el => {
+        const tmp = { ...el }
+        if (tmp.meta.role) {
+            if (tool.checkRole(tmp.meta.role)) {
+                res.push(tmp)
+            }
+        } else {
+            if (tmp.children) {
+                tmp.children = routerCheckRole(tmp.children)
+            }
+            if (!tmp.children || tmp.children.length > 0) {
+                res.push(tmp)
+            }
+
+
+        }
+    })
+    return res
+}
 
 
 export default router

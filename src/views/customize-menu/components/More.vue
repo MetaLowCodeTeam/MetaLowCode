@@ -70,7 +70,7 @@
                     </span>
                     数据导出
                 </div>
-                <div class="pl-20 item" @click="dataUploadFn" v-if="$TOOL.getAuto('r6011')">
+                <div class="pl-20 item" @click="dataUploadFn" v-if="$TOOL.checkRole('r6011')">
                     <span class="icon-t1">
                         <el-icon>
                             <ElIconUpload />
@@ -100,7 +100,7 @@
                     @click="changeColumnShow('ALL')"
                 >
                     默认列显示
-                    <div class="action-icon" v-if="$TOOL.getAuto('r6008')">
+                    <div class="action-icon" v-if="$TOOL.checkRole('r6008')">
                         <span class="icon-span edit-icon" @click.stop="editColumn('ALL')">
                             <el-icon>
                                 <ElIconEditPen />

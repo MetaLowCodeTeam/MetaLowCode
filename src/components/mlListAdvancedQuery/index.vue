@@ -12,7 +12,7 @@
                         @click="changeOp(op)"
                     >
                         <div class="item-text fl text-ellipsis">{{ op.configName }}</div>
-                        <div class="item-icon fl" v-if="op.layoutConfigId !== 'all' && $TOOL.getAuto('r6008')">
+                        <div class="item-icon fl" v-if="op.layoutConfigId !== 'all' && $TOOL.checkRole('r6008')">
                             <span class="icon-span add-icon mr-5" @click.stop="editAdv(op)">
                                 <el-icon size="15">
                                     <ElIconEditPen />
@@ -74,7 +74,7 @@
                     <el-form-item label="名称" class="mb-10">
                         <el-input v-model="saveDialog.configName" />
                     </el-form-item>
-                    <el-form-item label=" " class="mb-10" v-if="$TOOL.getAuto('r6008')">
+                    <el-form-item label=" " class="mb-10" v-if="$TOOL.checkRole('r6008')">
                         <mlShareTo v-model="saveDialog.shareTo" />
                     </el-form-item>
                     <el-form-item label=" ">
@@ -105,7 +105,7 @@
                         <el-form-item label="名称" class="mb-10">
                             <el-input v-model="editAdvDailog.configName" />
                         </el-form-item>
-                        <el-form-item label=" " class="mb-10" v-if="$TOOL.getAuto('r6008')">
+                        <el-form-item label=" " class="mb-10" v-if="$TOOL.checkRole('r6008')">
                             <mlShareTo v-model="editAdvDailog.shareTo" />
                         </el-form-item>
                         <el-form-item label=" ">

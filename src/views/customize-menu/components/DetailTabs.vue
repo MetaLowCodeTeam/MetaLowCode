@@ -8,7 +8,7 @@
                 :name="tab.entityName"
             ></el-tab-pane>
         </el-tabs>
-        <span class="setting-tabs" @click="openDialog" v-if="$TOOL.getAuto('r6008')">
+        <span class="setting-tabs" @click="openDialog" v-if="$TOOL.checkRole('r6008')">
             <el-icon>
                 <ElIconSetting />
             </el-icon>

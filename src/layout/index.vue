@@ -4,8 +4,8 @@
 		<header class="adminui-header">
 			<div class="adminui-header-left">
 				<div class="logo-bar">
-					<img class="logo" src="~@/assets/imgs/logo.png">
-					<span>{{ $CONFIG.APP_NAME }}</span>
+					<img class="logo" :src="$TOOL.data.get('APP_LOGO')">
+					<span>{{ $TOOL.data.get('APP_NAME') }}</span>
 				</div>
 				<ul v-if="!ismobileFn" class="nav">
 					<li v-for="item in menu" :key="item" :class="pmenu.path==item.path?'active':''" @click="showMenu(item)">
@@ -53,8 +53,8 @@
 		<header class="adminui-header">
 			<div class="adminui-header-left">
 				<div class="logo-bar">
-					<img class="logo" src="~@/assets/imgs/logo.png">
-					<span>{{ $CONFIG.APP_NAME }}</span>
+					<img class="logo" :src="$TOOL.data.get('APP_LOGO')">
+					<span>{{  $TOOL.data.get('APP_NAME') }}</span>
 				</div>
 			</div>
 			<div class="adminui-header-right">
@@ -93,8 +93,8 @@
 		<header class="adminui-header">
 			<div class="adminui-header-left">
 				<div class="logo-bar">
-					<img class="logo" src="~@/assets/imgs/logo.png">
-					<span>{{ $CONFIG.APP_NAME }}</span>
+					<img class="logo" :src="$TOOL.data.get('APP_LOGO')">
+					<span>{{  $TOOL.data.get('APP_NAME') }}</span>
 				</div>
 			</div>
 			<div class="adminui-header-right">
@@ -128,7 +128,7 @@
 			<div v-if="!ismobileFn" class="aminui-side-split">
 				<div class="aminui-side-split-top">
 					<router-link :to="$CONFIG.DASHBOARD_URL">
-						<img class="logo" :title="$CONFIG.APP_NAME" src="~@/assets/imgs/logo-r.png">
+						<img class="logo" :title=" $TOOL.data.get('APP_NAME')" src="~@/assets/imgs/logo-r.png">
 					</router-link>
 				</div>
 				<div class="adminui-side-split-scroll">
@@ -176,11 +176,11 @@
 
 	<div class="main-maximize-exit" @click="exitMaximize"><el-icon><el-icon-close /></el-icon></div>
 
-	<div class="layout-setting" @click="openSetting"><el-icon><el-icon-brush-filled /></el-icon></div>
+	<!-- <div class="layout-setting" @click="openSetting"><el-icon><el-icon-brush-filled /></el-icon></div> -->
 
-	<el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
+	<!-- <el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
 		<setting></setting>
-	</el-drawer>
+	</el-drawer> -->
 
 	<auto-exit></auto-exit>
     
