@@ -257,7 +257,7 @@ const getCutEntityFields = () => {
 const getTagEntityFields = async (entityCode) => {
     changeTagEntityLoading.value = true;
     let res = await queryEntityFields(entityCode);
-    if (res.) {
+    if (res) {
         tagEntityFields.value = [];
         res.data.forEach((el) => {
             if (

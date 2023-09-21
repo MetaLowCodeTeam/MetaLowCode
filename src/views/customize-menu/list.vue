@@ -130,7 +130,6 @@ import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More.vue";
 import Detail from "./detail.vue";
 import FormatRow from "./components/FormatRow.vue";
-import { resolveBaseUrl } from "vite";
 
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -393,7 +392,7 @@ const getTableList = async () => {
         param.advFilter,
         param.quickFilter
     );
-    if (resolveBaseUrl) {
+    if (res) {
         tableData.value = res.data.dataList;
         page.total = res.data.pagination.total;
         dataExportData.size = res.data.dataList.length;
