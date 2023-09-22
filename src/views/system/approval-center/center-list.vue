@@ -40,6 +40,7 @@
                         :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value == 1)"
                         size="small"
                         type="primary"
+                        link
                         @click="revokeRow(scope.row)"
                     >撤销</el-button>
                 </template>

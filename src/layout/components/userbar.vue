@@ -127,19 +127,25 @@ const handleUser = (command) => {
                 type: "info",
             }
         )
-            .then(() => {
-                const loading = ElLoading.service({
-                    lock: true,
-                    text: "Loading",
-                    background: "rgba(0, 0, 0, 0.7)",
-                });
-                $TOOL.data.clear();
-                $TOOL.cookie.remove("userInfo");
-                router.replace({ path: "/login" });
-                setTimeout(() => {
-                    loading.close();
-                    location.reload();
-                }, 1000);
+            .then(async () => {
+                let res = await http.post("/user/logout");
+                if (res) {
+                    router.replace({ path: "/login" });
+                    const loading = ElLoading.service({
+                        lock: true,
+                        text: "Loading",
+                        background: "rgba(0, 0, 0, 0.7)",
+                    });
+                    $TOOL.data.clear();
+                    $TOOL.cookie.remove("userInfo");
+                
+                    router.replace({ path: "/login" });
+                    setTimeout(() => {
+                        loading.close();
+                        location.reload();
+                    }, 1000);
+                }
+                
             })
             .catch(() => {
                 //取消
