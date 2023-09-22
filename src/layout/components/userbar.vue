@@ -199,7 +199,6 @@ const msgClick = (item, inx) => {
         );
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
-            markRead(item,inx);
         } else {
             let detailObj = {};
             detailObj.entityName = item.entityName;
@@ -209,8 +208,8 @@ const msgClick = (item, inx) => {
             detailObj.detailTitle = item.relatedRecord.name;
             msg.value = false;
             detailRefs.value.openDialog(detailObj);
-            markRead(item,inx)
         }
+        markRead(item,inx)
     } else {
         $ElMessage.info("点击了type：" + item.type);
     }

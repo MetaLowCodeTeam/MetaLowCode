@@ -9,6 +9,7 @@
                     placeholder="查询"
                     @confirm="getTableList"
                 />
+                <slot name="addbutton"></slot>
             </div>
         </el-header>
 

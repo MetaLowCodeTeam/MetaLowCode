@@ -38,7 +38,7 @@
                         placeholder="查询"
                         @confirm="getApprovalList"
                     />
-                    <slot name="addbutton" text="我是子组件小猪课堂"></slot>
+                    <slot name="addbutton"></slot>
                 </div>
             </el-header>
             <el-main>
