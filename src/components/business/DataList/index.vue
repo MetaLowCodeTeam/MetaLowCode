@@ -28,7 +28,7 @@
                      table-width="100% !important">
           <template #table_operation="{scope}">
             <el-button link type="primary" size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
-            <el-button link type="primary" size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
+            <el-button link type="primary" size="small" icon="el-icon-delete" @click="deleteTableData(scope.row)">删除</el-button>
           </template>
         </SimpleTable>
       </div>

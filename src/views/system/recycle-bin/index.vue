@@ -19,12 +19,13 @@
                     <el-tag type="info" v-else>未恢复</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" :align="'center'" width="100">
+            <el-table-column label="操作" fixed="right" :align="'center'" width="100">
                 <template #default="scope">
                     <el-button
                         :disabled="scope.row.restoreBy && !!scope.row.restoreBy.name"
                         size="small"
                         type="primary"
+                        link
                         @click="activeRow(scope.row)"
                     >恢复</el-button>
                 </template>

@@ -97,9 +97,9 @@
                             <span v-else>{{ scope.row[column.prop]}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" :align="'center'" width="170">
+                    <el-table-column label="操作" fixed="right" :align="'center'" width="170">
                         <template #default="scope">
-                            <el-button size="small" @click="editApproval('edit',scope.row)">
+                            <el-button size="small" type="primary" link @click="editApproval('edit',scope.row)">
                                 <span class="mr-3">
                                     <el-icon>
                                         <Edit />
@@ -108,16 +108,17 @@
                                 <span>编辑</span>
                             </el-button>
                             <el-button
-                                class="ml-delete-btn"
                                 size="small"
+                                link
+                                type="primary"
                                 @click="deleteProcess(scope.row)"
                             >
                                 <span class="mr-3">
-                                    <el-icon color="#f56c6c">
+                                    <el-icon>
                                         <Delete />
                                     </el-icon>
                                 </span>
-                                <span style="color: #f56c6c;">删除</span>
+                                <span>删除</span>
                             </el-button>
                         </template>
                     </el-table-column>

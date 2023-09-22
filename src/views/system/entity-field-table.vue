@@ -112,7 +112,7 @@
             <template #table_operation="{scope}">
               <template v-if="!scope.row['reserved']">
                 <el-button type="primary" link size="small" icon="el-icon-edit" @click="editTableData(scope.row)">修改</el-button>
-                <el-button type="primary" link size="small" icon="el-icon-delete-solid" @click="deleteTableData(scope.row)">删除</el-button>
+                <el-button type="primary" link size="small" icon="el-icon-delete" @click="deleteTableData(scope.row)">删除</el-button>
               </template>
             </template>
           </SimpleTable>

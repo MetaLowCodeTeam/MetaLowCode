@@ -10,9 +10,9 @@
         queryUrl="/revisionHistory/listQuery"
     >
         <template #activeRow>
-            <el-table-column label="操作" :align="'center'" width="100">
+            <el-table-column label="操作" fixed="right" :align="'center'" width="100">
                 <template #default="scope">
-                    <el-button size="small" type="primary" @click="activeRow(scope.row)">查看</el-button>
+                    <el-button :disabled="scope.row.revisionType && scope.row.revisionType.value != 1 && scope.row.revisionType.value != 5" link type="primary" size="small" @click="activeRow(scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </template>
@@ -99,8 +99,6 @@ async function activeRow(row) {
             historyData.value = res.data;
             historyDialog.value = true;
         } 
-    } else {
-        $ElMessage.error(res.error);
     }
     mlSingleListRef.value.loading = false;
 }
