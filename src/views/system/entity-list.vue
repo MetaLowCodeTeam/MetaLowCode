@@ -94,7 +94,6 @@ export default {
           return
         }
         this.entityItems = res.data
-        //debugger
       }).catch(res => {
         this.$message({ message: res.message, type: 'error' })
       })

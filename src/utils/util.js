@@ -237,12 +237,18 @@ export function strArrayToStr(array, separator) {
     return result
 }
 
+export const deepClone = function (origin) {
+    if (origin === undefined) {
+        return undefined
+    }
 
+    return JSON.parse(JSON.stringify(origin))
+}
 
 /**
- * 
+ *
  * 更好的时间提示
- * 
+ *
  */
 export const $moment = function (date) {
     return moment(date.trim())

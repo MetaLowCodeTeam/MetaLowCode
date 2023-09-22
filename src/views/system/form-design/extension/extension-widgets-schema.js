@@ -15,10 +15,8 @@ export const referenceSchema = {
 		labelWidth: null,
 		labelHidden: false,
 		labelWrap: false,  //标签超长换行
-		readonly: false,
 		disabled: false,
 		hidden: false,
-		clearable: true,
 		required: false,
 		requiredHint: '',
 		validation: '',
@@ -30,7 +28,7 @@ export const referenceSchema = {
 		labelTooltip: null,
 		prefixIcon: '',
 		suffixIcon: '',
-		buttonIcon: 'custom-search',
+		buttonIcon: 'Search',
 		//-------------------
 		onCreated: '',
 		onMounted: '',

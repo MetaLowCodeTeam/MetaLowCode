@@ -70,6 +70,7 @@ export default {
         }
 
         if ((!!res.data) && (!!res.data.layoutJson)) {
+          this.layoutId = res.data.formLayoutId
           this.$refs.vfDesigner.setFormJson(res.data.layoutJson)
         } else {
           this.$refs.vfDesigner.clearDesigner()

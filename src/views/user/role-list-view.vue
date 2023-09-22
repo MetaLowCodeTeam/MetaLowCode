@@ -326,7 +326,7 @@
                 return
             }
             callback()
-           
+
         },
       getRightLevels(rightEntity) {
         if (rightEntity.authorizable === true) {
@@ -354,7 +354,6 @@
 
       addNewRole() {
         getBlankRoleData().then(res => {
-          //debugger
           if (res.error != null) {
             this.$message({ message: res.error, type: 'error' })
             return
@@ -413,7 +412,7 @@
       saveRole() {
 
         this.$refs['roleForm'].validate( (valid) => {
-        
+
             if(valid){
                 //TODO 检查实体权限是否合理，比如删除权限是否大于读取权限
                 saveRoleData(this.formModel).then(res => {
@@ -434,16 +433,16 @@
                 return false;
             }
         })
-  
+
       },
-        elFormErrorScrollIntoView() { 
-            // 获取第一个校验错误的元素 
-            const element = document.querySelectorAll('.el-form-item__error')[0] 
-            // 滚动到错误元素对应位置 
-            element.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            }) 
+        elFormErrorScrollIntoView() {
+            // 获取第一个校验错误的元素
+            const element = document.querySelectorAll('.el-form-item__error')[0]
+            // 滚动到错误元素对应位置
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            })
         },
 
 
