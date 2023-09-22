@@ -20,7 +20,7 @@ const useCommonStore = defineStore('commonStore', () => {
                 res.data.forEach(el => {
                     entityLable[el.entityCode] = el.label;
                     entityName[el.entityCode] = el.entityName
-                    if(!el.systemEntityFlag){
+                    if (!el.systemEntityFlag) {
                         approveDialogEntityList.value.push(el);
                     }
                 })
@@ -34,6 +34,8 @@ const useCommonStore = defineStore('commonStore', () => {
         getEntityLable,
         approveDialogEntityList
     }
+}, {
+    persist: true
 })
 
 export default useCommonStore

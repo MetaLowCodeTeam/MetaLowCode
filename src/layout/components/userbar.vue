@@ -1,18 +1,8 @@
 <template>
     <div class="user-bar">
-        <div class="panel-item hidden-sm-and-down" @click="searchFn">
-            <el-icon>
-                <el-icon-search />
-            </el-icon>
-        </div>
         <div class="screen panel-item hidden-sm-and-down" @click="screen">
             <el-icon>
                 <el-icon-full-screen />
-            </el-icon>
-        </div>
-        <div class="tasks panel-item" @click="tasksFn">
-            <el-icon>
-                <el-icon-sort />
             </el-icon>
         </div>
         <div class="msg panel-item" @click="showMsg">
@@ -38,7 +28,7 @@
                                             </el-badge>
                                         </div>
                                         <div class="msg-list__main">
-                                            <h2>{{item.fromUser.name}}</h2>
+                                            <h2>{{item.fromUser.name}}临时TYPE{{item.type}}</h2>
                                             <p>{{item.message}}</p>
                                         </div>
                                         <div class="msg-list__time">
@@ -56,7 +46,7 @@
                     </el-main>
                     <el-footer>
                         <el-button type="primary" @click="goNotification">消息中心</el-button>
-                        <el-button @click="markRead">全部设为已读</el-button>
+                        <el-button @click="markAllRead">全部设为已读</el-button>
                     </el-footer>
                 </el-container>
             </el-drawer>
@@ -86,6 +76,7 @@
     <el-drawer v-model="tasksVisible" :size="450" title="任务中心" destroy-on-close>
         <tasks></tasks>
     </el-drawer>
+    <Detail ref="detailRefs" />
 </template>
 
 <script setup>
@@ -95,11 +86,14 @@ import tasks from "./tasks.vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElLoading } from "element-plus";
 import useCheckStatusStore from "@/store/modules/checkStatus";
+import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import http from "@/utils/request";
 import { $fromNow } from "@/utils/util";
+import Detail from "@/views/customize-menu/detail.vue";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
+const { approveDialogEntityList } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 const COMMON_CONFIG = inject("COMMON_CONFIG");
@@ -159,7 +153,7 @@ const handleUser = (command) => {
         })
             .then(async () => {
                 let res = await http.post("/user/logout");
-                if(res){
+                if (res) {
                     router.replace({ path: "/login" });
                 }
             })
@@ -187,13 +181,44 @@ const getMsgList = async () => {
     }
     msgLoading.value = false;
 };
+
+// 消息详情组件
+let detailRefs = ref("");
 // 消息点击
 const msgClick = (item, inx) => {
+    console.log(item, "item");
+    if (item.type == 30 || item.type == 20) {
+        let filterEntity = approveDialogEntityList.value.filter(
+            (el) => el.name == item.entityName
+        );
+        if (filterEntity.length < 1) {
+            $ElMessage.error("该实体已删除");
+            markRead(item,inx);
+        } else {
+            let detailObj = {};
+            detailObj.entityName = item.entityName;
+            detailObj.entityCode = filterEntity[0].entityCode;
+            detailObj.tab = {};
+            detailObj.detailId = item.relatedRecord.id;
+            detailObj.detailTitle = item.relatedRecord.name;
+            msg.value = false;
+            detailRefs.value.openDialog(detailObj);
+            markRead(item,inx)
+        }
+    } else {
+        $ElMessage.info("点击了type：" + item.type);
+    }
+};
+
+// 标记单条已读
+const markRead = (item,inx) => {
     msgList.value.splice(inx, 1);
     setNewMsgNum(msgList.length);
+    http.post("/note/read?id=" + item.notificationId);
 };
-//标记已读
-const markRead = () => {
+
+//标记全部已读
+const markAllRead = () => {
     http.post("/note/readAll");
     msgList.value = [];
     setNewMsgNum(0);
@@ -201,12 +226,10 @@ const markRead = () => {
 // 去消息中心
 function goNotification() {
     let { currentRoute } = router;
-    if (currentRoute.value.name === "Notification") {
-        msg.value = false;
-    } else {
+    if (currentRoute.value.name != "Notification") {
         router.push("/notification");
-        msg.value = false;
     }
+    msg.value = false;
 }
 //搜索
 const searchFn = () => {

@@ -189,6 +189,8 @@ let quickQueryPlaceholder = ref("");
 let detailTab = reactive({});
 // 实体ID
 let idFiledName = ref("");
+// 标蓝字段
+let nameFiledName = ref("");
 
 onBeforeMount(() => {
     entityCode.value = router.currentRoute.value.meta.entityCode;
@@ -203,6 +205,7 @@ const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res) {
         idFiledName.value = res.data.idFiledName;
+        nameFiledName.value = res.data.nameFiledName;
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
@@ -309,6 +312,7 @@ const openDetilDialog = (row) => {
     detailData.entityCode = entityCode.value;
     detailData.tab = { ...detailTab };
     detailData.detailId = row[idFiledName.value];
+    detailData.detailTitle = row[nameFiledName.value];
     detailRefs.value.openDialog(detailData);
 };
 

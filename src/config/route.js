@@ -53,6 +53,13 @@ const routes = [
                 },
                 "component": "home/index"
             },
+            {
+                path: "/:entityname/list",
+                name: "MenuTrendsList",
+                "meta": {
+                    hidden: true,
+                },
+            }
 
             // ...formatRoutrs
         ]

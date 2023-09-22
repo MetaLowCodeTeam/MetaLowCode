@@ -42,8 +42,7 @@
 </template>
 
 <script>
-import useCommonStore from "@/store/modules/common";
-const { getEntityLable } = useCommonStore();
+
 import http from "@/utils/request";
 export default {
     data() {
@@ -149,17 +148,13 @@ export default {
                  */
                 // 获取所有权限
                 this.getRightMap();
-                // 获取所有实体并格式化Label
-                this.getEntityLable();
+          
                 this.$router.replace({
                     path: "/",
                 });
                 this.$message.success("Login Success 登录成功");
             }
             this.islogin = false;
-        },
-        getEntityLable() {
-            getEntityLable();
         },
         async getRightMap() {
             let getRightMapRes = await http.get("/user/getRightMap");

@@ -8,7 +8,7 @@
     >
         <template #header>
             <div class="detail-header">
-                {{ entityLable[detailDialog.entityCode] }}详情
+                {{ detailDialog.detailTitle }}详情
                 <div class="fr fr-box">
                     <span class="fr-icon mr-10" @click="initData">
                         <el-icon>
@@ -52,12 +52,11 @@
 </template>
 
 <script setup>
-import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
-import { ref, reactive } from "vue";
+
+import { ref, reactive,inject } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
 import More from "./components/More.vue";
-const { entityLable } = storeToRefs(useCommonStore());
+const $API = inject("$API");
 let detailDialog = reactive({
     isShow: false,
 });
@@ -65,30 +64,33 @@ let loading = ref(false);
 let multipleSelection = ref([]);
 const openDialog = (row) => {
     detailDialog = Object.assign(detailDialog, row);
+    
     multipleSelection.value = [row];
     detailDialog.isShow = true;
-    initData();
+    if(!detailDialog.tab || JSON.stringify(detailDialog.tab) == "{}"){
+        getLayoutList();
+    }else {
+        initData();
+    }
+    
 };
 
-/**
- * ************************************************************ tab页签相关数据 beg
- */
+// 加载页签
+const getLayoutList =async () => {
+    loading.value = true;
+    let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
+    if(res){
+        detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
+        initData();
+    }
+    loading.value = false;
+}
 
-let tabs = ref([
-    {
-        label: "详情",
-        name: "detail",
-    },
-]);
-let cutTab = ref("detail");
-
-/**
- * ************************************************************ tab页签相关数据 end
- */
 
 // 初始化数据
 const initData = () => {
     loading.value = true;
+    
     setTimeout(() => {
         loading.value = false;
     }, 10);
