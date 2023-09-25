@@ -12,6 +12,10 @@ export default {
     getDepartment: async (data) => {
         return await http.get("/department/listDepartment", data);
     },
+    // 获取团队信息
+    getTeam: async (data) => {
+        return await http.get("/team/listTeam", data);
+    },
     // 查询条件专用获取字段接口
     getFieldListOfFilter: async (data) => {
         return await http.get("/systemManager/getFieldListOfFilter", data);

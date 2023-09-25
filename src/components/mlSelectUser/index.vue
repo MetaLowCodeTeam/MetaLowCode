@@ -136,6 +136,12 @@ let tabConfing = ref([
         itemId: "departmentId",
         itemName: "departmentName",
     },
+    {
+        label: "团队",
+        name: "Team",
+        itemId: "teamId",
+        itemName: "teamName",
+    },
 ]);
 let tabList = ref([]);
 // 页签数据
