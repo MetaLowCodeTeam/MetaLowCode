@@ -13,7 +13,7 @@
             </div>
         </el-header>
 
-        <el-main>
+        <el-main class="ml-main-list">
             <el-table
                 class="ml-el-table"
                 :data="tableList"
@@ -32,6 +32,7 @@
                 ></el-table-column>
                 <slot name="activeRow"></slot>
             </el-table>
+
             <mlPagination
                 :no="page.no"
                 :size="page.size"
@@ -119,10 +120,10 @@ async function getTableList() {
         res = await http.post(props.queryUrl, {
             mainEntity: param.mainEntity,
             fieldsList: param.fieldsList,
-            filter:param.filter,
-            pageSize:param.pageSize,
-            pageNo:param.pageNo,
-            sortFields:param.sortFields,
+            filter: param.filter,
+            pageSize: param.pageSize,
+            pageNo: param.pageNo,
+            sortFields: param.sortFields,
         });
     } else {
         if (param.mainEntity == "ApprovalTask") {
@@ -160,9 +161,11 @@ defineExpose({
 </script>
 <style lang="scss" scoped>
 .one-list {
-    background: #fff;
+    // background: red;
     position: relative;
     padding-bottom: 50px;
+    background: #fff;
+    // height: 100%;
 }
 .props-action-section {
     .section-title {
@@ -174,5 +177,9 @@ defineExpose({
             width: 224px;
         }
     }
+}
+.ml-main-list {
+    // height: calc(100% - 300px);
+    // background: red;
 }
 </style>

@@ -7,23 +7,25 @@
             <div class="fields-list">
                 <div class="fields-list-header">实体列表</div>
                 <div class="fields-list-box">
-                    <div
-                        class="fields-list-item text-ellipsis"
-                        :class="{'is-active': defaultCode === 'all'}"
-                        @click="fieldCheck({
+                    <el-scrollbar>
+                        <div
+                            class="fields-list-item text-ellipsis"
+                            :class="{'is-active': defaultCode === 'all'}"
+                            @click="fieldCheck({
                             label: '全部实体',
                             entityCode: 'all',
                         })"
-                        title="全部实体"
-                    >全部实体</div>
-                    <div
-                        class="fields-list-item text-ellipsis"
-                        v-for="(field,inx) of entityList"
-                        :key="inx"
-                        :class="{'is-active':field.entityCode == defaultCode}"
-                        @click="fieldCheck(field)"
-                        :title="field.entityCode"
-                    >{{ entityLable[field.entityCode] }}</div>
+                            title="全部实体"
+                        >全部实体</div>
+                        <div
+                            class="fields-list-item text-ellipsis"
+                            v-for="(field,inx) of entityList"
+                            :key="inx"
+                            :class="{'is-active':field.entityCode == defaultCode}"
+                            @click="fieldCheck(field)"
+                            :title="field.entityCode"
+                        >{{ entityLable[field.entityCode] }}</div>
+                    </el-scrollbar>
                 </div>
             </div>
         </el-aside>
@@ -99,7 +101,12 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" :align="'center'" width="170">
                         <template #default="scope">
-                            <el-button size="small" type="primary" link @click="editApproval('edit',scope.row)">
+                            <el-button
+                                size="small"
+                                type="primary"
+                                link
+                                @click="editApproval('edit',scope.row)"
+                            >
                                 <span class="mr-3">
                                     <el-icon>
                                         <Edit />
@@ -123,6 +130,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
+
                 <mlPagination
                     :size="page.size"
                     :no="page.no"
@@ -276,7 +284,7 @@ const getApprovalList = async () => {
     if (res) {
         approvalList.value = res.data.dataList;
         page.total = res.data.pagination.total;
-    } 
+    }
     loading.value = false;
 };
 
@@ -428,7 +436,7 @@ const deleteProcess = (row) => {
             if (res) {
                 message.success("删除成功");
                 getApprovalList();
-            } 
+            }
             loading.value = false;
         })
         .catch(() => {});
@@ -464,7 +472,7 @@ defineExpose({
         padding-left: 20px;
     }
     .fields-list-box {
-        height: calc(100% - 55px);
+        height: calc(100% - 80px);
         overflow-y: auto;
         padding: 10px 20px;
         font-size: 14px;

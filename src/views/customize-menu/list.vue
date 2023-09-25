@@ -109,8 +109,19 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" :align="'center'" width="120">
                         <template #default="scope">
-                            <el-button size="small" icon="el-icon-edit" link type="primary" @click.stop="onEditRow(scope.row)">编辑</el-button>
-                            <el-button size="small" link type="primary" @click.stop="openDetilDialog(scope.row)">查看</el-button>
+                            <el-button
+                                size="small"
+                                icon="el-icon-edit"
+                                link
+                                type="primary"
+                                @click.stop="onEditRow(scope.row)"
+                            >编辑</el-button>
+                            <el-button
+                                size="small"
+                                link
+                                type="primary"
+                                @click.stop="openDetilDialog(scope.row)"
+                            >查看</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -312,9 +323,9 @@ const handleHighlightChangeTable = (row, column) => {
 };
 
 // 打开编辑
-const onEditRow =(row)=>{
-    alert("点击了编辑")
-}
+const onEditRow = (row) => {
+    alert("点击了编辑");
+};
 
 let detailRefs = ref("");
 // 打开详情
