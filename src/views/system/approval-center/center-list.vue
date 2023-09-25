@@ -16,11 +16,12 @@
                 width="160"
                 key="1"
                 v-if="type === 'handle'"
-                fixed
+                fixed="right"
             >
                 <template #default="scope">
-                    <el-button size="small" @click="approveHistory(scope.row)" type="primary">审批历史</el-button>
+                    <el-button size="small" link @click="approveHistory(scope.row)" type="primary">审批历史</el-button>
                     <el-button
+                        link
                         :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
                         size="small"
                         type="success"
