@@ -28,11 +28,13 @@
                 <el-col :span="18">
                     <DetailTabs v-model="detailDialog" />
                     <v-form-render
+                        v-if="haveLayoutJson"
                         ref="vFormRef"
                         :option-data="optionData"
                         :form-data="formData"
                         :global-dsv="globalDsv"
                     />
+                    <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
@@ -115,22 +117,28 @@ const getLayoutList = async () => {
     loading.value = false;
 };
 
+let haveLayoutJson = ref(false);
 // 初始化数据
 const initData = async () => {
     loading.value = true;
     let res = await getFormLayout(detailDialog.entityName);
     if (res) {
-        vFormRef.value.setFormJson(res.data.layoutJson);
-        // // 根据数据渲染出页面填入的值，填过
-        nextTick(async () => {
-            let formData = await queryById(detailDialog.detailId)
-            if(formData){
-                vFormRef.value.setFormData(formData.data);
-                vFormRef.value.setReadMode();
-            }
+        if (res.data?.layoutJson) {
+            haveLayoutJson.value = true;
+            vFormRef.value.setFormJson(res.data.layoutJson);
+            // // 根据数据渲染出页面填入的值，填过
+            nextTick(async () => {
+                let formData = await queryById(detailDialog.detailId);
+                if (formData) {
+                    vFormRef.value.setFormData(formData.data);
+                    vFormRef.value.setReadMode();
+                }
+                loading.value = false;
+            });
+        } else {
             loading.value = false;
-        });
-    }else {
+        }
+    } else {
         loading.value = false;
     }
 };

@@ -33,6 +33,7 @@
                 <div class="fr table-setting">
                     <el-button class="mr-15">按钮占用</el-button>
                     <More
+                        ref="MoreRefs"
                         :layoutConfig="layoutConfig"
                         :defaultColumnShow="defaultColumnShow"
                         :tableColumn="tableColumn"
@@ -216,6 +217,12 @@ onBeforeMount(() => {
     // 获取导航配置
     getLayoutList();
 });
+
+// 配置自定义列显示
+const MoreRefs = ref();
+const editColumn = (type) => {
+    MoreRefs.value.editColumn(type)
+}
 
 // 获取导航配置
 const getLayoutList = async () => {

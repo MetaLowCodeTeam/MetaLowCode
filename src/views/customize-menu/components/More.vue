@@ -239,6 +239,9 @@ const editColumnConfirm = () => {
 /**
  **************************************************************  列显示 end
  */
+defineExpose({
+    editColumn
+})
 </script>
 <style lang='scss' scoped>
 .icon-t1 {
