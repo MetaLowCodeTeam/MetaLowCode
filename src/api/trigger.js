@@ -26,8 +26,8 @@ export default {
             return await http.post("/trigger/executeTrigger", params);
         },
         // 推送测试
-        hookUrlTest: async (params) => {
-            return await http.post("/trigger/hookUrlTest", params);
+        callBackTest: async (params) => {
+            return await http.post("/trigger/callBackTest", params);
         },
         // 判断通知类型是否可用
         querySendState: async () => {

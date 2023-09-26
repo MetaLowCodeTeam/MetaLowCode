@@ -1,13 +1,38 @@
 <template>
     <!--  -->
     <div class="action-div" v-loading="contentLoading">
-        <el-form-item class="mt-20" label="推送到(URL)">
+        <el-form-item class="mt-20" label="回调类型">
+            <el-radio-group v-model="trigger.actionContent.callBackType" class="ml-4">
+                <el-radio label="URL">URL回调</el-radio>
+                <el-radio label="FUNCTION">函数回调</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item
+            class="mt-20"
+            label="回调函数"
+            v-if="trigger.actionContent.callBackType == 'FUNCTION'"
+            v-loading="functionListLoading"
+        >
+            <el-select v-model="trigger.actionContent.functionName" class="m-2" placeholder="选择回调函数">
+                <el-option
+                    v-for="item in functionList"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                />
+            </el-select>
+        </el-form-item>
+        <el-form-item
+            class="mt-20"
+            label="推送到(URL)"
+            v-if="trigger.actionContent.callBackType == 'URL'"
+        >
             <el-input
                 v-model="trigger.actionContent.hookUrl"
                 placeholder="https://www.test.com/send"
             ></el-input>
         </el-form-item>
-        <el-form-item class="mt-20" label="安全码">
+        <el-form-item class="mt-20" label="安全码" v-if="trigger.actionContent.callBackType == 'URL'">
             <el-input v-model="trigger.actionContent.hookSecret" placeholder="(选填)"></el-input>
             <div class="info-text mt-3">
                 填写后，系统在调用时会携带在请求头 Header 中，Header 名称为
@@ -16,7 +41,7 @@
                 >X-RBHOOK-SECRET</span>
             </div>
         </el-form-item>
-        <el-form-item class="mt-10" label=" ">
+        <el-form-item class="mt-10" label=" " v-if="trigger.actionContent.callBackType == 'URL'">
             <el-row class="w-100">
                 <el-checkbox v-model="trigger.actionContent.forceSync" label="校验返回结果" />
             </el-row>
@@ -38,7 +63,7 @@
                     style="width: 80px;height: 36px;"
                     type="primary"
                     plain
-                    @click="hookUrlTest"
+                    @click="callBackTest"
                 >推送测试</el-button>
             </el-row>
             <div class="text-div mt-5" v-if="testRes">
@@ -56,6 +81,7 @@
 </template>
 
 <script setup>
+import http from "@/utils/request";
 import { onMounted, ref, inject } from "vue";
 
 const $API = inject("$API");
@@ -71,24 +97,41 @@ let trigger = ref({
 });
 onMounted(() => {
     trigger.value = props.modelValue;
-    console.log(trigger.value, "trigger.value");
+    // 初始化回调类型
+    if (!trigger.value.actionContent.callBackType) {
+        trigger.value.actionContent.callBackType = "URL";
+    }
+    getFunctionList();
 });
 
 // 推送返回
 let testRes = ref({});
 
 // 推送测试
-const hookUrlTest = async () => {
+const callBackTest = async () => {
     if (!trigger.value.actionContent.hookUrl) {
         $ElMessage.warning("请数要推送到的URL");
         return;
     }
     // let actionContent = JSON.stringify(trigger.value.actionContent);
-    let res = await $API.trigger.detial.hookUrlTest(
+    let res = await $API.trigger.detial.callBackTest(
         trigger.value.actionContent
     );
     testRes.value = res;
 };
+
+let functionListLoading = ref(false);
+let functionList = ref([])
+const getFunctionList =async ()=>{
+    functionListLoading.value = true;
+    let res =await http.get("/trigger/queryFunctionList");
+    if(res){
+        functionList.value = res.data;
+    }
+    functionListLoading.value = false;
+}
+
+
 </script>
 <style lang='scss' scoped>
 .action-div {

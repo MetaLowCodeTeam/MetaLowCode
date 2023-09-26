@@ -10,7 +10,7 @@
             <div class="detail-header">
                 {{ detailDialog.detailTitle }}详情
                 <div class="fr fr-box">
-                    <span class="fr-icon mr-10" @click="initData">
+                    <span class="fr-icon mr-10" @click="refresh">
                         <el-icon>
                             <ElIconRefresh />
                         </el-icon>
@@ -27,6 +27,12 @@
             <el-row :gutter="20">
                 <el-col :span="18">
                     <DetailTabs v-model="detailDialog" />
+                    <v-form-render
+                        ref="vFormRef"
+                        :option-data="optionData"
+                        :form-data="formData"
+                        :global-dsv="globalDsv"
+                    />
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
@@ -52,11 +58,29 @@
 </template>
 
 <script setup>
-
-import { ref, reactive,inject } from "vue";
+import { ref, reactive, inject, nextTick } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
+import { getFormLayout } from "@/api/system-manager";
+import { queryById } from "@/api/crud";
 import More from "./components/More.vue";
 const $API = inject("$API");
+const $ElMessage = inject("$ElMessage");
+const vFormRef = ref();
+const optionData = reactive({});
+// {
+// 'gender': '2',
+// 'paymentType': 'wechat'
+// 'subForm01': [
+// {'price': '88.00', 'count':
+// '12'},
+// {'price': '199.00', 'count':
+// '16'}
+// ]
+// }
+const formData = reactive({
+    gender: "2",
+});
+const globalDsv = reactive({});
 let detailDialog = reactive({
     isShow: false,
 });
@@ -64,36 +88,58 @@ let loading = ref(false);
 let multipleSelection = ref([]);
 const openDialog = (row) => {
     detailDialog = Object.assign(detailDialog, row);
-    
+
     multipleSelection.value = [row];
     detailDialog.isShow = true;
-    if(!detailDialog.tab || JSON.stringify(detailDialog.tab) == "{}"){
+    // 加载数据
+    refresh();
+};
+
+// 刷新
+const refresh = () => {
+    if (!detailDialog.tab || JSON.stringify(detailDialog.tab) == "{}") {
         getLayoutList();
-    }else {
+    } else {
         initData();
     }
-    
 };
 
 // 加载页签
-const getLayoutList =async () => {
+const getLayoutList = async () => {
     loading.value = true;
     let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
-    if(res){
+    if (res) {
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         initData();
     }
     loading.value = false;
-}
-
+};
 
 // 初始化数据
-const initData = () => {
+const initData = async () => {
     loading.value = true;
-    
-    setTimeout(() => {
+    let res = await getFormLayout(detailDialog.entityName);
+    if (res) {
+        vFormRef.value.setFormJson(res.data.layoutJson);
+        // // 根据数据渲染出页面填入的值，填过
+        nextTick(async () => {
+            let formData = await queryById(detailDialog.detailId)
+            if(formData){
+                vFormRef.value.setFormData(formData.data);
+                vFormRef.value.setReadMode();
+            }
+            loading.value = false;
+        });
+    }else {
         loading.value = false;
-    }, 10);
+    }
+};
+
+// 给URL加参数--------暂时未用
+const addUrlParam = (key, value) => {
+    let obj = new window.URL(window.location.href);
+    obj.searchParams.set(key, value);
+    return obj.href;
 };
 
 // 暴露方法给父组件调用

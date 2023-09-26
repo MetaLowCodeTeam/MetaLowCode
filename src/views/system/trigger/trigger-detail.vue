@@ -275,8 +275,12 @@ const onSave = async (target) => {
     }
     // 如果是回调URL
     if (trigger.actionType.value == 14) {
-        if (!actionContent.hookUrl) {
-            $ElMessage.warning("请数要推送到的URL");
+        if (actionContent.callBackType == "URL" && !actionContent.hookUrl) {
+            $ElMessage.warning("请输入要推送到的URL");
+            return;
+        }
+        if (actionContent.callBackType == "FUNCTION" && !actionContent.functionName) {
+            $ElMessage.warning("请选择回调函数");
             return;
         }
     }
