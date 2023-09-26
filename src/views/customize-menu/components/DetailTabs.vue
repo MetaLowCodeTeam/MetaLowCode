@@ -28,7 +28,7 @@ import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
     modelValue: null,
 });
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue","tabChange"]);
 const $TOOL = inject("$TOOL")
 let detailDialog = ref({});
 let tabs = ref();
@@ -72,7 +72,10 @@ const openDialog = () => {
 };
 
 const handleClick = (e) => {
-    console.log(e.props.name, "页签变化");
+    emits("tabChange",e.props.name)
+    // detailDialog.value.cutTab = e.props.name;
+    // console.log(detailDialog.value,'detailDialog.value')
+    // emits("update:modelValue", detailDialog.value);
 };
 
 const confirm = (e) => {

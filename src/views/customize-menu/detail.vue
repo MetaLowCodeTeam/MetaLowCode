@@ -26,15 +26,22 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="18">
-                    <DetailTabs v-model="detailDialog" />
-                    <v-form-render
-                        v-if="haveLayoutJson"
-                        ref="vFormRef"
-                        :option-data="optionData"
-                        :form-data="formData"
-                        :global-dsv="globalDsv"
-                    />
-                    <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
+                    <DetailTabs v-model="detailDialog" @tabChange="tabChange" />
+                    <!-- 详情 -->
+                    <div v-if="cutTab == 'detail'">
+                        <v-form-render
+                            v-if="haveLayoutJson"
+                            ref="vFormRef"
+                            :option-data="optionData"
+                            :form-data="formData"
+                            :global-dsv="globalDsv"
+                        />
+                        <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
+                    </div>
+                    <!-- 非详情 -->
+                    <div v-else>
+                        <DetailTabCom :cutTab="cutTab"/>
+                    </div>
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
@@ -65,6 +72,7 @@ import DetailTabs from "./components/DetailTabs.vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import More from "./components/More.vue";
+import DetailTabCom from "./components/DetailTabCom.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const vFormRef = ref();
@@ -79,24 +87,27 @@ const optionData = reactive({});
 // '16'}
 // ]
 // }
-const formData = reactive({
-    gender: "2",
-});
+const formData = reactive();
 const globalDsv = reactive({});
 let detailDialog = reactive({
     isShow: false,
 });
 let loading = ref(false);
 let multipleSelection = ref([]);
+// 当前页签
+let cutTab = ref("detail");
 const openDialog = (row) => {
     detailDialog = Object.assign(detailDialog, row);
-
     multipleSelection.value = [row];
     detailDialog.isShow = true;
     // 加载数据
     refresh();
 };
 
+// 页签更换
+const tabChange = (tab) => {
+    cutTab.value = tab
+}
 // 刷新
 const refresh = () => {
     if (!detailDialog.tab || JSON.stringify(detailDialog.tab) == "{}") {
@@ -125,10 +136,12 @@ const initData = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
-            vFormRef.value.setFormJson(res.data.layoutJson);
+
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
+                
                 let formData = await queryById(detailDialog.detailId);
+                vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
                     vFormRef.value.setFormData(formData.data);
                     vFormRef.value.setReadMode();

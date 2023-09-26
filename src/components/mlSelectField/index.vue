@@ -48,6 +48,7 @@ watch(
 );
 onMounted(() => {
     selectedFields.value = props.modelValue;
+    console.log(selectedFields.value,'selectedFields.value')
 });
 
 // 打开弹框
@@ -68,8 +69,9 @@ const getAllFields = async () => {
             if(el.type !== 'PrimaryKey'){
                 el.isSelected = false;
                 if (hasFields.includes(el.name)) {
-                    el.isRequired = false,
-                    el.isEdit = false,
+                    let filterFields = selectedFields.value.filter((subEl) => el.name == subEl.name);
+                    el.isRequired = filterFields[0].isRequired,
+                    el.isEdit = filterFields[0].isEdit,
                     el.isSelected = true;
                 }
                 resList.push(el)
