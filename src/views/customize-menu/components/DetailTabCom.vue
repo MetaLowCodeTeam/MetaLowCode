@@ -3,60 +3,100 @@
     <div v-loading="loading">
         <el-empty v-if="tableColumn.length == 0" :image-size="100" description="未查询到该实体相关配置列数据" />
         <div v-else class="main">
-            <div v-if="defaultShowType == 'table'">
-                <div class="main-header">
-                    <el-input v-model="quickQueryVal" placeholder="快速查询" style="width:300px">
-                        <template #append>
-                            <span class="main-search-icon" @click="getTableList">
-                                <el-icon>
-                                    <ElIconSearch />
-                                </el-icon>
-                            </span>
-                        </template>
-                    </el-input>
-                    <el-button text class="ml-3" title="列表页查看" @click="goPath">
-                        <SvgIcon icon-name="open" />
-                    </el-button>
-                    <div class="fr fr-box">123</div>
-                </div>
-                <div class="min-table mt-20">
-                    <el-table
-                        ref="elTables"
-                        :data="tableData"
-                        :border="true"
-                        stripe
-                        style="width: 100%"
-                        max-height="400px"
-                        @sort-change="sortChange"
+            <div class="main-header">
+                <el-input v-model="quickQueryVal" placeholder="快速查询" style="width:300px">
+                    <template #append>
+                        <span class="main-search-icon" @click="getTableList">
+                            <el-icon>
+                                <ElIconSearch />
+                            </el-icon>
+                        </span>
+                    </template>
+                </el-input>
+                <el-button
+                    text
+                    class="ml-3"
+                    title="列表页查看"
+                    @click="goPath"
+                    v-if="defaultShowType == 'table'"
+                >
+                    <SvgIcon icon-name="open" />
+                </el-button>
+                <div class="fr fr-box">
+                    <el-button
+                        text
+                        title="卡片视图"
+                        style="margin-left: 0;padding: 8px"
+                        :class="{'is-active': defaultShowType == 'card'}"
+                        @click="defaultShowType = 'card'"
                     >
-                        <el-table-column
-                            v-for="(column,columnInx) of tableColumn"
-                            :key="columnInx"
-                            :prop="column.fieldName"
-                            :label="column.columnAliasName ?column.columnAliasName : column.fieldLabel"
-                            :width="setColumnWidth(column)"
-                            sortable
-                            show-overflow-tooltip
-                        >
-                            <template #default="scope">
-                                <FormatRow
-                                    :row="scope.row"
-                                    :column="column"
-                                    @openDetilDialog="openDetilDialog"
-                                />
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <mlPagination
-                        :no="page.no"
-                        :size="page.size"
-                        :total="page.total"
-                        @pageChange="pageChange"
-                        @handleSizeChange="handleSizeChange"
-                        style="background: #fff;"
-                        :bottom="false"
-                    />
+                        <SvgIcon icon-name="separator-horizontal" />
+                    </el-button>
+                    <el-button
+                        text
+                        title="列表视图"
+                        style="margin-left: 0;padding: 8px;"
+                        :class="{'is-active': defaultShowType == 'table'}"
+                        @click="defaultShowType = 'table'"
+                    >
+                        <SvgIcon icon-name="grid_n" />
+                    </el-button>
                 </div>
+            </div>
+            <div class="min-table mt-20" v-if="defaultShowType == 'table'">
+                <el-table
+                    ref="elTables"
+                    :data="tableData"
+                    :border="true"
+                    stripe
+                    style="width: 100%"
+                    max-height="400px"
+                    @sort-change="sortChange"
+                >
+                    <el-table-column
+                        v-for="(column,columnInx) of tableColumn"
+                        :key="columnInx"
+                        :prop="column.fieldName"
+                        :label="column.columnAliasName ?column.columnAliasName : column.fieldLabel"
+                        :width="setColumnWidth(column)"
+                        sortable
+                        show-overflow-tooltip
+                    >
+                        <template #default="scope">
+                            <FormatRow
+                                :row="scope.row"
+                                :column="column"
+                                @openDetilDialog="openDetilDialog"
+                            />
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <mlPagination
+                    :no="page.no"
+                    :size="page.size"
+                    :total="page.total"
+                    @pageChange="pageChange"
+                    @handleSizeChange="handleSizeChange"
+                    style="background: #fff;"
+                    :bottom="false"
+                />
+            </div>
+            <div class="min-table mt-20" v-else>
+                <el-collapse v-model="cardActiveNames">
+                    <el-collapse-item
+                        v-for="(item,inx) of tableData"
+                        :key="inx"
+                        :name="item[idFiledName]"
+                    >
+                        <template #title>
+                            <div class="collapse-title">
+                                <span class="title-span">{{ item[nameFiledName] }}</span>
+                                <i class="header-icon el-icon-info"></i>
+                            </div>
+                        </template>
+                        内容
+                    </el-collapse-item>
+                </el-collapse>
             </div>
         </div>
     </div>
@@ -98,6 +138,8 @@ let tabs = ref([]);
 let tableColumn = ref([]);
 // 表格数据
 let tableData = ref([]);
+// card数据
+let cardActiveNames = ref([]);
 // 默认列宽度
 let titleWidthForAll = reactive({});
 // 自定义列宽度
@@ -300,6 +342,9 @@ const getTableList = async () => {
     );
     if (res) {
         tableData.value = res.data.dataList;
+        cardActiveNames.value = tableData.value.map(
+            (el) => el[idFiledName.value]
+        );
         page.total = res.data.pagination.total;
     }
     loading.value = false;
@@ -323,6 +368,23 @@ const getTableList = async () => {
         .el-icon {
             width: 100%;
         }
+    }
+    .is-active {
+        color: var(--el-color-primary);
+    }
+}
+
+:deep(.el-collapse-item__header) {
+    background: #eeeeee;
+    height: 38px;
+    line-height: 38px;
+}
+.collapse-title {
+    width: 100%;
+
+    .title-span {
+        color: var(--el-color-primary);
+        margin-left: 20px;
     }
 }
 </style>
