@@ -23,6 +23,25 @@
                     <SvgIcon icon-name="open" />
                 </el-button>
                 <div class="fr fr-box">
+                    <el-dropdown
+                        trigger="click"
+                        @command="cardSortCommand"
+                        :disabled="defaultShowType == 'table'"
+                    >
+                        <span class="el-dropdown-link">
+                            {{ cardSortText }}
+                            <el-icon class="el-icon--right">
+                                <arrow-down />
+                            </el-icon>
+                        </span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item command="modifiedOnDesc">最近修改时间</el-dropdown-item>
+                                <el-dropdown-item command="createdOnDesc">最近创建时间</el-dropdown-item>
+                                <el-dropdown-item command="createdOnAsc">最早创建时间</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                     <el-button
                         text
                         title="卡片视图"
@@ -169,6 +188,40 @@ let detailTab = reactive({});
 let idFiledName = ref("");
 // 标蓝字段
 let nameFiledName = ref("");
+
+// 卡片视图排序
+let cardSortText = ref("默认排序");
+const cardSortCommand = (e) => {
+    if (e == "modifiedOnDesc") {
+        sortFields.value = [
+            {
+                fieldName: "modifiedOn",
+                type: "DESC",
+            },
+        ];
+        cardSortText.value = "最近修改时间"
+    }
+    if (e == "createdOnDesc") {
+        sortFields.value = [
+            {
+                fieldName: "createdOn",
+                type: "DESC",
+            },
+        ];
+        cardSortText.value = "最近创建时间"
+    }
+    if (e == "createdOnAsc") {
+        sortFields.value = [
+            {
+                fieldName: "createdOn",
+                type: "ASC",
+            },
+        ];
+        cardSortText.value = "最早创建时间"
+    }
+    getTableList();
+};
+
 // 初始化数据
 const initData = async () => {
     tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
@@ -371,6 +424,12 @@ const getTableList = async () => {
     }
     .is-active {
         color: var(--el-color-primary);
+    }
+    .el-dropdown-link {
+        display: inline-block;
+        height: 32px;
+        line-height: 32px;
+        margin-right: 5px;
     }
 }
 

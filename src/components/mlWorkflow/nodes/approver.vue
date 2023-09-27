@@ -80,7 +80,7 @@
                         <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
                     </el-radio-group>
                 </div>
-                <div class="lable-title mb-10 mt-20">可查看字段</div>
+                <div class="lable-title mb-10 mt-20">允许修改字段</div>
                 <div class="edit-field-list-box">
                     <div
                         class="edit-field-list"
@@ -98,12 +98,12 @@
                         </span>
 
                         <span class="required-icon fr" :title="field.reserved ? '系统字段无法修改' : ''">
-                            <el-checkbox
+                            <!-- <el-checkbox
                                 @change="fieldEditChange(field)"
                                 :disabled="field.reserved"
                                 v-model="field.isEdit"
                                 label="允许修改"
-                            />
+                            /> -->
                             <el-checkbox
                                 @change="fieldRequiredChange(field)"
                                 :disabled="field.reserved"
@@ -128,6 +128,7 @@
                 ref="SelectFieldDialog"
                 v-model="form.modifiableFields"
                 title="选择可查看/修改字段"
+
             />
         </el-drawer>
     </div>

@@ -5,7 +5,7 @@
                 <el-col :span="6" v-for="(field,inx) of fieldList" :key="inx" >
                     <div class="mlfield-item">
                         <div class="mlfield-check-box fl">
-                            <el-checkbox v-model="field.isSelected"/>
+                            <el-checkbox v-model="field.isSelected" :disabled="field.reserved"/>
                         </div>
                         <div
                             class="mlfield-label fr"
@@ -84,12 +84,18 @@ const getAllFields = async () => {
 
 // 选择字段
 const fieldSelect = (field) => {
+    if(field.reserved){
+        return
+    }
     field.isSelected = !field.isSelected;
 }
 
 // 确认
 const confirm = () => {
     selectedFields.value = fieldList.value.filter((el) => el.isSelected);
+    selectedFields.value.forEach(el => {
+        el.isEdit = true;
+    })
     emit("update:modelValue", selectedFields.value);
     dialogIsShow.value = false;
 };
