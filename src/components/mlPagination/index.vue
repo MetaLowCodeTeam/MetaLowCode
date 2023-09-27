@@ -1,5 +1,5 @@
 <template>
-    <div class="table-footer">
+    <div class="table-footer" :class="{'bottom':bottom}">
         <el-pagination
             :total="total"
             :current-page="no"
@@ -27,6 +27,7 @@ const props = defineProps({
         type: Array,
         default: () => [20, 40, 80, 100, 200, 300, 400, 500],
     },
+    bottom: { type: Boolean, default: true },
 });
 const emit = defineEmits(["pageChange", "handleSizeChange"]);
 const pageChange = (v) => {
@@ -48,11 +49,13 @@ const handleSizeChange = (v) => {
     font-size: 13px;
     color: #616161;
     justify-content: center;
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
     z-index: 2001;
     box-sizing: border-box;
+    &.bottom {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
 }
 </style>

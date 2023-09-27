@@ -1,12 +1,78 @@
 <template>
     <!--  -->
-    <div v-loading="loading">{{ cutTab }}</div>
+    <div v-loading="loading">
+        <el-empty v-if="tableColumn.length == 0" :image-size="100" description="未查询到该实体相关配置列数据" />
+        <div v-else class="main">
+            <div v-if="defaultShowType == 'table'">
+                <div class="main-header">
+                    <el-input v-model="quickQueryVal" placeholder="快速查询" style="width:300px">
+                        <template #append>
+                            <span class="main-search-icon" @click="getTableList">
+                                <el-icon>
+                                    <ElIconSearch />
+                                </el-icon>
+                            </span>
+                        </template>
+                    </el-input>
+                    <el-button text class="ml-3" title="列表页查看" @click="goPath">
+                        <SvgIcon icon-name="open" />
+                    </el-button>
+                    <div class="fr fr-box">123</div>
+                </div>
+                <div class="min-table mt-20">
+                    <el-table
+                        ref="elTables"
+                        :data="tableData"
+                        :border="true"
+                        stripe
+                        style="width: 100%"
+                        max-height="400px"
+                        @sort-change="sortChange"
+                    >
+                        <el-table-column
+                            v-for="(column,columnInx) of tableColumn"
+                            :key="columnInx"
+                            :prop="column.fieldName"
+                            :label="column.columnAliasName ?column.columnAliasName : column.fieldLabel"
+                            :width="setColumnWidth(column)"
+                            sortable
+                            show-overflow-tooltip
+                        >
+                            <template #default="scope">
+                                <FormatRow
+                                    :row="scope.row"
+                                    :column="column"
+                                    @openDetilDialog="openDetilDialog"
+                                />
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <mlPagination
+                        :no="page.no"
+                        :size="page.size"
+                        :total="page.total"
+                        @pageChange="pageChange"
+                        @handleSizeChange="handleSizeChange"
+                        style="background: #fff;"
+                        :bottom="false"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+    <Detail ref="detailRefs" />
 </template>
 
 <script setup>
 import { onMounted, watch, inject, reactive, ref } from "vue";
+import { getDataList } from "@/api/crud";
+import { useRouter } from "vue-router";
+import FormatRow from "./FormatRow.vue";
+import Detail from "../detail.vue";
+const router = useRouter();
 const props = defineProps({
     cutTab: { type: String },
+    tabs: { type: Object, default: () => {} },
 });
 const $API = inject("$API");
 
@@ -17,22 +83,246 @@ watch(
     },
     { deep: true }
 );
-
+// 当前实体
+let entityCode = ref("");
+let entityName = ref("");
 onMounted(() => {
     initData();
 });
 
 let loading = ref(false);
 let layoutConfig = reactive({});
+// 当前所有页签
+let tabs = ref([]);
+// 当前导航显示的列
+let tableColumn = ref([]);
+// 表格数据
+let tableData = ref([]);
+// 默认列宽度
+let titleWidthForAll = reactive({});
+// 自定义列宽度
+let titleWidthForSelf = reactive({});
+// 默认显示类型  table 表格  card 卡片
+let defaultShowType = ref("table");
+// 快速查询
+let quickQueryVal = ref("");
+// 默认显示列
+let defaultColumnShow = ref("");
+// 所有字段
+let allFields = ref([]);
+// 列排序
+let sortFields = ref([]);
+// 默认排序
+let defaultSortFields = ref([
+    {
+        fieldName: "modifiedOn",
+        type: "DESC",
+    },
+]);
+
+let detailRefs = ref("");
+// 详情Tab
+let detailTab = reactive({});
+// 实体ID
+let idFiledName = ref("");
+// 标蓝字段
+let nameFiledName = ref("");
 // 初始化数据
 const initData = async () => {
+    tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
+    let filterTabs = tabs.value.filter((el) => el.entityName == props.cutTab);
+    if (filterTabs[0]) {
+        entityCode.value = filterTabs[0].entityCode;
+        entityName.value = filterTabs[0].entityName;
+    }
+    // console.log(tabs);
     loading.value = true;
     let res = await $API.layoutConfig.getLayoutList(props.cutTab);
     if (res) {
+        idFiledName.value = res.data.idFiledName;
+        nameFiledName.value = res.data.nameFiledName;
         layoutConfig = res.data ? { ...res.data } : {};
+        let { chosenListType, LIST } = layoutConfig;
+        let { ALL, SELF } = LIST;
+        titleWidthForAll = res.data.titleWidthForAll
+            ? { ...JSON.parse(res.data.titleWidthForAll) }
+            : {};
+        titleWidthForSelf = res.data.titleWidthForSelf
+            ? { ...JSON.parse(res.data.titleWidthForSelf) }
+            : {};
+        detailTab = res.data.TAB ? { ...res.data.TAB } : {};
+        // let resList = Object.assign({}, res.data.LIST);
+        SELF.FILTER = SELF.config ? JSON.parse(SELF.config) : [];
+        ALL.FILTER = ALL.config ? JSON.parse(ALL.config) : [];
+        // 如果自定义配置不存在，用ALL配置
+        if (SELF.FILTER.length < 1) {
+            tableColumn.value = ALL.FILTER;
+            defaultColumnShow.value = "ALL";
+        } else {
+            tableColumn.value = SELF.FILTER;
+            defaultColumnShow.value = "SELF";
+        }
+        // 如果存在默认配置，用默认配置
+        if (chosenListType == "ALL") {
+            tableColumn.value = ALL.FILTER;
+            defaultColumnShow.value = "ALL";
+        }
+        if (chosenListType == "SELF") {
+            tableColumn.value = SELF.FILTER;
+            defaultColumnShow.value = "SELF";
+        }
+        // 如果存在列
+        if (tableColumn.value.length > 0) {
+            refreshData();
+        }
+    }
+    loading.value = false;
+};
+
+const goPath = () => {
+    router.push("/" + props.cutTab + "/list");
+};
+
+// 分页
+let page = reactive({
+    no: 1,
+    size: 20,
+    total: 0,
+});
+
+// 分页切换
+const pageChange = (cutPage) => {
+    page.no = cutPage;
+    getTableList();
+};
+const handleSizeChange = (size) => {
+    page.size = size;
+    getTableList();
+};
+
+// 打开详情
+const openDetilDialog = (row) => {
+    let detailData = { ...row };
+    detailData.entityName = entityName.value;
+    detailData.entityCode = entityCode.value;
+    detailData.tab = { ...detailTab };
+    detailData.detailId = row[idFiledName.value];
+    detailData.detailTitle = row[nameFiledName.value];
+    detailRefs.value.openDialog(detailData);
+};
+// 列排序
+const sortChange = (column) => {
+    let columnSort = {};
+    if (column.order == "ascending") {
+        columnSort.type = "ASC";
+        columnSort.fieldName = column.prop;
+    } else if (column.order == "descending") {
+        columnSort.type = "DESC";
+        columnSort.fieldName = column.prop;
+    } else {
+        columnSort = { ...defaultSortFields[0] };
+    }
+    sortFields.value = [columnSort];
+    getTableList();
+};
+// 设置列宽度
+const setColumnWidth = (column) => {
+    // console.log(defaultColumnShow.value)
+    if (
+        defaultColumnShow.value == "SELF" &&
+        titleWidthForSelf[column.fieldName]
+    ) {
+        return titleWidthForSelf[column.fieldName];
+    }
+    if (
+        defaultColumnShow.value == "ALL" &&
+        titleWidthForAll[column.fieldName]
+    ) {
+        return titleWidthForAll[column.fieldName];
+    }
+    if (column.columnWidth && column.columnWidth > 0) {
+        return column.columnWidth;
+    }
+    return "150";
+};
+
+// 刷新数据
+const refreshData = () => {
+    // 获取所有列字段
+    allFields.value = tableColumn.value.map((el) => el.fieldName);
+    // 获取所有列排序
+    let findSortFields = tableColumn.value.filter((el) => el.columnSort);
+    // 如果有排序
+    if (findSortFields.length > 0) {
+        sortFields.value = [
+            {
+                fieldName: findSortFields[0].fieldName,
+                type: findSortFields[0].columnSort,
+            },
+        ];
+        // 默认排序赋值为设置的排序
+        defaultSortFields.value = [...sortFields.value];
+    }
+    // 如果没有，拿默认排序
+    else {
+        defaultSortFields.value = [
+            {
+                fieldName: "modifiedOn",
+                type: "DESC",
+            },
+        ];
+        sortFields.value = [...defaultSortFields.value];
+    }
+    getTableList();
+};
+
+const getTableList = async () => {
+    loading.value = true;
+    let param = {
+        mainEntity: entityName.value,
+        fieldsList: allFields.value.join(),
+        pageSize: page.size,
+        pageNo: page.no,
+        // filter: { ...queryFilter },
+        // advFilter: { ...comQueriesList },
+        sortFields: sortFields.value,
+        quickFilter: quickQueryVal.value,
+    };
+    let res = await getDataList(
+        param.mainEntity,
+        param.fieldsList,
+        param.filter,
+        param.pageSize,
+        param.pageNo,
+        param.sortFields,
+        param.advFilter,
+        param.quickFilter
+    );
+    if (res) {
+        tableData.value = res.data.dataList;
+        page.total = res.data.pagination.total;
     }
     loading.value = false;
 };
 </script>
 <style lang='scss' scoped>
+.main-header {
+    height: 32px;
+    line-height: 32px;
+    .main-search-icon {
+        // cursor: pointer;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        .el-icon {
+            width: 100%;
+        }
+    }
+}
 </style>

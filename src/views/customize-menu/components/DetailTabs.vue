@@ -27,9 +27,10 @@ import { inject, onMounted, ref, watch } from "vue";
 import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
     modelValue: null,
+    cutTab: { type: String, default: "" },
 });
-const emits = defineEmits(["update:modelValue","tabChange"]);
-const $TOOL = inject("$TOOL")
+const emits = defineEmits(["update:modelValue", "tabChange"]);
+const $TOOL = inject("$TOOL");
 let detailDialog = ref({});
 let tabs = ref();
 
@@ -41,9 +42,17 @@ watch(
     },
     { deep: true }
 );
+watch(
+    () => props.cutTab,
+    () => {
+        activeName.value = props.cutTab
+    },
+    { deep: true }
+);
 let activeName = ref("");
 onMounted(() => {
     detailDialog.value = props.modelValue;
+    
     initTabs();
 });
 
@@ -72,7 +81,7 @@ const openDialog = () => {
 };
 
 const handleClick = (e) => {
-    emits("tabChange",e.props.name)
+    emits("tabChange", e.props.name);
     // detailDialog.value.cutTab = e.props.name;
     // console.log(detailDialog.value,'detailDialog.value')
     // emits("update:modelValue", detailDialog.value);

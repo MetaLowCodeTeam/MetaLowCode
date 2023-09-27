@@ -26,7 +26,7 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="18">
-                    <DetailTabs v-model="detailDialog" @tabChange="tabChange" />
+                    <DetailTabs v-model="detailDialog" @tabChange="tabChange" :cutTab="cutTab"/>
                     <!-- 详情 -->
                     <div v-if="cutTab == 'detail'">
                         <v-form-render
@@ -40,7 +40,7 @@
                     </div>
                     <!-- 非详情 -->
                     <div v-else>
-                        <DetailTabCom :cutTab="cutTab"/>
+                        <DetailTabCom :cutTab="cutTab" :tabs="detailDialog.tab"/>
                     </div>
                 </el-col>
                 <el-col :span="6">
@@ -77,16 +77,7 @@ const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const vFormRef = ref();
 const optionData = reactive({});
-// {
-// 'gender': '2',
-// 'paymentType': 'wechat'
-// 'subForm01': [
-// {'price': '88.00', 'count':
-// '12'},
-// {'price': '199.00', 'count':
-// '16'}
-// ]
-// }
+
 const formData = reactive();
 const globalDsv = reactive({});
 let detailDialog = reactive({
@@ -107,9 +98,13 @@ const openDialog = (row) => {
 // 页签更换
 const tabChange = (tab) => {
     cutTab.value = tab
+    if(tab == 'detail'){
+        refresh()
+    }
 }
 // 刷新
 const refresh = () => {
+    cutTab.value = "detail"
     if (!detailDialog.tab || JSON.stringify(detailDialog.tab) == "{}") {
         getLayoutList();
     } else {

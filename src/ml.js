@@ -39,6 +39,7 @@ import role from './directives/role'
 import time from './directives/time'
 import copy from './directives/copy'
 import errorHandler from './utils/errorHandler'
+import SvgIcon from "./components/SvgIcon/index.vue";
 
 import * as elIcons from '@element-plus/icons-vue'
 import * as scIcons from './assets/icons'
@@ -88,6 +89,7 @@ export default {
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);
 		app.component('SimpleTable', SimpleTable)
+		app.component('SvgIcon', SvgIcon)
 
 
 		//注册全局指令
