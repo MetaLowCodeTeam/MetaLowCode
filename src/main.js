@@ -16,6 +16,7 @@ import 'virtual:svg-icons-register'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import '@/../lib/visual-design/designer.style.css'
 import {loadExtensionWidgets} from "@/views/system/form-design/extension/extension-widgets-loader";
+import {loadChartsExtension} from "@/views/system/dashboard-design/charts/charts-loader";
 
 const app = createApp(App);
 app.use(router);
@@ -23,6 +24,7 @@ app.use(pinia);
 app.use(ElementPlus);
 app.use(VisualDesign)
 loadExtensionWidgets(app)
+loadChartsExtension(app)
 app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);
