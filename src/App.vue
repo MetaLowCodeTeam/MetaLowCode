@@ -99,6 +99,7 @@ const colorPrimary = (val) => {
         val = "#409EFF";
     }
     document.documentElement.style.setProperty("--el-color-primary", val);
+    document.documentElement.style.setProperty("--vf-color-primary", val);  //同步主题色
     for (let i = 1; i <= 9; i++) {
         document.documentElement.style.setProperty(
             `--el-color-primary-light-${i}`,
