@@ -2,7 +2,7 @@
     <mlSingleList
         :title="pageType[type].title"
         mainEntity="ApprovalTask"
-        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName"
+        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName,approvalConfigId.entityCode"
         :sortFields="sortFields"
         fieldName="approvalConfigId.flowName"
         :tableColumn="tableColumn"
@@ -53,6 +53,8 @@
             v-model="approveDialogIsShow"
             :taskId="approvalTaskId"
             :entityId="entityId"
+            :entityCode="entityCode"
+            :approvalName="approvalName"
             @confirm="confirm"
             title="审批"
         />
@@ -127,6 +129,10 @@ let approveDialogIsShow = ref(false);
 let approvalTaskId = ref("");
 // 实体ID
 let entityId = ref("");
+// 实体CODE
+let entityCode = ref("");
+// 审批名称
+let approvalName = ref("");
 // 默认排序
 let sortFields = ref([
     {
@@ -204,6 +210,8 @@ function approveRow(row) {
     approveDialogIsShow.value = true;
     approvalTaskId.value = row.approvalTaskId;
     entityId.value = row.entityId.id;
+    approvalName.value = row.entityId.name
+    entityCode.value = row['approvalConfigId.entityCode']
 }
 
 

@@ -95,6 +95,7 @@ const confirm = () => {
     selectedFields.value = fieldList.value.filter((el) => el.isSelected);
     selectedFields.value.forEach(el => {
         el.isEdit = true;
+        el.isRequired = false;
     })
     emit("update:modelValue", selectedFields.value);
     dialogIsShow.value = false;

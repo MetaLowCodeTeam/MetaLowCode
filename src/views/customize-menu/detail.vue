@@ -45,7 +45,7 @@
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
-                        <el-button>
+                        <el-button @click="onEditRow">
                             <span class="mr-5">
                                 <el-icon>
                                     <ElIconEditPen />
@@ -58,11 +58,13 @@
                             :multipleSelection="multipleSelection"
                             :entityCode="detailDialog.entityCode"
                             :detailId="detailDialog.detailId"
+                            :idFiledName="detailDialog.idFiledName"
                         />
                     </div>
                 </el-col>
             </el-row>
         </div>
+        <Edit ref="editRefs" @onConfirm="onConfirm"/>
     </el-drawer>
 </template>
 
@@ -73,6 +75,8 @@ import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import More from "./components/More.vue";
 import DetailTabCom from "./components/DetailTabCom.vue";
+import Edit from './edit.vue';
+const emits = defineEmits("onConfirm");
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const vFormRef = ref();
@@ -157,6 +161,17 @@ const addUrlParam = (key, value) => {
     obj.searchParams.set(key, value);
     return obj.href;
 };
+
+// 打开编辑
+let editRefs = ref();
+const onEditRow = () => {
+    editRefs.value.openDialog(detailDialog);
+};
+
+// 编辑确认
+const onConfirm = ()=>{
+    emits("onConfirm");
+}
 
 // 暴露方法给父组件调用
 defineExpose({

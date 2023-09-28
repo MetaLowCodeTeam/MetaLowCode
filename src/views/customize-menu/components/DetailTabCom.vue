@@ -297,6 +297,7 @@ const handleSizeChange = (size) => {
 
 // 打开详情
 const openDetilDialog = (row) => {
+    console.log(row,'row')
     let detailData = { ...row };
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;

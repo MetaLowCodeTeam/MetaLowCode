@@ -77,7 +77,7 @@
                     <span class="lh-span-a" @click="editColumn('SELF')">前去配置</span>
                 </div>
             </div>
-            <div v-else>
+            <div v-else class="table-div">
                 <el-table
                     ref="elTables"
                     :data="tableData"
@@ -136,7 +136,8 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" />
+        <Detail ref="detailRefs" @onConfirm="getTableList"/>
+        <Edit ref="editRefs" @onConfirm="getTableList"/>
     </div>
 </template>
 
@@ -147,10 +148,11 @@ import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More.vue";
 import Detail from "./detail.vue";
+import Edit from './edit.vue';
 import FormatRow from "./components/FormatRow.vue";
 
 const router = useRouter();
-const $ElMessage = inject("$ElMessage");
+
 const $API = inject("$API");
 // 页面Loading
 let pageLoading = ref(false);
@@ -330,8 +332,13 @@ const handleHighlightChangeTable = (row, column) => {
 };
 
 // 打开编辑
+let editRefs = ref();
 const onEditRow = (row) => {
-    alert("点击了编辑");
+    let tempV = {...row};
+    tempV.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
+    tempV.entityName = entityName.value;
+    tempV.detailId = row[idFiledName.value];
+    editRefs.value.openDialog(tempV);
 };
 
 let detailRefs = ref("");
@@ -343,7 +350,10 @@ const openDetilDialog = (row) => {
     detailData.tab = { ...detailTab };
     detailData.detailId = row[idFiledName.value];
     detailData.detailTitle = row[nameFiledName.value];
+    detailData.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
+    detailData.idFiledName = idFiledName.value;
     detailRefs.value.openDialog(detailData);
+    
 };
 
 // 列排序
@@ -437,18 +447,20 @@ const getTableList = async () => {
 
 // 设置表格高度
 const setTableHeight = () => {
-    let mainEl = document.querySelector(".customize-menu-list");
-    let tableEl = document.querySelector(".el-table__body-wrapper");
-    let offsetTop = 0;
-    if (mainEl) {
-        offsetTop += mainEl.offsetTop;
-    }
-    if (tableEl) {
-        offsetTop += tableEl.offsetTop;
-    }
-    offsetTop += 85;
-    let calcPx = offsetTop + "px";
-    return `calc(100vh - ${calcPx})`;
+    // let mainEl = document.querySelector(".customize-menu-list");
+
+    // let tableEl = document.querySelector(".el-table__body-wrapper");
+    // let offsetTop = 0;
+    // if (mainEl) {
+    //     offsetTop += mainEl.offsetTop;
+    // }
+    // if (tableEl) {
+    //     offsetTop += tableEl.offsetTop;
+    // }
+    // offsetTop += 150;
+    // let calcPx = offsetTop + "px";
+    // return 'calc(100% - 40px)'
+    return '100%'
 };
 
 // 设置列宽度
@@ -505,6 +517,7 @@ div {
     box-sizing: border-box;
 
     .table-box {
+        height: 100%;
         border-top: 3px solid var(--el-color-primary);
         // padding: 20px 0;
         .table-search-box {
@@ -524,6 +537,9 @@ div {
                     top: 6px;
                 }
             }
+        }
+        .table-div {
+            height: calc(100% - 100px);
         }
     }
 }

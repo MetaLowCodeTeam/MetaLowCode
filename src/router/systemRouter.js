@@ -36,6 +36,13 @@ const routes = [
 			title: "表单模板设计"
 		}
 	},
+    {
+		path: "/chartDesign",
+		component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/chartDesign/index.vue'),
+		meta: {
+			title: "图表设计"
+		}
+	},
 
 ]
 

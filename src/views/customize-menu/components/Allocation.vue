@@ -156,12 +156,24 @@ const openDialog = (data) => {
     formData.withUpdate = false;
     labelData.type = data.type;
     labelData.pageType = data.pageType;
-    labelData.label =
-        data.type == "allocation"
-            ? "分配"
-            : data.type == "share"
-            ? "共享"
-            : "取消共享";
+    if(data.type == "allocation"){
+        labelData.label = "分配"
+    }
+    if(data.type == "share"){
+        labelData.label = "共享"
+    }
+    if(data.type == "unShare"){
+        labelData.label = "取消共享"
+    }
+    if(data.type == "del"){
+        labelData.label = "删除"
+    }
+    // labelData.label =
+    //     data.type == "allocation"
+    //         ? "分配"
+    //         : data.type == "share"
+    //         ? "共享"
+    //         : "取消共享";
 };
 
 // 删除关联记录切换

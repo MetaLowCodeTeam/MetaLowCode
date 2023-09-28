@@ -1,66 +1,94 @@
 <template>
-    <mlDialog v-model="isShow" :title="title" width="35%">
-        <el-form label-position="top" label-width="100px" v-loading="loading">
-            <el-form-item label="批注">
-                <el-input
-                    v-model="form.remark"
-                    :autosize="{ minRows: 4, maxRows: 6 }"
-                    type="textarea"
-                    placeholder="输入批注(可选)"
-                    maxlength="500"
-                    show-word-limit
-                />
-            </el-form-item>
-            <el-form-item v-if="approvalTask.userSelectFlag">
-                <template #label>
-                    <el-icon class="icon filled-icon">
-                        <el-icon-user-filled />
-                    </el-icon>下一审批人(或签)
-                </template>
-                <mlSelectUser v-model="form.nextApprovalUserList" multiple clearable />
-            </el-form-item>
-            <el-form-item>
-                <template #label>
-                    <el-icon class="icon promotion-icon">
-                        <el-icon-promotion />
-                    </el-icon>本次审批结果将抄送给
-                </template>
-                <mlSelectUser v-model="form.currentCCToUserList" multiple clearable />
-            </el-form-item>
-            <el-form-item style="margin-bottom: 0;">
-                <div class="foot-btn w-100">
-                    <el-dropdown
-                        trigger="click"
-                        @command="handleCommand"
-                        v-if="approvalTask.transferApproval || approvalTask.addSignaturesApproval"
-                    >
-                        <span class="el-dropdown-link">
-                            <el-icon class="el-icon--right">
-                                <ElIconMoreFilled />
-                            </el-icon>
-                        </span>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-if="approvalTask.transferApproval"
-                                    :icon="Avatar"
-                                    :command="1"
-                                >转审</el-dropdown-item>
-                                <el-dropdown-item
-                                    v-if="approvalTask.addSignaturesApproval"
-                                    :icon="CirclePlusFilled"
-                                    :command="2"
-                                >加签</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
-                    <el-button type="primary" @click="confirmApprove(false)">同意</el-button>
-                    <el-button type="danger" @click="confirmApprove(true)">驳回</el-button>
-                    <el-button @click="canner">取消</el-button>
+    <el-drawer size="73%" class="ml-drawer" v-model="isShow" direction="rtl" :show-close="false">
+        <template #header>
+            <div class="detail-header">
+                {{ approvalName }} 审批
+                <div class="fr fr-box">
+                    <span class="fr-icon" @click="isShow = false">
+                        <el-icon>
+                            <ElIconCloseBold />
+                        </el-icon>
+                    </span>
                 </div>
-            </el-form-item>
-        </el-form>
-    </mlDialog>
+            </div>
+        </template>
+        <div class="detail-main" v-loading="loading">
+            <el-row :gutter="20">
+                <el-col :span="18">
+                    <v-form-render
+                        v-if="haveLayoutJson"
+                        ref="vFormRef"
+                        :option-data="optionData"
+                        :form-data="formData"
+                        :global-dsv="globalDsv"
+                    />
+                    <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
+                </el-col>
+                <el-col :span="6">
+                    <el-form label-position="top" label-width="100px">
+                        <el-form-item label="批注">
+                            <el-input
+                                v-model="form.remark"
+                                :autosize="{ minRows: 4, maxRows: 6 }"
+                                type="textarea"
+                                placeholder="输入批注(可选)"
+                                maxlength="500"
+                                show-word-limit
+                            />
+                        </el-form-item>
+                        <el-form-item v-if="approvalTask.userSelectFlag">
+                            <template #label>
+                                <el-icon class="icon filled-icon">
+                                    <el-icon-user-filled />
+                                </el-icon>下一审批人(或签)
+                            </template>
+                            <mlSelectUser v-model="form.nextApprovalUserList" multiple clearable />
+                        </el-form-item>
+                        <el-form-item>
+                            <template #label>
+                                <el-icon class="icon promotion-icon">
+                                    <el-icon-promotion />
+                                </el-icon>本次审批结果将抄送给
+                            </template>
+                            <mlSelectUser v-model="form.currentCCToUserList" multiple clearable />
+                        </el-form-item>
+                        <el-form-item style="margin-bottom: 0;">
+                            <div class="foot-btn w-100">
+                                <el-dropdown
+                                    trigger="click"
+                                    @command="handleCommand"
+                                    v-if="approvalTask.transferApproval || approvalTask.addSignaturesApproval"
+                                >
+                                    <span class="el-dropdown-link">
+                                        <el-icon class="el-icon--right">
+                                            <ElIconMoreFilled />
+                                        </el-icon>
+                                    </span>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item
+                                                v-if="approvalTask.transferApproval"
+                                                :icon="Avatar"
+                                                :command="1"
+                                            >转审</el-dropdown-item>
+                                            <el-dropdown-item
+                                                v-if="approvalTask.addSignaturesApproval"
+                                                :icon="CirclePlusFilled"
+                                                :command="2"
+                                            >加签</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                                <el-button type="primary" @click="confirmApprove(false)">同意</el-button>
+                                <el-button type="danger" @click="confirmApprove(true)">驳回</el-button>
+                                <el-button @click="canner">取消</el-button>
+                            </div>
+                        </el-form-item>
+                    </el-form>
+                </el-col>
+            </el-row>
+        </div>
+    </el-drawer>
     <mlDialog v-model="otherDialog" :title="taskOperation.title" width="35%" appendToBody>
         <el-form label-position="top" label-width="100px" v-loading="otherLoading">
             <el-form-item :label="taskOperation.title + '到哪些用户'">
@@ -79,12 +107,19 @@
 <script setup>
 import http from "@/utils/request";
 import { Avatar, CirclePlusFilled } from "@element-plus/icons-vue";
-import { watch, ref, onMounted, inject } from "vue";
+import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
+import { queryById, saveRecord } from "@/api/crud";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+import { getFormLayout } from "@/api/system-manager";
+const { entityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
     taskId: { type: String, default: "" },
     entityId: { type: String, default: "" },
     title: { type: String, default: "" },
+    approvalName: { type: String, default: "" },
+    entityCode: { type: Number, default: "" },
 });
 const emit = defineEmits(["update:modelValue", "canner", "confirm"]);
 const $ElMessage = inject("$ElMessage");
@@ -134,8 +169,63 @@ watch(
 );
 onMounted(() => {
     isShow.value = props.modelValue;
+
     getApprovalTaskById();
 });
+
+/**
+ *
+ * *********************************************************** 表单信息相关 beg
+ *
+ */
+
+const vFormRef = ref();
+let haveLayoutJson = ref(false);
+let optionData = reactive({});
+let formData = reactive({});
+let globalDsv = reactive({});
+// 初始化自定义表单
+const initFormLayout = async () => {
+    loading.value = true;
+    let res = await getFormLayout(entityName.value[props.entityCode]);
+    if (res) {
+        if (res.data?.layoutJson) {
+            haveLayoutJson.value = true;
+            // // 根据数据渲染出页面填入的值，填过
+            nextTick(async () => {
+                let formData = await queryById(props.entityId);
+                vFormRef.value.setFormJson(res.data.layoutJson);
+                if (formData) {
+                    vFormRef.value.setFormData(formData.data);
+                    nextTick(() => {
+                        vFormRef.value.disableForm();
+                        // 显示可编辑字段
+                        let enableWidgets =
+                            approvalTask.value.modifiableFields.map(
+                                (el) => el.name
+                            );
+                        vFormRef.value.enableWidgets(enableWidgets);
+                        // 显示必填字段
+                        let required = approvalTask.value.modifiableFields.map(
+                            (el) => (el.isRequired ? el.name : null)
+                        );
+                        vFormRef.value.setWidgetsRequired(required, true);
+                    });
+                }
+                loading.value = false;
+            });
+        } else {
+            loading.value = false;
+        }
+    } else {
+        loading.value = false;
+    }
+};
+/**
+ *
+ * *********************************************************** 表单信息相关 end
+ *
+ */
 
 // 拓展按钮点击
 function handleCommand(type) {
@@ -158,23 +248,35 @@ async function confirmApostille() {
             canner();
             emit("confirm");
         }
-    } 
+    }
     otherLoading.value = false;
 }
 
 // 同意审批
 async function confirmApprove(isBacked) {
-    loading.value = true;
-    form.value.entityId = props.entityId;
-    form.value.isBacked = isBacked;
-    let res = await http.post("/approval/approvalProcess", form.value);
-    if (res) {
-        let msg = isBacked ? "驳回" : "审批";
-        $ElMessage.success(msg + "成功");
-        canner();
-        emit("confirm");
+    let formData = await vFormRef.value.getFormData();
+    if (formData) {
+        loading.value = true;
+        let saveRes = await saveRecord(
+            entityName.value[props.entityCode],
+            props.entityId,
+            formData
+        );
+        if (saveRes) {
+            form.value.entityId = props.entityId;
+            form.value.isBacked = isBacked;
+            let res = await http.post("/approval/approvalProcess", form.value);
+            if (res) {
+                let msg = isBacked ? "驳回" : "审批";
+                $ElMessage.success(msg + "成功");
+                canner();
+                emit("confirm");
+            }
+            loading.value = false;
+        } else {
+            loading.value = false;
+        }
     }
-    loading.value = false;
 }
 
 // 获取审核参数
@@ -185,8 +287,10 @@ async function getApprovalTaskById() {
     });
     if (res) {
         approvalTask.value = res.data;
+        initFormLayout();
+    } else {
+        loading.value = false;
     }
-    loading.value = false;
 }
 
 // 关闭弹框
@@ -196,6 +300,26 @@ function canner() {
 </script>
 
 <style lang="scss" scoped>
+.detail-header {
+    // padding-bottom: 20px;
+    // box-sizing: border-box;
+    padding: 20px;
+    height: 60px;
+    background: #f0f0f0;
+    .fr-box {
+        // height: 60px;
+        .fr-icon {
+            cursor: pointer;
+            &:hover {
+                color: var(--el-color-primary);
+            }
+        }
+    }
+}
+.detail-main {
+    padding: 20px;
+    font-size: 14px;
+}
 .icon {
     position: relative;
 }
