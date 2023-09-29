@@ -13,7 +13,10 @@ import App from './App.vue'
 import pinia from './store'
 
 import 'virtual:svg-icons-register'
+import VueSmartWidget from 'vue-smart-widget'
+import '@/../lib/vue-smart-widiget.css'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+import '@/../lib/visual-design/designer.style.css'
 import '@/../lib/visual-design/designer.style.css'
 import {loadExtensionWidgets} from "@/views/system/form-design/extension/extension-widgets-loader";
 import {loadChartsExtension} from "@/views/system/dashboard-design/charts/charts-loader";
@@ -22,6 +25,7 @@ const app = createApp(App);
 app.use(router);
 app.use(pinia);
 app.use(ElementPlus);
+app.use(VueSmartWidget)
 app.use(VisualDesign)
 loadExtensionWidgets(app)
 loadChartsExtension(app)

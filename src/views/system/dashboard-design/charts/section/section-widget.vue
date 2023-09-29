@@ -1,20 +1,5 @@
 <template>
-  <vue-draggable-resizable
-          :w="widget.options.w"
-          :h="widget.options.h"
-          :x="widget.options.x"
-          :y="widget.options.y"
-          :parent="false"
-          :debug="true"
-          :min-width="100"
-          :min-height="20"
-          :isConflictCheck="true"
-          :snap="true"
-          :snapTolerance="1"
-          @dragstop="onDragCallback"
-          @resizestop="onResizeCallback"
-          @refLineParams="emitRefLineParams"
-          class="section">
+  <smart-widget title="区块">
 
     <draggable :list="widget.widgetList" item-key="id" v-bind="{group:'dragGroup', ghostClass: 'ghost',animation: 400}"
                tag="transition-group" :component-data="{name: 'fade'}"
@@ -35,19 +20,13 @@
       </template>
     </draggable>
 
-  </vue-draggable-resizable>
+  </smart-widget>
 </template>
 
 <script>
-  //import VueDraggableResizable from "vue-draggable-resizable-gorkys/src/components/vue-draggable-resizable.vue"
-  //import "vue-draggable-resizable-gorkys/src/components/vue-draggable-resizable.css"
-  import VueDraggableResizable from "@/components/vdr/components/vue-draggable-resizable.vue"
-  import "@/components/vdr/components/vue-draggable-resizable.css"
-
   export default {
     name: "section-widget",
     components: {
-      VueDraggableResizable
     },
     props: {
       widget: Object,
@@ -64,11 +43,6 @@
       designer: Object,
     },
     methods: {
-      emitRefLineParams(params) {
-        //console.error('aaaaa')
-        this.$emit('refLineParams', params)
-      },
-
       checkContainerMove(evt) {
         return this.designer.checkWidgetMove(evt)
       },
@@ -114,10 +88,6 @@
 
 <style scoped>
   .section {
-    //background-color: #ECF5FF;
-    //background-color: #F1F2F3;
-    //background-color: rgba(241, 242, 243, 0.2);
-    //background-color: rgba(236, 245, 255, 0.2);
     box-shadow: rgba(17, 17, 26, 0.05) 0 1px 0, rgba(17, 17, 26, 0.1) 0 0 8px;
 
     &:hover {
