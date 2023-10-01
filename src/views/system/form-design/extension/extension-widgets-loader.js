@@ -3,9 +3,10 @@ import enLang from './lang/en-US'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {registerFieldWidgets} from "@/views/system/form-design/extension/field-widgets";
 import {referenceSchema} from "@/views/system/form-design/extension/extension-widgets-schema";
+import newTestEditor from './property-editor/newTest-editor.vue'
 
 const {addAdvancedFieldSchema, addCustomWidgetSchema, addZHExtensionLang,
-	addENExtensionLang} = VisualDesign.VFormSDK
+	addENExtensionLang, PERegister} = VisualDesign.VFormSDK
 
 export const loadExtensionWidgets = (app) => {
 	//加载语言文件
@@ -18,4 +19,6 @@ export const loadExtensionWidgets = (app) => {
 
 	//添加到设计器组件库
 	addAdvancedFieldSchema(referenceSchema)
+
+    PERegister.registerCPEditor(app, 'newTest', 'newTest-editor', newTestEditor)
 }

@@ -21,6 +21,7 @@ export const referenceSchema = {
 		requiredHint: '',
 		validation: '',
 		validationHint: '',
+        newTest: '',
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
