@@ -1,34 +1,32 @@
 <template>
-	<smart-widget>
-		<static-content-wrapper
-			:designer="designer"
-			:field="field"
-			:design-state="designState"
-			:parent-widget="parentWidget"
-			:parent-list="parentList"
-			:index-of-parent-list="indexOfParentList"
-			:sub-form-row-index="subFormRowIndex"
-			:sub-form-col-index="subFormColIndex"
-			:sub-form-row-id="subFormRowId">
-			<div class="card-panel" :style="{'justify-content':field.options.showIcon?'space-between':'center'}">
-				<div class="card-panel-icon-wrapper icon-color" v-if="field.options.showIcon"
-					 :style="{'color':field.options.iconColor,'--hover-color': field.options.iconColor }">
-					<el-icon>
-						<component :is="field.options.icon"/>
-					</el-icon>
+	<static-content-wrapper
+		:designer="designer"
+		:field="field"
+		:design-state="designState"
+		:parent-widget="parentWidget"
+		:parent-list="parentList"
+		:index-of-parent-list="indexOfParentList"
+		:sub-form-row-index="subFormRowIndex"
+		:sub-form-col-index="subFormColIndex"
+		:sub-form-row-id="subFormRowId">
+		<div class="card-panel" :style="{'justify-content':field.options.showIcon?'space-between':'center'}">
+			<div class="card-panel-icon-wrapper icon-color" v-if="field.options.showIcon"
+				 :style="{'color':field.options.iconColor,'--hover-color': field.options.iconColor }">
+				<el-icon>
+					<component :is="field.options.icon"/>
+				</el-icon>
+			</div>
+			<div class="card-panel-description">
+				<div class="card-panel-text">
+					{{ field.options.label }}
 				</div>
-				<div class="card-panel-description">
-					<div class="card-panel-text">
-						{{ field.options.label }}
-					</div>
-					<div>
-						<count-up :startVal="0" :endVal="field.options.option.value" class="card-panel-num">
-						</count-up>
-					</div>
+				<div>
+					<count-up :startVal="0" :endVal="field.options.value" class="card-panel-num">
+					</count-up>
 				</div>
 			</div>
-		</static-content-wrapper>
-	</smart-widget>
+		</div>
+	</static-content-wrapper>
 </template>
 
 <script>
@@ -75,7 +73,7 @@ export default {
 		field: {
 			deep: true,
 			handler(val) {
-				console.log(val, "2000")
+				//console.log(val, "2000")
 			}
 		}
 	},
@@ -118,19 +116,19 @@ export default {
 				customFunc.call(this);
 			}
 		},
-		/**
-		 * 获取图表数据
-		 */
-		getStatisticData() {
-			return this.field.options.option
-		},
-		/**
-		 * 设置图表数据
-		 * @param statisticData
-		 */
-		setStatisticData(statisticData) {
-			this.field.options.option = statisticData
-		},
+		// /**
+		//  * 获取图表数据
+		//  */
+		// getStatisticData() {
+		// 	return this.field.options.option
+		// },
+		// /**
+		//  * 设置图表数据
+		//  * @param statisticData
+		//  */
+		// setStatisticData(statisticData) {
+		// 	this.field.options.option = statisticData
+		// },
 		/**
 		 * 从数据源加载统计数值
 		 * @param localDsv 本地数据源变量DSV
