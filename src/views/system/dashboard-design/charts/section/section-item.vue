@@ -1,15 +1,13 @@
 <template>
-	<smart-widget title="区块">
-		<p>test section</p>
-	</smart-widget>
+    <smart-widget title="区块">
+        <p>测试 区块</p>
+    </smart-widget>
 </template>
-
-<script>
-export default {
-	name: "section-item"
-}
+<script setup>
+defineOptions({
+    name: "section-item",
+});
 </script>
 
-<style scoped>
-
+<style>
 </style>
