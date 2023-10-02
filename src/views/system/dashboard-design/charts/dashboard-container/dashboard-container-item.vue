@@ -5,7 +5,7 @@
 					   :is-static="false"
 					   :auto-size="true">
 
-		<template v-for="(item, index) in widget.widgetList" #[item.id]>
+		<template v-for="(item, index) in widget.widgetList" #[item.id] :key="index">
 			<smart-widget :simple="!item.options.showHeader"
 						  :title="item.options.title"
 						  :refresh="item.options.showRefresh"

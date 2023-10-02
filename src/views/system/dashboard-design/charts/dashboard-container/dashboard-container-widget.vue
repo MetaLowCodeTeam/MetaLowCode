@@ -21,12 +21,15 @@
 					   :is-static="false"
 					   :auto-size="true">
 
-		<template v-for="(item, index) in widget.widgetList" #[item.id]>
-			<smart-widget :simple="!item.options.showHeader"
-						  :title="item.options.title"
-						  :refresh="item.options.showRefresh"
-						  :collapse="item.options.showCollapse"
-						  :fullscreen="item.options.showFullscreen">
+		<template v-for="(item, index) in widget.widgetList" #[item.id] :key="index">
+			<smart-widget 
+                :simple="!item.options.showHeader"
+				:title="item.options.title"
+				:refresh="item.options.showRefresh"
+				:collapse="item.options.showCollapse"
+				:fullscreen="item.options.showFullscreen"       
+            >
+                          
 				<div>
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-widget'" :widget="item" :designer="designer"

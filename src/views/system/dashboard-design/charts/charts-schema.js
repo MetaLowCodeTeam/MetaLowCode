@@ -73,8 +73,8 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
-            showHeader: true,
+            title: '进度条',
+            showHeader: false,
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
