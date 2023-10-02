@@ -20,8 +20,9 @@ import '@/../lib/visual-design/designer.style.css'
 import '@/../lib/visual-design/designer.style.css'
 import {loadExtensionWidgets} from "@/views/system/form-design/extension/extension-widgets-loader";
 import {loadChartsExtension} from "@/views/system/dashboard-design/charts/charts-loader";
-
+import VueResizeObserver from "vue-resize-observer";
 const app = createApp(App);
+app.use(VueResizeObserver);
 app.use(router);
 app.use(pinia);
 app.use(ElementPlus);

@@ -1,13 +1,13 @@
 <template>
-    <div class="bar-chart">
-        123
+    <div class="bar-chart" v-resize="handleResize">
+        <scEcharts class="chart" ref="scEchartsRefs" :option="option"></scEcharts>
     </div>
-    <!-- <scEcharts height="100%" :option="option"></scEcharts> -->
+    <!--  -->
 </template>
 
 <script setup>
-import scEcharts from '@/components/scEcharts/index.vue'
-import { reactive } from "vue";
+import scEcharts from "@/components/scEcharts/index.vue";
+import { reactive, ref } from "vue";
 
 defineOptions({
     name: "barChart-widget",
@@ -27,11 +27,18 @@ let option = reactive({
         },
     ],
 });
+let scEchartsRefs = ref();
+const handleResize = () => {
+    scEchartsRefs.value.myChart.resize();
+};
 </script>
 <style lang="scss" scoped>
 .bar-chart {
     width: 100%;
     height: 100%;
-    background: green;
+    .chart {
+        width: 100%;
+        height: 100%;
+    }
 }
 </style>

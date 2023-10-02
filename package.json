@@ -35,6 +35,7 @@
 		"vue-countup-v3": "^1.3.0",
 		"vue-draggable-next": "^2.2.1",
 		"vue-i18n": "9.2.2",
+		"vue-resize-observer": "^2.0.15",
 		"vue-router": "4.1.6",
 		"vue-smart-widget": "^1.0.0-alpha.1",
 		"vue3-manner-report": "^0.1.5",
