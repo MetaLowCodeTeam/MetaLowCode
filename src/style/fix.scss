@@ -412,3 +412,23 @@ body .tox-tinymce-aux {
         padding: 0;
     }
 }
+
+.fields-popover {
+    padding: 0!important;
+    .popover-div {
+        padding: 10px 0;
+        .popover-item {
+            height: 26px;
+            line-height: 26px;
+            padding: 0 10px;
+            cursor: pointer;
+            &:hover {
+                background: #e6e6e6;
+            }
+            &.is-active {
+                color: var(--el-color-primary);
+            }
+        }
+    }
+   
+}

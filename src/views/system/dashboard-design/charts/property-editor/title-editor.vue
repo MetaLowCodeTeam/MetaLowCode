@@ -1,6 +1,7 @@
 <template>
   <el-form-item label="标题栏文字">
-    <el-input type="text" v-model="optionModel.title"></el-input>
+    <!-- <el-input type="text" v-model="optionModel.title"></el-input> -->
+    66666666
   </el-form-item>
 </template>
 

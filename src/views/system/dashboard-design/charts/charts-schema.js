@@ -32,10 +32,92 @@ export const ext_chart_containers = [
             onCreated: '',
             onMounted: '',
             onRefresh: '',
+            setDimensional:"",
         },
     },
 
 ]
+
+const chartsList = [
+    {
+        type: "progressbar",
+        title: "进度条条"
+    },
+    {
+        type: "barChart",
+        title: "柱状图"
+    },
+    {
+        type: "barXChart",
+        title: "条形图"
+    },
+    {
+        type: "lineChart",
+        title: "折线图"
+    },
+    {
+        type: "funnelChart",
+        title: "漏斗图"
+    },
+    {
+        type: "pieChart",
+        title: "饼图"
+    },
+    {
+        type: "radarChart",
+        title: "雷达图"
+    },
+    {
+        type: "pivotTable",
+        title: "透视表"
+    },
+    {
+        type: "listTable",
+        title: "数据列表"
+    }
+];
+
+const initChaer = () => {
+    let newChartList = [];
+    chartsList.forEach(el => {
+        let chartObj = {
+            type: el.type,
+            icon: el.type,
+            formItemFlag: false,
+            options: {
+                name: '',
+                value: 13232.12,
+                title: el.title,
+                loading: false,
+                // 数据实体
+                dataEntity: "",
+                setDimensional: {
+                    // 维度
+                    dimension: [],
+                    // 指标
+                    metrics: [],
+                },
+                showHeader: true,
+                showFullscreen: false,
+                showRefresh: false,
+                icon: 'el-icon-star-on',
+                iconColor: '#000',
+                customClass: [],
+                dsEnabled: false,
+                dsName: "",
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 4,
+                onCreated: '',
+                onMounted: '',
+                onRefresh: '',
+            }
+        };
+        newChartList.push(chartObj)
+    })
+    return newChartList
+}
 
 export const ext_charts_widgets = [
     {
@@ -65,258 +147,5 @@ export const ext_charts_widgets = [
             onRefresh: '',
         }
     },
-    // 进度条
-    {
-        type: 'progressbar',
-        icon: 'progressbar',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '进度条',
-            showHeader: false,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-    // 柱状图
-    {
-        type: 'barChart',
-        icon: 'barChart',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '柱状图',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-    // 条形图
-    {
-        type: 'barXChart',
-        icon: 'barXChart',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '条形图',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-
-    // 折线图
-    {
-        type: 'lineChart',
-        icon: 'lineChart',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '折线图',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-    // 漏斗图
-    {
-        type: 'funnelChart',
-        icon: 'funnelChart',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '漏斗图',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-    // 饼图
-    {
-        type: 'pieChart',
-        icon: 'pieChart',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '饼图',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-
-    // 雷达图
-    {
-        type: 'radarChart',
-        icon: 'radarChart',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '雷达图',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-    // 透视表
-    {
-        type: 'pivotTable',
-        icon: 'pivotTable',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '透视表',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
-    // 数据列表
-    {
-        type: 'listTable',
-        icon: 'listTable',
-        formItemFlag: false,
-        options: {
-            name: '',
-            value: 13232.12,
-            title: '数据列表',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
-            customClass: [],
-            dsEnabled: false,
-            dsName: "",
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-        }
-    },
+    ...initChaer()
 ]

@@ -26,7 +26,6 @@
                 :simple="!item.options.showHeader"
 				:title="item.options.title"
 				:refresh="item.options.showRefresh"
-				:collapse="item.options.showCollapse"
 				:fullscreen="item.options.showFullscreen"       
                 :isActived="designer.selectedWidget?.id == item.id"
             >
