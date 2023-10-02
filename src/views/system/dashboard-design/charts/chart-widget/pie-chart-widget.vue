@@ -4,13 +4,26 @@
 </style>
 
 <template>
-    <div class="bar-chart" v-resize="handleResize">
+    <div class="bar-chart" v-resize="handleResize" @click.stop="setSelected">
         <scEcharts class="chart" ref="scEchartsRefs" :option="option"></scEcharts>
     </div>
 </template>
 <script setup>
 import scEcharts from "@/components/scEcharts/index.vue";
-import { reactive, ref } from "vue";
+import {getCurrentInstance, reactive, ref} from "vue";
+
+const props = defineProps({
+	field: Object,
+	parentWidget: Object,
+	parentList: Array,
+	indexOfParentList: Number,
+	designer: Object,
+
+	designState: {
+		type: Boolean,
+		default: false,
+	},
+})
 
 defineOptions({
     name: "pieChart-widget",
@@ -45,9 +58,16 @@ let option = reactive({
     ],
 });
 let scEchartsRefs = ref();
+const { proxy } = getCurrentInstance()
+
 const handleResize = () => {
     scEchartsRefs.value.myChart?.resize();
 };
+
+const setSelected = () => {
+	console.error('aaaaaaaaa')
+	props.designer.setSelected(props.field)
+}
 </script>
 <style lang="scss" scoped>
 .bar-chart {
