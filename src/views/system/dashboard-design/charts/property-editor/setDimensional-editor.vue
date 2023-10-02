@@ -14,7 +14,7 @@
                                 :list="dimension"
                                 @add="(e) => addCom(e,'dimension')"
                             >
-                                <DimensionCom v-model="dimension" @onSort="onSort" />
+                                <DimensionCom v-model="dimension" @onSort="onSort" isDimension />
                             </VueDraggableNext>
                         </div>
                     </el-form-item>
@@ -87,12 +87,22 @@ onMounted(() => {
 });
 // 维度
 let dimension = ref([]);
+// 最大维度
+let maxDimension = ref();
 // 指标
 let metrics = ref([]);
+// 最大指标
+let maxMetrics = ref();
+// 所有字段最大数
+let maxFieldLength = ref();
 // 初始化纬度、指标
 const initDimensional = () => {
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
+    maxDimension.value = props.optionModel.setDimensional?.maxDimension || 0;
+    maxMetrics.value = props.optionModel.setDimensional?.maxMetrics || 0;
+    maxFieldLength.value =
+        props.optionModel.setDimensional?.maxFieldLength || 0;
 };
 
 /**
@@ -100,31 +110,91 @@ const initDimensional = () => {
  */
 let fields = [
     {
-        label: "字段1",
-        alias: "字段1",
+        label: "学历",
+        alias: "学历",
         code: "code1",
         type: "N",
         sort: "",
         showEdit: false,
         editAlias: "",
+        list: [
+            {
+                name: "本科",
+            },
+            {
+                name: "博士",
+            },
+            {
+                name: "博士后",
+            },
+            {
+                name: "高中",
+            },
+            {
+                name: "硕士",
+            },
+            {
+                name: "专科",
+            },
+        ],
     },
     {
-        label: "字段2",
-        alias: "字段2",
+        label: "身份证",
+        alias: "身份证",
         code: "code2",
         type: "N",
         sort: "",
         showEdit: false,
         editAlias: "",
+        list: [
+            {
+                name: "5",
+            },
+            {
+                name: "3",
+            },
+            {
+                name: "4",
+            },
+            {
+                name: "2",
+            },
+            {
+                name: "6",
+            },
+            {
+                name: "1",
+            },
+        ],
     },
     {
-        label: "字段3",
-        alias: "字段3",
+        label: "人数",
+        alias: "人数",
         code: "code3",
         type: "N",
         sort: "",
         showEdit: false,
         editAlias: "",
+        list: [
+            {
+                name: "6",
+            },
+            {
+                name: "1",
+            },
+            {
+                name: "2",
+            },
+            {
+                name: "4",
+            },
+            {
+                name: "3",
+            },
+            {
+                name: "5",
+            },
+        ],
     },
     {
         label: "字段4",
@@ -134,6 +204,26 @@ let fields = [
         sort: "",
         showEdit: false,
         editAlias: "",
+        list: [
+            {
+                name: "2",
+            },
+            {
+                name: "7",
+            },
+            {
+                name: "5",
+            },
+            {
+                name: "5",
+            },
+            {
+                name: "1",
+            },
+            {
+                name: "0",
+            },
+        ],
     },
     {
         label: "字段5",
@@ -143,6 +233,26 @@ let fields = [
         sort: "",
         showEdit: false,
         editAlias: "",
+        list: [
+            {
+                name: "14",
+            },
+            {
+                name: "1",
+            },
+            {
+                name: "5",
+            },
+            {
+                name: "4",
+            },
+            {
+                name: "7",
+            },
+            {
+                name: "5",
+            },
+        ],
     },
 ];
 
@@ -167,6 +277,7 @@ const setItemBoxHeight = () => {
  */
 // 新加字段
 const addCom = (e, target) => {
+    // console.log(,'props.optionModel')
     let cutField = { ...fields[e.oldIndex] };
 
     let checkHasDimension = dimension.value.filter(
@@ -183,10 +294,34 @@ const addCom = (e, target) => {
         $ElMessage.warning("添加失败，同一字段不能重复添加指标");
         return;
     }
+    let dimensionLength = dimension.value.length;
+    let metricsLength = metrics.value.length;
+    let { type } = props.optionModel;
+    let max3 = ["barChart"];
     if (target == "dimension") {
+        // 1个维度或多个指标
+        // 2个维度或1个指标
+        if (max3.includes(type)) {
+            if (dimensionLength > 1) {
+                $ElMessage.warning("添加失败，最多添加2个维度");
+                return;
+            }
+            if (metricsLength > 1 && dimensionLength.length > 0) {
+                $ElMessage.warning("添加失败，多个指标最多只能添加1个维度");
+                return;
+            }
+        }
         dimension.value.push(cutField);
     }
     if (target == "metrics") {
+        // 1个维度或多个指标
+        // 2个维度或1个指标
+        if (max3.includes(type)) {
+            if (dimensionLength > 1 && metricsLength > 0) {
+                $ElMessage.warning("添加失败，2个维度最多只能添加1个指标");
+                return;
+            }
+        }
         metrics.value.push(cutField);
     }
 };

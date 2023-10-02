@@ -32,7 +32,7 @@ export const ext_chart_containers = [
             onCreated: '',
             onMounted: '',
             onRefresh: '',
-            setDimensional:"",
+            setDimensional: "",
         },
     },
 
@@ -85,6 +85,7 @@ const initChaer = () => {
             icon: el.type,
             formItemFlag: false,
             options: {
+                type: el.type,
                 name: '',
                 value: 13232.12,
                 title: el.title,

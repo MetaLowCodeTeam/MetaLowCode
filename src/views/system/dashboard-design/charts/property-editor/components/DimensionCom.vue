@@ -62,7 +62,7 @@
                 </div>
             </div>
             <template #reference>
-                <span class="drop-down-box">
+                <span class="drop-down-box" :class="{'isDimension':isDimension}">
                     <span class="arrow-down">
                         <el-icon>
                             <ElIconArrowDown />
@@ -90,6 +90,7 @@
 import { onMounted, watch, ref } from "vue";
 const props = defineProps({
     modelValue: null,
+    isDimension: { type: Boolean, default: false },
 });
 const emits = defineEmits(["update:modelValue", "onSort"]);
 
@@ -153,6 +154,9 @@ const onSort = (tag, target, inx) => {
         line-height: 24px;
         padding: 0 25px;
         padding-left: 10px;
+        &.isDimension {
+            background: var(--el-color-success);
+        }
         .arrow-down {
             position: relative;
             top: 2px;
