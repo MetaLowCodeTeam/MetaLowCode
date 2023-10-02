@@ -101,7 +101,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '柱状图',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
@@ -129,7 +129,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '条形图',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
@@ -158,7 +158,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '折线图',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
@@ -186,7 +186,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '漏斗图',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
@@ -243,7 +243,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '雷达图',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
@@ -271,7 +271,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '透视表',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
@@ -299,7 +299,7 @@ export const ext_charts_widgets = [
         options: {
             name: '',
             value: 13232.12,
-            title: '饼图',
+            title: '数据列表',
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
