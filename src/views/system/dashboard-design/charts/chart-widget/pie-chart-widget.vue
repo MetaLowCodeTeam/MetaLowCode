@@ -10,20 +10,12 @@
 </template>
 <script setup>
 import scEcharts from "@/components/scEcharts/index.vue";
-import {getCurrentInstance, reactive, ref} from "vue";
+import { getCurrentInstance, reactive, ref } from "vue";
 
 const props = defineProps({
-	field: Object,
-	parentWidget: Object,
-	parentList: Array,
-	indexOfParentList: Number,
-	designer: Object,
-
-	designState: {
-		type: Boolean,
-		default: false,
-	},
-})
+    field: Object,
+    designer: Object,
+});
 
 defineOptions({
     name: "pieChart-widget",
@@ -58,16 +50,15 @@ let option = reactive({
     ],
 });
 let scEchartsRefs = ref();
-const { proxy } = getCurrentInstance()
+const { proxy } = getCurrentInstance();
 
 const handleResize = () => {
     scEchartsRefs.value.myChart?.resize();
 };
 
 const setSelected = () => {
-	console.error('aaaaaaaaa')
-	props.designer.setSelected(props.field)
-}
+    props.designer.setSelected(props.field);
+};
 </script>
 <style lang="scss" scoped>
 .bar-chart {

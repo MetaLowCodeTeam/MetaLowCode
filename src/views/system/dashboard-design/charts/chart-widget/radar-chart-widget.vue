@@ -1,15 +1,14 @@
-
 <template>
-    <div class="bar-chart" v-resize="handleResize">
-        <scEcharts class="chart" ref="scEchartsRefs" :option="option"></scEcharts>
-    </div>
-    <!--  -->
+    <myEcharts :option="option" :field="field" :designer="designer" />
 </template>
 
 <script setup>
-import scEcharts from "@/components/scEcharts/index.vue";
-import { reactive, ref } from "vue";
-
+import myEcharts from "@/components/scEcharts/chart-widget.vue";
+import { reactive } from "vue";
+const props = defineProps({
+    field: Object,
+    designer: Object,
+});
 defineOptions({
     name: "radarChart-widget",
 });
@@ -21,14 +20,13 @@ let option = reactive({
         containLabel: true,
     },
     radar: {
-        // shape: 'circle',
         indicator: [
-            { name: "Sales", max: 6500 },
-            { name: "Administration", max: 16000 },
-            { name: "Information Technology", max: 30000 },
-            { name: "Customer Support", max: 38000 },
-            { name: "Development", max: 52000 },
-            { name: "Marketing", max: 25000 },
+            { name: "Sales" },
+            { name: "Administration" },
+            { name: "Information Technology" },
+            { name: "Customer Support" },
+            { name: "Development" },
+            { name: "Marketing" },
         ],
     },
     series: [
@@ -48,18 +46,4 @@ let option = reactive({
         },
     ],
 });
-let scEchartsRefs = ref();
-const handleResize = () => {
-    scEchartsRefs.value.myChart.resize();
-};
 </script>
-<style lang="scss" scoped>
-.bar-chart {
-    width: 100%;
-    height: 100%;
-    .chart {
-        width: 100%;
-        height: 100%;
-    }
-}
-</style>

@@ -28,6 +28,7 @@
 				:refresh="item.options.showRefresh"
 				:collapse="item.options.showCollapse"
 				:fullscreen="item.options.showFullscreen"       
+                :isActived="designer.selectedWidget?.id == item.id"
             >
                           
 				<div class="container-com">
