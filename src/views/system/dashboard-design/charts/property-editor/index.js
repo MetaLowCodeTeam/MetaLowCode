@@ -24,7 +24,7 @@ export const registerChartLibProperties = (app, PERegister) => {
     // 组件排序
     let comOrder = ['dataEntity', 'setDimensional', 'showHeader', 'showFullscreen', 'showRefresh'];
     let newCom = [];
-    const modules = import.meta.globEager('./**/*.vue')
+    const modules = import.meta.globEager('./*.vue')
     for (const path in modules) {
         let cname = modules[path].default.name
 

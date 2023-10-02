@@ -14,106 +14,21 @@
                                 :list="dimension"
                                 @add="(e) => addCom(e,'dimension')"
                             >
-                                <div
-                                    class="item-tag"
-                                    v-for="(tag,inx) of dimension"
-                                    :key="inx"
-                                    :title="'原名：' + tag.label"
-                                    ref="buttonRef"
-                                >
-                                    <el-popover
-                                        placement="bottom"
-                                        popper-class="fields-popover"
-                                        :width="80"
-                                        trigger="click"
-                                        @hide="tag.showEdit = false"
-                                        ref="fieldsPopoverRefs"
-                                    >
-                                        <div class="popover-div" v-if="!tag.showEdit">
-                                            <div class="popover-item" @click="editAlias(tag)">修改显示名</div>
-                                            <el-popover
-                                                placement="right"
-                                                :width="60"
-                                                trigger="hover"
-                                                popper-class="fields-popover"
-                                                ref="sortPopoverRefs"
-                                            >
-                                                <div class="popover-div">
-                                                    <div
-                                                        class="popover-item"
-                                                        :class="{'is-active':!tag.sort}"
-                                                        @click="onSort(tag,'',inx)"
-                                                    >默认</div>
-                                                    <div
-                                                        class="popover-item"
-                                                        :class="{'is-active':tag.sort == 'ASC'}"
-                                                        @click="onSort(tag,'ASC',inx)"
-                                                    >升序</div>
-                                                    <div
-                                                        class="popover-item"
-                                                        :class="{'is-active':tag.sort == 'DESC'}"
-                                                        @click="onSort(tag,'DESC',inx)"
-                                                    >降序</div>
-                                                </div>
-                                                <template #reference>
-                                                    <div class="popover-item">
-                                                        排序
-                                                        <span
-                                                            style="position: relative;top:2px;float: right;"
-                                                        >
-                                                            <el-icon>
-                                                                <ElIconArrowRight />
-                                                            </el-icon>
-                                                        </span>
-                                                    </div>
-                                                </template>
-                                            </el-popover>
-                                        </div>
-                                        <div class="popover-div" style="padding: 10px;" v-else>
-                                            <div class="w-100">
-                                                <el-input v-model="tag.editAlias" size="small"></el-input>
-                                            </div>
-                                            <div class="w-100 mt-10" style="text-align: right;">
-                                                <el-button size="small" @click="cannerAlias(inx)">取消</el-button>
-                                                <el-button
-                                                    size="small"
-                                                    type="primary"
-                                                    @click="confirmAlias(tag,inx)"
-                                                >确认</el-button>
-                                            </div>
-                                        </div>
-                                        <template #reference>
-                                            <span class="drop-down-box">
-                                                <span class="arrow-down">
-                                                    <el-icon>
-                                                        <ElIconArrowDown />
-                                                    </el-icon>
-                                                </span>
-                                                <SvgIcon
-                                                    class="sort-icon ml-3"
-                                                    v-if="tag.sort=='ASC'"
-                                                    icon-name="fields-asc"
-                                                />
-                                                <SvgIcon
-                                                    class="sort-icon ml-3"
-                                                    v-if="tag.sort=='DESC'"
-                                                    icon-name="fields-desc"
-                                                />
-                                                {{ tag.alias }}
-                                            </span>
-                                        </template>
-                                    </el-popover>
-                                    <span class="close-span" @click.stop="delCom(inx,'dimension')">
-                                        <el-icon>
-                                            <ElIconCircleCloseFilled />
-                                        </el-icon>
-                                    </span>
-                                </div>
+                                <DimensionCom v-model="dimension" @onSort="onSort" />
                             </VueDraggableNext>
                         </div>
                     </el-form-item>
                     <el-form-item label="指标">
-                        <div class="input-box"></div>
+                        <div class="input-box">
+                            <VueDraggableNext
+                                class="draggable-box"
+                                group="list"
+                                :list="metrics"
+                                @add="(e) => addCom(e,'metrics')"
+                            >
+                                <DimensionCom v-model="metrics" @onSort="onSort" />
+                            </VueDraggableNext>
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
@@ -146,9 +61,8 @@
 </template>
 <script setup>
 import { onMounted, ref, watch, inject } from "vue";
-import { ElMessageBox } from "element-plus";
 import { VueDraggableNext } from "vue-draggable-next";
-
+import DimensionCom from "./components/DimensionCom.vue";
 defineOptions({
     name: "setDimensional-editor",
 });
@@ -272,41 +186,18 @@ const addCom = (e, target) => {
     if (target == "dimension") {
         dimension.value.push(cutField);
     }
-};
-// 删除字段
-const delCom = (inx, target) => {
-    if (target == "dimension") {
-        dimension.value.splice(inx, 1);
+    if (target == "metrics") {
+        metrics.value.push(cutField);
     }
 };
-let fieldsPopoverRefs = ref();
-let sortPopoverRefs = ref();
-// 字段修改别名
-const editAlias = (tag) => {
-    tag.editAlias = tag.alias;
-    tag.showEdit = true;
-};
-const confirmAlias = (tag, inx) => {
-    if (tag.editAlias) {
-        tag.alias = tag.editAlias;
-        cannerAlias(inx);
-    }
-};
-// 取消修改别名
-const cannerAlias = (inx) => {
-    fieldsPopoverRefs.value[inx].hide();
-};
-// 字段排序
-const onSort = (tag, target, inx) => {
+const onSort = (e) => {
     dimension.value.forEach((el) => {
         el.sort = "";
     });
     metrics.value.forEach((el) => {
         el.sort = "";
     });
-    tag.sort = target;
-    fieldsPopoverRefs.value[inx].hide();
-    sortPopoverRefs.value[inx].hide();
+    e.tag.sort = e.target;
 };
 </script>
 <style lang="scss" scoped>
@@ -328,41 +219,6 @@ const onSort = (tag, target, inx) => {
                 min-height: 32px;
                 .item-list {
                     display: none;
-                }
-            }
-
-            .item-tag {
-                display: inline-block;
-                line-height: 24px;
-                cursor: pointer;
-                position: relative;
-                color: #fff;
-                .drop-down-box {
-                    display: inline-block;
-                    background: var(--el-color-primary);
-                    color: #fff;
-                    margin-right: 5px;
-                    border-radius: 20px;
-                    height: 24px;
-                    line-height: 24px;
-                    padding: 0 25px;
-                    padding-left: 10px;
-                    .arrow-down {
-                        position: relative;
-                        top: 2px;
-                    }
-                }
-
-                .close-span {
-                    display: none;
-                    position: absolute;
-                    right: 10px;
-                    top: 2px;
-                }
-                &:hover {
-                    .close-span {
-                        display: inline-block;
-                    }
                 }
             }
         }
