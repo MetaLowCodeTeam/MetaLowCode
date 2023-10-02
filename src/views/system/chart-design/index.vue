@@ -81,9 +81,10 @@
                         <el-scrollbar>
                             <smart-widget-grid :layout="layout" :row-height="48" :margin="[15, 15]">
                                 <template v-for="(item, index) in widgetList" :key="index" #[index]>
-                                    <smart-widget :title="item.name">
-                                        <div class="layout-center">{{ item.type }}【{{ index }}】</div>
-                                    </smart-widget>
+                                    <component :is="item.type + '-widget'" ></component>
+                                    <!-- <smart-widget :title="item.name">
+                                        <div class="layout-center">{{ item.type }}【{{ item.id }}】--{{index}}</div>
+                                    </smart-widget> -->
                                 </template>
                             </smart-widget-grid>
                         </el-scrollbar>
@@ -103,16 +104,16 @@ import { VueDraggableNext } from "vue-draggable-next";
 // 左边
 let sideBarShow = ref(true);
 let dragList = ref([
-    { name: "统计数值", type: "1" },
-    { name: "柱状图", type: "2" },
-    { name: "条形图", type: "3" },
-    { name: "折线图", type: "4" },
-    { name: "饼图", type: "5" },
-    { name: "漏斗图", type: "6" },
-    { name: "进度条", type: "7" },
-    { name: "雷达图", type: "8" },
-    { name: "透视表", type: "9" },
-    { name: "数据列表", type: "10" },
+    { name: "统计数值", type: "1", id: "0" },
+    { name: "柱状图", type: "2", id: "1" },
+    { name: "条形图", type: "3", id: "2" },
+    { name: "折线图", type: "4", id: "3" },
+    { name: "饼图", type: "5", id: "4" },
+    { name: "漏斗图", type: "6", id: "5" },
+    { name: "进度条", type: "7", id: "6" },
+    { name: "雷达图", type: "8", id: "7" },
+    { name: "透视表", type: "9", id: "8" },
+    { name: "数据列表", type: "10", id: "9" },
 ]);
 let widgetList = ref([
     // { name: "统计数值" }
@@ -130,11 +131,11 @@ const addCom = (widgetList) => {
     // widgetList.forEach((el) => {
     //     // 检测ID不存在的时候添加
     //     if (!dataIds.value.includes(el.type)) {
-            let inx = layout.value.length;
-            layout.value.push({ x: 0, y: 0, w: 4, h: 3, i: inx });
-            dataList.value.push({ id: inx, cont: "el.name" });
-            // dataIds.value.push(el.type);
-        // }
+    let inx = layout.value.length;
+    layout.value.push({ x: 0, y: 0, w: 4, h: 3, i: inx });
+    dataList.value.push({ id: inx, cont: "el.name" });
+    // dataIds.value.push(el.type);
+    // }
     // });
 }
 </script>
