@@ -13,6 +13,12 @@ defineOptions({
     name: "barChart-widget",
 });
 let option = reactive({
+    grid: {
+        left: "3%",
+        right: "4%",
+        top:"5%",
+        containLabel: true,
+    },
     xAxis: {
         type: "category",
         data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
