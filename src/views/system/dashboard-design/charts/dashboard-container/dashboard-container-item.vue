@@ -11,7 +11,7 @@
 						  :refresh="item.options.showRefresh"
 						  :collapse="item.options.showCollapse"
 						  :fullscreen="item.options.showFullscreen">
-				<div>
+				<div class="container-com">
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-item'" :widget="item"
 								   :key="item.id" :parent-list="widget.widgetList"
@@ -58,5 +58,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.container-com {
+    width: 100%;
+    height: 100%;
+}
 </style>

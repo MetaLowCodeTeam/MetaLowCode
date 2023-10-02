@@ -30,7 +30,7 @@
 				:fullscreen="item.options.showFullscreen"       
             >
                           
-				<div>
+				<div class="container-com">
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-widget'" :widget="item" :designer="designer"
 								   :key="item.id" :parent-list="widget.widgetList"
@@ -85,5 +85,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.container-com {
+    width: 100%;
+    height: 100%;
+}
 </style>
