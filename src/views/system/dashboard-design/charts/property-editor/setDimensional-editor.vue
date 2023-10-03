@@ -11,7 +11,6 @@
                             <VueDraggableNext
                                 class="draggable-box"
                                 group="list"
-                                :list="dimension"
                                 @add="(e) => addCom(e,'dimension')"
                             >
                                 <DimensionCom v-model="dimension" @onSort="onSort" isDimension />
@@ -23,7 +22,6 @@
                             <VueDraggableNext
                                 class="draggable-box"
                                 group="list"
-                                :list="metrics"
                                 @add="(e) => addCom(e,'metrics')"
                             >
                                 <DimensionCom v-model="metrics" @onSort="onSort" />
@@ -36,7 +34,10 @@
                 <div class="item-title">可用字段</div>
                 <div class="item-list-box">
                     <el-scrollbar>
-                        <VueDraggableNext :group="{ name: 'list', pull: 'clone',put: false }">
+                        <VueDraggableNext
+                            :list="fields"
+                            :group="{ name: 'list', pull: 'clone',put: false }"
+                        >
                             <div
                                 class="item-list yichu"
                                 v-for="(item,inx) of fields"
@@ -72,7 +73,6 @@ const props = defineProps({
     optionModel: Object,
 });
 
-const emits = defineEmits(["update:optionModel"]);
 const $ElMessage = inject("$ElMessage");
 
 watch(
@@ -85,24 +85,16 @@ watch(
 onMounted(() => {
     initDimensional();
 });
+let myOptionModel = ref({});
 // 维度
 let dimension = ref([]);
-// 最大维度
-let maxDimension = ref();
 // 指标
 let metrics = ref([]);
-// 最大指标
-let maxMetrics = ref();
-// 所有字段最大数
-let maxFieldLength = ref();
 // 初始化纬度、指标
 const initDimensional = () => {
+    myOptionModel.value = props.optionModel;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
-    maxDimension.value = props.optionModel.setDimensional?.maxDimension || 0;
-    maxMetrics.value = props.optionModel.setDimensional?.maxMetrics || 0;
-    maxFieldLength.value =
-        props.optionModel.setDimensional?.maxFieldLength || 0;
 };
 
 /**
@@ -275,9 +267,9 @@ const setItemBoxHeight = () => {
 /**
  * 拖拽
  */
+
 // 新加字段
 const addCom = (e, target) => {
-    // console.log(,'props.optionModel')
     let cutField = { ...fields[e.oldIndex] };
 
     let checkHasDimension = dimension.value.filter(

@@ -63,6 +63,7 @@ let option = reactive({
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
+        let { chartStyls } = options;
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
             option.isNoData = true;
@@ -76,6 +77,12 @@ const initOption = () => {
                     data: el.list.map((subel) => subel.name),
                     type: "bar",
                     name: el.alias,
+                    stack:
+                        chartStyls == 1
+                            ? null
+                            : chartStyls == 2
+                            ? "普通堆叠"
+                            : "百分比堆叠",
                 };
                 option.series.push(metricsObj);
             });

@@ -77,6 +77,16 @@ const chartsList = [
     }
 ];
 
+
+// 拥有图标样式的组件
+const hasChartStylsType = [
+    "barChart",
+    "barXChart",
+    "lineChart",
+    "pieChart",
+    "progressbar",
+];
+
 const initChaer = () => {
     let newChartList = [];
     chartsList.forEach(el => {
@@ -115,6 +125,9 @@ const initChaer = () => {
                 onRefresh: '',
             }
         };
+        if (hasChartStylsType.includes(el.type)) {
+            chartObj.options.chartStyls = 1;
+        }
         newChartList.push(chartObj)
     })
     return newChartList

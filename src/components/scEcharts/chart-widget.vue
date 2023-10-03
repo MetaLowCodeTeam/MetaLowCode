@@ -30,7 +30,9 @@ onMounted(() => {
 });
 let scEchartsRefs = ref();
 const handleResize = () => {
-    scEchartsRefs.value.myChart?.resize();
+    if(!myOption.value.isNoData){
+        scEchartsRefs.value.myChart?.resize();
+    }
 };
 const setSelected = () => {
     props.designer?.setSelected(props.field);

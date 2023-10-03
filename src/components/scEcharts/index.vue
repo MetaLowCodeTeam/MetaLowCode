@@ -27,6 +27,7 @@ export default {
         option: {
             deep: true,
             handler(v) {
+                unwarp(this.myChart)?.clear();
                 unwarp(this.myChart)?.setOption(v);
             },
         },
