@@ -289,7 +289,7 @@ const addCom = (e, target) => {
     let dimensionLength = dimension.value.length;
     let metricsLength = metrics.value.length;
     let { type } = props.optionModel;
-    let max3 = ["barChart"];
+    let max3 = ["barChart","barXChart","lineChart"];
     if (target == "dimension") {
         // 1个维度或多个指标
         // 2个维度或1个指标

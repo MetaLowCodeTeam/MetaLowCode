@@ -73,6 +73,21 @@ let stylesList = ref([
             },
         ],
     },
+    {
+        type: "lineChart",
+        list: [
+            {
+                type: 1,
+                label: "折线图",
+                icon: "lineChart",
+            },
+            {
+                type: 2,
+                label: "曲线图",
+                icon: "graph",
+            },
+        ],
+    },
 ]);
 watch(
     () => props.optionModel,
