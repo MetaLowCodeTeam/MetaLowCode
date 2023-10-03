@@ -88,6 +88,21 @@ let stylesList = ref([
             },
         ],
     },
+    {
+        type: "pieChart",
+        list: [
+            {
+                type: 1,
+                label: "实心",
+                icon: "pieChart",
+            },
+            {
+                type: 2,
+                label: "环形",
+                icon: "donutChart",
+            },
+        ],
+    },
 ]);
 watch(
     () => props.optionModel,

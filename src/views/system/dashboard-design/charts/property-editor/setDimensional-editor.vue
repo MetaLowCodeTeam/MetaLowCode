@@ -289,7 +289,7 @@ const addCom = (e, target) => {
     let dimensionLength = dimension.value.length;
     let metricsLength = metrics.value.length;
     let { type } = props.optionModel;
-    let max3 = ["barChart","barXChart","lineChart"];
+    let max3 = ["barChart", "barXChart", "lineChart"];
     if (target == "dimension") {
         // 1个维度或多个指标
         // 2个维度或1个指标
@@ -303,6 +303,11 @@ const addCom = (e, target) => {
                 return;
             }
         }
+        // 如果是饼图
+        if (type == "pieChart" && dimensionLength > 0) {
+            $ElMessage.warning("添加失败，最多添加1个维度");
+            return;
+        }
         dimension.value.push(cutField);
     }
     if (target == "metrics") {
@@ -313,6 +318,11 @@ const addCom = (e, target) => {
                 $ElMessage.warning("添加失败，2个维度最多只能添加1个指标");
                 return;
             }
+        }
+        // 如果是饼图
+        if (type == "pieChart" && metricsLength > 0) {
+            $ElMessage.warning("添加失败，最多添加1个维度");
+            return;
         }
         metrics.value.push(cutField);
     }
