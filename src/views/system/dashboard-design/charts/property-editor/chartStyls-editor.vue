@@ -1,25 +1,22 @@
 <template>
-    <!-- <el-form-item label="图表样式">
-    </el-form-item>-->
     <div class="chart-styles">
         <div class="c-s-t">图表样式</div>
-        <!-- 柱状图 -->
-        <div class="c-s-c" v-if="option.type == 'barChart'">
-            <div
-                class="prive-box"
-                v-for="(item,inx) of barChartType"
-                :key="inx"
-                :title="item.label"
-                :class="{'is-active':option.chartStyls == item.type,'is-disabled': checkIsDisabled(item,'barChart')}"
-                @click="checkIsDisabled(item,'barChart') ? ()=> {} : chartStylsChange(item)"
-            >
-                <div class="icon-box">
-                    <SvgIcon class="sort-icon ml-3" :icon-name="item.icon" />
+        <template v-for="(style,styleInx) of stylesList">
+            <div class="c-s-c" v-if="style.type == option.type" :key="styleInx">
+                <div
+                    class="prive-box"
+                    v-for="(item,inx) of style.list"
+                    :key="inx"
+                    :title="item.label"
+                    :class="{'is-active':option.chartStyls == item.type,'is-disabled': checkIsDisabled(item,style.type)}"
+                    @click="checkIsDisabled(item,style.type) ? ()=> {} : chartStylsChange(item)"
+                >
+                    <div class="icon-box">
+                        <SvgIcon class="sort-icon ml-3" :icon-name="item.icon" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- 条形图 -->
-        <div class="c-s-c" v-if="option.type == 'barXChart'">条形图</div>
+        </template>
     </div>
 </template>
 <script setup>
@@ -35,21 +32,46 @@ const props = defineProps({
 });
 const emits = defineEmits(["update:optionModel"]);
 let option = ref({});
-let barChartType = ref([
+let stylesList = ref([
     {
-        type: 1,
-        label: "普通柱状图",
-        icon: "barChart",
+        type: "barChart",
+        list: [
+            {
+                type: 1,
+                label: "普通柱状图",
+                icon: "barChart",
+            },
+            {
+                type: 2,
+                label: "堆积状态图",
+                icon: "stacking",
+            },
+            {
+                type: 3,
+                label: "百分比堆积状态图",
+                icon: "stacking",
+            },
+        ],
     },
     {
-        type: 2,
-        label: "堆积状态图",
-        icon: "stacking",
-    },
-    {
-        type: 3,
-        label: "百分比堆积状态图",
-        icon: "stacking",
+        type: "barXChart",
+        list: [
+            {
+                type: 1,
+                label: "普通条形图",
+                icon: "barXChart",
+            },
+            {
+                type: 2,
+                label: "堆积条形图",
+                icon: "stacking-x",
+            },
+            {
+                type: 3,
+                label: "百分比堆积条形图",
+                icon: "stacking-x",
+            },
+        ],
     },
 ]);
 watch(
@@ -72,7 +94,7 @@ const checkIsDisabled = (item, chartType) => {
     let { dimension, metrics } = option.value.setDimensional;
     // 如果是柱状图，并且不是基础柱状图 并且 维度大于1
     if (
-        chartType == "barChart" &&
+        (chartType == "barChart" || chartType == "barXChart") &&
         item.type != 1 &&
         (dimension.length > 1 || metrics.length < 2)
     ) {

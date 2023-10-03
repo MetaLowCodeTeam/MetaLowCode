@@ -13,7 +13,6 @@ defineOptions({
     name: "barChart-widget",
 });
 let cutField = ref("");
-let isNoData = ref(true);
 watch(
     () => props.field,
     () => {
@@ -30,14 +29,6 @@ let option = reactive({
     isNoData: true,
     tooltip: {
         trigger: "axis",
-        // axisPointer: {
-        //     type: "shadow",
-        // },
-        // formatter: function (params) {
-        //     console.log(params, "params");
-        //     var tar = params[1];
-        //     return tar.name + "<br/>" + tar.seriesName + " : " + tar.value;
-        // },
     },
     grid: {
         left: "3%",
@@ -63,34 +54,40 @@ let option = reactive({
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
-        let { chartStyls } = options;
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
             option.isNoData = true;
             return;
         }
         if (dimension.length == 1) {
-            option.xAxis.data = dimension[0].list.map((el) => el.name);
-            option.series = [];
-            metrics.forEach((el) => {
-                let metricsObj = {
-                    data: el.list.map((subel) => subel.name),
-                    type: "bar",
-                    name: el.alias,
-                    stack:
-                        chartStyls == 1
-                            ? null
-                            : chartStyls == 2
-                            ? "普通堆叠"
-                            : "百分比堆叠",
-                };
-                option.series.push(metricsObj);
-            });
+            formatOption(dimension, metrics);
+        } else {
+            formatOption(metrics, dimension);
         }
+
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
-    // option.xAxis =
+};
+// 格式化图表option
+const formatOption = (x, y) => {
+    let { chartStyls } = cutField.value.options;
+    option.xAxis.data = x[0].list.map((el) => el.name);
+    option.series = [];
+    y.forEach((el) => {
+        let metricsObj = {
+            data: el.list.map((subel) => subel.name),
+            type: "bar",
+            name: el.alias,
+            stack:
+                chartStyls == 1
+                    ? null
+                    : chartStyls == 2
+                    ? "普通堆叠"
+                    : "百分比堆叠",
+        };
+        option.series.push(metricsObj);
+    });
 };
 </script>
