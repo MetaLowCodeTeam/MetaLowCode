@@ -102,13 +102,23 @@ const initChaer = () => {
                 loading: false,
                 // 数据实体
                 dataEntity: "",
+                // 维度指标设置
                 setDimensional: {
                     // 维度
                     dimension: [],
                     // 指标
                     metrics: [],
                     // 目标值
-                    targetValue:[],
+                    targetValue: [],
+                },
+                // 图表设置
+                setChartConf: {
+                    // 数值显示
+                    numShow: true,
+                    // 图例显示
+                    chartShow: true,
+                    // 使用全部数据
+                    useAllData: true,
                 },
                 showHeader: true,
                 showFullscreen: false,

@@ -22,7 +22,7 @@ export const registerChartLibProperties = (app, PERegister) => {
     // PERegister.registerCPEditor(app, 'showIcon', 'showIcon-editor', showIconEditor)
 
     // 组件排序
-    let comOrder = ['dataEntity', 'setDimensional', 'showHeader', 'showFullscreen', 'showRefresh', 'chartStyls'];
+    let comOrder = ['dataEntity', 'setDimensional', 'showHeader', 'showFullscreen', 'showRefresh', 'chartStyls', 'setChartConf'];
     let newCom = [];
     const modules = import.meta.globEager('./*.vue')
     for (const path in modules) {

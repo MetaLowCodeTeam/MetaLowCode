@@ -7,13 +7,14 @@
                     class="prive-box"
                     v-for="(item,inx) of style.list"
                     :key="inx"
-                    :title="item.label"
                     :class="{'is-active':option.chartStyls == item.type,'is-disabled': checkIsDisabled(item,style.type)}"
                     @click="checkIsDisabled(item,style.type) ? ()=> {} : chartStylsChange(item)"
                 >
-                    <div class="icon-box">
-                        <SvgIcon class="sort-icon ml-3" :icon-name="item.icon" />
-                    </div>
+                    <el-tooltip effect="dark" :content="item.label" placement="bottom">
+                        <div class="icon-box">
+                            <SvgIcon class="sort-icon ml-3" :icon-name="item.icon" />
+                        </div>
+                    </el-tooltip>
                 </div>
             </div>
         </template>
@@ -163,6 +164,7 @@ const chartStylsChange = (item) => {
 </script>
 <style lang="scss" scoped>
 .chart-styles {
+    padding-top: 20px;
     .c-s-t {
         font-size: 14px;
         font-weight: bold;
