@@ -9,7 +9,11 @@
         </el-form-item>
         <el-form-item label="使用全部数据">
             <el-switch v-model="optionModel.setChartConf.useAllData"></el-switch>
-            <el-tooltip effect="dark" content="不启用则只能查看登录用户权限内的数据" placement="top">
+            <el-tooltip
+                effect="dark"
+                content="不启用则只能查看登录用户权限内的数据"
+                placement="top"
+            >
                 <span class="question-icon">
                     <el-icon size="16">
                         <ElIconQuestionFilled />

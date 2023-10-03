@@ -78,7 +78,7 @@ const chartsList = [
 ];
 
 
-// 拥有图标样式的组件
+// 拥有图标样式的图表
 const hasChartStylsType = [
     "barChart",
     "barXChart",
@@ -86,6 +86,9 @@ const hasChartStylsType = [
     "pieChart",
     "progressbar",
 ];
+
+// 拥有设置轴坐标的图表
+const hasAxisCoordinates = ["barChart", "barXChart", "lineChart"];
 
 const initChaer = () => {
     let newChartList = [];
@@ -137,8 +140,18 @@ const initChaer = () => {
                 onRefresh: '',
             }
         };
+        // 添加图表样式设置
         if (hasChartStylsType.includes(el.type)) {
             chartObj.options.chartStyls = 1;
+        }
+        // 添加Y轴坐标设置
+        if (hasAxisCoordinates.includes(el.type)) {
+            chartObj.options.axisCoordinates = {
+                // 最大值
+                max: "",
+                // 最小值
+                min: "",
+            };
         }
         newChartList.push(chartObj)
     })
