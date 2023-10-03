@@ -5,8 +5,8 @@
     <el-drawer v-model="drawer" title="维度指标设置" size="460">
         <div class="drawer-main">
             <div class="form-box" ref="formBoxRefs">
-                <el-form>
-                    <el-form-item label="维度">
+                <el-form label-width="60">
+                    <el-form-item label="维度" v-if="props.optionModel.type != 'progressbar'">
                         <div class="input-box">
                             <VueDraggableNext
                                 class="draggable-box"
@@ -25,6 +25,17 @@
                                 @add="(e) => addCom(e,'metrics')"
                             >
                                 <DimensionCom v-model="metrics" @onSort="onSort" />
+                            </VueDraggableNext>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="目标值" v-if="props.optionModel.type == 'progressbar'">
+                        <div class="input-box">
+                            <VueDraggableNext
+                                class="draggable-box"
+                                group="list"
+                                @add="(e) => addCom(e,'targetValue')"
+                            >
+                                <DimensionCom v-model="targetValue" @onSort="onSort" />
                             </VueDraggableNext>
                         </div>
                     </el-form-item>
@@ -90,11 +101,14 @@ let myOptionModel = ref({});
 let dimension = ref([]);
 // 指标
 let metrics = ref([]);
+// 目标值
+let targetValue = ref([]);
 // 初始化纬度、指标
 const initDimensional = () => {
     myOptionModel.value = props.optionModel;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
+    targetValue.value = props.optionModel.setDimensional?.targetValue || [];
 };
 
 /**
@@ -246,6 +260,26 @@ let fields = [
             },
         ],
     },
+    {
+        label: "当前销售",
+        alias: "当前销售",
+        code: "code7",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+        num: 5570,
+    },
+    {
+        label: "销售额度",
+        alias: "销售额度",
+        code: "code8",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+        num: 10000,
+    },
 ];
 
 let drawer = ref(false);
@@ -289,7 +323,7 @@ const addCom = (e, target) => {
     let dimensionLength = dimension.value.length;
     let metricsLength = metrics.value.length;
     let { type } = props.optionModel;
-    let max3 = ["barChart", "barXChart", "lineChart"];
+    let max3 = ["barChart", "barXChart", "lineChart", "radarChart"];
     if (target == "dimension") {
         // 1个维度或多个指标
         // 2个维度或1个指标
@@ -303,8 +337,11 @@ const addCom = (e, target) => {
                 return;
             }
         }
-        // 如果是饼图
-        if (type == "pieChart" && dimensionLength > 0) {
+        // 如果是饼图、漏斗图 最多添加1个维度
+        if (
+            (type == "pieChart" || type == "funnelChart") &&
+            dimensionLength > 0
+        ) {
             $ElMessage.warning("添加失败，最多添加1个维度");
             return;
         }
@@ -319,12 +356,23 @@ const addCom = (e, target) => {
                 return;
             }
         }
-        // 如果是饼图
-        if (type == "pieChart" && metricsLength > 0) {
+        // 如果是饼图、进度条 最多添加1个指标
+        if (
+            (type == "pieChart" || type == "progressbar") &&
+            metricsLength > 0
+        ) {
             $ElMessage.warning("添加失败，最多添加1个维度");
             return;
         }
         metrics.value.push(cutField);
+    }
+    if (target == "targetValue") {
+        // 如果是进度条 最多添加1个目标值
+        if (type == "progressbar" && targetValue > 0) {
+            $ElMessage.warning("添加失败，最多添加1个目标值");
+            return;
+        }
+        targetValue.value.push(cutField);
     }
 };
 const onSort = (e) => {

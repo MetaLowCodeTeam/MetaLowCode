@@ -107,6 +107,8 @@ const initChaer = () => {
                     dimension: [],
                     // 指标
                     metrics: [],
+                    // 目标值
+                    targetValue:[],
                 },
                 showHeader: true,
                 showFullscreen: false,

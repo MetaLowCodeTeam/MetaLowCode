@@ -5,6 +5,7 @@
 <script>
 import * as echarts from "echarts";
 import T from "./echarts-theme-T.js";
+import  'echarts-liquidfill'
 echarts.registerTheme("T", T);
 const unwarp = (obj) => obj && (obj.__v_raw || obj.valueOf() || obj);
 

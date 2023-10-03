@@ -103,6 +103,26 @@ let stylesList = ref([
             },
         ],
     },
+    {
+        type: "progressbar",
+        list: [
+            {
+                type: 1,
+                label: "环形",
+                icon: "donutChart",
+            },
+            {
+                type: 2,
+                label: "进度条",
+                icon: "progressbar",
+            },
+            {
+                type: 3,
+                label: "水波图",
+                icon: "wavesChart",
+            },
+        ],
+    },
 ]);
 watch(
     () => props.optionModel,
