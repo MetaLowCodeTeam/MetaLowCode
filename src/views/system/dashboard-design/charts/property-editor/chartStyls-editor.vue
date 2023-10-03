@@ -10,8 +10,8 @@
                 v-for="(item,inx) of barChartType"
                 :key="inx"
                 :title="item.label"
-                :class="{'is-active':option.chartStyls == item.type}"
-                @click="chartStylsChange(item)"
+                :class="{'is-active':option.chartStyls == item.type,'is-disabled': checkIsDisabled(item,'barChart')}"
+                @click="checkIsDisabled(item,'barChart') ? ()=> {} : chartStylsChange(item)"
             >
                 <div class="icon-box">
                     <SvgIcon class="sort-icon ml-3" :icon-name="item.icon" />
@@ -67,6 +67,19 @@ onMounted(() => {
 const initChartStyls = () => {
     option.value = props.optionModel;
 };
+// 检测禁用
+const checkIsDisabled = (item, chartType) => {
+    let { dimension, metrics } = option.value.setDimensional;
+    // 如果是柱状图，并且不是基础柱状图 并且 维度大于1
+    if (
+        chartType == "barChart" &&
+        item.type != 1 &&
+        (dimension.length > 1 || metrics.length < 2)
+    ) {
+        return true;
+    }
+    return false;
+};
 // 切换图表样式
 const chartStylsChange = (item) => {
     if (option.value.chartStyls == item.type) {
@@ -107,6 +120,10 @@ const chartStylsChange = (item) => {
                 .sort-icon {
                     color: var(--el-color-primary);
                 }
+            }
+            &.is-disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
             }
         }
     }
