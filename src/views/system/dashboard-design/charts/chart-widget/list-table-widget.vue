@@ -1,20 +1,29 @@
 
 <template>
-    <div class="pivot-table-widget">
+    <div class="pivot-table-widget" @click.stop="setSelected">
         <div class="table-box">
-            <el-table :data="tableData" :border="true" style="width: 100%" :max-height="320">
+            <el-table
+                size="small"
+                :data="tableData"
+                :border="true"
+                style="width: 100%"
+                :max-height="320"
+            >
                 <el-table-column prop="date" label="Date" width="180" />
                 <el-table-column prop="name" label="Name" width="180" />
-                <el-table-column prop="address" label="Address" />
+                <el-table-column prop="address" label="Address" show-overflow-tooltip />
             </el-table>
         </div>
-        <div class="page-box">分页</div>
     </div>
 </template>
 
 <script setup>
 defineOptions({
     name: "listTable-widget",
+});
+const props = defineProps({
+    field: Object,
+    designer: Object,
 });
 const tableData = [
     {
@@ -26,6 +35,10 @@ const tableData = [
         zip: "CA 90036",
     },
 ];
+
+const setSelected = () => {
+    props.designer?.setSelected(props.field);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -34,11 +47,7 @@ const tableData = [
     width: 100%;
     .table-box {
         width: 100%;
-        height: calc(100% - 30px);
-    }
-    .page-box {
-        height: 30px;
-        // background: green;
+        height: 100%;
     }
 }
 </style>

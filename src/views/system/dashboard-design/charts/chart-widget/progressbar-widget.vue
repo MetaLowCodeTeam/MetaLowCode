@@ -3,7 +3,7 @@
         :option="myOption"
         :field="field"
         :designer="designer"
-        v-if="props.field.options.chartStyls !=2 "
+        v-if="props.field.options.chartStyls !=2 || myOption.isNoData"
     />
     <div class="bar-progress" @click.stop="setSelected" v-else>
         <el-progress

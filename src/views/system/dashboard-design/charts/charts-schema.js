@@ -113,6 +113,8 @@ const initChaer = () => {
                     metrics: [],
                     // 目标值
                     targetValue: [],
+                    // 显示字段
+                    showFields:[],
                 },
                 // 图表设置
                 setChartConf: {
