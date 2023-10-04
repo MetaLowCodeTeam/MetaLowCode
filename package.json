@@ -10,7 +10,6 @@
 		"vite-build": "vite build"
 	},
 	"dependencies": {
-		"@antv/s2": "^1.51.0",
 		"@antv/s2-vue": "^1.5.0",
 		"@element-plus/icons-vue": "2.0.10",
 		"@tinymce/tinymce-vue": "5.0.0",
