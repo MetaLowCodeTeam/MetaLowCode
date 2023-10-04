@@ -1,7 +1,7 @@
 <template>
     <div class="bar-chart" v-resize="handleResize" @click.stop="setSelected">
         <scEcharts class="chart" ref="scEchartsRefs" :option="myOption" v-if="!myOption.isNoData"></scEcharts>
-        <div class="no-data" v-else>清通过维度右侧 <span class="lh">维度指标设置</span> 维度、指标栏来添加数据</div>
+        <div class="no-data" v-else>请通过右侧 <span class="lh">维度指标设置</span> 维度、指标栏来添加数据</div>
     </div>
 </template>
 

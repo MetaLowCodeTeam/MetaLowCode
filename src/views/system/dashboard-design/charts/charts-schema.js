@@ -124,6 +124,10 @@ const initChaer = () => {
                     chartShow: true,
                     // 使用全部数据
                     useAllData: true,
+                    // 汇总行显示
+                    showSummary:false,
+                    // 汇总列显示
+                    showSumcol:false,
                 },
                 showHeader: true,
                 showFullscreen: false,
