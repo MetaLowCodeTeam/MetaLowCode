@@ -3,7 +3,7 @@
         :option="myOption"
         :field="field"
         :designer="designer"
-        v-if="props.field.options.chartStyls !=2 || myOption.isNoData"
+        v-if="props.field.options.chartStyle !=2 || myOption.isNoData"
     />
     <div class="bar-progress" @click.stop="setSelected" v-else>
         <el-progress
@@ -180,9 +180,9 @@ let progressText = ref("");
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
-        let { chartStyls, setDimensional } = options;
+        let { chartStyle, setDimensional } = options;
         let { metrics, targetValue } = setDimensional;
-        myOption.value = chartStyls == 1 ? donutChartOption : wavesChart;
+        myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
         if (metrics.length < 1 || targetValue.length < 1) {
             myOption.value.isNoData = true;
             return;
@@ -192,7 +192,7 @@ const initOption = () => {
         let point = Math.round((cutNum / maxNum) * 100);
         percentage.value = point;
         progressText.value = metrics[0].alias;
-        if (chartStyls == 1) {
+        if (chartStyle == 1) {
             myOption.value.title.text = `${point}%`;
             myOption.value.series[0].data[0].value = cutNum;
             myOption.value.series[0].data[0].name = metrics[0].alias;

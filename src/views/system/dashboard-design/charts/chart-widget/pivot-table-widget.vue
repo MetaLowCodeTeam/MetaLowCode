@@ -1,23 +1,36 @@
 <template>
     <div class="pivot-table-widget" @click.stop="setSelected" v-loading="loading">
-        <div class="table-box" id="container" :style="{'height': tableBoxHeight}">
-            <SheetComponent
-                ref="s2"
-                :dataCfg="dataCfg"
-                :options="tableOptions"
-                :adaptive="adaptive"
-            />
-        </div>
-        <div class="page-box">分页信息 {{ tableOptions.totals.row.showGrandTotals }}</div>
-        <!-- <div class="table-box" ref="tableBoxRefs">
-            
-        </div>
-        <div>测试</div>-->
+        <template v-if="!isNoData">
+            <div class="table-box" id="container" :style="{'height': tableBoxHeight}">
+                <SheetComponent
+                    ref="s2"
+                    :dataCfg="dataCfg"
+                    :options="tableOptions"
+                    :adaptive="adaptive"
+                />
+            </div>
+            <div class="page-box">
+                <el-pagination
+                    style="justify-content:right"
+                    v-model:current-page="paginationConf.page"
+                    :page-size="paginationConf.pageSize"
+                    layout="total, prev, pager, next"
+                    :total="paginationConf.total"
+                    @current-change="handleCurrentChange"
+                />
+            </div>
+        </template>
+        <template v-else>
+            <div class="no-data">
+                请通过右侧
+                <span class="lh">维度指标设置</span> 维度、指标栏来添加数据
+            </div>
+        </template>
     </div>
 </template>
 
 <script setup>
-import { SheetComponent, TableSheet } from "@antv/s2-vue";
+import { SheetComponent } from "@antv/s2-vue";
 import { onMounted, reactive, shallowRef, ref, watch } from "vue";
 import "@antv/s2-vue/dist/style.min.css";
 const adaptive = {
@@ -32,302 +45,26 @@ const props = defineProps({
     field: Object,
     designer: Object,
 });
-
+// 透视表
+const s2 = shallowRef();
+// 透视表参数
 let s2DataConfig = {
     fields: {
         rows: ["province", "city"],
-        columns: ["type", "sub_type"],
-        values: ["number"],
+        columns: [],
+        values: ["number", "price"],
     },
     meta: [
-        {
-            field: "number",
-            name: "数量",
-        },
-        {
-            field: "province",
-            name: "省份",
-        },
-        {
-            field: "city",
-            name: "城市",
-        },
-        {
-            field: "type",
-            name: "类别",
-        },
-        {
-            field: "sub_type",
-            name: "子类别",
-        },
+        // {
+        //     field: "price",
+        //     name: "价格",
+        // },
     ],
-    data: [
-        {
-            number: 1176,
-            province: "山东省",
-            city: "济南市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 2258,
-            province: "湖南省",
-            city: "长沙市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 1176,
-            province: "湖南省",
-            city: "长沙A市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 442,
-            province: "湖南省",
-            city: "长沙B市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 3321,
-            province: "湖南省",
-            city: "长沙C市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 7789,
-            province: "浙江省",
-            city: "杭州市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 2367,
-            province: "浙江省",
-            city: "绍兴市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 3877,
-            province: "浙江省",
-            city: "宁波市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 4342,
-            province: "浙江省",
-            city: "舟山市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 5343,
-            province: "浙江省",
-            city: "杭州市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 632,
-            province: "浙江省",
-            city: "绍兴市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 7234,
-            province: "浙江省",
-            city: "宁波市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 834,
-            province: "浙江省",
-            city: "舟山市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 945,
-            province: "浙江省",
-            city: "杭州市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 1304,
-            province: "浙江省",
-            city: "绍兴市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 1145,
-            province: "浙江省",
-            city: "宁波市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 1432,
-            province: "浙江省",
-            city: "舟山市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 1343,
-            province: "浙江省",
-            city: "杭州市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 1354,
-            province: "浙江省",
-            city: "绍兴市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 1523,
-            province: "浙江省",
-            city: "宁波市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 1634,
-            province: "浙江省",
-            city: "舟山市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 1723,
-            province: "四川省",
-            city: "成都市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 1822,
-            province: "四川省",
-            city: "绵阳市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 1943,
-            province: "四川省",
-            city: "南充市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 2330,
-            province: "四川省",
-            city: "乐山市",
-            type: "家具",
-            sub_type: "桌子",
-        },
-        {
-            number: 2451,
-            province: "四川省",
-            city: "成都市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 2244,
-            province: "四川省",
-            city: "绵阳市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 2333,
-            province: "四川省",
-            city: "南充市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 2445,
-            province: "四川省",
-            city: "乐山市",
-            type: "家具",
-            sub_type: "沙发",
-        },
-        {
-            number: 2335,
-            province: "四川省",
-            city: "成都市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 245,
-            province: "四川省",
-            city: "绵阳市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 2457,
-            province: "四川省",
-            city: "南充市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 2458,
-            province: "四川省",
-            city: "乐山市",
-            type: "办公用品",
-            sub_type: "笔",
-        },
-        {
-            number: 4004,
-            province: "四川省",
-            city: "成都市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 3077,
-            province: "四川省",
-            city: "绵阳市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 3551,
-            province: "四川省",
-            city: "南充市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-        {
-            number: 352,
-            province: "四川省",
-            city: "乐山市",
-            type: "办公用品",
-            sub_type: "纸张",
-        },
-    ],
-    test: 123,
+    data: [],
 };
-
-const s2 = shallowRef();
 // dataCfg 数据字段较多，建议使用 shallow, 如果有数据更改直接替换整个对象
 let dataCfg = ref(s2DataConfig);
+// 透视表设置
 let tableOptions = ref({
     // height:60,
     totals: {
@@ -358,6 +95,12 @@ let tableOptions = ref({
 
 let cutField = ref("");
 let loading = ref(false);
+let isNoData = ref(true);
+let paginationConf = reactive({
+    page: 1,
+    pageSize: 20,
+    total: 100,
+});
 watch(
     () => props.field,
     () => {
@@ -381,23 +124,69 @@ const initOption = () => {
         tableOptions.value.totals.row.showGrandTotals = showSummary;
         tableOptions.value.totals.col.showGrandTotals = showSumcol;
         s2.value?.instance.setOptions(tableOptions.value);
-        // console.log("s2 instance:",);
-        // });
-        loading.value = true;
-        setTimeout(() => {
-            dataCfg.value.data = [
-                {
-                    number: 1176,
-                    province: "山东省",
-                    city: "济南市",
-                    type: "家具",
-                    sub_type: "桌子",
-                },
-            ];
-            loading.value = false;
-            handleResize();
-        }, 1000);
+        let { dimensionRow, dimensionCol, metrics } = options.setDimensional;
+        // 没有维度行或者指标=没有数据
+        if (dimensionRow.length < 1 || metrics.length < 1) {
+            isNoData.value = true;
+            return;
+        }
+        // 元字段格式化名字
+        dataCfg.value.meta = [];
+
+        // 维度行设置
+        dataCfg.value.fields.rows = [];
+        setPivotTableConf(dimensionRow, "rows");
+
+        // 指标设置
+        dataCfg.value.fields.values = [];
+        setPivotTableConf(metrics, "values");
+        // 维度列设置
+        if (dimensionCol.length > 0) {
+            dataCfg.value.fields.columns = [];
+            setPivotTableConf(dimensionCol, "columns");
+        }
+
+        // 获取表格数据
+        getTableData();
+        isNoData.value = false;
+    } else {
+        isNoData.value = true;
     }
+};
+
+// 设置透视表参数
+const setPivotTableConf = (arr, key) => {
+    arr.forEach((el) => {
+        dataCfg.value.fields[key].push(el.code);
+        dataCfg.value.meta.push({
+            field: el.code,
+            name: el.alias,
+        });
+    });
+};
+// 分页切换
+const handleCurrentChange = (v) => {
+    paginationConf.page = v;
+    getTableData();
+};
+// 获取表格数据
+const getTableData = () => {
+    loading.value = true;
+    setTimeout(() => {
+        dataCfg.value.data = [
+            {
+                zhi: 1176,
+                price: 25,
+                hang: "透视表行测试数据",
+                city: "济南市",
+                lie: "家具",
+                sub_type: "桌子",
+            },
+        ];
+        paginationConf.total = dataCfg.value.data.length;
+        loading.value = false;
+        handleResize();
+    }, 1000);
 };
 
 let tableBoxHeight = ref("300px");
@@ -429,17 +218,17 @@ const handleResize = () => {
         }
     }
     // 行高
-    // let rowHeight = 40
-    // tableBoxHeight.value =
-    //     // 数据行高
-    //     (rowLine > 9 ? 10 : rowLine) * rowHeight +
-    //     // 列数行高
-    //     columns.length * rowHeight +
-    //     // 当前行高
-    //     rowHeight +
-    //     // 汇总行高
-    //     (tableOptions.value.totals.row.showGrandTotals ? rowHeight : 0) +
-    //     "px";
+    let rowHeight = 32;
+    tableBoxHeight.value =
+        // 数据行高
+        (rowLine > 9 ? 10 : rowLine) * rowHeight +
+        // 列数行高
+        columns.length * rowHeight +
+        // 当前行高
+        rowHeight +
+        // 汇总行高
+        (tableOptions.value.totals.row.showGrandTotals ? rowHeight : 0) +
+        "px";
 };
 
 const setSelected = () => {
@@ -450,5 +239,12 @@ const setSelected = () => {
 <style lang="scss" scoped>
 .pivot-table-widget {
     width: 100%;
+    height: 100%;
+}
+.no-data {
+    font-size: 14px;
+    .lh {
+        color: var(--el-color-primary);
+    }
 }
 </style>

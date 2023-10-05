@@ -79,7 +79,7 @@ const chartsList = [
 
 
 // 拥有图标样式的图表
-const hasChartStylsType = [
+const hasChartStyleType = [
     "barChart",
     "barXChart",
     "lineChart",
@@ -114,7 +114,11 @@ const initChaer = () => {
                     // 目标值
                     targetValue: [],
                     // 显示字段
-                    showFields:[],
+                    showFields: [],
+                    // 维度行
+                    dimensionRow: [],
+                    // 维度列
+                    dimensionCol: [],
                 },
                 // 图表设置
                 setChartConf: {
@@ -125,9 +129,9 @@ const initChaer = () => {
                     // 使用全部数据
                     useAllData: true,
                     // 汇总行显示
-                    showSummary:false,
+                    showSummary: false,
                     // 汇总列显示
-                    showSumcol:false,
+                    showSumcol: false,
                 },
                 showHeader: true,
                 showFullscreen: false,
@@ -147,8 +151,8 @@ const initChaer = () => {
             }
         };
         // 添加图表样式设置
-        if (hasChartStylsType.includes(el.type)) {
-            chartObj.options.chartStyls = 1;
+        if (hasChartStyleType.includes(el.type)) {
+            chartObj.options.chartStyle = 0;
         }
         // 添加Y轴坐标设置
         if (hasAxisCoordinates.includes(el.type)) {
@@ -158,6 +162,11 @@ const initChaer = () => {
                 // 最小值
                 min: "",
             };
+        }
+        // 如果是表
+        if (el.type == 'pivotTable' || el.type == 'listTable') {
+            chartObj.options.w = 12
+            chartObj.options.h = 6
         }
         newChartList.push(chartObj)
     })
@@ -173,6 +182,31 @@ export const ext_charts_widgets = [
             name: '',
             value: 13232.12,
             title: '今年的增长',
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            // 图表样式
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,

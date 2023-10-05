@@ -7,8 +7,8 @@
             <div class="form-box" ref="formBoxRefs">
                 <el-form label-width="60">
                     <el-form-item label="维度" v-if="isShowDimension()">
-                        <el-scrollbar max-height="132px">
-                            <div class="input-box">
+                        <div class="input-box">
+                            <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
                                     group="list"
@@ -16,12 +16,46 @@
                                 >
                                     <DimensionCom v-model="dimension" @onSort="onSort" isDimension />
                                 </VueDraggableNext>
-                            </div>
-                        </el-scrollbar>
+                            </el-scrollbar>
+                        </div>
                     </el-form-item>
-                    <el-form-item label="指标" v-if="isShowMetrics()">
-                        <el-scrollbar max-height="132px">
-                            <div class="input-box">
+                    <el-form-item label="维度行" v-if="chartType == 'pivotTable'">
+                        <div class="input-box">
+                            <el-scrollbar max-height="132px">
+                                <VueDraggableNext
+                                    class="draggable-box"
+                                    group="list"
+                                    @add="(e) => addCom(e,'dimensionRow')"
+                                >
+                                    <DimensionCom
+                                        v-model="dimensionRow"
+                                        @onSort="onSort"
+                                        isDimension
+                                    />
+                                </VueDraggableNext>
+                            </el-scrollbar>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="维度列" v-if="chartType == 'pivotTable'">
+                        <div class="input-box">
+                            <el-scrollbar max-height="132px">
+                                <VueDraggableNext
+                                    class="draggable-box"
+                                    group="list"
+                                    @add="(e) => addCom(e,'dimensionCol')"
+                                >
+                                    <DimensionCom
+                                        v-model="dimensionCol"
+                                        @onSort="onSort"
+                                        isDimension
+                                    />
+                                </VueDraggableNext>
+                            </el-scrollbar>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="指标" v-if="chartType != 'listTable'">
+                        <div class="input-box">
+                            <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
                                     group="list"
@@ -29,8 +63,8 @@
                                 >
                                     <DimensionCom v-model="metrics" @onSort="onSort" />
                                 </VueDraggableNext>
-                            </div>
-                        </el-scrollbar>
+                            </el-scrollbar>
+                        </div>
                     </el-form-item>
                     <el-form-item label="目标值" v-if="chartType == 'progressbar'">
                         <div class="input-box">
@@ -119,6 +153,10 @@ onMounted(() => {
 let chartType = ref("");
 // 维度
 let dimension = ref([]);
+// 维度行
+let dimensionRow = ref([]);
+// 维度列
+let dimensionCol = ref([]);
 // 指标
 let metrics = ref([]);
 // 目标值
@@ -132,9 +170,12 @@ const initDimensional = () => {
     metrics.value = props.optionModel.setDimensional?.metrics || [];
     targetValue.value = props.optionModel.setDimensional?.targetValue || [];
     showFields.value = props.optionModel.setDimensional?.showFields || [];
-    nextTick(()=>{
+    dimensionRow.value = props.optionModel.setDimensional?.dimensionRow || [];
+    dimensionCol.value = props.optionModel.setDimensional?.dimensionCol || [];
+
+    nextTick(() => {
         setItemBoxHeight();
-    })
+    });
 };
 
 /**
@@ -342,14 +383,60 @@ let fields = [
         showEdit: false,
         editAlias: "",
     },
+    {
+        label: "透视表维度行",
+        alias: "透视表维度行",
+        code: "hang",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+    },
+    {
+        label: "透视表维度列",
+        alias: "透视表维度列",
+        code: "lie",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+    },
+    {
+        label: "透视表指标",
+        alias: "透视表指标",
+        code: "zhi",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+    },
+    {
+        label: "数值维度",
+        alias: "数值维度",
+        code: "szwd",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+    },
+    {
+        label: "数值指标",
+        alias: "数值指标",
+        code: "szzb",
+        type: "N",
+        sort: "",
+        showEdit: false,
+        editAlias: "",
+        num: 666,
+    },
 ];
 
 let drawer = ref(false);
 const openDrawer = () => {
     drawer.value = true;
-    nextTick(()=>{
+    nextTick(() => {
         setItemBoxHeight();
-    })
+    });
 };
 const onCancel = () => {
     console.log(dimension.value);
@@ -377,7 +464,12 @@ const setItemBoxHeight = () => {
 // 新加字段
 const addCom = (e, target) => {
     let cutField = { ...fields[e.oldIndex] };
-
+    let checkHasDimensionRow = dimensionRow.value.filter(
+        (el) => el.label == cutField.label
+    );
+    let checkHasDimensionCol = dimensionCol.value.filter(
+        (el) => el.label == cutField.label
+    );
     let checkHasDimension = dimension.value.filter(
         (el) => el.label == cutField.label
     );
@@ -392,6 +484,14 @@ const addCom = (e, target) => {
     );
     if (checkHasDimension.length > 0) {
         $ElMessage.warning("添加失败，同一字段不能重复添加维度");
+        return;
+    }
+    if (checkHasDimensionRow.length > 0) {
+        $ElMessage.warning("添加失败，同一字段不能重复添加维度行");
+        return;
+    }
+    if (checkHasDimensionCol.length > 0) {
+        $ElMessage.warning("添加失败，同一字段不能重复添加维度列");
         return;
     }
     if (checkHasMetrics.length > 0) {
@@ -410,6 +510,7 @@ const addCom = (e, target) => {
     let metricsLength = metrics.value.length;
     let { type } = props.optionModel;
     let max3 = ["barChart", "barXChart", "lineChart", "radarChart"];
+    // 添加维度
     if (target == "dimension") {
         // 1个维度或多个指标
         // 2个维度或1个指标
@@ -425,7 +526,7 @@ const addCom = (e, target) => {
         }
         // 如果是饼图、漏斗图 最多添加1个维度
         if (
-            (type == "pieChart" || type == "funnelChart") &&
+            (type == "pieChart" || type == "funnelChart" || type == "statistic") &&
             dimensionLength > 0
         ) {
             $ElMessage.warning("添加失败，最多添加1个维度");
@@ -433,7 +534,8 @@ const addCom = (e, target) => {
         }
         dimension.value.push(cutField);
     }
-    if (target == "metrics") {
+    // 添加指标
+    else if (target == "metrics") {
         // 1个维度或多个指标
         // 2个维度或1个指标
         if (max3.includes(type)) {
@@ -444,15 +546,16 @@ const addCom = (e, target) => {
         }
         // 如果是饼图、进度条 最多添加1个指标
         if (
-            (type == "pieChart" || type == "progressbar") &&
+            (type == "pieChart" || type == "progressbar" || type == "statistic") &&
             metricsLength > 0
         ) {
-            $ElMessage.warning("添加失败，最多添加1个维度");
+            $ElMessage.warning("添加失败，最多添加1个指标");
             return;
         }
         metrics.value.push(cutField);
     }
-    if (target == "targetValue") {
+    // 添加目标值
+    else if (target == "targetValue") {
         // 如果是进度条 最多添加1个目标值
         if (type == "progressbar" && targetValue > 0) {
             $ElMessage.warning("添加失败，最多添加1个目标值");
@@ -460,12 +563,27 @@ const addCom = (e, target) => {
         }
         targetValue.value.push(cutField);
     }
-    if (target == "showFields") {
+    // 添加显示字段
+    else if (target == "showFields") {
         showFields.value.push(cutField);
+    }
+    // 添加维度行
+    else if (target == "dimensionRow") {
+        dimensionRow.value.push(cutField);
+    }
+    // 添加维度列
+    else if (target == "dimensionCol") {
+        dimensionCol.value.push(cutField);
     }
 };
 const onSort = (e) => {
     dimension.value.forEach((el) => {
+        el.sort = "";
+    });
+    dimensionRow.value.forEach((el) => {
+        el.sort = "";
+    });
+    dimensionCol.value.forEach((el) => {
         el.sort = "";
     });
     metrics.value.forEach((el) => {
@@ -482,13 +600,8 @@ const onSort = (e) => {
 
 // 维度是否显示
 const isShowDimension = () => {
-    let notNeedDimension = ["progressbar", "listTable"];
+    let notNeedDimension = ["progressbar", "listTable", "pivotTable"];
     return showFn(notNeedDimension);
-};
-// 指标是否显示
-const isShowMetrics = () => {
-    let notNeedMetrics = ["listTable"];
-    return showFn(notNeedMetrics);
 };
 
 // 显示方法

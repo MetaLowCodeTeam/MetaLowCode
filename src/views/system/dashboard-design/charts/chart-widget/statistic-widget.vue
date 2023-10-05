@@ -1,224 +1,108 @@
 <template>
-	<static-content-wrapper
-		:designer="designer"
-		:field="field"
-		:design-state="designState"
-		:parent-widget="parentWidget"
-		:parent-list="parentList"
-		:index-of-parent-list="indexOfParentList"
-		:sub-form-row-index="subFormRowIndex"
-		:sub-form-col-index="subFormColIndex"
-		:sub-form-row-id="subFormRowId">
-		<div class="card-panel" :style="{'justify-content':field.options.showIcon?'space-between':'center'}">
-			<div class="card-panel-icon-wrapper icon-color" v-if="field.options.showIcon"
-				 :style="{'color':field.options.iconColor,'--hover-color': field.options.iconColor }">
-				<el-icon>
-					<component :is="field.options.icon"/>
-				</el-icon>
-			</div>
-			<div class="card-panel-description">
-				<div class="card-panel-text">
-					{{ field.options.label }}
-				</div>
-				<div>
-					<count-up :startVal="0" :endVal="field.options.value" class="card-panel-num">
-					</count-up>
-				</div>
-			</div>
-		</div>
-	</static-content-wrapper>
+    <div class="pivot-table-widget" @click.stop="setSelected" v-loading="loading">
+        <div
+            class="statistic-box"
+            :style="{'color':cutField?.options.setChartStyle.useTextColor}"
+            v-if="!isNoData"
+        >
+            <div class="statistic-dimension" v-if="dimensionName">{{ dimensionName }}</div>
+            <div class="statistic-metrics">
+                <span>{{ metricsNum }}</span>
+                <span class="sub-text" :style="{'font-size':cutField?.options.setChartStyle.currencySymbolSize + 'px'}">{{ cutField?.options.setChartStyle.currencySymbol }}</span>
+            </div>
+        </div>
+        <div class="no-data" v-else>
+            请通过右侧
+            <span class="lh">维度指标设置</span> 维度、指标栏来添加数据
+        </div>
+    </div>
 </template>
+<script setup>
+import { onMounted, reactive, ref, watch } from "vue";
+defineOptions({
+    name: "statistic-widget",
+});
+const props = defineProps({
+    field: Object,
+    designer: Object,
+});
+let cutField = ref({});
+let isNoData = ref(true);
+let loading = ref(false);
 
-<script>
-import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+watch(
+    () => props.field,
+    () => {
+        cutField.value = props.field;
+        initOption();
+    },
+    { deep: true }
+);
+onMounted(() => {
+    cutField.value = props.field;
+    initOption();
+});
 
-const {StaticContentWrapper, emitter, i18n, fieldMixin, Utils} = VisualDesign.VFormSDK
-const {getDSByName, overwriteObj, runDataSourceRequest} = Utils
+let dimensionName = ref("");
+let metricsNum = ref(0);
 
-import CountUp from 'vue-countup-v3';
+const initOption = () => {
+    let { options } = cutField.value;
+    if (options) {
+        let { dimension, metrics } = options.setDimensional;
+        if (metrics.length < 1) {
+            isNoData.value = true;
+            return;
+        }
+        if (dimension.length > 0) {
+            dimensionName.value = dimension[0].alias;
+        }
 
-export default {
-	name: "statistic-widget",
-	componentName: "FieldWidget", //必须固定为FieldWidget，用于接收父级组件的broadcast事件
-	mixins: [emitter, fieldMixin, i18n],
-	props: {
-		field: Object,
-		parentWidget: Object,
-		parentList: Array,
-		indexOfParentList: Number,
-		designer: Object,
+        metricsNum.value = metrics[0].num
+            ? Number.isNaN(metrics[0].num)
+                ? "N/A"
+                : metrics[0].num
+            : "N/A";
+        isNoData.value = false;
+    } else {
+        isNoData.value = true;
+    }
+};
 
-		designState: {
-			type: Boolean,
-			default: false,
-		},
-
-		subFormRowIndex: {
-			/* 子表单组件行索引，从0开始计数 */
-			type: Number,
-			default: -1,
-		},
-		subFormColIndex: {
-			/* 子表单组件列索引，从0开始计数 */
-			type: Number,
-			default: -1,
-		},
-		subFormRowId: {
-			/* 子表单组件行Id，唯一id且不可变 */
-			type: String,
-			default: "",
-		},
-	},
-	watch: {
-		field: {
-			deep: true,
-			handler(val) {
-				//console.log(val, "2000")
-			}
-		}
-	},
-	components: {
-		StaticContentWrapper,
-		CountUp,
-	},
-	computed: {
-		customClass() {
-			return this.field.options.customClass || "";
-		},
-	},
-	created() {
-		this.registerToRefList();
-		this.initEventHandler();
-		this.handleOnCreated();
-	},
-	mounted() {
-		if (!!this.field.options.dsEnabled) {
-			this.loadDataFromDS({});
-		}
-		this.$nextTick(() => {
-			this.onMounted();
-		});
-	},
-	beforeUnmount() {
-		this.unregisterFromRefList();
-	},
-	methods: {
-		onCreated() {
-			if (!!this.field.options.onCreated) {
-				let customFunc = new Function(this.field.options.onCreated);
-				customFunc.call(this);
-			}
-		},
-
-		onMounted() {
-			if (!!this.field.options.onMounted) {
-				let customFunc = new Function(this.field.options.onMounted);
-				customFunc.call(this);
-			}
-		},
-		// /**
-		//  * 获取图表数据
-		//  */
-		// getStatisticData() {
-		// 	return this.field.options.option
-		// },
-		// /**
-		//  * 设置图表数据
-		//  * @param statisticData
-		//  */
-		// setStatisticData(statisticData) {
-		// 	this.field.options.option = statisticData
-		// },
-		/**
-		 * 从数据源加载统计数值
-		 * @param localDsv 本地数据源变量DSV
-		 * @param dsName 数据源名称，不传此值，则使用dsName属性绑定的数据源
-		 */
-		loadDataFromDS(localDsv = {}, dsName = '') {
-			let curDSName = dsName || this.field.options.dsName
-			let curDSetName = this.field.options.dataSetName
-			let curDS = getDSByName(this.formConfig, curDSName)
-			if (!!curDS) {
-				let gDsv = this.getGlobalDsv() || {}
-				let newDsv = new Object({})
-				overwriteObj(newDsv, gDsv)
-				overwriteObj(newDsv, localDsv)
-				newDsv.fieldName = this.field.options.name
-				runDataSourceRequest(curDS, newDsv, this.getFormRef(), false, this.$message).then(res => {
-					if (!!curDSetName && res.hasOwnProperty(curDSetName)) {
-						this.setStatisticData(res[curDSetName])
-					} else {
-						this.setStatisticData(res)
-					}
-				}).catch(err => {
-					this.$message.error(err.message)
-				})
-			}
-		},
-	},
+const setSelected = () => {
+    props.designer?.setSelected(props.field);
 };
 </script>
-
 <style lang="scss" scoped>
-.chart {
-	height: 300px;
-	//height: 100%;
+.pivot-table-widget {
+    width: 100%;
+    height: 100%;
+    .statistic-box {
+        // width: 10;
+        height: 100%;
+        container-type: inline-size;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .statistic-dimension {
+            font-size: 5cqw;
+        }
+        .statistic-metrics {
+            font-size: 15cqw;
+            font-weight: bold;
+            .sub-text {
+                position: relative;
+                top: -5px;
+                margin-left: 5px;
+            }
+        }
+    }
 }
-
-.card-panel {
-	cursor: pointer;
-	font-size: 12px;
-	position: relative;
-	overflow: hidden;
-	color: rgb(212, 197, 197);
-	background: #fff;
-	box-shadow: 4px 4px 20px rgba(0, 0, 0, .05);
-	border-color: rgba(0, 0, 0, .05);
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 0;
-
-	&:hover {
-		.card-panel-icon-wrapper {
-			color: #fff !important;
-		}
-
-		.icon-color {
-			background: var(--hover-color);
-		}
-	}
-
-	.card-panel-icon-wrapper {
-		float: left;
-		margin-left: 10px;
-		padding: 12px;
-		transition: all 0.38s ease-out;
-		border-radius: 6px;
-	}
-
-	.card-panel-icon {
-		float: left;
-		font-size: 48px;
-	}
-
-	.card-panel-description {
-		float: right;
-		font-weight: bold;
-		margin: 14px;
-		margin-left: 0px;
-		text-align: center;
-
-		.card-panel-text {
-			line-height: 18px;
-			color: rgba(0, 0, 0, 0.45);
-			font-size: 16px;
-			margin-bottom: 12px;
-		}
-
-		.card-panel-num {
-			font-size: 24px;
-		}
-	}
+.no-data {
+    font-size: 14px;
+    .lh {
+        color: var(--el-color-primary);
+    }
 }
 </style>

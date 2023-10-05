@@ -72,7 +72,7 @@ const initOption = () => {
 };
 // 格式化图表option
 const formatOption = (x, y) => {
-    let { chartStyls } = cutField.value.options;
+    let { chartStyle } = cutField.value.options;
     option.yAxis.data = x[0].list.map((el) => el.name);
     option.series = [];
     y.forEach((el) => {
@@ -81,9 +81,9 @@ const formatOption = (x, y) => {
             type: "bar",
             name: el.alias,
             stack:
-                chartStyls == 1
+                chartStyle == 1
                     ? null
-                    : chartStyls == 2
+                    : chartStyle == 2
                     ? "普通堆叠"
                     : "百分比堆叠",
         };

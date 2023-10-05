@@ -94,7 +94,7 @@ const initOption = () => {
 };
 // 格式化图表option
 const formatOption = (x, y) => {
-    let { chartStyls } = cutField.value.options;
+    let { chartStyle } = cutField.value.options;
     option.xAxis.data = x[0].list.map((el) => el.name);
     option.series = [];
     y.forEach((el) => {
@@ -102,7 +102,7 @@ const formatOption = (x, y) => {
             data: el.list.map((subel) => subel.name),
             type: "line",
             name: el.alias,
-            smooth: chartStyls == 2,
+            smooth: chartStyle == 2,
         };
         option.series.push(metricsObj);
     });

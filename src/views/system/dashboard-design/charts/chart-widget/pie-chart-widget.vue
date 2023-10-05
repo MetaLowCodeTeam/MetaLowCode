@@ -73,8 +73,8 @@ const initOption = () => {
                 value: metrics[0].list[inx].name,
             });
         });
-        let { chartStyls } = cutField.value.options;
-        option.series[0].radius = chartStyls == 1? '50%' : ['40%', '70%'];
+        let { chartStyle } = cutField.value.options;
+        option.series[0].radius = chartStyle == 1? '50%' : ['40%', '70%'];
         option.isNoData = false;
     } else {
         option.isNoData = true;

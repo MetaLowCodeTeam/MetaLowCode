@@ -12,7 +12,7 @@
         </div>
         <el-form-item label="最大值">
             <el-input-number
-                :disabled="optionModel.chartStyls == 3"
+                :disabled="optionModel.chartStyle == 3"
                 style="width:100%"
                 :controls="false"
                 v-model="optionModel.axisCoordinates.max"
@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item label="最小值">
             <el-input-number
-                :disabled="optionModel.chartStyls == 3"
+                :disabled="optionModel.chartStyle == 3"
                 style="width:100%"
                 :controls="false"
                 v-model="optionModel.axisCoordinates.min"

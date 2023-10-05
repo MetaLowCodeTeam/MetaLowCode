@@ -7,8 +7,8 @@
                     class="prive-box"
                     v-for="(item,inx) of style.list"
                     :key="inx"
-                    :class="{'is-active':option.chartStyls == item.type,'is-disabled': checkIsDisabled(item,style.type)}"
-                    @click="checkIsDisabled(item,style.type) ? ()=> {} : chartStylsChange(item)"
+                    :class="{'is-active':option.chartStyle == item.type,'is-disabled': checkIsDisabled(item,style.type)}"
+                    @click="checkIsDisabled(item,style.type) ? ()=> {} : chartStyleChange(item)"
                 >
                     <el-tooltip effect="dark" :content="item.label" placement="bottom">
                         <div class="icon-box">
@@ -24,7 +24,7 @@
 import { ref, watch, onMounted } from "vue";
 
 defineOptions({
-    name: "chartStyls-editor",
+    name: "chartStyle-editor",
 });
 const props = defineProps({
     designer: Object,
@@ -128,16 +128,16 @@ let stylesList = ref([
 watch(
     () => props.optionModel,
     () => {
-        initChartStyls();
+        initchartStyle();
     },
     { deep: true }
 );
 onMounted(() => {
-    initChartStyls();
+    initchartStyle();
 });
 
 // 初始化图表样式
-const initChartStyls = () => {
+const initchartStyle = () => {
     option.value = props.optionModel;
 };
 // 检测禁用
@@ -154,11 +154,11 @@ const checkIsDisabled = (item, chartType) => {
     return false;
 };
 // 切换图表样式
-const chartStylsChange = (item) => {
-    if (option.value.chartStyls == item.type) {
+const chartStyleChange = (item) => {
+    if (option.value.chartStyle == item.type) {
         return;
     }
-    option.value.chartStyls = item.type;
+    option.value.chartStyle = item.type;
     emits("update:optionModel", option.value);
 };
 </script>
