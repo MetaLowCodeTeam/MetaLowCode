@@ -11,7 +11,7 @@
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
-                                    group="list"
+                                    :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimension')"
                                 >
                                     <DimensionCom v-model="dimension" @onSort="onSort" isDimension />
@@ -24,7 +24,7 @@
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
-                                    group="list"
+                                    :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimensionRow')"
                                 >
                                     <DimensionCom
@@ -41,7 +41,7 @@
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
-                                    group="list"
+                                    :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimensionCol')"
                                 >
                                     <DimensionCom
@@ -58,7 +58,7 @@
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
-                                    group="list"
+                                    :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'metrics')"
                                 >
                                     <DimensionCom v-model="metrics" @onSort="onSort" />
@@ -71,7 +71,7 @@
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
-                                    group="list"
+                                    :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'targetValue')"
                                 >
                                     <DimensionCom v-model="targetValue" @onSort="onSort" />
@@ -84,7 +84,7 @@
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
                                     class="draggable-box"
-                                    group="list"
+                                    :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'showFields')"
                                 >
                                     <DimensionCom v-model="showFields" @onSort="onSort" />
@@ -353,14 +353,36 @@ let fields = [
         code: "name",
         type: "N",
         sort: "",
+        num:7778,
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         showEdit: false,
         editAlias: "",
+        list:[],
     },
     {
         label: "表格专用字段2",
         alias: "城市(表格专用)",
         code: "city",
         type: "N",
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         sort: "",
         showEdit: false,
         editAlias: "",
@@ -371,6 +393,16 @@ let fields = [
         code: "age",
         type: "N",
         sort: "",
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         showEdit: false,
         editAlias: "",
     },
@@ -380,6 +412,16 @@ let fields = [
         code: "vipLive",
         type: "N",
         sort: "",
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         showEdit: false,
         editAlias: "",
     },
@@ -389,6 +431,16 @@ let fields = [
         code: "hang",
         type: "N",
         sort: "",
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         showEdit: false,
         editAlias: "",
     },
@@ -398,6 +450,16 @@ let fields = [
         code: "lie",
         type: "N",
         sort: "",
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         showEdit: false,
         editAlias: "",
     },
@@ -407,6 +469,16 @@ let fields = [
         code: "zhi",
         type: "N",
         sort: "",
+        summaryType: 1,
+        showFormat: 1,
+        // 千分符
+        showThousandthMark: false,
+        // 小数位数
+        showDecimalPlaces: false,
+        decimalPlaces: 2,
+        // 数值量级
+        showNumericalMagnitude: false,
+        numericalMagnitude: "无",
         showEdit: false,
         editAlias: "",
     },
@@ -526,7 +598,9 @@ const addCom = (e, target) => {
         }
         // 如果是饼图、漏斗图 最多添加1个维度
         if (
-            (type == "pieChart" || type == "funnelChart" || type == "statistic") &&
+            (type == "pieChart" ||
+                type == "funnelChart" ||
+                type == "statistic") &&
             dimensionLength > 0
         ) {
             $ElMessage.warning("添加失败，最多添加1个维度");
@@ -546,7 +620,9 @@ const addCom = (e, target) => {
         }
         // 如果是饼图、进度条 最多添加1个指标
         if (
-            (type == "pieChart" || type == "progressbar" || type == "statistic") &&
+            (type == "pieChart" ||
+                type == "progressbar" ||
+                type == "statistic") &&
             metricsLength > 0
         ) {
             $ElMessage.warning("添加失败，最多添加1个指标");

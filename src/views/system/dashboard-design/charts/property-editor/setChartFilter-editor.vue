@@ -1,7 +1,7 @@
 <template>
     <el-form-item label="过滤条件">
-        <el-button @click="setCondition" v-if="getSetConditionText() == '点击设置'">点击设置</el-button>
-        <div class="ml-a-span" @click="setCondition" v-else>{{ getSetConditionText() }}</div>
+        <el-button @click="setCondition">{{ getSetConditionText() }}</el-button>
+        <!-- <div class="ml-a-span" @click="setCondition" v-else></div> -->
     </el-form-item>
     <mlDialog title="过滤条件" append-to-body width="37%" v-model="dialogIsShow">
         <mlSetConditions
