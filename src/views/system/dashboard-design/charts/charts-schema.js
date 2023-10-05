@@ -120,6 +120,11 @@ const initChaer = () => {
                     // 维度列
                     dimensionCol: [],
                 },
+                // 过滤条件
+                setChartFilter: {
+                    equation: "OR",
+                    items: [],
+                },
                 // 图表设置
                 setChartConf: {
                     // 数值显示
@@ -152,7 +157,7 @@ const initChaer = () => {
         };
         // 添加图表样式设置
         if (hasChartStyleType.includes(el.type)) {
-            chartObj.options.chartStyle = 0;
+            chartObj.options.chartStyle = 1;
         }
         // 添加Y轴坐标设置
         if (hasAxisCoordinates.includes(el.type)) {
@@ -206,6 +211,11 @@ export const ext_charts_widgets = [
                 chartShow: true,
                 // 使用全部数据
                 useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
             },
             showHeader: true,
             showFullscreen: false,
