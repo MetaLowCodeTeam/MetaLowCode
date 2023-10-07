@@ -105,7 +105,7 @@
                     <el-scrollbar>
                         <VueDraggableNext
                             :list="fields"
-                            disabled
+                            :sort="false"
                             :group="{ name: 'list', pull: 'clone',put: false }"
                         >
                             <div
@@ -124,8 +124,8 @@
         </div>
         <template #footer>
             <div style="flex: auto;padding-top: 10px;">
-                <el-button size="default" @click="onCancel">取消</el-button>
-                <el-button size="default" type="primary" @click="drawer = false">确认</el-button>
+                <!-- <el-button size="default" @click="onCancel">取消</el-button> -->
+                <el-button size="default" type="primary" @click="drawer = false">关闭</el-button>
             </div>
         </template>
     </el-drawer>
@@ -145,6 +145,9 @@ const props = defineProps({
 });
 
 const $ElMessage = inject("$ElMessage");
+const emits = defineEmits(["update:optionModel"]);
+// // 记录元数据
+// let meteOption = ref({});
 
 watch(
     () => props.optionModel,
@@ -172,6 +175,7 @@ let targetValue = ref([]);
 let showFields = ref([]);
 // 初始化纬度、指标
 const initDimensional = () => {
+    console.log(props.optionModel, "props.optionModel");
     chartType.value = props.optionModel.type;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
@@ -179,8 +183,6 @@ const initDimensional = () => {
     showFields.value = props.optionModel.setDimensional?.showFields || [];
     dimensionRow.value = props.optionModel.setDimensional?.dimensionRow || [];
     dimensionCol.value = props.optionModel.setDimensional?.dimensionCol || [];
-    // 获取实体字段
-    getEntityFields();
     nextTick(() => {
         setItemBoxHeight();
     });
@@ -202,8 +204,8 @@ const fieldsAdd = reactive({
     type: "N",
     // 排序
     sort: "",
-    // 汇总方式 1 计数  2 去重计数
-    summaryType: 1,
+    // 汇总方式
+    summaryType: "count",
     // 数据格式 1 数值 2 百分比
     showFormat: 1,
     // 千分符
@@ -223,7 +225,7 @@ const getEntityFields = async () => {
     loading.value = true;
     let res = await queryEntityFields(props.optionModel.dataEntity, true, true);
     // fields.forEach()
-    if (res) {
+    if (res && res.data) {
         fields.value = [];
         res.data.forEach((el) => {
             if (
@@ -239,8 +241,10 @@ const getEntityFields = async () => {
                 fields.value.push({ ...newField });
             }
         });
+        nextTick(() => {
+            setItemBoxHeight();
+        });
     }
-    console.log(fields.value, "fields");
     loading.value = false;
 };
 
@@ -251,12 +255,20 @@ const openDrawer = () => {
         return;
     }
     drawer.value = true;
-    nextTick(() => {
-        setItemBoxHeight();
-    });
+    getEntityFields();
 };
 const onCancel = () => {
-    console.log(dimension.value);
+    // let widget__list__selected = localStorage.getItem("widget__list__selected");
+
+    // if (widget__list__selected) {
+        // let mete = JSON.parse(widget__list__selected);
+        
+        // console.log(mete.options,'mete.options')
+        // console.log(props.optionModel,'props.optionModel')
+        // console.log(props.optionModel,'props.optionModel')
+
+        // emits("update:optionModel", {title:"14"});
+    // }
     drawer.value = false;
 };
 
@@ -280,24 +292,24 @@ const setItemBoxHeight = () => {
 
 // 新加字段
 const addCom = (e, target) => {
-    let cutField = { ...fields[e.oldIndex] };
+    let cutField = { ...fields.value[e.oldIndex] };
     let checkHasDimensionRow = dimensionRow.value.filter(
-        (el) => el.label == cutField.label
+        (el) => el.fieldLabel == cutField.fieldLabel
     );
     let checkHasDimensionCol = dimensionCol.value.filter(
-        (el) => el.label == cutField.label
+        (el) => el.fieldLabel == cutField.fieldLabel
     );
     let checkHasDimension = dimension.value.filter(
-        (el) => el.label == cutField.label
+        (el) => el.fieldLabel == cutField.fieldLabel
     );
     let checkHasMetrics = metrics.value.filter(
-        (el) => el.label == cutField.label
+        (el) => el.fieldLabel == cutField.fieldLabel
     );
     let checkHasTargetValue = targetValue.value.filter(
-        (el) => el.label == cutField.label
+        (el) => el.fieldLabel == cutField.fieldLabel
     );
     let checkHasShowFields = showFields.value.filter(
-        (el) => el.label == cutField.label
+        (el) => el.fieldLabel == cutField.fieldLabel
     );
     if (checkHasDimension.length > 0) {
         $ElMessage.warning("添加失败，同一字段不能重复添加维度");

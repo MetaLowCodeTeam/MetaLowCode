@@ -184,6 +184,7 @@ export const ext_charts_widgets = [
         icon: 'statistic',
         formItemFlag: false,
         options: {
+            type: 'statistic',
             name: '',
             value: 13232.12,
             title: '今年的增长',

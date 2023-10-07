@@ -57,10 +57,7 @@ const initOption = () => {
             isNoData.value = true;
             return;
         }
-        if (dimension.length > 0) {
-            dimensionName.value = dimension[0].alias;
-        }
-
+        dimensionName.value = dimension.length > 0 ? dimension[0].alias : "";
         metricsNum.value = metrics[0].num
             ? Number.isNaN(metrics[0].num)
                 ? "N/A"
@@ -114,6 +111,7 @@ const numberToCurrencyNo = (value) => {
 
 const setSelected = () => {
     props.designer?.setSelected(props.field);
+    // localStorage.setItem("widget__list__selected", JSON.stringify(props.field));
 };
 </script>
 <style lang="scss" scoped>

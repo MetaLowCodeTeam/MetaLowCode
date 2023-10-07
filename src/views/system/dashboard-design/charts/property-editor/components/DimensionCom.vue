@@ -26,16 +26,15 @@
                     v-if="!isDimension"
                 >
                     <div class="popover-div">
-                        <div
-                            class="popover-item"
-                            :class="{'is-active':!tag.summaryType || tag.summaryType == 1}"
-                            @click="onSummaryTypeChange(tag,1,inx)"
-                        >计数</div>
-                        <div
-                            class="popover-item"
-                            :class="{'is-active':tag.summaryType == 2}"
-                            @click="onSummaryTypeChange(tag,2,inx)"
-                        >去重计数</div>
+                        <template v-for="(summary,summaryInx) of summaryType">
+                            <div
+                                :key="summaryInx"
+                                class="popover-item"
+                                :class="{'is-active':tag.summaryType == summary.code}"
+                                v-if="summary.type == 'N|T' || summary.type == tag.type"
+                                @click="onSummaryTypeChange(tag,summary.code,inx)"
+                            >{{ summary.label }}</div>
+                        </template>
                     </div>
                     <template #reference>
                         <div class="popover-item">
@@ -197,6 +196,40 @@ watch(
     },
     { deep: true }
 );
+
+let summaryType = ref([
+    {
+        label: "求和",
+        type: "N",
+        code: "sum",
+    },
+    {
+        label: "计数",
+        type: "N|T",
+        code: "count",
+    },
+    {
+        label: "去重计数",
+        type: "N|T",
+        code: "countSet",
+    },
+    {
+        label: "平均值",
+        type: "N",
+        code: "average",
+    },
+    {
+        label: "最大值",
+        type: "N",
+        code: "max",
+    },
+    {
+        label: "最小值",
+        type: "N",
+        code: "min",
+    },
+]);
+
 onMounted(() => {
     list.value = props.modelValue;
 });
