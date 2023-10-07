@@ -94,22 +94,28 @@
                     </el-form-item>
                 </el-form>
             </div>
-            <div class="item-box" ref="itemBoxRefs" :style="{'height': itemBoxHeight}">
+            <div
+                class="item-box"
+                ref="itemBoxRefs"
+                :style="{'height': itemBoxHeight}"
+                v-loading="loading"
+            >
                 <div class="item-title">可用字段</div>
                 <div class="item-list-box">
                     <el-scrollbar>
                         <VueDraggableNext
                             :list="fields"
+                            disabled
                             :group="{ name: 'list', pull: 'clone',put: false }"
                         >
                             <div
                                 class="item-list yichu"
                                 v-for="(item,inx) of fields"
                                 :key="inx"
-                                :title="item.label"
+                                :title="item.fieldLabel"
                             >
                                 <span class="lh">{{ item.type }}</span>
-                                {{ item.label }}
+                                {{ item.fieldLabel }}
                             </div>
                         </VueDraggableNext>
                     </el-scrollbar>
@@ -125,9 +131,10 @@
     </el-drawer>
 </template>
 <script setup>
-import { onMounted, ref, watch, inject, nextTick } from "vue";
+import { onMounted, ref, watch, inject, nextTick, reactive } from "vue";
 import { VueDraggableNext } from "vue-draggable-next";
 import DimensionCom from "./components/DimensionCom.vue";
+import { queryEntityFields } from "@/api/crud";
 defineOptions({
     name: "setDimensional-editor",
 });
@@ -172,7 +179,8 @@ const initDimensional = () => {
     showFields.value = props.optionModel.setDimensional?.showFields || [];
     dimensionRow.value = props.optionModel.setDimensional?.dimensionRow || [];
     dimensionCol.value = props.optionModel.setDimensional?.dimensionCol || [];
-
+    // 获取实体字段
+    getEntityFields();
     nextTick(() => {
         setItemBoxHeight();
     });
@@ -181,330 +189,67 @@ const initDimensional = () => {
 /**
  * 所有字段
  */
-let fields = [
-    {
-        label: "学历",
-        alias: "学历",
-        code: "code1",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        list: [
-            {
-                name: "本科",
-            },
-            {
-                name: "博士",
-            },
-            {
-                name: "博士后",
-            },
-            {
-                name: "高中",
-            },
-            {
-                name: "硕士",
-            },
-            {
-                name: "专科",
-            },
-        ],
-    },
-    {
-        label: "身份证",
-        alias: "身份证",
-        code: "code2",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        list: [
-            {
-                name: "5",
-            },
-            {
-                name: "3",
-            },
-            {
-                name: "4",
-            },
-            {
-                name: "2",
-            },
-            {
-                name: "6",
-            },
-            {
-                name: "1",
-            },
-        ],
-    },
-    {
-        label: "人数",
-        alias: "人数",
-        code: "code3",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        list: [
-            {
-                name: "6",
-            },
-            {
-                name: "1",
-            },
-            {
-                name: "2",
-            },
-            {
-                name: "4",
-            },
-            {
-                name: "3",
-            },
-            {
-                name: "5",
-            },
-        ],
-    },
-    {
-        label: "字段4",
-        alias: "字段4",
-        code: "code4",
-        type: "S",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        list: [
-            {
-                name: "2",
-            },
-            {
-                name: "7",
-            },
-            {
-                name: "5",
-            },
-            {
-                name: "5",
-            },
-            {
-                name: "1",
-            },
-            {
-                name: "0",
-            },
-        ],
-    },
-    {
-        label: "字段5",
-        alias: "字段5",
-        code: "code5",
-        type: "S",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        list: [
-            {
-                name: "14",
-            },
-            {
-                name: "1",
-            },
-            {
-                name: "5",
-            },
-            {
-                name: "4",
-            },
-            {
-                name: "7",
-            },
-            {
-                name: "5",
-            },
-        ],
-    },
-    {
-        label: "当前销售",
-        alias: "当前销售",
-        code: "code7",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        num: 5570,
-    },
-    {
-        label: "销售额度",
-        alias: "销售额度",
-        code: "code8",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        num: 10000,
-    },
-    {
-        label: "表格专用字段1",
-        alias: "姓名(表格专用)",
-        code: "name",
-        type: "N",
-        sort: "",
-        num:7778,
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        showEdit: false,
-        editAlias: "",
-        list:[],
-    },
-    {
-        label: "表格专用字段2",
-        alias: "城市(表格专用)",
-        code: "city",
-        type: "N",
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "表格专用字段3",
-        alias: "年龄(表格专用)",
-        code: "age",
-        type: "N",
-        sort: "",
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "表格专用字段4",
-        alias: "VIP等级(表格专用)",
-        code: "vipLive",
-        type: "N",
-        sort: "",
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "透视表维度行",
-        alias: "透视表维度行",
-        code: "hang",
-        type: "N",
-        sort: "",
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "透视表维度列",
-        alias: "透视表维度列",
-        code: "lie",
-        type: "N",
-        sort: "",
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "透视表指标",
-        alias: "透视表指标",
-        code: "zhi",
-        type: "N",
-        sort: "",
-        summaryType: 1,
-        showFormat: 1,
-        // 千分符
-        showThousandthMark: false,
-        // 小数位数
-        showDecimalPlaces: false,
-        decimalPlaces: 2,
-        // 数值量级
-        showNumericalMagnitude: false,
-        numericalMagnitude: "无",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "数值维度",
-        alias: "数值维度",
-        code: "szwd",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-    },
-    {
-        label: "数值指标",
-        alias: "数值指标",
-        code: "szzb",
-        type: "N",
-        sort: "",
-        showEdit: false,
-        editAlias: "",
-        num: 666,
-    },
-];
+let fields = ref([]);
+
+const fieldsAdd = reactive({
+    // 别名
+    alias: "",
+    // 显示编辑名称
+    showEdit: false,
+    // 编辑后胡名称
+    editAlias: "",
+    // 字段类型
+    type: "N",
+    // 排序
+    sort: "",
+    // 汇总方式 1 计数  2 去重计数
+    summaryType: 1,
+    // 数据格式 1 数值 2 百分比
+    showFormat: 1,
+    // 千分符
+    showThousandthMark: false,
+    // 小数位数
+    showDecimalPlaces: false,
+    decimalPlaces: 2,
+    // 数值量级
+    showNumericalMagnitude: false,
+    numericalMagnitude: "无",
+});
+
+let loading = ref(false);
+let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
+let textType = ref(["Text", "TextArea"]);
+const getEntityFields = async () => {
+    loading.value = true;
+    let res = await queryEntityFields(props.optionModel.dataEntity, true, true);
+    // fields.forEach()
+    if (res) {
+        fields.value = [];
+        res.data.forEach((el) => {
+            if (
+                numType.value.includes(el.fieldType) ||
+                textType.value.includes(el.fieldType)
+            ) {
+                let newFieldsAdd = { ...fieldsAdd };
+                newFieldsAdd.alias = el.fieldLabel;
+                newFieldsAdd.type = numType.value.includes(el.fieldType)
+                    ? "N"
+                    : "T";
+                let newField = Object.assign(newFieldsAdd, { ...el });
+                fields.value.push({ ...newField });
+            }
+        });
+    }
+    console.log(fields.value, "fields");
+    loading.value = false;
+};
 
 let drawer = ref(false);
 const openDrawer = () => {
+    if (!props.optionModel.dataEntity) {
+        $ElMessage.warning("请先选择图标数据实体");
+        return;
+    }
     drawer.value = true;
     nextTick(() => {
         setItemBoxHeight();

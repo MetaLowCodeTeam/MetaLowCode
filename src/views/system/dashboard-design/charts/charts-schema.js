@@ -187,6 +187,8 @@ export const ext_charts_widgets = [
             name: '',
             value: 13232.12,
             title: '今年的增长',
+            // 数据实体
+            dataEntity: "",
             // 维度指标设置
             setDimensional: {
                 // 维度

@@ -14,7 +14,8 @@
     </mlDialog>
 </template>
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted,inject } from "vue";
+const $ElMessage = inject("$ElMessage");
 defineOptions({
     name: "setChartFilter-editor",
 });
@@ -44,6 +45,10 @@ let conditionConf = ref({});
 let dialogIsShow = ref(false);
 // 设置条件
 const setCondition = () => {
+    if(!props.optionModel.dataEntity){
+        $ElMessage.warning("请先选择图标数据实体")
+        return
+    }
     let actionFilter = initFilter({ ...cutOption.value?.setChartFilter });
     conditionConf.value = JSON.parse(JSON.stringify(actionFilter));
     dialogIsShow.value = true;

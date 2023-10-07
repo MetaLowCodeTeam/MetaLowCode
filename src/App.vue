@@ -65,16 +65,16 @@ onBeforeMount(() => {
         }
     }
     // 获取新消息
-    // getNewMsgNum();
+    getNewMsgNum();
     // // 轮循获取新消息
     // roundRobin(5000);
 
-    // // 获取公开系统配置
-    // queryPublicSetting();
-    // if($TOOL.data.get('USER_INFO')?.userName){
-    //     // 获取所有实体并格式化Label
-    //     getEntityLable();
-    // }
+    // 获取公开系统配置
+    queryPublicSetting();
+    if($TOOL.data.get('USER_INFO')?.userName){
+        // 获取所有实体并格式化Label
+        getEntityLable();
+    }
 });
 
 // /crud/getRightMap
