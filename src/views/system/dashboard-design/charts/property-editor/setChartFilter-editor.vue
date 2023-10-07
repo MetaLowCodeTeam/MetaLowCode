@@ -9,13 +9,16 @@
             footer
             @cancel="dialogIsShow = false"
             @confirm="conditionConfirm"
-            :entityName="cutOption.dataEntity"
+            :entityName="entityName[cutOption.dataEntity]"
         />
     </mlDialog>
 </template>
 <script setup>
 import { ref, watch, onMounted,inject } from "vue";
 const $ElMessage = inject("$ElMessage");
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { entityName } = storeToRefs(useCommonStore());
 defineOptions({
     name: "setChartFilter-editor",
 });
@@ -35,6 +38,7 @@ watch(
 );
 onMounted(() => {
     cutOption.value = props.optionModel;
+    // console.log(cutOption,'cutOption')
 });
 
 /***

@@ -14,7 +14,12 @@
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimension')"
                                 >
-                                    <DimensionCom v-model="dimension" @onSort="onSort" isDimension />
+                                    <DimensionCom
+                                        v-model="dimension"
+                                        :chartType="chartType"
+                                        @onSort="onSort"
+                                        isDimension
+                                    />
                                 </VueDraggableNext>
                             </el-scrollbar>
                         </div>
@@ -31,6 +36,7 @@
                                         v-model="dimensionRow"
                                         @onSort="onSort"
                                         isDimension
+                                        :chartType="chartType"
                                     />
                                 </VueDraggableNext>
                             </el-scrollbar>
@@ -48,6 +54,7 @@
                                         v-model="dimensionCol"
                                         @onSort="onSort"
                                         isDimension
+                                        :chartType="chartType"
                                     />
                                 </VueDraggableNext>
                             </el-scrollbar>
@@ -61,7 +68,11 @@
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'metrics')"
                                 >
-                                    <DimensionCom v-model="metrics" @onSort="onSort" />
+                                    <DimensionCom
+                                        v-model="metrics"
+                                        @onSort="onSort"
+                                        :chartType="chartType"
+                                    />
                                 </VueDraggableNext>
                             </el-scrollbar>
                         </div>
@@ -74,7 +85,11 @@
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'targetValue')"
                                 >
-                                    <DimensionCom v-model="targetValue" @onSort="onSort" />
+                                    <DimensionCom
+                                        v-model="targetValue"
+                                        @onSort="onSort"
+                                        :chartType="chartType"
+                                    />
                                 </VueDraggableNext>
                             </el-scrollbar>
                         </div>
@@ -87,7 +102,11 @@
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'showFields')"
                                 >
-                                    <DimensionCom v-model="showFields" @onSort="onSort" />
+                                    <DimensionCom
+                                        v-model="showFields"
+                                        @onSort="onSort"
+                                        :chartType="chartType"
+                                    />
                                 </VueDraggableNext>
                             </el-scrollbar>
                         </div>

@@ -123,7 +123,11 @@
             <el-form label-width="120">
                 <el-form-item label="显示设置">
                     <div class="w-100">
-                        <el-checkbox v-model="dialogConf.data.thousandsSeparator" label="千分符" />
+                        <el-checkbox
+                            :disabled="needDisabledType()"
+                            v-model="dialogConf.data.thousandsSeparator"
+                            label="千分符"
+                        />
                     </div>
                     <div class="w-100">
                         <el-checkbox v-model="dialogConf.data.showDecimalPlaces" label="小数位数" />
@@ -138,7 +142,11 @@
                         </span>
                     </div>
                     <div class="w-100">
-                        <el-checkbox v-model="dialogConf.data.showNumericUnits" label="数值量级" />
+                        <el-checkbox
+                            v-model="dialogConf.data.showNumericUnits"
+                            label="数值量级"
+                            :disabled="needDisabledType()"
+                        />
                         <span class="decimal-places" v-if="dialogConf.data.showNumericUnits">
                             <el-select
                                 v-model="dialogConf.data.numericUnits"
@@ -182,6 +190,8 @@ import { onMounted, watch, ref, reactive } from "vue";
 const props = defineProps({
     modelValue: null,
     isDimension: { type: Boolean, default: false },
+    chartType: { type: String, default: "" },
+    
 });
 const emits = defineEmits(["update:modelValue", "onSort"]);
 
@@ -307,6 +317,15 @@ const onSort = (tag, target, inx) => {
     sortPopoverRefs.value[inx].hide();
     emits("update:modelValue", list.value);
     emits("onSort", { tag, target });
+};
+
+// 部分表格禁用千分符、数值量级
+let needDisabledType = () => {
+    let chartTypes = ["barChart"];
+    if (chartTypes.includes(props.chartType)) {
+        return true;
+    }
+    return false;
 };
 
 /***

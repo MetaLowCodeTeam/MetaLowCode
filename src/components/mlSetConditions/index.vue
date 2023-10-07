@@ -29,6 +29,7 @@
                         @change="fieldChange(item)"
                         filterable
                         no-match-text="无匹配文本"
+                        size="default"
                     >
                         <el-option
                             v-for="op in fieldList"
@@ -40,7 +41,7 @@
                 </el-col>
                 <!-- 条件类型 -->
                 <el-col :span="4">
-                    <el-select v-model="item.op" @change="opChange(item)">
+                    <el-select v-model="item.op" @change="opChange(item)" size="default">
                         <el-option
                             v-for="op in getSelectOp(item)"
                             :key="op"
@@ -54,6 +55,7 @@
                     <!-- 日期选择器 -->
                     <div v-if="item.valueType === 'datePicker'">
                         <el-date-picker
+                            size="default"
                             v-model="item.value"
                             type="date"
                             style="width: 100%;"
@@ -66,6 +68,7 @@
                     <!-- 日期区间 -->
                     <div v-else-if="item.valueType === 'datePickerBw'">
                         <el-date-picker
+                            size="default"
                             v-model="item.value"
                             type="date"
                             style="width: 100%;"
@@ -77,6 +80,7 @@
                             @focus="clearError(item)"
                         />
                         <el-date-picker
+                            size="default"
                             v-model="item.value2"
                             type="date"
                             style="width: 100%;"
@@ -91,6 +95,7 @@
                     <!-- 数字输入框 -->
                     <div v-else-if="item.valueType === 'numberInput'">
                         <el-input-number
+                            size="default"
                             v-model="item.value"
                             :controls="false"
                             class="mlnumer-input w-100"
@@ -101,6 +106,7 @@
                     <!-- 数字输入框区间 -->
                     <div v-else-if="item.valueType === 'numberInputBw'">
                         <el-input-number
+                            size="default"
                             v-model="item.value"
                             :controls="false"
                             class="mlnumer-input w-100 bw-start-icon mb-5"
@@ -109,6 +115,7 @@
                             @change="bwChange(item)"
                         />
                         <el-input-number
+                            size="default"
                             v-model="item.value2"
                             :controls="false"
                             class="mlnumer-input w-100 bw-end-icon"
@@ -120,6 +127,7 @@
                     <!-- 文本输入框 -->
                     <div v-else-if="item.valueType === 'textInput'">
                         <el-input
+                            size="default"
                             v-model="item.value"
                             :class="{'is-error':item.isError}"
                             @focus="clearError(item)"
@@ -128,6 +136,7 @@
                     <!-- 布尔类型 -->
                     <div v-else-if="item.valueType === 'booleanSelect'">
                         <el-select
+                            size="default"
                             v-model="item.value"
                             class="w-100"
                             :class="{'is-error':item.isError}"
@@ -139,8 +148,11 @@
                         </el-select>
                     </div>
                     <!-- 用户下拉框 -->
-                    <div v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT'">
+                    <div
+                        v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT'"
+                    >
                         <el-select
+                            size="default"
                             v-model="item.value"
                             class="w-100"
                             :class="{'is-error':item.isError}"
@@ -160,6 +172,7 @@
                     <!-- 部门下拉框 -->
                     <div v-else-if="item.valueType === 'departmentSelect'">
                         <el-select
+                            size="default"
                             v-model="item.value"
                             class="w-100"
                             :class="{'is-error':item.isError}"
@@ -188,7 +201,11 @@
             </span>
         </div>
         <div class="mlconditions-mode mt-10">
-            <el-radio-group v-model="conditionConf.type" @change="conditionTypeChange">
+            <el-radio-group
+                v-model="conditionConf.type"
+                @change="conditionTypeChange"
+                size="default"
+            >
                 <el-radio :label="1">符合任一</el-radio>
                 <el-radio :label="2">符合全部</el-radio>
                 <el-radio :label="3">高级表达式</el-radio>
@@ -199,12 +216,13 @@
                 v-model="conditionConf.equation"
                 clearable
                 :placeholder="getPlaceholder()"
+                size="default"
                 :class="{'is-error':errorEquation}"
             ></el-input>
         </div>
         <div class="mlconditions-footer mt-10" v-if="footer">
-            <el-button type="primary" @click="confirm">确认</el-button>
-            <el-button @click="cancel">取消</el-button>
+            <el-button type="primary" @click="confirm" size="default">确认</el-button>
+            <el-button @click="cancel" size="default">取消</el-button>
         </div>
     </div>
 </template>
@@ -220,7 +238,7 @@ export default {
         return {
             // 所有类型
             op_type: {
-                REF:"包含",
+                REF: "包含",
                 LK: "包含",
                 NLK: "不包含",
                 IN: "包含",
@@ -312,8 +330,7 @@ export default {
             let resUser = await this.$API.common.getUser(param);
             let resDepartment = await this.$API.common.getDepartment(param);
             this.userList = resUser ? resUser.data || [] : [];
-            this.departmentList =
-                resDepartment ? resDepartment.data || [] : [];
+            this.departmentList = resDepartment ? resDepartment.data || [] : [];
             if (res) {
                 let list = res.data || [];
                 this.fieldList = list.map((el) => {
@@ -346,7 +363,7 @@ export default {
             this.fieldList.forEach((el) => {
                 this.conditionConf.items.forEach((subEl) => {
                     if (el.fieldName === subEl.fieldName) {
-                        let newItem = Object.assign({...el}, subEl);
+                        let newItem = Object.assign({ ...el }, subEl);
                         newItem.valueType = this.showValueType(newItem);
                         conditionList.push(newItem);
                     }
@@ -384,7 +401,7 @@ export default {
         },
         // 获取条件op
         getSelectOp(item) {
-            let { type,referTo } = item;
+            let { type, referTo } = item;
             let { numberFieldType } = this;
             let op = [];
             if (type === "Date" || type === "DateTime") {
@@ -420,10 +437,10 @@ export default {
             } else if (type === "Reference") {
                 op = ["REF", "NL", "NT"];
                 if (referTo == "User") {
-                    op = ["LK", "NLK", "SFU","NL","NT"];
+                    op = ["LK", "NLK", "SFU", "NL", "NT"];
                 }
                 if (referTo == "Department") {
-                    op = ["LK", "NLK", "SFB", "SFD","NL","NT"];
+                    op = ["LK", "NLK", "SFB", "SFD", "NL", "NT"];
                 }
             } else if (type === "Boolean") {
                 op = ["EQ", "NL", "NT"];
@@ -496,7 +513,7 @@ export default {
                 equation: this.conditionConf.equation,
             };
             let res = await this.$API.common.isEquation(param);
-            this.errorEquation = !(res);
+            this.errorEquation = !res;
         },
         // 确认
         async confirm() {
