@@ -41,7 +41,7 @@ export const ext_chart_containers = [
 const chartsList = [
     {
         type: "progressbar",
-        title: "进度条条"
+        title: "进度条"
     },
     {
         type: "barChart",
@@ -187,7 +187,7 @@ export const ext_charts_widgets = [
             type: 'statistic',
             name: '',
             value: 13232.12,
-            title: '今年的增长',
+            title: '统计数值',
             // 数据实体
             dataEntity: "",
             // 维度指标设置

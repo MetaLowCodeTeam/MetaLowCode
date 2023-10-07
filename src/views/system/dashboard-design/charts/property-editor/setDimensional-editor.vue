@@ -175,7 +175,6 @@ let targetValue = ref([]);
 let showFields = ref([]);
 // 初始化纬度、指标
 const initDimensional = () => {
-    console.log(props.optionModel, "props.optionModel");
     chartType.value = props.optionModel.type;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
@@ -205,17 +204,15 @@ const fieldsAdd = reactive({
     // 排序
     sort: "",
     // 汇总方式
-    summaryType: "count",
-    // 数据格式 1 数值 2 百分比
-    showFormat: 1,
+    calcMode: "count",
     // 千分符
-    showThousandthMark: false,
+    thousandsSeparator: false,
     // 小数位数
     showDecimalPlaces: false,
     decimalPlaces: 2,
     // 数值量级
-    showNumericalMagnitude: false,
-    numericalMagnitude: "无",
+    showNumericUnits: false,
+    numericUnits: "无",
 });
 
 let loading = ref(false);
@@ -259,17 +256,14 @@ const openDrawer = () => {
 };
 const onCancel = () => {
     // let widget__list__selected = localStorage.getItem("widget__list__selected");
-
     // if (widget__list__selected) {
-        // let mete = JSON.parse(widget__list__selected);
-        
-        // console.log(mete.options,'mete.options')
-        // console.log(props.optionModel,'props.optionModel')
-        // console.log(props.optionModel,'props.optionModel')
-
-        // emits("update:optionModel", {title:"14"});
+    // let mete = JSON.parse(widget__list__selected);
+    // console.log(mete.options,'mete.options')
+    // console.log(props.optionModel,'props.optionModel')
+    // console.log(props.optionModel,'props.optionModel')
+    // emits("update:optionModel", {title:"14"});
     // }
-    drawer.value = false;
+    // drawer.value = false;
 };
 
 let itemBoxHeight = ref("");
@@ -355,9 +349,7 @@ const addCom = (e, target) => {
         }
         // 如果是饼图、漏斗图 最多添加1个维度
         if (
-            (type == "pieChart" ||
-                type == "funnelChart" ||
-                type == "statistic") &&
+            (type == "pieChart" || type == "funnelChart") &&
             dimensionLength > 0
         ) {
             $ElMessage.warning("添加失败，最多添加1个维度");
@@ -433,7 +425,12 @@ const onSort = (e) => {
 
 // 维度是否显示
 const isShowDimension = () => {
-    let notNeedDimension = ["progressbar", "listTable", "pivotTable"];
+    let notNeedDimension = [
+        "progressbar",
+        "listTable",
+        "pivotTable",
+        "statistic",
+    ];
     return showFn(notNeedDimension);
 };
 

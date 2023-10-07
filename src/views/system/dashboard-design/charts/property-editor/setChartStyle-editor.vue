@@ -22,7 +22,7 @@
                         />
                     </el-select>
                 </div>
-                <el-tooltip effect="dark" content="显示在数值后" placement="top">
+                <el-tooltip effect="dark" content="显示在数值前" placement="top">
                     <span class="question-icon">
                         <el-icon size="16">
                             <ElIconQuestionFilled />
@@ -49,32 +49,20 @@ const props = defineProps({
 });
 let options = ref([
     {
-        value: "元",
-        label: "元",
+        value: "￥",
+        label: "￥",
     },
     {
-        value: "万元",
-        label: "万元",
+        value: "$",
+        label: "$",
     },
     {
-        value: "亿",
-        label: "亿",
+        value: "€",
+        label: "€",
     },
     {
-        value: "美元",
-        label: "美元",
-    },
-    {
-        value: "个",
-        label: "个",
-    },
-    {
-        value: "位",
-        label: "位",
-    },
-    {
-        value: "天",
-        label: "天",
+        value: "￡",
+        label: "￡",
     },
 ]);
 </script>

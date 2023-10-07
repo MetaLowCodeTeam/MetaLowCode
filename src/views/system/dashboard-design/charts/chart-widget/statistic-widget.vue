@@ -6,12 +6,12 @@
             v-if="!isNoData"
         >
             <div class="statistic-dimension" v-if="dimensionName">{{ dimensionName }}</div>
-            <div class="statistic-metrics">
-                <span>{{ metricsNum }}</span>
+            <div class="statistic-metrics yichu" :title="metricsNum">
                 <span
                     class="sub-text"
                     :style="{'font-size':cutField?.options.setChartStyle.currencySymbolSize + 'px'}"
                 >{{ cutField?.options.setChartStyle.currencySymbol }}</span>
+                <span>{{ metricsNum }}</span>
             </div>
         </div>
         <div class="no-data" v-else>
@@ -21,7 +21,8 @@
     </div>
 </template>
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { queryChartData } from "@/api/chart";
 defineOptions({
     name: "statistic-widget",
 });
@@ -48,43 +49,40 @@ onMounted(() => {
 
 let dimensionName = ref("");
 let metricsNum = ref("");
-
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
-        let { dimension, metrics } = options.setDimensional;
+        let { metrics } = options.setDimensional;
         if (metrics.length < 1) {
             isNoData.value = true;
             return;
         }
-        dimensionName.value = dimension.length > 0 ? dimension[0].alias : "";
-        metricsNum.value = metrics[0].num
-            ? Number.isNaN(metrics[0].num)
-                ? "N/A"
-                : getPreviewNum(metrics[0])
-            : "N/A";
-        // 是否有数据量级
-        // if (
-        //     metrics[0].showNumericalMagnitude &&
-        //     metrics[0].numericalMagnitude !== "无"
-        // ) {
-        //     cutField.value.options.setChartStyle.currencySymbol =
-        //         metrics[0]?.numericalMagnitude;
-        // }
+
         isNoData.value = false;
+
+        getChartData(options);
     } else {
         isNoData.value = true;
     }
 };
 
+const getChartData = async (options) => {
+    loading.value = true;
+    let res = await queryChartData(options);
+    if (res) {
+        metricsNum.value = res.data.data;
+    }
+    loading.value = false;
+};
+
 // 效果预览
 const getPreviewNum = (item) => {
-    let { showThousandthMark, showDecimalPlaces, decimalPlaces } = item;
+    let { thousandsSeparator, showDecimalPlaces, decimalPlaces } = item;
     let previewStr = item.num;
     if (showDecimalPlaces) {
         previewStr = Number(previewStr).toFixed(decimalPlaces);
     }
-    if (showThousandthMark) {
+    if (thousandsSeparator) {
         previewStr = numberToCurrencyNo(previewStr);
     }
     return previewStr;
@@ -132,6 +130,7 @@ const setSelected = () => {
         .statistic-metrics {
             font-size: 15cqw;
             font-weight: bold;
+            padding: 0 20px;
             .sub-text {
                 position: relative;
                 top: -5px;

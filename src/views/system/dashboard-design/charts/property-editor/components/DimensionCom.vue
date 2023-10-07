@@ -26,13 +26,13 @@
                     v-if="!isDimension"
                 >
                     <div class="popover-div">
-                        <template v-for="(summary,summaryInx) of summaryType">
+                        <template v-for="(summary,summaryInx) of calcMode">
                             <div
                                 :key="summaryInx"
                                 class="popover-item"
-                                :class="{'is-active':tag.summaryType == summary.code}"
+                                :class="{'is-active':tag.calcMode == summary.code}"
                                 v-if="summary.type == 'N|T' || summary.type == tag.type"
-                                @click="onSummaryTypeChange(tag,summary.code,inx)"
+                                @click="onCalcModeChange(tag,summary.code,inx)"
                             >{{ summary.label }}</div>
                         </template>
                     </div>
@@ -121,15 +121,9 @@
     <mlDialog title="数据格式" append-to-body width="450" v-model="dialogConf.isShow">
         <div class="pr-20">
             <el-form label-width="120">
-                <el-form-item label="显示格式">
-                    <el-radio-group v-model="dialogConf.data.showFormat" class="ml-4">
-                        <el-radio :label="1">数值</el-radio>
-                        <el-radio :label="2">百分比</el-radio>
-                    </el-radio-group>
-                </el-form-item>
                 <el-form-item label="显示设置">
                     <div class="w-100">
-                        <el-checkbox v-model="dialogConf.data.showThousandthMark" label="千分符" />
+                        <el-checkbox v-model="dialogConf.data.thousandsSeparator" label="千分符" />
                     </div>
                     <div class="w-100">
                         <el-checkbox v-model="dialogConf.data.showDecimalPlaces" label="小数位数" />
@@ -138,15 +132,16 @@
                                 style="width: 150px;"
                                 size="small"
                                 v-model="dialogConf.data.decimalPlaces"
-                                :min="2"
+                                :min="1"
+                                :max="4"
                             />
                         </span>
                     </div>
                     <div class="w-100">
-                        <el-checkbox v-model="dialogConf.data.showNumericalMagnitude" label="数值量级" />
-                        <span class="decimal-places" v-if="dialogConf.data.showNumericalMagnitude">
+                        <el-checkbox v-model="dialogConf.data.showNumericUnits" label="数值量级" />
+                        <span class="decimal-places" v-if="dialogConf.data.showNumericUnits">
                             <el-select
-                                v-model="dialogConf.data.numericalMagnitude"
+                                v-model="dialogConf.data.numericUnits"
                                 filterable
                                 style="width: 150px;"
                                 size="small"
@@ -162,12 +157,15 @@
                     </div>
                 </el-form-item>
                 <el-form-item label="效果预览">
-                    <div class="show-preview">
+                    <div
+                        class="show-preview yichu"
+                        :title="getPreviewNum() + (dialogConf.data.numericUnits == '无' ? '' : dialogConf.data.numericUnits)"
+                    >
                         <span>{{ getPreviewNum() }}</span>
                         <span
                             class="sub"
-                            v-if="dialogConf.data.showNumericalMagnitude && dialogConf.data.numericalMagnitude != '无'"
-                        >{{ dialogConf.data.numericalMagnitude }}</span>
+                            v-if="dialogConf.data.showNumericUnits && dialogConf.data.numericUnits != '无'"
+                        >{{ dialogConf.data.numericUnits }}</span>
                     </div>
                 </el-form-item>
                 <el-form-item label=" ">
@@ -197,7 +195,7 @@ watch(
     { deep: true }
 );
 
-let summaryType = ref([
+let calcMode = ref([
     {
         label: "求和",
         type: "N",
@@ -237,6 +235,10 @@ let options = ref([
     {
         value: "无",
         label: "无",
+    },
+    {
+        value: "%",
+        label: "%",
     },
     {
         value: "元",
@@ -293,10 +295,10 @@ const cannerAlias = (inx) => {
 
 // 字段汇总方式切换
 let summaryPopoverRefs = ref();
-const onSummaryTypeChange = (tag, target, inx) => {
+const onCalcModeChange = (tag, target, inx) => {
     summaryPopoverRefs.value[inx].hide();
     sortPopoverRefs.value[inx].hide();
-    tag.summaryType = target;
+    tag.calcMode = target;
     emits("update:modelValue", list.value);
 };
 // 字段排序
@@ -324,13 +326,13 @@ const showDataFormat = (tag, inx) => {
 };
 // 效果预览
 const getPreviewNum = () => {
-    let { showFormat, showThousandthMark, showDecimalPlaces, decimalPlaces } =
+    let { showFormat, thousandsSeparator, showDecimalPlaces, decimalPlaces } =
         dialogConf.data;
     let previewStr = "99999999";
     if (showDecimalPlaces) {
         previewStr = Number(previewStr).toFixed(decimalPlaces);
     }
-    if (showThousandthMark) {
+    if (thousandsSeparator) {
         previewStr = numberToCurrencyNo(previewStr);
     }
     return previewStr;
