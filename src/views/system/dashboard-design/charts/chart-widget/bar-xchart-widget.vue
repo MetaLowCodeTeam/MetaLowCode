@@ -1,10 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" />
+    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
 </template>
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
+import { queryChartData } from "@/api/chart";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -13,6 +14,7 @@ defineOptions({
     name: "barXChart-widget",
 });
 let cutField = ref("");
+let loading = ref(false);
 watch(
     () => props.field,
     () => {
@@ -59,35 +61,52 @@ const initOption = () => {
             option.isNoData = true;
             return;
         }
-        if (dimension.length == 1) {
-            formatOption(dimension, metrics);
-        } else {
-            formatOption(metrics, dimension);
-        }
+        getChartData(options);
+        // if (dimension.length == 1) {
+        //     formatOption(dimension, metrics);
+        // } else {
+        //     formatOption(metrics, dimension);
+        // }
 
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
-// 格式化图表option
-const formatOption = (x, y) => {
-    let { chartStyle } = cutField.value.options;
-    option.yAxis.data = x[0].list.map((el) => el.name);
-    option.series = [];
-    y.forEach((el) => {
-        let metricsObj = {
-            data: el.list.map((subel) => subel.name),
-            type: "bar",
-            name: el.alias,
-            stack:
-                chartStyle == 1
-                    ? null
-                    : chartStyle == 2
-                    ? "普通堆叠"
-                    : "百分比堆叠",
-        };
-        option.series.push(metricsObj);
-    });
+
+const getChartData = async (options) => {
+    loading.value = true;
+    let res = await queryChartData(options);
+    if (res && res.data) {
+        option.yAxis.data = [...res.data.xAxis];
+
+        option.series = res.data.series.map((el) => {
+            el.type = "bar";
+            return el;
+        });
+        console.log(option, "option");
+    }
+    loading.value = false;
 };
+
+// 格式化图表option
+// const formatOption = (x, y) => {
+//     let { chartStyle } = cutField.value.options;
+//     option.yAxis.data = x[0].list.map((el) => el.name);
+//     option.series = [];
+//     y.forEach((el) => {
+//         let metricsObj = {
+//             data: el.list.map((subel) => subel.name),
+//             type: "bar",
+//             name: el.alias,
+//             stack:
+//                 chartStyle == 1
+//                     ? null
+//                     : chartStyle == 2
+//                     ? "普通堆叠"
+//                     : "百分比堆叠",
+//         };
+//         option.series.push(metricsObj);
+//     });
+// };
 </script>

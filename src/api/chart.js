@@ -8,7 +8,11 @@ const ChartTypes = {
     // 统计数值
     'statistic': 'number',
     // 柱状图
-    'barChart': 'axis'
+    'barChart': 'axis',
+    // 条形图
+    'barXChart': 'axis',
+    // 折线图
+    'lineChart': 'axis'
 };
 
 const formatItem = (list, target) => {

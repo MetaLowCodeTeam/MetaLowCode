@@ -321,7 +321,7 @@ const onSort = (tag, target, inx) => {
 
 // 部分表格禁用千分符、数值量级
 let needDisabledType = () => {
-    let chartTypes = ["barChart"];
+    let chartTypes = ["barChart",'barXChart','lineChart'];
     if (chartTypes.includes(props.chartType)) {
         return true;
     }
