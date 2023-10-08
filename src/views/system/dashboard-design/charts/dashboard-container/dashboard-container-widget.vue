@@ -33,17 +33,16 @@
             >
                           
 				<div class="container-com">
-                    <!-- {{ this.isRefresh }} -->
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-widget'" :widget="item" :designer="designer"
 								   :key="item.id" :parent-list="widget.widgetList"
-								   :index-of-parent-list="index" :parent-widget="widget" :isRefresh="isRefresh"></component>
+								   :index-of-parent-list="index" :parent-widget="widget"></component>
 					</template>
 					<template v-else>
 						<component :is="item.type + '-widget'" :field="item" :designer="designer"
 								   :key="item.id" :parent-list="widget.widgetList"
 								   :index-of-parent-list="index" :parent-widget="widget"
-								   :design-state="true" :isRefresh="isRefresh"></component>
+								   :design-state="true"></component>
 					</template>
 				</div>
 			</smart-widget>
