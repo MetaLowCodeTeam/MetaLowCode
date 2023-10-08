@@ -15,15 +15,15 @@
                 :disabled="option.chartStyle == 3"
                 style="width:100%"
                 v-model="option.axisCoordinates.max"
-                :min="0"
+                :min="option.axisCoordinates.min"
             />
         </el-form-item>
         <el-form-item label="最小值">
             <el-input-number
                 :disabled="option.chartStyle == 3"
                 style="width:100%"
-                @change="minChange"
                 :min="0"
+                :max="option.axisCoordinates.max"
                 v-model="option.axisCoordinates.min"
             />
         </el-form-item>
@@ -57,14 +57,7 @@ onMounted(() => {
 const initchartStyle = () => {
     option.value = props.optionModel;
 };
-const minChange = () => {
-    let minValue = option.value?.axisCoordinates.min;
-    let maxValue = option.value?.axisCoordinates.max;
-    if (minValue > maxValue) {
-        option.value.axisCoordinates.max = minValue;
-        option.value.axisCoordinates.min = maxValue;
-    }
-};
+
 </script>
 <style lang="scss" scoped>
 .chart-styles {

@@ -72,32 +72,37 @@ const initOption = () => {
 const getChartData = async (options) => {
     loading.value = true;
     let res = await queryChartData(options);
-    let { chartStyle } = cutField.value.options;
+    let { chartStyle, setChartConf, axisCoordinates } = cutField.value.options;
+    // 如果设置了Y轴最大值
+    if (axisCoordinates.max > 0) {
+        option.yAxis.min = axisCoordinates.min;
+        option.yAxis.max = axisCoordinates.max;
+    }else {
+        option.yAxis = {
+            type: "value",
+        };
+    }
+    // 图例是否显示
+    option.legend = {
+        show: setChartConf.chartShow,
+        bottom: 5,
+    };
+    option.grid.bottom = setChartConf.chartShow ? "50px" : "10px";
     if (res && res.data) {
         option.xAxis.data = [...res.data.xAxis];
         option.series = res.data.series.map((el) => {
             el.type = "line";
             el.smooth = chartStyle == 2;
+            // 数值是否展示
+            el.label = {
+                show: setChartConf.numShow,
+                position: "top",
+            };
             return el;
         });
     }
     loading.value = false;
 };
-// 格式化图表option
-// const formatOption = (x, y) => {
-//     let { chartStyle } = cutField.value.options;
-//     option.xAxis.data = x[0].list.map((el) => el.name);
-//     option.series = [];
-//     y.forEach((el) => {
-//         let metricsObj = {
-//             data: el.list.map((subel) => subel.name),
-//             type: "line",
-//             name: el.alias,
-//             smooth: chartStyle == 2,
-//         };
-//         option.series.push(metricsObj);
-//     });
-// };
 </script>
 
 

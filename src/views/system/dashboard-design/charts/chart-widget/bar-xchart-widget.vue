@@ -87,9 +87,13 @@ const getChartData = async (options) => {
             cutField.value.options;
 
         // 如果不是堆叠图，并且设置了Y轴最大值
-        if (chartStyle != 3 && axisCoordinates.max) {
+        if (chartStyle != 3 && axisCoordinates.max > 0) {
             option.xAxis.min = axisCoordinates.min;
             option.xAxis.max = axisCoordinates.max;
+        }else {
+            option.xAxis = {
+                type: "value",
+            };
         }
         // 图例是否显示
         option.legend = {
@@ -120,24 +124,5 @@ const getChartData = async (options) => {
     loading.value = false;
 };
 
-// 格式化图表option
-// const formatOption = (x, y) => {
-//     let { chartStyle } = cutField.value.options;
-//     option.yAxis.data = x[0].list.map((el) => el.name);
-//     option.series = [];
-//     y.forEach((el) => {
-//         let metricsObj = {
-//             data: el.list.map((subel) => subel.name),
-//             type: "bar",
-//             name: el.alias,
-//             stack:
-//                 chartStyle == 1
-//                     ? null
-//                     : chartStyle == 2
-//                     ? "普通堆叠"
-//                     : "百分比堆叠",
-//         };
-//         option.series.push(metricsObj);
-//     });
-// };
+
 </script>
