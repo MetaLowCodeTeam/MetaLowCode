@@ -4,8 +4,9 @@
         :field="field"
         :designer="designer"
         v-if="props.field.options.chartStyle !=2 || myOption.isNoData"
+        v-loading="loading"
     />
-    <div class="bar-progress" @click.stop="setSelected" v-else>
+    <div class="bar-progress" @click.stop="setSelected" v-loading="loading" v-else>
         <el-progress
             :text-inside="true"
             :stroke-width="36"
@@ -19,6 +20,7 @@
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
+import { queryChartData } from "@/api/chart";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -50,6 +52,13 @@ let donutChartOption = reactive({
             color: "#29EEF3",
             fontSize: "15",
         },
+    },
+    legend: {
+        show: false,
+        bottom: 0,
+    },
+    grid: {
+        containLabel: true,
     },
     tooltip: {
         formatter: function (params) {
@@ -94,12 +103,18 @@ let donutChartOption = reactive({
                             show: false,
                         },
                     },
+                    label: {
+                        show: false,
+                    },
                 },
                 {
                     name: "剩余",
                     value: 70,
                     itemStyle: {
                         color: "#E1E8EE",
+                    },
+                    label: {
+                        show: false,
                     },
                 },
             ],
@@ -120,6 +135,13 @@ let wavesChart = reactive({
             fontSize: 15,
             fontWeight: 500,
         },
+    },
+    grid: {
+        containLabel: true,
+    },
+    legend: {
+        show: false,
+        bottom: 0,
     },
     series: [
         {
@@ -177,27 +199,50 @@ let myOption = ref({});
 let percentage = ref();
 // 进度条文本
 let progressText = ref("");
+let loading = ref(false);
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
-        let { chartStyle, setDimensional } = options;
-        let { metrics, targetValue } = setDimensional;
-        myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
+        let { setDimensional } = options;
+        let { metrics } = setDimensional;
+        //
         if (metrics.length < 1) {
             myOption.value.isNoData = true;
             return;
         }
+
+        getChartData(options);
+        myOption.value.isNoData = false;
+    } else {
+        myOption.value.isNoData = true;
+    }
+};
+const getChartData = async (options) => {
+    loading.value = true;
+    let res = await queryChartData(options);
+    if (res && res.data) {
+        let { chartStyle, setDimensional, setChartConf } = options;
+        let { targetValue, metrics } = setDimensional;
+        myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
         let maxNum = targetValue || 1;
-        let cutNum = 66;
+        let cutNum = res.data.data;
         let point = Math.round((cutNum / maxNum) * 100);
 
         percentage.value = point;
-        progressText.value = metrics[0].alias;
+        progressText.value = setChartConf.numShow ? metrics[0].alias : null;
+        // 图例是否显示
+        myOption.value.legend.show = setChartConf.chartShow;
+
         if (chartStyle == 1) {
             myOption.value.title.text = `${point}%`;
             myOption.value.series[0].data[0].value = cutNum;
-            myOption.value.series[0].data[0].name = metrics[0].alias;
+            myOption.value.series[0].data[0].name =
+                metrics[0].alias + "：" + cutNum;
             myOption.value.series[0].data[1].value = maxNum - cutNum;
+            myOption.value.series[0].data[1].name =
+                "剩余：" + (maxNum - cutNum);
+            myOption.value.series[0].data[0].label.show = setChartConf.numShow;
+            myOption.value.series[0].data[1].label.show = setChartConf.numShow;
         } else {
             myOption.value.series[0].data = [
                 point / 100,
@@ -206,15 +251,16 @@ const initOption = () => {
             ];
             myOption.value.series[0].label.formatter = point + "%";
             myOption.value.title.text = metrics[0].alias;
+            myOption.value.title.show = setChartConf.numShow;
+            myOption.value.series[0].label.show = setChartConf.numShow;
         }
-        myOption.value.isNoData = false;
-    } else {
-        myOption.value.isNoData = true;
     }
+    loading.value = false;
 };
+
 // 格式化进度条显示文字
 const formatText = (num) => {
-    return progressText.value + " " + num + "%";
+    return progressText.value ? progressText.value + " " + num + "%" : "";
 };
 const setSelected = () => {
     props.designer?.setSelected(props.field);

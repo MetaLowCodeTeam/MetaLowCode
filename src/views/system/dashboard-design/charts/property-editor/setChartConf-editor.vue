@@ -17,8 +17,8 @@
             <el-form-item label="数值显示">
                 <el-switch v-model="optionModel.setChartConf.numShow"></el-switch>
             </el-form-item>
-            <el-form-item label="图例显示">
-                <el-switch v-model="optionModel.setChartConf.chartShow"></el-switch>
+            <el-form-item label="图例显示" >
+                <el-switch v-model="optionModel.setChartConf.chartShow" :disabled="optionModel.type == 'progressbar' && optionModel.chartStyle != 1"></el-switch>
             </el-form-item>
         </template>
         <el-form-item label="使用全部数据">

@@ -7,6 +7,8 @@ import http from "@/utils/request"
 const ChartTypes = {
     // 统计数值
     'statistic': 'number',
+    // 进度条
+    'progressbar': 'number',
     // 柱状图
     'barChart': 'axis',
     // 条形图
@@ -47,9 +49,6 @@ const formatItem = (list, target) => {
 
 // 图表数据获取接口
 export function queryChartData(formModel) {
-    console.log("-------------------------------- ↓↓↓ 源数据 ↓↓↓ beg --------------------------------")
-    console.log({ ...formModel })
-    console.log("-------------------------------- ↑↑↑ 源数据 ↑↑↑ end --------------------------------")
     let commonStore = localStorage.getItem('commonStore');
     let entityName = commonStore ? JSON.parse(commonStore).entityName : {};
     // 维度
@@ -66,9 +65,6 @@ export function queryChartData(formModel) {
         noPrivileges: formModel?.setChartConf.useAllData,
         filter: formModel.setChartFilter
     };
-    // console.log("-------------------------------- ↓↓↓ 接口传参 ↓↓↓ beg --------------------------------")
-    // console.log({ ...param })
-    // console.log("-------------------------------- ↑↑↑ 接口传参 ↑↑↑ end --------------------------------")
     return http.post('/chart/queryChartData', param)
 }
 

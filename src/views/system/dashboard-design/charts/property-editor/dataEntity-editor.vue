@@ -44,15 +44,15 @@ onMounted(() => {
 
 // 初始化图表样式
 const initchartStyle = () => {
-    myOption.value = {...props.optionModel};
+    myOption.value = { ...props.optionModel };
 };
 const changeEntity = () => {
     myOption.value.setDimensional.dimension = [];
-    myOption.value.setDimensional.metrics=[];
-    myOption.value.setDimensional.targetValue=[];
-    myOption.value.setDimensional.showFields=[];
-    myOption.value.setDimensional.dimensionRow=[];
-    myOption.value.setDimensional.dimensionCol=[];
+    myOption.value.setDimensional.metrics = [];
+    myOption.value.setDimensional.targetValue = 1;
+    myOption.value.setDimensional.showFields = [];
+    myOption.value.setDimensional.dimensionRow = [];
+    myOption.value.setDimensional.dimensionCol = [];
 };
 </script>
 <style lang="scss" scoped>

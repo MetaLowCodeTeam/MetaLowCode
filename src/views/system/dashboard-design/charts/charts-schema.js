@@ -112,7 +112,7 @@ const initChaer = () => {
                     // 指标
                     metrics: [],
                     // 目标值
-                    targetValue: [],
+                    targetValue: 1,
                     // 显示字段
                     showFields: [],
                     // 维度行
