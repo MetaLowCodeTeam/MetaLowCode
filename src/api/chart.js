@@ -16,7 +16,9 @@ const ChartTypes = {
     // 漏斗图
     'funnelChart': 'pie',
     // 漏斗图
-    'pieChart': 'pie'
+    'pieChart': 'pie',
+    // 雷达图
+    'radarChart': 'axis',
 };
 
 const formatItem = (list, target) => {
@@ -31,7 +33,7 @@ const formatItem = (list, target) => {
             newItem.axisFormat = {
                 thousandsSeparator: el.thousandsSeparator,
                 decimalPlaces: el.showDecimalPlaces ? el.decimalPlaces : 0,
-                numericUnits: el.showNumericUnits ? el.numericUnits : "",
+                numericUnits: el.showNumericUnits && el.numericUnits != '无' ? el.numericUnits : "",
             }
         }
         return { ...newItem }

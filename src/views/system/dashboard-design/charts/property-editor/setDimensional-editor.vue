@@ -78,21 +78,11 @@
                         </div>
                     </el-form-item>
                     <el-form-item label="目标值" v-if="chartType == 'progressbar'">
-                        <div class="input-box">
-                            <el-scrollbar max-height="132px">
-                                <VueDraggableNext
-                                    class="draggable-box"
-                                    :group="{ name: 'list', pull: false}"
-                                    @add="(e) => addCom(e,'targetValue')"
-                                >
-                                    <DimensionCom
-                                        v-model="targetValue"
-                                        @onSort="onSort"
-                                        :chartType="chartType"
-                                    />
-                                </VueDraggableNext>
-                            </el-scrollbar>
-                        </div>
+                        <el-input-number
+                            v-model="props.optionModel.setDimensional.targetValue"
+                            :min="0"
+                            class="w-100"
+                        />
                     </el-form-item>
                     <el-form-item label="显示字段" v-if="chartType == 'listTable'">
                         <div class="input-box">
@@ -188,8 +178,6 @@ let dimensionRow = ref([]);
 let dimensionCol = ref([]);
 // 指标
 let metrics = ref([]);
-// 目标值
-let targetValue = ref([]);
 // 显示字段
 let showFields = ref([]);
 // 初始化纬度、指标
@@ -197,7 +185,6 @@ const initDimensional = () => {
     chartType.value = props.optionModel.type;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
-    targetValue.value = props.optionModel.setDimensional?.targetValue || [];
     showFields.value = props.optionModel.setDimensional?.showFields || [];
     dimensionRow.value = props.optionModel.setDimensional?.dimensionRow || [];
     dimensionCol.value = props.optionModel.setDimensional?.dimensionCol || [];
@@ -318,9 +305,6 @@ const addCom = (e, target) => {
     let checkHasMetrics = metrics.value.filter(
         (el) => el.fieldLabel == cutField.fieldLabel
     );
-    let checkHasTargetValue = targetValue.value.filter(
-        (el) => el.fieldLabel == cutField.fieldLabel
-    );
     let checkHasShowFields = showFields.value.filter(
         (el) => el.fieldLabel == cutField.fieldLabel
     );
@@ -338,10 +322,6 @@ const addCom = (e, target) => {
     }
     if (checkHasMetrics.length > 0) {
         $ElMessage.warning("添加失败，同一字段不能重复添加指标");
-        return;
-    }
-    if (checkHasTargetValue.length > 0) {
-        $ElMessage.warning("添加失败，同一字段不能重复添加目标值");
         return;
     }
     if (checkHasShowFields.length > 0) {
@@ -398,15 +378,6 @@ const addCom = (e, target) => {
         }
         metrics.value.push(cutField);
     }
-    // 添加目标值
-    else if (target == "targetValue") {
-        // 如果是进度条 最多添加1个目标值
-        if (type == "progressbar" && targetValue > 0) {
-            $ElMessage.warning("添加失败，最多添加1个目标值");
-            return;
-        }
-        targetValue.value.push(cutField);
-    }
     // 添加显示字段
     else if (target == "showFields") {
         showFields.value.push(cutField);
@@ -431,9 +402,6 @@ const onSort = (e) => {
         el.sort = "";
     });
     metrics.value.forEach((el) => {
-        el.sort = "";
-    });
-    targetValue.value.forEach((el) => {
         el.sort = "";
     });
     showFields.value.forEach((el) => {

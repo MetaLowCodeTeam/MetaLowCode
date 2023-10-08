@@ -1,10 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" />
+    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
 </template>
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
+import { queryChartData } from "@/api/chart";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -13,6 +14,7 @@ defineOptions({
     name: "radarChart-widget",
 });
 let cutField = ref("");
+let loading = ref(false);
 watch(
     () => props.field,
     () => {
@@ -45,17 +47,17 @@ let option = reactive({
     },
     series: [
         {
-            name: "Budget vs spending",
+            // name: "Budget vs spending",
             type: "radar",
             data: [
                 {
-                    value: [4200, 3000, 20000, 35000, 50000, 18000],
-                    name: "状态1",
+                    value: ["1", "6", "6", "6", "1", "1", "3"],
+                    name: "公司名称",
                 },
-                {
-                    value: [5000, 14000, 28000, 26000, 42000, 21000],
-                    name: "状态2",
-                },
+                // {
+                //     value: [5000, 14000, 28000, 26000, 42000, 21000],
+                //     name: "状态2",
+                // },
             ],
         },
     ],
@@ -69,30 +71,38 @@ const initOption = () => {
             option.isNoData = true;
             return;
         }
-        if (dimension.length == 1) {
-            formatOption(dimension, metrics);
-        } else {
-            formatOption(metrics, dimension);
-        }
-
+        getChartData(options);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
-// 格式化图表option
-const formatOption = (x, y) => {
-    option.radar.indicator = x[0].list.map((el) => {
-        return { name: el.name };
-    });
-    option.series[0].data = [];
-
-    y.forEach((el) => {
-        let metricsObj = {
-            value: el.list.map((subel) => subel.name),
-            name: el.alias,
+const getChartData = async (options) => {
+    loading.value = true;
+    let res = await queryChartData(options);
+    if (res && res.data) {
+        let { setChartConf } = cutField.value.options;
+        // 图例是否显示
+        option.legend = {
+            show: setChartConf.chartShow,
+            bottom: 5,
         };
-        option.series[0].data.push(metricsObj);
-    });
+        option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
+        option.series[0] = {
+            type: "radar",
+            data: res.data.series.map((el) => {
+                return {
+                    value: el.data,
+                    name: el.name,
+                };
+            }),
+        };
+        option.radar.indicator = res.data.xAxis.map((el) => {
+            return {
+                name: el,
+            };
+        });
+    }
+    loading.value = false;
 };
 </script>

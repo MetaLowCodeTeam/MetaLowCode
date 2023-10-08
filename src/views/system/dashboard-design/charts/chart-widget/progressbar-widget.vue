@@ -183,13 +183,14 @@ const initOption = () => {
         let { chartStyle, setDimensional } = options;
         let { metrics, targetValue } = setDimensional;
         myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
-        if (metrics.length < 1 || targetValue.length < 1) {
+        if (metrics.length < 1) {
             myOption.value.isNoData = true;
             return;
         }
-        let maxNum = targetValue[0]?.num || 100;
-        let cutNum = metrics[0]?.num || 66;
+        let maxNum = targetValue || 1;
+        let cutNum = 66;
         let point = Math.round((cutNum / maxNum) * 100);
+
         percentage.value = point;
         progressText.value = metrics[0].alias;
         if (chartStyle == 1) {

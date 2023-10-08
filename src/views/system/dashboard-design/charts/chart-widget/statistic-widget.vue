@@ -132,9 +132,7 @@ const setSelected = () => {
             font-weight: bold;
             padding: 0 20px;
             .sub-text {
-                position: relative;
-                top: -5px;
-                margin-left: 5px;
+                margin-right: 5px;
             }
         }
     }

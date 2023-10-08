@@ -153,6 +153,10 @@
                                 filterable
                                 style="width: 150px;"
                                 size="small"
+                                placeholder
+                                allow-create
+                                default-first-option
+                                clearable
                             >
                                 <el-option
                                     v-for="item in options"
@@ -191,7 +195,6 @@ const props = defineProps({
     modelValue: null,
     isDimension: { type: Boolean, default: false },
     chartType: { type: String, default: "" },
-    
 });
 const emits = defineEmits(["update:modelValue", "onSort"]);
 
@@ -321,7 +324,7 @@ const onSort = (tag, target, inx) => {
 
 // 部分表格禁用千分符、数值量级
 let needDisabledType = () => {
-    let chartTypes = ["barChart",'barXChart','lineChart'];
+    let chartTypes = ["barChart", "barXChart", "lineChart"];
     if (chartTypes.includes(props.chartType)) {
         return true;
     }

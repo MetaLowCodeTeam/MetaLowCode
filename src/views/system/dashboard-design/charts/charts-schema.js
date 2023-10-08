@@ -179,7 +179,12 @@ const initChaer = () => {
         }
         // 如果是饼图
         if (el.type == 'pieChart') {
-            chartObj.options.h = 6
+            chartObj.options.h = 7
+        }
+        // 如果是雷达图
+        if (el.type == 'radarChart') {
+            chartObj.options.h = 8
+            chartObj.options.w = 6
         }
         newChartList.push(chartObj)
     })

@@ -13,6 +13,7 @@
                         placeholder
                         allow-create
                         default-first-option
+                        clearable
                     >
                         <el-option
                             v-for="item in options"
