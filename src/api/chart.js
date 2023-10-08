@@ -54,6 +54,7 @@ export function queryChartData(formModel) {
         latitude,
         longitude,
         noPrivileges: formModel?.setChartConf.useAllData,
+        filter:formModel.setChartFilter
     };
     // console.log("-------------------------------- ↓↓↓ 接口传参 ↓↓↓ beg --------------------------------")
     // console.log({ ...param })

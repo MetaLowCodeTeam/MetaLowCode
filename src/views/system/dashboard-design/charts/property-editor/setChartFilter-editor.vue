@@ -84,7 +84,7 @@ const getSetConditionText = () => {
 const conditionConfirm = (e) => {
     cutOption.value.setChartFilter = Object.assign({}, e);
     dialogIsShow.value = false;
-    emit("update:optionModel", cutOption.value);
+    emits("update:optionModel", cutOption.value);
 };
 
 /***
