@@ -9,7 +9,7 @@
                     :adaptive="adaptive"
                 />
             </div>
-            <div class="page-box">
+            <!-- <div class="page-box">
                 <el-pagination
                     style="justify-content:right"
                     v-model:current-page="paginationConf.page"
@@ -18,7 +18,7 @@
                     :total="paginationConf.total"
                     @current-change="handleCurrentChange"
                 />
-            </div>
+            </div> -->
         </template>
         <template v-else>
             <div class="no-data">
@@ -33,6 +33,7 @@
 import { SheetComponent } from "@antv/s2-vue";
 import { onMounted, reactive, shallowRef, ref, watch } from "vue";
 import "@antv/s2-vue/dist/style.min.css";
+import { queryChartData } from "@/api/chart";
 const adaptive = {
     width: true,
     height: true,
@@ -130,21 +131,21 @@ const initOption = () => {
             isNoData.value = true;
             return;
         }
-        // 元字段格式化名字
-        dataCfg.value.meta = [];
+        // // 元字段格式化名字
+        // dataCfg.value.meta = [];
 
-        // 维度行设置
-        dataCfg.value.fields.rows = [];
-        setPivotTableConf(dimensionRow, "rows");
+        // // 维度行设置
+        // dataCfg.value.fields.rows = [];
+        // setPivotTableConf(dimensionRow, "rows");
 
-        // 指标设置
-        dataCfg.value.fields.values = [];
-        setPivotTableConf(metrics, "values");
-        // 维度列设置
-        if (dimensionCol.length > 0) {
-            dataCfg.value.fields.columns = [];
-            setPivotTableConf(dimensionCol, "columns");
-        }
+        // // 指标设置
+        // dataCfg.value.fields.values = [];
+        // setPivotTableConf(metrics, "values");
+        // // 维度列设置
+        // if (dimensionCol.length > 0) {
+        //     dataCfg.value.fields.columns = [];
+        //     setPivotTableConf(dimensionCol, "columns");
+        // }
 
         // 获取表格数据
         getTableData();
@@ -157,9 +158,9 @@ const initOption = () => {
 // 设置透视表参数
 const setPivotTableConf = (arr, key) => {
     arr.forEach((el) => {
-        dataCfg.value.fields[key].push(el.code);
+        dataCfg.value.fields[key].push(el.fieldName);
         dataCfg.value.meta.push({
-            field: el.code,
+            field: el.fieldName,
             name: el.alias,
         });
     });
@@ -170,23 +171,23 @@ const handleCurrentChange = (v) => {
     getTableData();
 };
 // 获取表格数据
-const getTableData = () => {
+const getTableData = async () => {
     loading.value = true;
-    setTimeout(() => {
-        dataCfg.value.data = [
-            {
-                zhi: 1176,
-                price: 25,
-                hang: "透视表行测试数据",
-                city: "济南市",
-                lie: "家具",
-                sub_type: "桌子",
-            },
-        ];
-        paginationConf.total = dataCfg.value.data.length;
-        loading.value = false;
+    let { options } = cutField.value;
+    if (!options) {
+        return;
+    }
+    let res = await queryChartData(options);
+    if (res && res.data) {
+        // 元数据
+        dataCfg.value.meta = res.data.meta;
+        // 字段
+        dataCfg.value.fields = res.data.fields;
+        // 数据
+        dataCfg.value.data = res.data.data;
         handleResize();
-    }, 1000);
+    }
+    loading.value = false;
 };
 
 let tableBoxHeight = ref("300px");

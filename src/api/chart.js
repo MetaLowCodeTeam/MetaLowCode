@@ -56,6 +56,14 @@ export function queryChartData(formModel) {
     // 指标
     let longitude = formatItem(formModel?.setDimensional.metrics || [], 'longitude');
 
+    if (formModel.type == 'pivotTable') {
+        latitude = formatItem(formModel?.setDimensional.dimensionRow || [], 'latitude');
+        let dimensionCol = formatItem(formModel?.setDimensional.dimensionCol || [], 'latitude');
+        dimensionCol.forEach(el => {
+            el.columns = true;
+            latitude.push(el)
+        })
+    }
 
     let param = {
         chartType: ChartTypes[formModel.type],

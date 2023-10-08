@@ -35,6 +35,7 @@ export default {
 				exportCodeButton: false,
 				generateSFCButton: false,
 				toolbarMaxWidth: 300,
+                chartLib: true
 			},
 		}
 	},

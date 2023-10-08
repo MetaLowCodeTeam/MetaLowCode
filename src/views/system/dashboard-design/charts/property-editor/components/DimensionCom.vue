@@ -108,7 +108,7 @@
                         v-if="tag.sort=='DESC'"
                         icon-name="fields-desc"
                     />
-                    {{ tag.alias }}{{ !isDimension ? '(计数)' : '' }}
+                    {{ tag.alias }}{{ !isDimension ? "("+CalcMode[tag.calcMode]+")" : '' }}
                 </span>
             </template>
         </el-popover>
@@ -196,6 +196,14 @@ const props = defineProps({
     isDimension: { type: Boolean, default: false },
     chartType: { type: String, default: "" },
 });
+const CalcMode = {
+    sum: "求和",
+    count: "计数",
+    countSet: "去重计数",
+    average: "平均值",
+    max: "最大值",
+    min: "最小值",
+};
 const emits = defineEmits(["update:modelValue", "onSort"]);
 
 let list = ref([]);

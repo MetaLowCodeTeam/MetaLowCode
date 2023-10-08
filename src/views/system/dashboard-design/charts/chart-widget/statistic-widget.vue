@@ -69,8 +69,8 @@ const initOption = () => {
 const getChartData = async (options) => {
     loading.value = true;
     let res = await queryChartData(options);
-    if (res) {
-        metricsNum.value = res.data.data;
+    if (res && res.data) {
+        metricsNum.value = res.data.data || 0;
     }
     loading.value = false;
 };
