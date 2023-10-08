@@ -177,6 +177,10 @@ const initChaer = () => {
         if (el.type == 'funnelChart') {
             chartObj.options.h = 8
         }
+        // 如果是饼图
+        if (el.type == 'pieChart') {
+            chartObj.options.h = 6
+        }
         newChartList.push(chartObj)
     })
     return newChartList
