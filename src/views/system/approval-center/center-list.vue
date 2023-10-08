@@ -152,6 +152,9 @@ let tableColumn = ref([
     {
         prop: "entityId.name",
         label: "关联记录",
+        formatter: (row) => {
+            return row.entityId?.name;
+        },
     },
     {
         prop: "remark",
@@ -163,7 +166,7 @@ let tableColumn = ref([
         width: "120",
         align: "center",
         formatter: (row) => {
-            return row.approvalStatus.label;
+            return row.approvalStatus?.label;
         },
     },
     {
@@ -172,7 +175,7 @@ let tableColumn = ref([
         width: "150",
         align: "center",
         formatter: (row) => {
-            return row.approvalUser.name;
+            return row.approvalUser?.name;
         },
     },
     {

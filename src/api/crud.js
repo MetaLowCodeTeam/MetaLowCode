@@ -42,7 +42,6 @@ export function deleteRecords(body) {
 * @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
 */
 export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter) {
-    console.log(entity,'entity')
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,

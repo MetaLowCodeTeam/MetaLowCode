@@ -60,12 +60,18 @@ let tableColumn = ref([
     {
         prop: "relatedRecord.name",
         label: "相关记录",
+        formatter: (row) => {
+            return row.relatedRecord?.name;
+        },
     },
     {
         prop: "fromUser.name",
         label: "发送人",
         width: "120",
         align: "center",
+        formatter: (row) => {
+            return row.fromUser?.name;
+        },
     },
     {
         prop: "type",

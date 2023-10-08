@@ -90,6 +90,9 @@ let tableColumn = ref([
         label: "删除人",
         width: "150",
         align: "center",
+        formatter: (row) => {
+            return row.deletedBy?.name;
+        },
     },
     {
         prop: "restoreOn",
@@ -105,6 +108,9 @@ let tableColumn = ref([
         label: "恢复人",
         width: "150",
         align: "center",
+        formatter: (row) => {
+            return row.restoreBy?.name;
+        },
     },
 ]);
 

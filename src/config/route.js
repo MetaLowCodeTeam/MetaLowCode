@@ -207,6 +207,13 @@ const routes = [
                 meta: { title: '触发器详情', hidden: true },
                 component: 'system/trigger/trigger-detail',
             },
+            // 仪表盘
+            {
+                path: '/dashboard-list',
+                name: 'DashboardDesign',
+                meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
+                component: 'system/dashboard-design/chart',
+            },
             // 报表设计
             {
                 path: '/templates-list',

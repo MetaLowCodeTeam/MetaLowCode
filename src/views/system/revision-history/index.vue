@@ -64,16 +64,25 @@ let tableColumn = ref([
         prop: "entityId.name",
         label: "关联记录",
         align: "center",
+        formatter: (row) => {
+            return row.entityId?.name;
+        },
     },
     {
         prop: "revisionType.label",
         label: "变更类型",
         align: "center",
+        formatter: (row) => {
+            return row.revisionType?.label;
+        },
     },
     {
         prop: "revisionBy.name",
         label: "变更用户",
         align: "center",
+        formatter: (row) => {
+            return row.revisionBy?.name;
+        },
     },
     {
         prop: "revisionOn",

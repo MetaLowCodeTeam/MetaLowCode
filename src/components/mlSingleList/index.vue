@@ -29,7 +29,20 @@
                     :align="column.align"
                     :width="column.width"
                     :formatter="column.formatter"
-                ></el-table-column>
+                >
+                    <template #default="scope">
+                        <!-- 需要高亮的 -->
+                        <span
+                            v-if="column.highlight"
+                            class="highlight"
+                            @click="goDetial(scope.row)"
+                        >{{ scope.row[column.prop] }}</span>
+                        <!-- 需要格式化的 -->
+                        <span v-else-if="column.formatter">{{ column.formatter(scope.row)}}</span>
+                        <!-- 默认 -->
+                        <span v-else>{{ scope.row[column.prop] }}</span>
+                    </template>
+                </el-table-column>
                 <slot name="activeRow"></slot>
             </el-table>
 
@@ -153,6 +166,8 @@ async function getTableList() {
     }
     loading.value = false;
 }
+
+
 
 defineExpose({
     loading,
