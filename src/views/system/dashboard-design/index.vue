@@ -16,7 +16,7 @@
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {dashboard_container_schema} from "@/views/system/dashboard-design/charts/charts-schema";
 import {deepClone} from "@/utils/util";
-
+// import { saveRecord } from ''
 const { Utils } = VisualDesign.VFormSDK
 
 export default {
@@ -72,6 +72,7 @@ export default {
 
 		saveDesign() {
 			this.$message.info('待实现...')
+            console.log(this.$refs.dbDesignerRef.getFormJson(false),'this.$refs.vfDesigner.getFormJson(false)')
 		},
 
 	}
