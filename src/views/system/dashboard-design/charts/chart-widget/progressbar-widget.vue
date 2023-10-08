@@ -24,10 +24,12 @@ import { queryChartData } from "@/api/chart";
 const props = defineProps({
     field: Object,
     designer: Object,
+    // isRefresh: { type: Boolean, default: false },
 });
 defineOptions({
     name: "progressbar-widget",
 });
+const emits = defineEmits("update:isRefresh");
 
 let cutField = ref("");
 watch(
@@ -38,6 +40,7 @@ watch(
     },
     { deep: true }
 );
+
 onMounted(() => {
     cutField.value = props.field;
     initOption();

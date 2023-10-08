@@ -28,19 +28,22 @@
 				:refresh="item.options.showRefresh"
 				:fullscreen="item.options.showFullscreen"       
                 :isActived="designer.selectedWidget?.id == item.id"
+                @on-refresh="onRefresh(item)"
+
             >
                           
 				<div class="container-com">
+                    <!-- {{ this.isRefresh }} -->
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-widget'" :widget="item" :designer="designer"
 								   :key="item.id" :parent-list="widget.widgetList"
-								   :index-of-parent-list="index" :parent-widget="widget"></component>
+								   :index-of-parent-list="index" :parent-widget="widget" :isRefresh="isRefresh"></component>
 					</template>
 					<template v-else>
 						<component :is="item.type + '-widget'" :field="item" :designer="designer"
 								   :key="item.id" :parent-list="widget.widgetList"
 								   :index-of-parent-list="index" :parent-widget="widget"
-								   :design-state="true"></component>
+								   :design-state="true" :isRefresh="isRefresh"></component>
 					</template>
 				</div>
 			</smart-widget>
@@ -80,6 +83,11 @@ export default {
 		// },
 
 	},
+    methods:{
+        onRefresh(item){
+            item.options.isRefresh = !item.options.isRefresh;
+        }
+    },
 
 }
 </script>
