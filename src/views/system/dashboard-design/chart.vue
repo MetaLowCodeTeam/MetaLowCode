@@ -8,6 +8,8 @@
         fieldName="chartName"
         :tableColumn="tableColumn"
         :filterItems="filterItems"
+        detailRouter="/dashboard-design"
+        detailId="chartId"
     >
         <template #addbutton>
             <!-- <el-button type="primary" @click="markAllRead">全部设为已读</el-button> -->

@@ -61,7 +61,8 @@
 import { onMounted, ref, reactive, inject } from "vue";
 import http from "@/utils/request";
 import { getDataList } from "@/api/crud";
-const message = inject("$ElMessage");
+import { useRouter } from "vue-router";
+const router = useRouter();
 const $API = inject("$API");
 const props = defineProps({
     // 表格名字
@@ -80,6 +81,9 @@ const props = defineProps({
     tableColumn: { type: Array, default: () => [] },
     // 查询接口
     queryUrl: { type: String, default: "" },
+    // 详情路由
+    detailRouter: { type: String, default: "" },
+    detailId: { type: String, default: "" },
 });
 let loading = ref(false);
 
@@ -167,7 +171,17 @@ async function getTableList() {
     loading.value = false;
 }
 
-
+// 详情跳转
+const goDetial = (row) => {
+    let routerData = {
+        path: props.detailRouter,
+        query: {
+            triggerConfigId: row.triggerConfigId,
+        },
+    };
+    routerData.query[props.detailId] = row[props.detailId];
+    router.push(routerData);
+};
 
 defineExpose({
     loading,
