@@ -2,22 +2,6 @@
 	<form-item-wrapper :designer="designer" :field="field" :rules="rules" :design-state="designState"
 					   :parent-widget="parentWidget" :parent-list="parentList" :index-of-parent-list="indexOfParentList"
 					   :sub-form-row-index="subFormRowIndex" :sub-form-col-index="subFormColIndex" :sub-form-row-id="subFormRowId">
-		<!--
-		<el-checkbox-group ref="fieldEditor" v-model="fieldModel" v-show="!isReadMode"
-						   :disabled="field.options.disabled"
-						   @change="handleChangeEvent">
-			<template v-if="!!field.options.buttonStyle">
-				<el-checkbox-button v-for="(item, index) in field.options.optionItems" :key="index" :label="item.value"
-									:disabled="item.disabled" :border="field.options.border"
-									:style="{display: field.options.displayStyle}">{{item.label}}</el-checkbox-button>
-			</template>
-			<template v-else>
-				<el-checkbox v-for="(item, index) in field.options.optionItems" :key="index" :label="item.value"
-							 :disabled="item.disabled" :border="field.options.border"
-							 :style="{display: field.options.displayStyle}">{{item.label}}</el-checkbox>
-			</template>
-		</el-checkbox-group>
-		-->
 		<div>
 			<template v-for="(item, index) in field.options.optionItems">
 				<el-check-tag :checked="isChecked(item)"

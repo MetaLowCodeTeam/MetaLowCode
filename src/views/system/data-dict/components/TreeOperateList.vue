@@ -29,7 +29,7 @@
                         placeholder="查询关键字"
                         @confirm="getApprovalList"
                     />-->
-                    <el-button type="primary" @click.stop="operateItem(false,'add')">
+                    <el-button @click.stop="operateItem(false,'add')">
                         <span class="btn-icon-t1">
                             <el-icon>
                                 <ElIconPlus />
@@ -173,7 +173,7 @@ const getMainList = async () => {
     );
     if (res) {
         mainList.value = res.data || [];
-    } 
+    }
     mainLoading.value = false;
 };
 

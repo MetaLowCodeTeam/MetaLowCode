@@ -1,13 +1,15 @@
 <template>
-	<v-form-designer ref="vfDesigner" :designer-config="designerConfig" :field-list-data="fieldListData"
+	<v-form-designer ref="vfDesigner"
+					 :designer-config="designerConfig"
+					 :field-list-data="fieldListData"
 					 class="visual-design">
 		<!-- 配置工具按钮 -->
 		<template #customToolButtons>
-			<el-button type="primary" link @click="quickDesign">
+			<el-button type="primary" link @click="addMetaField">
 				<el-icon>
 					<MagicStick/>
 				</el-icon>
-				一键生成
+				新建字段
 			</el-button>
 			<el-button type="primary" link @click="saveDesign">
 				<el-icon>
@@ -21,7 +23,8 @@
 
 <script>
 import {createFormLayout, updateFormLayout, getFormLayout, getMDFieldList} from '@/api/system-manager'
-import {deepClone} from "@/utils/util";
+import {deepClone, overwriteObj} from "@/utils/util";
+import {formFieldMapping} from "@/views/system/form-design/formFieldMapping";
 
 export default {
 	name: "form-design",
@@ -37,6 +40,7 @@ export default {
 		return {
 			designerConfig: {
 				formTemplates: false,
+				metadataLib: true,
 				logoHeader: false,
 				exportCodeButton: false,
 				generateSFCButton: false,
@@ -44,6 +48,7 @@ export default {
 			},
 			fieldListData: {},
 			layoutId: null,
+			formOptionData: {},
 		}
 	},
 	created() {
@@ -52,17 +57,18 @@ export default {
 	},
 	mounted() {
 		this.loadDesign()
-		this.loadFieldListData()
 	},
 	methods: {
+		addMetaField() {
+			this.$message.info('待实现...')
+		},
+
 		quickDesign() {
 			this.$message.info('待实现...')
 		},
 
 		loadFieldListData() {
 			getMDFieldList(this.entity).then(res => {
-				console.log('resulst: ', res)
-
 				if (res.data.fieldList) {
 					this.fieldListData.fieldList = res.data.fieldList
 					if (res.data.subFormList) {
@@ -90,10 +96,15 @@ export default {
 			if (mdResult.data.fieldList) {
 				mdResult.data.fieldList.forEach(fld => {
 					if (!fld.detailEntity && (fld.type !== 'PrimaryKey')) {  //跳过id主键
-						const fieldSchema = deepClone( this.$refs.vfDesigner.designer.getFieldWidgetByType('input') )
-						//TODO: 设置必填属性、nameeadonly等属性
-						//TODO: 选项类型字段需要指定optionValueType属性！！
+						const fieldNewProps = deepClone(formFieldMapping[fld.type])
+						const fieldSchema = deepClone( this.$refs.vfDesigner.designer.getFieldWidgetByType( fieldNewProps.type ) )
+						overwriteObj(fieldSchema.options, fieldNewProps.options)
+
 						fieldSchema.displayName = fld.label
+						fieldSchema.nameReadonly = true
+						fieldSchema.options.name = fld.name
+						fieldSchema.options.label = fld.label
+						this.adjustFieldSchema(fieldSchema, fld)
 						result.main.fieldList.push(fieldSchema)
 					}
 				})
@@ -111,8 +122,15 @@ export default {
 
 					mdResult.data.fieldList.forEach(fld => {
 						if (fld.detailEntity && (fld.detailEntity === deName) && (fld.type !== 'PrimaryKey')) {  //跳过id主键
-							const fieldSchema = deepClone( this.$refs.vfDesigner.designer.getFieldWidgetByType('input') )
+							const fieldNewProps = deepClone(formFieldMapping[fld.type])
+							const fieldSchema = deepClone( this.$refs.vfDesigner.designer.getFieldWidgetByType( fieldNewProps.type ) )
+							overwriteObj(fieldSchema.options, fieldNewProps.options)
+
 							fieldSchema.displayName = fld.label
+							fieldSchema.nameReadonly = true
+							fieldSchema.options.name = fld.name
+							fieldSchema.options.label = fld.label
+							this.adjustFieldSchema(fieldSchema, fld)
 							detailDataItem.fieldList.push(fieldSchema)
 						}
 					})
@@ -124,6 +142,24 @@ export default {
 			return result
 		},
 
+		adjustFieldSchema(fieldSchema, fldObj) {
+			if (fieldSchema.options.hasOwnProperty('optionItems')) {
+				if (this.formOptionData.hasOwnProperty(fieldSchema.options.name)) {
+					fieldSchema.options.optionItems = deepClone( this.formOptionData[fieldSchema.options.name] )
+				}
+
+				fieldSchema.optionItemsReadonly = true
+			}
+
+			if (fldObj.hasOwnProperty('required')) {
+				fieldSchema.options.required = fldObj['required'] === "1"
+			}
+
+			// if (fldObj.type === 'status') {
+			// 	fieldSchema.options.disabled = true
+			// }
+		},
+
 		loadDesign() {
 			getFormLayout(this.entity).then(res => {
 				if (res.error != null) {
@@ -131,12 +167,20 @@ export default {
 					return
 				}
 
-				if ((!!res.data) && (!!res.data.layoutJson)) {
+				if (!!res.data && !!res.data.layoutJson) {
 					this.layoutId = res.data.formLayoutId
 					this.$refs.vfDesigner.setFormJson(res.data.layoutJson)
 				} else {
 					this.$refs.vfDesigner.clearDesigner()
 				}
+
+				//console.log('abc', res.data.optionData)
+				if (!!res.data && !!res.data.optionData) {
+					this.formOptionData = res.data.optionData
+					this.$refs.vfDesigner.setTestOptionData(res.data.optionData)
+				}
+
+				this.loadFieldListData()
 			}).catch(res => {
 				this.$message({message: res.message, type: 'error'})
 			})
