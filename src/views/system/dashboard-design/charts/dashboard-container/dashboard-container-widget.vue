@@ -22,16 +22,16 @@
 					   :auto-size="true">
 
 		<template v-for="(item, index) in widget.widgetList" #[item.id] :key="index">
-			<smart-widget 
+			<smart-widget
                 :simple="!item.options.showHeader"
 				:title="item.options.title"
 				:refresh="item.options.showRefresh"
-				:fullscreen="item.options.showFullscreen"       
+				:fullscreen="item.options.showFullscreen"
                 :isActived="designer.selectedWidget?.id == item.id"
                 @on-refresh="onRefresh(item)"
 
             >
-                          
+
 				<div class="container-com">
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-widget'" :widget="item" :designer="designer"
@@ -52,6 +52,9 @@
 </template>
 
 <script>
+import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+const { Utils } = VisualDesign.VFormSDK
+
 export default {
 	name: "dashboard-container-widget",
 	props: {
@@ -75,17 +78,49 @@ export default {
 			}
 		},
 
-		// slotName() {
-		// 	return (item) => {
-		// 		return item.id
-		// 	}
-		// },
-
 	},
     methods:{
         onRefresh(item){
             item.options.isRefresh = !item.options.isRefresh;
-        }
+        },
+
+		/**
+		 * 删除选中的图表组件或者区块容器
+		 */
+		removeSelectedChart() {
+			if (!!this.parentList) {
+				const widgetRefName = this.designer.selectedWidgetName
+				const childrenRefNames = []
+				const fwHandler = (fw) => {
+					childrenRefNames.push( fw.options.name )
+				}
+				const cwHandler = (cw) => {
+					childrenRefNames.push( cw.options.name )
+				}
+				Utils.traverseWidgetsOfContainer(this.designer.selectedWidget, fwHandler, cwHandler)
+
+				let nextSelected = null
+				if (this.parentList.length === 1) {
+					if (!!this.parentWidget) {
+						nextSelected = this.parentWidget
+					}
+				} else if (this.parentList.length === (1 + this.indexOfParentList)) {
+					nextSelected = this.parentList[this.indexOfParentList - 1]
+				} else {
+					nextSelected = this.parentList[this.indexOfParentList + 1]
+				}
+
+				this.$nextTick(() => {
+					this.parentList.splice(this.indexOfParentList, 1)
+					this.designer.setSelected(nextSelected)
+
+					this.designer.formWidget.deleteWidgetRef(widgetRefName)  //删除组件ref！！！
+					this.designer.formWidget.deletedChildrenRef(childrenRefNames)  //删除容器组件的所有内嵌组件ref！！！
+					this.designer.emitHistoryChange()
+				})
+			}
+		}
+
     },
 
 }
