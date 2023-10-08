@@ -163,9 +163,9 @@ const initChaer = () => {
         if (hasAxisCoordinates.includes(el.type)) {
             chartObj.options.axisCoordinates = {
                 // 最大值
-                max: "",
+                max: 0,
                 // 最小值
-                min: "",
+                min: 0,
             };
         }
         // 如果是表
