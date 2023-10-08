@@ -1,10 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" />
+    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
 </template>
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
+import { queryChartData } from "@/api/chart";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -34,10 +35,10 @@ let option = reactive({
             maxSize: "100%",
             sort: "descending",
             gap: 2,
-            label: {
-                show: true,
-                // position: "inside",
-            },
+            // label: {
+            //     show: true,
+            //     // position: "inside",
+            // },
             labelLine: {
                 length: 10,
                 lineStyle: {
@@ -62,10 +63,10 @@ let option = reactive({
                 { value: 100, name: "Show" },
             ],
         },
-        
     ],
 });
 let cutField = ref("");
+let loading = ref(false);
 watch(
     () => props.field,
     () => {
@@ -82,32 +83,38 @@ onMounted(() => {
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
-        let { dimension, metrics } = options.setDimensional;
-        if (dimension.length < 1 && metrics.length < 2) {
+        let { metrics } = options.setDimensional;
+        if (metrics.length < 1) {
             option.isNoData = true;
             return;
         }
-        option.series[0].data = [];
-        if (dimension.length == 1) {
-            dimension[0].list.forEach((el, inx) => {
-                option.series[0].data.push({
-                    name: el.name,
-                    value: metrics[0].list[inx].name,
-                });
-            });
-        } else {
-            metrics.forEach((el) => {
-                option.series[0].data.push({
-                    name: el.alias,
-                    value: 100,
-                });
-            });
-        }
-
+        getChartData(options);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
+};
+const getChartData = async (options) => {
+    loading.value = true;
+    let res = await queryChartData(options);
+    if (res && res.data) {
+        let { setChartConf } = cutField.value.options;
+        // 图例是否显示
+        option.legend = {
+            show: setChartConf.chartShow,
+            bottom: 5,
+        };
+        option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
+        option.series[0].data = res.data;
+        option.series[0].label = {
+            show: setChartConf.numShow,
+            formatter: function (param) {
+                return param.value;
+            },
+            position: "inside",
+        };
+    }
+    loading.value = false;
 };
 </script>
 

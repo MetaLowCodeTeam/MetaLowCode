@@ -12,7 +12,11 @@ const ChartTypes = {
     // 条形图
     'barXChart': 'axis',
     // 折线图
-    'lineChart': 'axis'
+    'lineChart': 'axis',
+    // 漏斗图
+    'funnelChart': 'pie',
+    // 漏斗图
+    'pieChart': 'pie'
 };
 
 const formatItem = (list, target) => {
@@ -54,7 +58,7 @@ export function queryChartData(formModel) {
         latitude,
         longitude,
         noPrivileges: formModel?.setChartConf.useAllData,
-        filter:formModel.setChartFilter
+        filter: formModel.setChartFilter
     };
     // console.log("-------------------------------- ↓↓↓ 接口传参 ↓↓↓ beg --------------------------------")
     // console.log({ ...param })

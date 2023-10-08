@@ -173,6 +173,10 @@ const initChaer = () => {
             chartObj.options.w = 12
             chartObj.options.h = 6
         }
+        // 如果是漏斗图
+        if (el.type == 'funnelChart') {
+            chartObj.options.h = 8
+        }
         newChartList.push(chartObj)
     })
     return newChartList
