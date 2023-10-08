@@ -96,6 +96,7 @@
                                         v-model="showFields"
                                         @onSort="onSort"
                                         :chartType="chartType"
+                                        isDimension
                                     />
                                 </VueDraggableNext>
                             </el-scrollbar>

@@ -3,7 +3,7 @@
         class="item-tag"
         v-for="(tag,inx) of list"
         :key="inx"
-        :title="'原名：' + tag.label"
+        :title="'原名：' + tag.fieldLabel"
         ref="buttonRef"
     >
         <el-popover

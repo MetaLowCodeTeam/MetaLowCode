@@ -19,6 +19,10 @@ const ChartTypes = {
     'pieChart': 'pie',
     // 雷达图
     'radarChart': 'axis',
+    // 数据列表
+    'listTable': 'table',
+    // 透视表
+    'pivotTable': 'table',
 };
 
 const formatItem = (list, target) => {

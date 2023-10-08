@@ -3,6 +3,9 @@
         <div class="c-s-t">图表设置</div>
         <!-- 表格 -->
         <template v-if="optionModel.type == 'listTable' || optionModel.type == 'pivotTable'">
+            <el-form-item label="最大展示条数" v-if="optionModel.type == 'listTable'">
+                <el-input-number v-model="optionModel.setChartConf.pageSize" :min="1" :max="999" />
+            </el-form-item>
             <el-form-item label="汇总行显示">
                 <el-switch v-model="optionModel.setChartConf.showSummary"></el-switch>
             </el-form-item>

@@ -137,6 +137,8 @@ const initChaer = () => {
                     showSummary: false,
                     // 汇总列显示
                     showSumcol: false,
+                    // 最大展示条数
+                    pageSize: 999,
                 },
                 showHeader: true,
                 showFullscreen: false,

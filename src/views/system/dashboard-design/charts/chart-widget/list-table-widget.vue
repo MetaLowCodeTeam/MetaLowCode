@@ -18,16 +18,14 @@
                     :key="inx"
                     show-overflow-tooltip
                     :label="column.alias"
-                    :prop="column.code"
+                    :prop="column.fieldName"
                 >
                     <!-- header -->
                     <template #header>
-                        <div class="yichu">
-                            {{ column.alias }}
-                        </div>
+                        <div class="yichu">{{ column.alias }}</div>
                     </template>
                     <template #default="scope">
-                        <div class="yichu">{{ scope.row[column.code] }}</div>
+                        <div class="yichu">{{ scope.row[column.fieldName] }}</div>
                     </template>
                 </el-table-column>
             </el-table>
@@ -41,6 +39,11 @@
 
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+import { getDataList } from "@/api/crud";
+const { entityName } = storeToRefs(useCommonStore());
+
 defineOptions({
     name: "listTable-widget",
 });
@@ -53,6 +56,8 @@ let cutField = ref("");
 let tableColumn = ref([]);
 let tableData = ref([]);
 let tableLoading = ref(false);
+let fieldsList = ref([]);
+let sortFields = ref([]);
 watch(
     () => props.field,
     () => {
@@ -69,53 +74,57 @@ onMounted(() => {
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
+        console.log(options, "options");
         let { showFields } = options.setDimensional;
+
         tableColumn.value = [...showFields];
+
         if (tableColumn.value.length > 0) {
-            tableLoading.value = true;
-            getTableData();
+            fieldsList.value = tableColumn.value.map((el) => el.fieldName);
+            sortFields.value = [];
+            tableColumn.value.forEach((el) => {
+                if (el.sort) {
+                    sortFields.value.push({
+                        fieldName: el.fieldName,
+                        type: el.sort,
+                    });
+                }
+            });
+            getTableData(options);
         }
     }
 };
 
-const getTableData = () => {
-    setTimeout(() => {
-        let list = [
-            {
-                date: "2016-05-03",
-                name: "Tom",
-                state: "California",
-                city: "Los Angeles",
-                address: "No. 189, Grove St, Los Angeles",
-                age: "18",
-                vipLive: 5,
-            },
-            {
-                date: "2016-05-03",
-                name: "ASSX",
-                state: "California",
-                city: "上海市闵行区浦江临港科技广场",
-                address: "No. 189, Grove St, Los Angeles",
-                age: "21",
-                vipLive: 10,
-            },
-            {
-                date: "2016-05-03",
-                name: "Dcss",
-                state: "California",
-                city: "Los Angeles",
-                address: "No. 189, Grove St, Los Angeles",
-                age: "19",
-                vipLive: 7,
-            },
-        ];
+const getTableData = async (options) => {
+    tableLoading.value = true;
+    let param = {
+        mainEntity: entityName.value[options.dataEntity],
+        fieldsList: fieldsList.value.join(),
+        pageSize: options.setChartConf.pageSize,
+        pageNo: 1,
+        filter: options.setChartFilter,
+        sortFields: sortFields.value,
+    };
+    console.log(options, "options");
+
+    let res = await getDataList(
+        param.mainEntity,
+        param.fieldsList,
+        param.filter,
+        param.pageSize,
+        param.pageNo,
+        param.sortFields
+    );
+    if (res) {
+        let list = res.data.dataList || [];
         let showSumcol = cutField.value?.options.setChartConf.showSumcol;
         // 如果需要汇总列
         if (showSumcol) {
             list.forEach((rowEl) => {
                 const values = tableColumn.value.map((item) =>
-                    Number(rowEl[item.code])
+                    Number(rowEl[item.fieldName])
                 );
+                // console.log(values,'values')
                 if (!values.every((value) => Number.isNaN(value))) {
                     rowEl.sumcol = `${values.reduce((prev, curr) => {
                         const value = Number(curr);
@@ -131,12 +140,16 @@ const getTableData = () => {
             });
             tableColumn.value[tableColumn.value.length] = {
                 alias: "汇总",
-                code: "sumcol",
+                fieldName: "sumcol",
             };
         }
         tableData.value = [...list];
-        tableLoading.value = false;
-    }, 500);
+    }
+    tableLoading.value = false;
+    // setTimeout(() => {
+
+    //     tableLoading.value = false;
+    // }, 500);
 };
 
 // 汇总行
