@@ -77,6 +77,16 @@
         <tasks></tasks>
     </el-drawer>
     <Detail ref="detailRefs" />
+    <div v-if="approveDialogIsShow">
+        <mlApprove
+            v-model="approveDialogIsShow"
+            :taskId="approvalTaskId"
+            :entityId="entityId"
+            :entityCode="entityCode"
+            :approvalName="approvalName"
+            title="审批"
+        />
+    </div>
 </template>
 
 <script setup>
@@ -91,12 +101,14 @@ import { storeToRefs } from "pinia";
 import http from "@/utils/request";
 import { $fromNow } from "@/utils/util";
 import Detail from "@/views/customize-menu/detail.vue";
+import mlApprove from "@/components/mlApprove/index.vue";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const { approveDialogEntityList } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 const COMMON_CONFIG = inject("COMMON_CONFIG");
+
 const router = useRouter();
 let userName = ref("");
 let userNameF = ref("");
@@ -138,14 +150,13 @@ const handleUser = (command) => {
                     });
                     $TOOL.data.clear();
                     $TOOL.cookie.remove("userInfo");
-                
+
                     router.replace({ path: "/login" });
                     setTimeout(() => {
                         loading.close();
                         location.reload();
                     }, 1000);
                 }
-                
             })
             .catch(() => {
                 //取消
@@ -190,13 +201,24 @@ const getMsgList = async () => {
 
 // 消息详情组件
 let detailRefs = ref("");
+// 审核弹框是否显示
+let approveDialogIsShow = ref(false);
+// 审批任务Id
+let approvalTaskId = ref("");
+// 实体ID
+let entityId = ref("");
+// 实体CODE
+let entityCode = ref("");
+// 审批名称
+let approvalName = ref("");
+
 // 消息点击
 const msgClick = (item, inx) => {
     console.log(item, "item");
+    let filterEntity = approveDialogEntityList.value.filter(
+        (el) => el.name == item.entityName
+    );
     if (item.type == 30 || item.type == 20) {
-        let filterEntity = approveDialogEntityList.value.filter(
-            (el) => el.name == item.entityName
-        );
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
         } else {
@@ -209,14 +231,22 @@ const msgClick = (item, inx) => {
             msg.value = false;
             detailRefs.value.openDialog(detailObj);
         }
-        markRead(item,inx)
+        markRead(item, inx);
+    } else if (item.type == 10) {
+        approveDialogIsShow.value = true;
+        entityId.value = item.relatedRecord.id;
+        approvalName.value = item.relatedRecord.name;
+        entityCode.value = filterEntity[0].entityCode;
+        if (item.unread) {
+            markRead(item);
+        }
     } else {
         $ElMessage.info("点击了type：" + item.type);
     }
 };
 
 // 标记单条已读
-const markRead = (item,inx) => {
+const markRead = (item, inx) => {
     msgList.value.splice(inx, 1);
     setNewMsgNum(msgList.length);
     http.post("/note/read?id=" + item.notificationId);

@@ -24,7 +24,7 @@
 		<template v-for="(item, index) in widget.widgetList" #[item.id] :key="index">
 			<smart-widget
                 :simple="!item.options.showHeader"
-				:title="item.options.title"
+				:title="item.options.label"
 				:refresh="item.options.showRefresh"
 				:fullscreen="item.options.showFullscreen"
                 :isActived="designer.selectedWidget?.id == item.id"

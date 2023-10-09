@@ -21,6 +21,16 @@
         </template>
     </mlSingleList>
     <Detail ref="detailRefs" />
+    <div v-if="approveDialogIsShow">
+        <mlApprove
+            v-model="approveDialogIsShow"
+            :taskId="approvalTaskId"
+            :entityId="entityId"
+            :entityCode="entityCode"
+            :approvalName="approvalName"
+            title="审批"
+        />
+    </div>
 </template>
    
 <script setup>
@@ -30,6 +40,8 @@ import { storeToRefs } from "pinia";
 import Detail from "@/views/customize-menu/detail.vue";
 import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
+import mlApprove from "@/components/mlApprove/index.vue";
+import http from "@/utils/request";
 const { approveDialogEntityList } = storeToRefs(useCommonStore());
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
@@ -104,13 +116,25 @@ let tableColumn = ref([
 
 // 消息详情组件
 let detailRefs = ref("");
+
+// 审核弹框是否显示
+let approveDialogIsShow = ref(false);
+// 审批任务Id
+let approvalTaskId = ref("");
+// 实体ID
+let entityId = ref("");
+// 实体CODE
+let entityCode = ref("");
+// 审批名称
+let approvalName = ref("");
+
 // 消息点击
 const activeRow = (item) => {
     console.log(item, "item");
+    let filterEntity = approveDialogEntityList.value.filter(
+        (el) => el.name == item.entityName
+    );
     if (item.type == 30 || item.type == 20) {
-        let filterEntity = approveDialogEntityList.value.filter(
-            (el) => el.name == item.entityName
-        );
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
         } else {
@@ -122,6 +146,14 @@ const activeRow = (item) => {
             detailObj.detailTitle = item.relatedRecord.name;
             detailRefs.value.openDialog(detailObj);
         }
+        if (item.unread) {
+            markRead(item);
+        }
+    } else if (item.type == 10) {
+        approveDialogIsShow.value = true;
+        entityId.value = item.relatedRecord.id;
+        approvalName.value = item.relatedRecord.name;
+        entityCode.value = filterEntity[0].entityCode;
         if (item.unread) {
             markRead(item);
         }

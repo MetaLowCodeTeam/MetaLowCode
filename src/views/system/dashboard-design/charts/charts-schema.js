@@ -38,171 +38,17 @@ export const ext_chart_containers = [
 
 ]
 
-const chartsList = [
-    {
-        type: "progressbar",
-        title: "进度条"
-    },
-    {
-        type: "barChart",
-        title: "柱状图"
-    },
-    {
-        type: "barXChart",
-        title: "条形图"
-    },
-    {
-        type: "lineChart",
-        title: "折线图"
-    },
-    {
-        type: "funnelChart",
-        title: "漏斗图"
-    },
-    {
-        type: "pieChart",
-        title: "饼图"
-    },
-    {
-        type: "radarChart",
-        title: "雷达图"
-    },
-    {
-        type: "pivotTable",
-        title: "透视表"
-    },
-    {
-        type: "listTable",
-        title: "数据列表"
-    }
-];
-
-
-// 拥有图标样式的图表
-const hasChartStyleType = [
-    "barChart",
-    "barXChart",
-    "lineChart",
-    "pieChart",
-    "progressbar",
-];
-
-// 拥有设置轴坐标的图表
-const hasAxisCoordinates = ["barChart", "barXChart", "lineChart"];
-
-const initChaer = () => {
-    let newChartList = [];
-    chartsList.forEach(el => {
-        let chartObj = {
-            type: el.type,
-            icon: el.type,
-            formItemFlag: false,
-            options: {
-                type: el.type,
-                name: '',
-                value: 13232.12,
-                title: el.title,
-                loading: false,
-                // 数据实体
-                dataEntity: "",
-                // 维度指标设置
-                setDimensional: {
-                    // 维度
-                    dimension: [],
-                    // 指标
-                    metrics: [],
-                    // 目标值
-                    targetValue: 1,
-                    // 显示字段
-                    showFields: [],
-                    // 维度行
-                    dimensionRow: [],
-                    // 维度列
-                    dimensionCol: [],
-                },
-                // 过滤条件
-                setChartFilter: {
-                    equation: "OR",
-                    items: [],
-                },
-                // 图表设置
-                setChartConf: {
-                    // 数值显示
-                    numShow: true,
-                    // 图例显示
-                    chartShow: true,
-                    // 使用全部数据
-                    useAllData: true,
-                    // 汇总行显示
-                    showSummary: false,
-                    // 汇总列显示
-                    showSumcol: false,
-                    // 最大展示条数
-                    pageSize: 999,
-                },
-                showHeader: true,
-                showFullscreen: false,
-                showRefresh: false,
-                icon: 'el-icon-star-on',
-                iconColor: '#000',
-                customClass: [],
-                dsEnabled: false,
-                dsName: "",
-                x: 0,
-                y: 0,
-                w: 4,
-                h: 4,
-                onCreated: '',
-                onMounted: '',
-                onRefresh: '',
-            }
-        };
-        // 添加图表样式设置
-        if (hasChartStyleType.includes(el.type)) {
-            chartObj.options.chartStyle = 1;
-        }
-        // 添加Y轴坐标设置
-        if (hasAxisCoordinates.includes(el.type)) {
-            chartObj.options.axisCoordinates = {
-                // 最大值
-                max: 0,
-                // 最小值
-                min: 0,
-            };
-        }
-        // 如果是表
-        if (el.type == 'pivotTable' || el.type == 'listTable') {
-            chartObj.options.w = 12
-            chartObj.options.h = 6
-        }
-        // 如果是漏斗图
-        if (el.type == 'funnelChart') {
-            chartObj.options.h = 8
-        }
-        // 如果是饼图
-        if (el.type == 'pieChart') {
-            chartObj.options.h = 7
-        }
-        // 如果是雷达图
-        if (el.type == 'radarChart') {
-            chartObj.options.h = 8
-            chartObj.options.w = 6
-        }
-        newChartList.push(chartObj)
-    })
-    return newChartList
-}
 
 export const ext_charts_widgets = [
+    // 统计数值
     {
         type: 'statistic',
         icon: 'statistic',
         formItemFlag: false,
         options: {
-            type: 'statistic',
             name: '',
             value: 13232.12,
-            title: '统计数值',
+            label: '统计数值',
             // 数据实体
             dataEntity: "",
             // 维度指标设置
@@ -239,9 +85,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
-            showIcon: false,
-            icon: 'el-icon-star-on',
-            iconColor: '#000',
+
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -249,10 +93,516 @@ export const ext_charts_widgets = [
             y: 0,
             w: 4,
             h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
         }
     },
-    ...initChaer()
+    // 进度条
+    {
+        type: 'progressbar',
+        icon: 'progressbar',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '进度条',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 指标
+                metrics: [],
+                // 目标值
+                targetValue: 1,
+            },
+            // 图表样式
+            chartStyle: 1,
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+        }
+    },
+    // 柱状图
+    {
+        type: 'barChart',
+        icon: 'barChart',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '柱状图',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            // 图表样式
+            chartStyle: 1,
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            // 添加Y轴坐标设置
+            axisCoordinates: {
+                // 最大值
+                max: 0,
+                // 最小值
+                min: 0,
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+        }
+    },
+    // 条形图
+    {
+        type: 'barXChart',
+        icon: 'barXChart',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '条形图',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            // 图表样式
+            chartStyle: 1,
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 添加Y轴坐标设置
+            axisCoordinates: {
+                // 最大值
+                max: 0,
+                // 最小值
+                min: 0,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+        }
+    },
+    // 折线图
+    {
+        type: 'lineChart',
+        icon: 'lineChart',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '折线图',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            // 图表样式
+            chartStyle: 1,
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 添加Y轴坐标设置
+            axisCoordinates: {
+                // 最大值
+                max: 0,
+                // 最小值
+                min: 0,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+        }
+    },
+    // 漏斗图
+    {
+        type: 'funnelChart',
+        icon: 'funnelChart',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '漏斗图',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 8,
+        }
+    },
+    // 饼图
+    {
+        type: 'pieChart',
+        icon: 'pieChart',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '饼图',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            chartStyle: 1,
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 7,
+        }
+    },
+    // 雷达图
+    {
+        type: 'radarChart',
+        icon: 'radarChart',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '雷达图',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度
+                dimension: [],
+                // 指标
+                metrics: [],
+            },
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 数值显示
+                numShow: true,
+                // 图例显示
+                chartShow: true,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 6,
+            h: 7,
+        }
+    },
+    // 透视表
+    {
+        type: 'pivotTable',
+        icon: 'pivotTable',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '透视表',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 维度行
+                dimensionRow: [],
+                // 维度列
+                dimensionCol: [],
+                // 指标
+                metrics: [],
+            },
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 汇总行显示
+                showSummary: false,
+                // 汇总列显示
+                showSumcol: false,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 12,
+            h: 6,
+        }
+    },
+    // 数据列表
+    {
+        type: 'listTable',
+        icon: 'listTable',
+        formItemFlag: false,
+        options: {
+            name: '',
+            value: 13232.12,
+            label: '数据列表',
+            // 数据实体
+            dataEntity: "",
+            // 维度指标设置
+            setDimensional: {
+                // 显示字段
+                showFields: [],
+            },
+            setChartStyle: {
+                // 颜色选择
+                useTextColor: "#000000",
+                // 货币符号
+                currencySymbol: "",
+                // 货币符号尺寸
+                currencySymbolSize: 14,
+            },
+            // 图表设置
+            setChartConf: {
+                // 最大展示条数
+                pageSize: 999,
+                // 汇总行显示
+                showSummary: false,
+                // 汇总列显示
+                showSumcol: false,
+                // 使用全部数据
+                useAllData: true,
+            },
+            // 过滤条件
+            setChartFilter: {
+                equation: "OR",
+                items: [],
+            },
+            showHeader: true,
+            showFullscreen: false,
+            showRefresh: false,
+            showCollapse: false,
+            customClass: [],
+            dsEnabled: false,
+            dsName: "",
+            x: 0,
+            y: 0,
+            w: 12,
+            h: 6,
+        }
+    },
+    // ...initChaer()
 ]

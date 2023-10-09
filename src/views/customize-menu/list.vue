@@ -31,7 +31,10 @@
                     </el-input>
                 </div>
                 <div class="fr table-setting">
-                    <el-button class="mr-15">按钮占用</el-button>
+                    <!-- <el-button class="mr-15">按钮占用</el-button> -->
+                    <el-button icon="Notification">打开</el-button>
+                    <el-button icon="Edit">编辑</el-button>
+                    <el-button type="primary" icon="Plus">新建</el-button>
                     <More
                         ref="MoreRefs"
                         :layoutConfig="layoutConfig"

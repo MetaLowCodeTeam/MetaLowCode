@@ -7,7 +7,7 @@
 
 		<template v-for="(item, index) in widget.widgetList" #[item.id] :key="index">
 			<smart-widget :simple="!item.options.showHeader"
-						  :title="item.options.title"
+						  :title="item.options.label"
 						  :refresh="item.options.showRefresh"
 						  :collapse="item.options.showCollapse"
 						  :fullscreen="item.options.showFullscreen">

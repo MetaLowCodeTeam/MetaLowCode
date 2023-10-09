@@ -183,7 +183,7 @@ let metrics = ref([]);
 let showFields = ref([]);
 // 初始化纬度、指标
 const initDimensional = () => {
-    chartType.value = props.optionModel.type;
+    chartType.value = props.selectedWidget.type;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
     showFields.value = props.optionModel.setDimensional?.showFields || [];
