@@ -14,7 +14,11 @@
         </div>
         <template #footer>
             <el-button @click="isShow = false">取消</el-button>
-            <el-button type="primary" @click="confirm" v-if="row.approvalStatus.value != 1 && row.approvalStatus.value != 3">确认</el-button>
+            <el-button
+                type="primary"
+                @click="confirm"
+                v-if="row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
+            >确认</el-button>
         </template>
     </ml-dialog>
 </template>
@@ -27,12 +31,12 @@ const emits = defineEmits("onConfirm");
 const $ElMessage = inject("$ElMessage");
 let row = reactive({
     approvalStatus: {},
+    detailId: "",
 });
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = (v) => {
-    row = Object.assign(row, v);
-    console.log(row, "row");
+    row = Object.assign(v,row);
     isShow.value = true;
     initFormLayout();
 };
@@ -55,24 +59,34 @@ const initFormLayout = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
-            // 根据数据渲染出页面填入的值，填过
-            nextTick(async () => {
-                let formData = await queryById(row.detailId);
-                vFormRef.value.setFormJson(res.data.layoutJson);
-                if (formData) {
-                    row.approvalStatus = formData.data.approvalStatus || {};
-                    vFormRef.value.setFormData(formData.data);
-                    if (
-                        row.approvalStatus.value == 1 ||
-                        row.approvalStatus.value == 3
-                    ) {
-                        nextTick(() => {
-                            vFormRef.value.disableForm();
-                        });
+            // 是编辑
+            if (row.detailId) {
+                // 根据数据渲染出页面填入的值，填过
+                nextTick(async () => {
+                    let formData = await queryById(row.detailId);
+                    vFormRef.value.setFormJson(res.data.layoutJson);
+                    if (formData) {
+                        row.approvalStatus = formData.data.approvalStatus || {};
+                        vFormRef.value.setFormData(formData.data);
+                        if (
+                            row.approvalStatus.value == 1 ||
+                            row.approvalStatus.value == 3
+                        ) {
+                            nextTick(() => {
+                                vFormRef.value.disableForm();
+                            });
+                        }
                     }
-                }
-                loading.value = false;
-            });
+                    loading.value = false;
+                });
+            }
+            // 是新建
+            else {
+                nextTick(async () => {
+                    vFormRef.value.setFormJson(res.data.layoutJson);
+                });
+            }
+            loading.value = false;
         } else {
             loading.value = false;
         }

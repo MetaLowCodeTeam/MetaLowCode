@@ -7,6 +7,8 @@ const useCommonStore = defineStore('commonStore', () => {
     let entityLable = reactive({});
     // 所有实体Name
     let entityName = reactive({});
+    // 所有实体Code
+    let entityCode = reactive({});
     // 审核弹框选择应用实体---已过滤
     let approveDialogEntityList = ref([]);
     const getEntityLable = () => {
@@ -20,10 +22,12 @@ const useCommonStore = defineStore('commonStore', () => {
                 res.data.forEach(el => {
                     entityLable[el.entityCode] = el.label;
                     entityName[el.entityCode] = el.name;
+                    entityCode[el.name] = el.entityCode;
                     if (!el.systemEntityFlag) {
                         approveDialogEntityList.value.push(el);
                     }
                 })
+                console.log(entityCode,'entityCode')
             }
         }).catch(res => {
             ElMessage({ message: res.message, type: 'error' })

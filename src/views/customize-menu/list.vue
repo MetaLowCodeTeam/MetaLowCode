@@ -32,9 +32,17 @@
                 </div>
                 <div class="fr table-setting">
                     <!-- <el-button class="mr-15">按钮占用</el-button> -->
-                    <el-button icon="Notification">打开</el-button>
-                    <el-button icon="Edit">编辑</el-button>
-                    <el-button type="primary" icon="Plus">新建</el-button>
+                    <el-button
+                        icon="Notification"
+                        :disabled="multipleSelection.length > 1"
+                        @click="openDetilDialog(multipleSelection[0])"
+                    >打开</el-button>
+                    <el-button
+                        icon="Edit"
+                        :disabled="multipleSelection.length > 1"
+                        @click="onEditRow(multipleSelection[0])"
+                    >编辑</el-button>
+                    <el-button type="primary" icon="Plus" @click="onAdd">新建</el-button>
                     <More
                         ref="MoreRefs"
                         :layoutConfig="layoutConfig"
@@ -139,8 +147,8 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList"/>
-        <Edit ref="editRefs" @onConfirm="getTableList"/>
+        <Detail ref="detailRefs" @onConfirm="getTableList" />
+        <Edit ref="editRefs" @onConfirm="getTableList" />
     </div>
 </template>
 
@@ -151,12 +159,13 @@ import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More.vue";
 import Detail from "./detail.vue";
-import Edit from './edit.vue';
+import Edit from "./edit.vue";
 import FormatRow from "./components/FormatRow.vue";
 
 const router = useRouter();
 
 const $API = inject("$API");
+const $ElMessage = inject("$ElMessage");
 // 页面Loading
 let pageLoading = ref(false);
 // 当前实体
@@ -226,8 +235,8 @@ onBeforeMount(() => {
 // 配置自定义列显示
 const MoreRefs = ref();
 const editColumn = (type) => {
-    MoreRefs.value.editColumn(type)
-}
+    MoreRefs.value.editColumn(type);
+};
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -334,10 +343,24 @@ const handleHighlightChangeTable = (row, column) => {
     }
 };
 
-// 打开编辑
+// 编辑弹框
 let editRefs = ref();
+
+// 新建
+const onAdd = () => {
+    let tempV = {};
+    tempV.dialogTitle = "新建" + router.currentRoute.value.meta.title;
+    tempV.entityName = entityName.value;
+    editRefs.value.openDialog(tempV);
+};
+
+// 编辑
 const onEditRow = (row) => {
-    let tempV = {...row};
+    if(!row){
+        $ElMessage.warning("请先选择数据");
+        return 
+    }
+    let tempV = { ...row };
     tempV.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
     tempV.entityName = entityName.value;
     tempV.detailId = row[idFiledName.value];
@@ -347,6 +370,10 @@ const onEditRow = (row) => {
 let detailRefs = ref("");
 // 打开详情
 const openDetilDialog = (row) => {
+    if(!row){
+        $ElMessage.warning("请先选择数据");
+        return 
+    }
     let detailData = { ...row };
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;
@@ -356,7 +383,6 @@ const openDetilDialog = (row) => {
     detailData.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
     detailData.idFiledName = idFiledName.value;
     detailRefs.value.openDialog(detailData);
-    
 };
 
 // 列排序
@@ -463,7 +489,7 @@ const setTableHeight = () => {
     // offsetTop += 150;
     // let calcPx = offsetTop + "px";
     // return 'calc(100% - 40px)'
-    return '100%'
+    return "100%";
 };
 
 // 设置列宽度
