@@ -81,22 +81,22 @@ onMounted(() => {
 });
 
 const initOption = () => {
-    let { options } = cutField.value;
+    let { options,type } = cutField.value;
     if (options) {
         let { metrics } = options.setDimensional;
         if (metrics.length < 1) {
             option.isNoData = true;
             return;
         }
-        getChartData(options);
+        getChartData(options,type);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
-const getChartData = async (options) => {
+const getChartData = async (options,type) => {
     loading.value = true;
-    let res = await queryChartData(options);
+    let res = await queryChartData(options,type);
     if (res && res.data) {
         let { setChartConf } = cutField.value.options;
         // 图例是否显示

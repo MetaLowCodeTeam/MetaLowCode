@@ -2,7 +2,7 @@
     <div class="chart-styles">
         <div class="c-s-t">图表样式</div>
         <template v-for="(style,styleInx) of stylesList">
-            <div class="c-s-c" v-if="style.type == option.type" :key="styleInx">
+            <div class="c-s-c" v-if="style.type == selectedWidget.type" :key="styleInx">
                 <div
                     class="prive-box"
                     v-for="(item,inx) of style.list"
@@ -142,14 +142,16 @@ const initchartStyle = () => {
 };
 // 检测禁用
 const checkIsDisabled = (item, chartType) => {
-    let { dimension, metrics } = option.value.setDimensional;
-    // 如果是柱状图，并且不是基础柱状图 并且 维度大于1
-    if (
-        (chartType == "barChart" || chartType == "barXChart") &&
-        item.type != 1 &&
-        (dimension.length > 1 || metrics.length < 2)
-    ) {
-        return true;
+    if (option.value.setDimensional) {
+        let { dimension, metrics } = option.value.setDimensional;
+        // 如果是柱状图，并且不是基础柱状图 并且 维度大于1
+        if (
+            (chartType == "barChart" || chartType == "barXChart") &&
+            item.type != 1 &&
+            (dimension.length > 1 || metrics.length < 2)
+        ) {
+            return true;
+        }
     }
     return false;
 };

@@ -54,7 +54,7 @@ let option = reactive({
 });
 
 const initOption = () => {
-    let { options } = cutField.value;
+    let { options,type } = cutField.value;
     if (options) {
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
@@ -65,7 +65,7 @@ const initOption = () => {
         if (metrics.length < 2 && chartStyle != 1) {
             cutField.value.options.chartStyle = 1;
         }
-        getChartData(options);
+        getChartData(options,type);
         // if (dimension.length == 1) {
         //     formatOption(dimension, metrics);
         // } else {
@@ -78,9 +78,9 @@ const initOption = () => {
     }
 };
 
-const getChartData = async (options) => {
+const getChartData = async (options,type) => {
     loading.value = true;
-    let res = await queryChartData(options);
+    let res = await queryChartData(options,type);
     if (res && res.data) {
         option.yAxis.data = [...res.data.xAxis];
         let { chartStyle, setChartConf, axisCoordinates } =

@@ -48,7 +48,7 @@ const formatItem = (list, target) => {
 }
 
 // 图表数据获取接口
-export function queryChartData(formModel) {
+export function queryChartData(formModel,type) {
     let commonStore = localStorage.getItem('commonStore');
     let entityName = commonStore ? JSON.parse(commonStore).entityName : {};
     // 维度
@@ -56,7 +56,7 @@ export function queryChartData(formModel) {
     // 指标
     let longitude = formatItem(formModel?.setDimensional.metrics || [], 'longitude');
 
-    if (formModel.type == 'pivotTable') {
+    if (type == 'pivotTable') {
         latitude = formatItem(formModel?.setDimensional.dimensionRow || [], 'latitude');
         let dimensionCol = formatItem(formModel?.setDimensional.dimensionCol || [], 'latitude');
         dimensionCol.forEach(el => {
@@ -66,7 +66,7 @@ export function queryChartData(formModel) {
     }
 
     let param = {
-        chartType: ChartTypes[formModel.type],
+        chartType: ChartTypes[type],
         entityName: entityName[formModel.dataEntity],
         latitude,
         longitude,

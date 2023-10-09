@@ -50,7 +50,7 @@ onMounted(() => {
 let dimensionName = ref("");
 let metricsNum = ref("");
 const initOption = () => {
-    let { options } = cutField.value;
+    let { options,type } = cutField.value;
     if (options) {
         let { metrics } = options.setDimensional;
         if (metrics.length < 1) {
@@ -60,15 +60,15 @@ const initOption = () => {
 
         isNoData.value = false;
 
-        getChartData(options);
+        getChartData(options,type);
     } else {
         isNoData.value = true;
     }
 };
 
-const getChartData = async (options) => {
+const getChartData = async (options,type) => {
     loading.value = true;
-    let res = await queryChartData(options);
+    let res = await queryChartData(options,type);
     if (res && res.data) {
         metricsNum.value = res.data.data || 0;
     }

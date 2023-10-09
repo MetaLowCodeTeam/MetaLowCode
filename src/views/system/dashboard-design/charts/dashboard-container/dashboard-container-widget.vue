@@ -44,7 +44,7 @@
 								   :index-of-parent-list="index" :parent-widget="widget"
 								   :design-state="true"></component>
 					</template>
-                    <span v-if="designer.selectedWidget?.id == item.id" class="del-span" @click="removeSelectedChart(index)">
+                    <span v-if="designer.selectedWidget?.id == item.id" class="del-span" @click="removeSelectedChart(index, item.id)">
                         <el-icon size="20"><ElIconDelete /></el-icon>
                     </span>
 				</div>
@@ -90,7 +90,14 @@ export default {
 		/**
 		 * 删除选中的图表组件或者区块容器
 		 */
-		removeSelectedChart(chartIndex) {
+		removeSelectedChart(chartIndex, chartId) {
+            let delInx;
+            this.widget.options.layout.forEach((el,inx) => {
+                if(el.i == chartId){
+                    delInx = inx;
+                }
+            })
+            this.widget.options.layout.splice(delInx,1);
             const chartList = this.widget.widgetList
 			if (chartList.length > 0) {
 				const widgetRefName = this.designer.selectedWidgetName

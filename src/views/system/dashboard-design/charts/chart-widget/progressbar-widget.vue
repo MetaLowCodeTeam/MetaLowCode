@@ -202,7 +202,7 @@ let percentage = ref();
 let progressText = ref("");
 let loading = ref(false);
 const initOption = () => {
-    let { options } = cutField.value;
+    let { options,type } = cutField.value;
     if (options) {
         let { setDimensional } = options;
         let { metrics } = setDimensional;
@@ -212,15 +212,15 @@ const initOption = () => {
             return;
         }
 
-        getChartData(options);
+        getChartData(options,type);
         myOption.value.isNoData = false;
     } else {
         myOption.value.isNoData = true;
     }
 };
-const getChartData = async (options) => {
+const getChartData = async (options,type) => {
     loading.value = true;
-    let res = await queryChartData(options);
+    let res = await queryChartData(options,type);
     if (res && res.data) {
         let { chartStyle, setDimensional, setChartConf } = options;
         let { targetValue, metrics } = setDimensional;

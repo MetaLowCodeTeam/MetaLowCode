@@ -108,6 +108,7 @@ export const ext_charts_widgets = [
             dataEntity: "",
             // 维度指标设置
             setDimensional: {
+                dimension:[],
                 // 指标
                 metrics: [],
                 // 目标值

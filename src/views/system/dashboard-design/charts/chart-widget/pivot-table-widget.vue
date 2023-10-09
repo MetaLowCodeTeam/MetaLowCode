@@ -173,11 +173,11 @@ const handleCurrentChange = (v) => {
 // 获取表格数据
 const getTableData = async () => {
     loading.value = true;
-    let { options } = cutField.value;
+    let { options,type } = cutField.value;
     if (!options) {
         return;
     }
-    let res = await queryChartData(options);
+    let res = await queryChartData(options,type);
     if (res && res.data) {
         // 元数据
         dataCfg.value.meta = res.data.meta;
