@@ -44,7 +44,7 @@
 								   :index-of-parent-list="index" :parent-widget="widget"
 								   :design-state="true"></component>
 					</template>
-                    <span v-if="designer.selectedWidget?.id == item.id" class="del-span" @click="removeSelectedChart">
+                    <span v-if="designer.selectedWidget?.id == item.id" class="del-span" @click="removeSelectedChart(index)">
                         <el-icon size="20"><ElIconDelete /></el-icon>
                     </span>
 				</div>
@@ -90,8 +90,9 @@ export default {
 		/**
 		 * 删除选中的图表组件或者区块容器
 		 */
-		removeSelectedChart() {
-			if (!!this.parentList) {
+		removeSelectedChart(chartIndex) {
+            const chartList = this.widget.widgetList
+			if (chartList.length > 0) {
 				const widgetRefName = this.designer.selectedWidgetName
 				const childrenRefNames = []
 				const fwHandler = (fw) => {
@@ -103,18 +104,16 @@ export default {
 				Utils.traverseWidgetsOfContainer(this.designer.selectedWidget, fwHandler, cwHandler)
 
 				let nextSelected = null
-				if (this.parentList.length === 1) {
-					if (!!this.parentWidget) {
-						nextSelected = this.parentWidget
-					}
-				} else if (this.parentList.length === (1 + this.indexOfParentList)) {
-					nextSelected = this.parentList[this.indexOfParentList - 1]
+				if (chartList.length === 1) {
+                    //
+				} else if (chartList.length === (1 + chartIndex)) {
+					nextSelected = chartList[chartIndex - 1]
 				} else {
-					nextSelected = this.parentList[this.indexOfParentList + 1]
+					nextSelected = chartList[chartIndex + 1]
 				}
 
 				this.$nextTick(() => {
-					this.parentList.splice(this.indexOfParentList, 1)
+					chartList.splice(chartIndex, 1)
 					this.designer.setSelected(nextSelected)
 
 					this.designer.formWidget.deleteWidgetRef(widgetRefName)  //删除组件ref！！！
