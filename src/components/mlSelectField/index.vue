@@ -48,7 +48,6 @@ watch(
 );
 onMounted(() => {
     selectedFields.value = props.modelValue;
-    console.log(selectedFields.value,'selectedFields.value')
 });
 
 // 打开弹框

@@ -29,6 +29,11 @@
                             </el-button>
                         </template>
                     </el-input>
+                    <span class="queick-edit" @click="addSearchFields">
+                        <el-icon size="18">
+                            <ElIconEditPen />
+                        </el-icon>
+                    </span>
                 </div>
                 <div class="fr table-setting">
                     <!-- <el-button class="mr-15">按钮占用</el-button> -->
@@ -149,6 +154,8 @@
         />
         <Detail ref="detailRefs" @onConfirm="getTableList" />
         <Edit ref="editRefs" @onConfirm="getTableList" />
+        <!-- 快速搜索字段 -->
+        <mlSelectField ref="SelectFieldDialog" v-model="searchFields" title="选择可查看/修改字段" />
     </div>
 </template>
 
@@ -161,7 +168,7 @@ import More from "./components/More.vue";
 import Detail from "./detail.vue";
 import Edit from "./edit.vue";
 import FormatRow from "./components/FormatRow.vue";
-
+import mlSelectField from "@/components/mlSelectField/index.vue";
 const router = useRouter();
 
 const $API = inject("$API");
@@ -356,9 +363,9 @@ const onAdd = () => {
 
 // 编辑
 const onEditRow = (row) => {
-    if(!row){
+    if (!row) {
         $ElMessage.warning("请先选择数据");
-        return 
+        return;
     }
     let tempV = { ...row };
     tempV.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
@@ -370,9 +377,9 @@ const onEditRow = (row) => {
 let detailRefs = ref("");
 // 打开详情
 const openDetilDialog = (row) => {
-    if(!row){
+    if (!row) {
         $ElMessage.warning("请先选择数据");
-        return 
+        return;
     }
     let detailData = { ...row };
     detailData.entityName = entityName.value;
@@ -416,6 +423,13 @@ const headerDragend = (newWidth, oldWidth, column) => {
             JSON.stringify(titleWidthForAll)
         );
     }
+};
+
+// 添加快速查询字段
+let searchFields = ref([]);
+let SelectFieldDialog = ref();
+const addSearchFields = () => {
+    SelectFieldDialog.value.openDialg();
 };
 
 // 常用查询切换
@@ -590,9 +604,29 @@ div {
 .quick-query {
     display: inline-block;
     margin-left: 15px;
-    width: 270px;
+    width: 300px;
+    padding-right: 30px;
+    position: relative;
     .quick-query-icon {
         cursor: pointer;
+    }
+    .queick-edit {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        right: 10px;
+        top: 5px;
+        cursor: pointer;
+        display: none;
+        color: #a1a1a1;
+        &:hover {
+            color: #666;
+        }
+    }
+    &:hover {
+        .queick-edit {
+            display: block;
+        }
     }
 }
 </style>

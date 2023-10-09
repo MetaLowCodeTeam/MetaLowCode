@@ -36,7 +36,14 @@ let row = reactive({
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = (v) => {
-    row = Object.assign(v,row);
+    // 如果是新建
+    if (!v.detailId) {
+        row = {
+            approvalStatus: {},
+            detailId: "",
+        };
+    }
+    row = Object.assign(row, v);
     isShow.value = true;
     initFormLayout();
 };

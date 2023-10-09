@@ -155,7 +155,8 @@ let notTitleDialog = reactive({
 
 // 保存调用
 const onSave = async (target) => {
-    let { triggerConfigId, whenNum, priority, actionContent } = trigger;
+
+    let { triggerConfigId, whenNum, priority, actionContent ,defaultTargetEntity} = trigger;
     // 如果是更新规则
     if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
         $ElMessage.warning("请至少添加 1 个更新规则");
@@ -188,6 +189,11 @@ const onSave = async (target) => {
     params.formModel.actionFilter = "";
     if (trigger.actionFilter.items.length > 0) {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
+    }
+    // 如果是聚合规则
+    if (trigger.actionType.value == 2){
+        actionContent.entityName = defaultTargetEntity.entityName
+        actionContent.fieldName = defaultTargetEntity.fieldName
     }
     // 如果是数据效验
     if (trigger.actionType.value == 4) {
@@ -253,6 +259,7 @@ const onSave = async (target) => {
             return;
         }
     }
+ 
     // 如果是自动撤销审批
     if (trigger.actionType.value == 7 && actionContent.items.length < 1) {
         $ElMessage.warning("请选择撤销记录");
