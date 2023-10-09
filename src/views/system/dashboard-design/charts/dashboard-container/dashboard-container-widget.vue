@@ -44,6 +44,9 @@
 								   :index-of-parent-list="index" :parent-widget="widget"
 								   :design-state="true"></component>
 					</template>
+                    <span v-if="designer.selectedWidget?.id == item.id" class="del-span" @click="removeSelectedChart">
+                        <el-icon size="20"><ElIconDelete /></el-icon>
+                    </span>
 				</div>
 			</smart-widget>
 		</template>
@@ -130,5 +133,16 @@ export default {
 .container-com {
     width: 100%;
     height: 100%;
+    position: relative;
+    .del-span {
+        position: absolute;
+        right: -11px;
+        bottom: -2px;
+        color: #909399;
+        cursor: pointer;
+        &:hover {
+            color: #606266;
+        }
+    }
 }
 </style>
