@@ -2,6 +2,8 @@
 	<v-form-designer ref="vfDesigner"
 					 :designer-config="designerConfig"
 					 :field-list-data="fieldListData"
+					 @field-widget-used="handleFWU"
+					 @field-widget-removed="handleFWR"
 					 class="visual-design">
 		<!-- 配置工具按钮 -->
 		<template #customToolButtons>
@@ -39,6 +41,7 @@ export default {
 	data() {
 		return {
 			designerConfig: {
+				componentLib: false,
 				formTemplates: false,
 				metadataLib: true,
 				logoHeader: false,
@@ -49,6 +52,9 @@ export default {
 			fieldListData: {},
 			layoutId: null,
 			formOptionData: {},
+
+			meteFieldsResult: null,
+			usedFieldNames: {},
 		}
 	},
 	created() {
@@ -63,9 +69,9 @@ export default {
 			this.$message.info('待实现...')
 		},
 
-		quickDesign() {
-			this.$message.info('待实现...')
-		},
+		// quickDesign() {
+		// 	this.$message.info('待实现...')
+		// },
 
 		loadFieldListData() {
 			getMDFieldList(this.entity).then(res => {
@@ -74,7 +80,8 @@ export default {
 					if (res.data.subFormList) {
 						this.fieldListData.subFormList = res.data.subFormList
 					}
-					let metaFields = this.buildMetaFields(res)
+					this.meteFieldsResult = res
+					const metaFields = this.buildMetaFields(this.meteFieldsResult)
 					this.$refs.vfDesigner.setFieldListData(this.fieldListData)
 					this.$refs.vfDesigner.setMetaFields(metaFields)
 				}
@@ -96,6 +103,10 @@ export default {
 			if (mdResult.data.fieldList) {
 				mdResult.data.fieldList.forEach(fld => {
 					if (!fld.detailEntity && (fld.type !== 'PrimaryKey')) {  //跳过id主键
+						if (this.usedFieldNames.hasOwnProperty(fld.name)) {
+							return //跳过本次循环
+						}
+
 						const fieldNewProps = deepClone(formFieldMapping[fld.type])
 						const fieldSchema = deepClone( this.$refs.vfDesigner.designer.getFieldWidgetByType( fieldNewProps.type ) )
 						overwriteObj(fieldSchema.options, fieldNewProps.options)
@@ -122,6 +133,10 @@ export default {
 
 					mdResult.data.fieldList.forEach(fld => {
 						if (fld.detailEntity && (fld.detailEntity === deName) && (fld.type !== 'PrimaryKey')) {  //跳过id主键
+							if (this.usedFieldNames.hasOwnProperty(fld.name)) {
+								return //跳过本次循环
+							}
+
 							const fieldNewProps = deepClone(formFieldMapping[fld.type])
 							const fieldSchema = deepClone( this.$refs.vfDesigner.designer.getFieldWidgetByType( fieldNewProps.type ) )
 							overwriteObj(fieldSchema.options, fieldNewProps.options)
@@ -155,9 +170,25 @@ export default {
 				fieldSchema.options.required = fldObj['required'] === "1"
 			}
 
-			// if (fldObj.type === 'status') {
-			// 	fieldSchema.options.disabled = true
-			// }
+			//
+		},
+
+		handleFWU(fwName) {
+			this.usedFieldNames[fwName] = 1
+			/* 必须延时处理，否则draggable会报错 */
+			setTimeout(() => {
+				const metaFields = this.buildMetaFields(this.meteFieldsResult)
+				this.$refs.vfDesigner.setMetaFields(metaFields)
+			}, 800)
+		},
+
+		handleFWR(fwName) {
+			delete this.usedFieldNames[fwName]
+			/* 必须延时处理，否则draggable会报错 */
+			setTimeout(() => {
+				const metaFields = this.buildMetaFields(this.meteFieldsResult)
+				this.$refs.vfDesigner.setMetaFields(metaFields)
+			}, 800)
 		},
 
 		loadDesign() {
@@ -169,12 +200,12 @@ export default {
 
 				if (!!res.data && !!res.data.layoutJson) {
 					this.layoutId = res.data.formLayoutId
+					//TODO: 首次表单后，需要过滤已使用字段组件！！
 					this.$refs.vfDesigner.setFormJson(res.data.layoutJson)
 				} else {
 					this.$refs.vfDesigner.clearDesigner()
 				}
 
-				//console.log('abc', res.data.optionData)
 				if (!!res.data && !!res.data.optionData) {
 					this.formOptionData = res.data.optionData
 					this.$refs.vfDesigner.setTestOptionData(res.data.optionData)
@@ -187,6 +218,8 @@ export default {
 		},
 
 		saveDesign() {
+			//TODO: 检查表单设计是否符合规范！！！
+
 			if (!this.layoutId) {
 				createFormLayout(this.entity, this.$refs.vfDesigner.getFormJson()).then(res => {
 					if (res.error != null) {
