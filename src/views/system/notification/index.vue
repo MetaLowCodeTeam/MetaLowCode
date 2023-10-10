@@ -36,6 +36,7 @@
 import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 import Detail from "@/views/customize-menu/detail.vue";
 import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
@@ -47,7 +48,7 @@ const { setNewMsgNum } = useCheckStatusStore();
 const COMMON_CONFIG = inject("COMMON_CONFIG");
 const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
-
+const router = useRouter();
 // 默认排序
 let sortFields = ref([
     {
@@ -143,19 +144,16 @@ const activeRow = (item) => {
             detailObj.detailTitle = item.relatedRecord.name;
             detailRefs.value.openDialog(detailObj);
         }
-        if (item.unread) {
-            markRead(item);
-        }
     } else if (item.type == 10) {
         approveDialogIsShow.value = true;
         approvalTaskId.value = item.relatedRecord.id;
         entityId.value = item.relatedRecord.id;
         approvalName.value = item.relatedRecord.name;
-        // if (item.unread) {
-        //     markRead(item);
-        // }
     } else {
-        $ElMessage.info("点击了type：" + item.type);
+        router.push("/center-cc");
+    }
+    if (item.unread) {
+        markRead(item);
     }
 };
 

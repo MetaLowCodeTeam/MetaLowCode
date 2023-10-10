@@ -6,6 +6,7 @@
             </el-icon>
         </div>
         <div class="msg panel-item" @click="showMsg">
+            
             <el-badge :hidden="newMsgNum == 0" :value="newMsgNum" class="badge" type="danger">
                 <el-icon>
                     <el-icon-chat-dot-round />
@@ -28,7 +29,7 @@
                                             </el-badge>
                                         </div>
                                         <div class="msg-list__main">
-                                            <h2>{{item.fromUser.name}}临时TYPE{{item.type}}</h2>
+                                            <h2>{{item.fromUser.name}}</h2>
                                             <p>{{item.message}}</p>
                                         </div>
                                         <div class="msg-list__time">
@@ -227,24 +228,27 @@ const msgClick = (item, inx) => {
             msg.value = false;
             detailRefs.value.openDialog(detailObj);
         }
-        markRead(item, inx);
     } else if (item.type == 10) {
         approveDialogIsShow.value = true;
         approvalTaskId.value = item.relatedRecord.id;
         entityId.value = item.relatedRecord.id;
         approvalName.value = item.relatedRecord.name;
-        if (item.unread) {
-            markRead(item);
-        }
     } else {
-        $ElMessage.info("点击了type：" + item.type);
+        let { currentRoute } = router;
+        if (currentRoute.value.name != "CenterCc") {
+            router.push("/center-cc");
+        }
+        msg.value = false;
+    }
+    if (item.unread) {
+        markRead(item, inx);
     }
 };
 
 // 标记单条已读
 const markRead = (item, inx) => {
     msgList.value.splice(inx, 1);
-    setNewMsgNum(msgList.length);
+    setNewMsgNum(msgList.value.length);
     http.post("/note/read?id=" + item.notificationId);
 };
 
