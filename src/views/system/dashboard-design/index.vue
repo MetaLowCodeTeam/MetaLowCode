@@ -43,8 +43,10 @@ export default {
             loading: false,
             chartId: "",
             designerConfig: {
+				componentLib: false,  //隐藏表单组件库
                 formTemplates: false,
                 logoHeader: false,
+				layoutTypeButton: false,  //隐藏表单布局适配按钮组
                 clearDesignerButton: false,
                 previewFormButton: false,
                 importJsonButton: false,

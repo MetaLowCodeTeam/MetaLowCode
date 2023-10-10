@@ -4,6 +4,7 @@
 					 :field-list-data="fieldListData"
 					 @field-widget-used="handleFWU"
 					 @field-widget-removed="handleFWR"
+					 @form-json-updated="handleFJU"
 					 class="visual-design">
 		<!-- 配置工具按钮 -->
 		<template #customToolButtons>
@@ -68,10 +69,6 @@ export default {
 		addMetaField() {
 			this.$message.info('待实现...')
 		},
-
-		// quickDesign() {
-		// 	this.$message.info('待实现...')
-		// },
 
 		loadFieldListData() {
 			getMDFieldList(this.entity).then(res => {
@@ -175,6 +172,12 @@ export default {
 
 		handleFWU(fwName) {
 			this.usedFieldNames[fwName] = 1
+
+			// this.$nextTick(() => {
+			// 	const metaFields = this.buildMetaFields(this.meteFieldsResult)
+			// 	this.$refs.vfDesigner.setMetaFields(metaFields)
+			// })
+
 			/* 必须延时处理，否则draggable会报错 */
 			setTimeout(() => {
 				const metaFields = this.buildMetaFields(this.meteFieldsResult)
@@ -184,11 +187,33 @@ export default {
 
 		handleFWR(fwName) {
 			delete this.usedFieldNames[fwName]
+
+			// this.$nextTick(() => {
+			// 	const metaFields = this.buildMetaFields(this.meteFieldsResult)
+			// 	this.$refs.vfDesigner.setMetaFields(metaFields)
+			// })
+
 			/* 必须延时处理，否则draggable会报错 */
 			setTimeout(() => {
 				const metaFields = this.buildMetaFields(this.meteFieldsResult)
 				this.$refs.vfDesigner.setMetaFields(metaFields)
 			}, 800)
+		},
+
+		handleFJU() {
+			this.handleUsedFields()
+			setTimeout(() => {
+				const metaFields = this.buildMetaFields(this.meteFieldsResult)
+				this.$refs.vfDesigner.setMetaFields(metaFields)
+			}, 300)
+		},
+
+		handleUsedFields() {
+			this.usedFieldNames = {}
+			const allFieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
+			allFieldWidgets.forEach(fwItem => {
+				this.usedFieldNames[fwItem.name] = 1
+			})
 		},
 
 		loadDesign() {
@@ -202,6 +227,7 @@ export default {
 					this.layoutId = res.data.formLayoutId
 					//TODO: 首次表单后，需要过滤已使用字段组件！！
 					this.$refs.vfDesigner.setFormJson(res.data.layoutJson)
+					this.handleUsedFields()
 				} else {
 					this.$refs.vfDesigner.clearDesigner()
 				}
