@@ -53,7 +53,6 @@
             v-model="approveDialogIsShow"
             :taskId="approvalTaskId"
             :entityId="entityId"
-            :entityCode="entityCode"
             :approvalName="approvalName"
             @confirm="confirm"
             title="审批"

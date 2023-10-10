@@ -26,7 +26,6 @@
             v-model="approveDialogIsShow"
             :taskId="approvalTaskId"
             :entityId="entityId"
-            :entityCode="cutEntityCode"
             :approvalName="approvalName"
             title="审批"
         />
@@ -42,7 +41,7 @@ import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
-const { entityCode } = storeToRefs(useCommonStore());
+const { approveDialogEntityList } = storeToRefs(useCommonStore());
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const COMMON_CONFIG = inject("COMMON_CONFIG");
@@ -123,21 +122,22 @@ let approveDialogIsShow = ref(false);
 let approvalTaskId = ref("");
 // 实体ID
 let entityId = ref("");
-// 实体CODE
-let cutEntityCode = ref("");
+
 // 审批名称
 let approvalName = ref("");
 
 // 消息点击
 const activeRow = (item) => {
-    console.log(item, "item");
+    let filterEntity = approveDialogEntityList.value.filter(
+        (el) => el.name == item.entityName
+    );
     if (item.type == 30 || item.type == 20) {
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
         } else {
             let detailObj = {};
             detailObj.entityName = item.entityName;
-            detailObj.entityCode = entityCode[item.entityName];
+            detailObj.entityCode = filterEntity[0].entityCode;
             detailObj.tab = {};
             detailObj.detailId = item.relatedRecord.id;
             detailObj.detailTitle = item.relatedRecord.name;
@@ -151,7 +151,6 @@ const activeRow = (item) => {
         approvalTaskId.value = item.relatedRecord.id;
         entityId.value = item.relatedRecord.id;
         approvalName.value = item.relatedRecord.name;
-        cutEntityCode.value = entityCode[item.entityName];
         // if (item.unread) {
         //     markRead(item);
         // }

@@ -27,7 +27,6 @@ const useCommonStore = defineStore('commonStore', () => {
                         approveDialogEntityList.value.push(el);
                     }
                 })
-                console.log(entityCode,'entityCode')
             }
         }).catch(res => {
             ElMessage({ message: res.message, type: 'error' })

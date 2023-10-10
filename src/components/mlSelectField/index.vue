@@ -2,15 +2,15 @@
     <mlDialog :title="title" append-to-body width="37%" v-model="dialogIsShow">
         <div class="mlfield-box">
             <el-row :gutter="10">
-                <el-col :span="6" v-for="(field,inx) of fieldList" :key="inx" >
+                <el-col :span="6" v-for="(field,inx) of fieldList" :key="inx">
                     <div class="mlfield-item">
                         <div class="mlfield-check-box fl">
-                            <el-checkbox v-model="field.isSelected" :disabled="field.reserved"/>
+                            <el-checkbox
+                                v-model="field.isSelected"
+                                :disabled="!isQuickQuery && field.reserved"
+                            />
                         </div>
-                        <div
-                            class="mlfield-label fr"
-                            @click="fieldSelect(field)"
-                        >{{ field.label }}</div>
+                        <div class="mlfield-label fr" @click="fieldSelect(field)">{{ field.label }}</div>
                     </div>
                 </el-col>
             </el-row>
@@ -24,13 +24,15 @@
 
 <script setup>
 import { watch, ref, onMounted, inject } from "vue";
-const api = inject("$API");
-const message = inject("$ElMessage");
+const $API = inject("$API");
+const $ElMessage = inject("$ElMessage");
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     title: { type: String, defalut: "123" },
+    isQuickQuery: { type: Boolean, defalut: false },
+    quickQueryConf: { type: Object, default: () => {} },
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "onConfirm"]);
 // 选中的数据列表
 let selectedFields = ref([]);
 // 弹框是否显示
@@ -61,21 +63,31 @@ const getAllFields = async () => {
     loading.value = true;
     let param = { entity: "DemoContact" };
     let hasFields = selectedFields.value.map((el) => el.name);
-    let res = await api.common.getFieldListOfEntity(param);
+    let res = await $API.common.getFieldListOfEntity(param);
     if (res) {
         let resList = [];
-        res.data.forEach(el=>{
-            if(el.type !== 'PrimaryKey'){
+        res.data.forEach((el) => {
+            if (el.type !== "PrimaryKey" && props.isQuickQuery) {
                 el.isSelected = false;
                 if (hasFields.includes(el.name)) {
-                    let filterFields = selectedFields.value.filter((subEl) => el.name == subEl.name);
-                    el.isRequired = filterFields[0].isRequired,
-                    el.isEdit = filterFields[0].isEdit,
+                    let filterFields = selectedFields.value.filter(
+                        (subEl) => el.name == subEl.name
+                    );
+                    (el.isRequired = filterFields[0].isRequired),
+                        (el.isEdit = filterFields[0].isEdit),
+                        (el.isSelected = true);
+                }
+                // 如果是快速查询字段，且没有默认值，且是名称字段
+                if (
+                    props.isQuickQuery &&
+                    selectedFields.value.length < 1 &&
+                    el.nameFieldFlag
+                ) {
                     el.isSelected = true;
                 }
-                resList.push(el)
+                resList.push(el);
             }
-        })
+        });
         fieldList.value = resList;
     }
     loading.value = false;
@@ -83,28 +95,52 @@ const getAllFields = async () => {
 
 // 选择字段
 const fieldSelect = (field) => {
-    if(field.reserved){
-        return
+    if (field.reserved) {
+        return;
     }
     field.isSelected = !field.isSelected;
-}
+};
 
 // 确认
-const confirm = () => {
+const confirm = async () => {
     selectedFields.value = fieldList.value.filter((el) => el.isSelected);
-    selectedFields.value.forEach(el => {
+    selectedFields.value.forEach((el) => {
         el.isEdit = true;
         el.isRequired = false;
-    })
-    emit("update:modelValue", selectedFields.value);
-    dialogIsShow.value = false;
+    });
+    if (props.isQuickQuery) {
+        if (selectedFields.value.length < 1) {
+            $ElMessage.warning("请至少选择 1 个搜索字段");
+            return;
+        }
+        let { entityCode, layoutConfigId } = props.quickQueryConf;
+        let param = {
+            config: JSON.stringify([...selectedFields.value]),
+            entityCode,
+            applyType: "SEARCH",
+        };
+        loading.value = true;
+        let res = await $API.layoutConfig.saveConfig(
+            layoutConfigId,
+            "SEARCH",
+            param
+        );
+        if (res) {
+            $ElMessage.success("保存成功！");
+            dialogIsShow.value = false;
+            emit('onConfirm')
+        }
+        loading.value = false;
+    } else {
+        emit("update:modelValue", selectedFields.value);
+        dialogIsShow.value = false;
+    }
 };
 
 // 暴露方法给父组件调用
 defineExpose({
     openDialg,
 });
-
 </script>
 
 <style lang="scss" scoped>

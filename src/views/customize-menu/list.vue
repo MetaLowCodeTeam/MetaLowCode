@@ -29,7 +29,7 @@
                             </el-button>
                         </template>
                     </el-input>
-                    <span class="queick-edit" @click="addSearchFields">
+                    <span class="queick-edit" @click="openSelectFieldDialog">
                         <el-icon size="18">
                             <ElIconEditPen />
                         </el-icon>
@@ -155,7 +155,14 @@
         <Detail ref="detailRefs" @onConfirm="getTableList" />
         <Edit ref="editRefs" @onConfirm="getTableList" />
         <!-- 快速搜索字段 -->
-        <mlSelectField ref="SelectFieldDialog" v-model="searchFields" title="选择可查看/修改字段" />
+        <mlSelectField
+            ref="SelectFieldDialog"
+            v-model="quickQueryConf.value"
+            title="选择快速搜索字段"
+            isQuickQuery
+            :quickQueryConf="quickQueryConf"
+            @onConfirm="getLayoutList"
+        />
     </div>
 </template>
 
@@ -223,6 +230,13 @@ let titleWidthForSelf = reactive({});
 // 快捷查询
 let quickQuery = ref("");
 let quickQueryPlaceholder = ref("");
+// 快速查询配置
+let quickQueryConf = reactive({
+    layoutConfigId: "",
+    value: [],
+    entityCode:"",
+});
+
 
 // 详情Tab
 let detailTab = reactive({});
@@ -231,9 +245,12 @@ let idFiledName = ref("");
 // 标蓝字段
 let nameFiledName = ref("");
 
+
+
 onBeforeMount(() => {
     entityCode.value = router.currentRoute.value.meta.entityCode;
     entityName.value = router.currentRoute.value.meta.entityName;
+    quickQueryConf.entityCode = entityCode.value;
     // getTableColumn();
     // 获取导航配置
     getLayoutList();
@@ -286,6 +303,12 @@ const getLayoutList = async () => {
         // 如果存在列
         if (tableColumn.value.length > 0) {
             refreshData();
+        }
+        // 如果存在快速搜索字段
+        if(res.data.SEARCH){
+            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId
+            quickQueryConf.entityCode = res.data.SEARCH.entityCode
+            quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
         }
     }
 };
@@ -426,11 +449,12 @@ const headerDragend = (newWidth, oldWidth, column) => {
 };
 
 // 添加快速查询字段
-let searchFields = ref([]);
+
 let SelectFieldDialog = ref();
-const addSearchFields = () => {
+const openSelectFieldDialog = () => {
     SelectFieldDialog.value.openDialg();
 };
+
 
 // 常用查询切换
 const changeAdvFilter = (e) => {

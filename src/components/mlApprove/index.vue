@@ -14,7 +14,7 @@
         </template>
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
-                <el-col :span="18">
+                <el-col :span="approvalTask.type ? 18 : 24">
                     <v-form-render
                         v-if="haveLayoutJson"
                         ref="vFormRef"
@@ -22,9 +22,9 @@
                         :form-data="formData"
                         :global-dsv="globalDsv"
                     />
-                    <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
+                    <el-empty v-else :image-size="100" :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'" />
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6" v-if="approvalTask.type">
                     <el-form label-position="top" label-width="100px">
                         <el-form-item label="批注">
                             <el-input
@@ -119,7 +119,6 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     title: { type: String, default: "" },
     approvalName: { type: String, default: "" },
-    entityCode: { type: Number, default: "" },
 });
 const emit = defineEmits(["update:modelValue", "canner", "confirm"]);
 const $ElMessage = inject("$ElMessage");
@@ -153,6 +152,7 @@ let taskOperation = ref({
     //    操作用户
     nodeRoleList: [],
 });
+
 watch(
     () => props.modelValue,
     () => {
@@ -187,7 +187,7 @@ let globalDsv = reactive({});
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
-    let res = await getFormLayout(entityName.value[props.entityCode]);
+    let res = await getFormLayout(entityName.value[approvalTask.value.entityCode]);
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
@@ -258,7 +258,7 @@ async function confirmApprove(isBacked) {
     if (formData) {
         loading.value = true;
         let saveRes = await saveRecord(
-            entityName.value[props.entityCode],
+            entityName.value[approvalTask.value.entityCode],
             props.entityId,
             formData
         );
