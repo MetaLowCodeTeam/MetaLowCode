@@ -9,7 +9,7 @@
         <template #customToolButtons>
             <el-button type="primary" link @click="clearCanvas">
                 <el-icon>
-                    <Delete />
+                    <ElIconDelete />
                 </el-icon>清空画布
             </el-button>
             <el-button type="primary" link @click="previewDesign">

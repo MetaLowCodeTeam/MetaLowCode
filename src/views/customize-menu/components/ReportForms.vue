@@ -49,7 +49,7 @@ const openDialog = (data) => {
 
 const getReportConfigList = async () => {
     loading.value = true;
-    let res = await http.get("/report/getReportConfigList", {
+    let res = await http.get("/plugins/mannerReport/getReportConfigList", {
         entityCode: entityCode.value,
     });
     if (res) {
@@ -60,7 +60,7 @@ const getReportConfigList = async () => {
 
 const downReport = async (item) => {
     window.open(
-        `/api/report/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
+        `/api/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
     );
 };
 

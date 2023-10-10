@@ -46,10 +46,12 @@ import * as scIcons from './assets/icons'
 
 import mlSelectUser from './components/mlSelectUser/index.vue';
 import mlSetConditions from './components/mlSetConditions/index.vue';
+
 import mlDialog from './components/mlDialog/index.vue';
 import mlPagination from './components/mlPagination/index.vue';
 import mlSearchInput from './components/mlSearchInput/index.vue';
 import mlSingleList from './components/mlSingleList/index.vue';
+import mlListDetails from './components/mlListDetails/index.vue';
 import mlActiveDialog from "./components/mlActiveDialog/index.vue";
 import mlEntityMenuAndList from "./components/mlEntityMenuAndList/index.vue";
 import mlUpload from "./components/mlUpload/index.vue";
@@ -81,6 +83,7 @@ export default {
         app.component('mlPagination', mlPagination);
         app.component('mlSearchInput', mlSearchInput);
         app.component('mlSingleList', mlSingleList);
+        app.component('mlListDetails', mlListDetails);
         app.component('mlActiveDialog', mlActiveDialog);
         app.component('mlEntityMenuAndList', mlEntityMenuAndList);
         app.component('mlUpload', mlUpload);

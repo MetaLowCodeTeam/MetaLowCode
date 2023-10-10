@@ -11,7 +11,7 @@ export default {
     list: {
         // 获取实体列表
         getEntityList: async (data) => {
-            return await http.get("/report/getEntityCode", data);
+            return await http.get("/plugins/mannerReport/getEntityCode", data);
         },
     },
 }

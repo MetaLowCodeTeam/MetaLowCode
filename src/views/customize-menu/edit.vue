@@ -6,9 +6,6 @@
             <v-form-render
                 v-if="haveLayoutJson"
                 ref="vFormRef"
-                :option-data="optionData"
-                :form-data="formData"
-                :global-dsv="globalDsv"
             />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
@@ -27,23 +24,21 @@
 import { reactive, ref, inject, nextTick } from "vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
-const emits = defineEmits("onConfirm");
+const emits = defineEmits(["onConfirm"]);
 const $ElMessage = inject("$ElMessage");
+
 let row = reactive({
     approvalStatus: {},
     detailId: "",
+    entityName: "",
+    dialogTitle: "",
 });
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = (v) => {
-    // 如果是新建
-    if (!v.detailId) {
-        row = {
-            approvalStatus: {},
-            detailId: "",
-        };
-    }
-    row = Object.assign(row, v);
+    row.detailId = v.detailId;
+    row.entityName = v.entityName;
+    row.dialogTitle = v.dialogTitle;
     isShow.value = true;
     initFormLayout();
 };
@@ -56,9 +51,6 @@ const openDialog = (v) => {
 
 const vFormRef = ref();
 let haveLayoutJson = ref(false);
-let optionData = reactive({});
-let formData = reactive({});
-let globalDsv = reactive({});
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
@@ -91,6 +83,7 @@ const initFormLayout = async () => {
             else {
                 nextTick(async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
+                    vFormRef.value.setFormData({});
                 });
             }
             loading.value = false;
@@ -108,7 +101,12 @@ const initFormLayout = async () => {
  */
 // 保存
 const confirm = async () => {
+    if (!vFormRef.value) {
+        isShow.value = false;
+        return;
+    }
     let formData = await vFormRef.value.getFormData();
+
     if (formData) {
         loading.value = true;
         let saveRes = await saveRecord(row.entityName, row.detailId, formData);

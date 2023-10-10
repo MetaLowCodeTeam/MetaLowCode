@@ -100,7 +100,6 @@ export default {
     contentForReadMode() {
       return this.fieldModel ? this.fieldModel.name : '--'
     }
-
   },
   watch: {
     fieldModel: {
@@ -118,7 +117,8 @@ export default {
   },
 
   created() {
-    this.entity = this.$route.query.entity || this.$route.meta.entityName
+    const gDsv = this.getGlobalDsv()
+    this.entity = this.$route.query.entity || this.$route.meta.entityName || gDsv['formEntity']
 
     /* 注意：子组件mounted在父组件created之后、父组件mounted之前触发，故子组件mounted需要用到的prop
        需要在父组件created中初始化！！ */

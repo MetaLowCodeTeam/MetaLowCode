@@ -54,7 +54,7 @@ function initData() {
 // 获取菜单数据
 function getEntityData() {
     return new Promise(async (resolve, reject) => {
-        let menuRes = await http.get("/report/getEntityList", {
+        let menuRes = await http.get("/plugins/mannerReport/getEntityList", {
             reportConfigId: reportConfigId.value,
         });
         if (menuRes) {

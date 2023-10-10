@@ -109,7 +109,7 @@
                             >
                                 <span class="mr-3">
                                     <el-icon>
-                                        <Edit />
+                                        <ElIconEdit />
                                     </el-icon>
                                 </span>
                                 <span>编辑</span>
@@ -122,7 +122,7 @@
                             >
                                 <span class="mr-3">
                                     <el-icon>
-                                        <Delete />
+                                        <ElIconDelete />
                                     </el-icon>
                                 </span>
                                 <span>删除</span>

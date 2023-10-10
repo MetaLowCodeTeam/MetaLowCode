@@ -131,6 +131,12 @@ const routes = [
                         component: 'user/role-list-view',
                         meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1' }
                     },
+                    {
+                        path: '/team-list',
+                        name: 'TeamList',
+                        component: 'user/team-list-view',
+                        meta: { title: '团队', icon: 'el-icon-suitcase-line', role: 'r24-1', entityName: "Team" }
+                    },
                 ]
             },
             {

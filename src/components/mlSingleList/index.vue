@@ -171,7 +171,7 @@ async function getTableList() {
     }
 
     if (res) {
-        tableList.value = res.data.dataList;
+        tableList.value = res.data?.dataList || [];
         page.total = res.data.pagination.total;
     }
     loading.value = false;
