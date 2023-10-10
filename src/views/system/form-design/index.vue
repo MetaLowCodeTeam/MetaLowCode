@@ -160,6 +160,14 @@ export default {
 					fieldSchema.options.optionItems = deepClone( this.formOptionData[fieldSchema.options.name] )
 				}
 
+				if (fldObj.type === 'Boolean') {
+					fieldSchema.options.optionItems = [
+						{ value: true, label: '是'},
+						{ value: false, label: '否'},
+						{ value: null, label: '未指定'},
+					]
+				}
+
 				fieldSchema.optionItemsReadonly = true
 			}
 
@@ -173,11 +181,6 @@ export default {
 		handleFWU(fwName) {
 			this.usedFieldNames[fwName] = 1
 
-			// this.$nextTick(() => {
-			// 	const metaFields = this.buildMetaFields(this.meteFieldsResult)
-			// 	this.$refs.vfDesigner.setMetaFields(metaFields)
-			// })
-
 			/* 必须延时处理，否则draggable会报错 */
 			setTimeout(() => {
 				const metaFields = this.buildMetaFields(this.meteFieldsResult)
@@ -187,11 +190,6 @@ export default {
 
 		handleFWR(fwName) {
 			delete this.usedFieldNames[fwName]
-
-			// this.$nextTick(() => {
-			// 	const metaFields = this.buildMetaFields(this.meteFieldsResult)
-			// 	this.$refs.vfDesigner.setMetaFields(metaFields)
-			// })
 
 			/* 必须延时处理，否则draggable会报错 */
 			setTimeout(() => {
