@@ -1,7 +1,7 @@
 <template>
     <mlDialog v-model="isShow" :title="title" width="35%">
         <div class="timeline-div" v-loading="loading">
-            <el-timeline>
+            <el-timeline v-if="approveHistory.length > 0">
                 <el-timeline-item
                     v-for="(activity, index) in approveHistory"
                     :key="index"
@@ -52,6 +52,7 @@
                     </div>
                 </el-timeline-item>
             </el-timeline>
+            <el-empty v-else :image-size="100" description="未查询到流程记录"/>
         </div>
     </mlDialog>
 </template>

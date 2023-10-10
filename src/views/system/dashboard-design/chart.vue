@@ -8,8 +8,7 @@
         fieldName="chartName"
         :tableColumn="tableColumn"
         :filterItems="filterItems"
-        detailRouter="/dashboard-design"
-        detailId="chartId"
+        @highlightClick="highlightClick"
     >
         <template #addbutton>
             <!-- <el-button type="primary" @click="markAllRead">全部设为已读</el-button> -->
@@ -63,6 +62,8 @@ import { ref, inject, reactive } from "vue";
 import { $fromNow } from "@/utils/util";
 import { saveRecord, deleteRecord } from "@/api/crud";
 import { ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 // 默认排序
 let sortFields = ref([
@@ -147,6 +148,7 @@ const delCick = (row) => {
         })
         .catch(() => {});
 };
+
 // 确认
 let mlSingleListRef = ref();
 const onConfirm = async () => {
@@ -162,6 +164,17 @@ const onConfirm = async () => {
         mlSingleListRef.value.getTableList();
     }
     mlSingleListRef.value.loading = false;
+};
+
+// 高亮字段点击
+const highlightClick = (row) => {
+    let routerData = {
+        path: "/dashboard-design",
+        query: {
+            chartId: row.chartId,
+        },
+    };
+    router.push(routerData);
 };
 </script>
 <style>

@@ -33,12 +33,20 @@
                     <template #default="scope">
                         <!-- 需要高亮的 -->
                         <span
-                            v-if="column.highlight"
+                            v-if="column.highlight && !column.formatter"
                             class="highlight"
-                            @click="goDetial(scope.row)"
+                            @click="highlightClick(scope.row)"
                         >{{ scope.row[column.prop] }}</span>
+                        <!-- 需要高亮的 -->
+                        <span
+                            v-else-if="column.highlight && column.formatter"
+                            class="highlight"
+                            @click="highlightClick(scope.row)"
+                        >{{ column.formatter(scope.row) }}</span>
                         <!-- 需要格式化的 -->
-                        <span v-else-if="column.formatter">{{ column.formatter(scope.row)}}</span>
+                        <span
+                            v-else-if="!column.highlight && column.formatter"
+                        >{{ column.formatter(scope.row)}}</span>
                         <!-- 默认 -->
                         <span v-else>{{ scope.row[column.prop] }}</span>
                     </template>
@@ -61,8 +69,9 @@
 import { onMounted, ref, reactive, inject } from "vue";
 import http from "@/utils/request";
 import { getDataList } from "@/api/crud";
-import { useRouter } from "vue-router";
-const router = useRouter();
+
+const emits = defineEmits(["highlightClick"]);
+
 const $API = inject("$API");
 const props = defineProps({
     // 表格名字
@@ -81,9 +90,6 @@ const props = defineProps({
     tableColumn: { type: Array, default: () => [] },
     // 查询接口
     queryUrl: { type: String, default: "" },
-    // 详情路由
-    detailRouter: { type: String, default: "" },
-    detailId: { type: String, default: "" },
 });
 let loading = ref(false);
 
@@ -172,15 +178,9 @@ async function getTableList() {
 }
 
 // 详情跳转
-const goDetial = (row) => {
-    let routerData = {
-        path: props.detailRouter,
-        query: {
-            triggerConfigId: row.triggerConfigId,
-        },
-    };
-    routerData.query[props.detailId] = row[props.detailId];
-    router.push(routerData);
+const highlightClick = (row) => {
+   
+    emits("highlightClick", row);
 };
 
 defineExpose({

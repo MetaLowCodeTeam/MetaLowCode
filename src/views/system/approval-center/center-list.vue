@@ -8,6 +8,7 @@
         :tableColumn="tableColumn"
         :filterItems="pageType[type].filterItems"
         ref="mlSingleListRef"
+        @highlightClick="highlightClick"
     >
         <template #activeRow>
             <el-table-column
@@ -15,17 +16,23 @@
                 :align="'center'"
                 width="160"
                 key="1"
-                v-if="type === 'handle'"
+                v-if="type === 'handle' || type === 'cc'"
                 fixed="right"
             >
                 <template #default="scope">
-                    <el-button size="small" link @click="approveHistory(scope.row)" type="primary">审批历史</el-button>
+                    <el-button
+                        size="small"
+                        link
+                        @click="approveHistory(scope.row)"
+                        type="primary"
+                    >审批历史</el-button>
                     <el-button
                         link
                         :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
                         size="small"
                         type="success"
                         @click="approveRow(scope.row)"
+                        v-if="type != 'cc'"
                     >审批</el-button>
                 </template>
             </el-table-column>
@@ -66,18 +73,22 @@
             title="审批历史"
         />
     </div>
+    <Detail ref="detailRefs" />
 </template>
   
 <script setup>
 import { reactive, ref, inject, onBeforeMount } from "vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
 import { $fromNow } from "@/utils/util";
 import mlApprove from "@/components/mlApprove/index.vue";
 import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
 import { ElMessageBox } from "element-plus";
 import http from "@/utils/request";
+import Detail from "@/views/customize-menu/detail.vue";
+const { entityName } = storeToRefs(useCommonStore());
 const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
-
 
 const props = defineProps({
     type: { type: String, default: "" },
@@ -145,12 +156,13 @@ let tableColumn = ref([
         prop: "approvalConfigId.flowName",
         label: "流程名称",
         formatter: (row) => {
-            return row['approvalConfigId.flowName'] || row.stepName
+            return row["approvalConfigId.flowName"] || row.stepName;
         },
     },
     {
         prop: "entityId.name",
         label: "关联记录",
+        highlight: true,
         formatter: (row) => {
             return row.entityId?.name;
         },
@@ -197,11 +209,13 @@ const revokeRow = (row) => {
     })
         .then(async () => {
             mlSingleListRef.value.loading = true;
-            let res = await http.post("/approval/approvalRevocation?entityId=" + row.entityId.id);
+            let res = await http.post(
+                "/approval/approvalRevocation?entityId=" + row.entityId.id
+            );
             if (res) {
                 $ElMessage.success("撤销成功");
                 mlSingleListRef.value.getTableList();
-            } 
+            }
             mlSingleListRef.value.loading = false;
         })
         .catch(() => {});
@@ -212,11 +226,9 @@ function approveRow(row) {
     approveDialogIsShow.value = true;
     approvalTaskId.value = row.approvalTaskId;
     entityId.value = row.entityId.id;
-    approvalName.value = row.entityId.name
-    entityCode.value = row['approvalConfigId.entityCode']
+    approvalName.value = row.entityId.name;
+    entityCode.value = row["approvalConfigId.entityCode"];
 }
-
-
 
 function confirm() {
     mlSingleListRef.value.getTableList();
@@ -230,6 +242,19 @@ function approveHistory(row) {
     entityId.value = row.entityId.id;
     // console.log(row.entityId.id,'row')
 }
+
+// 详情组件
+let detailRefs = ref("");
+// 高亮字段点击
+const highlightClick = (item) => {
+    let detailObj = {};
+    detailObj.entityCode = item["approvalConfigId.entityCode"];
+    detailObj.entityName = entityName.value[detailObj.entityCode];
+    detailObj.tab = {};
+    detailObj.detailId = item.entityId.id;
+    detailObj.detailTitle = item.entityId.name;
+    detailRefs.value.openDialog(detailObj);
+};
 </script>
 <style lang="scss">
 </style>
