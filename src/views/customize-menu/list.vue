@@ -152,7 +152,7 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList" />
+        <Detail ref="detailRefs" @onConfirm="getTableList" @onAdd="onDetailAdd" />
         <Edit ref="editRefs" @onConfirm="getTableList" />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -234,9 +234,8 @@ let quickQueryPlaceholder = ref("");
 let quickQueryConf = reactive({
     layoutConfigId: "",
     value: [],
-    entityCode:"",
+    entityCode: "",
 });
-
 
 // 详情Tab
 let detailTab = reactive({});
@@ -244,8 +243,8 @@ let detailTab = reactive({});
 let idFiledName = ref("");
 // 标蓝字段
 let nameFiledName = ref("");
-
-
+// 新建配置项
+let addConf = reactive({});
 
 onBeforeMount(() => {
     entityCode.value = router.currentRoute.value.meta.entityCode;
@@ -272,6 +271,7 @@ const getLayoutList = async () => {
         advancedFilter.value = res.data.FILTER;
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
         detailTab = res.data.TAB ? { ...res.data.TAB } : {};
+        addConf = res.data.ADD ? { ...res.data.ADD } : {};
         let { ALL, SELF } = res.data.LIST;
         titleWidthForAll = res.data.titleWidthForAll
             ? { ...JSON.parse(res.data.titleWidthForAll) }
@@ -305,9 +305,9 @@ const getLayoutList = async () => {
             refreshData();
         }
         // 如果存在快速搜索字段
-        if(res.data.SEARCH){
-            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId
-            quickQueryConf.entityCode = res.data.SEARCH.entityCode
+        if (res.data.SEARCH) {
+            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
+            quickQueryConf.entityCode = res.data.SEARCH.entityCode;
             quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
         }
     }
@@ -376,6 +376,13 @@ const handleHighlightChangeTable = (row, column) => {
 // 编辑弹框
 let editRefs = ref();
 
+const onDetailAdd = (e) => {
+    let tempV = {};
+    tempV.dialogTitle = "新建" + (e.columnAliasName || e.entityLabel);
+    tempV.entityName = e.entityName;
+    editRefs.value.openDialog(tempV);
+};
+
 // 新建
 const onAdd = () => {
     let tempV = {};
@@ -408,6 +415,7 @@ const openDetilDialog = (row) => {
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;
     detailData.tab = { ...detailTab };
+    detailData.add = { ...addConf };
     detailData.detailId = row[idFiledName.value];
     detailData.detailTitle = row[nameFiledName.value];
     detailData.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
@@ -454,7 +462,6 @@ let SelectFieldDialog = ref();
 const openSelectFieldDialog = () => {
     SelectFieldDialog.value.openDialg();
 };
-
 
 // 常用查询切换
 const changeAdvFilter = (e) => {

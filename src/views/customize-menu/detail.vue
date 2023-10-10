@@ -26,7 +26,7 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="18">
-                    <DetailTabs v-model="detailDialog" @tabChange="tabChange" :cutTab="cutTab"/>
+                    <DetailTabs v-model="detailDialog" @tabChange="tabChange" :cutTab="cutTab" @confirm="getLayoutList"/>
                     <!-- 详情 -->
                     <div v-if="cutTab == 'detail'">
                         <v-form-render
@@ -40,12 +40,19 @@
                     </div>
                     <!-- 非详情 -->
                     <div v-else>
-                        <DetailTabCom :cutTab="cutTab" :tabs="detailDialog.tab"/>
+                        <DetailTabCom :cutTab="cutTab" :tabs="detailDialog.tab" />
                     </div>
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
-                        <el-button @click="onEditRow">
+                        <NewRelated
+                            :entityName="detailDialog.entityName"
+                            :entityCode="detailDialog.entityCode"
+                            :addConf="detailDialog.add"
+                            @confirm="getLayoutList"
+                            @add="onAdd"
+                        />
+                        <el-button @click="onEditRow" class="ml-10">
                             <span class="mr-5">
                                 <el-icon>
                                     <ElIconEditPen />
@@ -53,6 +60,7 @@
                             </span>
                             编辑
                         </el-button>
+
                         <More
                             type="detail"
                             :multipleSelection="multipleSelection"
@@ -64,7 +72,7 @@
                 </el-col>
             </el-row>
         </div>
-        <Edit ref="editRefs" @onConfirm="onConfirm"/>
+        <Edit ref="editRefs" @onConfirm="onConfirm" />
     </el-drawer>
 </template>
 
@@ -75,8 +83,9 @@ import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import More from "./components/More.vue";
 import DetailTabCom from "./components/DetailTabCom.vue";
-import Edit from './edit.vue';
-const emits = defineEmits("onConfirm");
+import Edit from "./edit.vue";
+import NewRelated from "./components/NewRelated.vue";
+const emits = defineEmits(["onConfirm","onAdd"]);
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const vFormRef = ref();
@@ -89,6 +98,12 @@ let detailDialog = reactive({
 });
 let loading = ref(false);
 let multipleSelection = ref([]);
+
+// 新建
+const onAdd = (e)=>{
+    emits("onAdd",e)
+}
+
 // 当前页签
 let cutTab = ref("detail");
 const openDialog = (row) => {
@@ -101,15 +116,19 @@ const openDialog = (row) => {
 
 // 页签更换
 const tabChange = (tab) => {
-    cutTab.value = tab
-    if(tab == 'detail'){
-        refresh()
+    cutTab.value = tab;
+    if (tab == "detail") {
+        refresh();
     }
-}
+};
 // 刷新
 const refresh = () => {
-    cutTab.value = "detail"
-    if (!detailDialog.tab || JSON.stringify(detailDialog.tab) == "{}") {
+    cutTab.value = "detail";
+    if (
+        !detailDialog.tab ||
+        JSON.stringify(detailDialog.tab) == "{}" ||
+        (!detailDialog.add == JSON.stringify(detailDialog.add)) == "{}"
+    ) {
         getLayoutList();
     } else {
         initData();
@@ -122,6 +141,7 @@ const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
     if (res) {
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
+        detailDialog.add = res.data.ADD ? { ...res.data.ADD } : {};
         initData();
     }
     loading.value = false;
@@ -138,7 +158,6 @@ const initData = async () => {
 
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
-                
                 let formData = await queryById(detailDialog.detailId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
@@ -169,9 +188,9 @@ const onEditRow = () => {
 };
 
 // 编辑确认
-const onConfirm = ()=>{
+const onConfirm = () => {
     emits("onConfirm");
-}
+};
 
 // 暴露方法给父组件调用
 defineExpose({

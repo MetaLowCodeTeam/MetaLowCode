@@ -56,6 +56,7 @@
                     </el-input>
                     <div
                         class="source-column-box"
+                        v-if="notShowColumn().length > 0"
                         :class="{'need-auto':notShowColumn().length > 8}"
                     >
                         <div
@@ -72,6 +73,7 @@
                             </span>
                         </div>
                     </div>
+                    <el-empty v-else :image-size="100" description="没有数据" />
                 </div>
             </div>
         </div>
@@ -94,7 +96,7 @@
                     <el-form-item label="别名">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
                     </el-form-item>
-                    <el-form-item label="附加过滤条件">
+                    <!-- <el-form-item label="附加过滤条件">
                         <el-row>
                             <el-col :span="24">
                                 <div
@@ -106,7 +108,7 @@
                                 <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
                             </el-col>
                         </el-row>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item>
                         <el-button type="primary" @click="confirmColumnEdit">保存</el-button>
                         <el-button @click="editColumnDialogIsShow = false">取消</el-button>
@@ -136,6 +138,7 @@ const props = defineProps({
     modelValue: null,
     entityCode: { type: Number, default: 0 },
     entityName: { type: String, default: "" },
+    applyType: { type: String, default: "TAB" },
 });
 const emit = defineEmits(["update:modelValue", "confirm"]);
 const $ElMessage = inject("$ElMessage");
@@ -143,7 +146,6 @@ let isShow = ref(false);
 let loading = ref(false);
 let layoutConfigId = ref("");
 let hasEntityName = ref([]);
-
 
 // 已显示列
 let showColumn = ref([]);
@@ -153,8 +155,6 @@ let sourceColumn = ref([]);
 
 // 筛选字段
 let searchField = ref("");
-
-
 
 const notShowColumn = () => {
     if (!searchField) {
@@ -222,18 +222,17 @@ const delColumn = (column, inx) => {
     sourceColumn.value.push(column);
 };
 
-
 // 打开弹框
 const openDialog = (data) => {
     layoutConfigId.value = data.layoutConfigId;
-    if(data.config){
-        let config = JSON.parse(data.config)
+    if (data.config) {
+        let config = JSON.parse(data.config);
         showColumn.value = [];
         hasEntityName.value = [];
-        config.forEach(el=>{
+        config.forEach((el) => {
             showColumn.value.push(el);
             hasEntityName.value.push(el.entityName);
-        })
+        });
     }
     isShow.value = true;
     getAllColumn();
@@ -249,12 +248,12 @@ const getAllColumn = async () => {
         true
     );
     if (res) {
-        if(res.data && res.data.length > 0){
+        if (res.data && res.data.length > 0) {
             sourceColumn.value = res.data.filter(
                 (el) => !hasEntityName.value.includes(el.entityName)
             );
         }
-    } 
+    }
     loading.value = false;
     // console.log(props.entityName);
 };
@@ -264,23 +263,21 @@ const onSave = async () => {
         $ElMessage.warning("请至少选择 1 个显示项");
         return;
     }
-    // let { entityCode, applyType, shareTo, layoutConfigId } =
-    //     props.editColumnDialog;
     let param = {
         config: JSON.stringify([...showColumn.value]),
         entityCode: props.entityCode,
-        applyType: "TAB",
+        applyType: props.applyType,
     };
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(
         layoutConfigId.value,
-        "TAB",
+        props.applyType,
         param
     );
-    if (res ) {
+    if (res) {
         $ElMessage.success("保存成功！");
         isShow.value = false;
-        emit("confirm",res.data.formData.config);
+        emit("confirm", res.data.formData.config);
     }
     loading.value = false;
 };
