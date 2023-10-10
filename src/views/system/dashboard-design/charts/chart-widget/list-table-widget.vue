@@ -74,7 +74,6 @@ onMounted(() => {
 const initOption = () => {
     let { options } = cutField.value;
     if (options) {
-        console.log(options, "options");
         let { showFields } = options.setDimensional;
 
         tableColumn.value = [...showFields];
@@ -105,7 +104,6 @@ const getTableData = async (options) => {
         filter: options.setChartFilter,
         sortFields: sortFields.value,
     };
-    console.log(options, "options");
 
     let res = await getDataList(
         param.mainEntity,

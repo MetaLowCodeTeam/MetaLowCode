@@ -197,7 +197,9 @@ let wavesChart = reactive({
 
 let myOption = ref({});
 // 进度条当前进度 %
-let percentage = ref();
+let percentage = ref(0);
+// 实际完成进度
+let metePercentage = ref(0);
 // 进度条文本
 let progressText = ref("");
 let loading = ref(false);
@@ -228,8 +230,8 @@ const getChartData = async (options,type) => {
         let maxNum = targetValue || 1;
         let cutNum = res.data.data;
         let point = Math.round((cutNum / maxNum) * 100);
-
-        percentage.value = point;
+        percentage.value = point > 100 ? 100 : point;
+        metePercentage.value = point;
         progressText.value = setChartConf.numShow ? metrics[0].alias : null;
         // 图例是否显示
         myOption.value.legend.show = setChartConf.chartShow;
@@ -260,8 +262,8 @@ const getChartData = async (options,type) => {
 };
 
 // 格式化进度条显示文字
-const formatText = (num) => {
-    return progressText.value ? progressText.value + " " + num + "%" : "";
+const formatText = () => {
+    return progressText.value ? progressText.value + " " + metePercentage.value + "%" : "";
 };
 const setSelected = () => {
     props.designer?.setSelected(props.field);
