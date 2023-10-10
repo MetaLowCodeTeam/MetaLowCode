@@ -4,7 +4,7 @@
             <el-tab-pane
                 v-for="(tab,tabInx) of tabs"
                 :key="tabInx"
-                :label="tab.entityLabel"
+                :label="tab.columnAliasName || tab.entityLabel"
                 :name="tab.entityName"
             ></el-tab-pane>
         </el-tabs>
@@ -29,7 +29,7 @@ const props = defineProps({
     modelValue: null,
     cutTab: { type: String, default: "" },
 });
-const emits = defineEmits(["update:modelValue", "tabChange"]);
+const emits = defineEmits(["update:modelValue", "tabChange","confirm"]);
 const $TOOL = inject("$TOOL");
 let detailDialog = ref({});
 let tabs = ref();
@@ -52,7 +52,6 @@ watch(
 let activeName = ref("");
 onMounted(() => {
     detailDialog.value = props.modelValue;
-    
     initTabs();
 });
 
@@ -90,6 +89,7 @@ const handleClick = (e) => {
 const confirm = (e) => {
     detailDialog.value.tab.config = e;
     emits("update:modelValue", detailDialog.value);
+    emits('confirm')
 };
 </script>
 <style lang='scss' scoped>

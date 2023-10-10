@@ -101,7 +101,7 @@
                 />
             </div>
             <div class="min-table mt-20" v-else>
-                <el-collapse v-model="cardActiveNames">
+                <el-collapse v-model="cardActiveNames" v-if="tableData.length > 0">
                     <el-collapse-item
                         v-for="(item,inx) of tableData"
                         :key="inx"
@@ -113,9 +113,10 @@
                                 <i class="header-icon el-icon-info"></i>
                             </div>
                         </template>
-                        内容
+                        <CardLayout :layoutJson="layoutJson" :data="item" />
                     </el-collapse-item>
                 </el-collapse>
+                <el-empty v-else :image-size="100" description="暂无数据" />
             </div>
         </div>
     </div>
@@ -124,10 +125,12 @@
 
 <script setup>
 import { onMounted, watch, inject, reactive, ref } from "vue";
+import { getFormLayout } from "@/api/system-manager";
 import { getDataList } from "@/api/crud";
 import { useRouter } from "vue-router";
 import FormatRow from "./FormatRow.vue";
 import Detail from "../detail.vue";
+import CardLayout from "./CardLayout.vue";
 const router = useRouter();
 const props = defineProps({
     cutTab: { type: String },
@@ -199,7 +202,7 @@ const cardSortCommand = (e) => {
                 type: "DESC",
             },
         ];
-        cardSortText.value = "最近修改时间"
+        cardSortText.value = "最近修改时间";
     }
     if (e == "createdOnDesc") {
         sortFields.value = [
@@ -208,7 +211,7 @@ const cardSortCommand = (e) => {
                 type: "DESC",
             },
         ];
-        cardSortText.value = "最近创建时间"
+        cardSortText.value = "最近创建时间";
     }
     if (e == "createdOnAsc") {
         sortFields.value = [
@@ -217,7 +220,7 @@ const cardSortCommand = (e) => {
                 type: "ASC",
             },
         ];
-        cardSortText.value = "最早创建时间"
+        cardSortText.value = "最早创建时间";
     }
     getTableList();
 };
@@ -297,7 +300,6 @@ const handleSizeChange = (size) => {
 
 // 打开详情
 const openDetilDialog = (row) => {
-    console.log(row,'row')
     let detailData = { ...row };
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;
@@ -372,6 +374,7 @@ const refreshData = () => {
     getTableList();
 };
 
+let layoutJson = ref({});
 const getTableList = async () => {
     loading.value = true;
     let param = {
@@ -400,8 +403,15 @@ const getTableList = async () => {
             (el) => el[idFiledName.value]
         );
         page.total = res.data.pagination.total;
+        loading.value = true;
+        let formLayoutRes = await getFormLayout(entityName.value);
+        if (formLayoutRes) {
+            layoutJson.value = formLayoutRes.data?.layoutJson || {};
+        }
+        loading.value = false;
+    } else {
+        loading.value = false;
     }
-    loading.value = false;
 };
 </script>
 <style lang='scss' scoped>
@@ -438,10 +448,15 @@ const getTableList = async () => {
     background: #eeeeee;
     height: 38px;
     line-height: 38px;
+    border-bottom: 2px solid #fff;
 }
+:deep(.el-collapse-item__content) {
+    padding-bottom: 0;
+}
+
 .collapse-title {
     width: 100%;
-
+    
     .title-span {
         color: var(--el-color-primary);
         margin-left: 20px;
