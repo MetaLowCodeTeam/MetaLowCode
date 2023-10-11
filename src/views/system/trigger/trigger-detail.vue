@@ -190,8 +190,8 @@ const onSave = async (target) => {
     if (trigger.actionFilter.items.length > 0) {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
-    // 如果是聚合规则
-    if (trigger.actionType.value == 2){
+    // 如果是聚合规则 或者 字段更新
+    if (trigger.actionType.value == 2 || trigger.actionType.value == 1){
         actionContent.entityName = defaultTargetEntity.entityName
         actionContent.fieldName = defaultTargetEntity.fieldName
     }
@@ -253,10 +253,6 @@ const onSave = async (target) => {
             allocationWhos.forEach((el) => {
                 actionContent.assignTo.push(el.id);
             });
-        }
-        if (cascades.length < 1) {
-            $ElMessage.warning("请选择同时分配关联记录");
-            return;
         }
     }
  
