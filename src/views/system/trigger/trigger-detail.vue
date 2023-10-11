@@ -194,6 +194,8 @@ const onSave = async (target) => {
     if (trigger.actionType.value == 2 || trigger.actionType.value == 1){
         actionContent.entityName = defaultTargetEntity.entityName
         actionContent.fieldName = defaultTargetEntity.fieldName
+        actionContent.isReferenced = defaultTargetEntity.isReferenced
+        // console.log(defaultTargetEntity,'defaultTargetEntity')
     }
     // 如果是数据效验
     if (trigger.actionType.value == 4) {
