@@ -15,6 +15,12 @@ export function addTeamMembers(body) {
 }
 
 // 删除团队成员
-export function delTeamMembers(teamId,userId) {
-    return http.get('/team/delTeamUser', { teamId,userId })
+export function delTeamMembers(teamId, userId) {
+    return http.get('/team/delTeamUser', { teamId, userId })
 }
+
+// 删除团队
+export function delTeam(teamId) {
+    return http.get('/team/delTeam', { teamId })
+}
+

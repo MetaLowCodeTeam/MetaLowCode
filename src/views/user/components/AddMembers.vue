@@ -41,13 +41,11 @@ const addMembers = async () => {
     let res = await addTeamMembers(param);
     if(res){
         ElMessage.success("添加成功");
+        myMembers.value = [];
         isShow.value = false;
         emits("addMembers");
     }
     loading.value = false;
-    // console.log(props.teamId,'teamId')
-    // console.log(myMembers.value,'myMembers')
-    // emits("addMembers");
 };
 </script>
 <style lang='scss' scoped>

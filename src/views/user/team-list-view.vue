@@ -44,11 +44,11 @@
     <Edit ref="editRefs" @onConfirm="onRefresh" />
     <!-- 列表详情 -->
     <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="teamName">
-        <template #tab="{row}">
-            <TabMemberList v-model="memberList" @delMembers="changeMembers" :teamId="row.teamId"/>
+        <template #tab>
+            <TabMemberList v-model="memberList" @delMembers="changeMembers" />
         </template>
         <template #operate="{row}">
-            <AddMembers @addMembers="changeMembers" :teamId="row.teamId"/>
+            <AddMembers @addMembers="changeMembers" :teamId="row.teamId" />
             <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
             <el-dropdown trigger="click">
                 <el-button>
@@ -72,13 +72,12 @@
 <script setup>
 import { ref, inject, reactive } from "vue";
 import { $fromNow } from "@/utils/util";
-import { saveRecord, deleteRecord } from "@/api/crud";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import Edit from "@/views/customize-menu/edit.vue";
 import AddMembers from "./components/AddMembers.vue";
 import TabMemberList from "./components/TabMemberList.vue";
-import { getTeamMembers } from "@/api/team";
+import { getTeamMembers,delTeam } from "@/api/team";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 
@@ -143,7 +142,7 @@ const delCick = (row) => {
         type: "warning",
     })
         .then(async () => {
-            let res = await deleteRecord(row.teamId);
+            let res = await delTeam(row.teamId);
             mlSingleListRef.value.loading = true;
             if (res) {
                 $ElMessage.success("删除成功");
@@ -195,11 +194,10 @@ const changeMembers = () => {
 
 // 页签切换
 const tabChange = async (tab) => {
-    console.log(tab, "接口待开发...");
     mlListDetailsRefs.value.loading = true;
     // 获取团队成员
     let res = await getTeamMembers(tab.id);
-    if (res && res.data) {
+    if (res) {
         memberList.value = res.data || [];
     }
     mlListDetailsRefs.value.loading = false;

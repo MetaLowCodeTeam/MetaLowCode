@@ -1,6 +1,6 @@
 <template>
     <!--  -->
-    <div class="tab-member-list">
+    <div class="tab-member-list" v-loading="loading">
         <div class="search-box mb-10">
             <mlSearchInput
                 style="width: 230px;"
@@ -42,12 +42,12 @@ import { delTeamMembers } from "@/api/team";
 const emits = defineEmits(["delMembers"]);
 const props = defineProps({
     modelValue: null,
-    teamId: { type: String, default: "" },
 });
 
 let myMembers = ref([]);
 let keyword = ref("");
 let showMembers = ref([]);
+let loading = ref(false);
 watch(
     () => props.modelValue,
     () => {
@@ -88,11 +88,13 @@ const delMember = (item) => {
         type: "warning",
     })
         .then(async () => {
-            console.log(props.teamId)
-            console.log(item,'item')
-            
-            ElMessage.success("删除成功");
-            emits("delMembers");
+            loading.value = true;
+            let res = await delTeamMembers(item.teamId,item.userId)
+            if(res){
+                ElMessage.success("删除成功");
+                emits("delMembers");
+            }
+            loading.value = false;
         })
         .catch(() => {});
 };
