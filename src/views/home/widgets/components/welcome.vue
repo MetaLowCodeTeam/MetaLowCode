@@ -2,7 +2,7 @@
 	<el-card shadow="hover" header="欢迎">
 		<div class="welcome">
 			<div class="logo">
-				<img :src="$TOOL.data.get('APP_LOGO')">
+				<mlLogo class="logo"/>
 				<h2>欢迎体验 SCUI</h2>
 			</div>
 			<div class="tips">

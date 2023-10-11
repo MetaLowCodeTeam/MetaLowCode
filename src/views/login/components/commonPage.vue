@@ -3,7 +3,7 @@
 		<el-header style="height:50px;">
 			<div class="common-header-left">
 				<div class="common-header-logo">
-					<img :alt=" $TOOL.data.get('APP_NAME')" :src="$TOOL.data.get('APP_LOGO')">
+                    <mlLogo />
 					<label>{{ $TOOL.data.get('APP_NAME')}}</label>
 				</div>
 				<div class="common-header-title">{{title}}</div>

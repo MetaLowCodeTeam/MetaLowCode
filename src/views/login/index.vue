@@ -15,7 +15,7 @@
 			<div class="login-form">
 				<div class="login-header">
 					<div class="logo">
-						<img :alt=" $TOOL.data.get('APP_NAME')" :src="$TOOL.data.get('APP_LOGO')">
+						<mlLogo />
 						<label>{{ $TOOL.data.get('APP_NAME')}}</label>
 					</div>
 				</div>

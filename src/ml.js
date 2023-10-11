@@ -54,6 +54,7 @@ import mlSingleList from './components/mlSingleList/index.vue';
 import mlListDetails from './components/mlListDetails/index.vue';
 import mlActiveDialog from "./components/mlActiveDialog/index.vue";
 import mlEntityMenuAndList from "./components/mlEntityMenuAndList/index.vue";
+import mlLogo from './components/mlLogo/index.vue';
 import mlUpload from "./components/mlUpload/index.vue";
 import mlWaterMark from './components/mlWaterMark/index.vue';
 import { ElMessage } from 'element-plus'
@@ -88,6 +89,7 @@ export default {
         app.component('mlEntityMenuAndList', mlEntityMenuAndList);
         app.component('mlUpload', mlUpload);
         app.component('mlWaterMark', mlWaterMark);
+        app.component('mlLogo', mlLogo);
 		app.component('scTable', scTable);
 		app.component('scTableColumn', scTableColumn);
 		app.component('scQrCode', scQrCode);

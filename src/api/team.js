@@ -24,3 +24,9 @@ export function delTeam(teamId) {
     return http.get('/team/delTeam', { teamId })
 }
 
+// 保存团队
+export function saveTeam(entity, id, formModel) {
+    return http.post('/team/saveTeam', formModel, {
+        params: { entity, id },
+    })
+}
