@@ -4,7 +4,7 @@
 	<el-drawer ref="mobileNavBox" title="移动端菜单" :size="240" v-model="nav" direction="ltr" :with-header="false" destroy-on-close>
 		<el-container class="mobile-nav">
 			<el-header>
-				<div class="logo-bar"><img class="logo" :src="$TOOL.data.get('APP_LOGO')"><span>{{  $TOOL.data.get('APP_NAME') }}</span></div>
+				<div class="logo-bar"><mlLogo class="logo"/><span>{{  $TOOL.data.get('APP_NAME') }}</span></div>
 			</el-header>
 			<el-main>
 				<el-scrollbar>

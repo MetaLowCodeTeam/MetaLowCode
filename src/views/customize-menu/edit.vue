@@ -3,10 +3,7 @@
         <div class="main" v-loading="loading">
             <div class="info-box" v-if="row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
-            <v-form-render
-                v-if="haveLayoutJson"
-                ref="vFormRef"
-            />
+            <v-form-render v-if="haveLayoutJson" ref="vFormRef" />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
         <template #footer>
@@ -24,7 +21,11 @@
 import { reactive, ref, inject, nextTick } from "vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
+import { saveTeam } from "@/api/team";
 const emits = defineEmits(["onConfirm"]);
+const props = defineProps({
+    isTeam: { type: Boolean, default: false },
+});
 const $ElMessage = inject("$ElMessage");
 
 let row = reactive({
@@ -109,7 +110,13 @@ const confirm = async () => {
 
     if (formData) {
         loading.value = true;
-        let saveRes = await saveRecord(row.entityName, row.detailId, formData);
+        let saveRes;
+        if (props.isTeam) {
+            saveRes = await saveTeam(row.entityName, row.detailId, formData);
+        } else {
+            saveRes = await saveRecord(row.entityName, row.detailId, formData);
+        }
+
         if (saveRes) {
             $ElMessage.success("保存成功");
             emits("onConfirm");

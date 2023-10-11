@@ -41,7 +41,7 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <Edit ref="editRefs" @onConfirm="onRefresh" />
+    <Edit ref="editRefs" @onConfirm="onRefresh" isTeam/>
     <!-- 列表详情 -->
     <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="teamName">
         <template #tab>

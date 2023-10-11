@@ -4,7 +4,7 @@
         <header class="adminui-header">
             <div class="adminui-header-left">
                 <div class="logo-bar">
-                    <img class="logo" :src="$TOOL.data.get('APP_LOGO')" />
+                    <mlLogo class="logo"/>
                     <span>{{ $TOOL.data.get('APP_NAME') }}</span>
                 </div>
                 <ul v-if="!ismobileFn" class="nav">
@@ -75,7 +75,7 @@
         <header class="adminui-header">
             <div class="adminui-header-left">
                 <div class="logo-bar">
-                    <img class="logo" :src="$TOOL.data.get('APP_LOGO')" />
+                    <mlLogo class="logo"/>
                     <span>{{ $TOOL.data.get('APP_NAME') }}</span>
                 </div>
             </div>
@@ -131,7 +131,7 @@
         <header class="adminui-header">
             <div class="adminui-header-left">
                 <div class="logo-bar">
-                    <img class="logo" :src="$TOOL.data.get('APP_LOGO')" />
+                    <mlLogo class="logo"/>
                     <span>{{ $TOOL.data.get('APP_NAME') }}</span>
                 </div>
             </div>
