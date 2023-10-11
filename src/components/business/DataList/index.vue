@@ -51,12 +51,9 @@
 </template>
 
 <script>
-  import FormWidget from "@/views/system/field-widget/form-widget.vue";
   import FormState from "@/views/system/form-state-variables";
   import {initDataList, createRecord, updateRecord, saveRecord, deleteRecord, getDataList} from "@/api/crud";
   import {arrayContain, isEmptyStr, setColumnFormatter} from "@/utils/util";
-  import {createLayoutObj} from "@/views/system/layout/form-layout-object";
-  import {deleteUserById} from "@/api/user";
   import eventBus from "@/utils/event-bus";
 
   export default {

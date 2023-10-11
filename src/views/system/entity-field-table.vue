@@ -12,7 +12,8 @@
             <el-form-item label="显示名称：">
               <el-input link type="primary" v-model="entityProps.label" :readonly="true">
                 <template #suffix>
-                  <i class="el-icon-edit primary-color" title="修改显示名称" @click="modifyEntityLabel"></i>
+					<el-button link type="primary" icon="el-icon-edit" title="修改显示名称"
+							   @click="modifyEntityLabel"></el-button>
                 </template>
               </el-input>
             </el-form-item>
@@ -25,7 +26,8 @@
             <el-form-item label="名称字段：">
               <el-input link type="primary" v-model="entityProps.nameField" :readonly="true">
                 <template #suffix>
-                  <i class="el-icon-edit primary-color" title="修改名称字段" @click="modifyEntityNameField"></i>
+					<el-button link type="primary" icon="el-icon-edit" title="修改名称字段"
+							   @click="modifyEntityNameField"></el-button>
                 </template>
               </el-input>
             </el-form-item>
@@ -126,7 +128,7 @@
       </el-footer>
 
       <el-dialog title="修改名称字段" v-model="showNameFieldDialogFlag" v-if="showNameFieldDialogFlag"
-                 :append-to-body="true" :destroy-on-close="true" class="name-field-dialog" width="460px">
+                 :append-to-body="true" :destroy-on-close="true" class="name-field-dialog" width="480px">
         <div class="name-field-hint"><i class="el-icon-bell"></i>提示：只有文本(Text)类型字段可设置为名称字段。</div>
         <SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'"
                      :show-operation-column="true"

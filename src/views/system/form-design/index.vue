@@ -206,6 +206,9 @@ export default {
 			}, 300)
 		},
 
+		/**
+		 * 过滤已使用字段组件
+		 */
 		handleUsedFields() {
 			this.usedFieldNames = {}
 			const allFieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
@@ -223,7 +226,6 @@ export default {
 
 				if (!!res.data && !!res.data.layoutJson) {
 					this.layoutId = res.data.formLayoutId
-					//TODO: 首次表单后，需要过滤已使用字段组件！！
 					this.$refs.vfDesigner.setFormJson(res.data.layoutJson)
 					this.handleUsedFields()
 				} else {
@@ -243,6 +245,11 @@ export default {
 
 		saveDesign() {
 			//TODO: 检查表单设计是否符合规范！！！
+			/**
+			 * 1. 必填字段必须添加到表单；
+			 * 2. 子表单名称关联到明细实体，必须正确设置；
+			 * 3. 主实体字段不能出现在子表单中、明细实体字段只能出现在明细实体关联的子表单中。
+			 */
 
 			if (!this.layoutId) {
 				createFormLayout(this.entity, this.$refs.vfDesigner.getFormJson()).then(res => {

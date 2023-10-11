@@ -107,15 +107,12 @@
 import {arrayContain, formatRefColumn, isEmptyStr} from '@/utils/util'
 import {deleteDepartmentById, deleteUserById, getDepartmentTree, saveDepartment, saveUser} from '@/api/user'
 import {createRecord, getDataList, updateRecord} from '@/api/crud'
-import {createLayoutObj} from '@/views/system/layout/form-layout-object.js'
 import FormState from '@/views/system/form-state-variables'
-import FormWidget from '@/views/system/field-widget/form-widget.vue'
 import eventBus from "@/utils/event-bus"
 import http from '@/utils/request'
 
 export default {
     name: "UserTreeTable",
-    components: {FormWidget},
     data() {
       return {
         entity: 'User',

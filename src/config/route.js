@@ -90,14 +90,6 @@ const routes = [
                 meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
             },
 
-            {
-                path: '/list-setting',
-                name: 'ListSetting',
-                component: 'business/data-list-view',
-                hidden: true,
-                props: true,
-                meta: { title: '列表设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
-            },
             // 通用配置
             {
                 path: '/comConf',
