@@ -203,6 +203,7 @@
   import ReferenceWE from '@/views/system/field-editor/reference-widget-editor.vue';
   import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor.vue';
   import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
+  import { h } from 'vue';
 
   export default {
     name: "EntityFieldTable",
@@ -371,7 +372,6 @@
 
             let confirmText = ['字段删除后不能恢复，是否确认删除?', '1. 删除字段会清空该字段的所有数据，且不能恢复；’',
               '2. 删除字段不会同步更新表单和列表，请手工从表单布局和列表中移除；']
-            const h = this.$createElement
             let pTags = []
             confirmText.forEach(ct => {
               pTags.push(h('p', null, ct))
