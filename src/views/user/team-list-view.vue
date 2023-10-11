@@ -45,10 +45,10 @@
     <!-- 列表详情 -->
     <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="teamName">
         <template #tab>
-            <div>你好</div>
+            <TabMemberList v-model="memberList" @delMembers="changeMembers" />
         </template>
         <template #operate="{row}">
-            <el-button icon="Plus">添加成员</el-button>
+            <AddMembers @addMembers="changeMembers" />
             <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
             <el-dropdown trigger="click">
                 <el-button>
@@ -75,9 +75,13 @@ import { $fromNow } from "@/utils/util";
 import { saveRecord, deleteRecord } from "@/api/crud";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
+import Edit from "@/views/customize-menu/edit.vue";
+import AddMembers from "./components/AddMembers.vue";
+import TabMemberList from "./components/TabMemberList.vue";
+import { getTeamMembers } from "@/api/team";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
-import Edit from "@/views/customize-menu/edit.vue";
+
 // 默认排序
 let sortFields = ref([
     {
@@ -179,8 +183,26 @@ const highlightClick = (row) => {
     });
 };
 
+// 成员列表
+let memberList = ref([]);
+
+// 添加成员
+const changeMembers = () => {
+    mlListDetailsRefs.value.refresh();
+};
+
+// 当前页签
+// let cutTab = ref("");
+
 // 页签切换
-const tabChange = (tab) => {
-    console.log(tab);
+const tabChange = async (tab) => {
+    console.log(tab, "接口待开发...");
+    mlListDetailsRefs.value.loading = true;
+    // 获取团队成员
+    let res = await getTeamMembers(tab.id);
+    if (res && res.data) {
+        memberList.value = res.data || [];
+    }
+    mlListDetailsRefs.value.loading = false;
 };
 </script>

@@ -1,18 +1,22 @@
 <template>
-    <el-input
-        class="ml-input-search"
-        v-model="keyword"
-        :placeholder="placeholder"
-        @keyup.enter="confirm"
-    >
-        <template #suffix>
-            <span class="el-input__icon" @click="confirm">
-                <el-icon>
-                    <ElIconSearch />
-                </el-icon>
-            </span>
-        </template>
-    </el-input>
+    <div class="ml-input-box">
+        <el-input
+            class="ml-input-search"
+            v-model="keyword"
+            :placeholder="placeholder"
+            @keyup.enter="confirm"
+            clearable
+            @clear="confirm"
+        >
+            <template #append>
+                <el-button @click="confirm">
+                    <el-icon>
+                        <ElIconSearch />
+                    </el-icon>
+                </el-button>
+            </template>
+        </el-input>
+    </div>
 </template>
 
 <script setup>
@@ -41,7 +45,8 @@ const confirm = () => {
 </script>
 
 <style lang="scss" scoped>
-.el-input__icon {
-    cursor: pointer;
+.ml-input-box {
+    display: inline-block;
+    min-width: 240px;
 }
 </style>

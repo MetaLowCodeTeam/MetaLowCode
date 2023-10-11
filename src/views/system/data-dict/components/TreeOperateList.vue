@@ -23,12 +23,6 @@
             <el-header class="main-header w-100">
                 <div class="title fl">{{ cutNode.label }}</div>
                 <div class="section-fr fr">
-                    <!-- <mlSearchInput
-                        class="section-search"
-                        v-model="keyword"
-                        placeholder="查询关键字"
-                        @confirm="getApprovalList"
-                    />-->
                     <el-button @click.stop="operateItem(false,'add')">
                         <span class="btn-icon-t1">
                             <el-icon>
@@ -339,10 +333,6 @@ const onSave = async () => {
     padding: 0 20px;
     .title {
         font-size: 16px;
-    }
-    .section-search {
-        display: inline-block;
-        width: 224px;
     }
     .btn-icon-t1 {
         position: relative;

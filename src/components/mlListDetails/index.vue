@@ -55,10 +55,14 @@
 import { ref, reactive, inject, nextTick } from "vue";
 import { queryById } from "@/api/crud";
 import { getFormLayout } from "@/api/system-manager";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
     titleFromApi: { type: String, default: "" },
 });
 const emits = defineEmits(["tabChange"]);
+
+
 // 默认tab
 const DefaultTab = [
     {
@@ -83,7 +87,8 @@ const handleClick = (tab) => {
     if (activeTabName.value == "detail") {
         refresh();
     } else {
-        emits("tabChange", tab.props.name);
+        detailDialog.activeTabName = tab.props.name;
+        emits("tabChange", detailDialog);
     }
 };
 
@@ -123,7 +128,7 @@ const refresh = async () => {
     loading.value = true;
     let res = await getFormLayout(detailDialog.entityName);
     if (res) {
-        if (res.data?.layoutJson) {
+        if (res.data?.layoutJson && activeTabName.value == "detail") {
             haveLayoutJson.value = true;
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
@@ -143,6 +148,8 @@ const refresh = async () => {
             });
             loading.value = false;
         } else {
+            detailDialog.activeTabName = activeTabName.value;
+            emits("tabChange", detailDialog);
             loading.value = false;
         }
     } else {

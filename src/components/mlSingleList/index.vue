@@ -4,7 +4,7 @@
             <span class="section-title">{{ title }}</span>
             <div class="section-fr fr">
                 <mlSearchInput
-                    class="section-search"
+                    style="margin-right: 10px;"
                     v-model="keyword"
                     placeholder="查询"
                     @confirm="getTableList"
@@ -199,12 +199,6 @@ defineExpose({
 .props-action-section {
     .section-title {
         font-size: 16px;
-    }
-    .section-fr {
-        .section-search {
-            display: inline-block;
-            width: 224px;
-        }
     }
 }
 .ml-main-list {

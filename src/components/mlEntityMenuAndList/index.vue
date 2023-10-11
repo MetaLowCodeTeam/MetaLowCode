@@ -35,10 +35,10 @@
                 <span class="section-title">{{ ListTile[entityName] }}</span>
                 <div class="section-fr fr">
                     <mlSearchInput
-                        class="section-search"
                         v-model="keyword"
                         placeholder="查询"
                         @confirm="getApprovalList"
+                        style="margin-right: 10px;"
                     />
                     <slot name="addbutton"></slot>
                 </div>
@@ -496,12 +496,6 @@ defineExpose({
 .props-action-section {
     .section-title {
         font-size: 16px;
-    }
-    .section-fr {
-        .section-search {
-            display: inline-block;
-            width: 224px;
-        }
     }
 }
 
