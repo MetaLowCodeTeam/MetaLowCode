@@ -10,7 +10,7 @@
                         class="w-100"
                         @change="targetEntityChange"
                         :disabled="trigger.isOnSave"
-                        value-key="label"
+                        value-key="inx"
                     >
                         <template v-for="(op,inx) in tagEntitys" :key="inx">
                             <el-option :label="op.label" :value="op" />
