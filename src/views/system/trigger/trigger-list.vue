@@ -12,6 +12,7 @@
         :tableColumn="tableColumn"
         defalutSortField="modifiedOn"
         defaultFilter="name"
+        v-if="isSupportFunc"
     >
         <template #addbutton>
             <el-button type="primary" @click="addClick">
@@ -38,11 +39,23 @@
             </el-form-item>
         </template>
     </mlEntityMenuAndList>
+    <div v-else class="not-support">
+        当前版本不支持该功能！
+    </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+const $TOOL = inject("$TOOL");
+// 是否支持该功能
+let isSupportFunc = ref(false);
+onMounted(()=>{
+    let pluginIdList =  $TOOL.data.get("APP_PLUGINID");
+    if(pluginIdList.includes('metaTrigger')){
+        isSupportFunc.value = true;
+    }
+})
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([
@@ -153,5 +166,11 @@ const goDetial = (row) => {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.not-support {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 30px;
+}
 </style>

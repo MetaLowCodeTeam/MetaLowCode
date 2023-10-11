@@ -38,7 +38,7 @@
                         <v-form-render v-if="haveLayoutJson" ref="vFormRef" />
                     </div>
                     <div v-else>
-                        <slot name="tab" :activeTabName="activeTabName"></slot>
+                        <slot name="tab" :row="detailDialog.formData"></slot>
                     </div>
                 </el-col>
                 <el-col :span="6">

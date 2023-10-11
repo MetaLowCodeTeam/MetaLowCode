@@ -17,7 +17,10 @@
                     </div>
                     <div class="member-list__main">
                         <div class="name yichu" :title="item.userName">{{item.userName}}</div>
-                        <div class="department yichu" :title="item.departmentName">{{item.departmentName}}</div>
+                        <div
+                            class="department yichu"
+                            :title="item.departmentName"
+                        >{{item.departmentName}}</div>
                     </div>
                     <span class="member-list__del" @click.stop="delMember(item)">
                         <el-icon size="20">
@@ -34,9 +37,12 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
+import { delTeamMembers } from "@/api/team";
+
 const emits = defineEmits(["delMembers"]);
 const props = defineProps({
     modelValue: null,
+    teamId: { type: String, default: "" },
 });
 
 let myMembers = ref([]);
@@ -71,7 +77,7 @@ const formatMembers = () => {
             newMembersList.push(el);
         }
     });
-    showMembers.value = [...newMembersList]
+    showMembers.value = [...newMembersList];
 };
 
 // 删除成员
@@ -82,8 +88,11 @@ const delMember = (item) => {
         type: "warning",
     })
         .then(async () => {
+            console.log(props.teamId)
+            console.log(item,'item')
+            
             ElMessage.success("删除成功");
-            emits('delMembers')
+            emits("delMembers");
         })
         .catch(() => {});
 };

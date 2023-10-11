@@ -98,6 +98,13 @@ const routes = [
                 props: true,
                 meta: { title: '列表设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
             },
+            // 通用配置
+            {
+                path: '/comConf',
+                name: 'ComConf',
+                component: 'system/common-config/index',
+                meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r6012' }
+            },
             {
                 path: '/metadata',
                 name: 'Metadata',

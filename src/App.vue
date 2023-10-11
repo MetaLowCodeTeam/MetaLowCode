@@ -90,6 +90,7 @@ const queryPublicSetting = async () => {
         $TOOL.data.set("APP_SUB_TITLE", res.data.appSubtitle);
         $TOOL.data.set("APP_INTRO", res.data.appIntro);
         $TOOL.data.set("APP_WATERMARK", res.data.watermark);
+        $TOOL.data.set("APP_PLUGINID", res.data.pluginIdList);
         colorPrimary(res.data.themeColor);
     }
 };
