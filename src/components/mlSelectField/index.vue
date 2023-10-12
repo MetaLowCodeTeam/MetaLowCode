@@ -73,6 +73,7 @@ const getAllFields = async () => {
     let hasFields = selectedFields.value.map((el) => el.name);
     let res;
     if (props.isQuickQuery) {
+        param.queryReference = false;
         res = await $API.common.getFieldListOfFilter(param);
     } else {
         res = await $API.common.getFieldListOfEntity(param);
