@@ -162,6 +162,7 @@
             isQuickQuery
             :quickQueryConf="quickQueryConf"
             @onConfirm="getLayoutList"
+            :entityName="entityName"
         />
     </div>
 </template>

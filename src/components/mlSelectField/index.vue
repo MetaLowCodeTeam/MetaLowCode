@@ -31,6 +31,7 @@ const props = defineProps({
     title: { type: String, defalut: "123" },
     isQuickQuery: { type: Boolean, defalut: false },
     quickQueryConf: { type: Object, default: () => {} },
+    entityName: { type: String, defalut: "DemoContact" },
 });
 const emit = defineEmits(["update:modelValue", "onConfirm"]);
 // 选中的数据列表
@@ -61,13 +62,13 @@ const openDialg = () => {
 // 获取所有字段
 const getAllFields = async () => {
     loading.value = true;
-    let param = { entity: "DemoContact" };
+    let param = { entity: props.entityName };
     let hasFields = selectedFields.value.map((el) => el.name);
     let res = await $API.common.getFieldListOfEntity(param);
     if (res) {
         let resList = [];
         res.data.forEach((el) => {
-            if (el.type !== "PrimaryKey" && props.isQuickQuery) {
+            if (el.type !== "PrimaryKey") {
                 el.isSelected = false;
                 if (hasFields.includes(el.name)) {
                     let filterFields = selectedFields.value.filter(
@@ -95,7 +96,7 @@ const getAllFields = async () => {
 
 // 选择字段
 const fieldSelect = (field) => {
-    if (field.reserved) {
+    if (field.reserved && !props.isQuickQuery) {
         return;
     }
     field.isSelected = !field.isSelected;

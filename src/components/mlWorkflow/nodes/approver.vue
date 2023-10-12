@@ -128,6 +128,7 @@
                 ref="SelectFieldDialog"
                 v-model="form.modifiableFields"
                 title="选择可查看/修改字段"
+                :entityName="myEntityName"
             />
         </el-drawer>
     </div>
@@ -138,9 +139,13 @@ import addNode from "./addNode.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
 import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
+import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+const router = useRouter();
 let message = inject("$ElMessage");
 const { style } = storeToRefs(usePpprovalProcessStore());
+const { entityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
 });
@@ -151,6 +156,7 @@ let form = reactive({});
 let drawer = ref(false);
 let SelectFieldDialog = ref();
 let nodeTitle = ref();
+let myEntityName = ref("");
 watch(
     () => props.modelValue,
     () => {
@@ -162,6 +168,12 @@ watch(
 );
 onMounted(() => {
     nodeConfig.value = props.modelValue;
+    let entityCode = router.currentRoute.value.query.entityCode;
+    if(entityCode){
+        myEntityName.value = entityName.value[entityCode]
+    }
+    
+    
 });
 
 const show = () => {

@@ -114,27 +114,27 @@ const initData = async () => {
         let resData = res.data ? res.data : {};
         confData = Object.assign(confData, resData);
         let { emailSetting, smsSetting } = confData;
+
         // 格式化短信
-        confData.smsOpen = false;
+        confData.smsOpen = smsSetting.openStatus;
         for (const key in smsSetting) {
             if (Object.hasOwnProperty.call(smsSetting, key)) {
                 const element = smsSetting[key];
                 confData["sms" + key] = element;
-                if (element) {
-                    confData.smsOpen = true;
-                }
             }
         }
         // 格式化邮箱
-        confData.emailOpen = false;
+        confData.emailOpen = emailSetting.openStatus;
         for (const key in emailSetting) {
             if (Object.hasOwnProperty.call(emailSetting, key)) {
                 const element = emailSetting[key];
                 confData[key] = element;
-                if (element) {
-                    confData.emailOpen = true;
-                }
             }
+        }
+
+        // 初始化LOGO
+        if (!confData.logo) {
+            confData.logo = "/src/assets/imgs/logo.png";
         }
     }
     loading.value = false;
@@ -175,11 +175,18 @@ const isDisabled = (card, item) => {
  * *************************************** 保存数据
  */
 // 保存执行
-const onSubmit = () => {
+const onSubmit = async () => {
     if (!checkOnSave()) {
         return;
     }
-    console.log(confData, "可以保存---confData");
+    loading.value = true;
+    let res = await updateSysSetting(confData);
+    if (res) {
+        ElMessage.success("保存成功");
+        initData();
+    } else {
+        loading.value = false;
+    }
 };
 
 // 错误类型
@@ -200,8 +207,37 @@ const checkOnSave = () => {
         // 循环当前tab下的字段集
         for (let subInx = 0; subInx < el.confs.length; subInx++) {
             const subEl = el.confs[subInx];
-            // 如果字段是必填的，且该字段没有值
-            if (subEl.required && !confData[subEl.key]) {
+            // 如果字段是必填的，且该字段没有值 并且该字段不属于短信 或者 邮箱
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                !smsFields.value.includes(subEl.key) &&
+                !emailFields.value.includes(subEl.key)
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于短信 并且短息是开启的
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                smsFields.value.includes(subEl.key) &&
+                confData.smsOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于邮箱 并且邮箱是开启的
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                emailFields.value.includes(subEl.key) &&
+                confData.emailOpen
+            ) {
                 subEl.isError = true;
                 activeName.value = el.code;
                 ElMessage.warning(MsgType[subEl.type] + subEl.label);

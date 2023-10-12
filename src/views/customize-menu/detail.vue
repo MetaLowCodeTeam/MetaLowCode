@@ -26,16 +26,15 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="18">
-                    <DetailTabs v-model="detailDialog" @tabChange="tabChange" :cutTab="cutTab" @confirm="getLayoutList"/>
+                    <DetailTabs
+                        v-model="detailDialog"
+                        @tabChange="tabChange"
+                        :cutTab="cutTab"
+                        @confirm="getLayoutList"
+                    />
                     <!-- 详情 -->
                     <div v-if="cutTab == 'detail'">
-                        <v-form-render
-                            v-if="haveLayoutJson"
-                            ref="vFormRef"
-                            :option-data="optionData"
-                            :form-data="formData"
-                            :global-dsv="globalDsv"
-                        />
+                        <v-form-render v-if="haveLayoutJson" ref="vFormRef" />
                         <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
                     </div>
                     <!-- 非详情 -->
@@ -60,7 +59,6 @@
                             </span>
                             编辑
                         </el-button>
-
                         <More
                             type="detail"
                             :multipleSelection="multipleSelection"
@@ -68,6 +66,7 @@
                             :detailId="detailDialog.detailId"
                             :idFiledName="detailDialog.idFiledName"
                         />
+                        <ApprovalRelated />
                     </div>
                 </el-col>
             </el-row>
@@ -85,24 +84,21 @@ import More from "./components/More.vue";
 import DetailTabCom from "./components/DetailTabCom.vue";
 import Edit from "./edit.vue";
 import NewRelated from "./components/NewRelated.vue";
-const emits = defineEmits(["onConfirm","onAdd"]);
+import ApprovalRelated from "./components/ApprovalRelated.vue";
+const emits = defineEmits(["onConfirm", "onAdd"]);
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const vFormRef = ref();
-const optionData = reactive({});
-
-const formData = reactive();
-const globalDsv = reactive({});
 let detailDialog = reactive({
     isShow: false,
 });
 let loading = ref(false);
 let multipleSelection = ref([]);
-
+let fromData = reactive({});
 // 新建
-const onAdd = (e)=>{
-    emits("onAdd",e)
-}
+const onAdd = (e) => {
+    emits("onAdd", e);
+};
 
 // 当前页签
 let cutTab = ref("detail");
@@ -158,10 +154,12 @@ const initData = async () => {
 
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
-                let formData = await queryById(detailDialog.detailId);
+                let queryByIdRes = await queryById(detailDialog.detailId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
-                if (formData) {
-                    vFormRef.value.setFormData(formData.data);
+                if (queryByIdRes) {
+                    let resData = queryByIdRes.data || {};
+                    fromData = Object(resData,fromData)
+                    vFormRef.value.setFormData(fromData);
                     vFormRef.value.setReadMode();
                 }
                 loading.value = false;
@@ -218,5 +216,10 @@ defineExpose({
 .detail-main {
     padding: 20px;
     font-size: 14px;
+    .detail-right {
+        :deep(.el-button) {
+            margin-bottom: 5px;
+        }
+    }
 }
 </style>
