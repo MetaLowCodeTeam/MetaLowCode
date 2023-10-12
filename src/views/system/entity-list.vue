@@ -2,13 +2,14 @@
 	<el-container>
 		<el-header class="entity-action-section">实体列表
 			<div style="float: right">
-				<el-button type="primary" size="small" @click="createNewEntity">
+				<el-button type="primary" @click="createNewEntity">
 					<i class="el-icon-plus"></i>&nbsp;新建实体
 				</el-button>
 			</div>
 		</el-header>
 		<el-main class="card-container">
-			<el-card class="entity-card" shadow="hover" v-for="(entityItem, entityIdx) in entityItems" :key="entityIdx"
+			<el-card class="entity-card" shadow="hover" v-for="(entityItem, entityIdx) in availableEntityList"
+					 :key="entityIdx"
 					 @click=" (event) => showContextMenu(entityItem, event) "
 					 @contextmenu.prevent=" (event) => showContextMenu(entityItem, event) "
 					 @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
@@ -24,7 +25,7 @@
 				<div v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity"><i title="主实体">主</i></div>
 				<div v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity"><i title="明细实体">从</i>
 				</div>
-				<div v-if="!!entityItem.internalFlag" class="entity-flag detail-entity"><i title="内部实体">内</i></div>
+				<div v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity"><i title="内部实体">内</i></div>
 			</el-card>
 
 			<el-dialog title="新建实体" v-model="showNewEntityDialogFlag" v-if="showNewEntityDialogFlag"
@@ -34,9 +35,9 @@
 								  :filter-entity-method="filterMainEntity"></EntityPropEditor>
 				<template #footer>
 					<div class="dialog-footer">
-						<el-button type="primary" @click="saveNewEntity" size="small" style="width: 90px">保 存
+						<el-button type="primary" @click="saveNewEntity" style="width: 90px">保 存
 						</el-button>
-						<el-button @click="showNewEntityDialogFlag = false" size="small">取 消</el-button>
+						<el-button @click="showNewEntityDialogFlag = false">取 消</el-button>
 					</div>
 				</template>
 			</el-dialog>
@@ -45,9 +46,6 @@
 				 @mouseenter="clearHideMenuTimer" @mouseleave="setHideMenuTimer">
 				<div class="context-menu__item" @click="gotoEntityManager(selectedEntityObj)">字段管理</div>
 				<div class="context-menu__item" @click="gotoFormLayout(selectedEntityObj)">表单设计</div>
-				<!--
-				  <div class="context-menu__item" @click="gotoListSetting(selectedEntityObj)">列表设计</div>
-				  -->
 				<div class="context-menu__item" @click="deleteSelectedEntity(selectedEntityObj)">删除实体</div>
 			</div>
 
@@ -88,7 +86,18 @@ export default {
 
 		}
 	},
-	computed: {},
+	computed: {
+		availableEntityList() {
+			//return this.entityItems
+
+			return this.entityItems.filter(entityItem => {
+				return (entityItem.name !== 'ApprovalConfig') && (entityItem.name !== 'ReportConfig')
+					&& (entityItem.name !== 'TriggerConfig') && (entityItem.name !== 'MetaApi')
+					&& (entityItem.name !== 'Chart')
+			})
+		},
+
+	},
 	mounted() {
 		this.getEntityList()
 	},
@@ -147,12 +156,6 @@ export default {
 		},
 
 		gotoEntityManager(selectedEntityObj) {
-			//   this.$router.push({name: 'FieldManager',
-			//   params: {
-			//       entity: selectedEntityObj.name,
-			//       entityLabel: selectedEntityObj.label,
-			//     }
-			//   })
 			this.$router.push({
 				name: "FieldManager",
 				query: {
@@ -173,25 +176,6 @@ export default {
 				query: {
 					'entity': selectedEntityObj.name,
 					'entityLabel': selectedEntityObj.label
-				}
-			})
-		},
-
-		gotoListSetting(selectedEntityObj) {
-			if (selectedEntityObj.systemEntityFlag === true) {
-				this.$message.info('系统实体不需要设计列表')
-				return
-			}
-
-			if (selectedEntityObj.listable !== true) {
-				this.$message.info('当前实体不允许设计列表')
-				return
-			}
-
-			this.$router.push({
-				name: 'ListSetting',
-				query: {
-					'entity': selectedEntityObj.name,
 				}
 			})
 		},
@@ -245,7 +229,9 @@ export default {
 		filterMainEntity(filterList, callBack) {
 			filterList.length = 0  /* 清空数组，不能用filterList=[]，否则SimpleTable显示不出数据！！ */
 			filterList = this.entityItems.filter(entity => {
-				if (entity.detailEntityFlag === false) {
+				if (entity.systemEntityFlag || entity.internalEntityFlag) {
+					//
+				} else if (entity.detailEntityFlag === false) {
 					filterList.push({name: entity.name, label: entity.label})
 				}
 			})

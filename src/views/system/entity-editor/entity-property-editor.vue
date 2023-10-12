@@ -131,7 +131,6 @@ export default {
 		},
 
 		selectMainEntity(row) {
-			// console.log(row)
 			if (!!row) {
 				this.entityProps.mainEntity = row.name
 				this.mainEntityName = row.label + '(' + row.name + ')'

@@ -2,7 +2,7 @@
   <el-container id="commonTable">
     <el-main>
       <el-table :data="data" :height="height" :max-height="maxHeight" border stripe tooltip-effect="light"
-                @selection-change="handleSelectionChange" size="default" :style="{width: tableWidth}"
+                @selection-change="handleSelectionChange" :style="{width: tableWidth}"
                 :header-cell-style="{background: '#f6f8f9'}">
         <el-table-column v-if="showCheckBox" type="selection" width="45"></el-table-column>
         <template v-for="(item, index) in columns">
@@ -19,7 +19,7 @@
           </el-table-column>
         </template>
         <template v-if="showOperationColumn">
-          <el-table-column fixed="right" label="操作" width="130">
+          <el-table-column fixed="right" label="操作" width="150">
             <template #default="scope">
               <slot name="table_operation" :scope="scope" />
             </template>
