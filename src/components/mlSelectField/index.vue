@@ -1,19 +1,25 @@
 <template>
-    <mlDialog :title="title" append-to-body width="37%" v-model="dialogIsShow">
+    <mlDialog :title="title" append-to-body width="38%" v-model="dialogIsShow">
         <div class="mlfield-box">
-            <el-row :gutter="10">
-                <el-col :span="6" v-for="(field,inx) of fieldList" :key="inx">
-                    <div class="mlfield-item">
-                        <div class="mlfield-check-box fl">
-                            <el-checkbox
-                                v-model="field.isSelected"
-                                :disabled="!isQuickQuery && field.reserved"
-                            />
+            <el-scrollbar height="400px" v-if="fieldList.length > 0">
+                <el-row>
+                    <el-col :span="isQuickQuery ? 8 : 6" v-for="(field,inx) of fieldList" :key="inx">
+                        <div class="mlfield-item">
+                            <div class="mlfield-check-box fl">
+                                <el-checkbox
+                                    v-model="field.isSelected"
+                                    :disabled="!isQuickQuery && field.reserved"
+                                />
+                            </div>
+                            <div
+                                class="mlfield-label fr"
+                                @click="fieldSelect(field)"
+                            >{{ field.label }}</div>
                         </div>
-                        <div class="mlfield-label fr" @click="fieldSelect(field)">{{ field.label }}</div>
-                    </div>
-                </el-col>
-            </el-row>
+                    </el-col>
+                </el-row>
+            </el-scrollbar>
+            <el-empty v-else description="没有数据" />
         </div>
         <template #footer>
             <el-button type="primary" @click="confirm">确认</el-button>
@@ -29,6 +35,7 @@ const $ElMessage = inject("$ElMessage");
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     title: { type: String, defalut: "123" },
+    nameFiledName: { type: String, defalut: "123" },
     isQuickQuery: { type: Boolean, defalut: false },
     quickQueryConf: { type: Object, default: () => {} },
     entityName: { type: String, defalut: "DemoContact" },
@@ -64,7 +71,12 @@ const getAllFields = async () => {
     loading.value = true;
     let param = { entity: props.entityName };
     let hasFields = selectedFields.value.map((el) => el.name);
-    let res = await $API.common.getFieldListOfEntity(param);
+    let res;
+    if (props.isQuickQuery) {
+        res = await $API.common.getFieldListOfFilter(param);
+    } else {
+        res = await $API.common.getFieldListOfEntity(param);
+    }
     if (res) {
         let resList = [];
         res.data.forEach((el) => {
@@ -82,7 +94,7 @@ const getAllFields = async () => {
                 if (
                     props.isQuickQuery &&
                     selectedFields.value.length < 1 &&
-                    el.nameFieldFlag
+                    el.name == props.nameFiledName
                 ) {
                     el.isSelected = true;
                 }
@@ -129,7 +141,7 @@ const confirm = async () => {
         if (res) {
             $ElMessage.success("保存成功！");
             dialogIsShow.value = false;
-            emit('onConfirm')
+            emit("onConfirm");
         }
         loading.value = false;
     } else {
@@ -152,6 +164,7 @@ defineExpose({
             display: inline-block;
             width: calc(100% - 20px);
             margin-top: -3px;
+            padding-right: 5px;
         }
     }
 }

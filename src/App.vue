@@ -19,7 +19,7 @@ import {
 } from "vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
-
+import { getPublicSetting } from '@/api/setting';
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
@@ -80,7 +80,7 @@ onBeforeMount(() => {
 // /crud/getRightMap
 // 获取公开系统配置
 const queryPublicSetting = async () => {
-    let res = await http.get("/setting/queryPublicSetting");
+    let res = await getPublicSetting();
     if (res) {
         $TOOL.data.set("APP_NAME", res.data.appName);
         $TOOL.data.set("APP_VER", res.data.dbVersion);

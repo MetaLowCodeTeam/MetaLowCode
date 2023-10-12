@@ -76,9 +76,10 @@
 
 <script setup>
 import { ElMessage } from "element-plus";
-import { onMounted, reactive, ref } from "vue";
+import { inject, nextTick, onMounted, reactive, ref } from "vue";
 import { getSettingInfo, updateSysSetting } from "@/api/setting";
 import commonConfig from "@/config/commonConfig";
+const $TOOL = inject("$TOOL");
 // import config from "@/config/table";
 onMounted(() => {
     initData();
@@ -179,11 +180,30 @@ const onSubmit = async () => {
     if (!checkOnSave()) {
         return;
     }
-    loading.value = true;
+    // 如果短信是开启的
+    if (confData.smsOpen) {
+        for (const key in confData.smsSetting) {
+            if (Object.hasOwnProperty.call(confData.smsSetting, key)) {
+                confData.smsSetting[key] = confData["sms" + key];
+            }
+        }
+    }
+    confData.smsSetting.openStatus = confData.smsOpen;
+    // 如果邮箱是开启的
+    if (confData.emailOpen) {
+        for (const key in confData.emailSetting) {
+            if (Object.hasOwnProperty.call(confData.emailSetting, key)) {
+                confData.emailSetting[key] = confData[key];
+            }
+        }
+    }
+    confData.emailSetting.openStatus = confData.emailOpen;
     let res = await updateSysSetting(confData);
     if (res) {
         ElMessage.success("保存成功");
-        initData();
+        nextTick(() => {
+            location.reload();
+        });
     } else {
         loading.value = false;
     }
@@ -246,6 +266,44 @@ const checkOnSave = () => {
         }
     }
     return true;
+};
+
+// 获取公开系统配置
+const queryPublicSetting = async () => {
+    let res = await getPublicSetting();
+    if (res) {
+        $TOOL.data.set("APP_NAME", res.data.appName);
+        $TOOL.data.set("APP_VER", res.data.dbVersion);
+        $TOOL.data.set("APP_LOGO", res.data.logo);
+        $TOOL.data.set("APP_PAGE_FOOTER", res.data.pageFooter);
+        $TOOL.data.set("APP_TITLE", res.data.appTitle);
+        $TOOL.data.set("APP_SUB_TITLE", res.data.appSubtitle);
+        $TOOL.data.set("APP_INTRO", res.data.appIntro);
+        $TOOL.data.set("APP_WATERMARK", res.data.watermark);
+        $TOOL.data.set("APP_PLUGINID", res.data.pluginIdList);
+        colorPrimary(res.data.themeColor);
+    }
+};
+
+const colorPrimary = (val) => {
+    if (!val) {
+        val = "#409EFF";
+    }
+    document.documentElement.style.setProperty("--el-color-primary", val);
+    document.documentElement.style.setProperty("--vf-color-primary", val); //同步主题色
+    for (let i = 1; i <= 9; i++) {
+        document.documentElement.style.setProperty(
+            `--el-color-primary-light-${i}`,
+            colorTool.lighten(val, i / 10)
+        );
+    }
+    for (let i = 1; i <= 9; i++) {
+        document.documentElement.style.setProperty(
+            `--el-color-primary-dark-${i}`,
+            colorTool.darken(val, i / 10)
+        );
+    }
+    $TOOL.data.set("APP_COLOR", val);
 };
 </script>
 <style lang='scss' scoped>

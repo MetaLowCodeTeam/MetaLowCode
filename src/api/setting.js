@@ -14,3 +14,9 @@ export function updateSysSetting(body) {
     return http.post('/setting/updateSysSetting', body)
 }
 
+
+
+
+export function getPublicSetting() {
+    return http.get('/setting/queryPublicSetting')
+}

@@ -163,6 +163,7 @@
             :quickQueryConf="quickQueryConf"
             @onConfirm="getLayoutList"
             :entityName="entityName"
+            :nameFiledName="nameFiledName"
         />
     </div>
 </template>

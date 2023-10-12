@@ -66,7 +66,11 @@
                             :detailId="detailDialog.detailId"
                             :idFiledName="detailDialog.idFiledName"
                         />
-                        <ApprovalRelated />
+                        {{ fromData.approvalStatus }}
+                        <ApprovalRelated
+                            v-if="fromData.approvalStatus"
+                            :approvalStatus="approvalStatus"
+                        />
                     </div>
                 </el-col>
             </el-row>
@@ -151,14 +155,14 @@ const initData = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
-
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let queryByIdRes = await queryById(detailDialog.detailId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (queryByIdRes) {
                     let resData = queryByIdRes.data || {};
-                    fromData = Object(resData,fromData)
+                    fromData = Object(fromData, resData);
+                    console.log(fromData, "fromData");
                     vFormRef.value.setFormData(fromData);
                     vFormRef.value.setReadMode();
                 }
