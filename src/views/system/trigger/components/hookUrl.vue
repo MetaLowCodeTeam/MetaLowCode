@@ -124,7 +124,7 @@ let functionListLoading = ref(false);
 let functionList = ref([])
 const getFunctionList =async ()=>{
     functionListLoading.value = true;
-    let res =await http.get("/trigger/queryFunctionList");
+    let res =await http.get("/plugins/metaTrigger/trigger/queryFunctionList");
     if(res){
         functionList.value = res.data;
     }
