@@ -1,7 +1,7 @@
 <template>
     <mlDialog :title="title" append-to-body width="38%" v-model="dialogIsShow">
         <div class="mlfield-box">
-            <el-scrollbar height="400px" v-if="fieldList.length > 0">
+            <el-scrollbar max-height="400px" v-if="fieldList.length > 0">
                 <el-row>
                     <el-col :span="isQuickQuery ? 8 : 6" v-for="(field,inx) of fieldList" :key="inx">
                         <div class="mlfield-item">
