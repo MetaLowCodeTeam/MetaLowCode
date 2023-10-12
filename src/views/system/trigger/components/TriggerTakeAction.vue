@@ -3,7 +3,7 @@
     <div class="trigger-take-action">
         <el-form label-width="120px">
             <el-form-item label="源实体">
-                <span class="blod">{{ entityLable[trigger.entityCode] }}</span>
+                <span class="blod">{{ entityLabel[trigger.entityCode] }}</span>
             </el-form-item>
             <el-form-item label="触发动作">
                 <div>
@@ -51,7 +51,7 @@
                     </mlDialog>
                     <div class="info-text mt-5">
                         注意：定期执行将会对
-                        <span class="blod">{{ entityLable[trigger.entityCode] }}</span> 中所有数据执行操作。设置的执行周期请勿过于频繁！
+                        <span class="blod">{{ entityLabel[trigger.entityCode] }}</span> 中所有数据执行操作。设置的执行周期请勿过于频繁！
                     </div>
                 </div>
             </el-form-item>
@@ -85,7 +85,7 @@
 import { watch, ref, onMounted } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { entityLable } = storeToRefs(useCommonStore());
+const { entityLabel } = storeToRefs(useCommonStore());
 import mlCron from "@/components/mlCron/index.vue";
 
 const props = defineProps({

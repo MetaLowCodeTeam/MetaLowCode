@@ -23,7 +23,7 @@ import { getPublicSetting } from '@/api/setting';
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
-const { getEntityLable } = useCommonStore();
+const { getEntityLabel } = useCommonStore();
 const router = useRouter();
 const { setNewMsgNum } = useCheckStatusStore();
 
@@ -73,7 +73,7 @@ onBeforeMount(() => {
     queryPublicSetting();
     if($TOOL.data.get('USER_INFO')?.userName){
         // 获取所有实体并格式化Label
-        getEntityLable();
+        getEntityLabel();
     }
 });
 

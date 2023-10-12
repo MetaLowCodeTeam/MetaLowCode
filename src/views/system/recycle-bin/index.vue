@@ -42,7 +42,7 @@ import http from "@/utils/request";
 const $ElMessage = inject("$ElMessage");
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { entityLable } = storeToRefs(useCommonStore());
+const { entityLabel } = storeToRefs(useCommonStore());
 let mlSingleListRef = ref("");
 
 // 默认排序
@@ -67,7 +67,7 @@ let tableColumn = ref([
         width: "150",
         align: "center",
         formatter: (row) => {
-            return entityLable.value[row.entityCode];
+            return entityLabel.value[row.entityCode];
         },
     },
     {

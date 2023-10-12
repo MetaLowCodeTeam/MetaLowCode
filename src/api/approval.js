@@ -13,7 +13,11 @@ export default {
         // 保存审批流程
         save: async (data) => {
             return await http.post("/approval/saveLastApprovalFlow", data);
-        }
+        },
+        // 获取审批状态
+        recordApprovalState: async (recordId) => {
+            return await http.get("/approval/recordApprovalState", { recordId });
+        },
     },
     list: {
         // 获取实体列表

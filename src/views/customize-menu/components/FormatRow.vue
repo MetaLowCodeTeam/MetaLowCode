@@ -13,6 +13,10 @@
     >{{ row[column.fieldName] ? row[column.fieldName] + "%" : '' }}</div>
     <div
         class="text-ellipsis"
+        v-else-if="column.fieldType == 'Option'"
+    >{{ row[column.fieldName] ? row[column.fieldName].label : '' }}</div>
+    <div
+        class="text-ellipsis"
         v-else-if="column.fieldType == 'Boolean'"
     >{{ row[column.fieldName] == null ? "" : (row[column.fieldName] ? "是" : '否') }}</div>
     <div class="text-ellipsis" v-else-if="column.isNameField">

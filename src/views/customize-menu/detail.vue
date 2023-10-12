@@ -66,11 +66,7 @@
                             :detailId="detailDialog.detailId"
                             :idFiledName="detailDialog.idFiledName"
                         />
-                        {{ fromData.approvalStatus }}
-                        <ApprovalRelated
-                            v-if="fromData.approvalStatus"
-                            :approvalStatus="approvalStatus"
-                        />
+                        <ApprovalRelated v-if="approvalStatus" :approvalStatus="approvalStatus" />
                     </div>
                 </el-col>
             </el-row>
@@ -98,7 +94,7 @@ let detailDialog = reactive({
 });
 let loading = ref(false);
 let multipleSelection = ref([]);
-let fromData = reactive({});
+let approvalStatus = ref(null);
 // 新建
 const onAdd = (e) => {
     emits("onAdd", e);
@@ -143,8 +139,9 @@ const getLayoutList = async () => {
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         detailDialog.add = res.data.ADD ? { ...res.data.ADD } : {};
         initData();
+    } else {
+        loading.value = false;
     }
-    loading.value = false;
 };
 
 let haveLayoutJson = ref(false);
@@ -152,6 +149,7 @@ let haveLayoutJson = ref(false);
 const initData = async () => {
     loading.value = true;
     let res = await getFormLayout(detailDialog.entityName);
+
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
@@ -159,11 +157,11 @@ const initData = async () => {
             nextTick(async () => {
                 let queryByIdRes = await queryById(detailDialog.detailId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
+
                 if (queryByIdRes) {
-                    let resData = queryByIdRes.data || {};
-                    fromData = Object(fromData, resData);
-                    console.log(fromData, "fromData");
-                    vFormRef.value.setFormData(fromData);
+                    vFormRef.value.setFormData(queryByIdRes.data || {});
+                    approvalStatus.value =
+                        queryByIdRes?.data.recordApprovalState || null;
                     vFormRef.value.setReadMode();
                 }
                 loading.value = false;
@@ -174,6 +172,12 @@ const initData = async () => {
     } else {
         loading.value = false;
     }
+    // let approvalStatusRes = await $API.approval.detial.recordApprovalState(
+    //     detailDialog.detailId
+    // );
+    // if (approvalStatusRes) {
+    //     approvalStatus.value = approvalStatusRes.data || null;
+    // }
 };
 
 // 给URL加参数--------暂时未用

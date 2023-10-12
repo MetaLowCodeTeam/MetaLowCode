@@ -4,14 +4,14 @@ import { getEntitySet } from '@/api/system-manager'
 import { ElMessage } from 'element-plus'
 const useCommonStore = defineStore('commonStore', () => {
     // 所有实体label
-    let entityLable = reactive({});
+    let entityLabel = reactive({});
     // 所有实体Name
     let entityName = reactive({});
     // 所有实体Code
     let entityCode = reactive({});
     // 审核弹框选择应用实体---已过滤
     let approveDialogEntityList = ref([]);
-    const getEntityLable = () => {
+    const getEntityLabel = () => {
         getEntitySet().then(res => {
             if (res.error != null) {
                 ElMessage({ message: res.error, type: 'error' })
@@ -20,7 +20,7 @@ const useCommonStore = defineStore('commonStore', () => {
             if (res.data && res.data.length > 0) {
                 approveDialogEntityList.value = [];
                 res.data.forEach(el => {
-                    entityLable[el.entityCode] = el.label;
+                    entityLabel[el.entityCode] = el.label;
                     entityName[el.entityCode] = el.name;
                     entityCode[el.name] = el.entityCode;
                     if (!el.systemEntityFlag) {
@@ -33,8 +33,8 @@ const useCommonStore = defineStore('commonStore', () => {
         })
     }
     return {
-        entityLable,
-        getEntityLable,
+        entityLabel,
+        getEntityLabel,
         approveDialogEntityList,
         entityName
     }
