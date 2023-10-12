@@ -100,6 +100,10 @@ export default {
 			if (mdResult.data.fieldList) {
 				mdResult.data.fieldList.forEach(fld => {
 					if (!fld.detailEntity && (fld.type !== 'PrimaryKey')) {  //跳过id主键
+						if ((fld.type === 'AnyReference') || (fld.type === 'ReferenceList')) {
+							return
+						}
+
 						if (this.usedFieldNames.hasOwnProperty(fld.name)) {
 							return //跳过本次循环
 						}
@@ -130,6 +134,10 @@ export default {
 
 					mdResult.data.fieldList.forEach(fld => {
 						if (fld.detailEntity && (fld.detailEntity === deName) && (fld.type !== 'PrimaryKey')) {  //跳过id主键
+							if ((fld.type === 'AnyReference') || (fld.type === 'ReferenceList')) {
+								return
+							}
+
 							if (this.usedFieldNames.hasOwnProperty(fld.name)) {
 								return //跳过本次循环
 							}
