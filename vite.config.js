@@ -3,6 +3,7 @@ import legacyPlugin from '@vitejs/plugin-legacy';
 import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import topLevelAwait from 'vite-plugin-top-level-await'
 import { loadEnv } from 'vite';
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -60,7 +61,8 @@ export default ({
             proxy,
         },
         build: {
-            target: 'es2015',
+            target: ['es2015','es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+            cssTarget: 'chrome61',
             minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用terser
             manifest: false, // 是否产出maifest.json
             sourcemap: false, // 是否产出soucemap.json
@@ -73,9 +75,7 @@ export default ({
         esbuild,
         optimizeDeps,
         plugins: [
-            legacyPlugin({
-                targets: ['Android > 39', 'Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15'],
-            }), vuePlugin(),
+            vuePlugin(),
 
             createSvgIconsPlugin({
                 // Specify the icon folder to be cached
@@ -83,6 +83,12 @@ export default ({
                 // Specify symbolId format
                 symbolId: 'icon-[dir]-[name]',
             }),
+            topLevelAwait({
+                // The export name of top-level await promise for each chunk module
+                promiseExportName: '__tla',
+                // The function to generate import names of top-level await promise in each chunk module
+                promiseImportName: i => `__tla_${i}`
+            })
 
         ],
         css: {

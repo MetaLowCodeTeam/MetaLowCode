@@ -48,7 +48,7 @@
             <TabMemberList v-model="memberList" @delMembers="changeMembers" />
         </template>
         <template #operate="{row}">
-            <AddMembers @addMembers="changeMembers" :teamId="row.teamId" />
+            <AddMembers @addMembers="changeMembers" :paramId="row.teamId" paramIdName="teamId"/>
             <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
             <el-dropdown trigger="click">
                 <el-button>

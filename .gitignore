@@ -20,6 +20,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*build
 
 /package-lock.json
 /MetaLowCode.iml

@@ -1,14 +1,14 @@
 <template>
     <mlDialog v-model="isShow" :title="title" width="35%">
         <div class="timeline-div" v-loading="loading">
+            <!-- :type="index == 0 ? 'primary' : index == (approveHistory.length-1) ? 'danger' : null" -->
             <el-timeline v-if="approveHistory.length > 0">
                 <el-timeline-item
                     v-for="(activity, index) in approveHistory"
                     :key="index"
-                    :type="index == 0 ? 'primary' : null"
-                    :icon="index == 0 ? null : Clock"
+                    :type="getTimelineType(index,activity)"
+                    :icon="index"
                     size="large"
-                    :color="index == 0 ? null : '#f8b904'"
                     class="ml-timeline-item"
                 >
                     <div class="item-row">
@@ -20,7 +20,7 @@
                         <div class="item-content before" v-if="index == 0">
                             <div class="item-title mb-5">由 {{ activity.stepUserName }} 提交审批</div>
                             <div class="item-step-name">
-                                <span class="item-step-name-span">
+                                <span class="item-step-name-span" @click="goApprovalList">
                                     <el-icon class="item-step-icon">
                                         <ElIconCircleCheck />
                                     </el-icon>
@@ -28,7 +28,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="item-content" v-else>
+                        <div class="item-content" v-if="index != 0 && activity.state != 13">
                             <div
                                 class="contain-div"
                                 v-if="activity.singLabel && activity.needRow > 1"
@@ -48,7 +48,10 @@
                                         :content="activity.remark"
                                         placement="top"
                                     >
-                                        <span style="position: relative;top: 2px;cursor: pointer;" v-if="activity.remark">
+                                        <span
+                                            style="position: relative;top: 2px;cursor: pointer;"
+                                            v-if="activity.remark"
+                                        >
                                             <el-icon>
                                                 <ElIconQuestionFilled />
                                             </el-icon>
@@ -62,7 +65,10 @@
                                         :content="activity.remark"
                                         placement="top"
                                     >
-                                        <span style="position: relative;top: 2px;cursor: pointer;" v-if="activity.remark">
+                                        <span
+                                            style="position: relative;top: 2px;cursor: pointer;"
+                                            v-if="activity.remark"
+                                        >
                                             <el-icon>
                                                 <ElIconQuestionFilled />
                                             </el-icon>
@@ -76,7 +82,10 @@
                                         :content="activity.remark"
                                         placement="top"
                                     >
-                                        <span style="position: relative;top: 2px;cursor: pointer;" v-if="activity.remark">
+                                        <span
+                                            style="position: relative;top: 2px;cursor: pointer;"
+                                            v-if="activity.remark"
+                                        >
                                             <el-icon>
                                                 <ElIconQuestionFilled />
                                             </el-icon>
@@ -98,8 +107,8 @@
 <script setup>
 import http from "@/utils/request";
 import { watch, ref, onMounted, inject, reactive } from "vue";
-import { Clock } from "@element-plus/icons-vue";
-const $ElMessage = inject("$ElMessage");
+import { useRouter } from "vue-router";
+const Route = useRouter();
 const props = defineProps({
     modelValue: null,
     entityId: { type: String, default: "" },
@@ -133,6 +142,21 @@ onMounted(() => {
 });
 
 let approveHistory = ref([]);
+
+const getTimelineType = (index, activity) => {
+    if (index == 0) {
+        return "primary";
+    }
+    let warningType = [11,12];
+    if (warningType.includes(activity.state)) {
+        return "warning";
+    }
+    let dangerType = [13];
+    if (dangerType.includes(activity.state)) {
+        return "danger";
+    }
+    return "success";
+};
 
 // 获取步揍名称
 function getStepName(inx, item) {
@@ -185,6 +209,11 @@ function formatResData(data) {
     });
     return newData;
 }
+
+// 配置流程
+const goApprovalList = () => {
+    Route.push("/process-list");
+};
 
 // 关闭弹框
 function canner() {

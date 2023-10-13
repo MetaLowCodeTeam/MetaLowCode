@@ -14,11 +14,12 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { addTeamMembers } from "@/api/team";
 import { ElMessage } from "element-plus";
 const props = defineProps({
-    teamId: { type: String, default: "" },
+    paramIdName: { type: String, default: "" },
+    paramId: { type: String, default: "" },
 });
 const emits = defineEmits(["addMembers"]);
 let myMembers = ref([]);
@@ -34,9 +35,9 @@ const addMembers = async () => {
         return;
     }
     let param = {
-        teamId: props.teamId,
         nodeRoleList: [...myMembers.value],
     };
+    param[props.paramIdName] = props.paramId
     loading.value = true;
     let res = await addTeamMembers(param);
     if(res){

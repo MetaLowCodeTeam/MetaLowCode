@@ -19,7 +19,7 @@
         <el-button @click="openHistoryDialog">详情</el-button>
     </template>
     <!-- 审批弹框 -->
-    <mlDialog v-model="approvalDialog.isShow" :title="approvalDialog.title" width="600">
+    <mlDialog v-model="approvalDialog.isShow" :title="approvalDialog.title" width="460">
         <el-form label-width="120px" v-loading="approvalDialog.loading">
             <el-form-item label="选择审批流程">
                 <el-select
@@ -35,8 +35,8 @@
                     />
                 </el-select>
                 <div v-else class="info-text">
-                    无使用流程
-                    <span class="ml-a-span" @click="goApprovalList">点击配置</span>
+                    暂无审批流程
+                    <span class="ml-a-span" @click="goApprovalList" v-if="$TOOL.checkRole('r30-1')">点击配置</span>
                 </div>
             </el-form-item>
             <el-form-item>
@@ -73,6 +73,7 @@ import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
 import http from "@/utils/request";
 const Route = useRouter();
 const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const props = defineProps({
     approvalStatus: { type: Object, default: () => {} },
 });
@@ -109,7 +110,8 @@ const openDialog = async (title) => {
         myApproval.value.recordId
     );
     if (res) {
-        approvalList.value = res.data || [];
+        // approvalList.value = res.data || [];
+        approvalList.value = [];
     }
     approvalDialog.loading = false;
 };

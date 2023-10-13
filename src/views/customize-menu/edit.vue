@@ -22,9 +22,11 @@ import { reactive, ref, inject, nextTick } from "vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
+import { saveUser } from "@/api/user";
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
+    isUser: { type: Boolean, default: false },
 });
 const $ElMessage = inject("$ElMessage");
 
@@ -113,6 +115,8 @@ const confirm = async () => {
         let saveRes;
         if (props.isTeam) {
             saveRes = await saveTeam(row.entityName, row.detailId, formData);
+        } else if (props.isUser) {
+            saveRes = await saveUser(row.entityName, row.detailId, formData);
         } else {
             saveRes = await saveRecord(row.entityName, row.detailId, formData);
         }
