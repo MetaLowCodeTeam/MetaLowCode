@@ -73,6 +73,6 @@ export function queryChartData(formModel,type) {
         noPrivileges: formModel?.setChartConf.useAllData,
         filter: formModel.setChartFilter
     };
-    return http.post('/chart/queryChartData', param)
+    return http.post('/plugins/metaDataCube/chart/queryChartData', param)
 }
 
