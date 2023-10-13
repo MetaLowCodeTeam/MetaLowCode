@@ -36,7 +36,7 @@
                     >审批</el-button>
                 </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 label="操作"
                 :align="'center'"
                 width="100"
@@ -52,7 +52,7 @@
                         @click="revokeRow(scope.row)"
                     >撤销</el-button>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
         </template>
     </mlSingleList>
     <div v-if="approveDialogIsShow">
@@ -131,6 +131,7 @@ onBeforeMount(() => {
             ],
         },
     };
+    
 });
 
 // 审核弹框是否显示
@@ -200,26 +201,6 @@ let tableColumn = ref([
     },
 ]);
 
-// 撤销
-const revokeRow = (row) => {
-    ElMessageBox.confirm("是否确认撤销?", "提示：", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "warning",
-    })
-        .then(async () => {
-            mlSingleListRef.value.loading = true;
-            let res = await http.post(
-                "/approval/approvalRevocation?entityId=" + row.entityId.id
-            );
-            if (res) {
-                $ElMessage.success("撤销成功");
-                mlSingleListRef.value.getTableList();
-            }
-            mlSingleListRef.value.loading = false;
-        })
-        .catch(() => {});
-};
 
 // 审批
 function approveRow(row) {

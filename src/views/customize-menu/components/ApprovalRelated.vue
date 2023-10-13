@@ -1,34 +1,82 @@
 <template>
     <!-- 未提交 -->
     <template v-if="myApproval.approvalStatus == 0">
-        <el-button @click="submitApproval">提交审批</el-button>
+        <el-button v-if="myApproval.startApproval" @click="openDialog('提交审批')">提交审批</el-button>
     </template>
     <!-- 审核中 -->
     <template v-if="myApproval.approvalStatus == 1">
-        <el-button>提交审批1</el-button>
+        <el-button v-if="myApproval.imApproval" @click="openApproveDialog">审批</el-button>
+        <el-button @click="openHistoryDialog">详情</el-button>
     </template>
     <!-- 已驳回 -->
-    <template v-if="myApproval.approvalStatus == 2">
-        <el-button>提交审批2</el-button>
+    <template v-if="myApproval.approvalStatus == 2 || myApproval.approvalStatus == 4">
+        <el-button @click="openDialog('提交审批')">提交审批</el-button>
+        <el-button @click="openHistoryDialog">详情</el-button>
     </template>
     <!-- 已完成 -->
     <template v-if="myApproval.approvalStatus == 3">
-        <el-button>提交审批3</el-button>
-    </template>
-    <!-- 已撤销 -->
-    <template v-if="myApproval.approvalStatus == 4">
-        <el-button>提交审批4</el-button>
+        <el-button @click="revokeApproval" v-if="$TOOL.checkRole('r6013')">撤销</el-button>
+        <el-button @click="openHistoryDialog">详情</el-button>
     </template>
     <!-- 审批弹框 -->
-    <mlDialog v-model="approvalDialog.isShow" :title="approvalDialog.title" width="600">213</mlDialog>
+    <mlDialog v-model="approvalDialog.isShow" :title="approvalDialog.title" width="600">
+        <el-form label-width="120px" v-loading="approvalDialog.loading">
+            <el-form-item label="选择审批流程">
+                <el-select
+                    v-if="approvalList.length > 0"
+                    v-model="approvalDialog.approvalConfigId"
+                    placeholder="请选择审批流程"
+                >
+                    <el-option
+                        v-for="item in approvalList"
+                        :key="item.approvalConfigId"
+                        :label="item.flowName"
+                        :value="item.approvalConfigId"
+                    />
+                </el-select>
+                <div v-else class="info-text">
+                    无使用流程
+                    <span class="ml-a-span" @click="goApprovalList">点击配置</span>
+                </div>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" style="width: 80px;" @click="onSubmit">提交</el-button>
+                <el-button style="width: 80px;" @click="approvalDialog.isShow = false">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </mlDialog>
+    <div v-if="approveDialogIsShow">
+        <mlApprove
+            v-model="approveDialogIsShow"
+            :taskId="myApproval.approvalTaskId"
+            :entityId="myApproval.recordId"
+            :approvalName="myApproval.approvalName"
+            @confirm="confirmApproval"
+            title="审批"
+        />
+    </div>
+    <div v-if="approvalHistoryDialog">
+        <mlApproveHistory
+            v-model="approvalHistoryDialog"
+            :entityId="myApproval.recordId"
+            title="审批详情"
+        />
+    </div>
 </template>
 
 <script setup>
-import { onMounted, watch, ref, reactive } from "vue";
-
+import { ElMessageBox, ElMessage } from "element-plus";
+import { onMounted, watch, ref, reactive, inject } from "vue";
+import { useRouter } from "vue-router";
+import mlApprove from "@/components/mlApprove/index.vue";
+import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
+import http from "@/utils/request";
+const Route = useRouter();
+const $API = inject("$API");
 const props = defineProps({
     approvalStatus: { type: Object, default: () => {} },
 });
+const emits = defineEmits(["onSubmit"]);
 let myApproval = ref({});
 watch(
     () => props.approvalStatus,
@@ -40,18 +88,104 @@ watch(
 );
 onMounted(() => {
     myApproval.value = props.approvalStatus;
-    console.log(myApproval.value, "myApproval.value");
 });
+
+// 审批流程
+let approvalList = ref([]);
 
 let approvalDialog = reactive({
     isShow: false,
+    loading: false,
     title: "",
+    approvalConfigId: "",
 });
 
-// 提交审批
-const submitApproval = () => {
+// 打开弹框
+const openDialog = async (title) => {
     approvalDialog.isShow = true;
-    approvalDialog.title = "提交审批";
+    approvalDialog.title = title;
+    approvalDialog.loading = true;
+    let res = await $API.approval.detial.getApprovalList(
+        myApproval.value.recordId
+    );
+    if (res) {
+        approvalList.value = res.data || [];
+    }
+    approvalDialog.loading = false;
+};
+
+const closeDialog = () => {
+    approvalDialog.isShow = false;
+};
+
+/**
+ * ************************************ 审批详情
+ */
+// 审批详情弹框
+let approvalHistoryDialog = ref(false);
+// 审批历史
+const openHistoryDialog = (row) => {
+    approvalHistoryDialog.value = true;
+};
+
+// 审批
+let approveDialogIsShow = ref(false);
+const openApproveDialog = () => {
+    approveDialogIsShow.value = true;
+};
+
+// 确认审批
+const confirmApproval = () => {
+    emits("onSubmit");
+    closeDialog();
+};
+
+// 撤销
+const revokeApproval = () => {
+    ElMessageBox.confirm("是否确认撤销?", "提示：", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(async () => {
+            approvalDialog.loading = true;
+            let res = await http.post(
+                "/approval/approvalRevocation?entityId=" +
+                    myApproval.value.recordId
+            );
+            if (res) {
+                ElMessage.success("撤销成功");
+                emits("onSubmit");
+                closeDialog();
+            }
+            approvalDialog.loading = false;
+        })
+        .catch(() => {});
+};
+
+// 提交接口
+const onSubmit = async () => {
+    // let status = myApproval.value.approvalStatus;
+    if (!approvalDialog.approvalConfigId) {
+        ElMessage.warning("请选择审批流程");
+        return;
+    }
+    approvalDialog.loading = true;
+    let res = await $API.approval.detial.startApproval(
+        myApproval.value.recordId,
+        approvalDialog.approvalConfigId
+    );
+    if (res) {
+        ElMessage.success("提交审批成功");
+        emits("onSubmit");
+        closeDialog();
+    }
+    approvalDialog.loading = false;
+};
+
+// 配置流程
+const goApprovalList = () => {
+    Route.push("/process-list");
 };
 </script>
 <style lang='scss' scoped>

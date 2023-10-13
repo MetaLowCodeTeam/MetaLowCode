@@ -40,7 +40,7 @@
         </template>
     </mlEntityMenuAndList>
     <div v-else class="not-support">
-        当前版本不支持该功能！
+        触发器 插件未安装！
     </div>
 </template>
 

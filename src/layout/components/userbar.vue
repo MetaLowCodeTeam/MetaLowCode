@@ -25,7 +25,9 @@
                                     <a :href="item.link" target="_blank">
                                         <div class="msg-list__icon">
                                             <el-badge is-dot type="danger">
-                                                <el-avatar :size="40" :src="'img/avatar.jpg'"></el-avatar>
+                                                <el-avatar :size="40">
+                                                    <mlAvatar :userId="item.fromUser.id"/>
+                                                </el-avatar>
                                             </el-badge>
                                         </div>
                                         <div class="msg-list__main">
@@ -54,7 +56,9 @@
         </div>
         <el-dropdown class="user panel-item" trigger="click" @command="handleUser">
             <div class="user-avatar">
-                <el-avatar :size="30">{{ userNameF }}</el-avatar>
+                <el-avatar :size="30">
+                    <mlAvatar :userId="userId"/>
+                </el-avatar>
                 <label>{{ userName }}</label>
                 <el-icon class="el-icon--right">
                     <el-icon-arrow-down />
@@ -111,6 +115,7 @@ const COMMON_CONFIG = inject("COMMON_CONFIG");
 
 const router = useRouter();
 let userName = ref("");
+let userId = ref("");
 let userNameF = ref("");
 let searchVisible = ref(false);
 let tasksVisible = ref(false);
@@ -120,6 +125,7 @@ let msgLoading = ref(false);
 onMounted(() => {
     var userInfo = $TOOL.data.get("USER_INFO");
     userName.value = userInfo.userName;
+    userId.value = userInfo.userId;
     userNameF.value = userName.value.substring(0, 1);
 });
 

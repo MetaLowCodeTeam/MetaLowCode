@@ -4,7 +4,7 @@
     <mlDialog v-model="isShow" title="添加成员" width="500">
         <el-form label-width="80px" v-loading="loading">
             <el-form-item style="margin-bottom: 20px;" label="选择用户">
-                <mlSelectUser v-model="myMembers" multiple clearable />
+                <mlSelectUser type="User" v-model="myMembers" multiple clearable />
             </el-form-item>
             <el-form-item label=" ">
                 <el-button type="primary" @click="addMembers">确认</el-button>

@@ -75,6 +75,7 @@ const begImport = async () => {
     delete param.columns;
     delete param.fields;
     delete param.originalFilename;
+
     param.fieldsMapping = { ...fieldsMapping };
     param.owningUser = getUserId(fromData.value.owningUser);
     let filterMandatory = fromData.value.importFields.filter(el=> !el.isNullable);
@@ -121,8 +122,9 @@ const goBack = () => {
 
 // 格式化表格数据
 const formatTableData = () => {
-    let { columns } = fromData.value;
+    let { columns ,fields} = fromData.value;
     let formatList = [];
+    console.log(fromData.value,'fromData.value')
     columns.forEach((el, inx) => {
         formatList.push({
             rawValue: el.rawValue,
@@ -132,6 +134,13 @@ const formatTableData = () => {
             columnNo: el.columnNo,
         });
     });
+    formatList.forEach(el=>{
+        fields.forEach(subEl => {
+            if(el.rawValue == subEl.fieldLabel){
+                el.useFileds = subEl.fieldName
+            }
+        })
+    })
     tableData.value = [...formatList];
 };
 // 格式化索引

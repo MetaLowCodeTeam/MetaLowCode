@@ -22,7 +22,9 @@
             </el-button>
         </template>
     </mlEntityMenuAndList>
-    <div v-else class="not-support">当前版本不支持该功能！</div>
+    <div v-else class="not-support">
+        在线报表 插件未安装！
+    </div>
 </template>
 
 <script setup>

@@ -1,6 +1,6 @@
 <template>
     <!--  -->
-    <img :alt="$TOOL.data.get('APP_NAME')" :src="formatImg()" />
+    <img alt="logo" :src="formatImg()" />
 </template>
 
 <script setup>

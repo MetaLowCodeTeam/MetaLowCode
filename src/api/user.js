@@ -94,3 +94,10 @@ export function listRole() {
         method: 'get',
     })
 }
+
+
+export function updateLoginUser(id, formModel) {
+    return request.post('/user/updateLoginUser', formModel, {
+        params: { id },
+    })
+}

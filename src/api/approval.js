@@ -14,10 +14,15 @@ export default {
         save: async (data) => {
             return await http.post("/approval/saveLastApprovalFlow", data);
         },
-        // 获取审批状态
-        recordApprovalState: async (recordId) => {
-            return await http.get("/approval/recordApprovalState", { recordId });
+        // 获取审批配置列表
+        getApprovalList: async (recordId) => {
+            return await http.get("/approval/getEntityApprovalConfigList", { recordId });
         },
+        // 提交审批
+        startApproval: async (entityId, approvalConfigId) => {
+            return await http.get("/approval/startApproval", { entityId, approvalConfigId });
+        },
+
     },
     list: {
         // 获取实体列表
@@ -46,3 +51,5 @@ export default {
 
     },
 }
+
+

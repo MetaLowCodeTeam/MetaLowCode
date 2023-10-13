@@ -88,7 +88,7 @@ export default {
         let userInfo = this.$TOOL.cookie.get("userInfo");
         if(userInfo){
             userInfo = JSON.parse(userInfo);
-            this.form.user = userInfo.userName
+            this.form.user = userInfo.loginName
             this.form.password = userInfo.password
             this.form.autologin = userInfo.autologin
         }
@@ -122,10 +122,10 @@ export default {
                     expires: this.form.autologin ? 24 * 60 * 60 * 3 : 0,
                 });
 
-                //this.$TOOL.data.set("USER_INFO", user.data.userInfo)
                 let userInfo = {
-                    userName: this.form.user,
-                    userId: user.data,
+                    userName: user.data.name,
+                    loginName: this.form.user,
+                    userId: user.data.id,
                     dashboard: "1",
                 };
                 this.$TOOL.data.set("USER_INFO", userInfo);
@@ -139,7 +139,7 @@ export default {
                     });
                 }
                 
-                sessionStorage.setItem("userId", user.data); // 保存用户Id到本地会话
+                sessionStorage.setItem("userId", user.data.id); // 保存用户Id到本地会话
                 this.$TOOL.cookie.set("uid", user.data, {
                     expires: 24 * 60 * 60 * 3,
                 });

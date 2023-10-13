@@ -4,9 +4,11 @@
 			<el-container>
 				<el-header style="height: auto;display: block;">
 					<div class="user-info-top">
-						<el-avatar :size="70" src="img/avatar.jpg"></el-avatar>
-						<h2>{{ user.userName }}</h2>
-						<p><el-tag effect="dark" round size="large" disable-transitions>{{ user.role }}</el-tag></p>
+						<el-avatar :size="70">
+                            <mlAvatar :userId="userInfo.userId"/>
+                        </el-avatar>
+						<h2>{{ userInfo.userName }}</h2>
+						<!-- <p><el-tag effect="dark" round size="large" disable-transitions>{{ user.role }}</el-tag></p> -->
 					</div>
 				</el-header>
 				<el-main class="nopadding">
@@ -61,54 +63,21 @@
 								title: "账号信息",
 								component: "account"
 							},
-							{
-								icon: "el-icon-operation",
-								title: "个人设置",
-								component: "seting"
-							},
+						
 							{
 								icon: "el-icon-lock",
-								title: "密码",
+								title: "重置密码",
 								component: "password"
 							},
-							{
-								icon: "el-icon-bell",
-								title: "通知设置",
-								component: "pushSettings"
-							}
 						]
 					},
-					{
-						groupName: "数据管理",
-						list: [
-							{
-								icon: "el-icon-coin",
-								title: "存储空间信息",
-								component: "space"
-							},
-							{
-								icon: "el-icon-clock",
-								title: "操作日志",
-								component: "logs"
-							}
-						]
-					},
-					{
-						groupName: "账号升级",
-						list: [
-							{
-								icon: "el-icon-office-building",
-								title: "升级为企业账号",
-								component: "upToEnterprise"
-							}
-						]
-					}
 				],
 				user: {
 					userName: "Sakuya",
 					role: "超级管理员",
 				},
-				page: "account"
+				page: "account",
+                userInfo:{},
 			}
 		},
 		//路由跳转进来 判断from是否有特殊标识做特殊处理
@@ -125,6 +94,9 @@
 				}
 			})
 		},
+        mounted(){
+            this.userInfo = this.$TOOL.data.get('USER_INFO');
+        },
 		methods: {
 			openPage(item){
 				this.page = item.index

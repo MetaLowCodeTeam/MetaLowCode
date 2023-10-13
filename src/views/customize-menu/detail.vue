@@ -66,7 +66,11 @@
                             :detailId="detailDialog.detailId"
                             :idFiledName="detailDialog.idFiledName"
                         />
-                        <ApprovalRelated v-if="approvalStatus" :approvalStatus="approvalStatus" />
+                        <ApprovalRelated
+                            v-if="approvalStatus"
+                            :approvalStatus="approvalStatus"
+                            @onSubmit="getLayoutList"
+                        />
                     </div>
                 </el-col>
             </el-row>
@@ -162,6 +166,15 @@ const initData = async () => {
                     vFormRef.value.setFormData(queryByIdRes.data || {});
                     approvalStatus.value =
                         queryByIdRes?.data.recordApprovalState || null;
+                    if (approvalStatus.value) {
+                        approvalStatus.value.entityCode =
+                            detailDialog.entityCode;
+                        approvalStatus.value.entityName =
+                            detailDialog.entityName;
+                        approvalStatus.value.recordId = detailDialog.detailId;
+                        approvalStatus.value.approvalName = detailDialog.detailTitle;
+                    }
+
                     vFormRef.value.setReadMode();
                 }
                 loading.value = false;
