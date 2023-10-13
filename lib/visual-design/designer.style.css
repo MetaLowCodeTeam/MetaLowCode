@@ -43,7 +43,7 @@
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-2a03d21b] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-2a03d21b]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -143,7 +143,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4fb0ed34] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4fb0ed34]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -342,7 +342,7 @@ div.panel-container[data-v-4fb0ed34] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -435,7 +435,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-25f78db2] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-25f78db2]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -523,7 +523,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-25f78db2] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-25f78db2]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -665,7 +665,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-04532474] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-04532474]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -753,7 +753,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-04532474] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-04532474]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -844,7 +844,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-70ede2a0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-70ede2a0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -932,7 +932,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-70ede2a0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-70ede2a0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1115,7 +1115,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4d4f31ec] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4d4f31ec]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1203,7 +1203,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4d4f31ec] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4d4f31ec]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1301,7 +1301,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-6268a390] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-6268a390]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1389,7 +1389,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-6268a390] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-6268a390]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1478,7 +1478,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-15ad9a07] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-15ad9a07]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1566,7 +1566,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-15ad9a07] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-15ad9a07]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1658,7 +1658,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-0afc920f] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-0afc920f]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1746,7 +1746,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-0afc920f] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-0afc920f]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1852,7 +1852,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-92bf9a96] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-92bf9a96]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -1940,7 +1940,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-92bf9a96] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-92bf9a96]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2038,7 +2038,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-6604df59] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-6604df59]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2126,7 +2126,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-6604df59] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-6604df59]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2214,7 +2214,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-73c1d519] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-73c1d519]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2302,7 +2302,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-73c1d519] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-73c1d519]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2419,7 +2419,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-a0d236d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-a0d236d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2507,7 +2507,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-a0d236d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-a0d236d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2595,7 +2595,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-89e3b0d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-89e3b0d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2683,7 +2683,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-89e3b0d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-89e3b0d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2772,7 +2772,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-aae6021c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-aae6021c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2860,7 +2860,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-aae6021c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-aae6021c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -2952,7 +2952,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-d56d745e] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-d56d745e]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -3040,7 +3040,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-d56d745e] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-d56d745e]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -3149,7 +3149,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5da89272] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5da89272]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -3237,7 +3237,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5da89272] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5da89272]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -3326,7 +3326,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-c0a3bf96] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-c0a3bf96]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -3414,7 +3414,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-c0a3bf96] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-c0a3bf96]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -3506,7 +3506,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -5896,7 +5896,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-7f02fd9e] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-7f02fd9e]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -5984,7 +5984,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-7f02fd9e] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-7f02fd9e]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6085,7 +6085,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4d79e768] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4d79e768]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6173,7 +6173,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4d79e768] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4d79e768]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6265,7 +6265,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-d9d184c4] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-d9d184c4]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6353,7 +6353,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-d9d184c4] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-d9d184c4]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6445,7 +6445,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-1b458525] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-1b458525]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6545,7 +6545,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-990dcae8] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-990dcae8]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6633,7 +6633,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-990dcae8] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-990dcae8]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6721,7 +6721,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5732c178] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5732c178]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6809,7 +6809,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5732c178] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5732c178]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6904,7 +6904,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-21f9c4f0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-21f9c4f0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -6992,7 +6992,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-21f9c4f0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-21f9c4f0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7087,7 +7087,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-68faa871] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-68faa871]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7175,7 +7175,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-68faa871] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-68faa871]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7278,7 +7278,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-03e270d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-03e270d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7366,7 +7366,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-03e270d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-03e270d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7464,7 +7464,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5cac62c0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5cac62c0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7572,7 +7572,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-9d9176c6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-9d9176c6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7669,7 +7669,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5ccd1e74] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5ccd1e74]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -7866,7 +7866,7 @@ div.sub-form-table-column.hide-label[data-v-5ccd1e74] .el-form-item__label {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5810c836] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5810c836]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8061,7 +8061,7 @@ div.sub-form-table-column.hide-label[data-v-5810c836] .el-form-item__label {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-16fa7af9] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-16fa7af9]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8156,7 +8156,7 @@ td.table-cell[data-v-16fa7af9] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4d4f1738] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4d4f1738]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8251,7 +8251,7 @@ div.table-container table.table-layout[data-v-4d4f1738] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-3a6d6506] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-3a6d6506]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8354,7 +8354,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-0f24375b] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-0f24375b]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8450,7 +8450,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-067607b1] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-067607b1]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8543,7 +8543,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-d179e75c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-d179e75c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8636,7 +8636,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-ed4bddb8] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-ed4bddb8]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -8878,7 +8878,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-656de765] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-656de765]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9035,7 +9035,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-fcb445c6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-fcb445c6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9129,7 +9129,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-2bf809b1] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-2bf809b1]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9245,7 +9245,7 @@ li.ghost[data-v-2bf809b1] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-f9cc7378] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-f9cc7378]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9339,7 +9339,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-00800654] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-00800654]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9477,7 +9477,7 @@ li.col-item .col-delete-button[data-v-00800654] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-86b3f21a] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-86b3f21a]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9586,7 +9586,7 @@ li.col-item .col-delete-button[data-v-86b3f21a] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-7c6da3d6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-7c6da3d6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9680,7 +9680,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-2041c9fc] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-2041c9fc]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9793,7 +9793,7 @@ li.col-item .col-delete-button[data-v-2041c9fc] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-6f3413a6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-6f3413a6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9892,7 +9892,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-47be7df0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-47be7df0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -9991,7 +9991,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-65ce3b05] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-65ce3b05]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10106,7 +10106,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-212ec5b6] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-212ec5b6]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10279,7 +10279,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-179dc52a] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-179dc52a]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10428,7 +10428,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10521,7 +10521,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-dc661e70] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-dc661e70]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10650,7 +10650,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-5db93d4b] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-5db93d4b]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10743,7 +10743,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-4b438bf4] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-4b438bf4]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10861,7 +10861,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-2cb73e42] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-2cb73e42]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -10995,7 +10995,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-70978c5f] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-70978c5f]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11112,7 +11112,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-0a068dd0] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-0a068dd0]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11212,7 +11212,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-13ef2746] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-13ef2746]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11311,7 +11311,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-30b39229] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-30b39229]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11431,7 +11431,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-47fef782] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-47fef782]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11530,7 +11530,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-d0c6273c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-d0c6273c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11674,7 +11674,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-3f1a7449] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-3f1a7449]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11788,7 +11788,7 @@ div.table-container table.table-layout .form-widget-list[data-v-3f1a7449], div.t
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-777203ed] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-777203ed]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11876,7 +11876,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-777203ed] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-777203ed]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -11987,7 +11987,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-f85dd3b2] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-f85dd3b2]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -12092,7 +12092,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-87d1b93c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-87d1b93c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -12197,7 +12197,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-9f47222c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-9f47222c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -12308,13 +12308,13 @@ body {//IE浏览器滚动条样式
   opacity: 0;
 }@charset "UTF-8";
 /* 全局css变量 */
-.primary-color[data-v-6dcc01f9] {
+.primary-color[data-v-7a11a436] {
   color: var(--vf-color-primary, #409EFF);
 }
-.background-opacity[data-v-6dcc01f9] {
+.background-opacity[data-v-7a11a436] {
   background: rgba(64, 158, 255, 0.6);
 }
-.form-widget-list .ghost[data-v-6dcc01f9], .drag-drop-zone .ghost[data-v-6dcc01f9] {
+.form-widget-list .ghost[data-v-7a11a436], .drag-drop-zone .ghost[data-v-7a11a436] {
   content: "";
   font-size: 0;
   height: 3px;
@@ -12325,54 +12325,54 @@ body {//IE浏览器滚动条样式
   padding: 0;
   overflow: hidden;
 }
-.el-form-item .el-rate[data-v-6dcc01f9] {
+.el-form-item .el-rate[data-v-7a11a436] {
   margin-top: 8px;
 }
-.el-form-item--medium .el-radio[data-v-6dcc01f9] {
+.el-form-item--medium .el-radio[data-v-7a11a436] {
   line-height: 36px !important;
 }
-.el-form-item--medium .el-rate[data-v-6dcc01f9] {
+.el-form-item--medium .el-rate[data-v-7a11a436] {
   margin-top: 8px;
 }
-.el-form-item--small .el-radio[data-v-6dcc01f9] {
+.el-form-item--small .el-radio[data-v-7a11a436] {
   line-height: 32px !important;
 }
-.el-form-item--small .el-rate[data-v-6dcc01f9] {
+.el-form-item--small .el-rate[data-v-7a11a436] {
   margin-top: 6px;
 }
-.el-form-item--mini .el-radio[data-v-6dcc01f9] {
+.el-form-item--mini .el-radio[data-v-7a11a436] {
   line-height: 28px !important;
 }
-.el-form-item--mini .el-rate[data-v-6dcc01f9] {
+.el-form-item--mini .el-rate[data-v-7a11a436] {
   margin-top: 4px;
 }
-.el-card[data-v-6dcc01f9] {
+.el-card[data-v-7a11a436] {
   margin-top: 3px;
   margin-bottom: 3px;
 }
-.readonly-mode-form .el-form-item__content[data-v-6dcc01f9] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+.readonly-mode-form .el-form-item__content[data-v-7a11a436] {
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
-input[type=password][data-v-6dcc01f9]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
+input[type=password][data-v-7a11a436]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
 }
-.auto-full-width.el-date-editor.el-input[data-v-6dcc01f9], .auto-full-width.el-date-editor.el-input__inner[data-v-6dcc01f9] {
+.auto-full-width.el-date-editor.el-input[data-v-7a11a436], .auto-full-width.el-date-editor.el-input__inner[data-v-7a11a436] {
   width: 100% !important;
 }
 
 /* 滚动条样式 begin */
-[data-v-6dcc01f9]::-webkit-scrollbar {
+[data-v-7a11a436]::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-[data-v-6dcc01f9]::-webkit-scrollbar-track {
+[data-v-7a11a436]::-webkit-scrollbar-track {
   width: 8px;
   background: rgba(16, 31, 28, 0.1);
   -webkit-border-radius: 2em;
   -moz-border-radius: 2em;
   border-radius: 2em;
 }
-[data-v-6dcc01f9]::-webkit-scrollbar-thumb {
+[data-v-7a11a436]::-webkit-scrollbar-thumb {
   background-color: rgba(16, 31, 28, 0.35);
   background-clip: padding-box;
   min-height: 28px;
@@ -12380,10 +12380,10 @@ input[type=password][data-v-6dcc01f9]::-ms-reveal { /* 隐藏IE/Edge原生的密
   -moz-border-radius: 2em;
   border-radius: 2em;
 }
-[data-v-6dcc01f9]::-webkit-scrollbar-thumb:hover {
+[data-v-7a11a436]::-webkit-scrollbar-thumb:hover {
   background-color: rgba(16, 31, 28, 0.85);
 }
-*[data-v-6dcc01f9] {
+*[data-v-7a11a436] {
   scrollbar-color: #e5e5e5 #f7f7f9;
   scrollbar-width: thin;
 }
@@ -12397,10 +12397,10 @@ body {//IE浏览器滚动条样式
 }
 */
 /* 滚动条样式 end */
-.el-container.main-container.full-height[data-v-6dcc01f9] {
+.el-container.main-container.full-height[data-v-7a11a436] {
   display: flex;
 }
-.el-container.main-container .el-container.main-content[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content[data-v-7a11a436] {
   display: inline-flex;
   height: 100%;
   width: 100%;
@@ -12409,50 +12409,50 @@ body {//IE浏览器滚动条样式
   overflow: hidden;
   position: relative;
 }
-.el-container.main-container .el-container.main-content .el-aside.side-panel[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .el-aside.side-panel[data-v-7a11a436] {
   height: 100%;
 }
-.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-6dcc01f9] .el-scrollbar .el-scrollbar__view {
+.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-7a11a436] .el-scrollbar .el-scrollbar__view {
   height: 100%;
 }
-.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-6dcc01f9] .form-widget-container {
+.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-7a11a436] .form-widget-container {
   overflow-y: hidden;
   height: 100%;
   box-sizing: border-box;
 }
-.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-6dcc01f9] .form-widget-container .el-form.full-height-width {
+.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-7a11a436] .form-widget-container .el-form.full-height-width {
   box-sizing: border-box;
   overflow-y: auto;
 }
-.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-6dcc01f9] .form-widget-container .form-widget-canvas {
+.el-container.main-container .el-container.main-content .el-main.form-widget-main[data-v-7a11a436] .form-widget-container .form-widget-canvas {
   height: 100%;
   box-sizing: border-box;
 }
-.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] {
   height: 100%;
   overflow-y: hidden;
   display: flex;
   flex-basis: auto;
 }
-.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] .panel-container {
+.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] .panel-container {
   padding: 0;
 }
-.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] .panel-container .el-tabs {
+.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] .panel-container .el-tabs {
   display: flex;
   flex-direction: column;
 }
-.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] .panel-container .el-tabs__header {
+.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] .panel-container .el-tabs__header {
   padding: 0 8px;
 }
-.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] .panel-container .el-tabs__content, .el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] .panel-container .el-tab-pane {
+.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] .panel-container .el-tabs__content, .el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] .panel-container .el-tab-pane {
   height: 100%;
   flex-grow: 1;
 }
-.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-6dcc01f9] .panel-container .el-scrollbar__wrap {
+.el-container.main-container .el-container.main-content .el-aside.setting-panel[data-v-7a11a436] .panel-container .el-scrollbar__wrap {
   padding-left: 8px;
   padding-right: 12px;
 }
-.el-container.main-container .el-container.main-content .left-aside-toggle-bar[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .left-aside-toggle-bar[data-v-7a11a436] {
   display: block;
   cursor: pointer;
   height: 36px;
@@ -12465,18 +12465,18 @@ body {//IE浏览器滚动条样式
   z-index: 8;
   padding-top: 16px;
 }
-.el-container.main-container .el-container.main-content .left-aside-toggle-bar i[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .left-aside-toggle-bar i[data-v-7a11a436] {
   font-size: 18px;
   color: #909399;
   margin-left: -3px;
 }
-.el-container.main-container .el-container.main-content .left-aside-toggle-bar:hover i[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .left-aside-toggle-bar:hover i[data-v-7a11a436] {
   color: var(--vf-color-primary, #409EFF);
 }
-.el-container.main-container .el-container.main-content .left-aside-toggle-bar.aside-hidden[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .left-aside-toggle-bar.aside-hidden[data-v-7a11a436] {
   left: -2px;
 }
-.el-container.main-container .el-container.main-content .right-aside-toggle-bar[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .right-aside-toggle-bar[data-v-7a11a436] {
   display: block;
   cursor: pointer;
   height: 36px;
@@ -12490,100 +12490,100 @@ body {//IE浏览器滚动条样式
   padding-top: 16px;
   padding-right: -5px !important;
 }
-.el-container.main-container .el-container.main-content .right-aside-toggle-bar i[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .right-aside-toggle-bar i[data-v-7a11a436] {
   font-size: 18px;
   color: #909399;
   position: relative;
   top: 3px;
   left: -4px;
 }
-.el-container.main-container .el-container.main-content .right-aside-toggle-bar:hover i[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .right-aside-toggle-bar:hover i[data-v-7a11a436] {
   color: var(--vf-color-primary, #409EFF);
 }
-.el-container.main-container .el-container.main-content .right-aside-toggle-bar.aside-hidden[data-v-6dcc01f9] {
+.el-container.main-container .el-container.main-content .right-aside-toggle-bar.aside-hidden[data-v-7a11a436] {
   right: -2px;
 }
-.el-container.main-container[data-v-6dcc01f9] {
+.el-container.main-container[data-v-7a11a436] {
   background: #fff;
 }
-.el-container.main-container[data-v-6dcc01f9] aside { /* 防止aside样式被外部样式覆盖！！ */
+.el-container.main-container[data-v-7a11a436] aside { /* 防止aside样式被外部样式覆盖！！ */
   margin: 0;
   padding: 0;
   background: inherit;
 }
-.el-container.full-height[data-v-6dcc01f9] {
+.el-container.full-height[data-v-7a11a436] {
   height: 100%;
   overflow-y: hidden;
 }
-.el-container.center-layout-container[data-v-6dcc01f9] {
+.el-container.center-layout-container[data-v-7a11a436] {
   min-width: 680px;
   border-left: 2px dotted #EBEEF5;
   border-right: 2px dotted #EBEEF5;
 }
-.el-header.main-header[data-v-6dcc01f9] {
+.el-header.main-header[data-v-7a11a436] {
   border-bottom: 2px dotted #EBEEF5;
   height: 48px !important;
   line-height: 48px !important;
   min-width: 800px;
 }
-div.main-title[data-v-6dcc01f9] {
+div.main-title[data-v-7a11a436] {
   font-size: 18px;
   color: #242424;
   display: flex;
   align-items: center;
   justify-items: center;
 }
-div.main-title img[data-v-6dcc01f9] {
+div.main-title img[data-v-7a11a436] {
   cursor: pointer;
   width: 36px;
   height: 36px;
 }
-div.main-title span.bold[data-v-6dcc01f9] {
+div.main-title span.bold[data-v-7a11a436] {
   font-size: 20px;
   font-weight: bold;
   margin: 0 6px 0 6px;
 }
-div.main-title span.version-span[data-v-6dcc01f9] {
+div.main-title span.version-span[data-v-7a11a436] {
   font-size: 14px;
   color: #101F1C;
   margin-left: 6px;
 }
-.float-left[data-v-6dcc01f9] {
+.float-left[data-v-7a11a436] {
   float: left;
 }
-.float-right[data-v-6dcc01f9] {
+.float-right[data-v-7a11a436] {
   float: right;
 }
-.el-dropdown-link[data-v-6dcc01f9] {
+.el-dropdown-link[data-v-7a11a436] {
   margin-right: 12px;
   cursor: pointer;
 }
-div.external-link[data-v-6dcc01f9] {
+div.external-link[data-v-7a11a436] {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-div.external-link a[data-v-6dcc01f9] {
+div.external-link a[data-v-7a11a436] {
   font-size: 13px;
   text-decoration: none;
   margin-right: 10px;
   color: #606266;
 }
-.el-header.toolbar-header[data-v-6dcc01f9] {
+.el-header.toolbar-header[data-v-7a11a436] {
   font-size: 14px;
   border-bottom: 1px dotted #CCCCCC;
   height: 42px !important;
 }
-.el-aside.side-panel[data-v-6dcc01f9] {
+.el-aside.side-panel[data-v-7a11a436] {
   width: 260px !important;
   overflow-y: hidden;
 }
-.el-main.form-widget-main[data-v-6dcc01f9] {
+.el-main.form-widget-main[data-v-7a11a436] {
   padding: 0;
   position: relative;
   overflow-x: hidden;
 }
-.container-scroll-bar[data-v-6dcc01f9] .el-scrollbar__wrap, .container-scroll-bar[data-v-6dcc01f9] .el-scrollbar__view {
+.container-scroll-bar[data-v-7a11a436] .el-scrollbar__wrap, .container-scroll-bar[data-v-7a11a436] .el-scrollbar__view {
   overflow-x: hidden;
 }@font-face {
   font-family: "iconfont"; /* Project id  */
@@ -12659,7 +12659,7 @@ div.external-link a[data-v-6dcc01f9] {
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-33a45974] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-33a45974]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;
@@ -12774,7 +12774,7 @@ body {//IE浏览器滚动条样式
   margin-bottom: 3px;
 }
 .readonly-mode-form .el-form-item__content[data-v-85ff776c] {
-  background-color: #f1f2f3; /* 只读查看状态-默认底色 */
+  background-color: #f8f8f8; /* 只读查看状态-默认底色 */
 }
 input[type=password][data-v-85ff776c]::-ms-reveal { /* 隐藏IE/Edge原生的密码查看按钮 */
   display: none;

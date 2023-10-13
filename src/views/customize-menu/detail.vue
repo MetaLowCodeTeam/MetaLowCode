@@ -218,6 +218,10 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+:deep(.el-form-item--default) {
+	margin-bottom: 5px !important;
+}
+
 .detail-header {
     // padding-bottom: 20px;
     // box-sizing: border-box;

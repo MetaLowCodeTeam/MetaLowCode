@@ -1,5 +1,5 @@
 <template>
-    <ml-dialog :title="row.dialogTitle" v-model="isShow" width="800px">
+    <ml-dialog :title="row.dialogTitle" v-model="isShow" width="900px">
         <div class="main" v-loading="loading">
             <div class="info-box" v-if="row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
@@ -134,6 +134,10 @@ defineExpose({
 });
 </script>
 <style lang='scss' scoped>
+:deep(.el-form-item--default) {
+	margin-bottom: 5px !important;
+}
+
 .main {
     .info-box {
         height: 26px;
