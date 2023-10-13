@@ -4,13 +4,14 @@
         <el-form-item label="目标实体">
             <el-row class="w-100 mb-15" :gutter="20">
                 <el-col :span="9">
+                    <!-- {{ trigger.defaultTargetEntity }} -->
                     <el-select
                         v-model="trigger.defaultTargetEntity"
                         filterable
                         class="w-100"
                         @change="targetEntityChange"
                         :disabled="trigger.isOnSave"
-                        value-key="inx"
+                        value-key="entityInx"
                     >
                         <el-option
                             v-for="(op,inx) in tagEntitys"
@@ -211,7 +212,10 @@ const getTagEntitys = () => {
             trigger.value.entityCode
         );
         if (res) {
-            tagEntitys.value = res.data;
+            tagEntitys.value = res.data.map((el,inx)=>{
+                el.entityInx = inx;
+                return el
+            });
             res.data.forEach((el) => {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
             });
@@ -242,12 +246,11 @@ const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
         let res = await queryEntityFields(trigger.value.entityCode, true, true);
         if (res) {
-            cutEntityFields.value = res.data;
+            cutEntityFields.value = res.data || [];
             res.data.forEach((el) => {
                 cutEntityFieldLable.value[el.fieldName] = el.fieldLabel;
             });
-            
-        } 
+        }
         resolve();
     });
 };
@@ -272,7 +275,7 @@ const getTagEntityFields = async (entityCode) => {
         }
         // 格式化规则列表
         formatActionContentItems();
-    } 
+    }
     changeTagEntityLoading.value = false;
 };
 
@@ -402,7 +405,6 @@ const addUptadeRule = () => {
             return;
         }
     }
-
     trigger.value.actionContent.items.push({
         targetField,
         updateMode,

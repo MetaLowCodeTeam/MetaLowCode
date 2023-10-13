@@ -32,11 +32,10 @@
 </template>
 
 <script setup>
-import { reactive, ref, inject } from "vue";
+import { ref, inject } from "vue";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
 
 let dialogShow = ref(false);

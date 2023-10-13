@@ -10,7 +10,7 @@
                         class="w-100"
                         @change="targetEntityChange"
                         :disabled="trigger.isOnSave"
-                        value-key="inx"
+                        value-key="entityInx"
                     >
                         <template v-for="(op,inx) in tagEntitys" :key="inx">
                             <el-option :label="op.label" :value="op" />
@@ -213,7 +213,10 @@ const getTagEntitys = () => {
             trigger.value.entityCode
         );
         if (res) {
-            tagEntitys.value = res.data;
+            tagEntitys.value = res.data.map((el,inx)=>{
+                el.entityInx = inx;
+                return el
+            });
             if (res.data && res.data.length > 0) {
                 // 目标实体默认选中第1个
                 let defalutInx = 0;
