@@ -41,10 +41,48 @@
                                     class="mr-5"
                                     v-if="activity.state === 0"
                                 >等待 {{ activity.stepUserName }} 审批</span>
-                                <span
-                                    class="mr-5"
-                                    v-if="activity.state === 1"
-                                >由 {{ activity.stepUserName }} 审批同意</span>
+                                <span class="mr-5" v-if="activity.state === 1">
+                                    由 {{ activity.stepUserName }} 审批同意
+                                    <el-tooltip
+                                        effect="dark"
+                                        :content="activity.remark"
+                                        placement="top"
+                                    >
+                                        <span style="position: relative;top: 2px;cursor: pointer;" v-if="activity.remark">
+                                            <el-icon>
+                                                <ElIconQuestionFilled />
+                                            </el-icon>
+                                        </span>
+                                    </el-tooltip>
+                                </span>
+                                <span class="mr-5" v-if="activity.state === 11">
+                                    由 {{ activity.stepUserName }} 驳回
+                                    <el-tooltip
+                                        effect="dark"
+                                        :content="activity.remark"
+                                        placement="top"
+                                    >
+                                        <span style="position: relative;top: 2px;cursor: pointer;" v-if="activity.remark">
+                                            <el-icon>
+                                                <ElIconQuestionFilled />
+                                            </el-icon>
+                                        </span>
+                                    </el-tooltip>
+                                </span>
+                                <span class="mr-5" v-if="activity.state === 12">
+                                    由 {{ activity.stepUserName }} 撤销
+                                    <el-tooltip
+                                        effect="dark"
+                                        :content="activity.remark"
+                                        placement="top"
+                                    >
+                                        <span style="position: relative;top: 2px;cursor: pointer;" v-if="activity.remark">
+                                            <el-icon>
+                                                <ElIconQuestionFilled />
+                                            </el-icon>
+                                        </span>
+                                    </el-tooltip>
+                                </span>
                                 <el-tag v-if="activity.operationState === 1" type="warning">转审</el-tag>
                                 <el-tag v-if="activity.operationState === 2" type="warning">加签</el-tag>
                             </div>
@@ -52,7 +90,7 @@
                     </div>
                 </el-timeline-item>
             </el-timeline>
-            <el-empty v-else :image-size="100" description="未查询到流程记录"/>
+            <el-empty v-else :image-size="100" description="未查询到流程记录" />
         </div>
     </mlDialog>
 </template>
@@ -113,7 +151,7 @@ function getContainHeight(item) {
     return {
         height: height + "px",
         lineHeight: height + "px",
-        top: - (75 * (item.needRow - 1)) + 'px',
+        top: -(75 * (item.needRow - 1)) + "px",
     };
 }
 
@@ -181,9 +219,9 @@ function canner() {
         margin-top: 3px;
         width: calc(100% - 40px);
         position: relative;
-        &.before {
-            width: 100%;
-        }
+        // &.before {
+        //     width: 100%;
+        // }
         .item-step-name {
             height: 26px;
             line-height: 26px;
