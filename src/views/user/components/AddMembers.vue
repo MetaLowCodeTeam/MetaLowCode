@@ -16,6 +16,7 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { addTeamMembers } from "@/api/team";
+import { addUserRole } from "@/api/user";
 import { ElMessage } from "element-plus";
 const props = defineProps({
     paramName: { type: String, default: "" },
@@ -41,7 +42,12 @@ const addMembers = async () => {
         nodeRoleList: [...myMembers.value],
     };
     loading.value = true;
-    let res = await addTeamMembers(param);
+    let res;
+    if(props.paramType == 'Role'){
+        res = await addUserRole(param);
+    }else {
+        res = await addTeamMembers(param);
+    }
     if (res) {
         ElMessage.success("添加成功");
         myMembers.value = [];

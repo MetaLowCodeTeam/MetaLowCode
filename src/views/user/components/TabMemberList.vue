@@ -1,7 +1,7 @@
 <template>
     <!--  -->
     <div class="tab-member-list" v-loading="loading">
-        <div class="search-box mb-10">
+        <div class="search-box mb-10" v-if="!isRole">
             <mlSearchInput
                 style="width: 230px;"
                 v-model="keyword"
@@ -12,16 +12,27 @@
         <div class="member-item-box">
             <el-scrollbar v-if="showMembers.length > 0">
                 <div class="member-item" v-for="(item,inx) of showMembers" :key="inx">
-                    <div class="member-list__icon">
-                        <el-avatar :size="40" :src="'img/avatar.jpg'"></el-avatar>
-                    </div>
-                    <div class="member-list__main">
-                        <div class="name yichu" :title="item.userName">{{item.userName}}</div>
-                        <div
-                            class="department yichu"
-                            :title="item.departmentName"
-                        >{{item.departmentName}}</div>
-                    </div>
+                    <template v-if="isRole">
+                        <div class="member-list__main role">
+                            <div class="name yichu" :title="item.roleName.name">{{item.roleName}}</div>
+                            <div
+                                class="department yichu"
+                                :title="item.description"
+                            >{{item.description}}</div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="member-list__icon">
+                            <el-avatar :size="40" :src="'img/avatar.jpg'"></el-avatar>
+                        </div>
+                        <div class="member-list__main">
+                            <div class="name yichu" :title="item.userName">{{item.userName}}</div>
+                            <div
+                                class="department yichu"
+                                :title="item.departmentName"
+                            >{{item.departmentName}}</div>
+                        </div>
+                    </template>
                     <span class="member-list__del" @click.stop="delMember(item)">
                         <el-icon size="20">
                             <ElIconDeleteFilled />
@@ -43,6 +54,7 @@ const emits = defineEmits(["delMembers"]);
 const props = defineProps({
     modelValue: null,
     id: { type: String, default: "" },
+    isRole: { type: Boolean, default: false },
 });
 
 let myMembers = ref([]);
@@ -83,6 +95,7 @@ const formatMembers = () => {
 
 // 删除成员
 const delMember = (item) => {
+    console.log(item,'item')
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
@@ -90,8 +103,13 @@ const delMember = (item) => {
     })
         .then(async () => {
             loading.value = true;
-            let res = await delTeamMembers(props.id,item.userId)
-            if(res){
+            let res;
+            if(props.isRole){
+                res = await delTeamMembers(item.roleId,props.id);
+            }else {
+                res = await delTeamMembers(props.id, item.userId);
+            }
+            if (res) {
                 ElMessage.success("删除成功");
                 emits("delMembers");
             }
@@ -125,6 +143,9 @@ const delMember = (item) => {
             .member-list__main {
                 float: left;
                 width: calc(100% - 100px);
+                &.role {
+                    padding-left: 20px;
+                }
                 .name {
                     height: 20px;
                     margin-top: 5px;

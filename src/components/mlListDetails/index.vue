@@ -56,12 +56,12 @@ import { ref, reactive, inject, nextTick } from "vue";
 import { queryById } from "@/api/crud";
 import { getFormLayout } from "@/api/system-manager";
 import { useRouter } from "vue-router";
+import { format } from "echarts";
 const router = useRouter();
 const props = defineProps({
     titleFromApi: { type: String, default: "" },
 });
 const emits = defineEmits(["tabChange"]);
-
 
 // 默认tab
 const DefaultTab = [
@@ -139,7 +139,14 @@ const refresh = async () => {
                     if (props.titleFromApi) {
                         detailDialog.title = formData.data[props.titleFromApi];
                     }
-                    vFormRef.value.setFormData(formData.data);
+                    console.log(formData.data, "formData.data");
+                    if (detailDialog.formData.avatar) {
+                        detailDialog.formData.avatar = formatUrl(
+                            detailDialog.formData.avatar
+                        );
+                        console.log();
+                    }
+                    vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
                         vFormRef.value.disableForm();
                     });
@@ -155,6 +162,10 @@ const refresh = async () => {
     } else {
         loading.value = false;
     }
+};
+
+const formatUrl = (url) => {
+    return import.meta.env.VITE_API_SERVER + "/picture/get/" + url;
 };
 
 // 暴露方法给父组件调用
