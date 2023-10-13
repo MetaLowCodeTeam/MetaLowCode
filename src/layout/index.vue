@@ -4,7 +4,7 @@
         <header class="adminui-header">
             <div class="adminui-header-left">
                 <div class="logo-bar">
-                    <mlLogo class="logo"/>
+                    <mlLogo class="logo" />
                     <span>{{ $TOOL.data.get('APP_NAME') }}</span>
                 </div>
                 <ul v-if="!ismobileFn" class="nav">
@@ -54,16 +54,24 @@
                     <Topbar v-if="!ismobileFn"></Topbar>
                     <Tags v-if="!ismobileFn && layoutTagsFn"></Tags>
                     <div class="adminui-main" id="adminui-main">
-                        <router-view v-slot="{ Component }">
-                            <keep-alive :include="keepLiveRouteFn">
-                                <component
-                                    :is="Component"
-                                    :key="$route.fullPath"
-                                    v-if="routeShowFn"
-                                />
-                            </keep-alive>
-                        </router-view>
-                        <iframe-view></iframe-view>
+                        <div
+                            v-if="checkPlugin($route)"
+                            class="not-plugin"
+                        >
+                            {{ pluginInfo[$route.name].errMsg }}
+                        </div>
+                        <template v-else>
+                            <router-view v-slot="{ Component }">
+                                <keep-alive :include="keepLiveRouteFn">
+                                    <component
+                                        :is="Component"
+                                        :key="$route.fullPath"
+                                        v-if="routeShowFn"
+                                    />
+                                </keep-alive>
+                            </router-view>
+                            <iframe-view></iframe-view>
+                        </template>
                     </div>
                 </div>
             </mlWaterMark>
@@ -75,7 +83,7 @@
         <header class="adminui-header">
             <div class="adminui-header-left">
                 <div class="logo-bar">
-                    <mlLogo class="logo"/>
+                    <mlLogo class="logo" />
                     <span>{{ $TOOL.data.get('APP_NAME') }}</span>
                 </div>
             </div>
@@ -131,7 +139,7 @@
         <header class="adminui-header">
             <div class="adminui-header-left">
                 <div class="logo-bar">
-                    <mlLogo class="logo"/>
+                    <mlLogo class="logo" />
                     <span>{{ $TOOL.data.get('APP_NAME') }}</span>
                 </div>
             </div>
@@ -310,6 +318,23 @@ export default {
             pmenu: {},
             active: "",
             defaultOpeneds: [],
+            // 插件
+            pluginIdList: [],
+            pluginInfo: {
+                RriggerList: {
+                    pluginName:"metaTrigger",
+                    errMsg:"触发器 插件未安装！"
+                },
+                DashboardDesign: {
+                    pluginName:"metaDataCube",
+                    errMsg:"数据分析 插件未安装！"
+                },
+                TemplatesList: {
+                    pluginName:"mannerReport",
+                    errMsg:"在线报表 插件未安装！"
+                },
+            },
+            needPlugin: ["RriggerList", "DashboardDesign", "TemplatesList"],
         };
     },
     computed: {
@@ -339,6 +364,7 @@ export default {
         this.menu = this.filterUrl(menu);
         this.getDefaultOpeneds();
         this.showThis();
+        this.pluginIdList = this.$TOOL.data.get("APP_PLUGINID");
     },
     watch: {
         $route() {
@@ -352,6 +378,19 @@ export default {
         },
     },
     methods: {
+        checkPlugin(route) {
+            let name = route.name;
+            // 如果不需要插件
+            if(!this.needPlugin.includes(name)){
+                return false;
+            }
+            let pluginInfo = this.pluginInfo[name];
+            // 如果插件列表不存在该插件
+            if(!this.pluginIdList.includes(pluginInfo.pluginName)){
+                return true;
+            }
+            return false;
+        },
         getDefaultOpeneds() {
             let needMenu = this.menu[0].children;
             needMenu.forEach((el) => {

@@ -37,7 +37,6 @@ textarea {
 	margin: 0;
 	padding: 0;
 	outline: none;
-
 }
 
 /* 大布局样式 */
@@ -494,4 +493,11 @@ $names: (
 	&:hover {
 		color: var(--el-color-primary-light-5);
 	}
+}
+
+.not-plugin {
+	text-align: center;
+	font-weight: bold;
+	font-size: 20px;
+	margin-top: 30px;
 }

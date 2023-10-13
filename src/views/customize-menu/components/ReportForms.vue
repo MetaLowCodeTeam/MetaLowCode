@@ -1,11 +1,15 @@
 <template>
     <ml-dialog title="选择报表" v-model="dialogShow" width="500px" appendToBody>
-        <div v-loading="loading" style="max-height: 500px;">
+        <div v-loading="loading" style="max-height: 500px;" v-if="isSupportFunc">
             <el-scrollbar>
                 <el-empty v-if="reportList.length==0" :image-size="80">
                     <template #description>
                         暂无报表
-                        <span class="ml-a-span" @click="clcikSet" v-if="$TOOL.checkRole('r45-1')">点击配置</span>
+                        <span
+                            class="ml-a-span"
+                            @click="clcikSet"
+                            v-if="$TOOL.checkRole('r45-1')"
+                        >点击配置</span>
                     </template>
                 </el-empty>
                 <div
@@ -23,6 +27,7 @@
                 </div>
             </el-scrollbar>
         </div>
+        <div v-else class="not-plugin">在线报表 插件未安装！！</div>
     </ml-dialog>
 </template>
 
@@ -39,12 +44,17 @@ let loading = ref(false);
 let entityCode = ref("");
 let detailId = ref("");
 let reportList = ref([]);
-
+let isSupportFunc = ref(false);
 const openDialog = (data) => {
     dialogShow.value = true;
     entityCode.value = data.entityCode;
     detailId.value = data.detailId;
-    getReportConfigList();
+    let pluginIdList = $TOOL.data.get("APP_PLUGINID");
+    if (pluginIdList.includes("mannerReport")) {
+        isSupportFunc.value = true;
+        getReportConfigList();
+    }
+    
 };
 
 const getReportConfigList = async () => {

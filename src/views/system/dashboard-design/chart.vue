@@ -9,7 +9,6 @@
         :tableColumn="tableColumn"
         :filterItems="filterItems"
         @highlightClick="highlightClick"
-        v-if="isSupportFunc"
     >
         <template #addbutton>
             <!-- <el-button type="primary" @click="markAllRead">全部设为已读</el-button> -->
@@ -43,9 +42,6 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <div v-else class="not-support">
-        数据分析 插件未安装！
-    </div>
     <ml-dialog title="新建仪表盘" v-model="dialogConf.isShow" width="600">
         <div style="padding-right: 60px;">
             <el-form label-width="80px">
@@ -63,7 +59,7 @@
 </template>
    
 <script setup>
-import { ref, inject, reactive, onMounted } from "vue";
+import { ref, inject, reactive } from "vue";
 import { $fromNow } from "@/utils/util";
 import { saveRecord, deleteRecord } from "@/api/crud";
 import { ElMessageBox } from "element-plus";
@@ -71,14 +67,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
-// 是否支持该功能
-let isSupportFunc = ref(false);
-onMounted(()=>{
-    let pluginIdList = $TOOL.data.get("APP_PLUGINID");
-    if (pluginIdList.includes("metaDataCube")) {
-        isSupportFunc.value = true;
-    }
-})
+
 // 默认排序
 let sortFields = ref([
     {
@@ -192,10 +181,4 @@ const highlightClick = (row) => {
 };
 </script>
 <style lang="scss" scoped>
-.not-support {
-    text-align: center;
-    font-weight: bold;
-    font-size: 20px;
-    margin-top: 30px;
-}
 </style>

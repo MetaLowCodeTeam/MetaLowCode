@@ -11,7 +11,6 @@
         :showFormItem="[{'label':'名称','code':'reportName','type':'1'}]"
         defalutSortField="modifiedOn"
         defaultFilter="reportName"
-        v-if="isSupportFunc"
     >
         <template #addbutton>
             <el-button type="primary" @click="addClick">
@@ -22,23 +21,12 @@
             </el-button>
         </template>
     </mlEntityMenuAndList>
-    <div v-else class="not-support">
-        在线报表 插件未安装！
-    </div>
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
-const $TOOL = inject("$TOOL");
-// 是否支持该功能
-let isSupportFunc = ref(false);
-onMounted(() => {
-    let pluginIdList = $TOOL.data.get("APP_PLUGINID");
-    if (pluginIdList.includes("mannerReport")) {
-        isSupportFunc.value = true;
-    }
-});
+
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([
@@ -93,10 +81,4 @@ const referral = () => {
 </script>
 
 <style lang="scss" scoped>
-.not-support {
-    text-align: center;
-    font-weight: bold;
-    font-size: 20px;
-    margin-top: 30px;
-}
 </style>
