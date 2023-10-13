@@ -132,10 +132,10 @@ onMounted(() => {
 //个人信息
 const handleUser = (command) => {
     if (command == "uc") {
-        router.push({ path: "/usercenter" });
+        router.push({ path: "/web/usercenter" });
     }
     if (command == "cmd") {
-        router.push({ path: "/cmd" });
+        router.push({ path: "/web/cmd" });
     }
     if (command == "clearCache") {
         ElMessageBox.confirm(
@@ -146,9 +146,9 @@ const handleUser = (command) => {
             }
         )
             .then(async () => {
-                let res = await http.post("/user/logout");
+                let res = await http.post("/web/user/logout");
                 if (res) {
-                    router.replace({ path: "/login" });
+                    router.replace({ path: "/web/login" });
                     const loading = ElLoading.service({
                         lock: true,
                         text: "Loading",
@@ -157,7 +157,7 @@ const handleUser = (command) => {
                     $TOOL.data.clear();
                     $TOOL.cookie.remove("userInfo");
 
-                    router.replace({ path: "/login" });
+                    router.replace({ path: "/web/login" });
                     setTimeout(() => {
                         loading.close();
                         location.reload();
@@ -175,9 +175,9 @@ const handleUser = (command) => {
             confirmButtonClass: "el-button--danger",
         })
             .then(async () => {
-                let res = await http.post("/user/logout");
+                let res = await http.post("/web/user/logout");
                 if (res) {
-                    router.replace({ path: "/login" });
+                    router.replace({ path: "/web/login" });
                 }
             })
             .catch(() => {
@@ -242,7 +242,7 @@ const msgClick = (item, inx) => {
     } else {
         let { currentRoute } = router;
         if (currentRoute.value.name != "CenterCc") {
-            router.push("/center-cc");
+            router.push("/web/center-cc");
         }
         msg.value = false;
     }
@@ -268,7 +268,7 @@ const markAllRead = () => {
 function goNotification() {
     let { currentRoute } = router;
     if (currentRoute.value.name != "Notification") {
-        router.push("/notification");
+        router.push("/web/notification");
     }
     msg.value = false;
 }

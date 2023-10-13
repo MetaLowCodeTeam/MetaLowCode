@@ -172,7 +172,7 @@ const onConfirm = async () => {
 // 高亮字段点击
 const highlightClick = (row) => {
     let routerData = {
-        path: "/dashboard-design",
+        path: "/web/dashboard-design",
         query: {
             chartId: row.chartId,
         },

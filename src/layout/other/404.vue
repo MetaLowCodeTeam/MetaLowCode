@@ -23,7 +23,7 @@
 				this.$router.go(-1);
 			},
 			gologin(){
-				this.$router.push("/login");
+				this.$router.push("/web/login");
 			}
 		}
 	}

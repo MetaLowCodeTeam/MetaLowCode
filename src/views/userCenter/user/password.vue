@@ -104,7 +104,7 @@ export default {
                         )
                             .then(() => {
                                 this.$router.replace({
-                                    path: "/login",
+                                    path: "/web/login",
                                 });
                             })
                             .catch(() => {});

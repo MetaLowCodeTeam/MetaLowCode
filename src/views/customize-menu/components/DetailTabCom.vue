@@ -278,7 +278,7 @@ const initData = async () => {
 };
 
 const goPath = () => {
-    router.push("/" + props.cutTab + "/list");
+    router.push("/web/" + props.cutTab + "/list");
 };
 
 // 分页

@@ -193,7 +193,9 @@ export default {
             departmentLabelsModel: {},
             curDepartmentId: null,
             departmentFieldPropsMap: {},
-            departmentDsv: {},
+            departmentDsv: {
+                formEntity:"User",
+            },
             userDsv: {},
 
             tableData: [],

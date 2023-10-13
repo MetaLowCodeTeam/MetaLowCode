@@ -146,7 +146,7 @@ const addClick = () => {
 // 跳转详情
 const goDetial = (row) => {
     router.push({
-        path: "/trigger-detail",
+        path: "/web/trigger-detail",
         query: {
             triggerConfigId: row.triggerConfigId,
         },
