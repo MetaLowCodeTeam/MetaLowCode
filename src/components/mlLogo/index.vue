@@ -1,11 +1,11 @@
 <template>
     <!--  -->
-    <img alt="logo" :src="formatImg()" />
+    <img alt="logo" :src="formatImg() ? formatImg() : logo" />
 </template>
 
 <script setup>
 import { inject } from "vue";
-
+import logo from '@/assets/imgs/logo.png'
 const $TOOL = inject("$TOOL");
 const props = defineProps({
     logoUrl: { type: String, default: "" },
@@ -15,7 +15,7 @@ const props = defineProps({
 const formatImg = () => {
     let url = props.logoUrl ? props.logoUrl : $TOOL.data.get("APP_LOGO");
     if (!url || url.indexOf("/src/assets/imgs") != -1) {
-        return "/src/assets/imgs/logo.png";
+        return false;
     } else {
         return import.meta.env.VITE_API_SERVER + "/picture/get/" + url;
     }
