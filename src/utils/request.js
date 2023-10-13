@@ -29,7 +29,7 @@ axios.interceptors.request.use(
 			config.params['_'] = new Date().getTime();
 		}
         // if(config['Content-Type']){
-        //     config.headers['Content-Type'] = 
+        //     config.headers['Content-Type'] =
         // }
         // console.log(config,'config')
 		Object.assign(config.headers, sysConfig.HEADERS)
@@ -50,7 +50,7 @@ axios.interceptors.response.use(
             return response
         }
         if(response.data.code === 403){
-            router.replace({path: '/login'});
+            router.replace({path: '/web/login'});
             return response
         }else {
             ElMessage.error(response.data.error)
@@ -82,7 +82,7 @@ axios.interceptors.response.use(
 							done()
 						}
 					}).then(() => {
-						router.replace({path: '/login'});
+						router.replace({path: '/web/login'});
 					}).catch(() => {})
 				}
 			} else {

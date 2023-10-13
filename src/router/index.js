@@ -70,7 +70,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (!token) {
         next({
-            path: '/login'
+            path: '/web/login'
         });
         return false;
     }

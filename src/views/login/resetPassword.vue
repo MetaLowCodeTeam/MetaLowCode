@@ -111,7 +111,7 @@
 			},
 			backLogin(){
 				this.$router.push({
-					path: '/login'
+					path: '/web/login'
 				})
 			}
 		}
