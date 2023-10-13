@@ -150,7 +150,7 @@ const activeRow = (item) => {
         entityId.value = item.relatedRecord.id;
         approvalName.value = item.relatedRecord.name;
     } else {
-        router.push("/center-cc");
+        router.push("/web/center-cc");
     }
     if (item.unread) {
         markRead(item);

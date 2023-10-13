@@ -124,10 +124,10 @@
         <!-- 列表详情 -->
         <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="userName">
             <template #tab>
-                <TabMemberList v-model="memberList" @delMembers="changeMembers" />
+                <TabMemberList v-model="memberList" @delMembers="changeMembers" idName="userId"/>
             </template>
             <template #operate="{row}">
-                <AddMembers @addMembers="changeMembers" :paramId="row.userId" paramIdName="userId"/>
+                <AddMembers @addMembers="changeMembers" :paramId="row.userId" paramName="角色" paramType="Role"/>
                 <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
                 <el-dropdown trigger="click">
                     <el-button>
@@ -165,6 +165,7 @@ import http from "@/utils/request";
 import Edit from "@/views/customize-menu/edit.vue";
 import TabMemberList from "./components/TabMemberList.vue";
 import AddMembers from "./components/AddMembers.vue";
+import { getTeamMembers,delTeam } from "@/api/team";
 export default {
     name: "UserTreeTable",
     components: {
@@ -176,7 +177,7 @@ export default {
         return {
             entity: "User",
             fieldsList:
-                "userName, loginName, createdOn, createdBy, modifiedOn, modifiedBy, departmentId",
+                "userName, loginName, createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar",
             showFormDialogFlag: false,
             layout: {},
             formState: 1,
@@ -192,7 +193,9 @@ export default {
             departmentLabelsModel: {},
             curDepartmentId: null,
             departmentFieldPropsMap: {},
-            departmentDsv: {},
+            departmentDsv: {
+                formEntity:"User",
+            },
             userDsv: {},
 
             tableData: [],
@@ -359,7 +362,7 @@ export default {
             this.$refs.mlListDetailsRefs.refresh();
         },
         // 页签切换
-        async tabChange() {
+        async tabChange(tab) {
             this.$refs.mlListDetailsRefs.loading = true;
             // 获取团队成员
             let res = await getTeamMembers(tab.id);

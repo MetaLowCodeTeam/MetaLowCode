@@ -98,7 +98,7 @@ const getApprovalList = async () => {
 // 跳转到审批流程列表
 const goProcess = () => {
     router.push({
-        path: "/process-list",
+        path: "/web/process-list",
     });
 };
 </script>

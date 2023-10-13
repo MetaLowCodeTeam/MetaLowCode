@@ -7,7 +7,6 @@
                     v-for="(activity, index) in approveHistory"
                     :key="index"
                     :type="getTimelineType(index,activity)"
-                    :icon="index"
                     size="large"
                     class="ml-timeline-item"
                 >
@@ -20,7 +19,7 @@
                         <div class="item-content before" v-if="index == 0">
                             <div class="item-title mb-5">由 {{ activity.stepUserName }} 提交审批</div>
                             <div class="item-step-name">
-                                <span class="item-step-name-span" @click="goApprovalList">
+                                <span class="item-step-name-span" @click="goApprovalList(activity)">
                                     <el-icon class="item-step-icon">
                                         <ElIconCircleCheck />
                                     </el-icon>
@@ -211,8 +210,9 @@ function formatResData(data) {
 }
 
 // 配置流程
-const goApprovalList = () => {
-    Route.push("/process-list");
+const goApprovalList = (activity) => {
+    console.log(activity,'activity')
+    // Route.push("/process-list");
 };
 
 // 关闭弹框

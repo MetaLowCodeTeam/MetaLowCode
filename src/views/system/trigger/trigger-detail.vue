@@ -142,7 +142,7 @@ const initDetailData = async () => {
 // 返回列表
 const goTriggerList = () => {
     router.push({
-        path: "/trigger-list",
+        path: "/web/trigger-list",
     });
 };
 

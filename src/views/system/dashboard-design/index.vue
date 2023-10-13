@@ -62,7 +62,7 @@ export default {
         // console.log()
         this.chartId = this.$route.query.chartId;
         if (!this.chartId) {
-            this.$router.push("/dashboard-list");
+            this.$router.push("/web/dashboard-list");
         }
     },
     mounted() {

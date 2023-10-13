@@ -187,7 +187,7 @@ const onSubmit = async () => {
 
 // 配置流程
 const goApprovalList = () => {
-    Route.push("/process-list");
+    Route.push("/web/process-list");
 };
 </script>
 <style lang='scss' scoped>

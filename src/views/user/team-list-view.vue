@@ -43,12 +43,12 @@
     </mlSingleList>
     <Edit ref="editRefs" @onConfirm="onRefresh" isTeam/>
     <!-- 列表详情 -->
-    <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="teamName">
+    <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="teamName" >
         <template #tab>
-            <TabMemberList v-model="memberList" @delMembers="changeMembers" />
+            <TabMemberList v-model="memberList" @delMembers="changeMembers" :id="teamId"/>
         </template>
         <template #operate="{row}">
-            <AddMembers @addMembers="changeMembers" :paramId="row.teamId" paramIdName="teamId"/>
+            <AddMembers @addMembers="changeMembers" :paramId="row.teamId" paramName="成员" paramType="User"/>
             <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
             <el-dropdown trigger="click">
                 <el-button>
@@ -113,8 +113,10 @@ let tableColumn = ref([
     },
 ]);
 
+
 // 编辑弹框
 let editRefs = ref();
+let teamId = ref("");
 const addClick = () => {
     let tempV = {};
     tempV.dialogTitle = "新建团队";
@@ -179,6 +181,7 @@ const highlightClick = (row) => {
             },
         ],
     });
+    teamId.value = row.teamId
 };
 
 // 成员列表

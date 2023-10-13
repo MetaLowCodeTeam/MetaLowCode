@@ -66,7 +66,7 @@ const addClick = () => {
 // 跳转详情
 const goDetial = (row) => {
     const to = router.resolve({
-        path: "/luckysheet",
+        path: "/web/luckysheet",
         query: {
             reportConfigId: row.reportConfigId,
         },

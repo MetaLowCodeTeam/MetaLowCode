@@ -87,7 +87,7 @@ const addClick = () => {
 const goDetial = (row) => {
     console.log(row,'row')
     router.push({
-        path: "/process-detail",
+        path: "/web/process-detail",
         query: {
             approvalConfigId: row.approvalConfigId,
             entityCode:row.entityCode
