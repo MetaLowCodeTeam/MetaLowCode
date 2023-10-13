@@ -124,10 +124,15 @@
         <!-- 列表详情 -->
         <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="userName">
             <template #tab>
-                <TabMemberList v-model="memberList" @delMembers="changeMembers" idName="userId"/>
+                <TabMemberList v-model="memberList" @delMembers="changeMembers" :id="curUserId" isRole/>
             </template>
             <template #operate="{row}">
-                <AddMembers @addMembers="changeMembers" :paramId="row.userId" paramName="角色" paramType="Role"/>
+                <AddMembers
+                    @addMembers="changeMembers"
+                    :paramId="row.userId"
+                    paramName="角色"
+                    paramType="Role"
+                />
                 <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
                 <el-dropdown trigger="click">
                     <el-button>
@@ -165,7 +170,7 @@ import http from "@/utils/request";
 import Edit from "@/views/customize-menu/edit.vue";
 import TabMemberList from "./components/TabMemberList.vue";
 import AddMembers from "./components/AddMembers.vue";
-import { getTeamMembers,delTeam } from "@/api/team";
+import { getUserRole } from "@/api/user";
 export default {
     name: "UserTreeTable",
     components: {
@@ -194,7 +199,7 @@ export default {
             curDepartmentId: null,
             departmentFieldPropsMap: {},
             departmentDsv: {
-                formEntity:"User",
+                formEntity: "User",
             },
             userDsv: {},
 
@@ -356,6 +361,7 @@ export default {
                     },
                 ],
             });
+            this.curUserId = row.userId;
         },
         // 添加角色成员
         changeMembers() {
@@ -364,10 +370,11 @@ export default {
         // 页签切换
         async tabChange(tab) {
             this.$refs.mlListDetailsRefs.loading = true;
+            this.memberList = [];
             // 获取团队成员
-            let res = await getTeamMembers(tab.id);
+            let res = await getUserRole(tab.id);
             if (res) {
-                this.memberList = res.data || [];
+                this.memberList = res.data.data || [];
             }
             this.$refs.mlListDetailsRefs.loading = false;
         },
@@ -481,7 +488,6 @@ export default {
                     }
 
                     if (!!res.data && !!res.data.layoutJson) {
-                        // this.curUserId = null
                         // this.layout = this.buildLayoutObj()
                         // this.layout.setLayoutPropsFromServer(res)
                         // this.handleDeletedFields(res, this.layout) /* 处理表单已删除字段！！ */
@@ -494,7 +500,7 @@ export default {
                         // 	this.$refs['formWidget'].clearFormValidate()
                         // }
 
-                        this.curUserId = null;
+                      
                         this.formState = FormState.NEW;
                         this.showFormDialogFlag = true;
                         this.userDsv["formEntity"] = "User";

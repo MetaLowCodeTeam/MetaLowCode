@@ -146,7 +146,7 @@ const handleUser = (command) => {
             }
         )
             .then(async () => {
-                let res = await http.post("/web/user/logout");
+                let res = await http.post("/user/logout");
                 if (res) {
                     router.replace({ path: "/web/login" });
                     const loading = ElLoading.service({
@@ -175,7 +175,7 @@ const handleUser = (command) => {
             confirmButtonClass: "el-button--danger",
         })
             .then(async () => {
-                let res = await http.post("/web/user/logout");
+                let res = await http.post("/user/logout");
                 if (res) {
                     router.replace({ path: "/web/login" });
                 }

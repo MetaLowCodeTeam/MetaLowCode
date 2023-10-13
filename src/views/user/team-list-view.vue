@@ -199,6 +199,7 @@ const changeMembers = () => {
 const tabChange = async (tab) => {
     mlListDetailsRefs.value.loading = true;
     // 获取团队成员
+    memberList.value = [];
     let res = await getTeamMembers(tab.id);
     if (res) {
         memberList.value = res.data || [];

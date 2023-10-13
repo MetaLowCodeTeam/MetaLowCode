@@ -163,7 +163,8 @@ const initData = async () => {
                 vFormRef.value.setFormJson(res.data.layoutJson);
 
                 if (queryByIdRes) {
-                    vFormRef.value.setFormData(queryByIdRes.data || {});
+                    let resData = queryByIdRes.data || {};
+                    vFormRef.value.setFormData(resData);
                     approvalStatus.value =
                         queryByIdRes?.data.recordApprovalState || null;
                     if (approvalStatus.value) {

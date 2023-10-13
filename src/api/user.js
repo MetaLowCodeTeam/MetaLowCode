@@ -101,3 +101,18 @@ export function updateLoginUser(id, formModel) {
         params: { id },
     })
 }
+
+
+export function addUserRole(body) {
+    return request.post('/user/addUserRole ', body)
+}
+
+
+
+
+
+
+// 获取用户角色
+export function getUserRole(userId) {
+    return request.get('/user/getUserRole?userId='+ userId)
+}
