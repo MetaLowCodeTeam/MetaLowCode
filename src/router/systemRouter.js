@@ -5,49 +5,42 @@ const routes = [
 		name: "layout",
 		path: "/",
 		component: () => import(/* webpackChunkName: "layout" */ '@/layout/index.vue'),
-		redirect: config.DASHBOARD_URL || '/dashboard',
+		redirect: config.DASHBOARD_URL || '/web/dashboard',
 		children: []
 	},
 	{
-		path: "/login",
+		path: "/web/login",
 		component: () => import(/* webpackChunkName: "login" */ '@/views/login/index.vue'),
 		meta: {
 			title: "登录"
 		}
 	},
 	{
-		path: "/user_register",
+		path: "/web/user_register",
 		component: () => import(/* webpackChunkName: "userRegister" */ '@/views/login/userRegister.vue'),
 		meta: {
 			title: "注册"
 		}
 	},
 	{
-		path: "/reset_password",
+		path: "/web/reset_password",
 		component: () => import(/* webpackChunkName: "resetPassword" */ '@/views/login/resetPassword.vue'),
 		meta: {
 			title: "重置密码"
 		}
 	},
     {
-		path: "/luckysheet",
+		path: "/web/luckysheet",
 		component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/luckysheet.vue'),
 		meta: {
 			title: "表单模板设计"
 		}
 	},
     {
-		path: "/dashboard-design",
+		path: "/web/dashboard-design",
 		component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/dashboard-design/index.vue'),
 		meta: {
 			title: "图表设计"
-		}
-	},
-	{
-		path: "/chart-design",
-		component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/chart-design/index.vue'),
-		meta: {
-			title: "测试组件"
 		}
 	},
 

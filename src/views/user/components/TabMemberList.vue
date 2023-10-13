@@ -42,6 +42,7 @@ import { delTeamMembers } from "@/api/team";
 const emits = defineEmits(["delMembers"]);
 const props = defineProps({
     modelValue: null,
+    id: { type: String, default: "" },
 });
 
 let myMembers = ref([]);
@@ -89,7 +90,7 @@ const delMember = (item) => {
     })
         .then(async () => {
             loading.value = true;
-            let res = await delTeamMembers(item.teamId,item.userId)
+            let res = await delTeamMembers(props.id,item.userId)
             if(res){
                 ElMessage.success("删除成功");
                 emits("delMembers");

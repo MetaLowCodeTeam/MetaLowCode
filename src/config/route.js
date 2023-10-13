@@ -36,7 +36,7 @@
 const routes = [
     {
         "name": "home",
-        "path": "/home",
+        "path": "/web/home",
         "meta": {
             "title": "首页",
             "icon": "el-icon-eleme-filled",
@@ -45,7 +45,7 @@ const routes = [
         "children": [
             {
                 "name": "dashboard",
-                "path": "/dashboard",
+                "path": "/web/dashboard",
                 "meta": {
                     "title": "控制台",
                     "icon": "el-icon-menu",
@@ -68,12 +68,12 @@ const routes = [
     //*****
 
     {
-        path: '/system',
+        path: '/web/system',
         name: 'SystemManager',
         meta: { title: '系统管理', icon: 'el-icon-setting', svgIcon: 'setting' },
         children: [
             {
-                path: '/field-manager',
+                path: '/web/field-manager',
                 name: 'FieldManager',
                 component: 'system/entity-field-table',
                 props: true,
@@ -82,7 +82,7 @@ const routes = [
             },
 
             {
-                path: '/form-design',
+                path: '/web/form-design',
                 name: 'FormDesign',
                 component: 'system/form-design/index',
                 hidden: true,
@@ -92,18 +92,18 @@ const routes = [
 
             // 通用配置
             {
-                path: '/comConf',
+                path: '/web/comConf',
                 name: 'ComConf',
                 component: 'system/common-config/index',
                 meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r6012' }
             },
             {
-                path: '/metadata',
+                path: '/web/metadata',
                 name: 'Metadata',
                 meta: { group: true, title: '元数据设置', icon: "el-icon-coin", role: 'r6001' },
                 children: [
                     {
-                        path: '/entity-list',
+                        path: '/web/entity-list',
                         name: 'EntityList',
                         component: 'system/entity-list',
                         meta: { title: '实体管理', icon: 'el-icon-coin' }
@@ -113,25 +113,25 @@ const routes = [
             },
 
             {
-                path: '/user-manager',
+                path: '/web/user-manager',
                 name: 'UserManager',
                 meta: { group: true, title: '组织架构', icon: 'el-icon-user' },
                 children: [
                     {
-                        path: '/user-list',
+                        path: '/web/user-list',
                         name: 'UserList',
                         component: 'user/user-tree-table',
-                        meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-1' }
+                        meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-1', entityName: "User" }
                     },
 
                     {
-                        path: '/role-list',
+                        path: '/web/role-list',
                         name: 'RoleList',
                         component: 'user/role-list-view',
-                        meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1' }
+                        meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1', entityName: "Role" }
                     },
                     {
-                        path: '/team-list',
+                        path: '/web/team-list',
                         name: 'TeamList',
                         component: 'user/team-list-view',
                         meta: { title: '团队', icon: 'el-icon-suitcase-line', role: 'r24-1', entityName: "Team" }
@@ -139,19 +139,19 @@ const routes = [
                 ]
             },
             {
-                path: '/data-dict',
+                path: '/web/data-dict',
                 name: 'DataDict',
                 meta: { group: true, title: '数据字典', icon: 'el-icon-management' },
                 children: [
                     {
-                        path: '/option-manager',
+                        path: '/web/option-manager',
                         name: 'OptionManager',
                         component: 'system/data-dict/option-manager',
                         meta: { title: '单选项管理', icon: 'el-icon-operation', role: 'r6005' }
                     },
 
                     {
-                        path: '/tag-manager',
+                        path: '/web/tag-manager',
                         name: 'TagManager',
                         component: 'system/data-dict/tag-manager',
                         meta: { title: '多选项管理', icon: 'el-icon-files', role: 'r6006' }
@@ -160,7 +160,7 @@ const routes = [
             },
             // 审批流程
             {
-                path: '/process-list',
+                path: '/web/process-list',
                 name: 'ProcessList',
                 component: 'system/approval-process/process-list',
                 meta: { title: '审批流程', icon: 'el-icon-operation', role: 'r30-1' }
@@ -174,12 +174,12 @@ const routes = [
             },
             // 审批中心
             {
-                path: '/approval-center',
+                path: '/web/approval-center',
                 name: 'ApprovalCenter',
                 meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
                 children: [
                     {
-                        path: '/center-handle',
+                        path: '/web/center-handle',
                         name: 'CenterHandle',
                         component: 'system/approval-center/center-handle',
                         meta: { title: '待我处理', }
@@ -200,35 +200,35 @@ const routes = [
             },
             // 触发器
             {
-                path: '/trigger-list',
+                path: '/web/trigger-list',
                 name: 'RriggerList',
                 meta: { group: true, title: '触发器', icon: 'el-icon-cpu', role: 'r48-1' },
                 component: 'system/trigger/trigger-list',
             },
             // 触发器详情
             {
-                path: '/trigger-detail',
+                path: '/web/trigger-detail',
                 name: 'RriggerDetail',
                 meta: { title: '触发器详情', hidden: true },
                 component: 'system/trigger/trigger-detail',
             },
             // 仪表盘
             {
-                path: '/dashboard-list',
+                path: '/web/dashboard-list',
                 name: 'DashboardDesign',
                 meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
                 component: 'system/dashboard-design/chart',
             },
             // 报表设计
             {
-                path: '/templates-list',
+                path: '/web/templates-list',
                 name: 'TemplatesList',
                 component: 'system/report-templates/templates-list',
                 meta: { title: '报表设计', icon: 'el-icon-memo', role: 'r45-1' }
             },
             // 数据导入
             {
-                path: '/data-upload',
+                path: '/web/data-upload',
                 name: 'DataUpload',
                 meta: { title: '数据导入', icon: 'el-icon-Upload', role: 'r6011' },
                 component: 'system/data-upload/index',
@@ -236,7 +236,7 @@ const routes = [
             // 账号信息
             {
                 "name": "userCenter",
-                "path": "/usercenter",
+                "path": "/web/usercenter",
                 "meta": {
                     "title": "帐号信息",
                     "icon": "el-icon-user",
@@ -245,21 +245,21 @@ const routes = [
             },
             // 消息中心
             {
-                path: '/notification',
+                path: '/web/notification',
                 name: 'Notification',
                 meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
                 component: 'system/notification/index',
             },
             // 变更历史
             {
-                path: '/revision-history',
+                path: '/web/revision-history',
                 name: 'RevisionHistory',
                 meta: { title: '变更历史', icon: 'el-icon-document-remove', role: 'r6010' },
                 component: 'system/revision-history/index',
             },
             // 回收站
             {
-                path: '/recycle-bin',
+                path: '/web/recycle-bin',
                 name: 'RecycleBin',
                 meta: { title: '回收站', icon: 'el-icon-delete', role: 'r6009' },
                 component: 'system/recycle-bin/index',

@@ -77,7 +77,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                         },
                         path:
                             subEl.type == 1
-                                ? "/" + subEl.entityName + "/list"
+                                ? "/web/" + subEl.entityName + "/list"
                                 : subEl.outLink,
                         component: "customize-menu/list",
                     });
@@ -85,7 +85,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
                 if (el.type == 1) {
-                    initMenu.path = "/" + el.entityName + "/list";
+                    initMenu.path = "/web/" + el.entityName + "/list";
                 } else {
                     initMenu.path = el.outLink;
                 }
