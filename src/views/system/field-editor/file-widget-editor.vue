@@ -18,17 +18,17 @@
 					<el-input-number v-model="fieldProps.fieldViewModel.fileMaxSize"
 									 :min="1" :max="100" style="width: 100%"></el-input-number>
 				</el-form-item>
-				<el-form-item label="上传文件类型(多选、可追加类型)" prop="fieldViewModel.uploadFileTypes">
-					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"
-							   v-model="fieldProps.fieldViewModel.uploadFileTypes" style="width: 100%">
-						<el-option
-							v-for="(ft, ftIdx) in fileTypes"
-							:key="ftIdx"
-							:label="ft.label"
-							:value="ft.value">
-						</el-option>
-					</el-select>
-				</el-form-item>
+<!--				<el-form-item label="上传文件类型(多选、可追加类型)" prop="fieldViewModel.uploadFileTypes">-->
+<!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
+<!--							   v-model="fieldProps.fieldViewModel.uploadFileTypes" style="width: 100%">-->
+<!--						<el-option-->
+<!--							v-for="(ft, ftIdx) in fileTypes"-->
+<!--							:key="ftIdx"-->
+<!--							:label="ft.label"-->
+<!--							:value="ft.value">-->
+<!--						</el-option>-->
+<!--					</el-select>-->
+<!--				</el-form-item>-->
 				<el-form-item label="上传说明提示">
 					<el-input v-model="fieldProps.fieldViewModel.uploadHint"></el-input>
 				</el-form-item>

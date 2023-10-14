@@ -8,12 +8,37 @@
 					 class="visual-design">
 		<!-- 配置工具按钮 -->
 		<template #customToolButtons>
+			<!--
 			<el-button type="primary" link @click="addMetaField">
 				<el-icon>
 					<MagicStick/>
 				</el-icon>
 				新建字段
 			</el-button>
+			-->
+			<el-dropdown class="ml-button-dropdown" @command="handleNewFieldCommand" size="small">
+				<el-button link type="primary">
+					<el-icon ><MagicStick /></el-icon>新建字段
+				</el-button>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item command="BooleanWE">布尔 / Boolean</el-dropdown-item>
+						<el-dropdown-item command="IntegerWE">整数 / Integer</el-dropdown-item>
+						<el-dropdown-item command="DecimalWE">精度小数 / Decimal</el-dropdown-item>
+						<el-dropdown-item command="PercentWE">百分比 / Percent</el-dropdown-item>
+						<el-dropdown-item command="MoneyWE">金额 / Money</el-dropdown-item>
+						<el-dropdown-item command="TextWE" divided>文本 / Text</el-dropdown-item>
+						<el-dropdown-item command="TextAreaWE">长文本 / TextArea</el-dropdown-item>
+						<el-dropdown-item command="OptionWE" divided>单选项 / Option</el-dropdown-item>
+						<el-dropdown-item command="TagWE">多选项 / Tag</el-dropdown-item>
+						<el-dropdown-item command="DateWE" divided>日期 / Date</el-dropdown-item>
+						<el-dropdown-item command="DateTimeWE">日期时间 / DateTime</el-dropdown-item>
+						<el-dropdown-item command="PictureWE" divided>图片 / Picture</el-dropdown-item>
+						<el-dropdown-item command="FileWE">文件 / File</el-dropdown-item>
+						<el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
 			<el-button type="primary" link @click="saveDesign">
 				<el-icon>
 					<Finished/>
@@ -22,15 +47,63 @@
 			</el-button>
 		</template>
 	</v-form-designer>
+
+	<el-dialog :title="'新建字段 / ' + curEditorType" v-model="showNewFieldDialogFlag"
+			   v-if="showNewFieldDialogFlag"
+			   :show-close="true" :destroy-on-close="true" :close-on-click-modal="false"
+			   :close-on-press-escape="false" class="no-padding" width="620px">
+		<component :is="curFWEditor" :entity="entity" @fieldSaved="onFieldSaved" @cancelSave="onCancelSaveField"
+				   :showingInDialog="true"></component>
+	</el-dialog>
 </template>
 
 <script>
 import {createFormLayout, updateFormLayout, getFormLayout, getMDFieldList} from '@/api/system-manager'
 import {deepClone, overwriteObj} from "@/utils/util";
 import {formFieldMapping} from "@/views/system/form-design/formFieldMapping";
+import BooleanWE from '@/views/system/field-editor/boolean-widget-editor.vue';
+import IntegerWE from '@/views/system/field-editor/integer-widget-editor.vue';
+import DecimalWE from '@/views/system/field-editor/decimal-widget-editor.vue';
+import PercentWE from '@/views/system/field-editor/percent-widget-editor.vue';
+import MoneyWE from '@/views/system/field-editor/money-widget-editor.vue';
+import TextWE from '@/views/system/field-editor/text-widget-editor.vue';
+import EmailWE from '@/views/system/field-editor/email-widget-editor.vue';
+import UrlWE from '@/views/system/field-editor/url-widget-editor.vue';
+import TextAreaWE from '@/views/system/field-editor/textarea-widget-editor.vue';
+import PasswordWE from '@/views/system/field-editor/password-widget-editor.vue';
+import OptionWE from '@/views/system/field-editor/option-widget-editor.vue';
+import TagWE from '@/views/system/field-editor/tag-widget-editor.vue';
+import DateWE from '@/views/system/field-editor/date-widget-editor.vue';
+import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor.vue';
+import PictureWE from '@/views/system/field-editor/picture-widget-editor.vue';
+import FileWE from '@/views/system/field-editor/file-widget-editor.vue';
+import ReferenceWE from '@/views/system/field-editor/reference-widget-editor.vue';
+import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor.vue';
+import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
 
 export default {
 	name: "form-design",
+	components: {
+		BooleanWE,
+		IntegerWE,
+		DecimalWE,
+		PercentWE,
+		MoneyWE,
+		TextWE,
+		EmailWE,
+		UrlWE,
+		TextAreaWE,
+		PasswordWE,
+		OptionWE,
+		TagWE,
+		DateWE,
+		DateTimeWE,
+		PictureWE,
+		FileWE,
+		ReferenceWE,
+		AnyReferenceWE,
+		ReferenceListWE,
+	},
 	prop: {
 		entity: {
 			type: String,
@@ -56,6 +129,10 @@ export default {
 
 			meteFieldsResult: null,
 			usedFieldNames: {},
+
+			curFWEditor: '',
+			curEditorType: '',
+			showNewFieldDialogFlag: false,
 		}
 	},
 	created() {
@@ -100,6 +177,10 @@ export default {
 			if (mdResult.data.fieldList) {
 				mdResult.data.fieldList.forEach(fld => {
 					if (!fld.detailEntity && (fld.type !== 'PrimaryKey')) {  //跳过id主键
+						if (fld.name === 'loginPwd') {
+							return
+						}
+
 						if ((fld.type === 'AnyReference') || (fld.type === 'ReferenceList')) {
 							return
 						}
@@ -284,6 +365,23 @@ export default {
 			}
 		},
 
+		handleNewFieldCommand(command) {
+			this.curFWEditor = command
+			this.curEditorType = command.replace(/WE$/, '')
+			this.showNewFieldDialogFlag = true
+		},
+
+		onFieldSaved() {
+			this.showNewFieldDialogFlag = false
+			setTimeout(() => {
+				this.loadFieldListData()  //重新加载元数据字段
+			}, 300)
+		},
+
+		onCancelSaveField() {
+			this.showNewFieldDialogFlag = false
+		},
+
 	}
 }
 </script>
@@ -291,6 +389,10 @@ export default {
 <style scoped>
 :deep(.toolbar-header .toolbar-container) {
 	width: 100%;
+}
+
+.el-button + .el-dropdown {
+	margin-left: 0 !important;
 }
 
 </style>
@@ -301,6 +403,10 @@ export default {
 
 .ds-setting-drawer .el-drawer__body {
 	padding: 20px !important;
+}
+
+.el-dropdown.ml-button-dropdown {
+	height: 45px;
 }
 
 </style>

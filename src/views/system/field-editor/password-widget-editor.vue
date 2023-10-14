@@ -18,17 +18,17 @@
 					<el-input-number v-model="fieldProps.fieldViewModel.maxLength"
 									 :min="6" :max="30" style="width: 100%"></el-input-number>
 				</el-form-item>
-				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">
-					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"
-							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">
-						<el-option
-							v-for="(vt, vtIdx) in validators"
-							:key="vtIdx"
-							:label="vt.label"
-							:value="vt.value">
-						</el-option>
-					</el-select>
-				</el-form-item>
+<!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
+<!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
+<!--							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">-->
+<!--						<el-option-->
+<!--							v-for="(vt, vtIdx) in validators"-->
+<!--							:key="vtIdx"-->
+<!--							:label="vt.label"-->
+<!--							:value="vt.value">-->
+<!--						</el-option>-->
+<!--					</el-select>-->
+<!--				</el-form-item>-->
 				<el-form-item label="是否允许空值">
 					<el-radio-group v-model="fieldProps.nullable" style="float: right">
 						<el-radio :label="true">是</el-radio>

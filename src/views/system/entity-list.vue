@@ -203,7 +203,21 @@ export default {
 					showCancelButton: true,
 					type: 'warning'
 				}).then(() => {
-					this.executeDeleteEntity(selectedEntityObj.name)
+					//再次确认删除
+					this.$prompt('请输入大写"MLC"', '再次确认删除', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						inputPattern: /^MLC$/,
+						inputErrorMessage: '输入不正确'
+					}).then(({value}) => {
+						if (value === 'MLC') {
+							this.executeDeleteEntity(selectedEntityObj.name)
+						}
+					}).catch((err) => {
+						console.error('eeee', err)
+						//this.$message.error(err.message)
+						this.$message({type: 'info', message: '已取消删除'});
+					})
 				}).catch(() => {
 					this.$message({type: 'info', message: '已取消删除'});
 				});
