@@ -3,7 +3,7 @@
 		<div class="welcome">
 			<div class="logo">
 				<mlLogo class="logo"/>
-				<h2>欢迎体验 SCUI</h2>
+				<h2>欢迎体验 MetaLowCode</h2>
 			</div>
 			<div class="tips">
 				<div class="tips-item">
@@ -38,7 +38,7 @@
 		},
 		methods: {
 			godoc(){
-				window.open("https://lolicode.gitee.io/scui-doc/")
+				window.open("https://gitee.com/MetaLowCode/MetaLowCode")
 			}
 		}
 	}

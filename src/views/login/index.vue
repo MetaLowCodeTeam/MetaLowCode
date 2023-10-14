@@ -36,7 +36,7 @@
 			</div>
 		</div>
 	</el-dialog>
-    
+
 </template>
 
 <script>
@@ -102,7 +102,7 @@
 			clearViewTags();
 			clearKeepLive();
 			clearIframeList();
-			console.log('%c SCUI %c Gitee: https://gitee.com/lolicode/scui', 'background:#666;color:#fff;border-radius:3px;', '')
+			console.log('%c 美乐低代码 %c Gitee: https://gitee.com/MetaLowCode/MetaLowCode', 'background:#666;color:#fff;border-radius:3px;', '')
 		},
 		methods: {
 			configDark(){
@@ -113,7 +113,7 @@
 			},
 			wechatLogin(){
 				this.showWechatLogin = true
-				this.WechatLoginCode = "SCUI-823677237287236-" + new Date().getTime()
+				this.WechatLoginCode = "ML-823677237287236-" + new Date().getTime()
 				this.isWechatLoginResult = false
 				setTimeout(()=>{
 					this.isWechatLoginResult = true

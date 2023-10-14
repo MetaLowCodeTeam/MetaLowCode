@@ -63,7 +63,7 @@
 								title: "账号信息",
 								component: "account"
 							},
-						
+
 							{
 								icon: "el-icon-lock",
 								title: "重置密码",
@@ -73,7 +73,7 @@
 					},
 				],
 				user: {
-					userName: "Sakuya",
+					userName: "admin",
 					role: "超级管理员",
 				},
 				page: "account",

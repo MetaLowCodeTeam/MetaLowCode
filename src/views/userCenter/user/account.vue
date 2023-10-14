@@ -99,18 +99,6 @@ const onSave = async () => {
 const onAvataSuccess = (data) => {
     userInfo.value.avatar = data;
 };
-// export default {
-// 	data() {
-// 		return {
-// 			form: {
-// 				user: "administrator@scuiadmin.com",
-// 				name: "Sakuya",
-// 				sex: "0",
-// 				about: "正所谓富贵险中求"
-// 			}
-// 		}
-// 	}
-// }
 </script>
 
 <style lang="scss" scoped>
