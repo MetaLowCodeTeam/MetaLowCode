@@ -128,7 +128,7 @@
 						</el-row>
 						<el-row :gutter="12" class="function-right-row">
 							<el-col :span="12">
-								<el-form-item label="允许设计表单布局" title="r6003">
+								<el-form-item label="允许设计表单" title="r6003">
 									<el-radio-group v-model="formModel.rightValueMap['r6003']">
 										<el-radio :label="true">是</el-radio>
 										<el-radio :label="false">否</el-radio>

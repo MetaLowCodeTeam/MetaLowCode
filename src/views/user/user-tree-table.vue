@@ -127,28 +127,37 @@
                 <TabMemberList v-model="memberList" @delMembers="changeMembers" :id="curUserId" isRole/>
             </template>
             <template #operate="{row}">
-                <AddMembers
-                    @addMembers="changeMembers"
-                    :paramId="row.userId"
-                    paramName="角色"
-                    paramType="Role"
-                />
-                <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
-                <el-dropdown trigger="click">
-                    <el-button>
-                        更多
-                        <el-icon style="transform: rotate(90deg);">
-                            <ElIconMoreFilled />
-                        </el-icon>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item>
-                                <span @click="deleteTableData(row)">删除</span>
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+				<el-row class="action-group">
+					<el-col :span="24">
+						<AddMembers
+							@addMembers="changeMembers"
+							:paramId="row.userId"
+							paramName="角色"
+							paramType="Role"
+						/>
+					</el-col>
+					<el-col :span="24">
+						<el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
+					</el-col>
+					<el-col :span="24">
+						<el-dropdown trigger="click">
+							<el-button>
+								更多
+								<el-icon style="transform: rotate(90deg);">
+									<ElIconMoreFilled />
+								</el-icon>
+							</el-button>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item>
+										<span @click="deleteTableData(row)">删除</span>
+									</el-dropdown-item>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
+					</el-col>
+				</el-row>
+
             </template>
         </mlListDetails>
     </el-container>
@@ -500,7 +509,7 @@ export default {
                         // 	this.$refs['formWidget'].clearFormValidate()
                         // }
 
-                      
+
                         this.formState = FormState.NEW;
                         this.showFormDialogFlag = true;
                         this.userDsv["formEntity"] = "User";
@@ -820,4 +829,11 @@ export default {
     //height: 48px !important;
     //padding-top: 8px !important;
 }
+
+.action-group {
+	:deep(.el-button) {
+		min-width: 110px !important;
+	}
+}
+
 </style>

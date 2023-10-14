@@ -44,33 +44,44 @@
                 </el-col>
                 <el-col :span="6">
                     <div class="detail-right" style="padding-top: 40px;">
-                        <NewRelated
-                            :entityName="detailDialog.entityName"
-                            :entityCode="detailDialog.entityCode"
-                            :addConf="detailDialog.add"
-                            @confirm="getLayoutList"
-                            @add="onAdd"
-                        />
-                        <el-button @click="onEditRow" class="ml-10">
-                            <span class="mr-5">
-                                <el-icon>
-                                    <ElIconEditPen />
-                                </el-icon>
-                            </span>
-                            编辑
-                        </el-button>
-                        <More
-                            type="detail"
-                            :multipleSelection="multipleSelection"
-                            :entityCode="detailDialog.entityCode"
-                            :detailId="detailDialog.detailId"
-                            :idFiledName="detailDialog.idFiledName"
-                        />
-                        <ApprovalRelated
-                            v-if="approvalStatus"
-                            :approvalStatus="approvalStatus"
-                            @onSubmit="getLayoutList"
-                        />
+						<el-row>
+							<el-col :span="24">
+								<NewRelated
+									:entityName="detailDialog.entityName"
+									:entityCode="detailDialog.entityCode"
+									:addConf="detailDialog.add"
+									@confirm="getLayoutList"
+									@add="onAdd"
+								/>
+							</el-col>
+							<el-col :span="24">
+								<el-button @click="onEditRow">
+									<span class="mr-5">
+										<el-icon>
+											<ElIconEditPen />
+										</el-icon>
+									</span>
+									编辑
+								</el-button>
+							</el-col>
+							<el-col :span="24">
+								<More
+									type="detail"
+									:multipleSelection="multipleSelection"
+									:entityCode="detailDialog.entityCode"
+									:detailId="detailDialog.detailId"
+									:idFiledName="detailDialog.idFiledName"
+								/>
+							</el-col>
+							<el-col :span="24">
+								<ApprovalRelated
+									v-if="approvalStatus"
+									:approvalStatus="approvalStatus"
+									@onSubmit="getLayoutList"
+								/>
+							</el-col>
+						</el-row>
+
                     </div>
                 </el-col>
             </el-row>
@@ -219,7 +230,7 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-form-item--default) {
+:deep(.el-form-item--default), :deep(.el-form-item)  {
 	margin-bottom: 5px !important;
 }
 
@@ -245,7 +256,16 @@ defineExpose({
     .detail-right {
         :deep(.el-button) {
             margin-bottom: 5px;
+			min-width: 110px !important;
         }
     }
+}
+</style>
+
+<style lang="scss">
+.detail-main {
+	.el-form-item {
+		margin-bottom: 5px !important;
+	}
 }
 </style>

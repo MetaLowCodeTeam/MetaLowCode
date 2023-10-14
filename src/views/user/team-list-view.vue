@@ -48,27 +48,36 @@
             <TabMemberList v-model="memberList" @delMembers="changeMembers" :id="teamId"/>
         </template>
         <template #operate="{row}">
-            <AddMembers @addMembers="changeMembers" :paramId="row.teamId" paramName="成员" paramType="User"/>
-            <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
-            <el-dropdown trigger="click">
-                <el-button>
-                    更多
-                    <el-icon style="transform: rotate(90deg);">
-                        <ElIconMoreFilled />
-                    </el-icon>
-                </el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item>
-                            <span @click="delCick({teamId:row.id})">删除</span>
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
+			<el-row class="action-group">
+				<el-col :span="24">
+					<AddMembers @addMembers="changeMembers" :paramId="row.teamId" paramName="成员" paramType="User"/>
+				</el-col>
+				<el-col :span="24">
+					<el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
+				</el-col>
+				<el-col :span="24">
+					<el-dropdown trigger="click">
+						<el-button>
+							更多
+							<el-icon style="transform: rotate(90deg);">
+								<ElIconMoreFilled />
+							</el-icon>
+						</el-button>
+						<template #dropdown>
+							<el-dropdown-menu>
+								<el-dropdown-item>
+									<span @click="delCick({teamId:row.id})">删除</span>
+								</el-dropdown-item>
+							</el-dropdown-menu>
+						</template>
+					</el-dropdown>
+				</el-col>
+			</el-row>
+
         </template>
     </mlListDetails>
 </template>
-   
+
 <script setup>
 import { ref, inject, reactive } from "vue";
 import { $fromNow } from "@/utils/util";
@@ -207,3 +216,12 @@ const tabChange = async (tab) => {
     mlListDetailsRefs.value.loading = false;
 };
 </script>
+
+<style lang="scss" scoped>
+.action-group {
+	:deep(.el-button) {
+		min-width: 110px !important;
+	}
+}
+
+</style>
