@@ -13,28 +13,29 @@ export const dashboard_container_schema = {
 
 export const ext_chart_containers = [
     dashboard_container_schema,
-    {
-        type: 'section',
-        category: 'container',
-        icon: 'section',
-        widgetList: [],
-        options: {
-            name: '',
-            title: '',
-            showHeader: true,
-            showFullscreen: false,
-            showRefresh: false,
-            showCollapse: false,
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            onCreated: '',
-            onMounted: '',
-            onRefresh: '',
-            setDimensional: "",
-        },
-    },
+
+    // {
+    //     type: 'section',
+    //     category: 'container',
+    //     icon: 'section',
+    //     widgetList: [],
+    //     options: {
+    //         name: '',
+    //         title: '',
+    //         showHeader: true,
+    //         showFullscreen: false,
+    //         showRefresh: false,
+    //         showCollapse: false,
+    //         x: 0,
+    //         y: 0,
+    //         w: 4,
+    //         h: 4,
+    //         onCreated: '',
+    //         onMounted: '',
+    //         onRefresh: '',
+    //         setDimensional: "",
+    //     },
+    // },
 
 ]
 

@@ -571,7 +571,7 @@ export default {
         },
 
         editDepartment(node, data) {
-            if (node.data.id === "022-000000000000000000000000000000000001") {
+            if (node.data.id === "0000022-00000000000000000000000000000001") {
                 this.$message.info("根部门不可编辑！");
                 return;
             }
@@ -595,6 +595,10 @@ export default {
                             this.$nextTick(() => {
 								const parentDpt = this.$refs.departmentFormRef.getWidgetRef('parentDepartmentId')
 								!!parentDpt && parentDpt.setDisabled(true)
+								if (node.data.id === "0000022-00000000000000000000000000000001") {
+									!!parentDpt && parentDpt.setRequired(false)
+								}
+
                                 this.$refs.departmentFormRef.setFormData(
                                     res.data.formData
                                 );
@@ -655,7 +659,7 @@ export default {
         },
 
         deleteDepartment(node, data) {
-            if (node.data.id === "022-000000000000000000000000000000000001") {
+            if (node.data.id === "0000022-00000000000000000000000000000001") {
                 this.$message.info("根部门不可删除！");
                 return;
             }
