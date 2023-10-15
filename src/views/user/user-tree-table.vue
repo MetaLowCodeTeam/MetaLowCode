@@ -138,6 +138,9 @@
                     <el-col :span="24">
                         <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
                     </el-col>
+					<el-col :span="24">
+						<el-button icon="Key" @click="openResetPasswordDialog(row)">重置密码</el-button>
+					</el-col>
                     <el-col :span="24">
                         <el-dropdown trigger="click">
                             <el-button>
@@ -148,9 +151,6 @@
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item>
-                                        <span @click="openResetPasswordDialog(row)">重置密码</span>
-                                    </el-dropdown-item>
                                     <el-dropdown-item>
                                         <span @click="deleteTableData(row)">删除</span>
                                     </el-dropdown-item>
@@ -209,7 +209,8 @@ export default {
             curDepartmentId: null,
             departmentFieldPropsMap: {},
             departmentDsv: {
-                formEntity: "User",
+                formEntity: "Department",
+				uploadServer: import.meta.env.VITE_APP_BASE_API
             },
             userDsv: {},
 
@@ -355,7 +356,7 @@ export default {
         openResetPasswordDialog(row){
             this.resetPasswordDialogIsShow = true;
             this.resetPasswordUserId = row.userId
-        
+
         },
         // 刷新数据
         onRefresh() {
@@ -508,18 +509,6 @@ export default {
                     }
 
                     if (!!res.data && !!res.data.layoutJson) {
-                        // this.layout = this.buildLayoutObj()
-                        // this.layout.setLayoutPropsFromServer(res)
-                        // this.handleDeletedFields(res, this.layout) /* 处理表单已删除字段！！ */
-                        // this.formModel = res.data.formData
-                        // this.labelsModel = res.data.labelData
-                        // this.fieldPropsMap = res.data.fieldPropsMap
-                        // this.formState = FormState.NEW
-                        // this.showFormDialogFlag = true;
-                        // if (!!this.$refs['formWidget']) {
-                        // 	this.$refs['formWidget'].clearFormValidate()
-                        // }
-
                         this.formState = FormState.NEW;
                         this.showFormDialogFlag = true;
                         this.userDsv["formEntity"] = "User";
@@ -541,8 +530,6 @@ export default {
         },
 
         addDepartment(node, data) {
-            //console.log(node)
-
             createRecord("Department")
                 .then((res) => {
                     if (res.error != null) {
@@ -551,23 +538,6 @@ export default {
                     }
 
                     if (!!res.data && !!res.data.layoutJson) {
-                        // this.curDepartmentId = null
-                        // this.departmentLayout = this.buildLayoutObj()
-                        // this.departmentLayout.setLayoutPropsFromServer(res)
-                        // this.handleDeletedFields(res, this.departmentLayout) /* 处理表单已删除字段！！ */
-                        // this.departmentFormModel = res.data.formData
-                        // this.departmentLabelsModel = res.data.labelData
-                        // this.departmentFieldPropsMap = res.data.fieldPropsMap
-                        // this.departmentFormState = FormState.NEW
-                        // this.showDepartmentFormDialogFlag = true;
-                        //
-                        // // 上级部门赋值
-                        // this.departmentFormModel['parentDepartmentId'] = node.data.id
-                        // this.departmentLabelsModel['parentDepartmentId'] = node.data.label
-                        // if (!!this.$refs['departmentDormWidget']) {
-                        // 	this.$refs['departmentFormWidget'].clearFormValidate()
-                        // }
-
                         this.curDepartmentId = null;
                         this.departmentFormState = FormState.NEW;
                         this.showDepartmentFormDialogFlag = true;
@@ -615,18 +585,6 @@ export default {
                     }
 
                     if (!!res.data && !!res.data.layoutJson) {
-                        // this.departmentLayout = this.buildLayoutObj()
-                        // this.departmentLayout.setLayoutPropsFromServer(res)
-                        // this.handleDeletedFields(res, this.departmentLayout) /* 处理表单已删除字段！！ */
-                        // this.departmentFormModel = res.data.formData
-                        // this.departmentLabelsModel = res.data.labelData
-                        // this.departmentFieldPropsMap = res.data.fieldPropsMap
-                        // this.departmentFormState = FormState.EDIT //编辑记录状态
-                        // this.showDepartmentFormDialogFlag = true;
-                        // if (!!this.$refs['departmentFormWidget']) {
-                        // 	this.$refs['departmentFormWidget'].clearFormValidate()
-                        // }
-
                         this.departmentFormState = FormState.EDIT;
                         this.showDepartmentFormDialogFlag = true;
                         this.departmentDsv["formEntity"] = "Department";
@@ -635,6 +593,8 @@ export default {
                                 res.data.layoutJson
                             );
                             this.$nextTick(() => {
+								const parentDpt = this.$refs.departmentFormRef.getWidgetRef('parentDepartmentId')
+								!!parentDpt && parentDpt.setDisabled(true)
                                 this.$refs.departmentFormRef.setFormData(
                                     res.data.formData
                                 );
@@ -653,17 +613,6 @@ export default {
         },
 
         saveDepartment() {
-            // let validResult = false
-            // this.$refs['departmentFormWidget'].validateForm((valid) => {
-            // 	validResult = valid
-            // 	if (!!!valid) {
-            // 		return false
-            // 	}
-            // })
-            // if (!!!validResult) {
-            // 	return
-            // }
-
             this.$refs.departmentFormRef
                 .getFormData()
                 .then((formData) => {

@@ -8,14 +8,6 @@
 					 class="visual-design">
 		<!-- 配置工具按钮 -->
 		<template #customToolButtons>
-			<!--
-			<el-button type="primary" link @click="addMetaField">
-				<el-icon>
-					<MagicStick/>
-				</el-icon>
-				新建字段
-			</el-button>
-			-->
 			<el-dropdown class="ml-button-dropdown" @command="handleNewFieldCommand" size="small">
 				<el-button link type="primary">
 					<el-icon ><MagicStick /></el-icon>新建字段
@@ -366,6 +358,8 @@ export default {
 		},
 
 		handleNewFieldCommand(command) {
+			// TODO: 此处应该判断是否具备实体字段创建权限！！
+
 			this.curFWEditor = command
 			this.curEditorType = command.replace(/WE$/, '')
 			this.showNewFieldDialogFlag = true

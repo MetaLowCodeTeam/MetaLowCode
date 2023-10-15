@@ -148,7 +148,8 @@ const refresh = async () => {
                     }
                     vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
-                        vFormRef.value.disableForm();
+                        //vFormRef.value.disableForm();
+						vFormRef.value.setReadMode();
                     });
                 }
                 loading.value = false;

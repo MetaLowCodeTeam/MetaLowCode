@@ -1,9 +1,13 @@
 <template>
-    <ml-dialog :title="row.dialogTitle" v-model="isShow" width="900px">
+    <ml-dialog :title="row.dialogTitle" v-if="isShow" v-model="isShow" width="900px">
         <div class="main" v-loading="loading">
             <div class="info-box" v-if="row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
-            <v-form-render v-if="haveLayoutJson" ref="vFormRef" />
+            <v-form-render v-if="haveLayoutJson"
+						   ref="vFormRef"
+						   :global-dsv="globalDsv"
+						   :option-data="optionData"
+			/>
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
         <template #footer>
@@ -36,6 +40,9 @@ let row = reactive({
     entityName: "",
     dialogTitle: "",
 });
+const globalDsv = reactive({})
+globalDsv['uploadServer'] = import.meta.env.VITE_APP_BASE_API
+const optionData = reactive({})
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = (v) => {

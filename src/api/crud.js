@@ -1,7 +1,7 @@
 import http, { request } from '@/utils/request'
 
-export function refFieldQuery(entity, field, pageNo, pageSize) {
-    return http.get('crud/refFieldQuery', { entity, 'refField': field, pageNo, pageSize })
+export function refFieldQuery(entity, field, pageNo, pageSize, queryText) {
+    return http.get('crud/refFieldQuery', { entity, 'refField': field, pageNo, pageSize, queryText });
 }
 
 export function createRecord(entity) {
@@ -30,7 +30,7 @@ export function deleteRecords(body) {
 }
 
 /**
-* 
+*
 * 通用查询接口
 * @param {*} mainEntity 实体名称
 * @param {*} fieldsList 要显示的字段名称

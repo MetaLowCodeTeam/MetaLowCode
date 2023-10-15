@@ -138,7 +138,7 @@ export default {
                         expires:  24 * 60 * 60 * 3,
                     });
                 }
-                
+
                 sessionStorage.setItem("userId", user.data.id); // 保存用户Id到本地会话
                 this.$TOOL.cookie.set("uid", user.data, {
                     expires: 24 * 60 * 60 * 3,
@@ -148,11 +148,11 @@ export default {
                  */
                 // 获取所有权限
                 this.getRightMap();
-          
+
                 this.$router.replace({
                     path: "/",
                 });
-                this.$message.success("Login Success 登录成功");
+                this.$message.success("登录成功");
             }
             this.islogin = false;
         },

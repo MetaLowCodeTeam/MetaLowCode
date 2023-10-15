@@ -30,7 +30,9 @@
 				<span class="readonly-mode-field">{{ contentForReadMode }}</span>
 			</template>
 		</form-item-wrapper>
-		<el-dialog title="请选择" v-model="showReferenceDialogFlag" :show-close="true" class="small-padding-dialog"
+		<el-dialog title="请选择" v-if="showReferenceDialogFlag"
+				   v-model="showReferenceDialogFlag"
+				   :show-close="true" class="small-padding-dialog"
 				   :width="'520px'" draggable
 				   :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true">
 			<ReferenceSearchTable ref="referST" :entity="entity" :refField="curRefField"
@@ -109,7 +111,6 @@ export default {
 			deep: true,
 			immediate: true,
 			handler(val) {
-				//console.error(val)
 				this.displayValue = !!val ? val.name : ''
 			}
 		},
@@ -121,7 +122,7 @@ export default {
 
 	created() {
 		const gDsv = this.getGlobalDsv()
-		this.entity = this.$route.query.entity || this.$route.meta.entityName || gDsv['formEntity']
+		this.entity = gDsv['formEntity'] || this.$route.query.entity || this.$route.meta.entityName
 
 		/* 注意：子组件mounted在父组件created之后、父组件mounted之前触发，故子组件mounted需要用到的prop
 		   需要在父组件created中初始化！！ */
