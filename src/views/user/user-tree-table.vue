@@ -66,12 +66,6 @@
                         </el-icon>
                         <span class="ml-5">新建用户</span>
                     </el-button>
-                    <!-- <el-button type="primary" @click="resetPasswordDialogIsShow = true">
-                        <el-icon size="14">
-                            <ElIconPlus />
-                        </el-icon>
-                        <span class="ml-5">重置登录密码</span>
-                    </el-button>-->
                 </template>
                 <template #activeRow>
                     <el-table-column label="操作" :align="'center'" width="140" fixed="right">
@@ -118,46 +112,53 @@
             </el-input>
             <template #footer>
                 <el-button @click="resetPasswordDialogIsShow = false">取消</el-button>
-                <el-button type="primary" @click="confirm">确定</el-button>
+                <el-button type="primary" @click="confirmResetPassword">确定</el-button>
             </template>
         </ml-dialog>
         <!-- 列表详情 -->
         <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="userName">
             <template #tab>
-                <TabMemberList v-model="memberList" @delMembers="changeMembers" :id="curUserId" isRole/>
+                <TabMemberList
+                    v-model="memberList"
+                    @delMembers="changeMembers"
+                    :id="curUserId"
+                    isRole
+                />
             </template>
             <template #operate="{row}">
-				<el-row class="action-group">
-					<el-col :span="24">
-						<AddMembers
-							@addMembers="changeMembers"
-							:paramId="row.userId"
-							paramName="角色"
-							paramType="Role"
-						/>
-					</el-col>
-					<el-col :span="24">
-						<el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
-					</el-col>
-					<el-col :span="24">
-						<el-dropdown trigger="click">
-							<el-button>
-								更多
-								<el-icon style="transform: rotate(90deg);">
-									<ElIconMoreFilled />
-								</el-icon>
-							</el-button>
-							<template #dropdown>
-								<el-dropdown-menu>
-									<el-dropdown-item>
-										<span @click="deleteTableData(row)">删除</span>
-									</el-dropdown-item>
-								</el-dropdown-menu>
-							</template>
-						</el-dropdown>
-					</el-col>
-				</el-row>
-
+                <el-row class="action-group">
+                    <el-col :span="24">
+                        <AddMembers
+                            @addMembers="changeMembers"
+                            :paramId="row.userId"
+                            paramName="角色"
+                            paramType="Role"
+                        />
+                    </el-col>
+                    <el-col :span="24">
+                        <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-dropdown trigger="click">
+                            <el-button>
+                                更多
+                                <el-icon style="transform: rotate(90deg);">
+                                    <ElIconMoreFilled />
+                                </el-icon>
+                            </el-button>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item>
+                                        <span @click="openResetPasswordDialog(row)">重置密码</span>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <span @click="deleteTableData(row)">删除</span>
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </el-col>
+                </el-row>
             </template>
         </mlListDetails>
     </el-container>
@@ -244,6 +245,7 @@ export default {
             multipleSelection: [],
             // 重置密码
             resetPasswordDialogIsShow: false,
+            resetPasswordUserId:"",
             newPassword: "",
             // 默认排序
             sortFields: [
@@ -349,6 +351,12 @@ export default {
             tempV.detailId = row.userId;
             this.$refs.editRefs.openDialog(tempV);
         },
+        // 打开重置密码弹框
+        openResetPasswordDialog(row){
+            this.resetPasswordDialogIsShow = true;
+            this.resetPasswordUserId = row.userId
+        
+        },
         // 刷新数据
         onRefresh() {
             this.$refs.mlSingleListRef.getTableList();
@@ -396,7 +404,7 @@ export default {
             });
         },
         // 确认修改密码
-        async confirm() {
+        async confirmResetPassword() {
             if (!this.newPassword) {
                 this.$message.error("请输入密码");
                 return;
@@ -411,11 +419,14 @@ export default {
             }
             let res = await http.get("/user/resetPassword", {
                 password: this.newPassword,
+                userId:this.resetPasswordUserId,
             });
             if (res) {
                 this.$message.success("重置成功");
                 this.newPassword = "";
                 this.resetPasswordDialogIsShow = false;
+                this.isDialogCallEdit = true;
+                this.onRefresh();
             }
         },
 
@@ -508,7 +519,6 @@ export default {
                         // if (!!this.$refs['formWidget']) {
                         // 	this.$refs['formWidget'].clearFormValidate()
                         // }
-
 
                         this.formState = FormState.NEW;
                         this.showFormDialogFlag = true;
@@ -831,9 +841,9 @@ export default {
 }
 
 .action-group {
-	:deep(.el-button) {
-		min-width: 110px !important;
-	}
+    :deep(.el-button) {
+        margin-bottom: 5px;
+        min-width: 110px !important;
+    }
 }
-
 </style>

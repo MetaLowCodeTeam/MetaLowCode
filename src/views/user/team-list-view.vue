@@ -220,6 +220,7 @@ const tabChange = async (tab) => {
 <style lang="scss" scoped>
 .action-group {
 	:deep(.el-button) {
+        margin-bottom: 5px;
 		min-width: 110px !important;
 	}
 }
