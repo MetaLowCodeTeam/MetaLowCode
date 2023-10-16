@@ -117,14 +117,7 @@ export const ext_charts_widgets = [
             },
             // 图表样式
             chartStyle: 1,
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
+
             // 图表设置
             setChartConf: {
                 // 数值显示
@@ -172,14 +165,7 @@ export const ext_charts_widgets = [
             },
             // 图表样式
             chartStyle: 1,
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
+          
             // 图表设置
             setChartConf: {
                 // 数值显示
@@ -234,14 +220,7 @@ export const ext_charts_widgets = [
             },
             // 图表样式
             chartStyle: 1,
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
+          
             // 图表设置
             setChartConf: {
                 // 数值显示
@@ -296,14 +275,7 @@ export const ext_charts_widgets = [
             },
             // 图表样式
             chartStyle: 1,
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
+           
             // 图表设置
             setChartConf: {
                 // 数值显示
@@ -356,14 +328,7 @@ export const ext_charts_widgets = [
                 // 指标
                 metrics: [],
             },
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
+          
             // 图表设置
             setChartConf: {
                 // 数值显示
@@ -410,14 +375,7 @@ export const ext_charts_widgets = [
                 metrics: [],
             },
             chartStyle: 1,
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
+          
             // 图表设置
             setChartConf: {
                 // 数值显示
@@ -462,14 +420,6 @@ export const ext_charts_widgets = [
                 dimension: [],
                 // 指标
                 metrics: [],
-            },
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
             },
             // 图表设置
             setChartConf: {
@@ -518,14 +468,6 @@ export const ext_charts_widgets = [
                 // 指标
                 metrics: [],
             },
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
-            },
             // 图表设置
             setChartConf: {
                 // 汇总行显示
@@ -568,14 +510,6 @@ export const ext_charts_widgets = [
             setDimensional: {
                 // 显示字段
                 showFields: [],
-            },
-            setChartStyle: {
-                // 颜色选择
-                useTextColor: "#000000",
-                // 货币符号
-                currencySymbol: "",
-                // 货币符号尺寸
-                currencySymbolSize: 14,
             },
             // 图表设置
             setChartConf: {
