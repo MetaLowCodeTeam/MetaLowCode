@@ -43,7 +43,7 @@ const exportFn = async () => {
     loading.value = true;
     let res = await $API.layoutConfig.excelDataExcel(queryParm);
     if(res){
-        window.open(import.meta.env.VITE_API_SERVER + "/excelData/downloadExcelFile?key=" + res.data)
+        window.open(import.meta.env.VITE_APP_BASE_API + "/excelData/downloadExcelFile?key=" + res.data)
         $ElMessage.success("导出成功！")
     }
     loading.value = false;

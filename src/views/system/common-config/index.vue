@@ -147,7 +147,8 @@ const initData = async () => {
 
 // logo上传成功
 const onLogoSuccess = (data) => {
-    confData.logo = data;
+    console.log(data,'data')
+    confData.logo = data.url;
 };
 
 // 是否禁用

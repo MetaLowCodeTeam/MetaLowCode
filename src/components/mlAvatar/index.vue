@@ -13,7 +13,7 @@ const props = defineProps({
 
 // 格式化图片
 const formatImg = () => {
-    return import.meta.env.VITE_API_SERVER + "/user/avatar?userId=" + props.userId;
+    return import.meta.env.VITE_APP_BASE_API + "/user/avatar?userId=" + props.userId;
 };
 </script>
 <style lang='scss' scoped>

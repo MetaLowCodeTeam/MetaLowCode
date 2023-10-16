@@ -97,7 +97,7 @@ const onSave = async () => {
 
 // 头像上传成功
 const onAvataSuccess = (data) => {
-    userInfo.value.avatar = data;
+    userInfo.value.avatar = data.url;
 };
 </script>
 
