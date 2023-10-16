@@ -60,7 +60,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
-            initMenu.meta.icon = el.useIcon
+            initMenu.meta.icon = el.useIcon || 'set-up'
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
                 initMenu.path = "";
@@ -73,7 +73,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             type: subEl.type == 2 ? "link" : "",
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
-                            icon:subEl.useIcon
+                            icon:subEl.useIcon || 'set-up'
                         },
                         path:
                             subEl.type == 1
