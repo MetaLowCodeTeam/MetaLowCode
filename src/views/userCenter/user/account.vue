@@ -12,8 +12,8 @@
                     style="width: 70px;"
                 >
                     <template #trigger>
-                        <div class="avatar-box" v-if="userInfo.avatar">
-                            <mlLogo class="avatar" :logoUrl="userInfo.avatar" />
+                        <div class="avatar-box" v-if="userInfo.avatar && userInfo.avatar[0]">
+                            <mlLogo class="avatar" :logoUrl="userInfo.avatar[0].url" />
                         </div>
                         <el-icon v-else class="avatar-uploader-icon">
                             <ElIconPlus />
@@ -82,7 +82,7 @@ const onSave = async () => {
         return;
     }
     let param = {
-        avatar,
+        avatar:JSON.stringify(avatar),
         userName,
         mobilePhone,
         email,
@@ -97,7 +97,7 @@ const onSave = async () => {
 
 // 头像上传成功
 const onAvataSuccess = (data) => {
-    userInfo.value.avatar = data.url;
+    userInfo.value.avatar = [data];
 };
 </script>
 
