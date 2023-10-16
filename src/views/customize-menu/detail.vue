@@ -39,7 +39,7 @@
                     </div>
                     <!-- 非详情 -->
                     <div v-else>
-                        <DetailTabCom :cutTab="cutTab" :tabs="detailDialog.tab" />
+                        <DetailTabCom :cutTab="cutTab" :tabs="detailDialog.tab" :entityId="detailDialog.detailId"/>
                     </div>
                 </el-col>
                 <el-col :span="6">

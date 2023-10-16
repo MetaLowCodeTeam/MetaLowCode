@@ -1,22 +1,36 @@
 <template>
     <!-- 未提交 -->
     <template v-if="myApproval.approvalStatus == 0">
-        <el-button v-if="myApproval.startApproval" @click="openDialog('提交审批')">提交审批</el-button>
+        <el-row>
+            <el-button v-if="myApproval.startApproval" @click="openDialog('提交审批')">提交审批</el-button>
+        </el-row>
     </template>
     <!-- 审核中 -->
     <template v-if="myApproval.approvalStatus == 1">
-        <el-button v-if="myApproval.imApproval" @click="openApproveDialog">审批</el-button>
-        <el-button @click="openHistoryDialog">详情</el-button>
+        <el-row>
+            <el-button v-if="myApproval.imApproval" @click="openApproveDialog">审批</el-button>
+        </el-row>
+        <el-row>
+            <el-button @click="openHistoryDialog">详情</el-button>
+        </el-row>
     </template>
     <!-- 已驳回 -->
     <template v-if="myApproval.approvalStatus == 2 || myApproval.approvalStatus == 4">
-        <el-button @click="openDialog('提交审批')">提交审批</el-button>
-        <el-button @click="openHistoryDialog">详情</el-button>
+        <el-row>
+            <el-button @click="openDialog('提交审批')">提交审批</el-button>
+        </el-row>
+        <el-row>
+            <el-button @click="openHistoryDialog">详情</el-button>
+        </el-row>
     </template>
     <!-- 已完成 -->
     <template v-if="myApproval.approvalStatus == 3">
-        <el-button @click="revokeApproval" v-if="$TOOL.checkRole('r6013')">撤销</el-button>
-        <el-button @click="openHistoryDialog">详情</el-button>
+        <el-row>
+            <el-button @click="revokeApproval" v-if="$TOOL.checkRole('r6013')">撤销</el-button>
+        </el-row>
+        <el-row>
+            <el-button @click="openHistoryDialog">详情</el-button>
+        </el-row>
     </template>
     <!-- 审批弹框 -->
     <mlDialog v-model="approvalDialog.isShow" :title="approvalDialog.title" width="460">
@@ -37,7 +51,11 @@
                 </el-select>
                 <div v-else class="info-text">
                     暂无审批流程
-                    <span class="ml-a-span" @click="goApprovalList" v-if="$TOOL.checkRole('r30-1')">点击配置</span>
+                    <span
+                        class="ml-a-span"
+                        @click="goApprovalList"
+                        v-if="$TOOL.checkRole('r30-1')"
+                    >点击配置</span>
                 </div>
             </el-form-item>
             <el-form-item>
@@ -60,7 +78,7 @@
         <mlApproveHistory
             v-model="approvalHistoryDialog"
             :entityId="myApproval.recordId"
-            title="审批详情"
+            title="审批历史"
         />
     </div>
 </template>

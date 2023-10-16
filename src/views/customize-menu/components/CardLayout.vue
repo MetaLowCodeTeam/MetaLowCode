@@ -23,7 +23,6 @@ const optionData = reactive({});
 const formData = reactive();
 const globalDsv = reactive({});
 onMounted(() => {
-    // console.log(props.layoutJson,'layoutJson');
     vFormRef.value.setFormJson(props.layoutJson);
     nextTick(() => {
         vFormRef.value.setFormData(props.data);

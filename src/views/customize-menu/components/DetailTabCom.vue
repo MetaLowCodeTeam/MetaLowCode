@@ -134,6 +134,7 @@ import CardLayout from "./CardLayout.vue";
 const router = useRouter();
 const props = defineProps({
     cutTab: { type: String },
+    entityId: { type: String, default: "" },
     tabs: { type: Object, default: () => {} },
 });
 const $API = inject("$API");
@@ -191,6 +192,8 @@ let detailTab = reactive({});
 let idFiledName = ref("");
 // 标蓝字段
 let nameFiledName = ref("");
+// 当前选中TabfieldName
+let fieldName = ref("");
 
 // 卡片视图排序
 let cardSortText = ref("默认排序");
@@ -228,10 +231,13 @@ const cardSortCommand = (e) => {
 // 初始化数据
 const initData = async () => {
     tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
+    defaultShowType.value = "table";
     let filterTabs = tabs.value.filter((el) => el.entityName == props.cutTab);
     if (filterTabs[0]) {
         entityCode.value = filterTabs[0].entityCode;
         entityName.value = filterTabs[0].entityName;
+        fieldName.value = filterTabs[0].fieldName;
+        console.log(filterTabs[0], "filterTabs[0]");
     }
     // console.log(tabs);
     loading.value = true;
@@ -377,12 +383,23 @@ const refreshData = () => {
 let layoutJson = ref({});
 const getTableList = async () => {
     loading.value = true;
+
     let param = {
         mainEntity: entityName.value,
         fieldsList: allFields.value.join(),
         pageSize: page.size,
         pageNo: page.no,
-        // filter: { ...queryFilter },
+        // entityId
+        filter: {
+            equation: "AND",
+            items: [
+                {
+                    fieldName: fieldName.value,
+                    op:"EQ",
+                    entityId:props.entityId
+                },
+            ],
+        },
         // advFilter: { ...comQueriesList },
         sortFields: sortFields.value,
         quickFilter: quickQueryVal.value,
@@ -456,7 +473,7 @@ const getTableList = async () => {
 
 .collapse-title {
     width: 100%;
-    
+
     .title-span {
         color: var(--el-color-primary);
         margin-left: 20px;

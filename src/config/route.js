@@ -63,6 +63,32 @@ const routes = [
                 },
                 "component": "home/index"
             },
+            // 审批中心
+            {
+                path: '/web/approval-center',
+                name: 'ApprovalCenter',
+                meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
+                children: [
+                    {
+                        path: '/web/center-handle',
+                        name: 'CenterHandle',
+                        component: 'system/approval-center/center-handle',
+                        meta: { title: '待我处理', }
+                    },
+                    {
+                        path: `/web/center-submit`,
+                        name: 'CenterSubmit',
+                        component: 'system/approval-center/center-submit',
+                        meta: { title: '我提交的', }
+                    },
+                    {
+                        path: `/web/center-cc`,
+                        name: 'CenterCc',
+                        component: 'system/approval-center/center-cc',
+                        meta: { title: '抄送我的', }
+                    },
+                ]
+            },
             {
                 path: "/web/:entityname/list",
                 name: "MenuTrendsList",
@@ -182,32 +208,7 @@ const routes = [
                 hidden: true,
                 meta: { title: '流程设计', hidden: true }
             },
-            // 审批中心
-            {
-                path: '/web/approval-center',
-                name: 'ApprovalCenter',
-                meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
-                children: [
-                    {
-                        path: '/web/center-handle',
-                        name: 'CenterHandle',
-                        component: 'system/approval-center/center-handle',
-                        meta: { title: '待我处理', }
-                    },
-                    {
-                        path: `/web/center-submit`,
-                        name: 'CenterSubmit',
-                        component: 'system/approval-center/center-submit',
-                        meta: { title: '我提交的', }
-                    },
-                    {
-                        path: `/web/center-cc`,
-                        name: 'CenterCc',
-                        component: 'system/approval-center/center-cc',
-                        meta: { title: '抄送我的', }
-                    },
-                ]
-            },
+
             // 触发器
             {
                 path: '/web/trigger-list',
