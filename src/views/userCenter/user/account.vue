@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, ref, nextTick } from "vue";
 import { queryById } from "@/api/crud";
 import { updateLoginUser } from "@/api/user";
 import { ElMessage } from "element-plus";
@@ -82,7 +82,7 @@ const onSave = async () => {
         return;
     }
     let param = {
-        avatar:JSON.stringify(avatar),
+        avatar: JSON.stringify(avatar),
         userName,
         mobilePhone,
         email,
