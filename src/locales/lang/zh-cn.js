@@ -9,7 +9,7 @@ export default {
 		forgetPassword: '忘记密码',
 		signIn: '登录',
 		signInOther: '其他登录方式',
-		userPlaceholder: '用户名 / 手机 / 邮箱',
+		userPlaceholder: '用户名',
 		userError: '请输入用户名',
 		PWPlaceholder: '请输入密码',
 		PWError: '请输入密码',

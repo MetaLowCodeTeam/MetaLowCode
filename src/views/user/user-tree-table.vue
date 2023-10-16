@@ -102,7 +102,7 @@
             </mlSingleList>
         </el-container>
         <!-- 新建、编辑用户 -->
-        <Edit ref="editRefs" @onConfirm="onRefresh" isUser />
+        <Edit ref="editRefs" @onConfirm="onRefresh" isUser :disableWidgets="disableWidgets" />
         <!-- 重置密码 -->
         <ml-dialog title="重置密码" v-model="resetPasswordDialogIsShow" appendToBody width="450px">
             <el-input v-model="newPassword" placeholder="输入密码" clearable>
@@ -138,9 +138,9 @@
                     <el-col :span="24">
                         <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
                     </el-col>
-					<el-col :span="24">
-						<el-button icon="Key" @click="openResetPasswordDialog(row)">重置密码</el-button>
-					</el-col>
+                    <el-col :span="24">
+                        <el-button icon="Key" @click="openResetPasswordDialog(row)">重置密码</el-button>
+                    </el-col>
                     <el-col :span="24">
                         <el-dropdown trigger="click">
                             <el-button>
@@ -210,7 +210,7 @@ export default {
             departmentFieldPropsMap: {},
             departmentDsv: {
                 formEntity: "Department",
-				uploadServer: import.meta.env.VITE_APP_BASE_API
+                uploadServer: import.meta.env.VITE_APP_BASE_API,
             },
             userDsv: {},
 
@@ -246,7 +246,7 @@ export default {
             multipleSelection: [],
             // 重置密码
             resetPasswordDialogIsShow: false,
-            resetPasswordUserId:"",
+            resetPasswordUserId: "",
             newPassword: "",
             // 默认排序
             sortFields: [
@@ -307,6 +307,8 @@ export default {
             isDialogCallEdit: false,
             // 成员列表
             memberList: [],
+            // 要禁用的字段
+            disableWidgets: [],
         };
     },
     computed: {
@@ -339,6 +341,7 @@ export default {
             let tempV = {};
             tempV.dialogTitle = "新建用户";
             tempV.entityName = "User";
+            this.disableWidgets = [];
             this.$refs.editRefs.openDialog(tempV);
         },
         // 编辑用户
@@ -350,13 +353,13 @@ export default {
             tempV.dialogTitle = "编辑" + row.userName;
             tempV.entityName = "User";
             tempV.detailId = row.userId;
+            this.disableWidgets = ['loginPwd'];
             this.$refs.editRefs.openDialog(tempV);
         },
         // 打开重置密码弹框
-        openResetPasswordDialog(row){
+        openResetPasswordDialog(row) {
             this.resetPasswordDialogIsShow = true;
-            this.resetPasswordUserId = row.userId
-
+            this.resetPasswordUserId = row.userId;
         },
         // 刷新数据
         onRefresh() {
@@ -420,7 +423,7 @@ export default {
             }
             let res = await http.get("/user/resetPassword", {
                 password: this.newPassword,
-                userId:this.resetPasswordUserId,
+                userId: this.resetPasswordUserId,
             });
             if (res) {
                 this.$message.success("重置成功");
@@ -500,7 +503,6 @@ export default {
             return createLayoutObj(eventBus);
         },
 
-
         addDepartment(node, data) {
             createRecord("Department")
                 .then((res) => {
@@ -565,11 +567,17 @@ export default {
                                 res.data.layoutJson
                             );
                             this.$nextTick(() => {
-								const parentDpt = this.$refs.departmentFormRef.getWidgetRef('parentDepartmentId')
-								!!parentDpt && parentDpt.setDisabled(true)
-								if (node.data.id === "0000022-00000000000000000000000000000001") {
-									!!parentDpt && parentDpt.setRequired(false)
-								}
+                                const parentDpt =
+                                    this.$refs.departmentFormRef.getWidgetRef(
+                                        "parentDepartmentId"
+                                    );
+                                !!parentDpt && parentDpt.setDisabled(true);
+                                if (
+                                    node.data.id ===
+                                    "0000022-00000000000000000000000000000001"
+                                ) {
+                                    !!parentDpt && parentDpt.setRequired(false);
+                                }
 
                                 this.$refs.departmentFormRef.setFormData(
                                     res.data.formData

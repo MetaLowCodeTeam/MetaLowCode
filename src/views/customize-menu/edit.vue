@@ -3,11 +3,12 @@
         <div class="main" v-loading="loading">
             <div class="info-box" v-if="row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
-            <v-form-render v-if="haveLayoutJson"
-						   ref="vFormRef"
-						   :global-dsv="globalDsv"
-						   :option-data="optionData"
-			/>
+            <v-form-render
+                v-if="haveLayoutJson"
+                ref="vFormRef"
+                :global-dsv="globalDsv"
+                :option-data="optionData"
+            />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
         <template #footer>
@@ -31,6 +32,7 @@ const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
+    disableWidgets: { type: Array, default: ()=>[] },
 });
 const $ElMessage = inject("$ElMessage");
 
@@ -40,9 +42,9 @@ let row = reactive({
     entityName: "",
     dialogTitle: "",
 });
-const globalDsv = reactive({})
-globalDsv['uploadServer'] = import.meta.env.VITE_APP_BASE_API
-const optionData = reactive({})
+const globalDsv = reactive({});
+globalDsv["uploadServer"] = import.meta.env.VITE_APP_BASE_API;
+const optionData = reactive({});
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = (v) => {
@@ -77,6 +79,7 @@ const initFormLayout = async () => {
                     if (formData) {
                         row.approvalStatus = formData.data.approvalStatus || {};
                         vFormRef.value.setFormData(formData.data);
+                        
                         if (
                             row.approvalStatus.value == 1 ||
                             row.approvalStatus.value == 3
@@ -84,6 +87,14 @@ const initFormLayout = async () => {
                             nextTick(() => {
                                 vFormRef.value.disableForm();
                             });
+                            return
+                        }
+
+                        if(props.disableWidgets.length > 0){
+                            nextTick(() => {
+                                vFormRef.value.disableWidgets(props.disableWidgets)
+                            });
+                            
                         }
                     }
                     loading.value = false;
@@ -142,7 +153,7 @@ defineExpose({
 </script>
 <style lang='scss' scoped>
 :deep(.el-form-item--default) {
-	margin-bottom: 5px !important;
+    margin-bottom: 5px !important;
 }
 
 .main {

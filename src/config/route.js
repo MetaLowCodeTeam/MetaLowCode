@@ -43,11 +43,21 @@ const routes = [
             "type": "menu"
         },
         "children": [
+            // {
+            //     "name": "dashboard",
+            //     "path": "/web/dashboard",
+            //     "meta": {
+            //         "title": "控制台",
+            //         "icon": "el-icon-menu",
+            //         "affix": true
+            //     },
+            //     "component": "home/index"
+            // },
             {
                 "name": "dashboard",
                 "path": "/web/dashboard",
                 "meta": {
-                    "title": "控制台",
+                    "title": "仪表盘",
                     "icon": "el-icon-menu",
                     "affix": true
                 },

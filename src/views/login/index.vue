@@ -1,6 +1,6 @@
 <template>
 	<div class="login_bg">
-		<div class="login_adv" style="background-image: url(img/auth_banner.jpg);">
+		<div class="login_adv">
 			<div class="login_adv__title">
 				<h2>{{ $TOOL.data.get('APP_TITLE')}}</h2>
 				<h4>{{ $TOOL.data.get('APP_SUB_TITLE') }}</h4>
