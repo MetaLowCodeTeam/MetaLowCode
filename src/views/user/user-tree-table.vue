@@ -500,34 +500,6 @@ export default {
             return createLayoutObj(eventBus);
         },
 
-        addUser() {
-            createRecord(this.entity)
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                        return;
-                    }
-
-                    if (!!res.data && !!res.data.layoutJson) {
-                        this.formState = FormState.NEW;
-                        this.showFormDialogFlag = true;
-                        this.userDsv["formEntity"] = "User";
-                        this.$nextTick(() => {
-                            this.$refs.userFormRef.setFormJson(
-                                res.data.layoutJson
-                            );
-                        });
-                    } else {
-                        this.$message({
-                            message: "加载表单布局出错",
-                            type: "error",
-                        });
-                    }
-                })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                });
-        },
 
         addDepartment(node, data) {
             createRecord("Department")

@@ -54,8 +54,8 @@ axios.interceptors.response.use(
             return response
         }else {
             ElMessage.error(response.data.error)
+            return null
         }
-		return {};
 	},
 	(error) => {
 		if (error.response) {
