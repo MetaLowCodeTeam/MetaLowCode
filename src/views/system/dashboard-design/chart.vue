@@ -3,7 +3,7 @@
         ref="mlSingleListRef"
         title="仪表盘"
         mainEntity="Chart"
-        fieldsList="chartName,ownerUser,ownerDepartment,modifiedOn,modifiedBy,default"
+        fieldsList="chartName,ownerUser,ownerDepartment,modifiedOn,modifiedBy,defaultChart"
         :sortFields="sortFields"
         fieldName="chartName"
         :tableColumn="tableColumn"
@@ -23,7 +23,7 @@
             <!-- default -->
             <el-table-column label="默认视图" :align="'center'" width="100">
                 <template #default="scope">
-                    <el-switch v-model="scope.row.default" @change="changeDefault"/>
+                    <el-switch v-model="scope.row.defaultChart" @change="changeDefault(scope.row)" />
                 </template>
             </el-table-column>
             <el-table-column label="操作" :align="'center'" width="140" fixed="right">
@@ -67,6 +67,7 @@
 import { ref, inject, reactive } from "vue";
 import { $fromNow } from "@/utils/util";
 import { saveRecord, deleteRecord } from "@/api/crud";
+import { updateDefault } from "@/api/chart.js";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -75,7 +76,7 @@ const $ElMessage = inject("$ElMessage");
 // 默认排序
 let sortFields = ref([
     {
-        fieldName: "modifiedOn",
+        fieldName: "createdOn",
         type: "DESC",
     },
 ]);
@@ -117,8 +118,6 @@ let tableColumn = ref([
         },
     },
 ]);
-
-
 
 // 添加触发
 let dialogConf = reactive({
@@ -179,10 +178,15 @@ const onConfirm = async () => {
 };
 
 // 默认视图切换
-const changeDefault = async ()=>{
-    // mlSingleListRef.value.loading = true;
-    mlSingleListRef.value.getTableList();
-}
+const changeDefault = async (row) => {
+    mlSingleListRef.value.loading = true;
+    let res = await updateDefault(row.chartId, row.defaultChart);
+    if (res) {
+        dialogConf.isShow = false;
+        mlSingleListRef.value.getTableList();
+    }
+    mlSingleListRef.value.loading = false;
+};
 
 // 高亮字段点击
 const highlightClick = (row) => {

@@ -48,7 +48,7 @@ const formatItem = (list, target) => {
 }
 
 // 图表数据获取接口
-export function queryChartData(formModel,type) {
+export function queryChartData(formModel, type) {
     let commonStore = localStorage.getItem('commonStore');
     let entityName = commonStore ? JSON.parse(commonStore).entityName : {};
     // 维度
@@ -74,5 +74,12 @@ export function queryChartData(formModel,type) {
         filter: formModel.setChartFilter
     };
     return http.post('/plugins/metaDataCube/chart/queryChartData', param)
+}
+
+// 修改默认视图
+export function updateDefault(id, defaultChart) {
+    return http.post('/plugins/metaDataCube/chart/updateDefault', {}, {
+        params: { id, defaultChart},
+    })
 }
 

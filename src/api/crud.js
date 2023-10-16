@@ -34,12 +34,13 @@ export function deleteRecords(body) {
 * 通用查询接口
 * @param {*} mainEntity 实体名称
 * @param {*} fieldsList 要显示的字段名称
+* @param {*} filter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  过滤
 * @param {*} pageSize 默认页数大小
 * @param {*} pageNo 页数大小
-* @param {*} filter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  过滤
+* @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
 * @param {*} advFilter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  常用查询
 * @param {*} quickFilter ""  快速查询
-* @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
+
 */
 export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter) {
     return http.post('crud/listQuery', {
