@@ -166,7 +166,7 @@ const routes = [
                 meta: { title: '审批流程', icon: 'el-icon-operation', role: 'r30-1' }
             },
             {
-                path: `/process-detail`,
+                path: `/web/process-detail`,
                 name: 'ProcessDetail',
                 component: 'system/approval-process/process-detail',
                 hidden: true,
@@ -185,13 +185,13 @@ const routes = [
                         meta: { title: '待我处理', }
                     },
                     {
-                        path: `/center-submit`,
+                        path: `/web/center-submit`,
                         name: 'CenterSubmit',
                         component: 'system/approval-center/center-submit',
                         meta: { title: '我提交的', }
                     },
                     {
-                        path: `/center-cc`,
+                        path: `/web/center-cc`,
                         name: 'CenterCc',
                         component: 'system/approval-center/center-cc',
                         meta: { title: '抄送我的', }
