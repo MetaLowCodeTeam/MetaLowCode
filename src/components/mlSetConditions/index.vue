@@ -149,7 +149,7 @@
                     </div>
                     <!-- 用户下拉框 -->
                     <div
-                        v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT'"
+                        v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT' && item.op != 'NL'&& item.op != 'NT'" 
                     >
                         <el-select
                             size="default"
