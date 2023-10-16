@@ -26,6 +26,7 @@
                     v-if="approvalList.length > 0"
                     v-model="approvalDialog.approvalConfigId"
                     placeholder="请选择审批流程"
+                    style="width: 233px;margin-bottom: 10px;"
                 >
                     <el-option
                         v-for="item in approvalList"
@@ -110,8 +111,7 @@ const openDialog = async (title) => {
         myApproval.value.recordId
     );
     if (res) {
-        // approvalList.value = res.data || [];
-        approvalList.value = [];
+        approvalList.value = res.data || [];
     }
     approvalDialog.loading = false;
 };
