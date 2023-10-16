@@ -91,6 +91,9 @@ const onSave = async () => {
     let res = await updateLoginUser(userInfo.value.userId, param);
     if (res) {
         ElMessage.success("保存成功");
+        nextTick(() => {
+            location.reload();
+        });
     }
     loading.value = false;
 };
