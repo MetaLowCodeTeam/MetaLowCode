@@ -139,13 +139,11 @@ const refresh = async () => {
                     if (props.titleFromApi) {
                         detailDialog.title = formData.data[props.titleFromApi];
                     }
-                    console.log(formData.data, "formData.data");
-                    if (detailDialog.formData.avatar) {
-                        detailDialog.formData.avatar = formatUrl(
-                            detailDialog.formData.avatar
-                        );
-                        console.log();
-                    }
+                    // if (detailDialog.formData.avatar) {
+                    //     detailDialog.formData.avatar = formatUrl(
+                    //         detailDialog.formData.avatar
+                    //     );
+                    // }
                     vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
                         //vFormRef.value.disableForm();
@@ -166,7 +164,7 @@ const refresh = async () => {
 };
 
 const formatUrl = (url) => {
-    return import.meta.env.VITE_API_SERVER + "/picture/get/" + url;
+    return import.meta.env.VITE_API_SERVER + "picture/get/" + url;
 };
 
 // 暴露方法给父组件调用

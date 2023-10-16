@@ -124,6 +124,10 @@ let msgList = ref([]);
 let msgLoading = ref(false);
 onMounted(() => {
     var userInfo = $TOOL.data.get("USER_INFO");
+    if(!userInfo){
+        router.push({ path: "/web/login" });
+        return    
+    }
     userName.value = userInfo.userName;
     userId.value = userInfo.userId;
     userNameF.value = userName.value.substring(0, 1);

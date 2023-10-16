@@ -83,7 +83,7 @@ router.beforeEach(async (to, from, next) => {
     if (!isGetRouter) {
         const { setNavigationList, setChosenNavigationId, setDefaultMenuList } = useLayoutConfigStore();
         let navRes = await layoutConfigApi.getNavigationList();
-        if (navRes) {
+        if (navRes && navRes.data) {
             setNavigationList(navRes.data.navigationList);
             setChosenNavigationId(navRes.data.chosenNavigationId);
             setDefaultMenuList();

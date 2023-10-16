@@ -28,7 +28,7 @@ let color = ref("rgba(128,128,128,0.2)");
 // 水印文本深度
 let opacity = ref("0.6");
 onMounted(() => {
-    title.value = $TOOL.data.get("USER_INFO").userName;
+    title.value = $TOOL.data.get("USER_INFO")?.userName;
     subTitle.value = $TOOL.data.get("APP_NAME");
     let APP_WATERMARK = $TOOL.data.get("APP_WATERMARK");
     if (APP_WATERMARK && APP_WATERMARK != "false") {
