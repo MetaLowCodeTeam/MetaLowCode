@@ -3,7 +3,7 @@
         ref="mlSingleListRef"
         title="仪表盘"
         mainEntity="Chart"
-        fieldsList="chartName,ownerUser,ownerDepartment,modifiedOn,modifiedBy"
+        fieldsList="chartName,ownerUser,ownerDepartment,modifiedOn,modifiedBy,default"
         :sortFields="sortFields"
         fieldName="chartName"
         :tableColumn="tableColumn"
@@ -20,6 +20,12 @@
             </el-button>
         </template>
         <template #activeRow>
+            <!-- default -->
+            <el-table-column label="默认视图" :align="'center'" width="100">
+                <template #default="scope">
+                    <el-switch v-model="scope.row.default" @change="changeDefault"/>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" :align="'center'" width="140" fixed="right">
                 <template #default="scope">
                     <el-button size="small" type="primary" link @click="editClick(scope.row)">
@@ -42,7 +48,7 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <ml-dialog title="新建仪表盘" v-model="dialogConf.isShow" width="600">
+    <ml-dialog :title="dialogConf.title" v-model="dialogConf.isShow" width="600">
         <div style="padding-right: 60px;">
             <el-form label-width="80px">
                 <el-form-item label="名称">
@@ -55,7 +61,6 @@
             </el-form>
         </div>
     </ml-dialog>
-    
 </template>
    
 <script setup>
@@ -66,7 +71,6 @@ import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
-const $TOOL = inject("$TOOL");
 
 // 默认排序
 let sortFields = ref([
@@ -114,11 +118,14 @@ let tableColumn = ref([
     },
 ]);
 
+
+
 // 添加触发
 let dialogConf = reactive({
     isShow: false,
     chartName: "",
     chartId: "",
+    title: "",
 });
 
 // 新增
@@ -126,12 +133,14 @@ const addClick = () => {
     dialogConf.isShow = true;
     dialogConf.chartName = "";
     dialogConf.chartId = "";
+    dialogConf.title = "新建仪表盘";
 };
 // 编辑
 const editClick = (row) => {
     dialogConf.isShow = true;
     dialogConf.chartName = row.chartName;
     dialogConf.chartId = row.chartId;
+    dialogConf.title = "编辑仪表盘";
 };
 // 删除
 const delCick = (row) => {
@@ -168,6 +177,12 @@ const onConfirm = async () => {
     }
     mlSingleListRef.value.loading = false;
 };
+
+// 默认视图切换
+const changeDefault = async ()=>{
+    // mlSingleListRef.value.loading = true;
+    mlSingleListRef.value.getTableList();
+}
 
 // 高亮字段点击
 const highlightClick = (row) => {

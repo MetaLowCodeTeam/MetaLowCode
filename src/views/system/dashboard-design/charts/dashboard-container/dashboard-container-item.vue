@@ -2,7 +2,7 @@
 	<smart-widget-grid :layout="gridLayout" v-if="widget.widgetList.length > 0"
 					   :row-height="48"
 					   :margin="[15, 15]"
-					   :is-static="false"
+					   :is-static="true"
 					   :auto-size="true">
 
 		<template v-for="(item, index) in widget.widgetList" #[item.id] :key="index">
@@ -10,7 +10,8 @@
 						  :title="item.options.label"
 						  :refresh="item.options.showRefresh"
 						  :collapse="item.options.showCollapse"
-						  :fullscreen="item.options.showFullscreen">
+						  :fullscreen="item.options.showFullscreen"
+                          >
 				<div class="container-com">
 					<template v-if="'container' === item.category">
 						<component :is="item.type + '-item'" :widget="item"

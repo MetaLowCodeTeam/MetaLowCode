@@ -130,6 +130,7 @@ const saveProcess = async () => {
         if (type === "add") {
             let emitValue = {};
             emitValue[saveIdCode] = res.data.formData[saveIdCode];
+            emitValue.entityCode = entityCode;
             emit("saveProcess", emitValue);
         } else {
             emit("saveProcess");

@@ -78,7 +78,7 @@ export default {
                 } else {
                     let blankFormJson = JSON.parse(res.data.chartData)
                     this.$refs.dbDesignerRef.setFormJson(blankFormJson);
-                    console.log(JSON.parse(res.data.chartData),'JSON.parse(res.data.chartData)')
+                    // console.log(JSON.parse(res.data.chartData),'JSON.parse(res.data.chartData)')
                 }
             }else {
                 this.clearCanvas();

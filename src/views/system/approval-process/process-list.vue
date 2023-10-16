@@ -85,7 +85,6 @@ const addClick = () => {
 
 // 跳转详情
 const goDetial = (row) => {
-    console.log(row,'row')
     router.push({
         path: "/web/process-detail",
         query: {
