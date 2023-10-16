@@ -63,32 +63,43 @@ const routes = [
                 },
                 "component": "home/index"
             },
-            // 审批中心
-            {
-                path: '/web/approval-center',
-                name: 'ApprovalCenter',
-                meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
-                children: [
-                    {
-                        path: '/web/center-handle',
-                        name: 'CenterHandle',
-                        component: 'system/approval-center/center-handle',
-                        meta: { title: '待我处理', }
-                    },
-                    {
-                        path: `/web/center-submit`,
-                        name: 'CenterSubmit',
-                        component: 'system/approval-center/center-submit',
-                        meta: { title: '我提交的', }
-                    },
-                    {
-                        path: `/web/center-cc`,
-                        name: 'CenterCc',
-                        component: 'system/approval-center/center-cc',
-                        meta: { title: '抄送我的', }
-                    },
-                ]
-            },
+            // // 审批中心
+            // {
+            //     path: '/web/approval-center',
+            //     name: 'ApprovalCenter',
+            //     meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
+            //     children: [
+            //         {
+            //             path: '/web/center-handle',
+            //             name: 'CenterHandle',
+            //             component: 'system/approval-center/center-handle',
+            //             meta: { title: '待我处理', }
+            //         },
+            //         {
+            //             path: `/web/center-submit`,
+            //             name: 'CenterSubmit',
+            //             component: 'system/approval-center/center-submit',
+            //             meta: { title: '我提交的', }
+            //         },
+            //         {
+            //             path: `/web/center-cc`,
+            //             name: 'CenterCc',
+            //             component: 'system/approval-center/center-cc',
+            //             meta: { title: '抄送我的', }
+            //         },
+            //     ]
+            // },
+            // 账号信息
+            //   {
+            //     "name": "userCenter",
+            //     "path": "/web/usercenter",
+            //     "meta": {
+            //         "title": "帐号信息",
+            //         "icon": "el-icon-user",
+            //     },
+            //     "component": "userCenter/index"
+            // },
+          
             {
                 path: "/web/:entityname/list",
                 name: "MenuTrendsList",
@@ -243,23 +254,6 @@ const routes = [
                 name: 'DataUpload',
                 meta: { title: '数据导入', icon: 'el-icon-Upload', role: 'r6011' },
                 component: 'system/data-upload/index',
-            },
-            // 账号信息
-            {
-                "name": "userCenter",
-                "path": "/web/usercenter",
-                "meta": {
-                    "title": "帐号信息",
-                    "icon": "el-icon-user",
-                },
-                "component": "userCenter/index"
-            },
-            // 消息中心
-            {
-                path: '/web/notification',
-                name: 'Notification',
-                meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
-                component: 'system/notification/index',
             },
             // 变更历史
             {
