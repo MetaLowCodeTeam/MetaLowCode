@@ -266,7 +266,7 @@ const editColumn = (type) => {
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
-    if (res) {
+    if (res && res.data) {
         idFiledName.value = res.data.idFiledName;
         nameFiledName.value = res.data.nameFiledName;
         advFilter.value = res.data.advFilter || "all";
