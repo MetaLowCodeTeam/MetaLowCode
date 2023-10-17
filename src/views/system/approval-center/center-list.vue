@@ -36,23 +36,6 @@
                     >审批</el-button>
                 </template>
             </el-table-column>
-            <!-- <el-table-column
-                label="操作"
-                :align="'center'"
-                width="100"
-                key="2"
-                v-if="type === 'submit'"
-            >
-                <template #default="scope">
-                    <el-button
-                        :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value == 1)"
-                        size="small"
-                        type="primary"
-                        link
-                        @click="revokeRow(scope.row)"
-                    >撤销</el-button>
-                </template>
-            </el-table-column> -->
         </template>
     </mlSingleList>
     <div v-if="approveDialogIsShow">

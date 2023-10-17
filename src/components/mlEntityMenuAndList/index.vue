@@ -140,7 +140,6 @@
                 />
             </el-main>
         </el-container>
-       
     </el-container>
 </template>
   
@@ -172,7 +171,7 @@ const ListTile = reactive({
     ReportConfig: "模板列表",
     TriggerConfig: "触发器",
 });
-const { entityLabel, approveDialogEntityList } = storeToRefs(useCommonStore());
+const { entityLabel } = storeToRefs(useCommonStore());
 // 加载状态
 let loading = ref(false);
 // 默认值
@@ -195,13 +194,6 @@ let tableSort = ref([
         type: "DESC",
     },
 ]);
-// 编辑弹框
-// let dialogIsShow = ref(false);
-// let dialogForm = reactive({
-//     title: "",
-//     type: "add",
-//     form: {},
-// });
 onMounted(() => {
     getEntityList();
 });
@@ -265,22 +257,6 @@ const actionBtn = (target, row) => {
         target,
         row,
     });
-    // dialogIsShow.value = true;
-    // if (target === "add") {
-    //     dialogForm.title = "添加" + ListTile[props.entityName];
-    //     dialogForm.form = {};
-    //     dialogForm.type = "add";
-    // } else {
-    //     dialogForm.title = "编辑" + ListTile[props.entityName];
-    //     dialogForm.type = "edit";
-    //     if (props.entityName == "TriggerConfig") {
-    //         let tempForm = { ...row };
-    //         tempForm.actionType = tempForm.actionType.value;
-    //         dialogForm.form = { ...tempForm };
-    //         return;
-    //     }
-    //     dialogForm.form = { ...row };
-    // }
 };
 
 // 分页切换
@@ -389,7 +365,6 @@ const formatterWhenNum = (whenNum) => {
     return `当 ${actions.join("/")} 时`;
 };
 
-
 // 删除流程
 const deleteProcess = (row) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
@@ -412,7 +387,6 @@ const deleteProcess = (row) => {
 const goDetial = (row) => {
     emit("goDetial", row);
 };
-
 
 defineExpose({
     getApprovalList,
