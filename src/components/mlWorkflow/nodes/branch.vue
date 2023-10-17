@@ -68,7 +68,7 @@
             <template #header>
                 <div class="node-wrap-drawer__title">
                     <label @click="editTitle" v-if="!isEditTitle">
-                        {{form.nodeName}}111
+                        {{form.nodeName}}
                         <el-icon class="node-wrap-drawer__title-edit">
                             <el-icon-edit />
                         </el-icon>
@@ -115,7 +115,7 @@ let nodeConfig = ref({});
 let drawer = ref(false);
 let isEditTitle = ref(false);
 let cutIndex = ref(0);
-let form = reactive({});
+let form = ref({});
 let conditionConf = reactive({});
 let mlSetConditionsRef = ref();
 // 最终分支
@@ -137,12 +137,12 @@ onMounted(() => {
 
 const show = (index) => {
     cutIndex.value = index;
-    form = Object.assign(form, nodeConfig.value.conditionNodes[index]);
+    form.value = nodeConfig.value.conditionNodes[index];
     lastNodes.value = false;
     if (index === nodeConfig.value.conditionNodes.length - 1) {
         lastNodes.value = true;
     }
-    let { filter } = JSON.parse(JSON.stringify(form));
+    let { filter } = form.value;
     filter = initFilter(filter);
     conditionConf = filter;
     drawer.value = true;
@@ -174,9 +174,7 @@ const save = () => {
     if (!mlSetConditionsRef.value.checkConditionList()) {
         return;
     }
-    let { items, equation } = conditionConf;
-    Object.assign(form.filter, { equation, items });
-    nodeConfig.value.conditionNodes[cutIndex.value] = form;
+    nodeConfig.value.conditionNodes[cutIndex.value] = form.value;
     emit("update:modelValue", nodeConfig.value);
     drawer.value = false;
 };
@@ -234,7 +232,12 @@ const arrTransfer = (index, type = 1) => {
 const toText = (nodeConfig, index) => {
     var { filter } = nodeConfig.conditionNodes[index];
     if (index === nodeConfig.conditionNodes.length - 1) {
-        return `其他条件`;
+        if(filter && filter.items && filter.items.length > 0){
+            return `其他条件（${filter.items.length}）`;
+        }else {
+            return `其他条件`
+        }
+        
     }
     if (filter && filter.items && filter.items.length > 0) {
         return `已设置条件（${filter.items.length}）`;
