@@ -39,7 +39,11 @@
                     </div>
                     <!-- 非详情 -->
                     <div v-else>
-                        <DetailTabCom :cutTab="cutTab" :tabs="detailDialog.tab" :entityId="detailDialog.detailId"/>
+                        <DetailTabCom
+                            :cutTab="cutTab"
+                            :tabs="detailDialog.tab"
+                            :entityId="detailDialog.detailId"
+                        />
                     </div>
                 </el-col>
                 <el-col :span="6">
@@ -220,6 +224,8 @@ const onEditRow = () => {
 
 // 编辑确认
 const onConfirm = () => {
+    // 加载数据
+    refresh();
     emits("onConfirm");
 };
 
@@ -267,7 +273,8 @@ defineExpose({
 
 <style lang="scss">
 .detail-main {
-	.el-form-item--default, .el-form-item {
+    .el-form-item--default,
+    .el-form-item {
         margin-bottom: 5px !important;
     }
 }

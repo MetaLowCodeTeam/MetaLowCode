@@ -139,12 +139,13 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, inject, reactive } from "vue";
+import { ref, inject, reactive } from "vue";
 import SetColumn from "./SetColumn.vue";
 import DataExport from "./DataExport.vue";
 import Allocation from "./Allocation.vue";
 import ReportForms from "./ReportForms.vue";
-import { ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },

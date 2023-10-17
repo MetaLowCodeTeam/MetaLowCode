@@ -44,12 +44,24 @@ const routes = [
         }
     },
     // 消息中心
-    {
-        path: '/web/notification',
-        name: 'Notification',
-        meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
-        component: 'system/notification/index',
-    },
+    // {
+    //     path: '/web/notification',
+    //     name: 'Notification',
+    //     meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
+    //     // component: 'system/notification/index',
+    //     component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/notification/index.vue'),
+    // },
+    // 账号信息
+    // {
+    //     "name": "userCenter",
+    //     "path": "/web/usercenter",
+    //     "meta": {
+    //         "title": "帐号信息",
+    //         "icon": "el-icon-user",
+    //     },
+    //     // component: "userCenter/index"
+    //     component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/userCenter/index.vue'),
+    // },
 ]
 
 export default routes;
