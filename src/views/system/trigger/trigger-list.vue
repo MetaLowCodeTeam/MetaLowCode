@@ -21,10 +21,10 @@
                 <span class="ml-5">添加</span>
             </el-button>
         </template>
-        <template #formitem="{dialogForm}">
-            <el-form-item label="选择触发器" v-if="dialogForm.type == 'add'">
+        <template #subFormItem="{subFormitemData}">
+            <el-form-item label="选择触发器" v-if="subFormitemData.type == 'add'">
                 <el-select
-                    v-model="dialogForm.form.actionType"
+                    v-model="subFormitemData.form.actionType"
                     placeholder="请选择触发器"
                     style="width: 80%;"
                 >

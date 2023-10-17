@@ -141,6 +141,7 @@
             </el-main>
         </el-container>
         <mlActiveDialog
+            v-if="dialogIsShow"
             v-model="dialogIsShow"
             :entityList="approveDialogEntityList"
             :dialogForm="dialogForm"
@@ -153,8 +154,8 @@
             :showFormItem="showFormItem"
             :fromEntityLabel="fromEntityLabel"
         >
-            <template #formitem="{dialogForm}">
-                <slot name="formitem" :dialogForm="dialogForm"></slot>
+            <template #formitem="{formitemData}">
+                <slot name="subFormItem" :subFormitemData="formitemData"></slot>
             </template>
         </mlActiveDialog>
     </el-container>
@@ -163,8 +164,6 @@
 <script setup>
 import useCommonStore from "@/store/modules/common";
 import { inject, onMounted, reactive, ref } from "vue";
-import { Search, Delete, Edit } from "@element-plus/icons-vue";
-
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import { getDataList, deleteRecord, getEntityCodeList } from "@/api/crud";
@@ -195,7 +194,6 @@ const props = defineProps({
 });
 const emit = defineEmits(["goDetial"]);
 const message = inject("$ElMessage");
-const api = inject("$API");
 const ListTile = reactive({
     ApprovalConfig: "审批流程",
     ReportConfig: "模板列表",
