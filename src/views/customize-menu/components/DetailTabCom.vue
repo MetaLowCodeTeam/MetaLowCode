@@ -396,7 +396,7 @@ const getTableList = async () => {
                 {
                     fieldName: fieldName.value,
                     op:"EQ",
-                    entityId:props.entityId
+                    value:props.entityId
                 },
             ],
         },

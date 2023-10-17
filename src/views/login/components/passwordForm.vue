@@ -44,6 +44,8 @@
 <script>
 
 import http from "@/utils/request";
+import useCommonStore from "@/store/modules/common";
+const { getEntityLabel } = useCommonStore();
 export default {
     data() {
         return {
@@ -148,10 +150,12 @@ export default {
                  */
                 // 获取所有权限
                 this.getRightMap();
-
+                // 调用实体数据
+                getEntityLabel();
                 this.$router.replace({
                     path: "/",
                 });
+
                 this.$message.success("登录成功");
             }
             this.islogin = false;

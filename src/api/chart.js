@@ -3,6 +3,8 @@
  */
 
 import http from "@/utils/request"
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
 
 const ChartTypes = {
     // 统计数值
@@ -49,9 +51,7 @@ const formatItem = (list, target) => {
 
 // 图表数据获取接口
 export function queryChartData(formModel, type) {
-    let commonStore = localStorage.getItem('commonStore');
-    let entityName = commonStore ? JSON.parse(commonStore).entityName : {};
-    // 维度
+    const { entityName } = storeToRefs(useCommonStore());
     let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
     // 指标
     let longitude = formatItem(formModel?.setDimensional.metrics || [], 'longitude');
@@ -67,7 +67,7 @@ export function queryChartData(formModel, type) {
 
     let param = {
         chartType: ChartTypes[type],
-        entityName: entityName[formModel.dataEntity],
+        entityName: entityName.value[formModel.dataEntity],
         latitude,
         longitude,
         noPrivileges: formModel?.setChartConf.useAllData,
