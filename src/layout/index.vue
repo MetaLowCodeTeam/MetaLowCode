@@ -57,9 +57,7 @@
                         <div
                             v-if="checkPlugin($route)"
                             class="not-plugin"
-                        >
-                            {{ pluginInfo[$route.name].errMsg }}
-                        </div>
+                        >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="keepLiveRouteFn">
@@ -118,16 +116,22 @@
                     <Topbar v-if="!ismobileFn"></Topbar>
                     <Tags v-if="!ismobileFn && layoutTagsFn"></Tags>
                     <div class="adminui-main" id="adminui-main">
-                        <router-view v-slot="{ Component }">
-                            <keep-alive :include="keepLiveRouteFn">
-                                <component
-                                    :is="Component"
-                                    :key="$route.fullPath"
-                                    v-if="routeShowFn"
-                                />
-                            </keep-alive>
-                        </router-view>
-                        <iframe-view></iframe-view>
+                        <div
+                            v-if="checkPlugin($route)"
+                            class="not-plugin"
+                        >{{ pluginInfo[$route.name].errMsg }}</div>
+                        <template v-else>
+                            <router-view v-slot="{ Component }">
+                                <keep-alive :include="keepLiveRouteFn">
+                                    <component
+                                        :is="Component"
+                                        :key="$route.fullPath"
+                                        v-if="routeShowFn"
+                                    />
+                                </keep-alive>
+                            </router-view>
+                            <iframe-view></iframe-view>
+                        </template>
                     </div>
                 </div>
             </mlWaterMark>
@@ -167,16 +171,22 @@
                 <div class="aminui-body el-container">
                     <Tags v-if="!ismobileFn && layoutTagsFn"></Tags>
                     <div class="adminui-main" id="adminui-main">
-                        <router-view v-slot="{ Component }">
-                            <keep-alive :include="keepLiveRouteFn">
-                                <component
-                                    :is="Component"
-                                    :key="$route.fullPath"
-                                    v-if="routeShowFn"
-                                />
-                            </keep-alive>
-                        </router-view>
-                        <iframe-view></iframe-view>
+                        <div
+                            v-if="checkPlugin($route)"
+                            class="not-plugin"
+                        >{{ pluginInfo[$route.name].errMsg }}</div>
+                        <template v-else>
+                            <router-view v-slot="{ Component }">
+                                <keep-alive :include="keepLiveRouteFn">
+                                    <component
+                                        :is="Component"
+                                        :key="$route.fullPath"
+                                        v-if="routeShowFn"
+                                    />
+                                </keep-alive>
+                            </router-view>
+                            <iframe-view></iframe-view>
+                        </template>
                     </div>
                 </div>
             </mlWaterMark>
@@ -244,16 +254,22 @@
                     </Topbar>
                     <Tags v-if="!ismobileFn && layoutTagsFn"></Tags>
                     <div class="adminui-main" id="adminui-main">
-                        <router-view v-slot="{ Component }">
-                            <keep-alive :include="keepLiveRouteFn">
-                                <component
-                                    :is="Component"
-                                    :key="$route.fullPath"
-                                    v-if="routeShowFn"
-                                />
-                            </keep-alive>
-                        </router-view>
-                        <iframe-view></iframe-view>
+                        <div
+                            v-if="checkPlugin($route)"
+                            class="not-plugin"
+                        >{{ pluginInfo[$route.name].errMsg }}</div>
+                        <template v-else>
+                            <router-view v-slot="{ Component }">
+                                <keep-alive :include="keepLiveRouteFn">
+                                    <component
+                                        :is="Component"
+                                        :key="$route.fullPath"
+                                        v-if="routeShowFn"
+                                    />
+                                </keep-alive>
+                            </router-view>
+                            <iframe-view></iframe-view>
+                        </template>
                     </div>
                 </div>
             </mlWaterMark>
@@ -322,16 +338,16 @@ export default {
             pluginIdList: [],
             pluginInfo: {
                 RriggerList: {
-                    pluginName:"metaTrigger",
-                    errMsg:"触发器 插件未安装！"
+                    pluginName: "metaTrigger",
+                    errMsg: "触发器 插件未安装！",
                 },
                 DashboardDesign: {
-                    pluginName:"metaDataCube",
-                    errMsg:"数据分析 插件未安装！"
+                    pluginName: "metaDataCube",
+                    errMsg: "数据分析 插件未安装！",
                 },
                 TemplatesList: {
-                    pluginName:"mannerReport",
-                    errMsg:"在线报表 插件未安装！"
+                    pluginName: "mannerReport",
+                    errMsg: "在线报表 插件未安装！",
                 },
             },
             needPlugin: ["RriggerList", "DashboardDesign", "TemplatesList"],
@@ -381,12 +397,12 @@ export default {
         checkPlugin(route) {
             let name = route.name;
             // 如果不需要插件
-            if(!this.needPlugin.includes(name)){
+            if (!this.needPlugin.includes(name)) {
                 return false;
             }
             let pluginInfo = this.pluginInfo[name];
             // 如果插件列表不存在该插件
-            if(!this.pluginIdList.includes(pluginInfo.pluginName)){
+            if (!this.pluginIdList.includes(pluginInfo.pluginName)) {
                 return true;
             }
             return false;

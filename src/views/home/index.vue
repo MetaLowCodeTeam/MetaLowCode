@@ -1,6 +1,6 @@
 <template>
     <!-- 仪表盘 -->
-    <div class="dashboard" v-loading="loading">
+    <div class="dashboard" v-loading="loading" v-if="isHasPlugin">
         <template v-if="dashboardList.length > 0">
             <v-form-render v-if="showFormRender" ref="dashboardWidget"></v-form-render>
             <el-popover
@@ -32,6 +32,7 @@
         </template>
         <el-empty v-else description="暂无视图" />
     </div>
+    <div v-else class="not-plugin">数据分析 插件未安装！</div>
 </template>
 
 <script setup>
@@ -51,23 +52,26 @@ let defaultChartId = ref("");
 let cutUseChartId = ref("");
 // 是否显示仪表盘
 let showFormRender = ref(false);
+// 插件列表
+let pluginIdList = ref([]);
+let isHasPlugin = ref(false);
 onMounted(() => {
-    // 获取仪表盘数据
-    getDashboardList();
+    pluginIdList.value = $TOOL.data.get("APP_PLUGINID");
+    isHasPlugin.value = pluginIdList.value.includes("metaDataCube");
+    if (isHasPlugin.value) {
+        // 获取仪表盘数据
+        getDashboardList();
+    }
 });
 
 const getDashboardList = async () => {
     loading.value = true;
-    defaultChartId.value = $TOOL.data.get("defaultChartId");
+    defaultChartId.value = $TOOL.data.get("defaultChartId") || false;
     let filter = {
         equation: "AND",
-        items: [{ fieldName: "chartData", op: "NT",value:"" }],
+        items: [{ fieldName: "chartData", op: "NT", value: "" }],
     };
-    let res = await getDataList(
-        "Chart",
-        "chartName,defaultChart",
-        filter
-    );
+    let res = await getDataList("Chart", "chartName,defaultChart", filter);
     if (res && res.data) {
         dashboardList.value = res.data.dataList || [];
         // 如果没有数据
@@ -111,7 +115,7 @@ const initFormConfig = async (chartId) => {
     if (res && res.data.chartData) {
         showFormRender.value = true;
         let blankFormJson = JSON.parse(res.data.chartData);
-        console.log(blankFormJson,'blankFormJson')
+        console.log(blankFormJson, "blankFormJson");
         nextTick(() => {
             dashboardWidget.value.setFormJson(blankFormJson);
         });
