@@ -264,6 +264,7 @@ const confirm = async () => {
         }
         emits("allocationSuccess");
         dialogShow.value = false;
+        loading.value = false;
     }else {
         loading.value = false;
     }
