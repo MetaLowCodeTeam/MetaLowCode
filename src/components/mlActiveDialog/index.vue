@@ -1,11 +1,13 @@
 
 <template>
-
     <!-- 列表页面新增、编辑通用弹框 -->
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
         <el-form label-width="120px" v-loading="loading">
             <!-- <slot name="formitem"></slot> -->
-            <el-form-item label="选择触发器" v-if="dialogForm.type == 'add' && dialogForm.title == '添加触发器'">
+            <el-form-item
+                label="选择触发器"
+                v-if="dialogForm.type == 'add' && dialogForm.title == '添加触发器'"
+            >
                 <el-select
                     v-model="dialogForm.form.actionType"
                     placeholder="请选择触发器"
@@ -19,7 +21,10 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item :label="fromEntityLabel" v-if="dialogForm.type == 'add' && dialogForm.title != '添加触发器'">
+            <el-form-item
+                :label="fromEntityLabel"
+                v-if="dialogForm.type == 'add' && dialogForm.title != '添加触发器'"
+            >
                 <el-select
                     v-model="dialogForm.form.entityCode"
                     :placeholder="fromEntityLabel"
@@ -29,7 +34,7 @@
                     <el-option
                         :label="op.label"
                         :value="op.entityCode"
-                        v-for="(op,inx) of entityList"
+                        v-for="(op,inx) of approveDialogEntityList"
                         :key="inx"
                     />
                 </el-select>
@@ -60,13 +65,11 @@
 <script setup>
 import { ref, onMounted, watch, inject } from "vue";
 import { saveRecord } from "@/api/crud";
-
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { approveDialogEntityList } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
-    entityList: {
-        type: Array,
-        default: () => [],
-    },
     dialogForm: {
         type: Object,
         default: () => {},
@@ -162,14 +165,16 @@ onMounted(() => {
 const saveProcess = async () => {
     let { saveEntity, saveIdCode, dialogForm, checkCodes, codeErrMsg } = props;
     let { type, form } = dialogForm;
-    let { entityCode, isDisabled } = form;
-    if (type == "add") {
-        if (!entityCode) {
-            message.error("请选择应用实体");
-            return;
-        }
+    let { entityCode, isDisabled ,actionType} = form;
+    if (type == "add" && saveEntity != "TriggerConfig" && !entityCode) {
+        message.error("请选择应用实体");
+        return;
     }
-
+    if (type == "add" && saveEntity == "TriggerConfig" && !actionType) {
+        message.error("请选择触发器");
+        return;
+    }
+    
     // 开始验证必填
     for (let index = 0; index < checkCodes.length; index++) {
         const el = checkCodes[index];

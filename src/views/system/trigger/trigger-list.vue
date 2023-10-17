@@ -5,15 +5,13 @@
         aciveId="triggerConfigId"
         fieldsList="name,entityCode,actionType,actionContent,priority,isDisabled,modifiedOn,whenNum"
         @goDetial="goDetial"
-        :checkCodes="['actionType','name']"
-        :codeErrMsg="['请选择触发器','请输入名称']"
-        :showFormItem="[{'label':'名称','code':'name','type':'1'}]"
         :tableColumn="tableColumn"
         defalutSortField="modifiedOn"
         defaultFilter="name"
+        @actionBtn="actionBtn"
     >
         <template #addbutton>
-            <el-button type="primary" @click="addClick">
+            <el-button type="primary" @click="actionBtn({target:'add'})">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -21,6 +19,18 @@
             </el-button>
         </template>
     </mlEntityMenuAndList>
+    <mlActiveDialog
+        v-if="dialogIsShow"
+        v-model="dialogIsShow"
+        :entityList="approveDialogEntityList"
+        :dialogForm="dialogForm"
+        @saveProcess="saveProcess"
+        saveEntity="TriggerConfig"
+        saveIdCode="triggerConfigId"
+        :checkCodes="['actionType','name']"
+        :codeErrMsg="['请选择触发器','请输入名称']"
+        :showFormItem="[{'label':'名称','code':'name','type':'1'}]"
+    ></mlActiveDialog>
 </template>
 
 <script setup>
@@ -76,9 +86,29 @@ let tableColumn = ref([
     },
 ]);
 
-// 添加触发
-const addClick = () => {
-    mlEntityMenuAndListRef.value.editApproval("add");
+// 详情弹框
+let dialogIsShow = ref(false);
+let dialogForm = ref({});
+// 新建编辑触发
+const actionBtn = (data) => {
+    let { target, row } = data;
+    dialogIsShow.value = true;
+    if (target === "add") {
+        dialogForm.value.title = "添加触发器";
+        dialogForm.value.form = {};
+        dialogForm.value.type = "add";
+    } else {
+        dialogForm.value.title = "编辑触发器";
+        dialogForm.value.type = "edit";
+        let tempForm = { ...row };
+        tempForm.actionType = tempForm.actionType.value;
+        dialogForm.value.form = { ...tempForm };
+    }
+};
+
+// 保存流程
+const saveProcess = async () => {
+    mlEntityMenuAndListRef.value.getApprovalList();
 };
 
 // 跳转详情
@@ -93,5 +123,4 @@ const goDetial = (row) => {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

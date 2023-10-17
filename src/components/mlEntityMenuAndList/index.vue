@@ -105,7 +105,7 @@
                                 size="small"
                                 type="primary"
                                 link
-                                @click="editApproval('edit',scope.row)"
+                                @click="actionBtn('edit',scope.row)"
                             >
                                 <span class="mr-3">
                                     <el-icon>
@@ -140,20 +140,7 @@
                 />
             </el-main>
         </el-container>
-        <mlActiveDialog
-            v-if="dialogIsShow"
-            v-model="dialogIsShow"
-            :entityList="approveDialogEntityList"
-            :dialogForm="dialogForm"
-            @saveProcess="saveProcess"
-            :saveEntity="entityName"
-            :saveIdCode="aciveId"
-            :checkCodes="checkCodes"
-            :codeErrMsg="codeErrMsg"
-            :disabledTip="disabledTip"
-            :showFormItem="showFormItem"
-            :fromEntityLabel="fromEntityLabel"
-        ></mlActiveDialog>
+       
     </el-container>
 </template>
   
@@ -171,16 +158,6 @@ const props = defineProps({
     fieldsList: { type: String, default: "" },
     // 操作ID
     aciveId: { type: String, default: "" },
-    // 编辑弹框检测code
-    checkCodes: { type: Array, default: () => [] },
-    // 编辑弹框错误msg
-    codeErrMsg: { type: Array, default: () => [] },
-    // 编辑框显示的输入框
-    showFormItem: { type: Array, default: () => [] },
-    // 编辑弹框禁用tip
-    disabledTip: { type: String, default: "" },
-    // 编辑框框选择实体的label
-    fromEntityLabel: { type: String, default: "选择应用实体" },
     // 自定义表格列
     tableColumn: { type: Array, default: () => [] },
     // 默认排序字段
@@ -188,7 +165,7 @@ const props = defineProps({
     // 默认查询字段
     defaultFilter: { type: String, default: "" },
 });
-const emit = defineEmits(["goDetial"]);
+const emit = defineEmits(["goDetial", "actionBtn"]);
 const message = inject("$ElMessage");
 const ListTile = reactive({
     ApprovalConfig: "审批流程",
@@ -219,12 +196,12 @@ let tableSort = ref([
     },
 ]);
 // 编辑弹框
-let dialogIsShow = ref(false);
-let dialogForm = reactive({
-    title: "",
-    type: "add",
-    form: {},
-});
+// let dialogIsShow = ref(false);
+// let dialogForm = reactive({
+//     title: "",
+//     type: "add",
+//     form: {},
+// });
 onMounted(() => {
     getEntityList();
 });
@@ -283,23 +260,27 @@ const getApprovalList = async () => {
 };
 
 // 添加流程
-const editApproval = (target, row) => {
-    dialogIsShow.value = true;
-    if (target === "add") {
-        dialogForm.title = "添加" + ListTile[props.entityName];
-        dialogForm.form = {};
-        dialogForm.type = "add";
-    } else {
-        dialogForm.title = "编辑" + ListTile[props.entityName];
-        dialogForm.type = "edit";
-        if (props.entityName == "TriggerConfig") {
-            let tempForm = { ...row };
-            tempForm.actionType = tempForm.actionType.value;
-            dialogForm.form = { ...tempForm };
-            return;
-        }
-        dialogForm.form = { ...row };
-    }
+const actionBtn = (target, row) => {
+    emit("actionBtn", {
+        target,
+        row,
+    });
+    // dialogIsShow.value = true;
+    // if (target === "add") {
+    //     dialogForm.title = "添加" + ListTile[props.entityName];
+    //     dialogForm.form = {};
+    //     dialogForm.type = "add";
+    // } else {
+    //     dialogForm.title = "编辑" + ListTile[props.entityName];
+    //     dialogForm.type = "edit";
+    //     if (props.entityName == "TriggerConfig") {
+    //         let tempForm = { ...row };
+    //         tempForm.actionType = tempForm.actionType.value;
+    //         dialogForm.form = { ...tempForm };
+    //         return;
+    //     }
+    //     dialogForm.form = { ...row };
+    // }
 };
 
 // 分页切换
@@ -408,14 +389,6 @@ const formatterWhenNum = (whenNum) => {
     return `当 ${actions.join("/")} 时`;
 };
 
-// 保存流程
-const saveProcess = async (val) => {
-    if (val) {
-        goDetial(val);
-    } else {
-        getApprovalList();
-    }
-};
 
 // 删除流程
 const deleteProcess = (row) => {
@@ -439,8 +412,10 @@ const deleteProcess = (row) => {
 const goDetial = (row) => {
     emit("goDetial", row);
 };
+
+
 defineExpose({
-    editApproval,
+    getApprovalList,
 });
 </script>
   

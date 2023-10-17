@@ -3,7 +3,6 @@ import legacyPlugin from '@vitejs/plugin-legacy';
 import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import topLevelAwait from 'vite-plugin-top-level-await'
 import { loadEnv } from 'vite';
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -82,7 +81,8 @@ export default ({
                 iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
                 // Specify symbolId format
                 symbolId: 'icon-[dir]-[name]',
-            }),
+            })
+
         ],
         css: {
             preprocessorOptions: {
