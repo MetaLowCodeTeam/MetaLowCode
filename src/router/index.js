@@ -49,7 +49,7 @@ router.beforeEach(async (to, from, next) => {
     // console.log(store,'store')
     NProgress.start()
     //动态标题
-    document.title = to.meta.title ? `${to.meta.title} - ${tool.data.get('APP_NAME')}` : `${tool.data.get('APP_NAME')}`
+    document.title = to.meta.title ? `${to.meta.title} - ${tool.data.get('APP_NAME') || ''}` : `${tool.data.get('APP_NAME') || ''}`
 
     let token = tool.cookie.get("TOKEN");
 
