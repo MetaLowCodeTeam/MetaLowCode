@@ -1,5 +1,4 @@
 /* eslint-disable */
-import legacyPlugin from '@vitejs/plugin-legacy';
 import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
@@ -10,7 +9,13 @@ export default ({
     mode
 }) => {
     const env = loadEnv(mode, process.cwd());
-    let rollupOptions = {};
+    let rollupOptions = {
+        output: {// 分包
+            manualChunks(id) {
+                if (id.includes("node_modules")) { return id.toString().split("node_modules/")[1].split("/")[0].toString() }
+            },
+        },
+    };
 
     let optimizeDeps = {
         include: ['@/../lib/visual-design/designer.umd.js']
@@ -61,9 +66,16 @@ export default ({
             proxy,
         },
         build: {
-            target: ['es2015','es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+            target: ['es2015', 'es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
             cssTarget: 'chrome61',
             minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用terser
+            terserOptions: {
+                compress: {
+                    keep_infinity: true,  // 防止 Infinity 被压缩成 1/0，这可能会导致 Chrome 上的性能问题
+                    drop_console: true,   // 生产环境去除 console
+                    drop_debugger: true   // 生产环境去除 debugger
+                },
+            },
             manifest: false, // 是否产出maifest.json
             sourcemap: false, // 是否产出soucemap.json
             outDir: 'build', // 产出目录
