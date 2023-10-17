@@ -54,7 +54,7 @@ axios.interceptors.response.use(
             return response
         }else {
             ElMessage.error(response.data.error)
-            return null
+            return {}
         }
 	},
 	(error) => {
@@ -119,8 +119,6 @@ var http = {
 			}).then((response) => {
                 if(response){
                     resolve(response.data);
-                }else {
-                    reject()
                 }
 			}).catch((error) => {
 				reject(error);
@@ -141,7 +139,9 @@ var http = {
 				data: data,
 				...config
 			}).then((response) => {
-				resolve(response.data);
+                if(response){
+                    resolve(response.data);
+                }
 			}).catch((error) => {
 				reject(error);
 			})
@@ -161,7 +161,9 @@ var http = {
 				data: data,
 				...config
 			}).then((response) => {
-				resolve(response.data);
+                if(response){
+                    resolve(response.data);
+                }
 			}).catch((error) => {
 				reject(error);
 			})
@@ -181,7 +183,9 @@ var http = {
 				data: data,
 				...config
 			}).then((response) => {
-				resolve(response.data);
+                if(response){
+                    resolve(response.data);
+                }
 			}).catch((error) => {
 				reject(error);
 			})
@@ -201,7 +205,9 @@ var http = {
 				data: data,
 				...config
 			}).then((response) => {
-				resolve(response.data);
+                if(response){
+                    resolve(response.data);
+                }
 			}).catch((error) => {
 				reject(error);
 			})

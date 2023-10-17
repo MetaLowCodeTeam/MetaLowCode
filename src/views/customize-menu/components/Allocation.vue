@@ -264,8 +264,10 @@ const confirm = async () => {
         }
         emits("allocationSuccess");
         dialogShow.value = false;
+    }else {
+        loading.value = false;
     }
-    loading.value = false;
+   
 };
 
 defineExpose({
