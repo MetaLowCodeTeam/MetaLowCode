@@ -68,7 +68,7 @@
             <template #header>
                 <div class="node-wrap-drawer__title">
                     <label @click="editTitle" v-if="!isEditTitle">
-                        {{form.nodeName}}
+                        {{form.nodeName}}111
                         <el-icon class="node-wrap-drawer__title-edit">
                             <el-icon-edit />
                         </el-icon>
@@ -161,6 +161,7 @@ const initFilter = (filter) => {
 
     return filter;
 };
+let nodeTitle = ref("");
 const editTitle = async () => {
     isEditTitle.value = true;
     await nextTick();
