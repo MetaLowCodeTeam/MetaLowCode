@@ -63,43 +63,51 @@ const routes = [
                 },
                 "component": "home/index"
             },
-            // // 审批中心
-            // {
-            //     path: '/web/approval-center',
-            //     name: 'ApprovalCenter',
-            //     meta: { group: true, title: '审批中心', icon: 'el-icon-connection' },
-            //     children: [
-            //         {
-            //             path: '/web/center-handle',
-            //             name: 'CenterHandle',
-            //             component: 'system/approval-center/center-handle',
-            //             meta: { title: '待我处理', }
-            //         },
-            //         {
-            //             path: `/web/center-submit`,
-            //             name: 'CenterSubmit',
-            //             component: 'system/approval-center/center-submit',
-            //             meta: { title: '我提交的', }
-            //         },
-            //         {
-            //             path: `/web/center-cc`,
-            //             name: 'CenterCc',
-            //             component: 'system/approval-center/center-cc',
-            //             meta: { title: '抄送我的', }
-            //         },
-            //     ]
-            // },
+            // 审批中心
+            {
+                path: '/web/approval-center',
+                name: 'ApprovalCenter',
+                meta: { group: true, title: '审批中心', icon: 'el-icon-connection', hidden: true },
+                children: [
+                    {
+                        path: '/web/center-handle',
+                        name: 'CenterHandle',
+                        component: 'system/approval-center/center-handle',
+                        meta: { title: '待我处理', hidden: true }
+                    },
+                    {
+                        path: `/web/center-submit`,
+                        name: 'CenterSubmit',
+                        component: 'system/approval-center/center-submit',
+                        meta: { title: '我提交的', hidden: true }
+                    },
+                    {
+                        path: `/web/center-cc`,
+                        name: 'CenterCc',
+                        component: 'system/approval-center/center-cc',
+                        meta: { title: '抄送我的', hidden: true }
+                    },
+                ]
+            },
             // 账号信息
-            //   {
-            //     "name": "userCenter",
-            //     "path": "/web/usercenter",
-            //     "meta": {
-            //         "title": "帐号信息",
-            //         "icon": "el-icon-user",
-            //     },
-            //     "component": "userCenter/index"
-            // },
-          
+            {
+                "name": "userCenter",
+                "path": "/web/usercenter",
+                "meta": {
+                    "title": "帐号信息",
+                    "icon": "el-icon-user",
+                    hidden: true
+                },
+                "component": "userCenter/index"
+            },
+            // 消息中心
+            {
+                path: '/web/notification',
+                name: 'Notification',
+                meta: { title: '消息中心', icon: 'el-icon-chat-dot-round', hidden: true },
+                component: 'system/notification/index',
+            },
+
             {
                 path: "/web/:entityname/list",
                 name: "MenuTrendsList",

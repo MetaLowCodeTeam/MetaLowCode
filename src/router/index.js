@@ -62,7 +62,12 @@ router.beforeEach(async (to, from, next) => {
         next();
         return false;
     }
-
+    if(to.path == '/'){
+        next({
+            path: '/web/dashboard'
+        });
+        return false;
+    }
     if (routes.findIndex(r => r.path === to.path) >= 0) {
         next();
         return false;
