@@ -5,16 +5,13 @@
         aciveId="approvalConfigId"
         fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal"
         @goDetial="goDetial"
-        :checkCodes="['flowName']"
-        :codeErrMsg="['请输入审批流程名称']"
-        disabledTip="禁用后正在使用此流程的审批记录不受影响"
-        :showFormItem="[{'label':'名称','code':'flowName','type':'1'}]"
         :tableColumn="tableColumn"
         defalutSortField="modifiedOn"
         defaultFilter="flowName"
+        @actionBtn="actionBtn"
     >
         <template #addbutton>
-            <el-dropdown split-button type="primary" @click="addClick" @command="referral">
+            <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -32,6 +29,7 @@
             </el-dropdown>
         </template>
     </mlEntityMenuAndList>
+    <mlActiveDialog ref="mlActiveDialogRefs" @saveProcess="saveProcess"></mlActiveDialog>
 </template>
 
 <script setup>
@@ -77,6 +75,43 @@ let tableColumn = ref([
         fromNow: true,
     },
 ]);
+
+// 编辑弹框
+let mlActiveDialogRefs = ref();
+let dialogForm = ref({
+    saveEntity: "ApprovalConfig",
+    saveIdCode: "approvalConfigId",
+    checkCodes: ["flowName"],
+    codeErrMsg: ["请输入审批流程名称"],
+    disabledTip:"禁用后正在使用此流程的审批记录不受影响",
+    fromEntityLabel:'应用实体',
+    showFormItem: [{ label: "名称", code: "flowName", type: "1" }],
+});
+
+// 新建编辑触发
+const actionBtn = (data) => {
+    let { target, row } = data;
+    if (target === "add") {
+        dialogForm.value.title = "添加审批流程";
+        dialogForm.value.form = {};
+        dialogForm.value.type = "add";
+    } else {
+        dialogForm.value.title = "编辑审批流程";
+        dialogForm.value.type = "edit";
+        dialogForm.value.form = { ...row };
+    }
+    mlActiveDialogRefs.value.openDialog(dialogForm.value);
+};
+
+// 保存流程
+const saveProcess = async (row) => {
+    if(row){
+        goDetial(row);
+    }else {
+        mlEntityMenuAndListRef.value.getApprovalList();
+    }
+};
+
 
 // 添加触发
 const addClick = () => {

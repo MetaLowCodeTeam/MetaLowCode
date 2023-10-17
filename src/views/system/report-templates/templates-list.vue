@@ -11,9 +11,10 @@
         :showFormItem="[{'label':'名称','code':'reportName','type':'1'}]"
         defalutSortField="modifiedOn"
         defaultFilter="reportName"
+        @actionBtn="actionBtn"
     >
         <template #addbutton>
-            <el-button type="primary" @click="addClick">
+            <el-button type="primary" @click="actionBtn({target:'add'})">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -21,6 +22,7 @@
             </el-button>
         </template>
     </mlEntityMenuAndList>
+    <mlActiveDialog ref="mlActiveDialogRefs" @saveProcess="saveProcess"></mlActiveDialog>
 </template>
 
 <script setup>
@@ -58,9 +60,36 @@ let tableColumn = ref([
     },
 ]);
 
-// 添加触发
-const addClick = () => {
-    mlEntityMenuAndListRef.value.editApproval("add");
+
+// 编辑弹框
+let mlActiveDialogRefs = ref();
+let dialogForm = ref({
+    saveEntity: "ReportConfig",
+    saveIdCode: "reportConfigId",
+    checkCodes: ["reportName"],
+    codeErrMsg: ["请输入模板名称"],
+    fromEntityLabel:'应用实体',
+    showFormItem: [{ label: "名称", code: "reportName", type: "1" }],
+});
+
+// 新建编辑触发
+const actionBtn = (data) => {
+    let { target, row } = data;
+    if (target === "add") {
+        dialogForm.value.title = "添加模板";
+        dialogForm.value.form = {};
+        dialogForm.value.type = "add";
+    } else {
+        dialogForm.value.title = "编辑模板";
+        dialogForm.value.type = "edit";
+        dialogForm.value.form = { ...row };
+    }
+    mlActiveDialogRefs.value.openDialog(dialogForm.value);
+};
+
+// 保存流程
+const saveProcess = async () => {
+    mlEntityMenuAndListRef.value.getApprovalList();
 };
 
 // 跳转详情
