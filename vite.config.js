@@ -3,10 +3,10 @@ import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
-// 配置ElementPlus按需导入
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+// // 配置ElementPlus按需导入
+// import AutoImport from 'unplugin-auto-import/vite'
+// import Components from 'unplugin-vue-components/vite'
+// import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -93,8 +93,8 @@ export default ({
         optimizeDeps,
         plugins: [
             vuePlugin(),
-            AutoImport({ resolvers: [ElementPlusResolver()] }),
-            Components({ resolvers: [ElementPlusResolver()] }),
+            // AutoImport({ resolvers: [ElementPlusResolver()] }),
+            // Components({ resolvers: [ElementPlusResolver()] }),
             createSvgIconsPlugin({
                 // Specify the icon folder to be cached
                 iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
