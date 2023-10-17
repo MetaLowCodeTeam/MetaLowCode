@@ -4,11 +4,11 @@
 		<el-main class="entity-props-pane">
 			<el-form :model="entityProps" :rules="rules" ref="entityPropsForm" label-position="left"
 					 label-width="360px">
-				<el-form-item label="实体名称" prop="name"> <!-- prop必须跟v-model名称一致！！ -->
-					<el-input v-model="entityProps.name" minlength="2"></el-input>
-				</el-form-item>
 				<el-form-item label="显示名称" prop="label">
 					<el-input v-model="entityProps.label" minlength="2"></el-input>
+				</el-form-item>
+				<el-form-item label="实体名称" prop="name"> <!-- prop必须跟v-model名称一致！！ -->
+					<el-input v-model="entityProps.name" minlength="2"></el-input>
 				</el-form-item>
 				<el-form-item label="实体编码">
 					<el-input v-model="entityProps.entityCode" readonly disabled></el-input>
@@ -155,7 +155,7 @@ export default {
 		validateForm(callback) {
 			this.$refs['entityPropsForm'].validate((success) => {
 				if (!success) {
-					this.$message.error('数据不和规范，请检查')
+					this.$message.error('数据不合规范，请检查')
 				} else {
 					if (!!this.entityProps.detailEntityFlag && !this.mainEntityName) {
 						this.$message.info('请选择所属主实体')
