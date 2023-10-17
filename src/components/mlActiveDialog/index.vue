@@ -4,6 +4,25 @@
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
         <el-form label-width="120px" v-loading="loading">
             <!-- <slot name="formitem"></slot> -->
+            
+            <el-form-item
+                :label="dialogForm.fromEntityLabel"
+                v-if="dialogForm.type == 'add'"
+            >
+                <el-select
+                    v-model="dialogForm.form.entityCode"
+                    :placeholder="dialogForm.fromEntityLabel"
+                    style="width: 80%;"
+                    filterable
+                >
+                    <el-option
+                        :label="op.label"
+                        :value="op.entityCode"
+                        v-for="(op,inx) of approveDialogEntityList"
+                        :key="inx"
+                    />
+                </el-select>
+            </el-form-item>
             <el-form-item
                 label="选择触发器"
                 v-if="dialogForm.type == 'add' && dialogForm.title == '添加触发器'"
@@ -22,24 +41,10 @@
                 </el-select>
             </el-form-item>
             <el-form-item
-                :label="fromEntityLabel"
-                v-if="dialogForm.type == 'add' && dialogForm.title != '添加触发器'"
+                v-for="(item,inx) of dialogForm.showFormItem"
+                :key="inx"
+                :label="item.label"
             >
-                <el-select
-                    v-model="dialogForm.form.entityCode"
-                    :placeholder="fromEntityLabel"
-                    style="width: 80%;"
-                    filterable
-                >
-                    <el-option
-                        :label="op.label"
-                        :value="op.entityCode"
-                        v-for="(op,inx) of approveDialogEntityList"
-                        :key="inx"
-                    />
-                </el-select>
-            </el-form-item>
-            <el-form-item v-for="(item,inx) of showFormItem" :key="inx" :label="item.label">
                 <el-input
                     v-if="item.type == 1"
                     v-model="dialogForm.form[item.code]"
@@ -48,7 +53,12 @@
             </el-form-item>
             <el-form-item v-if="dialogForm.type == 'edit'">
                 <el-checkbox v-model="dialogForm.form.isDisabled" label="是否禁用" />
-                <el-tooltip v-if="disabledTip" effect="dark" :content="disabledTip" placement="top">
+                <el-tooltip
+                    v-if="dialogForm.disabledTip"
+                    effect="dark"
+                    :content="dialogForm.disabledTip"
+                    placement="top"
+                >
                     <el-icon size="15" class="ml-5 cursor-pointer">
                         <ElIconInfoFilled />
                     </el-icon>
@@ -63,31 +73,11 @@
 </template>
  
 <script setup>
-import { ref, onMounted, watch, inject } from "vue";
+import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { approveDialogEntityList } = storeToRefs(useCommonStore());
-const props = defineProps({
-    modelValue: null,
-    dialogForm: {
-        type: Object,
-        default: () => {},
-    },
-    // 要保存的实体
-    saveEntity: { type: String, default: "" },
-    // 要保存的Id
-    saveIdCode: { type: String, default: "" },
-    // 保存时需要验证的code
-    checkCodes: { type: Array, default: () => [] },
-    // 验证失败的msg
-    codeErrMsg: { type: Array, default: () => [] },
-    // 是否禁用提示信息
-    disabledTip: { type: String, default: "" },
-    // 编辑框显示的输入框
-    showFormItem: { type: Array, default: () => [] },
-    fromEntityLabel: { type: String, default: "选择应用实体" },
-});
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 // 弹框是否显示
@@ -139,33 +129,17 @@ let triggerList = ref([
         code: 14,
     },
 ]);
-watch(
-    () => props.modelValue,
-    () => {
-        isShow.value = props.modelValue;
-    },
-    {
-        deep: true,
-    }
-);
-watch(
-    () => isShow,
-    (newVal) => {
-        emit("update:modelValue", newVal);
-    },
-    {
-        deep: true,
-    }
-);
 
-onMounted(() => {
-    isShow.value = props.modelValue;
-});
+let dialogForm = ref({});
+const openDialog = (data) => {
+    dialogForm.value = data;
+    isShow.value = true;
+};
 
 const saveProcess = async () => {
-    let { saveEntity, saveIdCode, dialogForm, checkCodes, codeErrMsg } = props;
-    let { type, form } = dialogForm;
-    let { entityCode, isDisabled ,actionType} = form;
+    let { type, form, saveEntity, saveIdCode, checkCodes, codeErrMsg } =
+        dialogForm.value;
+    let { entityCode, isDisabled, actionType } = form;
     if (type == "add" && saveEntity != "TriggerConfig" && !entityCode) {
         message.error("请选择应用实体");
         return;
@@ -174,7 +148,7 @@ const saveProcess = async () => {
         message.error("请选择触发器");
         return;
     }
-    
+
     // 开始验证必填
     for (let index = 0; index < checkCodes.length; index++) {
         const el = checkCodes[index];
@@ -208,6 +182,9 @@ const saveProcess = async () => {
 
     loading.value = false;
 };
+defineExpose({
+    openDialog,
+});
 </script>
 
 <style>

@@ -19,18 +19,7 @@
             </el-button>
         </template>
     </mlEntityMenuAndList>
-    <mlActiveDialog
-        v-if="dialogIsShow"
-        v-model="dialogIsShow"
-        :entityList="approveDialogEntityList"
-        :dialogForm="dialogForm"
-        @saveProcess="saveProcess"
-        saveEntity="TriggerConfig"
-        saveIdCode="triggerConfigId"
-        :checkCodes="['actionType','name']"
-        :codeErrMsg="['请选择触发器','请输入名称']"
-        :showFormItem="[{'label':'名称','code':'name','type':'1'}]"
-    ></mlActiveDialog>
+    <mlActiveDialog ref="mlActiveDialogRefs" @saveProcess="saveProcess"></mlActiveDialog>
 </template>
 
 <script setup>
@@ -86,13 +75,20 @@ let tableColumn = ref([
     },
 ]);
 
-// 详情弹框
-let dialogIsShow = ref(false);
-let dialogForm = ref({});
+// 编辑弹框
+let mlActiveDialogRefs = ref();
+let dialogForm = ref({
+    saveEntity: "TriggerConfig",
+    saveIdCode: "triggerConfigId",
+    checkCodes: ["actionType", "name"],
+    codeErrMsg: ["请选择触发器", "请输入名称"],
+    fromEntityLabel:'源实体',
+    showFormItem: [{ label: "名称", code: "name", type: "1" }],
+});
+
 // 新建编辑触发
 const actionBtn = (data) => {
     let { target, row } = data;
-    dialogIsShow.value = true;
     if (target === "add") {
         dialogForm.value.title = "添加触发器";
         dialogForm.value.form = {};
@@ -104,6 +100,7 @@ const actionBtn = (data) => {
         tempForm.actionType = tempForm.actionType.value;
         dialogForm.value.form = { ...tempForm };
     }
+    mlActiveDialogRefs.value.openDialog(dialogForm.value);
 };
 
 // 保存流程
