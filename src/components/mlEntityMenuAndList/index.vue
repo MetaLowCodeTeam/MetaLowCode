@@ -153,11 +153,7 @@
             :disabledTip="disabledTip"
             :showFormItem="showFormItem"
             :fromEntityLabel="fromEntityLabel"
-        >
-            <template #formitem="{formitemData}">
-                <slot name="subFormItem" :subFormitemData="formitemData"></slot>
-            </template>
-        </mlActiveDialog>
+        ></mlActiveDialog>
     </el-container>
 </template>
   

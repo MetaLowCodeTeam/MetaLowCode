@@ -1,10 +1,25 @@
 
 <template>
+
     <!-- 列表页面新增、编辑通用弹框 -->
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
         <el-form label-width="120px" v-loading="loading">
-            <slot name="formitem" :formitemData="dialogForm"></slot>
-            <el-form-item :label="fromEntityLabel" v-if="dialogForm.type == 'add'">
+            <!-- <slot name="formitem"></slot> -->
+            <el-form-item label="选择触发器" v-if="dialogForm.type == 'add' && dialogForm.title == '添加触发器'">
+                <el-select
+                    v-model="dialogForm.form.actionType"
+                    placeholder="请选择触发器"
+                    style="width: 80%;"
+                >
+                    <el-option
+                        :label="op.label"
+                        :value="op.code"
+                        v-for="(op,inx) of triggerList"
+                        :key="inx"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item :label="fromEntityLabel" v-if="dialogForm.type == 'add' && dialogForm.title != '添加触发器'">
                 <el-select
                     v-model="dialogForm.form.entityCode"
                     :placeholder="fromEntityLabel"
@@ -45,6 +60,7 @@
 <script setup>
 import { ref, onMounted, watch, inject } from "vue";
 import { saveRecord } from "@/api/crud";
+
 const props = defineProps({
     modelValue: null,
     entityList: {
@@ -74,6 +90,52 @@ const message = inject("$ElMessage");
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);
+let triggerList = ref([
+    {
+        label: "字段更新",
+        code: 1,
+    },
+    {
+        label: "字段聚合",
+        code: 2,
+    },
+    {
+        label: "数据效验",
+        code: 4,
+    },
+    {
+        label: "发送通知",
+        code: 5,
+    },
+    {
+        label: "自动审批",
+        code: 6,
+    },
+    {
+        label: "自动撤销审批",
+        code: 7,
+    },
+    {
+        label: "自动分配",
+        code: 8,
+    },
+    {
+        label: "自动共享",
+        code: 9,
+    },
+    {
+        label: "自动取消共享",
+        code: 10,
+    },
+    {
+        label: "自动删除",
+        code: 12,
+    },
+    {
+        label: "回调URL",
+        code: 14,
+    },
+]);
 watch(
     () => props.modelValue,
     () => {
