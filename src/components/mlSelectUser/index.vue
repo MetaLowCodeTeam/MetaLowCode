@@ -210,12 +210,12 @@ let getData = async () => {
     loading.value = false;
 };
 
-let selectRefs = reactive({});
+let selectRefs = ref("");
 
 // 自动模拟options赋值
 let autoCurrentLabel = () => {
     nextTick(() => {
-        selectRefs.selected.forEach((item) => {
+        selectRefs.value.selected.forEach((item) => {
             item.currentLabel = item.value.name;
         });
     });
