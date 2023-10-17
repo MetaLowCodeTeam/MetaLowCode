@@ -8,7 +8,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
-import viteCompression from 'vite-plugin-compression'
 // @see https://cn.vitejs.dev/config/
 export default ({
     command,
@@ -102,8 +101,6 @@ export default ({
                 // Specify symbolId format
                 symbolId: 'icon-[dir]-[name]',
             }),
-            //在plugins配置数组里添加gzip插件
-            viteCompression({ verbose: true, disable: false, threshold: 10240, algorithm: 'gzip', ext: '.gz', }),
         ],
         css: {
             preprocessorOptions: {
