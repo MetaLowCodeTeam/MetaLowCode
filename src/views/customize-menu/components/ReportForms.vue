@@ -69,7 +69,7 @@ const getReportConfigList = async () => {
 
 const downReport = async (item) => {
     window.open(
-        `/api/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
+        import.meta.env.VITE_APP_BASE_API + `/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
     );
 };
 

@@ -19,7 +19,7 @@
         class="text-ellipsis"
         v-else-if="column.fieldType == 'Boolean'"
     >{{ row[column.fieldName] == null ? "" : (row[column.fieldName] ? "是" : '否') }}</div>
-    <div class="text-ellipsis" v-else-if="column.isNameField">
+    <div class="text-ellipsis" v-else-if="column.fieldName == nameFiledName">
         <span class="ml-a-span" @click.stop="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
     <div class="text-ellipsis" v-else>{{ row[column.fieldName] }}</div>
@@ -29,13 +29,13 @@
 const props = defineProps({
     row: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
+    nameFiledName: { type: String, default: "" },
 });
 const emits = defineEmits(["openDetilDialog"]);
 
-const openDetilDialog = (row)=>{
-    emits('openDetilDialog',row)
-}
+const openDetilDialog = (row) => {
+    emits("openDetilDialog", row);
+};
 </script>
 <style lang='scss' scoped>
-
 </style>
