@@ -165,7 +165,7 @@ export default {
 		saveField() {
 			this.$refs['editorForm'].validate((success) => {
 				if (!success) {
-					this.$message.error('数据不和规范，请检查')
+					this.$message.error('数据不合规范，请检查')
 					return false
 				}
 
