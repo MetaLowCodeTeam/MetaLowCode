@@ -84,7 +84,7 @@ export default {
 					{required: true, message: '请输入实体名称', trigger: 'blur'},
 					{
 						pattern: /^[A-Z]+[A-Za-z\d_-]*$/,
-						message: '请以英文大写字母开头，不可包含中文，中间可输入字母、下划线或横杠',
+						message: '英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线或横杠',
 						trigger: 'blur'
 					},
 					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
@@ -152,21 +152,19 @@ export default {
 			}
 		},
 
-		validateForm() {
-			let validResult = true
+		validateForm(callback) {
 			this.$refs['entityPropsForm'].validate((success) => {
 				if (!success) {
-					validResult = false
-					return false
+					this.$message.info('数据不和规范，请检查')
+				} else {
+					if (!!this.entityProps.detailEntityFlag && !this.mainEntityName) {
+						this.$message.info('请选择所属主实体')
+						return
+					}
+
+					callback()
 				}
 			})
-
-			if (!!this.entityProps.detailEntityFlag && !this.mainEntityName) {
-				this.$message.info('请选择所属主实体')
-				return false
-			}
-
-			return validResult
 		}
 
 	},
