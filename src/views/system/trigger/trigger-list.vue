@@ -8,7 +8,6 @@
         :checkCodes="['actionType','name']"
         :codeErrMsg="['请选择触发器','请输入名称']"
         :showFormItem="[{'label':'名称','code':'name','type':'1'}]"
-        from-entity-label="请选择源实体"
         :tableColumn="tableColumn"
         defalutSortField="modifiedOn"
         defaultFilter="name"
@@ -20,22 +19,6 @@
                 </el-icon>
                 <span class="ml-5">添加</span>
             </el-button>
-        </template>
-        <template #subFormItem="{subFormitemData}">
-            <el-form-item label="选择触发器" v-if="subFormitemData.type == 'add'">
-                <el-select
-                    v-model="subFormitemData.form.actionType"
-                    placeholder="请选择触发器"
-                    style="width: 80%;"
-                >
-                    <el-option
-                        :label="op.label"
-                        :value="op.code"
-                        v-for="(op,inx) of triggerList"
-                        :key="inx"
-                    />
-                </el-select>
-            </el-form-item>
         </template>
     </mlEntityMenuAndList>
 </template>
@@ -92,52 +75,7 @@ let tableColumn = ref([
         fromNow: true,
     },
 ]);
-let triggerList = ref([
-    {
-        label: "字段更新",
-        code: 1,
-    },
-    {
-        label: "字段聚合",
-        code: 2,
-    },
-    {
-        label: "数据效验",
-        code: 4,
-    },
-    {
-        label: "发送通知",
-        code: 5,
-    },
-    {
-        label: "自动审批",
-        code: 6,
-    },
-    {
-        label: "自动撤销审批",
-        code: 7,
-    },
-    {
-        label: "自动分配",
-        code: 8,
-    },
-    {
-        label: "自动共享",
-        code: 9,
-    },
-    {
-        label: "自动取消共享",
-        code: 10,
-    },
-    {
-        label: "自动删除",
-        code: 12,
-    },
-    {
-        label: "回调URL",
-        code: 14,
-    },
-]);
+
 // 添加触发
 const addClick = () => {
     mlEntityMenuAndListRef.value.editApproval("add");
