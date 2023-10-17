@@ -156,23 +156,7 @@ export default {
 	methods: {
 		saveField() {
 			console.log(this.fieldProps.fieldViewModel)
-			let validResult = true
-			this.$refs['editorForm'].validate((success) => {
-				if (!success) {
-					validResult = false
-					return false
-				}
-			})
-			if (!validResult) return
-
-			this.fieldProps.type = 'Picture'
-			if (this.fieldState === FieldState.NEW) {
-				this.createNewField()
-			} else if (this.fieldState === FieldState.EDIT) {
-				this.modifyOldField()
-			} else {
-				// error
-			}
+			this.doSave('Picture')
 		},
 
 		cancelSave() {

@@ -267,7 +267,7 @@ defineExpose({
 
 <style lang="scss">
 .detail-main {
-    .el-form-item {
+	.el-form-item--default, .el-form-item {
         margin-bottom: 5px !important;
     }
 }

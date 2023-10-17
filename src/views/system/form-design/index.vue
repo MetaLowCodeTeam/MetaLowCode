@@ -291,6 +291,8 @@ export default {
 		 * 过滤已使用字段组件
 		 */
 		handleUsedFields() {
+			//console.error('aaaaaaaaaa')
+
 			this.usedFieldNames = {}
 			const allFieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
 			allFieldWidgets.forEach(fwItem => {
@@ -401,6 +403,12 @@ export default {
 
 .el-dropdown.ml-button-dropdown {
 	height: 45px;
+}
+
+.form-widget-container, .form-render-wrapper {
+	.el-form-item--default, .el-form-item {
+		margin-bottom: 5px !important;
+	}
 }
 
 </style>

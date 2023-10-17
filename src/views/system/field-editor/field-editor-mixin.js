@@ -61,6 +61,24 @@ export const fieldEditorMixin = {
 			})
 		},
 
+		doSave(fieldType) {
+			this.$refs['editorForm'].validate((success) => {
+				if (!success) {
+					this.$message.error('数据不和规范，请检查')
+					return false
+				}
+
+				this.fieldProps.type = fieldType
+				if (this.fieldState === FieldState.NEW) {
+					this.createNewField()
+				} else if (this.fieldState === FieldState.EDIT) {
+					this.modifyOldField()
+				} else {
+					// error
+				}
+			})
+		},
+
 		cancelSave() {
 			this.$emit('cancelSave')
 		},

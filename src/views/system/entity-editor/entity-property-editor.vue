@@ -155,7 +155,7 @@ export default {
 		validateForm(callback) {
 			this.$refs['entityPropsForm'].validate((success) => {
 				if (!success) {
-					this.$message.info('数据不和规范，请检查')
+					this.$message.error('数据不和规范，请检查')
 				} else {
 					if (!!this.entityProps.detailEntityFlag && !this.mainEntityName) {
 						this.$message.info('请选择所属主实体')

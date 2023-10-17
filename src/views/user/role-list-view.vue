@@ -5,7 +5,11 @@
 				   :custom-delete-action="true" @deleteTableRow="deleteRole"
 				   :custom-data-load="true" :page="page" @handleSizeChange="handleSizeChange"
 				   @handleCurrentChange="handleCurrentChange" @refreshTable="handelTableRefresh"
-				   @searchData="searchRole" @clearSearch="clearSearch"></data-list>
+				   @searchData="searchRole" @clearSearch="clearSearch">
+			<template #listTitle>
+				  <span>角色列表</span>
+			</template>
+		</data-list>
 
 		<el-dialog :title="formTitle" v-model="showRoleFormDialogFlag" v-if="showRoleFormDialogFlag"
 				   :destroy-on-close="true" :close-on-click-modal="false" class="small-padding"

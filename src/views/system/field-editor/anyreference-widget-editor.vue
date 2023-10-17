@@ -208,40 +208,37 @@ export default {
 	},
 	methods: {
 		saveField() {
-			let validResult = true
 			this.$refs['editorForm'].validate((success) => {
 				if (!success) {
-					validResult = false
+					this.$message.error('数据不和规范，请检查')
 					return false
 				}
-			})
-			if (!validResult) return
 
-			if ((this.fieldProps.referTo.length <= 0) || !this.fieldProps.referenceSetting) {
-				this.$message.error('请设置引用实体！')
-				return
-			}
-
-			this.fieldProps.type = 'AnyReference'
-			let referToEntities = ''
-			this.fieldProps.referTo.forEach((item, idx) => {
-				if (idx !== this.fieldProps.referTo.length - 1) {
-					referToEntities += item + ','
-				} else {
-					referToEntities += item
-				}
-			})
-			//console.log( JSON.stringify(this.fieldProps) )
-			addAnyRefField(this.fieldProps, this.entity, referToEntities).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
+				if ((this.fieldProps.referTo.length <= 0) || !this.fieldProps.referenceSetting) {
+					this.$message.error('请设置引用实体！')
 					return
-				} else {
-					this.$message.success('保存成功')
-					this.$emit('fieldSaved')
 				}
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
+
+				this.fieldProps.type = 'AnyReference'
+				let referToEntities = ''
+				this.fieldProps.referTo.forEach((item, idx) => {
+					if (idx !== this.fieldProps.referTo.length - 1) {
+						referToEntities += item + ','
+					} else {
+						referToEntities += item
+					}
+				})
+				//console.log( JSON.stringify(this.fieldProps) )
+				addAnyRefField(this.fieldProps, this.entity, referToEntities).then(res => {
+					if (res.error != null) {
+						this.$message({message: res.error, type: 'error'})
+					} else {
+						this.$message.success('保存成功')
+						this.$emit('fieldSaved')
+					}
+				}).catch(res => {
+					this.$message({message: res.message, type: 'error'})
+				})
 			})
 		},
 

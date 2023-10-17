@@ -116,23 +116,7 @@ export default {
 	},
 	methods: {
 		saveField() {
-			let validResult = true
-			this.$refs['editorForm'].validate((success) => {
-				if (!success) {
-					validResult = false
-					return false
-				}
-			})
-			if (!validResult) return
-
-			this.fieldProps.type = 'TextArea'
-			if (this.fieldState === FieldState.NEW) {
-				this.createNewField()
-			} else if (this.fieldState === FieldState.EDIT) {
-				this.modifyOldField()
-			} else {
-				// error
-			}
+			this.doSave('TextArea')
 		},
 
 		cancelSave() {

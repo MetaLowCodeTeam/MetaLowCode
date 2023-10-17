@@ -2,22 +2,23 @@
 	<el-container>
 		<el-header class="list-search-panel">
 			<div class="search-panel-left">
-				<el-button type="primary" icon="el-icon-plus" @click="addNewRecord">新建{{ entityLabel }}</el-button>
 				<!-- TODO: 此处应该增加按钮插槽!! -->
+				<slot name="listTitle"></slot>
 			</div>
 			<div style="flex: 1"></div>
 			<div class="search-panel-right">
-				<el-input type="primary" placeholder="请输入关键词搜索" :clearable="true" class="v-middle"
+				<el-input type="primary" placeholder="请输入关键词搜索" :clearable="true"
 						  v-model="keyword" @keyup.enter="searchData" @clear="clearSearch"
 						  suffix-icon="el-icon-search">
 					<template #append>
 						<el-button icon="el-icon-refresh-right" @click="refreshTableData" title="刷新"></el-button>
 					</template>
 				</el-input>
+				<el-button type="primary" icon="el-icon-plus" @click="addNewRecord">新建{{ entityLabel }}</el-button>
 			</div>
 		</el-header>
 
-		<el-main ref="tableContainer">
+		<el-main ref="tableContainer" class="table-container">
 			<div style="height: 100%">
 				<SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="true"
 							 :height="tableHeight + 'px'"
@@ -433,23 +434,18 @@ export default {
 
 .search-panel-left {
 	float: left;
+	font-size: 16px;
 }
 
 .search-panel-right {
 	float: right;
 	width: 360px;
-
-	/* 解决IE浮动元素垂直居中问题 begin */
-	position: relative;
-	height: 62px;
-
-	:deep(.el-input.v-middle) {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
-
-	/* end */
+	display: flex;
+	align-items: center;
 }
+
+.table-container :deep(.el-table) {
+	font-size: 14px;
+}
+
 </style>

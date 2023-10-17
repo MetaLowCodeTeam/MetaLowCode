@@ -163,38 +163,36 @@ export default {
 		},
 
 		saveField() {
-			let validResult = true
 			this.$refs['editorForm'].validate((success) => {
 				if (!success) {
-					validResult = false
+					this.$message.error('数据不和规范，请检查')
 					return false
 				}
-			})
-			if (!validResult) return
 
-			this.fieldProps.type = 'Tag'
-			let tagList = []
-			this.tagItems.forEach((item) => {
-				if (!!item.label) {
-					tagList.push(item.label)
+				this.fieldProps.type = 'Tag'
+				let tagList = []
+				this.tagItems.forEach((item) => {
+					if (!!item.label) {
+						tagList.push(item.label)
+					}
+				})
+
+
+				let saveMethod = addTagField
+				if (this.fieldState === FieldState.EDIT) {
+					saveMethod = updateTagField
 				}
-			})
+				saveMethod(this.fieldProps, this.entity, tagList).then(res => {
+					if (res.error != null) {
+						this.$message({message: res.error, type: 'error'})
+						return
+					}
 
-
-			let saveMethod = addTagField
-			if (this.fieldState === FieldState.EDIT) {
-				saveMethod = updateTagField
-			}
-			saveMethod(this.fieldProps, this.entity, tagList).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message.success('保存成功')
-				this.$emit('fieldSaved')
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
+					this.$message.success('保存成功')
+					this.$emit('fieldSaved')
+				}).catch(res => {
+					this.$message({message: res.message, type: 'error'})
+				})
 			})
 		},
 

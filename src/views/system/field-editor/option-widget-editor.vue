@@ -154,37 +154,35 @@ export default {
 		},
 
 		saveField() {
-			let validResult = true
 			this.$refs['editorForm'].validate((success) => {
 				if (!success) {
-					validResult = false
+					this.$message.error('数据不和规范，请检查')
 					return false
 				}
-			})
-			if (!validResult) return
 
-			this.fieldProps.type = 'Option'
-			let optionList = []
-			this.optionItems.forEach((item) => {
-				if (!!item.value) {
-					optionList.push({'key': item.label, 'value': item.value})
+				this.fieldProps.type = 'Option'
+				let optionList = []
+				this.optionItems.forEach((item) => {
+					if (!!item.value) {
+						optionList.push({'key': item.label, 'value': item.value})
+					}
+				})
+
+				let saveMethod = addOptionField
+				if (this.fieldState === FieldState.EDIT) {
+					saveMethod = updateOptionField
 				}
-			})
+				saveMethod(this.fieldProps, this.entity, optionList).then(res => {
+					if (res.error != null) {
+						this.$message({message: res.error, type: 'error'})
+						return
+					}
 
-			let saveMethod = addOptionField
-			if (this.fieldState === FieldState.EDIT) {
-				saveMethod = updateOptionField
-			}
-			saveMethod(this.fieldProps, this.entity, optionList).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message.success('保存成功')
-				this.$emit('fieldSaved')
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
+					this.$message.success('保存成功')
+					this.$emit('fieldSaved')
+				}).catch(res => {
+					this.$message({message: res.message, type: 'error'})
+				})
 			})
 		},
 

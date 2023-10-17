@@ -262,36 +262,34 @@ export default {
 		},
 
 		saveField() {
-			let validResult = true
 			this.$refs['editorForm'].validate((success) => {
 				if (!success) {
-					validResult = false
+					this.$message.error('数据不和规范，请检查')
 					return false
 				}
-			})
-			if (!validResult) return
 
-			if (!this.fieldProps.referenceSetting) {
-				this.$message.error('请设置引用实体！')
-				return
-			}
-
-			this.fieldProps.type = 'Reference'
-			//console.log( JSON.stringify(this.fieldProps) )
-			let saveMethod = addRefField
-			if (this.fieldState === FieldState.EDIT) {
-				saveMethod = updateRefField
-			}
-			saveMethod(this.fieldProps, this.entity, this.currentRefEntity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
+				if (!this.fieldProps.referenceSetting) {
+					this.$message.error('请设置引用实体！')
 					return
 				}
 
-				this.$message.success('保存成功')
-				this.$emit('fieldSaved')
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
+				this.fieldProps.type = 'Reference'
+				//console.log( JSON.stringify(this.fieldProps) )
+				let saveMethod = addRefField
+				if (this.fieldState === FieldState.EDIT) {
+					saveMethod = updateRefField
+				}
+				saveMethod(this.fieldProps, this.entity, this.currentRefEntity).then(res => {
+					if (res.error != null) {
+						this.$message({message: res.error, type: 'error'})
+						return
+					}
+
+					this.$message.success('保存成功')
+					this.$emit('fieldSaved')
+				}).catch(res => {
+					this.$message({message: res.message, type: 'error'})
+				})
 			})
 		},
 
