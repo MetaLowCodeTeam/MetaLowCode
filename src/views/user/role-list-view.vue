@@ -73,9 +73,7 @@
                 <el-tabs type="border-card">
                     <el-tab-pane label="数据权限">
                         <div class="entity-right-setting title">
-                            <div class="fl label">
-                                <!-- <span class="ml-a-span">批量设置</span> -->
-                            </div>
+                            <div class="fl label"></div>
                             <div class="fl text-align-center bold">查看权限</div>
                             <div class="fl text-align-center bold">新建权限</div>
                             <div class="fl text-align-center bold">修改权限</div>
@@ -83,13 +81,13 @@
                             <div class="fl text-align-center bold">分配权限</div>
                             <div class="fl text-align-center bold">共享权限</div>
                             <div class="fl">
-                                <el-dropdown trigger="click"  @command="allHandleCommand">
+                                <el-dropdown trigger="click" @command="allHandleCommand">
                                     <span class="text-icon-all">
                                         <el-icon size="16">
                                             <ElIconFinished />
                                         </el-icon>
                                     </span>
-                                    <template #dropdown >
+                                    <template #dropdown>
                                         <el-dropdown-menu>
                                             <el-dropdown-item
                                                 :command="dropItem.value"
@@ -227,91 +225,18 @@
                             <hr style="border: 0;border-top: 1px dotted #cccccc" />
                         </el-row>
                         <el-row :gutter="12" class="function-right-row">
-                            <el-col :span="12">
-                                <el-form-item label="允许管理实体" title="r6001">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6001']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="允许删除实体" title="r6002">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6002']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="12" class="function-right-row">
-                            <el-col :span="12">
-                                <el-form-item label="允许设计表单" title="r6003">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6003']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="允许配置列表布局" title="r6008">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6008']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="12" class="function-right-row">
-                            <el-col :span="12">
-                                <el-form-item label="允许配置导航菜单" title="r6007">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6007']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="12" class="function-right-row">
-                            <el-col :span="12">
-                                <el-form-item label="允许管理单选项" title="r6005">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6005']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="允许管理多选项" title="r6006">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6006']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="12" class="function-right-row">
-                            <el-col :span="12">
-                                <el-form-item label="允许管理回收站" title="r6009">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6009']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="允许查看修改历史" title="r6010">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6010']">
-                                        <el-radio :label="true">是</el-radio>
-                                        <el-radio :label="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="12" class="function-right-row">
-                            <el-col :span="12">
-                                <el-form-item label="允许导入数据" title="r6011">
-                                    <el-radio-group v-model="formModel.rightValueMap['r6011']">
+                            <el-col
+                                :span="12"
+                                v-for="(funcItem,funcInx) of funcRight"
+                                :key="funcInx"
+                            >
+                                <el-form-item
+                                    :label="funcItem.label"
+                                    :title="funcItem.value"
+                                >
+                                    <el-radio-group
+                                        v-model="formModel.rightValueMap[funcItem.value]"
+                                    >
                                         <el-radio :label="true">是</el-radio>
                                         <el-radio :label="false">否</el-radio>
                                     </el-radio-group>
@@ -426,7 +351,60 @@ export default {
             },
 
             rightEntityList: [],
-
+            funcRight: [
+                {
+                    label: "实体管理",
+                    value: "r6001",
+                },
+                {
+                    label: "删除实体",
+                    value: "r6002",
+                },
+                {
+                    label: "设计表单布局",
+                    value: "r6003",
+                },
+                {
+                    label: "单选项管理",
+                    value: "r6005",
+                },
+                {
+                    label: "多选项管理",
+                    value: "r6006",
+                },
+                {
+                    label: "配置导航",
+                    value: "r6007",
+                },
+                {
+                    label: "实体布局配置",
+                    value: "r6008",
+                },
+                {
+                    label: "回收站管理",
+                    value: "r6009",
+                },
+                {
+                    label: "修改历史查询",
+                    value: "r6010",
+                },
+                {
+                    label: "数据导入",
+                    value: "r6011",
+                },
+                {
+                    label: "审批撤销",
+                    value: "r6013",
+                },
+                {
+                    label: "登录日志查看",
+                    value: "r6014",
+                },
+                {
+                    label: "触发器执行日志查看",
+                    value: "r6015",
+                },
+            ],
             formRules: {
                 roleName: [
                     { validator: this.validateRoleName, trigger: "blur" },
@@ -489,26 +467,21 @@ export default {
             }
         },
         // 设置所有数据权限
-        allHandleCommand(command){
-            // console.log(this.rightEntityList,'this.rightEntityList')
-            this.rightEntityList.forEach(el=>{
-                this.formModel.rightValueMap["r" + el.entityCode + "-1"] = command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-2"] = command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-3"] = command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-4"] = command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-5"] = command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-6"] = command;
-            })
-            // for (const key in this.formModel.rightValueMap) {
-            //     if (Object.hasOwnProperty.call(this.formModel.rightValueMap, key)) {
-            //         const element = this.formModel.rightValueMap[key];
-            //         // console.log(element,typeof element,'123')
-            //         console.log(key,element);
-            //         // if(typeof element == 'number'){
-            //         //     this.formModel.rightValueMap[key] = command
-            //         // }
-            //     }
-            // }
+        allHandleCommand(command) {
+            this.rightEntityList.forEach((el) => {
+                this.formModel.rightValueMap["r" + el.entityCode + "-1"] =
+                    command;
+                this.formModel.rightValueMap["r" + el.entityCode + "-2"] =
+                    command;
+                this.formModel.rightValueMap["r" + el.entityCode + "-3"] =
+                    command;
+                this.formModel.rightValueMap["r" + el.entityCode + "-4"] =
+                    command;
+                this.formModel.rightValueMap["r" + el.entityCode + "-5"] =
+                    command;
+                this.formModel.rightValueMap["r" + el.entityCode + "-6"] =
+                    command;
+            });
         },
         getRightLevels(rightEntity) {
             if (rightEntity.authorizable === true) {
