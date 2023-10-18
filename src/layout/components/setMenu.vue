@@ -98,7 +98,7 @@
                             @change="associationChange"
                         >
                             <el-option
-                                v-for="(op,inx) of approveDialogEntityList"
+                                v-for="(op,inx) of unSystemEntityList"
                                 :key="inx"
                                 :value="op.entityCode"
                                 :label="op.label"
@@ -187,7 +187,7 @@ const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
-const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { setNavigationList, setChosenNavigationId, setDefaultMenuList } =
     useLayoutConfigStore();
 
@@ -278,7 +278,7 @@ let cutMenu = ref(null);
 
 // 关联项切换
 const associationChange = (entityCode) => {
-    let linkEntity = approveDialogEntityList.value.filter(
+    let linkEntity = unSystemEntityList.value.filter(
         (el) => el.entityCode == entityCode
     );
     cutMenu.value.name = linkEntity[0].label;

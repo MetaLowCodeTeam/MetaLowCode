@@ -51,7 +51,7 @@ const formatItem = (list, target) => {
 
 // 图表数据获取接口
 export function queryChartData(formModel, type) {
-    const { entityName } = storeToRefs(useCommonStore());
+    const { allEntityName } = storeToRefs(useCommonStore());
     let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
     // 指标
     let longitude = formatItem(formModel?.setDimensional.metrics || [], 'longitude');
@@ -67,7 +67,7 @@ export function queryChartData(formModel, type) {
 
     let param = {
         chartType: ChartTypes[type],
-        entityName: entityName.value[formModel.dataEntity],
+        entityName: allEntityName.value[formModel.dataEntity],
         latitude,
         longitude,
         noPrivileges: formModel?.setChartConf.useAllData,

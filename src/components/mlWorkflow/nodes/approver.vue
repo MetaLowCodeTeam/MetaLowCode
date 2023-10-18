@@ -145,7 +145,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 let message = inject("$ElMessage");
 const { style } = storeToRefs(usePpprovalProcessStore());
-const { entityName } = storeToRefs(useCommonStore());
+const { allEntityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
 });
@@ -170,7 +170,7 @@ onMounted(() => {
     nodeConfig.value = props.modelValue;
     let entityCode = router.currentRoute.value.query.entityCode;
     if(entityCode){
-        myEntityName.value = entityName.value[entityCode]
+        myEntityName.value = allEntityName.value[entityCode]
     }
     
     

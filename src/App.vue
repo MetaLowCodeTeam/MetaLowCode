@@ -16,6 +16,7 @@ import {
     reactive,
     onBeforeMount,
     inject,
+    nextTick,
 } from "vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
@@ -23,7 +24,7 @@ import { getPublicSetting } from '@/api/setting';
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
-const { getEntityLabel } = useCommonStore();
+const { getEntityList } = useCommonStore();
 const router = useRouter();
 const { setNewMsgNum } = useCheckStatusStore();
 
@@ -71,9 +72,10 @@ onBeforeMount(() => {
 
     // 获取公开系统配置
     queryPublicSetting();
+    // 有用户信息，并且不是在实体列表
     if($TOOL.data.get('USER_INFO')?.userName){
-        // 获取所有实体并格式化Label
-        getEntityLabel();
+        // 获取实体列表
+        getEntityList();
     }
 });
 

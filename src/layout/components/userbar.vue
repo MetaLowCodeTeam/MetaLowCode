@@ -108,7 +108,7 @@ import Detail from "@/views/customize-menu/detail.vue";
 import mlApprove from "@/components/mlApprove/index.vue";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
-const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 const COMMON_CONFIG = inject("COMMON_CONFIG");
@@ -222,7 +222,7 @@ let approvalName = ref("");
 
 // 消息点击
 const msgClick = (item, inx) => {
-    let filterEntity = approveDialogEntityList.value.filter(
+    let filterEntity = unSystemEntityList.value.filter(
         (el) => el.name == item.entityName
     );
     if (item.type == 30 || item.type == 20) {

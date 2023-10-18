@@ -69,7 +69,7 @@ import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
 import { ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 import Detail from "@/views/customize-menu/detail.vue";
-const { entityName } = storeToRefs(useCommonStore());
+const { allEntityName } = storeToRefs(useCommonStore());
 const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
 
@@ -213,7 +213,7 @@ let detailRefs = ref("");
 const highlightClick = (item) => {
     let detailObj = {};
     detailObj.entityCode = item["approvalConfigId.entityCode"];
-    detailObj.entityName = entityName.value[detailObj.entityCode];
+    detailObj.entityName = allEntityName.value[detailObj.entityCode];
     detailObj.tab = {};
     detailObj.detailId = item.entityId.id;
     detailObj.detailTitle = item.entityId.name;

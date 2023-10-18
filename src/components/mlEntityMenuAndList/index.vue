@@ -24,7 +24,7 @@
                             :class="{'is-active':field.entityCode == defaultCode}"
                             @click="fieldCheck(field)"
                             :title="field.entityCode"
-                        >{{ entityLabel[field.entityCode] }}</div>
+                        >{{ allEntityLabel[field.entityCode] }}</div>
                     </el-scrollbar>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                             <!-- 需要转换实体的 -->
                             <span
                                 v-else-if="column.entityCode"
-                            >{{ entityLabel[scope.row[column.prop]] }}</span>
+                            >{{ allEntityLabel[scope.row[column.prop]] }}</span>
                             <!-- 需要用是否禁用的 -->
                             <span
                                 v-else-if="column.isDisabled"
@@ -171,7 +171,7 @@ const ListTile = reactive({
     ReportConfig: "模板列表",
     TriggerConfig: "触发器",
 });
-const { entityLabel } = storeToRefs(useCommonStore());
+const { allEntityLabel } = storeToRefs(useCommonStore());
 // 加载状态
 let loading = ref(false);
 // 默认值

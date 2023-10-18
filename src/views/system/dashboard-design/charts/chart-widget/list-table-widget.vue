@@ -42,7 +42,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getDataList } from "@/api/crud";
-const { entityName } = storeToRefs(useCommonStore());
+const { allEntityName } = storeToRefs(useCommonStore());
 
 defineOptions({
     name: "listTable-widget",
@@ -97,7 +97,7 @@ const initOption = () => {
 const getTableData = async (options) => {
     tableLoading.value = true;
     let param = {
-        mainEntity: entityName.value[options.dataEntity],
+        mainEntity: allEntityName.value[options.dataEntity],
         fieldsList: fieldsList.value.join(),
         pageSize: options.setChartConf.pageSize,
         pageNo: 1,

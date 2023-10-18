@@ -13,7 +13,7 @@
                     <el-option
                         :label="op.label"
                         :value="op.name"
-                        v-for="(op,inx) of approveDialogEntityList"
+                        v-for="(op,inx) of unSystemEntityList"
                         :key="inx"
                     />
                 </el-select>
@@ -105,7 +105,7 @@ import { storeToRefs } from "pinia";
 import { queryEntityFields } from "@/api/crud";
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
-const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
 });
@@ -116,16 +116,16 @@ let entityCode = ref();
 onMounted(() => {
     fromData.value = props.modelValue;
     // 初始化选中第一个实体
-    if (approveDialogEntityList.value.length > 0) {
-        fromData.value.mainEntity = approveDialogEntityList.value[0].name;
-        entityCode.value = approveDialogEntityList.value[0].entityCode;
+    if (unSystemEntityList.value.length > 0) {
+        fromData.value.mainEntity = unSystemEntityList.value[0].name;
+        entityCode.value = unSystemEntityList.value[0].entityCode;
         getEntityFields();
     }
 });
 
 const changeEntity = () => {
     fromData.value.repeatFields = [];
-    let filterEntity = approveDialogEntityList.value.filter(
+    let filterEntity = unSystemEntityList.value.filter(
         (el) => el.name == fromData.value.mainEntity
     );
     entityCode.value = filterEntity[0].entityCode;

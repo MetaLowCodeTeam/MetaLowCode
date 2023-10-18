@@ -42,7 +42,7 @@ import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
-const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const COMMON_CONFIG = inject("COMMON_CONFIG");
@@ -129,7 +129,7 @@ let approvalName = ref("");
 
 // 消息点击
 const activeRow = (item) => {
-    let filterEntity = approveDialogEntityList.value.filter(
+    let filterEntity = unSystemEntityList.value.filter(
         (el) => el.name == item.entityName
     );
     if (item.type == 30 || item.type == 20) {

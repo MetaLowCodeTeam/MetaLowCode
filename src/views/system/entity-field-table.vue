@@ -219,7 +219,8 @@ import ReferenceWE from '@/views/system/field-editor/reference-widget-editor.vue
 import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor.vue';
 import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
 import {h} from 'vue';
-
+import useCommonStore from "@/store/modules/common";
+const { getEntityList } = useCommonStore();
 export default {
 	name: "EntityFieldTable",
 	components: {
@@ -509,6 +510,7 @@ export default {
 					}
 
 					this.entityProps.label = value
+                    getEntityList()
 					this.$message({message: '修改成功', type: 'success'})
 				}).catch(res => {
 					this.$message({message: res.message, type: 'error'})

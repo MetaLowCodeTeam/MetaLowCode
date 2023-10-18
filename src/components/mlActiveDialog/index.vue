@@ -18,7 +18,7 @@
                     <el-option
                         :label="op.label"
                         :value="op.entityCode"
-                        v-for="(op,inx) of approveDialogEntityList"
+                        v-for="(op,inx) of unSystemEntityList"
                         :key="inx"
                     />
                 </el-select>
@@ -77,7 +77,7 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList } = storeToRefs(useCommonStore());
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 // 弹框是否显示

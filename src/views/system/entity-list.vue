@@ -57,7 +57,8 @@
 import {h} from 'vue';
 import {getEntitySet, createEntity, entityCanBeDeleted, deleteEntity} from '@/api/system-manager'
 import EntityPropEditor from './entity-editor/entity-property-editor.vue'
-
+import useCommonStore from "@/store/modules/common";
+const { refreshCache } = useCommonStore();
 export default {
 	name: 'EntityList',
 	components: {EntityPropEditor},
@@ -109,6 +110,7 @@ export default {
 					return
 				}
 				this.entityItems = res.data
+                refreshCache(res.data || []);
 			}).catch(res => {
 				this.$message({message: res.message, type: 'error'})
 			})

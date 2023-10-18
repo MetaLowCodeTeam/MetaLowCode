@@ -45,7 +45,7 @@
 
 import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
-const { getEntityLabel } = useCommonStore();
+const { getEntityList } = useCommonStore();
 export default {
     data() {
         return {
@@ -151,7 +151,7 @@ export default {
                 // 获取所有权限
                 this.getRightMap();
                 // 调用实体数据
-                getEntityLabel();
+                getEntityList();
                 this.$router.replace({
                     path: "/",
                 });

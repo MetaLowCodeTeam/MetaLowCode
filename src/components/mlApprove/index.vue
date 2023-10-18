@@ -112,7 +112,7 @@ import { queryById, saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
-const { entityName } = storeToRefs(useCommonStore());
+const { allEntityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
     taskId: { type: String, default: "" },
@@ -187,7 +187,7 @@ let globalDsv = reactive({});
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
-    let res = await getFormLayout(entityName.value[approvalTask.value.entityCode]);
+    let res = await getFormLayout(allEntityName.value[approvalTask.value.entityCode]);
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
@@ -258,7 +258,7 @@ async function confirmApprove(isBacked) {
     if (formData) {
         loading.value = true;
         let saveRes = await saveRecord(
-            entityName.value[approvalTask.value.entityCode],
+            allEntityName.value[approvalTask.value.entityCode],
             props.entityId,
             formData
         );

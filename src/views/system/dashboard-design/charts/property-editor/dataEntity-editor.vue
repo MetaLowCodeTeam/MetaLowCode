@@ -9,7 +9,7 @@
             <el-option
                 :label="op.label"
                 :value="op.entityCode"
-                v-for="(op,inx) of approveDialogEntityList"
+                v-for="(op,inx) of unSystemEntityList"
                 :key="inx"
             />
         </el-select>
@@ -18,7 +18,7 @@
 <script setup>
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { approveDialogEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList } = storeToRefs(useCommonStore());
 import { ref, watch, onMounted } from "vue";
 defineOptions({
     name: "dataEntity-editor",

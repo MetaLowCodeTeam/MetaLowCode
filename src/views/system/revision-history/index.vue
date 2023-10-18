@@ -34,7 +34,7 @@ import { $fromNow } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import http from "@/utils/request";
-const { entityLabel } = storeToRefs(useCommonStore());
+const { allEntityLabel } = storeToRefs(useCommonStore());
 const $ElMessage = inject("$ElMessage");
 let mlSingleListRef = ref("");
 // 默认排序
@@ -57,7 +57,7 @@ let tableColumn = ref([
         label: "所属实体",
         align: "center",
         formatter: (row) => {
-            return entityLabel.value[row.entityCode];
+            return allEntityLabel.value[row.entityCode];
         },
     },
     {
