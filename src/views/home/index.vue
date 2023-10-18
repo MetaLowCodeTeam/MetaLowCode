@@ -73,9 +73,11 @@ const getDashboardList = async () => {
     };
     let res = await getDataList("Chart", "chartName,defaultChart", filter);
     if (res && res.data) {
+        
         dashboardList.value = res.data.dataList || [];
         // 如果没有数据
         if (dashboardList.value.length < 1) {
+            loading.value = false;
             return;
         }
         // 如果有本地缓存ID
@@ -87,6 +89,7 @@ const getDashboardList = async () => {
             // 如果存在就使用
             if (filterChartId.length > 0) {
                 initFormConfig(defaultChartId.value);
+                loading.value = false;
                 return;
             }
         }
@@ -97,10 +100,14 @@ const getDashboardList = async () => {
         if (filterDefaultId.length > 0) {
             dashboardDefaultId.value = filterDefaultId[0].chartId;
             initFormConfig(dashboardDefaultId.value);
+            loading.value = false;
             return;
         }
+        
         // 如果都没有
+        
         initFormConfig(dashboardList.value[0].chartId);
+        loading.value = false;
     } else {
         loading.value = false;
     }

@@ -5,7 +5,7 @@
         :element-loading-text="loadingText"
         class="w-100"
     >
-        <ml-report
+        <MlReport
             v-if="isLoad"
             @onSave="onSave"
             :reportName="reportName"
@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import { MlReport } from "vue3-manner-report";
 import "./luckysheet.scss";
 import http from "@/utils/request";
 import { saveRecord } from "@/api/crud";
