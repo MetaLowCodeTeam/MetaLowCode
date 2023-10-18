@@ -618,19 +618,22 @@ export default {
             this.$refs["roleForm"].validate((valid) => {
                 if (valid) {
                     //TODO 检查实体权限是否合理，比如删除权限是否大于读取权限
+                    this.roleFormDialogLoading = true;
                     saveRoleData(this.formModel)
                         .then((res) => {
-                            if (res.code == 200) {
+                            if (res.data.code == 200) {
                                 this.$message.success("保存成功");
                                 this.showRoleFormDialogFlag = false;
                                 this.loadRoleData(this.searchFilter);
                             }
+                            this.roleFormDialogLoading = false;
                         })
                         .catch((res) => {
                             this.$message({
                                 message: res.message,
                                 type: "error",
                             });
+                            this.roleFormDialogLoading = false;
                         });
                 } else {
                     this.$nextTick(() => {
