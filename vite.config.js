@@ -3,10 +3,7 @@ import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
-// // 配置ElementPlus按需导入
-// import AutoImport from 'unplugin-auto-import/vite'
-// import Components from 'unplugin-vue-components/vite'
-// import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -15,10 +12,17 @@ export default ({
 }) => {
     const env = loadEnv(mode, process.cwd());
     let rollupOptions = {
-        output: {// 分包
+		// external: ['vue', 'element-plus', 'echarts'],
+        output: {
+			// 分包
             manualChunks(id) {
                 if (id.includes("node_modules")) { return id.toString().split("node_modules/")[1].split("/")[0].toString() }
             },
+			// 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
+			// globals: {
+			// 	vue: 'Vue',
+			// 	'element-plus': 'ElementPlus',
+			// },
         },
     };
 
@@ -101,6 +105,9 @@ export default ({
                 // Specify symbolId format
                 symbolId: 'icon-[dir]-[name]',
             }),
+
+			//打包可视化分析插件
+			visualizer(),
         ],
         css: {
             preprocessorOptions: {
