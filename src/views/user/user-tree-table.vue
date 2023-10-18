@@ -60,7 +60,7 @@
                 @highlightClick="highlightClick"
             >
                 <template #addbutton>
-                    <el-button type="primary" @click="addClick">
+                    <el-button type="primary" @click="addClick" :disabled="!$TOOL.checkRole('r21-2')">
                         <el-icon size="14">
                             <ElIconPlus />
                         </el-icon>
@@ -75,6 +75,7 @@
                                 type="primary"
                                 link
                                 @click="editClick(scope.row)"
+                                :disabled="!$TOOL.checkRole('r21-3')"
                             >
                                 <span class="mr-3">
                                     <el-icon>
@@ -88,6 +89,7 @@
                                 link
                                 type="primary"
                                 @click="deleteTableData(scope.row)"
+                                :disabled="!$TOOL.checkRole('r21-4')"
                             >
                                 <span class="mr-3">
                                     <el-icon>
@@ -136,7 +138,7 @@
                         />
                     </el-col>
                     <el-col :span="24">
-                        <el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
+                        <el-button :disabled="$TOOL.checkRole('r21-3')" icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
                     </el-col>
                     <el-col :span="24">
                         <el-button icon="Key" @click="openResetPasswordDialog(row)">重置密码</el-button>

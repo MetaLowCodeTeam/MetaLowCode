@@ -328,6 +328,7 @@ const actionExecute = (params) => {
                 actionFilter: params.formModel.actionFilter || null,
                 actionContent: params.formModel.actionContent || null,
                 actionType: trigger.actionType.value,
+                triggerConfigId:trigger.triggerConfigId
             });
             initLoading.value = false;
         })

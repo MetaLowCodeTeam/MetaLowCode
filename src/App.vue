@@ -16,7 +16,6 @@ import {
     reactive,
     onBeforeMount,
     inject,
-    nextTick,
 } from "vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";

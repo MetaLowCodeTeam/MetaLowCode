@@ -138,8 +138,7 @@ const confirm = async () => {
         } else {
             saveRes = await saveRecord(row.entityName, row.detailId, formData);
         }
-
-        if (saveRes) {
+        if (saveRes && saveRes.code == 200) {
             $ElMessage.success("保存成功");
             emits("onConfirm");
             isShow.value = false;
