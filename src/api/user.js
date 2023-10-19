@@ -15,12 +15,10 @@ export function logout() {
     })
 }
 
+
 export function saveUser(entity, id, formModel) {
-    return request({
-        url: 'user/saveUser',
-        method: 'post',
+    return request.post('/user/saveUser', formModel, {
         params: { entity, id },
-        data: formModel,
     })
 }
 
@@ -114,5 +112,5 @@ export function addUserRole(body) {
 
 // 获取用户角色
 export function getUserRole(userId) {
-    return request.get('/user/getUserRole?userId='+ userId)
+    return request.get('/user/getUserRole?userId=' + userId)
 }
