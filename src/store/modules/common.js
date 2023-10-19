@@ -35,13 +35,21 @@ const useCommonStore = defineStore('commonStore', () => {
             }
         })
     }
+    const queryEntityNameById = (id) => {
+        return allEntityName[parseInt(id.split('-')[0])];
+    }
+    const queryEntityCodeById = (id) => {
+        return parseInt(id.split('-')[0]);
+    } 
     return {
         allEntityLabel,
         getEntityList,
         unSystemEntityList,
         refreshCache,
         allEntityName,
-        allEntityCode
+        allEntityCode,
+        queryEntityNameById,
+        queryEntityCodeById
     }
 }, {
     persist: true

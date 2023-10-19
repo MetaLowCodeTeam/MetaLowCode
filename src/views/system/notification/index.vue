@@ -137,8 +137,6 @@ const activeRow = (item) => {
             $ElMessage.error("该实体已删除");
         } else {
             let detailObj = {};
-            detailObj.entityName = item.entityName;
-            detailObj.entityCode = filterEntity[0].entityCode;
             detailObj.tab = {};
             detailObj.detailId = item.relatedRecord.id;
             detailObj.detailTitle = item.relatedRecord.name;

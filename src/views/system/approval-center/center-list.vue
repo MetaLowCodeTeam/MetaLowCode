@@ -212,8 +212,6 @@ let detailRefs = ref("");
 // 高亮字段点击
 const highlightClick = (item) => {
     let detailObj = {};
-    detailObj.entityCode = item["approvalConfigId.entityCode"];
-    detailObj.entityName = allEntityName.value[detailObj.entityCode];
     detailObj.tab = {};
     detailObj.detailId = item.entityId.id;
     detailObj.detailTitle = item.entityId.name;

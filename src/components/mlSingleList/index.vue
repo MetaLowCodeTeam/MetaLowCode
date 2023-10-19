@@ -45,8 +45,14 @@
                         >{{ column.formatter(scope.row) }}</span>
                         <!-- 需要格式化的 -->
                         <span
-                            v-else-if="!column.highlight && column.formatter"
+                            v-else-if="!column.highlight && !column.elTag && column.formatter"
                         >{{ column.formatter(scope.row)}}</span>
+                        <!-- 有状态的 -->
+                        <span v-else-if="column.elTag && column.formatter">
+                            <el-tag
+                                :type="column.formatter(scope.row).type"
+                            >{{ column.formatter(scope.row).label }}</el-tag>
+                        </span>
                         <!-- 默认 -->
                         <span v-else>{{ scope.row[column.prop] }}</span>
                     </template>
@@ -179,7 +185,6 @@ async function getTableList() {
 
 // 详情跳转
 const highlightClick = (row) => {
-   
     emits("highlightClick", row);
 };
 

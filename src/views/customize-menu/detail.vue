@@ -23,8 +23,9 @@
                 </div>
             </div>
         </template>
+
         <div class="detail-main" v-loading="loading">
-            <el-row :gutter="20">
+            <el-row :gutter="20" v-if="!noeData">
                 <el-col :span="18">
                     <DetailTabs
                         v-model="detailDialog"
@@ -88,6 +89,7 @@
                     </div>
                 </el-col>
             </el-row>
+            <el-empty v-else description="暂无数据" />
         </div>
         <Edit ref="editRefs" @onConfirm="onConfirm" />
     </el-drawer>
@@ -103,6 +105,9 @@ import DetailTabCom from "./components/DetailTabCom.vue";
 import Edit from "./edit.vue";
 import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
+import useCommonStore from "@/store/modules/common";
+import { ElMessage } from "element-plus";
+const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onAdd"]);
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
@@ -123,6 +128,12 @@ let cutTab = ref("detail");
 const openDialog = (row) => {
     detailDialog = Object.assign(detailDialog, row);
     multipleSelection.value = [row];
+    detailDialog.entityCode = queryEntityCodeById(detailDialog.detailId);
+    detailDialog.entityName = queryEntityNameById(detailDialog.detailId);
+    if (!detailDialog.entityName) {
+        ElMessage.warning("当前实体未找到");
+        return;
+    }
     detailDialog.isShow = true;
     // 加载数据
     refresh();
@@ -163,6 +174,7 @@ const getLayoutList = async () => {
 };
 
 let haveLayoutJson = ref(false);
+let noeData = ref(false);
 // 初始化数据
 const initData = async () => {
     loading.value = true;
@@ -171,12 +183,11 @@ const initData = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
-            // // 根据数据渲染出页面填入的值，填过
+            // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let queryByIdRes = await queryById(detailDialog.detailId);
-                vFormRef.value.setFormJson(res.data.layoutJson);
-
                 if (queryByIdRes) {
+                    vFormRef.value.setFormJson(res.data.layoutJson);
                     let resData = queryByIdRes.data || {};
                     vFormRef.value.setFormData(resData);
                     approvalStatus.value =
@@ -190,8 +201,10 @@ const initData = async () => {
                         approvalStatus.value.approvalName =
                             detailDialog.detailTitle;
                     }
-
                     vFormRef.value.setReadMode();
+                    noeData.value = false;
+                } else {
+                    noeData.value = true;
                 }
                 loading.value = false;
             });
@@ -201,20 +214,8 @@ const initData = async () => {
     } else {
         loading.value = false;
     }
-    // let approvalStatusRes = await $API.approval.detial.recordApprovalState(
-    //     detailDialog.detailId
-    // );
-    // if (approvalStatusRes) {
-    //     approvalStatus.value = approvalStatusRes.data || null;
-    // }
 };
 
-// 给URL加参数--------暂时未用
-const addUrlParam = (key, value) => {
-    let obj = new window.URL(window.location.href);
-    obj.searchParams.set(key, value);
-    return obj.href;
-};
 
 // 打开编辑
 let editRefs = ref();
