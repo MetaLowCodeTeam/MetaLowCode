@@ -50,6 +50,7 @@
                         <!-- 有状态的 -->
                         <span v-else-if="column.elTag && column.formatter">
                             <el-tag
+                                v-if="column.formatter(scope.row).label"
                                 :type="column.formatter(scope.row).type"
                             >{{ column.formatter(scope.row).label }}</el-tag>
                         </span>
@@ -132,12 +133,16 @@ async function getTableList() {
         pageSize: page.size,
         pageNo: page.no,
         filter: {
-            equation: "AND",
-            items: [...filterItems],
+            equation: "OR",
+            items: [],
         },
         sortFields,
     };
     if (keyword.value) {
+        param.filter.items = filterItems.map(el=>{
+            el.value =  el.value ?  el.value : keyword.value
+            return el
+        })
         param.filter.items.unshift({
             fieldName,
             op: "LK",

@@ -5,7 +5,7 @@
         mainEntity="TriggerLog"
         fieldsList="actionType,triggerReason,recordId,executeFlag,triggerConfigId,createdOn"
         :sortFields="sortFields"
-        fieldName="triggerConfigId"
+        fieldName="triggerConfigId.name"
         :tableColumn="tableColumn"
         queryUrl="/plugins/metaTrigger/trigger/log"
         @highlightClick="highlightClick"
@@ -28,9 +28,6 @@
 <script setup>
 import { ref } from "vue";
 import { $fromNow } from "@/utils/util";
-import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
-const { allEntityName } = storeToRefs(useCommonStore());
 import Detail from "@/views/customize-menu/detail.vue";
 // 默认排序
 let sortFields = ref([
@@ -41,11 +38,6 @@ let sortFields = ref([
 ]);
 // 过滤条件
 let filterItems = ref([
-    {
-        fieldName: "triggerConfigId.name",
-        op: "LK",
-        value:"",
-    },
     {
         fieldName: "triggerReason",
         op: "LK",
