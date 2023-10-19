@@ -9,7 +9,7 @@
         :close-on-click-modal="closeOnClickModal"
         :class="{'not-header':notHeader}"
         :top="top"
-        :z-index="2000"
+        v-if="isShow"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
