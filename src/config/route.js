@@ -150,7 +150,7 @@ const routes = [
                 path: '/web/comConf',
                 name: 'ComConf',
                 component: 'system/common-config/index',
-                meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r600' }
+                meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r6000' }
             },
             {
                 path: '/web/metadata',
@@ -283,6 +283,13 @@ const routes = [
                 name: 'RevisionHistory',
                 meta: { title: '变更历史', icon: 'el-icon-document-remove', role: 'r6010' },
                 component: 'system/revision-history/index',
+            },
+            // 登录日志
+            {
+                path: '/web/login-log',
+                name: 'LoginLog',
+                meta: { title: '登录日志', icon: 'el-icon-delete', role: 'r6014' },
+                component: 'login/login-log',
             },
             // 回收站
             {
