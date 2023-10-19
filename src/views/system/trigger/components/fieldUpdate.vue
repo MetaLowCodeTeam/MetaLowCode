@@ -544,8 +544,7 @@ const showAdvancedFormula = (sourceFields, isAdvanced, value) => {
 
 // 确认计算方式
 const formulaConfirm = (formula) => {
-    console.log(formula, "formula");
-    // uptadeRule.sourceField = v;
+    uptadeRule.sourceField = formula.label;
 };
 
 /**
