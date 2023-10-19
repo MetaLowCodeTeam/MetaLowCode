@@ -110,7 +110,7 @@ export default {
 	},
 	methods: {
 		saveField() {
-			this.doSave('File')
+			this.doSave('Money')
 		},
 
 		cancelSave() {
