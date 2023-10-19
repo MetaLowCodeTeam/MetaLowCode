@@ -70,6 +70,7 @@ import { saveRecord, deleteRecord } from "@/api/crud";
 import { updateDefault } from "@/api/chart.js";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
+import { fa } from "element-plus/es/locale";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 
@@ -166,9 +167,13 @@ const onConfirm = async () => {
     mlSingleListRef.value.loading = true;
     let param = {
         entity: "Chart",
-        formModel: { chartName: dialogConf.chartName },
+        formModel: { chartName: dialogConf.chartName},
         id: dialogConf.chartId,
     };
+    // 新建
+    if(!dialogConf.chartId){
+        param.formModel.defaultChart = false;
+    }
     let res = await saveRecord(param.entity, param.id, param.formModel);
     if (res) {
         dialogConf.isShow = false;
