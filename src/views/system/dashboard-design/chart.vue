@@ -70,7 +70,6 @@ import { saveRecord, deleteRecord } from "@/api/crud";
 import { updateDefault } from "@/api/chart.js";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
-import { fa } from "element-plus/es/locale";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 
