@@ -212,9 +212,9 @@ const getTagEntitys = () => {
             trigger.value.entityCode
         );
         if (res) {
-            tagEntitys.value = res.data.map((el,inx)=>{
+            tagEntitys.value = res.data.map((el, inx) => {
                 el.entityInx = inx;
-                return el
+                return el;
             });
             res.data.forEach((el) => {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
@@ -261,20 +261,22 @@ const getTagEntityFields = async (entityCode) => {
     let res = await queryEntityFields(entityCode);
     if (res) {
         tagEntityFields.value = res.data;
-        // 目标字段 默认选中 第一个
-        seleteTargetField.value = res.data[0];
-        uptadeRule.targetField = res.data[0].fieldName;
-        // 获取目标字段类型
-        toFixedForFieldType.value = getUptadeRuleTargetFieldType(
-            res.data[0].fieldName
-        );
-        // 如果更新方式是字段值
-        if (uptadeRule.updateMode == "forField") {
-            // 源字段 默认选中第一个
-            uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+        if (tagEntityFields.value && tagEntityFields.value.length > 0) {
+            // 目标字段 默认选中 第一个
+            seleteTargetField.value = res.data[0];
+            uptadeRule.targetField = res.data[0].fieldName;
+            // 获取目标字段类型
+            toFixedForFieldType.value = getUptadeRuleTargetFieldType(
+                res.data[0].fieldName
+            );
+            // 如果更新方式是字段值
+            if (uptadeRule.updateMode == "forField") {
+                // 源字段 默认选中第一个
+                uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+            }
+            // 格式化规则列表
+            formatActionContentItems();
         }
-        // 格式化规则列表
-        formatActionContentItems();
     }
     changeTagEntityLoading.value = false;
 };
