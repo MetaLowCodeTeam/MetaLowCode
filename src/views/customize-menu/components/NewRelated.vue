@@ -4,7 +4,7 @@
         <el-button icon="plus">新建相关</el-button>
         <template #dropdown>
             <el-dropdown-menu>
-                <template v-if="addConf.config">
+                <template v-if="addConf?.config">
                     <el-dropdown-item v-for="(item,inx) of JSON.parse(addConf.config)" :key="inx" :command="item">
                         {{ item.columnAliasName || item.entityLabel }}
                     </el-dropdown-item>

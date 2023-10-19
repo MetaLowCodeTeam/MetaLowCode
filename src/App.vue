@@ -19,7 +19,7 @@ import {
 } from "vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
-import { getPublicSetting } from '@/api/setting';
+import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
@@ -71,12 +71,20 @@ onBeforeMount(() => {
 
     // 获取公开系统配置
     queryPublicSetting();
-    // 有用户信息，并且不是在实体列表
-    if($TOOL.data.get('USER_INFO')?.userName){
+    // 有用户信息
+    if ($TOOL.data.get("USER_INFO")?.userName) {
         // 获取实体列表
         getEntityList();
+        getRightMap();
     }
 });
+
+const getRightMap = async () => {
+    let getRightMapRes = await http.get("/user/getRightMap");
+    if (getRightMapRes) {
+        $TOOL.data.set("rightMap", getRightMapRes.data || {});
+    }
+};
 
 // /crud/getRightMap
 // 获取公开系统配置
@@ -101,7 +109,7 @@ const colorPrimary = (val) => {
         val = "#409EFF";
     }
     document.documentElement.style.setProperty("--el-color-primary", val);
-    document.documentElement.style.setProperty("--vf-color-primary", val);  //同步主题色
+    document.documentElement.style.setProperty("--vf-color-primary", val); //同步主题色
     for (let i = 1; i <= 9; i++) {
         document.documentElement.style.setProperty(
             `--el-color-primary-light-${i}`,

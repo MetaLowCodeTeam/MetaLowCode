@@ -10,6 +10,7 @@
                 highlight-current
                 :expand-on-click-node="false"
                 :props="defaultProps"
+                v-if="checkRole('r22-1')"
             >
                 <template #default="{ node, data }">
                     <span
@@ -19,9 +20,14 @@
                     >
                         <span>{{ node.label }}</span>
                         <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
-                            <el-button link type="primary" @click="addDepartment(node, data)">添加</el-button>
-                            <el-button link type="primary" @click="editDepartment(node, data)">编辑</el-button>
-                            <el-button link type="primary" @click="deleteDepartment(node, data)">删除</el-button>
+                            <el-button link type="primary" @click="addDepartment(node, data)" :disabled="!checkRole('r22-2')">添加</el-button>
+                            <el-button
+                                link
+                                type="primary"
+                                :disabled="!checkRole('r22-3')"
+                                @click="editDepartment(node, data)"
+                            >编辑</el-button>
+                            <el-button link type="primary" @click="deleteDepartment(node, data)" :disabled="!checkRole('r22-4')">删除</el-button>
                         </span>
                     </span>
                 </template>
@@ -60,7 +66,11 @@
                 @highlightClick="highlightClick"
             >
                 <template #addbutton>
-                    <el-button type="primary" @click="addClick" :disabled="!$TOOL.checkRole('r21-2')">
+                    <el-button
+                        type="primary"
+                        @click="addClick"
+                        :disabled="!$TOOL.checkRole('r21-2')"
+                    >
                         <el-icon size="14">
                             <ElIconPlus />
                         </el-icon>
@@ -125,6 +135,7 @@
                     @delMembers="changeMembers"
                     :id="curUserId"
                     isRole
+                    :isDisabled="!checkRole('r21-4')"
                 />
             </template>
             <template #operate="{row}">
@@ -135,10 +146,15 @@
                             :paramId="row.userId"
                             paramName="角色"
                             paramType="Role"
+                            :isDisabled="!checkRole('r21-3')"
                         />
                     </el-col>
                     <el-col :span="24">
-                        <el-button :disabled="$TOOL.checkRole('r21-3')" icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
+                        <el-button
+                            icon="Edit"
+                            @click="editClick(row,'dialog')"
+                            :disabled="!checkRole('r21-3')"
+                        >编辑</el-button>
                     </el-col>
                     <el-col :span="24">
                         <el-button icon="Key" @click="openResetPasswordDialog(row)">重置密码</el-button>
@@ -153,8 +169,9 @@
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item>
-                                        <span @click="deleteTableData(row)">删除</span>
+                                    <el-dropdown-item :disabled="!checkRole('r21-4')">
+                                        <span @click="deleteTableData(row)" v-if="checkRole('r21-4')">删除</span>
+                                        <span v-else>删除</span>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -338,6 +355,9 @@ export default {
         this.initTreeData();
     },
     methods: {
+        checkRole(str) {
+            return this.$TOOL.checkRole(str);
+        },
         // 新建用户
         addClick() {
             let tempV = {};
@@ -355,7 +375,7 @@ export default {
             tempV.dialogTitle = "编辑" + row.userName;
             tempV.entityName = "User";
             tempV.detailId = row.userId;
-            this.disableWidgets = ['loginPwd'];
+            this.disableWidgets = ["loginPwd"];
             this.$refs.editRefs.openDialog(tempV);
         },
         // 打开重置密码弹框

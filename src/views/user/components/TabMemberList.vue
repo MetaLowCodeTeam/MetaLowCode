@@ -33,7 +33,7 @@
                             >{{item.departmentName}}</div>
                         </div>
                     </template>
-                    <span class="member-list__del" @click.stop="delMember(item)">
+                    <span class="member-list__del" @click.stop="delMember(item)" v-if="!isDisabled">
                         <el-icon size="20">
                             <ElIconDeleteFilled />
                         </el-icon>
@@ -55,6 +55,7 @@ const props = defineProps({
     modelValue: null,
     id: { type: String, default: "" },
     isRole: { type: Boolean, default: false },
+    isDisabled: { type: Boolean, default: false },
 });
 
 let myMembers = ref([]);

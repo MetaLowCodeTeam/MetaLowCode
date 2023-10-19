@@ -150,7 +150,7 @@ const routes = [
                 path: '/web/comConf',
                 name: 'ComConf',
                 component: 'system/common-config/index',
-                meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r6012' }
+                meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r600' }
             },
             {
                 path: '/web/metadata',
@@ -230,10 +230,24 @@ const routes = [
 
             // 触发器
             {
-                path: '/web/trigger-list',
-                name: 'RriggerList',
-                meta: { group: true, title: '触发器', icon: 'el-icon-cpu', role: 'r48-1' },
-                component: 'system/trigger/trigger-list',
+                path: '/web/triggert',
+                name: 'Rrigger',
+                meta: { group: true, title: '触发器', icon: 'el-icon-cpu' },
+                children: [
+                    {
+                        path: '/web/trigger-list',
+                        name: 'RriggerList',
+                        component: 'system/trigger/trigger-list',
+                        meta: { title: '触发器列表', role: 'r48-1' },
+                    },
+
+                    {
+                        path: '/web/trigger-log',
+                        name: 'RriggerLog',
+                        component: 'system/trigger/trigger-log',
+                        meta: { title: '触发器日志', role: 'r6015' }
+                    },
+                ]
             },
             // 触发器详情
             {

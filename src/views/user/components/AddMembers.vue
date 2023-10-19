@@ -1,6 +1,6 @@
 <template>
     <!--  -->
-    <el-button class="mr-10" icon="Plus" @click="openDialog">添加{{ paramName }}</el-button>
+    <el-button class="mr-10" icon="Plus" @click="openDialog" :disabled="isDisabled">添加{{ paramName }}</el-button>
     <mlDialog v-model="isShow" :title="'添加' + paramName" width="500">
         <el-form label-width="80px" v-loading="loading">
             <el-form-item style="margin-bottom: 20px;" :label="'选择' + paramName">
@@ -22,6 +22,7 @@ const props = defineProps({
     paramName: { type: String, default: "" },
     paramType: { type: String, default: "" },
     paramId: { type: String, default: "" },
+    isDisabled: { type: Boolean, default: false },
 });
 
 const emits = defineEmits(["addMembers"]);
