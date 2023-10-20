@@ -61,27 +61,24 @@ let tableColumn = ref([
         align: "center",
     },
     {
-        prop: "logout",
-        label: "登出状态",
+        prop: "createdOn",
+        label: "登录时间",
+        width: "150",
         align: "center",
-        elTag: true,
-        width:'120',
         formatter: (row) => {
-            return {
-                type: row.logout ? "info" : null,
-                label: row.logout ? "已注销" : null,
-            };
+            return $fromNow(row.createdOn);
         },
     },
     {
         prop: "logoutType",
         label: "登出类型",
         align: "center",
+        width:'150',
     },
     {
         prop: "logoutTime",
         label: "登出时间",
-        width: "120",
+        width: "150",
         align: "center",
         formatter: (row) => {
             return $fromNow(row.logoutTime);
