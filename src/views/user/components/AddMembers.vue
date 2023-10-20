@@ -1,6 +1,11 @@
 <template>
     <!--  -->
-    <el-button class="mr-10" icon="Plus" @click="openDialog" :disabled="isDisabled">添加{{ paramName }}</el-button>
+    <el-button
+        class="mr-10"
+        icon="Plus"
+        @click="openDialog"
+        :disabled="isDisabled"
+    >添加{{ paramName }}</el-button>
     <mlDialog v-model="isShow" :title="'添加' + paramName" width="500">
         <el-form label-width="80px" v-loading="loading">
             <el-form-item style="margin-bottom: 20px;" :label="'选择' + paramName">
@@ -44,12 +49,13 @@ const addMembers = async () => {
     };
     loading.value = true;
     let res;
-    if(props.paramType == 'Role'){
+    if (props.paramType == "Role") {
         res = await addUserRole(param);
-    }else {
+    } else {
         res = await addTeamMembers(param);
     }
-    if (res) {
+
+    if (res && (res.code == 200 || res.data?.code == 200)) {
         ElMessage.success("添加成功");
         myMembers.value = [];
         isShow.value = false;

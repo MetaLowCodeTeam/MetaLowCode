@@ -41,54 +41,23 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <Edit ref="editRefs" @onConfirm="onRefresh" isTeam/>
+    <Edit ref="editRefs" @onConfirm="onRefresh" isTeam />
     <!-- 列表详情 -->
-    <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="teamName" >
-        <template #tab>
-            <TabMemberList v-model="memberList" @delMembers="changeMembers" :id="teamId"/>
-        </template>
-        <template #operate="{row}">
-			<el-row class="action-group">
-				<el-col :span="24">
-					<AddMembers @addMembers="changeMembers" :paramId="row.teamId" paramName="成员" paramType="User"/>
-				</el-col>
-				<el-col :span="24">
-					<el-button icon="Edit" @click="editClick(row,'dialog')">编辑</el-button>
-				</el-col>
-				<el-col :span="24">
-					<el-dropdown trigger="click">
-						<el-button>
-							更多
-							<el-icon style="transform: rotate(90deg);">
-								<ElIconMoreFilled />
-							</el-icon>
-						</el-button>
-						<template #dropdown>
-							<el-dropdown-menu>
-								<el-dropdown-item>
-									<span @click="delCick({teamId:row.id})">删除</span>
-								</el-dropdown-item>
-							</el-dropdown-menu>
-						</template>
-					</el-dropdown>
-				</el-col>
-			</el-row>
-
-        </template>
-    </mlListDetails>
+    <ListDetail
+        ref="mlListDetailsRefs"
+        idFieldName="teamId"
+        nameFieldName="teamName"
+        @onRefresh="onRefresh"
+    />
 </template>
 
 <script setup>
-import { ref, inject, reactive } from "vue";
+import { ref } from "vue";
 import { $fromNow } from "@/utils/util";
-import { ElMessageBox } from "element-plus";
-import { useRouter } from "vue-router";
+import { ElMessageBox, ElMessage } from "element-plus";
 import Edit from "@/views/customize-menu/edit.vue";
-import AddMembers from "./components/AddMembers.vue";
-import TabMemberList from "./components/TabMemberList.vue";
-import { getTeamMembers,delTeam } from "@/api/team";
-const router = useRouter();
-const $ElMessage = inject("$ElMessage");
+import ListDetail from "./components/ListDetail.vue";
+import { delTeam } from "@/api/team";
 
 // 默认排序
 let sortFields = ref([
@@ -122,29 +91,24 @@ let tableColumn = ref([
     },
 ]);
 
-
 // 编辑弹框
 let editRefs = ref();
-let teamId = ref("");
 const addClick = () => {
     let tempV = {};
     tempV.dialogTitle = "新建团队";
     tempV.entityName = "Team";
     editRefs.value.openDialog(tempV);
 };
-// 是否弹框调用
-let isDialogCallEdit = ref(false);
 // 编辑
-const editClick = (row, target) => {
-    if (target == "dialog") {
-        isDialogCallEdit.value = true;
-    }
+const editClick = (row) => {
     let tempV = { ...row };
     tempV.dialogTitle = "编辑" + row.teamName;
     tempV.entityName = "Team";
     tempV.detailId = row.teamId;
     editRefs.value.openDialog(tempV);
 };
+
+let mlSingleListRef = ref();
 // 删除
 const delCick = (row) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
@@ -156,22 +120,16 @@ const delCick = (row) => {
             let res = await delTeam(row.teamId);
             mlSingleListRef.value.loading = true;
             if (res) {
-                $ElMessage.success("删除成功");
+                ElMessage.success("删除成功");
                 mlSingleListRef.value.getTableList();
-                mlListDetailsRefs.value.closeDialog();
             }
             mlSingleListRef.value.loading = false;
         })
         .catch(() => {});
 };
 
-let mlSingleListRef = ref();
 const onRefresh = () => {
     mlSingleListRef.value.getTableList();
-    if (isDialogCallEdit.value) {
-        mlListDetailsRefs.value.refresh();
-        isDialogCallEdit.value = false;
-    }
 };
 
 // 详情组件
@@ -179,50 +137,13 @@ let mlListDetailsRefs = ref();
 
 // 高亮字段点击
 const highlightClick = (row) => {
-    mlListDetailsRefs.value.openDialog({
-        title: row.teamName,
-        id: row.teamId,
-        entityName: "Team",
-        tabs: [
-            {
-                label: "成员列表",
-                name: "memberList",
-            },
-        ],
-    });
-    teamId.value = row.teamId
-};
-
-// 成员列表
-let memberList = ref([]);
-
-// 添加成员
-const changeMembers = () => {
-    mlListDetailsRefs.value.refresh();
+    mlListDetailsRefs.value.openDetailDialog(row.teamId, row.teamName);
 };
 
 // 当前页签
 // let cutTab = ref("");
-
-// 页签切换
-const tabChange = async (tab) => {
-    mlListDetailsRefs.value.loading = true;
-    // 获取团队成员
-    memberList.value = [];
-    let res = await getTeamMembers(tab.id);
-    if (res) {
-        memberList.value = res.data || [];
-    }
-    mlListDetailsRefs.value.loading = false;
-};
 </script>
 
 <style lang="scss" scoped>
-.action-group {
-	:deep(.el-button) {
-        margin-bottom: 5px;
-		min-width: 110px !important;
-	}
-}
 
 </style>

@@ -32,7 +32,7 @@ const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
-    disableWidgets: { type: Array, default: ()=>[] },
+    disableWidgets: { type: Array, default: () => [] },
 });
 const $ElMessage = inject("$ElMessage");
 
@@ -79,7 +79,7 @@ const initFormLayout = async () => {
                     if (formData) {
                         row.approvalStatus = formData.data.approvalStatus || {};
                         vFormRef.value.setFormData(formData.data);
-                        
+
                         if (
                             row.approvalStatus.value == 1 ||
                             row.approvalStatus.value == 3
@@ -87,14 +87,15 @@ const initFormLayout = async () => {
                             nextTick(() => {
                                 vFormRef.value.disableForm();
                             });
-                            return
+                            return;
                         }
 
-                        if(props.disableWidgets.length > 0){
+                        if (props.disableWidgets.length > 0) {
                             nextTick(() => {
-                                vFormRef.value.disableWidgets(props.disableWidgets)
+                                vFormRef.value.disableWidgets(
+                                    props.disableWidgets
+                                );
                             });
-                            
                         }
                     }
                     loading.value = false;
@@ -138,7 +139,7 @@ const confirm = async () => {
         } else {
             saveRes = await saveRecord(row.entityName, row.detailId, formData);
         }
-        if (saveRes && saveRes.data.code == 200) {
+        if (saveRes && (saveRes.data?.code == 200 || saveRes.code == 200)) {
             $ElMessage.success("保存成功");
             emits("onConfirm");
             isShow.value = false;

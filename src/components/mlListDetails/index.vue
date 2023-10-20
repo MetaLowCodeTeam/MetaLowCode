@@ -56,7 +56,8 @@ import { ref, reactive, inject, nextTick } from "vue";
 import { queryById } from "@/api/crud";
 import { getFormLayout } from "@/api/system-manager";
 import { useRouter } from "vue-router";
-import { format } from "echarts";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameById } = useCommonStore();
 const router = useRouter();
 const props = defineProps({
     titleFromApi: { type: String, default: "" },
@@ -106,7 +107,7 @@ const openDialog = (row) => {
     detailDialog.id = row.id;
     detailDialog.isShow = true;
     detailDialog.title = row.title;
-    detailDialog.entityName = row.entityName;
+    detailDialog.entityName = queryEntityNameById(row.id);
     tabList.value = [...DefaultTab];
     // 自定义tab
     if (row.tabs && row.tabs.length > 0) {
@@ -126,10 +127,12 @@ let vFormRef = ref();
 // 刷新数据
 const refresh = async () => {
     loading.value = true;
+    haveLayoutJson.value = false;
     let res = await getFormLayout(detailDialog.entityName);
     if (res) {
         if (res.data?.layoutJson && activeTabName.value == "detail") {
             haveLayoutJson.value = true;
+            
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let formData = await queryById(detailDialog.id);
@@ -139,15 +142,10 @@ const refresh = async () => {
                     if (props.titleFromApi) {
                         detailDialog.title = formData.data[props.titleFromApi];
                     }
-                    // if (detailDialog.formData.avatar) {
-                    //     detailDialog.formData.avatar = formatUrl(
-                    //         detailDialog.formData.avatar
-                    //     );
-                    // }
                     vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
                         //vFormRef.value.disableForm();
-						vFormRef.value.setReadMode();
+                        vFormRef.value.setReadMode();
                     });
                 }
                 loading.value = false;
@@ -162,8 +160,6 @@ const refresh = async () => {
         loading.value = false;
     }
 };
-
-
 
 // 暴露方法给父组件调用
 defineExpose({

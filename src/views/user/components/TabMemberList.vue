@@ -23,7 +23,9 @@
                     </template>
                     <template v-else>
                         <div class="member-list__icon">
-                            <el-avatar :size="40" :src="'img/avatar.jpg'"></el-avatar>
+                            <el-avatar :size="40">
+                                <mlAvatar :userId="item.userId"/>
+                            </el-avatar>
                         </div>
                         <div class="member-list__main">
                             <div class="name yichu" :title="item.userName">{{item.userName}}</div>

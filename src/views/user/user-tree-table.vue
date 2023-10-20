@@ -20,14 +20,24 @@
                     >
                         <span>{{ node.label }}</span>
                         <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
-                            <el-button link type="primary" @click="addDepartment(node, data)" :disabled="!checkRole('r22-2')">添加</el-button>
+                            <el-button
+                                link
+                                type="primary"
+                                @click="addDepartment(node, data)"
+                                :disabled="!checkRole('r22-2')"
+                            >添加</el-button>
                             <el-button
                                 link
                                 type="primary"
                                 :disabled="!checkRole('r22-3')"
                                 @click="editDepartment(node, data)"
                             >编辑</el-button>
-                            <el-button link type="primary" @click="deleteDepartment(node, data)" :disabled="!checkRole('r22-4')">删除</el-button>
+                            <el-button
+                                link
+                                type="primary"
+                                @click="deleteDepartment(node, data)"
+                                :disabled="!checkRole('r22-4')"
+                            >删除</el-button>
                         </span>
                     </span>
                 </template>
@@ -115,20 +125,15 @@
         </el-container>
         <!-- 新建、编辑用户 -->
         <Edit ref="editRefs" @onConfirm="onRefresh" isUser :disableWidgets="disableWidgets" />
-        <!-- 重置密码 -->
-        <ml-dialog title="重置密码" v-model="resetPasswordDialogIsShow" appendToBody width="450px">
-            <el-input v-model="newPassword" placeholder="输入密码" clearable>
-                <template #append>
-                    <span class="generate-pwd" @click="generatePwd">生成随机密码</span>
-                </template>
-            </el-input>
-            <template #footer>
-                <el-button @click="resetPasswordDialogIsShow = false">取消</el-button>
-                <el-button type="primary" @click="confirmResetPassword">确定</el-button>
-            </template>
-        </ml-dialog>
+    
         <!-- 列表详情 -->
-        <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="userName">
+        <ListDetail
+            ref="mlListDetailsRefs"
+            idFieldName="userId"
+            nameFieldName="userName"
+            @onRefresh="onRefresh"
+        />
+        <!-- <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="userName">
             <template #tab>
                 <TabMemberList
                     v-model="memberList"
@@ -179,33 +184,30 @@
                     </el-col>
                 </el-row>
             </template>
-        </mlListDetails>
+        </mlListDetails>-->
     </el-container>
 </template>
 
 <script>
-import { arrayContain, formatRefColumn, isEmptyStr } from "@/utils/util";
+import { arrayContain } from "@/utils/util";
 import {
     deleteDepartmentById,
     deleteUserById,
     getDepartmentTree,
     saveDepartment,
-    saveUser,
 } from "@/api/user";
 import { createRecord, updateRecord } from "@/api/crud";
 import FormState from "@/views/system/form-state-variables";
 import eventBus from "@/utils/event-bus";
 import http from "@/utils/request";
 import Edit from "@/views/customize-menu/edit.vue";
-import TabMemberList from "./components/TabMemberList.vue";
-import AddMembers from "./components/AddMembers.vue";
-import { getUserRole } from "@/api/user";
+import ListDetail from "./components/ListDetail.vue";
+
 export default {
     name: "UserTreeTable",
     components: {
         Edit,
-        TabMemberList,
-        AddMembers,
+        ListDetail,
     },
     data() {
         return {
@@ -263,8 +265,6 @@ export default {
                 ],
             },
             multipleSelection: [],
-            // 重置密码
-            resetPasswordDialogIsShow: false,
             resetPasswordUserId: "",
             newPassword: "",
             // 默认排序
@@ -322,8 +322,6 @@ export default {
                     },
                 },
             ],
-            // 是否弹框调用
-            isDialogCallEdit: false,
             // 成员列表
             memberList: [],
             // 要禁用的字段
@@ -368,9 +366,6 @@ export default {
         },
         // 编辑用户
         editClick(row, target) {
-            if (target == "dialog") {
-                this.isDialogCallEdit = true;
-            }
             let tempV = { ...row };
             tempV.dialogTitle = "编辑" + row.userName;
             tempV.entityName = "User";
@@ -378,83 +373,16 @@ export default {
             this.disableWidgets = ["loginPwd"];
             this.$refs.editRefs.openDialog(tempV);
         },
-        // 打开重置密码弹框
-        openResetPasswordDialog(row) {
-            this.resetPasswordDialogIsShow = true;
-            this.resetPasswordUserId = row.userId;
-        },
         // 刷新数据
         onRefresh() {
             this.$refs.mlSingleListRef.getTableList();
-            if (this.isDialogCallEdit) {
-                this.$refs.mlListDetailsRefs.refresh();
-                this.isDialogCallEdit = false;
-            }
         },
         // 高亮字段点击
         highlightClick(row) {
-            this.$refs.mlListDetailsRefs.openDialog({
-                title: row.userName,
-                id: row.userId,
-                entityName: "User",
-                tabs: [
-                    {
-                        label: "角色列表",
-                        name: "memberList",
-                    },
-                ],
-            });
-            this.curUserId = row.userId;
+            this.$refs.mlListDetailsRefs.openDetailDialog(row.userId,row.userName)
         },
-        // 添加角色成员
-        changeMembers() {
-            this.$refs.mlListDetailsRefs.refresh();
-        },
-        // 页签切换
-        async tabChange(tab) {
-            this.$refs.mlListDetailsRefs.loading = true;
-            this.memberList = [];
-            // 获取团队成员
-            let res = await getUserRole(tab.id);
-            if (res) {
-                this.memberList = res.data.data || [];
-            }
-            this.$refs.mlListDetailsRefs.loading = false;
-        },
-        // 生成密码
-        generatePwd() {
-            this.newPassword = "xxxcxxx".replace(/[xy]/g, function (c) {
-                var r = (Math.random() * 16) | 0,
-                    v = c == "x" ? r : (r & 0x3) | 0x8;
-                return v.toString(16);
-            });
-        },
-        // 确认修改密码
-        async confirmResetPassword() {
-            if (!this.newPassword) {
-                this.$message.error("请输入密码");
-                return;
-            }
-            let regEx =
-                /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/;
-            if (!regEx.test(this.newPassword)) {
-                this.$message.error(
-                    "必须包含数字、英文。可有字符。密码长度为：6-20位"
-                );
-                return;
-            }
-            let res = await http.get("/user/resetPassword", {
-                password: this.newPassword,
-                userId: this.resetPasswordUserId,
-            });
-            if (res) {
-                this.$message.success("重置成功");
-                this.newPassword = "";
-                this.resetPasswordDialogIsShow = false;
-                this.isDialogCallEdit = true;
-                this.onRefresh();
-            }
-        },
+       
+        
 
         handleDeletedFields(res, layoutObj) {
             let deletedFields = res.data.deletedFields;
@@ -793,12 +721,5 @@ export default {
     border-left: 1px solid #ebeef5;
     //height: 48px !important;
     //padding-top: 8px !important;
-}
-
-.action-group {
-    :deep(.el-button) {
-        margin-bottom: 5px;
-        min-width: 110px !important;
-    }
 }
 </style>
