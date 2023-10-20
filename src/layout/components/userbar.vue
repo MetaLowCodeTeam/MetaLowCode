@@ -1,12 +1,27 @@
 <template>
     <div class="user-bar">
+        <div class="approval-center panel-item">
+            <el-dropdown trigger="click"  @command="handleApproval">
+                <span class="approval-icon-span">
+                    <el-icon>
+                        <el-icon-connection />
+                    </el-icon>
+                </span>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item command="CenterHandle">待我处理</el-dropdown-item>
+                        <el-dropdown-item command="CenterSubmit">我提交的</el-dropdown-item>
+                        <el-dropdown-item command="CenterCc">抄送我的</el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+        </div>
         <div class="screen panel-item hidden-sm-and-down" @click="screen">
             <el-icon>
                 <el-icon-full-screen />
             </el-icon>
         </div>
         <div class="msg panel-item" @click="showMsg">
-            
             <el-badge :hidden="newMsgNum == 0" :value="newMsgNum" class="badge" type="danger">
                 <el-icon>
                     <el-icon-chat-dot-round />
@@ -26,7 +41,7 @@
                                         <div class="msg-list__icon">
                                             <el-badge is-dot type="danger">
                                                 <el-avatar :size="40">
-                                                    <mlAvatar :userId="item.fromUser.id"/>
+                                                    <mlAvatar :userId="item.fromUser.id" />
                                                 </el-avatar>
                                             </el-badge>
                                         </div>
@@ -57,7 +72,7 @@
         <el-dropdown class="user panel-item" trigger="click" @command="handleUser">
             <div class="user-avatar">
                 <el-avatar :size="30">
-                    <mlAvatar :userId="userId"/>
+                    <mlAvatar :userId="userId" />
                 </el-avatar>
                 <label>{{ userName }}</label>
                 <el-icon class="el-icon--right">
@@ -124,9 +139,9 @@ let msgList = ref([]);
 let msgLoading = ref(false);
 onMounted(() => {
     var userInfo = $TOOL.data.get("USER_INFO");
-    if(!userInfo){
+    if (!userInfo) {
         router.push({ path: "/web/login" });
-        return    
+        return;
     }
     userName.value = userInfo.userName;
     userId.value = userInfo.userId;
@@ -189,6 +204,12 @@ const handleUser = (command) => {
             });
     }
 };
+
+// 审批流程
+const handleApproval = (command) => {
+    router.push({ name: command });
+}
+
 //全屏
 const screen = () => {
     var element = document.documentElement;
@@ -284,7 +305,7 @@ const tasksFn = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .user-bar {
     display: flex;
     align-items: center;
@@ -357,5 +378,23 @@ const tasksFn = () => {
 }
 .dark .msg-list li a:hover {
     background: #383838;
+}
+
+.approval-center {
+    padding: 0!important;
+    .el-dropdown {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+    .approval-icon-span {
+        color: #d0d0d0;
+        height: 100%;
+        display: flex;
+        padding: 0 10px;
+        width: 100%;
+        align-items: center;
+    }
+    
 }
 </style>
