@@ -30,7 +30,7 @@
                     placeholder="请输入新密码"
                 ></el-input>
                 <sc-password-strength v-model="form.newPassword"></sc-password-strength>
-                <div class="el-form-item-msg">请输入包含英文、数字的8位以上密码</div>
+                <div class="el-form-item-msg">请输入包含英文、数字的6-20位密码</div>
             </el-form-item>
             <el-form-item label="确认新密码" prop="confirmNewPassword">
                 <el-input
@@ -84,8 +84,8 @@ export default {
             this.$refs.form.validate(async (valid) => {
                 if (valid) {
                     let regEx = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/;
-                    if(!regEx.test(this.form.userPassword)){
-                        this.$message.error("必须包含数字、英文。可有字符。密码长度为：6-20位")
+                    if(!regEx.test(this.form.newPassword)){
+                        this.$message.error("必须包含数字、英文。密码长度为：6-20位")
                         return
                     }
                     let res = await http.get("/user/updatePassword", {
