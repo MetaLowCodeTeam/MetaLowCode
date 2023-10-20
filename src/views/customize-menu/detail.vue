@@ -82,7 +82,7 @@
                                 <ApprovalRelated
                                     v-if="approvalStatus"
                                     :approvalStatus="approvalStatus"
-                                    @onSubmit="getLayoutList"
+                                    @onSubmit="onSubmitApproval"
                                 />
                             </el-col>
                         </el-row>
@@ -160,6 +160,12 @@ const refresh = () => {
     }
 };
 
+// 提交审批触发
+const onSubmitApproval = ()=>{
+    getLayoutList();
+    emits('onConfirm')
+}
+
 // 加载页签
 const getLayoutList = async () => {
     loading.value = true;
@@ -179,7 +185,7 @@ let noeData = ref(false);
 const initData = async () => {
     loading.value = true;
     let res = await getFormLayout(detailDialog.entityName);
-
+    haveLayoutJson.value = false;
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;

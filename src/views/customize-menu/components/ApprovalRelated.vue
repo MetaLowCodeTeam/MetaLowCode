@@ -102,7 +102,6 @@ watch(
     () => props.approvalStatus,
     () => {
         myApproval.value = props.approvalStatus;
-        console.log(myApproval.value, "myApproval.value");
     },
     { deep: true }
 );

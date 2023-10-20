@@ -11,16 +11,6 @@
         @highlightClick="highlightClick"
         :filterItems="filterItems"
     >
-        <!-- <template #addbutton>
-            <el-button type="primary" @click="markAllRead">全部设为已读</el-button>
-        </template>
-        <template #activeRow>
-            <el-table-column label="操作" :align="'center'" width="100" fixed="right">
-                <template #default="scope">
-                    <el-button type="primary" size="small" link @click="activeRow(scope.row)">查看</el-button>
-                </template>
-            </el-table-column>
-        </template>-->
     </mlSingleList>
     <Detail ref="detailRefs" />
 </template>
