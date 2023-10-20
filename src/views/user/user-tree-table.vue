@@ -199,10 +199,8 @@ import {
 import { createRecord, updateRecord } from "@/api/crud";
 import FormState from "@/views/system/form-state-variables";
 import eventBus from "@/utils/event-bus";
-import http from "@/utils/request";
 import Edit from "@/views/customize-menu/edit.vue";
 import ListDetail from "./components/ListDetail.vue";
-
 export default {
     name: "UserTreeTable",
     components: {
