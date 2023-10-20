@@ -52,8 +52,7 @@ router.beforeEach(async (to, from, next) => {
     document.title = to.meta.title ? `${to.meta.title} - ${tool.data.get('APP_NAME') || ''}` : `${tool.data.get('APP_NAME') || ''}`
 
     let token = tool.cookie.get("TOKEN");
-
-    if (to.path === "/login") {
+    if (to.path === "/web/login") {
         //删除路由(替换当前layout路由)
         router.addRoute(routes[0])
         //删除路由(404)
