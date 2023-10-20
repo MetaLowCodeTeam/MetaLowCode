@@ -3,7 +3,7 @@
         <el-button @click="setCondition">{{ getSetConditionText() }}</el-button>
         <!-- <div class="ml-a-span" @click="setCondition" v-else></div> -->
     </el-form-item>
-    <mlDialog title="过滤条件" append-to-body width="37%" v-model="dialogIsShow">
+    <mlDialog title="过滤条件" append-to-body width="37%" v-if="dialogIsShow" v-model="dialogIsShow">
         <mlSetConditions
             v-model="conditionConf"
             footer
@@ -14,7 +14,7 @@
     </mlDialog>
 </template>
 <script setup>
-import { ref, watch, onMounted,inject } from "vue";
+import { ref, watch, onMounted, inject } from "vue";
 const $ElMessage = inject("$ElMessage");
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
@@ -49,9 +49,9 @@ let conditionConf = ref({});
 let dialogIsShow = ref(false);
 // 设置条件
 const setCondition = () => {
-    if(!props.optionModel.dataEntity){
-        $ElMessage.warning("请先选择图标数据实体")
-        return
+    if (!props.optionModel.dataEntity) {
+        $ElMessage.warning("请先选择图标数据实体");
+        return;
     }
     let actionFilter = initFilter({ ...cutOption.value?.setChartFilter });
     conditionConf.value = JSON.parse(JSON.stringify(actionFilter));
