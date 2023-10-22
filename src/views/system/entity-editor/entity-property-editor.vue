@@ -3,15 +3,22 @@
 		<el-header v-if="showTitle" class="entity-props-header">&lt;实体&gt;属性设置</el-header>
 		<el-main class="entity-props-pane">
 			<el-form :model="entityProps" :rules="rules" ref="entityPropsForm" label-position="left"
-					 label-width="360px">
+					 label-width="230px">
 				<el-form-item label="显示名称" prop="label">
-					<el-input v-model="entityProps.label" minlength="2"></el-input>
+					<el-input v-model="entityProps.label" minlength="2"
+							  placeholder="以中文、英文字母、数字开头，中间可输入下划线或横杠" @change="handleEntityLabelChange"></el-input>
 				</el-form-item>
 				<el-form-item label="实体名称" prop="name"> <!-- prop必须跟v-model名称一致！！ -->
-					<el-input v-model="entityProps.name" minlength="2"></el-input>
+					<el-input v-model="entityProps.name" minlength="2"
+							  placeholder="英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线或横杠">
+						<template #append>
+							<el-button @click="generateEntityName">刷新生成</el-button>
+						</template>
+					</el-input>
 				</el-form-item>
 				<el-form-item label="实体编码">
-					<el-input v-model="entityProps.entityCode" readonly disabled></el-input>
+					<el-input v-model="entityProps.entityCode" readonly disabled
+							  placeholder="系统自动生成"></el-input>
 				</el-form-item>
 				<el-form-item label="是否允许设计表单">
 					<el-switch style="display: block; float: right" v-model="entityProps.layoutable"
@@ -40,7 +47,12 @@
 				  </el-switch>
 				</el-form-item>
 				-->
-				<el-form-item label="是否明细实体">
+				<el-form-item>
+					<template #label>
+						是否明细实体<el-tooltip content="明细实体不能单独设置权限，受主实体控制" effect="light">
+							<el-icon><InfoFilled /></el-icon>
+						</el-tooltip>
+					</template>
 					<el-switch style="display: block; float: right" v-model="entityProps.detailEntityFlag"
 							   active-text="是" inactive-text="否" @change="onToggleDetailEntityFlag">
 					</el-switch>
@@ -74,6 +86,8 @@
 </template>
 
 <script>
+import {getSimplePinYin, upperFirstLetter} from "@/utils/util";
+
 export default {
 	name: "EntityPropEditor",
 	props: ['entityProps', 'showTitle', 'filterEntityMethod'],
@@ -93,7 +107,7 @@ export default {
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
 					{
 						pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
-						message: '请以中文、英文字母、数字开头，中间可输入下划线或横杠',
+						message: '以中文、英文字母、数字开头，中间可输入下划线或横杠',
 						trigger: 'blur'
 					},
 					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
@@ -165,7 +179,23 @@ export default {
 					callback()
 				}
 			})
-		}
+		},
+
+		handleEntityLabelChange(val) {
+			if (!val) {
+				return
+			}
+
+			if (!this.entityProps.name) {
+				const pyName = getSimplePinYin(val)
+				this.entityProps.name = upperFirstLetter(pyName)
+			}
+		},
+
+		generateEntityName() {
+			let newName = getSimplePinYin(this.entityProps.label)
+			this.entityProps.name = upperFirstLetter(newName)
+		},
 
 	},
 }
@@ -196,6 +226,10 @@ export default {
 
 :deep(.no-padding .el-dialog__body) {
 	padding: 0;
+}
+
+:deep(.el-form-item__label) {
+	align-items: center;
 }
 
 /*:deep(.el-switch__label) * {*/

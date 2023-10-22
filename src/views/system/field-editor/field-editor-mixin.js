@@ -1,6 +1,6 @@
 import FieldState from "@/views/system/field-state-variables";
 import {addField, getField, updateField} from "@/api/system-manager";
-import {copyObj} from "@/utils/util";
+import {copyObj, getSimplePinYin, upperFirstLetter} from "@/utils/util";
 
 export const fieldEditorMixin = {
 	data() {
@@ -108,5 +108,20 @@ export const fieldEditorMixin = {
 				this.$message({message: res.message, type: 'error'})
 			})
 		},
+
+		handleFieldLabelChange(val) {
+			if (!val) {
+				return
+			}
+
+			if (!this.fieldProps.name) {
+				this.fieldProps.name = getSimplePinYin(val)
+			}
+		},
+
+		generateFieldName() {
+			this.fieldProps.name = getSimplePinYin(this.fieldProps.label)
+		},
+
 	}
 }

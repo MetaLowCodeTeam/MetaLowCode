@@ -1,4 +1,6 @@
-import moment from 'moment';
+import moment from 'moment'
+import { pinyin } from 'pinyin-pro'
+
 moment.locale('zh-cn', {
     months: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
     monthsShort: '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
@@ -260,4 +262,26 @@ export const $fromNow = function (date) {
     }
     const m = $moment(date)
     return Math.abs(moment().diff(m)) < 6000 ? '刚刚' : m.fromNow()
+}
+
+/**
+ * 首字母大写
+ * @param inStr
+ * @returns {*|string}
+ */
+export const upperFirstLetter = (inStr) => {
+	if (!inStr) {
+		return ''
+	}
+
+	return inStr.slice(0, 1).toUpperCase() + inStr.slice(1)
+}
+
+/**
+ * 获取汉字简拼
+ * @param chStr
+ * @returns {string}
+ */
+export const getSimplePinYin = (chStr) => {
+	return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '')
 }

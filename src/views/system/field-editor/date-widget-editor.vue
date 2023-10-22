@@ -4,11 +4,11 @@
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
-				<el-form-item label="字段名称" prop="name">
-					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1"></el-input>
-				</el-form-item>
 				<el-form-item label="显示名称" prop="label">
 					<el-input v-model="fieldProps.label"></el-input>
+				</el-form-item>
+				<el-form-item label="字段名称" prop="name">
+					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1"></el-input>
 				</el-form-item>
 <!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
 <!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->

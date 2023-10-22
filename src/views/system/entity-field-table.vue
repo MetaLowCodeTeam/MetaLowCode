@@ -40,7 +40,7 @@
 							<el-form-item label="开启记录级权限：">
 								<el-switch v-model="entityProps.authorizable" style="float: right" disabled></el-switch>
 							</el-form-item>
-							<el-form-item label="是否从属实体：">
+							<el-form-item>
 								<el-switch v-model="entityProps.detailEntityFlag" style="float: right"
 										   disabled></el-switch>
 							</el-form-item>
@@ -64,8 +64,8 @@
 			<el-header class="list-search-panel">
 				<div class="search-panel-left">
 					<el-dropdown @command="handleNewFieldCommand" size="small">
-						<el-button type="primary" icon="el-icon-ArrowDown">
-							新建字段
+						<el-button type="primary">
+							新建字段<el-icon><ArrowDown /></el-icon>
 						</el-button>
 						<template #dropdown>
 							<el-dropdown-menu>
@@ -157,7 +157,7 @@
 			<el-dialog :title="'新建字段 / ' + curEditorType" v-model="showNewFieldDialogFlag"
 					   v-if="showNewFieldDialogFlag"
 					   :show-close="true" :destroy-on-close="true" :close-on-click-modal="false"
-					   :close-on-press-escape="false" class="no-padding" width="620px">
+					   :close-on-press-escape="false" class="no-padding field-setting-dialog" width="620px">
 				<component :is="curFWEditor" :entity="entity" @fieldSaved="onFieldSaved" @cancelSave="onCancelSaveField"
 						   :showingInDialog="true"></component>
 			</el-dialog>
@@ -165,7 +165,7 @@
 			<el-dialog :title="'编辑字段 / ' + curEditorType" v-model="showEditFieldDialogFlag"
 					   v-if="showEditFieldDialogFlag"
 					   :show-close="true" :destroy-on-close="true" :close-on-click-modal="false"
-					   :close-on-press-escape="false" class="no-padding" width="620px">
+					   :close-on-press-escape="false" class="no-padding field-setting-dialog" width="620px">
 				<component :is="curFWEditor" :entity="entity" @fieldSaved="onFieldSaved" @cancelSave="onCancelSaveField"
 						   :showingInDialog="true" :field-name="editingFieldName" :field-state="2"></component>
 			</el-dialog>
@@ -677,6 +677,18 @@ export default {
 
 	:deep(.el-dialog__body) {
 		padding: 6px;
+	}
+}
+</style>
+<style lang="scss">
+.field-setting-dialog {
+	.el-dialog__header {
+		margin: 0;
+		background-color: var(--el-color-primary) !important;
+
+		.el-dialog__title {
+			color: #fff;
+		}
 	}
 }
 </style>

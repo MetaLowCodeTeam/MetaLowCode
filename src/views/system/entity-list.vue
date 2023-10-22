@@ -29,7 +29,7 @@
 			</el-card>
 
 			<el-dialog title="新建实体" v-model="showNewEntityDialogFlag" v-if="showNewEntityDialogFlag"
-					   :show-close="false"
+					   :show-close="false" class="new-entity-dialog"
 					   :close-on-click-modal="false" :close-on-press-escape="false">
 				<EntityPropEditor ref="EPEditor" :entityProps="newEntityProps" :show-title="false"
 								  :filter-entity-method="filterMainEntity"></EntityPropEditor>
@@ -59,6 +59,9 @@ import {getEntitySet, createEntity, entityCanBeDeleted, deleteEntity} from '@/ap
 import EntityPropEditor from './entity-editor/entity-property-editor.vue'
 import useCommonStore from "@/store/modules/common";
 const { refreshCache } = useCommonStore();
+
+const visualDesign = await import('@/../lib/visual-design/designer.umd.js')
+
 export default {
 	name: 'EntityList',
 	components: {EntityPropEditor},
@@ -101,6 +104,16 @@ export default {
 	},
 	mounted() {
 		this.getEntityList()
+
+		//const visualDesign = import.meta.glob('@/../lib/visual-design/designer.umd.js')
+		// const visualDesign = import.meta.glob('@/../lib/visual-design/*.js')
+		// const visualDesign = import.meta.glob('vform3-builds/dist/designer.umd.js')
+		const $app = this.$root.$.appContext.app
+		$app.use(visualDesign)
+		//const { VFormDesigner } = visualDesign
+		//console.error('$app', $app)
+		//console.error('visualDesign', visualDesign)
+		//$app.use(VFormDesigner)
 	},
 	methods: {
 		getEntityList() {
@@ -467,4 +480,17 @@ export default {
 	color: #fff;
 }
 
+</style>
+
+<style lang="scss">
+.new-entity-dialog {
+	.el-dialog__header {
+		margin: 0;
+		background-color: var(--el-color-primary) !important;
+
+		.el-dialog__title {
+			color: #fff;
+		}
+	}
+}
 </style>

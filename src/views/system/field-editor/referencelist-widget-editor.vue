@@ -4,11 +4,15 @@
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
-				<el-form-item label="字段名称" prop="name">
-					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1"></el-input>
-				</el-form-item>
 				<el-form-item label="显示名称" prop="label">
-					<el-input v-model="fieldProps.label"></el-input>
+					<el-input v-model="fieldProps.label" @change="handleFieldLabelChange"></el-input>
+				</el-form-item>
+				<el-form-item label="字段名称" prop="name">
+					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1">
+						<template v-if="fieldState === 1" #append>
+							<el-button @click="generateFieldName">刷新生成</el-button>
+						</template>
+					</el-input>
 				</el-form-item>
 				<el-form-item label="引用实体设置">
 					<el-button style="float: right" icon="el-icon-plus" @click="addRefEntity">添加</el-button>
@@ -141,7 +145,7 @@ import {
 	getRefFieldExtras
 } from '@/api/system-manager'
 import FieldState from "@/views/system/field-state-variables";
-import {copyObj} from "@/utils/util";
+import {copyObj, getSimplePinYin} from "@/utils/util";
 
 export default {
 	name: "ReferenceListWidgetEditor",
@@ -427,6 +431,20 @@ export default {
 
 			//console.log(JSON.stringify(this.fieldProps.referTo))
 			//console.log(JSON.stringify(this.fieldProps.referenceSetting))
+		},
+
+		handleFieldLabelChange(val) {
+			if (!val) {
+				return
+			}
+
+			if (!this.fieldProps.name) {
+				this.fieldProps.name = getSimplePinYin(val)
+			}
+		},
+
+		generateFieldName() {
+			this.fieldProps.name = getSimplePinYin(this.fieldProps.label)
 		},
 
 	}
