@@ -457,7 +457,7 @@ export default {
             else if (numberFieldType.includes(type)) {
                 op = ["GT", "LT", "EQ", "BW", "GE", "LE"];
             } else if (type === "Reference") {
-                op = ["REF", "NL", "NT"];
+                op = ["EQ", "NEQ", "NL", "NT"];
                 if (referTo == "User") {
                     op = ["LK", "NLK", "SFU", "NL", "NT"];
                 }
@@ -512,7 +512,11 @@ export default {
             let flag = true;
             if (this.conditionConf.items.length > 0) {
                 this.conditionConf.items.forEach((el) => {
-                    if (!el.value && el.value != 0 && !this.op_no_value.includes(el.op)) {
+                    if (
+                        !el.value &&
+                        el.value != 0 &&
+                        !this.op_no_value.includes(el.op)
+                    ) {
                         flag = false;
                         el.isError = true;
                     }
