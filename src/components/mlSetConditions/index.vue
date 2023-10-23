@@ -149,7 +149,7 @@
                     </div>
                     <!-- 用户下拉框 -->
                     <div
-                        v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT' && item.op != 'NL'&& item.op != 'NT'" 
+                        v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT' && item.op != 'NL'&& item.op != 'NT'"
                     >
                         <el-select
                             size="default"
@@ -186,6 +186,24 @@
                                 :label="departmentOp.departmentName"
                                 :value="departmentOp.departmentId"
                                 :key="departmentInx"
+                            />
+                        </el-select>
+                    </div>
+                    <!-- 类型为Tag 和 option的 -->
+                    <div v-else-if="item.valueType == 'optionData'">
+                        <el-select
+                            size="default"
+                            v-model="item.value"
+                            class="w-100"
+                            :class="{'is-error':item.isError}"
+                            @focus="clearError(item)"
+                            placeholder=" "
+                        >
+                            <el-option
+                                v-for="(userOp,userInx) of item.optionData"
+                                :label="userOp.label || userOp.value"
+                                :value="userOp.value"
+                                :key="userInx"
                             />
                         </el-select>
                     </div>
@@ -345,6 +363,7 @@ export default {
                         // 值类型
                         valueType: "",
                         label: el.label,
+                        optionData: el.optionData,
                     };
                 });
                 // 初始化已有字段
@@ -431,8 +450,11 @@ export default {
                     "CUY",
                 ];
             } else if (type === "Tag") {
-                op = ["IN", "NIN"];
-            } else if (numberFieldType.includes(type)) {
+                op = ["LK", "NLK"];
+            }
+            // 数组类型的字段
+            // numberFieldType: ["Money", "Integer", "Decimal", "Percent"],
+            else if (numberFieldType.includes(type)) {
                 op = ["GT", "LT", "EQ", "BW", "GE", "LE"];
             } else if (type === "Reference") {
                 op = ["REF", "NL", "NT"];
@@ -444,8 +466,8 @@ export default {
                 }
             } else if (type === "Boolean") {
                 op = ["EQ", "NL", "NT"];
-            } else if (type === "Option") {
-                op = ["IN", "NIN", "NL", "NT"];
+            } else if (type === "Option" || type === "Status") {
+                op = ["EQ", "NEQ", "NL", "NT"];
             } else if (
                 type === "Email" ||
                 type === "Url" ||
@@ -455,9 +477,9 @@ export default {
                 op = ["LK", "NLK", "EQ", "NEQ", "NL", "NT"];
             } else {
                 op = [];
-                for (const key in this.op_type) {
-                    op.push(key);
-                }
+                // for (const key in this.op_type) {
+                //     op.push(key);
+                // }
             }
             return op;
         },
@@ -490,7 +512,7 @@ export default {
             let flag = true;
             if (this.conditionConf.items.length > 0) {
                 this.conditionConf.items.forEach((el) => {
-                    if (!el.value && !this.op_no_value.includes(el.op)) {
+                    if (!el.value && el.value != 0 && !this.op_no_value.includes(el.op)) {
                         flag = false;
                         el.isError = true;
                     }
@@ -583,6 +605,10 @@ export default {
             // 不需要value条件
             if (op_no_value.includes(op)) {
                 return;
+            }
+            // 如果类型是Tag || Option
+            if (type == "Tag" || type == "Option" || type == "Status") {
+                return "optionData";
             }
             // 文本输入框
             return "textInput";

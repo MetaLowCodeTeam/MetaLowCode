@@ -53,6 +53,10 @@ const changeEntity = () => {
     myOption.value.setDimensional.showFields = [];
     myOption.value.setDimensional.dimensionRow = [];
     myOption.value.setDimensional.dimensionCol = [];
+    myOption.value.setChartFilter = {
+        equation: "OR",
+        items: [],
+    };
 };
 </script>
 <style lang="scss" scoped>
