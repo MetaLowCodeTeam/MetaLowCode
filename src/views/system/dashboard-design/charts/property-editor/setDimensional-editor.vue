@@ -225,6 +225,7 @@ const fieldsAdd = reactive({
 let loading = ref(false);
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 let textType = ref(["Text", "TextArea"]);
+let optionsType = ref(["Option"]);
 const getEntityFields = async () => {
     loading.value = true;
     let res = await queryEntityFields(props.optionModel.dataEntity, true, true);
@@ -234,7 +235,8 @@ const getEntityFields = async () => {
         res.data.forEach((el) => {
             if (
                 numType.value.includes(el.fieldType) ||
-                textType.value.includes(el.fieldType)
+                textType.value.includes(el.fieldType) || 
+                optionsType.value.includes(el.fieldType)
             ) {
                 let newFieldsAdd = { ...fieldsAdd };
                 newFieldsAdd.alias = el.fieldLabel;

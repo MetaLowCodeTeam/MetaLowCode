@@ -22,6 +22,15 @@
     <div class="text-ellipsis" v-else-if="column.fieldName == nameFiledName">
         <span class="ml-a-span" @click.stop="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
+    <div class="text-ellipsis" v-else-if="column.fieldType == 'Picture'" :title="'图片：' + row[column.fieldName]?.length">
+        <img
+            class="row-img"
+            :src="formatUrl(img.url)"
+            alt
+            v-for="(img,inx) of row[column.fieldName]"
+            :key="inx"
+        />
+    </div>
     <div class="text-ellipsis" v-else>{{ row[column.fieldName] }}</div>
 </template>
 
@@ -33,9 +42,23 @@ const props = defineProps({
 });
 const emits = defineEmits(["openDetilDialog"]);
 
+const formatUrl = (url) => {
+    return import.meta.env.VITE_APP_BASE_API + url;
+};
+
 const openDetilDialog = (row) => {
     emits("openDetilDialog", row);
 };
 </script>
 <style lang='scss' scoped>
+.row-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    &:last-child{
+        margin-right: 0px;
+    }
+}
 </style>
