@@ -140,6 +140,7 @@ export default {
 :deep(.vue-grid-layout) {
     min-height: 450px !important;
 }
+
 </style>
 <style>
 .main-container.visual-design li {
@@ -149,4 +150,24 @@ export default {
 .ds-setting-drawer .el-drawer__body {
     padding: 20px !important;
 }
+
+.chart-widget-item {
+	height: 72px !important;
+
+	div.svg-icon-label {
+		display: flex;
+		height: 72px !important;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+
+		.svg-icon {
+			margin-top: 6px !important;
+			font-size: 20px !important;
+		}
+	}
+
+}
+
 </style>
