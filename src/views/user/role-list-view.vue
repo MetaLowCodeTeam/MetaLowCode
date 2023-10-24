@@ -3,15 +3,15 @@
         <mlSingleList
             ref="mlSingleListRef"
             title="权限角色"
-            :mainEntity="entity"
-            :fieldsList="fieldsList"
-            :sortFields="sortFields"
-            fieldName="roleName"
-            :tableColumn="tableColumn"
-            :filterItems="filterItems"
+            :mainEntity="tableConf.entity"
+            :fieldsList="tableConf.fieldsList"
+            :sortFields="tableConf.sortFields"
+            :fieldName="tableConf.roleName"
+            :tableColumn="tableConf.tableColumn"
+            :filterItems="tableConf.filterItems"
         >
             <template #addbutton>
-                <el-button type="primary" @click="addNewRole" :disabled="!checkRole('r23-2')">
+                <el-button type="primary" @click="addNewRole" :disabled="!$TOOL.checkRole('r23-2')">
                     <el-icon size="14">
                         <ElIconPlus />
                     </el-icon>
@@ -25,7 +25,7 @@
                             size="small"
                             type="primary"
                             link
-                            :disabled="!checkRole('r23-3')"
+                            :disabled="!$TOOL.checkRole('r23-3')"
                             @click="editRole(scope.row)"
                         >
                             <span class="mr-3">
@@ -39,7 +39,7 @@
                             size="small"
                             link
                             type="primary"
-                            :disabled="!checkRole('r23-4')"
+                            :disabled="!$TOOL.checkRole('r23-4')"
                             @click="deleteRole(scope.row)"
                         >
                             <span class="mr-3">
@@ -54,7 +54,7 @@
             </template>
         </mlSingleList>
         <el-dialog
-            :title="formTitle"
+            :title="formModel.roleId ? '新建权限角色':'编辑权限角色'"
             v-model="showRoleFormDialogFlag"
             v-if="showRoleFormDialogFlag"
             :destroy-on-close="true"
@@ -69,7 +69,7 @@
                 label-position="left"
                 :label-width="'150px'"
                 size
-                ref="roleForm"
+                ref="roleFormRes"
                 :model="formModel"
                 :rules="formRules"
                 v-loading="roleFormDialogLoading"
@@ -293,409 +293,377 @@
     </el-container>
 </template>
 
-<script>
-import DataList from "@/components/business/DataList/index.vue";
-import { copyNew, isEmptyStr } from "@/utils/util";
-import { getDataList } from "@/api/crud";
+<script setup>
+import { copyNew } from "@/utils/util";
 import {
     deleteRoleById,
     getBlankRoleData,
     getRoleData,
     saveRoleData,
 } from "@/api/user";
+import { inject, nextTick, ref, shallowRef } from "vue";
+import { ElMessageBox, ElMessage } from "element-plus";
+const $TOOL = inject("$TOOL");
 
-export default {
-    name: "RoleListView",
-    components: { DataList },
-    props: {
-        entity: {
-            type: String,
-            default: "Role",
+let mlSingleListRef = ref();
+// 表格参数
+let tableConf = ref({
+    entity: "Role",
+    fieldsList: "roleName, disabled, description,createdBy",
+    // 默认搜索字段
+    fieldName: "roleName",
+    // 默认排序
+    sortFields: [
+        {
+            fieldName: "createdBy",
+            type: "DESC",
         },
-    },
-    data() {
-        return {
-            fieldsList: "roleName, disabled, description",
-            // 默认排序
-            sortFields: [
-                {
-                    fieldName: "createdBy",
-                    type: "DESC",
-                },
-            ],
-            // 过滤条件
-            filterItems: [],
-            tableColumn: [
-                {
-                    prop: "roleName",
-                    label: "用户名称",
-                    width: "180",
-                },
-                {
-                    prop: "disabled",
-                    label: "是否禁用",
-                    align:'center',
-                    width: "120",
-                    formatter: (row) => {
-                        return row.disabled ? "是" : "否";
-                    },
-                },
-                {
-                    prop: "description",
-                    label: "角色描述",
-                },
-            ],
-
-            searchFilter: "",
-
-            showRoleFormDialogFlag: false,
-            roleFormDialogLoading: false,
-
-            rowRightLevels: [
-                { label: "无权限", value: 0 },
-                { label: "本人", value: 10 },
-                { label: "本部门", value: 20 },
-                { label: "本部门及以下", value: 30 },
-                { label: "上级部门及以下", value: 40 },
-                { label: "全部数据", value: 50 },
-            ],
-
-            oneselfRightLevels: [
-                { label: "不允许", value: 0 },
-                { label: "允许", value: 50 },
-            ],
-
-            simpleRightLevels: [
-                { label: "无权限", value: 0 },
-                { label: "全部数据", value: 50 },
-            ],
-
-            formModel: {
-                roleId: "",
-                roleName: "",
-                disabled: false,
-                description: "",
-                rightValueMap: {},
+    ],
+    // 过滤条件
+    filterItems: [],
+    tableColumn: [
+        {
+            prop: "roleName",
+            label: "用户名称",
+            width: "180",
+        },
+        {
+            prop: "disabled",
+            label: "是否禁用",
+            align: "center",
+            width: "120",
+            formatter: (row) => {
+                return row.disabled ? "是" : "否";
             },
+        },
+        {
+            prop: "description",
+            label: "角色描述",
+        },
+    ],
+});
 
-            rightEntityList: [],
-            funcRight: [
-                {
-                    label: "实体管理",
-                    value: "r6001",
-                },
-                {
-                    label: "删除实体",
-                    value: "r6002",
-                },
-                {
-                    label: "设计表单布局",
-                    value: "r6003",
-                },
-                {
-                    label: "单选项管理",
-                    value: "r6005",
-                },
-                {
-                    label: "多选项管理",
-                    value: "r6006",
-                },
-                {
-                    label: "配置导航",
-                    value: "r6007",
-                },
-                {
-                    label: "实体布局配置",
-                    value: "r6008",
-                },
-                {
-                    label: "回收站管理",
-                    value: "r6009",
-                },
-                {
-                    label: "修改历史查询",
-                    value: "r6010",
-                },
-                {
-                    label: "数据导入",
-                    value: "r6011",
-                },
-                {
-                    label: "审批撤销",
-                    value: "r6013",
-                },
-                {
-                    label: "登录日志查看",
-                    value: "r6014",
-                },
-                {
-                    label: "触发器执行日志查看",
-                    value: "r6015",
-                },
-            ],
-            formRules: {
-                roleName: [
-                    { validator: this.validateRoleName, trigger: "blur" },
-                ],
-            },
-            loading: false,
-        };
-    },
-    computed: {
-        formTitle() {
-            return !!this.formModel.roleId ? "编辑权限角色" : "新建权限角色";
-        },
-    },
-    mounted() {
-        // this.loadRoleData();
-    },
-    methods: {
-        checkRole(str) {
-            return this.$TOOL.checkRole(str);
-        },
-        validateRoleName(rule, value, callback) {
-            if (!value) {
-                callback(new Error("请输入角色名称"));
-                // this.$message.error('请输入角色名称')
-                return;
+/**
+ * ************************************************************** 列表相关增删改
+ */
+
+// 添加角色
+const addNewRole = () => {
+    rightEntityList.value = [];
+    showRoleFormDialogFlag.value = true;
+    roleFormDialogLoading.value = true;
+    getBlankRoleData()
+        .then((res) => {
+            if (res && res.data.code == 200) {
+                let resData = res.data.data;
+                formModel.value.roleId = "";
+                formModel.value.roleName = resData.roleName;
+                formModel.value.disabled = resData.disabled;
+                formModel.value.description = resData.description;
+                formModel.value.rightValueMap = resData.rightValueMap;
+                rightEntityList.value = copyNew(resData.rightEntityList);
             }
-            if (value.length < 2) {
-                callback(new Error("请输入至少两个字符"));
-                // this.$message.error('角色名称至少两个字符')
-                return;
+            roleFormDialogLoading.value = false;
+        })
+        .catch((res) => {
+            ElMessage.error(res.message);
+            roleFormDialogLoading.value = false;
+        });
+};
+// 编辑角色
+const editRole = (row) => {
+    if (row.roleId === "023-000000000000000000000000000000000001") {
+        ElMessage.info("管理员角色禁止修改！");
+        return;
+    }
+    rightEntityList.value = [];
+    showRoleFormDialogFlag.value = true;
+    roleFormDialogLoading.value = true;
+    getRoleData(row.roleId)
+        .then((res) => {
+            if (res && res.data.code == 200) {
+                const resData = res.data.data;
+                formModel.value.roleId = resData.roleId;
+                formModel.value.roleName = resData.roleName;
+                formModel.value.disabled = resData.disabled;
+                formModel.value.description = resData.description;
+                formModel.value.rightValueMap = resData.rightValueMap;
+                rightEntityList.value = copyNew(resData.rightEntityList);
             }
-            if (value.length > 30) {
-                callback(new Error("名字最多只能30个字符"));
-                // this.$message.error('角色名称最多30字符')
-                return;
-            }
-            let regEx = /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/;
-            if (!regEx.test(value)) {
-                callback(
-                    new Error(
-                        "请以中文、英文字母、数字开头，中间可输入下划线或横杠"
-                    )
-                );
-                // this.$message.error('请以中文、英文字母、数字开头，中间可输入下划线或横杠')
-                return;
-            }
-            callback();
-        },
-        // 单行设置权限
-        rowHandleCommand(command, row) {
-            let { entityCode, authorizable } = row;
-            for (let index = 1; index < 7; index++) {
-                // 新建
-                if (index == 2 || !authorizable) {
-                    this.formModel.rightValueMap[
-                        "r" + entityCode + "-" + index
-                    ] = command > 0 ? 50 : 0;
-                } else {
-                    this.formModel.rightValueMap[
-                        "r" + entityCode + "-" + index
-                    ] = command;
-                }
-            }
-        },
-        // 设置所有数据权限
-        allHandleCommand(command) {
-            this.rightEntityList.forEach((el) => {
-                this.formModel.rightValueMap["r" + el.entityCode + "-1"] =
-                    command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-2"] =
-                    command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-3"] =
-                    command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-4"] =
-                    command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-5"] =
-                    command;
-                this.formModel.rightValueMap["r" + el.entityCode + "-6"] =
-                    command;
-            });
-        },
-        getRightLevels(rightEntity) {
-            if (rightEntity.authorizable === true) {
-                return this.rowRightLevels;
-            } else {
-                return this.simpleRightLevels;
-            }
-        },
-        addNewRole() {
-            this.rightEntityList = [];
-            this.showRoleFormDialogFlag = true;
-            this.roleFormDialogLoading = true;
-            getBlankRoleData()
+            roleFormDialogLoading.value = false;
+        })
+        .catch((res) => {
+            ElMessage.error(res.message);
+            roleFormDialogLoading.value = false;
+        });
+};
+
+// 删除角色
+const deleteRole = (row) => {
+    if (row.roleId === "023-000000000000000000000000000000000001") {
+        ElMessage.info("管理员角色禁止删除！");
+        return;
+    }
+    ElMessageBox.confirm("是否删除该权限角色?", "删除确认")
+        .then(() => {
+            deleteRoleById(row.roleId)
                 .then((res) => {
-                    if (res && res.data.code == 200) {
-                        let resData = res.data.data;
-                        this.formModel.roleId = "";
-                        this.formModel.roleName = resData.roleName;
-                        this.formModel.disabled = resData.disabled;
-                        this.formModel.description = resData.description;
-                        this.formModel.rightValueMap = resData.rightValueMap;
-                        this.rightEntityList = copyNew(resData.rightEntityList);
+                    if (res.data.code == 200) {
+                        ElMessage.success("删除成功");
+                        mlSingleListRef.value.getTableList();
                     }
-                    this.roleFormDialogLoading = false;
                 })
                 .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                    this.roleFormDialogLoading = false;
+                    ElMessage.error(res.message);
                 });
-        },
+        })
+        .catch(() => {
+            ElMessage.info("取消删除");
+        });
+};
 
-        handleReadRightChange(entityCode, readRight) {
-            this.adjustEntityRight(entityCode, 2, readRight);
-            this.adjustEntityRight(entityCode, 3, readRight);
-            this.adjustEntityRight(entityCode, 4, readRight);
-        },
+/**
+ * ************************************************************** 角色弹框
+ */
 
-        adjustEntityRight(entityCode, rightType, readRight) {
-            let entityRight =
-                this.formModel.rightValueMap[
-                    "r" + entityCode + "-" + rightType
-                ];
-            if (!entityRight) {
-                entityRight = 0;
-            }
+// 是否显示角色弹框
+let showRoleFormDialogFlag = ref(false);
+// 角色弹框loading
+let roleFormDialogLoading = ref(false);
+// 权限数据
+let rightEntityList = shallowRef([]);
 
-            if (entityRight > readRight) {
-                this.formModel.rightValueMap[
-                    "r" + entityCode + "-" + rightType
-                ] = readRight;
-            }
-        },
+// 角色弹框
+let roleFormRes = ref();
+// 弹框数据
+let formModel = ref({
+    roleId: "",
+    roleName: "",
+    disabled: false,
+    description: "",
+    rightValueMap: {},
+});
 
-        handleEntityRightChange(entityCode, rightType, val) {
-            let entityReadRight =
-                this.formModel.rightValueMap["r" + entityCode + "-1"];
-            if (!entityReadRight) {
-                entityReadRight = 0;
-            }
+// 表单验证
+const validateRoleName = (rule, value, callback) => {
+    if (!value) {
+        callback(new Error("请输入角色名称"));
+        return;
+    }
+    if (value.length < 2) {
+        callback(new Error("请输入至少两个字符"));
+        return;
+    }
+    if (value.length > 30) {
+        callback(new Error("名字最多只能30个字符"));
+        return;
+    }
+    let regEx = /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/;
+    if (!regEx.test(value)) {
+        callback(
+            new Error("请以中文、英文字母、数字开头，中间可输入下划线或横杠")
+        );
+        return;
+    }
+    callback();
+};
+let formRules = shallowRef({
+    roleName: [{ validator: validateRoleName, trigger: "blur" }],
+});
+// 功能权限
+let funcRight = shallowRef([
+    {
+        label: "实体管理",
+        value: "r6001",
+    },
+    {
+        label: "删除实体",
+        value: "r6002",
+    },
+    {
+        label: "设计表单布局",
+        value: "r6003",
+    },
+    {
+        label: "单选项管理",
+        value: "r6005",
+    },
+    {
+        label: "多选项管理",
+        value: "r6006",
+    },
+    {
+        label: "配置导航",
+        value: "r6007",
+    },
+    {
+        label: "实体布局配置",
+        value: "r6008",
+    },
+    {
+        label: "回收站管理",
+        value: "r6009",
+    },
+    {
+        label: "修改历史查询",
+        value: "r6010",
+    },
+    {
+        label: "数据导入",
+        value: "r6011",
+    },
+    {
+        label: "审批撤销",
+        value: "r6013",
+    },
+    {
+        label: "登录日志查看",
+        value: "r6014",
+    },
+    {
+        label: "触发器执行日志查看",
+        value: "r6015",
+    },
+]);
 
-            if (val > entityReadRight) {
-                let infoContent = "新建权限不能高于查看权限";
-                if (rightType === 2) {
-                    //
-                }
-                if (rightType === 3) {
-                    infoContent = "修改权限不能高于查看权限";
-                }
-                if (rightType === 4) {
-                    infoContent = "删除权限不能高于查看权限";
-                }
-                this.$message.info(infoContent);
-                this.formModel.rightValueMap[
-                    "r" + entityCode + "-" + rightType
-                ] = entityReadRight;
-            }
-        },
+const handleReadRightChange = (entityCode, readRight) => {
+    adjustEntityRight(entityCode, 2, readRight);
+    adjustEntityRight(entityCode, 3, readRight);
+    adjustEntityRight(entityCode, 4, readRight);
+};
 
-        saveRole() {
-            this.$refs["roleForm"].validate((valid) => {
-                if (valid) {
-                    //TODO 检查实体权限是否合理，比如删除权限是否大于读取权限
-                    this.roleFormDialogLoading = true;
-                    saveRoleData(this.formModel)
-                        .then((res) => {
-                            if (res.data.code == 200) {
-                                this.$message.success("保存成功");
-                                this.showRoleFormDialogFlag = false;
-                                this.$refs.mlSingleListRef.getTableList();
-                            }
-                            this.roleFormDialogLoading = false;
-                        })
-                        .catch((res) => {
-                            console.log(res,'res')
-                            this.$message({
-                                message: res.message,
-                                type: "error",
-                            });
-                            this.roleFormDialogLoading = false;
-                        });
-                } else {
-                    this.$nextTick(() => {
-                        this.elFormErrorScrollIntoView();
+const adjustEntityRight = (entityCode, rightType, readRight) => {
+    let entityRight =
+        formModel.value.rightValueMap["r" + entityCode + "-" + rightType];
+    if (!entityRight) {
+        entityRight = 0;
+    }
+
+    if (entityRight > readRight) {
+        formModel.value.rightValueMap["r" + entityCode + "-" + rightType] =
+            readRight;
+    }
+};
+
+const handleEntityRightChange = (entityCode, rightType, val) => {
+    let entityReadRight =
+        formModel.value.rightValueMap["r" + entityCode + "-1"];
+    if (!entityReadRight) {
+        entityReadRight = 0;
+    }
+
+    if (val > entityReadRight) {
+        let infoContent = "新建权限不能高于查看权限";
+        if (rightType === 2) {
+            //
+        }
+        if (rightType === 3) {
+            infoContent = "修改权限不能高于查看权限";
+        }
+        if (rightType === 4) {
+            infoContent = "删除权限不能高于查看权限";
+        }
+        ElMessage.info(infoContent);
+        formModel.value.rightValueMap["r" + entityCode + "-" + rightType] =
+            entityReadRight;
+    }
+};
+
+let rowRightLevels = shallowRef([
+    { label: "无权限", value: 0 },
+    { label: "本人", value: 10 },
+    { label: "本部门", value: 20 },
+    { label: "本部门及以下", value: 30 },
+    { label: "上级部门及以下", value: 40 },
+    { label: "全部数据", value: 50 },
+]);
+
+let simpleRightLevels = shallowRef([
+    { label: "无权限", value: 0 },
+    { label: "全部数据", value: 50 },
+]);
+
+let oneselfRightLevels = shallowRef([
+    { label: "不允许", value: 0 },
+    { label: "允许", value: 50 },
+]);
+
+const getRightLevels = (rightEntity) => {
+    if (rightEntity.authorizable === true) {
+        return rowRightLevels.value;
+    } else {
+        return simpleRightLevels.value;
+    }
+};
+
+// 单行设置权限
+const rowHandleCommand = (command, row) => {
+    let { entityCode, authorizable } = row;
+    for (let index = 1; index < 7; index++) {
+        // 新建
+        if (index == 2 || !authorizable) {
+            formModel.value.rightValueMap["r" + entityCode + "-" + index] =
+                command > 0 ? 50 : 0;
+        } else {
+            formModel.value.rightValueMap["r" + entityCode + "-" + index] =
+                command;
+        }
+    }
+};
+// 设置所有数据权限
+const allHandleCommand = (command) => {
+    rightEntityList.value.forEach((el) => {
+        formModel.value.rightValueMap["r" + el.entityCode + "-1"] = command;
+        formModel.value.rightValueMap["r" + el.entityCode + "-2"] = command;
+        formModel.value.rightValueMap["r" + el.entityCode + "-3"] = command;
+        formModel.value.rightValueMap["r" + el.entityCode + "-4"] = command;
+        formModel.value.rightValueMap["r" + el.entityCode + "-5"] = command;
+        formModel.value.rightValueMap["r" + el.entityCode + "-6"] = command;
+    });
+};
+
+const saveRole = () => {
+    roleFormRes.value.validate((valid) => {
+        if (valid) {
+            //TODO 检查实体权限是否合理，比如删除权限是否大于读取权限
+            roleFormDialogLoading.value = true;
+            saveRoleData(formModel.value)
+                .then((res) => {
+                    if (res.data.code == 200) {
+                        ElMessage.success("保存成功");
+                        showRoleFormDialogFlag.value = false;
+                        mlSingleListRef.value.getTableList();
+                    }
+                    roleFormDialogLoading.value = false;
+                })
+                .catch((res) => {
+                    console.log(res, "res");
+                    ElMessage({
+                        message: res.message,
+                        type: "error",
                     });
-                    return false;
-                }
-            });
-        },
-        elFormErrorScrollIntoView() {
-            // 获取第一个校验错误的元素
-            const element = document.querySelectorAll(
-                ".el-form-item__error"
-            )[0];
-            // 滚动到错误元素对应位置
-            element.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-            });
-        },
-
-        editRole(row) {
-            if (row.roleId === "023-000000000000000000000000000000000001") {
-                this.$message.info("管理员角色禁止修改！");
-                return;
-            }
-            this.rightEntityList = [];
-            this.showRoleFormDialogFlag = true;
-            this.roleFormDialogLoading = true;
-            getRoleData(row.roleId)
-                .then((res) => {
-                    if (res && res.data.code == 200) {
-                        const resData = res.data.data;
-                        this.formModel.roleId = resData.roleId;
-                        this.formModel.roleName = resData.roleName;
-                        this.formModel.disabled = resData.disabled;
-                        this.formModel.description = resData.description;
-                        this.formModel.rightValueMap = resData.rightValueMap;
-                        this.rightEntityList = copyNew(resData.rightEntityList);
-                    }
-                    this.roleFormDialogLoading = false;
-                })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                    this.roleFormDialogLoading = false;
+                    roleFormDialogLoading.value = false;
                 });
-        },
+        } else {
+            nextTick(() => {
+                elFormErrorScrollIntoView();
+            });
+            return false;
+        }
+    });
+};
 
-        deleteRole(row) {
-            if (row.roleId === "023-000000000000000000000000000000000001") {
-                this.$message.info("管理员角色禁止删除！");
-                return;
-            }
-
-            this.$confirm("是否删除该权限角色?", "删除确认")
-                .then(() => {
-                    deleteRoleById(row.roleId)
-                        .then((res) => {
-                            if (res.error != null) {
-                                this.$message({
-                                    message: res.error,
-                                    type: "error",
-                                });
-                                return;
-                            }
-
-                            this.$message.success("删除成功");
-                            this.$refs.mlSingleListRef.getTableList();
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                message: res.message,
-                                type: "error",
-                            });
-                        });
-                })
-                .catch(() => {
-                    this.$message.info("取消删除");
-                });
-        },
-
-    },
+const elFormErrorScrollIntoView = () => {
+    // 获取第一个校验错误的元素
+    const element = document.querySelectorAll(".el-form-item__error")[0];
+    // 滚动到错误元素对应位置
+    element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+    });
 };
 </script>
+
 
 <style lang="scss" scoped>
 .el-container {
@@ -763,26 +731,4 @@ export default {
     padding: 10px 0;
     padding-top: 5px;
 }
-
-// .el-row.entity-right-setting {
-//     margin-top: 0;
-//     margin-bottom: 0;
-//     font-size: 12px;
-//     //font-style: italic;
-
-//     .el-col.text-align-center {
-//         text-align: center;
-//     }
-
-//     .bold {
-//         //font-weight: 600;
-//         //text-decoration: underline;
-//     }
-// }
-
-// .el-row.function-right-setting {
-//     margin-top: 15px;
-//     margin-bottom: 0;
-//     font-size: 12px;
-// }
 </style>
