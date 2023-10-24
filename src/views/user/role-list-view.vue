@@ -1,26 +1,58 @@
 <template>
     <el-container direction="horizontal">
-        <data-list
-            ref="dataList"
-            :entity="entity"
-            :custom-add-action="true"
-            @addTableRecord="addNewRole"
-            :custom-edit-action="true"
-            @editTableRow="editRole"
-            :custom-delete-action="true"
-            @deleteTableRow="deleteRole"
-            :custom-data-load="true"
-            :page="page"
-            @handleSizeChange="handleSizeChange"
-            @handleCurrentChange="handleCurrentChange"
-            @refreshTable="handelTableRefresh"
-            @searchData="searchRole"
-            @clearSearch="clearSearch"
+        <mlSingleList
+            ref="mlSingleListRef"
+            title="权限角色"
+            :mainEntity="entity"
+            :fieldsList="fieldsList"
+            :sortFields="sortFields"
+            fieldName="roleName"
+            :tableColumn="tableColumn"
+            :filterItems="filterItems"
         >
-            <template #listTitle>
-                <span>角色列表</span>
+            <template #addbutton>
+                <el-button type="primary" @click="addNewRole" :disabled="!checkRole('r23-2')">
+                    <el-icon size="14">
+                        <ElIconPlus />
+                    </el-icon>
+                    <span class="ml-5">新建角色</span>
+                </el-button>
             </template>
-        </data-list>
+            <template #activeRow>
+                <el-table-column label="操作" :align="'center'" width="140" fixed="right">
+                    <template #default="scope">
+                        <el-button
+                            size="small"
+                            type="primary"
+                            link
+                            :disabled="!checkRole('r23-3')"
+                            @click="editRole(scope.row)"
+                        >
+                            <span class="mr-3">
+                                <el-icon>
+                                    <ElIconEdit />
+                                </el-icon>
+                            </span>
+                            <span>编辑</span>
+                        </el-button>
+                        <el-button
+                            size="small"
+                            link
+                            type="primary"
+                            :disabled="!checkRole('r23-4')"
+                            @click="deleteRole(scope.row)"
+                        >
+                            <span class="mr-3">
+                                <el-icon>
+                                    <ElIconDelete />
+                                </el-icon>
+                            </span>
+                            <span>删除</span>
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </template>
+        </mlSingleList>
         <el-dialog
             :title="formTitle"
             v-model="showRoleFormDialogFlag"
@@ -230,10 +262,7 @@
                                 v-for="(funcItem,funcInx) of funcRight"
                                 :key="funcInx"
                             >
-                                <el-form-item
-                                    :label="funcItem.label"
-                                    :title="funcItem.value"
-                                >
+                                <el-form-item :label="funcItem.label" :title="funcItem.value">
                                     <el-radio-group
                                         v-model="formModel.rightValueMap[funcItem.value]"
                                     >
@@ -287,36 +316,35 @@ export default {
     data() {
         return {
             fieldsList: "roleName, disabled, description",
-
-            columns: [
+            // 默认排序
+            sortFields: [
+                {
+                    fieldName: "createdBy",
+                    type: "DESC",
+                },
+            ],
+            // 过滤条件
+            filterItems: [],
+            tableColumn: [
                 {
                     prop: "roleName",
                     label: "用户名称",
                     width: "180",
-                    type: "Text",
-                    align: "center",
                 },
                 {
                     prop: "disabled",
                     label: "是否禁用",
+                    align:'center',
                     width: "120",
-                    type: "Boolean",
-                    align: "left",
+                    formatter: (row) => {
+                        return row.disabled ? "是" : "否";
+                    },
                 },
                 {
                     prop: "description",
                     label: "角色描述",
-                    type: "TextArea",
-                    align: "center",
                 },
             ],
-
-            page: {
-                pageNo: 1,
-                limit: 20,
-                sizes: [10, 20, 30, 50, 100],
-                total: 0,
-            },
 
             searchFilter: "",
 
@@ -419,9 +447,12 @@ export default {
         },
     },
     mounted() {
-        this.loadRoleData();
+        // this.loadRoleData();
     },
     methods: {
+        checkRole(str) {
+            return this.$TOOL.checkRole(str);
+        },
         validateRoleName(rule, value, callback) {
             if (!value) {
                 callback(new Error("请输入角色名称"));
@@ -490,33 +521,6 @@ export default {
                 return this.simpleRightLevels;
             }
         },
-
-        loadRoleData(filter) {
-            let realFilter = isEmptyStr(filter) ? null : filter;
-            getDataList(
-                this.entity,
-                this.fieldsList,
-                realFilter,
-                this.page.limit,
-                this.page.pageNo
-            )
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                        return;
-                    }
-
-                    this.$refs["dataList"].setTableData(
-                        this.columns,
-                        res.data.dataList
-                    );
-                    this.page.total = res.data.pagination.total;
-                })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                });
-        },
-
         addNewRole() {
             this.rightEntityList = [];
             this.showRoleFormDialogFlag = true;
@@ -597,11 +601,12 @@ export default {
                             if (res.data.code == 200) {
                                 this.$message.success("保存成功");
                                 this.showRoleFormDialogFlag = false;
-                                this.loadRoleData(this.searchFilter);
+                                this.$refs.mlSingleListRef.getTableList();
                             }
                             this.roleFormDialogLoading = false;
                         })
                         .catch((res) => {
+                            console.log(res,'res')
                             this.$message({
                                 message: res.message,
                                 type: "error",
@@ -674,7 +679,7 @@ export default {
                             }
 
                             this.$message.success("删除成功");
-                            this.loadRoleData(this.searchFilter);
+                            this.$refs.mlSingleListRef.getTableList();
                         })
                         .catch((res) => {
                             this.$message({
@@ -688,30 +693,6 @@ export default {
                 });
         },
 
-        handleSizeChange(val) {
-            this.page.limit = val;
-            this.page.pageNo = 1;
-            this.loadRoleData(this.searchFilter);
-        },
-
-        handleCurrentChange(val) {
-            this.page.pageNo = val;
-            this.loadRoleData(this.searchFilter);
-        },
-
-        handelTableRefresh() {
-            this.loadRoleData(this.searchFilter);
-        },
-
-        searchRole(keyword) {
-            this.searchFilter = `([roleName] like '%${keyword}%')`;
-            this.loadRoleData(this.searchFilter);
-        },
-
-        clearSearch() {
-            this.searchFilter = "";
-            this.loadRoleData();
-        },
     },
 };
 </script>
