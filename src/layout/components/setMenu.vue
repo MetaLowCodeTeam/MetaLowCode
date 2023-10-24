@@ -98,7 +98,7 @@
                             @change="associationChange"
                         >
                             <el-option
-                                v-for="(op,inx) of unSystemEntityList"
+                                v-for="(op,inx) of getEntityList()"
                                 :key="inx"
                                 :value="op.entityCode"
                                 :label="op.label"
@@ -230,11 +230,17 @@ onMounted(() => {
 
 let parentMenu = ref("父级菜单");
 
+// 格式化实体
+const getEntityList = ()=>{
+    return unSystemEntityList.value.filter(el => !el.detailEntityFlag )
+}
+
 // 节点选中
 const nodeClick = (node) => {
     cutMenu.value = Object.assign({}, node);
     cutMenu.value.useIcon = cutMenu.value.useIcon || ""
 };
+
 
 let isShowIconDialog = ref(false);
 // 选择图标
@@ -278,7 +284,7 @@ let cutMenu = ref(null);
 
 // 关联项切换
 const associationChange = (entityCode) => {
-    let linkEntity = unSystemEntityList.value.filter(
+    let linkEntity = getEntityList().filter(
         (el) => el.entityCode == entityCode
     );
     cutMenu.value.name = linkEntity[0].label;
