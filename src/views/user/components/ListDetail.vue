@@ -22,13 +22,13 @@
                     />
                 </el-col>
                 <el-col :span="24">
-                    <el-button icon="Edit" @click="editClick(row)" :isDisabled="!checkRole(3)">编辑</el-button>
+                    <el-button icon="Edit" @click="editClick(row)" :disabled="!checkRole(3)">编辑</el-button>
                 </el-col>
                 <el-col :span="24" v-if="detailEntity == 'User'">
                     <el-button
                         icon="Key"
                         @click="openResetPasswordDialog(row)"
-                        :isDisabled="!checkRole(3)"
+                        :disabled="!checkRole(3)"
                     >重置密码</el-button>
                 </el-col>
                 <el-col :span="24">
@@ -41,7 +41,7 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item :isDisabled="!checkRole(4)">
+                                <el-dropdown-item :disabled="!checkRole(4)">
                                     <span @click="delCick(row[idFieldName])" v-if="checkRole(4)">删除</span>
                                     <span v-else>删除</span>
                                 </el-dropdown-item>

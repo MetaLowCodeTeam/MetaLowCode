@@ -133,58 +133,6 @@
             nameFieldName="userName"
             @onRefresh="onRefresh"
         />
-        <!-- <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange" titleFromApi="userName">
-            <template #tab>
-                <TabMemberList
-                    v-model="memberList"
-                    @delMembers="changeMembers"
-                    :id="curUserId"
-                    isRole
-                    :isDisabled="!checkRole('r21-4')"
-                />
-            </template>
-            <template #operate="{row}">
-                <el-row class="action-group">
-                    <el-col :span="24">
-                        <AddMembers
-                            @addMembers="changeMembers"
-                            :paramId="row.userId"
-                            paramName="角色"
-                            paramType="Role"
-                            :isDisabled="!checkRole('r21-3')"
-                        />
-                    </el-col>
-                    <el-col :span="24">
-                        <el-button
-                            icon="Edit"
-                            @click="editClick(row,'dialog')"
-                            :disabled="!checkRole('r21-3')"
-                        >编辑</el-button>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-button icon="Key" @click="openResetPasswordDialog(row)">重置密码</el-button>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-dropdown trigger="click">
-                            <el-button>
-                                更多
-                                <el-icon style="transform: rotate(90deg);">
-                                    <ElIconMoreFilled />
-                                </el-icon>
-                            </el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item :disabled="!checkRole('r21-4')">
-                                        <span @click="deleteTableData(row)" v-if="checkRole('r21-4')">删除</span>
-                                        <span v-else>删除</span>
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </el-col>
-                </el-row>
-            </template>
-        </mlListDetails>-->
     </el-container>
 </template>
 

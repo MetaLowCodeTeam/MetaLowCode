@@ -11,7 +11,7 @@
         @highlightClick="highlightClick"
     >
         <template #addbutton>
-            <el-button type="primary" @click="addClick">
+            <el-button type="primary" @click="addClick" :disabled="!$TOOL.checkRole('r24-3')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -21,7 +21,7 @@
         <template #activeRow>
             <el-table-column label="操作" :align="'center'" width="140" fixed="right">
                 <template #default="scope">
-                    <el-button size="small" type="primary" link @click="editClick(scope.row)">
+                    <el-button size="small" type="primary" link @click="editClick(scope.row)" :disabled="!$TOOL.checkRole('r24-3')">
                         <span class="mr-3">
                             <el-icon>
                                 <ElIconEdit />
@@ -29,7 +29,13 @@
                         </span>
                         <span>编辑</span>
                     </el-button>
-                    <el-button size="small" link type="primary" @click="delCick(scope.row)">
+                    <el-button
+                        size="small"
+                        link
+                        type="primary"
+                        @click="delCick(scope.row)"
+                        :disabled="!$TOOL.checkRole('r24-4')"
+                    >
                         <span class="mr-3">
                             <el-icon>
                                 <ElIconDelete />
@@ -52,13 +58,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";
 import { ElMessageBox, ElMessage } from "element-plus";
 import Edit from "@/views/customize-menu/edit.vue";
 import ListDetail from "./components/ListDetail.vue";
 import { delTeam } from "@/api/team";
-
+const $TOOL = inject("$TOOL");
 // 默认排序
 let sortFields = ref([
     {
@@ -145,5 +151,4 @@ const highlightClick = (row) => {
 </script>
 
 <style lang="scss" scoped>
-
 </style>
