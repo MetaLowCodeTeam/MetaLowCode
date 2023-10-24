@@ -105,6 +105,7 @@
                                 size="small"
                                 type="primary"
                                 link
+                                :disabled="checkRoleFn(3)"
                                 @click="actionBtn('edit',scope.row)"
                             >
                                 <span class="mr-3">
@@ -118,6 +119,7 @@
                                 size="small"
                                 link
                                 type="primary"
+                                :disabled="checkRoleFn(4)"
                                 @click="deleteProcess(scope.row)"
                             >
                                 <span class="mr-3">
@@ -150,6 +152,7 @@ import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import { getDataList, deleteRecord, getEntityCodeList } from "@/api/crud";
 import { ElMessageBox } from "element-plus";
+const $TOOL = inject("$TOOL")
 const props = defineProps({
     // 实体名称
     entityName: { type: String, default: "" },
@@ -163,6 +166,8 @@ const props = defineProps({
     defalutSortField: { type: String, default: "" },
     // 默认查询字段
     defaultFilter: { type: String, default: "" },
+    // 权限字段
+    checkRole: { type: String, default: "" },
 });
 const emit = defineEmits(["goDetial", "actionBtn"]);
 const message = inject("$ElMessage");
@@ -197,6 +202,14 @@ let tableSort = ref([
 onMounted(() => {
     getEntityList();
 });
+
+// 权限校验
+const checkRoleFn = (num)=>{
+    if(!props.checkRole){
+        return false
+    }
+    return !$TOOL.checkRole(props.checkRole + "-" + num)
+}
 
 // 获取左侧实体列表
 const getEntityList = async () => {

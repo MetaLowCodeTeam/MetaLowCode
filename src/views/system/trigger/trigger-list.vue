@@ -9,9 +9,10 @@
         defalutSortField="modifiedOn"
         defaultFilter="name"
         @actionBtn="actionBtn"
+        checkRole="r48"
     >
         <template #addbutton>
-            <el-button type="primary" @click="actionBtn({target:'add'})">
+            <el-button type="primary" @click="actionBtn({target:'add'})" :disabled="!$TOOL.checkRole('r48-3')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -23,9 +24,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
-
+const $TOOL = inject("$TOOL")
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([

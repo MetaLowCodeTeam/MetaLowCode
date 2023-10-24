@@ -1,7 +1,7 @@
 <template>
     <!-- 就执行操作 -->
     <div class="perform-operations">
-        <el-form label-width="124px">
+        <el-form label-width="124px" :disabled="!$TOOL.checkRole('r48-3')">
             <el-form-item label="执行操作">
                 <span class="blod">{{ trigger.actionType?.label}}</span>
             </el-form-item>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted } from "vue";
+import { watch, ref, onMounted, inject } from "vue";
 // 字段更新
 import fieldUpdate from "./fieldUpdate.vue";
 // 字段聚合
@@ -75,6 +75,7 @@ import autoShare from "./autoShare.vue"
 const props = defineProps({
     modelValue: null,
 });
+const $TOOL = inject("$TOOL");
 const emit = defineEmits(["update:modelValue", "onSave"]);
 
 watch(

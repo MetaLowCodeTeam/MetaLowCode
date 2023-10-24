@@ -1,7 +1,7 @@
 <template>
     <!-- 当发生动作 -->
     <div class="trigger-take-action">
-        <el-form label-width="120px">
+        <el-form label-width="120px" :disabled="!$TOOL.checkRole('r48-3')">
             <el-form-item label="源实体">
                 <span class="blod">{{ allEntityLabel[trigger.entityCode] }}</span>
             </el-form-item>
@@ -59,7 +59,8 @@
             <el-form-item label="附加过滤条件">
                 <el-row>
                     <el-col :span="24">
-                        <div class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
+                        <div v-if="$TOOL.checkRole('r48-3')" class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
+                        <el-button v-else disabled link>{{ getSetConditionText() }}</el-button>
                     </el-col>
                     <el-col :span="24">
                         <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
@@ -82,12 +83,12 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted } from "vue";
+import { watch,inject, ref, onMounted } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { allEntityLabel } = storeToRefs(useCommonStore());
 import mlCron from "@/components/mlCron/index.vue";
-
+const $TOOL = inject("$TOOL");
 const props = defineProps({
     modelValue: null,
 });
