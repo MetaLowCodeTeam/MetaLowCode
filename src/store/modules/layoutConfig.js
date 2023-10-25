@@ -86,7 +86,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                                     : subEl.outLink,
 
 
-                        component: el.type == 1 ? "customize-menu/list" : el.type == 3 ? ("custom-page/" + el.outLink) : '',
+                        component: subEl.type == 1 ? "customize-menu/list" : subEl.type == 3 ? ("custom-page/" + subEl.outLink) : '',
                     });
                 });
             } else {
@@ -94,17 +94,17 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 if (el.type == 1) {
                     initMenu.path = "/web/" + el.entityName + "/list";
                 }
-                if (el.type == 3) {
+                else if (el.type == 3) {
                     initMenu.path = "/web/custom-page/" + el.outLink;
                 } else {
                     initMenu.path = el.outLink;
                 }
+
                 if (el.type == 1) {
                     initMenu.component = "customize-menu/list";
                 } else if (el.type == 3) {
                     initMenu.component = "custom-page/" + el.outLink;
                 }
-
             }
             formatRoutrs.push(initMenu);
         });

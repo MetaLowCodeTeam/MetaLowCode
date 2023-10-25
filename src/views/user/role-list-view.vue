@@ -250,9 +250,6 @@
                     </el-tab-pane>
 
                     <el-tab-pane label="功能权限">
-                        <el-row :gutter="12" class="function-right-setting">
-                            <el-col :offset="0" :span="4">功能权限设置</el-col>
-                        </el-row>
                         <el-row>
                             <hr style="border: 0;border-top: 1px dotted #cccccc" />
                         </el-row>
@@ -521,7 +518,7 @@ let funcRight = shallowRef([
         value: "r6014",
     },
     {
-        label: "触发器执行日志查看",
+        label: "触发器执行日志",
         value: "r6015",
     },
     {
