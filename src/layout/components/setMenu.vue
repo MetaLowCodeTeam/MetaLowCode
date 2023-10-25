@@ -86,6 +86,7 @@
                     <el-tabs v-model="cutMenu.type">
                         <el-tab-pane label="关联项" :name="1"></el-tab-pane>
                         <el-tab-pane label="外部地址" :name="2"></el-tab-pane>
+                        <el-tab-pane label="自定义页面" :name="3"></el-tab-pane>
                     </el-tabs>
                     <div
                         v-if="cutMenu.type == 1 && (!cutMenu.children || (cutMenu.children && cutMenu.children.length < 1))"
@@ -115,6 +116,13 @@
                             class="w-100"
                             disabled
                         ></el-select>
+                    </div>
+                    <div v-if="cutMenu.type == 3">
+                        <el-input
+                            v-model="cutMenu.outLink"
+                            placeholder="输入自定义页面名称，例：page"
+                            clearable
+                        ></el-input>
                     </div>
                     <div v-if="cutMenu.type == 2">
                         <el-input
@@ -323,6 +331,10 @@ const confirmMenu = () => {
         $ElMessage.warning("请输入外部地址");
         return;
     }
+    if (cutMenu.value.type == 3 && !cutMenu.value.outLink) {
+        $ElMessage.warning("请输入自定义页面名称");
+        return;
+    }
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
         let inx = getMenuInx(menuData.list, cutMenu.value.guid);
@@ -361,7 +373,6 @@ const confirmMenu = () => {
             }
         }
     }
-    console.log(cutMenu.value)
     cutMenu.value = null;
 };
 // 获取数据索引
@@ -463,7 +474,6 @@ const layoutSave = async () => {
         loading.value = false;
     }
 
-    // console.log(menuData, "保存数据");
 };
 
 // 格式化菜单数据
@@ -496,7 +506,6 @@ const formatMenuList = () => {
             saveMenu.splice(inx, 1);
         }
     });
-    console.log(saveMenu, "saveMenu");
     return saveMenu;
 };
 </script>

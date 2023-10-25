@@ -82,20 +82,29 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                         },
                         path:
                             subEl.type == 1
-                                ? "/web/" + subEl.entityName + "/list"
-                                : subEl.outLink,
-                        component: "customize-menu/list",
+                                ? ("/web/" + subEl.entityName + "/list") : subEl.type == 3 ? ("/web/custom-page/" + el.outLink)
+                                    : subEl.outLink,
+
+
+                        component: el.type == 1 ? "customize-menu/list" : el.type == 3 ? ("custom-page/" + el.outLink) : '',
                     });
                 });
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
                 if (el.type == 1) {
                     initMenu.path = "/web/" + el.entityName + "/list";
+                }
+                if (el.type == 3) {
+                    initMenu.path = "/web/custom-page/" + el.outLink;
                 } else {
                     initMenu.path = el.outLink;
                 }
+                if (el.type == 1) {
+                    initMenu.component = "customize-menu/list";
+                } else if (el.type == 3) {
+                    initMenu.component = "custom-page/" + el.outLink;
+                }
 
-                initMenu.component = "customize-menu/list";
             }
             formatRoutrs.push(initMenu);
         });
