@@ -9,9 +9,10 @@
         defalutSortField="modifiedOn"
         defaultFilter="flowName"
         @actionBtn="actionBtn"
+        checkRole="r31"
     >
         <template #addbutton>
-            <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral">
+            <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral" :disabled="!$TOOL.checkRole('r31-2')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -33,9 +34,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
+const $TOOL = inject('$TOOL')
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([
     {

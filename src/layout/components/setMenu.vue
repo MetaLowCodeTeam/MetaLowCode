@@ -168,7 +168,7 @@
                     <mlShareTo v-model="menuData.shareTo" />
                 </div>
                 <el-button @click="isShow = false" :loading="loading">取消</el-button>
-                <el-button type="primary" @click="textSave" :loading="loading">保存</el-button>
+                <el-button type="primary" @click="layoutSave" :loading="loading">保存</el-button>
             </div>
         </template>
     </mlDialog>
@@ -408,8 +408,8 @@ const getMenuFn = () => {
     menuData.list = menuData.config ? JSON.parse(menuData.config) : [];
 };
 
-// 测试保存
-const textSave = async () => {
+// 导航保存
+const layoutSave = async () => {
     let { layoutConfigId, configName } = menuData;
     if (!configName) {
         $ElMessage.warning("请输入菜单名称");

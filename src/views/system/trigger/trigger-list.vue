@@ -12,7 +12,7 @@
         checkRole="r48"
     >
         <template #addbutton>
-            <el-button type="primary" @click="actionBtn({target:'add'})" :disabled="!$TOOL.checkRole('r48-3')">
+            <el-button type="primary" @click="actionBtn({target:'add'})" :disabled="!$TOOL.checkRole('r48-2')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>

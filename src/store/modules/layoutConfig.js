@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
+
 // import useLayoutConfigStore from "@/store/modules/layoutConfig";
 // const { setNavigationList } = useLayoutConfigStore();
 // import { storeToRefs } from 'pinia';
 // const { navigationList } = storeToRefs(useLayoutConfigStore());
 const useLayoutConfigStore = defineStore('layoutConfig', () => {
+    const $TOOL = inject('$TOOL');
     // 导航列表
     let navigationList = ref([]);
     // 默认导航ID
@@ -38,6 +40,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 useMenuList.value = [];
             }
         }
+
     }
     // 格式化导航
     const formatRouters = (config) => {
@@ -49,7 +52,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             tempConfig = JSON.stringify([]);
         }
         let list = JSON.parse(tempConfig);
-        let testRoutes = [...list];
+        let testRoutes = [...list]
+        console.log(testRoutes, 'testRoutes')
         let formatRoutrs = [];
         testRoutes.forEach((el) => {
             let initMenu = {
@@ -60,7 +64,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
-            initMenu.meta.icon = el.useIcon || 'set-up'
+            initMenu.meta.icon = el.useIcon || 'set-up';
+            initMenu.meta.hidden = el.entityCode && !$TOOL.checkRole('r' + el.entityCode + '-1');
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
                 initMenu.path = "";
@@ -73,7 +78,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             type: subEl.type == 2 ? "link" : "",
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
-                            icon:subEl.useIcon || 'set-up'
+                            icon: subEl.useIcon || 'set-up',
+                            hidden: subEl.entityCode && !$TOOL.checkRole('r' + subEl.entityCode + '-1'),
                         },
                         path:
                             subEl.type == 1
