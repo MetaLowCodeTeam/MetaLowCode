@@ -53,7 +53,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         let list = JSON.parse(tempConfig);
         let testRoutes = [...list]
-        console.log(testRoutes, 'testRoutes')
         let formatRoutrs = [];
         testRoutes.forEach((el) => {
             let initMenu = {

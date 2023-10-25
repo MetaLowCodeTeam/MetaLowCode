@@ -55,7 +55,9 @@
                 <div class="end-node-circle"></div>
                 <div class="end-node-text">流程结束</div>
             </div>
+            <div class="z-model" v-if="!$TOOL.checkRole('r31-3')"></div>
         </div>
+        <!--  -->
     </div>
 </template>
 
@@ -126,6 +128,7 @@ const editZoom = (target) => {
     font-size: 13px;
     position: relative;
     box-sizing: border-box;
+   
 }
 .sc-workflow-design .box-scale {
     display: inline-block;
@@ -136,6 +139,15 @@ const editZoom = (target) => {
     justify-content: center;
     flex-wrap: wrap;
     min-width: min-content;
+    .z-model {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba($color: #000000, $alpha: 0.3);
+        z-index: 6666;
+    }
 }
 
 .sc-workflow-design {

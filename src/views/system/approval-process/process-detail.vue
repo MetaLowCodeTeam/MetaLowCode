@@ -2,70 +2,74 @@
     <el-container class="process-detail" v-loading="loading">
         <el-header class="process-title">
             {{ data.flowName }}
-            <el-button type="primary" class="fr" @click="saveApprovalConfig">保存</el-button>
+            <el-button
+                type="primary"
+                class="fr"
+                @click="saveApprovalConfig"
+                :disabled="!$TOOL.checkRole('r31-3')"
+            >保存</el-button>
         </el-header>
         <el-container class="main-container">
             <mlWorkflow v-model="data.nodeConfig" />
         </el-container>
+        <!-- <div class="z-model" v-if="!$TOOL.checkRole('r31-3')"></div> -->
     </el-container>
 </template>
 
-<script>
+<script setup>
 import mlWorkflow from "@/components/mlWorkflow/index.vue";
-export default {
-    components: {
-        mlWorkflow,
-    },
-    data() {
-        return {
-            loading: false,
-            approvalConfigId: null,
-            data: {
-                approvalConfigId: "0000030-b105364997e64227b6f567bbd900a78b",
-                flowName: "请假审批",
-            },
-        };
-    },
-    mounted() {
-        this.approvalConfigId = this.$route.query.approvalConfigId;
-        this.getApprovalConfig();
-    },
-    methods: {
-        async getApprovalConfig() {
-            let { approvalConfigId } = this;
-            this.loading = true;
-            let res = await this.$API.approval.detial.get({ approvalConfigId });
-            if (res) {
-                this.data = Object.assign(this.data, res.data);
-                // 新建的
-                if (!this.data.nodeConfig) {
-                    this.data.nodeConfig = {
-                        nodeName: "发起人",
-                        type: 0,
-                        // 谁可以审批
-                        nodeRoleType: 2,
-                        // 指定用户
-                        nodeRoleList: [],
-                        // 发起条件
-                        filter: {
-                            equation: "",
-                            items: [],
-                        },
-                    };
-                }
-            }
-            this.loading = false;
-        },
-        async saveApprovalConfig() {
-            let { data } = this;
-            this.loading = true;
-            let res = await this.$API.approval.detial.save(data);
-            if (res) {
-                this.$message.success("保存成功");
-            }
-            this.loading = false;
-        },
-    },
+import { inject, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+const $API = inject("$API");
+const $TOOL = inject("$TOOL");
+const route = useRouter();
+
+let loading = ref(false);
+let approvalConfigId = ref("");
+let data = ref({
+    approvalConfigId: "0000030-b105364997e64227b6f567bbd900a78b",
+    flowName: "请假审批",
+});
+
+onMounted(() => {
+    approvalConfigId.value = route.currentRoute.value.query.approvalConfigId;
+    getApprovalConfig();
+});
+
+const getApprovalConfig = async () => {
+    loading.value = true;
+    let res = await $API.approval.detial.get({
+        approvalConfigId: approvalConfigId.value,
+    });
+    if (res) {
+        data.value = Object.assign(data.value, res.data);
+        // 新建的
+        if (!data.value.nodeConfig) {
+            data.value.nodeConfig = {
+                nodeName: "发起人",
+                type: 0,
+                // 谁可以审批
+                nodeRoleType: 2,
+                // 指定用户
+                nodeRoleList: [],
+                // 发起条件
+                filter: {
+                    equation: "",
+                    items: [],
+                },
+            };
+        }
+    }
+    loading.value = false;
+};
+
+const saveApprovalConfig = async () => {
+    loading.value = true;
+    let res = await $API.approval.detial.save(data.value);
+    if (res) {
+        this.$message.success("保存成功");
+    }
+    loading.value = false;
 };
 </script>
 
