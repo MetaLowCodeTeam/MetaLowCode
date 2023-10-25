@@ -57,7 +57,7 @@
             </el-row>
             <div class="info-text">更新时默认只推送修改的字段/数据，启用后会推送全部字段/数据</div>
         </el-form-item>
-        <el-form-item class="mt-15" label=" ">
+        <el-form-item class="mt-15" label=" " v-if="trigger.actionContent.callBackType == 'URL'">
             <el-row class="w-100">
                 <el-button
                     style="width: 80px;height: 36px;"
@@ -110,7 +110,7 @@ let testRes = ref({});
 // 推送测试
 const callBackTest = async () => {
     if (!trigger.value.actionContent.hookUrl) {
-        $ElMessage.warning("请数要推送到的URL");
+        $ElMessage.warning("请输入要推送到的URL");
         return;
     }
     // let actionContent = JSON.stringify(trigger.value.actionContent);
