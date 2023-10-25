@@ -5,10 +5,14 @@
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
 				<el-form-item label="显示名称" prop="label">
-					<el-input v-model="fieldProps.label"></el-input>
+					<el-input v-model="fieldProps.label" @change="handleFieldLabelChange"></el-input>
 				</el-form-item>
 				<el-form-item label="字段名称" prop="name">
-					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1"></el-input>
+					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1">
+						<template v-if="fieldState === 1" #append>
+							<el-button @click="generateFieldName">刷新生成</el-button>
+						</template>
+					</el-input>
 				</el-form-item>
 <!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
 <!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
