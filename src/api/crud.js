@@ -79,8 +79,8 @@ export function queryById(entityId, fieldNames) {
  * @param {*} queryReference 是否查询引用实体的字段（单引用）  true or false 默认 false
  * @param {*} queryReserved 是否查询系统字段  true or false 默认 false
  */
-export function queryEntityFields(entityCode, queryReference, queryReserved) {
-    return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved })
+export function queryEntityFields(entityCode, queryReference, queryReserved,firstReference) {
+    return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved,firstReference })
 }
 
 /**
