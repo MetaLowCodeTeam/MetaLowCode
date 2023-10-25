@@ -232,7 +232,8 @@ export default {
 				}
 			}).catch((err) => {
 				console.error('eeee', err)
-				this.$message.error(err.message)
+				//this.$message.error(err.message)
+				this.$message.info('已取消')
 			})
 		},
 
