@@ -6,13 +6,12 @@
                 type="primary"
                 class="fr"
                 @click="saveApprovalConfig"
-                :disabled="!$TOOL.checkRole('r31-3')"
+                :disabled="!$TOOL.checkRole('r30-3')"
             >保存</el-button>
         </el-header>
         <el-container class="main-container">
             <mlWorkflow v-model="data.nodeConfig" />
         </el-container>
-        <!-- <div class="z-model" v-if="!$TOOL.checkRole('r31-3')"></div> -->
     </el-container>
 </template>
 

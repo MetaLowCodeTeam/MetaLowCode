@@ -9,10 +9,10 @@
         defalutSortField="modifiedOn"
         defaultFilter="flowName"
         @actionBtn="actionBtn"
-        checkRole="r31"
+        checkRole="r30"
     >
         <template #addbutton>
-            <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral" :disabled="!$TOOL.checkRole('r31-2')">
+            <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral" :disabled="!$TOOL.checkRole('r30-2')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
