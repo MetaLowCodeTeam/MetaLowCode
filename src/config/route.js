@@ -218,7 +218,7 @@ const routes = [
                 path: '/web/process-list',
                 name: 'ProcessList',
                 component: 'system/approval-process/process-list',
-                meta: { title: '审批流程', icon: 'el-icon-operation', role: 'r30-1' }
+                meta: { title: '审批流程', icon: 'el-icon-operation', role: 'r6016' }
             },
             {
                 path: `/web/process-detail`,

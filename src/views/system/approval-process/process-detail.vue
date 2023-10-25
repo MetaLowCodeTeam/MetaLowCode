@@ -6,7 +6,7 @@
                 type="primary"
                 class="fr"
                 @click="saveApprovalConfig"
-                :disabled="!$TOOL.checkRole('r30-3')"
+                :disabled="!$TOOL.checkRole('r6016')"
             >保存</el-button>
         </el-header>
         <el-container class="main-container">

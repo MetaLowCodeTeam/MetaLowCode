@@ -152,7 +152,8 @@ import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import { getDataList, deleteRecord, getEntityCodeList } from "@/api/crud";
 import { ElMessageBox } from "element-plus";
-const $TOOL = inject("$TOOL")
+import http from "@/utils/request";
+const $TOOL = inject("$TOOL");
 const props = defineProps({
     // 实体名称
     entityName: { type: String, default: "" },
@@ -168,6 +169,8 @@ const props = defineProps({
     defaultFilter: { type: String, default: "" },
     // 权限字段
     checkRole: { type: String, default: "" },
+    // 查询接口
+    queryUrl: { type: String, default: "" },
 });
 const emit = defineEmits(["goDetial", "actionBtn"]);
 const message = inject("$ElMessage");
@@ -204,12 +207,12 @@ onMounted(() => {
 });
 
 // 权限校验
-const checkRoleFn = (num)=>{
-    if(!props.checkRole){
-        return false
+const checkRoleFn = (num) => {
+    if (!props.checkRole) {
+        return false;
     }
-    return !$TOOL.checkRole(props.checkRole + "-" + num)
-}
+    return !$TOOL.checkRole(props.checkRole + "-" + num);
+};
 
 // 获取左侧实体列表
 const getEntityList = async () => {
@@ -249,14 +252,28 @@ const getApprovalList = async () => {
             value: defaultCode.value,
         };
     }
-    let res = await getDataList(
-        param.mainEntity,
-        param.fieldsList,
-        param.filter,
-        param.pageSize,
-        param.pageNo,
-        param.sortFields
-    );
+    let res;
+
+    if (props.queryUrl) {
+        res = await http.post(props.queryUrl, {
+            mainEntity: param.mainEntity,
+            fieldsList: param.fieldsList,
+            filter: param.filter,
+            pageSize: param.pageSize,
+            pageNo: param.pageNo,
+            sortFields: param.sortFields,
+        });
+    } else {
+        res = await getDataList(
+            param.mainEntity,
+            param.fieldsList,
+            param.filter,
+            param.pageSize,
+            param.pageNo,
+            param.sortFields
+        );
+    }
+
     if (res) {
         approvalList.value = res.data.dataList;
         page.total = res.data.pagination.total;

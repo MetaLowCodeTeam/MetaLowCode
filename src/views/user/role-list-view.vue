@@ -524,6 +524,10 @@ let funcRight = shallowRef([
         label: "触发器执行日志查看",
         value: "r6015",
     },
+    {
+        label: "流程配置管理",
+        value: "r6016",
+    },
 ]);
 
 const handleReadRightChange = (entityCode, readRight) => {

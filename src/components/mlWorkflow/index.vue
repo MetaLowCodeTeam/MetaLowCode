@@ -55,7 +55,7 @@
                 <div class="end-node-circle"></div>
                 <div class="end-node-text">流程结束</div>
             </div>
-            <div class="z-model" v-if="!$TOOL.checkRole('r30-3')"></div>
+            <div class="z-model" v-if="!$TOOL.checkRole('r6016')"></div>
         </div>
         <!--  -->
     </div>

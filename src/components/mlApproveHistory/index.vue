@@ -113,6 +113,8 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     title: { type: String, default: "" },
 });
+import useCommonStore from "@/store/modules/common";
+const { queryEntityCodeById } = useCommonStore();
 const emit = defineEmits(["update:modelValue", "canner", "confirm"]);
 const signType = reactive({
     1: "会签",
@@ -146,7 +148,7 @@ const getTimelineType = (index, activity) => {
     if (index == 0) {
         return "primary";
     }
-    let warningType = [11,12];
+    let warningType = [11, 12];
     if (warningType.includes(activity.state)) {
         return "warning";
     }
@@ -211,8 +213,13 @@ function formatResData(data) {
 
 // 配置流程
 const goApprovalList = (activity) => {
-    console.log(activity,'activity')
-    // Route.push("/process-list");
+    Route.push({
+        path: "/web/process-detail",
+        query: {
+            approvalConfigId: activity.recordId,
+            entityCode: queryEntityCodeById(props.entityId),
+        },
+    });
 };
 
 // 关闭弹框
