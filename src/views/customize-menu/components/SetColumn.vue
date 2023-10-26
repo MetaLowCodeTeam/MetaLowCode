@@ -242,7 +242,8 @@ const getAllColumn = async () => {
     let res = await queryEntityFields(
         props.editColumnDialog.entityCode,
         true,
-        false
+        false,
+        true
     );
     if (res) {
         showColumn.value = [];

@@ -17,7 +17,12 @@
             <el-button type="primary" class="fr" @click="confirm">确定</el-button>
         </div>
         <div class="input-box" v-if="!showAdvanced">
-            <div class="formula-val mb-10" v-if="formulaNumList.length > 0">
+            <div class="formula-val mb-10 need-change" v-if="formulaNumList.length > 0">
+                <span class="change-span" @click.stop="showAdvanced = !showAdvanced">
+                    <el-icon>
+                        <ElIconConnection />
+                    </el-icon>
+                </span>
                 <template v-for="(item,inx) of formulaNumList" :key="inx">
                     <el-dropdown
                         trigger="click"
@@ -49,8 +54,13 @@
                     >{{ item.label }}</i>
                 </template>
             </div>
-            <div class="formula-val mb-10" v-else>
+            <div class="formula-val mb-10 need-change default-icon" v-else>
                 <span class="not-val">计算公式</span>
+                <span class="change-span" @click.stop="showAdvanced = !showAdvanced">
+                    <el-icon>
+                        <ElIconConnection />
+                    </el-icon>
+                </span>
             </div>
             <div class="active-box">
                 <div class="active-l fl">
@@ -58,7 +68,7 @@
                         class="active-item text-ellipsis"
                         v-for="(item,inx) of fields"
                         :key="inx"
-                        @click="fieldSelect(item)"
+                        @click="fieldSelect(item,true)"
                     >
                         <span class="active-type">N</span>
                         {{ item.fieldLabel }}
@@ -228,8 +238,8 @@ const insertStr = (source, start, newStr) => {
 };
 
 // 字段选择
-const fieldSelect = (item) => {
-    if (!props.isAdvanced) {
+const fieldSelect = (item, isNumber) => {
+    if (isNumber) {
         let formulaNumItem = {
             value: "field",
             label: `{${item.fieldLabel}`,
@@ -244,11 +254,14 @@ const fieldSelect = (item) => {
             blurIndex.value,
             `{${item.fieldName}}`
         );
-        let setSelectionRange = blurIndex.value + item.fieldName.length + 2
+        let setSelectionRange = blurIndex.value + item.fieldName.length + 2;
         contentInputRef.value.focus();
         setTimeout(() => {
-            contentInputRef.value.ref.setSelectionRange(setSelectionRange, setSelectionRange);
-        }, 0);
+            contentInputRef.value.ref.setSelectionRange(
+                setSelectionRange,
+                setSelectionRange
+            );
+        }, 10);
         popoverRef.value.hide();
     }
 };
@@ -319,33 +332,7 @@ const isConfirm = () => {
 <style lang='scss' scoped>
 .input-box {
     position: relative;
-    .change-span {
-        position: absolute;
-        right: 5px;
-        top: 3px;
-        font-weight: bold;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-        color: #2c2c2c;
-        .lt,
-        .rt {
-            float: left;
-            margin-top: 8px;
-        }
-        .lt {
-            margin-left: 4px;
-        }
-        .rt {
-            margin-left: -4px;
-        }
-        cursor: pointer;
-        border-radius: 5px;
-        &:hover {
-            background: #212121;
-            color: #fff;
-        }
-    }
+
     .field-span {
         position: absolute;
         right: 10px;
@@ -365,6 +352,26 @@ const isConfirm = () => {
         word-break: break-all;
         overflow: hidden;
         line-height: 16px;
+
+        &.need-change {
+            position: relative;
+            padding-right: 26px;
+            .change-span {
+                position: absolute;
+                font-size: 16px;
+                top: 10px;
+                right: 10px;
+                cursor: pointer;
+                &:hover {
+                    color: #7b7b7b;
+                }
+            }
+        }
+        &.default-icon {
+            .change-span {
+                top: 8px;
+            }
+        }
         .v {
             font-style: normal;
 
