@@ -46,7 +46,8 @@ let locale = computed(() => {
 });
 
 onBeforeMount(() => {
-    const app_color = $CONFIG.COLOR || publicSetting.value.APP_COLOR || '#409EFF';
+    const app_color =
+        $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     if (app_color) {
         document.documentElement.style.setProperty(
             "--el-color-primary",
