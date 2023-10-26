@@ -250,7 +250,7 @@ const fieldSelect = (item, isNumber) => {
         formulaNumList.value.push(formulaNumItem);
     } else {
         formulaVal.value = insertStr(
-            formulaVal.value,
+            formulaVal.value || "",
             blurIndex.value,
             `{${item.fieldName}}`
         );
