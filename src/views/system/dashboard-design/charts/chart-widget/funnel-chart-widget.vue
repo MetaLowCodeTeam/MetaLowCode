@@ -114,6 +114,7 @@ const getChartData = async (options, type) => {
             },
             position: "inside",
         };
+        loading.value = false;
     } else {
         loading.value = false;
     }
