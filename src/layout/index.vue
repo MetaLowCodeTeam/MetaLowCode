@@ -5,7 +5,7 @@
             <div class="adminui-header-left">
                 <div class="logo-bar">
                     <mlLogo class="logo" />
-                    <span>{{ $TOOL.data.get('APP_NAME') }}</span>
+                    <span>{{ appName }}</span>
                 </div>
                 <ul v-if="!ismobileFn" class="nav">
                     <li
@@ -82,7 +82,7 @@
             <div class="adminui-header-left">
                 <div class="logo-bar">
                     <mlLogo class="logo" />
-                    <span>{{ $TOOL.data.get('APP_NAME') }}</span>
+                    <span>{{ appName }}</span>
                 </div>
             </div>
             <div class="adminui-header-right">
@@ -144,7 +144,7 @@
             <div class="adminui-header-left">
                 <div class="logo-bar">
                     <mlLogo class="logo" />
-                    <span>{{ $TOOL.data.get('APP_NAME') }}</span>
+                    <span>{{ appName }}</span>
                 </div>
             </div>
             <div class="adminui-header-right">
@@ -202,7 +202,7 @@
                         <router-link :to="$CONFIG.DASHBOARD_URL">
                             <img
                                 class="logo"
-                                :title=" $TOOL.data.get('APP_NAME')"
+                                :title=" appName"
                                 src="~@/assets/imgs/logo-r.png"
                             />
                         </router-link>
@@ -372,6 +372,9 @@ export default {
         menuIsCollapseFn() {
             return menuIsCollapse.value;
         },
+        appName:()=>{
+            return publicSetting.value.APP_NAME
+        }
     },
     created() {
         this.onLayoutResize();

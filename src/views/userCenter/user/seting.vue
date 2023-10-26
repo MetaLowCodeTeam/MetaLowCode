@@ -41,13 +41,15 @@
 
 <script>
 	import colorTool from '@/utils/color'
-
+    import useCommonStore from "@/store/modules/common";
+    import { storeToRefs } from "pinia";
+    const { publicSetting } = storeToRefs(useCommonStore());
 	export default {
 		data() {
 			return {
 				colorList: ['#409EFF', '#009688', '#536dfe', '#ff5c93', '#c62f2f', '#fd726d'],
 				config: {
-					lang: this.$TOOL.data.get('APP_LANG') || this.$CONFIG.LANG,
+					lang: publicSetting.value.APP_LANG || this.$CONFIG.LANG,
 					dark: this.$TOOL.data.get('APP_DARK') || false,
 					autoExit: this.$TOOL.data.get('AUTO_EXIT') || 0,
 				}

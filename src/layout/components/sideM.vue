@@ -4,7 +4,7 @@
 	<el-drawer ref="mobileNavBox" title="移动端菜单" :size="240" v-model="nav" direction="ltr" :with-header="false" destroy-on-close>
 		<el-container class="mobile-nav">
 			<el-header>
-				<div class="logo-bar"><mlLogo class="logo"/><span>{{  $TOOL.data.get('APP_NAME') }}</span></div>
+				<div class="logo-bar"><mlLogo class="logo"/><span>{{  appName }}</span></div>
 			</el-header>
 			<el-main>
 				<el-scrollbar>
@@ -20,7 +20,9 @@
 
 <script>
 	import NavMenu from './NavMenu.vue';
-
+    import useCommonStore from "@/store/modules/common";
+    import { storeToRefs } from "pinia";
+    const { publicSetting } = storeToRefs(useCommonStore());
 	export default {
 		components: {
 			NavMenu
@@ -32,7 +34,9 @@
 			}
 		},
 		computed:{
-
+            appName:()=>{
+                return publicSetting.value.APP_NAME
+            }
 		},
 		created() {
 			var menu = this.$router.sc_getMenu()

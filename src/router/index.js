@@ -6,6 +6,7 @@ import 'nprogress/nprogress.css'
 import tool from '@/utils/tool';
 import layoutConfigApi from '@/api/layoutConfig';
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
+import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from 'pinia';
 // console.log(useLayoutConfigStore,'useLayoutConfigStore')
 // import pinia from '../store/index';
@@ -36,9 +37,10 @@ const routes_404 = {
     component: () => import(/* webpackChunkName: "404" */ '@/layout/other/404.vue'),
 }
 let routes_404_r = () => { }
-
+const { publicSetting } = storeToRefs(useCommonStore());
+let APP_NAME = publicSetting.value.APP_NAME;
 //设置标题
-document.title = tool.data.get('APP_NAME')
+document.title = APP_NAME
 
 //判断是否已加载过动态/静态路由
 var isGetRouter = false;
@@ -49,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
     // console.log(store,'store')
     NProgress.start()
     //动态标题
-    document.title = to.meta.title ? `${to.meta.title} - ${tool.data.get('APP_NAME') || ''}` : `${tool.data.get('APP_NAME') || ''}`
+    document.title = to.meta.title ? `${to.meta.title} - ${APP_NAME || ''}` : `${APP_NAME || ''}`
 
     let token = tool.cookie.get("TOKEN");
     if (to.path === "/web/login") {
