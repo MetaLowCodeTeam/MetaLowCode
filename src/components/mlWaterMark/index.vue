@@ -15,8 +15,10 @@
 
 <script setup>
 import { inject, onMounted, ref } from "vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
-
 // 水印组件
 let mlWaterMarkRefs = ref();
 // 水印大标题
@@ -29,8 +31,8 @@ let color = ref("rgba(128,128,128,0.2)");
 let opacity = ref("0.6");
 onMounted(() => {
     title.value = $TOOL.data.get("USER_INFO")?.userName;
-    subTitle.value = $TOOL.data.get("APP_NAME");
-    let APP_WATERMARK = $TOOL.data.get("APP_WATERMARK");
+    subTitle.value = publicSetting.value.APP_NAME;
+    let APP_WATERMARK = publicSetting.value.APP_WATERMARK;
     if (APP_WATERMARK && APP_WATERMARK != "false") {
         create(title.value, subTitle.value);
     } else {

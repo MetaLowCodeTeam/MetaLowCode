@@ -302,9 +302,11 @@ import iframeView from "./components/iframeView.vue";
 import autoExit from "./other/autoExit.js";
 import useKeepAliveStore from "@/store/modules/keepAlive";
 import useGlobalStore from "@/store/modules/global";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 
 import navigation from "./components/navigationList.vue";
-import { storeToRefs } from "pinia";
 
 const { keepLiveRoute, routeShow } = storeToRefs(useKeepAliveStore());
 const { ismobile, layout, layoutTags, menuIsCollapse } = storeToRefs(
@@ -334,8 +336,6 @@ export default {
             pmenu: {},
             active: "",
             defaultOpeneds: [],
-            // 插件
-            pluginIdList: [],
             pluginInfo: {
                 RriggerList: {
                     pluginName: "metaTrigger",
@@ -380,7 +380,6 @@ export default {
         this.menu = this.filterUrl(menu);
         this.getDefaultOpeneds();
         this.showThis();
-        this.pluginIdList = this.$TOOL.data.get("APP_PLUGINID");
     },
     watch: {
         $route() {
@@ -395,6 +394,7 @@ export default {
     },
     methods: {
         checkPlugin(route) {
+            let pluginIdList = publicSetting.value.APP_PLUGINID || [];
             let name = route.name;
             // 如果不需要插件
             if (!this.needPlugin.includes(name)) {
@@ -402,7 +402,7 @@ export default {
             }
             let pluginInfo = this.pluginInfo[name];
             // 如果插件列表不存在该插件
-            if (!this.pluginIdList.includes(pluginInfo.pluginName)) {
+            if (!pluginIdList.includes(pluginInfo.pluginName)) {
                 return true;
             }
             return false;

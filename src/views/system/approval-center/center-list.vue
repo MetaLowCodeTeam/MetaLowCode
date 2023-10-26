@@ -61,16 +61,10 @@
   
 <script setup>
 import { reactive, ref, inject, onBeforeMount } from "vue";
-import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
 import { $fromNow } from "@/utils/util";
 import mlApprove from "@/components/mlApprove/index.vue";
 import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
-import { ElMessageBox } from "element-plus";
-import http from "@/utils/request";
 import Detail from "@/views/customize-menu/detail.vue";
-const { allEntityName } = storeToRefs(useCommonStore());
-const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
 
 const props = defineProps({

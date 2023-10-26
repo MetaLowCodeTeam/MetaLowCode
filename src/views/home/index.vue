@@ -38,6 +38,9 @@
 <script setup>
 import { inject, nextTick, onMounted, ref } from "vue";
 import { getDataList, queryById } from "@/api/crud";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 // import { ElMessage } from "element-plus";
 const $TOOL = inject("$TOOL");
 let dashboardWidget = ref("");
@@ -56,7 +59,7 @@ let showFormRender = ref(false);
 let pluginIdList = ref([]);
 let isHasPlugin = ref(false);
 onMounted(() => {
-    pluginIdList.value = $TOOL.data.get("APP_PLUGINID");
+    pluginIdList.value = publicSetting.value.APP_PLUGINID || [];
     isHasPlugin.value = pluginIdList.value.includes("metaDataCube");
     if (isHasPlugin.value) {
         // 获取仪表盘数据
@@ -73,7 +76,6 @@ const getDashboardList = async () => {
     };
     let res = await getDataList("Chart", "chartName,defaultChart", filter);
     if (res && res.data) {
-        
         dashboardList.value = res.data.dataList || [];
         // 如果没有数据
         if (dashboardList.value.length < 1) {
@@ -103,9 +105,9 @@ const getDashboardList = async () => {
             loading.value = false;
             return;
         }
-        
+
         // 如果都没有
-        
+
         initFormConfig(dashboardList.value[0].chartId);
         loading.value = false;
     } else {

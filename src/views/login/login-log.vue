@@ -17,9 +17,6 @@
 <script setup>
 import { ref } from "vue";
 import { $fromNow } from "@/utils/util";
-import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
-const { allEntityName } = storeToRefs(useCommonStore());
 import Detail from "@/views/customize-menu/detail.vue";
 // 默认排序
 let sortFields = ref([

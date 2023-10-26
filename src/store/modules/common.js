@@ -11,14 +11,16 @@ const useCommonStore = defineStore('commonStore', () => {
     let allEntityCode = reactive({});
     // 非系统实体
     let unSystemEntityList = ref([]);
+    // 系统配置
+    let publicSetting = ref({});
     const getEntityList = () => {
         getEntitySet().then(res => {
             if (res.error != null) {
                 ElMessage({ message: res.error, type: 'error' })
                 return
             }
-            if (res.data && res.data.length > 0) {
-                refreshCache(res.data)
+            if (data && data.length > 0) {
+                refreshCache(data)
             }
         }).catch(res => {
             ElMessage({ message: res.message, type: 'error' })
@@ -40,7 +42,19 @@ const useCommonStore = defineStore('commonStore', () => {
     }
     const queryEntityCodeById = (id) => {
         return parseInt(id.split('-')[0]);
-    } 
+    }
+    const setPublicSetting = (data) => {
+        publicSetting.value.APP_NAME = data.appName;
+        publicSetting.value.APP_VER = data.dbVersion;
+        publicSetting.value.APP_LOGO = data.logo;
+        publicSetting.value.APP_PAGE_FOOTER = data.pageFooter;
+        publicSetting.value.APP_TITLE = data.appTitle;
+        publicSetting.value.APP_SUB_TITLE = data.appSubtitle;
+        publicSetting.value.APP_INTRO = data.appIntro;
+        publicSetting.value.APP_WATERMARK = data.watermark;
+        publicSetting.value.APP_PLUGINID = data.pluginIdList;
+        publicSetting.value.APP_COLOR = data.themeColor
+    }
     return {
         allEntityLabel,
         getEntityList,
@@ -49,7 +63,9 @@ const useCommonStore = defineStore('commonStore', () => {
         allEntityName,
         allEntityCode,
         queryEntityNameById,
-        queryEntityCodeById
+        queryEntityCodeById,
+        publicSetting,
+        setPublicSetting
     }
 }, {
     persist: true

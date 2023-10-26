@@ -1,14 +1,12 @@
 <template>
-    <div v-loading="loading">
-        <el-config-provider
-            :locale="locale"
-            :size="$CONFIG.size"
-            :zIndex="$CONFIG.zIndex"
-            :button="$CONFIG.button"
-        >
-            <router-view></router-view>
-        </el-config-provider>
-    </div>
+    <el-config-provider
+        :locale="locale"
+        :size="$CONFIG.size"
+        :zIndex="$CONFIG.zIndex"
+        :button="$CONFIG.button"
+    >
+        <router-view></router-view>
+    </el-config-provider>
 </template>
 
 <script setup>
@@ -24,16 +22,15 @@ import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
-import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
-const { getEntityList } = useCommonStore();
-const router = useRouter();
+import { storeToRefs } from "pinia";
+const { getEntityList, setPublicSetting } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
+const { publicSetting } = storeToRefs(useCommonStore());
 
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
-const $ElMessage = inject("$ElMessage");
 let { proxy } = instance;
 let config = reactive({
     size: "default",
@@ -49,7 +46,7 @@ let locale = computed(() => {
 });
 
 onBeforeMount(() => {
-    const app_color = $CONFIG.COLOR || $TOOL.data.get("APP_COLOR");
+    const app_color = $CONFIG.COLOR || publicSetting.value.APP_COLOR || '#409EFF';
     if (app_color) {
         document.documentElement.style.setProperty(
             "--el-color-primary",
@@ -93,21 +90,13 @@ const getRightMap = async () => {
 // /crud/getRightMap
 // 获取公开系统配置
 const queryPublicSetting = async () => {
-    loading.value = true;
     let res = await getPublicSetting();
     if (res) {
-        $TOOL.data.set("APP_NAME", res.data.appName);
-        $TOOL.data.set("APP_VER", res.data.dbVersion);
-        $TOOL.data.set("APP_LOGO", res.data.logo);
-        $TOOL.data.set("APP_PAGE_FOOTER", res.data.pageFooter);
-        $TOOL.data.set("APP_TITLE", res.data.appTitle);
-        $TOOL.data.set("APP_SUB_TITLE", res.data.appSubtitle);
-        $TOOL.data.set("APP_INTRO", res.data.appIntro);
-        $TOOL.data.set("APP_WATERMARK", res.data.watermark);
-        $TOOL.data.set("APP_PLUGINID", res.data.pluginIdList);
-        colorPrimary(res.data.themeColor);
+        let resData = res.data || {};
+        resData.themeColor = res.data.themeColor || "#409EFF";
+        colorPrimary(resData.themeColor);
+        setPublicSetting(resData);
     }
-    loading.value = false;
 };
 
 const colorPrimary = (val) => {
@@ -128,7 +117,6 @@ const colorPrimary = (val) => {
             colorTool.darken(val, i / 10)
         );
     }
-    $TOOL.data.set("APP_COLOR", val);
 };
 
 // 获取新消息

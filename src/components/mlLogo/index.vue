@@ -6,6 +6,9 @@
 <script setup>
 import { inject } from "vue";
 import logo from '@/assets/imgs/logo.png'
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const props = defineProps({
     logoUrl: { type: String, default: "" },
@@ -13,7 +16,7 @@ const props = defineProps({
 
 // 格式化图片
 const formatImg = () => {
-    let url = props.logoUrl ? props.logoUrl : $TOOL.data.get("APP_LOGO");
+    let url = props.logoUrl ? props.logoUrl : publicSetting.value.APP_LOGO;
     if (!url || url.indexOf("/src/assets/imgs") != -1) {
         return false;
     } else {

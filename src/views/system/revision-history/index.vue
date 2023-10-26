@@ -44,7 +44,7 @@
 </template>
    
 <script setup>
-import { inject, nextTick, ref } from "vue";
+import { nextTick, ref } from "vue";
 import { $fromNow } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";

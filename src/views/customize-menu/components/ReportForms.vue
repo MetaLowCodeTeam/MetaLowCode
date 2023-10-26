@@ -37,6 +37,9 @@ import http from "@/utils/request";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const $TOOL = inject("$TOOL");
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 
 let dialogShow = ref(false);
 let loading = ref(false);
@@ -48,7 +51,7 @@ const openDialog = (data) => {
     dialogShow.value = true;
     entityCode.value = data.entityCode;
     detailId.value = data.detailId;
-    let pluginIdList = $TOOL.data.get("APP_PLUGINID");
+    let pluginIdList = publicSetting.value.APP_PLUGINID || [];
     if (pluginIdList.includes("mannerReport")) {
         isSupportFunc.value = true;
         getReportConfigList();
