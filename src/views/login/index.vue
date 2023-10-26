@@ -140,11 +140,6 @@ export default {
             "background:#666;color:#fff;border-radius:3px;",
             ""
         );
-        console.log(
-            "%c development %c ver: v0.0.1",
-            "background:#666;color:#fff;border-radius:3px;",
-            ""
-        );
         // this.appTitle = publicSetting.value.APP_TITLE;
         // this.appSubTitle
     },
