@@ -17,6 +17,7 @@
 
 <script setup>
 import mlWorkflow from "@/components/mlWorkflow/index.vue";
+import { ElMessage } from "element-plus";
 import { inject, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const $API = inject("$API");
@@ -66,7 +67,7 @@ const saveApprovalConfig = async () => {
     loading.value = true;
     let res = await $API.approval.detial.save(data.value);
     if (res) {
-        this.$message.success("保存成功");
+        ElMessage.success("保存成功");
     }
     loading.value = false;
 };
