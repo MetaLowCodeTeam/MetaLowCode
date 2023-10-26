@@ -105,7 +105,20 @@
                 <el-tabs type="border-card">
                     <el-tab-pane label="数据权限">
                         <div class="entity-right-setting title">
-                            <div class="fl label"></div>
+                            <div class="fl label">
+                                <el-input
+                                    size="small"
+                                    v-model="filterStr"
+                                    placeholder="过滤实体（回车搜索）"
+                                    @keyup.enter="queryEntity"
+                                >
+                                    <template #prefix>
+                                        <el-icon class="el-input__icon">
+                                            <ElIconSearch />
+                                        </el-icon>
+                                    </template>
+                                </el-input>
+                            </div>
                             <div class="fl text-align-center bold">查看权限</div>
                             <div class="fl text-align-center bold">新建权限</div>
                             <div class="fl text-align-center bold">修改权限</div>
@@ -135,7 +148,7 @@
                             <el-scrollbar>
                                 <div
                                     class="entity-right-setting"
-                                    v-for="(rightEntity, entityIdx) in rightEntityList"
+                                    v-for="(rightEntity, entityIdx) in filterEntityList"
                                     :key="entityIdx"
                                 >
                                     <div class="fl label">{{ rightEntity.label }}</div>
@@ -359,6 +372,7 @@ const addNewRole = () => {
                 formModel.value.description = resData.description;
                 formModel.value.rightValueMap = resData.rightValueMap;
                 rightEntityList.value = copyNew(resData.rightEntityList);
+                queryEntity();
             }
             roleFormDialogLoading.value = false;
         })
@@ -386,6 +400,7 @@ const editRole = (row) => {
                 formModel.value.description = resData.description;
                 formModel.value.rightValueMap = resData.rightValueMap;
                 rightEntityList.value = copyNew(resData.rightEntityList);
+                queryEntity();
             }
             roleFormDialogLoading.value = false;
         })
@@ -429,6 +444,23 @@ let showRoleFormDialogFlag = ref(false);
 let roleFormDialogLoading = ref(false);
 // 权限数据
 let rightEntityList = shallowRef([]);
+// 过滤值
+let filterStr = ref("");
+let filterEntityList = shallowRef([]);
+
+const queryEntity = () => {
+    roleFormDialogLoading.value = true;
+    if (!filterStr.value) {
+        filterEntityList.value = [...rightEntityList.value];
+    } else {
+        filterEntityList.value = rightEntityList.value.filter(
+            (el) => el.label.indexOf(filterStr.value) != -1
+        );
+    }
+    setTimeout(() => {
+        roleFormDialogLoading.value = false;
+    }, 300);
+};
 
 // 角色弹框
 let roleFormRes = ref();
@@ -621,6 +653,7 @@ const allHandleCommand = (command) => {
         formModel.value.rightValueMap["r" + el.entityCode + "-5"] = command;
         formModel.value.rightValueMap["r" + el.entityCode + "-6"] = command;
     });
+    queryEntity();
 };
 
 const saveRole = () => {
