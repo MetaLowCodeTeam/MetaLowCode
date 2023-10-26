@@ -125,7 +125,10 @@ const initFormConfig = async (chartId) => {
         showFormRender.value = true;
         let blankFormJson = JSON.parse(res.data.chartData);
         nextTick(() => {
-            dashboardWidget.value.setFormJson(blankFormJson);
+            if(dashboardWidget.value){
+                dashboardWidget.value.setFormJson(blankFormJson);
+            }
+            
         });
     }
     loading.value = false;

@@ -1,5 +1,12 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
+    <myEcharts
+        v-if="dataList.length > 0"
+        :option="option"
+        :field="field"
+        :designer="designer"
+        v-loading="loading"
+    />
+    <el-empty v-else description="没有数据" />
 </template>
 
 <script setup>
@@ -58,6 +65,7 @@ let option = reactive({
 });
 let cutField = ref("");
 let loading = ref(false);
+let dataList = ref([]);
 watch(
     () => props.field,
     () => {
@@ -87,6 +95,7 @@ const initOption = () => {
 };
 const getChartData = async (options, type) => {
     loading.value = true;
+    dataList.value = [];
     let res = await queryChartData(options, type);
     if (res && res.data) {
         let { setChartConf } = cutField.value.options;
@@ -97,6 +106,7 @@ const getChartData = async (options, type) => {
         };
         option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
         option.series[0].data = res.data;
+        dataList.value = res.data || [];
         option.series[0].label = {
             show: setChartConf.numShow,
             formatter: function (param) {
@@ -104,10 +114,9 @@ const getChartData = async (options, type) => {
             },
             position: "inside",
         };
-    }else {
+    } else {
         loading.value = false;
     }
-    
 };
 </script>
 

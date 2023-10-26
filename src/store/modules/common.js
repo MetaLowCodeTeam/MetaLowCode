@@ -19,8 +19,8 @@ const useCommonStore = defineStore('commonStore', () => {
                 ElMessage({ message: res.error, type: 'error' })
                 return
             }
-            if (data && data.length > 0) {
-                refreshCache(data)
+            if (res.data && res.data.length > 0) {
+                refreshCache(res.data)
             }
         }).catch(res => {
             ElMessage({ message: res.message, type: 'error' })
