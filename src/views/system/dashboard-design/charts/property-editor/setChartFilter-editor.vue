@@ -3,8 +3,9 @@
         <el-button @click="setCondition">{{ getSetConditionText() }}</el-button>
         <!-- <div class="ml-a-span" @click="setCondition" v-else></div> -->
     </el-form-item>
-    <mlDialog title="过滤条件" append-to-body width="37%" v-if="dialogIsShow" v-model="dialogIsShow">
+    <mlDialog title="过滤条件" append-to-body width="37%" v-model="dialogIsShow">
         <mlSetConditions
+            v-if="dialogIsShow" 
             v-model="conditionConf"
             footer
             @cancel="dialogIsShow = false"

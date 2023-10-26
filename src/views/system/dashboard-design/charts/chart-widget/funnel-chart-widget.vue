@@ -29,16 +29,13 @@ let option = reactive({
             top: 60,
             bottom: 60,
             width: "80%",
-            min: 0,
-            max: 10,
             minSize: "0%",
             maxSize: "100%",
             sort: "descending",
             gap: 2,
-            // label: {
-            //     show: true,
-            //     // position: "inside",
-            // },
+            label: {
+                show: true,
+            },
             labelLine: {
                 length: 10,
                 lineStyle: {
@@ -55,13 +52,7 @@ let option = reactive({
                     fontSize: 20,
                 },
             },
-            data: [
-                { value: 60, name: "Visit" },
-                { value: 40, name: "Inquiry" },
-                { value: 20, name: "Order" },
-                { value: 80, name: "Click" },
-                { value: 100, name: "Show" },
-            ],
+            data: [],
         },
     ],
 });
@@ -81,22 +72,22 @@ onMounted(() => {
 });
 
 const initOption = () => {
-    let { options,type } = cutField.value;
+    let { options, type } = cutField.value;
     if (options) {
         let { metrics } = options.setDimensional;
         if (metrics.length < 1) {
             option.isNoData = true;
             return;
         }
-        getChartData(options,type);
+        getChartData(options, type);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
-const getChartData = async (options,type) => {
+const getChartData = async (options, type) => {
     loading.value = true;
-    let res = await queryChartData(options,type);
+    let res = await queryChartData(options, type);
     if (res && res.data) {
         let { setChartConf } = cutField.value.options;
         // 图例是否显示
@@ -113,8 +104,10 @@ const getChartData = async (options,type) => {
             },
             position: "inside",
         };
+    }else {
+        loading.value = false;
     }
-    loading.value = false;
+    
 };
 </script>
 
