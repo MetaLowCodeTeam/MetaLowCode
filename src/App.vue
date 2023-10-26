@@ -1,12 +1,14 @@
 <template>
-    <el-config-provider
-        :locale="locale"
-        :size="$CONFIG.size"
-        :zIndex="$CONFIG.zIndex"
-        :button="$CONFIG.button"
-    >
-        <router-view></router-view>
-    </el-config-provider>
+    <div v-loading="loading">
+        <el-config-provider
+            :locale="locale"
+            :size="$CONFIG.size"
+            :zIndex="$CONFIG.zIndex"
+            :button="$CONFIG.button"
+        >
+            <router-view></router-view>
+        </el-config-provider>
+    </div>
 </template>
 
 <script setup>
@@ -16,6 +18,7 @@ import {
     reactive,
     onBeforeMount,
     inject,
+    ref,
 } from "vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
@@ -39,6 +42,7 @@ let config = reactive({
         autoInsertSpace: false,
     },
 });
+let loading = ref(false);
 // computed()
 let locale = computed(() => {
     return proxy.$i18n.messages[proxy.$i18n.locale].el;
@@ -89,6 +93,7 @@ const getRightMap = async () => {
 // /crud/getRightMap
 // 获取公开系统配置
 const queryPublicSetting = async () => {
+    loading.value = true;
     let res = await getPublicSetting();
     if (res) {
         $TOOL.data.set("APP_NAME", res.data.appName);
@@ -102,6 +107,7 @@ const queryPublicSetting = async () => {
         $TOOL.data.set("APP_PLUGINID", res.data.pluginIdList);
         colorPrimary(res.data.themeColor);
     }
+    loading.value = false;
 };
 
 const colorPrimary = (val) => {
