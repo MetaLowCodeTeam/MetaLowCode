@@ -89,7 +89,7 @@ export default {
                         return
                     }
                     let res = await http.get("/user/updatePassword", {
-                        userName: tool.data.get("USER_INFO").userName,
+                        userName: tool.data.get("USER_INFO").loginName,
                         password: this.form.userPassword,
                         newPassword: this.form.newPassword,
                     });
