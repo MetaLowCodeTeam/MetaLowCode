@@ -259,10 +259,6 @@ const getAllColumn = async () => {
 };
 
 const onSave = async () => {
-    if (showColumn.value.length < 1) {
-        $ElMessage.warning("请至少选择 1 个显示项");
-        return;
-    }
     let param = {
         config: JSON.stringify([...showColumn.value]),
         entityCode: props.entityCode,
