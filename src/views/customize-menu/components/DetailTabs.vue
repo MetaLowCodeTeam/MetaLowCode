@@ -81,13 +81,10 @@ const openDialog = () => {
 
 const handleClick = (e) => {
     emits("tabChange", e.props.name);
-    // detailDialog.value.cutTab = e.props.name;
-    // console.log(detailDialog.value,'detailDialog.value')
-    // emits("update:modelValue", detailDialog.value);
 };
 
 const confirm = (e) => {
-    detailDialog.value.tab.config = e;
+    detailDialog.value.tab = e;
     emits("update:modelValue", detailDialog.value);
     emits('confirm')
 };

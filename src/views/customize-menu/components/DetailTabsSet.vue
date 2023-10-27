@@ -274,7 +274,7 @@ const onSave = async () => {
     if (res) {
         $ElMessage.success("保存成功！");
         isShow.value = false;
-        emit("confirm", res.data.formData.config);
+        emit("confirm", res.data.formData);
     }
     loading.value = false;
 };
