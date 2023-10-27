@@ -1,12 +1,11 @@
 <template>
     <myEcharts
-        v-if="dataList.length > 0"
+        :isShowEmpty="dataList.length < 1"
         :option="option"
         :field="field"
         :designer="designer"
         v-loading="loading"
     />
-    <el-empty v-else description="没有数据" />
 </template>
 
 <script setup>

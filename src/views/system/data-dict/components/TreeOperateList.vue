@@ -23,7 +23,7 @@
             <el-header class="main-header w-100">
                 <div class="title fl">{{ cutNode.label }}</div>
                 <div class="section-fr fr">
-                    <el-button @click.stop="operateItem(false,'add')">
+                    <el-button @click.stop="operateItem(false,'add')" :disabled="treeList.length < 1">
                         <span class="btn-icon-t1">
                             <el-icon>
                                 <ElIconPlus />
@@ -31,7 +31,7 @@
                         </span>
                         新增选项
                     </el-button>
-                    <el-button type="primary" @click="onSave" :loading="mainLoading">保存</el-button>
+                    <el-button type="primary" @click="onSave" :loading="mainLoading" :disabled="treeList.length < 1">保存</el-button>
                 </div>
             </el-header>
             <el-main class="mian-box" v-loading="mainLoading">
