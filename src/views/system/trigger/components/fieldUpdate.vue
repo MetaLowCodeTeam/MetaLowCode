@@ -122,10 +122,24 @@
                         type="datetime"
                     />
                     <el-input
-                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
+                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
                         v-model="uptadeRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
+                    <el-select
+                        v-if="uptadeRule.updateMode == 'toFixed' && (toFixedForFieldType == 'Option' || toFixedForFieldType == 'Tag')"
+                        v-model="uptadeRule.sourceField"
+                        v-loading="optionItemLoading"
+                        filterable
+                        class="w-100"
+                    >
+                        <el-option
+                            v-for="(tOp,tInx) of optionItems"
+                            :key="tInx"
+                            :label="tOp.label"
+                            :value="tOp.value"
+                        />
+                    </el-select>
                     <el-input
                         v-if="uptadeRule.updateMode == 'forCompile'"
                         v-model="uptadeRule.sourceField"
@@ -160,6 +174,7 @@
 import { queryEntityFields } from "@/api/crud";
 import { ref, onMounted, inject, reactive } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
+import { getOptionItems, getTagItems } from "@/api/system-manager";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -340,8 +355,11 @@ const delUptadeRule = (inx) => {
     actionContentItems.value.splice(inx, 1);
 };
 
+let optionItems = ref([]);
+let optionItemLoading = ref(false);
+
 // 目标字段切换
-const targetFieldChange = (e) => {
+const targetFieldChange = async (e) => {
     uptadeRule.targetField = e.fieldName;
     // 获取字段的type
     toFixedForFieldType.value = getUptadeRuleTargetFieldType(e.fieldName);
@@ -350,6 +368,23 @@ const targetFieldChange = (e) => {
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
         uptadeRule.sourceField = "";
+    }
+    console.log(toFixedForFieldType.value, "toFixedForFieldType.value");
+
+    if (e.fieldType == "Tag" || e.fieldType == "Option") {
+        optionItemLoading.value = true;
+        let typeEntityName = trigger.value.defaultTargetEntity.entityName;
+        let typeFieldName = e.fieldName;
+        let res;
+        if (e.fieldType == "Tag") {
+            res = await getOptionItems(typeEntityName, typeFieldName);
+        } else {
+            res = await getOptionItems(typeEntityName, getTagItems);
+        }
+        if (res && res.data) {
+            optionItems.value = res.data;
+        }
+        optionItemLoading.value = false;
     }
 };
 

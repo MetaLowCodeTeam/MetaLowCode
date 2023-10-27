@@ -212,7 +212,7 @@ const getTagEntitys = () => {
         let res = await $API.trigger.detial.aggregationEntityList(
             trigger.value.entityCode
         );
-        if (res) {
+        if (res && res.data) {
             tagEntitys.value = res.data.map((el,inx)=>{
                 el.entityInx = inx;
                 return el
