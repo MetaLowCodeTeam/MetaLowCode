@@ -138,7 +138,6 @@ async function getTableList() {
         },
         sortFields,
     };
-    console.log(filterItems,'filterItems')
     param.filter.items = filterItems.map((el) => {
         el.value = el.value ? el.value : keyword.value;
         return el;
