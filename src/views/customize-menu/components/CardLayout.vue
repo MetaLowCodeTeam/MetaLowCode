@@ -23,15 +23,17 @@ const optionData = reactive({});
 const formData = reactive();
 const globalDsv = reactive({});
 onMounted(() => {
-    vFormRef.value.setFormJson(props.layoutJson);
-    nextTick(() => {
-        vFormRef.value.setFormData(props.data);
-        vFormRef.value.setReadMode();
-    });
+    if (props.layoutJson) {
+        vFormRef.value.setFormJson(props.layoutJson);
+        nextTick(() => {
+            vFormRef.value.setFormData(props.data);
+            vFormRef.value.setReadMode();
+        });
+    }
 });
 </script>
 <style lang='scss' scoped>
-:deep(.el-form-item){
+:deep(.el-form-item) {
     margin-bottom: 0;
 }
 </style>

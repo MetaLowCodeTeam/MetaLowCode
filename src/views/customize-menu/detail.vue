@@ -189,8 +189,10 @@ const initData = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
+            await nextTick()
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
+                console.log(vFormRef.value,'vFormRef.value')
                 let queryByIdRes = await queryById(detailDialog.detailId);
                 if (queryByIdRes) {
                     vFormRef.value.setFormJson(res.data.layoutJson);

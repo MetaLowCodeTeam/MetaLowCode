@@ -237,7 +237,6 @@ const initData = async () => {
         entityCode.value = filterTabs[0].entityCode;
         entityName.value = filterTabs[0].entityName;
         fieldName.value = filterTabs[0].fieldName;
-        console.log(filterTabs[0], "filterTabs[0]");
     }
     // console.log(tabs);
     loading.value = true;
@@ -380,7 +379,7 @@ const refreshData = () => {
     getTableList();
 };
 
-let layoutJson = ref({});
+let layoutJson = ref(null);
 const getTableList = async () => {
     loading.value = true;
 
@@ -423,7 +422,7 @@ const getTableList = async () => {
         loading.value = true;
         let formLayoutRes = await getFormLayout(entityName.value);
         if (formLayoutRes) {
-            layoutJson.value = formLayoutRes.data?.layoutJson || {};
+            layoutJson.value = formLayoutRes.data?.layoutJson || null;
         }
         loading.value = false;
     } else {
