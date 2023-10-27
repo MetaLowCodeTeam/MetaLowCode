@@ -138,11 +138,12 @@ async function getTableList() {
         },
         sortFields,
     };
+    console.log(filterItems,'filterItems')
+    param.filter.items = filterItems.map((el) => {
+        el.value = el.value ? el.value : keyword.value;
+        return el;
+    });
     if (keyword.value) {
-        param.filter.items = filterItems.map(el=>{
-            el.value =  el.value ?  el.value : keyword.value
-            return el
-        })
         param.filter.items.unshift({
             fieldName,
             op: "LK",
@@ -181,7 +182,7 @@ async function getTableList() {
         }
     }
 
-    if (res) {
+    if (res && res.data) {
         tableList.value = res.data?.dataList || [];
         page.total = res.data.pagination.total;
     }
@@ -195,6 +196,7 @@ const highlightClick = (row) => {
 
 defineExpose({
     loading,
+    keyword,
     getTableList,
 });
 </script>

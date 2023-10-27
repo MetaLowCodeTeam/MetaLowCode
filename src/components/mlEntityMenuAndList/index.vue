@@ -274,7 +274,7 @@ const getApprovalList = async () => {
         );
     }
 
-    if (res) {
+    if (res && res.data) {
         approvalList.value = res.data.dataList;
         page.total = res.data.pagination.total;
     }

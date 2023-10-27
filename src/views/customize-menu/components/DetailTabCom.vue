@@ -414,7 +414,7 @@ const getTableList = async () => {
         param.advFilter,
         param.quickFilter
     );
-    if (res) {
+    if (res && res.data) {
         tableData.value = res.data.dataList;
         cardActiveNames.value = tableData.value.map(
             (el) => el[idFiledName.value]

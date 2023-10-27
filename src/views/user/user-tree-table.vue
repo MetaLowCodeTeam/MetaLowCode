@@ -3,7 +3,6 @@
         <el-aside class="left-tree-panel">
             <el-tree
                 :data="treeData"
-                show-checkbox
                 default-expand-all
                 node-key="id"
                 ref="tree"
@@ -11,6 +10,7 @@
                 :expand-on-click-node="false"
                 :props="defaultProps"
                 v-if="checkRole('r22-1')"
+                @node-click="nodeClick"
             >
                 <template #default="{ node, data }">
                     <span
@@ -76,6 +76,7 @@
                 @highlightClick="highlightClick"
             >
                 <template #addbutton>
+                    <el-button @click="resetting">重置</el-button>
                     <el-button
                         type="primary"
                         @click="addClick"
@@ -125,7 +126,7 @@
         </el-container>
         <!-- 新建、编辑用户 -->
         <Edit ref="editRefs" @onConfirm="onRefresh" isUser :disableWidgets="disableWidgets" />
-    
+
         <!-- 列表详情 -->
         <ListDetail
             ref="mlListDetailsRefs"
@@ -302,6 +303,27 @@ export default {
         checkRole(str) {
             return this.$TOOL.checkRole(str);
         },
+        // 重置
+        resetting(){
+            this.filterItems = [];
+            this.$nextTick(()=>{
+                this.$refs.mlSingleListRef.keyword = "";
+                this.onRefresh();
+            })
+        },
+        // 节点点击
+        nodeClick(node) {
+            this.filterItems = [
+                {
+                    fieldName: "departmentId",
+                    op: "EQ",
+                    value: node.id,
+                },
+            ];
+            this.$nextTick(()=>{
+                this.onRefresh();
+            })
+        },
         // 新建用户
         addClick() {
             let tempV = {};
@@ -325,10 +347,11 @@ export default {
         },
         // 高亮字段点击
         highlightClick(row) {
-            this.$refs.mlListDetailsRefs.openDetailDialog(row.userId,row.userName)
+            this.$refs.mlListDetailsRefs.openDetailDialog(
+                row.userId,
+                row.userName
+            );
         },
-       
-        
 
         handleDeletedFields(res, layoutObj) {
             let deletedFields = res.data.deletedFields;

@@ -513,7 +513,7 @@ const getTableList = async () => {
         param.advFilter,
         param.quickFilter
     );
-    if (res) {
+    if (res && res.data) {
         tableData.value = res.data.dataList;
         page.total = res.data.pagination.total;
         dataExportData.size = res.data.dataList.length;
