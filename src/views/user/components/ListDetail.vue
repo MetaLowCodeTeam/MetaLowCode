@@ -15,7 +15,7 @@
                 <el-col :span="24">
                     <AddMembers
                         @addMembers="changeMembers"
-                        :paramId="row[idFieldName]"
+                        :paramId="detailId"
                         :paramName="detailEntity == 'Team' ? '成员' : '角色'"
                         :paramType="detailEntity == 'Team' ? 'User' : 'Role'"
                         :isDisabled="!checkRole(3)"
