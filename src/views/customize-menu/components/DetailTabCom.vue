@@ -84,6 +84,7 @@
                         <template #default="scope">
                             <FormatRow
                                 :row="scope.row"
+                                :nameFiledName="nameFiledName"
                                 :column="column"
                                 @openDetilDialog="openDetilDialog"
                             />
