@@ -2,7 +2,7 @@
 <template>
     <!-- 列表页面新增、编辑通用弹框 -->
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
-        <el-form label-width="120px" v-loading="loading">
+        <el-form label-width="120px" v-loading="loading" @submit.prevent>
             <!-- <slot name="formitem"></slot> -->
             
             <el-form-item

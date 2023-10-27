@@ -192,7 +192,7 @@ const initData = async () => {
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let queryByIdRes = await queryById(detailDialog.detailId);
-                if (queryByIdRes) {
+                if (queryByIdRes && queryByIdRes.data) {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let resData = queryByIdRes.data || {};
                     vFormRef.value.setFormData(resData);

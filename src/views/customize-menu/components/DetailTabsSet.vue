@@ -90,9 +90,10 @@
             title="显示项设置"
             width="510"
             top="25vh"
+            
         >
             <div style="padding-right: 50px;">
-                <el-form label-width="120px">
+                <el-form label-width="120px" @submit.prevent>
                     <el-form-item label="别名">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
                     </el-form-item>
