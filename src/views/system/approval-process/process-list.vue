@@ -9,7 +9,7 @@
         defalutSortField="modifiedOn"
         defaultFilter="flowName"
         @actionBtn="actionBtn"
-        queryUrl="/approval/listQuery"
+        queryUrl="/approval/configList"
     >
         <template #addbutton>
             <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral">
