@@ -52,7 +52,7 @@
             </el-row>
         </template>
     </mlListDetails>
-    <Edit ref="editRefs" @onConfirm="onRefresh" :isTeam="detailEntity == 'Team'" />
+    <Edit ref="editRefs" @onConfirm="onRefresh" :isTeam="detailEntity == 'Team'" :isUser="detailEntity == 'User'" />
     <!-- 重置密码 -->
     <ml-dialog title="重置密码" v-model="resetPasswordDialogIsShow" appendToBody width="450px">
         <el-input v-model="newPassword" placeholder="输入密码" clearable>
