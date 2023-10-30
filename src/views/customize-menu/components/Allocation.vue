@@ -115,7 +115,12 @@
 <script setup>
 import { reactive, ref, inject } from "vue";
 import { useRouter } from "vue-router";
-import { assignRecord, shareRecord, cancelShareRecord,deleteRecords } from "@/api/crud";
+import {
+    assignRecord,
+    shareRecord,
+    cancelShareRecord,
+    deleteRecords,
+} from "@/api/crud";
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
     idFiledName: { type: String, default: "" },
@@ -144,7 +149,7 @@ let formData = reactive({
 let labelData = reactive({
     type: "",
     label: "",
-    pageType:"list",
+    pageType: "list",
 });
 const openDialog = (data) => {
     dialogShow.value = true;
@@ -156,17 +161,17 @@ const openDialog = (data) => {
     formData.withUpdate = false;
     labelData.type = data.type;
     labelData.pageType = data.pageType;
-    if(data.type == "allocation"){
-        labelData.label = "分配"
+    if (data.type == "allocation") {
+        labelData.label = "分配";
     }
-    if(data.type == "share"){
-        labelData.label = "共享"
+    if (data.type == "share") {
+        labelData.label = "共享";
     }
-    if(data.type == "unShare"){
-        labelData.label = "取消共享"
+    if (data.type == "unShare") {
+        labelData.label = "取消共享";
     }
-    if(data.type == "del"){
-        labelData.label = "删除"
+    if (data.type == "del") {
+        labelData.label = "删除";
     }
     // labelData.label =
     //     data.type == "allocation"
@@ -204,7 +209,8 @@ const showAssociatedRecords = async () => {
 // 确认
 const confirm = async () => {
     if (
-        labelData.type != "unShare" && labelData.type != "del"  && 
+        labelData.type != "unShare" &&
+        labelData.type != "del" &&
         (!formData.allocationTo || formData.allocationTo.length < 1)
     ) {
         $ElMessage.warning("请选择" + labelData.label + "给谁");
@@ -245,7 +251,7 @@ const confirm = async () => {
             },
         };
         res = await cancelShareRecord(param.body, formData.userType);
-    } 
+    }
     // 删除
     else {
         let param = {
@@ -262,13 +268,12 @@ const confirm = async () => {
         } else {
             $ElMessage.success(`${labelData.label}成功`);
         }
-        emits("allocationSuccess");
+        emits("allocationSuccess", { isDel: labelData.type == "del" });
         dialogShow.value = false;
         loading.value = false;
-    }else {
+    } else {
         loading.value = false;
     }
-   
 };
 
 defineExpose({

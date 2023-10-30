@@ -176,8 +176,8 @@ const allocationFn = (type) => {
     }
 };
 
-const allocationSuccess = () => {
-    emits("editColumnConfirm");
+const allocationSuccess = (v) => {
+    emits("editColumnConfirm",v);
 };
 
 // 打开报表
@@ -234,15 +234,15 @@ const editColumn = (type) => {
 const changeColumnShow = (type) => {
     emits("changeColumnShow", type);
 };
-const editColumnConfirm = () => {
-    emits("editColumnConfirm");
+const editColumnConfirm = (v) => {
+    emits("editColumnConfirm", v);
 };
 /**
  **************************************************************  列显示 end
  */
 defineExpose({
-    editColumn
-})
+    editColumn,
+});
 </script>
 <style lang='scss' scoped>
 .icon-t1 {

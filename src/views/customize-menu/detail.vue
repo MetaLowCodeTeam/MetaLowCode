@@ -116,7 +116,7 @@ const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onAdd"]);
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
-const vFormRef = ref();
+let vFormRef = ref();
 let detailDialog = reactive({
     isShow: false,
 });
@@ -242,9 +242,14 @@ const onEditRow = () => {
     editRefs.value.openDialog(detailDialog);
 };
 
-const editColumnConfirm = ()=>{
-    onConfirm()
-}
+const editColumnConfirm = (v) => {
+    if (v && v.isDel) {
+        detailDialog.isShow = false;
+        emits("onConfirm");
+    } else {
+        onConfirm();
+    }
+};
 
 // 编辑确认
 const onConfirm = () => {

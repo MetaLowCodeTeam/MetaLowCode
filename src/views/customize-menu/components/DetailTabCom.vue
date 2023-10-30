@@ -121,7 +121,7 @@
             </div>
         </div>
     </div>
-    <Detail ref="detailRefs" />
+    <Detail ref="detailRefs" @onConfirm="getTableList" />
 </template>
 
 <script setup>
