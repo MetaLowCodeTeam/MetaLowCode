@@ -36,6 +36,7 @@
 				<el-form-item label="上传说明提示">
 					<el-input v-model="fieldProps.fieldViewModel.uploadHint"></el-input>
 				</el-form-item>
+				<!--
 				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">
 					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"
 							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">
@@ -47,6 +48,7 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
+				-->
 				<!--
 				<el-form-item label="是否在列表中默认显示">
 				  <el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
@@ -113,7 +115,7 @@ export default {
 				'fieldViewModel': {
 					'maxFileCount': 3,
 					'fileMaxSize': 5,
-					'uploadFileTypes': '',
+					'uploadFileTypes': [],
 					'uploadHint': '',
 					'validators': [],
 				},
@@ -127,7 +129,7 @@ export default {
 						message: '请以小写英文字母开头，中间可输入字母或数字，禁止中文',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
 				],
 				label: [
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
@@ -136,7 +138,7 @@ export default {
 						message: '请以中文、英文字母、数字开头，中间可输入下划线或横杠',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
 				],
 				'fieldViewModel.uploadFileTypes': [
 					{required: true, message: '请选择上传文件类型', trigger: 'blur', type: 'array'},

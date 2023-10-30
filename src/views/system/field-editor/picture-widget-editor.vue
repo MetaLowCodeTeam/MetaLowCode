@@ -128,7 +128,7 @@ export default {
 						message: '请以小写英文字母开头，中间可输入字母或数字，禁止中文',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
 				],
 				label: [
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
@@ -137,7 +137,7 @@ export default {
 						message: '请以中文、英文字母、数字开头，中间可输入下划线或横杠',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
 				],
 				'fieldViewModel.uploadFileTypes': [
 					{required: true, message: '请选择上传图片类型', trigger: 'blur', type: 'array'},
