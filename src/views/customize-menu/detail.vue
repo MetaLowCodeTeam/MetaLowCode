@@ -80,6 +80,7 @@
                                     :entityCode="detailDialog.entityCode"
                                     :detailId="detailDialog.detailId"
                                     :idFiledName="detailDialog.idFiledName"
+                                    @editColumnConfirm="editColumnConfirm"
                                 />
                             </el-col>
                             <el-col :span="24">
@@ -240,6 +241,10 @@ let editRefs = ref();
 const onEditRow = () => {
     editRefs.value.openDialog(detailDialog);
 };
+
+const editColumnConfirm = ()=>{
+    onConfirm()
+}
 
 // 编辑确认
 const onConfirm = () => {

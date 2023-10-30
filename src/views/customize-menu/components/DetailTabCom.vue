@@ -312,6 +312,7 @@ const openDetilDialog = (row) => {
     detailData.tab = { ...detailTab };
     detailData.detailId = row[idFiledName.value];
     detailData.detailTitle = row[nameFiledName.value];
+    detailData.idFiledName = idFiledName.value;
     detailRefs.value.openDialog(detailData);
 };
 // 列排序
