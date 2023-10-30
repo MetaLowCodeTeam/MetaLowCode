@@ -22,7 +22,11 @@
                         :form-data="formData"
                         :global-dsv="globalDsv"
                     />
-                    <el-empty v-else :image-size="100" :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'" />
+                    <el-empty
+                        v-else
+                        :image-size="100"
+                        :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'"
+                    />
                 </el-col>
                 <el-col :span="6" v-if="approvalTask.type">
                     <el-form label-position="top" label-width="100px">
@@ -181,16 +185,19 @@ onMounted(() => {
 
 const vFormRef = ref();
 let haveLayoutJson = ref(false);
-let optionData = reactive({});
+let optionData = ref({});
 let formData = reactive({});
 let globalDsv = reactive({});
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
-    let res = await getFormLayout(allEntityName.value[approvalTask.value.entityCode]);
+    let res = await getFormLayout(
+        allEntityName.value[approvalTask.value.entityCode]
+    );
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
+            optionData.value = res.data.optionData || {};
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let formData = await queryById(props.entityId);
@@ -198,6 +205,9 @@ const initFormLayout = async () => {
                 if (formData) {
                     vFormRef.value.setFormData(formData.data);
                     nextTick(() => {
+                        if (JSON.stringify(optionData.value) == "{}") {
+                            vFormRef.value.reloadOptionData();
+                        }
                         vFormRef.value.disableForm();
                         // 显示可编辑字段
                         let enableWidgets =

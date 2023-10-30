@@ -31,7 +31,7 @@
                         </span>
                         新增选项
                     </el-button>
-                    <el-button type="primary" @click="onSave" :loading="mainLoading" :disabled="treeList.length < 1">保存</el-button>
+                    <!-- <el-button type="primary" @click="onSave" :loading="mainLoading" :disabled="treeList.length < 1">保存</el-button> -->
                 </div>
             </el-header>
             <el-main class="mian-box" v-loading="mainLoading">
@@ -228,7 +228,9 @@ const operateItem = (inx, targe, item) => {
             done();
         },
     })
-        .then(() => {})
+        .then(() => {
+            onSave();
+        })
         .catch(() => {});
 };
 const getOptionMaxValue = () => {
@@ -259,6 +261,7 @@ const moveItem = (inx, target) => {
             mainList.value[inx] = nextItem;
         }
     }
+    onSave();
 };
 
 // 删除

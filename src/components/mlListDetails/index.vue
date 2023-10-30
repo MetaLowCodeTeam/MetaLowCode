@@ -35,7 +35,11 @@
                         ></el-tab-pane>
                     </el-tabs>
                     <div v-if="activeTabName == 'detail'">
-                        <v-form-render v-if="haveLayoutJson" ref="vFormRef" />
+                        <v-form-render
+                            v-if="haveLayoutJson"
+                            :option-data="optionData"
+                            ref="vFormRef"
+                        />
                     </div>
                     <div v-else>
                         <slot name="tab" :activeTabName="activeTabName"></slot>
@@ -124,6 +128,7 @@ const closeDialog = () => {
 // 表单数据是否显示
 let haveLayoutJson = ref(false);
 let vFormRef = ref();
+let optionData = ref({});
 // 刷新数据
 const refresh = async () => {
     loading.value = true;
@@ -132,7 +137,7 @@ const refresh = async () => {
     if (res) {
         if (res.data?.layoutJson && activeTabName.value == "detail") {
             haveLayoutJson.value = true;
-            
+            optionData.value = res.data.optionData || {};
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let formData = await queryById(detailDialog.id);
@@ -144,7 +149,9 @@ const refresh = async () => {
                     }
                     vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
-                        //vFormRef.value.disableForm();
+                        if (JSON.stringify(optionData.value) == "{}") {
+                            vFormRef.value.reloadOptionData();
+                        }
                         vFormRef.value.setReadMode();
                     });
                 }

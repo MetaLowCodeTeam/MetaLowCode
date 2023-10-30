@@ -44,7 +44,7 @@ let row = reactive({
 });
 const globalDsv = reactive({});
 globalDsv["uploadServer"] = import.meta.env.VITE_APP_BASE_API;
-const optionData = reactive({});
+let optionData = ref({});
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = (v) => {
@@ -70,6 +70,7 @@ const initFormLayout = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
+            optionData.value = res.data.optionData || {};
             // 是编辑
             if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过
@@ -80,23 +81,24 @@ const initFormLayout = async () => {
                         row.approvalStatus = formData.data.approvalStatus || {};
                         vFormRef.value.setFormData(formData.data);
 
-                        if (
-                            row.approvalStatus.value == 1 ||
-                            row.approvalStatus.value == 3
-                        ) {
-                            nextTick(() => {
+                        nextTick(() => {
+                            if (JSON.stringify(optionData.value) == "{}") {
+                                vFormRef.value.reloadOptionData();
+                            }
+                            if (
+                                row.approvalStatus.value == 1 ||
+                                row.approvalStatus.value == 3
+                            ) {
                                 vFormRef.value.disableForm();
-                            });
-                            return;
-                        }
+                                return;
+                            }
 
-                        if (props.disableWidgets.length > 0) {
-                            nextTick(() => {
+                            if (props.disableWidgets.length > 0) {
                                 vFormRef.value.disableWidgets(
                                     props.disableWidgets
                                 );
-                            });
-                        }
+                            }
+                        });
                     }
                     loading.value = false;
                 });
@@ -106,6 +108,11 @@ const initFormLayout = async () => {
                 nextTick(async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     vFormRef.value.setFormData({});
+                    nextTick(() => {
+                        if (JSON.stringify(optionData.value) == "{}") {
+                            vFormRef.value.reloadOptionData();
+                        }
+                    });
                 });
             }
             loading.value = false;

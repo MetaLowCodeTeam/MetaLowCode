@@ -35,7 +35,11 @@
                     />
                     <!-- 详情 -->
                     <div v-if="cutTab == 'detail'">
-                        <v-form-render v-if="haveLayoutJson" ref="vFormRef" />
+                        <v-form-render
+                            v-if="haveLayoutJson"
+                            :option-data="optionData"
+                            ref="vFormRef"
+                        />
                         <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
                     </div>
                     <!-- 非详情 -->
@@ -161,10 +165,10 @@ const refresh = () => {
 };
 
 // 提交审批触发
-const onSubmitApproval = ()=>{
+const onSubmitApproval = () => {
     getLayoutList();
-    emits('onConfirm')
-}
+    emits("onConfirm");
+};
 
 // 加载页签
 const getLayoutList = async () => {
@@ -181,6 +185,7 @@ const getLayoutList = async () => {
 
 let haveLayoutJson = ref(false);
 let noeData = ref(false);
+let optionData = ref({});
 // 初始化数据
 const initData = async () => {
     loading.value = true;
@@ -189,6 +194,7 @@ const initData = async () => {
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
+            optionData.value = res.data.optionData || {};
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let queryByIdRes = await queryById(detailDialog.detailId);
@@ -196,18 +202,25 @@ const initData = async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let resData = queryByIdRes.data || {};
                     vFormRef.value.setFormData(resData);
-                    approvalStatus.value =
-                        queryByIdRes?.data.recordApprovalState || null;
-                    if (approvalStatus.value) {
-                        approvalStatus.value.entityCode =
-                            detailDialog.entityCode;
-                        approvalStatus.value.entityName =
-                            detailDialog.entityName;
-                        approvalStatus.value.recordId = detailDialog.detailId;
-                        approvalStatus.value.approvalName =
-                            detailDialog.detailTitle;
-                    }
-                    vFormRef.value.setReadMode();
+                    nextTick(() => {
+                        if (JSON.stringify(optionData.value) == "{}") {
+                            vFormRef.value.reloadOptionData();
+                        }
+                        approvalStatus.value =
+                            queryByIdRes?.data.recordApprovalState || null;
+                        if (approvalStatus.value) {
+                            approvalStatus.value.entityCode =
+                                detailDialog.entityCode;
+                            approvalStatus.value.entityName =
+                                detailDialog.entityName;
+                            approvalStatus.value.recordId =
+                                detailDialog.detailId;
+                            approvalStatus.value.approvalName =
+                                detailDialog.detailTitle;
+                        }
+                        vFormRef.value.setReadMode();
+                    });
+
                     noeData.value = false;
                 } else {
                     noeData.value = true;
@@ -221,7 +234,6 @@ const initData = async () => {
         loading.value = false;
     }
 };
-
 
 // 打开编辑
 let editRefs = ref();
