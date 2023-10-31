@@ -105,6 +105,7 @@
                     @sort-change="sortChange"
                     @header-dragend="headerDragend"
                     @row-click="handleHighlightChangeTable"
+                    @row-dblclick="rowDblclick"
                 >
                     <el-table-column type="selection" width="50" :align="'center'" />
                     <el-table-column
@@ -408,6 +409,11 @@ const onEditRow = (row) => {
 };
 
 let detailRefs = ref("");
+
+const rowDblclick = (row) => {
+    openDetilDialog(row);
+};
+
 // 打开详情
 const openDetilDialog = (row) => {
     if (!row) {

@@ -200,11 +200,7 @@
                 <div v-if="!ismobileFn" class="aminui-side-split">
                     <div class="aminui-side-split-top">
                         <router-link :to="$CONFIG.DASHBOARD_URL">
-                            <img
-                                class="logo"
-                                :title=" appName"
-                                src="~@/assets/imgs/logo-r.png"
-                            />
+                            <img class="logo" :title=" appName" src="~@/assets/imgs/logo-r.png" />
                         </router-link>
                     </div>
                     <div class="adminui-side-split-scroll">
@@ -341,6 +337,10 @@ export default {
                     pluginName: "metaTrigger",
                     errMsg: "触发器 插件未安装！",
                 },
+                RriggerLog: {
+                    pluginName: "metaTrigger",
+                    errMsg: "触发器 插件未安装！",
+                },
                 DashboardDesign: {
                     pluginName: "metaDataCube",
                     errMsg: "数据分析 插件未安装！",
@@ -350,7 +350,7 @@ export default {
                     errMsg: "在线报表 插件未安装！",
                 },
             },
-            needPlugin: ["RriggerList", "DashboardDesign", "TemplatesList"],
+            needPlugin: ["RriggerList", "DashboardDesign", "TemplatesList","RriggerLog"],
         };
     },
     computed: {
@@ -372,9 +372,9 @@ export default {
         menuIsCollapseFn() {
             return menuIsCollapse.value;
         },
-        appName:()=>{
-            return publicSetting.value.APP_NAME
-        }
+        appName: () => {
+            return publicSetting.value.APP_NAME;
+        },
     },
     created() {
         this.onLayoutResize();

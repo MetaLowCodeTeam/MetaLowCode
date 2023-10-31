@@ -377,9 +377,9 @@ const targetFieldChange = async (e) => {
         let typeFieldName = e.fieldName;
         let res;
         if (e.fieldType == "Tag") {
-            res = await getOptionItems(typeEntityName, typeFieldName);
+            res = await getTagItems(typeEntityName, typeFieldName);
         } else {
-            res = await getOptionItems(typeEntityName, getTagItems);
+            res = await getOptionItems(typeEntityName, typeFieldName);
         }
         if (res && res.data) {
             optionItems.value = res.data;

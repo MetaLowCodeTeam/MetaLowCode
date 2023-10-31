@@ -20,6 +20,7 @@
                 style="width: 100%;"
                 :border="true"
                 ref="meTable"
+                
             >
                 <el-table-column
                     v-for="(column,inx) of tableColumn"
