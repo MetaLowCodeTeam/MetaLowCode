@@ -27,7 +27,7 @@ import { reactive, ref, inject, nextTick } from "vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
-import { saveUser } from "@/api/user";
+import { saveUser, checkRight } from "@/api/user";
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -47,12 +47,25 @@ globalDsv["uploadServer"] = import.meta.env.VITE_APP_BASE_API;
 let optionData = ref({});
 let loading = ref(false);
 let isShow = ref(false);
-const openDialog = (v) => {
+const openDialog = async (v) => {
     row.detailId = v.detailId;
     row.entityName = v.entityName;
     row.dialogTitle = v.dialogTitle;
-    isShow.value = true;
-    initFormLayout();
+    let param = {
+        id: v.detailId,
+        // 2新建 3更新
+        rightType: v.detailId ? 3 : 2,
+        entityName: v.detailId ? "" : v.entityName,
+    };
+    let res = await checkRight(param.id, param.rightType, param.entityName);
+    if (res.data.code == 200 && res.data.data) {
+        isShow.value = true;
+        initFormLayout();
+    } else {
+        $ElMessage.error(
+            "当前用户没有" + (v.detailId ? "编辑" : "新建") + "权限"
+        );
+    }
 };
 
 /**

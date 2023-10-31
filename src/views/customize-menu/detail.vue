@@ -59,7 +59,7 @@
                                     :entityName="detailDialog.entityName"
                                     :entityCode="detailDialog.entityCode"
                                     :addConf="detailDialog.add"
-                                    @confirm="getLayoutList"
+                                    @confirm="newRelatedConfirm"
                                     @add="onAdd"
                                 />
                             </el-col>
@@ -164,6 +164,12 @@ const refresh = () => {
         initData();
     }
 };
+
+// 新建相关完成触发
+const newRelatedConfirm = ()=>{
+    cutTab.value = "detail";
+    getLayoutList();
+}
 
 // 提交审批触发
 const onSubmitApproval = () => {

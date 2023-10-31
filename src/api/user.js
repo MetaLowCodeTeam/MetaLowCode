@@ -119,11 +119,11 @@ export function getUserRole(userId) {
  * 
  * @param {*} id  实体记录ID
  * @param {*} rightType 权限类型  2新建 3更新 4删除 5分配 6分享
- * @param {*} entityCode 实体CODE
+ * @param {*} entityName 实体Name
  * @returns 
  */
-export function checkRight(id, rightType,entityCode) {
+export function checkRight(id, rightType, entityName) {
     return request.post('/user/checkRight', {}, {
-        params: { id, rightType }
+        params: { id, rightType, entityName }
     })
 }
