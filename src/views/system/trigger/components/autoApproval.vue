@@ -24,7 +24,13 @@
                     <el-checkbox v-model="trigger.actionContent.submitMode" label="提交模式" />
                 </el-row>
                 <el-row>
-                    <span class="info-text">仅提交不审批。选择的审批流程至少配置一个审批人，否则会提交失败</span>
+                    <span class="info-text">1.勾选提交模式当满足条件将自动提交审批，但不会自动审核，需审核人人工审核。</span>
+                </el-row>
+                <el-row>
+                    <span class="info-text">2.不勾选提交模式当满足条件将自动提交审批，且自动审核通过。</span>
+                </el-row>
+                <el-row>
+                    <span class="info-text">注：审批流程中至少配置一个审批人，否则会提交失败</span>
                 </el-row>
             </div>
         </el-form-item>
