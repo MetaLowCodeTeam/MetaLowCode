@@ -144,6 +144,7 @@ import SetColumn from "./SetColumn.vue";
 import DataExport from "./DataExport.vue";
 import Allocation from "./Allocation.vue";
 import ReportForms from "./ReportForms.vue";
+import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
@@ -166,18 +167,57 @@ const $ElMessage = inject("$ElMessage");
  * ********************************************************  操作 beg
  */
 let allocationRefs = ref("");
-const allocationFn = (type) => {
+const RightType = {
+    del: {
+        type: 4,
+        label: "删除",
+    },
+    allocation: {
+        type: 5,
+        label: "分配",
+    },
+    share: {
+        type: 6,
+        label: "共享",
+    },
+    unShare: {
+        type: 6,
+        label: "取消共享",
+    },
+};
+const allocationFn = async (type) => {
     if (props.multipleSelection.length > 0) {
-        allocationRefs.value.openDialog({
-            type,
-            pageType: props.type,
-            list: props.multipleSelection,
-        });
+        if (props.multipleSelection.length == 1) {
+            let param = {
+                id: props.detailId,
+                rightType: RightType[type].type,
+            };
+            let res = await checkRight(param.id, param.rightType);
+            if (res.data.code == 200 && res.data.data) {
+                allowOpenDialog();
+            } else {
+                $ElMessage.error(
+                    "当前用户没有" + RightType[type].label + "权限"
+                );
+            }
+        }
+        // 如果数据大于1条不做权限效验
+        else {
+            allowOpenDialog(type);
+        }
     }
 };
 
+const allowOpenDialog = (type) => {
+    allocationRefs.value.openDialog({
+        type,
+        pageType: props.type,
+        list: props.multipleSelection,
+    });
+};
+
 const allocationSuccess = (v) => {
-    emits("editColumnConfirm",v);
+    emits("editColumnConfirm", v);
 };
 
 // 打开报表
