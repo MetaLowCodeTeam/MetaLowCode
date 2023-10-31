@@ -9,10 +9,15 @@
         defalutSortField="modifiedOn"
         defaultFilter="name"
         @actionBtn="actionBtn"
+        @changeSwitch="changeSwitch"
         checkRole="r48"
     >
         <template #addbutton>
-            <el-button type="primary" @click="actionBtn({target:'add'})" :disabled="!$TOOL.checkRole('r48-2')">
+            <el-button
+                type="primary"
+                @click="actionBtn({target:'add'})"
+                :disabled="!$TOOL.checkRole('r48-2')"
+            >
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -26,7 +31,7 @@
 <script setup>
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
-const $TOOL = inject("$TOOL")
+const $TOOL = inject("$TOOL");
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([
@@ -64,8 +69,9 @@ let tableColumn = ref([
         prop: "isDisabled",
         label: "启用",
         align: "center",
-        width: 60,
-        isDisabled: true,
+        customSolt: "switch",
+        isNegation:true,
+        width: 80,
     },
     {
         prop: "modifiedOn",
@@ -83,7 +89,7 @@ let dialogForm = ref({
     saveIdCode: "triggerConfigId",
     checkCodes: ["actionType", "name"],
     codeErrMsg: ["请选择触发器", "请输入名称"],
-    fromEntityLabel:'源实体',
+    fromEntityLabel: "源实体",
     showFormItem: [{ label: "名称", code: "name", type: "1" }],
 });
 
@@ -102,6 +108,14 @@ const actionBtn = (data) => {
         dialogForm.value.form = { ...tempForm };
     }
     mlActiveDialogRefs.value.openDialog(dialogForm.value);
+};
+
+const changeSwitch = (row) => {
+    let tempForm = { ...row };
+    tempForm.actionType = tempForm.actionType.value;
+    dialogForm.value.form = { ...tempForm };
+    mlActiveDialogRefs.value.dialogForm = {...dialogForm.value};
+    mlActiveDialogRefs.value.saveProcess();
 };
 
 // 保存流程

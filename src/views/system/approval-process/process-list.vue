@@ -10,9 +10,15 @@
         defaultFilter="flowName"
         @actionBtn="actionBtn"
         queryUrl="/approval/configList"
+        @changeSwitch="changeSwitch"
     >
         <template #addbutton>
-            <el-dropdown split-button type="primary" @click="actionBtn({target:'add'})" @command="referral">
+            <el-dropdown
+                split-button
+                type="primary"
+                @click="actionBtn({target:'add'})"
+                @command="referral"
+            >
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -37,7 +43,7 @@
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const $TOOL = inject('$TOOL')
+const $TOOL = inject("$TOOL");
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([
     {
@@ -66,8 +72,9 @@ let tableColumn = ref([
         prop: "isDisabled",
         label: "启用",
         align: "center",
-        width: 60,
-        isDisabled: true,
+        customSolt: "switch",
+        isNegation: true,
+        width: 80,
     },
     {
         prop: "createdOn",
@@ -78,6 +85,14 @@ let tableColumn = ref([
     },
 ]);
 
+const changeSwitch = (row) => {
+    let tempForm = { ...row };
+    tempForm.actionType = tempForm.actionType.value;
+    dialogForm.value.form = { ...tempForm };
+    mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
+    mlActiveDialogRefs.value.saveProcess();
+};
+
 // 编辑弹框
 let mlActiveDialogRefs = ref();
 let dialogForm = ref({
@@ -85,8 +100,8 @@ let dialogForm = ref({
     saveIdCode: "approvalConfigId",
     checkCodes: ["flowName"],
     codeErrMsg: ["请输入审批流程名称"],
-    disabledTip:"禁用后正在使用此流程的审批记录不受影响",
-    fromEntityLabel:'应用实体',
+    disabledTip: "禁用后正在使用此流程的审批记录不受影响",
+    fromEntityLabel: "应用实体",
     showFormItem: [{ label: "名称", code: "flowName", type: "1" }],
 });
 
@@ -107,13 +122,12 @@ const actionBtn = (data) => {
 
 // 保存流程
 const saveProcess = async (row) => {
-    if(row){
+    if (row) {
         goDetial(row);
-    }else {
+    } else {
         mlEntityMenuAndListRef.value.getApprovalList();
     }
 };
-
 
 // 添加触发
 const addClick = () => {
@@ -126,7 +140,7 @@ const goDetial = (row) => {
         path: "/web/process-detail",
         query: {
             approvalConfigId: row.approvalConfigId,
-            entityCode:row.entityCode
+            entityCode: row.entityCode,
             // entityCode:
         },
     });

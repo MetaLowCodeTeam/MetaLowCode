@@ -95,6 +95,20 @@
                             <span v-else-if="column.customSolt === 'priority'">
                                 <span class="num-span">{{ scope.row.priority }}</span>
                             </span>
+                            <span v-else-if="column.customSolt === 'switch' && column.isNegation">
+                                <el-switch
+                                    v-model="scope.row[column.prop]"
+                                    :active-value="false"
+                                    :inactive-value="true"
+                                    @change="changeSwitch(scope.row)"
+                                />
+                            </span>
+                            <span v-else-if="column.customSolt === 'switch' && !column.isNegation">
+                                <el-switch
+                                    v-model="scope.row[column.prop]"
+                                    @change="changeSwitch(scope.row)"
+                                />
+                            </span>
                             <!-- 默认 -->
                             <span v-else>{{ scope.row[column.prop]}}</span>
                         </template>
@@ -172,7 +186,7 @@ const props = defineProps({
     // 查询接口
     queryUrl: { type: String, default: "" },
 });
-const emit = defineEmits(["goDetial", "actionBtn"]);
+const emit = defineEmits(["goDetial", "actionBtn", "changeSwitch"]);
 const message = inject("$ElMessage");
 const ListTile = reactive({
     ApprovalConfig: "审批流程",
@@ -416,6 +430,10 @@ const deleteProcess = (row) => {
 
 const goDetial = (row) => {
     emit("goDetial", row);
+};
+
+const changeSwitch = (row) => {
+    emit("changeSwitch", row);
 };
 
 defineExpose({

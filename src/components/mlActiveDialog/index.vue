@@ -184,6 +184,8 @@ const saveProcess = async () => {
 };
 defineExpose({
     openDialog,
+    dialogForm,
+    saveProcess,
 });
 </script>
 

@@ -12,6 +12,7 @@
         defalutSortField="modifiedOn"
         defaultFilter="reportName"
         @actionBtn="actionBtn"
+        @changeSwitch="changeSwitch"
     >
         <template #addbutton>
             <el-button type="primary" @click="actionBtn({target:'add'})">
@@ -48,8 +49,9 @@ let tableColumn = ref([
         prop: "isDisabled",
         label: "启用",
         align: "center",
-        width: 60,
-        isDisabled: true,
+        customSolt: "switch",
+        isNegation:true,
+        width: 80,
     },
     {
         prop: "modifiedOn",
@@ -59,6 +61,14 @@ let tableColumn = ref([
         fromNow: true,
     },
 ]);
+
+const changeSwitch = (row) => {
+    let tempForm = { ...row };
+    tempForm.actionType = tempForm.actionType.value;
+    dialogForm.value.form = { ...tempForm };
+    mlActiveDialogRefs.value.dialogForm = {...dialogForm.value};
+    mlActiveDialogRefs.value.saveProcess();
+};
 
 
 // 编辑弹框
