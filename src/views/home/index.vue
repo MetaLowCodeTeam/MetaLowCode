@@ -82,19 +82,19 @@ const getDashboardList = async () => {
             loading.value = false;
             return;
         }
-        // 如果有本地缓存ID
-        if (defaultChartId.value) {
-            // 查找缓存ID是否存在于已有LIST中
-            let filterChartId = dashboardList.value.filter(
-                (el) => el.chartId == defaultChartId.value
-            );
-            // 如果存在就使用
-            if (filterChartId.length > 0) {
-                initFormConfig(defaultChartId.value);
-                loading.value = false;
-                return;
-            }
-        }
+        // // 如果有本地缓存ID
+        // if (defaultChartId.value) {
+        //     // 查找缓存ID是否存在于已有LIST中
+        //     let filterChartId = dashboardList.value.filter(
+        //         (el) => el.chartId == defaultChartId.value
+        //     );
+        //     // 如果存在就使用
+        //     if (filterChartId.length > 0) {
+        //         initFormConfig(defaultChartId.value);
+        //         loading.value = false;
+        //         return;
+        //     }
+        // }
         // 查找有没有默认
         let filterDefaultId = dashboardList.value.filter(
             (el) => el.defaultChart
@@ -107,7 +107,6 @@ const getDashboardList = async () => {
         }
 
         // 如果都没有
-
         initFormConfig(dashboardList.value[0].chartId);
         loading.value = false;
     } else {
