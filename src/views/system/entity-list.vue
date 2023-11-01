@@ -144,23 +144,6 @@ export default {
 		},
 
 		saveNewEntity() {
-			// if (!this.$refs['EPEditor'].validateForm())
-			// 	return
-			//
-			// let mainEntityName = !this.newEntityProps.mainEntity ? 'null' : this.newEntityProps.mainEntity
-			// createEntity(this.newEntityProps, mainEntityName).then(res => {
-			// 	if (res.error != null) {
-			// 		this.$message({message: res.error, type: 'error'})
-			// 		return
-			// 	}
-			//
-			// 	this.$message.success('保存成功')
-			// 	this.showNewEntityDialogFlag = false
-			// 	this.getEntityList()
-			// }).catch(res => {
-			// 	this.$message({message: res.message, type: 'error'})
-			// })
-
 			this.$refs['EPEditor'].validateForm(() => {
 				const mainEntityName = !this.newEntityProps.mainEntity ? 'null' : this.newEntityProps.mainEntity
 				createEntity(this.newEntityProps, mainEntityName).then(res => {
@@ -172,8 +155,9 @@ export default {
 					this.$message.success('保存成功')
 					this.showNewEntityDialogFlag = false
 					this.getEntityList()
-				}).catch(res => {
-					this.$message({message: res.message, type: 'error'})
+				}).catch(err => {
+					console.error(err.message)
+					//this.$message({message: err.message, type: 'error'})
 				})
 			})
 		},
