@@ -45,6 +45,7 @@
                     <!-- 非详情 -->
                     <div v-else>
                         <DetailTabCom
+                            ref="detailTabComRefs"
                             :cutTab="cutTab"
                             :tabs="detailDialog.tab"
                             :entityId="detailDialog.detailId"
@@ -58,7 +59,7 @@
                                 <NewRelated
                                     :entityName="detailDialog.entityName"
                                     :entityCode="detailDialog.entityCode"
-                                    :addConf="detailDialog.add"
+                                    :addConf="addConf"
                                     @confirm="newRelatedConfirm"
                                     @add="onAdd"
                                 />
@@ -154,27 +155,30 @@ const tabChange = (tab) => {
 // 刷新
 const refresh = () => {
     cutTab.value = "detail";
-    if (
-        !detailDialog.tab ||
-        JSON.stringify(detailDialog.tab) == "{}" ||
-        (!detailDialog.add == JSON.stringify(detailDialog.add)) == "{}"
-    ) {
-        getLayoutList();
-    } else {
-        initData();
-    }
+    getLayoutList();
 };
 
+// 新建相关
+let addConf = ref({});
+let detailTabComRefs = ref();
 // 新建相关完成触发
-const newRelatedConfirm = ()=>{
-    cutTab.value = "detail";
-    getLayoutList();
-}
+const newRelatedConfirm = async () => {
+    loading.value = true;
+    let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
+    if (res) {
+        addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
+        if (cutTab.value == "detail") {
+            initData();
+        } else {
+            detailTabComRefs.value.initData();
+        }
+    }
+    loading.value = false;
+};
 
 // 提交审批触发
 const onSubmitApproval = () => {
-    getLayoutList();
-    emits("onConfirm");
+    onConfirm();
 };
 
 // 加载页签
@@ -183,7 +187,7 @@ const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
     if (res) {
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
-        detailDialog.add = res.data.ADD ? { ...res.data.ADD } : {};
+        addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
         initData();
     } else {
         loading.value = false;
@@ -259,8 +263,11 @@ const editColumnConfirm = (v) => {
 
 // 编辑确认
 const onConfirm = () => {
-    // 加载数据
-    refresh();
+    if (cutTab.value == "detail") {
+        initData();
+    } else {
+        detailTabComRefs.value.initData();
+    }
     emits("onConfirm");
 };
 

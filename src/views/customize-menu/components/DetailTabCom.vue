@@ -396,8 +396,8 @@ const getTableList = async () => {
             items: [
                 {
                     fieldName: fieldName.value,
-                    op:"EQ",
-                    value:props.entityId
+                    op: "EQ",
+                    value: props.entityId,
                 },
             ],
         },
@@ -431,6 +431,9 @@ const getTableList = async () => {
         loading.value = false;
     }
 };
+defineExpose({
+    initData,
+});
 </script>
 <style lang='scss' scoped>
 .main-header {
