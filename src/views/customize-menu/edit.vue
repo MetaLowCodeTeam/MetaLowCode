@@ -138,7 +138,7 @@ const initFormLayout = async () => {
                     }
                     vFormRef.value.setFormData(param);
                     nextTick(() => {
-                        if(row.fieldName){
+                        if (row.fieldName) {
                             vFormRef.value.disableWidgets([row.fieldName]);
                         }
                         if (JSON.stringify(optionData.value) == "{}") {
@@ -167,7 +167,12 @@ const confirm = async () => {
         return;
     }
     let formData = await vFormRef.value.getFormData();
-
+    if (row.fieldName) {
+        formData[row.fieldName] = {
+            id: row.fieldNameVale,
+            name: row.fieldNameLabel,
+        };
+    }
     if (formData) {
         loading.value = true;
         let saveRes;

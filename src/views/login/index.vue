@@ -7,9 +7,7 @@
                 <p>{{ appIntro }}</p>
             </div>
             <div class="login_adv__mask"></div>
-            <div
-                class="login_adv__bottom"
-            >© {{ appPageFooter }} {{ appVer }}</div>
+            <div class="login_adv__bottom">© {{ appPageFooter }} {{ appVer }}</div>
         </div>
         <div class="login_main">
             <div class="login-form">
@@ -106,24 +104,23 @@ export default {
             this.$i18n.locale = val;
             this.$TOOL.data.set("APP_LANG", val);
         },
-
     },
-    computed:{
-        appTitle:()=>{
+    computed: {
+        appTitle: () => {
             return publicSetting.value.APP_TITLE;
         },
-        appSubTitle:()=>{
+        appSubTitle: () => {
             return publicSetting.value.APP_SUB_TITLE;
         },
-        appIntro:()=>{
-            return publicSetting.value.APP_INTRO
+        appIntro: () => {
+            return publicSetting.value.APP_INTRO;
         },
-        appPageFooter:()=>{
-            return  publicSetting.value.APP_PAGE_FOOTER
+        appPageFooter: () => {
+            return publicSetting.value.APP_PAGE_FOOTER;
         },
-        appVer:()=>{
-            return  publicSetting.value.APP_VER
-        }
+        appVer: () => {
+            return publicSetting.value.APP_VER;
+        },
     },
     created: function () {
         this.$TOOL.cookie.remove("TOKEN");
@@ -140,8 +137,6 @@ export default {
             "background:#666;color:#fff;border-radius:3px;",
             ""
         );
-        // this.appTitle = publicSetting.value.APP_TITLE;
-        // this.appSubTitle
     },
     methods: {
         configDark() {
@@ -176,6 +171,8 @@ export default {
     background-position: center center;
     background-repeat: no-repeat;
     position: relative;
+    background: url("/img/auth_banner.jpg") no-repeat;
+    background-size: 100% 100%;
 }
 .login_adv__title {
     color: #fff;
