@@ -214,6 +214,7 @@ const initData = async () => {
                 if (queryByIdRes && queryByIdRes.data) {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let resData = queryByIdRes.data || {};
+                    resData.logo = resData.logo || [];
                     vFormRef.value.setFormData(resData);
                     nextTick(() => {
                         if (JSON.stringify(optionData.value) == "{}") {
