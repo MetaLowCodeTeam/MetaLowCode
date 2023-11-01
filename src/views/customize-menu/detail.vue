@@ -124,12 +124,6 @@ let detailDialog = reactive({
 let loading = ref(false);
 let multipleSelection = ref([]);
 let approvalStatus = ref(null);
-// 新建
-const onAdd = (e) => {
-    e.fieldNameVale = detailDialog.detailId;
-    e.fieldNameLabel = detailDialog.detailTitle
-    emits("onAdd", e);
-};
 
 // 当前页签
 let cutTab = ref("detail");
@@ -214,7 +208,8 @@ const initData = async () => {
                 if (queryByIdRes && queryByIdRes.data) {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let resData = queryByIdRes.data || {};
-                    resData.logo = resData.logo || [];
+                    // resData.logo = resData.logo || [];
+                    vFormRef.value.resetForm();
                     vFormRef.value.setFormData(resData);
                     nextTick(() => {
                         if (JSON.stringify(optionData.value) == "{}") {
@@ -253,6 +248,17 @@ const initData = async () => {
 let editRefs = ref();
 const onEditRow = () => {
     editRefs.value.openDialog(detailDialog);
+};
+
+// 新建
+const onAdd = (e) => {
+    let tempV = {};
+    tempV.dialogTitle = "新建" + (e.columnAliasName || e.entityLabel);
+    tempV.entityName = e.entityName;
+    tempV.fieldName = e.fieldName;
+    tempV.fieldNameVale = detailDialog.detailId;
+    tempV.fieldNameLabel = detailDialog.detailTitle;
+    editRefs.value.openDialog(tempV);
 };
 
 const editColumnConfirm = (v) => {

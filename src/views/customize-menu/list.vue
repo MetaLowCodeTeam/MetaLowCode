@@ -154,7 +154,7 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList" @onAdd="onDetailAdd" />
+        <Detail ref="detailRefs" @onConfirm="getTableList"/>
         <Edit ref="editRefs" @onConfirm="getTableList" />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -379,16 +379,6 @@ const handleHighlightChangeTable = (row, column) => {
 
 // 编辑弹框
 let editRefs = ref();
-
-const onDetailAdd = (e) => {
-    let tempV = {};
-    tempV.dialogTitle = "新建" + (e.columnAliasName || e.entityLabel);
-    tempV.entityName = e.entityName;
-    tempV.fieldName = e.fieldName;
-    tempV.fieldNameVale = e.fieldNameVale;
-    tempV.fieldNameLabel = e.fieldNameLabel;
-    editRefs.value.openDialog(tempV);
-};
 
 // 新建
 const onAdd = () => {
