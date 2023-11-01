@@ -35,6 +35,11 @@
                         </el-icon>
                     </span>
                 </div>
+                <div class="data-filter" v-if="isDataFilter">
+                    <el-tag type="success" closable @close="clearDataFilter">
+                        当前数据已过滤
+                    </el-tag>
+                </div>
                 <div class="fr table-setting">
                     <!-- <el-button class="mr-15">按钮占用</el-button> -->
                     <el-button
@@ -154,7 +159,7 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList"/>
+        <Detail ref="detailRefs" @onConfirm="getTableList" />
         <Edit ref="editRefs" @onConfirm="getTableList" />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -180,6 +185,10 @@ import Detail from "./detail.vue";
 import Edit from "./edit.vue";
 import FormatRow from "./components/FormatRow.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
+import routerParamsStore from "@/store/modules/routerParams";
+import { storeToRefs } from "pinia";
+const { setRouterParams } = routerParamsStore();
+const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
 
 const $API = inject("$API");
@@ -489,7 +498,23 @@ let dataExportData = reactive({
     total: 0,
 });
 
+let builtInFilter = ref({});
+let isDataFilter = ref(false);
+
+const clearDataFilter = ()=>{
+    isDataFilter.value = false;
+    builtInFilter.value = {};
+    quickQuery.value = "",
+    setRouterParams({});
+    getTableList();
+}
+
 const getTableList = async () => {
+    if (routerParams.value.path && routerParams.value.path == router.currentRoute.value.path) {
+        quickQuery.value = routerParams.value.quickFilter;
+        builtInFilter.value = routerParams.value.filter;
+        isDataFilter.value = true;
+    }
     pageLoading.value = true;
     let param = {
         mainEntity: entityName.value,
@@ -500,6 +525,7 @@ const getTableList = async () => {
         advFilter: { ...comQueriesList },
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
+        builtInFilter:builtInFilter.value, 
     };
     dataExportData.queryParm = { ...param };
     let res = await getDataList(
@@ -510,7 +536,8 @@ const getTableList = async () => {
         param.pageNo,
         param.sortFields,
         param.advFilter,
-        param.quickFilter
+        param.quickFilter,
+        param.builtInFilter,
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
@@ -661,5 +688,10 @@ div {
             display: block;
         }
     }
+}
+.data-filter {
+    display: inline-block;
+    position: relative;
+    top: 2px;
 }
 </style>

@@ -132,6 +132,8 @@ import { useRouter } from "vue-router";
 import FormatRow from "./FormatRow.vue";
 import Detail from "../detail.vue";
 import CardLayout from "./CardLayout.vue";
+import routerParamsStore from "@/store/modules/routerParams";
+const { setRouterParams } = routerParamsStore();
 const router = useRouter();
 const props = defineProps({
     cutTab: { type: String },
@@ -284,7 +286,23 @@ const initData = async () => {
 };
 
 const goPath = () => {
-    router.push("/web/" + props.cutTab + "/list");
+    router.push({
+        path: "/web/" + props.cutTab + "/list",
+    });
+    setRouterParams({
+        path: "/web/" + props.cutTab + "/list",
+        filter: {
+            equation: "AND",
+            items: [
+                {
+                    fieldName: fieldName.value,
+                    op: "EQ",
+                    value: props.entityId,
+                },
+            ],
+        },
+        quickFilter: quickQueryVal.value,
+    });
 };
 
 // 分页

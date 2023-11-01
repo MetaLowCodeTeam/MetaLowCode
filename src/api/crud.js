@@ -40,13 +40,14 @@ export function deleteRecords(body) {
 * @param {*} sortFields [{   "fieldName": "entityCode","type": "desc" }] 排序
 * @param {*} advFilter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  常用查询
 * @param {*} quickFilter ""  快速查询
+* @param {*} builtInFilter ""  { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] } 参数查询
 
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, pageSize, pageNo, sortFields, advFilter, quickFilter
+        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter
     })
 }
 
@@ -80,8 +81,8 @@ export function queryById(entityId, fieldNames) {
  * @param {*} queryReserved 是否查询系统字段  true or false 默认 false
  * @param {*} firstReference 是否查询引用字段（不包含引用实体字段）  true or false 默认 false
  */
-export function queryEntityFields(entityCode, queryReference, queryReserved,firstReference) {
-    return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved,firstReference })
+export function queryEntityFields(entityCode, queryReference, queryReserved, firstReference) {
+    return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved, firstReference })
 }
 
 /**

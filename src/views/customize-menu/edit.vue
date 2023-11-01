@@ -130,6 +130,7 @@ const initFormLayout = async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     // if(row.fieldName){}
                     let param = {};
+                    console.log(row,'row')
                     if (row.fieldName) {
                         param[row.fieldName] = {
                             id: row.fieldNameVale,
