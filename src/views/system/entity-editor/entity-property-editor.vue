@@ -106,7 +106,7 @@ export default {
 				label: [
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
 					{
-						pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
+						pattern: /^[A-Za-z\d\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d]+[_-]*[A-Za-z\d\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d]/,
 						message: '以中文、英文字母、数字开头，中间可输入下划线或横杠',
 						trigger: 'blur'
 					},

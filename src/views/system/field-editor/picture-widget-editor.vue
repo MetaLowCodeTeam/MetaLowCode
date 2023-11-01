@@ -114,7 +114,7 @@ export default {
 				'fieldViewModel': {
 					'maxFileCount': 1,
 					'fileMaxSize': 5,
-					'uploadFileTypes': '',
+					'uploadFileTypes': [],
 					'uploadHint': '',
 					'validators': [],
 				},

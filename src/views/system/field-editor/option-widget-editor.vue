@@ -217,7 +217,7 @@ export default {
 			this.$prompt('请输入选项名称', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
-				inputPattern: /^[A-Za-z\u4e00-\u9fa5\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
+				inputPattern: /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
 				inputErrorMessage: '输入不正确'
 			}).then(({value}) => {
 				if (this.validateOption(value, -1)) {
@@ -241,7 +241,7 @@ export default {
 			this.$prompt('请输入选项名称', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
-				inputPattern: /^[A-Za-z\u4e00-\u9fa5\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
+				inputPattern: /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
 				inputErrorMessage: '输入不正确'
 			}).then(({value}) => {
 				if (this.validateOption(value, -1)) {
@@ -288,7 +288,7 @@ export default {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				inputValue: oldOptionLabel,
-				inputPattern: /^[A-Za-z\u4e00-\u9fa5\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
+				inputPattern: /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
 				inputErrorMessage: '输入不正确'
 			}).then(({value}) => {
 				if (this.validateOption(value, optionIdx)) {
