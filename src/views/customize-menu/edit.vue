@@ -41,9 +41,12 @@ let row = reactive({
     detailId: "",
     entityName: "",
     dialogTitle: "",
+    fieldName: "",
+    fieldNameLabel: "",
+    fieldNameVale: "",
 });
-const globalDsv = reactive({});
-globalDsv["uploadServer"] = import.meta.env.VITE_APP_BASE_API;
+const globalDsv = ref({});
+globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
 let optionData = ref({});
 let loading = ref(false);
 let isShow = ref(false);
@@ -51,6 +54,9 @@ const openDialog = async (v) => {
     row.detailId = v.detailId;
     row.entityName = v.entityName;
     row.dialogTitle = v.dialogTitle;
+    row.fieldName = v.fieldName;
+    row.fieldNameLabel = v.fieldNameLabel;
+    row.fieldNameVale = v.fieldNameVale;
     let param = {
         id: v.detailId,
         // 2新建 3更新
@@ -58,7 +64,7 @@ const openDialog = async (v) => {
         entityName: v.detailId ? "" : v.entityName,
     };
     let res = await checkRight(param.id, param.rightType, param.entityName);
-    if (res.data.code == 200 && res.data.data) {
+    if (res.data && res.data.code == 200 && res.data.data) {
         isShow.value = true;
         initFormLayout();
     } else {
@@ -79,6 +85,7 @@ let haveLayoutJson = ref(false);
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
+    globalDsv.value.formEntity = row.entityName;
     let res = await getFormLayout(row.entityName);
     if (res) {
         if (res.data?.layoutJson) {
@@ -92,6 +99,7 @@ const initFormLayout = async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     if (formData) {
                         row.approvalStatus = formData.data.approvalStatus || {};
+                        console.log(formData.data, "formData.data");
                         vFormRef.value.setFormData(formData.data);
 
                         nextTick(() => {
@@ -118,10 +126,22 @@ const initFormLayout = async () => {
             }
             // 是新建
             else {
+                console.log(row, "row");
                 nextTick(async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
-                    vFormRef.value.setFormData({});
+                    // if(row.fieldName){}
+                    let param = {};
+                    if (row.fieldName) {
+                        param[row.fieldName] = {
+                            id: row.fieldNameVale,
+                            name: row.fieldNameLabel,
+                        };
+                    }
+                    vFormRef.value.setFormData(param);
                     nextTick(() => {
+                        if(row.fieldName){
+                            vFormRef.value.disableWidgets([row.fieldName]);
+                        }
                         if (JSON.stringify(optionData.value) == "{}") {
                             vFormRef.value.reloadOptionData();
                         }

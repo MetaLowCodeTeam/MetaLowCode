@@ -126,6 +126,8 @@ let multipleSelection = ref([]);
 let approvalStatus = ref(null);
 // 新建
 const onAdd = (e) => {
+    e.fieldNameVale = detailDialog.detailId;
+    e.fieldNameLabel = detailDialog.detailTitle
     emits("onAdd", e);
 };
 

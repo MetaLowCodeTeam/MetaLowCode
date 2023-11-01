@@ -5,9 +5,11 @@
         <template #dropdown>
             <el-dropdown-menu>
                 <template v-if="addConf?.config">
-                    <el-dropdown-item v-for="(item,inx) of JSON.parse(addConf.config)" :key="inx" :command="item">
-                        {{ item.columnAliasName || item.entityLabel }}
-                    </el-dropdown-item>
+                    <el-dropdown-item
+                        v-for="(item,inx) of JSON.parse(addConf.config)"
+                        :key="inx"
+                        :command="item"
+                    >{{ item.columnAliasName || item.entityLabel }}</el-dropdown-item>
                 </template>
                 <el-dropdown-item divided command="openSetDialog">配置新建项</el-dropdown-item>
             </el-dropdown-menu>
@@ -30,14 +32,14 @@ const props = defineProps({
     entityCode: { type: Number },
     addConf: { type: Object, default: () => {} },
 });
-const emits = defineEmits(["confirm",'add']);
+const emits = defineEmits(["confirm", "add"]);
 // let addConfList = ref([]);
 
 const handleCommand = (e) => {
     if (e === "openSetDialog") {
         openSetDialog();
     } else {
-        emits("add",e)
+        emits("add", e);
     }
 };
 
@@ -48,7 +50,7 @@ const openSetDialog = () => {
 };
 // 保存新建配置
 const confirm = () => {
-    emits('confirm')
+    emits("confirm");
 };
 </script>
 <style lang='scss' scoped>

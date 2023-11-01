@@ -384,6 +384,9 @@ const onDetailAdd = (e) => {
     let tempV = {};
     tempV.dialogTitle = "新建" + (e.columnAliasName || e.entityLabel);
     tempV.entityName = e.entityName;
+    tempV.fieldName = e.fieldName;
+    tempV.fieldNameVale = e.fieldNameVale;
+    tempV.fieldNameLabel = e.fieldNameLabel;
     editRefs.value.openDialog(tempV);
 };
 
