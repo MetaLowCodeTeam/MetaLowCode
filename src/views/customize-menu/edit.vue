@@ -126,7 +126,6 @@ const initFormLayout = async () => {
             }
             // 是新建
             else {
-                console.log(row, "row");
                 nextTick(async () => {
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     // if(row.fieldName){}
