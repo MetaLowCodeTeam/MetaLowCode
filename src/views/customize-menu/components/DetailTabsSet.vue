@@ -246,6 +246,8 @@ const getAllColumn = async () => {
         props.entityCode,
         false,
         false,
+        true,
+        false,
         true
     );
     if (res) {

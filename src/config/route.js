@@ -39,7 +39,7 @@ const routes = [
         "path": "/web/home",
         "meta": {
             "title": "首页",
-            "icon": "el-icon-eleme-filled",
+            "icon": "el-icon-home-filled",
             "type": "menu"
         },
         "children": [
