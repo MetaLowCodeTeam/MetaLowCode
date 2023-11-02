@@ -20,7 +20,6 @@
                 style="width: 100%;"
                 :border="true"
                 ref="meTable"
-                
             >
                 <el-table-column
                     v-for="(column,inx) of tableColumn"
@@ -55,6 +54,20 @@
                                 :type="column.formatter(scope.row).type"
                             >{{ column.formatter(scope.row).label }}</el-tag>
                         </span>
+                        <span v-else-if="column.customSolt === 'switch' && column.isNegation">
+                            <el-switch
+                                v-model="scope.row[column.prop]"
+                                :active-value="false"
+                                :inactive-value="true"
+                                @change="changeSwitch(scope.row)"
+                            />
+                        </span>
+                        <span v-else-if="column.customSolt === 'switch' && !column.isNegation">
+                            <el-switch
+                                v-model="scope.row[column.prop]"
+                                @change="changeSwitch(scope.row)"
+                            />
+                        </span>
                         <!-- 默认 -->
                         <span v-else>{{ scope.row[column.prop] }}</span>
                     </template>
@@ -78,7 +91,7 @@ import { onMounted, ref, reactive, inject } from "vue";
 import http from "@/utils/request";
 import { getDataList } from "@/api/crud";
 
-const emits = defineEmits(["highlightClick"]);
+const emits = defineEmits(["highlightClick", "changeSwitch"]);
 
 const $API = inject("$API");
 const props = defineProps({
@@ -192,6 +205,10 @@ async function getTableList() {
 // 详情跳转
 const highlightClick = (row) => {
     emits("highlightClick", row);
+};
+
+const changeSwitch = (row) => {
+    emits("changeSwitch", row);
 };
 
 defineExpose({

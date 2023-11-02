@@ -59,7 +59,8 @@ import {getEntitySet, createEntity, entityCanBeDeleted, deleteEntity} from '@/ap
 import EntityPropEditor from './entity-editor/entity-property-editor.vue'
 import useCommonStore from "@/store/modules/common";
 const { refreshCache } = useCommonStore();
-
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const visualDesign = await import('@/../lib/visual-design/designer.umd.js')
 
 export default {
@@ -100,7 +101,6 @@ export default {
 					&& (entityItem.name !== 'Chart')
 			})
 		},
-
 	},
 	mounted() {
 		this.getEntityList()
@@ -196,6 +196,10 @@ export default {
 		},
 
 		deleteSelectedEntity(selectedEntityObj) {
+            if(publicSetting.value.trialVersionFlag){
+                this.$message.error("试用版本已禁用删除实体功能，敬请谅解");
+                return
+            }
 			entityCanBeDeleted(selectedEntityObj.name).then(res => {
 				if (res.error != null) {
 					this.$message({message: res.error, type: 'error'})

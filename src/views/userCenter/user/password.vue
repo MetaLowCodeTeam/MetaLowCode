@@ -51,6 +51,9 @@
 import scPasswordStrength from "@/components/scPasswordStrength/index.vue";
 import http from "@/utils/request";
 import tool from "@/utils/tool";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 export default {
     components: {
         scPasswordStrength,
@@ -81,6 +84,10 @@ export default {
             }
         },
         save() {
+            if(publicSetting.value.trialVersionFlag){
+                this.$message.error("试用版本已禁用修改密码功能，敬请谅解");
+                return
+            }
             this.$refs.form.validate(async (valid) => {
                 if (valid) {
                     let regEx = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/;

@@ -221,6 +221,8 @@ import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-ed
 import {h} from 'vue';
 import useCommonStore from "@/store/modules/common";
 const { getEntityList } = useCommonStore();
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 export default {
 	name: "EntityFieldTable",
 	components: {
@@ -388,6 +390,10 @@ export default {
 		},
 
 		deleteTableData(row) {
+            if(publicSetting.value.trialVersionFlag){
+                this.$message.error("试用版本已禁用删除字段功能，敬请谅解");
+                return
+            }
 			if (!!this.entity && !!row.type && !!row.name) {
 				fieldCanBeDeleted(row.name, this.entity).then(res => {
 					if (res.error != null) {

@@ -1,6 +1,6 @@
 <template>
     <el-container class="hidden-x-scrollbar">
-        <el-aside class="left-tree-panel"  v-if="checkRole('r22-1')">
+        <el-aside class="left-tree-panel" v-if="checkRole('r22-1')">
             <el-tree
                 :data="treeData"
                 default-expand-all
@@ -73,6 +73,7 @@
                 :tableColumn="tableColumn"
                 :filterItems="filterItems"
                 @highlightClick="highlightClick"
+                @changeSwitch="changeSwitch"
             >
                 <template #addbutton>
                     <el-button @click="resetting">重置</el-button>
@@ -143,6 +144,7 @@ import {
     deleteUserById,
     getDepartmentTree,
     saveDepartment,
+    saveUser,
 } from "@/api/user";
 import { createRecord, updateRecord } from "@/api/crud";
 import FormState from "@/views/system/form-state-variables";
@@ -159,7 +161,7 @@ export default {
         return {
             entity: "User",
             fieldsList:
-                "userName, loginName, createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar",
+                "userName, loginName, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar",
             showFormDialogFlag: false,
             layout: {},
             formState: 1,
@@ -227,26 +229,49 @@ export default {
                 {
                     prop: "userName",
                     label: "用户名称",
-                    width: "130",
-                    // align: "left",
                     highlight: true,
                 },
                 {
                     prop: "loginName",
                     label: "登录名",
-                    width: "120",
                 },
                 {
-                    prop: "createdOn",
-                    label: "创建时间",
-                    width: "160",
-                },
-                {
-                    prop: "createdBy",
-                    label: "创建用户",
+                    prop: "jobTitle",
+                    label: "职务",
                     formatter: (row) => {
-                        return row.createdBy?.name;
+                        return row.jobTitle?.label;
                     },
+                },
+                {
+                    prop: "mobilePhone",
+                    label: "手机号",
+                },
+                {
+                    prop: "departmentId",
+                    label: "部门",
+                    formatter: (row) => {
+                        return row.departmentId?.name;
+                    },
+                },
+                // {
+                //     prop: "createdOn",
+                //     label: "创建时间",
+                //     width: "160",
+                // },
+                // {
+                //     prop: "createdBy",
+                //     label: "创建用户",
+                //     formatter: (row) => {
+                //         return row.createdBy?.name;
+                //     },
+                // },
+                {
+                    prop: "disabled",
+                    label: "启用",
+                    align: "center",
+                    customSolt: "switch",
+                    isNegation: true,
+                    width: 80,
                 },
                 {
                     prop: "modifiedOn",
@@ -260,13 +285,13 @@ export default {
                         return row.modifiedBy?.name;
                     },
                 },
-                {
-                    prop: "departmentId",
-                    label: "归属部门",
-                    formatter: (row) => {
-                        return row.departmentId?.name;
-                    },
-                },
+                // {
+                //     prop: "departmentId",
+                //     label: "归属部门",
+                //     formatter: (row) => {
+                //         return row.departmentId?.name;
+                //     },
+                // },
             ],
             // 成员列表
             memberList: [],
@@ -303,12 +328,12 @@ export default {
             return this.$TOOL.checkRole(str);
         },
         // 重置
-        resetting(){
+        resetting() {
             this.filterItems = [];
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
                 this.$refs.mlSingleListRef.keyword = "";
                 this.onRefresh();
-            })
+            });
         },
         // 节点点击
         nodeClick(node) {
@@ -319,9 +344,9 @@ export default {
                     value: node.id,
                 },
             ];
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
                 this.onRefresh();
-            })
+            });
         },
         // 新建用户
         addClick() {
@@ -351,7 +376,11 @@ export default {
                 row.userName
             );
         },
-
+        // 是否启用
+        async changeSwitch(row) {
+            let res = await saveUser("User", row.userId, { ...row });
+            this.onRefresh();
+        },
         handleDeletedFields(res, layoutObj) {
             let deletedFields = res.data.deletedFields;
             if (!!deletedFields && Array.isArray(deletedFields)) {

@@ -116,7 +116,6 @@ import { ElMessage } from "element-plus";
 const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onAdd"]);
 const $API = inject("$API");
-const $ElMessage = inject("$ElMessage");
 let vFormRef = ref();
 let detailDialog = reactive({
     isShow: false,
