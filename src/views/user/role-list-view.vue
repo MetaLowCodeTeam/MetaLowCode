@@ -663,7 +663,7 @@ const saveRole = () => {
             roleFormDialogLoading.value = true;
             saveRoleData(formModel.value)
                 .then((res) => {
-                    if (res.data.code == 200) {
+                    if (res && res.data?.code == 200) {
                         ElMessage.success("保存成功");
                         showRoleFormDialogFlag.value = false;
                         mlSingleListRef.value.getTableList();
