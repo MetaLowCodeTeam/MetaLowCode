@@ -194,7 +194,7 @@ const allocationFn = async (type) => {
             };
             let res = await checkRight(param.id, param.rightType);
             if (res.data.code == 200 && res.data.data) {
-                allowOpenDialog();
+                allowOpenDialog(type);
             } else {
                 $ElMessage.error(
                     "当前用户没有" + RightType[type].label + "权限"
