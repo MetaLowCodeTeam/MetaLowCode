@@ -299,19 +299,15 @@ const getLayoutList = async () => {
             SELF,
             ALL,
         };
-        // 如果自定义配置不存在，用ALL配置
-        if (SELF.FILTER.length < 1) {
-            tableColumn.value = ALL.FILTER;
-            defaultColumnShow.value = "ALL";
-        } else {
-            tableColumn.value = SELF.FILTER;
-            defaultColumnShow.value = "SELF";
-        }
+       
         // 如果存在默认配置，用默认配置
         if (res.data.chosenListType) {
             tableColumn.value =
                 layoutConfig.value[res.data.chosenListType].FILTER;
             defaultColumnShow.value = res.data.chosenListType;
+        }else {
+            tableColumn.value = ALL.FILTER;
+            defaultColumnShow.value = "ALL";
         }
         // 如果存在列
         if (tableColumn.value.length > 0) {
