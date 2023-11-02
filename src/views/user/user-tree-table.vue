@@ -1,6 +1,6 @@
 <template>
     <el-container class="hidden-x-scrollbar">
-        <el-aside class="left-tree-panel">
+        <el-aside class="left-tree-panel"  v-if="checkRole('r22-1')">
             <el-tree
                 :data="treeData"
                 default-expand-all
@@ -9,7 +9,6 @@
                 highlight-current
                 :expand-on-click-node="false"
                 :props="defaultProps"
-                v-if="checkRole('r22-1')"
                 @node-click="nodeClick"
             >
                 <template #default="{ node, data }">
