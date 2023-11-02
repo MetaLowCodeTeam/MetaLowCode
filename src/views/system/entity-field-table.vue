@@ -40,7 +40,7 @@
 							<el-form-item label="开启记录级权限：">
 								<el-switch v-model="entityProps.authorizable" style="float: right" disabled></el-switch>
 							</el-form-item>
-							<el-form-item>
+							<el-form-item label="是否明细实体：">
 								<el-switch v-model="entityProps.detailEntityFlag" style="float: right"
 										   disabled></el-switch>
 							</el-form-item>
