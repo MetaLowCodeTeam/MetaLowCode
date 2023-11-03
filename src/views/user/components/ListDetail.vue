@@ -29,7 +29,7 @@
                         icon="Key"
                         @click="openResetPasswordDialog(row)"
                         :disabled="!checkRole(3)"
-                    >重置密码{{ nameFieldName }}</el-button>
+                    >重置密码</el-button>
                 </el-col>
                 <el-col :span="24">
                     <el-dropdown trigger="click">
