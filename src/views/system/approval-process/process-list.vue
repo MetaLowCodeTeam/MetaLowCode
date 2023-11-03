@@ -13,7 +13,7 @@
         @changeSwitch="changeSwitch"
     >
         <template #addbutton>
-            <el-dropdown
+            <!-- <el-dropdown
                 split-button
                 type="primary"
                 @click="actionBtn({target:'add'})"
@@ -33,7 +33,13 @@
                         </el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
-            </el-dropdown>
+            </el-dropdown>-->
+            <el-button type="primary" @click="actionBtn({target:'add'})">
+                <el-icon size="14">
+                    <ElIconPlus />
+                </el-icon>
+                <span class="ml-5">添加</span>
+            </el-button>
         </template>
     </mlEntityMenuAndList>
     <mlActiveDialog ref="mlActiveDialogRefs" isProcess @saveProcess="saveProcess"></mlActiveDialog>

@@ -70,7 +70,6 @@ let tableColumn = ref([
         prop: "entityCode",
         label: "所属实体",
         align: "center",
-        highlight: true,
         formatter: (row) => {
             return allEntityLabel.value[row.entityCode];
         },
@@ -79,6 +78,7 @@ let tableColumn = ref([
         prop: "entityId.name",
         label: "关联记录",
         align: "center",
+        highlight: true,
         formatter: (row) => {
             return row.entityId?.name;
         },
