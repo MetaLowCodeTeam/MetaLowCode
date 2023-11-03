@@ -138,8 +138,6 @@ const openDialog = (id) => {
     detailId.value = id;
     entityCode.value = queryEntityCodeById(id);
     entityName.value = queryEntityNameById(id);
-    // detailDialog = Object.assign(detailDialog, row);
-    // multipleSelection.value = [row];
     if (!entityName.value) {
         ElMessage.warning("当前实体未找到");
         return;
@@ -208,6 +206,7 @@ const initData = async () => {
     loading.value = true;
     let res = await getFormLayout(entityName.value);
     haveLayoutJson.value = false;
+    noeData.value = false;
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
