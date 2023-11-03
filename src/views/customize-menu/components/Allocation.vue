@@ -123,7 +123,7 @@ import {
 } from "@/api/crud";
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
-    idFiledName: { type: String, default: "" },
+    idFieldName: { type: String, default: "" },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -224,7 +224,7 @@ const confirm = async () => {
         let param = {
             body: {
                 toUser: formData.allocationTo[0].id,
-                recordIds: formData.list.map((el) => el[props.idFiledName]),
+                recordIds: formData.list.map((el) => el[props.idFieldName]),
                 cascades: formData.associatedRecords.map((el) => el),
             },
         };
@@ -235,7 +235,7 @@ const confirm = async () => {
         let param = {
             body: {
                 toUsersId: formData.allocationTo.map((el) => el.id),
-                recordIds: formData.list.map((el) => el[props.idFiledName]),
+                recordIds: formData.list.map((el) => el[props.idFieldName]),
                 cascades: formData.associatedRecords.map((el) => el),
                 withUpdate: formData.withUpdate,
             },
@@ -247,7 +247,7 @@ const confirm = async () => {
         let param = {
             body: {
                 toUsersId: formData.allocationTo.map((el) => el.id),
-                recordIds: formData.list.map((el) => el[props.idFiledName]),
+                recordIds: formData.list.map((el) => el[props.idFieldName]),
             },
         };
         res = await cancelShareRecord(param.body, formData.userType);
@@ -256,7 +256,7 @@ const confirm = async () => {
     else {
         let param = {
             body: {
-                recordIds: formData.list.map((el) => el[props.idFiledName]),
+                recordIds: formData.list.map((el) => el[props.idFieldName]),
                 cascades: formData.associatedRecords.map((el) => el),
             },
         };

@@ -62,7 +62,7 @@
                         :dataExportData="dataExportData"
                         @changeColumnShow="changeColumnShow"
                         @editColumnConfirm="getLayoutList"
-                        :idFiledName="idFiledName"
+                        :idFieldName="idFieldName"
                     />
                 </div>
             </div>
@@ -126,7 +126,7 @@
                             <FormatRow
                                 :row="scope.row"
                                 :column="column"
-                                :nameFiledName="nameFiledName"
+                                :nameFieldName="nameFieldName"
                                 @openDetilDialog="openDetilDialog"
                             />
                         </template>
@@ -160,7 +160,7 @@
             style="background: #fff;"
         />
         <Detail ref="detailRefs" @onConfirm="getTableList" />
-        <Edit ref="editRefs" @onConfirm="getTableList" />
+        <Edit ref="editRefs" @onConfirm="getTableList" :nameFieldName="nameFieldName"/>
         <!-- 快速搜索字段 -->
         <mlSelectField
             ref="SelectFieldDialog"
@@ -170,7 +170,7 @@
             :quickQueryConf="quickQueryConf"
             @onConfirm="getLayoutList"
             :entityName="entityName"
-            :nameFiledName="nameFiledName"
+            :nameFieldName="nameFieldName"
         />
     </div>
 </template>
@@ -253,9 +253,9 @@ let quickQueryConf = reactive({
 // 详情Tab
 let detailTab = reactive({});
 // 实体ID
-let idFiledName = ref("");
+let idFieldName = ref("");
 // 标蓝字段
-let nameFiledName = ref("");
+let nameFieldName = ref("");
 // 新建配置项
 let addConf = reactive({});
 
@@ -278,8 +278,8 @@ const editColumn = (type) => {
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res && res.data) {
-        idFiledName.value = res.data.idFiledName;
-        nameFiledName.value = res.data.nameFiledName;
+        idFieldName.value = res.data.idFieldName;
+        nameFieldName.value = res.data.nameFieldName;
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
@@ -388,7 +388,6 @@ let editRefs = ref();
 // 新建
 const onAdd = () => {
     let tempV = {};
-    tempV.dialogTitle = "新建" + router.currentRoute.value.meta.title;
     tempV.entityName = entityName.value;
     editRefs.value.openDialog(tempV);
 };
@@ -399,10 +398,8 @@ const onEditRow = (row) => {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    let tempV = { ...row };
-    tempV.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
-    tempV.entityName = entityName.value;
-    tempV.detailId = row[idFiledName.value];
+    let tempV = {};
+    tempV.detailId = row[idFieldName.value];
     editRefs.value.openDialog(tempV);
 };
 
@@ -418,16 +415,17 @@ const openDetilDialog = (row) => {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    let detailData = { ...row };
-    detailData.entityName = entityName.value;
-    detailData.entityCode = entityCode.value;
-    detailData.tab = { ...detailTab };
-    detailData.add = { ...addConf };
-    detailData.detailId = row[idFiledName.value];
-    detailData.detailTitle = row[nameFiledName.value];
-    detailData.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
-    detailData.idFiledName = idFiledName.value;
-    detailRefs.value.openDialog(detailData);
+    // console.log(row[idFieldName.value],'row')
+    // let detailData = { ...row };
+    // detailData.entityName = entityName.value;
+    // detailData.entityCode = entityCode.value;
+    // detailData.tab = { ...detailTab };
+    // detailData.add = { ...addConf };
+    // detailData.detailId = row[idFieldName.value];
+    // detailData.detailTitle = row[nameFieldName.value];
+    // detailData.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
+    // detailData.idFieldName = idFieldName.value;
+    detailRefs.value.openDialog(row[idFieldName.value]);
 };
 
 // 列排序

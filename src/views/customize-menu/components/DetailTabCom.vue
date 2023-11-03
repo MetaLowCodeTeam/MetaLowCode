@@ -84,7 +84,7 @@
                         <template #default="scope">
                             <FormatRow
                                 :row="scope.row"
-                                :nameFiledName="nameFiledName"
+                                :nameFieldName="nameFieldName"
                                 :column="column"
                                 @openDetilDialog="openDetilDialog"
                             />
@@ -106,11 +106,11 @@
                     <el-collapse-item
                         v-for="(item,inx) of tableData"
                         :key="inx"
-                        :name="item[idFiledName]"
+                        :name="item[idFieldName]"
                     >
                         <template #title>
                             <div class="collapse-title">
-                                <span class="title-span">{{ item[nameFiledName] }}</span>
+                                <span class="title-span">{{ item[nameFieldName] }}</span>
                                 <i class="header-icon el-icon-info"></i>
                             </div>
                         </template>
@@ -192,9 +192,9 @@ let detailRefs = ref("");
 // 详情Tab
 let detailTab = reactive({});
 // 实体ID
-let idFiledName = ref("");
+let idFieldName = ref("");
 // 标蓝字段
-let nameFiledName = ref("");
+let nameFieldName = ref("");
 // 当前选中TabfieldName
 let fieldName = ref("");
 
@@ -245,8 +245,8 @@ const initData = async () => {
     loading.value = true;
     let res = await $API.layoutConfig.getLayoutList(props.cutTab);
     if (res) {
-        idFiledName.value = res.data.idFiledName;
-        nameFiledName.value = res.data.nameFiledName;
+        idFieldName.value = res.data.idFieldName;
+        nameFieldName.value = res.data.nameFieldName;
         layoutConfig = res.data ? { ...res.data } : {};
         let { chosenListType, LIST } = layoutConfig;
         let { ALL, SELF } = LIST;
@@ -328,9 +328,9 @@ const openDetilDialog = (row) => {
     detailData.entityName = entityName.value;
     detailData.entityCode = entityCode.value;
     detailData.tab = { ...detailTab };
-    detailData.detailId = row[idFiledName.value];
-    detailData.detailTitle = row[nameFiledName.value];
-    detailData.idFiledName = idFiledName.value;
+    detailData.detailId = row[idFieldName.value];
+    detailData.detailTitle = row[nameFieldName.value];
+    detailData.idFieldName = idFieldName.value;
     detailRefs.value.openDialog(detailData);
 };
 // 列排序
@@ -436,7 +436,7 @@ const getTableList = async () => {
     if (res && res.data) {
         tableData.value = res.data.dataList;
         cardActiveNames.value = tableData.value.map(
-            (el) => el[idFiledName.value]
+            (el) => el[idFieldName.value]
         );
         page.total = res.data.pagination.total;
         loading.value = true;

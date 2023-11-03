@@ -43,6 +43,9 @@ const useCommonStore = defineStore('commonStore', () => {
     const queryEntityCodeById = (id) => {
         return parseInt(id.split('-')[0]);
     }
+    const queryEntityNameByLabel = (name) => {
+        return allEntityLabel[allEntityCode[name]];
+    }
     const setPublicSetting = (data) => {
         publicSetting.value.APP_NAME = data.appName;
         publicSetting.value.APP_VER = data.dbVersion;
@@ -65,6 +68,7 @@ const useCommonStore = defineStore('commonStore', () => {
         allEntityCode,
         queryEntityNameById,
         queryEntityCodeById,
+        queryEntityNameByLabel,
         publicSetting,
         setPublicSetting
     }

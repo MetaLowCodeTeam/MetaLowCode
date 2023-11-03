@@ -47,7 +47,7 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <Edit ref="editRefs" @onConfirm="onRefresh" isTeam />
+    <Edit ref="editRefs" @onConfirm="onRefresh" isTeam nameFieldName="teamName"/>
     <!-- 列表详情 -->
     <ListDetail
         ref="mlListDetailsRefs"
@@ -101,15 +101,12 @@ let tableColumn = ref([
 let editRefs = ref();
 const addClick = () => {
     let tempV = {};
-    tempV.dialogTitle = "新建团队";
     tempV.entityName = "Team";
     editRefs.value.openDialog(tempV);
 };
 // 编辑
 const editClick = (row) => {
-    let tempV = { ...row };
-    tempV.dialogTitle = "编辑" + row.teamName;
-    tempV.entityName = "Team";
+    let tempV = {};
     tempV.detailId = row.teamId;
     editRefs.value.openDialog(tempV);
 };

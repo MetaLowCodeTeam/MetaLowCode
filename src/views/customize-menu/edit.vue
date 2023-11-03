@@ -28,11 +28,14 @@ import { getFormLayout } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameById,queryEntityNameByLabel } = useCommonStore();
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
     disableWidgets: { type: Array, default: () => [] },
+    nameFieldName: { type: String, default: "" },
 });
 const $ElMessage = inject("$ElMessage");
 
@@ -40,7 +43,6 @@ let row = reactive({
     approvalStatus: {},
     detailId: "",
     entityName: "",
-    dialogTitle: "",
     fieldName: "",
     fieldNameLabel: "",
     fieldNameVale: "",
@@ -51,9 +53,11 @@ let optionData = ref({});
 let loading = ref(false);
 let isShow = ref(false);
 const openDialog = async (v) => {
+    row.dialogTitle = "Loading...";
     row.detailId = v.detailId;
-    row.entityName = v.entityName;
-    row.dialogTitle = v.dialogTitle;
+    row.entityName = v.detailId
+        ? queryEntityNameById(v.detailId)
+        : v.entityName;
     row.fieldName = v.fieldName;
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
@@ -97,9 +101,10 @@ const initFormLayout = async () => {
                 nextTick(async () => {
                     let formData = await queryById(row.detailId);
                     vFormRef.value.setFormJson(res.data.layoutJson);
-                    if (formData) {
+                    if (formData && formData.data) {
+                        row.dialogTitle =
+                            "编辑" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
-                        console.log(formData.data, "formData.data");
                         vFormRef.value.setFormData(formData.data);
 
                         nextTick(() => {
@@ -127,10 +132,10 @@ const initFormLayout = async () => {
             // 是新建
             else {
                 nextTick(async () => {
+                    row.dialogTitle = "新建" + queryEntityNameByLabel(row.entityName);
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     // if(row.fieldName){}
                     let param = {};
-                    console.log(row,'row')
                     if (row.fieldName) {
                         param[row.fieldName] = {
                             id: row.fieldNameVale,

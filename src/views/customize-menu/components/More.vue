@@ -131,7 +131,7 @@
     <!-- 分配 -->
     <Allocation
         ref="allocationRefs"
-        :idFiledName="idFiledName"
+        :idFieldName="idFieldName"
         @allocationSuccess="allocationSuccess"
     />
     <!-- 报表 -->
@@ -150,7 +150,7 @@ const router = useRouter();
 const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
-    idFiledName: { type: String, default: "" },
+    idFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
     tableColumn: { type: Array, default: () => [] },
     multipleSelection: { type: Array, default: () => [] },
@@ -189,7 +189,7 @@ const allocationFn = async (type) => {
     if (props.multipleSelection.length > 0) {
         if (props.multipleSelection.length == 1) {
             let param = {
-                id: props.detailId || props.multipleSelection[0][props.idFiledName],
+                id: props.detailId || props.multipleSelection[0][props.idFieldName],
                 rightType: RightType[type].type ,
             };
             let res = await checkRight(param.id, param.rightType);

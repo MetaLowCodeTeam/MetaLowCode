@@ -35,7 +35,7 @@ const $ElMessage = inject("$ElMessage");
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     title: { type: String, defalut: "123" },
-    nameFiledName: { type: String, defalut: "123" },
+    nameFieldName: { type: String, defalut: "123" },
     isQuickQuery: { type: Boolean, defalut: false },
     quickQueryConf: { type: Object, default: () => {} },
     entityName: { type: String, defalut: "DemoContact" },
@@ -95,7 +95,7 @@ const getAllFields = async () => {
                 if (
                     props.isQuickQuery &&
                     selectedFields.value.length < 1 &&
-                    el.name == props.nameFiledName
+                    el.name == props.nameFieldName
                 ) {
                     el.isSelected = true;
                 }

@@ -29,7 +29,7 @@
                         icon="Key"
                         @click="openResetPasswordDialog(row)"
                         :disabled="!checkRole(3)"
-                    >重置密码</el-button>
+                    >重置密码{{ nameFieldName }}</el-button>
                 </el-col>
                 <el-col :span="24">
                     <el-dropdown trigger="click">
@@ -52,7 +52,13 @@
             </el-row>
         </template>
     </mlListDetails>
-    <Edit ref="editRefs" @onConfirm="onRefresh" :isTeam="detailEntity == 'Team'" :isUser="detailEntity == 'User'" />
+    <Edit
+        ref="editRefs"
+        @onConfirm="onRefresh"
+        :isTeam="detailEntity == 'Team'"
+        :isUser="detailEntity == 'User'"
+        :nameFieldName="detailEntity == 'User' ? 'UserName' : 'TeamName'"
+    />
     <!-- 重置密码 -->
     <ml-dialog title="重置密码" v-model="resetPasswordDialogIsShow" appendToBody width="450px">
         <el-input v-model="newPassword" placeholder="输入密码" clearable>
@@ -183,9 +189,7 @@ let editRefs = ref();
 
 // 编辑
 const editClick = (row) => {
-    let tempV = { ...row };
-    tempV.dialogTitle = "编辑" + row[props.nameFieldName];
-    tempV.entityName = detailEntity.value;
+    let tempV = {};
     tempV.detailId = row[props.idFieldName];
     editRefs.value.openDialog(tempV);
 };

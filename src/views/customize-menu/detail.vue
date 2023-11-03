@@ -8,7 +8,7 @@
     >
         <template #header>
             <div class="detail-header">
-                {{ detailDialog.detailTitle }}详情
+                {{ detailName }}详情
                 <div class="fr fr-box">
                     <span class="fr-icon mr-10" @click="refresh">
                         <el-icon>
@@ -48,7 +48,7 @@
                             ref="detailTabComRefs"
                             :cutTab="cutTab"
                             :tabs="detailDialog.tab"
-                            :entityId="detailDialog.detailId"
+                            :entityId="detailId"
                         />
                     </div>
                 </el-col>
@@ -57,8 +57,8 @@
                         <el-row class="group-el-button">
                             <el-col :span="24">
                                 <NewRelated
-                                    :entityName="detailDialog.entityName"
-                                    :entityCode="detailDialog.entityCode"
+                                    :entityName="entityName"
+                                    :entityCode="entityCode"
                                     :addConf="addConf"
                                     @confirm="newRelatedConfirm"
                                     @add="onAdd"
@@ -78,9 +78,9 @@
                                 <More
                                     type="detail"
                                     :multipleSelection="multipleSelection"
-                                    :entityCode="detailDialog.entityCode"
-                                    :detailId="detailDialog.detailId"
-                                    :idFiledName="detailDialog.idFiledName"
+                                    :entityCode="entityCode"
+                                    :detailId="detailId"
+                                    :idFieldName="idFieldName"
                                     @editColumnConfirm="editColumnConfirm"
                                 />
                             </el-col>
@@ -97,7 +97,7 @@
             </el-row>
             <el-empty v-else description="暂无数据" />
         </div>
-        <Edit ref="editRefs" @onConfirm="onConfirm" />
+        <Edit ref="editRefs" @onConfirm="onConfirm" :nameFieldName="nameFieldName" />
     </el-drawer>
 </template>
 
@@ -119,19 +119,28 @@ const $API = inject("$API");
 let vFormRef = ref();
 let detailDialog = reactive({
     isShow: false,
+    tab: {},
 });
 let loading = ref(false);
 let multipleSelection = ref([]);
 let approvalStatus = ref(null);
 
+let entityCode = ref("");
+let entityName = ref("");
+let detailId = ref("");
+let idFieldName = ref("");
+let detailName = ref("");
+let nameFieldName = ref("");
+
 // 当前页签
 let cutTab = ref("detail");
-const openDialog = (row) => {
-    detailDialog = Object.assign(detailDialog, row);
-    multipleSelection.value = [row];
-    detailDialog.entityCode = queryEntityCodeById(detailDialog.detailId);
-    detailDialog.entityName = queryEntityNameById(detailDialog.detailId);
-    if (!detailDialog.entityName) {
+const openDialog = (id) => {
+    detailId.value = id;
+    entityCode.value = queryEntityCodeById(id);
+    entityName.value = queryEntityNameById(id);
+    // detailDialog = Object.assign(detailDialog, row);
+    // multipleSelection.value = [row];
+    if (!entityName.value) {
         ElMessage.warning("当前实体未找到");
         return;
     }
@@ -159,7 +168,7 @@ let detailTabComRefs = ref();
 // 新建相关完成触发
 const newRelatedConfirm = async () => {
     loading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res) {
         addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
         if (cutTab.value == "detail") {
@@ -179,10 +188,12 @@ const onSubmitApproval = () => {
 // 加载页签
 const getLayoutList = async () => {
     loading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(detailDialog.entityName);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res) {
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
+        idFieldName.value = res.data.idFieldName;
+        nameFieldName.value = res.data.nameFieldName;
         initData();
     } else {
         loading.value = false;
@@ -195,7 +206,7 @@ let optionData = ref({});
 // 初始化数据
 const initData = async () => {
     loading.value = true;
-    let res = await getFormLayout(detailDialog.entityName);
+    let res = await getFormLayout(entityName.value);
     haveLayoutJson.value = false;
     if (res) {
         if (res.data?.layoutJson) {
@@ -203,8 +214,9 @@ const initData = async () => {
             optionData.value = res.data.optionData || {};
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
-                let queryByIdRes = await queryById(detailDialog.detailId);
+                let queryByIdRes = await queryById(detailId.value);
                 if (queryByIdRes && queryByIdRes.data) {
+                    detailName.value = queryByIdRes.data[nameFieldName.value];
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let resData = queryByIdRes.data || {};
                     // resData.logo = resData.logo || [];
@@ -217,12 +229,9 @@ const initData = async () => {
                         approvalStatus.value =
                             queryByIdRes?.data.recordApprovalState || null;
                         if (approvalStatus.value) {
-                            approvalStatus.value.entityCode =
-                                detailDialog.entityCode;
-                            approvalStatus.value.entityName =
-                                detailDialog.entityName;
-                            approvalStatus.value.recordId =
-                                detailDialog.detailId;
+                            approvalStatus.value.entityCode = entityCode.value;
+                            approvalStatus.value.entityName = entityName.value;
+                            approvalStatus.value.recordId = detailId.value;
                             approvalStatus.value.approvalName =
                                 detailDialog.detailTitle;
                         }
@@ -246,17 +255,16 @@ const initData = async () => {
 // 打开编辑
 let editRefs = ref();
 const onEditRow = () => {
-    editRefs.value.openDialog(detailDialog);
+    editRefs.value.openDialog({ detailId: detailId.value });
 };
 
 // 新建
 const onAdd = (e) => {
     let tempV = {};
-    tempV.dialogTitle = "新建" + (e.columnAliasName || e.entityLabel);
     tempV.entityName = e.entityName;
     tempV.fieldName = e.fieldName;
-    tempV.fieldNameVale = detailDialog.detailId;
-    tempV.fieldNameLabel = detailDialog.detailTitle;
+    tempV.fieldNameVale = detailId.value;
+    tempV.fieldNameLabel = detailName.value;
     editRefs.value.openDialog(tempV);
 };
 

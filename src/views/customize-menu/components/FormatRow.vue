@@ -19,7 +19,7 @@
         class="text-ellipsis"
         v-else-if="column.fieldType == 'Boolean'"
     >{{ row[column.fieldName] == null ? "" : (row[column.fieldName] ? "是" : '否') }}</div>
-    <div class="text-ellipsis" v-else-if="column.fieldName == nameFiledName">
+    <div class="text-ellipsis" v-else-if="column.fieldName == nameFieldName">
         <span class="ml-a-span" @click.stop="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
     <div class="text-ellipsis" v-else-if="column.fieldType == 'Picture'" :title="'图片：' + row[column.fieldName]?.length">
@@ -71,7 +71,7 @@ import { ref } from "vue";
 const props = defineProps({
     row: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
-    nameFiledName: { type: String, default: "" },
+    nameFieldName: { type: String, default: "" },
 });
 const emits = defineEmits(["openDetilDialog"]);
 

@@ -179,6 +179,7 @@ export default {
 				this.idFieldName = res.data.entityBasicInfo.idField
 				if (!!res.data.entityBasicInfo.nameField) {
 					this.nameFieldName = res.data.entityBasicInfo.nameField
+                    
 				}
 			}).catch(res => {
 				this.$message({message: res.message, type: 'error'})
