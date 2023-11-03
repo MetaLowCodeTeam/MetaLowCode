@@ -53,7 +53,9 @@ axios.interceptors.response.use(
             router.replace({path: '/web/login'});
             return response
         }else {
-            ElMessage.error(response.data.error)
+            if(response.data.error != '请登录'){
+                ElMessage.error(response.data.error)
+            }
             return {}
         }
 	},
