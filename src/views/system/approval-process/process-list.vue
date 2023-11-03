@@ -93,7 +93,6 @@ let tableColumn = ref([
 
 const changeSwitch = (row) => {
     let tempForm = { ...row };
-    tempForm.actionType = tempForm.actionType.value;
     dialogForm.value.form = { ...tempForm };
     mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
     mlActiveDialogRefs.value.saveProcess();
