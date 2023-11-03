@@ -36,7 +36,7 @@
             </el-dropdown>
         </template>
     </mlEntityMenuAndList>
-    <mlActiveDialog ref="mlActiveDialogRefs" @saveProcess="saveProcess"></mlActiveDialog>
+    <mlActiveDialog ref="mlActiveDialogRefs" isProcess @saveProcess="saveProcess"></mlActiveDialog>
 </template>
 
 <script setup>

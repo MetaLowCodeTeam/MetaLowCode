@@ -86,11 +86,7 @@ let tableColumn = ref([
 let detailRefs = ref("");
 // 高亮字段点击
 const highlightClick = (item) => {
-    let detailObj = {};
-    detailObj.tab = {};
-    detailObj.detailId = item.recordId.id;
-    detailObj.detailTitle = item.recordId.name;
-    detailRefs.value.openDialog(detailObj);
+    detailRefs.value.openDialog(item.recordId.id);
 };
 </script>
 <style>

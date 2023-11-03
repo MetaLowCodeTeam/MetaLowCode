@@ -160,11 +160,7 @@ const openListDetailDialog = (row) => {
 let detailRefs = ref("");
 
 const openEntityDetailDialog = (item) => {
-    let detailObj = {};
-    detailObj.tab = {};
-    detailObj.detailId = item.entityId.id;
-    detailObj.detailTitle = item.entityId.name;
-    detailRefs.value.openDialog(detailObj);
+    detailRefs.value.openDialog(item.entityId.id);
 };
 
 // 高亮字段点击

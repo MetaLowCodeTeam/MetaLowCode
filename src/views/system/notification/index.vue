@@ -136,11 +136,7 @@ const activeRow = (item) => {
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
         } else {
-            let detailObj = {};
-            detailObj.tab = {};
-            detailObj.detailId = item.relatedRecord.id;
-            detailObj.detailTitle = item.relatedRecord.name;
-            detailRefs.value.openDialog(detailObj);
+            detailRefs.value.openDialog(item.relatedRecord.id);
         }
     } else if (item.type == 10) {
         approveDialogIsShow.value = true;

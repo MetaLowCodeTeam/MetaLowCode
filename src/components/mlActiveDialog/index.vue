@@ -4,11 +4,8 @@
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
         <el-form label-width="120px" v-loading="loading" @submit.prevent>
             <!-- <slot name="formitem"></slot> -->
-            
-            <el-form-item
-                :label="dialogForm.fromEntityLabel"
-                v-if="dialogForm.type == 'add'"
-            >
+
+            <el-form-item :label="dialogForm.fromEntityLabel" v-if="dialogForm.type == 'add'">
                 <el-select
                     v-model="dialogForm.form.entityCode"
                     :placeholder="dialogForm.fromEntityLabel"
@@ -18,7 +15,7 @@
                     <el-option
                         :label="op.label"
                         :value="op.entityCode"
-                        v-for="(op,inx) of unSystemEntityList"
+                        v-for="(op,inx) of isProcess ? processEntityList : unSystemEntityList"
                         :key="inx"
                     />
                 </el-select>
@@ -77,9 +74,12 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { unSystemEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList, processEntityList } = storeToRefs(useCommonStore());
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
+let props = defineProps({
+    isProcess: { type: Boolean, default: false },
+});
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);

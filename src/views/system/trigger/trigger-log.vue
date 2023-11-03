@@ -10,8 +10,7 @@
         queryUrl="/plugins/metaTrigger/trigger/log"
         @highlightClick="highlightClick"
         :filterItems="filterItems"
-    >
-    </mlSingleList>
+    ></mlSingleList>
     <Detail ref="detailRefs" />
 </template>
    
@@ -31,7 +30,7 @@ let filterItems = ref([
     {
         fieldName: "triggerReason",
         op: "LK",
-        value:"",
+        value: "",
     },
 ]);
 let tableColumn = ref([
@@ -93,11 +92,7 @@ let tableColumn = ref([
 let detailRefs = ref("");
 // 高亮字段点击
 const highlightClick = (item) => {
-    let detailObj = {};
-    detailObj.tab = {};
-    detailObj.detailId = item.recordId.id;
-    detailObj.detailTitle = item.recordId.name;
-    detailRefs.value.openDialog(detailObj);
+    detailRefs.value.openDialog(item.recordId.id);
 };
 </script>
 <style>

@@ -63,10 +63,7 @@ const { menuIsCollapse } = storeToRefs(useGlobalStore());
 
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
-const $ElMessage = inject("$ElMessage");
-onMounted(() => {
-    // menuOperateAuth.value = $TOOL.data.get("rightMap")['r6007'];
-});
+
 // 导航点击
 const navClick = async (item) => {
     router.push("/web/dashboard");

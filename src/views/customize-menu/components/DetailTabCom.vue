@@ -324,14 +324,7 @@ const handleSizeChange = (size) => {
 
 // 打开详情
 const openDetilDialog = (row) => {
-    let detailData = { ...row };
-    detailData.entityName = entityName.value;
-    detailData.entityCode = entityCode.value;
-    detailData.tab = { ...detailTab };
-    detailData.detailId = row[idFieldName.value];
-    detailData.detailTitle = row[nameFieldName.value];
-    detailData.idFieldName = idFieldName.value;
-    detailRefs.value.openDialog(detailData);
+    detailRefs.value.openDialog(row[idFieldName.value]);
 };
 // 列排序
 const sortChange = (column) => {
@@ -435,6 +428,7 @@ const getTableList = async () => {
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
+    
         cardActiveNames.value = tableData.value.map(
             (el) => el[idFieldName.value]
         );

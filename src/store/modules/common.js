@@ -11,6 +11,8 @@ const useCommonStore = defineStore('commonStore', () => {
     let allEntityCode = reactive({});
     // 非系统实体
     let unSystemEntityList = ref([]);
+    // 审批流程实体
+    let processEntityList = ref([]);
     // 系统配置
     let publicSetting = ref({});
     const getEntityList = () => {
@@ -28,12 +30,16 @@ const useCommonStore = defineStore('commonStore', () => {
     }
     const refreshCache = (list) => {
         unSystemEntityList.value = [];
+        processEntityList.value = [];
         list.forEach(el => {
             allEntityLabel[el.entityCode] = el.label;
             allEntityName[el.entityCode] = el.name;
             allEntityCode[el.name] = el.entityCode;
             if (!el.systemEntityFlag) {
                 unSystemEntityList.value.push(el);
+            }
+            if (!el.systemEntityFlag && !el.detailEntityFlag) {
+                processEntityList.value.push(el);
             }
         })
     }
@@ -63,6 +69,7 @@ const useCommonStore = defineStore('commonStore', () => {
         allEntityLabel,
         getEntityList,
         unSystemEntityList,
+        processEntityList,
         refreshCache,
         allEntityName,
         allEntityCode,
