@@ -196,20 +196,20 @@ const routes = [
             {
                 path: '/web/data-dict',
                 name: 'DataDict',
-                meta: { group: true, title: '数据字典', icon: 'el-icon-management' },
+                meta: { group: true, title: '数据字典', icon: 'el-icon-operation' },
                 children: [
                     {
                         path: '/web/option-manager',
                         name: 'OptionManager',
                         component: 'system/data-dict/option-manager',
-                        meta: { title: '单选项管理', icon: 'el-icon-operation', role: 'r6005' }
+                        meta: { title: '单选项管理', icon: 'el-icon-open', role: 'r6005' }
                     },
 
                     {
                         path: '/web/tag-manager',
                         name: 'TagManager',
                         component: 'system/data-dict/tag-manager',
-                        meta: { title: '多选项管理', icon: 'el-icon-files', role: 'r6006' }
+                        meta: { title: '多选项管理', icon: 'el-icon-guide', role: 'r6006' }
                     },
                 ]
             },
@@ -218,7 +218,7 @@ const routes = [
                 path: '/web/process-list',
                 name: 'ProcessList',
                 component: 'system/approval-process/process-list',
-                meta: { title: '审批流程', icon: 'el-icon-operation', role: 'r6016' }
+                meta: { title: '审批流程', icon: 'el-icon-share', role: 'r6016' }
             },
             {
                 path: `/web/process-detail`,
@@ -274,21 +274,21 @@ const routes = [
             {
                 path: '/web/data-upload',
                 name: 'DataUpload',
-                meta: { title: '数据导入', icon: 'el-icon-Upload', role: 'r6011' },
+                meta: { title: '数据导入', icon: 'el-icon-BottomRight', role: 'r6011' },
                 component: 'system/data-upload/index',
             },
             // 变更历史
             {
                 path: '/web/revision-history',
                 name: 'RevisionHistory',
-                meta: { title: '变更历史', icon: 'el-icon-document-remove', role: 'r6010' },
+                meta: { title: '变更历史', icon: 'el-icon-EditPen', role: 'r6010' },
                 component: 'system/revision-history/index',
             },
             // 登录日志
             {
                 path: '/web/login-log',
                 name: 'LoginLog',
-                meta: { title: '登录日志', icon: 'el-icon-delete', role: 'r6014' },
+                meta: { title: '登录日志', icon: 'el-icon-Tickets', role: 'r6014' },
                 component: 'login/login-log',
             },
             // 回收站
