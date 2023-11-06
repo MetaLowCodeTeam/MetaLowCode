@@ -56,7 +56,7 @@ import { watch, ref, onMounted, inject } from "vue";
 import fieldUpdate from "./fieldUpdate.vue";
 // 字段聚合
 import fieldAggregation from "./fieldAggregation.vue";
-// 数据效验
+// 数据校验
 import dataValidation from "./dataValidation.vue";
 // 发送通知
 import sendNotifications from "./sendNotifications.vue";

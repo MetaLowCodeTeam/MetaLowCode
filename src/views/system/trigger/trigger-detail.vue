@@ -117,7 +117,7 @@ const initDetailData = async () => {
         if (trigger.actionContent.items.length > 0) {
             trigger.isOnSave = true;
         }
-        // 如果是数据效验
+        // 如果是数据校验
         if (trigger.actionType.value == 4) {
             // 禁用定期执行
             trigger.disabledActive = [512];
@@ -197,7 +197,7 @@ const onSave = async (target) => {
         actionContent.isReferenced = defaultTargetEntity.isReferenced
         // console.log(defaultTargetEntity,'defaultTargetEntity')
     }
-    // 如果是数据效验
+    // 如果是数据校验
     if (trigger.actionType.value == 4) {
         if (actionContent.filter.items.length < 1) {
             $ElMessage.warning("请至少选择一个效验条件");

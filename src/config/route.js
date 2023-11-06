@@ -231,19 +231,19 @@ const routes = [
             // 触发器
             {
                 path: '/web/triggert',
-                name: 'Rrigger',
+                name: 'Trigger',
                 meta: { group: true, title: '触发器', icon: 'el-icon-cpu' },
                 children: [
                     {
                         path: '/web/trigger-list',
-                        name: 'RriggerList',
+                        name: 'TriggerList',
                         component: 'system/trigger/trigger-list',
                         meta: { title: '触发器列表', role: 'r48-1' },
                     },
 
                     {
                         path: '/web/trigger-log',
-                        name: 'RriggerLog',
+                        name: 'TriggerLog',
                         component: 'system/trigger/trigger-log',
                         meta: { title: '触发器日志', role: 'r6015' }
                     },
@@ -252,7 +252,7 @@ const routes = [
             // 触发器详情
             {
                 path: '/web/trigger-detail',
-                name: 'RriggerDetail',
+                name: 'TriggerDetail',
                 meta: { title: '触发器详情', hidden: true },
                 component: 'system/trigger/trigger-detail',
             },

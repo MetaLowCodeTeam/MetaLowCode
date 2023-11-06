@@ -53,7 +53,7 @@
             <div class="input-box">
                 <el-input
                     v-model="trigger.actionContent.content"
-                    placeholder="数据效验未通过"
+                    placeholder="数据校验未通过"
                     :autosize="{ minRows: 3}"
                     type="textarea"
                     @blur="formulaBlur"

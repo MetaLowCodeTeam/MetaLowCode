@@ -333,11 +333,11 @@ export default {
             active: "",
             defaultOpeneds: [],
             pluginInfo: {
-                RriggerList: {
+                TriggerList: {
                     pluginName: "metaTrigger",
                     errMsg: "触发器 插件未安装！",
                 },
-                RriggerLog: {
+                TriggerLog: {
                     pluginName: "metaTrigger",
                     errMsg: "触发器 插件未安装！",
                 },
@@ -350,7 +350,7 @@ export default {
                     errMsg: "在线报表 插件未安装！",
                 },
             },
-            needPlugin: ["RriggerList", "DashboardDesign", "TemplatesList","RriggerLog"],
+            needPlugin: ["TriggerList", "DashboardDesign", "TemplatesList","TriggerLog"],
         };
     },
     computed: {

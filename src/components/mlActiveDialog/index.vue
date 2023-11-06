@@ -93,7 +93,7 @@ let triggerList = ref([
         code: 2,
     },
     {
-        label: "数据效验",
+        label: "数据校验",
         code: 4,
     },
     {
