@@ -153,109 +153,51 @@
                                 >
                                     <div class="fl label">{{ rightEntity.label }}</div>
                                     <div class="fl text-align-center">
-                                        <el-select
+                                        <mlSelectCom
                                             v-model="formModel.rightValueMap['r' + rightEntity.entityCode + '-1']"
-                                            @change="(val) => handleReadRightChange(rightEntity.entityCode, val)"
-                                            size="small"
-                                        >
-                                            <el-option
-                                                v-for="item in getRightLevels(rightEntity)"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                            ></el-option>
-                                        </el-select>
+                                            :options="getRightLevels(rightEntity)"
+                                        />
                                     </div>
                                     <div class="fl text-align-center">
-                                        <el-select
+                                        <mlSelectCom
                                             v-model="formModel.rightValueMap['r' + rightEntity.entityCode + '-2']"
-                                            @change="(val) => handleEntityRightChange(rightEntity.entityCode, 2, val)"
-                                            size="small"
-                                        >
-                                            <el-option
-                                                v-for="item in oneselfRightLevels"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                            ></el-option>
-                                        </el-select>
+                                            :options="oneselfRightLevels"
+                                        />
                                     </div>
                                     <div class="fl text-align-center">
-                                        <el-select
+                                        <mlSelectCom
                                             v-model="formModel.rightValueMap['r' + rightEntity.entityCode + '-3']"
-                                            @change="(val) => handleEntityRightChange(rightEntity.entityCode, 3, val)"
-                                            size="small"
-                                        >
-                                            <el-option
-                                                v-for="item in getRightLevels(rightEntity)"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                            ></el-option>
-                                        </el-select>
+                                            :options="getRightLevels(rightEntity)"
+                                        />
                                     </div>
                                     <div class="fl text-align-center">
-                                        <el-select
+                                        <mlSelectCom
                                             v-model="formModel.rightValueMap['r' + rightEntity.entityCode + '-4']"
-                                            @change="(val) => handleEntityRightChange(rightEntity.entityCode, 4, val)"
-                                            size="small"
-                                        >
-                                            <el-option
-                                                v-for="item in getRightLevels(rightEntity)"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                            ></el-option>
-                                        </el-select>
+                                            :options="getRightLevels(rightEntity)"
+                                        />
                                     </div>
                                     <div class="fl text-align-center">
-                                        <el-select
+                                        <mlSelectCom
                                             v-model="formModel.rightValueMap['r' + rightEntity.entityCode + '-5']"
-                                            @change="(val) => handleEntityRightChange(rightEntity.entityCode, 5, val)"
-                                            size="small"
-                                        >
-                                            <el-option
-                                                v-for="item in getRightLevels(rightEntity)"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                            ></el-option>
-                                        </el-select>
+                                            :options="getRightLevels(rightEntity)"
+                                        />
                                     </div>
                                     <div class="fl text-align-center">
-                                        <el-select
+                                        <mlSelectCom
                                             v-model="formModel.rightValueMap['r' + rightEntity.entityCode + '-6']"
-                                            @change="(val) => handleEntityRightChange(rightEntity.entityCode, 6, val)"
-                                            size="small"
-                                        >
-                                            <el-option
-                                                v-for="item in getRightLevels(rightEntity)"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                            ></el-option>
-                                        </el-select>
+                                            :options="getRightLevels(rightEntity)"
+                                        />
                                     </div>
                                     <div class="fl text-icon">
-                                        <el-dropdown
-                                            @command="(e) => rowHandleCommand(e,rightEntity)"
-                                            trigger="click"
-                                        >
-                                            <span class="text-icon-span">
-                                                <el-icon size="16">
-                                                    <ElIconFinished />
-                                                </el-icon>
-                                            </span>
-                                            <template #dropdown>
-                                                <el-dropdown-menu>
-                                                    <el-dropdown-item
-                                                        :command="dropItem.value"
-                                                        v-for="(dropItem,dropInx) of getRightLevels(rightEntity)"
-                                                        :key="dropInx"
-                                                    >{{ dropItem.label }}</el-dropdown-item>
-                                                </el-dropdown-menu>
+                                        <mlSelectCom :options="getRightLevels(rightEntity)" @onChange="(e) => rowHandleCommand(e,rightEntity)">
+                                            <template #default>
+                                                <span class="text-icon-span">
+                                                    <el-icon size="16">
+                                                        <ElIconFinished />
+                                                    </el-icon>
+                                                </span>
                                             </template>
-                                        </el-dropdown>
+                                        </mlSelectCom>
                                     </div>
                                 </div>
                             </el-scrollbar>
@@ -313,6 +255,7 @@ import {
 } from "@/api/user";
 import { inject, nextTick, ref, shallowRef } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
+import mlSelectCom from "@/components/mlSelectCom/index.vue";
 const $TOOL = inject("$TOOL");
 
 let mlSingleListRef = ref();
@@ -746,7 +689,7 @@ const elFormErrorScrollIntoView = () => {
         .text-icon-span {
             cursor: pointer;
             position: relative;
-            top: 2px;
+            top: -1px;
         }
     }
     .bold {

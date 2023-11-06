@@ -250,8 +250,6 @@ let quickQueryConf = reactive({
     entityCode: "",
 });
 
-// 详情Tab
-let detailTab = reactive({});
 // 实体ID
 let idFieldName = ref("");
 // 标蓝字段
@@ -283,7 +281,6 @@ const getLayoutList = async () => {
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
-        detailTab = res.data.TAB ? { ...res.data.TAB } : {};
         addConf = res.data.ADD ? { ...res.data.ADD } : {};
         let { ALL, SELF } = res.data.LIST;
         titleWidthForAll = res.data.titleWidthForAll
@@ -415,16 +412,6 @@ const openDetilDialog = (row) => {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    // console.log(row[idFieldName.value],'row')
-    // let detailData = { ...row };
-    // detailData.entityName = entityName.value;
-    // detailData.entityCode = entityCode.value;
-    // detailData.tab = { ...detailTab };
-    // detailData.add = { ...addConf };
-    // detailData.detailId = row[idFieldName.value];
-    // detailData.detailTitle = row[nameFieldName.value];
-    // detailData.dialogTitle = "编辑" + router.currentRoute.value.meta.title;
-    // detailData.idFieldName = idFieldName.value;
     detailRefs.value.openDialog(row[idFieldName.value]);
 };
 
