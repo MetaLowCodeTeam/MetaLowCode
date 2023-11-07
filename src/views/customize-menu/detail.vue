@@ -142,6 +142,8 @@ const openDialog = (id) => {
         ElMessage.warning("当前实体未找到");
         return;
     }
+    detailDialog.entityCode = entityCode.value
+    detailDialog.entityName = entityName.value
     detailDialog.isShow = true;
     // 加载数据
     refresh();
