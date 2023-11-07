@@ -39,7 +39,7 @@ import role from './directives/role'
 import time from './directives/time'
 import copy from './directives/copy'
 import errorHandler from './utils/errorHandler'
-import SvgIcon from "./components/SvgIcon/index.vue";
+import SvgIcon from "./components/svgIcon/index.vue";
 
 import * as elIcons from '@element-plus/icons-vue'
 import * as scIcons from './assets/icons'
@@ -76,7 +76,7 @@ export default {
         app.provide('$API', api);
         app.provide('$ElMessage', ElMessage);
         app.provide('COMMON_CONFIG',COMMON_CONFIG);
-        
+
 
 		// 注册全局组件
         app.component('mlSelectUser', mlSelectUser);
