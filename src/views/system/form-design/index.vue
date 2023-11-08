@@ -73,6 +73,8 @@ import ReferenceWE from '@/views/system/field-editor/reference-widget-editor.vue
 import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor.vue';
 import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
 
+//const visualDesign = import.meta.glob('@/../lib/visual-design/designer.umd.js')
+
 export default {
 	name: "form-design",
 	components: {
@@ -130,13 +132,47 @@ export default {
 	created() {
 		this.entity = this.$route.query.entity
 		this.entityLabel = this.$route.query.entityLabel
+		this.designerConfig.componentLib = !!window.advancedDevMode
 	},
 	mounted() {
 		this.loadDesign()
+
+		this.handleDocumentKeyEvent()
 	},
 	methods: {
-		addMetaField() {
-			this.$message.info('待实现...')
+		handleDocumentKeyEvent() {
+			let shiftKeyFlag = 0, ctrlKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0
+			document.onkeydown = (e) => {
+				let keyCode = e.keyCode || e.which || e.charCode
+				if (keyCode === 16) {
+					shiftKeyFlag = 1
+				} else if (keyCode === 17) {
+					ctrlKeyFlag = 1
+				} else if (keyCode === 76 || keyCode === 108) {
+					lKeyFlag = 1
+				} else if (keyCode === 77 || keyCode === 109) {
+					mKeyFlag = 1
+				}
+
+				if (shiftKeyFlag && ctrlKeyFlag && mKeyFlag && lKeyFlag) {
+					//console.error('99999999')
+					window.advancedDevMode = !window.advancedDevMode
+					this.designerConfig.componentLib = !!window.advancedDevMode
+				}
+			}
+
+			document.onkeyup = (e) => {
+				let keyCode = e.keyCode || e.which || e.charCode
+				if (keyCode === 16) {
+					shiftKeyFlag = 0
+				} else if (keyCode === 17) {
+					ctrlKeyFlag = 0
+				} else if (keyCode === 76 || keyCode === 108) {
+					lKeyFlag = 0
+				} else if (keyCode === 77 || keyCode === 109) {
+					mKeyFlag = 0
+				}
+			}
 		},
 
 		loadFieldListData() {
