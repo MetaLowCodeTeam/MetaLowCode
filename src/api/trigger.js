@@ -9,6 +9,10 @@ export default {
         dataUpdateEntityList: async (entityCode) => {
             return await http.get("/plugins/metaTrigger/trigger/dataUpdate/entityList", { entityCode });
         },
+         // 字段更新-获取目标实体（所有实体）
+         dataAutoCreate: async (entityCode) => {
+            return await http.get("/plugins/metaTrigger/trigger/dataAutoCreate/entityList", { entityCode });
+        },
         // 字段聚合-获取目标实体（所有实体）
         aggregationEntityList: async (entityCode) => {
             return await http.get("/plugins/metaTrigger/trigger/aggregation/entityList", { entityCode });

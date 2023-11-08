@@ -220,17 +220,14 @@ const getActionContentData = async () => {
 // 获取实体（目标实体）
 const getTagEntitys = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await $API.trigger.detial.dataUpdateEntityList(
+        let res = await $API.trigger.detial.dataAutoCreate(
             trigger.value.entityCode
         );
         if (res) {
             tagEntitys.value = [];
-            res.data.forEach((el,inx) => {
+            res.data.forEach((el, inx) => {
                 el.entityInx = inx;
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
-                if(trigger.value.entityCode != el.entityCode){
-                    tagEntitys.value.push(el);
-                }
             });
             // 目标实体默认选中第1个
             let defalutInx = 0;
@@ -246,10 +243,12 @@ const getTagEntitys = () => {
                     }
                 });
             }
-            // 设置选中
-            trigger.value.defaultTargetEntity = res.data[defalutInx];
-            // 获取选中实体的所有字段
-            getTagEntityFields(res.data[defalutInx].entityCode);
+            if (res.data.length > 0) {
+                // 设置选中
+                trigger.value.defaultTargetEntity = res.data[defalutInx];
+                // 获取选中实体的所有字段
+                getTagEntityFields(res.data[defalutInx].entityCode);
+            }
         }
         resolve();
     });
@@ -694,8 +693,8 @@ const targetEntityChange = () => {
 };
 
 defineExpose({
-    requiredFields
-})
+    requiredFields,
+});
 </script>
 <style lang='scss' scoped>
 .uptade-rule-row {
