@@ -3,10 +3,10 @@
         ref="mlEntityMenuAndListRef"
         entityName="ApprovalConfig"
         aciveId="approvalConfigId"
-        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal"
+        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn"
         @goDetial="goDetial"
         :tableColumn="tableColumn"
-        defalutSortField="modifiedOn"
+        defalutSortField="createdOn"
         defaultFilter="flowName"
         @actionBtn="actionBtn"
         queryUrl="/approval/configList"
@@ -83,7 +83,7 @@ let tableColumn = ref([
         width: 80,
     },
     {
-        prop: "createdOn",
+        prop: "modifiedOn",
         label: "修改时间",
         align: "center",
         width: 100,

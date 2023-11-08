@@ -218,7 +218,7 @@ export default {
             // 默认排序
             sortFields: [
                 {
-                    fieldName: "createdBy",
+                    fieldName: "createdOn",
                     type: "DESC",
                 },
             ],
