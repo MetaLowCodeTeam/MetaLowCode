@@ -16,7 +16,7 @@
             <el-button
                 type="primary"
                 @click="confirm"
-                v-if="row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
+                v-if="!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3)"
             >确认</el-button>
         </template>
     </ml-dialog>
