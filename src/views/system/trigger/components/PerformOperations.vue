@@ -17,6 +17,11 @@
                 <autoShare v-model="trigger" v-if="trigger.actionType?.value == 10" />
                 <autoDelete v-model="trigger" v-if="trigger.actionType?.value == 12" />
                 <hookUrl v-model="trigger" v-if="trigger.actionType?.value == 14" />
+                <autoCreation
+                    ref="autoCreationRefs"
+                    v-model="trigger"
+                    v-if="trigger.actionType?.value == 15"
+                />
             </el-form-item>
             <el-form-item label="执行优先级">
                 <el-input-number
@@ -56,6 +61,8 @@ import { watch, ref, onMounted, inject } from "vue";
 import fieldUpdate from "./fieldUpdate.vue";
 // 字段聚合
 import fieldAggregation from "./fieldAggregation.vue";
+// 自动创建
+import autoCreation from "./autoCreation.vue";
 // 数据校验
 import dataValidation from "./dataValidation.vue";
 // 发送通知
@@ -65,13 +72,14 @@ import autoAllocation from "./autoAllocation.vue";
 // 自动审批
 import autoApproval from "./autoApproval.vue";
 // 自动撤销审批
-import autoRevokeApproval from './autoRevokeApproval.vue';
+import autoRevokeApproval from "./autoRevokeApproval.vue";
 // 自动删除
 import autoDelete from "./autoDelete.vue";
 // 回调URL
 import hookUrl from "./hookUrl.vue";
 // 自动共享、取消共享
-import autoShare from "./autoShare.vue"
+import autoShare from "./autoShare.vue";
+import { ElMessage } from "element-plus";
 const props = defineProps({
     modelValue: null,
 });
@@ -96,15 +104,33 @@ const priorityChange = () => {
     emit("update:modelValue", trigger.value);
 };
 
+let autoCreationRefs = ref();
 // 保存调用
 const onSave = () => {
+    let { actionType, actionContent } = trigger.value;
+    // 自动创建
+    if (actionType.value == 15) {
+        let { requiredFields } = autoCreationRefs.value;
+        let itemFields = actionContent.items.map((el) => el.targetField);
+        let needFields = requiredFields.map((el) => el.fieldName);
+        for (let index = 0; index < needFields.length; index++) {
+            const element = needFields[index];
+            if(!itemFields.includes(element)){
+                ElMessage.warning(requiredFields[index].fieldLabel + "为必填字段，请添加！")
+                return
+            }
+        }
+        emit("onSave");
+    } else {
+        emit("onSave");
+    }
     // 需要定期执行
     // if ((trigger.whenNum & 512) > 0) {
     //     trigger.cron = triggerTakeActionRef.value.getCronVal();
     // }
 
     // console.log(trigger.value, "保存调用...");
-    emit("onSave");
+    // emit("onSave");
     // saveRecord
 };
 
@@ -114,8 +140,6 @@ const handleCommand = (e) => {
         emit("onSave", "execute");
     }
 };
-
-
 </script>
 <style lang="scss" scoped>
 .action-div {

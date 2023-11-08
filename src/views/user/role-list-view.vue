@@ -54,7 +54,7 @@
             </template>
         </mlSingleList>
         <el-dialog
-            :title="formModel.roleId ? '新建权限角色':'编辑权限角色'"
+            :title="formModel.roleId ? '编辑权限角色':'新建权限角色'"
             v-model="showRoleFormDialogFlag"
             v-if="showRoleFormDialogFlag"
             :destroy-on-close="true"

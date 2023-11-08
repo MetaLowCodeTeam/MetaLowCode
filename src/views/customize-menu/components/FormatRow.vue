@@ -22,7 +22,13 @@
     <div class="text-ellipsis" v-else-if="column.fieldName == nameFieldName">
         <span class="ml-a-span" @click.stop="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
-    <div class="text-ellipsis" v-else-if="column.fieldType == 'Picture'" :title="'图片：' + row[column.fieldName]?.length">
+
+    <div class="text-ellipsis" v-else-if="column.fieldType == 'Money'">{{ numberToCurrencyNo(row[column.fieldName]) }}</div>
+    <div
+        class="text-ellipsis"
+        v-else-if="column.fieldType == 'Picture'"
+        :title="'图片：' + row[column.fieldName]?.length"
+    >
         <img
             class="row-img"
             :src="formatUrl(img.url)"
@@ -32,6 +38,7 @@
             @click.stop="downField(img.url,img.name)"
         />
     </div>
+
     <div
         class="text-ellipsis"
         v-else-if="column.fieldType == 'File'"
@@ -43,6 +50,7 @@
                 class="ml-a-span"
             >文件({{ row[column.fieldName]?.length }})</span>
         </template>
+
         <template v-else>
             <span
                 class="ml-a-span"
@@ -98,6 +106,26 @@ let filesList = ref([]);
 const openFilesDialog = (list) => {
     filesDialog.value = true;
     filesList.value = [...list];
+};
+
+const numberToCurrencyNo = (value) => {
+    if (!value) return 0;
+    // 获取整数部分
+    const intPart = Math.trunc(value);
+    // 整数部分处理，增加,
+    const intPartFormat = intPart
+        .toString()
+        .replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
+    // 预定义小数部分
+    let floatPart = "";
+    // 将数值截取为小数部分和整数部分
+    const valueArray = value.toString().split(".");
+    if (valueArray.length === 2) {
+        // 有小数部分
+        floatPart = valueArray[1].toString(); // 取得小数部分
+        return intPartFormat + "." + floatPart;
+    }
+    return intPartFormat + floatPart;
 };
 </script>
 <style lang='scss' scoped>

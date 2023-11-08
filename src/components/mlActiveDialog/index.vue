@@ -93,6 +93,10 @@ let triggerList = ref([
         code: 2,
     },
     {
+        label: "自动创建",
+        code: 15,
+    },
+    {
         label: "数据校验",
         code: 4,
     },
@@ -128,6 +132,7 @@ let triggerList = ref([
         label: "回调URL",
         code: 14,
     },
+  
 ]);
 
 let dialogForm = ref({});

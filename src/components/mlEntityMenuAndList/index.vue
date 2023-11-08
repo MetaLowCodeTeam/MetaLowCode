@@ -84,7 +84,7 @@
                             <!-- 需要深入拿字段 -->
                             <span
                                 v-else-if="column.needField"
-                            >{{ scope.row[column.prop][column.needField] }}</span>
+                            >{{ scope.row[column.prop] && scope.row[column.prop][column.needField] }}</span>
                             <!-- 自定义 -->
                             <span v-else-if="column.customSolt === 'whenNum'">
                                 <span

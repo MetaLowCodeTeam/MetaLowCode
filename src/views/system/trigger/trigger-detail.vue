@@ -135,7 +135,7 @@ const initDetailData = async () => {
             // 禁用删除时、分配时
             trigger.disabledActive = [4];
         }
-    } 
+    }
     initLoading.value = false;
 };
 
@@ -155,8 +155,13 @@ let notTitleDialog = reactive({
 
 // 保存调用
 const onSave = async (target) => {
-
-    let { triggerConfigId, whenNum, priority, actionContent ,defaultTargetEntity} = trigger;
+    let {
+        triggerConfigId,
+        whenNum,
+        priority,
+        actionContent,
+        defaultTargetEntity,
+    } = trigger;
     // 如果是更新规则
     if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
         $ElMessage.warning("请至少添加 1 个更新规则");
@@ -191,11 +196,14 @@ const onSave = async (target) => {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
     // 如果是聚合规则 或者 字段更新
-    if (trigger.actionType.value == 2 || trigger.actionType.value == 1){
-        actionContent.entityName = defaultTargetEntity.entityName
-        actionContent.fieldName = defaultTargetEntity.fieldName
-        actionContent.isReferenced = defaultTargetEntity.isReferenced
-        // console.log(defaultTargetEntity,'defaultTargetEntity')
+    if (
+        trigger.actionType.value == 2 ||
+        trigger.actionType.value == 1 ||
+        trigger.actionType.value == 15
+    ) {
+        actionContent.entityName = defaultTargetEntity.entityName;
+        actionContent.fieldName = defaultTargetEntity.fieldName;
+        actionContent.isReferenced = defaultTargetEntity.isReferenced;
     }
     // 如果是数据校验
     if (trigger.actionType.value == 4) {
@@ -257,7 +265,7 @@ const onSave = async (target) => {
             });
         }
     }
- 
+
     // 如果是自动撤销审批
     if (trigger.actionType.value == 7 && actionContent.items.length < 1) {
         $ElMessage.warning("请选择撤销记录");
@@ -284,7 +292,10 @@ const onSave = async (target) => {
             $ElMessage.warning("请输入要推送到的URL");
             return;
         }
-        if (actionContent.callBackType == "FUNCTION" && !actionContent.functionName) {
+        if (
+            actionContent.callBackType == "FUNCTION" &&
+            !actionContent.functionName
+        ) {
             $ElMessage.warning("请选择回调函数");
             return;
         }
@@ -328,7 +339,7 @@ const actionExecute = (params) => {
                 actionFilter: params.formModel.actionFilter || null,
                 actionContent: params.formModel.actionContent || null,
                 actionType: trigger.actionType.value,
-                triggerConfigId:trigger.triggerConfigId
+                triggerConfigId: trigger.triggerConfigId,
             });
             initLoading.value = false;
         })
