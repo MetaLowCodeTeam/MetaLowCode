@@ -123,6 +123,9 @@ export default {
 	created() {
 		const gDsv = this.getGlobalDsv()
 		this.entity = gDsv['formEntity'] || this.$route.query.entity || this.$route.meta.entityName
+		if (!!this.subFormItemFlag) {  //设置为明细实体名称！！
+			this.entity = this.subFormName
+		}
 
 		/* 注意：子组件mounted在父组件created之后、父组件mounted之前触发，故子组件mounted需要用到的prop
 		   需要在父组件created中初始化！！ */
