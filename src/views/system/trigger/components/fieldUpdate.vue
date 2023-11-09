@@ -669,9 +669,10 @@ const floatSourceFieldList = () => {
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
-        return cutEntityFields.value;
+        return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
     } else {
         if (fieldType == "Reference") {
+      
             let showFields = [];
             cutEntityFields.value.forEach((el) => {
                 if (
@@ -690,7 +691,7 @@ const floatSourceFieldList = () => {
                 }
             });
             if (showFields.length < 1) {
-                return cutEntityFields.value;
+                return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
             } else {
                 return showFields;
             }
