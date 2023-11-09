@@ -287,7 +287,7 @@ let numFormulaVal = ref("");
 // 确认
 const confirm = async () => {
     let checkVal = "";
-    if (showAdvanced) {
+    if (showAdvanced.value) {
         checkVal = formulaVal.value;
     } else {
         formulaNumList.value.forEach((el) => {

@@ -82,7 +82,7 @@
                         @change="uptadeModeChange"
                     >
                         <el-option
-                            v-for="(op,inx) in uptadeModeList"
+                            v-for="(op,inx) in getUptadeModeList()"
                             :key="inx"
                             :label="op.label"
                             :value="op.value"
@@ -122,10 +122,23 @@
                         type="datetime"
                     />
                     <el-input
-                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
+                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
                         v-model="uptadeRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
+                    <el-input
+                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference'"
+                        v-model="uptadeRule.sourceField.label"
+                        placeholder="固定值"
+                    >
+                        <template #append>
+                            <el-button @click="showReferenceDialogFlag = true">
+                                <el-icon>
+                                    <ElIconSearch />
+                                </el-icon>
+                            </el-button>
+                        </template>
+                    </el-input>
                     <el-select
                         v-if="uptadeRule.updateMode == 'toFixed' && (toFixedForFieldType == 'Option' || toFixedForFieldType == 'Tag')"
                         v-model="uptadeRule.sourceField"
@@ -167,6 +180,25 @@
                 @confirm="formulaConfirm"
             />
         </div>
+        <el-dialog
+            title="请选择"
+            v-if="showReferenceDialogFlag"
+            v-model="showReferenceDialogFlag"
+            :show-close="true"
+            class="small-padding-dialog"
+            :width="'520px'"
+            draggable
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :append-to-body="true"
+        >
+            <ReferenceSearchTable
+                ref="referST"
+                :entity="trigger.defaultTargetEntity.entityName"
+                :refField="uptadeRule.targetField"
+                @recordSelected="setReferRecord"
+            ></ReferenceSearchTable>
+        </el-dialog>
     </div>
 </template>
 
@@ -175,6 +207,7 @@ import { queryEntityFields } from "@/api/crud";
 import { ref, onMounted, inject, reactive } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
 import { getOptionItems, getTagItems } from "@/api/system-manager";
+import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -206,7 +239,8 @@ let cutEntityFields = ref([]);
 let cutEntityFieldLable = ref({});
 // 切换目标实体Loading
 let changeTagEntityLoading = ref(false);
-
+// 引用实体弹框
+let showReferenceDialogFlag = ref(false);
 // 获取操作内容数据
 const getActionContentData = async () => {
     contentLoading.value = true;
@@ -273,10 +307,14 @@ const getCutEntityFields = () => {
 // 获取目标实体所有字段
 const getTagEntityFields = async (entityCode) => {
     changeTagEntityLoading.value = true;
-    let res = await queryEntityFields(entityCode);
+    let res = await queryEntityFields(entityCode, false, false, true);
     if (res) {
         tagEntityFields.value = res.data;
-        if (tagEntityFields.value && tagEntityFields.value.length > 0) {
+        if (
+            tagEntityFields.value &&
+            tagEntityFields.value.length > 0 &&
+            res.data.length > 0
+        ) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = res.data[0];
             uptadeRule.targetField = res.data[0].fieldName;
@@ -284,6 +322,10 @@ const getTagEntityFields = async (entityCode) => {
             toFixedForFieldType.value = getUptadeRuleTargetFieldType(
                 res.data[0].fieldName
             );
+            if (toFixedForFieldType.value == "Reference") {
+                uptadeRule.updateMode = "forField";
+                uptadeRule.sourceField = "";
+            }
             // 如果更新方式是字段值
             if (uptadeRule.updateMode == "forField") {
                 // 源字段 默认选中第一个
@@ -338,6 +380,27 @@ let uptadeModeList = ref([
     },
 ]);
 
+const getUptadeModeList = () => {
+    if (toFixedForFieldType.value == "Reference") {
+        return [
+            {
+                label: "字段值",
+                value: "forField",
+            },
+            {
+                label: "固定值",
+                value: "toFixed",
+            },
+            {
+                label: "置空",
+                value: "toNull",
+            },
+        ];
+    } else {
+        return uptadeModeList.value;
+    }
+};
+
 // 聚合方式
 const uptadeModeLabel = reactive({
     forField: "字段值",
@@ -369,8 +432,6 @@ const targetFieldChange = async (e) => {
     } else {
         uptadeRule.sourceField = "";
     }
-    console.log(toFixedForFieldType.value, "toFixedForFieldType.value");
-
     if (e.fieldType == "Tag" || e.fieldType == "Option") {
         optionItemLoading.value = true;
         let typeEntityName = trigger.value.defaultTargetEntity.entityName;
@@ -394,7 +455,11 @@ const uptadeModeChange = (e) => {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        uptadeRule.sourceField = null;
+        if (toFixedForFieldType.value == "Reference") {
+            uptadeRule.sourceField = {};
+        } else {
+            uptadeRule.sourceField = null;
+        }
     }
 };
 
@@ -432,12 +497,12 @@ const addUptadeRule = () => {
     }
     if (updateMode == "toNull") {
         // 效验是否必填
-        let checkIsNullLable = tagEntityFields.value.filter(
+        let checkIsNullable = tagEntityFields.value.filter(
             (el) => el.fieldName == targetField
         );
-        if (!checkIsNullLable[0].isNullLable) {
+        if (!checkIsNullable[0].isNullable) {
             $ElMessage.warning(
-                "目标字段 [ " + checkIsNullLable[0].fieldLabel + " ] 不能为空!"
+                "目标字段 [ " + checkIsNullable[0].fieldLabel + " ] 不能为空!"
             );
             return;
         }
@@ -533,34 +598,34 @@ let mlIsAdvanced = ref(false);
 // 判断计算公式显示
 const checkMlFormula = () => {
     // 判断目标字段是不是数字类型
-    if (numType.value.includes(toFixedForFieldType.value)) {
-        let numTypeFields = [];
-        // 循环源字段，把所有的数字类型字段遍历出来
-        cutEntityFields.value.forEach((el) => {
-            if (numType.value.includes(el.fieldType)) {
-                numTypeFields.push(el);
-            }
-        });
-        // 如果源字段没有数字类型 显示 高级计算公式
-        if (numTypeFields.length < 1) {
-            showAdvancedFormula(
-                cutEntityFields.value,
-                true,
-                uptadeRule.sourceField
-            );
-            return;
-        }
-        // 否则就显示 数字类型的 计算公式
-        showAdvancedFormula(numTypeFields, false);
-    }
-    // 不是数字类型，显示高级计算公式
-    else {
+    // if (numType.value.includes(toFixedForFieldType.value)) {
+    //     let numTypeFields = [];
+    //     // 循环源字段，把所有的数字类型字段遍历出来
+    //     cutEntityFields.value.forEach((el) => {
+    //         if (numType.value.includes(el.fieldType)) {
+    //             numTypeFields.push(el);
+    //         }
+    //     });
+    //     // 如果源字段没有数字类型 显示 高级计算公式
+    //     if (numTypeFields.length < 1) {
+    //         showAdvancedFormula(
+    //             cutEntityFields.value,
+    //             true,
+    //             uptadeRule.sourceField
+    //         );
+    //         return;
+    //     }
+    //     // 否则就显示 数字类型的 计算公式
+    //     showAdvancedFormula(numTypeFields, false);
+    // }
+    // // 不是数字类型，显示高级计算公式
+    // else {
         showAdvancedFormula(
             cutEntityFields.value,
             true,
             uptadeRule.sourceField
         );
-    }
+    // }
 };
 // 执行显示 计算公式
 /**
@@ -600,22 +665,36 @@ const getUptadeRuleTargetFieldType = (fieldName) => {
 const floatSourceFieldList = () => {
     // 字符串字段
     let strField = ["Email", "Url", "TextArea", "Text"];
-    let { fieldType } = seleteTargetField.value;
+    let { fieldType, referenceName } = seleteTargetField.value;
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
-        return cutEntityFields.value;
+        return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
     } else {
-        let showFields = [];
-        cutEntityFields.value.forEach((el) => {
-            if (el.fieldType == fieldType) {
-                showFields.push(el);
-            }
-        });
-        if (showFields.length < 1) {
-            return cutEntityFields.value;
-        } else {
+        if (fieldType == "Reference") {
+      
+            let showFields = [];
+            cutEntityFields.value.forEach((el) => {
+                if (
+                    el.fieldType == fieldType &&
+                    el.referenceName == referenceName
+                ) {
+                    showFields.push(el);
+                }
+            });
             return showFields;
+        } else {
+            let showFields = [];
+            cutEntityFields.value.forEach((el) => {
+                if (el.fieldType == fieldType) {
+                    showFields.push(el);
+                }
+            });
+            if (showFields.length < 1) {
+                return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
+            } else {
+                return showFields;
+            }
         }
     }
 };
@@ -637,11 +716,14 @@ const getUpdateModeLabel = (value) => {
 // 获取源字段显示label
 const getSourceFieldLabel = (item) => {
     if (item.updateMode !== "forField") {
-        if (item.sourceField == 1) {
+        if (item.sourceField == 1 && toFixedForFieldType.value == "Boolean") {
             return "正常";
         }
-        if (item.sourceField == 0) {
+        if (item.sourceField == 0 && toFixedForFieldType.value == "Boolean") {
             return "禁用";
+        }
+        if (item.sourceField && item.sourceField.id) {
+            return item.sourceField.label;
         }
         return item.sourceField;
     }
@@ -687,6 +769,12 @@ const targetEntityChange = () => {
     } else {
         getTagEntityFields(cutEntity.entityCode);
     }
+};
+
+// 引用字段弹框选择
+const setReferRecord = (e) => {
+    uptadeRule.sourceField = e;
+    showReferenceDialogFlag.value = false;
 };
 </script>
 <style lang='scss' scoped>

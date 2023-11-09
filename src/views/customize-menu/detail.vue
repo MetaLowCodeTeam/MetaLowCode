@@ -142,9 +142,13 @@ const openDialog = (id) => {
         ElMessage.warning("当前实体未找到");
         return;
     }
-    detailDialog.entityCode = entityCode.value
-    detailDialog.entityName = entityName.value
+    detailDialog.entityCode = entityCode.value;
+    detailDialog.entityName = entityName.value;
     detailDialog.isShow = true;
+    // let row = {};
+    // row[idFieldName.value] = id;
+    // console.log(row,'row')
+
     // 加载数据
     refresh();
 };
@@ -194,6 +198,9 @@ const getLayoutList = async () => {
         addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
+        let row = {};
+        row[idFieldName.value] = detailId.value;
+        multipleSelection.value = [row];
         initData();
     } else {
         loading.value = false;

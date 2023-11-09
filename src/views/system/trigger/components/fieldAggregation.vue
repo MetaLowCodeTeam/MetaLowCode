@@ -213,9 +213,9 @@ const getTagEntitys = () => {
             trigger.value.entityCode
         );
         if (res && res.data) {
-            tagEntitys.value = res.data.map((el,inx)=>{
+            tagEntitys.value = res.data.map((el, inx) => {
                 el.entityInx = inx;
-                return el
+                return el;
             });
             if (res.data && res.data.length > 0) {
                 // 目标实体默认选中第1个
@@ -238,7 +238,7 @@ const getTagEntitys = () => {
                 // 获取选中实体的所有字段
                 getTagEntityFields(res.data[defalutInx].entityCode);
             }
-        } 
+        }
         resolve();
     });
 };
@@ -251,7 +251,7 @@ const getCutEntityFields = () => {
             res.data.forEach((el) => {
                 cutEntityFieldLable.value[el.fieldName] = el.fieldLabel;
             });
-        } 
+        }
         resolve();
     });
 };
@@ -272,23 +272,25 @@ const getTagEntityFields = async (entityCode) => {
                 tagEntityFields.value.push(el);
             }
         });
-        // 目标字段 默认选中 第一个
-        seleteTargetField.value = tagEntityFields.value[0];
-        uptadeRule.targetField = tagEntityFields.value[0].fieldName;
+        if (tagEntityFields.value.length > 0) {
+            // 目标字段 默认选中 第一个
+            seleteTargetField.value = tagEntityFields.value[0];
+            uptadeRule.targetField = tagEntityFields.value[0].fieldName;
 
-        // 获取目标字段类型
-        toFixedForFieldType.value = getUptadeRuleTargetFieldType(
-            tagEntityFields.value[0].fieldName
-        );
-        // 聚合方式默认选中
-        uptadeRule.calcMode = getUptadeMode()[0].value;
-        // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
-        if (uptadeRule.calcMode !== "forCompile") {
-            uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+            // 获取目标字段类型
+            toFixedForFieldType.value = getUptadeRuleTargetFieldType(
+                tagEntityFields.value[0].fieldName
+            );
+            // 聚合方式默认选中
+            uptadeRule.calcMode = getUptadeMode()[0].value;
+            // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
+            if (uptadeRule.calcMode !== "forCompile") {
+                uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+            }
+            // 格式化规则列表
+            formatActionContentItems();
         }
-        // 格式化规则列表
-        formatActionContentItems();
-    } 
+    }
     changeTagEntityLoading.value = false;
 };
 
@@ -542,34 +544,34 @@ let formulaVal = ref({});
 // 判断计算公式显示
 const checkMlFormula = () => {
     // 判断目标字段是不是数字类型
-    if (numType.value.includes(toFixedForFieldType.value)) {
-        let numTypeFields = [];
-        // 循环源字段，把所有的数字类型字段遍历出来
-        cutEntityFields.value.forEach((el) => {
-            if (numType.value.includes(el.fieldType)) {
-                numTypeFields.push(el);
-            }
-        });
-        // 如果源字段没有数字类型 显示 高级计算公式
-        if (numTypeFields.length < 1) {
-            showAdvancedFormula(
-                cutEntityFields.value,
-                true,
-                uptadeRule.sourceField
-            );
-            return;
-        }
-        // 否则就显示 数字类型的 计算公式
-        showAdvancedFormula(numTypeFields, false);
-    }
-    // 不是数字类型，显示高级计算公式
-    else {
+    // if (numType.value.includes(toFixedForFieldType.value)) {
+    //     let numTypeFields = [];
+    //     // 循环源字段，把所有的数字类型字段遍历出来
+    //     cutEntityFields.value.forEach((el) => {
+    //         if (numType.value.includes(el.fieldType)) {
+    //             numTypeFields.push(el);
+    //         }
+    //     });
+    //     // 如果源字段没有数字类型 显示 高级计算公式
+    //     if (numTypeFields.length < 1) {
+    //         showAdvancedFormula(
+    //             cutEntityFields.value,
+    //             true,
+    //             uptadeRule.sourceField
+    //         );
+    //         return;
+    //     }
+    //     // 否则就显示 数字类型的 计算公式
+    //     showAdvancedFormula(numTypeFields, false);
+    // }
+    // // 不是数字类型，显示高级计算公式
+    // else {
         showAdvancedFormula(
             cutEntityFields.value,
             true,
             uptadeRule.sourceField
         );
-    }
+    // }
 };
 // 执行显示 计算公式
 /**

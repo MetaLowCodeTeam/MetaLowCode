@@ -99,7 +99,7 @@ const actionBtn = (data) => {
 
 // 保存流程
 const saveProcess = async () => {
-    mlEntityMenuAndListRef.value.getApprovalList();
+    mlEntityMenuAndListRef.value.getEntityList();
 };
 
 // 跳转详情
