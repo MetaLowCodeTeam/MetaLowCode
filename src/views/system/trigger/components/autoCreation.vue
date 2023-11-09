@@ -81,7 +81,7 @@
                         @change="uptadeModeChange"
                     >
                         <el-option
-                            v-for="(op,inx) in uptadeModeList"
+                            v-for="(op,inx) in getUptadeModeList()"
                             :key="inx"
                             :label="op.label"
                             :value="op.value"
@@ -315,7 +315,11 @@ const getTagEntityFields = async (entityCode) => {
                 requiredFields.value.push(el);
             }
         });
-        if (tagEntityFields.value && tagEntityFields.value.length > 0 && res.data.length > 0) {
+        if (
+            tagEntityFields.value &&
+            tagEntityFields.value.length > 0 &&
+            res.data.length > 0
+        ) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = res.data[0];
             uptadeRule.targetField = res.data[0].fieldName;
@@ -324,8 +328,8 @@ const getTagEntityFields = async (entityCode) => {
                 res.data[0].fieldName
             );
             if (toFixedForFieldType.value == "Reference") {
-                uptadeRule.updateMode = "toFixed";
-                uptadeRule.sourceField = "";
+                uptadeRule.updateMode = "forField";
+                uptadeRule.sourceField = {};
             }
             // 如果更新方式是字段值
             if (uptadeRule.updateMode == "forField") {
@@ -381,6 +385,27 @@ let uptadeModeList = ref([
     },
 ]);
 
+const getUptadeModeList = () => {
+    if (toFixedForFieldType.value == "Reference") {
+        return [
+            {
+                label: "字段值",
+                value: "forField",
+            },
+            {
+                label: "固定值",
+                value: "toFixed",
+            },
+            {
+                label: "置空",
+                value: "toNull",
+            },
+        ];
+    } else {
+        return uptadeModeList.value;
+    }
+};
+
 // 聚合方式
 const uptadeModeLabel = reactive({
     forField: "字段值",
@@ -431,11 +456,16 @@ const targetFieldChange = async (e) => {
 
 // 更新方式切换
 const uptadeModeChange = (e) => {
+    console.log();
     if (e.value == "forField") {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        uptadeRule.sourceField = null;
+        if (toFixedForFieldType.value == "Reference") {
+            uptadeRule.sourceField = {};
+        } else {
+            uptadeRule.sourceField = null;
+        }
     }
 };
 
@@ -647,16 +677,29 @@ const floatSourceFieldList = () => {
     if (strField.includes(fieldType)) {
         return cutEntityFields.value;
     } else {
-        let showFields = [];
-        cutEntityFields.value.forEach((el) => {
-            if (el.fieldType == fieldType) {
-                showFields.push(el);
-            }
-        });
-        if (showFields.length < 1) {
-            return cutEntityFields.value;
-        } else {
+        if (fieldType == "Reference") {
+            let showFields = [];
+            cutEntityFields.value.forEach((el) => {
+                if (
+                    el.fieldType == fieldType &&
+                    el.referenceName == referenceName
+                ) {
+                    showFields.push(el);
+                }
+            });
             return showFields;
+        } else {
+            let showFields = [];
+            cutEntityFields.value.forEach((el) => {
+                if (el.fieldType == fieldType) {
+                    showFields.push(el);
+                }
+            });
+            if (showFields.length < 1) {
+                return cutEntityFields.value;
+            } else {
+                return showFields;
+            }
         }
     }
 };
@@ -678,10 +721,10 @@ const getUpdateModeLabel = (value) => {
 // 获取源字段显示label
 const getSourceFieldLabel = (item) => {
     if (item.updateMode !== "forField") {
-        if (item.sourceField == 1) {
+        if (item.sourceField == 1 && toFixedForFieldType.value == "Boolean") {
             return "正常";
         }
-        if (item.sourceField == 0) {
+        if (item.sourceField == 0 && toFixedForFieldType.value == "Boolean") {
             return "禁用";
         }
         if (item.sourceField && item.sourceField.id) {
@@ -742,8 +785,6 @@ const setReferRecord = (e) => {
 defineExpose({
     requiredFields,
 });
-
-
 </script>
 <style lang='scss' scoped>
 .uptade-rule-row {

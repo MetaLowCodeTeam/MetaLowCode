@@ -323,7 +323,7 @@ const getTagEntityFields = async (entityCode) => {
                 res.data[0].fieldName
             );
             if (toFixedForFieldType.value == "Reference") {
-                uptadeRule.updateMode = "toFixed";
+                uptadeRule.updateMode = "forField";
                 uptadeRule.sourceField = "";
             }
             // 如果更新方式是字段值
@@ -383,6 +383,10 @@ let uptadeModeList = ref([
 const getUptadeModeList = () => {
     if (toFixedForFieldType.value == "Reference") {
         return [
+            {
+                label: "字段值",
+                value: "forField",
+            },
             {
                 label: "固定值",
                 value: "toFixed",
@@ -451,7 +455,11 @@ const uptadeModeChange = (e) => {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        uptadeRule.sourceField = null;
+        if (toFixedForFieldType.value == "Reference") {
+            uptadeRule.sourceField = {};
+        } else {
+            uptadeRule.sourceField = null;
+        }
     }
 };
 
@@ -657,22 +665,35 @@ const getUptadeRuleTargetFieldType = (fieldName) => {
 const floatSourceFieldList = () => {
     // 字符串字段
     let strField = ["Email", "Url", "TextArea", "Text"];
-    let { fieldType } = seleteTargetField.value;
+    let { fieldType, referenceName } = seleteTargetField.value;
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
         return cutEntityFields.value;
     } else {
-        let showFields = [];
-        cutEntityFields.value.forEach((el) => {
-            if (el.fieldType == fieldType) {
-                showFields.push(el);
-            }
-        });
-        if (showFields.length < 1) {
-            return cutEntityFields.value;
-        } else {
+        if (fieldType == "Reference") {
+            let showFields = [];
+            cutEntityFields.value.forEach((el) => {
+                if (
+                    el.fieldType == fieldType &&
+                    el.referenceName == referenceName
+                ) {
+                    showFields.push(el);
+                }
+            });
             return showFields;
+        } else {
+            let showFields = [];
+            cutEntityFields.value.forEach((el) => {
+                if (el.fieldType == fieldType) {
+                    showFields.push(el);
+                }
+            });
+            if (showFields.length < 1) {
+                return cutEntityFields.value;
+            } else {
+                return showFields;
+            }
         }
     }
 };
@@ -694,10 +715,10 @@ const getUpdateModeLabel = (value) => {
 // 获取源字段显示label
 const getSourceFieldLabel = (item) => {
     if (item.updateMode !== "forField") {
-        if (item.sourceField == 1) {
+        if (item.sourceField == 1 && toFixedForFieldType.value == "Boolean") {
             return "正常";
         }
-        if (item.sourceField == 0) {
+        if (item.sourceField == 0 && toFixedForFieldType.value == "Boolean") {
             return "禁用";
         }
         if (item.sourceField && item.sourceField.id) {
