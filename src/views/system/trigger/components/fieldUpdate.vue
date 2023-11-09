@@ -150,7 +150,7 @@
                             v-for="(tOp,tInx) of optionItems"
                             :key="tInx"
                             :label="tOp.label"
-                            :value="tOp.value"
+                            :value="tOp"
                         />
                     </el-select>
                     <el-input
@@ -455,7 +455,7 @@ const uptadeModeChange = (e) => {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        if (toFixedForFieldType.value == "Reference") {
+        if (toFixedForFieldType.value == "Reference" || toFixedForFieldType.value == "Option") {
             uptadeRule.sourceField = {};
         } else {
             uptadeRule.sourceField = null;
@@ -722,7 +722,7 @@ const getSourceFieldLabel = (item) => {
         if (item.sourceField == 0 && toFixedForFieldType.value == "Boolean") {
             return "禁用";
         }
-        if (item.sourceField && item.sourceField.id) {
+        if (item.sourceField && item.sourceField.label) {
             return item.sourceField.label;
         }
         return item.sourceField;
