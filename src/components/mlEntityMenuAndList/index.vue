@@ -421,7 +421,7 @@ const deleteProcess = (row) => {
             loading.value = true;
             if (res) {
                 message.success("删除成功");
-                getApprovalList();
+                getEntityList();
             }
             loading.value = false;
         })
@@ -437,7 +437,7 @@ const changeSwitch = (row) => {
 };
 
 defineExpose({
-    getApprovalList,
+    getEntityList,
 });
 </script>
   
