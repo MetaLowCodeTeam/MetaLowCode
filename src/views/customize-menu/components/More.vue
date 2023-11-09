@@ -189,7 +189,7 @@ const allocationFn = async (type) => {
     if (props.multipleSelection.length > 0) {
         if (props.multipleSelection.length == 1) {
             let param = {
-                id: props.detailId,
+                id: props.detailId || props.multipleSelection[0][props.idFieldName],
                 rightType: RightType[type].type ,
             };
             let res = await checkRight(param.id, param.rightType);
