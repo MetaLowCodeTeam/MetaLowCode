@@ -310,7 +310,11 @@ const getTagEntityFields = async (entityCode) => {
     let res = await queryEntityFields(entityCode, false, false, true);
     if (res) {
         tagEntityFields.value = res.data;
-        if (tagEntityFields.value && tagEntityFields.value.length > 0) {
+        if (
+            tagEntityFields.value &&
+            tagEntityFields.value.length > 0 &&
+            res.data.length > 0
+        ) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = res.data[0];
             uptadeRule.targetField = res.data[0].fieldName;
@@ -696,8 +700,8 @@ const getSourceFieldLabel = (item) => {
         if (item.sourceField == 0) {
             return "禁用";
         }
-        if(item.sourceField && item.sourceField.id){
-            return item.sourceField.label
+        if (item.sourceField && item.sourceField.id) {
+            return item.sourceField.label;
         }
         return item.sourceField;
     }

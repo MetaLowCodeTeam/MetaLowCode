@@ -121,10 +121,23 @@
                         type="datetime"
                     />
                     <el-input
-                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
+                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
                         v-model="uptadeRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
+                    <el-input
+                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference'"
+                        v-model="uptadeRule.sourceField.label"
+                        placeholder="固定值"
+                    >
+                        <template #append>
+                            <el-button @click="showReferenceDialogFlag = true">
+                                <el-icon>
+                                    <ElIconSearch />
+                                </el-icon>
+                            </el-button>
+                        </template>
+                    </el-input>
                     <el-select
                         v-if="uptadeRule.updateMode == 'toFixed' && (toFixedForFieldType == 'Option' || toFixedForFieldType == 'Tag')"
                         v-model="uptadeRule.sourceField"
@@ -166,6 +179,25 @@
                 @confirm="formulaConfirm"
             />
         </div>
+        <el-dialog
+            title="请选择"
+            v-if="showReferenceDialogFlag"
+            v-model="showReferenceDialogFlag"
+            :show-close="true"
+            class="small-padding-dialog"
+            :width="'520px'"
+            draggable
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :append-to-body="true"
+        >
+            <ReferenceSearchTable
+                ref="referST"
+                :entity="trigger.defaultTargetEntity.entityName"
+                :refField="uptadeRule.targetField"
+                @recordSelected="setReferRecord"
+            ></ReferenceSearchTable>
+        </el-dialog>
     </div>
 </template>
 
@@ -174,6 +206,7 @@ import { queryEntityFields } from "@/api/crud";
 import { ref, onMounted, inject, reactive } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
 import { getOptionItems, getTagItems } from "@/api/system-manager";
+import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -207,6 +240,8 @@ let cutEntityFields = ref([]);
 let cutEntityFieldLable = ref({});
 // 切换目标实体Loading
 let changeTagEntityLoading = ref(false);
+// 引用实体弹框
+let showReferenceDialogFlag = ref(false);
 
 // 获取操作内容数据
 const getActionContentData = async () => {
@@ -271,7 +306,7 @@ const getCutEntityFields = () => {
 // 获取目标实体所有字段
 const getTagEntityFields = async (entityCode) => {
     changeTagEntityLoading.value = true;
-    let res = await queryEntityFields(entityCode);
+    let res = await queryEntityFields(entityCode, false, false, true);
     if (res) {
         tagEntityFields.value = res.data;
         requiredFields.value = [];
@@ -280,7 +315,7 @@ const getTagEntityFields = async (entityCode) => {
                 requiredFields.value.push(el);
             }
         });
-        if (tagEntityFields.value && tagEntityFields.value.length > 0) {
+        if (tagEntityFields.value && tagEntityFields.value.length > 0 && res.data.length > 0) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = res.data[0];
             uptadeRule.targetField = res.data[0].fieldName;
@@ -288,6 +323,10 @@ const getTagEntityFields = async (entityCode) => {
             toFixedForFieldType.value = getUptadeRuleTargetFieldType(
                 res.data[0].fieldName
             );
+            if (toFixedForFieldType.value == "Reference") {
+                uptadeRule.updateMode = "toFixed";
+                uptadeRule.sourceField = "";
+            }
             // 如果更新方式是字段值
             if (uptadeRule.updateMode == "forField") {
                 // 源字段 默认选中第一个
@@ -373,8 +412,6 @@ const targetFieldChange = async (e) => {
     } else {
         uptadeRule.sourceField = "";
     }
-    console.log(toFixedForFieldType.value, "toFixedForFieldType.value");
-
     if (e.fieldType == "Tag" || e.fieldType == "Option") {
         optionItemLoading.value = true;
         let typeEntityName = trigger.value.defaultTargetEntity.entityName;
@@ -647,6 +684,9 @@ const getSourceFieldLabel = (item) => {
         if (item.sourceField == 0) {
             return "禁用";
         }
+        if (item.sourceField && item.sourceField.id) {
+            return item.sourceField.label;
+        }
         return item.sourceField;
     }
     let filterVal = cutEntityFields.value?.filter(
@@ -693,9 +733,17 @@ const targetEntityChange = () => {
     }
 };
 
+// 引用字段弹框选择
+const setReferRecord = (e) => {
+    uptadeRule.sourceField = e;
+    showReferenceDialogFlag.value = false;
+};
+
 defineExpose({
     requiredFields,
 });
+
+
 </script>
 <style lang='scss' scoped>
 .uptade-rule-row {
