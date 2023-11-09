@@ -228,6 +228,7 @@ const getTagEntitys = () => {
             res.data.forEach((el, inx) => {
                 el.entityInx = inx;
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
+                tagEntitys.value.push(el);
             });
             // 目标实体默认选中第1个
             let defalutInx = 0;
