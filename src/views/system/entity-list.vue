@@ -46,6 +46,7 @@
 				 @mouseenter="clearHideMenuTimer" @mouseleave="setHideMenuTimer">
 				<div class="context-menu__item" @click="gotoEntityManager(selectedEntityObj)">字段管理</div>
 				<div class="context-menu__item" @click="gotoFormLayout(selectedEntityObj)">表单设计</div>
+				<div class="context-menu__item" @click="gotoListView(selectedEntityObj)">列表设计</div>
 				<div class="context-menu__item" @click="deleteSelectedEntity(selectedEntityObj)">删除实体</div>
 			</div>
 
@@ -61,7 +62,8 @@ import useCommonStore from "@/store/modules/common";
 const { refreshCache } = useCommonStore();
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
-const visualDesign = await import('@/../lib/visual-design/designer.umd.js')
+
+//const visualDesign = await import('@/../lib/visual-design/designer.umd.js')
 
 export default {
 	name: 'EntityList',
@@ -105,6 +107,7 @@ export default {
 	mounted() {
 		this.getEntityList()
 
+		/*
 		//const visualDesign = import.meta.glob('@/../lib/visual-design/designer.umd.js')
 		// const visualDesign = import.meta.glob('@/../lib/visual-design/*.js')
 		// const visualDesign = import.meta.glob('vform3-builds/dist/designer.umd.js')
@@ -114,6 +117,7 @@ export default {
 		//console.error('$app', $app)
 		//console.error('visualDesign', visualDesign)
 		//$app.use(VFormDesigner)
+		*/
 	},
 	methods: {
 		getEntityList() {
@@ -193,6 +197,15 @@ export default {
 					'entityLabel': selectedEntityObj.label
 				}
 			})
+		},
+
+		gotoListView(selectedEntityObj) {
+			if (selectedEntityObj.systemEntityFlag || selectedEntityObj.internalEntityFlag) {
+				this.$message.info('当前实体不允许设计列表')
+				return
+			}
+
+			this.$router.push('/web/' + selectedEntityObj.name + '/list')
 		},
 
 		deleteSelectedEntity(selectedEntityObj) {
