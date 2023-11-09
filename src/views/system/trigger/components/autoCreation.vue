@@ -626,11 +626,7 @@ const checkMlFormula = () => {
     // }
     // // 不是数字类型，显示高级计算公式
     // else {
-        showAdvancedFormula(
-            cutEntityFields.value,
-            true,
-            uptadeRule.sourceField
-        );
+    showAdvancedFormula(cutEntityFields.value, true, uptadeRule.sourceField);
     // }
 };
 // 执行显示 计算公式
@@ -671,11 +667,13 @@ const getUptadeRuleTargetFieldType = (fieldName) => {
 const floatSourceFieldList = () => {
     // 字符串字段
     let strField = ["Email", "Url", "TextArea", "Text"];
-    let { fieldType } = seleteTargetField.value;
+    let { fieldType, referenceName } = seleteTargetField.value;
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
-        return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
+        return cutEntityFields.value.filter(
+            (el) => el.fieldType != "Reference"
+        );
     } else {
         if (fieldType == "Reference") {
             let showFields = [];
@@ -696,7 +694,9 @@ const floatSourceFieldList = () => {
                 }
             });
             if (showFields.length < 1) {
-                return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
+                return cutEntityFields.value.filter(
+                    (el) => el.fieldType != "Reference"
+                );
             } else {
                 return showFields;
             }
