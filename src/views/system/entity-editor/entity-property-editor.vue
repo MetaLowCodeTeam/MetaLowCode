@@ -101,7 +101,7 @@ export default {
 						message: '英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线或横杠',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
 				],
 				label: [
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
@@ -110,7 +110,7 @@ export default {
 						message: '以中文、英文字母、数字开头，中间可输入下划线或横杠',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '请输入至少两个字符', trigger: 'blur'},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
 				],
 			},
 
