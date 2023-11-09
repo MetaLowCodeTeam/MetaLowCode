@@ -604,34 +604,34 @@ let mlIsAdvanced = ref(false);
 // 判断计算公式显示
 const checkMlFormula = () => {
     // 判断目标字段是不是数字类型
-    if (numType.value.includes(toFixedForFieldType.value)) {
-        let numTypeFields = [];
-        // 循环源字段，把所有的数字类型字段遍历出来
-        cutEntityFields.value.forEach((el) => {
-            if (numType.value.includes(el.fieldType)) {
-                numTypeFields.push(el);
-            }
-        });
-        // 如果源字段没有数字类型 显示 高级计算公式
-        if (numTypeFields.length < 1) {
-            showAdvancedFormula(
-                cutEntityFields.value,
-                true,
-                uptadeRule.sourceField
-            );
-            return;
-        }
-        // 否则就显示 数字类型的 计算公式
-        showAdvancedFormula(numTypeFields, false);
-    }
-    // 不是数字类型，显示高级计算公式
-    else {
+    // if (numType.value.includes(toFixedForFieldType.value)) {
+    //     let numTypeFields = [];
+    //     // 循环源字段，把所有的数字类型字段遍历出来
+    //     cutEntityFields.value.forEach((el) => {
+    //         if (numType.value.includes(el.fieldType)) {
+    //             numTypeFields.push(el);
+    //         }
+    //     });
+    //     // 如果源字段没有数字类型 显示 高级计算公式
+    //     if (numTypeFields.length < 1) {
+    //         showAdvancedFormula(
+    //             cutEntityFields.value,
+    //             true,
+    //             uptadeRule.sourceField
+    //         );
+    //         return;
+    //     }
+    //     // 否则就显示 数字类型的 计算公式
+    //     showAdvancedFormula(numTypeFields, false);
+    // }
+    // // 不是数字类型，显示高级计算公式
+    // else {
         showAdvancedFormula(
             cutEntityFields.value,
             true,
             uptadeRule.sourceField
         );
-    }
+    // }
 };
 // 执行显示 计算公式
 /**
