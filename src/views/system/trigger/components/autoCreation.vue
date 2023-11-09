@@ -436,12 +436,12 @@ const addUptadeRule = () => {
     }
     if (updateMode == "toNull") {
         // 效验是否必填
-        let checkIsNullLable = tagEntityFields.value.filter(
+        let checkIsNullable = tagEntityFields.value.filter(
             (el) => el.fieldName == targetField
         );
-        if (!checkIsNullLable[0].isNullLable) {
+        if (!checkIsNullable[0].isNullable) {
             $ElMessage.warning(
-                "目标字段 [ " + checkIsNullLable[0].fieldLabel + " ] 不能为空!"
+                "目标字段 [ " + checkIsNullable[0].fieldLabel + " ] 不能为空!"
             );
             return;
         }
