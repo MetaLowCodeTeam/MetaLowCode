@@ -204,12 +204,15 @@ const onSave = async (target) => {
     if (
         trigger.actionType.value == 2 ||
         trigger.actionType.value == 1 ||
+        trigger.actionType.value == 3 ||
         trigger.actionType.value == 15
     ) {
-        actionContent.entityName = defaultTargetEntity.entityName;
+        actionContent.entityName = defaultTargetEntity.entityName || defaultTargetEntity.name;
         actionContent.fieldName = defaultTargetEntity.fieldName;
         actionContent.isReferenced = defaultTargetEntity.isReferenced;
     }
+
+
     // 如果是分组聚合
     if (trigger.actionType.value == 3) {
         let { groupItem } = actionContent;

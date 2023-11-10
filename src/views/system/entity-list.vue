@@ -120,6 +120,9 @@ export default {
 		*/
 	},
 	methods: {
+        checkRole(str) {
+            return this.$TOOL.checkRole(str);
+        },
 		getEntityList() {
 			getEntitySet().then(res => {
 				if (res.error != null) {

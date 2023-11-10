@@ -203,9 +203,9 @@
                 <el-col :span="24">
                     <div class="info-text">仅会聚合符合过滤条件的数据</div>
                 </el-col>
-                <el-row>
+                <el-col class="mt-10">
                     <el-checkbox v-model="trigger.actionContent.autoCreate">目标记录不存在时自动新建</el-checkbox>
-                </el-row>
+                </el-col>
             </el-row>
         </el-form-item>
         <el-form-item class="mt-20" label="聚合后回填">
@@ -338,8 +338,7 @@ const getTagEntitys = () => {
                 let { actionContent } = trigger.value;
                 tagEntitys.value.forEach((el, elInx) => {
                     if (
-                        el.fieldName == actionContent.fieldName &&
-                        el.entityName == actionContent.entityName
+                        el.name == actionContent.entityName
                     ) {
                         defalutInx = elInx;
                     }
@@ -906,8 +905,10 @@ const formatGroupItems = () => {
 
 // 获取聚合回填下拉框数据
 const getCallbackFieldOptions = () => {
-    let name  = trigger.value.defaultTargetEntity?.name;
-    return cutEntityFields.value.filter(el=> el.fieldType == "Reference" && el.referenceName == name)
+    let name = trigger.value.defaultTargetEntity?.name;
+    return cutEntityFields.value.filter(
+        (el) => el.fieldType == "Reference" && el.referenceName == name
+    );
 };
 </script>
 <style lang='scss' scoped>
