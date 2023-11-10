@@ -93,6 +93,14 @@ let triggerList = ref([
         code: 2,
     },
     {
+        label: "分组聚合",
+        code: 3,
+    },
+    {
+        label: "字段聚合",
+        code: 2,
+    },
+    {
         label: "自动创建",
         code: 15,
     },

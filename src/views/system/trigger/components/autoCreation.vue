@@ -139,11 +139,26 @@
                         </template>
                     </el-input>
                     <el-select
-                        v-if="uptadeRule.updateMode == 'toFixed' && (toFixedForFieldType == 'Option' || toFixedForFieldType == 'Tag')"
+                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
                         v-model="uptadeRule.sourceField"
                         v-loading="optionItemLoading"
                         filterable
                         class="w-100"
+                    >
+                        <el-option
+                            v-for="(tOp,tInx) of optionItems"
+                            :key="tInx"
+                            :label="tOp.label"
+                            :value="tOp"
+                        />
+                    </el-select>
+                    <el-select
+                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Tag'"
+                        v-model="uptadeRule.sourceField"
+                        v-loading="optionItemLoading"
+                        filterable
+                        class="w-100"
+                        multiple
                     >
                         <el-option
                             v-for="(tOp,tInx) of optionItems"
@@ -331,6 +346,14 @@ const getTagEntityFields = async (entityCode) => {
                 uptadeRule.updateMode = "forField";
                 uptadeRule.sourceField = {};
             }
+            if (toFixedForFieldType.value == "Option") {
+                uptadeRule.updateMode = "toFixed";
+                uptadeRule.sourceField = "";
+            }
+            if (toFixedForFieldType.value == "Tag") {
+                uptadeRule.updateMode = "toFixed";
+                uptadeRule.sourceField = [];
+            }
             // 如果更新方式是字段值
             if (uptadeRule.updateMode == "forField") {
                 // 源字段 默认选中第一个
@@ -401,6 +424,21 @@ const getUptadeModeList = () => {
                 value: "toNull",
             },
         ];
+    }
+    if (
+        toFixedForFieldType.value == "Option" ||
+        toFixedForFieldType.value == "Tag"
+    ) {
+        return [
+            {
+                label: "固定值",
+                value: "toFixed",
+            },
+            {
+                label: "置空",
+                value: "toNull",
+            },
+        ];
     } else {
         return uptadeModeList.value;
     }
@@ -444,8 +482,12 @@ const targetFieldChange = async (e) => {
         let res;
         if (e.fieldType == "Tag") {
             res = await getTagItems(typeEntityName, typeFieldName);
+            uptadeRule.updateMode = "toFixed";
+            uptadeRule.sourceField = [];
         } else {
             res = await getOptionItems(typeEntityName, typeFieldName);
+            uptadeRule.updateMode = "toFixed";
+            uptadeRule.sourceField = {};
         }
         if (res && res.data) {
             optionItems.value = res.data;
@@ -456,13 +498,17 @@ const targetFieldChange = async (e) => {
 
 // 更新方式切换
 const uptadeModeChange = (e) => {
-    console.log();
     if (e.value == "forField") {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        if (toFixedForFieldType.value == "Reference" || toFixedForFieldType.value == "Option") {
+        if (
+            toFixedForFieldType.value == "Reference" ||
+            toFixedForFieldType.value == "Option"
+        ) {
             uptadeRule.sourceField = {};
+        } else if (toFixedForFieldType.value == "Tag") {
+            uptadeRule.sourceField = [];
         } else {
             uptadeRule.sourceField = null;
         }
@@ -729,6 +775,10 @@ const getSourceFieldLabel = (item) => {
         }
         if (item.sourceField && item.sourceField.label) {
             return item.sourceField.label;
+        }
+        if (item.sourceField && Array.isArray(item.sourceField)) {
+            let labels = item.sourceField.map((el) => el.label) || [];
+            return labels.join();
         }
         return item.sourceField;
     }

@@ -140,11 +140,26 @@
                         </template>
                     </el-input>
                     <el-select
-                        v-if="uptadeRule.updateMode == 'toFixed' && (toFixedForFieldType == 'Option' || toFixedForFieldType == 'Tag')"
+                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
                         v-model="uptadeRule.sourceField"
                         v-loading="optionItemLoading"
                         filterable
                         class="w-100"
+                    >
+                        <el-option
+                            v-for="(tOp,tInx) of optionItems"
+                            :key="tInx"
+                            :label="tOp.label"
+                            :value="tOp"
+                        />
+                    </el-select>
+                    <el-select
+                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Tag'"
+                        v-model="uptadeRule.sourceField"
+                        v-loading="optionItemLoading"
+                        filterable
+                        class="w-100"
+                        multiple
                     >
                         <el-option
                             v-for="(tOp,tInx) of optionItems"
@@ -324,7 +339,15 @@ const getTagEntityFields = async (entityCode) => {
             );
             if (toFixedForFieldType.value == "Reference") {
                 uptadeRule.updateMode = "forField";
+                uptadeRule.sourceField = {};
+            }
+            if (toFixedForFieldType.value == "Option") {
+                uptadeRule.updateMode = "toFixed";
                 uptadeRule.sourceField = "";
+            }
+            if (toFixedForFieldType.value == "Tag") {
+                uptadeRule.updateMode = "toFixed";
+                uptadeRule.sourceField = [];
             }
             // 如果更新方式是字段值
             if (uptadeRule.updateMode == "forField") {
@@ -396,6 +419,21 @@ const getUptadeModeList = () => {
                 value: "toNull",
             },
         ];
+    }
+    if (
+        toFixedForFieldType.value == "Option" ||
+        toFixedForFieldType.value == "Tag"
+    ) {
+        return [
+            {
+                label: "固定值",
+                value: "toFixed",
+            },
+            {
+                label: "置空",
+                value: "toNull",
+            },
+        ];
     } else {
         return uptadeModeList.value;
     }
@@ -439,8 +477,12 @@ const targetFieldChange = async (e) => {
         let res;
         if (e.fieldType == "Tag") {
             res = await getTagItems(typeEntityName, typeFieldName);
+            uptadeRule.updateMode = "toFixed";
+            uptadeRule.sourceField = [];
         } else {
             res = await getOptionItems(typeEntityName, typeFieldName);
+            uptadeRule.updateMode = "toFixed";
+            uptadeRule.sourceField = {};
         }
         if (res && res.data) {
             optionItems.value = res.data;
@@ -455,8 +497,13 @@ const uptadeModeChange = (e) => {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        if (toFixedForFieldType.value == "Reference" || toFixedForFieldType.value == "Option") {
+        if (
+            toFixedForFieldType.value == "Reference" ||
+            toFixedForFieldType.value == "Option"
+        ) {
             uptadeRule.sourceField = {};
+        } else if (toFixedForFieldType.value == "Tag") {
+            uptadeRule.sourceField = [];
         } else {
             uptadeRule.sourceField = null;
         }
@@ -620,11 +667,7 @@ const checkMlFormula = () => {
     // }
     // // 不是数字类型，显示高级计算公式
     // else {
-        showAdvancedFormula(
-            cutEntityFields.value,
-            true,
-            uptadeRule.sourceField
-        );
+    showAdvancedFormula(cutEntityFields.value, true, uptadeRule.sourceField);
     // }
 };
 // 执行显示 计算公式
@@ -669,10 +712,11 @@ const floatSourceFieldList = () => {
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
-        return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
+        return cutEntityFields.value.filter(
+            (el) => el.fieldType != "Reference"
+        );
     } else {
         if (fieldType == "Reference") {
-      
             let showFields = [];
             cutEntityFields.value.forEach((el) => {
                 if (
@@ -691,7 +735,9 @@ const floatSourceFieldList = () => {
                 }
             });
             if (showFields.length < 1) {
-                return cutEntityFields.value.filter(el=> el.fieldType != 'Reference');
+                return cutEntityFields.value.filter(
+                    (el) => el.fieldType != "Reference"
+                );
             } else {
                 return showFields;
             }
@@ -724,6 +770,10 @@ const getSourceFieldLabel = (item) => {
         }
         if (item.sourceField && item.sourceField.label) {
             return item.sourceField.label;
+        }
+        if (item.sourceField && Array.isArray(item.sourceField)){
+            let labels = item.sourceField.map(el=> el.label) || [];
+            return labels.join()
         }
         return item.sourceField;
     }

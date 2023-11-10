@@ -1,5 +1,5 @@
 <template>
-    <!-- 字段聚合 -->
+    <!-- 分组聚合 -->
     <div class="action-div" v-loading="contentLoading">
         <el-form-item label="目标实体">
             <el-row class="w-100 mb-15" :gutter="20">

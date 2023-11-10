@@ -8,6 +8,7 @@
             <el-form-item label="操作内容">
                 <fieldUpdate v-model="trigger" v-if="trigger.actionType?.value == 1" />
                 <fieldAggregation v-model="trigger" v-if="trigger.actionType?.value == 2" />
+                <groupAggregation v-model="trigger" v-if="trigger.actionType?.value == 3" />
                 <dataValidation v-model="trigger" v-if="trigger.actionType?.value == 4" />
                 <sendNotifications v-model="trigger" v-if="trigger.actionType?.value == 5" />
                 <autoApproval v-model="trigger" v-if="trigger.actionType?.value == 6" />
@@ -61,6 +62,7 @@ import { watch, ref, onMounted, inject } from "vue";
 import fieldUpdate from "./fieldUpdate.vue";
 // 字段聚合
 import fieldAggregation from "./fieldAggregation.vue";
+import groupAggregation from "./groupAggregation.vue";
 // 自动创建
 import autoCreation from "./autoCreation.vue";
 // 数据校验

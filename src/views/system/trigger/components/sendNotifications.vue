@@ -93,7 +93,6 @@ import { queryEntityFields } from "@/api/crud";
 const buttonRef = ref();
 const popoverRef = ref();
 const $API = inject("$API");
-const $ElMessage = inject("$ElMessage");
 const props = defineProps({
     modelValue: null,
 });
