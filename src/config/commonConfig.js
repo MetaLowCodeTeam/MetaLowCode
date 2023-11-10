@@ -121,7 +121,7 @@ export default [
                 isError: false,
             },
             {
-                label: "发件人地址",
+                label: "发件人名称",
                 key: "fromName",
                 type: "input",
                 required: true,
