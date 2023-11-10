@@ -62,6 +62,7 @@ import { watch, ref, onMounted, inject } from "vue";
 import fieldUpdate from "./fieldUpdate.vue";
 // 字段聚合
 import fieldAggregation from "./fieldAggregation.vue";
+// 分组聚合
 import groupAggregation from "./groupAggregation.vue";
 // 自动创建
 import autoCreation from "./autoCreation.vue";

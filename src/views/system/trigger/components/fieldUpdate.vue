@@ -516,6 +516,9 @@ let actionContentItems = ref([]);
 // 添加更新规则
 const addUptadeRule = () => {
     let { targetField, updateMode, sourceField, simpleFormula } = uptadeRule;
+    if(!targetField){
+        return
+    }
     if (updateMode != "toNull" && !sourceField) {
         return;
     }
@@ -616,6 +619,7 @@ const regSourceField = (sourceField) => {
 
 // 格式化规则列表
 const formatActionContentItems = () => {
+    actionContentItems.value = [];
     trigger.value.actionContent.items.forEach((el) => {
         // console.log(el);
         actionContentItems.value.push({

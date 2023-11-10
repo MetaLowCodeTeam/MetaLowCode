@@ -289,6 +289,11 @@ const getTagEntityFields = async (entityCode) => {
             }
             // 格式化规则列表
             formatActionContentItems();
+        } else {
+            seleteTargetField.value = {};
+            uptadeRule.targetField = "";
+            uptadeRule.calcMode = "";
+            uptadeRule.sourceField = "";
         }
     }
     changeTagEntityLoading.value = false;
@@ -429,8 +434,11 @@ let actionContentItems = ref([]);
 
 // 添加更新规则
 const addUptadeRule = () => {
-    let { targetField, calcMode, sourceField, simpleFormula } = uptadeRule;
-    if (!sourceField) {
+    let { targetField, calcMode, sourceField, simpleFormula,updateMode } = uptadeRule;
+    if (!targetField) {
+        return;
+    }
+    if (updateMode != "toNull" && !sourceField) {
         return;
     }
     if (
@@ -513,6 +521,7 @@ const regSourceField = (sourceField) => {
 
 // 格式化规则列表
 const formatActionContentItems = () => {
+    actionContentItems.value = [];
     trigger.value.actionContent.items.forEach((el) => {
         // console.log(el);
         actionContentItems.value.push({
@@ -566,11 +575,7 @@ const checkMlFormula = () => {
     // }
     // // 不是数字类型，显示高级计算公式
     // else {
-        showAdvancedFormula(
-            cutEntityFields.value,
-            true,
-            uptadeRule.sourceField
-        );
+    showAdvancedFormula(cutEntityFields.value, true, uptadeRule.sourceField);
     // }
 };
 // 执行显示 计算公式

@@ -19,8 +19,85 @@
                 </el-col>
             </el-row>
         </el-form-item>
-        <!-- 更新规则、聚合规则 -->
-        <el-form-item>
+        <el-form-item class="mt-20" label="聚合目标条件">
+            <el-row>
+                <el-col :span="24">
+                    <div
+                        class="ml-a-span"
+                        @click="setCondition('targetFilter')"
+                    >{{ getSetConditionText('targetFilter') }}</div>
+                </el-col>
+                <el-col :span="24">
+                    <div class="info-text">仅会聚合到符合条件的数据上</div>
+                </el-col>
+            </el-row>
+        </el-form-item>
+        <!-- 分组字段关联 -->
+        <el-form-item class="mt-20">
+            <template #label>分组字段关联</template>
+            <div class="w-100 mb-10" v-if="groupItems.length > 0">
+                <el-row
+                    :gutter="20"
+                    class="uptade-rule-row w-100 mb-5"
+                    v-for="(item,inx) of groupItems"
+                    :key="inx"
+                >
+                    <el-col :span="9">
+                        <span class="uptade-rule-span">{{ item.targetField?.fieldLabel }}</span>
+                    </el-col>
+                    <el-col :span="9" class="uptade-rule-col-last">
+                        <span class="uptade-rule-span">
+                            {{ item.sourceField?.fieldLabel }}
+                            <span
+                                class="del-icon"
+                                @click="delGroupItem(inx)"
+                            >
+                                <el-icon>
+                                    <ElIconCloseBold />
+                                </el-icon>
+                            </span>
+                        </span>
+                    </el-col>
+                </el-row>
+            </div>
+            <el-row class="w-100 mb-10 uptade-rule" :gutter="20" v-loading="changeTagEntityLoading">
+                <el-col :span="9">
+                    <el-select
+                        v-model="selectGroupTagField"
+                        filterable
+                        class="w-100"
+                        value-key="fieldLabel"
+                        @change="groupTagFieldChange"
+                    >
+                        <template v-for="(op,inx) in tagEntityFields" :key="inx">
+                            <el-option :label="op.fieldLabel" :value="op" />
+                        </template>
+                    </el-select>
+                    <div class="w-100 info-text mt-3">目标字段</div>
+                </el-col>
+                <el-col :span="9">
+                    <el-select
+                        v-model="selectGroupSourceField"
+                        filterable
+                        class="w-100"
+                        value-key="fieldLabel"
+                    >
+                        <el-option
+                            v-for="(op,inx) in getGroupSourceOptions()"
+                            :key="inx"
+                            :label="op.fieldLabel"
+                            :value="op"
+                        />
+                    </el-select>
+                    <div class="w-100 info-text mt-3">源字段</div>
+                </el-col>
+            </el-row>
+        </el-form-item>
+        <el-form-item label=" ">
+            <el-button type="primary" plain @click="addGroupItem">+ 添加</el-button>
+        </el-form-item>
+        <!-- 聚合规则 -->
+        <el-form-item class="mt-20">
             <template #label>聚合规则</template>
             <div class="w-100 mb-10" v-if="actionContentItems.length > 0">
                 <el-row
@@ -118,13 +195,37 @@
         <el-form-item class="mt-20" label="聚合数据条件">
             <el-row>
                 <el-col :span="24">
-                    <div class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
+                    <div
+                        class="ml-a-span"
+                        @click="setCondition('filter')"
+                    >{{ getSetConditionText('filter') }}</div>
                 </el-col>
                 <el-col :span="24">
                     <div class="info-text">仅会聚合符合过滤条件的数据</div>
                 </el-col>
+                <el-col class="mt-10">
+                    <el-checkbox v-model="trigger.actionContent.autoCreate">目标记录不存在时自动新建</el-checkbox>
+                </el-col>
             </el-row>
         </el-form-item>
+        <el-form-item class="mt-20" label="聚合后回填">
+            <el-row>
+                <el-select
+                    v-model="trigger.actionContent.callbackField"
+                    class="m-2"
+                    placeholder="(可选)"
+                    clearable
+                >
+                    <el-option
+                        v-for="item in getCallbackFieldOptions()"
+                        :key="item.fieldName"
+                        :label="item.fieldLabel"
+                        :value="item.fieldName"
+                    />
+                </el-select>
+            </el-row>
+        </el-form-item>
+
         <div v-if="mlFormulaIsShow">
             <mlFormula
                 v-model="mlFormulaIsShow"
@@ -141,7 +242,7 @@
                     footer
                     @cancel="dialogIsShow = false"
                     @confirm="conditionConfirm"
-                    :entityName="trigger.entityCode"
+                    :entityName="trigger.entityName"
                 />
             </mlDialog>
         </div>
@@ -154,6 +255,9 @@ import { ref, onMounted, inject, reactive, render } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { allEntityName, unSystemEntityList } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
 });
@@ -165,9 +269,20 @@ let trigger = ref({
 });
 onMounted(() => {
     trigger.value = props.modelValue;
+    trigger.value.entityName = allEntityName.value[trigger.value.entityCode];
     // 初始化 聚合数据条件
     if (!trigger.value.actionContent.filter) {
         trigger.value.actionContent.filter = {
+            items: [],
+        };
+    }
+    // 初始化 分组关联
+    if (!trigger.value.actionContent.groupItem) {
+        trigger.value.actionContent.groupItem = [];
+    }
+    // 初始化 聚合目标条件
+    if (!trigger.value.actionContent.targetFilter) {
+        trigger.value.actionContent.targetFilter = {
             items: [],
         };
     }
@@ -196,49 +311,48 @@ let changeTagEntityLoading = ref(false);
 // 获取操作内容数据
 const getActionContentData = async () => {
     contentLoading.value = true;
-    let { value } = trigger.value.actionType;
-    // 字段更新、字段聚合
-    if (value == 1 || value == 2) {
-        // 获取目标实体所有字段、当前实体所有字段
-        Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
-            contentLoading.value = false;
-        });
-    }
+    // let { value } = trigger.value.actionType;
+    // 获取目标实体所有字段、当前实体所有字段
+    Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
+        contentLoading.value = false;
+    });
 };
 
 // 获取实体（目标实体）
 const getTagEntitys = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await $API.trigger.detial.aggregationEntityList(
-            trigger.value.entityCode
-        );
-        if (res && res.data) {
-            tagEntitys.value = res.data.map((el, inx) => {
+        // let res = await $API.trigger.detial.aggregationEntityList(
+        //     trigger.value.entityCode
+        // );
+        // if (res && res.data) {
+        tagEntitys.value = [];
+        if (unSystemEntityList.value && unSystemEntityList.value.length > 0) {
+            tagEntitys.value = unSystemEntityList.value.map((el, inx) => {
                 el.entityInx = inx;
                 return el;
             });
-            if (res.data && res.data.length > 0) {
-                // 目标实体默认选中第1个
-                let defalutInx = 0;
-                // 如果是编辑过的，找到之前选中的数据
-                if (trigger.value.isOnSave) {
-                    let { actionContent } = trigger.value;
-                    tagEntitys.value.forEach((el, elInx) => {
-                        if (
-                            el.fieldName == actionContent.fieldName &&
-                            el.entityName == actionContent.entityName
-                        ) {
-                            defalutInx = elInx;
-                        }
-                    });
-                }
-
-                // 设置选中
-                trigger.value.defaultTargetEntity = res.data[defalutInx];
-                // 获取选中实体的所有字段
-                getTagEntityFields(res.data[defalutInx].entityCode);
+            // 目标实体默认选中第1个
+            let defalutInx = 0;
+            // 如果是编辑过的，找到之前选中的数据
+            if (trigger.value.isOnSave) {
+                let { actionContent } = trigger.value;
+                tagEntitys.value.forEach((el, elInx) => {
+                    if (
+                        el.name == actionContent.entityName
+                    ) {
+                        defalutInx = elInx;
+                    }
+                });
             }
+
+            // 设置选中
+            trigger.value.defaultTargetEntity =
+                unSystemEntityList.value[defalutInx];
+
+            // 获取选中实体的所有字段
+            getTagEntityFields(unSystemEntityList.value[defalutInx].entityCode);
         }
+        // }
         resolve();
     });
 };
@@ -287,8 +401,20 @@ const getTagEntityFields = async (entityCode) => {
             if (uptadeRule.calcMode !== "forCompile") {
                 uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
+
+            // 分组关联
+            selectGroupTagField.value = tagEntityFields.value[0];
+            // groupTagFieldChange();
+
             // 格式化规则列表
             formatActionContentItems();
+            // 格式化分组列表
+            formatGroupItems();
+        } else {
+            seleteTargetField.value = {};
+            uptadeRule.targetField = "";
+            uptadeRule.calcMode = "";
+            uptadeRule.sourceField = "";
         }
     }
     changeTagEntityLoading.value = false;
@@ -427,10 +553,14 @@ const uptadeModeChange = (e) => {
 // 规则列表
 let actionContentItems = ref([]);
 
-// 添加更新规则
+// 添加聚合规则
 const addUptadeRule = () => {
-    let { targetField, calcMode, sourceField, simpleFormula } = uptadeRule;
-    if (!sourceField) {
+    let { targetField, calcMode, sourceField, simpleFormula, updateMode } =
+        uptadeRule;
+    if (!targetField) {
+        return;
+    }
+    if (updateMode != "toNull" && !sourceField) {
         return;
     }
     if (
@@ -513,6 +643,7 @@ const regSourceField = (sourceField) => {
 
 // 格式化规则列表
 const formatActionContentItems = () => {
+    actionContentItems.value = [];
     trigger.value.actionContent.items.forEach((el) => {
         // console.log(el);
         actionContentItems.value.push({
@@ -566,11 +697,7 @@ const checkMlFormula = () => {
     // }
     // // 不是数字类型，显示高级计算公式
     // else {
-        showAdvancedFormula(
-            cutEntityFields.value,
-            true,
-            uptadeRule.sourceField
-        );
+    showAdvancedFormula(cutEntityFields.value, true, uptadeRule.sourceField);
     // }
 };
 // 执行显示 计算公式
@@ -646,9 +773,12 @@ const getSourceFieldInfo = () => {
 let dialogIsShow = ref(false);
 // 条件框传值
 let conditionConf = ref({});
+// 当期操作对象
+let cutActionConf = ref("");
 // 设置条件
-const setCondition = () => {
-    let { filter } = trigger.value.actionContent;
+const setCondition = (val) => {
+    cutActionConf.value = val;
+    let filter = trigger.value.actionContent[val];
     filter = initFilter(filter);
     conditionConf.value = JSON.parse(JSON.stringify(filter));
     dialogIsShow.value = true;
@@ -669,15 +799,15 @@ const initFilter = (filter) => {
 };
 
 // 获取设置条件文案
-const getSetConditionText = () => {
-    let { filter } = trigger.value.actionContent;
+const getSetConditionText = (val) => {
+    let filter = trigger.value.actionContent[val];
     let length = filter && filter.items ? filter.items.length : 0;
     return length > 0 ? `已设置条件（${length}）` : "点击设置";
 };
 
 // 确认设置条件
 const conditionConfirm = (e) => {
-    trigger.value.actionContent.filter = e;
+    trigger.value.actionContent[cutActionConf.value] = e;
     dialogIsShow.value = false;
 };
 
@@ -702,6 +832,83 @@ const targetEntityChange = () => {
     } else {
         getTagEntityFields(cutEntity.entityCode);
     }
+};
+
+/**
+ * ********************************************** 分组规则
+ */
+// 分组字段关联
+let groupItems = ref([]);
+
+//  分组关联目标字段
+let selectGroupTagField = ref({});
+let selectGroupSourceField = ref({});
+
+// 分组关联目标字段切换
+const groupTagFieldChange = () => {
+    if (getGroupSourceOptions().length > 0) {
+        selectGroupSourceField.value = getGroupSourceOptions()[0];
+    } else {
+        selectGroupSourceField.value = {};
+    }
+};
+
+// 分组关联源字段下拉框数据
+const getGroupSourceOptions = () => {
+    let { fieldType } = selectGroupTagField.value;
+    return cutEntityFields.value.filter((el) => el.fieldType == fieldType);
+};
+
+// 添加分组关联
+const addGroupItem = () => {
+    let tagFieldName = selectGroupTagField.value?.fieldName;
+    let sourceFieldName = selectGroupSourceField.value?.fieldName;
+    if (!tagFieldName || !sourceFieldName) {
+        return;
+    }
+
+    let chekTargetField = trigger.value.actionContent.groupItem.filter(
+        (el) => el.targetField == tagFieldName
+    );
+    if (chekTargetField.length > 0) {
+        $ElMessage.warning("目标字段重复!");
+        return;
+    }
+    groupItems.value.push({
+        targetField: selectGroupTagField.value,
+        sourceField: selectGroupSourceField.value,
+    });
+    trigger.value.actionContent.groupItem.push({
+        targetField: tagFieldName,
+        targetFieldName: selectGroupTagField.value.fieldLabel,
+        sourceField: sourceFieldName,
+        sourceFieldName: selectGroupSourceField.value.fieldLabel,
+    });
+};
+
+// 删除分组关联
+const delGroupItem = (inx) => {
+    trigger.value.actionContent.groupItem.splice(inx, 1);
+    groupItems.value.splice(inx, 1);
+};
+
+// 格式化分组规则
+const formatGroupItems = () => {
+    groupItems.value = [];
+    trigger.value.actionContent.groupItem.forEach((el) => {
+        groupItems.value.push({
+            targetField: { fieldLabel: el.targetFieldName },
+            sourceField: { fieldLabel: el.sourceFieldName },
+        });
+    });
+};
+
+// 获取聚合回填下拉框数据
+const getCallbackFieldOptions = () => {
+    let name = trigger.value.defaultTargetEntity?.name;
+    return cutEntityFields.value.filter(
+        (el) => el.fieldType == "Reference" && el.referenceName == name
+    );
 };
 </script>
 <style lang='scss' scoped>
