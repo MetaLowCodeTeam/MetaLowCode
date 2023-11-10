@@ -230,7 +230,7 @@ const routes = [
 
             // 触发器
             {
-                path: '/web/triggert',
+                path: '/web/trigger',
                 name: 'Trigger',
                 meta: { group: true, title: '触发器', icon: 'el-icon-cpu' },
                 children: [

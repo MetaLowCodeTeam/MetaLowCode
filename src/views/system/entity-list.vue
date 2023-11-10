@@ -44,10 +44,10 @@
 
 			<div id="contextMenu" v-show="contextMenuVisible" class="context-menu"
 				 @mouseenter="clearHideMenuTimer" @mouseleave="setHideMenuTimer">
-				<div class="context-menu__item" @click="gotoEntityManager(selectedEntityObj)">字段管理</div>
-				<div class="context-menu__item" @click="gotoFormLayout(selectedEntityObj)">表单设计</div>
-				<div class="context-menu__item" @click="gotoListView(selectedEntityObj)">列表设计</div>
-				<div class="context-menu__item" @click="deleteSelectedEntity(selectedEntityObj)">删除实体</div>
+				<div v-if="checkRole('r6001')" class="context-menu__item" @click="gotoEntityManager(selectedEntityObj)">字段管理</div>
+				<div v-if="checkRole('r6003')" class="context-menu__item" @click="gotoFormLayout(selectedEntityObj)">表单设计</div>
+				<div v-if="checkRole('r6008')" class="context-menu__item" @click="gotoListView(selectedEntityObj)">列表设计</div>
+				<div v-if="checkRole('r6002')" class="context-menu__item" @click="deleteSelectedEntity(selectedEntityObj)">删除实体</div>
 			</div>
 
 		</el-main>
@@ -328,6 +328,10 @@ export default {
 
 		clearHideMenuTimer() {
 			clearTimeout(this.hideMenuTimerId)
+		},
+
+		checkRole(rightStr) {
+			return this.$TOOL.checkRole(rightStr)
 		},
 
 	}
