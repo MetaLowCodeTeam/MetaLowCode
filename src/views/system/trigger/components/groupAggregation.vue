@@ -214,6 +214,7 @@
                     v-model="trigger.actionContent.callbackField"
                     class="m-2"
                     placeholder="(可选)"
+                    clearable
                 >
                     <el-option
                         v-for="item in getCallbackFieldOptions()"

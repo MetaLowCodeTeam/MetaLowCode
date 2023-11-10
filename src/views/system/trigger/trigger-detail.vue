@@ -118,7 +118,7 @@ const initDetailData = async () => {
             trigger.isOnSave = true;
         }
         if (trigger.actionType.value == 3) {
-            if (trigger.actionContent.groupItem.length > 0) {
+            if (trigger.actionContent.groupItem && trigger.actionContent.groupItem.length > 0) {
                 trigger.isOnSave = true;
             }
         }
