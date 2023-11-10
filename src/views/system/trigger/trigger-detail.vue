@@ -117,6 +117,11 @@ const initDetailData = async () => {
         if (trigger.actionContent.items.length > 0) {
             trigger.isOnSave = true;
         }
+        if (trigger.actionType.value == 3) {
+            if (trigger.actionContent.groupItem.length > 0) {
+                trigger.isOnSave = true;
+            }
+        }
         // 如果是数据校验
         if (trigger.actionType.value == 4) {
             // 禁用定期执行
@@ -205,6 +210,15 @@ const onSave = async (target) => {
         actionContent.fieldName = defaultTargetEntity.fieldName;
         actionContent.isReferenced = defaultTargetEntity.isReferenced;
     }
+    // 如果是分组聚合
+    if (trigger.actionType.value == 3) {
+        let { groupItem } = actionContent;
+        if (groupItem.length < 1) {
+            $ElMessage.warning("请至少添加一个分组字段关联");
+            return;
+        }
+    }
+
     // 如果是数据校验
     if (trigger.actionType.value == 4) {
         if (actionContent.filter.items.length < 1) {
