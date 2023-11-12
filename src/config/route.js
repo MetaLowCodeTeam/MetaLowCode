@@ -132,7 +132,7 @@ const routes = [
 				path: '/web/comConf',
 				name: 'ComConf',
 				component: 'system/common-config/index',
-				meta: { title: '通用配置', icon: 'el-icon-setting', role: 'r6000' }
+				meta: { title: '系统通用配置', icon: 'el-icon-setting', role: 'r6000' }
 			},
 
 			{
@@ -161,7 +161,7 @@ const routes = [
 					{
 						path: '/web/metadata',
 						name: 'Metadata',
-						meta: { group: true, title: '元数据设置', icon: "el-icon-coin", role: 'r6001' },
+						meta: { group: true, title: '元数据管理', icon: "el-icon-coin", role: 'r6001' },
 						children: [
 							{
 								path: '/web/entity-list',
