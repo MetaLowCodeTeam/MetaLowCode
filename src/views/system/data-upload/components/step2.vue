@@ -124,7 +124,6 @@ const goBack = () => {
 const formatTableData = () => {
     let { columns ,fields} = fromData.value;
     let formatList = [];
-    console.log(fromData.value,'fromData.value')
     columns.forEach((el, inx) => {
         formatList.push({
             rawValue: el.rawValue,

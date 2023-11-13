@@ -81,14 +81,12 @@ let fromData = reactive({
 const fileSuccess = () => {
     steps.value[0].isComplete = true;
     cutStep.value = 2;
-    console.log("第一步结束");
 };
 // 字段导入成功
 const importSuccess = (taskId) => {
     steps.value[1].isComplete = true;
     cutStep.value = 3;
     fromData.taskId = taskId;
-    console.log("第二步结束");
 };
 // 继续导入
 const reset = () => {

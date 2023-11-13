@@ -100,7 +100,6 @@ let taskData = reactive({
 });
 onMounted(() => {
     fromData.value = props.modelValue;
-    console.log(fromData.value, "fromData.value");
     // 获取任务状态
     getTaskState();
 });
