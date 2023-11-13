@@ -619,8 +619,7 @@ const floatSourceFieldList = () => {
         let showFields = [];
         cutEntityFields.value.forEach((el) => {
             if (
-                numType.value.includes(el.fieldType) ||
-                textType.value.includes(el.fieldType)
+                numType.value.includes(el.fieldType)
             ) {
                 showFields.push(el);
             }

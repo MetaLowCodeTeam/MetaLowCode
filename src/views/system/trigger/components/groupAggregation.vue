@@ -351,24 +351,6 @@ const getTagEntitys = () => {
                 el.entityInx = inx;
                 return el;
             });
-            // 目标实体默认选中第1个
-            let defalutInx = 0;
-            // 如果是编辑过的，找到之前选中的数据
-            if (trigger.value.isOnSave) {
-                let { actionContent } = trigger.value;
-                tagEntitys.value.forEach((el, elInx) => {
-                    if (el.name == actionContent.entityName) {
-                        defalutInx = elInx;
-                    }
-                });
-            }
-
-            // 设置选中
-            trigger.value.defaultTargetEntity =
-                unSystemEntityList.value[defalutInx];
-
-            // 获取选中实体的所有字段
-            getTagEntityFields(unSystemEntityList.value[defalutInx].entityCode);
         }
         // }
         resolve();
@@ -400,7 +382,7 @@ const getTagEntityFields = async (entityCode) => {
                 tagEntityFields.value.push(el);
             }
         });
-        if (tagEntityFields.value.length > 0) {
+        if (getRuleEntityFields().length > 0) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = getRuleEntityFields()[0];
             uptadeRule.targetField = getRuleEntityFields()[0].fieldName;
@@ -415,22 +397,23 @@ const getTagEntityFields = async (entityCode) => {
             if (uptadeRule.calcMode !== "forCompile") {
                 uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
-
-            // 分组关联
-            selectGroupTagField.value = getRuleEntityFields()[0];
-            // groupTagFieldChange();
-
             // 格式化规则列表
             formatActionContentItems();
-            // 格式化分组列表
-            formatGroupItems();
         } else {
             seleteTargetField.value = {};
             uptadeRule.targetField = "";
             uptadeRule.calcMode = "";
             uptadeRule.sourceField = "";
         }
+
+        if (getGroupEntityFields().length > 0) {
+            // 分组关联
+            selectGroupTagField.value = getGroupEntityFields()[0];
+            // 格式化分组列表
+            formatGroupItems();
+        }
     }
+
     changeTagEntityLoading.value = false;
 };
 
@@ -756,7 +739,7 @@ const floatSourceFieldList = () => {
     if (needShowNumType.includes(uptadeRule.calcMode)) {
         let showFields = [];
         cutEntityFields.value.forEach((el) => {
-            if (numType.value.includes(el.fieldType) || textType.value.includes(el.fieldType)) {
+            if (numType.value.includes(el.fieldType)) {
                 showFields.push(el);
             }
         });
@@ -863,10 +846,12 @@ let groupItems = ref([]);
 const getGroupEntityFields = () => {
     return tagEntityFields.value.filter(
         (el) =>
-            el.fieldType &&
-            (textType.value.includes(el.fieldType) ||
-                numType.value.includes(el.fieldType) ||
-                el.fieldType == "Reference") || el.fieldType == "Date"|| el.fieldType == "DateTime"
+            (el.fieldType &&
+                (textType.value.includes(el.fieldType) ||
+                    numType.value.includes(el.fieldType) ||
+                    el.fieldType == "Reference")) ||
+            el.fieldType == "Date" ||
+            el.fieldType == "DateTime"
     );
 };
 
