@@ -265,6 +265,27 @@ const getActionContentData = async () => {
         // 获取目标实体所有字段、当前实体所有字段
         Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
             contentLoading.value = false;
+            if (tagEntitys.value.length > 0) {
+                // 目标实体默认选中第1个
+                let defalutInx = 0;
+                // 如果是编辑过的，找到之前选中的数据
+                if (trigger.value.isOnSave) {
+                    let { actionContent } = trigger.value;
+                    tagEntitys.value.forEach((el, elInx) => {
+                        if (
+                            el.fieldName == actionContent.fieldName &&
+                            el.entityName == actionContent.entityName
+                        ) {
+                            defalutInx = elInx;
+                        }
+                    });
+                }
+                // 设置选中
+                trigger.value.defaultTargetEntity =
+                    tagEntitys.value[defalutInx];
+                // 获取选中实体的所有字段
+                getTagEntityFields(tagEntitys.value[defalutInx].entityCode);
+            }
         });
     }
 };
@@ -283,24 +304,6 @@ const getTagEntitys = () => {
             res.data.forEach((el) => {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
             });
-            // 目标实体默认选中第1个
-            let defalutInx = 0;
-            // 如果是编辑过的，找到之前选中的数据
-            if (trigger.value.isOnSave) {
-                let { actionContent } = trigger.value;
-                tagEntitys.value.forEach((el, elInx) => {
-                    if (
-                        el.fieldName == actionContent.fieldName &&
-                        el.entityName == actionContent.entityName
-                    ) {
-                        defalutInx = elInx;
-                    }
-                });
-            }
-            // 设置选中
-            trigger.value.defaultTargetEntity = res.data[defalutInx];
-            // 获取选中实体的所有字段
-            getTagEntityFields(res.data[defalutInx].entityCode);
         }
         resolve();
     });
@@ -516,8 +519,8 @@ let actionContentItems = ref([]);
 // 添加更新规则
 const addUptadeRule = () => {
     let { targetField, updateMode, sourceField, simpleFormula } = uptadeRule;
-    if(!targetField){
-        return
+    if (!targetField) {
+        return;
     }
     if (updateMode != "toNull" && !sourceField) {
         return;
@@ -775,9 +778,9 @@ const getSourceFieldLabel = (item) => {
         if (item.sourceField && item.sourceField.label) {
             return item.sourceField.label;
         }
-        if (item.sourceField && Array.isArray(item.sourceField)){
-            let labels = item.sourceField.map(el=> el.label) || [];
-            return labels.join()
+        if (item.sourceField && Array.isArray(item.sourceField)) {
+            let labels = item.sourceField.map((el) => el.label) || [];
+            return labels.join();
         }
         return item.sourceField;
     }

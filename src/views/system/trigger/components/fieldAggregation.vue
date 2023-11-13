@@ -118,7 +118,7 @@
         <el-form-item class="mt-20" label="聚合数据条件">
             <el-row>
                 <el-col :span="24">
-                    <div class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</div>
+                    <span class="ml-a-span" @click="setCondition">{{ getSetConditionText() }}</span>
                 </el-col>
                 <el-col :span="24">
                     <div class="info-text">仅会聚合符合过滤条件的数据</div>
@@ -202,6 +202,27 @@ const getActionContentData = async () => {
         // 获取目标实体所有字段、当前实体所有字段
         Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
             contentLoading.value = false;
+            if (tagEntitys.value.length > 0) {
+                // 目标实体默认选中第1个
+                let defalutInx = 0;
+                // 如果是编辑过的，找到之前选中的数据
+                if (trigger.value.isOnSave) {
+                    let { actionContent } = trigger.value;
+                    tagEntitys.value.forEach((el, elInx) => {
+                        if (
+                            el.fieldName == actionContent.fieldName &&
+                            el.entityName == actionContent.entityName
+                        ) {
+                            defalutInx = elInx;
+                        }
+                    });
+                }
+                // 设置选中
+                trigger.value.defaultTargetEntity =
+                    tagEntitys.value[defalutInx];
+                // 获取选中实体的所有字段
+                getTagEntityFields(tagEntitys.value[defalutInx].entityCode);
+            }
         });
     }
 };
@@ -217,27 +238,6 @@ const getTagEntitys = () => {
                 el.entityInx = inx;
                 return el;
             });
-            if (res.data && res.data.length > 0) {
-                // 目标实体默认选中第1个
-                let defalutInx = 0;
-                // 如果是编辑过的，找到之前选中的数据
-                if (trigger.value.isOnSave) {
-                    let { actionContent } = trigger.value;
-                    tagEntitys.value.forEach((el, elInx) => {
-                        if (
-                            el.fieldName == actionContent.fieldName &&
-                            el.entityName == actionContent.entityName
-                        ) {
-                            defalutInx = elInx;
-                        }
-                    });
-                }
-
-                // 设置选中
-                trigger.value.defaultTargetEntity = res.data[defalutInx];
-                // 获取选中实体的所有字段
-                getTagEntityFields(res.data[defalutInx].entityCode);
-            }
         }
         resolve();
     });
@@ -434,7 +434,8 @@ let actionContentItems = ref([]);
 
 // 添加更新规则
 const addUptadeRule = () => {
-    let { targetField, calcMode, sourceField, simpleFormula,updateMode } = uptadeRule;
+    let { targetField, calcMode, sourceField, simpleFormula, updateMode } =
+        uptadeRule;
     if (!targetField) {
         return;
     }

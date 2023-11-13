@@ -22,10 +22,10 @@
         <el-form-item class="mt-20" label="聚合目标条件">
             <el-row>
                 <el-col :span="24">
-                    <div
+                    <span
                         class="ml-a-span"
                         @click="setCondition('targetFilter')"
-                    >{{ getSetConditionText('targetFilter') }}</div>
+                    >{{ getSetConditionText('targetFilter') }}</span>
                 </el-col>
                 <el-col :span="24">
                     <div class="info-text">仅会聚合到符合条件的数据上</div>
@@ -195,10 +195,10 @@
         <el-form-item class="mt-20" label="聚合数据条件">
             <el-row>
                 <el-col :span="24">
-                    <div
+                    <span
                         class="ml-a-span"
                         @click="setCondition('filter')"
-                    >{{ getSetConditionText('filter') }}</div>
+                    >{{ getSetConditionText('filter') }}</span>
                 </el-col>
                 <el-col :span="24">
                     <div class="info-text">仅会聚合符合过滤条件的数据</div>
@@ -315,6 +315,26 @@ const getActionContentData = async () => {
     // 获取目标实体所有字段、当前实体所有字段
     Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
         contentLoading.value = false;
+        if (tagEntitys.value.length > 0) {
+            // 目标实体默认选中第1个
+            let defalutInx = 0;
+            // 如果是编辑过的，找到之前选中的数据
+            if (trigger.value.isOnSave) {
+                let { actionContent } = trigger.value;
+                tagEntitys.value.forEach((el, elInx) => {
+                    if (el.name == actionContent.entityName) {
+                        defalutInx = elInx;
+                    }
+                });
+            }
+
+            // 设置选中
+            trigger.value.defaultTargetEntity =
+                unSystemEntityList.value[defalutInx];
+
+            // 获取选中实体的所有字段
+            getTagEntityFields(unSystemEntityList.value[defalutInx].entityCode);
+        }
     });
 };
 
@@ -337,9 +357,7 @@ const getTagEntitys = () => {
             if (trigger.value.isOnSave) {
                 let { actionContent } = trigger.value;
                 tagEntitys.value.forEach((el, elInx) => {
-                    if (
-                        el.name == actionContent.entityName
-                    ) {
+                    if (el.name == actionContent.entityName) {
                         defalutInx = elInx;
                     }
                 });
