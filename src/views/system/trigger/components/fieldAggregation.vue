@@ -263,11 +263,7 @@ const getTagEntityFields = async (entityCode) => {
     if (res) {
         tagEntityFields.value = [];
         res.data.forEach((el) => {
-            if (
-                el.fieldType &&
-                (textType.value.includes(el.fieldType) ||
-                    numType.value.includes(el.fieldType))
-            ) {
+            if (el.fieldType && numType.value.includes(el.fieldType)) {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
                 tagEntityFields.value.push(el);
             }
@@ -622,7 +618,10 @@ const floatSourceFieldList = () => {
     if (needShowNumType.includes(uptadeRule.calcMode)) {
         let showFields = [];
         cutEntityFields.value.forEach((el) => {
-            if (numType.value.includes(el.fieldType)) {
+            if (
+                numType.value.includes(el.fieldType) ||
+                textType.value.includes(el.fieldType)
+            ) {
                 showFields.push(el);
             }
         });

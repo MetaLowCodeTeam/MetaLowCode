@@ -49,7 +49,7 @@
                             <span v-if="scope.row.type == 1" class="skip-span">
                                 跳过
                             </span>
-                            <span v-if="scope.row.type == 2" class="ml-a-span">
+                            <span v-if="scope.row.type == 2" class="ml-a-span" @click.stop="openDetail(scope.row)">
                                 新建成功
                                 <span class="rt-1">
                                     <el-icon>
@@ -57,7 +57,7 @@
                                     </el-icon>
                                 </span>
                             </span>
-                            <span v-if="scope.row.type == 3" class="ml-a-span">
+                            <span v-if="scope.row.type == 3" class="ml-a-span" @click.stop="openDetail(scope.row)">
                                 更新成功
                                 <span class="rt-1">
                                     <el-icon>
@@ -76,11 +76,13 @@
             </ml-dialog>
         </div>
     </div>
+    <Detail ref="detailRefs" />
 </template>
 
 <script setup>
 import { ref, onMounted, inject, reactive } from "vue";
 import { ElMessageBox } from "element-plus";
+import Detail from "@/views/customize-menu/detail.vue";
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const props = defineProps({
@@ -208,9 +210,12 @@ const getImportDetail = async () => {
     detailLoading.value = false;
 };
 
-const test = (scope) => {
-    console.log(scope, "scope");
-};
+// 消息详情组件
+let detailRefs = ref("");
+
+const openDetail = (row) => {
+    detailRefs.value.openDialog(row.recordId);
+}
 // 继续导入
 const reset = () => {
     emits("reset");

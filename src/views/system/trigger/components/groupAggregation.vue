@@ -69,7 +69,7 @@
                         value-key="fieldLabel"
                         @change="groupTagFieldChange"
                     >
-                        <template v-for="(op,inx) in tagEntityFields" :key="inx">
+                        <template v-for="(op,inx) in getGroupEntityFields()" :key="inx">
                             <el-option :label="op.fieldLabel" :value="op" />
                         </template>
                     </el-select>
@@ -139,7 +139,7 @@
                         @change="targetFieldChange"
                         value-key="fieldLabel"
                     >
-                        <template v-for="(op,inx) in tagEntityFields" :key="inx">
+                        <template v-for="(op,inx) in getRuleEntityFields()" :key="inx">
                             <el-option :label="op.fieldLabel" :value="op" />
                         </template>
                     </el-select>
@@ -391,27 +391,23 @@ const getCutEntityFields = () => {
 // 获取目标实体所有字段
 const getTagEntityFields = async (entityCode) => {
     changeTagEntityLoading.value = true;
-    let res = await queryEntityFields(entityCode);
+    let res = await queryEntityFields(entityCode, false, true, true);
     if (res) {
         tagEntityFields.value = [];
         res.data.forEach((el) => {
-            if (
-                el.fieldType &&
-                (textType.value.includes(el.fieldType) ||
-                    numType.value.includes(el.fieldType))
-            ) {
+            if (el.fieldType) {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
                 tagEntityFields.value.push(el);
             }
         });
         if (tagEntityFields.value.length > 0) {
             // 目标字段 默认选中 第一个
-            seleteTargetField.value = tagEntityFields.value[0];
-            uptadeRule.targetField = tagEntityFields.value[0].fieldName;
+            seleteTargetField.value = getRuleEntityFields()[0];
+            uptadeRule.targetField = getRuleEntityFields()[0].fieldName;
 
             // 获取目标字段类型
             toFixedForFieldType.value = getUptadeRuleTargetFieldType(
-                tagEntityFields.value[0].fieldName
+                getRuleEntityFields()[0].fieldName
             );
             // 聚合方式默认选中
             uptadeRule.calcMode = getUptadeMode()[0].value;
@@ -421,7 +417,7 @@ const getTagEntityFields = async (entityCode) => {
             }
 
             // 分组关联
-            selectGroupTagField.value = tagEntityFields.value[0];
+            selectGroupTagField.value = getRuleEntityFields()[0];
             // groupTagFieldChange();
 
             // 格式化规则列表
@@ -755,13 +751,12 @@ const getUptadeRuleTargetFieldType = (fieldName) => {
 
 // 格式化源字段显示
 const floatSourceFieldList = () => {
-    // let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
     let needShowNumType = ["sum", "average", "max", "min"];
     // 如果选择是数字类
     if (needShowNumType.includes(uptadeRule.calcMode)) {
         let showFields = [];
         cutEntityFields.value.forEach((el) => {
-            if (numType.value.includes(el.fieldType)) {
+            if (numType.value.includes(el.fieldType) || textType.value.includes(el.fieldType)) {
                 showFields.push(el);
             }
         });
@@ -852,11 +847,28 @@ const targetEntityChange = () => {
     }
 };
 
+// 聚合规则所有字段
+const getRuleEntityFields = () => {
+    return tagEntityFields.value.filter(
+        (el) => el.fieldType && numType.value.includes(el.fieldType)
+    );
+};
+
 /**
  * ********************************************** 分组规则
  */
 // 分组字段关联
 let groupItems = ref([]);
+// 分组字段关联实体所有字段
+const getGroupEntityFields = () => {
+    return tagEntityFields.value.filter(
+        (el) =>
+            el.fieldType &&
+            (textType.value.includes(el.fieldType) ||
+                numType.value.includes(el.fieldType) ||
+                el.fieldType == "Reference") || el.fieldType == "Date"|| el.fieldType == "DateTime"
+    );
+};
 
 //  分组关联目标字段
 let selectGroupTagField = ref({});
