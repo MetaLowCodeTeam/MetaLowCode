@@ -75,8 +75,8 @@ export default ({
             proxy,
         },
         build: {
-			target: ['edge90', 'chrome90', 'firefox90', 'safari15', 'esnext'],
-            cssTarget: 'chrome61',
+			// target: ['edge90', 'chrome90', 'firefox90', 'safari15', 'esnext'],
+            // cssTarget: 'chrome61',
             minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用terser
             terserOptions: {
                 compress: {
