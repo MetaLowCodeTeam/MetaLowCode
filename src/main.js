@@ -11,7 +11,7 @@ import i18n from './locales'
 import router from './router'
 import App from './App.vue'
 import pinia from './store'
-
+import ResizeObserver from 'resize-observer-polyfill'
 import 'virtual:svg-icons-register'
 import VueSmartWidget from 'vue-smart-widget'
 import '@/../lib/vue-smart-widiget.css'
@@ -35,3 +35,4 @@ app.use(scui);
 
 //挂载app
 app.mount('#app');
+window.ResizeObserver = ResizeObserver

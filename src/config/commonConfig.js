@@ -134,5 +134,41 @@ export default [
             },
 
         ],
-    }
+    },
+    {
+        label: "授权许可",
+        code: 'authLicense',
+        confs: [
+            {
+                label: "公司名称",
+                key: "companyName",
+                keyFrom:"licenseInfo",
+                type: 'text'
+            },
+            {
+                label: "账号",
+                key: "account",
+                keyFrom:"licenseInfo",
+                type: 'text'
+            },
+            {
+                label: "实体数量",
+                key: "entityLimit",
+                keyFrom:"licenseInfo",
+                type: 'text'
+            },
+            {
+                label: "产品类型",
+                key: "productType",
+                keyFrom:"licenseInfo",
+                type: 'text'
+            },
+            {
+                label: "设备号",
+                key: "deviceNo",
+                keyFrom:"licenseInfo",
+                type: 'text'
+            },
+        ],
+    },
 ]

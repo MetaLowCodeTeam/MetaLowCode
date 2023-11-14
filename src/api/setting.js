@@ -20,3 +20,10 @@ export function updateSysSetting(body) {
 export function getPublicSetting() {
     return http.get('/setting/queryPublicSetting')
 }
+
+
+export function registerLicenseApi(body) {
+    return http.post('/setting/registerLicense', body)
+}
+
+// 

@@ -16,8 +16,15 @@
                                     {{ item.label }}
                                 </div>
                             </template>
+                            <!-- 文本框 -->
+                            <div v-if="item.type == 'text'">
+                                <span
+                                    v-if="item.keyFrom"
+                                >{{ confData[item.keyFrom] ? confData[item.keyFrom][item.key] : '--'}}</span>
+                                <span v-else>{{ confData[item.key] }}</span>
+                            </div>
                             <!-- 输入框 -->
-                            <div v-if="item.type == 'input'">
+                            <div v-else-if="item.type == 'input'">
                                 <el-input
                                     :class="{'is-error':item.isError}"
                                     @focus="item.isError = false"
@@ -68,9 +75,16 @@
                 </el-tab-pane>
             </el-tabs>
             <div class="footer mt-20">
-                <el-button type="primary" style="width: 100px;" @click="onSubmit">保存</el-button>
+                <el-button
+                    type="primary"
+                    style="width: 100px;"
+                    v-if="activeName == 'authLicense'"
+                    @click="openActivateAuthDialog"
+                >激活授权</el-button>
+                <el-button type="primary" style="width: 100px;" v-else @click="onSubmit">保存</el-button>
             </div>
         </el-card>
+        <ActivateAuth ref="activateAuthRefs" @registerActiveConfirm="initData" />
     </div>
 </template>
 
@@ -79,7 +93,7 @@ import { ElMessage } from "element-plus";
 import { inject, nextTick, onMounted, reactive, ref } from "vue";
 import { getSettingInfo, updateSysSetting } from "@/api/setting";
 import commonConfig from "@/config/commonConfig";
-const $TOOL = inject("$TOOL");
+import ActivateAuth from "./components/ActivateAuth.vue";
 // import config from "@/config/table";
 onMounted(() => {
     initData();
@@ -147,7 +161,7 @@ const initData = async () => {
 
 // logo上传成功
 const onLogoSuccess = (data) => {
-    console.log(data,'data')
+    console.log(data, "data");
     confData.logo = data.url;
 };
 
@@ -269,7 +283,15 @@ const checkOnSave = () => {
     return true;
 };
 
+/**
+ * ***************************************** 激活授权
+ */
 
+let activateAuthRefs = ref();
+
+const openActivateAuthDialog = () => {
+    activateAuthRefs.value.openDailog(confData.licenseInfo);
+};
 </script>
 <style lang='scss' scoped>
 .common-config {
