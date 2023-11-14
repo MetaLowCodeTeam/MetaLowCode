@@ -109,7 +109,7 @@ export default ({
 			//打包可视化分析插件
 			visualizer(),
             legacy({
-                targets:['ie ≥ 11'],
+                targets:['ie >= 11'],
                 additionalLegacyPolyfills:["regenerator-runtime/runtime"]
             })
         ],

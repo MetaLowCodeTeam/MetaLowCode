@@ -263,7 +263,7 @@ const initData = async () => {
         // 如果存在默认配置，用默认配置
         if (res.data.chosenListType) {
             tableColumn.value =
-                layoutConfig.value[res.data.chosenListType].FILTER;
+                layoutConfig[res.data.chosenListType].FILTER;
             defaultColumnShow.value = res.data.chosenListType;
         }else {
             tableColumn.value = ALL.FILTER;
