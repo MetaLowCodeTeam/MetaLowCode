@@ -141,20 +141,20 @@ export default {
 	},
 	methods: {
 		handleDocumentKeyEvent() {
-			let shiftKeyFlag = 0, ctrlKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0
+			let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0
 			document.onkeydown = (e) => {
 				let keyCode = e.keyCode || e.which || e.charCode
 				if (keyCode === 16) {
 					shiftKeyFlag = 1
-				} else if (keyCode === 17) {
-					ctrlKeyFlag = 1
+				} else if (keyCode === 18) {
+					altKeyFlag = 1
 				} else if (keyCode === 76 || keyCode === 108) {
 					lKeyFlag = 1
 				} else if (keyCode === 77 || keyCode === 109) {
 					mKeyFlag = 1
 				}
 
-				if (shiftKeyFlag && ctrlKeyFlag && mKeyFlag && lKeyFlag) {
+				if (shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
 					//console.error('99999999')
 					window.advancedDevMode = !window.advancedDevMode
 					this.designerConfig.componentLib = !!window.advancedDevMode
@@ -165,8 +165,8 @@ export default {
 				let keyCode = e.keyCode || e.which || e.charCode
 				if (keyCode === 16) {
 					shiftKeyFlag = 0
-				} else if (keyCode === 17) {
-					ctrlKeyFlag = 0
+				} else if (keyCode === 18) {
+					altKeyFlag = 0
 				} else if (keyCode === 76 || keyCode === 108) {
 					lKeyFlag = 0
 				} else if (keyCode === 77 || keyCode === 109) {

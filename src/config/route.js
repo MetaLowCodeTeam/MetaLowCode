@@ -253,14 +253,14 @@ const routes = [
 								path: '/web/trigger-list',
 								name: 'TriggerList',
 								component: 'system/trigger/trigger-list',
-								meta: { title: '触发器列表', role: 'r48-1' },
+								meta: { title: '触发器列表', icon: 'el-icon-Cpu', role: 'r48-1' },
 							},
 
 							{
 								path: '/web/trigger-log',
 								name: 'TriggerLog',
 								component: 'system/trigger/trigger-log',
-								meta: { title: '触发器日志', role: 'r6015' }
+								meta: { title: '触发器日志', icon: 'el-icon-Timer', role: 'r6015' }
 							},
 						]
 					},
