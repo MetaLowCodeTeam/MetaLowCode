@@ -4,7 +4,7 @@ import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
-
+import legacy from "@vitejs/plugin-legacy"
 // @see https://cn.vitejs.dev/config/
 export default ({
     command,
@@ -108,6 +108,10 @@ export default ({
 
 			//打包可视化分析插件
 			visualizer(),
+            legacy({
+                targets:['ie ≥ 11'],
+                additionalLegacyPolyfills:["regenerator-runtime/runtime"]
+            })
         ],
         css: {
             preprocessorOptions: {
