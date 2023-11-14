@@ -70,7 +70,9 @@
 		if(document.documentMode){
 			browerInfo.type = "IE"
 			browerInfo.version = document.documentMode + ''
-		}else if(indexOf(userAgent, "Firefox")){
+		}
+        
+        else if(indexOf(userAgent, "Firefox")){
 			browerInfo.type = "Firefox"
 			browerInfo.version = userAgent.match(/Firefox\/([\d.]+)/)[1]
 		}else if(indexOf(userAgent, "Opera")){
@@ -93,10 +95,10 @@
     }
 	function isSatisfyBrower(){
 		var minVer = {
-			// "Chrome": 71,
-			// "Firefox": 65,
-			// "Safari": 12,
-			// "Edg": 97,
+			"Chrome": 58,
+			"Firefox": 65,
+			"Safari": 12,
+			"Edg": 97,
 			"IE": 999
 		}
 		var browerInfo = getBrowerInfo()
