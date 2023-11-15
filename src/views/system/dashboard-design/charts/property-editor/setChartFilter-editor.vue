@@ -1,11 +1,11 @@
 <template>
     <el-form-item label="过滤条件">
-        <el-button @click="setCondition">{{ getSetConditionText() }}</el-button>
+        <el-button @click="setCondition">{{ setConditionText }}</el-button>
         <!-- <div class="ml-a-span" @click="setCondition" v-else></div> -->
     </el-form-item>
     <mlDialog title="过滤条件" append-to-body width="37%" v-model="dialogIsShow">
         <mlSetConditions
-            v-if="dialogIsShow" 
+            v-if="dialogIsShow"
             v-model="conditionConf"
             footer
             @cancel="dialogIsShow = false"
@@ -34,11 +34,24 @@ watch(
     () => props.optionModel,
     () => {
         cutOption.value = props.optionModel;
+        // getSetConditionText();
+    },
+    { deep: true }
+);
+watch(
+    () => props.optionModel.dataEntity,
+    () => {
+        cutOption.value.setChartFilter = {
+            equation: "OR",
+            items: [],
+        };
+        getSetConditionText();
     },
     { deep: true }
 );
 onMounted(() => {
     cutOption.value = props.optionModel;
+    getSetConditionText();
     // console.log(cutOption,'cutOption')
 });
 
@@ -48,6 +61,7 @@ onMounted(() => {
 
 let conditionConf = ref({});
 let dialogIsShow = ref(false);
+let setConditionText = ref("");
 // 设置条件
 const setCondition = () => {
     if (!props.optionModel.dataEntity) {
@@ -78,7 +92,9 @@ const getSetConditionText = () => {
     let actionFilter = { ...cutOption.value?.setChartFilter };
     let length =
         actionFilter && actionFilter?.items ? actionFilter?.items.length : 0;
-    return length > 0 ? `已设置条件（${length}）` : "点击设置";
+
+    setConditionText.value =
+        length > 0 ? `已设置条件（${length}）` : "点击设置";
 };
 
 // 确认设置条件

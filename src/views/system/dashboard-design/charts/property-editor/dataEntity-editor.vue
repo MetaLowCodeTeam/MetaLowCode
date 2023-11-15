@@ -57,6 +57,7 @@ const changeEntity = () => {
         equation: "OR",
         items: [],
     };
+    emits("update:optionModel", myOption.value);
 };
 </script>
 <style lang="scss" scoped>
