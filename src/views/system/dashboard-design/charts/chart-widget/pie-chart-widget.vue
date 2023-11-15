@@ -1,5 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading"/>
+    <myEcharts
+        :isShowEmpty="isShowEmpty"
+        :option="option"
+        :field="field"
+        :designer="designer"
+        v-loading="loading"
+    />
 </template>
 
 <script setup>
@@ -46,6 +52,7 @@ let option = reactive({
 });
 let cutField = ref("");
 let loading = ref(false);
+let isShowEmpty = ref(false);
 watch(
     () => props.field,
     () => {
@@ -60,7 +67,7 @@ onMounted(() => {
 });
 
 const initOption = () => {
-    let { options,type } = cutField.value;
+    let { options, type } = cutField.value;
     if (options) {
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
@@ -68,16 +75,16 @@ const initOption = () => {
             return;
         }
         let { chartStyle } = cutField.value.options;
-        option.series[0].radius = chartStyle == 1? '60%' : ['40%', '60%'];
-        getChartData(options,type);
+        option.series[0].radius = chartStyle == 1 ? "60%" : ["40%", "60%"];
+        getChartData(options, type);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
-const getChartData = async (options,type) => {
+const getChartData = async (options, type) => {
     loading.value = true;
-    let res = await queryChartData(options,type);
+    let res = await queryChartData(options, type);
     if (res && res.data) {
         let { setChartConf } = cutField.value.options;
         // 图例是否显示
@@ -94,6 +101,9 @@ const getChartData = async (options,type) => {
             },
             position: "inside",
         };
+        isShowEmpty.value = false;
+    } else {
+        isShowEmpty.value = true;
     }
     loading.value = false;
 };

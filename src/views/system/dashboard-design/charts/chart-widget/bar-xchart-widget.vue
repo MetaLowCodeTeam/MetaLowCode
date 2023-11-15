@@ -1,5 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
+    <myEcharts
+        :isShowEmpty="isShowEmpty"
+        :option="option"
+        :field="field"
+        :designer="designer"
+        v-loading="loading"
+    />
 </template>
 
 <script setup>
@@ -15,6 +21,7 @@ defineOptions({
 });
 let cutField = ref("");
 let loading = ref(false);
+let isShowEmpty = ref(false);
 watch(
     () => props.field,
     () => {
@@ -54,7 +61,7 @@ let option = reactive({
 });
 
 const initOption = () => {
-    let { options,type } = cutField.value;
+    let { options, type } = cutField.value;
     if (options) {
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
@@ -65,7 +72,7 @@ const initOption = () => {
         if (metrics.length < 2 && chartStyle != 1) {
             cutField.value.options.chartStyle = 1;
         }
-        getChartData(options,type);
+        getChartData(options, type);
         // if (dimension.length == 1) {
         //     formatOption(dimension, metrics);
         // } else {
@@ -78,9 +85,9 @@ const initOption = () => {
     }
 };
 
-const getChartData = async (options,type) => {
+const getChartData = async (options, type) => {
     loading.value = true;
-    let res = await queryChartData(options,type);
+    let res = await queryChartData(options, type);
     if (res && res.data) {
         option.yAxis.data = [...res.data.xAxis];
         let { chartStyle, setChartConf, axisCoordinates } =
@@ -90,7 +97,7 @@ const getChartData = async (options,type) => {
         if (chartStyle != 3 && axisCoordinates.max > 0) {
             option.xAxis.min = axisCoordinates.min;
             option.xAxis.max = axisCoordinates.max;
-        }else {
+        } else {
             option.xAxis = {
                 type: "value",
             };
@@ -120,9 +127,10 @@ const getChartData = async (options,type) => {
             };
             return el;
         });
+        isShowEmpty.value = false;
+    } else {
+        isShowEmpty.value = true;
     }
     loading.value = false;
 };
-
-
 </script>

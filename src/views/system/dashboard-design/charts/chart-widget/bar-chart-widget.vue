@@ -1,5 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
+    <myEcharts
+        :isShowEmpty="isShowEmpty"
+        :option="option"
+        :field="field"
+        :designer="designer"
+        v-loading="loading"
+    />
 </template>
 
 <script setup>
@@ -15,6 +21,7 @@ defineOptions({
 });
 let cutField = ref("");
 let loading = ref(false);
+let isShowEmpty = ref(false);
 watch(
     () => props.field,
     () => {
@@ -40,14 +47,14 @@ let option = reactive({
     },
     xAxis: {
         type: "category",
-        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        data: [],
     },
     yAxis: {
         type: "value",
     },
     series: [
         {
-            data: [120, 200, 150, 80, 70, 110, 130],
+            data: [],
             type: "bar",
         },
     ],
@@ -65,16 +72,16 @@ const initOption = () => {
         if (metrics.length < 2 && chartStyle != 1) {
             cutField.value.options.chartStyle = 1;
         }
-        getChartData(options,type);
+        getChartData(options, type);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
 
-const getChartData = async (options,type) => {
+const getChartData = async (options, type) => {
     loading.value = true;
-    let res = await queryChartData(options,type);
+    let res = await queryChartData(options, type);
     if (res && res.data) {
         option.xAxis.data = [...res.data.xAxis];
         let { chartStyle, setChartConf, axisCoordinates } =
@@ -114,6 +121,9 @@ const getChartData = async (options,type) => {
             };
             return el;
         });
+        isShowEmpty.value = false;
+    }else{
+        isShowEmpty.value = true;
     }
     loading.value = false;
 };

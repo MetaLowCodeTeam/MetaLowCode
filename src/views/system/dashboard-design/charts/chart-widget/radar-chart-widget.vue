@@ -1,5 +1,11 @@
 <template>
-    <myEcharts :option="option" :field="field" :designer="designer" v-loading="loading" />
+    <myEcharts
+        :isShowEmpty="isShowEmpty"
+        :option="option"
+        :field="field"
+        :designer="designer"
+        v-loading="loading"
+    />
 </template>
 
 <script setup>
@@ -15,6 +21,7 @@ defineOptions({
 });
 let cutField = ref("");
 let loading = ref(false);
+let isShowEmpty = ref(false);
 watch(
     () => props.field,
     () => {
@@ -64,22 +71,22 @@ let option = reactive({
 });
 
 const initOption = () => {
-    let { options,type } = cutField.value;
+    let { options, type } = cutField.value;
     if (options) {
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
             option.isNoData = true;
             return;
         }
-        getChartData(options,type);
+        getChartData(options, type);
         option.isNoData = false;
     } else {
         option.isNoData = true;
     }
 };
-const getChartData = async (options,type) => {
+const getChartData = async (options, type) => {
     loading.value = true;
-    let res = await queryChartData(options,type);
+    let res = await queryChartData(options, type);
     if (res && res.data) {
         let { setChartConf } = cutField.value.options;
         // 图例是否显示
@@ -102,6 +109,9 @@ const getChartData = async (options,type) => {
                 name: el,
             };
         });
+        isShowEmpty.value = false;
+    } else {
+        isShowEmpty.value = true;
     }
     loading.value = false;
 };

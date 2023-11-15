@@ -1,5 +1,6 @@
 <template>
     <myEcharts
+        :isShowEmpty="isShowEmpty"
         :option="myOption"
         :field="field"
         :designer="designer"
@@ -70,7 +71,7 @@ let donutChartOption = reactive({
         {
             name: "circle",
             type: "pie",
-            radius: ["70%", "86%"],
+            radius: ["30%", "50%"],
             itemStyle: {
                 label: {
                     show: false,
@@ -203,8 +204,11 @@ let metePercentage = ref(0);
 // 进度条文本
 let progressText = ref("");
 let loading = ref(false);
+let isShowEmpty = ref(false);
+// 当前已完成
+let cutCompleted = ref();
 const initOption = () => {
-    let { options,type } = cutField.value;
+    let { options, type } = cutField.value;
     if (options) {
         let { setDimensional } = options;
         let { metrics } = setDimensional;
@@ -214,21 +218,22 @@ const initOption = () => {
             return;
         }
 
-        getChartData(options,type);
+        getChartData(options, type);
         myOption.value.isNoData = false;
     } else {
         myOption.value.isNoData = true;
     }
 };
-const getChartData = async (options,type) => {
+const getChartData = async (options, type) => {
     loading.value = true;
-    let res = await queryChartData(options,type);
+    let res = await queryChartData(options, type);
     if (res && res.data) {
         let { chartStyle, setDimensional, setChartConf } = options;
         let { targetValue, metrics } = setDimensional;
         myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
         let maxNum = targetValue || 1;
         let cutNum = res.data.data;
+        cutCompleted.value = cutNum;
         let point = Math.round((cutNum / maxNum) * 100);
         percentage.value = point > 100 ? 100 : point;
         metePercentage.value = point;
@@ -253,17 +258,28 @@ const getChartData = async (options,type) => {
                 point / 100,
             ];
             myOption.value.series[0].label.formatter = point + "%";
-            myOption.value.title.text = metrics[0].alias;
+            myOption.value.title.text =
+                metrics[0].alias + "（已完成：" + 900000000000 + "） ";
             myOption.value.title.show = setChartConf.numShow;
             myOption.value.series[0].label.show = setChartConf.numShow;
         }
+        isShowEmpty.value = false;
+    } else {
+        isShowEmpty.value = true;200
     }
     loading.value = false;
 };
 
 // 格式化进度条显示文字
 const formatText = () => {
-    return progressText.value ? progressText.value + " " + metePercentage.value + "%" : "";
+    return progressText.value
+        ? progressText.value +
+              "（已完成：" +
+              cutCompleted.value +
+              "） " +
+              metePercentage.value +
+              "%"
+        : "";
 };
 const setSelected = () => {
     props.designer?.setSelected(props.field);
