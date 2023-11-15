@@ -8,6 +8,7 @@
 		"start": "vite --force",
 		"preview": "vite preview",
 		"build": "vite build",
+        "fast-build": "vite build --config fastvite.config.js",
 		"vite-build": "vite build"
 	},
 	"dependencies": {
