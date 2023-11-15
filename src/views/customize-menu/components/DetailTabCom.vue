@@ -262,10 +262,9 @@ const initData = async () => {
         ALL.FILTER = ALL.config ? JSON.parse(ALL.config) : [];
         // 如果存在默认配置，用默认配置
         if (res.data.chosenListType) {
-            tableColumn.value =
-                layoutConfig[res.data.chosenListType].FILTER;
+            tableColumn.value = LIST[res.data.chosenListType].FILTER;
             defaultColumnShow.value = res.data.chosenListType;
-        }else {
+        } else {
             tableColumn.value = ALL.FILTER;
             defaultColumnShow.value = "ALL";
         }
@@ -420,7 +419,7 @@ const getTableList = async () => {
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
-    
+
         cardActiveNames.value = tableData.value.map(
             (el) => el[idFieldName.value]
         );
