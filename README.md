@@ -99,8 +99,7 @@ npm i
 npm run dev
 
 启动完成后浏览器访问 http://localhost:8022
-注意：必须先启动美乐后端集成环境，[点此查看详情](https://docs.qq.com/doc/p/9415a4c09eebbf6dd31c7566579647049fadcaaa)
-
+注意：必须先启动美乐后端集成环境，请阅读上述“环境准备-美乐后端集成环境-安装必读”。
 
 # 生产打包
 npm run fast-build
