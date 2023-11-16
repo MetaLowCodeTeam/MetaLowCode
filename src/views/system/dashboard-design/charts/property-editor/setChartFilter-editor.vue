@@ -34,18 +34,20 @@ watch(
     () => props.optionModel,
     () => {
         cutOption.value = props.optionModel;
-        // getSetConditionText();
+        getSetConditionText();
     },
     { deep: true }
 );
 watch(
     () => props.optionModel.dataEntity,
     () => {
-        cutOption.value.setChartFilter = {
-            equation: "OR",
-            items: [],
-        };
-        getSetConditionText();
+        if (props.optionModel.name == cutOption.value.name) {
+            cutOption.value.setChartFilter = {
+                equation: "OR",
+                items: [],
+            };
+            getSetConditionText();
+        }
     },
     { deep: true }
 );
