@@ -35,7 +35,7 @@
 				   :show-close="true" class="small-padding-dialog"
 				   :width="'520px'" draggable
 				   :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true">
-			<ReferenceSearchTable ref="referST" :entity="entity" :refField="curRefField"
+			<ReferenceSearchTable ref="referST" :entity="entity" :refField="curRefField" :extraFilter="searchFilter"
 								  @recordSelected="setReferRecord"></ReferenceSearchTable>
 		</el-dialog>
 	</div>
@@ -91,6 +91,7 @@ export default {
 			showReferenceDialogFlag: false,
 			entity: null,
 			curRefField: null,
+			searchFilter: '',
 		}
 	},
 	computed: {
@@ -164,6 +165,10 @@ export default {
 			this.handleChangeEvent(this.fieldModel)
 
 			this.showReferenceDialogFlag = false
+		},
+
+		setFilter(newFilter) {
+			this.searchFilter = newFilter
 		},
 
 	}
