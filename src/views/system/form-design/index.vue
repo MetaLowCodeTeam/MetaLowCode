@@ -425,6 +425,7 @@ export default {
 
 .el-button + .el-dropdown {
 	margin-left: 0 !important;
+	margin-top: -2px;
 }
 
 </style>

@@ -75,12 +75,12 @@
 
 ## 环境准备
 
-| 环境               | 名称版本                                                 | 备注                                             |
-|------------------|:-----------------------------------------------------|------------------------------------------------|
-| **开发工具**         | VSCode                                               | [下载地址](https://code.visualstudio.com/Download) |
-| **美乐后端集成环境**     | MetaServer                                           | [下载地址](https://melecode.com/#download)         |
-| **运行环境**         | 1. Node 16 +       <br/> 2. npm 8.0 +                | [下载地址](http://nodejs.cn/download)              |
-| **VSCode插件(必装)** | 1. `Vue Language Features (Volar) ` <br/> 2. `Vetur` |                                                |
+| 环境               | 名称版本                                                 | 备注                                                                                    |
+|------------------|:-----------------------------------------------------|---------------------------------------------------------------------------------------|
+| **开发工具**         | VSCode                                               | [下载地址](https://code.visualstudio.com/Download)                                        |
+| **美乐后端集成环境**     | MetaServer                                           | [下载地址](https://melecode.com/#downloadModal)   <br/> [**安装必读**](https://melecode.com/) |
+| **运行环境**         | 1. Node 16 +       <br/> 2. npm 8.0 +                | [下载地址](http://nodejs.cn/download)                                                     |
+| **VSCode插件(必装)** | 1. `Vue Language Features (Volar) ` <br/> 2. `Vetur` |                                                                                       |
 
 
 
