@@ -151,10 +151,7 @@ const goDetial = (row) => {
     });
 };
 
-// 批量转审
-const referral = () => {
-    console.log("批量转审");
-};
+
 </script>
 
 <style>
