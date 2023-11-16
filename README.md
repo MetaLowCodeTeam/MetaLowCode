@@ -78,7 +78,7 @@
 | 环境               | 名称版本                                                 | 备注                                                                                    |
 |------------------|:-----------------------------------------------------|---------------------------------------------------------------------------------------|
 | **开发工具**         | VSCode                                               | [下载地址](https://code.visualstudio.com/Download)                                        |
-| **美乐后端集成环境**     | MetaServer                                           | [下载地址](https://melecode.com/#downloadModal)   <br/> [**安装必读**](https://melecode.com/) |
+| **美乐后端集成环境**     | MetaServer                                           | [下载地址](https://melecode.com/#downloadModal)   <br/> [**安装必读**](https://docs.qq.com/doc/p/9415a4c09eebbf6dd31c7566579647049fadcaaa) |
 | **运行环境**         | 1. Node 16 +       <br/> 2. npm 8.0 +                | [下载地址](http://nodejs.cn/download)                                                     |
 | **VSCode插件(必装)** | 1. `Vue Language Features (Volar) ` <br/> 2. `Vetur` |                                                                                       |
 
@@ -98,7 +98,11 @@ npm i
 # 启动项目(开发模式)
 npm run dev
 
+启动完成后浏览器访问 http://localhost:8022
+注意：必须先启动美乐后端集成环境，[点此查看详情](https://docs.qq.com/doc/p/9415a4c09eebbf6dd31c7566579647049fadcaaa)
+
+
 # 生产打包
 npm run fast-build
 ```
-启动完成后浏览器访问 http://localhost:8022
+
