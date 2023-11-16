@@ -87,7 +87,7 @@
 ## 开发、打包
 ``` sh
 # 克隆项目
-git clone https://gitee.com/meta_low_code/MetaLowCode.git
+git clone https://gitee.com/MetaLowCode/MetaLowCode.git
 
 # 进入项目目录
 cd MetaLowCode
