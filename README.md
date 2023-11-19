@@ -105,7 +105,7 @@ npm run dev
 npm run fast-build
 ```
 
-##系统截图
+## 系统截图
 
 ![仪表盘](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_01.png)
 
