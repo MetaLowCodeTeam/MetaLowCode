@@ -105,3 +105,16 @@ npm run dev
 npm run fast-build
 ```
 
+##系统截图
+
+[仪表盘](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_01.png)
+
+[表单设计](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_02.png)
+
+[业务流程](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_03.png)
+
+[业务触发器](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_04.png)
+
+[客户详情](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_05.png)
+
+[报表引擎](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_06.png)
