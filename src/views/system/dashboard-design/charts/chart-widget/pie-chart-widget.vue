@@ -88,7 +88,7 @@ const initOption = () => {
 const getChartData = async (options, type) => {
     loading.value = true;
     let res = await queryChartData(options, type);
-    if (res && res.data) {
+    if (res && res.data && res.data.length > 0) {
         let { setChartConf } = cutField.value.options;
         // 图例是否显示
         option.legend = {
