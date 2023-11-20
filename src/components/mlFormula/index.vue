@@ -69,6 +69,7 @@
                         v-for="(item,inx) of fields"
                         :key="inx"
                         @click="fieldSelect(item,true)"
+                        :title="tem.fieldLabel"
                     >
                         <span class="active-type">N</span>
                         {{ item.fieldLabel }}
@@ -101,6 +102,7 @@
                 v-for="(item,inx) of fields"
                 :key="inx"
                 @click="fieldSelect(item)"
+                :title="item.fieldLabel"
             >{{ item.fieldLabel }}</div>
         </el-popover>
     </mlDialog>
