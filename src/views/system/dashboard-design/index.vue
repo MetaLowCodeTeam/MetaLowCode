@@ -63,18 +63,7 @@ onMounted(() => {
         this.$router.push("/web/dashboard-list");
         return;
     }
-
-    // setTimeout(() => {
-    //     clearCanvas();
-    //     // initFormConfig();
-    //     // nextTick(()=>{
-    //     //     initFormConfig();
-    //     // })
-    //     setTimeout(() => {
-    //         loading.value = true;
     initFormConfig();
-    //     }, 200);
-    // }, 100);
 });
 
 // 初始化数据
