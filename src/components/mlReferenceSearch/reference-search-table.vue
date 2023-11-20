@@ -40,6 +40,7 @@ export default {
 	props: {
 		entity: String,
 		refField: String,
+		extraFilter: String,  // 查询条件
 		tableHeight: {
 			type: String,
 			default: '480px'
@@ -81,7 +82,7 @@ export default {
 
 		loadTableTable() {
 			refFieldQuery(this.entity, this.refField, this.page.pageNo,
-				this.page.limit, this.queryText).then(res => {
+				this.page.limit, this.queryText, this.extraFilter).then(res => {
 				if (res.error != null) {
 					this.$message({message: res.error, type: 'error'})
 				} else {
