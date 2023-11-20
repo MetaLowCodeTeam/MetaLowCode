@@ -48,24 +48,7 @@ let locale = computed(() => {
 onBeforeMount(() => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
-    if (app_color) {
-        document.documentElement.style.setProperty(
-            "--el-color-primary",
-            app_color
-        );
-        for (let i = 1; i <= 9; i++) {
-            document.documentElement.style.setProperty(
-                `--el-color-primary-light-${i}`,
-                colorTool.lighten(app_color, i / 10)
-            );
-        }
-        for (let i = 1; i <= 9; i++) {
-            document.documentElement.style.setProperty(
-                `--el-color-primary-dark-${i}`,
-                colorTool.darken(app_color, i / 10)
-            );
-        }
-    }
+    colorPrimary(app_color);
     // 获取新消息
     getNewMsgNum();
     // // 轮循获取新消息
@@ -101,23 +84,21 @@ const queryPublicSetting = async () => {
 };
 
 const colorPrimary = (val) => {
-    if (!val) {
-        val = "#409EFF";
-    }
+    console.log(val,'val')
     document.documentElement.style.setProperty("--el-color-primary", val);
     document.documentElement.style.setProperty("--vf-color-primary", val); //同步主题色
     for (let i = 1; i <= 9; i++) {
-        document.documentElement.style.setProperty(
-            `--el-color-primary-light-${i}`,
-            colorTool.lighten(val, i / 10)
-        );
+        setProperty("light", "lighten", val, i);
+        setProperty("dark", "darken", val, i);
     }
-    for (let i = 1; i <= 9; i++) {
-        document.documentElement.style.setProperty(
-            `--el-color-primary-dark-${i}`,
-            colorTool.darken(val, i / 10)
-        );
-    }
+};
+
+// 设置主题样式
+const setProperty = (theme, type, val, inx) => {
+    document.documentElement.style.setProperty(
+        `--el-color-primary-${theme}-${inx}`,
+        colorTool[type](val, inx / 10)
+    );
 };
 
 // 获取新消息
