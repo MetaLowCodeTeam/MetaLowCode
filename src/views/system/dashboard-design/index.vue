@@ -60,7 +60,7 @@ let dbDesignerRef = ref();
 onMounted(() => {
     chartId.value = router.currentRoute.value.query.chartId;
     if (!chartId.value) {
-        this.$router.push("/web/dashboard-list");
+        router.push("/web/dashboard-list");
         return;
     }
     initFormConfig();
@@ -116,7 +116,7 @@ const saveDesign = async () => {
         formModel: {
             chartData: JSON.stringify(dbDesignerRef.value.getFormJson(false)),
         },
-        id: this.chartId,
+        id: chartId.value,
     };
     let res = await saveRecord(param.entity, param.id, param.formModel);
     if (res) {

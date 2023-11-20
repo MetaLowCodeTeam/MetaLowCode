@@ -5,6 +5,8 @@
             filterable
             placeholder="选择实体"
             @change="changeEntity"
+            :disabled="!designer.selectedId"
+            filter
         >
             <el-option
                 :label="op.label"
