@@ -28,7 +28,10 @@ let option = reactive({
         containLabel: true,
     },
     isNoData: true,
-    tooltip: {},
+    tooltip: {
+        trigger: 'item',
+        formatter: '{b} : {c} ({d}%)'
+    },
     series: [
         {
             type: "pie",

@@ -333,7 +333,7 @@ const addCom = (e, target) => {
     }
     let dimensionLength = dimension.value.length;
     let metricsLength = metrics.value.length;
-    let { type } = props.optionModel;
+    let { type } = props.selectedWidget;
     let max3 = ["barChart", "barXChart", "lineChart", "radarChart"];
     // 添加维度
     if (target == "dimension") {
