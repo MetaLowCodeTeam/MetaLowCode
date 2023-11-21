@@ -27,10 +27,11 @@
 
 ## 官网和演示
 
-| 类型 | 链接                                                      |
-| -------- |---------------------------------------------------------|
-| 官网地址  | https://melecode.com/                                   |
-| 演示地址  | http://117.50.194.75:8102/web/login （用户、密码：admin/admin） |
+| 类型   | 链接                                                      |
+|------|---------------------------------------------------------|
+| 美乐官网 | https://melecode.com/                                   |
+| 演示地址 | http://117.50.194.75:8101/web/login （用户、密码：admin/admin） |
+| 演示地址2 | http://117.50.194.75:8102/web/login （用户、密码：admin/admin） |
 
 
 ## 亮点功能
@@ -107,14 +108,17 @@ npm run fast-build
 
 ## 系统截图
 
-![仪表盘](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_01.png)
+![仪表盘](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_01.png)
 
-![表单设计](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_02.png)
+![表单设计](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_02.png)
 
-![业务流程](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_03.png)
+![业务流程](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_03.png)
 
-![业务触发器](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_04.png)
+![业务触发器](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_04.png)
 
-![客户详情](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_05.png)
+![客户详情](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_05.png)
 
-![报表引擎](https://gitee.com/MetaLowCode/MetaLowCode/raw/master/src/assets/imgs/mlc_screen_06.png)
+![报表引擎](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_06.png)
+
+## 开源协议
+MIT License
