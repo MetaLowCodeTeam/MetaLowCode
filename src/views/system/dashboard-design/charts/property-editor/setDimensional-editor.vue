@@ -344,7 +344,7 @@ const addCom = (e, target) => {
                 $ElMessage.warning("添加失败，最多添加2个维度");
                 return;
             }
-            if (metricsLength > 1 && dimensionLength.length > 0) {
+            if (metricsLength > 1 && dimensionLength > 0) {
                 $ElMessage.warning("添加失败，多个指标最多只能添加1个维度");
                 return;
             }

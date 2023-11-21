@@ -12,6 +12,7 @@
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
 import { queryChartData } from "@/api/chart";
+import { getPreviewNum } from "@/utils/util";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -41,7 +42,9 @@ let option = reactive({
         top: "5%",
         containLabel: true,
     },
-    tooltip: {},
+    tooltip: {
+        trigger: "item",
+    },
     radar: {
         indicator: [
             { name: "测试1" },
@@ -69,7 +72,7 @@ let option = reactive({
         },
     ],
 });
-
+let units = ref({});
 const initOption = () => {
     let { options, type } = cutField.value;
     if (options) {
@@ -78,6 +81,14 @@ const initOption = () => {
             option.isNoData = true;
             return;
         }
+        metrics.forEach((el) => {
+            units.value[el.fieldLabel] = {
+                showDecimalPlaces: el.showDecimalPlaces,
+                decimalPlaces: el.decimalPlaces,
+                thousandsSeparator: el.thousandsSeparator,
+                numericUnits: el.numericUnits == "无" ? "" : el.numericUnits,
+            };
+        });
         getChartData(options, type);
         option.isNoData = false;
     } else {
@@ -104,6 +115,37 @@ const getChartData = async (options, type) => {
                 };
             }),
         };
+        let xAxis = res.data.xAxis;
+        let { dimension, metrics } = options.setDimensional;
+        if (metrics.length > 1 && dimension.length == 1) {
+            option.tooltip.formatter = (e) => {
+                let {
+                    showDecimalPlaces,
+                    decimalPlaces,
+                    thousandsSeparator,
+                    numericUnits,
+                } = units.value[e.name];
+                let formatterStr = [];
+                e.data.value.forEach((el, inx) => {
+                    formatterStr.push(
+                        xAxis[inx] +
+                            "：" +
+                            getPreviewNum(
+                                showDecimalPlaces,
+                                decimalPlaces,
+                                thousandsSeparator,
+                                el
+                            ) +
+                            numericUnits
+                    );
+                });
+                formatterStr = formatterStr.join("<br />");
+                return e.name + "<br />" + formatterStr;
+            };
+        }else {
+            option.tooltip.formatter = ""
+        }
+
         option.radar.indicator = res.data.xAxis.map((el) => {
             return {
                 name: el,
