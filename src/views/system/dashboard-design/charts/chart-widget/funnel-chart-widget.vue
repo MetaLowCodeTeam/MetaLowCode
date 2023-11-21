@@ -12,6 +12,7 @@
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
 import { queryChartData } from "@/api/chart";
+import { getPreviewNum } from "@/utils/util";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -27,7 +28,9 @@ let option = reactive({
         containLabel: true,
     },
     isNoData: true,
-    tooltip: {},
+    tooltip: {
+        trigger: "item",
+    },
     series: [
         {
             type: "funnel",
@@ -65,6 +68,7 @@ let option = reactive({
 let cutField = ref("");
 let loading = ref(false);
 let dataList = ref([]);
+let units = ref({});
 watch(
     () => props.field,
     () => {
@@ -86,7 +90,16 @@ const initOption = () => {
             option.isNoData = true;
             return;
         }
+        metrics.forEach((el) => {
+            units.value[el.fieldLabel] = {
+                showDecimalPlaces: el.showDecimalPlaces,
+                decimalPlaces: el.decimalPlaces,
+                thousandsSeparator: el.thousandsSeparator,
+                numericUnits: el.numericUnits == "无" ? "" : el.numericUnits,
+            };
+        });
         getChartData(options, type);
+
         option.isNoData = false;
     } else {
         option.isNoData = true;
@@ -106,6 +119,27 @@ const getChartData = async (options, type) => {
         option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
         option.series[0].data = res.data;
         dataList.value = res.data || [];
+        if (dataList.value.length > 0) {
+            option.tooltip.formatter = (e) => {
+                let other = e.data.other;
+                let formatterStr = [];
+                for (const key in other) {
+                    if (Object.hasOwnProperty.call(other, key)) {
+                        const element = other[key];
+                        let {
+                            showDecimalPlaces,
+                            decimalPlaces,
+                            thousandsSeparator,
+                            numericUnits,
+                        } = units.value[key];
+                        formatterStr.push(key + "：" + getPreviewNum(showDecimalPlaces,decimalPlaces,thousandsSeparator,element) + numericUnits);
+                    }
+                }
+                formatterStr = formatterStr.join("<br />");
+                return e.name + "<br />" + formatterStr;
+            };
+        }
+
         option.series[0].label = {
             show: setChartConf.numShow,
             formatter: function (param) {

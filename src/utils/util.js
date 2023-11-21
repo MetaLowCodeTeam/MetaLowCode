@@ -257,7 +257,7 @@ export const $moment = function (date) {
 }
 
 export const $fromNow = function (date) {
-    if(!date){
+    if (!date) {
         return '暂无时间'
     }
     const m = $moment(date)
@@ -270,11 +270,11 @@ export const $fromNow = function (date) {
  * @returns {*|string}
  */
 export const upperFirstLetter = (inStr) => {
-	if (!inStr) {
-		return ''
-	}
+    if (!inStr) {
+        return ''
+    }
 
-	return inStr.slice(0, 1).toUpperCase() + inStr.slice(1)
+    return inStr.slice(0, 1).toUpperCase() + inStr.slice(1)
 }
 
 /**
@@ -283,5 +283,45 @@ export const upperFirstLetter = (inStr) => {
  * @returns {string}
  */
 export const getSimplePinYin = (chStr) => {
-	return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '')
+    return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '')
 }
+
+
+/**
+ * 
+ * @param {*} showDecimalPlaces 是否开启小数位
+ * @param {*} decimalPlaces 小数位是几
+ * @param {*} thousandsSeparator 是否开启千分符
+ * @param {*} val 值
+ * @returns 
+ */
+export const getPreviewNum = (showDecimalPlaces,decimalPlaces,thousandsSeparator,val) => {
+    let previewStr = val;
+    if (showDecimalPlaces) {
+        previewStr = Number(previewStr).toFixed(decimalPlaces);
+    }
+    if (thousandsSeparator) {
+        previewStr = numberToCurrencyNo(previewStr);
+    }
+    return previewStr;
+};
+
+const numberToCurrencyNo = (value) => {
+    if (!value) return 0;
+    // 获取整数部分
+    const intPart = Math.trunc(value);
+    // 整数部分处理，增加,
+    const intPartFormat = intPart
+        .toString()
+        .replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
+    // 预定义小数部分
+    let floatPart = "";
+    // 将数值截取为小数部分和整数部分
+    const valueArray = value.toString().split(".");
+    if (valueArray.length === 2) {
+        // 有小数部分
+        floatPart = valueArray[1].toString(); // 取得小数部分
+        return intPartFormat + "." + floatPart;
+    }
+    return intPartFormat + floatPart;
+};

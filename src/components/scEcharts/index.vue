@@ -52,7 +52,7 @@ export default {
         this.isActivat = true;
         setTimeout(() => {
             this.draw();
-        }, 100);
+        }, 500);
     },
     methods: {
         draw() {

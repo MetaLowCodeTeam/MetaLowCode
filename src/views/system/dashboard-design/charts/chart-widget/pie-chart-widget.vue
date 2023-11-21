@@ -12,6 +12,7 @@
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
 import { onMounted, reactive, ref, watch } from "vue";
 import { queryChartData } from "@/api/chart";
+import { getPreviewNum } from "@/utils/util";
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -29,8 +30,7 @@ let option = reactive({
     },
     isNoData: true,
     tooltip: {
-        trigger: 'item',
-        formatter: '{b} : {c} ({d}%)'
+        trigger: "item",
     },
     series: [
         {
@@ -77,7 +77,14 @@ const initOption = () => {
             option.isNoData = true;
             return;
         }
+        let { showDecimalPlaces, decimalPlaces, thousandsSeparator } =
+            metrics[0];
         let { chartStyle } = cutField.value.options;
+        option.tooltip.formatter = (e) => {
+            return (
+                e.name + "：" + getPreviewNum(showDecimalPlaces,decimalPlaces,thousandsSeparator,e.value) + " (" + e.percent + "%)"
+            );
+        };
         option.series[0].radius = chartStyle == 1 ? "60%" : ["40%", "60%"];
         getChartData(options, type);
         option.isNoData = false;
