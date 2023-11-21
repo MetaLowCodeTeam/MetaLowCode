@@ -409,16 +409,10 @@ export default {
                 .then(() => {
                     deleteUserById(row.userId)
                         .then((res) => {
-                            if (res.error != null) {
-                                this.$message({
-                                    message: res.error,
-                                    type: "error",
-                                });
-                                return;
+                            if(res && res.data){
+                                this.$message.success("删除成功");
+                                this.onRefresh();
                             }
-
-                            this.$message.success("删除成功");
-                            this.onRefresh();
                         })
                         .catch((res) => {
                             this.$message({
