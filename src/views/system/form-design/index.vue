@@ -448,4 +448,8 @@ export default {
 	}
 }
 
+.vf-preview-dialog {
+    width: 53.7%;
+}
+
 </style>
