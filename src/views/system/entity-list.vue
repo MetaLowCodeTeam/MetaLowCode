@@ -263,13 +263,10 @@ export default {
 
 		executeDeleteEntity(entity) {
 			deleteEntity(entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message.success('实体已删除')
-				this.getEntityList()
+                if(res && res.data){
+                    this.$message.success('实体已删除')
+				    this.getEntityList()
+                }
 			}).catch(res => {
 				this.$message({message: res.message, type: 'error'})
 			})
