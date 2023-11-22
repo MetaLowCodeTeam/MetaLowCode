@@ -43,7 +43,7 @@
                 </el-form-item>
                 <el-form-item
                     label=" "
-                    v-if="!formData.isAssociatedRecords && labelData.type != 'unShare'"
+                    v-if="!formData.isAssociatedRecords && labelData.type != 'unShare' && labelData.pageType !== 'dashboardList'"
                     class="mb-5"
                 >
                     <span

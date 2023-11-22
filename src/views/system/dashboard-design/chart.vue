@@ -26,8 +26,16 @@
                     <el-switch v-model="scope.row.defaultChart" @change="changeDefault(scope.row)" />
                 </template>
             </el-table-column>
-            <el-table-column label="操作" :align="'center'" width="140" fixed="right">
+            <el-table-column label="操作" :align="'center'" width="200" fixed="right">
                 <template #default="scope">
+                    <el-button size="small" type="primary" link @click="allowOpenDialog(scope.row)">
+                        <span class="mr-3">
+                            <el-icon>
+                                <ElIconShare />
+                            </el-icon>
+                        </span>
+                        <span>分配</span>
+                    </el-button>
                     <el-button size="small" type="primary" link @click="editClick(scope.row)">
                         <span class="mr-3">
                             <el-icon>
@@ -61,6 +69,12 @@
             </el-form>
         </div>
     </ml-dialog>
+    <!-- 分配 -->
+    <Allocation
+        ref="allocationRefs"
+        idFieldName="chartId"
+        @allocationSuccess="allocationSuccess"
+    />
 </template>
    
 <script setup>
@@ -70,6 +84,7 @@ import { saveRecord, deleteRecord } from "@/api/crud";
 import { updateDefault } from "@/api/chart.js";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
+import Allocation from "@/views/customize-menu/components/Allocation.vue";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 
@@ -166,11 +181,11 @@ const onConfirm = async () => {
     mlSingleListRef.value.loading = true;
     let param = {
         entity: "Chart",
-        formModel: { chartName: dialogConf.chartName},
+        formModel: { chartName: dialogConf.chartName },
         id: dialogConf.chartId,
     };
     // 新建
-    if(!dialogConf.chartId){
+    if (!dialogConf.chartId) {
         param.formModel.defaultChart = false;
     }
     let res = await saveRecord(param.entity, param.id, param.formModel);
@@ -202,6 +217,23 @@ const highlightClick = (row) => {
     };
     router.push(routerData);
 };
+
+/**
+ * 分配
+ */
+let allocationRefs = ref("");
+
+const allowOpenDialog = (row) => {
+    allocationRefs.value.openDialog({
+        type: "allocation",
+        pageType: "dashboardList",
+        list: [row],
+    });
+};
+
+const allocationSuccess = ()=>{
+    mlSingleListRef.value.getTableList();
+}
 </script>
 <style lang="scss" scoped>
 </style>

@@ -71,6 +71,7 @@
                     style="width: 100%"
                     max-height="400px"
                     @sort-change="sortChange"
+                    @row-dblclick="openDetilDialog"
                 >
                     <el-table-column
                         v-for="(column,columnInx) of tableColumn"
@@ -313,8 +314,12 @@ const handleSizeChange = (size) => {
     getTableList();
 };
 
+
 // 打开详情
 const openDetilDialog = (row) => {
+    if(!idFieldName.value){
+        return
+    }
     detailRefs.value.openDialog(row[idFieldName.value]);
 };
 // 列排序
