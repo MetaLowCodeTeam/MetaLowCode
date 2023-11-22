@@ -125,7 +125,7 @@
             </mlSingleList>
         </el-container>
         <!-- 新建、编辑用户 -->
-        <Edit ref="editRefs" @onConfirm="onRefresh" isUser :disableWidgets="disableWidgets" />
+        <Edit ref="editRefs" @onConfirm="onRefresh" nameFieldName="userName" isUser :disableWidgets="disableWidgets" />
 
         <!-- 列表详情 -->
         <ListDetail
@@ -351,7 +351,6 @@ export default {
         // 新建用户
         addClick() {
             let tempV = {};
-            tempV.dialogTitle = "新建用户";
             tempV.entityName = "User";
             this.disableWidgets = [];
             this.$refs.editRefs.openDialog(tempV);
@@ -359,10 +358,9 @@ export default {
         // 编辑用户
         editClick(row, target) {
             let tempV = { ...row };
-            tempV.dialogTitle = "编辑" + row.userName;
             tempV.entityName = "User";
             tempV.detailId = row.userId;
-            this.disableWidgets = ["loginPwd"];
+            this.disableWidgets = ["loginName","loginPwd"];
             this.$refs.editRefs.openDialog(tempV);
         },
         // 刷新数据
