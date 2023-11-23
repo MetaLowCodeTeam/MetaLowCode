@@ -16,7 +16,6 @@
                                         <span class="is-required" v-if="item.required">*</span>
                                         {{ item.label }}
                                     </div>
-                                    <div class="info-text">{{ item.subLabel }}</div>
                                 </div>
                             </template>
                             <!-- 文本框 -->
@@ -36,6 +35,7 @@
                                     :disabled="isDisabled(card,item)"
                                     :placeholder="'请输入' + item.label"
                                 ></el-input>
+                                <div class="info-text">{{ item.subLabel }}</div>
                             </div>
                             <!-- 复选框 -->
                             <div v-else-if="item.type == 'switch'">
@@ -202,15 +202,15 @@ const isDisabled = (card, item) => {
     ) {
         return true;
     }
-     // 如果是短信与邮箱 且 没有开启云存储
-     if (
+    // 如果是短信与邮箱 且 没有开启云存储
+    if (
         card.code == "serviceIntegration" &&
         !confData.cloudStorageOpen &&
         cloudStorageFields.value.includes(item.key)
     ) {
         return true;
     }
-    
+
     return false;
 };
 
@@ -334,6 +334,11 @@ const openActivateAuthDialog = () => {
 };
 </script>
 <style lang='scss' scoped>
+.info-text {
+    margin-top: 5px;
+    font-size: 12px;
+    padding-left: 5px;
+}
 .common-config {
     padding: 20px;
     padding-bottom: 0;
@@ -385,6 +390,6 @@ const openActivateAuthDialog = () => {
     }
 }
 :deep(.el-descriptions__label) {
-    width: 200px;
+    width: 220px;
 }
 </style>
