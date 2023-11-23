@@ -65,7 +65,7 @@ export default [
         ],
     },
     {
-        label: "短信与邮件",
+        label: "服务集成",
         code: "sms&email",
         confs: [
             {
@@ -132,7 +132,44 @@ export default [
                 key: "cc",
                 type: "input",
             },
-
+            {
+                label: "启用云存储 (七牛云)",
+                key: "emailOpen",
+                type: "switch",
+            },
+            {
+                label: "APPID",
+                key: "appId",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "APPKEY",
+                key: "appKey",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "发件人地址",
+                key: "from",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "发件人名称",
+                key: "fromName",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "抄送地址",
+                key: "cc",
+                type: "input",
+            },
         ],
     },
     {
