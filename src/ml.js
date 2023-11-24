@@ -5,27 +5,6 @@ import http from "./utils/request"
 import { permission, rolePermission } from './utils/permission'
 import COMMON_CONFIG from './config/common';
 
-/*
-import scTable from './components/scTable'
-import scTableColumn from './components/scTable/column.js'
-import scFilterBar from './components/scFilterBar'
-import scUpload from './components/scUpload'
-import scUploadMultiple from './components/scUpload/multiple'
-import scUploadFile from './components/scUpload/file'
-import scFormTable from './components/scFormTable'
-import scTableSelect from './components/scTableSelect'
-import scPageHeader from './components/scPageHeader'
-import scSelect from './components/scSelect'
-import scDialog from './components/scDialog'
-import scForm from './components/scForm'
-import scTitle from './components/scTitle'
-import scWaterMark from './components/scWaterMark'
-import scQrCode from './components/scQrCode'
-
-import scStatusIndicator from './components/scMini/scStatusIndicator'
-import scTrend from './components/scMini/scTrend'
-*/
-
 import scTable from './components/scTable/index.vue'
 import scTableColumn from './components/scTable/column.js'
 import scQrCode from './components/scQrCode/index.vue'
