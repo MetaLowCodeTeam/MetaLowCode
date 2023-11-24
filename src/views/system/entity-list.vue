@@ -192,7 +192,7 @@ import EntityPropEditor from "./entity-editor/entity-property-editor.vue";
 import useCommonStore from "@/store/modules/common";
 
 import { storeToRefs } from "pinia";
-import { inject, nextTick, onMounted, ref } from "vue";
+import { inject, h, onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 const { refreshCache } = useCommonStore();
@@ -231,17 +231,21 @@ let notGroup = ref([]);
 let entityGroup = ref({});
 let activeNames = ref(["未分组"]);
 onMounted(() => {
-    getEntityList();
-    loading.value = true;
-    Promise.all([getEntityList(), getAllTags()]).then(() => {
-        loading.value = false;
-        filterEntityList();
-    });
+    initEntity();
 });
 
 const checkRole = (rightStr) => {
     return $TOOL.checkRole(rightStr);
 };
+
+
+const initEntity = ()=>{
+    loading.value = true;
+    Promise.all([getEntityList(), getAllTags()]).then(() => {
+        loading.value = false;
+        filterEntityList();
+    });
+}
 
 const getEntityList = () => {
     return new Promise(async (resolve, reject) => {
@@ -298,7 +302,6 @@ const filterEntityList = () => {
     }
     notGroup.value = [];
     availableEntityList.value.forEach((el) => {
-        console.log(el, "el");
         el.newTags = el.tags ? el.tags.split(",") : [];
         if (el.newTags.length > 0) {
             el.newTags.forEach((subEl) => {
@@ -356,7 +359,7 @@ const saveNewEntity = () => {
                 if (res && res.data) {
                     ElMessage.success("保存成功");
                     showNewEntityDialogFlag.value = false;
-                    getEntityList();
+                    initEntity();
                 }
                 EPEditor.value.loading = false;
             })
@@ -480,7 +483,7 @@ const executeDeleteEntity = (entity) => {
         .then((res) => {
             if (res && res.data) {
                 ElMessage.success("实体已删除");
-                getEntityList();
+                initEntity();
             }
         })
         .catch((res) => {
