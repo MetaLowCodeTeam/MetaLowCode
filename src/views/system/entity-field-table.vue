@@ -204,8 +204,8 @@
 			</el-dialog>
 		</el-container>
 
-        <!-- 新增表填 -->
-        <ml-dialog v-model="addTagDialogIsShow" title="新增标签" width="400">
+        <!-- 设置标签 -->
+        <ml-dialog v-model="addTagDialogIsShow" title="设置标签" width="400">
             <div v-loading="addTagDialogLoading">
                 <el-check-tag 
                     v-for="(tag,inx) of allTags" :key="inx"
@@ -215,6 +215,9 @@
                 >
                     {{ tag.name }}
                 </el-check-tag>
+                <!-- <div class="w-100">
+
+                </div> -->
             </div>
            
             <template #footer>
