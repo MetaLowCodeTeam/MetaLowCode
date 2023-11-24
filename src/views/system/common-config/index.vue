@@ -12,8 +12,10 @@
                         <el-descriptions-item v-for="(item,inx) of card.confs" :key="inx">
                             <template #label>
                                 <div class="config-label">
-                                    <span class="is-required" v-if="item.required">*</span>
-                                    {{ item.label }}
+                                    <div>
+                                        <span class="is-required" v-if="item.required">*</span>
+                                        {{ item.label }}
+                                    </div>
                                 </div>
                             </template>
                             <!-- 文本框 -->
@@ -33,6 +35,7 @@
                                     :disabled="isDisabled(card,item)"
                                     :placeholder="'请输入' + item.label"
                                 ></el-input>
+                                <div class="info-text">{{ item.subLabel }}</div>
                             </div>
                             <!-- 复选框 -->
                             <div v-else-if="item.type == 'switch'">
@@ -120,6 +123,13 @@ let loading = ref(false);
 let smsFields = ref(["smsappId", "smsappKey", "smssignature"]);
 // 邮箱字段
 let emailFields = ref(["appId", "appKey", "from", "fromName", "cc"]);
+// 云存储字段
+let cloudStorageFields = ref([
+    "csaccessKey",
+    "cssecretKey",
+    "csbucket",
+    "cshost",
+]);
 
 const initData = async () => {
     confList.value = [...commonConfig];
@@ -128,7 +138,7 @@ const initData = async () => {
     if (res) {
         let resData = res.data ? res.data : {};
         confData = Object.assign(confData, resData);
-        let { emailSetting, smsSetting } = confData;
+        let { emailSetting, smsSetting, cloudStorageSetting } = confData;
 
         // 格式化短信
         confData.smsOpen = smsSetting.openStatus;
@@ -144,6 +154,15 @@ const initData = async () => {
             if (Object.hasOwnProperty.call(emailSetting, key)) {
                 const element = emailSetting[key];
                 confData[key] = element;
+            }
+        }
+
+        // 格式化云存储
+        confData.cloudStorageOpen = cloudStorageSetting.openStatus;
+        for (const key in cloudStorageSetting) {
+            if (Object.hasOwnProperty.call(cloudStorageSetting, key)) {
+                const element = cloudStorageSetting[key];
+                confData["cs" + key] = element;
             }
         }
 
@@ -169,21 +188,29 @@ const onLogoSuccess = (data) => {
 const isDisabled = (card, item) => {
     // 如果是短信与邮箱 且 没有开启短信
     if (
-        card.code == "sms&email" &&
+        card.code == "serviceIntegration" &&
         !confData.smsOpen &&
         smsFields.value.includes(item.key)
     ) {
         return true;
     }
     // 如果是短信与邮箱 且 没有开启邮箱
-
     if (
-        card.code == "sms&email" &&
+        card.code == "serviceIntegration" &&
         !confData.emailOpen &&
         emailFields.value.includes(item.key)
     ) {
         return true;
     }
+    // 如果是短信与邮箱 且 没有开启云存储
+    if (
+        card.code == "serviceIntegration" &&
+        !confData.cloudStorageOpen &&
+        cloudStorageFields.value.includes(item.key)
+    ) {
+        return true;
+    }
+
     return false;
 };
 
@@ -196,6 +223,7 @@ const onSubmit = async () => {
         return;
     }
     // 如果短信是开启的
+
     if (confData.smsOpen) {
         for (const key in confData.smsSetting) {
             if (Object.hasOwnProperty.call(confData.smsSetting, key)) {
@@ -204,7 +232,9 @@ const onSubmit = async () => {
         }
     }
     confData.smsSetting.openStatus = confData.smsOpen;
+
     // 如果邮箱是开启的
+
     if (confData.emailOpen) {
         for (const key in confData.emailSetting) {
             if (Object.hasOwnProperty.call(confData.emailSetting, key)) {
@@ -213,6 +243,16 @@ const onSubmit = async () => {
         }
     }
     confData.emailSetting.openStatus = confData.emailOpen;
+    // 如果云存储是开启的
+    if (confData.cloudStorageOpen) {
+        for (const key in confData.cloudStorageSetting) {
+            if (Object.hasOwnProperty.call(confData.cloudStorageSetting, key)) {
+                confData.cloudStorageSetting[key] = confData["cs" + key];
+            }
+        }
+    }
+    confData.cloudStorageSetting.openStatus = confData.cloudStorageOpen;
+
     let res = await updateSysSetting(confData);
     if (res) {
         ElMessage.success("保存成功");
@@ -294,6 +334,11 @@ const openActivateAuthDialog = () => {
 };
 </script>
 <style lang='scss' scoped>
+.info-text {
+    margin-top: 5px;
+    font-size: 12px;
+    padding-left: 5px;
+}
 .common-config {
     padding: 20px;
     padding-bottom: 0;
@@ -345,6 +390,6 @@ const openActivateAuthDialog = () => {
     }
 }
 :deep(.el-descriptions__label) {
-    width: 200px;
+    width: 220px;
 }
 </style>

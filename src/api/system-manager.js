@@ -23,6 +23,10 @@ export function getEntityProps(entity) {
   return http.get('systemManager/getEntityProps', { entity })
 }
 
+export function getAllTagsOfEntity() {
+	return http.get('systemManager/getAllTagsOfEntity')
+}
+
 export function createEntity(entity, maineEntityName) {
   return http.post('systemManager/createEntity', entity, {
     params: {'mainEntity': maineEntityName}
