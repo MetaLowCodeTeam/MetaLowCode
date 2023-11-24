@@ -7,7 +7,7 @@
                 <mlSearchInput
                     v-model="keyword"
                     placeholder="查询"
-                    @confirm="getEntityList"
+                    @confirm="filterEntityList"
                     style="margin-right: 10px;"
                 />
                 <el-button type="primary" @click="createNewEntity">
@@ -154,8 +154,15 @@ let hideMenuTimerId = ref(null);
 
 let availableEntityList = ref([]);
 
+let allTags = ref([]);
+
 onMounted(() => {
     getEntityList();
+    loading.value = true;
+    Promise.all([getEntityList(), getAllTags()]).then(() => {
+        loading.value = false;
+        filterEntityList();
+    });
 });
 
 const checkRole = (rightStr) => {
@@ -163,30 +170,49 @@ const checkRole = (rightStr) => {
 };
 
 const getEntityList = () => {
-    loading.value = true;
-    getEntitySet()
-        .then((res) => {
-            if (res && res.data) {
-                entityItems.value = res.data;
-                availableEntityList.value = entityItems.value.filter(
-                    (entityItem) => {
-                        return (
-                            entityItem.name !== "ApprovalConfig" &&
-                            entityItem.name !== "ReportConfig" &&
-                            entityItem.name !== "TriggerConfig" &&
-                            entityItem.name !== "MetaApi" &&
-                            entityItem.name !== "Chart"
-                        );
-                    }
-                );
-                refreshCache(res.data || []);
-            }
-            loading.value = false;
-        })
-        .catch((res) => {
-            ElMessage({ message: res.message, type: "error" });
-            loading.value = false;
-        });
+    return new Promise(async (resolve, reject) => {
+        let res = await getEntitySet();
+        if (res && res.data) {
+            entityItems.value = res.data;
+            refreshCache(res.data || []);
+        }
+        resolve();
+    });
+};
+
+const getAllTags = () => {
+    return new Promise(async (resolve, reject) => {
+        let res = await getAllTagsOfEntity();
+        if (res && res.data) {
+            allTags.value = res.data;
+        }
+        resolve();
+    });
+};
+
+const filterEntityList = () => {
+    let filterEntitys = entityItems.value.filter((entityItem) => {
+        return (
+            entityItem.name !== "ApprovalConfig" &&
+            entityItem.name !== "ReportConfig" &&
+            entityItem.name !== "TriggerConfig" &&
+            entityItem.name !== "MetaApi" &&
+            entityItem.name !== "Chart"
+        );
+    });
+    if (keyword.value) {
+        availableEntityList.value = filterEntitys.filter(
+            (el) =>
+                el.name
+                    .toLocaleUpperCase()
+                    .indexOf(keyword.value.toLocaleUpperCase()) != -1 ||
+                el.label
+                    .toLocaleUpperCase()
+                    .indexOf(keyword.value.toLocaleUpperCase()) != -1
+        );
+    } else {
+        availableEntityList.value = [...filterEntitys];
+    }
 };
 
 const createNewEntity = () => {
@@ -200,31 +226,16 @@ const createNewEntity = () => {
     newEntityProps.value.shareable = false;
     newEntityProps.value.mainEntity = "";
     newEntityProps.value.detailEntityFlag = false;
-    newEntityProps.value.useTag = [];
-    showNewEntityDialogFlag.value = true;
-    nextTick(() => {
-        getAllTags();
+    newEntityProps.value.useTag = allTags.value.map((el) => {
+        return {
+            name: el,
+            checked: false,
+        };
     });
+    showNewEntityDialogFlag.value = true;
 };
 
 let EPEditor = ref("");
-
-// 获取实体标签
-const getAllTags = async () => {
-    // console.log(EPEditor.value.loading,'EPEditor')
-    EPEditor.value.loading = true;
-    let res = await getAllTagsOfEntity();
-    console.log(res, "res");
-    if (res && res.data) {
-        newEntityProps.value.useTag = res.data.map((el) => {
-            return {
-                name: el,
-                checked: false,
-            };
-        });
-    }
-    EPEditor.value.loading = false;
-};
 
 const saveNewEntity = () => {
     EPEditor.value.validateForm(() => {
