@@ -142,7 +142,7 @@
                             @keyup.enter="handleInputConfirm"
                             @blur="handleInputConfirm"
                         />
-                        <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="myEntityProps.useTag.length > 9">+ 新增标签</el-button>
+                        <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="myEntityProps.useTag?.length > 9">+ 新增标签</el-button>
                     </div>
                     <div class="w-100 info-text">注：点击标签后颜色加深为选中状态，再次点击取消选中，可点击叉号删除标签。</div>
                 </el-form-item>
@@ -335,7 +335,7 @@ const handleInputConfirm = () => {
     if (tagValue.value && hasTag.length < 1) {
         myEntityProps.value.useTag.push({
             name: tagValue.value,
-            checked: false,
+            checked: true,
         });
     }
     inputVisible.value = false;
@@ -353,7 +353,7 @@ const onTagsChange = (item) => {
 defineExpose({
     validateForm,
     entityProps: myEntityProps.value,
-    loading: loading.value,
+    loading
 });
 </script>
 

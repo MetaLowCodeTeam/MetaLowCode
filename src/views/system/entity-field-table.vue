@@ -44,6 +44,17 @@
 								<el-switch v-model="entityProps.detailEntityFlag" style="float: right"
 										   disabled></el-switch>
 							</el-form-item>
+                            <el-form-item label="标签">
+								<el-tag
+                                    v-for="tag in entityProps.tags"
+                                    :key="tag"
+                                    class="mr-5 mb-5"
+                                    closable
+                                    @close="delTag(inx)"
+                                >
+                                    {{ tag }}
+                                </el-tag>
+							</el-form-item>
 							<el-form-item label="所属主实体：" v-if="!!entityProps.detailEntityFlag">
 								<el-input link type="primary" v-model="entityProps.mainEntity.label"
 										  disabled></el-input>
@@ -326,6 +337,10 @@ export default {
                 this.tableHeight = this.$refs.tableContainer.$el.offsetHeight - 42 + 42/*覆盖表格页脚高度*/
             }
 		},
+        // 删除Tag
+        delTag(inx){
+            this.entityProps.tags.splice(inx,1)
+        },
 
 		initEntityProps() {
 			getEntityProps(this.entity).then(res => {
@@ -335,6 +350,7 @@ export default {
 				}
 
 				this.entityProps = res.data
+                this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
 			}).catch(res => {
 				this.$message({message: res.message, type: 'error'})
 			})

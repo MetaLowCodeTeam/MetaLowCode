@@ -63,8 +63,16 @@
                 ></EntityPropEditor>
                 <template #footer>
                     <div class="dialog-footer">
-                        <el-button type="primary" @click="saveNewEntity" style="width: 90px">保 存</el-button>
-                        <el-button @click="showNewEntityDialogFlag = false">取 消</el-button>
+                        <el-button
+                            type="primary"
+                            @click="saveNewEntity"
+                            style="width: 90px"
+                            v-loading="EPEditor?.loading"
+                        >保 存</el-button>
+                        <el-button
+                            v-loading="EPEditor?.loading"
+                            @click="showNewEntityDialogFlag = false"
+                        >取 消</el-button>
                     </div>
                 </template>
             </el-dialog>
@@ -107,12 +115,13 @@ import {
     createEntity,
     entityCanBeDeleted,
     deleteEntity,
+    getAllTagsOfEntity,
 } from "@/api/system-manager";
 import EntityPropEditor from "./entity-editor/entity-property-editor.vue";
 import useCommonStore from "@/store/modules/common";
 
 import { storeToRefs } from "pinia";
-import { inject, onMounted, ref } from "vue";
+import { inject, nextTick, onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 const { refreshCache } = useCommonStore();
@@ -134,7 +143,7 @@ let newEntityProps = ref({
     shareable: false,
     mainEntity: "",
     detailEntityFlag: false,
-    useTag:[],
+    useTag: [],
 });
 
 let hoverEntityIdx = ref(-1);
@@ -193,9 +202,29 @@ const createNewEntity = () => {
     newEntityProps.value.detailEntityFlag = false;
     newEntityProps.value.useTag = [];
     showNewEntityDialogFlag.value = true;
+    nextTick(() => {
+        getAllTags();
+    });
 };
 
 let EPEditor = ref("");
+
+// 获取实体标签
+const getAllTags = async () => {
+    // console.log(EPEditor.value.loading,'EPEditor')
+    EPEditor.value.loading = true;
+    let res = await getAllTagsOfEntity();
+    console.log(res, "res");
+    if (res && res.data) {
+        newEntityProps.value.useTag = res.data.map((el) => {
+            return {
+                name: el,
+                checked: false,
+            };
+        });
+    }
+    EPEditor.value.loading = false;
+};
 
 const saveNewEntity = () => {
     EPEditor.value.validateForm(() => {
@@ -207,6 +236,15 @@ const saveNewEntity = () => {
             ? "null"
             : newEntityProps.value.mainEntity;
         EPEditor.value.loading = true;
+        let tags = [];
+        newEntityProps.value.useTag.forEach((el) => {
+            // tags.push()
+            if (el.checked) {
+                tags.push(el.name);
+            }
+        });
+        newEntityProps.value.tags = tags.join(",");
+        delete newEntityProps.value.useTag;
         createEntity(newEntityProps.value, mainEntityName)
             .then((res) => {
                 if (res && res.data) {
