@@ -65,8 +65,8 @@ export default [
         ],
     },
     {
-        label: "短信与邮件",
-        code: "sms&email",
+        label: "服务集成",
+        code: "serviceIntegration",
         confs: [
             {
                 label: "启用短信服务 (SUBMAIL)",
@@ -132,7 +132,40 @@ export default [
                 key: "cc",
                 type: "input",
             },
-
+            {
+                label: "启用云存储 (七牛云)",
+                key: "cloudStorageOpen",
+                type: "switch",
+            },
+            {
+                label: "accessKey",
+                key: "csaccessKey",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "secretKey",
+                key: "cssecretKey",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "存储空间",
+                subLabel:"存储空间变更需你自行迁移原有数据",
+                key: "csbucket",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "访问域名",
+                key: "cshost",
+                type: "input",
+                required: true,
+                isError: false,
+            },
         ],
     },
     {
