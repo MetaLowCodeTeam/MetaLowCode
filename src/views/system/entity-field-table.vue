@@ -49,11 +49,20 @@
                                     v-for="tag in entityProps.tags"
                                     :key="tag"
                                     class="mr-5 mb-5"
-                                    closable
-                                    @close="delTag(inx)"
                                 >
                                     {{ tag }}
                                 </el-tag>
+                                <div class="w-100">
+                                    <el-button 
+                                        :disabled="entityProps.tags?.length > 9" 
+                                        class="button-new-tag ml-1" 
+                                        size="small" 
+                                        @click="addTagDialogIsShow = true"
+                                        plain
+                                    >
+                                        设置标签
+                                    </el-button>
+                                </div>
 							</el-form-item>
 							<el-form-item label="所属主实体：" v-if="!!entityProps.detailEntityFlag">
 								<el-input link type="primary" v-model="entityProps.mainEntity.label"
@@ -194,13 +203,48 @@
 				</template>
 			</el-dialog>
 		</el-container>
+
+        <!-- 新增表填 -->
+        <ml-dialog v-model="addTagDialogIsShow" title="新增标签" width="400">
+            <div v-loading="addTagDialogLoading">
+                <el-check-tag 
+                    v-for="(tag,inx) of allTags" :key="inx"
+                    class="mr-5 mb-5" 
+                    :checked="tag.checked"
+                    @change="onTagsChange(tag)"
+                >
+                    {{ tag.name }}
+                </el-check-tag>
+            </div>
+           
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button
+                        type="primary"
+                        @click="addTags"
+                        v-loading="addTagDialogLoading"
+                    >确 定</el-button>
+                    <el-button @click="addTagDialogIsShow = false" v-loading="addTagDialogLoading"
+                    >取 消</el-button>
+                </div>
+            </template>
+        </ml-dialog>
 	</el-container>
 </template>
 
 <script>
 import {
-	getEntityProps, getFieldListOfEntity, getEntitySet, updateEntityLabel, getTextFieldList,
-	updateEntityNameField, fieldCanBeDeleted, deleteField, fieldCanBeEdited,updateEntityTags
+	getEntityProps,
+    getFieldListOfEntity, 
+    getEntitySet, 
+    updateEntityLabel, 
+    getTextFieldList,
+	updateEntityNameField, 
+    fieldCanBeDeleted, 
+    deleteField, 
+    fieldCanBeEdited,
+    updateEntityTags,
+    getAllTagsOfEntity
 } from '@/api/system-manager'
 import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
 import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor.vue";
@@ -318,6 +362,9 @@ export default {
 			},
 			entity: "",
             propsLoading:false,
+            allTags:[],
+            addTagDialogIsShow:false,
+            addTagDialogLoading:false,
 		}
 	},
 	created() {
@@ -338,21 +385,7 @@ export default {
                 this.tableHeight = this.$refs.tableContainer.$el.offsetHeight - 42 + 42/*覆盖表格页脚高度*/
             }
 		},
-        // 删除Tag
-        async delTag(inx){
-            this.propsLoading = true;
-            let tempTags = [...this.entityProps.tags];
-            tempTags.splice(inx,1)
-            let res = await updateEntityTags(this.entity,tempTags.join(","))
-            if(res && res.data){
-                this.$message.success('标签已删除')
-                this.entityProps.tags.splice(inx,1)
-				this.initEntityProps()
-            }else {
-                this.propsLoading = false;
-            }
-            
-        },
+        
 
 		initEntityProps() {
             this.propsLoading = true;
@@ -360,6 +393,7 @@ export default {
                 if(res && res.data){
                     this.entityProps = res.data
                     this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
+                    this.getAllTags();
                 }
 				this.propsLoading = false;
 			}).catch(res => {
@@ -372,8 +406,42 @@ export default {
 		initPageData() {
 			this.initEntityProps()
 			this.initTableData()
+           
 		},
-
+        // 获取所有tag
+        async getAllTags(){
+            let res = await getAllTagsOfEntity();
+            if (res && res.data) {
+                // let filterTags = res.data.filter(el=> !this.entityProps.tags.includes(el))
+                this.allTags = res.data.map((el) => {
+                    return {
+                        name: el,
+                        checked: this.entityProps.tags.includes(el),
+                    };
+                })
+            }
+        },
+        // 标签选中切换
+        onTagsChange(item)  {
+            item.checked = !item.checked;
+        },
+        // 新增标签
+        async addTags(){
+            this.addTagDialogLoading = true;
+            let setTags = [];
+            this.allTags.forEach(el=>{
+                if(el.checked){
+                    setTags.push(el.name)
+                }
+            })
+            let res = await updateEntityTags(this.entity,setTags.join(","))
+            if(res && res.data){
+                this.$message.success('标签设置成功')
+                this.addTagDialogIsShow = false;
+				this.initEntityProps()
+            }
+            this.addTagDialogLoading = false;
+        },
 		initTableData() {
 			getFieldListOfEntity(this.entity).then(res => {
 				if (res.error != null) {

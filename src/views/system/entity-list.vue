@@ -17,6 +17,50 @@
         </el-header>
         <el-main class="card-container" v-loading="loading">
             <el-collapse v-model="activeNames" class="collapse-entity">
+                <el-collapse-item name="未分组">
+                    <template #title>
+                        <div class="collapse-title">
+                            <span class="collapse-icon">
+                                <el-icon>
+                                    <ElIconGrid />
+                                </el-icon>
+                            </span>
+                            未分组
+                        </div>
+                    </template>
+                    <el-card
+                        class="entity-card"
+                        shadow="hover"
+                        v-for="(entityItem, entityIdx) in notGroup"
+                        :key="entityIdx"
+                        @click=" (event) => showContextMenu(entityItem, event) "
+                        @contextmenu.prevent=" (event) => showContextMenu(entityItem, event) "
+                        @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
+                        @mouseleave="onLeaveEntity"
+                    >
+                        <template #header>
+                            <div>
+                                <span>{{ entityItem.label }}</span>
+                            </div>
+                        </template>
+                        <div>{{ entityItem.name }}</div>
+                        <div v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
+                            <i title="系统实体">系</i>
+                        </div>
+                        <div v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
+                            <i title="主实体">主</i>
+                        </div>
+                        <div v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
+                            <i title="明细实体">从</i>
+                        </div>
+                        <div
+                            v-if="!!entityItem.internalEntityFlag"
+                            class="entity-flag detail-entity"
+                        >
+                            <i title="内部实体">内</i>
+                        </div>
+                    </el-card>
+                </el-collapse-item>
                 <template v-for="(op,name,inx) of entityGroup" :key="inx">
                     <el-collapse-item :name="name" v-if="op.length > 0">
                         <template #title>
@@ -183,6 +227,7 @@ let availableEntityList = ref([]);
 
 let allTags = ref([]);
 
+let notGroup = ref([]);
 let entityGroup = ref({});
 let activeNames = ref(["未分组"]);
 onMounted(() => {
@@ -214,7 +259,6 @@ const getAllTags = () => {
         let res = await getAllTagsOfEntity();
         if (res && res.data) {
             allTags.value = res.data;
-            entityGroup.value["未分组"] = [];
             res.data.forEach((el) => {
                 entityGroup.value[el] = [];
                 activeNames.value.push(el);
@@ -252,6 +296,7 @@ const filterEntityList = () => {
             entityGroup.value[key] = [];
         }
     }
+    notGroup.value = [];
     availableEntityList.value.forEach((el) => {
         console.log(el, "el");
         el.newTags = el.tags ? el.tags.split(",") : [];
@@ -260,7 +305,7 @@ const filterEntityList = () => {
                 entityGroup.value[subEl].push(el);
             });
         } else {
-            entityGroup.value["未分组"].push(el);
+            notGroup.value.push(el);
         }
     });
 };
@@ -513,7 +558,7 @@ const clearHideMenuTimer = () => {
             top: 2px;
         }
     }
-    :deep(.el-collapse-item__header){
+    :deep(.el-collapse-item__header) {
         height: 38px;
         line-height: 38px;
     }
