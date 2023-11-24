@@ -39,6 +39,12 @@ export function updateEntityLabel(entity, entityLabel) {
   })
 }
 
+export function updateEntityTags(entity, tags) {
+	return http.post('systemManager/updateEntityTags', {}, {
+		params: {entity, tags}
+	})
+}
+
 export function entityCanBeDeleted(entity) {
   return http.get('systemManager/entityCanBeDeleted', { entity })
 }
