@@ -200,7 +200,7 @@
 <script>
 import {
 	getEntityProps, getFieldListOfEntity, getEntitySet, updateEntityLabel, getTextFieldList,
-	updateEntityNameField, fieldCanBeDeleted, deleteField, fieldCanBeEdited
+	updateEntityNameField, fieldCanBeDeleted, deleteField, fieldCanBeEdited,updateEntityTags
 } from '@/api/system-manager'
 import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
 import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor.vue";
@@ -338,8 +338,13 @@ export default {
             }
 		},
         // 删除Tag
-        delTag(inx){
+        async delTag(inx){
             this.entityProps.tags.splice(inx,1)
+            let res = await updateEntityTags(this.entity,this.entityProps.tags.join(","))
+            if(res && res.data){
+                this.$message.success('标签已删除')
+				this.initTableData()
+            }
         },
 
 		initEntityProps() {
