@@ -16,36 +16,63 @@
             </div>
         </el-header>
         <el-main class="card-container" v-loading="loading">
-            <el-card
-                class="entity-card"
-                shadow="hover"
-                v-for="(entityItem, entityIdx) in availableEntityList"
-                :key="entityIdx"
-                @click=" (event) => showContextMenu(entityItem, event) "
-                @contextmenu.prevent=" (event) => showContextMenu(entityItem, event) "
-                @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
-                @mouseleave="onLeaveEntity"
-            >
-                <template #header>
-                    <div>
-                        <span>{{ entityItem.label }}</span>
-                    </div>
+            <el-collapse v-model="activeNames" class="collapse-entity">
+                <template v-for="(op,name,inx) of entityGroup" :key="inx">
+                    <el-collapse-item :name="name" v-if="op.length > 0">
+                        <template #title>
+                            <div class="collapse-title">
+                                <span class="collapse-icon">
+                                    <el-icon>
+                                        <ElIconGrid />
+                                    </el-icon>
+                                </span>
+                                {{name}}
+                            </div>
+                        </template>
+                        <el-card
+                            class="entity-card"
+                            shadow="hover"
+                            v-for="(entityItem, entityIdx) in op"
+                            :key="entityIdx"
+                            @click=" (event) => showContextMenu(entityItem, event) "
+                            @contextmenu.prevent=" (event) => showContextMenu(entityItem, event) "
+                            @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
+                            @mouseleave="onLeaveEntity"
+                        >
+                            <template #header>
+                                <div>
+                                    <span>{{ entityItem.label }}</span>
+                                </div>
+                            </template>
+                            <div>{{ entityItem.name }}</div>
+                            <div
+                                v-if="!!entityItem.systemEntityFlag"
+                                class="system-flag system-entity"
+                            >
+                                <i title="系统实体">系</i>
+                            </div>
+                            <div
+                                v-if="!entityItem.detailEntityFlag"
+                                class="entity-flag main-entity"
+                            >
+                                <i title="主实体">主</i>
+                            </div>
+                            <div
+                                v-if="!!entityItem.detailEntityFlag"
+                                class="entity-flag detail-entity"
+                            >
+                                <i title="明细实体">从</i>
+                            </div>
+                            <div
+                                v-if="!!entityItem.internalEntityFlag"
+                                class="entity-flag detail-entity"
+                            >
+                                <i title="内部实体">内</i>
+                            </div>
+                        </el-card>
+                    </el-collapse-item>
                 </template>
-                <div>{{ entityItem.name }}</div>
-                <div v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
-                    <i title="系统实体">系</i>
-                </div>
-                <div v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
-                    <i title="主实体">主</i>
-                </div>
-                <div v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
-                    <i title="明细实体">从</i>
-                </div>
-                <div v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
-                    <i title="内部实体">内</i>
-                </div>
-            </el-card>
-
+            </el-collapse>
             <el-dialog
                 title="新建实体"
                 v-model="showNewEntityDialogFlag"
@@ -156,6 +183,8 @@ let availableEntityList = ref([]);
 
 let allTags = ref([]);
 
+let entityGroup = ref({});
+let activeNames = ref(["未分组"]);
 onMounted(() => {
     getEntityList();
     loading.value = true;
@@ -185,6 +214,11 @@ const getAllTags = () => {
         let res = await getAllTagsOfEntity();
         if (res && res.data) {
             allTags.value = res.data;
+            entityGroup.value["未分组"] = [];
+            res.data.forEach((el) => {
+                entityGroup.value[el] = [];
+                activeNames.value.push(el);
+            });
         }
         resolve();
     });
@@ -213,6 +247,22 @@ const filterEntityList = () => {
     } else {
         availableEntityList.value = [...filterEntitys];
     }
+    for (const key in entityGroup.value) {
+        if (entityGroup.value.hasOwnProperty.call(entityGroup.value, key)) {
+            entityGroup.value[key] = [];
+        }
+    }
+    availableEntityList.value.forEach((el) => {
+        console.log(el, "el");
+        el.newTags = el.tags ? el.tags.split(",") : [];
+        if (el.newTags.length > 0) {
+            el.newTags.forEach((subEl) => {
+                entityGroup.value[subEl].push(el);
+            });
+        } else {
+            entityGroup.value["未分组"].push(el);
+        }
+    });
 };
 
 const createNewEntity = () => {
@@ -453,6 +503,21 @@ const clearHideMenuTimer = () => {
 </script>
 
 <style lang="scss" scoped>
+.collapse-entity {
+    .collapse-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #777;
+        .collapse-icon {
+            position: relative;
+            top: 2px;
+        }
+    }
+    :deep(.el-collapse-item__header){
+        height: 38px;
+        line-height: 38px;
+    }
+}
 .el-main.card-container {
     background: #ffffff;
 }
@@ -466,7 +531,7 @@ const clearHideMenuTimer = () => {
 .el-header.entity-action-section {
     height: 54px !important; /* 解决内部按钮居中问题 */
     line-height: 54px; /* 解决内部按钮居中问题 */
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
     border-bottom: 1px dashed #eeeeee;
 }
@@ -480,21 +545,24 @@ const clearHideMenuTimer = () => {
     cursor: pointer;
 
     :deep(.el-card__header) {
-        height: 42px; /* 指定高度，以避免中英文字体高度不一致导致el-card自动换行出现问题 */
+        height: 36px; /* 指定高度，以避免中英文字体高度不一致导致el-card自动换行出现问题 */
         text-align: center;
         border-bottom: 1px dotted #ebeef5;
-        padding: 12px;
+        padding: 0;
+        line-height: 36px;
+        background: #f7f7f7;
+        font-size: 13px;
     }
 
     :deep(.el-card__body) {
         text-align: center;
         font-size: 14px;
-        padding: 12px 12px 30px 12px;
+        padding: 12px 12px 16px 12px;
     }
 
     .system-flag {
         position: absolute;
-        top: 0;
+        bottom: 0;
         right: 23px;
         height: 22px;
         line-height: 22px;
@@ -514,7 +582,7 @@ const clearHideMenuTimer = () => {
 
     .entity-flag {
         position: absolute;
-        top: 0;
+        bottom: 0;
         right: 0;
         height: 22px;
         line-height: 22px;
