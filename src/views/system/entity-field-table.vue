@@ -2,7 +2,7 @@
 	<el-container class="hidden-x-scrollbar">
 		<el-aside class="left-props-panel">
 			<el-scrollbar class="props-scrollbar">
-				<div class="entity-property">
+				<div class="entity-property" v-loading="propsLoading">
 					<div class="entity-property-header">&lt;{{ entityProps.label }}&gt;实体属性</div>
 					<div class="entity-property-form">
 						<el-form label-position="left" :label-width="'120px'" size="small">
@@ -317,6 +317,7 @@ export default {
 				shareable: false,
 			},
 			entity: "",
+            propsLoading:false,
 		}
 	},
 	created() {
@@ -339,26 +340,33 @@ export default {
 		},
         // 删除Tag
         async delTag(inx){
-            this.entityProps.tags.splice(inx,1)
-            let res = await updateEntityTags(this.entity,this.entityProps.tags.join(","))
+            this.propsLoading = true;
+            let tempTags = [...this.entityProps.tags];
+            tempTags.splice(inx,1)
+            let res = await updateEntityTags(this.entity,tempTags.join(","))
             if(res && res.data){
                 this.$message.success('标签已删除')
-				this.initTableData()
+                this.entityProps.tags.splice(inx,1)
+				this.initEntityProps()
+            }else {
+                this.propsLoading = false;
             }
+            
         },
 
 		initEntityProps() {
+            this.propsLoading = true;
 			getEntityProps(this.entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.entityProps = res.data
-                this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
+                if(res && res.data){
+                    this.entityProps = res.data
+                    this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
+                }
+				this.propsLoading = false;
 			}).catch(res => {
 				this.$message({message: res.message, type: 'error'})
+                this.propsLoading = false;
 			})
+            
 		},
 
 		initPageData() {
