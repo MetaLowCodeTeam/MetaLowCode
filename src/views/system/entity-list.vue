@@ -591,6 +591,7 @@ const clearHideMenuTimer = () => {
     margin: 10px;
     position: relative;
     cursor: pointer;
+	border-top-width: 6px;
 
     :deep(.el-card__header) {
         height: 36px; /* 指定高度，以避免中英文字体高度不一致导致el-card自动换行出现问题 */

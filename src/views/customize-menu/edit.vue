@@ -95,6 +95,7 @@ const initFormLayout = async () => {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
+			globalDsv.value.cloudUploadToken = res.data.cloudUploadToken || '';
             // 是编辑
             if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过

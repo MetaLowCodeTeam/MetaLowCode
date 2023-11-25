@@ -225,7 +225,7 @@ export default {
 						fieldSchema.nameReadonly = true
 						fieldSchema.options.name = fld.name
 						fieldSchema.options.label = fld.label
-						this.adjustFieldSchema(fieldSchema, fld)
+						this.adjustFieldSchema(fieldSchema, fld, mdResult)
 						result.main.fieldList.push(fieldSchema)
 					}
 				})
@@ -259,7 +259,7 @@ export default {
 							fieldSchema.nameReadonly = true
 							fieldSchema.options.name = fld.name
 							fieldSchema.options.label = fld.label
-							this.adjustFieldSchema(fieldSchema, fld)
+							this.adjustFieldSchema(fieldSchema, fld, mdResult)
 							detailDataItem.fieldList.push(fieldSchema)
 						}
 					})
@@ -271,7 +271,41 @@ export default {
 			return result
 		},
 
-		adjustFieldSchema(fieldSchema, fldObj) {
+		adjustFieldSchema(fieldSchema, fldObj, mdResult) {
+			// 处理图片、文件上传字段！！
+			let cloudStorageFlag = false
+			let cloudStorageType = ''
+			let cloudUploadURL = ''
+			if (mdResult.data.storageSetting) {
+				cloudStorageFlag = mdResult.data.storageSetting.cloudStorage === 'true'
+				if (cloudStorageFlag) {
+					cloudStorageType = mdResult.data.storageSetting.cloudStorageType
+					cloudUploadURL = mdResult.data.storageSetting.uploadURL
+				}
+			}
+
+			if ((fldObj.type === 'Picture') || (fldObj.type === 'File')) {
+				if (cloudStorageFlag) {
+					//设置uploadURL
+					fieldSchema.options.uploadURL = cloudUploadURL
+
+					//设置withCredentials
+					fieldSchema.options.withCredentials = false
+
+					//设置onBeforeUpload事件代码(还需要生成uuid新文件名)
+					fieldSchema.onBeforeUpload = "const gDSV = this.getGlobalDsv();\nconst token = gDSV.cloudUploadToken;\nthis.setUploadData('token', token);\n\nconst randomNum = Math.floor(Math.random() * 100);\nconst newFileName = new Date().getTime() + randomNum+ '_' + file.name;\nthis.setUploadData('key', newFileName);\n"
+
+					//设置onUploadSuccess事件代码(上传返回结果需要设置QiNiu=前缀)
+					fieldSchema.onUploadSuccess = "return {\n  name: file.name,\n  ulr: '/picture/get/QiNiu=' + result.key\n}\n";
+					if (fldObj.type === 'File') {
+						fieldSchema.onUploadSuccess = "return {\n  name: file.name,\n  ulr: '/file/get/QiNiu=' + result.key\n}\n";
+					}
+
+					//表单渲染器global-dsv属性需要传递uploadToken
+				}
+			}
+			// 处理图片、文件上传字段 -- 结束
+
 			if (fieldSchema.options.hasOwnProperty('optionItems')) {
 				if (this.formOptionData.hasOwnProperty(fieldSchema.options.name)) {
 					fieldSchema.options.optionItems = deepClone( this.formOptionData[fieldSchema.options.name] )
