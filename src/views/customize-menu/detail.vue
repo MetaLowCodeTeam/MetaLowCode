@@ -8,25 +8,26 @@
     >
         <template #header>
             <div class="detail-header">
-                {{ detailName }}详情
-                <div class="fr fr-box">
+                <div class="detail-header-title">{{ detailName }}
+					<div class="fr fr-box">
                     <span class="fr-icon mr-10" @click="refresh">
                         <el-icon>
                             <ElIconRefresh />
                         </el-icon>
                     </span>
-                    <span class="fr-icon" @click="detailDialog.isShow = false">
+						<span class="fr-icon" @click="detailDialog.isShow = false">
                         <el-icon>
                             <ElIconCloseBold />
                         </el-icon>
                     </span>
-                </div>
+					</div>
+				</div>
             </div>
         </template>
 
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20" v-if="!noeData">
-                <el-col :span="18">
+                <el-col :span="21">
                     <DetailTabs
                         v-model="detailDialog"
                         @tabChange="tabChange"
@@ -52,9 +53,10 @@
                         />
                     </div>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="3">
                     <div class="detail-right" style="padding-top: 40px;">
-                        <el-row class="group-el-button">
+						<div class="group-button-label">基本操作</div>
+                        <el-row class="group-el-button" style="margin-bottom: 30px">
                             <el-col :span="24">
                                 <NewRelated
                                     :entityName="entityName"
@@ -65,7 +67,7 @@
                                 />
                             </el-col>
                             <el-col :span="24">
-                                <el-button @click="onEditRow">
+                                <el-button type="primary" plain @click="onEditRow">
                                     <span class="mr-5">
                                         <el-icon>
                                             <ElIconEditPen />
@@ -84,14 +86,18 @@
                                     @editColumnConfirm="editColumnConfirm"
                                 />
                             </el-col>
-                            <el-col :span="24">
-                                <ApprovalRelated
-                                    v-if="approvalStatus"
-                                    :approvalStatus="approvalStatus"
-                                    @onSubmit="onSubmitApproval"
-                                />
-                            </el-col>
+
                         </el-row>
+						<div class="group-button-label">流程操作</div>
+						<el-row class="group-el-button">
+							<el-col :span="24">
+								<ApprovalRelated
+									v-if="approvalStatus"
+									:approvalStatus="approvalStatus"
+									@onSubmit="onSubmitApproval"
+								/>
+							</el-col>
+						</el-row>
                     </div>
                 </el-col>
             </el-row>
@@ -308,11 +314,12 @@ defineExpose({
 }
 
 .detail-header {
+	border-bottom: 2px solid #f1f2f3;
     // padding-bottom: 20px;
     // box-sizing: border-box;
-    padding: 20px;
-    height: 60px;
-    background: #f0f0f0;
+    padding: 16px;
+    height: 56px;
+    //background: #f0f0f0;
     .fr-box {
         // height: 60px;
         .fr-icon {
@@ -322,6 +329,13 @@ defineExpose({
             }
         }
     }
+
+	.detail-header-title {
+		font-size: 18px;
+		padding-left: 5px;
+		border-left: 5px solid;
+		border-left-color: var(--el-color-primary);
+	}
 }
 .detail-main {
     padding: 20px;
@@ -333,6 +347,12 @@ defineExpose({
                 min-width: 110px !important;
             }
         }
+
+		.group-button-label {
+			font-size: 11px;
+			color: #999999;
+			margin-bottom: 5px;
+		}
     }
 }
 </style>

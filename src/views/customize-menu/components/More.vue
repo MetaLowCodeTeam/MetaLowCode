@@ -111,7 +111,7 @@
             </template>
         </div>
         <template #reference>
-            <el-button>
+            <el-button type="primary" plain >
                 更多
                 <el-icon style="transform: rotate(90deg);">
                     <ElIconMoreFilled />

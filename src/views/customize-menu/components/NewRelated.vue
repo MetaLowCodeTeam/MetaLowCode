@@ -1,7 +1,7 @@
 <template>
     <!--  -->
     <el-dropdown trigger="click" @command="handleCommand">
-        <el-button icon="plus">新建相关</el-button>
+        <el-button type="primary" plain icon="plus">新建相关</el-button>
         <template #dropdown>
             <el-dropdown-menu>
                 <template v-if="addConf?.config">

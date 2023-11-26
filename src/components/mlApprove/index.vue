@@ -314,8 +314,8 @@ function canner() {
     // padding-bottom: 20px;
     // box-sizing: border-box;
     padding: 20px;
-    height: 60px;
-    background: #f0f0f0;
+    height: 48px;
+    //background: #f0f0f0;
     .fr-box {
         // height: 60px;
         .fr-icon {

@@ -2,34 +2,34 @@
     <!-- 未提交 -->
     <template v-if="myApproval.approvalStatus == 0">
         <el-row>
-            <el-button v-if="myApproval.startApproval" @click="openDialog('提交审批')">提交审批</el-button>
+            <el-button type="success" plain v-if="myApproval.startApproval" @click="openDialog('提交审批')">提交审批</el-button>
         </el-row>
     </template>
     <!-- 审核中 -->
     <template v-if="myApproval.approvalStatus == 1">
         <el-row>
-            <el-button v-if="myApproval.imApproval" @click="openApproveDialog">审批</el-button>
+            <el-button type="success" plain v-if="myApproval.imApproval" @click="openApproveDialog">审批</el-button>
         </el-row>
         <el-row>
-            <el-button @click="openHistoryDialog">详情</el-button>
+            <el-button type="success" plain @click="openHistoryDialog">审批历史</el-button>
         </el-row>
     </template>
     <!-- 已驳回 -->
     <template v-if="myApproval.approvalStatus == 2 || myApproval.approvalStatus == 4">
         <el-row>
-            <el-button @click="openDialog('提交审批')">提交审批</el-button>
+            <el-button type="success" plain @click="openDialog('提交审批')">提交审批</el-button>
         </el-row>
         <el-row>
-            <el-button @click="openHistoryDialog">详情</el-button>
+            <el-button type="success" plain @click="openHistoryDialog">审批历史</el-button>
         </el-row>
     </template>
     <!-- 已完成 -->
     <template v-if="myApproval.approvalStatus == 3">
         <el-row>
-            <el-button @click="revokeApproval" v-if="$TOOL.checkRole('r6013')">撤销</el-button>
+            <el-button type="success" plain @click="revokeApproval" v-if="$TOOL.checkRole('r6013')">撤销审批</el-button>
         </el-row>
         <el-row>
-            <el-button @click="openHistoryDialog">详情</el-button>
+            <el-button type="success" plain @click="openHistoryDialog">审批历史</el-button>
         </el-row>
     </template>
     <!-- 审批弹框 -->
