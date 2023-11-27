@@ -24,10 +24,12 @@ import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { getLoginUser } from "@/api/user";
+import { useRouter } from "vue-router";
 const { getEntityList, setPublicSetting } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
-
+const router = useRouter();
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
@@ -49,20 +51,47 @@ onBeforeMount(() => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
-    // 获取新消息
-    getNewMsgNum();
-    // // 轮循获取新消息
-    // roundRobin(5000);
 
     // 获取公开系统配置
     queryPublicSetting();
+    // if(){}
+    // 如果没有登录信息
+    // if (!$TOOL.data.get("USER_INFO")?.userName) {
+    //     // xxxx;
+    // }
+    // // 有登录信息
+    // else {
+    initApi();
+    // }
+
     // 有用户信息
-    if ($TOOL.data.get("USER_INFO")?.userName) {
-        // 获取实体列表
-        getEntityList();
-        getRightMap();
-    }
+    // if ($TOOL.data.get("USER_INFO")?.userName) {
+    // }
 });
+
+const initApi = async () => {
+    let res = await getLoginUser();
+    if (res && res.data) {
+        if (res.data.data) {
+            let userInfo = {
+                userName: res.data.data.name,
+                loginName: res.data.data.loginName,
+                userId: res.data.data.id,
+                dashboard: "1",
+            };
+            $TOOL.data.set("USER_INFO", userInfo);
+            // 轮循获取新消息
+            // roundRobin(5000);
+            // 获取实体列表
+            getEntityList();
+            getRightMap();
+            // 获取新消息
+            getNewMsgNum();
+        } else {
+            router.push({ path: "/web/login" });
+        }
+    }
+};
 
 const getRightMap = async () => {
     let getRightMapRes = await http.get("/user/getRightMap");

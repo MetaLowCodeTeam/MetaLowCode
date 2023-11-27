@@ -22,6 +22,8 @@ export function saveUser(entity, id, formModel) {
     })
 }
 
+
+
 export function deleteUserById(userId) {
     return request({
         url: 'user/deleteUser',
@@ -61,6 +63,13 @@ export function getBlankRoleData() {
     })
 }
 
+export function getLoginUser() {
+    return request({
+        url: 'user/getLoginUser',
+        method: 'get',
+    })
+}
+
 export function getRoleData(roleId) {
     return request({
         url: 'role/getRoleData',
@@ -68,6 +77,8 @@ export function getRoleData(roleId) {
         params: { roleId }
     })
 }
+
+
 
 
 export function saveRoleData(roleDTO) {

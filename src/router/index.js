@@ -51,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
 
-    let token = tool.cookie.get("TOKEN");
+  
     if (to.path === "/web/login") {
         //删除路由(替换当前layout路由)
         router.addRoute(routes[0])
@@ -69,13 +69,6 @@ router.beforeEach(async (to, from, next) => {
     }
     if (routes.findIndex(r => r.path === to.path) >= 0) {
         next();
-        return false;
-    }
-
-    if (!token) {
-        next({
-            path: '/web/login'
-        });
         return false;
     }
     let routerEntityname = to.params?.entityname;
