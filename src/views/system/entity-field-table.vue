@@ -215,16 +215,25 @@
                 >
                     {{ tag.name }}
                 </el-check-tag>
-                <!-- <div class="w-100">
-
-                </div> -->
+                <div class="w-100">
+                    <el-input
+                        v-if="inputVisible"
+                        class="mb-5"
+                        ref="InputRef"
+                        v-model="tagValue"
+                        style="width: 100px;"
+                        @keyup.enter="handleInputConfirm"
+                        @blur="handleInputConfirm"
+                    />
+                    <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="allTags?.length > 9">+ 新增标签</el-button>
+                </div>
             </div>
            
             <template #footer>
                 <div class="dialog-footer">
                     <el-button
                         type="primary"
-                        @click="addTags"
+                        @click="setConfirmTags"
                         v-loading="addTagDialogLoading"
                     >确 定</el-button>
                     <el-button @click="addTagDialogIsShow = false" v-loading="addTagDialogLoading"
@@ -368,6 +377,8 @@ export default {
             allTags:[],
             addTagDialogIsShow:false,
             addTagDialogLoading:false,
+            inputVisible:false,
+            tagValue:"",
 		}
 	},
 	created() {
@@ -428,8 +439,8 @@ export default {
         onTagsChange(item)  {
             item.checked = !item.checked;
         },
-        // 新增标签
-        async addTags(){
+        // 设置标签确认
+        async setConfirmTags(){
             this.addTagDialogLoading = true;
             let setTags = [];
             this.allTags.forEach(el=>{
@@ -444,6 +455,27 @@ export default {
 				this.initEntityProps()
             }
             this.addTagDialogLoading = false;
+        },
+        // 点击新增标签
+        showInput(){
+            this.inputVisible = true;
+            this.$nextTick(()=>{
+                this.$refs.InputRef.focus()
+            })
+        },
+        // 新建确认
+        handleInputConfirm  () {
+            let hasTag = this.allTags.filter(
+                (el) => el.name == this.tagValue
+            );
+            if (this.tagValue && hasTag.length < 1) {
+                this.allTags.push({
+                    name: this.tagValue,
+                    checked: true,
+                });
+            }
+            this.inputVisible = false;
+            this.tagValue = "";
         },
 		initTableData() {
 			getFieldListOfEntity(this.entity).then(res => {
