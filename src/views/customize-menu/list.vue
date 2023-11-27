@@ -3,6 +3,7 @@
         <div class="table-box">
             <div class="table-search-box">
                 <mlListAdvancedQuery
+                    v-if="entityCode"
                     v-model="advFilter"
                     :entityName="entityName"
                     :entityCode="entityCode"
@@ -187,6 +188,9 @@ import FormatRow from "./components/FormatRow.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
+import useCommonStore from "@/store/modules/common";
+import { ElMessage } from "element-plus";
+const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
@@ -258,10 +262,21 @@ let nameFieldName = ref("");
 let addConf = reactive({});
 
 onBeforeMount(() => {
-    entityCode.value = router.currentRoute.value.meta.entityCode;
-    entityName.value = router.currentRoute.value.meta.entityName;
+    let routerEntityname = router.currentRoute.value.params?.entityname;
+    if(routerEntityname){
+  
+        entityCode.value = allEntityCode.value[routerEntityname];
+        entityName.value = routerEntityname;
+        
+    }else {
+        entityCode.value = router.currentRoute.value.meta.entityCode;
+        entityName.value = router.currentRoute.value.meta.entityName;
+    }
+    if(!entityCode.value){
+        ElMessage.warning("该实体不存在或者已删除");
+        return
+    }
     quickQueryConf.entityCode = entityCode.value;
-    // getTableColumn();
     // 获取导航配置
     getLayoutList();
 });

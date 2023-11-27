@@ -350,7 +350,12 @@ export default {
                     errMsg: "在线报表 插件未安装！",
                 },
             },
-            needPlugin: ["TriggerList", "DashboardDesign", "TemplatesList","TriggerLog"],
+            needPlugin: [
+                "TriggerList",
+                "DashboardDesign",
+                "TemplatesList",
+                "TriggerLog",
+            ],
         };
     },
     computed: {
@@ -380,6 +385,7 @@ export default {
         this.onLayoutResize();
         window.addEventListener("resize", this.onLayoutResize);
         var menu = this.$router.sc_getMenu();
+        console.log("4. 页面使用路由菜单...", menu);
         this.menu = this.filterUrl(menu);
         this.getDefaultOpeneds();
         this.showThis();

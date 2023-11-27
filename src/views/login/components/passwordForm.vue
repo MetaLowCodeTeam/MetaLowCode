@@ -155,7 +155,7 @@ export default {
                 this.$router.replace({
                     path: "/",
                 });
-
+                console.log("2. 点击了登录...");
                 this.$message.success("登录成功");
             }
             this.islogin = false;

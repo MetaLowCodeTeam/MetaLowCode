@@ -46,6 +46,7 @@ var isGetRouter = false;
 router.beforeEach(async (to, from, next) => {
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
+    const { queryEntityNameByLabel } = useCommonStore();
     NProgress.start()
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
@@ -60,7 +61,7 @@ router.beforeEach(async (to, from, next) => {
         next();
         return false;
     }
-    if(to.path == '/'){
+    if (to.path == '/') {
         next({
             path: '/web/dashboard'
         });
@@ -77,16 +78,20 @@ router.beforeEach(async (to, from, next) => {
         });
         return false;
     }
-
+    let routerEntityname = to.params?.entityname;
+    if(routerEntityname && !to.meta.title){
+        to.meta.title = queryEntityNameByLabel(routerEntityname)
+    }   
     //整页路由处理
     if (to.meta.fullpage) {
         to.matched = [to.matched[to.matched.length - 1]]
+       
     }
     //加载动态/静态路由
     if (!isGetRouter) {
         const { setNavigationList, setChosenNavigationId, setDefaultMenuList } = useLayoutConfigStore();
         let navRes = await layoutConfigApi.getNavigationList();
-        if(navRes && navRes.code == 403){
+        if (navRes && navRes.code == 403) {
             isGetRouter = false;
             next({
                 path: '/web/login'
@@ -98,6 +103,7 @@ router.beforeEach(async (to, from, next) => {
             setChosenNavigationId(navRes.data.chosenNavigationId);
             setDefaultMenuList();
         }
+        
         const { useMenuList } = storeToRefs(useLayoutConfigStore());
         let apiMenu = [...useMenuList.value];
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
@@ -116,6 +122,7 @@ router.beforeEach(async (to, from, next) => {
         }
         isGetRouter = true;
     }
+    
     beforeEach(to, from)
     next();
 });

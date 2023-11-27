@@ -105,6 +105,7 @@ const routes = [
                 "meta": {
                     hidden: true,
                 },
+                component: 'customize-menu/list',
             }
 
             // ...formatRoutrs
