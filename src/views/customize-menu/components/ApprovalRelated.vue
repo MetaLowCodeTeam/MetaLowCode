@@ -1,4 +1,5 @@
 <template>
+	<div class="group-button-label">流程操作</div>
     <!-- 未提交 -->
     <template v-if="myApproval.approvalStatus == 0">
         <el-row>
@@ -208,4 +209,9 @@ const goApprovalList = () => {
 };
 </script>
 <style lang='scss' scoped>
+.group-button-label {
+	font-size: 11px;
+	color: #999999;
+	margin-bottom: 5px;
+}
 </style>

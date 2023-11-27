@@ -111,6 +111,7 @@ export default {
 			designerConfig: {
 				componentLib: false,
 				formTemplates: false,
+				eventCollapse: false,
 				metadataLib: true,
 				logoHeader: false,
 				exportCodeButton: false,
@@ -133,6 +134,7 @@ export default {
 		this.entity = this.$route.query.entity
 		this.entityLabel = this.$route.query.entityLabel
 		this.designerConfig.componentLib = !!window.advancedDevMode
+		this.designerConfig.eventCollapse = !!window.advancedDevMode
 	},
 	mounted() {
 		this.loadDesign()
@@ -155,9 +157,9 @@ export default {
 				}
 
 				if (shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
-					//console.error('99999999')
 					window.advancedDevMode = !window.advancedDevMode
 					this.designerConfig.componentLib = !!window.advancedDevMode
+					this.designerConfig.eventCollapse = !!window.advancedDevMode
 				}
 			}
 
@@ -272,36 +274,35 @@ export default {
 		},
 
 		adjustFieldSchema(fieldSchema, fldObj, mdResult) {
+			//debugger
+
 			// 处理图片、文件上传字段！！
 			let cloudStorageFlag = false
 			let cloudStorageType = ''
-			let cloudUploadURL = ''
+			//let cloudUploadURL = ''
 			if (mdResult.data.storageSetting) {
-				cloudStorageFlag = mdResult.data.storageSetting.cloudStorage === 'true'
+				cloudStorageFlag = mdResult.data.storageSetting[0].cloudStorage === 'true'
 				if (cloudStorageFlag) {
-					cloudStorageType = mdResult.data.storageSetting.cloudStorageType
-					cloudUploadURL = mdResult.data.storageSetting.uploadURL
+					cloudStorageType = mdResult.data.storageSetting[0].cloudStorageType
+					//cloudUploadURL = mdResult.data.storageSetting[0].uploadURL
 				}
 			}
 
 			if ((fldObj.type === 'Picture') || (fldObj.type === 'File')) {
+				//debugger
+
 				if (cloudStorageFlag) {
 					//设置uploadURL
-					fieldSchema.options.uploadURL = cloudUploadURL
+					//fieldSchema.options.uploadURL = cloudUploadURL
 
 					//设置withCredentials
 					fieldSchema.options.withCredentials = false
 
 					//设置onBeforeUpload事件代码(还需要生成uuid新文件名)
-					fieldSchema.onBeforeUpload = "const gDSV = this.getGlobalDsv();\nconst token = gDSV.cloudUploadToken;\nthis.setUploadData('token', token);\n\nconst randomNum = Math.floor(Math.random() * 100);\nconst newFileName = new Date().getTime() + randomNum+ '_' + file.name;\nthis.setUploadData('key', newFileName);\n"
+					fieldSchema.options.onBeforeUpload = "const gDSV = this.getGlobalDsv();\nconst wType = this.field.type;\nif (wType === 'picture-upload') {\n  this.field.options.uploadURL = gDSV.picUploadURL;\n} else if (wType === 'file-upload')  {\n  this.field.options.uploadURL = gDSV.fileUploadURL;\n}\n\nconst cloudStorage = gDSV.cloudStorage;\nif (cloudStorage === \"true\") {\n  this.field.options.withCredentials = false\n  const token = gDSV.cloudUploadToken;\n  this.setUploadData('token', token);\n  \n  const randomNum = Math.floor(Math.random() * 100);\n  const newFileName = new Date().getTime() + randomNum+ '_' + file.name;\n  this.setUploadData('key', newFileName);\n} else {\n  //this.field.options.withCredentials = true\n}\n"
 
 					//设置onUploadSuccess事件代码(上传返回结果需要设置QiNiu=前缀)
-					fieldSchema.onUploadSuccess = "return {\n  name: file.name,\n  ulr: '/picture/get/QiNiu=' + result.key\n}\n";
-					if (fldObj.type === 'File') {
-						fieldSchema.onUploadSuccess = "return {\n  name: file.name,\n  ulr: '/file/get/QiNiu=' + result.key\n}\n";
-					}
-
-					//表单渲染器global-dsv属性需要传递uploadToken
+					fieldSchema.options.onUploadSuccess = "const gDSV = this.getGlobalDsv();\nconst cloudStorage = gDSV.cloudStorage;\nif (cloudStorage === \"true\") {\n  const wType = this.field.type;\n  let downloadPrefix = \"\"\n  if (wType === 'picture-upload') {\n    downloadPrefix = gDSV.picDownloadPrefix;\n  } else if (wType === 'file-upload')  {\n    downloadPrefix = gDSV.fileDownloadPrefix;\n  }\n  \n  return {\n    name: file.name,\n    url: downloadPrefix + result.key\n  }\n} else {\n  return {\n    name: file.name,\n    url: result.url\n  }\n}\n"
 				}
 			}
 			// 处理图片、文件上传字段 -- 结束

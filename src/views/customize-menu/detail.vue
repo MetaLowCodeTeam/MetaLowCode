@@ -88,7 +88,7 @@
                             </el-col>
 
                         </el-row>
-						<div class="group-button-label">流程操作</div>
+
 						<el-row class="group-el-button">
 							<el-col :span="24">
 								<ApprovalRelated

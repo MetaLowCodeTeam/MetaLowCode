@@ -95,7 +95,14 @@ const initFormLayout = async () => {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
-			globalDsv.value.cloudUploadToken = res.data.cloudUploadToken || '';
+			if (res.data.formUploadParam) {
+				globalDsv.value.cloudUploadToken = res.data.formUploadParam.cloudUploadToken
+				globalDsv.value.cloudStorage = res.data.formUploadParam.cloudStorage
+				globalDsv.value.picUploadURL = res.data.formUploadParam.picUploadURL
+				globalDsv.value.fileUploadURL = res.data.formUploadParam.fileUploadURL
+				globalDsv.value.picDownloadPrefix = res.data.formUploadParam.picDownloadPrefix
+				globalDsv.value.fileDownloadPrefix = res.data.formUploadParam.fileDownloadPrefix
+			}
             // 是编辑
             if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过
