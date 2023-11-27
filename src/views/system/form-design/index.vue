@@ -274,27 +274,18 @@ export default {
 		},
 
 		adjustFieldSchema(fieldSchema, fldObj, mdResult) {
-			//debugger
-
 			// 处理图片、文件上传字段！！
 			let cloudStorageFlag = false
 			let cloudStorageType = ''
-			//let cloudUploadURL = ''
 			if (mdResult.data.storageSetting) {
 				cloudStorageFlag = mdResult.data.storageSetting[0].cloudStorage === 'true'
 				if (cloudStorageFlag) {
 					cloudStorageType = mdResult.data.storageSetting[0].cloudStorageType
-					//cloudUploadURL = mdResult.data.storageSetting[0].uploadURL
 				}
 			}
 
 			if ((fldObj.type === 'Picture') || (fldObj.type === 'File')) {
-				//debugger
-
 				if (cloudStorageFlag) {
-					//设置uploadURL
-					//fieldSchema.options.uploadURL = cloudUploadURL
-
 					//设置withCredentials
 					fieldSchema.options.withCredentials = false
 
@@ -302,7 +293,7 @@ export default {
 					fieldSchema.options.onBeforeUpload = "const gDSV = this.getGlobalDsv();\nconst wType = this.field.type;\nif (wType === 'picture-upload') {\n  this.field.options.uploadURL = gDSV.picUploadURL;\n} else if (wType === 'file-upload')  {\n  this.field.options.uploadURL = gDSV.fileUploadURL;\n}\n\nconst cloudStorage = gDSV.cloudStorage;\nif (cloudStorage === \"true\") {\n  this.field.options.withCredentials = false\n  const token = gDSV.cloudUploadToken;\n  this.setUploadData('token', token);\n  \n  const randomNum = Math.floor(Math.random() * 100);\n  const newFileName = new Date().getTime() + randomNum+ '_' + file.name;\n  this.setUploadData('key', newFileName);\n} else {\n  //this.field.options.withCredentials = true\n}\n"
 
 					//设置onUploadSuccess事件代码(上传返回结果需要设置QiNiu=前缀)
-					fieldSchema.options.onUploadSuccess = "const gDSV = this.getGlobalDsv();\nconst cloudStorage = gDSV.cloudStorage;\nif (cloudStorage === \"true\") {\n  const wType = this.field.type;\n  let downloadPrefix = \"\"\n  if (wType === 'picture-upload') {\n    downloadPrefix = gDSV.picDownloadPrefix;\n  } else if (wType === 'file-upload')  {\n    downloadPrefix = gDSV.fileDownloadPrefix;\n  }\n  \n  return {\n    name: file.name,\n    url: downloadPrefix + result.key\n  }\n} else {\n  return {\n    name: file.name,\n    url: result.url\n  }\n}\n"
+					fieldSchema.options.onUploadSuccess = "const gDSV = this.getGlobalDsv();\nconst cloudStorage = gDSV.cloudStorage;\nif (cloudStorage === \"true\") {\n  const wType = this.field.type;\n  let downloadPrefix = \"\"\n  if (wType === 'picture-upload') {\n    downloadPrefix = gDSV.picDownloadPrefix;\n  } else if (wType === 'file-upload')  {\n    downloadPrefix = gDSV.fileDownloadPrefix;\n  }\n  \n  let downUrl = downloadPrefix + result.key;\n  const paramName = (downUrl.indexOf(\"?\") === -1) ? '?fileName=' : '&fileName=';\n  return {\n    name: file.name,\n    url: downUrl + paramName + file.name\n  }\n} else {\n  const paramName = (result.url.indexOf(\"?\") === -1) ? '?fileName=' : '&fileName=';\n  return {\n    name: file.name,\n    url: result.url + paramName + file.name\n  }\n}\n"
 				}
 			}
 			// 处理图片、文件上传字段 -- 结束
