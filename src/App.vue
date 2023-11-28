@@ -48,6 +48,11 @@ let locale = computed(() => {
 onBeforeMount(() => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
+
+    let isMobile = navigator.userAgent.match(
+        /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+    );
+    console.log(isMobile,'isMobile')
     colorPrimary(app_color);
     // 获取新消息
     getNewMsgNum();
