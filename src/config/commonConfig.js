@@ -18,6 +18,13 @@ export default [
                 isError: false,
             },
             {
+                label: "主页地址/域名",
+                key: "homeURL",
+                type: "input",
+                validation:"url",
+                isError: false,
+            },
+            {
                 label: "主色调",
                 key: "themeColor",
                 type: "picker",
@@ -34,6 +41,7 @@ export default [
                 key: "watermark",
                 type: "switch",
             },
+            
         ],
     },
     {

@@ -313,6 +313,12 @@ const checkOnSave = () => {
         // 循环当前tab下的字段集
         for (let subInx = 0; subInx < el.confs.length; subInx++) {
             const subEl = el.confs[subInx];
+            if(subEl.validation == 'url' && confData[subEl.key] && confData[subEl.key].indexOf('http://') == -1&& confData[subEl.key].indexOf('https://') == -1){
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning("请输入有效域名");
+                return false;
+            }
             // 如果字段是必填的，且该字段没有值 并且该字段不属于短信 或者 邮箱
             if (
                 subEl.required &&
@@ -377,6 +383,11 @@ const checkOnSave = () => {
             }
         }
     }
+    // if(confData.homeURL && confData.homeURL.indexOf('http://') == -1 && confData.homeURL.indexOf('https://') == -1){
+    //     ElMessage.warning("请输入有效域名");
+    //     confList.value[0].
+    //     return false
+    // }
     return true;
 };
 
