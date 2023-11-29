@@ -165,8 +165,10 @@ import { inject, onMounted, reactive, ref } from "vue";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import { getDataList, deleteRecord, getEntityCodeList } from "@/api/crud";
-import { ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const $TOOL = inject("$TOOL");
 const props = defineProps({
     // 实体名称
@@ -200,6 +202,8 @@ let loading = ref(false);
 let defaultCode = ref("all");
 // 实体列表
 let entityList = ref([]);
+// 所有实体CODE
+let allEntityCode = ref([]);
 // 流程列表
 let approvalList = ref([]);
 // 搜索值
@@ -216,7 +220,10 @@ let tableSort = ref([
         type: "DESC",
     },
 ]);
+
 onMounted(() => {
+    // console.log(defaultCode.value,'defaultCode.value')
+    // defaultCode.value = ""
     getEntityList();
 });
 
@@ -234,6 +241,13 @@ const getEntityList = async () => {
     let res = await getEntityCodeList(props.entityName);
     if (res) {
         entityList.value = res.data;
+        allEntityCode.value = res.data.map((el) => el.entityCode + "");
+        if (router.currentRoute.value.query.entityCode) {
+            defaultCode.value = router.currentRoute.value.query.entityCode;
+            if (!allEntityCode.value.includes(defaultCode.value)) {
+                ElMessage.warning("该实体不存在，请添加该实体");
+            }
+        }
         getApprovalList();
     }
     loading.value = false;
@@ -344,6 +358,9 @@ const sortChange = (column, prop, order) => {
 const fieldCheck = (item) => {
     defaultCode.value = item.entityCode;
     page.no = 1;
+    if(router.currentRoute.value.query.entityCode){
+        window.history.replaceState({}, '', `${window.location.pathname}`);
+    }
     getApprovalList();
 };
 
