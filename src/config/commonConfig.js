@@ -138,30 +138,30 @@ export default [
                 type: "switch",
             },
             {
-                label: "accessKey",
-                key: "csaccessKey",
+                label: "ACCESSKEY",
+                key: "accessKey",
                 type: "input",
                 required: true,
                 isError: false,
             },
             {
-                label: "secretKey",
-                key: "cssecretKey",
+                label: "SECRETKEY",
+                key: "secretKey",
                 type: "input",
                 required: true,
                 isError: false,
             },
             {
                 label: "存储空间",
-                subLabel:"存储空间变更需你自行迁移原有数据",
-                key: "csbucket",
+                subLabel: "存储空间变更需你自行迁移原有数据",
+                key: "bucket",
                 type: "input",
                 required: true,
                 isError: false,
             },
             {
                 label: "访问域名",
-                key: "cshost",
+                key: "host",
                 type: "input",
                 required: true,
                 isError: false,
@@ -169,37 +169,70 @@ export default [
         ],
     },
     {
+        label: "钉钉集成",
+        code: "dingTalkIntegration",
+        confs: [
+            {
+                label: "启用钉钉服务",
+                key: "dingTalkOpen",
+                type: "switch",
+            },
+            {
+                label: "AGENTID",
+                key: "dingTalkAgentId",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "APPKEY",
+                key: "dingTalkAppKey",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "APPSECRET",
+                key: "dingTalkAppSecret",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+        ],
+    },
+
+    {
         label: "授权许可",
         code: 'authLicense',
         confs: [
             {
                 label: "公司名称",
                 key: "companyName",
-                keyFrom:"licenseInfo",
+                keyFrom: "licenseInfo",
                 type: 'text'
             },
             {
                 label: "账号",
                 key: "account",
-                keyFrom:"licenseInfo",
+                keyFrom: "licenseInfo",
                 type: 'text'
             },
             {
                 label: "实体数量",
                 key: "entityLimit",
-                keyFrom:"licenseInfo",
+                keyFrom: "licenseInfo",
                 type: 'text'
             },
             {
                 label: "产品类型",
                 key: "productType",
-                keyFrom:"licenseInfo",
+                keyFrom: "licenseInfo",
                 type: 'text'
             },
             {
                 label: "设备号",
                 key: "deviceNo",
-                keyFrom:"licenseInfo",
+                keyFrom: "licenseInfo",
                 type: 'text'
             },
         ],

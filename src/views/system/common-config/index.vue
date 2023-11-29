@@ -124,11 +124,12 @@ let smsFields = ref(["smsappId", "smsappKey", "smssignature"]);
 // 邮箱字段
 let emailFields = ref(["appId", "appKey", "from", "fromName", "cc"]);
 // 云存储字段
-let cloudStorageFields = ref([
-    "csaccessKey",
-    "cssecretKey",
-    "csbucket",
-    "cshost",
+let cloudStorageFields = ref(["accessKey", "secretKey", "bucket", "host"]);
+// 钉钉字段
+let dingTalkFields = ref([
+    "dingTalkAppKey",
+    "dingTalkAppSecret",
+    "dingTalkAgentId",
 ]);
 
 const initData = async () => {
@@ -138,7 +139,8 @@ const initData = async () => {
     if (res) {
         let resData = res.data ? res.data : {};
         confData = Object.assign(confData, resData);
-        let { emailSetting, smsSetting, cloudStorageSetting } = confData;
+        let { emailSetting, smsSetting, cloudStorageSetting, dingTalkSetting } =
+            confData;
 
         // 格式化短信
         confData.smsOpen = smsSetting.openStatus;
@@ -162,7 +164,16 @@ const initData = async () => {
         for (const key in cloudStorageSetting) {
             if (Object.hasOwnProperty.call(cloudStorageSetting, key)) {
                 const element = cloudStorageSetting[key];
-                confData["cs" + key] = element;
+                confData[key] = element;
+            }
+        }
+
+        // 格式化钉钉集成
+        confData.dingTalkOpen = dingTalkSetting.openStatus;
+        for (const key in dingTalkSetting) {
+            if (Object.hasOwnProperty.call(dingTalkSetting, key)) {
+                const element = dingTalkSetting[key];
+                confData[key] = element;
             }
         }
 
@@ -210,7 +221,14 @@ const isDisabled = (card, item) => {
     ) {
         return true;
     }
-
+    // 如果是钉钉集成 且 没有开启钉钉服务
+    if (
+        card.code == "dingTalkIntegration" &&
+        !confData.dingTalkOpen &&
+        dingTalkFields.value.includes(item.key)
+    ) {
+        return true;
+    }
     return false;
 };
 
@@ -223,7 +241,6 @@ const onSubmit = async () => {
         return;
     }
     // 如果短信是开启的
-
     if (confData.smsOpen) {
         for (const key in confData.smsSetting) {
             if (Object.hasOwnProperty.call(confData.smsSetting, key)) {
@@ -231,10 +248,10 @@ const onSubmit = async () => {
             }
         }
     }
+    // 重新赋值短信开关
     confData.smsSetting.openStatus = confData.smsOpen;
 
     // 如果邮箱是开启的
-
     if (confData.emailOpen) {
         for (const key in confData.emailSetting) {
             if (Object.hasOwnProperty.call(confData.emailSetting, key)) {
@@ -242,16 +259,30 @@ const onSubmit = async () => {
             }
         }
     }
+    // 重新赋值邮箱开关
     confData.emailSetting.openStatus = confData.emailOpen;
+
     // 如果云存储是开启的
     if (confData.cloudStorageOpen) {
         for (const key in confData.cloudStorageSetting) {
             if (Object.hasOwnProperty.call(confData.cloudStorageSetting, key)) {
-                confData.cloudStorageSetting[key] = confData["cs" + key];
+                confData.cloudStorageSetting[key] = confData[key];
             }
         }
     }
+    // 重新赋值云存储开关
     confData.cloudStorageSetting.openStatus = confData.cloudStorageOpen;
+
+    // 如果钉钉是开启的
+    if (confData.dingTalkOpen) {
+        for (const key in confData.dingTalkSetting) {
+            if (Object.hasOwnProperty.call(confData.dingTalkSetting, key)) {
+                confData.dingTalkSetting[key] = confData[key];
+            }
+        }
+    }
+    // 重新赋值云存储开关
+    confData.dingTalkSetting.openStatus = confData.dingTalkOpen;
 
     let res = await updateSysSetting(confData);
     if (res) {
@@ -287,7 +318,9 @@ const checkOnSave = () => {
                 subEl.required &&
                 !confData[subEl.key] &&
                 !smsFields.value.includes(subEl.key) &&
-                !emailFields.value.includes(subEl.key)
+                !emailFields.value.includes(subEl.key) &&
+                !cloudStorageFields.value.includes(subEl.key) &&
+                !dingTalkFields.value.includes(subEl.key)
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
@@ -312,6 +345,30 @@ const checkOnSave = () => {
                 !confData[subEl.key] &&
                 emailFields.value.includes(subEl.key) &&
                 confData.emailOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于云存储 并且邮箱是开启的
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                cloudStorageFields.value.includes(subEl.key) &&
+                confData.cloudStorageOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于云存储 并且邮箱是开启的
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                dingTalkFields.value.includes(subEl.key) &&
+                confData.dingTalkOpen
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
