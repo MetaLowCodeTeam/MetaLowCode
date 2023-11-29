@@ -165,11 +165,28 @@
                     class="context-menu__item"
                     @click="gotoFormLayout(selectedEntityObj)"
                 >表单设计</div>
-                <div
-                    v-if="checkRole('r6008')"
-                    class="context-menu__item"
-                    @click="gotoListView(selectedEntityObj)"
-                >列表设计</div>
+				<div
+					v-if="checkRole('r6008')"
+					class="context-menu__item"
+					@click="gotoListView(selectedEntityObj)"
+				>列表设计</div>
+				<div class="context-menu-divider"></div>
+				<div
+					v-if="checkRole('r6016')"
+					class="context-menu__item"
+					@click="gotoRoute('process-list', true, selectedEntityObj)"
+				>流程设计</div>
+				<div
+					v-if="checkRole('r6015')"
+					class="context-menu__item"
+					@click="gotoRoute('trigger-list', false, selectedEntityObj)"
+				>触发器设计</div>
+				<div
+					v-if="checkRole('r45-2')"
+					class="context-menu__item"
+					@click="gotoRoute('templates-list', true, selectedEntityObj)"
+				>报表设计</div>
+				<div class="context-menu-divider"></div>
                 <div
                     v-if="checkRole('r6002')"
                     class="context-menu__item"
@@ -413,7 +430,29 @@ const gotoListView = (selectedEntityObj) => {
         return;
     }
 
+	if (selectedEntityObj.value.detailEntityFlag) {
+		ElMessage.info("明细实体不允许设计列表");
+		return;
+	}
+
     router.push("/web/" + selectedEntityObj.value.name + "/list");
+};
+
+const gotoRoute = (routePage, disableDetailEntity, selectedEntityObj) => {
+	if (
+		selectedEntityObj.value.systemEntityFlag ||
+		selectedEntityObj.value.internalEntityFlag
+	) {
+		ElMessage.info("当前实体不允许此操作");
+		return;
+	}
+
+	if (disableDetailEntity && selectedEntityObj.value.detailEntityFlag) {
+		ElMessage.info("明细实体不允许此操作");
+		return;
+	}
+
+	router.push("/web/" + routePage + '?entityCode=' + selectedEntityObj.value.entityCode);
 };
 
 const deleteSelectedEntity = (selectedEntityObj) => {
@@ -516,9 +555,9 @@ const contextMenuSetting = (menu, event) => {
         menu.style.left = event.clientX + 1 + "px";
     }
     if (event.clientY > 700) {
-        menu.style.top = event.clientY - 30 + "px";
+        menu.style.top = event.clientY - 70 + "px";
     } else {
-        menu.style.top = event.clientY - 10 + "px";
+        menu.style.top = event.clientY - 50 + "px";
     }
 };
 
@@ -530,9 +569,11 @@ const showContextMenu = (entity, event) => {
     selectedEntityObj.value.value = {
         name: entity.name,
         label: entity.label,
+		entityCode: entity.entityCode,
         layoutable: entity.layoutable,
         listable: entity.listable,
         systemEntityFlag: entity.systemEntityFlag,
+		detailEntityFlag: entity.detailEntityFlag,
     };
     let menu = document.querySelector("#contextMenu");
     contextMenuSetting(menu, event);
@@ -713,6 +754,13 @@ const clearHideMenuTimer = () => {
     background: #409eff;
     border-color: #66b1ff;
     color: #fff;
+}
+
+.context-menu-divider {
+	line-height: 4px;
+	height: 4px;
+	background-color: #fff2f3;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 </style>
 

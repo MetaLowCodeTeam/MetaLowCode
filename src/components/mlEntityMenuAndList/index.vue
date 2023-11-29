@@ -158,7 +158,7 @@
         </el-container>
     </el-container>
 </template>
-  
+
 <script setup>
 import useCommonStore from "@/store/modules/common";
 import { inject, onMounted, reactive, ref } from "vue";
@@ -245,7 +245,7 @@ const getEntityList = async () => {
         if (router.currentRoute.value.query.entityCode) {
             defaultCode.value = router.currentRoute.value.query.entityCode;
             if (!allEntityCode.value.includes(defaultCode.value)) {
-                ElMessage.warning("该实体不存在，请添加该实体");
+                ElMessage.warning("暂无数据，请点击【添加】按钮新增");
             }
         }
         getApprovalList();
@@ -457,7 +457,7 @@ defineExpose({
     getEntityList,
 });
 </script>
-  
+
 <style lang="scss" scoped>
 .main-container {
     min-width: 720px;
@@ -523,4 +523,3 @@ defineExpose({
     }
 }
 </style>
-  
