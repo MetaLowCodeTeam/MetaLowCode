@@ -16,17 +16,13 @@ const useCommonStore = defineStore('commonStore', () => {
     // 系统配置
     let publicSetting = ref({});
     const getEntityList = () => {
-        getEntitySet().then(res => {
-            if (res.error != null) {
-                ElMessage({ message: res.error, type: 'error' })
-                return
-            }
-            if (res.data && res.data.length > 0) {
+        return new Promise(async (resolve, reject) => {
+            let res = await getEntitySet();
+            if (res && res.data) {
                 refreshCache(res.data)
             }
-        }).catch(res => {
-            ElMessage({ message: res.message, type: 'error' })
-        })
+            resolve();
+        });
     }
     const refreshCache = (list) => {
         unSystemEntityList.value = [];
