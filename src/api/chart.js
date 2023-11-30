@@ -54,30 +54,30 @@ export function queryChartData(formModel, type) {
     const { getEntityList } = useCommonStore();
     const { allEntityName } = storeToRefs(useCommonStore());
     // 获取实体列表
-    getEntityList().then(() => {
-        let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
-        // 指标
-        let longitude = formatItem(formModel?.setDimensional.metrics || [], 'longitude');
+    // getEntityList().then(() => {
+    let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
+    // 指标
+    let longitude = formatItem(formModel?.setDimensional.metrics || [], 'longitude');
 
-        if (type == 'pivotTable') {
-            latitude = formatItem(formModel?.setDimensional.dimensionRow || [], 'latitude');
-            let dimensionCol = formatItem(formModel?.setDimensional.dimensionCol || [], 'latitude');
-            dimensionCol.forEach(el => {
-                el.columns = true;
-                latitude.push(el)
-            })
-        }
+    if (type == 'pivotTable') {
+        latitude = formatItem(formModel?.setDimensional.dimensionRow || [], 'latitude');
+        let dimensionCol = formatItem(formModel?.setDimensional.dimensionCol || [], 'latitude');
+        dimensionCol.forEach(el => {
+            el.columns = true;
+            latitude.push(el)
+        })
+    }
 
-        let param = {
-            chartType: ChartTypes[type],
-            entityName: allEntityName.value[formModel.dataEntity],
-            latitude,
-            longitude,
-            noPrivileges: formModel?.setChartConf.useAllData,
-            filter: formModel.setChartFilter
-        };
-        return http.post('/plugins/metaDataCube/chart/queryChartData', param)
-    });
+    let param = {
+        chartType: ChartTypes[type],
+        entityName: allEntityName.value[formModel.dataEntity],
+        latitude,
+        longitude,
+        noPrivileges: formModel?.setChartConf.useAllData,
+        filter: formModel.setChartFilter
+    };
+    return http.post('/plugins/metaDataCube/chart/queryChartData', param)
+    // });
 
 }
 
