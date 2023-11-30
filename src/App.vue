@@ -24,6 +24,7 @@ import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { ElLoading } from 'element-plus'
 const { getEntityList, setPublicSetting } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -59,7 +60,7 @@ onBeforeMount(() => {
     // 有用户信息
     if ($TOOL.data.get("USER_INFO")?.userName) {
         // 获取实体列表
-        getEntityList();
+        getEntityList()
         getRightMap();
     }
 });
@@ -74,12 +75,19 @@ const getRightMap = async () => {
 // /crud/getRightMap
 // 获取公开系统配置
 const queryPublicSetting = async () => {
+    
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
     let res = await getPublicSetting();
     if (res) {
         let resData = res.data || {};
         resData.themeColor = res.data.themeColor || "#409EFF";
         colorPrimary(resData.themeColor);
         setPublicSetting(resData);
+        loading.close()
     }
 };
 
