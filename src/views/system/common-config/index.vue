@@ -287,7 +287,8 @@ const checkOnSave = () => {
                 subEl.required &&
                 !confData[subEl.key] &&
                 !smsFields.value.includes(subEl.key) &&
-                !emailFields.value.includes(subEl.key)
+                !emailFields.value.includes(subEl.key) &&
+                !cloudStorageFields.value.includes(subEl.key)
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
@@ -312,6 +313,18 @@ const checkOnSave = () => {
                 !confData[subEl.key] &&
                 emailFields.value.includes(subEl.key) &&
                 confData.emailOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于七牛云 并且七牛云是开启的
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                cloudStorageFields.value.includes(subEl.key) &&
+                confData.cloudStorageOpen
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
