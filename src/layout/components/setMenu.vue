@@ -27,7 +27,15 @@
                                         <ElIconRank />
                                     </el-icon>
                                 </div>
-                                <div class="fl item text-ellipsis">{{ parent.name }}</div>
+                                <div class="fl item text-ellipsis">
+                                    <el-icon class="icon" v-if="!parent.useIcon">
+                                        <SetUp />
+                                    </el-icon>
+                                    <el-icon class="icon" v-else>
+                                        <component :is="parent.useIcon" />
+                                    </el-icon>
+                                    {{ parent.name }}
+                                </div>
                                 <div class="action-icon">
                                     <span
                                         class="icon-span add-icon mr-5"
@@ -65,7 +73,15 @@
                                             <ElIconRank />
                                         </el-icon>
                                     </div>
-                                    <div class="fl item text-ellipsis">{{ child.name }}</div>
+                                    <div class="fl item text-ellipsis">
+                                        <el-icon class="icon" v-if="!child.useIcon">
+                                            <SetUp />
+                                        </el-icon>
+                                        <el-icon class="icon" v-else>
+                                            <component :is="child.useIcon" />
+                                        </el-icon>
+                                        {{ child.name }}
+                                    </div>
                                     <div class="action-icon">
                                         <span
                                             class="icon-span"
@@ -239,16 +255,15 @@ onMounted(() => {
 let parentMenu = ref("父级菜单");
 
 // 格式化实体
-const getEntityList = ()=>{
-    return unSystemEntityList.value.filter(el => !el.detailEntityFlag )
-}
+const getEntityList = () => {
+    return unSystemEntityList.value.filter((el) => !el.detailEntityFlag);
+};
 
 // 节点选中
 const nodeClick = (node) => {
     cutMenu.value = Object.assign({}, node);
-    cutMenu.value.useIcon = cutMenu.value.useIcon || ""
+    cutMenu.value.useIcon = cutMenu.value.useIcon || "";
 };
-
 
 let isShowIconDialog = ref(false);
 // 选择图标
@@ -473,7 +488,6 @@ const layoutSave = async () => {
     } else {
         loading.value = false;
     }
-
 };
 
 // 格式化菜单数据
@@ -627,6 +641,10 @@ div {
     width: calc(100% - 32px);
     box-sizing: border-box;
     padding: 0 10px;
+    .icon {
+        position: relative;
+        top: 2px;
+    }
 }
 
 .ghost {
