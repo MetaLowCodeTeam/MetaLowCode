@@ -624,7 +624,7 @@ div {
     width: 32px;
     height: 36px;
     line-height: 36px;
-    background: var(--el-color-primary);
+    background: var(--el-color-primary-light-3);
     text-align: center;
     color: #fff;
     .icon {

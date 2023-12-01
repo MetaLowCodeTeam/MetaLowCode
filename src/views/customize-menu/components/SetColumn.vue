@@ -281,7 +281,7 @@ const onSave = async () => {
         $ElMessage.success("保存成功！");
         isShow.value = false;
         emit("confirm");
-    } 
+    }
     loading.value = false;
 };
 </script>
@@ -297,7 +297,7 @@ div {
     margin-bottom: 12px;
     overflow-x: auto;
     width: 48%;
-    
+
     &::-webkit-scrollbar {
         display: none;
     }
@@ -372,7 +372,7 @@ div {
     width: 32px;
     height: 36px;
     line-height: 36px;
-    background: var(--el-color-primary);
+    background: var(--el-color-primary-light-3);
     text-align: center;
     color: #fff;
     .icon {
