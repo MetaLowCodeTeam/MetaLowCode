@@ -249,6 +249,10 @@ watch(
 
 onMounted(() => {
     isShow.value = props.modelValue;
+    document.body.ondrop = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     getMenuFn();
 });
 
