@@ -35,6 +35,11 @@
 | 视频教程合辑 | https://space.bilibili.com/3546568428882557/video |
 
 
+## 系统架构图
+
+![系统架构一览](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_architecture.png)
+
+
 ## 亮点功能
 
 - **元数据管理**   
