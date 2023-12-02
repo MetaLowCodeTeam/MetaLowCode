@@ -353,8 +353,6 @@ export default {
 		 * 过滤已使用字段组件
 		 */
 		handleUsedFields() {
-			//console.error('aaaaaaaaaa')
-
 			this.usedFieldNames = {}
 			const allFieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
 			allFieldWidgets.forEach(fwItem => {
