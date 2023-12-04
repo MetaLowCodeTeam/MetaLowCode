@@ -566,7 +566,7 @@ const showContextMenu = (entity, event) => {
     contextMenuVisible.value = false;
     contextMenuVisible.value = true;
     //event.preventDefault() //关闭浏览器右键默认事件
-    selectedEntityObj.value.value = {
+    selectedEntityObj.value = {
         name: entity.name,
         label: entity.label,
 		entityCode: entity.entityCode,

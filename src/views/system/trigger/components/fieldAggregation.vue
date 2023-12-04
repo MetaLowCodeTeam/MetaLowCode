@@ -455,7 +455,7 @@ const addUptadeRule = () => {
     }
     let forCompileVal = "";
     if (calcMode == "forCompile" && !simpleFormula) {
-        forCompileVal = formulaVal.value.value;
+        forCompileVal = formulaVal.value;
     }
     trigger.value.actionContent.items.push({
         targetField,
