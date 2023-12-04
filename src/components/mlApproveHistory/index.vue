@@ -1,7 +1,6 @@
 <template>
     <mlDialog v-model="isShow" :title="title" width="35%">
         <div class="timeline-div" v-loading="loading">
-            <!-- :type="index == 0 ? 'primary' : index == (approveHistory.length-1) ? 'danger' : null" -->
             <el-timeline v-if="approveHistory.length > 0">
                 <el-timeline-item
                     v-for="(activity, index) in approveHistory"
@@ -155,6 +154,10 @@ const getTimelineType = (index, activity) => {
     let dangerType = [13];
     if (dangerType.includes(activity.state)) {
         return "danger";
+    }
+    let infoType = [1];
+    if (infoType.includes(activity.state)) {
+        return "info";
     }
     return "success";
 };

@@ -68,23 +68,24 @@
                             multiple
                             clearable
                         />
-                        <mlSelectUser
-                            v-if="form.nodeRoleType == 4"
+                        <el-select
                             v-model="form.nodeRoleList"
-                            multiple
+                            v-loading="departmentLoading"
                             clearable
-                            type="Department"
-                        />
+                            multiple
+                            value-key="name"
+                            placeholder="请选择指定部门负责人"
+                            v-if="form.nodeRoleType == 4"
+                        >
+                            <el-option
+                                v-for="(item,depInx) in departmentList"
+                                :key="depInx"
+                                :disabled="item.name.indexOf('未设置负责人') != -1"
+                                :label="item.name"
+                                :value="item"
+                            />
+                        </el-select>
                     </div>
-
-                    <!-- <el-radio-group
-                        class="radio-need-block"
-                        v-model="form.nodeRoleType"
-                        @change="nodeRoleTypeChange"
-                    >
-                        <el-radio :label="2">发起人自己</el-radio>
-                        <el-radio :label="3">指定审批人</el-radio>
-                    </el-radio-group>-->
                 </div>
                 <div class="mt-10">
                     <el-checkbox v-model="form.userSelectFlag" label="同时允许自选" />
@@ -160,6 +161,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 const router = useRouter();
 let message = inject("$ElMessage");
+let $API = inject("$API");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const { allEntityName } = storeToRefs(useCommonStore());
 const props = defineProps({
@@ -204,13 +206,39 @@ watch(
         deep: true,
     }
 );
+
+let departmentList = ref([]);
+let departmentLoading = ref(false);
+
 onMounted(() => {
     nodeConfig.value = props.modelValue;
     let entityCode = router.currentRoute.value.query.entityCode;
     if (entityCode) {
         myEntityName.value = allEntityName.value[entityCode];
     }
+    getDepartment();
 });
+
+const getDepartment = async () => {
+    departmentLoading.value = true;
+    let res = await $API.common.getDepartment();
+    if (res && res.data) {
+        let resData = res.data || [];
+        departmentList.value = resData.map((el) => {
+            let newData = {
+                name: `${el.departmentName}(${
+                    el.departmentOwnerUser
+                        ? el.departmentOwnerUser.name
+                        : "未设置负责人"
+                })`,
+                id: el.departmentId,
+            };
+            return newData;
+        });
+    }
+
+    departmentLoading.value = false;
+};
 
 const show = () => {
     form = Object.assign(form, nodeConfig.value);
@@ -228,11 +256,11 @@ const saveTitle = () => {
 
 const save = () => {
     let { nodeRoleType, nodeRoleList } = form;
-    if ((nodeRoleType == 3) && nodeRoleList.length < 1) {
+    if (nodeRoleType == 3 && nodeRoleList.length < 1) {
         message.error("请选择指定审批人");
         return;
     }
-    if ((nodeRoleType == 4) && nodeRoleList.length < 1) {
+    if (nodeRoleType == 4 && nodeRoleList.length < 1) {
         message.error("请选择指定部门负责人");
         return;
     }
@@ -245,12 +273,16 @@ const delNode = () => {
 
 const nodeRoleTypeChange = () => {
     // if (form.nodeRoleType !== 3) {
-        form.nodeRoleList = [];
+    form.nodeRoleList = [];
     // }
 };
 const toText = (nodeConfig) => {
     if (nodeConfig.nodeRoleType == 2) {
         return "发起人自己";
+    } else if (nodeConfig.nodeRoleType == 5) {
+        return "发起人部门负责人";
+    } else if (nodeConfig.nodeRoleType == 6) {
+        return "数据所属部分负责人";
     } else {
         if (nodeConfig.nodeRoleList && nodeConfig.nodeRoleList.length > 0) {
             return nodeConfig.nodeRoleList.map((item) => item.name).join("、");
