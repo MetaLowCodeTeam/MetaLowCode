@@ -108,10 +108,17 @@
                         </span>
                     </div>
                 </div>
+                <!-- 列表设置 -->
+                <div class="pl-5 mt-15 div-disabled" v-if="$TOOL.checkRole('r6008')">列表设置</div>
+                <div
+                    class="pl-20 item"
+                    @click="openDefaultFilterDialog"
+                    v-if="$TOOL.checkRole('r6008')"
+                >默认查询设置</div>
             </template>
         </div>
         <template #reference>
-            <el-button type="primary" plain >
+            <el-button type="primary" plain>
                 更多
                 <el-icon style="transform: rotate(90deg);">
                     <ElIconMoreFilled />
@@ -136,6 +143,8 @@
     />
     <!-- 报表 -->
     <ReportForms ref="reportFormsRefs" />
+    <!-- 默认查询设置 -->
+    <DefaultFilterDialog ref="defaultFilterRefs" @defaultFilterChange="defaultFilterChange" />
 </template>
 
 <script setup>
@@ -144,10 +153,16 @@ import SetColumn from "./SetColumn.vue";
 import DataExport from "./DataExport.vue";
 import Allocation from "./Allocation.vue";
 import ReportForms from "./ReportForms.vue";
+import DefaultFilterDialog from "./DefaultFilterDialog.vue";
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
+
 const router = useRouter();
-const emits = defineEmits(["changeColumnShow", "editColumnConfirm"]);
+const emits = defineEmits([
+    "changeColumnShow",
+    "editColumnConfirm",
+    "defaultFilterChange",
+]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
     idFieldName: { type: String, default: "" },
@@ -157,8 +172,11 @@ const props = defineProps({
     dataExportData: { type: Object, default: () => {} },
     type: { type: String, default: "list" },
     entityCode: { type: Number, default: 0 },
+    entityName: { type: String, default: "" },
     // 当前详情ID
     detailId: { type: String, default: "" },
+    // 默认查询设置
+    defaultFilterSetting: { type: Object, default: () => {} },
 });
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
@@ -189,8 +207,10 @@ const allocationFn = async (type) => {
     if (props.multipleSelection.length > 0) {
         if (props.multipleSelection.length == 1) {
             let param = {
-                id: props.detailId || props.multipleSelection[0][props.idFieldName],
-                rightType: RightType[type].type ,
+                id:
+                    props.detailId ||
+                    props.multipleSelection[0][props.idFieldName],
+                rightType: RightType[type].type,
             };
             let res = await checkRight(param.id, param.rightType);
             if (res.data.code == 200 && res.data.data) {
@@ -280,6 +300,22 @@ const editColumnConfirm = (v) => {
 /**
  **************************************************************  列显示 end
  */
+
+/**
+ **************************************************************  默认查询设置
+ */
+
+let defaultFilterRefs = ref("");
+const openDefaultFilterDialog = () => {
+    defaultFilterRefs.value.openDialog({
+        name: props.entityName,
+        code: props.entityCode,
+        defaultFilterSetting: props.defaultFilterSetting,
+    });
+};
+const defaultFilterChange = () => {
+    emits("defaultFilterChange");
+};
 defineExpose({
     editColumn,
 });

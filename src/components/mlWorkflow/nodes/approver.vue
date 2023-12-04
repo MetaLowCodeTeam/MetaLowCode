@@ -48,23 +48,45 @@
             <div class="work-flow-conditions mb-20">
                 <div class="lable-title mb-3">由谁审批</div>
                 <div class="mt-10">
-                    <el-radio-group
+                    <el-select
+                        v-model="form.nodeRoleType"
+                        placeholder="选择由谁审批"
+                        style="width: 180px;"
+                        @change="nodeRoleTypeChange"
+                    >
+                        <el-option
+                            v-for="item in nodeRoleTypeList"
+                            :key="item.type"
+                            :label="item.label"
+                            :value="item.type"
+                        />
+                    </el-select>
+                    <div style="width: calc(100% - 200px);display: inline-block;margin-left: 10px;">
+                        <mlSelectUser
+                            v-if="form.nodeRoleType == 3"
+                            v-model="form.nodeRoleList"
+                            multiple
+                            clearable
+                        />
+                        <mlSelectUser
+                            v-if="form.nodeRoleType == 4"
+                            v-model="form.nodeRoleList"
+                            multiple
+                            clearable
+                            type="Department"
+                        />
+                    </div>
+
+                    <!-- <el-radio-group
                         class="radio-need-block"
                         v-model="form.nodeRoleType"
                         @change="nodeRoleTypeChange"
                     >
                         <el-radio :label="2">发起人自己</el-radio>
                         <el-radio :label="3">指定审批人</el-radio>
-                    </el-radio-group>
+                    </el-radio-group>-->
                 </div>
-                <mlSelectUser
-                    class="mt-5 mb-5"
-                    v-if="form.nodeRoleType == 3"
-                    v-model="form.nodeRoleList"
-                    multiple
-                    clearable
-                />
-                <div>
+                <div class="mt-10">
                     <el-checkbox v-model="form.userSelectFlag" label="同时允许自选" />
                 </div>
                 <div>
@@ -98,12 +120,6 @@
                         </span>
 
                         <span class="required-icon fr" :title="field.reserved ? '系统字段无法修改' : ''">
-                            <!-- <el-checkbox
-                                @change="fieldEditChange(field)"
-                                :disabled="field.reserved"
-                                v-model="field.isEdit"
-                                label="允许修改"
-                            /> -->
                             <el-checkbox
                                 @change="fieldRequiredChange(field)"
                                 :disabled="field.reserved"
@@ -157,6 +173,28 @@ let drawer = ref(false);
 let SelectFieldDialog = ref();
 let nodeTitle = ref();
 let myEntityName = ref("");
+let nodeRoleTypeList = ref([
+    {
+        label: "指定审批人",
+        type: 3,
+    },
+    {
+        label: "指定部门负责人",
+        type: 4,
+    },
+    {
+        label: "发起人自己",
+        type: 2,
+    },
+    {
+        label: "发起人部门负责人",
+        type: 5,
+    },
+    {
+        label: "数据所属部门负责人",
+        type: 6,
+    },
+]);
 watch(
     () => props.modelValue,
     () => {
@@ -169,11 +207,9 @@ watch(
 onMounted(() => {
     nodeConfig.value = props.modelValue;
     let entityCode = router.currentRoute.value.query.entityCode;
-    if(entityCode){
-        myEntityName.value = allEntityName.value[entityCode]
+    if (entityCode) {
+        myEntityName.value = allEntityName.value[entityCode];
     }
-    
-    
 });
 
 const show = () => {
@@ -192,8 +228,12 @@ const saveTitle = () => {
 
 const save = () => {
     let { nodeRoleType, nodeRoleList } = form;
-    if (nodeRoleType == 3 && nodeRoleList.length < 1) {
-        message.error("请选择用户");
+    if ((nodeRoleType == 3) && nodeRoleList.length < 1) {
+        message.error("请选择指定审批人");
+        return;
+    }
+    if ((nodeRoleType == 4) && nodeRoleList.length < 1) {
+        message.error("请选择指定部门负责人");
         return;
     }
     emit("update:modelValue", form);
@@ -204,9 +244,9 @@ const delNode = () => {
 };
 
 const nodeRoleTypeChange = () => {
-    if (form.nodeRoleType !== 3) {
+    // if (form.nodeRoleType !== 3) {
         form.nodeRoleList = [];
-    }
+    // }
 };
 const toText = (nodeConfig) => {
     if (nodeConfig.nodeRoleType == 2) {

@@ -37,9 +37,7 @@
                     </span>
                 </div>
                 <div class="data-filter" v-if="isDataFilter">
-                    <el-tag type="success" closable @close="clearDataFilter">
-                        当前数据已过滤
-                    </el-tag>
+                    <el-tag type="success" closable @close="clearDataFilter">当前数据已过滤</el-tag>
                 </div>
                 <div class="fr table-setting">
                     <!-- <el-button class="mr-15">按钮占用</el-button> -->
@@ -64,6 +62,10 @@
                         @changeColumnShow="changeColumnShow"
                         @editColumnConfirm="getLayoutList"
                         :idFieldName="idFieldName"
+                        :entityName="entityName"
+                        :entityCode="entityCode"
+                        @defaultFilterChange="getLayoutList"
+                        :defaultFilterSetting="defaultFilterSetting"
                     />
                 </div>
             </div>
@@ -161,7 +163,7 @@
             style="background: #fff;"
         />
         <Detail ref="detailRefs" @onConfirm="getTableList" />
-        <Edit ref="editRefs" @onConfirm="getTableList" :nameFieldName="nameFieldName"/>
+        <Edit ref="editRefs" @onConfirm="getTableList" :nameFieldName="nameFieldName" />
         <!-- 快速搜索字段 -->
         <mlSelectField
             ref="SelectFieldDialog"
@@ -243,6 +245,8 @@ let comQueriesList = reactive({});
 let titleWidthForAll = reactive({});
 // 自定义列宽度
 let titleWidthForSelf = reactive({});
+// 默认查询设置
+let defaultFilterSetting = ref({});
 
 // 快捷查询
 let quickQuery = ref("");
@@ -263,18 +267,16 @@ let addConf = reactive({});
 
 onBeforeMount(() => {
     let routerEntityname = router.currentRoute.value.params?.entityname;
-    if(routerEntityname){
-  
+    if (routerEntityname) {
         entityCode.value = allEntityCode.value[routerEntityname];
         entityName.value = routerEntityname;
-        
-    }else {
+    } else {
         entityCode.value = router.currentRoute.value.meta.entityCode;
         entityName.value = router.currentRoute.value.meta.entityName;
     }
-    if(!entityCode.value){
+    if (!entityCode.value) {
         ElMessage.warning("该实体不存在或者已删除");
-        return
+        return;
     }
     quickQueryConf.entityCode = entityCode.value;
     // 获取导航配置
@@ -295,6 +297,7 @@ const getLayoutList = async () => {
         nameFieldName.value = res.data.nameFieldName;
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
+        defaultFilterSetting.value = res.data.DEFAULT_FILTER || {};
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
         addConf = res.data.ADD ? { ...res.data.ADD } : {};
         let { ALL, SELF } = res.data.LIST;
@@ -311,13 +314,13 @@ const getLayoutList = async () => {
             SELF,
             ALL,
         };
-       
+
         // 如果存在默认配置，用默认配置
         if (res.data.chosenListType) {
             tableColumn.value =
                 layoutConfig.value[res.data.chosenListType].FILTER;
             defaultColumnShow.value = res.data.chosenListType;
-        }else {
+        } else {
             tableColumn.value = ALL.FILTER;
             defaultColumnShow.value = "ALL";
         }
@@ -497,16 +500,18 @@ let dataExportData = reactive({
 let builtInFilter = ref({});
 let isDataFilter = ref(false);
 
-const clearDataFilter = ()=>{
+const clearDataFilter = () => {
     isDataFilter.value = false;
     builtInFilter.value = {};
-    quickQuery.value = "",
-    setRouterParams({});
+    (quickQuery.value = ""), setRouterParams({});
     getTableList();
-}
+};
 
 const getTableList = async () => {
-    if (routerParams.value.path && routerParams.value.path == router.currentRoute.value.path) {
+    if (
+        routerParams.value.path &&
+        routerParams.value.path == router.currentRoute.value.path
+    ) {
         quickQuery.value = routerParams.value.quickFilter;
         builtInFilter.value = routerParams.value.filter;
         isDataFilter.value = true;
@@ -521,7 +526,7 @@ const getTableList = async () => {
         advFilter: { ...comQueriesList },
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
-        builtInFilter:builtInFilter.value, 
+        builtInFilter: builtInFilter.value,
     };
     dataExportData.queryParm = { ...param };
     let res = await getDataList(
@@ -533,7 +538,7 @@ const getTableList = async () => {
         param.sortFields,
         param.advFilter,
         param.quickFilter,
-        param.builtInFilter,
+        param.builtInFilter
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
