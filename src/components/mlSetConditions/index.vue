@@ -41,7 +41,7 @@
                 </el-col>
                 <!-- 条件类型 -->
                 <el-col :span="4">
-                    <el-select v-model="item.op" @change="opChange(item)" size="default">
+                    <el-select v-model="item.op" size="default">
                         <el-option
                             v-for="op in getSelectOp(item)"
                             :key="op"
@@ -53,7 +53,7 @@
                 <!-- 条件值 -->
                 <el-col :span="10">
                     <!-- 日期选择器 -->
-                    <div v-if="item.valueType === 'datePicker'">
+                    <div v-if="conditionsConfig.isShowCom(item,'datePicker')">
                         <el-date-picker
                             size="default"
                             v-model="item.value"
@@ -66,7 +66,7 @@
                         />
                     </div>
                     <!-- 日期区间 -->
-                    <div v-else-if="item.valueType === 'datePickerBw'">
+                    <div v-if="conditionsConfig.isShowCom(item,'datePickerBw')">
                         <el-date-picker
                             size="default"
                             v-model="item.value"
@@ -93,7 +93,7 @@
                         />
                     </div>
                     <!-- 数字输入框 -->
-                    <div v-else-if="item.valueType === 'numberInput'">
+                    <div v-if="conditionsConfig.isShowCom(item,'numberInput')">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -104,7 +104,7 @@
                         />
                     </div>
                     <!-- 数字输入框区间 -->
-                    <div v-else-if="item.valueType === 'numberInputBw'">
+                    <div v-if="conditionsConfig.isShowCom(item,'numberInputBw')">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -125,7 +125,7 @@
                         />
                     </div>
                     <!-- 文本输入框 -->
-                    <div v-else-if="item.valueType === 'textInput'">
+                    <div v-if="conditionsConfig.isShowCom(item,'textInput')">
                         <el-input
                             size="default"
                             v-model="item.value"
@@ -134,7 +134,7 @@
                         />
                     </div>
                     <!-- 布尔类型 -->
-                    <div v-else-if="item.valueType === 'booleanSelect'">
+                    <div v-if="conditionsConfig.isShowCom(item,'booleanSelect')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -148,9 +148,7 @@
                         </el-select>
                     </div>
                     <!-- 用户下拉框 -->
-                    <div
-                        v-else-if="item.valueType === 'userSelect' && item.op != 'SFU' && item.op != 'SFB' && item.op != 'SFT' && item.op != 'NL'&& item.op != 'NT'"
-                    >
+                    <div v-if="conditionsConfig.isShowCom(item,'userSelect')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -169,8 +167,9 @@
                             />
                         </el-select>
                     </div>
+
                     <!-- 部门下拉框 -->
-                    <div v-else-if="item.valueType === 'departmentSelect'">
+                    <div v-if="conditionsConfig.isShowCom(item,'departmentSelect')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -190,7 +189,7 @@
                         </el-select>
                     </div>
                     <!-- 类型为Tag 和 option的 -->
-                    <div v-else-if="item.valueType == 'optionData'">
+                    <div v-if="conditionsConfig.isShowCom(item,'optionData')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -246,6 +245,7 @@
 </template>
 
 <script>
+import conditionsConfig from "@/config/conditionsConfig";
 export default {
     props: {
         modelValue: null,
@@ -255,45 +255,7 @@ export default {
     data() {
         return {
             // 所有类型
-            op_type: {
-                REF: "包含",
-                LK: "包含",
-                NLK: "不包含",
-                IN: "包含",
-                NIN: "不包含",
-                EQ: "等于",
-                NEQ: "不等于",
-                GT: "大于",
-                LT: "小于",
-                GE: "大于等于",
-                LE: "小于等于",
-                BW: "区间",
-                NL: "为空",
-                NT: "不为空",
-                BFD: "..天前",
-                BFM: "..月前",
-                BFY: "..年前",
-                AFD: "..天后",
-                AFM: "..月后",
-                AFY: "..年后",
-                RED: "最近..天",
-                REM: "最近..月",
-                REY: "最近..年",
-                FUD: "未来..天",
-                FUM: "未来..月",
-                FUY: "未来..年",
-                SFU: "本人",
-                SFB: "本部门",
-                SFD: "本部门及子部门",
-                SFT: "所在团队",
-                YTA: "昨天",
-                TDA: "今天",
-                TTA: "明天",
-                CUW: "本周",
-                CUM: "本月",
-                CUQ: "本季度",
-                CUY: "本年",
-            },
+            op_type: {},
             // 不需要输入框的条件
             op_no_value: [
                 "NL",
@@ -323,6 +285,7 @@ export default {
             userList: [],
             // 所有部门
             departmentList: [],
+            conditionsConfig: {},
         };
     },
     watch: {
@@ -336,6 +299,8 @@ export default {
     mounted() {
         this.conditionConf = this.modelValue;
         this.getFieldSet();
+        this.conditionsConfig = { ...conditionsConfig };
+        this.op_type = { ...this.conditionsConfig.op_type };
     },
     methods: {
         async getFieldSet() {
@@ -360,8 +325,6 @@ export default {
                         isError: false,
                         referTo: el.referTo,
                         type: el.type,
-                        // 值类型
-                        valueType: "",
                         label: el.label,
                         optionData: el.optionData,
                     };
@@ -383,7 +346,6 @@ export default {
                 this.conditionConf.items.forEach((subEl) => {
                     if (el.fieldName === subEl.fieldName) {
                         let newItem = Object.assign({ ...el }, subEl);
-                        newItem.valueType = this.showValueType(newItem);
                         conditionList.push(newItem);
                     }
                 });
@@ -398,11 +360,6 @@ export default {
             );
             Object.assign(item, metadata[0]);
             item.op = this.getSelectOp(item)[0];
-            item.valueType = this.showValueType(item);
-        },
-        // op切换
-        opChange(item) {
-            item.valueType = this.showValueType(item);
         },
         clearError(item) {
             item.isError = false;
@@ -421,65 +378,20 @@ export default {
         // 获取条件op
         getSelectOp(item) {
             let { type, referTo } = item;
-            let { numberFieldType } = this;
             let op = [];
-            if (type === "Date" || type === "DateTime") {
-                op = [
-                    "TDA",
-                    "YTA",
-                    "TTA",
-                    "GT",
-                    "LT",
-                    "EQ",
-                    "BW",
-                    "RED",
-                    "REM",
-                    "REY",
-                    "FUD",
-                    "FUM",
-                    "FUY",
-                    "BFD",
-                    "BFM",
-                    "BFY",
-                    "AFD",
-                    "AFM",
-                    "AFY",
-                    "CUW",
-                    "CUM",
-                    "CUQ",
-                    "CUY",
-                ];
-            } else if (type === "Tag") {
-                op = ["LK", "NLK"];
-            }
-            // 数组类型的字段
-            // numberFieldType: ["Money", "Integer", "Decimal", "Percent"],
-            else if (numberFieldType.includes(type)) {
-                op = ["GT", "LT", "EQ", "BW", "GE", "LE"];
-            } else if (type === "Reference") {
-                op = ["EQ", "NEQ", "NL", "NT"];
-                if (referTo == "User") {
-                    op = ["LK", "NLK", "SFU", "NL", "NT"];
+            // 如果是引用类型
+            if (type == "Reference") {
+                let referenceObj = { ...this.conditionsConfig[type] };
+                // 有单独设定的 条件
+                if (referenceObj.referenceFilters.includes(referTo)) {
+                    op = [...referenceObj[referTo]];
+                } else {
+                    op = [...referenceObj.All];
                 }
-                if (referTo == "Department") {
-                    op = ["LK", "NLK", "SFB", "SFD", "NL", "NT"];
-                }
-            } else if (type === "Boolean") {
-                op = ["EQ", "NL", "NT"];
-            } else if (type === "Option" || type === "Status") {
-                op = ["EQ", "NEQ", "NL", "NT"];
-            } else if (
-                type === "Email" ||
-                type === "Url" ||
-                type === "TextArea" ||
-                type === "Text"
-            ) {
-                op = ["LK", "NLK", "EQ", "NEQ", "NL", "NT"];
             } else {
-                op = [];
-                // for (const key in this.op_type) {
-                //     op.push(key);
-                // }
+                op = this.conditionsConfig[type]
+                    ? [...this.conditionsConfig[type]]
+                    : [];
             }
             return op;
         },
@@ -568,55 +480,7 @@ export default {
             });
             return conditionList.join(" or ");
         },
-        /**
-         *
-         * 条件value显示逻辑
-         *
-         */
-        showValueType(item) {
-            let { op, type, referTo } = item;
-            let { numberFieldType, op_no_value } = this;
-            // 时间选择框
-            let op_date_picker = ["EQ", "GT", "LT"];
-            if (
-                (type === "DateTime" || type === "Date") &&
-                op_date_picker.includes(op)
-            ) {
-                return "datePicker";
-            }
-            // 区间显示
-            if (op === "BW") {
-                if (type === "DateTime" || type === "Date") {
-                    return "datePickerBw";
-                }
-                if (numberFieldType.includes(type)) {
-                    return "numberInputBw";
-                }
-            }
-            // 数字输入框
-            let op_numer_input = ["GT", "LT", "EQ", "GE", "LE"];
-            if (numberFieldType.includes(type) && op_numer_input.includes(op)) {
-                return "numberInput";
-            }
-            // 如果是布尔类型，并且条件不是不为空
-            if (type === "Boolean" && op === "EQ") {
-                return "booleanSelect";
-            }
-            // 如果类型是引用
-            if (type === "Reference") {
-                return referTo === "User" ? "userSelect" : "departmentSelect";
-            }
-            // 不需要value条件
-            if (op_no_value.includes(op)) {
-                return;
-            }
-            // 如果类型是Tag || Option
-            if (type == "Tag" || type == "Option" || type == "Status") {
-                return "optionData";
-            }
-            // 文本输入框
-            return "textInput";
-        },
+        
         // 区间值变化
         bwChange(item) {
             let { type } = item;
