@@ -158,39 +158,39 @@
                 <div
                     v-if="checkRole('r6001')"
                     class="context-menu__item"
-                    @click="gotoEntityManager(selectedEntityObj)"
+                    @click="gotoEntityManager()"
                 >字段管理</div>
                 <div
                     v-if="checkRole('r6003')"
                     class="context-menu__item"
-                    @click="gotoFormLayout(selectedEntityObj)"
+                    @click="gotoFormLayout()"
                 >表单设计</div>
 				<div
 					v-if="checkRole('r6008')"
 					class="context-menu__item"
-					@click="gotoListView(selectedEntityObj)"
+					@click="gotoListView()"
 				>列表设计</div>
 				<div class="context-menu-divider"></div>
 				<div
 					v-if="checkRole('r6016')"
 					class="context-menu__item"
-					@click="gotoRoute('process-list', true, selectedEntityObj)"
+					@click="gotoRoute('process-list', true,)"
 				>流程设计</div>
 				<div
 					v-if="checkRole('r6015')"
 					class="context-menu__item"
-					@click="gotoRoute('trigger-list', false, selectedEntityObj)"
+					@click="gotoRoute('trigger-list', false)"
 				>触发器设计</div>
 				<div
 					v-if="checkRole('r45-2')"
 					class="context-menu__item"
-					@click="gotoRoute('templates-list', true, selectedEntityObj)"
+					@click="gotoRoute('templates-list', true)"
 				>报表设计</div>
 				<div class="context-menu-divider"></div>
                 <div
                     v-if="checkRole('r6002')"
                     class="context-menu__item"
-                    @click="deleteSelectedEntity(selectedEntityObj)"
+                    @click="deleteSelectedEntity()"
                 >删除实体</div>
             </div>
         </el-main>
@@ -396,7 +396,7 @@ const onLeaveEntity = () => {
     hoverEntityIdx.value = -1;
 };
 
-const gotoEntityManager = (selectedEntityObj) => {
+const gotoEntityManager = () => {
     router.push({
         name: "FieldManager",
         query: {
@@ -406,7 +406,7 @@ const gotoEntityManager = (selectedEntityObj) => {
     });
 };
 
-const gotoFormLayout = (selectedEntityObj) => {
+const gotoFormLayout = () => {
     if (selectedEntityObj.value.layoutable !== true) {
         ElMessage.info("当前实体不允许设计表单");
         return;
@@ -421,7 +421,7 @@ const gotoFormLayout = (selectedEntityObj) => {
     });
 };
 
-const gotoListView = (selectedEntityObj) => {
+const gotoListView = () => {
     if (
         selectedEntityObj.value.systemEntityFlag ||
         selectedEntityObj.value.internalEntityFlag
@@ -438,7 +438,7 @@ const gotoListView = (selectedEntityObj) => {
     router.push("/web/" + selectedEntityObj.value.name + "/list");
 };
 
-const gotoRoute = (routePage, disableDetailEntity, selectedEntityObj) => {
+const gotoRoute = (routePage, disableDetailEntity) => {
 	if (
 		selectedEntityObj.value.systemEntityFlag ||
 		selectedEntityObj.value.internalEntityFlag
@@ -455,7 +455,7 @@ const gotoRoute = (routePage, disableDetailEntity, selectedEntityObj) => {
 	router.push("/web/" + routePage + '?entityCode=' + selectedEntityObj.value.entityCode);
 };
 
-const deleteSelectedEntity = (selectedEntityObj) => {
+const deleteSelectedEntity = () => {
     if (publicSetting.value.trialVersionFlag) {
         ElMessage.error("试用版本已禁用删除实体功能，敬请谅解");
         return;
