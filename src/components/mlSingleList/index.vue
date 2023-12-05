@@ -52,6 +52,8 @@
                             <el-tag
                                 v-if="column.formatter(scope.row).label"
                                 :type="column.formatter(scope.row).type"
+                                :style="column.styleFn(scope.row)"
+                                @click="column.clickFn ? column.clickFn(scope.row) : null"
                             >{{ column.formatter(scope.row).label }}</el-tag>
                         </span>
                         <span v-else-if="column.customSolt === 'switch' && column.isNegation">
@@ -210,6 +212,7 @@ const highlightClick = (row) => {
 const changeSwitch = (row) => {
     emits("changeSwitch", row);
 };
+
 
 defineExpose({
     loading,
