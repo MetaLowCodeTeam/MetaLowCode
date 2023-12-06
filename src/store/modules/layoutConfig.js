@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { inject, ref } from 'vue'
-
+import tool from '@/utils/tool';
 // import useLayoutConfigStore from "@/store/modules/layoutConfig";
 // const { setNavigationList } = useLayoutConfigStore();
 // import { storeToRefs } from 'pinia';
 // const { navigationList } = storeToRefs(useLayoutConfigStore());
 const useLayoutConfigStore = defineStore('layoutConfig', () => {
-    const $TOOL = inject('$TOOL');
+
     // 导航列表
     let navigationList = ref([]);
     // 默认导航ID
@@ -64,7 +64,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
-            initMenu.meta.hidden = el.entityCode && !$TOOL.checkRole('r' + el.entityCode + '-1');
+            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1');
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
                 initMenu.path = "";
@@ -78,7 +78,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
-                            hidden: subEl.entityCode && !$TOOL.checkRole('r' + subEl.entityCode + '-1'),
+                            hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                         },
                         path:
                             subEl.type == 1
