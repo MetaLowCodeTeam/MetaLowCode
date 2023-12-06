@@ -86,7 +86,7 @@ export default {
             op: ["GT", "LT", "EQ", "GE", "LE"],
         },
         // 数字区间
-        numberInput: {
+        numberInputBw: {
             type: ["Money", "Integer", "Decimal", "Percent"],
             op: ["BW"],
         },
