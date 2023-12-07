@@ -431,6 +431,10 @@ const getUptadeModeList = () => {
     ) {
         return [
             {
+                label: "字段值",
+                value: "forField",
+            },
+            {
                 label: "固定值",
                 value: "toFixed",
             },
@@ -739,7 +743,7 @@ const floatSourceFieldList = () => {
         } else {
             let showFields = [];
             cutEntityFields.value.forEach((el) => {
-                if (el.fieldType == fieldType) {
+                if (el.fieldType == fieldType || el.fieldType == 'Text') {
                     showFields.push(el);
                 }
             });
