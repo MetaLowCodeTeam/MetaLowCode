@@ -142,6 +142,8 @@
                                 link
                                 type="primary"
                                 @click.stop="onEditRow(scope.row)"
+                                :disabled="scope.row.approvalStatus && (scope.row.approvalStatus.value == 3 || scope.row.approvalStatus.value == 1)"
+                                :title="getEditBtnTitle(scope.row)"
                             >编辑</el-button>
                             <el-button
                                 size="small"
@@ -407,6 +409,17 @@ const onAdd = () => {
     editRefs.value.openDialog(tempV);
 };
 
+const getEditBtnTitle = (row)=>{
+    let str = "";
+    if(row.approvalStatus && row.approvalStatus.value == 3){
+        str = "记录已完成审批，禁止编辑";
+        return
+    }
+    if(row.approvalStatus && row.approvalStatus.value == 1){
+        str ="记录正在审批中，禁止编辑" ;
+    }
+    return str;
+}
 // 编辑
 const onEditRow = (row) => {
     if (!row) {

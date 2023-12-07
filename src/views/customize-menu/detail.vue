@@ -8,20 +8,21 @@
     >
         <template #header>
             <div class="detail-header">
-                <div class="detail-header-title">{{ detailName }}
-					<div class="fr fr-box">
-                    <span class="fr-icon mr-10" @click="refresh">
-                        <el-icon>
-                            <ElIconRefresh />
-                        </el-icon>
-                    </span>
-						<span class="fr-icon" @click="detailDialog.isShow = false">
-                        <el-icon>
-                            <ElIconCloseBold />
-                        </el-icon>
-                    </span>
-					</div>
-				</div>
+                <div class="detail-header-title">
+                    {{ detailName }}
+                    <div class="fr fr-box">
+                        <span class="fr-icon mr-10" @click="refresh">
+                            <el-icon>
+                                <ElIconRefresh />
+                            </el-icon>
+                        </span>
+                        <span class="fr-icon" @click="detailDialog.isShow = false">
+                            <el-icon>
+                                <ElIconCloseBold />
+                            </el-icon>
+                        </span>
+                    </div>
+                </div>
             </div>
         </template>
 
@@ -55,7 +56,7 @@
                 </el-col>
                 <el-col :span="3">
                     <div class="detail-right" style="padding-top: 40px;">
-						<div class="group-button-label">基本操作</div>
+                        <div class="group-button-label">基本操作</div>
                         <el-row class="group-el-button" style="margin-bottom: 30px">
                             <el-col :span="24">
                                 <NewRelated
@@ -67,7 +68,13 @@
                                 />
                             </el-col>
                             <el-col :span="24">
-                                <el-button type="primary" plain @click="onEditRow">
+                                <el-button
+                                    type="primary"
+                                    plain
+                                    @click="onEditRow"
+                                    :disabled="approvalStatus && (approvalStatus.approvalStatus == 3 || approvalStatus.approvalStatus == 1)"
+                                    :title="getEditBtnTitle()"
+                                >
                                     <span class="mr-5">
                                         <el-icon>
                                             <ElIconEditPen />
@@ -86,18 +93,17 @@
                                     @editColumnConfirm="editColumnConfirm"
                                 />
                             </el-col>
-
                         </el-row>
 
-						<el-row class="group-el-button">
-							<el-col :span="24">
-								<ApprovalRelated
-									v-if="approvalStatus"
-									:approvalStatus="approvalStatus"
-									@onSubmit="onSubmitApproval"
-								/>
-							</el-col>
-						</el-row>
+                        <el-row class="group-el-button">
+                            <el-col :span="24">
+                                <ApprovalRelated
+                                    v-if="approvalStatus"
+                                    :approvalStatus="approvalStatus"
+                                    @onSubmit="onSubmitApproval"
+                                />
+                            </el-col>
+                        </el-row>
                     </div>
                 </el-col>
             </el-row>
@@ -301,6 +307,18 @@ const onConfirm = () => {
     emits("onConfirm");
 };
 
+const getEditBtnTitle = () => {
+    let str = "";
+    if (approvalStatus.value && approvalStatus.value.approvalStatus == 3) {
+        str = "记录已完成审批，禁止编辑";
+        return;
+    }
+    if (approvalStatus.value && approvalStatus.value.approvalStatus == 1) {
+        str = "记录正在审批中，禁止编辑";
+    }
+    return str;
+};
+
 // 暴露方法给父组件调用
 defineExpose({
     openDialog,
@@ -314,7 +332,7 @@ defineExpose({
 }
 
 .detail-header {
-	border-bottom: 2px solid #f1f2f3;
+    border-bottom: 2px solid #f1f2f3;
     // padding-bottom: 20px;
     // box-sizing: border-box;
     padding: 16px;
@@ -330,12 +348,12 @@ defineExpose({
         }
     }
 
-	.detail-header-title {
-		font-size: 18px;
-		padding-left: 5px;
-		border-left: 5px solid;
-		border-left-color: var(--el-color-primary);
-	}
+    .detail-header-title {
+        font-size: 18px;
+        padding-left: 5px;
+        border-left: 5px solid;
+        border-left-color: var(--el-color-primary);
+    }
 }
 .detail-main {
     padding: 20px;
@@ -348,11 +366,11 @@ defineExpose({
             }
         }
 
-		.group-button-label {
-			font-size: 11px;
-			color: #999999;
-			margin-bottom: 5px;
-		}
+        .group-button-label {
+            font-size: 11px;
+            color: #999999;
+            margin-bottom: 5px;
+        }
     }
 }
 </style>
