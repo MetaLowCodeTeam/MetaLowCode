@@ -247,10 +247,14 @@ function handleCommand(type) {
 }
 // 确认加签
 async function confirmApostille() {
+    let { type, title } = taskOperation.value;
+    if (taskOperation.value.nodeRoleList.length < 1) {
+        $ElMessage.warning("请选择要" + title + "到哪些人员");
+        return;
+    }
     otherLoading.value = true;
     let res = await http.post("/approval/taskOperation", taskOperation.value);
     if (res) {
-        let { type, title } = taskOperation.value;
         $ElMessage.success(title + "成功");
         otherDialog.value = false;
         // 如果是转审，2个弹框都要关掉

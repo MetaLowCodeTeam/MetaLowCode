@@ -52,8 +52,8 @@ onBeforeMount(() => {
     colorPrimary(app_color);
     // 获取新消息
     getNewMsgNum();
-    // // 轮循获取新消息
-    // roundRobin(5000);
+    // 轮循获取新消息
+    roundRobin(5000);
 
     // 获取公开系统配置
     queryPublicSetting();
