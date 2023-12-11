@@ -453,7 +453,7 @@ let isFinish = ref(false);
 let errorMessage = ref("");
 const autoSync = async () => {
     autoSyncLoading.value = true;
-    let defaultRole = confData.nodeRole? confData.nodeRole[0].id :null
+    let defaultRole = confData.nodeRole[0] ? confData.nodeRole[0].id :null
     let res = await getDingtalkSyncUser(defaultRole);
     if(res && res.data){
         cutTaskId.value = res.data;
