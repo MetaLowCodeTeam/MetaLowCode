@@ -51,22 +51,9 @@ onBeforeMount(() => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
-
     // 获取公开系统配置
     queryPublicSetting();
-    // if(){}
-    // 如果没有登录信息
-    // if (!$TOOL.data.get("USER_INFO")?.userName) {
-    //     // xxxx;
-    // }
-    // // 有登录信息
-    // else {
     initApi();
-    // }
-
-    // 有用户信息
-    // if ($TOOL.data.get("USER_INFO")?.userName) {
-    // }
 });
 
 const initApi = async () => {
@@ -81,7 +68,7 @@ const initApi = async () => {
             };
             $TOOL.data.set("USER_INFO", userInfo);
             // 轮循获取新消息
-            // roundRobin(5000);
+            roundRobin(5000);
             // 获取实体列表
             getEntityList();
             getRightMap();

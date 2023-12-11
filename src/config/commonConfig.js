@@ -21,7 +21,7 @@ export default [
                 label: "主页地址/域名",
                 key: "homeURL",
                 type: "input",
-                validation:"url",
+                validation: "url",
                 isError: false,
             },
             {
@@ -41,7 +41,7 @@ export default [
                 key: "watermark",
                 type: "switch",
             },
-            
+
         ],
     },
     {
@@ -206,6 +206,31 @@ export default [
                 required: true,
                 isError: false,
             },
+            {
+                label: "应用首页地址",
+                subLabel: "请复制地址至钉钉相关配置",
+                key: "homeDir",
+                type: "input",
+                disabled:true,
+            },
+            {
+                label: "回调域名",
+                subLabel: "请复制地址至钉钉相关配置",
+                key: "homeURL",
+                type: "input",
+                disabled:true,
+            },
+            {
+                label: "自动同步部门用户",
+                key: "nodeDep",
+                type: "autoSync",
+            },
+            {
+                label: "用户默认角色",
+                key: "nodeRole",
+                type: "mlSelectUser",
+            },
+
         ],
     },
 

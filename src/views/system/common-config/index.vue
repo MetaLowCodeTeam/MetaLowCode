@@ -32,7 +32,7 @@
                                     @focus="item.isError = false"
                                     v-model="confData[item.key]"
                                     clearable
-                                    :disabled="isDisabled(card,item)"
+                                    :disabled="isDisabled(card,item) || item.disabled"
                                     :placeholder="'请输入' + item.label"
                                 ></el-input>
                                 <div class="info-text">{{ item.subLabel }}</div>
@@ -44,6 +44,19 @@
                             <!-- 颜色选择器 -->
                             <div v-else-if="item.type == 'picker'">
                                 <el-color-picker v-model="confData[item.key]" />
+                            </div>
+                            <!-- 用户选择框 -->
+                            <div v-else-if="item.type == 'mlSelectUser'">
+                                <mlSelectUser type="Role" v-model="confData.nodeRole" clearable />
+                            </div>
+                            <!-- 立即同步 -->
+                            <div v-else-if="item.type == 'autoSync'">
+                                <el-button :loading="autoSyncLoading">
+                                    <el-icon v-if="!autoSyncLoading">
+                                        <ElIconRefresh />
+                                    </el-icon>
+                                    <span class="ml-2" @click="autoSync">立即同步</span>
+                                </el-button>
                             </div>
                             <!-- 上传Logo -->
                             <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
@@ -60,7 +73,7 @@
                                             v-if="confData[item.key]"
                                             @click="item.isError = false"
                                         >
-                                            <mlLogo class="avatar" :logoUrl="confData[item.key]" />
+                                            <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
                                         </div>
                                         <el-icon
                                             @click="item.isError = false"
@@ -93,10 +106,16 @@
 
 <script setup>
 import { ElMessage } from "element-plus";
-import { inject, nextTick, onMounted, reactive, ref } from "vue";
-import { getSettingInfo, updateSysSetting } from "@/api/setting";
+import { nextTick, onMounted, reactive, ref } from "vue";
+import {
+    getSettingInfo,
+    updateSysSetting,
+    getDingtalkSyncUser,
+    getHeavyTask
+} from "@/api/setting";
 import commonConfig from "@/config/commonConfig";
 import ActivateAuth from "./components/ActivateAuth.vue";
+
 // import config from "@/config/table";
 onMounted(() => {
     initData();
@@ -111,7 +130,10 @@ let confList = ref();
 // 当前tab
 let activeName = ref("common");
 // 表单数据
-let confData = reactive({});
+let confData = reactive({
+    nodeRole: [],
+    homeDir:"",
+});
 // 加载状态
 let loading = ref(false);
 
@@ -181,6 +203,8 @@ const initData = async () => {
         if (!confData.logo) {
             confData.logo = "/src/assets/imgs/logo.png";
         }
+        // 初始化应用首页地址
+        confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
     }
     loading.value = false;
 };
@@ -313,7 +337,12 @@ const checkOnSave = () => {
         // 循环当前tab下的字段集
         for (let subInx = 0; subInx < el.confs.length; subInx++) {
             const subEl = el.confs[subInx];
-            if(subEl.validation == 'url' && confData[subEl.key] && confData[subEl.key].indexOf('http://') == -1&& confData[subEl.key].indexOf('https://') == -1){
+            if (
+                subEl.validation == "url" &&
+                confData[subEl.key] &&
+                confData[subEl.key].indexOf("http://") == -1 &&
+                confData[subEl.key].indexOf("https://") == -1
+            ) {
                 subEl.isError = true;
                 activeName.value = el.code;
                 ElMessage.warning("请输入有效域名");
@@ -400,6 +429,43 @@ let activateAuthRefs = ref();
 const openActivateAuthDialog = () => {
     activateAuthRefs.value.openDailog(confData.licenseInfo);
 };
+
+// 获取logourl
+const getLogoUrl = (item) => {
+    return confData[item.key];
+};
+
+/**
+ * ***************************** 自动同步
+ */
+let autoSyncLoading = ref(false);
+let cutTaskId = ref();
+let isFinish = ref(false);
+const autoSync = async () => {
+    autoSyncLoading.value = true;
+    let res = await getDingtalkSyncUser();
+    if(res && res.data){
+        cutTaskId.value = res.data;
+        getHeavyTaskApi()
+    }
+};
+
+
+const getHeavyTaskApi = async () => {
+    let taskRes = await getHeavyTask(cutTaskId.value);
+    if(taskRes && taskRes.data){
+        isFinish.value = taskRes.data.finish;
+        if(!isFinish.value){
+            setTimeout(() => {
+                getHeavyTaskApi()
+            }, 5000);
+        }
+    }
+    if(isFinish.value){
+        autoSyncLoading.value = false;
+    }
+}
+
 </script>
 <style lang='scss' scoped>
 .info-text {

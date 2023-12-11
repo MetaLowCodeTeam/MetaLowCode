@@ -27,3 +27,16 @@ export function registerLicenseApi(body) {
 }
 
 // 
+
+/**
+ * 钉钉集成
+ */
+// -- 同步钉钉组织架构
+export function getDingtalkSyncUser() {
+    return http.get('/organizationSync/dingtalkSyncUser')
+}
+
+// -- 异步任务状态
+export function getHeavyTask(taskId) {
+    return http.get('/heavyTask/taskState?taskId=' + taskId);
+}

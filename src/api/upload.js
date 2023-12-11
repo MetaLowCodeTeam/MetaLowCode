@@ -14,7 +14,7 @@ export default {
     },
     // 导入状态
     taskState: async (taskId) => {
-        return await http.get("/excelData/taskState", { taskId });
+        return await http.get("/heavyTask/taskState", { taskId });
     },
     
     // 导入进度
@@ -23,7 +23,7 @@ export default {
     },
     // 中断任务
     taskCancel: async (taskId) => {
-        return await http.get("/excelData/cancel", { taskId });
+        return await http.get("/heavyTask/cancel", { taskId });
     },
     
 }
