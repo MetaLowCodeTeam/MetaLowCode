@@ -57,6 +57,7 @@
                                     </el-icon>
                                     <span class="ml-2">立即同步</span>
                                 </el-button>
+                                <span v-if="errorMessage" class="err-meg ml-10">{{ errorMessage }}</span>
                             </div>
                             <!-- 上传Logo -->
                             <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
@@ -442,6 +443,7 @@ const getLogoUrl = (item) => {
 let autoSyncLoading = ref(false);
 let cutTaskId = ref();
 let isFinish = ref(false);
+let errorMessage = ref("");
 const autoSync = async () => {
     autoSyncLoading.value = true;
     let res = await getDingtalkSyncUser();
@@ -458,6 +460,7 @@ const getHeavyTaskApi = async () => {
     let taskRes = await getHeavyTask(cutTaskId.value);
     if(taskRes && taskRes.data){
         isFinish.value = taskRes.data.finish;
+        errorMessage = taskRes.data.errorMessage;
         if(!isFinish.value){
             setTimeout(() => {
                 getHeavyTaskApi()
@@ -477,6 +480,10 @@ const getHeavyTaskApi = async () => {
     margin-top: 5px;
     font-size: 12px;
     padding-left: 5px;
+}
+
+.err-meg {
+    color: #f56c6c;
 }
 .common-config {
     padding: 20px;
