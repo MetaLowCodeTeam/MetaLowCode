@@ -211,25 +211,26 @@ export default [
                 subLabel: "请复制地址至钉钉相关配置",
                 key: "homeDir",
                 type: "input",
-                disabled:true,
+                disabled: true,
             },
             {
                 label: "回调域名",
                 subLabel: "请复制地址至钉钉相关配置",
                 key: "homeURL",
                 type: "input",
-                disabled:true,
-            },
-            {
-                label: "自动同步部门用户",
-                key: "nodeDep",
-                type: "autoSync",
+                disabled: true,
             },
             {
                 label: "用户默认角色",
                 key: "nodeRole",
                 type: "mlSelectUser",
             },
+            {
+                label: "自动同步部门用户",
+                key: "nodeDep",
+                type: "autoSync",
+            },
+
 
         ],
     },

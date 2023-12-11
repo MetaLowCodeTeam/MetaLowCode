@@ -32,8 +32,8 @@ export function registerLicenseApi(body) {
  * 钉钉集成
  */
 // -- 同步钉钉组织架构
-export function getDingtalkSyncUser() {
-    return http.get('/organizationSync/dingtalkSyncUser')
+export function getDingtalkSyncUser(defaultRole) {
+    return http.get('/organizationSync/dingtalkSyncUser', { defaultRole })
 }
 
 // -- 异步任务状态

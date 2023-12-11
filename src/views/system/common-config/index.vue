@@ -51,7 +51,11 @@
                             </div>
                             <!-- 立即同步 -->
                             <div v-else-if="item.type == 'autoSync'">
-                                <el-button :loading="autoSyncLoading" :disabled="isDisabled(card,item)" @click="autoSync">
+                                <el-button
+                                    :loading="autoSyncLoading"
+                                    :disabled="isDisabled(card,item)"
+                                    @click="autoSync"
+                                >
                                     <el-icon v-if="!autoSyncLoading">
                                         <ElIconRefresh />
                                     </el-icon>
@@ -449,7 +453,8 @@ let isFinish = ref(false);
 let errorMessage = ref("");
 const autoSync = async () => {
     autoSyncLoading.value = true;
-    let res = await getDingtalkSyncUser();
+    let defaultRole = confData.nodeRole? confData.nodeRole[0].id :null
+    let res = await getDingtalkSyncUser(defaultRole);
     if(res && res.data){
         cutTaskId.value = res.data;
         getHeavyTaskApi()
