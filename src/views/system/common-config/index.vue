@@ -51,7 +51,7 @@
                             </div>
                             <!-- 立即同步 -->
                             <div v-else-if="item.type == 'autoSync'">
-                                <el-button :loading="autoSyncLoading">
+                                <el-button :loading="autoSyncLoading" :disabled="isDisabled(card,item)">
                                     <el-icon v-if="!autoSyncLoading">
                                         <ElIconRefresh />
                                     </el-icon>
