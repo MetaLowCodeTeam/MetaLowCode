@@ -198,6 +198,9 @@ const initData = async () => {
             if (Object.hasOwnProperty.call(dingTalkSetting, key)) {
                 const element = dingTalkSetting[key];
                 confData[key] = element;
+                if(key == 'nodeRole' && !element){
+                    confData[key] = []
+                }
             }
         }
 
