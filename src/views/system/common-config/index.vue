@@ -51,11 +51,11 @@
                             </div>
                             <!-- 立即同步 -->
                             <div v-else-if="item.type == 'autoSync'">
-                                <el-button :loading="autoSyncLoading" :disabled="isDisabled(card,item)">
+                                <el-button :loading="autoSyncLoading" :disabled="isDisabled(card,item)" @click="autoSync">
                                     <el-icon v-if="!autoSyncLoading">
                                         <ElIconRefresh />
                                     </el-icon>
-                                    <span class="ml-2" @click="autoSync">立即同步</span>
+                                    <span class="ml-2">立即同步</span>
                                 </el-button>
                             </div>
                             <!-- 上传Logo -->
@@ -152,6 +152,7 @@ let dingTalkFields = ref([
     "dingTalkAppKey",
     "dingTalkAppSecret",
     "dingTalkAgentId",
+    "nodeDep"
 ]);
 
 const initData = async () => {
@@ -447,6 +448,8 @@ const autoSync = async () => {
     if(res && res.data){
         cutTaskId.value = res.data;
         getHeavyTaskApi()
+    }else{
+        autoSyncLoading.value = false;
     }
 };
 
@@ -460,6 +463,8 @@ const getHeavyTaskApi = async () => {
                 getHeavyTaskApi()
             }, 5000);
         }
+    }else {
+        autoSyncLoading.value = true;
     }
     if(isFinish.value){
         autoSyncLoading.value = false;
