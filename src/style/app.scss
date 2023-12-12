@@ -95,7 +95,7 @@ textarea {
 /* 头部 */
 .adminui-header {
 	height: 58px;
-	background: #222b45;
+	background: var(--el-color-primary);
 	color: #fff;
 	display: flex;
 	justify-content: space-between;
@@ -500,4 +500,8 @@ $names: (
 	font-weight: bold;
 	font-size: 20px;
 	margin-top: 30px;
+}
+
+.render-form .readonly-mode-field {
+    color: #000;
 }

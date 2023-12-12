@@ -32,18 +32,45 @@
                                     @focus="item.isError = false"
                                     v-model="confData[item.key]"
                                     clearable
-                                    :disabled="isDisabled(card,item)"
+                                    :disabled="isDisabled(card,item) || item.disabled"
                                     :placeholder="'请输入' + item.label"
                                 ></el-input>
                                 <div class="info-text">{{ item.subLabel }}</div>
                             </div>
                             <!-- 复选框 -->
                             <div v-else-if="item.type == 'switch'">
-                                <el-switch v-model="confData[item.key]" />
+                                <el-tooltip
+                                    class="box-item"
+                                    effect="dark"
+                                    :content="'当前：' + publicSetting.productType.displayName + ' 不支持该功能'"
+                                    placement="top"
+                                    v-if="publicSetting.productType.value == 1 || publicSetting.productType.value == 2"
+                                >
+                                    <el-switch v-model="confData[item.key]" disabled />
+                                </el-tooltip>
+                                <el-switch v-else v-model="confData[item.key]" />
                             </div>
                             <!-- 颜色选择器 -->
                             <div v-else-if="item.type == 'picker'">
                                 <el-color-picker v-model="confData[item.key]" />
+                            </div>
+                            <!-- 用户选择框 -->
+                            <div v-else-if="item.type == 'mlSelectUser'">
+                                <mlSelectUser type="Role" v-model="confData.nodeRole" clearable />
+                            </div>
+                            <!-- 立即同步 -->
+                            <div v-else-if="item.type == 'autoSync'">
+                                <el-button
+                                    :loading="autoSyncLoading"
+                                    :disabled="isDisabled(card,item)"
+                                    @click="autoSync"
+                                >
+                                    <el-icon v-if="!autoSyncLoading">
+                                        <ElIconRefresh />
+                                    </el-icon>
+                                    <span class="ml-2">立即同步</span>
+                                </el-button>
+                                <span v-if="errorMessage" class="err-meg ml-10">{{ errorMessage }}</span>
                             </div>
                             <!-- 上传Logo -->
                             <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
@@ -60,7 +87,7 @@
                                             v-if="confData[item.key]"
                                             @click="item.isError = false"
                                         >
-                                            <mlLogo class="avatar" :logoUrl="confData[item.key]" />
+                                            <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
                                         </div>
                                         <el-icon
                                             @click="item.isError = false"
@@ -93,10 +120,20 @@
 
 <script setup>
 import { ElMessage } from "element-plus";
-import { inject, nextTick, onMounted, reactive, ref } from "vue";
-import { getSettingInfo, updateSysSetting } from "@/api/setting";
+import { nextTick, onMounted, reactive, ref } from "vue";
+import {
+    getSettingInfo,
+    updateSysSetting,
+    getDingtalkSyncUser,
+    getHeavyTask,
+} from "@/api/setting";
 import commonConfig from "@/config/commonConfig";
 import ActivateAuth from "./components/ActivateAuth.vue";
+
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
+
 // import config from "@/config/table";
 onMounted(() => {
     initData();
@@ -111,7 +148,10 @@ let confList = ref();
 // 当前tab
 let activeName = ref("common");
 // 表单数据
-let confData = reactive({});
+let confData = reactive({
+    nodeRole: [],
+    homeDir: "",
+});
 // 加载状态
 let loading = ref(false);
 
@@ -124,11 +164,13 @@ let smsFields = ref(["smsappId", "smsappKey", "smssignature"]);
 // 邮箱字段
 let emailFields = ref(["appId", "appKey", "from", "fromName", "cc"]);
 // 云存储字段
-let cloudStorageFields = ref([
-    "csaccessKey",
-    "cssecretKey",
-    "csbucket",
-    "cshost",
+let cloudStorageFields = ref(["accessKey", "secretKey", "bucket", "host"]);
+// 钉钉字段
+let dingTalkFields = ref([
+    "dingTalkAppKey",
+    "dingTalkAppSecret",
+    "dingTalkAgentId",
+    "nodeDep",
 ]);
 
 const initData = async () => {
@@ -138,7 +180,8 @@ const initData = async () => {
     if (res) {
         let resData = res.data ? res.data : {};
         confData = Object.assign(confData, resData);
-        let { emailSetting, smsSetting, cloudStorageSetting } = confData;
+        let { emailSetting, smsSetting, cloudStorageSetting, dingTalkSetting } =
+            confData;
 
         // 格式化短信
         confData.smsOpen = smsSetting.openStatus;
@@ -162,7 +205,19 @@ const initData = async () => {
         for (const key in cloudStorageSetting) {
             if (Object.hasOwnProperty.call(cloudStorageSetting, key)) {
                 const element = cloudStorageSetting[key];
-                confData["cs" + key] = element;
+                confData[key] = element;
+            }
+        }
+
+        // 格式化钉钉集成
+        confData.dingTalkOpen = dingTalkSetting.openStatus;
+        for (const key in dingTalkSetting) {
+            if (Object.hasOwnProperty.call(dingTalkSetting, key)) {
+                const element = dingTalkSetting[key];
+                confData[key] = element;
+                if (key == "nodeRole" && !element) {
+                    confData[key] = [];
+                }
             }
         }
 
@@ -170,6 +225,8 @@ const initData = async () => {
         if (!confData.logo) {
             confData.logo = "/src/assets/imgs/logo.png";
         }
+        // 初始化应用首页地址
+        confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
     }
     loading.value = false;
 };
@@ -210,7 +267,14 @@ const isDisabled = (card, item) => {
     ) {
         return true;
     }
-
+    // 如果是钉钉集成 且 没有开启钉钉服务
+    if (
+        card.code == "dingTalkIntegration" &&
+        !confData.dingTalkOpen &&
+        dingTalkFields.value.includes(item.key)
+    ) {
+        return true;
+    }
     return false;
 };
 
@@ -223,7 +287,6 @@ const onSubmit = async () => {
         return;
     }
     // 如果短信是开启的
-
     if (confData.smsOpen) {
         for (const key in confData.smsSetting) {
             if (Object.hasOwnProperty.call(confData.smsSetting, key)) {
@@ -231,10 +294,10 @@ const onSubmit = async () => {
             }
         }
     }
+    // 重新赋值短信开关
     confData.smsSetting.openStatus = confData.smsOpen;
 
     // 如果邮箱是开启的
-
     if (confData.emailOpen) {
         for (const key in confData.emailSetting) {
             if (Object.hasOwnProperty.call(confData.emailSetting, key)) {
@@ -242,16 +305,30 @@ const onSubmit = async () => {
             }
         }
     }
+    // 重新赋值邮箱开关
     confData.emailSetting.openStatus = confData.emailOpen;
+
     // 如果云存储是开启的
     if (confData.cloudStorageOpen) {
         for (const key in confData.cloudStorageSetting) {
             if (Object.hasOwnProperty.call(confData.cloudStorageSetting, key)) {
-                confData.cloudStorageSetting[key] = confData["cs" + key];
+                confData.cloudStorageSetting[key] = confData[key];
             }
         }
     }
+    // 重新赋值云存储开关
     confData.cloudStorageSetting.openStatus = confData.cloudStorageOpen;
+
+    // 如果钉钉是开启的
+    if (confData.dingTalkOpen) {
+        for (const key in confData.dingTalkSetting) {
+            if (Object.hasOwnProperty.call(confData.dingTalkSetting, key)) {
+                confData.dingTalkSetting[key] = confData[key];
+            }
+        }
+    }
+    // 重新赋值云存储开关
+    confData.dingTalkSetting.openStatus = confData.dingTalkOpen;
 
     let res = await updateSysSetting(confData);
     if (res) {
@@ -282,13 +359,25 @@ const checkOnSave = () => {
         // 循环当前tab下的字段集
         for (let subInx = 0; subInx < el.confs.length; subInx++) {
             const subEl = el.confs[subInx];
+            if (
+                subEl.validation == "url" &&
+                confData[subEl.key] &&
+                confData[subEl.key].indexOf("http://") == -1 &&
+                confData[subEl.key].indexOf("https://") == -1
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning("请输入有效域名");
+                return false;
+            }
             // 如果字段是必填的，且该字段没有值 并且该字段不属于短信 或者 邮箱
             if (
                 subEl.required &&
                 !confData[subEl.key] &&
                 !smsFields.value.includes(subEl.key) &&
                 !emailFields.value.includes(subEl.key) &&
-                !cloudStorageFields.value.includes(subEl.key)
+                !cloudStorageFields.value.includes(subEl.key) &&
+                !dingTalkFields.value.includes(subEl.key)
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
@@ -331,8 +420,25 @@ const checkOnSave = () => {
                 ElMessage.warning(MsgType[subEl.type] + subEl.label);
                 return false;
             }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于云存储 并且邮箱是开启的
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                dingTalkFields.value.includes(subEl.key) &&
+                confData.dingTalkOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
         }
     }
+    // if(confData.homeURL && confData.homeURL.indexOf('http://') == -1 && confData.homeURL.indexOf('https://') == -1){
+    //     ElMessage.warning("请输入有效域名");
+    //     confList.value[0].
+    //     return false
+    // }
     return true;
 };
 
@@ -345,12 +451,58 @@ let activateAuthRefs = ref();
 const openActivateAuthDialog = () => {
     activateAuthRefs.value.openDailog(confData.licenseInfo);
 };
+
+// 获取logourl
+const getLogoUrl = (item) => {
+    return confData[item.key];
+};
+
+/**
+ * ***************************** 自动同步
+ */
+let autoSyncLoading = ref(false);
+let cutTaskId = ref();
+let isFinish = ref(false);
+let errorMessage = ref("");
+const autoSync = async () => {
+    autoSyncLoading.value = true;
+    let defaultRole = confData.nodeRole[0] ? confData.nodeRole[0].id : null;
+    let res = await getDingtalkSyncUser(defaultRole);
+    if (res && res.data) {
+        cutTaskId.value = res.data;
+        getHeavyTaskApi();
+    } else {
+        autoSyncLoading.value = false;
+    }
+};
+
+const getHeavyTaskApi = async () => {
+    let taskRes = await getHeavyTask(cutTaskId.value);
+    if (taskRes && taskRes.data) {
+        isFinish.value = taskRes.data.finish;
+        errorMessage = taskRes.data.errorMessage;
+        if (!isFinish.value) {
+            setTimeout(() => {
+                getHeavyTaskApi();
+            }, 5000);
+        }
+    } else {
+        autoSyncLoading.value = true;
+    }
+    if (isFinish.value) {
+        autoSyncLoading.value = false;
+    }
+};
 </script>
 <style lang='scss' scoped>
 .info-text {
     margin-top: 5px;
     font-size: 12px;
     padding-left: 5px;
+}
+
+.err-meg {
+    color: #f56c6c;
 }
 .common-config {
     padding: 20px;

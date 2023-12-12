@@ -24,11 +24,13 @@ import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-import { ElLoading } from 'element-plus'
+import { ElLoading } from "element-plus";
+import { getLoginUser } from "@/api/user";
+import { useRouter } from "vue-router";
 const { getEntityList, setPublicSetting } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
-
+const router = useRouter();
 const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
@@ -50,20 +52,34 @@ onBeforeMount(() => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
-    // 获取新消息
-    getNewMsgNum();
-    // 轮循获取新消息
-    roundRobin(5000);
-
     // 获取公开系统配置
     queryPublicSetting();
-    // 有用户信息
-    if ($TOOL.data.get("USER_INFO")?.userName) {
-        // 获取实体列表
-        getEntityList()
-        getRightMap();
-    }
+    initApi();
 });
+
+const initApi = async () => {
+    let res = await getLoginUser();
+    if (res && res.data) {
+        if (res.data.data) {
+            let userInfo = {
+                userName: res.data.data.name,
+                loginName: res.data.data.loginName,
+                userId: res.data.data.id,
+                dashboard: "1",
+            };
+            $TOOL.data.set("USER_INFO", userInfo);
+            // 轮循获取新消息
+            roundRobin(5000);
+            // 获取实体列表
+            getEntityList();
+            getRightMap();
+            // 获取新消息
+            getNewMsgNum();
+        } else {
+            router.push({ path: "/web/login" });
+        }
+    }
+};
 
 const getRightMap = async () => {
     let getRightMapRes = await http.get("/user/getRightMap");
@@ -75,19 +91,18 @@ const getRightMap = async () => {
 // /crud/getRightMap
 // 获取公开系统配置
 const queryPublicSetting = async () => {
-    
     const loading = ElLoading.service({
         lock: true,
-        text: 'Loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-    })
+        text: "Loading",
+        background: "rgba(0, 0, 0, 0.7)",
+    });
     let res = await getPublicSetting();
     if (res) {
         let resData = res.data || {};
         resData.themeColor = res.data.themeColor || "#409EFF";
         colorPrimary(resData.themeColor);
         setPublicSetting(resData);
-        loading.close()
+        loading.close();
     }
 };
 

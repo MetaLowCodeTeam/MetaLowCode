@@ -119,11 +119,9 @@ export default {
 
             //获取token
             var user = await this.$API.auth.token.post(data);
+            // console.log(user,'user')
+            // return
             if (user) {
-                this.$TOOL.cookie.set("TOKEN", user.data.token, {
-                    expires: this.form.autologin ? 24 * 60 * 60 * 3 : 0,
-                });
-
                 let userInfo = {
                     userName: user.data.name,
                     loginName: this.form.user,

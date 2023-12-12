@@ -59,6 +59,7 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.APP_WATERMARK = data.watermark;
         publicSetting.value.APP_PLUGINID = data.pluginIdList;
         publicSetting.value.APP_COLOR = data.themeColor
+        publicSetting.value.productType = data.productType;
         publicSetting.value.trialVersionFlag = data.trialVersionFlag
     }
     return {
