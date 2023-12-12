@@ -39,7 +39,16 @@
                             </div>
                             <!-- 复选框 -->
                             <div v-else-if="item.type == 'switch'">
-                                <el-switch v-model="confData[item.key]" />
+                                <el-tooltip
+                                    class="box-item"
+                                    effect="dark"
+                                    :content="'当前：' + publicSetting.productType.displayName + ' 不支持该功能'"
+                                    placement="top"
+                                    v-if="publicSetting.productType.value == 1 || publicSetting.productType.value == 2"
+                                >
+                                    <el-switch v-model="confData[item.key]" disabled />
+                                </el-tooltip>
+                                <el-switch v-else v-model="confData[item.key]" />
                             </div>
                             <!-- 颜色选择器 -->
                             <div v-else-if="item.type == 'picker'">
@@ -116,10 +125,14 @@ import {
     getSettingInfo,
     updateSysSetting,
     getDingtalkSyncUser,
-    getHeavyTask
+    getHeavyTask,
 } from "@/api/setting";
 import commonConfig from "@/config/commonConfig";
 import ActivateAuth from "./components/ActivateAuth.vue";
+
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 
 // import config from "@/config/table";
 onMounted(() => {
@@ -137,7 +150,7 @@ let activeName = ref("common");
 // 表单数据
 let confData = reactive({
     nodeRole: [],
-    homeDir:"",
+    homeDir: "",
 });
 // 加载状态
 let loading = ref(false);
@@ -157,7 +170,7 @@ let dingTalkFields = ref([
     "dingTalkAppKey",
     "dingTalkAppSecret",
     "dingTalkAgentId",
-    "nodeDep"
+    "nodeDep",
 ]);
 
 const initData = async () => {
@@ -202,8 +215,8 @@ const initData = async () => {
             if (Object.hasOwnProperty.call(dingTalkSetting, key)) {
                 const element = dingTalkSetting[key];
                 confData[key] = element;
-                if(key == 'nodeRole' && !element){
-                    confData[key] = []
+                if (key == "nodeRole" && !element) {
+                    confData[key] = [];
                 }
             }
         }
@@ -453,35 +466,33 @@ let isFinish = ref(false);
 let errorMessage = ref("");
 const autoSync = async () => {
     autoSyncLoading.value = true;
-    let defaultRole = confData.nodeRole[0] ? confData.nodeRole[0].id :null
+    let defaultRole = confData.nodeRole[0] ? confData.nodeRole[0].id : null;
     let res = await getDingtalkSyncUser(defaultRole);
-    if(res && res.data){
+    if (res && res.data) {
         cutTaskId.value = res.data;
-        getHeavyTaskApi()
-    }else{
+        getHeavyTaskApi();
+    } else {
         autoSyncLoading.value = false;
     }
 };
 
-
 const getHeavyTaskApi = async () => {
     let taskRes = await getHeavyTask(cutTaskId.value);
-    if(taskRes && taskRes.data){
+    if (taskRes && taskRes.data) {
         isFinish.value = taskRes.data.finish;
         errorMessage = taskRes.data.errorMessage;
-        if(!isFinish.value){
+        if (!isFinish.value) {
             setTimeout(() => {
-                getHeavyTaskApi()
+                getHeavyTaskApi();
             }, 5000);
         }
-    }else {
+    } else {
         autoSyncLoading.value = true;
     }
-    if(isFinish.value){
+    if (isFinish.value) {
         autoSyncLoading.value = false;
     }
-}
-
+};
 </script>
 <style lang='scss' scoped>
 .info-text {
