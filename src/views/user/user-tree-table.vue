@@ -17,7 +17,15 @@
                         @mouseenter="hoverNodeId = node.id"
                         @mouseleave="hoverNodeId = -1"
                     >
-                        <span>{{ node.label }}</span>
+                        <span>
+                            <img
+                                v-if="node.data.dingDepartmentId"
+                                src="@/assets/imgs/dd.png"
+                                style="width: 15px;height: 15px;position: relative;top: 2px;"
+                                alt
+                            />
+                            {{ node.label }}
+                        </span>
                         <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
                             <el-button
                                 link
@@ -125,7 +133,13 @@
             </mlSingleList>
         </el-container>
         <!-- 新建、编辑用户 -->
-        <Edit ref="editRefs" @onConfirm="onRefresh" nameFieldName="userName" isUser :disableWidgets="disableWidgets" />
+        <Edit
+            ref="editRefs"
+            @onConfirm="onRefresh"
+            nameFieldName="userName"
+            isUser
+            :disableWidgets="disableWidgets"
+        />
 
         <!-- 列表详情 -->
         <ListDetail
@@ -151,6 +165,7 @@ import FormState from "@/views/system/form-state-variables";
 import eventBus from "@/utils/event-bus";
 import Edit from "@/views/customize-menu/edit.vue";
 import ListDetail from "./components/ListDetail.vue";
+import ddImg from "@/assets/imgs/dd.png";
 export default {
     name: "UserTreeTable",
     components: {
@@ -161,7 +176,7 @@ export default {
         return {
             entity: "User",
             fieldsList:
-                "userName, loginName, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar",
+                "userName, loginName, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar,dingTalkUserId",
             showFormDialogFlag: false,
             layout: {},
             formState: 1,
@@ -234,6 +249,12 @@ export default {
                 {
                     prop: "loginName",
                     label: "登录名",
+                    needImg: (row) => {
+                        if (row.dingTalkUserId) {
+                            return ddImg;
+                        }
+                        return false;
+                    },
                 },
                 {
                     prop: "jobTitle",
@@ -360,7 +381,7 @@ export default {
             let tempV = { ...row };
             tempV.entityName = "User";
             tempV.detailId = row.userId;
-            this.disableWidgets = ["loginName","loginPwd"];
+            this.disableWidgets = ["loginName", "loginPwd"];
             this.$refs.editRefs.openDialog(tempV);
         },
         // 刷新数据
@@ -407,7 +428,7 @@ export default {
                 .then(() => {
                     deleteUserById(row.userId)
                         .then((res) => {
-                            if(res && res.data){
+                            if (res && res.data) {
                                 this.$message.success("删除成功");
                                 this.onRefresh();
                             }

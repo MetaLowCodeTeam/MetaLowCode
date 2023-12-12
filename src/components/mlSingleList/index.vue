@@ -70,6 +70,15 @@
                                 @change="changeSwitch(scope.row)"
                             />
                         </span>
+                        <!-- 需要图片的 -->
+                        <span v-else-if="column.needImg && column.needImg(scope.row)">
+                            {{ scope.row[column.prop] }}
+                            <img
+                                :src="column.needImg(scope.row)"
+                                style="width: 20px;height: 20px;position: relative;top: 4px;"
+                                alt
+                            />
+                        </span>
                         <!-- 默认 -->
                         <span v-else>{{ scope.row[column.prop] }}</span>
                     </template>
@@ -212,7 +221,6 @@ const highlightClick = (row) => {
 const changeSwitch = (row) => {
     emits("changeSwitch", row);
 };
-
 
 defineExpose({
     loading,
