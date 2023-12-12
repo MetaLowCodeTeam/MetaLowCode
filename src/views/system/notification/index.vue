@@ -129,9 +129,6 @@ let approvalName = ref("");
 
 // 消息点击
 const activeRow = (item) => {
-    let filterEntity = unSystemEntityList.value.filter(
-        (el) => el.name == item.entityName
-    );
     // 审批
     if (item.type == 10) {
         approveDialogIsShow.value = true;
@@ -145,6 +142,9 @@ const activeRow = (item) => {
     }
     // 实体列表详情
     else {
+        let filterEntity = unSystemEntityList.value.filter(
+            (el) => el.name == item.entityName
+        );
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
         } else {
