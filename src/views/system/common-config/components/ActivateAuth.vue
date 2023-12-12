@@ -54,8 +54,11 @@
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
 import { registerLicenseApi } from "@/api/setting";
+import { getPublicSetting } from "@/api/setting";
+import useCommonStore from "@/store/modules/common";
+const { setPublicSetting } = useCommonStore();
 // let dialogTitle = ref("在线激活");
-const emits = defineEmits(['registerActiveConfirm'])
+const emits = defineEmits(["registerActiveConfirm"]);
 const RegisterLicense = reactive({
     // 账号
     account: "",
@@ -107,9 +110,12 @@ const onActive = async () => {
     }
     dialogConf.loading = true;
     let res = await registerLicenseApi(params);
-    console.log(res,'res')
     if (res) {
-        ElMessage.success("激活成功")
+        let publicRes = await getPublicSetting();
+        if (publicRes) {
+            setPublicSetting(resData);
+        }
+        ElMessage.success("激活成功");
         dialogConf.isShow = false;
         dialogConf.loading = false;
         emits("registerActiveConfirm");
