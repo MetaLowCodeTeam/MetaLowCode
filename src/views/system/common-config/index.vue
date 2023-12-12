@@ -60,7 +60,27 @@
                             </div>
                             <!-- 立即同步 -->
                             <div v-else-if="item.type == 'autoSync'">
+                                <el-tooltip
+                                    popper-class="conmon-tooltip"
+                                    effect="dark"
+                                    :content="errorMessage"
+                                    placement="top"
+                                    v-if="errorMessage"
+                                    style="width: 300px;"
+                                >
+                                    <el-button
+                                        :loading="autoSyncLoading"
+                                        :disabled="isDisabled(card,item)"
+                                        @click="autoSync"
+                                    >
+                                        <el-icon v-if="!autoSyncLoading">
+                                            <ElIconRefresh />
+                                        </el-icon>
+                                        <span class="ml-2">同步失败</span>
+                                    </el-button>
+                                </el-tooltip>
                                 <el-button
+                                    v-else
                                     :loading="autoSyncLoading"
                                     :disabled="isDisabled(card,item)"
                                     @click="autoSync"
@@ -70,7 +90,6 @@
                                     </el-icon>
                                     <span class="ml-2">立即同步</span>
                                 </el-button>
-                                <span v-if="errorMessage" class="err-meg ml-10">{{ errorMessage }}</span>
                             </div>
                             <!-- 上传Logo -->
                             <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
