@@ -132,19 +132,24 @@ const activeRow = (item) => {
     let filterEntity = unSystemEntityList.value.filter(
         (el) => el.name == item.entityName
     );
-    if (item.type == 30 || item.type == 20) {
+    // 审批
+    if (item.type == 10) {
+        approveDialogIsShow.value = true;
+        approvalTaskId.value = item.relatedRecord.id;
+        entityId.value = item.relatedRecord.id;
+        approvalName.value = item.relatedRecord.name;
+    }
+    // 审批抄送
+    else if (item.type == 11) {
+        router.push("/web/center-cc");
+    }
+    // 实体列表详情
+    else {
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");
         } else {
             detailRefs.value.openDialog(item.relatedRecord.id);
         }
-    } else if (item.type == 10) {
-        approveDialogIsShow.value = true;
-        approvalTaskId.value = item.relatedRecord.id;
-        entityId.value = item.relatedRecord.id;
-        approvalName.value = item.relatedRecord.name;
-    } else {
-        router.push("/web/center-cc");
     }
     if (item.unread) {
         markRead(item);

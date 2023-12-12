@@ -11,7 +11,6 @@
         @highlightClick="highlightClick"
     >
         <template #addbutton>
-            <!-- <el-button type="primary" @click="markAllRead">全部设为已读</el-button> -->
             <el-button type="primary" @click="addClick">
                 <el-icon size="14">
                     <ElIconPlus />
