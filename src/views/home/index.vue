@@ -7,7 +7,7 @@
                 placement="bottom"
                 :width="200"
                 trigger="click"
-                content="this is content, this is content, this is content"
+                v-if="!routerDefaultId"
             >
                 <div class="dashboard-list">
                     <el-scrollbar>
@@ -40,6 +40,8 @@ import { inject, nextTick, onMounted, ref } from "vue";
 import { getDataList, queryById } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const { publicSetting } = storeToRefs(useCommonStore());
 // import { ElMessage } from "element-plus";
 const $TOOL = inject("$TOOL");
@@ -58,9 +60,15 @@ let showFormRender = ref(false);
 // 插件列表
 let pluginIdList = ref([]);
 let isHasPlugin = ref(false);
+
+let routerDefaultId = ref("");
+
 onMounted(() => {
     pluginIdList.value = publicSetting.value.APP_PLUGINID || [];
     isHasPlugin.value = pluginIdList.value.includes("metaDataCube");
+
+    routerDefaultId.value = router.currentRoute.value.query.default;
+
     if (isHasPlugin.value) {
         // 获取仪表盘数据
         getDashboardList();
@@ -77,6 +85,7 @@ const getDashboardList = async () => {
     let res = await getDataList("Chart", "chartName,defaultChart", filter);
     if (res && res.data) {
         dashboardList.value = res.data.dataList || [];
+        // console.log(dashboardList.value, "dashboardList.value");
         // 如果没有数据
         if (dashboardList.value.length < 1) {
             loading.value = false;
@@ -95,6 +104,25 @@ const getDashboardList = async () => {
         //         return;
         //     }
         // }
+        
+        // 查有没有路由ID
+        if(routerDefaultId.value){
+            let routerDefault = dashboardList.value.filter(
+                (el) => el.chartId == routerDefaultId.value
+            );
+            if (routerDefault.length > 0) {
+                dashboardDefaultId.value = routerDefault[0].chartId;
+                initFormConfig(dashboardDefaultId.value);
+                loading.value = false;
+            }else {
+                dashboardList.value = [];
+                loading.value = false;
+            }
+            
+        }
+       
+        
+        
         // 查找有没有默认
         let filterDefaultId = dashboardList.value.filter(
             (el) => el.defaultChart
@@ -124,10 +152,9 @@ const initFormConfig = async (chartId) => {
         showFormRender.value = true;
         let blankFormJson = JSON.parse(res.data.chartData);
         nextTick(() => {
-            if(dashboardWidget.value){
+            if (dashboardWidget.value) {
                 dashboardWidget.value.setFormJson(blankFormJson);
             }
-            
         });
     }
     loading.value = false;

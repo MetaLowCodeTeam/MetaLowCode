@@ -98,6 +98,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     initMenu.path = "/web/custom-page/" + el.outLink;
                 } else {
                     initMenu.path = el.outLink;
+                    // 如果是第一个字符是/表示是内部地址
+                    if(el.outLink.indexOf('/') == 0){
+                        initMenu.meta.type = "inLink"
+                    }
                 }
 
                 if (el.type == 1) {

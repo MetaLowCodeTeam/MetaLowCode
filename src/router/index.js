@@ -50,8 +50,6 @@ router.beforeEach(async (to, from, next) => {
     NProgress.start()
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
-
-  
     if (to.path === "/web/login") {
         //删除路由(替换当前layout路由)
         router.addRoute(routes[0])
