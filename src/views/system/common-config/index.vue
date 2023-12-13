@@ -514,7 +514,7 @@ const getHeavyTaskApi = async () => {
     let taskRes = await getHeavyTask(cutTaskId.value);
     if (taskRes && taskRes.data) {
         isFinish.value = taskRes.data.finish;
-        errorMessage = taskRes.data.errorMessage;
+        errorMessage.value = taskRes.data.errorMessage;
         if (!isFinish.value) {
             setTimeout(() => {
                 getHeavyTaskApi();
