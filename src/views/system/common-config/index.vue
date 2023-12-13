@@ -44,7 +44,7 @@
                                     effect="dark"
                                     :content="'当前：' + publicSetting.productType.displayName + ' 不支持该功能'"
                                     placement="top"
-                                    v-if="publicSetting.productType.value == 1 || publicSetting.productType.value == 2"
+                                    v-if="needAuthentication.includes(item.key) && (publicSetting.productType.value == 1 || publicSetting.productType.value == 2)"
                                 >
                                     <el-switch v-model="confData[item.key]" disabled />
                                 </el-tooltip>
@@ -57,6 +57,16 @@
                             <!-- 用户选择框 -->
                             <div v-else-if="item.type == 'mlSelectUser'">
                                 <mlSelectUser type="Role" v-model="confData.nodeRole" clearable />
+                            </div>
+                            <!-- 数字类型输入框 -->
+                            <div v-else-if="item.type == 'numInput'">
+                                <el-input-number
+                                    v-model="confData[item.key]"
+                                    :min="1"
+                                    :max="99999"
+                                    :disabled="!confData.autoBackup"
+                                /> 
+                               
                             </div>
                             <!-- 立即同步 -->
                             <div v-else-if="item.type == 'autoSync'">
@@ -174,6 +184,9 @@ let confData = reactive({
 // 加载状态
 let loading = ref(false);
 
+// 需要版本控制的
+let needAuthentication = ref(['dingTalkOpen']);
+
 /**
  * *************************************** 初始化数据
  */
@@ -246,6 +259,8 @@ const initData = async () => {
         }
         // 初始化应用首页地址
         confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
+        // 初始化备份保留时间
+        confData.backupOverdueDay = confData.backupOverdueDay || 1;
     }
     loading.value = false;
 };

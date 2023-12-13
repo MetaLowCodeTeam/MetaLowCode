@@ -8,6 +8,7 @@
                     v-model="keyword"
                     placeholder="查询"
                     @confirm="filterEntityList"
+                    @onInput="filterEntityList"
                     style="margin-right: 10px;"
                 />
                 <el-button type="primary" @click="createNewEntity">

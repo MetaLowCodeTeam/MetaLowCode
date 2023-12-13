@@ -41,7 +41,17 @@ export default [
                 key: "watermark",
                 type: "switch",
             },
-
+            {
+                label: "数据自动备份",
+                key: "autoBackup",
+                type: "switch",
+            },
+            {
+                label: "备份保留时间(天)",
+                key: "backupOverdueDay",
+                required: true,
+                type: "numInput",
+            },
         ],
     },
     {

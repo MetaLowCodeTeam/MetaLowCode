@@ -1,7 +1,7 @@
 <template>
     <div class="user-bar">
         <div class="approval-center panel-item">
-            <el-dropdown trigger="click"  @command="handleApproval">
+            <el-dropdown trigger="click" @command="handleApproval">
                 <span class="approval-icon-span">
                     <el-icon>
                         <el-icon-connection />
@@ -15,6 +15,11 @@
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
+        </div>
+        <div class="screen panel-item hidden-sm-and-down" @click="refresh">
+            <el-icon>
+                <ElIconRefresh />
+            </el-icon>
         </div>
         <div class="screen panel-item hidden-sm-and-down" @click="screen">
             <el-icon>
@@ -208,6 +213,11 @@ const handleUser = (command) => {
 // 审批流程
 const handleApproval = (command) => {
     router.push({ name: command });
+};
+
+// 刷新
+const refresh = ()=>{
+    window.location.reload()
 }
 
 //全屏
@@ -377,7 +387,7 @@ const tasksFn = () => {
 }
 
 .approval-center {
-    padding: 0!important;
+    padding: 0 !important;
     .el-dropdown {
         height: 100%;
         display: flex;
@@ -391,6 +401,5 @@ const tasksFn = () => {
         width: 100%;
         align-items: center;
     }
-    
 }
 </style>

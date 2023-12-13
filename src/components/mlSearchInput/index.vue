@@ -7,6 +7,7 @@
             @keyup.enter="confirm"
             clearable
             @clear="confirm"
+            @input="onInput"
         >
             <template #append>
                 <el-button @click="confirm">
@@ -26,7 +27,7 @@ const props = defineProps({
     modelValue: null,
     placeholder: { type: String, defalut: "" },
 });
-const emit = defineEmits(["update:modelValue", "confirm"]);
+const emit = defineEmits(["update:modelValue", "confirm", "onInput"]);
 let keyword = ref("");
 watch(
     () => props.modelValue,
@@ -41,6 +42,10 @@ onMounted(() => {
 const confirm = () => {
     emit("update:modelValue", keyword.value);
     emit("confirm");
+};
+const onInput = () => {
+    emit("update:modelValue", keyword.value);
+    emit("onInput");
 };
 </script>
 

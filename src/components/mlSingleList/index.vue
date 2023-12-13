@@ -52,7 +52,7 @@
                             <el-tag
                                 v-if="column.formatter(scope.row).label"
                                 :type="column.formatter(scope.row).type"
-                                :style="column.styleFn(scope.row)"
+                                :style="column.styleFn ? column.styleFn(scope.row):{} "
                                 @click="column.clickFn ? column.clickFn(scope.row) : null"
                             >{{ column.formatter(scope.row).label }}</el-tag>
                         </span>
@@ -79,6 +79,21 @@
                                 alt
                             />
                         </span>
+                        <!-- 如果有字段类型，且是文件类型 -->
+                        <el-tooltip
+                            v-else-if="column.columnType && column.columnType == 'File'"
+                            class="box-item"
+                            effect="dark"
+                            :content="'文件：' + scope.row[column.prop]?.length"
+                            placement="top"
+                        >
+                            <span
+                                class="ml-a-span mr-5"
+                                v-for="(field,inx) of scope.row[column.prop]"
+                                :key="inx"
+                                @click.stop="downField(field.url,field.name)"
+                            >{{ field.name }}</span>
+                        </el-tooltip>
                         <!-- 默认 -->
                         <span v-else>{{ scope.row[column.prop] }}</span>
                     </template>
@@ -220,6 +235,12 @@ const highlightClick = (row) => {
 
 const changeSwitch = (row) => {
     emits("changeSwitch", row);
+};
+
+const downField = (url, fileName) => {
+    window.open(
+        import.meta.env.VITE_APP_BASE_API + url + "?fileName=" + fileName
+    );
 };
 
 defineExpose({
