@@ -1,25 +1,11 @@
 <template>
     <!--  -->
     <div class="action-div" v-loading="contentLoading">
-        <el-form-item class="mt-20" label="通知类型">
-            <el-checkbox-group v-model="typeSelecteds" @change="typeChange">
-                <el-checkbox
-                    v-for="(item,inx) of typeList"
-                    :key="inx"
-                    :label="item.value"
-                    :disabled=" trigger.actionContent.userType == 2 && item.value == 2"
-                >
-                    {{ item.label }}
-                    <span
-                        v-if="item.code"
-                    >({{ querySendState[item.code] ? '可用' : "不可用"}})</span>
-                </el-checkbox>
-            </el-checkbox-group>
-        </el-form-item>
         <el-form-item class="mt-20" label="发送给谁">
             <el-radio-group v-model="trigger.actionContent.userType" @change="userTypeChange">
                 <el-radio :label="1">内部用户</el-radio>
                 <el-radio :label="2">外部人员</el-radio>
+                <el-radio :label="3" :disabled="!querySendState[dingState]">钉钉机器人</el-radio>
             </el-radio-group>
             <div class="w-100 mt-5">
                 <mlSelectUser
@@ -35,7 +21,7 @@
                     style="width: 100%"
                     clearable
                     filterable
-                    v-else
+                    v-if="trigger.actionContent.userType == 2"
                 >
                     <el-option
                         v-for="(op,opInx) in sendToFields"
@@ -46,6 +32,36 @@
                 </el-select>
             </div>
         </el-form-item>
+        <el-form-item class="mt-20" label="Webhook地址" v-if="trigger.actionContent.userType == 3">
+            <el-input
+                v-model="trigger.actionContent.dingdingRobotUrl"
+                placeholder="钉钉机器人Webhook地址"
+                clearable
+            ></el-input>
+        </el-form-item>
+        <el-form-item class="mt-20" label="加签秘钥" v-if="trigger.actionContent.userType == 3">
+            <el-input
+                v-model="trigger.actionContent.dingdingSign"
+                placeholder="钉钉机器人加签秘钥"
+                clearable
+            ></el-input>
+        </el-form-item>
+        <el-form-item class="mt-20" label="通知类型" v-if="trigger.actionContent.userType != 3">
+            <el-checkbox-group v-model="typeSelecteds" @change="typeChange">
+                <el-checkbox
+                    v-for="(item,inx) of typeList"
+                    :key="inx"
+                    :label="item.value"
+                    :disabled="trigger.actionContent.userType == 2 && item.value == 2"
+                >
+                    {{ item.label }}
+                    <span
+                        v-if="item.code"
+                    >({{ querySendState[item.code] ? '可用' : "不可用"}})</span>
+                </el-checkbox>
+            </el-checkbox-group>
+        </el-form-item>
+
         <el-form-item class="mt-20" v-if="typeSelecteds.includes(8)" label="邮件标题">
             <el-input v-model="trigger.actionContent.title" placeholder="你有一条新通知"></el-input>
         </el-form-item>
@@ -118,6 +134,11 @@ let typeList = ref([
         value: 4,
         code: "smsState",
     },
+    {
+        label: "钉钉",
+        value: 16,
+        code: "dingState",
+    },
 ]);
 // 选中集合
 let typeSelecteds = ref([]);
@@ -132,8 +153,8 @@ onMounted(() => {
     initSendType();
     getCutEntityFields();
     // 初始化通知内容
-    if(!trigger.value.actionContent.content){
-        trigger.value.actionContent.content = ""
+    if (!trigger.value.actionContent.content) {
+        trigger.value.actionContent.content = "";
     }
 });
 
@@ -219,6 +240,8 @@ let querySendState = reactive({
     emailState: false,
     // 短信是否可用
     smsState: false,
+    // 钉钉是否可用
+    dingState:false,
 });
 // 外部人员字段
 let sendToFields = ref([]);
@@ -231,6 +254,7 @@ const getCutEntityFields = async () => {
         let querySendStateRes = await $API.trigger.detial.querySendState();
         querySendState.emailState = querySendStateRes.data?.emailState;
         querySendState.smsState = querySendStateRes.data?.smsState;
+        querySendState.dingState = querySendStateRes.data?.dingState;
         // 如果是内部用户
         if (trigger.value.actionContent.userType == 1) {
             if (trigger.value.actionContent.sendTo?.length > 0) {
@@ -248,7 +272,7 @@ const getCutEntityFields = async () => {
         } else {
             trigger.value.actionContent.inUserList = [];
         }
-    } 
+    }
     contentLoading.value = false;
 };
 </script>
