@@ -43,7 +43,7 @@
                                     由 {{ activity.stepUserName }} 审批同意
                                     <el-tooltip
                                         effect="dark"
-                                        :content="activity.remark"
+                                        :content="activity.remark || 'error'"
                                         placement="top"
                                     >
                                         <span
@@ -60,7 +60,7 @@
                                     由 {{ activity.stepUserName }} 驳回
                                     <el-tooltip
                                         effect="dark"
-                                        :content="activity.remark"
+                                        :content="activity.remark || 'error'"
                                         placement="top"
                                     >
                                         <span
@@ -77,7 +77,7 @@
                                     由 {{ activity.stepUserName }} 撤销
                                     <el-tooltip
                                         effect="dark"
-                                        :content="activity.remark"
+                                        :content="activity.remark || 'error'"
                                         placement="top"
                                     >
                                         <span

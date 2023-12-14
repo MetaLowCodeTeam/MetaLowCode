@@ -53,7 +53,7 @@
                 <el-tooltip
                     v-if="dialogForm.disabledTip"
                     effect="dark"
-                    :content="dialogForm.disabledTip"
+                    :content="dialogForm.disabledTip || 'error'"
                     placement="top"
                 >
                     <el-icon size="15" class="ml-5 cursor-pointer">

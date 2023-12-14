@@ -73,7 +73,7 @@
                                 <el-tooltip
                                     popper-class="conmon-tooltip"
                                     effect="dark"
-                                    :content="errorMessage"
+                                    :content="errorMessage || 'error'"
                                     placement="top"
                                     v-if="errorMessage"
                                     style="width: 300px;"

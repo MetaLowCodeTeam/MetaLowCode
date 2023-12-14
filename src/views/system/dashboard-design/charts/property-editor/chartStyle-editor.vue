@@ -10,7 +10,7 @@
                     :class="{'is-active':option.chartStyle == item.type,'is-disabled': checkIsDisabled(item,style.type)}"
                     @click="checkIsDisabled(item,style.type) ? ()=> {} : chartStyleChange(item)"
                 >
-                    <el-tooltip effect="dark" :content="item.label" placement="bottom">
+                    <el-tooltip effect="dark" :content="item.label  || 'error'" placement="bottom">
                         <div class="icon-box">
                             <SvgIcon class="sort-icon ml-3" :icon-name="item.icon" />
                         </div>

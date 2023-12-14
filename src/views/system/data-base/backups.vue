@@ -9,6 +9,7 @@
         :tableColumn="tableColumn"
         :filterItems="filterItems"
         ref="mlSingleListRef"
+        queryUrl="/systemManager/backup/log"
     >
         <template #addbutton>
             <el-button type="primary" @click="backupDB">
@@ -25,7 +26,7 @@
 <script setup>
 import { ref } from "vue";
 import { postBackupDB } from "@/api/system-manager";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 // 默认排序
 let sortFields = ref([
     {
@@ -121,13 +122,26 @@ let errorLogDialog = ref({
  * 立即备份
  */
 let mlSingleListRef = ref();
-const backupDB = async () => {
-    mlSingleListRef.value.loading = true;
-    let res = await postBackupDB();
-    if (res && res.code == 200) {
-        ElMessage.success("备份成功");
-    }
-    mlSingleListRef.value.getTableList();
+const backupDB = () => {
+    ElMessageBox.confirm(
+        `请注意，此操作将创建一个数据库的副本，这可能需要一些时间，并占用一些磁盘空间。
+         备份期间内数据库将会暂时锁定，直到备份完成。`,
+        "您确定要进行数据库备份吗?",
+        {
+            confirmButtonText: "确认",
+            cancelButtonText: "取消",
+            type: "warning",
+        }
+    )
+        .then(async () => {
+            mlSingleListRef.value.loading = true;
+            let res = await postBackupDB();
+            if (res && res.code == 200) {
+                ElMessage.success("备份成功");
+            }
+            mlSingleListRef.value.getTableList();
+        })
+        .catch(() => {});
 };
 </script>
 <style lang="scss" scoped>

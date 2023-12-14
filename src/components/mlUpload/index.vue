@@ -43,7 +43,7 @@ const uploadFile = async (data) => {
     let { file } = data;
     let fileExtension = file.name.substring(file.name.lastIndexOf(".") + 1);
     const acceptIncludes = props.accept.includes(fileExtension);
-    if (!acceptIncludes && props.accept != "image/*") {
+    if (!acceptIncludes && props.accept != "image/gif, image/jpeg, image/png") {
         $ElMessage.warning("请选择" + props.accept + "类型");
         clearFiles();
         return false;
