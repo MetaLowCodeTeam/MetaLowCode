@@ -214,7 +214,10 @@
                                 v-for="(funcItem,funcInx) of funcRight"
                                 :key="funcInx"
                             >
-                                <el-form-item :label="funcItem.label" :title="funcItem.value">
+                                <el-form-item :title="funcItem.value">
+                                    <template #label>
+                                        {{ funcItem.label }}
+                                    </template>
                                     <el-radio-group
                                         v-model="formModel.rightValueMap[funcItem.value]"
                                     >
@@ -444,6 +447,10 @@ let formRules = shallowRef({
 });
 // 功能权限
 let funcRight = shallowRef([
+    {
+        label: "开发应用",
+        value: "r6017",
+    },
     {
         label: "实体管理",
         value: "r6001",

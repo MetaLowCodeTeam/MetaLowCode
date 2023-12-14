@@ -117,7 +117,7 @@ const routes = [
     {
         path: '/web/system',
         name: 'SystemManager',
-        meta: { title: '开发应用', icon: 'el-icon-setting', svgIcon: 'setting' },
+        meta: { title: '开发应用', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
         children: [
             // 通用配置
             {
