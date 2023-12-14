@@ -66,7 +66,7 @@
                                     :max="99999"
                                     :disabled="!confData.autoBackup"
                                 /> 
-                               
+                                <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>
                             </div>
                             <!-- 立即同步 -->
                             <div v-else-if="item.type == 'autoSync'">
@@ -259,8 +259,10 @@ const initData = async () => {
         }
         // 初始化应用首页地址
         confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
+        // 备份周期
+        confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
-        confData.backupOverdueDay = confData.backupOverdueDay || 1;
+        confData.backupOverdueDay = confData.backupOverdueDay * 1 || 30;
     }
     loading.value = false;
 };
