@@ -237,7 +237,7 @@ const onSave = async (target) => {
     if (trigger.actionType.value == 5) {
         let { type, title, content, outUserList, userType, inUserList } =
             actionContent;
-        if (type < 1) {
+        if (userType != 3 && type < 1) {
             $ElMessage.warning("请至少选择一个通知类型");
             return;
         }
