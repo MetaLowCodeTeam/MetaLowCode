@@ -47,6 +47,13 @@ export default [
                 type: "switch",
             },
             {
+                label: "备份周期",
+                key: "backupCycle",
+                required: true,
+                type: "numInput",
+                suffixText:"天备份一次"
+            },
+            {
                 label: "备份保留时间(天)",
                 key: "backupOverdueDay",
                 required: true,
