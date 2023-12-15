@@ -114,24 +114,24 @@
                             class="w-100"
                             @change="associationChange"
                         >
-                            <el-option
-                                v-for="(op,inx) of getEntityList()"
-                                :key="inx"
-                                :value="op.entityCode"
-                                :label="op.label"
-                            />
+                            <el-option-group
+                                v-for="group in getGroupEntityList()"
+                                :key="group.label"
+                                :label="group.label"
+                            >
+                                <el-option
+                                    v-for="(op,inx) of group.options"
+                                    :key="inx"
+                                    :value="op.entityCode"
+                                    :label="op.label"
+                                />
+                            </el-option-group>
                         </el-select>
                     </div>
                     <div
                         v-if="cutMenu.type == 1 && (cutMenu.children && cutMenu.children.length > 0)"
                     >
-                        <el-select
-                            v-model="parentMenu"
-                            filterable
-                            placeholder="选择关联项"
-                            class="w-100"
-                            disabled
-                        ></el-select>
+                        <el-select v-model="parentMenu" filterable class="w-100" disabled></el-select>
                     </div>
                     <div v-if="cutMenu.type == 3">
                         <el-input
@@ -249,10 +249,10 @@ watch(
 
 onMounted(() => {
     isShow.value = props.modelValue;
-    document.body.ondrop = function(event) {
+    document.body.ondrop = function (event) {
         event.preventDefault();
         event.stopPropagation();
-    }
+    };
     getMenuFn();
 });
 
@@ -261,6 +261,46 @@ let parentMenu = ref("父级菜单");
 // 格式化实体
 const getEntityList = () => {
     return unSystemEntityList.value.filter((el) => !el.detailEntityFlag);
+};
+
+// 实体分组
+const getGroupEntityList = () => {
+    return [
+        {
+            label: "默认实体",
+            options: [...getEntityList()],
+        },
+        {
+            label: "系统实体",
+            options: [
+                {
+                    label: "部门用户",
+                    entityCode: "22",
+                    name: "Department",
+                },
+                {
+                    label: "权限角色",
+                    entityCode: "23",
+                    name: "Role",
+                },
+                {
+                    label: "团队",
+                    entityCode: "24",
+                    name: "Team",
+                },
+                {
+                    label: "跟进",
+                    entityCode: "54",
+                    name: "FollowUp",
+                },
+                {
+                    label: "待办",
+                    entityCode: "55",
+                    name: "TodoTask",
+                },
+            ],
+        },
+    ];
 };
 
 // 节点选中
@@ -311,12 +351,20 @@ let cutMenu = ref(null);
 
 // 关联项切换
 const associationChange = (entityCode) => {
-    let linkEntity = getEntityList().filter(
-        (el) => el.entityCode == entityCode
-    );
-    cutMenu.value.name = linkEntity[0].label;
-    cutMenu.value.entityCode = linkEntity[0].entityCode;
-    cutMenu.value.entityName = linkEntity[0].name;
+    let linkEntity;
+    for (let index = 0; index < getGroupEntityList().length; index++) {
+        const element = getGroupEntityList()[index];
+        for (let j = 0; j < element.options.length; j++) {
+            const subEl = element.options[j];
+            if (subEl.entityCode == entityCode) {
+                linkEntity = subEl;
+                continue;
+            }
+        }
+    }
+    cutMenu.value.name = linkEntity.label;
+    cutMenu.value.entityCode = linkEntity.entityCode;
+    cutMenu.value.entityName = linkEntity.name;
 };
 
 // 添加父菜单
@@ -336,6 +384,12 @@ const addChildrenMenu = (menu) => {
     menu.children.push(setMenu);
     cutMenu.value = Object.assign({}, setMenu);
 };
+const systemEntityName = ref(["Department", "Role", "Team"])
+const systemEntityPath = reactive({
+    Department:"entity-user",
+    Role:"entity-role",
+    Team:"entity-team",
+})
 // 确认菜单
 const confirmMenu = () => {
     if (
@@ -353,6 +407,11 @@ const confirmMenu = () => {
     if (cutMenu.value.type == 3 && !cutMenu.value.outLink) {
         $ElMessage.warning("请输入自定义页面名称");
         return;
+    }
+    if (systemEntityName.value.includes(cutMenu.value.entityName)) {
+        cutMenu.value.type = 4;
+        cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName]
+        // cutMenu.value.path = systemEntityPath[cutMenu.value.entityName];
     }
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
@@ -392,6 +451,7 @@ const confirmMenu = () => {
             }
         }
     }
+    // console.log(menuData,'menuData')
     cutMenu.value = null;
 };
 // 获取数据索引

@@ -5,6 +5,21 @@ import tool from '@/utils/tool';
 // const { setNavigationList } = useLayoutConfigStore();
 // import { storeToRefs } from 'pinia';
 // const { navigationList } = storeToRefs(useLayoutConfigStore());
+
+const floamtRoute = (el) => {
+    let newRoute = {};
+    if (el.type == 1) {
+        newRoute.path = "/web/" + el.entityName + "/list";
+        newRoute.component = "customize-menu/list";
+    } else if (el.type == 2) {
+        newRoute.path = el.guid;
+    } else {
+        newRoute.path = "/web/custom-page/" + el.outLink;
+        newRoute.component = "custom-page/" + el.outLink;
+    }
+    return newRoute
+}
+
 const useLayoutConfigStore = defineStore('layoutConfig', () => {
 
     // 导航列表
@@ -53,6 +68,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         let list = JSON.parse(tempConfig);
         let testRoutes = [...list]
+        console.log(testRoutes, 'testRoutes')
         let formatRoutrs = [];
         testRoutes.forEach((el) => {
             let initMenu = {
@@ -65,12 +81,13 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
             initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1');
+            initMenu.meta.outLink = el.outLink;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
                 initMenu.path = "";
 
                 el.children.forEach((subEl) => {
-                    initMenu.children.push({
+                    let subRoute = {
                         name: subEl.guid,
                         meta: {
                             title: subEl.name,
@@ -79,37 +96,21 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
                             hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
+                            outLink: subEl.outLink,
                         },
-                        path:
-                            subEl.type == 1
-                                ? ("/web/" + subEl.entityName + "/list") : subEl.type == 3 ? ("/web/custom-page/" + el.outLink)
-                                    : subEl.outLink,
-
-
-                        component: subEl.type == 1 ? "customize-menu/list" : subEl.type == 3 ? ("custom-page/" + subEl.outLink) : '',
-                    });
+                    }
+                    let { path, component} = floamtRoute(subEl);
+                    subRoute.path = path;
+                    subRoute.component = component;
+                    initMenu.children.push(subRoute);
                 });
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
-                if (el.type == 1) {
-                    initMenu.path = "/web/" + el.entityName + "/list";
-                }
-                else if (el.type == 3) {
-                    initMenu.path = "/web/custom-page/" + el.outLink;
-                } else {
-                    initMenu.path = el.outLink;
-                    // 如果是第一个字符是/表示是内部地址
-                    if(el.outLink.indexOf('/') == 0){
-                        initMenu.meta.type = "inLink"
-                    }
-                }
-
-                if (el.type == 1) {
-                    initMenu.component = "customize-menu/list";
-                } else if (el.type == 3) {
-                    initMenu.component = "custom-page/" + el.outLink;
-                }
+                let { path, component} = floamtRoute(el);
+                initMenu.path = path;
+                initMenu.component = component;
             }
+            console.log(initMenu, 'initMenu')
             formatRoutrs.push(initMenu);
         });
         return formatRoutrs
@@ -126,5 +127,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
 }, {
     persist: true
 })
+
+
 
 export default useLayoutConfigStore
