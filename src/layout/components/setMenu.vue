@@ -105,7 +105,7 @@
                         <el-tab-pane label="自定义页面" :name="3"></el-tab-pane>
                     </el-tabs>
                     <div
-                        v-if="cutMenu.type == 1 && (!cutMenu.children || (cutMenu.children && cutMenu.children.length < 1))"
+                        v-if="(cutMenu.type == 1 || cutMenu.type == 4) && (!cutMenu.children || (cutMenu.children && cutMenu.children.length < 1)) && cutMenu.entityCode != 'parentMenu'"
                     >
                         <el-select
                             v-model="cutMenu.entityCode"
@@ -115,7 +115,7 @@
                             @change="associationChange"
                         >
                             <el-option-group
-                                v-for="group in getGroupEntityList()"
+                                v-for="group in getGroupEntityList(cutMenu)"
                                 :key="group.label"
                                 :label="group.label"
                             >
@@ -129,7 +129,7 @@
                         </el-select>
                     </div>
                     <div
-                        v-if="cutMenu.type == 1 && (cutMenu.children && cutMenu.children.length > 0)"
+                        v-if="(cutMenu.type == 1 || cutMenu.type == 4) && ((cutMenu.children && cutMenu.children.length > 0) || cutMenu.entityCode == 'parentMenu')"
                     >
                         <el-select v-model="parentMenu" filterable class="w-100" disabled></el-select>
                     </div>
@@ -264,8 +264,8 @@ const getEntityList = () => {
 };
 
 // 实体分组
-const getGroupEntityList = () => {
-    return [
+const getGroupEntityList = (cutMenu) => {
+    let newEntityList = [
         {
             label: "默认实体",
             options: [...getEntityList()],
@@ -275,32 +275,40 @@ const getGroupEntityList = () => {
             options: [
                 {
                     label: "部门用户",
-                    entityCode: "22",
+                    entityCode: 22,
                     name: "Department",
                 },
                 {
                     label: "权限角色",
-                    entityCode: "23",
+                    entityCode: 23,
                     name: "Role",
                 },
                 {
                     label: "团队",
-                    entityCode: "24",
+                    entityCode: 24,
                     name: "Team",
                 },
                 {
                     label: "跟进",
-                    entityCode: "54",
+                    entityCode: 54,
                     name: "FollowUp",
                 },
                 {
                     label: "待办",
-                    entityCode: "55",
+                    entityCode: 55,
                     name: "TodoTask",
                 },
             ],
         },
     ];
+    if (!cutMenu.parentGuid) {
+        newEntityList[1].children.push({
+            label: "父级菜单",
+            entityCode: "parentMenu",
+            name: "parentMenu",
+        });
+    }
+    return newEntityList;
 };
 
 // 节点选中
@@ -384,12 +392,12 @@ const addChildrenMenu = (menu) => {
     menu.children.push(setMenu);
     cutMenu.value = Object.assign({}, setMenu);
 };
-const systemEntityName = ref(["Department", "Role", "Team"])
+const systemEntityName = ref(["Department", "Role", "Team"]);
 const systemEntityPath = reactive({
-    Department:"entity-user",
-    Role:"entity-role",
-    Team:"entity-team",
-})
+    Department: "entity-user",
+    Role: "entity-role",
+    Team: "entity-team",
+});
 // 确认菜单
 const confirmMenu = () => {
     if (
@@ -408,10 +416,15 @@ const confirmMenu = () => {
         $ElMessage.warning("请输入自定义页面名称");
         return;
     }
+    // 如果是系统内置
     if (systemEntityName.value.includes(cutMenu.value.entityName)) {
         cutMenu.value.type = 4;
-        cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName]
+        cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
         // cutMenu.value.path = systemEntityPath[cutMenu.value.entityName];
+    }
+    // 如果是父级菜单
+    if (cutMenu.value.entityCode == "parentMenu") {
+        cutMenu.value.children = [];
     }
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
@@ -505,11 +518,12 @@ const layoutSave = async () => {
         $ElMessage.warning("请输入菜单名称");
         return;
     }
-    if (formatMenuList().length < 1) {
+    let newMenuList = [...formatMenuList()];
+    if (newMenuList.length < 1) {
         $ElMessage.warning("请至少添加一个菜单项");
         return;
     }
-    menuData.config = JSON.stringify(formatMenuList());
+    menuData.config = JSON.stringify(newMenuList);
 
     let param = {};
     // 检测数据有没变化
@@ -580,6 +594,12 @@ const formatMenuList = () => {
         }
     });
     saveMenu.forEach((el, inx) => {
+        if (
+            el.entityCode == "parentMenu" &&
+            (!el.children || el.children.length < 1)
+        ) {
+            saveMenu.splice(inx, 1);
+        }
         if (!el.entityCode && !el.outLink && el.children.length < 1) {
             saveMenu.splice(inx, 1);
         }
