@@ -126,7 +126,7 @@ router.afterEach((to, from) => {
 router.onError((error) => {
     NProgress.done();
     ElNotification.error({
-        title: '路由错误',
+        title: '路由错误，请尝试刷新页面',
         message: error.message
     });
 });
