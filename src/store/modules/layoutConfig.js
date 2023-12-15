@@ -110,7 +110,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.path = path;
                 initMenu.component = component;
             }
-            console.log(initMenu, 'initMenu')
+            // console.log(initMenu, 'initMenu')
             formatRoutrs.push(initMenu);
         });
         return formatRoutrs
