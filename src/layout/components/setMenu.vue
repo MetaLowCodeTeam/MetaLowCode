@@ -281,45 +281,21 @@ const getGroupEntityList = () => {
             entityCode: 24,
             name: "Team",
         },
-        {
-            label: "跟进",
-            entityCode: 54,
-            name: "FollowUp",
-        },
-        {
-            label: "待办",
-            entityCode: 55,
-            name: "TodoTask",
-        },
+        // {
+        //     label: "跟进",
+        //     entityCode: 54,
+        //     name: "FollowUp",
+        // },
+        // {
+        //     label: "待办",
+        //     entityCode: 55,
+        //     name: "TodoTask",
+        // },
     ];
     // 如果不是父级菜单
     if (!cutMenu.value.parentGuid) {
         systemOptions = [
-            {
-                label: "部门用户",
-                entityCode: 22,
-                name: "Department",
-            },
-            {
-                label: "权限角色",
-                entityCode: 23,
-                name: "Role",
-            },
-            {
-                label: "团队",
-                entityCode: 24,
-                name: "Team",
-            },
-            {
-                label: "跟进",
-                entityCode: 54,
-                name: "FollowUp",
-            },
-            {
-                label: "待办",
-                entityCode: 55,
-                name: "TodoTask",
-            },
+            ...systemOptions,
             {
                 label: "父级菜单",
                 entityCode: "parentMenu",
