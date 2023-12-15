@@ -52,7 +52,7 @@
                     v-for="(item,inx) of typeList"
                     :key="inx"
                     :label="item.value"
-                    :disabled="trigger.actionContent.userType == 2 && item.value == 2"
+                    :disabled="trigger.actionContent.userType == 2 && (item.value == 2 || item.value == 16)"
                 >
                     {{ item.label }}
                     <span
@@ -193,6 +193,11 @@ const userTypeChange = (e) => {
     // 如果选择外部人员，并且通知类型是勾选的。需要取消勾选
     if (e == 2 && (trigger.value.actionContent.type & 2) > 0) {
         trigger.value.actionContent.type = trigger.value.actionContent.type - 2;
+        setTypeSelecteds();
+    }
+    // 如果选择外部人员，并且钉钉类型是勾选的。需要取消勾选
+    if (e == 2 && (trigger.value.actionContent.type & 16) > 0) {
+        trigger.value.actionContent.type = trigger.value.actionContent.type - 16;
         setTypeSelecteds();
     }
 };

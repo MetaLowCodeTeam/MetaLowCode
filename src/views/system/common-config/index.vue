@@ -65,7 +65,7 @@
                                     :min="1"
                                     :max="99999"
                                     :disabled="!confData.autoBackup"
-                                /> 
+                                />
                                 <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>
                             </div>
                             <!-- 立即同步 -->
@@ -185,7 +185,7 @@ let confData = reactive({
 let loading = ref(false);
 
 // 需要版本控制的
-let needAuthentication = ref(['dingTalkOpen']);
+let needAuthentication = ref(["dingTalkOpen"]);
 
 /**
  * *************************************** 初始化数据
@@ -527,6 +527,11 @@ const getHeavyTaskApi = async () => {
     }
     if (isFinish.value) {
         autoSyncLoading.value = false;
+        if (errorMessage.value) {
+            ElMessage.error("同步失败");
+        } else {
+            ElMessage.success("同步成功");
+        }
     }
 };
 </script>

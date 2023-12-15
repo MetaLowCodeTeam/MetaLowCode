@@ -115,7 +115,7 @@
                             @change="associationChange"
                         >
                             <el-option-group
-                                v-for="group in getGroupEntityList(cutMenu)"
+                                v-for="group in getGroupEntityList()"
                                 :key="group.label"
                                 :label="group.label"
                             >
@@ -264,7 +264,69 @@ const getEntityList = () => {
 };
 
 // 实体分组
-const getGroupEntityList = (cutMenu) => {
+const getGroupEntityList = () => {
+    let systemOptions = [
+        {
+            label: "部门用户",
+            entityCode: 22,
+            name: "Department",
+        },
+        {
+            label: "权限角色",
+            entityCode: 23,
+            name: "Role",
+        },
+        {
+            label: "团队",
+            entityCode: 24,
+            name: "Team",
+        },
+        {
+            label: "跟进",
+            entityCode: 54,
+            name: "FollowUp",
+        },
+        {
+            label: "待办",
+            entityCode: 55,
+            name: "TodoTask",
+        },
+    ];
+    // 如果不是父级菜单
+    if (!cutMenu.value.parentGuid) {
+        systemOptions = [
+            {
+                label: "部门用户",
+                entityCode: 22,
+                name: "Department",
+            },
+            {
+                label: "权限角色",
+                entityCode: 23,
+                name: "Role",
+            },
+            {
+                label: "团队",
+                entityCode: 24,
+                name: "Team",
+            },
+            {
+                label: "跟进",
+                entityCode: 54,
+                name: "FollowUp",
+            },
+            {
+                label: "待办",
+                entityCode: 55,
+                name: "TodoTask",
+            },
+            {
+                label: "父级菜单",
+                entityCode: "parentMenu",
+                name: "parentMenu",
+            },
+        ];
+    }
     let newEntityList = [
         {
             label: "默认实体",
@@ -272,42 +334,9 @@ const getGroupEntityList = (cutMenu) => {
         },
         {
             label: "系统内置",
-            options: [
-                {
-                    label: "部门用户",
-                    entityCode: 22,
-                    name: "Department",
-                },
-                {
-                    label: "权限角色",
-                    entityCode: 23,
-                    name: "Role",
-                },
-                {
-                    label: "团队",
-                    entityCode: 24,
-                    name: "Team",
-                },
-                {
-                    label: "跟进",
-                    entityCode: 54,
-                    name: "FollowUp",
-                },
-                {
-                    label: "待办",
-                    entityCode: 55,
-                    name: "TodoTask",
-                },
-            ],
+            options: [...systemOptions],
         },
     ];
-    if (!cutMenu.parentGuid) {
-        newEntityList[1].children.push({
-            label: "父级菜单",
-            entityCode: "parentMenu",
-            name: "parentMenu",
-        });
-    }
     return newEntityList;
 };
 
