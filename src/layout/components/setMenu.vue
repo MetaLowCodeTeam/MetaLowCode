@@ -271,7 +271,7 @@ const getGroupEntityList = () => {
             options: [...getEntityList()],
         },
         {
-            label: "系统实体",
+            label: "系统内置",
             options: [
                 {
                     label: "部门用户",
