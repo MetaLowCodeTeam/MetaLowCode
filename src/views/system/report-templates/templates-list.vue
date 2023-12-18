@@ -10,7 +10,7 @@
         :tableColumn="tableColumn"
         :showFormItem="[{'label':'名称','code':'reportName','type':'1'}]"
         defalutSortField="createdOn"
-        defaultFilter="reportName"
+        :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
     >
@@ -32,6 +32,13 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
+let filterItems = ref([
+    {
+        fieldName: "reportName",
+        op: "LK",
+        value: "",
+    },
+]);
 let tableColumn = ref([
     {
         prop: "reportName",
@@ -85,9 +92,12 @@ let dialogForm = ref({
 // 新建编辑触发
 const actionBtn = (data) => {
     let { target, row } = data;
+    let { defaultCode } = mlEntityMenuAndListRef.value;
     if (target === "add") {
         dialogForm.value.title = "添加模板";
-        dialogForm.value.form = {};
+        dialogForm.value.form = {
+            entityCode: defaultCode == "all" ? "" : defaultCode,
+        };
         dialogForm.value.type = "add";
     } else {
         dialogForm.value.title = "编辑模板";

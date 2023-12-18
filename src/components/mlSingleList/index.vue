@@ -31,19 +31,19 @@
                     :formatter="column.formatter"
                 >
                     <template #default="scope">
-                        <!-- 需要高亮的 -->
+                        <!-- 需要高亮的 且不要格式化的 -->
                         <span
                             v-if="column.highlight && !column.formatter"
                             class="highlight"
                             @click="highlightClick(scope.row)"
                         >{{ scope.row[column.prop] }}</span>
-                        <!-- 需要高亮的 -->
+                        <!-- 需要高亮的 且 要格式化的 -->
                         <span
                             v-else-if="column.highlight && column.formatter"
                             class="highlight"
                             @click="highlightClick(scope.row)"
                         >{{ column.formatter(scope.row) }}</span>
-                        <!-- 需要格式化的 -->
+                        <!-- 不需要高亮 且 需要格式化的 -->
                         <span
                             v-else-if="!column.highlight && !column.elTag && column.formatter"
                         >{{ column.formatter(scope.row)}}</span>

@@ -7,7 +7,7 @@
         @goDetial="goDetial"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
-        defaultFilter="flowName"
+        :filterItems="filterItems"
         @actionBtn="actionBtn"
         queryUrl="/approval/configList"
         @changeSwitch="changeSwitch"
@@ -51,6 +51,13 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const $TOOL = inject("$TOOL");
 let mlEntityMenuAndListRef = ref("");
+let filterItems = ref([
+    {
+        fieldName: "flowName",
+        op: "LK",
+        value: "",
+    },
+]);
 let tableColumn = ref([
     {
         prop: "flowName",
@@ -113,9 +120,12 @@ let dialogForm = ref({
 // 新建编辑触发
 const actionBtn = (data) => {
     let { target, row } = data;
+    let { defaultCode } = mlEntityMenuAndListRef.value;
     if (target === "add") {
         dialogForm.value.title = "添加审批流程";
-        dialogForm.value.form = {};
+        dialogForm.value.form = {
+            entityCode: defaultCode == "all" ? "" : defaultCode,
+        };
         dialogForm.value.type = "add";
     } else {
         dialogForm.value.title = "编辑审批流程";
@@ -150,8 +160,6 @@ const goDetial = (row) => {
         },
     });
 };
-
-
 </script>
 
 <style>
