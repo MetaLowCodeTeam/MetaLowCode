@@ -163,7 +163,7 @@ const handleUser = (command) => {
     }
     if (command == "clearCache") {
         ElMessageBox.confirm(
-            "清除缓存会将系统初始化，包括登录状态、主题、语言设置等，是否继续？",
+            "清除缓存会将系统初始化，包括登录状态、主题、通用设置等，是否继续？",
             "提示",
             {
                 type: "info",
