@@ -63,12 +63,31 @@
                         :formatter="column.formatter"
                     >
                         <template #default="scope">
-                            <!-- 需要高亮的 -->
+                            <!-- 需要高亮的 且不要格式化的 -->
                             <span
-                                v-if="column.highlight"
+                                v-if="column.highlight && !column.formatter"
                                 class="highlight"
-                                @click="goDetial(scope.row)"
+                                @click="highlightClick(scope.row)"
                             >{{ scope.row[column.prop] }}</span>
+                            <!-- 需要高亮的 且 要格式化的 -->
+                            <span
+                                v-else-if="column.highlight && column.formatter"
+                                class="highlight"
+                                @click="highlightClick(scope.row)"
+                            >{{ column.formatter(scope.row) }}</span>
+                            <!-- 不需要高亮 且 需要格式化的 -->
+                            <span
+                                v-else-if="!column.highlight && !column.elTag && column.formatter"
+                            >{{ column.formatter(scope.row)}}</span>
+                            <!-- 有状态的 -->
+                            <span v-else-if="column.elTag && column.formatter">
+                                <el-tag
+                                    v-if="column.formatter(scope.row).label"
+                                    :type="column.formatter(scope.row).type"
+                                    :style="column.styleFn ? column.styleFn(scope.row):{} "
+                                    @click="column.clickFn ? column.clickFn(scope.row) : null"
+                                >{{ column.formatter(scope.row).label }}</el-tag>
+                            </span>
                             <!-- 需要转换实体的 -->
                             <span
                                 v-else-if="column.entityCode"
@@ -113,7 +132,7 @@
                             <span v-else>{{ scope.row[column.prop]}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" :align="'center'" width="170">
+                    <el-table-column label="操作" fixed="right" :align="'center'" width="170" key="defalut-btn" v-if="entityName != 'ApprovalTask'">
                         <template #default="scope">
                             <el-button
                                 size="small"
@@ -145,6 +164,7 @@
                             </el-button>
                         </template>
                     </el-table-column>
+                    <slot name="activeRow"></slot>
                 </el-table>
 
                 <mlPagination
@@ -165,6 +185,7 @@ import { inject, onMounted, reactive, ref } from "vue";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import { getDataList, deleteRecord, getEntityCodeList } from "@/api/crud";
+import { getEntityApprovalTaskList } from "@/api/approval.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
@@ -181,12 +202,15 @@ const props = defineProps({
     tableColumn: { type: Array, default: () => [] },
     // 默认排序字段
     defalutSortField: { type: String, default: "" },
-    // 默认查询字段
-    defaultFilter: { type: String, default: "" },
     // 权限字段
     checkRole: { type: String, default: "" },
     // 查询接口
     queryUrl: { type: String, default: "" },
+    // 添加过滤list
+    filterItems: { type: Array, default: () => [] },
+    // 默认过滤字段
+    fieldName: { type: String, default: "entityCode" },
+    approvalTaskType: { type: Number, default: 1 },
 });
 const emit = defineEmits(["goDetial", "actionBtn", "changeSwitch"]);
 const message = inject("$ElMessage");
@@ -238,7 +262,13 @@ const checkRoleFn = (num) => {
 // 获取左侧实体列表
 const getEntityList = async () => {
     loading.value = true;
-    let res = await getEntityCodeList(props.entityName);
+    let res;
+    if (props.entityName == "ApprovalTask") {
+        res = await getEntityApprovalTaskList(props.entityName,props.approvalTaskType);
+    } else {
+        res = await getEntityCodeList(props.entityName);
+    }
+
     if (res) {
         entityList.value = res.data;
         allEntityCode.value = res.data.map((el) => el.entityCode + "");
@@ -256,6 +286,7 @@ const getEntityList = async () => {
 // 获取右侧流程列表
 const getApprovalList = async () => {
     loading.value = true;
+    let { filterItems,fieldName } = props;
     let param = {
         mainEntity: props.entityName,
         fieldsList: props.fieldsList,
@@ -263,22 +294,20 @@ const getApprovalList = async () => {
         pageNo: page.no,
         filter: {
             equation: "AND",
-            items: [
-                {
-                    fieldName: props.defaultFilter,
-                    op: "LK",
-                    value: keyword.value,
-                },
-            ],
+            items: [],
         },
         sortFields: tableSort.value,
     };
+    param.filter.items = filterItems.map((el) => {
+        el.value = el.value ? el.value : keyword.value;
+        return el;
+    });
     if (defaultCode.value != "all") {
-        param.filter.items[1] = {
-            fieldName: "entityCode",
+        param.filter.items.push({
+            fieldName,
             op: "EQ",
             value: defaultCode.value,
-        };
+        });
     }
     let res;
 
@@ -358,8 +387,8 @@ const sortChange = (column, prop, order) => {
 const fieldCheck = (item) => {
     defaultCode.value = item.entityCode;
     page.no = 1;
-    if(router.currentRoute.value.query.entityCode){
-        window.history.replaceState({}, '', `${window.location.pathname}`);
+    if (router.currentRoute.value.query.entityCode) {
+        window.history.replaceState({}, "", `${window.location.pathname}`);
     }
     getApprovalList();
 };
@@ -455,6 +484,7 @@ const changeSwitch = (row) => {
 
 defineExpose({
     getEntityList,
+    defaultCode
 });
 </script>
 

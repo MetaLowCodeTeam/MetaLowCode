@@ -1,5 +1,5 @@
 <template>
-    <mlSingleList
+    <!-- <mlSingleList
         :title="pageType[type].title"
         mainEntity="ApprovalTask"
         fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName,approvalConfigId.entityCode"
@@ -37,7 +37,48 @@
                 </template>
             </el-table-column>
         </template>
-    </mlSingleList>
+    </mlSingleList>-->
+    <mlEntityMenuAndList
+        :title="pageType[type].title"
+        entityName="ApprovalTask"
+        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName,approvalConfigId.entityCode"
+        defalutSortField="modifiedOn"
+        :tableColumn="tableColumn"
+        :filterItems="pageType[type].filterItems"
+        ref="mlSingleListRef"
+        @highlightClick="highlightClick"
+        fieldName="approvalConfigId.entityCode"
+        :queryUrl="'/approval/listQuery'"
+        :approvalTaskType="pageType[type].value"
+    >
+        <template #activeRow>
+            <el-table-column
+                label="操作"
+                :align="'center'"
+                width="160"
+                key="1"
+                v-if="type === 'handle' || type === 'cc'"
+                fixed="right"
+            >
+                <template #default="scope">
+                    <el-button
+                        size="small"
+                        link
+                        @click="approveHistory(scope.row)"
+                        type="primary"
+                    >审批历史</el-button>
+                    <el-button
+                        link
+                        :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
+                        size="small"
+                        type="success"
+                        @click="approveRow(scope.row)"
+                        v-if="type != 'cc'"
+                    >审批</el-button>
+                </template>
+            </el-table-column>
+        </template>
+    </mlEntityMenuAndList>
     <div v-if="approveDialogIsShow">
         <mlApprove
             v-model="approveDialogIsShow"
@@ -77,6 +118,7 @@ onBeforeMount(() => {
     pageType = {
         handle: {
             title: "待我处理",
+            value: 1,
             filterItems: [
                 {
                     fieldName: "approver",
@@ -88,6 +130,7 @@ onBeforeMount(() => {
         },
         submit: {
             title: "我提交的",
+            value: 2,
             filterItems: [
                 {
                     fieldName: "createdBy",
@@ -98,6 +141,7 @@ onBeforeMount(() => {
         },
         cc: {
             title: "抄送我的",
+            value: 3,
             filterItems: [
                 {
                     fieldName: "ccTo",
@@ -108,7 +152,6 @@ onBeforeMount(() => {
             ],
         },
     };
-    
 });
 
 // 审核弹框是否显示
@@ -177,7 +220,6 @@ let tableColumn = ref([
         },
     },
 ]);
-
 
 // 审批
 function approveRow(row) {

@@ -53,3 +53,9 @@ export default {
 }
 
 
+
+
+export function getEntityApprovalTaskList(entity, value) {
+    return http.get('/approval/getEntityApprovalTaskList', { entity, type: value })
+}
+

@@ -7,7 +7,7 @@
         @goDetial="goDetial"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
-        defaultFilter="name"
+        :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         checkRole="r48"
@@ -34,6 +34,13 @@ import { useRouter } from "vue-router";
 const $TOOL = inject("$TOOL");
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
+let filterItems = ref([
+    {
+        fieldName: "name",
+        op: "LK",
+        value: "",
+    },
+]);
 let tableColumn = ref([
     {
         prop: "name",
@@ -70,7 +77,7 @@ let tableColumn = ref([
         label: "启用",
         align: "center",
         customSolt: "switch",
-        isNegation:true,
+        isNegation: true,
         width: 80,
     },
     {
@@ -96,9 +103,12 @@ let dialogForm = ref({
 // 新建编辑触发
 const actionBtn = (data) => {
     let { target, row } = data;
+    let { defaultCode } = mlEntityMenuAndListRef.value;
     if (target === "add") {
         dialogForm.value.title = "添加触发器";
-        dialogForm.value.form = {};
+        dialogForm.value.form = {
+            entityCode: defaultCode == "all" ? "" : defaultCode,
+        };
         dialogForm.value.type = "add";
     } else {
         dialogForm.value.title = "编辑触发器";
@@ -114,7 +124,7 @@ const changeSwitch = (row) => {
     let tempForm = { ...row };
     tempForm.actionType = tempForm.actionType.value;
     dialogForm.value.form = { ...tempForm };
-    mlActiveDialogRefs.value.dialogForm = {...dialogForm.value};
+    mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
     mlActiveDialogRefs.value.saveProcess();
 };
 
