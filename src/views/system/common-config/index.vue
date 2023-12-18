@@ -319,6 +319,13 @@ const isDisabled = (card, item) => {
  */
 // 保存执行
 const onSubmit = async () => {
+    if (publicSetting.value.trialVersionFlag) {
+        ElMessage
+            .error(`近期有多名不怎么可爱的用户恶意修改美乐演示版本内容，因此该功能在演示版本已被禁用！
+                    如需体验该功能，请联系美乐官网客服为您安排单独的体验环境，或者官网下载免费版使用。
+                    谢谢理解！`);
+        return;
+    }
     if (!checkOnSave()) {
         return;
     }

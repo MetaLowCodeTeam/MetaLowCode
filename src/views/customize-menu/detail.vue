@@ -65,6 +65,7 @@
                                     :addConf="addConf"
                                     @confirm="newRelatedConfirm"
                                     @add="onAdd"
+                                    v-if="$TOOL.checkRole('r6008')"
                                 />
                             </el-col>
                             <el-col :span="24">
