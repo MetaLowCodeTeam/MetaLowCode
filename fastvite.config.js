@@ -4,6 +4,7 @@ import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+const timestamp = new Date().getTime()
 // import legacy from "@vitejs/plugin-legacy"
 // @see https://cn.vitejs.dev/config/
 export default ({
