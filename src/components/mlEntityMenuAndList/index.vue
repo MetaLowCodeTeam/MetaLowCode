@@ -67,13 +67,13 @@
                             <span
                                 v-if="column.highlight && !column.formatter"
                                 class="highlight"
-                                @click="highlightClick(scope.row)"
+                                @click="goDetial(scope.row)"
                             >{{ scope.row[column.prop] }}</span>
                             <!-- 需要高亮的 且 要格式化的 -->
                             <span
                                 v-else-if="column.highlight && column.formatter"
                                 class="highlight"
-                                @click="highlightClick(scope.row)"
+                                @click="goDetial(scope.row)"
                             >{{ column.formatter(scope.row) }}</span>
                             <!-- 不需要高亮 且 需要格式化的 -->
                             <span
