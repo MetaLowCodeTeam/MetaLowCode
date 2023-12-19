@@ -214,7 +214,10 @@ defineExpose({
     margin-bottom: 5px !important;
 }
 
-.main {
+.main { 
+    max-height: 500px;
+    overflow-x: hidden;
+    overflow-y: auto;
     .info-box {
         height: 26px;
         line-height: 26px;
