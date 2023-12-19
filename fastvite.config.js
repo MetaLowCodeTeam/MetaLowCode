@@ -4,7 +4,6 @@ import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
-const timestamp = new Date().getTime()
 // import legacy from "@vitejs/plugin-legacy"
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -15,12 +14,6 @@ export default ({
     let rollupOptions = {
         // external: ['vue', 'element-plus', 'echarts'],
         output: {
-            // 入口文件名
-            entryFileNames: `assets/[name].${timestamp}.js`,
-            // 块文件名
-            chunkFileNames: `assets/[name]-[hash].${timestamp}.js`,
-            // 资源文件名 css 图片等等
-            assetFileNames: `assets/[name]-[hash].${timestamp}.[ext]`,
             // 分包
             manualChunks(id) {
                 if (id.includes("node_modules")) { return id.toString().split("node_modules/")[1].split("/")[0].toString() }
