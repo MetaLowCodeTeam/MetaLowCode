@@ -80,7 +80,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
-            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu";
+            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu"&& el.type == 1;
             initMenu.meta.outLink = el.outLink;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
@@ -110,7 +110,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.path = path;
                 initMenu.component = component;
             }
-            // console.log(initMenu, 'initMenu')
+            console.log(initMenu, 'initMenu')
             formatRoutrs.push(initMenu);
         });
         return formatRoutrs

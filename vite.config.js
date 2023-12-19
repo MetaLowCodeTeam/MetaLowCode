@@ -5,6 +5,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import legacy from "@vitejs/plugin-legacy"
+const timestamp = new Date().getTime()
 // @see https://cn.vitejs.dev/config/
 export default ({
     command,
@@ -12,22 +13,28 @@ export default ({
 }) => {
     const env = loadEnv(mode, process.cwd());
     let rollupOptions = {
-		// external: ['vue', 'element-plus', 'echarts'],
+        // external: ['vue', 'element-plus', 'echarts'],
         output: {
-			// 分包
+            // 入口文件名
+            entryFileNames: `assets/[name].${timestamp}.js`,
+            // 块文件名
+            chunkFileNames: `assets/[name]-[hash].${timestamp}.js`,
+            // 资源文件名 css 图片等等
+            assetFileNames: `assets/[name]-[hash].${timestamp}.[ext]`,
+            // 分包
             manualChunks(id) {
                 if (id.includes("node_modules")) { return id.toString().split("node_modules/")[1].split("/")[0].toString() }
             },
-			// 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
-			// globals: {
-			// 	vue: 'Vue',
-			// 	'element-plus': 'ElementPlus',
-			// },
+            // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
+            // globals: {
+            // 	vue: 'Vue',
+            // 	'element-plus': 'ElementPlus',
+            // },
         },
     };
 
     let optimizeDeps = {
-        include: ['@/../lib/visual-design/designer.umd.js']
+        include: [`@/../lib/visual-design/designer.umd.js`]
     };
 
     let alias = {
@@ -75,7 +82,7 @@ export default ({
             proxy,
         },
         build: {
-			// target: ['edge90', 'chrome90', 'firefox90', 'safari15', 'esnext'],
+            // target: ['edge90', 'chrome90', 'firefox90', 'safari15', 'esnext'],
             // cssTarget: 'chrome61',
             minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用terser
             terserOptions: {
@@ -106,11 +113,11 @@ export default ({
                 symbolId: 'icon-[dir]-[name]',
             }),
 
-			//打包可视化分析插件
-			visualizer(),
+            //打包可视化分析插件
+            visualizer(),
             legacy({
-                targets:['ie >= 11'],
-                additionalLegacyPolyfills:["regenerator-runtime/runtime"]
+                targets: ['ie >= 11'],
+                additionalLegacyPolyfills: ["regenerator-runtime/runtime"]
             })
         ],
         css: {

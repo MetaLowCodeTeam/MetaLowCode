@@ -312,6 +312,26 @@ const getGroupEntityList = () => {
             label: "系统内置",
             options: [...systemOptions],
         },
+        {
+            label: "审批流程",
+            options: [
+                {
+                    label: "待我处理",
+                    name: "approvalHandle",
+                    entityCode: "approvalHandle",
+                },
+                {
+                    label: "我提交的",
+                    name: "approvalSubmit",
+                    entityCode: "approvalSubmit",
+                },
+                {
+                    label: "抄送我的",
+                    name: "capprovalCc",
+                    entityCode: "capprovalCc",
+                },
+            ],
+        },
     ];
     return newEntityList;
 };
@@ -397,12 +417,25 @@ const addChildrenMenu = (menu) => {
     menu.children.push(setMenu);
     cutMenu.value = Object.assign({}, setMenu);
 };
-const systemEntityName = ref(["Department", "Role", "Team"]);
+
+// 系统内置
+const systemEntityName = ref([
+    "Department",
+    "Role",
+    "Team",
+    "approvalHandle",
+    "approvalSubmit",
+    "capprovalCc",
+]);
 const systemEntityPath = reactive({
     Department: "entity-user",
     Role: "entity-role",
     Team: "entity-team",
+    approvalHandle: "approval-handle",
+    approvalSubmit: "approval-submit",
+    capprovalCc: "approval-cc",
 });
+
 // 确认菜单
 const confirmMenu = () => {
     if (
@@ -425,7 +458,6 @@ const confirmMenu = () => {
     if (systemEntityName.value.includes(cutMenu.value.entityName)) {
         cutMenu.value.type = 4;
         cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
-        // cutMenu.value.path = systemEntityPath[cutMenu.value.entityName];
     }
     // 如果是父级菜单
     if (cutMenu.value.entityCode == "parentMenu") {
@@ -528,6 +560,10 @@ const layoutSave = async () => {
         $ElMessage.warning("请至少添加一个菜单项");
         return;
     }
+    newMenuList.forEach((el) => {
+        el.entityCode = "parentMenu";
+        el.entityName = "parentMenu";
+    });
     menuData.config = JSON.stringify(newMenuList);
 
     let param = {};
