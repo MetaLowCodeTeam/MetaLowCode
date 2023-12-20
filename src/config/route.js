@@ -127,10 +127,37 @@ const routes = [
                 meta: { title: '系统通用配置', icon: 'el-icon-setting', role: 'r6000' }
             },
 
+			{
+				path: '/web/user-manager',
+				name: 'UserManager',
+				meta: { title: '部门组织架构', icon: 'el-icon-user' },
+				children: [
+					{
+						path: '/web/user-list',
+						name: 'UserList',
+						component: 'user/user-tree-table',
+						meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-1', entityName: "User" }
+					},
+
+					{
+						path: '/web/role-list',
+						name: 'RoleList',
+						component: 'user/role-list-view',
+						meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1', entityName: "Role" }
+					},
+					{
+						path: '/web/team-list',
+						name: 'TeamList',
+						component: 'user/team-list-view',
+						meta: { title: '团队管理', icon: 'el-icon-suitcase-line', role: 'r24-1', entityName: "Team" }
+					},
+				]
+			},
+
             {
                 path: '',
                 name: 'BasicSetting',
-                meta: { title: '应用基础设置', icon: 'el-icon-Stopwatch' },
+                meta: { title: '应用开发设置', icon: 'el-icon-Stopwatch' },
                 children: [
                     {
                         path: '/web/field-manager',
@@ -166,32 +193,6 @@ const routes = [
                     },
 
                     {
-                        path: '/web/user-manager',
-                        name: 'UserManager',
-                        meta: { group: true, title: '组织架构', icon: 'el-icon-user' },
-                        children: [
-                            {
-                                path: '/web/user-list',
-                                name: 'UserList',
-                                component: 'user/user-tree-table',
-                                meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-1', entityName: "User" }
-                            },
-
-                            {
-                                path: '/web/role-list',
-                                name: 'RoleList',
-                                component: 'user/role-list-view',
-                                meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1', entityName: "Role" }
-                            },
-                            {
-                                path: '/web/team-list',
-                                name: 'TeamList',
-                                component: 'user/team-list-view',
-                                meta: { title: '团队管理', icon: 'el-icon-suitcase-line', role: 'r24-1', entityName: "Team" }
-                            },
-                        ]
-                    },
-                    {
                         path: '/web/data-dict',
                         name: 'DataDict',
                         meta: { group: true, title: '数据字典', icon: 'el-icon-operation' },
@@ -211,99 +212,102 @@ const routes = [
                             },
                         ]
                     },
+
+					// 审批流程
+					{
+						path: '/web/process-list',
+						name: 'ProcessList',
+						component: 'system/approval-process/process-list',
+						meta: { group: true, title: '业务流程', icon: 'el-icon-share', role: 'r6016' },
+						children: [
+							{
+								path: '/web/process-list',
+								name: 'ProcessList',
+								component: 'system/approval-process/process-list',
+								meta: { title: '审批流程', icon: 'el-icon-share', role: 'r6016' }
+							}
+						]
+					},
+
+					// 触发器
+					{
+						path: '/web/trigger',
+						name: 'Trigger',
+						meta: { group: true, title: '业务触发器', icon: 'el-icon-cpu' },
+						children: [
+							{
+								path: '/web/trigger-list',
+								name: 'TriggerList',
+								component: 'system/trigger/trigger-list',
+								meta: { title: '触发器列表', icon: 'el-icon-Cpu', role: 'r48-1' },
+							},
+
+							{
+								path: '/web/trigger-log',
+								name: 'TriggerLog',
+								component: 'system/trigger/trigger-log',
+								meta: { title: '触发器日志', icon: 'el-icon-Timer', role: 'r6015' }
+							},
+						]
+					},
+
+					// 仪表盘
+					{
+						path: '/web/dashboard-list',
+						name: 'DashboardDesign',
+						meta: { group: true, title: '可视化分析', icon: 'el-icon-menu', role: 'r52-1' },
+						component: 'system/dashboard-design/chart',
+						children: [
+							{
+								path: '/web/dashboard-list',
+								name: 'DashboardDesign',
+								meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
+								component: 'system/dashboard-design/chart',
+							}
+						]
+					},
+					// 报表设计
+					{
+						path: '/web/templates-list',
+						name: 'TemplatesList',
+						component: 'system/report-templates/templates-list',
+						meta: { group: true, title: '数据打印', icon: 'el-icon-memo', role: 'r45-1' },
+						children: [
+							{
+								path: '/web/templates-list',
+								name: 'TemplatesList',
+								component: 'system/report-templates/templates-list',
+								meta: { title: '报表设计', icon: 'el-icon-memo', role: 'r45-1' }
+							}
+						]
+					},
+
                 ]
             },
 
-            {
-                path: '',
-                name: 'AdvancedSetting',
-                meta: { title: '应用高级设置', icon: 'el-icon-operation' },
-                children: [
-                    // 审批流程
-                    {
-                        path: '/web/process-list',
-                        name: 'ProcessList',
-                        component: 'system/approval-process/process-list',
-                        meta: { group: true, title: '业务流程', icon: 'el-icon-share', role: 'r6016' },
-                        children: [
-                            {
-                                path: '/web/process-list',
-                                name: 'ProcessList',
-                                component: 'system/approval-process/process-list',
-                                meta: { title: '审批流程', icon: 'el-icon-share', role: 'r6016' }
-                            }
-                        ]
-                    },
+			// 数据导入
+			{
+				path: '/web/data-upload',
+				name: 'DataUpload',
+				meta: { title: '应用数据管理', icon: 'el-icon-switch', role: 'r6011' },
+				component: 'system/data-upload/index',
+				children: [
+					{
+						path: '/web/data-upload',
+						name: 'DataUpload',
+						meta: { title: '数据导入', icon: 'el-icon-BottomRight', role: 'r6011' },
+						component: 'system/data-upload/index',
+					},
 
-                    // 触发器
-                    {
-                        path: '/web/trigger',
-                        name: 'Trigger',
-                        meta: { group: true, title: '业务触发器', icon: 'el-icon-cpu' },
-                        children: [
-                            {
-                                path: '/web/trigger-list',
-                                name: 'TriggerList',
-                                component: 'system/trigger/trigger-list',
-                                meta: { title: '触发器列表', icon: 'el-icon-Cpu', role: 'r48-1' },
-                            },
-
-                            {
-                                path: '/web/trigger-log',
-                                name: 'TriggerLog',
-                                component: 'system/trigger/trigger-log',
-                                meta: { title: '触发器日志', icon: 'el-icon-Timer', role: 'r6015' }
-                            },
-                        ]
-                    },
-
-                    // 仪表盘
-                    {
-                        path: '/web/dashboard-list',
-                        name: 'DashboardDesign',
-                        meta: { group: true, title: '可视化分析', icon: 'el-icon-menu', role: 'r52-1' },
-                        component: 'system/dashboard-design/chart',
-                        children: [
-                            {
-                                path: '/web/dashboard-list',
-                                name: 'DashboardDesign',
-                                meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
-                                component: 'system/dashboard-design/chart',
-                            }
-                        ]
-                    },
-                    // 报表设计
-                    {
-                        path: '/web/templates-list',
-                        name: 'TemplatesList',
-                        component: 'system/report-templates/templates-list',
-                        meta: { group: true, title: '数据打印', icon: 'el-icon-memo', role: 'r45-1' },
-                        children: [
-                            {
-                                path: '/web/templates-list',
-                                name: 'TemplatesList',
-                                component: 'system/report-templates/templates-list',
-                                meta: { title: '报表设计', icon: 'el-icon-memo', role: 'r45-1' }
-                            }
-                        ]
-                    },
-                    // 数据导入
-                    {
-                        path: '/web/data-upload',
-                        name: 'DataUpload',
-                        meta: { group: true, title: '数据初始化', icon: 'el-icon-BottomRight', role: 'r6011' },
-                        component: 'system/data-upload/index',
-                        children: [
-                            {
-                                path: '/web/data-upload',
-                                name: 'DataUpload',
-                                meta: { title: '数据导入', icon: 'el-icon-BottomRight', role: 'r6011' },
-                                component: 'system/data-upload/index',
-                            }
-                        ]
-                    },
-                ]
-            },
+					// 数据库备份
+					{
+						path: '/web/database-backups',
+						name: 'DatabaseBackups',
+						meta: { title: '数据库备份', icon: 'el-icon-Collection', role: 'r6014' },
+						component: 'system/data-base/backups',
+					},
+				]
+			},
 
             // 审批流程详情
             {
@@ -336,6 +340,7 @@ const routes = [
                         meta: { title: '变更历史', icon: 'el-icon-EditPen', role: 'r6010' },
                         component: 'system/revision-history/index',
                     },
+
                     // 登录日志
                     {
                         path: '/web/login-log',
@@ -343,13 +348,7 @@ const routes = [
                         meta: { title: '登录日志', icon: 'el-icon-Tickets', role: 'r6014' },
                         component: 'login/login-log',
                     },
-                    // 数据库备份
-                    {
-                        path: '/web/database-backups',
-                        name: 'DatabaseBackups',
-                        meta: { title: '数据库备份', icon: 'el-icon-Collection', role: 'r6014' },
-                        component: 'system/data-base/backups',
-                    },
+
                     // 回收站
                     {
                         path: '/web/recycle-bin',
