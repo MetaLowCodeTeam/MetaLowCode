@@ -213,6 +213,7 @@ import { storeToRefs } from "pinia";
 import { inject, h, onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
+import {textIsSystemKeyword} from "@/utils/keyword-check";
 const { refreshCache } = useCommonStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
@@ -355,6 +356,11 @@ let EPEditor = ref("");
 
 const saveNewEntity = () => {
     EPEditor.value.validateForm(() => {
+		if ( textIsSystemKeyword(newEntityProps.value.name) ) {
+			ElMessage.error("实体不能使用系统保留关键字，请修改。");
+			return
+		}
+
         newEntityProps.value = Object.assign(
             newEntityProps.value,
             EPEditor.value.entityProps

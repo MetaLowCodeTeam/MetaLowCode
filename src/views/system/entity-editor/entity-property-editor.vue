@@ -22,7 +22,7 @@
                     <el-input
                         v-model="myEntityProps.name"
                         minlength="2"
-                        placeholder="英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线或横杠"
+                        placeholder="英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线"
                     >
                         <template #append>
                             <el-button @click="generateEntityName">刷新生成</el-button>
@@ -201,9 +201,9 @@ let rules = ref({
     name: [
         { required: true, message: "请输入实体名称", trigger: "blur" },
         {
-            pattern: /^[A-Z]+[A-Za-z\d_-]*$/,
+            pattern: /^[A-Z]+[A-Za-z\d_]*$/,
             message:
-                "英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线或横杠",
+                "英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线",
             trigger: "blur",
         },
         { min: 2, max: 30, message: "文字长度应在2-30之间", trigger: "blur" },
@@ -307,6 +307,7 @@ const handleEntityLabelChange = (val) => {
 const generateEntityName = () => {
     if (myEntityProps.value.label) {
         let newName = getSimplePinYin(myEntityProps.value.label);
+		newName = newName.replaceAll('-', '_');
         myEntityProps.value.name = upperFirstLetter(newName);
     }
 };
