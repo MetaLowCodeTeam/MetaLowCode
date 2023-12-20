@@ -43,6 +43,13 @@ const routes = [
             title: "图表设计"
         }
     },
+    {
+        path: "/web/Printer",
+        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/customize-menu/components/Printer.vue'),
+        meta: {
+            title: "打印"
+        }
+    },
     // 消息中心
     // {
     //     path: '/web/notification',

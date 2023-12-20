@@ -1,6 +1,6 @@
 <template>
     <el-drawer
-        size="73%"
+        size="62.4%"
         class="ml-drawer"
         v-model="detailDialog.isShow"
         direction="rtl"
@@ -91,6 +91,7 @@
                                     :entityCode="entityCode"
                                     :detailId="detailId"
                                     :idFieldName="idFieldName"
+                                    :nameFieldName="nameFieldName"
                                     @editColumnConfirm="editColumnConfirm"
                                 />
                             </el-col>

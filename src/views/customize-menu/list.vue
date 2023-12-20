@@ -62,7 +62,6 @@
                         @changeColumnShow="changeColumnShow"
                         @editColumnConfirm="getLayoutList"
                         :idFieldName="idFieldName"
-                        :entityName="entityName"
                         :entityCode="entityCode"
                         @defaultFilterChange="getLayoutList"
                         :defaultFilterSetting="defaultFilterSetting"

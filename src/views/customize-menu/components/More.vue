@@ -59,6 +59,14 @@
                 </span>
                 报表
             </div>
+            <div class="pl-20 item" @click="openPrinter()" v-if="type != 'list'">
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconPrinter />
+                    </el-icon>
+                </span>
+                打印
+            </div>
             <!-- 导入导出 -->
             <template v-if="type == 'list'">
                 <div class="pl-5 mt-15 item div-disabled">导入导出</div>
@@ -156,7 +164,8 @@ import ReportForms from "./ReportForms.vue";
 import DefaultFilterDialog from "./DefaultFilterDialog.vue";
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
-
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameById } = useCommonStore();
 const router = useRouter();
 const emits = defineEmits([
     "changeColumnShow",
@@ -166,13 +175,13 @@ const emits = defineEmits([
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
     idFieldName: { type: String, default: "" },
+    nameFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
     tableColumn: { type: Array, default: () => [] },
     multipleSelection: { type: Array, default: () => [] },
     dataExportData: { type: Object, default: () => {} },
     type: { type: String, default: "list" },
     entityCode: { type: Number, default: 0 },
-    entityName: { type: String, default: "" },
     // 当前详情ID
     detailId: { type: String, default: "" },
     // 默认查询设置
@@ -308,14 +317,28 @@ const editColumnConfirm = (v) => {
 let defaultFilterRefs = ref("");
 const openDefaultFilterDialog = () => {
     defaultFilterRefs.value.openDialog({
-        name: props.entityName,
+        name: queryEntityNameById(props.detailId),
         code: props.entityCode,
         defaultFilterSetting: props.defaultFilterSetting,
     });
 };
+
 const defaultFilterChange = () => {
     emits("defaultFilterChange");
 };
+
+/**
+ * 打印
+ */
+const openPrinter = () => {
+    let newUrl = router.resolve("/web/Printer?entityId=" + props.detailId + "&nameFieldName=" + props.nameFieldName);
+    window.open(newUrl.href);
+    // router.push({
+    //     path: "/web/Printer?entityId=" + props.detailId,
+    //     target: "_blank",
+    // });
+};
+
 defineExpose({
     editColumn,
 });
