@@ -35,12 +35,12 @@
 import { ref, inject } from "vue";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
-const router = useRouter();
-const $TOOL = inject("$TOOL");
+
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
-
+const router = useRouter();
+const $TOOL = inject("$TOOL");
 let dialogShow = ref(false);
 let loading = ref(false);
 let entityCode = ref("");
@@ -56,7 +56,6 @@ const openDialog = (data) => {
         isSupportFunc.value = true;
         getReportConfigList();
     }
-    
 };
 
 const getReportConfigList = async () => {
@@ -72,7 +71,8 @@ const getReportConfigList = async () => {
 
 const downReport = async (item) => {
     window.open(
-        import.meta.env.VITE_APP_BASE_API + `/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
+        import.meta.env.VITE_APP_BASE_API +
+            `/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
     );
 };
 
@@ -80,7 +80,10 @@ const clcikSet = () => {
     let temp = router.resolve({
         name: "TemplatesList",
     });
-    window.open(temp.href, "_blank");
+    window.open(
+        temp.href + "?entityCode=" + entityCode.value,
+        "_blank"
+    );
 };
 
 defineExpose({

@@ -132,7 +132,14 @@
                             <span v-else>{{ scope.row[column.prop]}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" :align="'center'" width="170" key="defalut-btn" v-if="entityName != 'ApprovalTask'">
+                    <el-table-column
+                        label="操作"
+                        fixed="right"
+                        :align="'center'"
+                        width="170"
+                        key="defalut-btn"
+                        v-if="entityName != 'ApprovalTask'"
+                    >
                         <template #default="scope">
                             <el-button
                                 size="small"
@@ -212,7 +219,7 @@ const props = defineProps({
     fieldName: { type: String, default: "entityCode" },
     approvalTaskType: { type: Number, default: 1 },
 });
-const emit = defineEmits(["goDetial", "actionBtn", "changeSwitch"]);
+const emit = defineEmits(["goDetial", "actionBtn", "changeSwitch","openAddDialog"]);
 const message = inject("$ElMessage");
 const ListTile = reactive({
     ApprovalConfig: "审批流程",
@@ -264,7 +271,10 @@ const getEntityList = async () => {
     loading.value = true;
     let res;
     if (props.entityName == "ApprovalTask") {
-        res = await getEntityApprovalTaskList(props.entityName,props.approvalTaskType);
+        res = await getEntityApprovalTaskList(
+            props.entityName,
+            props.approvalTaskType
+        );
     } else {
         res = await getEntityCodeList(props.entityName);
     }
@@ -275,7 +285,7 @@ const getEntityList = async () => {
         if (router.currentRoute.value.query.entityCode) {
             defaultCode.value = router.currentRoute.value.query.entityCode;
             if (!allEntityCode.value.includes(defaultCode.value)) {
-                ElMessage.warning("暂无数据，请点击【添加】按钮新增");
+                emit("openAddDialog");
             }
         }
         getApprovalList();
@@ -286,7 +296,7 @@ const getEntityList = async () => {
 // 获取右侧流程列表
 const getApprovalList = async () => {
     loading.value = true;
-    let { filterItems,fieldName } = props;
+    let { filterItems, fieldName } = props;
     let param = {
         mainEntity: props.entityName,
         fieldsList: props.fieldsList,
@@ -484,7 +494,7 @@ const changeSwitch = (row) => {
 
 defineExpose({
     getEntityList,
-    defaultCode
+    defaultCode,
 });
 </script>
 

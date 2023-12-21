@@ -42,7 +42,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         if (navRes && navRes.data) {
             setNavigationList(navRes.data.navigationList);
             setChosenNavigationId(navRes.data.chosenNavigationId);
-            setTopNavigation(navRes.data.topNavigation)
+            setTopNavigation(navRes.data.topNavigation || {})
             setDefaultMenuList();
         }
     }

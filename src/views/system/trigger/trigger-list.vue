@@ -10,6 +10,7 @@
         :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
+        @openAddDialog="openAddDialog"
         checkRole="r48"
     >
         <template #addbutton>
@@ -100,6 +101,10 @@ let dialogForm = ref({
     showFormItem: [{ label: "名称", code: "name", type: "1" }],
 });
 
+
+const openAddDialog = () => {
+    actionBtn({ target: "add" });
+};
 // 新建编辑触发
 const actionBtn = (data) => {
     let { target, row } = data;
@@ -107,7 +112,7 @@ const actionBtn = (data) => {
     if (target === "add") {
         dialogForm.value.title = "添加触发器";
         dialogForm.value.form = {
-            entityCode: defaultCode == "all" ? "" : defaultCode,
+            entityCode: defaultCode == "all" ? "" : parseInt(defaultCode),
         };
         dialogForm.value.type = "add";
     } else {

@@ -13,6 +13,7 @@
         :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
+        @openAddDialog="openAddDialog"
     >
         <template #addbutton>
             <el-button type="primary" @click="actionBtn({target:'add'})">
@@ -57,7 +58,7 @@ let tableColumn = ref([
         label: "启用",
         align: "center",
         customSolt: "switch",
-        isNegation:true,
+        isNegation: true,
         width: 80,
     },
     {
@@ -73,10 +74,9 @@ const changeSwitch = (row) => {
     let tempForm = { ...row };
     tempForm.actionType = tempForm.actionType.value;
     dialogForm.value.form = { ...tempForm };
-    mlActiveDialogRefs.value.dialogForm = {...dialogForm.value};
+    mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
     mlActiveDialogRefs.value.saveProcess();
 };
-
 
 // 编辑弹框
 let mlActiveDialogRefs = ref();
@@ -85,9 +85,13 @@ let dialogForm = ref({
     saveIdCode: "reportConfigId",
     checkCodes: ["reportName"],
     codeErrMsg: ["请输入模板名称"],
-    fromEntityLabel:'应用实体',
+    fromEntityLabel: "应用实体",
     showFormItem: [{ label: "名称", code: "reportName", type: "1" }],
 });
+
+const openAddDialog = () => {
+    actionBtn({ target: "add" });
+};
 
 // 新建编辑触发
 const actionBtn = (data) => {
@@ -96,7 +100,7 @@ const actionBtn = (data) => {
     if (target === "add") {
         dialogForm.value.title = "添加模板";
         dialogForm.value.form = {
-            entityCode: defaultCode == "all" ? "" : defaultCode,
+            entityCode: defaultCode == "all" ? "" : parseInt(defaultCode),
         };
         dialogForm.value.type = "add";
     } else {
