@@ -277,12 +277,12 @@
             <el-icon-close />
         </el-icon>
     </div>
+<!-- 
+    <div class="layout-setting" @click="openSetting"><el-icon><el-icon-brush-filled /></el-icon></div>
 
-    <!-- <div class="layout-setting" @click="openSetting"><el-icon><el-icon-brush-filled /></el-icon></div> -->
-
-    <!-- <el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
+    <el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
 		<setting></setting>
-    </el-drawer>-->
+    </el-drawer> -->
 
     <auto-exit></auto-exit>
 </template>
@@ -442,6 +442,10 @@ export default {
         },
         //点击显示
         showMenu(route) {
+            if(route.type == 2){
+                window.open(route.outLink)
+                return
+            }
             this.pmenu = route;
             this.nextMenu = this.filterUrl(route.children);
             if (

@@ -1,79 +1,95 @@
 <template>
     <div class="user-bar">
-        <div class="approval-center panel-item">
-            <el-dropdown trigger="click" @command="handleApproval">
-                <span class="approval-icon-span">
-                    <el-icon>
-                        <el-icon-connection />
-                    </el-icon>
-                </span>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item command="CenterHandle">待我处理</el-dropdown-item>
-                        <el-dropdown-item command="CenterSubmit">我提交的</el-dropdown-item>
-                        <el-dropdown-item command="CenterCc">抄送我的</el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
-        </div>
-        <div class="screen panel-item hidden-sm-and-down" @click="refresh">
-            <el-icon>
-                <ElIconRefresh />
-            </el-icon>
-        </div>
-        <div class="screen panel-item hidden-sm-and-down" @click="screen">
-            <el-icon>
-                <el-icon-full-screen />
-            </el-icon>
-        </div>
-        <div class="msg panel-item" @click="showMsg">
-            <el-badge :hidden="newMsgNum == 0" :value="newMsgNum" class="badge" type="danger">
+        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom">
+            <div class="screen panel-item hidden-sm-and-down" @click="setTopMenuDialogIsShow = true">
                 <el-icon>
-                    <el-icon-chat-dot-round />
+                    <ElIconGrid />
                 </el-icon>
-            </el-badge>
-            <el-drawer title="新消息" v-model="msg" :size="400" append-to-body destroy-on-close>
-                <el-container v-loading="msgLoading">
-                    <el-main class="nopadding">
-                        <el-scrollbar>
-                            <ul class="msg-list">
-                                <li
-                                    v-for="(item,itemInx) in msgList"
-                                    v-bind:key="item.id"
-                                    @click="msgClick(item,itemInx)"
-                                >
-                                    <a :href="item.link" target="_blank">
-                                        <div class="msg-list__icon">
-                                            <el-badge is-dot type="danger">
-                                                <el-avatar :size="40">
-                                                    <mlAvatar :userId="item.fromUser.id" />
-                                                </el-avatar>
-                                            </el-badge>
-                                        </div>
-                                        <div class="msg-list__main">
-                                            <h2>{{item.fromUser.name}}</h2>
-                                            <p>{{item.message}}</p>
-                                        </div>
-                                        <div class="msg-list__time">
-                                            <p>{{$fromNow(item.createdOn)}}</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <el-empty
-                                    v-if="msgList.length==0"
-                                    description="暂无新消息"
-                                    :image-size="100"
-                                ></el-empty>
-                            </ul>
-                        </el-scrollbar>
-                    </el-main>
-                    <el-footer>
-                        <el-button type="primary" @click="goNotification">消息中心</el-button>
-                        <el-button @click="markAllRead">全部设为已读</el-button>
-                    </el-footer>
-                </el-container>
-            </el-drawer>
-        </div>
+            </div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="light" content="审批中心" placement="bottom">
+            <div class="approval-center panel-item">
+                <el-dropdown trigger="click" @command="handleApproval">
+                    <span class="approval-icon-span">
+                        <el-icon>
+                            <el-icon-connection />
+                        </el-icon>
+                    </span>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item command="CenterHandle">待我处理</el-dropdown-item>
+                            <el-dropdown-item command="CenterSubmit">我提交的</el-dropdown-item>
+                            <el-dropdown-item command="CenterCc">抄送我的</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="light" content="刷新" placement="bottom">
+            <div class="screen panel-item hidden-sm-and-down" @click="refresh">
+                <el-icon>
+                    <ElIconRefresh />
+                </el-icon>
+            </div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="light" content="全屏" placement="bottom">
+            <div class="screen panel-item hidden-sm-and-down" @click="screen">
+                <el-icon>
+                    <el-icon-full-screen />
+                </el-icon>
+            </div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="light" content="消息" placement="bottom">
+            <div class="msg panel-item" @click="showMsg">
+                <el-badge :hidden="newMsgNum == 0" :value="newMsgNum" class="badge" type="danger">
+                    <el-icon>
+                        <el-icon-chat-dot-round />
+                    </el-icon>
+                </el-badge>
+                <el-drawer title="新消息" v-model="msg" :size="400" append-to-body destroy-on-close>
+                    <el-container v-loading="msgLoading">
+                        <el-main class="nopadding">
+                            <el-scrollbar>
+                                <ul class="msg-list">
+                                    <li
+                                        v-for="(item,itemInx) in msgList"
+                                        v-bind:key="item.id"
+                                        @click="msgClick(item,itemInx)"
+                                    >
+                                        <a :href="item.link" target="_blank">
+                                            <div class="msg-list__icon">
+                                                <el-badge is-dot type="danger">
+                                                    <el-avatar :size="40">
+                                                        <mlAvatar :userId="item.fromUser.id" />
+                                                    </el-avatar>
+                                                </el-badge>
+                                            </div>
+                                            <div class="msg-list__main">
+                                                <h2>{{item.fromUser.name}}</h2>
+                                                <p>{{item.message}}</p>
+                                            </div>
+                                            <div class="msg-list__time">
+                                                <p>{{$fromNow(item.createdOn)}}</p>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <el-empty
+                                        v-if="msgList.length==0"
+                                        description="暂无新消息"
+                                        :image-size="100"
+                                    ></el-empty>
+                                </ul>
+                            </el-scrollbar>
+                        </el-main>
+                        <el-footer>
+                            <el-button type="primary" @click="goNotification">消息中心</el-button>
+                            <el-button @click="markAllRead">全部设为已读</el-button>
+                        </el-footer>
+                    </el-container>
+                </el-drawer>
+            </div>
+        </el-tooltip>
+
         <el-dropdown class="user panel-item" trigger="click" @command="handleUser">
             <div class="user-avatar">
                 <el-avatar :size="30">
@@ -111,6 +127,8 @@
             title="审批"
         />
     </div>
+    <!-- 顶部导航设置 -->
+    <setTopMenu v-model="setTopMenuDialogIsShow"/>
 </template>
 
 <script setup>
@@ -126,6 +144,7 @@ import http from "@/utils/request";
 import { $fromNow } from "@/utils/util";
 import Detail from "@/views/customize-menu/detail.vue";
 import mlApprove from "@/components/mlApprove/index.vue";
+import setTopMenu from './setTopMenu.vue';
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
@@ -142,6 +161,10 @@ let tasksVisible = ref(false);
 let msg = ref(false);
 let msgList = ref([]);
 let msgLoading = ref(false);
+
+// 顶部导航设置弹框
+let setTopMenuDialogIsShow = ref(false);
+
 onMounted(() => {
     var userInfo = $TOOL.data.get("USER_INFO");
     if (!userInfo) {
@@ -216,9 +239,9 @@ const handleApproval = (command) => {
 };
 
 // 刷新
-const refresh = ()=>{
-    window.location.reload()
-}
+const refresh = () => {
+    window.location.reload();
+};
 
 //全屏
 const screen = () => {
@@ -309,6 +332,11 @@ const searchFn = () => {
 const tasksFn = () => {
     tasksVisible.value = true;
 };
+
+/**
+ * 
+ */
+
 </script>
 
 <style scoped lang="scss">

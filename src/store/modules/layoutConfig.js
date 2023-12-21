@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { inject, ref } from 'vue'
+import { ref } from 'vue'
 import tool from '@/utils/tool';
+import layoutConfigApi from '@/api/layoutConfig.js';
 // import useLayoutConfigStore from "@/store/modules/layoutConfig";
 // const { setNavigationList } = useLayoutConfigStore();
 // import { storeToRefs } from 'pinia';
@@ -17,6 +18,8 @@ const floamtRoute = (el) => {
         newRoute.path = "/web/custom-page/" + el.outLink;
         newRoute.component = "custom-page/" + el.outLink;
     }
+    // console.log(el,'el')
+    // console.log(newRoute,'---newRoute')
     return newRoute
 }
 
@@ -28,9 +31,29 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     let chosenNavigationId = ref("");
     // 使用的菜单
     let useMenuList = ref([]);
+
+    // 获取LayoutApi
+    const getNavigationApi = async (errorCb) => {
+        let navRes = await layoutConfigApi.getNavigationList();
+        if (navRes && navRes.code == 403) {
+            errorCb()
+            return;
+        }
+        if (navRes && navRes.data) {
+            setNavigationList(navRes.data.navigationList);
+            setChosenNavigationId(navRes.data.chosenNavigationId);
+            setTopNavigation(navRes.data.topNavigation)
+            setDefaultMenuList();
+        }
+    }
+
     // 设置导航列表
     const setNavigationList = (list) => {
         navigationList.value = list;
+    }
+    // 获取全部导航
+    const getAllNav = () => {
+        return [...navigationList.value];
     }
     // 设置默认ID
     const setChosenNavigationId = (id) => {
@@ -55,7 +78,21 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 useMenuList.value = [];
             }
         }
-
+        // let newMenuList = [];
+        // navigationList.value.forEach(el => {
+        //     let navItem = {
+        //         path: "/" + el.layoutConfigId,
+        //         name: el.layoutConfigId,
+        //         meta: { title: el.configName },
+        //         children:formatRouters(el.config)
+        //     };
+        //     newMenuList.push(navItem)
+        //     // path: '/web/system',
+        //     // name: 'SystemManager',
+        //     // meta: { title: '开发应用', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
+        // })
+        // useMenuList.value = [...newMenuList]
+        // console.log(newMenuList, 'useMenuList')
     }
     // 格式化导航
     const formatRouters = (config) => {
@@ -68,7 +105,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         let list = JSON.parse(tempConfig);
         let testRoutes = [...list]
-        console.log(testRoutes, 'testRoutes')
+        // console.log(testRoutes, 'testRoutes')
         let formatRoutrs = [];
         testRoutes.forEach((el) => {
             let initMenu = {
@@ -80,11 +117,11 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
-            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu"&& el.type == 1;
+            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
             initMenu.meta.outLink = el.outLink;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
-                initMenu.path = "";
+                initMenu.path = "/" + el.guid;
 
                 el.children.forEach((subEl) => {
                     let subRoute = {
@@ -99,14 +136,14 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             outLink: subEl.outLink,
                         },
                     }
-                    let { path, component} = floamtRoute(subEl);
+                    let { path, component } = floamtRoute(subEl);
                     subRoute.path = path;
                     subRoute.component = component;
                     initMenu.children.push(subRoute);
                 });
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
-                let { path, component} = floamtRoute(el);
+                let { path, component } = floamtRoute(el);
                 initMenu.path = path;
                 initMenu.component = component;
             }
@@ -115,14 +152,59 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         });
         return formatRoutrs
     }
-
+    // 获取左侧菜单
+    const getUseMenuList = () => {
+        return [...useMenuList.value]
+    }
+    /**
+     * 顶部导航相关
+     */
+    // 顶部导航数据
+    let topNavigation = ref({});
+    let topNavMenuList = ref([]);
+    // 设置顶部导航数据
+    const setTopNavigation = (data) => {
+        let formatConfig = data.config ? JSON.parse(data.config) : {};
+        topNavigation.value = {...data};
+        let navList = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];
+        topNavigation.value.navList = JSON.parse(JSON.stringify(navList))
+        topNavMenuList.value = navList;
+        topNavMenuList.value.forEach(el => {
+            el.path = el.type == 1 ? "/" + el.guid : el.outLink;
+            el.name = el.configName
+            // meta: { title: '开发应用', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
+            el.meta = {
+                title: el.configName,
+                icon: el.useIcon || 'set-up',
+                type: el.type,
+                outLink: el.outLink
+            };
+            if (el.type == 1) {
+                let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)
+                el.children = formatRouters(findNav[0].config)
+            }
+        })
+    }
+    // 获取顶部导航数据
+    let getTopNavigation = () => {
+        return { ...topNavigation.value }
+    }
+    const getTopNavMenuList = () => {
+        return [...topNavMenuList.value]
+    }
     return {
+        getNavigationApi,
         navigationList,
         chosenNavigationId,
         setNavigationList,
+        getAllNav,
         setChosenNavigationId,
         setDefaultMenuList,
-        useMenuList
+        useMenuList,
+        getUseMenuList,
+        setTopNavigation,
+        getTopNavigation,
+        getTopNavMenuList
     }
 }, {
     persist: true

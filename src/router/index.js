@@ -1,23 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { ElNotification } from 'element-plus';
-import config from "@/config"
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import tool from '@/utils/tool';
-import layoutConfigApi from '@/api/layoutConfig';
-import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-
-// console.log(useLayoutConfigStore,'useLayoutConfigStore')
-// import pinia from '../store/index';
-// import { useLayoutConfigStore } from "@/store/modules/layoutConfig";
-// const layoutStore = useLayoutConfigStore(pinia);
-// import { layoutConfig } from "../store/modules/layoutConfig"
-// const store = layoutConfig(pinia)
 import systemRouter from './systemRouter';
 import userRoutes from '@/config/route';
 import { beforeEach, afterEach } from './scrollBehavior';
+
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
 
 
 
@@ -47,6 +39,7 @@ router.beforeEach(async (to, from, next) => {
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
     const { queryEntityNameByLabel } = useCommonStore();
+    const { getUseMenuList, getNavigationApi, getTopNavMenuList } = useLayoutConfigStore();
     NProgress.start()
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
@@ -70,37 +63,27 @@ router.beforeEach(async (to, from, next) => {
         return false;
     }
     let routerEntityname = to.params?.entityname;
-    if(routerEntityname && !to.meta.title){
+    if (routerEntityname && !to.meta.title) {
         to.meta.title = queryEntityNameByLabel(routerEntityname)
-    }   
+    }
     //整页路由处理
     if (to.meta.fullpage) {
         to.matched = [to.matched[to.matched.length - 1]]
-       
+
     }
     //加载动态/静态路由
     if (!isGetRouter) {
-        const { setNavigationList, setChosenNavigationId, setDefaultMenuList } = useLayoutConfigStore();
-        let navRes = await layoutConfigApi.getNavigationList();
-        if (navRes && navRes.code == 403) {
+        await getNavigationApi(() => {
             isGetRouter = false;
             next({
                 path: '/web/login'
             });
-            return false;
-        }
-        if (navRes && navRes.data) {
-            setNavigationList(navRes.data.navigationList);
-            setChosenNavigationId(navRes.data.chosenNavigationId);
-            setDefaultMenuList();
-        }
-        
-        const { useMenuList } = storeToRefs(useLayoutConfigStore());
-        let apiMenu = [...useMenuList.value];
+        })
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
             return true
         })
-        userMenu[0].children.push(...apiMenu)
+        userMenu[0].children.push(...getUseMenuList())
+        userMenu.splice(1,0,...getTopNavMenuList())
         let menu = [...userMenu]
         var menuRouter = filterAsyncRouter(menu)
         menuRouter = flatAsyncRoutes(menuRouter)
@@ -113,7 +96,7 @@ router.beforeEach(async (to, from, next) => {
         }
         isGetRouter = true;
     }
-    
+
     beforeEach(to, from)
     next();
 });
@@ -133,12 +116,13 @@ router.onError((error) => {
 
 //入侵追加自定义方法、对象
 router.sc_getMenu = () => {
-    const { useMenuList } = storeToRefs(useLayoutConfigStore());
-    let apiMenu = [...useMenuList.value];
+    const { getUseMenuList,getTopNavMenuList } = useLayoutConfigStore();
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
         return true
     })
-    userMenu[0].children.push(...apiMenu)
+    userMenu[0].children.push(...getUseMenuList())
+    userMenu.splice(1,0,...getTopNavMenuList())
+    // userMenu.push(...apiMenu)
     var menu = [...userMenu]
     return menu
 }

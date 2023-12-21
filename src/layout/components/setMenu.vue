@@ -212,9 +212,7 @@ const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const { unSystemEntityList } = storeToRefs(useCommonStore());
-const { setNavigationList, setChosenNavigationId, setDefaultMenuList } =
-    useLayoutConfigStore();
-
+const { getNavigationApi } = useLayoutConfigStore();
 const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
 const props = defineProps({
     modelValue: null,
@@ -595,18 +593,11 @@ const layoutSave = async () => {
         ) {
             router.go(0);
         } else {
-            let navRes = await $API.layoutConfig.getNavigationList();
-            if (navRes) {
-                setNavigationList(navRes.data.navigationList);
-                setChosenNavigationId(navRes.data.chosenNavigationId);
-                setDefaultMenuList();
-                loading.value = false;
-                isShow.value = false;
-            }
+            getNavigationApi();
+            isShow.value = false;
         }
-    } else {
-        loading.value = false;
     }
+    loading.value = false;
 };
 
 // 格式化菜单数据
