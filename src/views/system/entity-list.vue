@@ -372,9 +372,8 @@ const createNewEntity = (target) => {
                     res.data
                 );
                 // 获取该实体标签
-                let cutEntityTag = newEntityProps.value.tags.split();
-                // 如果有有标签，回填选中
-                if (cutEntityTag && cutEntityTag.length > 0) {
+                if (newEntityProps.value.tags) {
+                    let cutEntityTag = newEntityProps.value.tags;
                     newEntityProps.value.useTag.forEach((el) => {
                         if (cutEntityTag.includes(el.name)) {
                             el.checked = true;
