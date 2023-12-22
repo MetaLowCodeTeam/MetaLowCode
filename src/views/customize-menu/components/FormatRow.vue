@@ -20,7 +20,7 @@
         v-else-if="column.fieldType == 'Boolean'"
     >{{ row[column.fieldName] == null ? "" : (row[column.fieldName] ? "是" : '否') }}</div>
     <div class="text-ellipsis" v-else-if="column.fieldName == nameFieldName">
-        <span class="ml-a-span" @click.stop="openDetilDialog(row)">{{ row[column.fieldName] }}</span>
+        <span class="ml-a-span" @click.stop="openDetailDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
 
     <div class="text-ellipsis" v-else-if="column.fieldType == 'Money'">{{ numberToCurrencyNo(row[column.fieldName]) }}</div>
@@ -81,7 +81,7 @@ const props = defineProps({
     column: { type: Object, default: () => {} },
     nameFieldName: { type: String, default: "" },
 });
-const emits = defineEmits(["openDetilDialog"]);
+const emits = defineEmits(["openDetailDialog"]);
 
 const formatUrl = (url) => {
     return import.meta.env.VITE_APP_BASE_API + url;
@@ -93,8 +93,8 @@ const downField = (url, fileName) => {
     );
 };
 
-const openDetilDialog = (row) => {
-    emits("openDetilDialog", row);
+const openDetailDialog = (row) => {
+    emits("openDetailDialog", row);
 };
 
 /**
