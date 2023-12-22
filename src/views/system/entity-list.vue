@@ -193,7 +193,11 @@
                     class="context-menu__item"
                     @click="deleteSelectedEntity()"
                 >删除实体</div>
-                <div class="context-menu__item" @click="createNewEntity('copy')" v-if="!selectedEntityObj.systemEntityFlag">复制实体</div>
+                <div
+                    class="context-menu__item"
+                    @click="createNewEntity('copy')"
+                    v-if="!selectedEntityObj.systemEntityFlag"
+                >复制实体</div>
             </div>
         </el-main>
     </el-container>
@@ -367,8 +371,19 @@ const createNewEntity = (target) => {
                     newEntityProps.value,
                     res.data
                 );
+                // 获取该实体标签
+                let cutEntityTag = newEntityProps.value.tags.split();
+                // 如果有有标签，回填选中
+                if (cutEntityTag && cutEntityTag.length > 0) {
+                    newEntityProps.value.useTag.forEach((el) => {
+                        if (cutEntityTag.includes(el.name)) {
+                            el.checked = true;
+                        }
+                    });
+                }
                 newEntityProps.value.name = "";
                 newEntityProps.value.label = "";
+
                 let subEntityRes = await hasDetailEntity(
                     selectedEntityObj.value.name
                 );
@@ -396,7 +411,7 @@ const saveNewEntity = () => {
             : newEntityProps.value.mainEntity;
         EPEditor.value.loading = true;
         let tags = [];
-        if(newEntityProps.value.useTag){
+        if (newEntityProps.value.useTag) {
             newEntityProps.value.useTag.forEach((el) => {
                 if (el.checked) {
                     tags.push(el.name);
@@ -404,7 +419,7 @@ const saveNewEntity = () => {
             });
         }
         newEntityProps.value.tags = tags.join(",");
-        
+
         delete newEntityProps.value.useTag;
         let res;
         // 是复制
