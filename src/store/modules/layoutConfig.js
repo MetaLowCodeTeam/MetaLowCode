@@ -7,10 +7,10 @@ import layoutConfigApi from '@/api/layoutConfig.js';
 // import { storeToRefs } from 'pinia';
 // const { navigationList } = storeToRefs(useLayoutConfigStore());
 
-const floamtRoute = (el) => {
+const floamtRoute = (el, isTopNav) => {
     let newRoute = {};
     if (el.type == 1) {
-        newRoute.path = "/web/" + el.entityName + "/list";
+        newRoute.path = "/web/" + (isTopNav ? 'topnav/' : '') + el.entityName + "/list";
         newRoute.component = "customize-menu/list";
     } else if (el.type == 2) {
         newRoute.path = el.guid;
@@ -95,7 +95,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         // console.log(newMenuList, 'useMenuList')
     }
     // 格式化导航
-    const formatRouters = (config) => {
+    const formatRouters = (config, isTopNav) => {
         let tempConfig = config;
         if (!tempConfig) {
             tempConfig = JSON.stringify([]);
@@ -136,14 +136,14 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             outLink: subEl.outLink,
                         },
                     }
-                    let { path, component } = floamtRoute(subEl);
+                    let { path, component } = floamtRoute(subEl, isTopNav);
                     subRoute.path = path;
                     subRoute.component = component;
                     initMenu.children.push(subRoute);
                 });
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
-                let { path, component } = floamtRoute(el);
+                let { path, component } = floamtRoute(el, isTopNav);
                 initMenu.path = path;
                 initMenu.component = component;
             }
@@ -165,7 +165,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 设置顶部导航数据
     const setTopNavigation = (data) => {
         let formatConfig = data.config ? JSON.parse(data.config) : {};
-        topNavigation.value = {...data};
+        topNavigation.value = { ...data };
         let navList = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];
         topNavigation.value.navList = JSON.parse(JSON.stringify(navList))
         topNavMenuList.value = navList;
@@ -181,7 +181,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             };
             if (el.type == 1) {
                 let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)
-                el.children = formatRouters(findNav[0].config)
+                el.children = formatRouters(findNav[0].config, true)
             }
         })
     }

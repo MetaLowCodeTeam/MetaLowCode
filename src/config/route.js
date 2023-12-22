@@ -106,6 +106,14 @@ const routes = [
                     hidden: true,
                 },
                 component: 'customize-menu/list',
+            },
+            {
+                path: "/web/topnav/:entityname/list",
+                name: "MenuTopTrendsList",
+                "meta": {
+                    hidden: true,
+                },
+                component: 'customize-menu/list',
             }
 
             // ...formatRoutrs
