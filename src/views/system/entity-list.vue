@@ -119,7 +119,7 @@
                 </template>
             </el-collapse>
             <el-dialog
-                title="新建实体"
+                :title="newEntityProps.activeType == 2 ? '复制实体' :'新建实体'"
                 v-model="showNewEntityDialogFlag"
                 v-if="showNewEntityDialogFlag"
                 :show-close="false"
@@ -139,7 +139,7 @@
                             type="primary"
                             @click="saveNewEntity"
                             style="width: 90px"
-                            v-loading="EPEditor?.loading"
+                            v-loading="EPEditor?.loading "
                         >保 存</el-button>
                         <el-button
                             v-loading="EPEditor?.loading"
@@ -166,33 +166,34 @@
                     class="context-menu__item"
                     @click="gotoFormLayout()"
                 >表单设计</div>
-				<div
-					v-if="checkRole('r6008')"
-					class="context-menu__item"
-					@click="gotoListView()"
-				>列表设计</div>
-				<div class="context-menu-divider"></div>
-				<div
-					v-if="checkRole('r6016')"
-					class="context-menu__item"
-					@click="gotoRoute('process-list', true,)"
-				>流程设计</div>
-				<div
-					v-if="checkRole('r6015')"
-					class="context-menu__item"
-					@click="gotoRoute('trigger-list', false)"
-				>触发器设计</div>
-				<div
-					v-if="checkRole('r45-2')"
-					class="context-menu__item"
-					@click="gotoRoute('templates-list', true)"
-				>报表设计</div>
-				<div class="context-menu-divider"></div>
+                <div
+                    v-if="checkRole('r6008')"
+                    class="context-menu__item"
+                    @click="gotoListView()"
+                >列表设计</div>
+                <div class="context-menu-divider"></div>
+                <div
+                    v-if="checkRole('r6016')"
+                    class="context-menu__item"
+                    @click="gotoRoute('process-list', true,)"
+                >流程设计</div>
+                <div
+                    v-if="checkRole('r6015')"
+                    class="context-menu__item"
+                    @click="gotoRoute('trigger-list', false)"
+                >触发器设计</div>
+                <div
+                    v-if="checkRole('r45-2')"
+                    class="context-menu__item"
+                    @click="gotoRoute('templates-list', true)"
+                >报表设计</div>
+                <div class="context-menu-divider"></div>
                 <div
                     v-if="checkRole('r6002')"
                     class="context-menu__item"
                     @click="deleteSelectedEntity()"
                 >删除实体</div>
+                <div class="context-menu__item" @click="createNewEntity('copy')">复制实体</div>
             </div>
         </el-main>
     </el-container>
@@ -205,15 +206,18 @@ import {
     entityCanBeDeleted,
     deleteEntity,
     getAllTagsOfEntity,
+    getEntityProps,
+    hasDetailEntity,
+    copyEntity,
 } from "@/api/system-manager";
 import EntityPropEditor from "./entity-editor/entity-property-editor.vue";
 import useCommonStore from "@/store/modules/common";
 
 import { storeToRefs } from "pinia";
-import { inject, h, onMounted, ref } from "vue";
+import { inject, h, onMounted, ref, nextTick } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
-import {textIsSystemKeyword} from "@/utils/keyword-check";
+import { textIsSystemKeyword } from "@/utils/keyword-check";
 const { refreshCache } = useCommonStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
@@ -257,14 +261,13 @@ const checkRole = (rightStr) => {
     return $TOOL.checkRole(rightStr);
 };
 
-
-const initEntity = ()=>{
+const initEntity = () => {
     loading.value = true;
     Promise.all([getEntityList(), getAllTags()]).then(() => {
         loading.value = false;
         filterEntityList();
     });
-}
+};
 
 const getEntityList = () => {
     return new Promise(async (resolve, reject) => {
@@ -332,7 +335,9 @@ const filterEntityList = () => {
     });
 };
 
-const createNewEntity = () => {
+let EPEditor = ref("");
+// 新建实体
+const createNewEntity = (target) => {
     newEntityProps.value.name = "";
     newEntityProps.value.label = "";
     newEntityProps.value.entityCode = null;
@@ -350,16 +355,37 @@ const createNewEntity = () => {
         };
     });
     showNewEntityDialogFlag.value = true;
+    // 如果是复制实体
+    if (target == "copy") {
+        // 复制
+        newEntityProps.value.activeType = 2;
+        nextTick(async () => {
+            EPEditor.value.loading = true;
+            let res = await getEntityProps(selectedEntityObj.value.name);
+            if (res && res.data) {
+                newEntityProps.value = Object.assign(
+                    newEntityProps.value,
+                    res.data
+                );
+                newEntityProps.value.name = "";
+                newEntityProps.value.label = "";
+                let subEntityRes = await hasDetailEntity(
+                    selectedEntityObj.value.name
+                );
+                newEntityProps.value.hasDetailEntity =
+                    subEntityRes?.data || false;
+            }
+            EPEditor.value.loading = false;
+        });
+    }
 };
 
-let EPEditor = ref("");
-
 const saveNewEntity = () => {
-    EPEditor.value.validateForm(() => {
-		if ( textIsSystemKeyword(newEntityProps.value.name) ) {
-			ElMessage.error("实体不能使用系统保留关键字，请修改。");
-			return
-		}
+    EPEditor.value.validateForm(async () => {
+        if (textIsSystemKeyword(newEntityProps.value.name)) {
+            ElMessage.error("实体不能使用系统保留关键字，请修改。");
+            return;
+        }
 
         newEntityProps.value = Object.assign(
             newEntityProps.value,
@@ -370,28 +396,36 @@ const saveNewEntity = () => {
             : newEntityProps.value.mainEntity;
         EPEditor.value.loading = true;
         let tags = [];
-        newEntityProps.value.useTag.forEach((el) => {
-            // tags.push()
-            if (el.checked) {
-                tags.push(el.name);
-            }
-        });
-        newEntityProps.value.tags = tags.join(",");
-        delete newEntityProps.value.useTag;
-        createEntity(newEntityProps.value, mainEntityName)
-            .then((res) => {
-                if (res && res.data) {
-                    ElMessage.success("保存成功");
-                    showNewEntityDialogFlag.value = false;
-                    initEntity();
+        if(newEntityProps.value.tags){
+            newEntityProps.value.useTag.forEach((el) => {
+                if (el.checked) {
+                    tags.push(el.name);
                 }
-                EPEditor.value.loading = false;
-            })
-            .catch((err) => {
-                console.error(err.message);
-                EPEditor.value.loading = false;
-                //ElMessage({message: err.message, type: 'error'})
             });
+        }
+        newEntityProps.value.tags = tags.join(",");
+        
+        delete newEntityProps.value.useTag;
+        let res;
+        // 是复制
+        if (newEntityProps.value.activeType == 2) {
+            let params = {
+                sourceEntity: newEntityProps.value,
+                mainEntityName,
+                operations: eval(
+                    EPEditor.value.copyEntiytSelectedType.join("+")
+                ),
+            };
+            res = await copyEntity(params);
+        } else {
+            res = await createEntity(newEntityProps.value, mainEntityName);
+        }
+        if (res && res.code == 200) {
+            ElMessage.success("保存成功");
+            showNewEntityDialogFlag.value = false;
+            initEntity();
+        }
+        EPEditor.value.loading = false;
     });
 };
 
@@ -437,29 +471,34 @@ const gotoListView = () => {
         return;
     }
 
-	if (selectedEntityObj.value.detailEntityFlag) {
-		ElMessage.info("明细实体不允许设计列表");
-		return;
-	}
+    if (selectedEntityObj.value.detailEntityFlag) {
+        ElMessage.info("明细实体不允许设计列表");
+        return;
+    }
 
     router.push("/web/" + selectedEntityObj.value.name + "/list");
 };
 
 const gotoRoute = (routePage, disableDetailEntity) => {
-	if (
-		selectedEntityObj.value.systemEntityFlag ||
-		selectedEntityObj.value.internalEntityFlag
-	) {
-		ElMessage.info("当前实体不允许此操作");
-		return;
-	}
+    if (
+        selectedEntityObj.value.systemEntityFlag ||
+        selectedEntityObj.value.internalEntityFlag
+    ) {
+        ElMessage.info("当前实体不允许此操作");
+        return;
+    }
 
-	if (disableDetailEntity && selectedEntityObj.value.detailEntityFlag) {
-		ElMessage.info("明细实体不允许此操作");
-		return;
-	}
+    if (disableDetailEntity && selectedEntityObj.value.detailEntityFlag) {
+        ElMessage.info("明细实体不允许此操作");
+        return;
+    }
 
-	router.push("/web/" + routePage + '?entityCode=' + selectedEntityObj.value.entityCode);
+    router.push(
+        "/web/" +
+            routePage +
+            "?entityCode=" +
+            selectedEntityObj.value.entityCode
+    );
 };
 
 const deleteSelectedEntity = () => {
@@ -576,11 +615,11 @@ const showContextMenu = (entity, event) => {
     selectedEntityObj.value = {
         name: entity.name,
         label: entity.label,
-		entityCode: entity.entityCode,
+        entityCode: entity.entityCode,
         layoutable: entity.layoutable,
         listable: entity.listable,
         systemEntityFlag: entity.systemEntityFlag,
-		detailEntityFlag: entity.detailEntityFlag,
+        detailEntityFlag: entity.detailEntityFlag,
     };
     let menu = document.querySelector("#contextMenu");
     contextMenuSetting(menu, event);
@@ -639,7 +678,7 @@ const clearHideMenuTimer = () => {
     margin: 10px;
     position: relative;
     cursor: pointer;
-	border-top-width: 6px;
+    border-top-width: 6px;
 
     :deep(.el-card__header) {
         height: 36px; /* 指定高度，以避免中英文字体高度不一致导致el-card自动换行出现问题 */
@@ -764,10 +803,10 @@ const clearHideMenuTimer = () => {
 }
 
 .context-menu-divider {
-	line-height: 4px;
-	height: 4px;
-	background-color: #fff2f3;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    line-height: 4px;
+    height: 4px;
+    background-color: #fff2f3;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 </style>
 
