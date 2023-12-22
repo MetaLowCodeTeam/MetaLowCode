@@ -17,7 +17,6 @@ const floamtRoute = (el, isTopNav) => {
 }
 
 const useLayoutConfigStore = defineStore('layoutConfig', () => {
-
     // 导航列表
     let navigationList = ref([]);
     // 默认导航ID
@@ -83,7 +82,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         let list = JSON.parse(tempConfig);
         let testRoutes = [...list]
-        // console.log(testRoutes, 'testRoutes')
         let formatRoutrs = [];
         testRoutes.forEach((el) => {
             let initMenu = {
@@ -125,7 +123,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.path = path;
                 initMenu.component = component;
             }
-            // console.log(initMenu, 'initMenu')
             formatRoutrs.push(initMenu);
         });
         return formatRoutrs
@@ -150,7 +147,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         topNavMenuList.value.forEach(el => {
             el.path = el.type == 1 ? "/" + el.guid : el.outLink;
             el.name = el.configName
-            // meta: { title: '开发应用', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
             el.meta = {
                 title: el.configName,
                 icon: el.useIcon || 'set-up',
