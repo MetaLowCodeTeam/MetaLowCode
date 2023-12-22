@@ -1,7 +1,7 @@
 <template>
     <mlDialog title="设置导航菜单" v-model="isShow" width="680px">
         <div v-loading="loading">
-            <el-form label-width="70px" label-position="left">
+            <el-form label-width="70px" label-position="left" @submit.prevent>
                 <el-form-item label="导航名称">
                     <el-input v-model="menuData.configName" placeholder="输入导航名称" clearable />
                 </el-form-item>

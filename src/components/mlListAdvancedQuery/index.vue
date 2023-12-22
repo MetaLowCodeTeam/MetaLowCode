@@ -70,7 +70,7 @@
         </div>
         <mlDialog title="保存高级查询" width="600" v-model="saveDialog.isShow">
             <div class="save-dialog" style="padding-right: 50px;" v-loading="saveLoading">
-                <el-form label-width="120px">
+                <el-form label-width="120px" @submit.prevent>
                     <el-form-item label="名称" class="mb-10">
                         <el-input v-model="saveDialog.configName" />
                     </el-form-item>
