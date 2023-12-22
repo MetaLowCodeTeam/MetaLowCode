@@ -2,15 +2,10 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue'
 import tool from '@/utils/tool';
 import layoutConfigApi from '@/api/layoutConfig.js';
-// import useLayoutConfigStore from "@/store/modules/layoutConfig";
-// const { setNavigationList } = useLayoutConfigStore();
-// import { storeToRefs } from 'pinia';
-// const { navigationList } = storeToRefs(useLayoutConfigStore());
-
 const floamtRoute = (el, isTopNav) => {
     let newRoute = {};
     if (el.type == 1) {
-        newRoute.path = "/web/" + (isTopNav ? 'topnav/' : '') + el.entityName + "/list";
+        newRoute.path = "/web/" + el.entityName + "/list" + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "customize-menu/list";
     } else if (el.type == 2) {
         newRoute.path = el.guid;
@@ -18,8 +13,6 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = "/web/custom-page/" + el.outLink;
         newRoute.component = "custom-page/" + el.outLink;
     }
-    // console.log(el,'el')
-    // console.log(newRoute,'---newRoute')
     return newRoute
 }
 
@@ -78,21 +71,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 useMenuList.value = [];
             }
         }
-        // let newMenuList = [];
-        // navigationList.value.forEach(el => {
-        //     let navItem = {
-        //         path: "/" + el.layoutConfigId,
-        //         name: el.layoutConfigId,
-        //         meta: { title: el.configName },
-        //         children:formatRouters(el.config)
-        //     };
-        //     newMenuList.push(navItem)
-        //     // path: '/web/system',
-        //     // name: 'SystemManager',
-        //     // meta: { title: '开发应用', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
-        // })
-        // useMenuList.value = [...newMenuList]
-        // console.log(newMenuList, 'useMenuList')
     }
     // 格式化导航
     const formatRouters = (config, isTopNav) => {
