@@ -110,7 +110,7 @@ export default {
         // option下拉框
         optionData: {
             type: ["Tag", "Option", "Status"],
-            op: ["EQ", "NEQ"],
+            op: ["EQ", "NEQ","LK", "NLK"],
         },
     },
     isShowCom: function (item, comName) {
