@@ -312,6 +312,7 @@ const getMenuFn = () => {
     menuData = Object.assign(menuData, getTopNavigation());
     sourceData = Object.assign({}, getTopNavigation());
     menuData.list = JSON.parse(JSON.stringify(menuData.navList));
+    cutMenu.value = null;
     // menuData.list = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];;
 };
 
@@ -319,10 +320,9 @@ const getMenuFn = () => {
 const layoutSave = async () => {
     let { layoutConfigId, list } = menuData;
     let newConfig = {
-        navList: [...list],
+        navList: list.filter(el=> el.layoutConfigId)
     };
     menuData.config = JSON.stringify(newConfig)
-   
     let param = {};
     // 检测数据有没变化
     if ($TOOL.checkIsEdit(sourceData.config, menuData.config)) {
@@ -333,7 +333,6 @@ const layoutSave = async () => {
         isShow.value = false;
         return;
     }
-
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(
         layoutConfigId,
@@ -348,6 +347,8 @@ const layoutSave = async () => {
     }
     loading.value = false;
 };
+
+
 </script>
 
 <style lang="scss" scoped>
