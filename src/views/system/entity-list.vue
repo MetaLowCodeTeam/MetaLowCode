@@ -193,7 +193,7 @@
                     class="context-menu__item"
                     @click="deleteSelectedEntity()"
                 >删除实体</div>
-                <div class="context-menu__item" @click="createNewEntity('copy')">复制实体</div>
+                <div class="context-menu__item" @click="createNewEntity('copy')" v-if="!selectedEntityObj.systemEntityFlag">复制实体</div>
             </div>
         </el-main>
     </el-container>

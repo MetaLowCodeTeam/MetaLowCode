@@ -160,14 +160,15 @@
                         v-model="copyEntiytSelectedType"
                         v-if="!myEntityProps.hasDetailEntity"
                     >
+                        <el-checkbox :label="0" disabled>实体字段</el-checkbox>
                         <el-checkbox
                             v-for="(type,typeInx) of copyTypes"
                             :key="typeInx"
                             :label="type.value"
-                            :disabled="typeInx == 0"
                         >{{ type.label }}</el-checkbox>
                     </el-checkbox-group>
                     <el-checkbox-group v-model="copyEntiytSelectedType" v-else>
+                        <el-checkbox :label="0" disabled>实体字段</el-checkbox>
                         <el-checkbox
                             v-for="(type,typeInx) of copyTypes"
                             :key="typeInx"
@@ -230,10 +231,6 @@ watch(
     { deep: true }
 );
 let copyTypes = ref([
-    {
-        label: "实体字段",
-        value: 0,
-    },
     {
         label: "表单设计",
         value: 1,
