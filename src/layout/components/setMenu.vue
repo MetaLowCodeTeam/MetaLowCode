@@ -559,11 +559,12 @@ const layoutSave = async () => {
         return;
     }
     newMenuList.forEach((el) => {
-        el.entityCode = "parentMenu";
-        el.entityName = "parentMenu";
+        if(el.children && el.children.length > 0){
+            el.entityCode = "parentMenu";
+            el.entityName = "parentMenu";
+        }
     });
     menuData.config = JSON.stringify(newMenuList);
-
     let param = {};
     // 检测数据有没变化
     if ($TOOL.checkIsEdit(sourceData.configName, menuData.configName)) {
