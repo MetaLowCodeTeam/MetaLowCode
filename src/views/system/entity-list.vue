@@ -396,7 +396,7 @@ const saveNewEntity = () => {
             : newEntityProps.value.mainEntity;
         EPEditor.value.loading = true;
         let tags = [];
-        if(newEntityProps.value.tags){
+        if(newEntityProps.value.useTag){
             newEntityProps.value.useTag.forEach((el) => {
                 if (el.checked) {
                     tags.push(el.name);
