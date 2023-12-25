@@ -108,20 +108,28 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
-                            hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                             outLink: subEl.outLink,
                         },
                     }
+
                     let { path, component } = floamtRoute(subEl, isTopNav);
                     subRoute.path = path;
                     subRoute.component = component;
-                    initMenu.children.push(subRoute);
+                    // 有权限才push
+                    if(!subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1')){
+                        initMenu.children.push(subRoute);
+                    }
+                    
                 });
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
                 let { path, component } = floamtRoute(el, isTopNav);
                 initMenu.path = path;
                 initMenu.component = component;
+            }
+            // 格式化父菜单  修复父菜单下有子级，但是子级没权限父菜单还可点击
+            if (initMenu.children && initMenu.children.length < 1) {
+                initMenu.meta.hidden = true;
             }
             formatRoutrs.push(initMenu);
         });
@@ -155,7 +163,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             };
             if (el.type == 1) {
                 let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)
-                if(findNav.length > 0){
+                if (findNav.length > 0) {
                     el.children = formatRouters(findNav[0].config)
                 }
             }
