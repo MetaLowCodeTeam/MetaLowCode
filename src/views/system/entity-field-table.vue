@@ -53,10 +53,10 @@
                                     {{ tag }}
                                 </el-tag>
                                 <div class="w-100">
-                                    <el-button 
-                                        :disabled="entityProps.tags?.length > 9" 
-                                        class="button-new-tag ml-1" 
-                                        size="small" 
+                                    <el-button
+                                        :disabled="entityProps.tags?.length > 9"
+                                        class="button-new-tag ml-1"
+                                        size="small"
                                         @click="addTagDialogIsShow = true"
                                         plain
                                     >
@@ -95,16 +95,10 @@
 								<el-dropdown-item command="PercentWE">百分比 / Percent</el-dropdown-item>
 								<el-dropdown-item command="MoneyWE">金额 / Money</el-dropdown-item>
 								<el-dropdown-item command="TextWE" divided>文本 / Text</el-dropdown-item>
-								<!--
-								<el-dropdown-item command="EmailWE">邮箱 / Email</el-dropdown-item>
-								<el-dropdown-item command="UrlWE">网址 / Url</el-dropdown-item>
-								-->
 								<el-dropdown-item command="TextAreaWE">长文本 / TextArea</el-dropdown-item>
-								<!--
-								<el-dropdown-item command="PasswordWE">密码 / Password</el-dropdown-item>
-								-->
 								<el-dropdown-item command="OptionWE" divided>单选项 / Option</el-dropdown-item>
 								<el-dropdown-item command="TagWE">多选项 / Tag</el-dropdown-item>
+								<el-dropdown-item command="AreaSelectWE">地区选择 / AreaSelect</el-dropdown-item>
 								<el-dropdown-item command="DateWE" divided>日期 / Date</el-dropdown-item>
 								<el-dropdown-item command="DateTimeWE">日期时间 / DateTime</el-dropdown-item>
 								<el-dropdown-item command="PictureWE" divided>图片 / Picture</el-dropdown-item>
@@ -207,9 +201,9 @@
         <!-- 设置标签 -->
         <ml-dialog v-model="addTagDialogIsShow" title="设置标签" width="400">
             <div v-loading="addTagDialogLoading">
-                <el-check-tag 
+                <el-check-tag
                     v-for="(tag,inx) of allTags" :key="inx"
-                    class="mr-5 mb-5" 
+                    class="mr-5 mb-5"
                     :checked="tag.checked"
                     @change="onTagsChange(tag)"
                 >
@@ -228,7 +222,7 @@
                     <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="allTags?.length > 9">+ 新增标签</el-button>
                 </div>
             </div>
-           
+
             <template #footer>
                 <div class="dialog-footer">
                     <el-button
@@ -247,13 +241,13 @@
 <script>
 import {
 	getEntityProps,
-    getFieldListOfEntity, 
-    getEntitySet, 
-    updateEntityLabel, 
+    getFieldListOfEntity,
+    getEntitySet,
+    updateEntityLabel,
     getTextFieldList,
-	updateEntityNameField, 
-    fieldCanBeDeleted, 
-    deleteField, 
+	updateEntityNameField,
+    fieldCanBeDeleted,
+    deleteField,
     fieldCanBeEdited,
     updateEntityTags,
     getAllTagsOfEntity
@@ -275,6 +269,7 @@ import PasswordWE from '@/views/system/field-editor/password-widget-editor.vue';
 //
 import OptionWE from '@/views/system/field-editor/option-widget-editor.vue';
 import TagWE from '@/views/system/field-editor/tag-widget-editor.vue';
+import AreaSelectWE from '@/views/system/field-editor/areaselect-widget-editor.vue';
 //
 import DateWE from '@/views/system/field-editor/date-widget-editor.vue';
 import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor.vue';
@@ -306,6 +301,7 @@ export default {
 		PasswordWE,
 		OptionWE,
 		TagWE,
+		AreaSelectWE,
 		DateWE,
 		DateTimeWE,
 		PictureWE,
@@ -399,7 +395,7 @@ export default {
                 this.tableHeight = this.$refs.tableContainer.$el.offsetHeight - 42 + 42/*覆盖表格页脚高度*/
             }
 		},
-        
+
 
 		initEntityProps() {
             this.propsLoading = true;
@@ -414,13 +410,13 @@ export default {
 				this.$message({message: res.message, type: 'error'})
                 this.propsLoading = false;
 			})
-            
+
 		},
 
 		initPageData() {
 			this.initEntityProps()
 			this.initTableData()
-           
+
 		},
         // 获取所有tag
         async getAllTags(){

@@ -23,6 +23,7 @@
 						<el-dropdown-item command="TextAreaWE">长文本 / TextArea</el-dropdown-item>
 						<el-dropdown-item command="OptionWE" divided>单选项 / Option</el-dropdown-item>
 						<el-dropdown-item command="TagWE">多选项 / Tag</el-dropdown-item>
+						<el-dropdown-item command="AreaSelectWE">地区选择 / AreaSelect</el-dropdown-item>
 						<el-dropdown-item command="DateWE" divided>日期 / Date</el-dropdown-item>
 						<el-dropdown-item command="DateTimeWE">日期时间 / DateTime</el-dropdown-item>
 						<el-dropdown-item command="PictureWE" divided>图片 / Picture</el-dropdown-item>
@@ -65,6 +66,7 @@ import TextAreaWE from '@/views/system/field-editor/textarea-widget-editor.vue';
 import PasswordWE from '@/views/system/field-editor/password-widget-editor.vue';
 import OptionWE from '@/views/system/field-editor/option-widget-editor.vue';
 import TagWE from '@/views/system/field-editor/tag-widget-editor.vue';
+import AreaSelectWE from '@/views/system/field-editor/areaselect-widget-editor.vue';
 import DateWE from '@/views/system/field-editor/date-widget-editor.vue';
 import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor.vue';
 import PictureWE from '@/views/system/field-editor/picture-widget-editor.vue';
@@ -90,6 +92,7 @@ export default {
 		PasswordWE,
 		OptionWE,
 		TagWE,
+		AreaSelectWE,
 		DateWE,
 		DateTimeWE,
 		PictureWE,
@@ -303,6 +306,12 @@ export default {
 				fieldSchema.options.precision = !fldObj.precision ? fieldSchema.options.precision : fldObj.precision * 1
 				fieldSchema.options.min = !fldObj.min ? fieldSchema.options.min : fldObj.min * 1
 				fieldSchema.options.max = !fldObj.max ? fieldSchema.options.max : fldObj.max * 1
+			}
+
+			/* 处理地区选择字段 */
+			if (fldObj.type === 'AreaSelect') {
+				fieldSchema.optionItemsReadonly = true
+				fieldSchema.options.areaDataType = !fldObj.areaDataType ? fieldSchema.options.areaDataType : fldObj.areaDataType * 1
 			}
 
 			if (fieldSchema.options.hasOwnProperty('optionItems')) {
