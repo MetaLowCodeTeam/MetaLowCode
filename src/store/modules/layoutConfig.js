@@ -116,10 +116,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     subRoute.path = path;
                     subRoute.component = component;
                     // 有权限才push
-                    if(!subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1')){
+                    if(!(subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'))){
                         initMenu.children.push(subRoute);
                     }
-                    
                 });
             } else {
                 initMenu.meta.type = el.type == 2 ? "link" : "";
