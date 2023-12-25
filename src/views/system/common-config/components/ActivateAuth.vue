@@ -113,7 +113,7 @@ const onActive = async () => {
     if (res) {
         let publicRes = await getPublicSetting();
         if (publicRes) {
-            setPublicSetting(resData);
+            setPublicSetting(publicRes);
         }
         ElMessage.success("激活成功");
         dialogConf.isShow = false;

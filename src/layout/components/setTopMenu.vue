@@ -313,7 +313,6 @@ const getMenuFn = () => {
     sourceData = Object.assign({}, getTopNavigation());
     menuData.list = JSON.parse(JSON.stringify(menuData.navList));
     cutMenu.value = null;
-    // menuData.list = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];;
 };
 
 // 导航保存
