@@ -176,20 +176,21 @@ const initFormLayout = async () => {
  */
 
 const getFieldListOfEntityApi = async (tag) => {
+    // 获取实体所有字段
     let res = await getFieldListOfEntity(row.entityName);
+    let disabledFileds = [];
     if (res && res.data) {
-        let disabledFileds = [];
+        // 取可编辑字段
         res.data.forEach((el) => {
             if (!el[tag]) {
                 disabledFileds.push(el.name);
             }
         });
-        if (props.disableWidgets.length > 0) {
-            disabledFileds.push(...props.disableWidgets);
-        }
-        console.log(disabledFileds, "disabledFileds");
-        vFormRef.value.disableWidgets(disabledFileds);
     }
+    if (props.disableWidgets.length > 0) {
+        disabledFileds.push(...props.disableWidgets);
+    }
+    vFormRef.value.disableWidgets(disabledFileds);
 };
 
 /**
