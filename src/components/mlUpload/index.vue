@@ -41,13 +41,16 @@ onMounted(() => {
 
 const uploadFile = async (data) => {
     let { file } = data;
+    // 取上传文件后缀
     let fileExtension = file.name.substring(file.name.lastIndexOf(".") + 1);
     const acceptIncludes = props.accept.includes(fileExtension);
-    if (!acceptIncludes && props.accept != "image/gif, image/jpeg, image/png") {
+    // 如果上传文件限制的图片类型不是 image/* 且 上传的文件后缀不在限制类型里。
+    if (!acceptIncludes && props.accept != "image/*") {
         $ElMessage.warning("请选择" + props.accept + "类型");
         clearFiles();
         return false;
     }
+    // 如果上传的文件指定类型 image/*   
     if (props.accept == "image/*" && !file.type.includes("image")) {
         $ElMessage.warning("请选择" + props.accept + "类型");
         clearFiles();
