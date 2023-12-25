@@ -29,7 +29,8 @@ import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
-const { queryEntityNameById,queryEntityNameByLabel } = useCommonStore();
+import { getFieldListOfEntity } from "@/api/system-manager";
+const { queryEntityNameById, queryEntityNameByLabel } = useCommonStore();
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -95,14 +96,20 @@ const initFormLayout = async () => {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
-			if (res.data.formUploadParam) {
-				globalDsv.value.cloudUploadToken = res.data.formUploadParam.cloudUploadToken
-				globalDsv.value.cloudStorage = res.data.formUploadParam.cloudStorage
-				globalDsv.value.picUploadURL = res.data.formUploadParam.picUploadURL
-				globalDsv.value.fileUploadURL = res.data.formUploadParam.fileUploadURL
-				globalDsv.value.picDownloadPrefix = res.data.formUploadParam.picDownloadPrefix
-				globalDsv.value.fileDownloadPrefix = res.data.formUploadParam.fileDownloadPrefix
-			}
+            if (res.data.formUploadParam) {
+                globalDsv.value.cloudUploadToken =
+                    res.data.formUploadParam.cloudUploadToken;
+                globalDsv.value.cloudStorage =
+                    res.data.formUploadParam.cloudStorage;
+                globalDsv.value.picUploadURL =
+                    res.data.formUploadParam.picUploadURL;
+                globalDsv.value.fileUploadURL =
+                    res.data.formUploadParam.fileUploadURL;
+                globalDsv.value.picDownloadPrefix =
+                    res.data.formUploadParam.picDownloadPrefix;
+                globalDsv.value.fileDownloadPrefix =
+                    res.data.formUploadParam.fileDownloadPrefix;
+            }
             // 是编辑
             if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过
@@ -127,11 +134,7 @@ const initFormLayout = async () => {
                                 return;
                             }
 
-                            if (props.disableWidgets.length > 0) {
-                                vFormRef.value.disableWidgets(
-                                    props.disableWidgets
-                                );
-                            }
+                            getFieldListOfEntityApi("updatable");
                         });
                     }
                     loading.value = false;
@@ -140,7 +143,8 @@ const initFormLayout = async () => {
             // 是新建
             else {
                 nextTick(async () => {
-                    row.dialogTitle = "新建" + queryEntityNameByLabel(row.entityName);
+                    row.dialogTitle =
+                        "新建" + queryEntityNameByLabel(row.entityName);
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     // if(row.fieldName){}
                     let param = {};
@@ -158,17 +162,36 @@ const initFormLayout = async () => {
                         if (JSON.stringify(optionData.value) == "{}") {
                             vFormRef.value.reloadOptionData();
                         }
+                        getFieldListOfEntityApi("creatable");
                     });
                 });
             }
-            loading.value = false;
-        } else {
-            loading.value = false;
         }
-    } else {
-        loading.value = false;
+    }
+    loading.value = false;
+};
+
+/**
+ * 获取字段是否禁用
+ */
+
+const getFieldListOfEntityApi = async (tag) => {
+    let res = await getFieldListOfEntity(row.entityName);
+    if (res && res.data) {
+        let disabledFileds = [];
+        res.data.forEach((el) => {
+            if (!el[tag]) {
+                disabledFileds.push(el.name);
+            }
+        });
+        if (props.disableWidgets.length > 0) {
+            disabledFileds.push(...props.disableWidgets);
+        }
+        console.log(disabledFileds, "disabledFileds");
+        vFormRef.value.disableWidgets(disabledFileds);
     }
 };
+
 /**
  *
  * *********************************************************** 表单信息相关 end
@@ -214,7 +237,7 @@ defineExpose({
     margin-bottom: 5px !important;
 }
 
-.main { 
+.main {
     max-height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
