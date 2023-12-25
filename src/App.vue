@@ -72,7 +72,6 @@ const initApi = async () => {
             roundRobin(5000);
             // 获取实体列表
             getEntityList();
-            getRightMap();
             // 获取新消息
             getNewMsgNum();
         } else {
@@ -81,14 +80,8 @@ const initApi = async () => {
     }
 };
 
-const getRightMap = async () => {
-    let getRightMapRes = await http.get("/user/getRightMap");
-    if (getRightMapRes) {
-        $TOOL.data.set("rightMap", getRightMapRes.data || {});
-    }
-};
 
-// /crud/getRightMap
+
 // 获取公开系统配置
 const queryPublicSetting = async () => {
     const loading = ElLoading.service({

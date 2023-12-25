@@ -146,8 +146,6 @@ export default {
                 /**
                  * 登录成功调用
                  */
-                // 获取所有权限
-                this.getRightMap();
                 // 调用实体数据
                 getEntityList();
                 this.$router.replace({
@@ -157,12 +155,6 @@ export default {
                 this.$message.success("登录成功");
             }
             this.islogin = false;
-        },
-        async getRightMap() {
-            let getRightMapRes = await http.get("/user/getRightMap");
-            if (getRightMapRes) {
-                this.$TOOL.data.set("rightMap", getRightMapRes.data || {});
-            }
         },
     },
 };

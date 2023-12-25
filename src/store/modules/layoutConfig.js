@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue'
 import tool from '@/utils/tool';
 import layoutConfigApi from '@/api/layoutConfig.js';
+import http from "@/utils/request";
 const floamtRoute = (el, isTopNav) => {
     let newRoute = {};
     if (el.type == 1) {
@@ -24,6 +25,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 使用的菜单
     let useMenuList = ref([]);
 
+
+
     // 获取LayoutApi
     const getNavigationApi = async (errorCb) => {
         let navRes = await layoutConfigApi.getNavigationList();
@@ -32,12 +35,20 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             return;
         }
         if (navRes && navRes.data) {
+            await getRightMap();
             setNavigationList(navRes.data.navigationList);
             setChosenNavigationId(navRes.data.chosenNavigationId);
             setTopNavigation(navRes.data.topNavigation || {})
             setDefaultMenuList();
         }
     }
+
+    const getRightMap = async () => {
+        let getRightMapRes = await http.get("/user/getRightMap");
+        if (getRightMapRes) {
+            tool.data.set("rightMap", getRightMapRes.data || {});
+        }
+    };
 
     // 设置导航列表
     const setNavigationList = (list) => {
@@ -108,6 +119,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
+                            // hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                             outLink: subEl.outLink,
                         },
                     }
@@ -116,7 +128,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     subRoute.path = path;
                     subRoute.component = component;
                     // 有权限才push
-                    if(!(subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'))){
+                    if (!(subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'))) {
                         initMenu.children.push(subRoute);
                     }
                 });
