@@ -119,16 +119,16 @@ let keyword = ref("");
 // 页签
 let tabConfing = ref([
     {
-        label: "角色",
-        name: "Role",
-        itemId: "roleId",
-        itemName: "roleName",
-    },
-    {
         label: "用户",
         name: "User",
         itemId: "userId",
         itemName: "userName",
+    },
+    {
+        label: "角色",
+        name: "Role",
+        itemId: "roleId",
+        itemName: "roleName",
     },
     {
         label: "部门",

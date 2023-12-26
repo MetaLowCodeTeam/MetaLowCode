@@ -66,7 +66,7 @@
                         />
                     </div>
                     <!-- 日期区间 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'datePickerBw')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'datePickerBw')">
                         <el-date-picker
                             size="default"
                             v-model="item.value"
@@ -93,7 +93,7 @@
                         />
                     </div>
                     <!-- 数字输入框 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'numberInput')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'numberInput')">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -104,7 +104,7 @@
                         />
                     </div>
                     <!-- 数字输入框区间 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'numberInputBw')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'numberInputBw')">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -125,7 +125,7 @@
                         />
                     </div>
                     <!-- 文本输入框 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'textInput')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'textInput')">
                         <el-input
                             size="default"
                             v-model="item.value"
@@ -134,7 +134,7 @@
                         />
                     </div>
                     <!-- 布尔类型 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'booleanSelect')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'booleanSelect')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -148,7 +148,7 @@
                         </el-select>
                     </div>
                     <!-- 用户下拉框 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'userSelect')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'userSelect')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -169,7 +169,7 @@
                     </div>
 
                     <!-- 部门下拉框 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'departmentSelect')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'departmentSelect')">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -189,7 +189,7 @@
                         </el-select>
                     </div>
                     <!-- 类型为Tag 和 option的 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'optionData')">
+                    <div v-else-if="conditionsConfig.isShowCom(item,'optionData')">
                         <el-select
                             size="default"
                             v-model="item.value"

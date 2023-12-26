@@ -82,8 +82,8 @@ export default {
         },
         // 数字输入框
         numberInput: {
-            type: ["Money", "Integer", "Decimal", "Percent"],
-            op: ["GT", "LT", "EQ", "GE", "LE"],
+            type: ["Money", "Integer", "Decimal", "Percent", "Date", "DateTime"],
+            op: ["GT", "LT", "EQ", "GE", "LE", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY"],
         },
         // 数字区间
         numberInputBw: {
@@ -110,7 +110,7 @@ export default {
         // option下拉框
         optionData: {
             type: ["Tag", "Option", "Status"],
-            op: ["EQ", "NEQ","LK", "NLK"],
+            op: ["EQ", "NEQ", "LK", "NLK"],
         },
     },
     isShowCom: function (item, comName) {
@@ -132,6 +132,6 @@ export default {
         return true
     },
 
- 
+
 
 }
