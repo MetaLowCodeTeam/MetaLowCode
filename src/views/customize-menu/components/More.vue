@@ -148,6 +148,7 @@
         ref="allocationRefs"
         :idFieldName="idFieldName"
         @allocationSuccess="allocationSuccess"
+        :entityCode="entityCode"
     />
     <!-- 报表 -->
     <ReportForms ref="reportFormsRefs" />

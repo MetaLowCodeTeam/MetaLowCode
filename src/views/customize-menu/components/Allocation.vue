@@ -124,6 +124,7 @@ import {
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
     idFieldName: { type: String, default: "" },
+    entityCode: { type: String, default: "" },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -193,7 +194,7 @@ const delRecordsChange = async (v) => {
 const showAssociatedRecords = async () => {
     formData.isAssociatedRecords = true;
     loading.value = true;
-    let entityCode = router.currentRoute.value.meta.entityCode;
+    let entityCode = props.entityCode;
     let res = await $API.common.queryEntityList(
         entityCode,
         false,
