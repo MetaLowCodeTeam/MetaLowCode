@@ -247,11 +247,11 @@ const confirm = async () => {
     else if (labelData.type == "unShare") {
         let param = {
             body: {
-                toUsersId: formData.allocationTo.map((el) => el.id),
-                recordIds:
+                toUsersId:
                     formData.userType == 1
                         ? []
-                        : formData.list.map((el) => el[props.idFieldName]),
+                        : formData.allocationTo.map((el) => el.id),
+                recordIds: formData.list.map((el) => el[props.idFieldName]),
             },
         };
         res = await cancelShareRecord(param.body, formData.userType);
