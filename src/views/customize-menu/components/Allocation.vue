@@ -124,7 +124,7 @@ import {
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
     idFieldName: { type: String, default: "" },
-    entityCode: { type: String, default: "" },
+    entityCode: { type: String || Number, default: "" },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -248,7 +248,10 @@ const confirm = async () => {
         let param = {
             body: {
                 toUsersId: formData.allocationTo.map((el) => el.id),
-                recordIds: formData.list.map((el) => el[props.idFieldName]),
+                recordIds:
+                    formData.userType == 1
+                        ? []
+                        : formData.list.map((el) => el[props.idFieldName]),
             },
         };
         res = await cancelShareRecord(param.body, formData.userType);
