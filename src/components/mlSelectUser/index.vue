@@ -55,22 +55,24 @@
                             v-for="(tab,inx) of tabList"
                             :key="inx"
                         >
-                            <div
-                                class="tab-item-li"
-                                v-for="(item,itemInx) of tabData"
-                                :key="itemInx"
-                                @click="selectUser(item,tab)"
-                            >
-                                {{ item[tab.itemName] }}
-                                <div class="tab-item-icon fr" v-if="item.isActive">
-                                    <el-icon class="tab-item-icon-el">
-                                        <ElIconSelect />
-                                    </el-icon>
+                            <div class="item-li-box">
+                                <div
+                                    class="tab-item-li"
+                                    v-for="(item,itemInx) of tabData"
+                                    :key="itemInx"
+                                    @click="selectUser(item,tab)"
+                                >
+                                    {{ item[tab.itemName] }}
+                                    <div class="tab-item-icon fr" v-if="item.isActive">
+                                        <el-icon class="tab-item-icon-el">
+                                            <ElIconSelect />
+                                        </el-icon>
+                                    </div>
                                 </div>
                             </div>
                         </el-tab-pane>
                     </el-tabs>
-                    <div class="mlselect-tab" v-else>
+                    <div class="mlselect-tab item-li-box" v-else>
                         <div
                             class="tab-item-li"
                             v-for="(item,itemInx) of tabData"
@@ -296,6 +298,11 @@ let filterMethod = (keyword) => {
     padding: 20px;
     .mlselect-tab {
         border: 1px solid #dcdfe6;
+    }
+    .item-li-box {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     .tab-item-li {
         font-size: 14px;

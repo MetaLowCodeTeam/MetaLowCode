@@ -108,10 +108,16 @@ router.afterEach((to, from) => {
 
 router.onError((error) => {
     NProgress.done();
-    ElNotification.error({
-        title: '路由错误，请尝试刷新页面',
-        message: error.message
-    });
+    // 如果是动态加载资源失败时 刷新页面
+    if(error.message.includes('Failed to fetch dynamically imported module')){
+        window.location = to.fullPath;
+    }else {
+        ElNotification.error({
+            title: '路由错误，请尝试刷新页面',
+            message: error.message
+        });
+    }
+    
 });
 
 //入侵追加自定义方法、对象
