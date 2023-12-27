@@ -420,7 +420,7 @@ export default {
             let needMenu = this.menu[0].children;
             needMenu.forEach((el) => {
                 if (el.meta.isOpeneds) {
-                    this.defaultOpeneds.push(el.name);
+                    this.defaultOpeneds.push(el.path);
                 }
             });
         },

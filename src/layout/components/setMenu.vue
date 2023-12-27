@@ -457,10 +457,6 @@ const confirmMenu = () => {
         cutMenu.value.type = 4;
         cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
     }
-    // 如果是父级菜单
-    if (cutMenu.value.entityCode == "parentMenu") {
-        cutMenu.value.children = [];
-    }
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
         let inx = getMenuInx(menuData.list, cutMenu.value.guid);
@@ -559,7 +555,7 @@ const layoutSave = async () => {
         return;
     }
     newMenuList.forEach((el) => {
-        if(el.children && el.children.length > 0){
+        if (el.children && el.children.length > 0) {
             el.entityCode = "parentMenu";
             el.entityName = "parentMenu";
         }
