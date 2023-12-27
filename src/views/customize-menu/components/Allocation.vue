@@ -124,7 +124,7 @@ import {
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
     idFieldName: { type: String, default: "" },
-    entityCode: { type: String || Number, default: "" },
+    entityCode: { type: [String, Number], default: "" },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
