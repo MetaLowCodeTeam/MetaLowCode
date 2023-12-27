@@ -23,6 +23,12 @@ export function getEntityProps(entity) {
     return http.get('systemManager/getEntityProps', { entity })
 }
 
+export function hasDetailEntity(entity) {
+    return http.get('systemManager/hasDetailEntity', { entity })
+}
+
+
+
 export function getAllTagsOfEntity() {
     return http.get('systemManager/getAllTagsOfEntity')
 }
@@ -31,6 +37,10 @@ export function createEntity(entity, maineEntityName) {
     return http.post('systemManager/createEntity', entity, {
         params: { 'mainEntity': maineEntityName }
     })
+}
+
+export function copyEntity(entity) {
+    return http.post('/systemManager/copyEntity', entity)
 }
 
 export function updateEntityLabel(entity, entityLabel) {

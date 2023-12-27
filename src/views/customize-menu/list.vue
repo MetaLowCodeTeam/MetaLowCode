@@ -44,7 +44,7 @@
                     <el-button
                         icon="Notification"
                         :disabled="multipleSelection.length > 1"
-                        @click="openDetilDialog(multipleSelection[0])"
+                        @click="openDetailDialog(multipleSelection[0])"
                     >打开</el-button>
                     <el-button
                         icon="Edit"
@@ -129,7 +129,7 @@
                                 :row="scope.row"
                                 :column="column"
                                 :nameFieldName="nameFieldName"
-                                @openDetilDialog="openDetilDialog"
+                                @openDetailDialog="openDetailDialog"
                             />
                         </template>
                     </el-table-column>
@@ -148,7 +148,7 @@
                                 size="small"
                                 link
                                 type="primary"
-                                @click.stop="openDetilDialog(scope.row)"
+                                @click.stop="openDetailDialog(scope.row)"
                             >查看</el-button>
                         </template>
                     </el-table-column>
@@ -433,11 +433,11 @@ const onEditRow = (row) => {
 let detailRefs = ref("");
 
 const rowDblclick = (row) => {
-    openDetilDialog(row);
+    openDetailDialog(row);
 };
 
 // 打开详情
-const openDetilDialog = (row) => {
+const openDetailDialog = (row) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;

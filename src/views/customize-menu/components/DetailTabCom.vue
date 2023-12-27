@@ -71,7 +71,7 @@
                     style="width: 100%"
                     max-height="400px"
                     @sort-change="sortChange"
-                    @row-dblclick="openDetilDialog"
+                    @row-dblclick="openDetailDialog"
                 >
                     <el-table-column
                         v-for="(column,columnInx) of tableColumn"
@@ -87,7 +87,7 @@
                                 :row="scope.row"
                                 :nameFieldName="nameFieldName"
                                 :column="column"
-                                @openDetilDialog="openDetilDialog"
+                                @openDetailDialog="openDetailDialog"
                             />
                         </template>
                     </el-table-column>
@@ -316,7 +316,7 @@ const handleSizeChange = (size) => {
 
 
 // 打开详情
-const openDetilDialog = (row) => {
+const openDetailDialog = (row) => {
     if(!idFieldName.value){
         return
     }

@@ -29,7 +29,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="实体编码">
+                <el-form-item label="实体编码" v-if="!myEntityProps.activeType == 2">
                     <el-input
                         v-model="myEntityProps.entityCode"
                         readonly
@@ -43,6 +43,7 @@
                         v-model="myEntityProps.layoutable"
                         active-text="是"
                         inactive-text="否"
+                        :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
                 </el-form-item>
                 <el-form-item label="是否允许设计列表">
@@ -51,6 +52,7 @@
                         v-model="myEntityProps.listable"
                         active-text="是"
                         inactive-text="否"
+                        :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
                 </el-form-item>
                 <el-form-item label="是否开启记录级权限">
@@ -60,6 +62,7 @@
                         active-text="是"
                         inactive-text="否"
                         @change="changeAuthorization"
+                        :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
                 </el-form-item>
                 <!--
@@ -89,6 +92,7 @@
                         active-text="是"
                         inactive-text="否"
                         @change="onToggleDetailEntityFlag"
+                        :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
                 </el-form-item>
                 <el-form-item label="所属主实体">
@@ -142,9 +146,43 @@
                             @keyup.enter="handleInputConfirm"
                             @blur="handleInputConfirm"
                         />
-                        <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="myEntityProps.useTag?.length > 9">+ 新增标签</el-button>
+                        <el-button
+                            v-else
+                            class="mb-5 button-new-tag ml-1"
+                            @click="showInput"
+                            :disabled="myEntityProps.useTag?.length > 9"
+                        >+ 新增标签</el-button>
                     </div>
                     <div class="w-100 info-text">注：点击标签后颜色加深为选中状态，再次点击取消选中，可点击叉号删除标签。</div>
+                </el-form-item>
+                <el-form-item label="复制模块" v-if="myEntityProps.activeType == 2">
+                    <el-checkbox-group
+                        v-model="copyEntiytSelectedType"
+                        v-if="!myEntityProps.hasDetailEntity"
+                    >
+                        <el-checkbox :label="0" disabled>实体字段</el-checkbox>
+                        <el-checkbox
+                            v-for="(type,typeInx) of copyTypes"
+                            :key="typeInx"
+                            :label="type.value"
+                        >{{ type.label }}</el-checkbox>
+                    </el-checkbox-group>
+                    <el-checkbox-group v-model="copyEntiytSelectedType" v-else>
+                        <el-checkbox :label="0" disabled>实体字段</el-checkbox>
+                        <el-checkbox
+                            v-for="(type,typeInx) of copyTypes"
+                            :key="typeInx"
+                            :label="type.value"
+                            disabled
+                        >
+                            <el-tooltip
+                                class="box-item"
+                                effect="dark"
+                                :content="'当前实体包含子实体，无法复制' + type.label"
+                                placement="bottom"
+                            >{{ type.label }}</el-tooltip>
+                        </el-checkbox>
+                    </el-checkbox-group>
                 </el-form-item>
             </el-form>
         </el-main>
@@ -192,6 +230,21 @@ watch(
     },
     { deep: true }
 );
+let copyTypes = ref([
+    {
+        label: "表单设计",
+        value: 1,
+    },
+    {
+        label: "列表设计",
+        value: 2,
+    },
+    {
+        label: "审批流程",
+        value: 4,
+    },
+]);
+let copyEntiytSelectedType = ref([0]);
 
 onMounted(() => {
     myEntityProps.value = props.entityProps;
@@ -307,7 +360,7 @@ const handleEntityLabelChange = (val) => {
 const generateEntityName = () => {
     if (myEntityProps.value.label) {
         let newName = getSimplePinYin(myEntityProps.value.label);
-		newName = newName.replaceAll('-', '_');
+        newName = newName.replaceAll("-", "_");
         myEntityProps.value.name = upperFirstLetter(newName);
     }
 };
@@ -354,7 +407,8 @@ const onTagsChange = (item) => {
 defineExpose({
     validateForm,
     entityProps: myEntityProps.value,
-    loading
+    loading,
+    copyEntiytSelectedType,
 });
 </script>
 
