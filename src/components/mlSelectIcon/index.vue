@@ -26,6 +26,7 @@
                                     v-for="icon in item.icons"
                                     :key="icon"
                                     @click="selectIcon(icon)"
+                                    :class="{'is-active': selectedIcon.name == icon}"
                                 >
                                     <span :data-icon="icon"></span>
                                     <el-icon>
@@ -39,6 +40,14 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <div class="mt-10 footer-box">
+            <span class="fl">
+                <el-color-picker v-model="selectedIcon.color" />
+                <span class="ml-5">选择颜色</span>
+            </span>
+            <el-button style="width: 80px;" @click="dialogIsShow = false">取消</el-button>
+            <el-button type="primary" style="width: 80px;" @click="confirmIcon">确认</el-button>
+        </div>
     </mlDialog>
 </template>
 
@@ -47,15 +56,26 @@ import { onMounted, ref, watch } from "vue";
 import config from "@/config/iconSelect";
 const props = defineProps({
     modelValue: null,
+    useIcon: {
+        type: Object,
+        default: () => {
+            return {
+                name: "",
+                color: "",
+            };
+        },
+    },
 });
 
 const emit = defineEmits(["update:modelValue", "confirmIcon"]);
 let dialogIsShow = ref(false);
 let keyWord = ref("");
+
 watch(
     () => props.modelValue,
     () => {
         dialogIsShow.value = props.modelValue;
+        selectedIcon.value = { ...props.useIcon };
     },
     { deep: true }
 );
@@ -74,6 +94,12 @@ watch(
     { deep: true }
 );
 let iconData = ref([]);
+// 当前选中的Icon
+let selectedIcon = ref({
+    name: "",
+    color: "",
+});
+
 onMounted(() => {
     dialogIsShow.value = props.modelValue;
     iconData.value = JSON.parse(JSON.stringify(config.icons));
@@ -97,7 +123,13 @@ const getIconName = (name) => {
 };
 
 const selectIcon = (icon) => {
-    emit("confirmIcon", icon);
+    selectedIcon.value.name = icon;
+    //
+};
+
+// 确认选中图标
+const confirmIcon = () => {
+    emit("confirmIcon", selectedIcon.value);
 };
 </script>
 
@@ -145,11 +177,20 @@ const selectIcon = (icon) => {
     align-items: center;
     border-radius: 4px;
 }
-.ml-icon-select__list li:hover {
+.ml-icon-select__list li:hover,
+.ml-icon-select__list li.is-active {
     box-shadow: 0 0 1px 4px var(--el-color-primary);
     background: var(--el-color-primary-light-5);
 }
-.ml-icon-select__list li:hover i {
+.ml-icon-select__list li:hover i,
+.ml-icon-select__list li.is-active i {
     color: var(--el-color-primary);
+}
+
+.footer-box {
+    height: 32px;
+    text-align: right;
+    padding-right: 45px;
+    padding-left: 20px;
 }
 </style>

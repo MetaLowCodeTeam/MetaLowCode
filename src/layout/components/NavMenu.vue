@@ -16,7 +16,10 @@
                 :target=" navMenu.meta.outLink.indexOf('/') == 0 ?'' : '_blank'"
                 @click.stop="()=>{}"
             ></a>
-            <el-icon v-if="navMenu.meta&&navMenu.meta.icon">
+            <el-icon
+                v-if="navMenu.meta&&navMenu.meta.icon"
+                :style="{'color':navMenu.meta.iconColor}"
+            >
                 <component :is="navMenu.meta.icon || 'el-icon-menu'" />
             </el-icon>
             <template #title>
@@ -26,7 +29,10 @@
         </el-menu-item>
         <el-sub-menu v-else :index="navMenu.path || navMenu.name">
             <template #title>
-                <el-icon v-if="navMenu.meta&&navMenu.meta.icon">
+                <el-icon
+                    v-if="navMenu.meta&&navMenu.meta.icon"
+                    :style="{'color':navMenu.meta.iconColor}"
+                >
                     <component :is="navMenu.meta.icon || 'el-icon-menu'" />
                 </el-icon>
                 <span>{{navMenu.meta.title}}</span>

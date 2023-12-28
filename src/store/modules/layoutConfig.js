@@ -104,6 +104,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
+            initMenu.meta.iconColor = el.iconColor || "";
             initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
             initMenu.meta.outLink = el.outLink;
             if (el.children && el.children.length > 0) {
@@ -119,6 +120,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
+                            icon: subEl.iconColor || '',
                             // hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                             outLink: subEl.outLink,
                         },

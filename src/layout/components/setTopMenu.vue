@@ -26,7 +26,7 @@
                                     <el-icon class="icon" v-if="!parent.useIcon">
                                         <SetUp />
                                     </el-icon>
-                                    <el-icon class="icon" v-else>
+                                    <el-icon class="icon" v-else :color="parent.iconColor">
                                         <component :is="parent.useIcon" />
                                     </el-icon>
                                     {{ parent.configName }}
@@ -89,12 +89,12 @@
                                 <span
                                     class="select-icon-span"
                                     title="选择图标"
-                                    @click="isShowIconDialog = true"
+                                    @click="openSelectIconDialog"
                                 >
                                     <el-icon class="icon" v-if="!cutMenu.useIcon">
                                         <SetUp />
                                     </el-icon>
-                                    <el-icon class="icon" v-else>
+                                    <el-icon class="icon" v-else :color="cutMenu.iconColor">
                                         <component :is="cutMenu.useIcon" />
                                     </el-icon>
                                 </span>
@@ -121,7 +121,7 @@
             </div>
         </template>
     </mlDialog>
-    <mlSelectIcon v-model="isShowIconDialog" @confirmIcon="selectIcon" />
+    <mlSelectIcon v-model="isShowIconDialog" :useIcon="cutMenuIcon" @confirmIcon="selectIcon" />
 </template>
 
 <script setup>
@@ -191,7 +191,6 @@ let menuData = reactive({
 });
 
 let parentMenu = ref("父级菜单");
-
 // 节点选中
 const nodeClick = (node) => {
     cutMenu.value = Object.assign({}, node);
@@ -199,10 +198,23 @@ const nodeClick = (node) => {
 };
 
 let isShowIconDialog = ref(false);
+// 当前菜单ICON
+let cutMenuIcon = ref({});
+
 // 选择图标
-const selectIcon = (el) => {
-    cutMenu.value.useIcon = el;
+const selectIcon = ({ name, color }) => {
+    cutMenu.value.useIcon = name;
+    cutMenu.value.iconColor = color;
     isShowIconDialog.value = false;
+};
+
+// 打开选择图标弹框
+const openSelectIconDialog = () => {
+    isShowIconDialog.value = true;
+    cutMenuIcon.value = {
+        name: cutMenu.value.useIcon,
+        color: cutMenu.value.iconColor || "",
+    };
 };
 
 /**
@@ -222,6 +234,8 @@ let defaultMenu = reactive({
     guid: "",
     // 使用图标
     useIcon: "",
+    // 图标颜色
+    iconColor: "",
 });
 
 const getGuid = () => {
@@ -319,9 +333,9 @@ const getMenuFn = () => {
 const layoutSave = async () => {
     let { layoutConfigId, list } = menuData;
     let newConfig = {
-        navList: list.filter(el=> el.layoutConfigId)
+        navList: list.filter((el) => el.layoutConfigId),
     };
-    menuData.config = JSON.stringify(newConfig)
+    menuData.config = JSON.stringify(newConfig);
     let param = {};
     // 检测数据有没变化
     if ($TOOL.checkIsEdit(sourceData.config, menuData.config)) {
@@ -346,8 +360,6 @@ const layoutSave = async () => {
     }
     loading.value = false;
 };
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -513,7 +525,7 @@ div {
         position: absolute;
         left: 6px;
         top: 7px;
-        color: #404040;
+        // color: #404040;
     }
     &:hover {
         background: #eeeeee;
