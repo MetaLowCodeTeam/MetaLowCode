@@ -85,6 +85,18 @@
                                 :value="item"
                             />
                         </el-select>
+                        <el-select
+                            v-model="form.deptLevel"
+                            placeholder="请选择指定部门负责人"
+                            v-if="form.nodeRoleType == 5 || form.nodeRoleType == 6"
+                        >
+                            <el-option
+                                v-for="(item,depInx) in nodeRoleTypeChilerenList"
+                                :key="depInx"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
                     </div>
                 </div>
                 <div class="mt-10">
@@ -197,6 +209,50 @@ let nodeRoleTypeList = ref([
         type: 6,
     },
 ]);
+
+let nodeRoleTypeChilerenList = ref([
+    {
+        label: "当前部门",
+        value: 0,
+    },
+    {
+        label: "二级部门",
+        value: 1,
+    },
+    {
+        label: "三级部门",
+        value: 2,
+    },
+    {
+        label: "四级部门",
+        value: 3,
+    },
+    {
+        label: "五级部门",
+        value: 4,
+    },
+    {
+        label: "六级部门",
+        value: 5,
+    },
+    {
+        label: "七级部门",
+        value: 6,
+    },
+    {
+        label: "八级部门",
+        value: 7,
+    },
+    {
+        label: "九级部门",
+        value: 8,
+    },
+    {
+        label: "十级部门",
+        value: 9,
+    },
+]);
+
 watch(
     () => props.modelValue,
     () => {
