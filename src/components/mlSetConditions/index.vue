@@ -250,7 +250,8 @@ export default {
     props: {
         modelValue: null,
         footer: { type: Boolean, default: false },
-        entityName: { type: String, default: "" },
+        // 实体名称兼CODE
+        entityName: { type: [String, Number], default: "" },
     },
     data() {
         return {
@@ -480,7 +481,7 @@ export default {
             });
             return conditionList.join(" or ");
         },
-        
+
         // 区间值变化
         bwChange(item) {
             let { type } = item;

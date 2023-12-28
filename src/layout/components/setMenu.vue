@@ -303,7 +303,7 @@ const getGroupEntityList = () => {
     }
     let newEntityList = [
         {
-            label: "默认实体",
+            label: "自定义实体",
             options: [...getEntityList()],
         },
         {
