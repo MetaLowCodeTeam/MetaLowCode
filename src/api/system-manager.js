@@ -7,6 +7,10 @@ export function getEntitySet() {
     return http.get('systemManager/getEntitySet')
 }
 
+export function filterEntitySet(keyword) {
+	return http.get('systemManager/filterEntitySet', { keyword})
+}
+
 export function getFieldSet(entity) {
     return http.get('systemManager/getFieldSet', { entity })
 }

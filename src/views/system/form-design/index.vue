@@ -302,7 +302,8 @@ export default {
 			// 处理图片、文件上传字段 -- 结束
 
 			/* 处理精度小数字段 */
-			if (fldObj.type === 'Decimal') {
+			if ((fldObj.type === 'Integer') || (fldObj.type === 'Percent') || (fldObj.type === 'Money') ||
+				(fldObj.type === 'Decimal')) {
 				fieldSchema.options.precision = !fldObj.precision ? fieldSchema.options.precision : fldObj.precision * 1
 				fieldSchema.options.min = !fldObj.min ? fieldSchema.options.min : fldObj.min * 1
 				fieldSchema.options.max = !fldObj.max ? fieldSchema.options.max : fldObj.max * 1

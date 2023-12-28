@@ -121,13 +121,31 @@
 		<el-dialog ref="entityListDlg" title="选择引用实体" v-model="showEntityListDialogFlag"
 				   v-if="showEntityListDialogFlag"
 				   :append-to-body="true" :destroy-on-close="true" class="entity-list-dialog" width="560px">
-			<SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'"
-						 :columns="columns" :data="tableData" :show-operation-column="true"
-						 :max-height="420">
-				<template #table_operation="{scope}">
-					<el-button class="" icon="el-icon-check" @click="selectEntity(scope.row)">选择</el-button>
-				</template>
-			</SimpleTable>
+			<el-container>
+				<el-header>
+					<el-input v-model="queryText" type="text" placeholder="请输入关键词搜索"
+							  @keyup.enter.native="doSearch"
+							  clearable @clear="cancelSearch">
+						<template #append>
+							<el-button @click="doSearch">
+								<el-icon>
+									<Search/>
+								</el-icon>
+							</el-button>
+						</template>
+					</el-input>
+				</el-header>
+
+				<el-main class="table-main-wrapper">
+					<SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'"
+								 :columns="columns" :data="tableData" :show-operation-column="true"
+								 :max-height="420">
+						<template #table_operation="{scope}">
+							<el-button class="" icon="el-icon-check" @click="selectEntity(scope.row)">选择</el-button>
+						</template>
+					</SimpleTable>
+				</el-main>
+			</el-container>
 		</el-dialog>
 
 	</el-container>
@@ -138,9 +156,8 @@ import {
 	addRefField,
 	updateRefField,
 	getRefFieldExtras,
-	getEntitySet,
 	getFieldSet,
-	getField
+	getField, filterEntitySet
 } from '@/api/system-manager'
 import {copyObj, getSimplePinYin} from '@/utils/util'
 import FieldState from "@/views/system/field-state-variables";
@@ -213,6 +230,7 @@ export default {
 				{prop: 'label', label: '显示名称', width: '200', align: 'center', formatter: this.formatter},
 			],
 			tableData: [],
+			queryText: '',
 		}
 	},
 	mounted() {
@@ -337,23 +355,8 @@ export default {
 
 		showEntityListDialog() {
 			this.tableData.length = 0
-			getEntitySet().then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-				let entityItems = res.data
-				if (!!entityItems) {
-					entityItems.filter(entity => {
-						if (entity.detailEntityFlag === false) {
-							this.tableData.push({name: entity.name, label: entity.label})
-						}
-					})
-				}
-				this.showEntityListDialogFlag = true
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+			this.loadEntityList()
+			this.showEntityListDialogFlag = true
 		},
 
 		selectEntity(row) {
@@ -394,8 +397,6 @@ export default {
 		},
 
 		isSelectedField(fieldItem) {
-			//console.log(fieldItem)
-			//console.log(this.selectedFieldItems)
 			let matchedFlag = false
 			this.selectedFieldItems.forEach(item => {
 				if (fieldItem.name === item.name) {
@@ -419,6 +420,34 @@ export default {
 			this.fieldProps.name = getSimplePinYin(this.fieldProps.label)
 		},
 
+		loadEntityList() {
+			filterEntitySet(this.queryText).then(res => {
+				this.tableData.length = 0
+				if (res.error != null) {
+					this.$message({message: res.error, type: 'error'})
+					return
+				}
+				let entityItems = res.data
+				if (!!entityItems) {
+					entityItems.filter(entity => {
+						if (entity.detailEntityFlag === false) {
+							this.tableData.push({name: entity.name, label: entity.label})
+						}
+					})
+				}
+			}).catch(res => {
+				this.$message({message: res.message, type: 'error'})
+			})
+		},
+
+		doSearch() {
+			this.loadEntityList()
+		},
+
+		cancelSearch() {
+			this.loadEntityList()
+		}
+
 	}
 }
 </script>
@@ -428,13 +457,17 @@ export default {
 
 .refer-entity-dialog, .entity-list-dialog {
 	:deep(.el-dialog__header) {
-		padding: 15px;
-		padding-bottom: 3px;
+		padding: 15px 15px 3px;
 	}
 
 	:deep(.el-dialog__body) {
 		padding: 6px;
 	}
+
+	.table-main-wrapper {
+		padding: 6px !important;
+	}
+
 }
 
 </style>
