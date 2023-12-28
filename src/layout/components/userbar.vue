@@ -1,6 +1,6 @@
 <template>
     <div class="user-bar">
-        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom">
+        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom" v-if="$TOOL.checkRole('r6007')">
             <div class="screen panel-item hidden-sm-and-down" @click="setTopMenuDialogIsShow = true">
                 <el-icon>
                     <ElIconGrid />

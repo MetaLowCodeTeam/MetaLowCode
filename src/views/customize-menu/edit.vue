@@ -162,6 +162,7 @@ const initFormLayout = async () => {
                         if (JSON.stringify(optionData.value) == "{}") {
                             vFormRef.value.reloadOptionData();
                         }
+                        // 获取字段是否禁用
                         getFieldListOfEntityApi("creatable");
                     });
                 });
