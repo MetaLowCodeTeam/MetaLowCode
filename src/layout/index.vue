@@ -14,7 +14,7 @@
                         :class="pmenu.path==item.path?'active':''"
                         @click="showMenu(item)"
                     >
-                        <el-icon>
+                        <el-icon :style="{'color':item.meta.iconColor}">
                             <component :is="item.meta.icon || 'el-icon-menu'" />
                         </el-icon>
                         <span>{{ item.meta.title }}</span>

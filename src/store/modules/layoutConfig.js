@@ -120,7 +120,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
-                            icon: subEl.iconColor || '',
+                            iconColor: subEl.iconColor || '',
                             // hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                             outLink: subEl.outLink,
                         },
@@ -171,6 +171,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             el.meta = {
                 title: el.configName,
                 icon: el.useIcon || 'set-up',
+                iconColor: el.iconColor || '',
                 type: el.type,
                 outLink: el.outLink
             };
