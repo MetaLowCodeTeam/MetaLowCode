@@ -24,12 +24,11 @@
 
 <script setup>
 import { reactive, ref, inject, nextTick } from "vue";
-import { getFormLayout } from "@/api/system-manager";
+import { getFormLayout,getFieldListOfEntity } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
-import { getFieldListOfEntity } from "@/api/system-manager";
 const { queryEntityNameById, queryEntityNameByLabel } = useCommonStore();
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
