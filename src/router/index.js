@@ -106,7 +106,7 @@ router.afterEach((to, from) => {
     NProgress.done()
 });
 
-router.onError((error) => {
+router.onError((error,to) => {
     NProgress.done();
     // 如果是动态加载资源失败时 刷新页面
     if(error.message.includes('Failed to fetch dynamically imported module')){
