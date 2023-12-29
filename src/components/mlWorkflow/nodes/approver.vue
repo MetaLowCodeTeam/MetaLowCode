@@ -156,7 +156,7 @@
             <mlSelectField
                 ref="SelectFieldDialog"
                 v-model="form.modifiableFields"
-                title="选择可查看/修改字段"
+                title="选择可修改字段"
                 :entityName="myEntityName"
             />
         </el-drawer>
