@@ -42,7 +42,7 @@
                                 <el-tooltip
                                     class="box-item"
                                     effect="dark"
-                                    :content="'当前：' + publicSetting.productType.displayName + ' 不支持该功能'"
+                                    :content="'当前：' + publicSetting.productType?.displayName + ' 不支持该功能'"
                                     placement="top"
                                     v-if="needAuthentication.includes(item.key) && (publicSetting.productType?.value == 1 || publicSetting.productType?.value == 2)"
                                 >
