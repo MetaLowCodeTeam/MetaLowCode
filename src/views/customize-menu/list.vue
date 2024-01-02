@@ -455,7 +455,7 @@ const sortChange = (column) => {
         columnSort.type = "DESC";
         columnSort.fieldName = column.prop;
     } else {
-        columnSort = { ...defaultSortFields[0] };
+        columnSort = { ...defaultSortFields.value[0] };
     }
     sortFields.value = [columnSort];
     getTableList();
