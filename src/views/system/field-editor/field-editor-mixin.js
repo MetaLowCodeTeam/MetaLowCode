@@ -33,32 +33,20 @@ export const fieldEditorMixin = {
 		}
 	},
 	methods: {
-		createNewField() {
-			addField(this.fieldProps, this.entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message.success('保存成功')
-				this.$emit('fieldSaved')
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+		async createNewField() {
+            let res = await addField(this.fieldProps, this.entity);
+            if(res && res.code == 200){
+                this.$message.success('保存成功')
+                this.$emit('fieldSaved')
+            }
 		},
 
-		modifyOldField() {
-			updateField(this.fieldProps, this.entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message.success('保存成功')
+		async modifyOldField() {
+            let res = updateField(this.fieldProps, this.entity);
+            if(res && res.code == 200){
+                this.$message.success('保存成功')
 				this.$emit('fieldSaved')
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+            }
 		},
 
 		doSave(fieldType) {
@@ -83,30 +71,20 @@ export const fieldEditorMixin = {
 			this.$emit('cancelSave')
 		},
 
-		loadFieldProps() {
+		async loadFieldProps() {
 			if (this.fieldState !== FieldState.EDIT) {
 				return
 			}
-
-			getField(this.fieldName, this.entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				//console.log(res.data)
-				copyObj(this.fieldProps, res.data)
+            let res = await getField(this.fieldName, this.entity);
+            if(res && res.code == 200){
+                copyObj(this.fieldProps, res.data)
 				if (!this.fieldProps.fieldViewModel) {
 					this.fieldProps.fieldViewModel = {}
 				}
 				if (!this.fieldProps.referenceSetting) {
 					this.fieldProps.referenceSetting = []
 				}
-
-				//console.log( this.fieldProps )
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+            }
 		},
 
 		handleFieldLabelChange(val) {

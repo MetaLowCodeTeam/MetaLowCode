@@ -57,7 +57,7 @@
     </mlSingleList>
     <ml-dialog :title="dialogConf.title" v-model="dialogConf.isShow" width="600">
         <div style="padding-right: 60px;">
-            <el-form label-width="80px">
+            <el-form label-width="80px" @submit.prevent>
                 <el-form-item label="名称">
                     <el-input v-model="dialogConf.chartName" />
                 </el-form-item>

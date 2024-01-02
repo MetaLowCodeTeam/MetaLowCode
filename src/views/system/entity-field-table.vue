@@ -178,7 +178,7 @@
 
 			<el-dialog :title="'编辑字段 / ' + curEditorType" v-model="showEditFieldDialogFlag"
 					   v-if="showEditFieldDialogFlag"
-					   :show-close="true" :destroy-on-close="true" :close-on-click-modal="false"
+					   :show-close="false" :destroy-on-close="true" :close-on-click-modal="false"
 					   :close-on-press-escape="false" class="no-padding field-setting-dialog" width="620px">
 				<component :is="curFWEditor" :entity="entity" @fieldSaved="onFieldSaved" @cancelSave="onCancelSaveField"
 						   :showingInDialog="true" :field-name="editingFieldName" :field-state="2"></component>
