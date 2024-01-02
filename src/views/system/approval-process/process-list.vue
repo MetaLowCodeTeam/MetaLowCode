@@ -145,7 +145,7 @@ const saveProcess = async (row) => {
     if (row) {
         goDetial(row);
     } else {
-        mlEntityMenuAndListRef.value.getApprovalList();
+        mlEntityMenuAndListRef.value.getEntityList();
     }
 };
 
