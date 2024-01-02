@@ -135,5 +135,9 @@ const roundRobin = (ms) => {
 .web-ver {
     width: 0;
     height: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
 }
 </style>
