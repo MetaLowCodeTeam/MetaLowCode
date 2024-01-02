@@ -215,6 +215,8 @@ const initFormLayout = async () => {
                                 (el) => el.name
                             );
                         vFormRef.value.enableWidgets(enableWidgets);
+                        // 显示可编辑的字段。即使设置了隐藏。
+                        vFormRef.value.showWidgets(enableWidgets);
                         // 显示必填字段
                         let required = approvalTask.value.modifiableFields.map(
                             (el) => (el.isRequired ? el.name : null)

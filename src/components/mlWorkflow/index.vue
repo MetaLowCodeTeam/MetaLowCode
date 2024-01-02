@@ -55,7 +55,7 @@
                 <div class="end-node-circle"></div>
                 <div class="end-node-text">流程结束</div>
             </div>
-            <div class="z-model" v-if="!$TOOL.checkRole('r6016')"></div>
+            <div class="z-model" v-if="!$TOOL.checkRole('r6016') || isLookPage"></div>
         </div>
         <!--  -->
     </div>
@@ -66,6 +66,8 @@ import { onMounted, ref, watch } from "vue";
 import nodeWrap from "./nodeWrap.vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+const Router = useRouter();
 const { style } = storeToRefs(usePpprovalProcessStore());
 
 const props = defineProps({
@@ -83,6 +85,8 @@ let minZoom = ref(10);
 let setupZoom = ref(10);
 // 是否显示设置
 let isShowSetting = ref(false);
+// 是否是查看页面
+let isLookPage = ref(false);
 watch(
     () => props.modelValue,
     (v) => {
@@ -101,6 +105,11 @@ watch(
 );
 
 onMounted(() => {
+    // 如果是查看页面
+    let look = Router.currentRoute.value.query.look;
+    if(look == 1){
+        isLookPage.value = true;
+    }
     // window.addEventListener("click", handleDocumentClick);
 });
 

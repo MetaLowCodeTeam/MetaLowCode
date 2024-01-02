@@ -217,10 +217,11 @@ function formatResData(data) {
 // 配置流程
 const goApprovalList = (activity) => {
     Route.push({
-        path: "/web/process-detail",
+        path: "/web/custom-page/approval-detail",
         query: {
             approvalConfigId: activity.recordId,
             entityCode: queryEntityCodeById(props.entityId),
+            look:1
         },
     });
 };

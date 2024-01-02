@@ -107,6 +107,15 @@ const routes = [
                 },
                 component: 'customize-menu/list',
             },
+            // 可查看的审批流程详情
+            {
+                path: "/web/custom-page/approval-detail",
+                name: "ApprovalDetail",
+                "meta": {
+                    hidden: true,
+                },
+                component: 'custom-page/approval-detail',
+            },
         ]
     },
 

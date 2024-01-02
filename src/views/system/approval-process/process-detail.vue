@@ -6,7 +6,7 @@
                 type="primary"
                 class="fr"
                 @click="saveApprovalConfig"
-                :disabled="!$TOOL.checkRole('r6016')"
+                :disabled="!$TOOL.checkRole('r6016') || isLookPage"
             >保存</el-button>
         </el-header>
         <el-container class="main-container">
@@ -23,7 +23,8 @@ import { useRouter } from "vue-router";
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const route = useRouter();
-
+// 是否是查看页面
+let isLookPage = ref(false);
 let loading = ref(false);
 let approvalConfigId = ref("");
 let data = ref({
@@ -33,6 +34,11 @@ let data = ref({
 
 onMounted(() => {
     approvalConfigId.value = route.currentRoute.value.query.approvalConfigId;
+    // 如果是查看页面
+    let look = route.currentRoute.value.query.look;
+    if (look == 1) {
+        isLookPage.value = true;
+    }
     getApprovalConfig();
 });
 
@@ -74,7 +80,6 @@ const saveApprovalConfig = async () => {
 </script>
 
 <style lang="scss" scoped>
-
 .process-title {
     font-size: 14px;
     text-align: center;

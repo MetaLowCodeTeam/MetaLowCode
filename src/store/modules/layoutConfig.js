@@ -129,6 +129,14 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     let { path, component } = floamtRoute(subEl, isTopNav);
                     subRoute.path = path;
                     subRoute.component = component;
+                    // 如果是审批中心页面直接跳过权限判断
+                    let approvalCenter = ["approvalHandle",
+                        "approvalSubmit",
+                        "capprovalCc"];
+                    if (approvalCenter.includes(subEl.entityCode)) {
+                        initMenu.children.push(subRoute);
+                        return
+                    }
                     // 有权限才push
                     if (!(subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'))) {
                         initMenu.children.push(subRoute);
