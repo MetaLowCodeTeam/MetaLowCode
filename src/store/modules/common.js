@@ -14,7 +14,9 @@ const useCommonStore = defineStore('commonStore', () => {
     // 审批流程实体
     let processEntityList = ref([]);
     // 系统配置
-    let publicSetting = ref({});
+    let publicSetting = ref({
+        webVer:"1.2.1 20240102"
+    });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
             let res = await getEntitySet();

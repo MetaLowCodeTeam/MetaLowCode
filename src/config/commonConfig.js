@@ -4,6 +4,11 @@ export default [
         code: "common",
         confs: [
             {
+                label: "当前版本号",
+                key: "webVer",
+                type: "text",
+            },
+            {
                 label: "名称",
                 key: "appName",
                 type: "input",
@@ -59,6 +64,7 @@ export default [
                 required: true,
                 type: "numInput",
             },
+           
         ],
     },
     {

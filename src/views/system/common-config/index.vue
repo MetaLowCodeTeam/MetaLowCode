@@ -212,6 +212,8 @@ const initData = async () => {
     if (res) {
         let resData = res.data ? res.data : {};
         confData = Object.assign(confData, resData);
+
+        confData.webVer = publicSetting.value.webVer;
         let { emailSetting, smsSetting, cloudStorageSetting, dingTalkSetting } =
             confData;
 

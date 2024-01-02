@@ -7,6 +7,7 @@
     >
         <router-view></router-view>
     </el-config-provider>
+    <div class="web-ver">{{ publicSetting.webVer }}</div>
 </template>
 
 <script setup>
@@ -80,8 +81,6 @@ const initApi = async () => {
     }
 };
 
-
-
 // 获取公开系统配置
 const queryPublicSetting = async () => {
     const loading = ElLoading.service({
@@ -133,4 +132,8 @@ const roundRobin = (ms) => {
 
 <style lang="scss">
 @import "@/style/style.scss";
+.web-ver {
+    width: 0;
+    height: 0;
+}
 </style>
