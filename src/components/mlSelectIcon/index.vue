@@ -80,9 +80,9 @@ watch(
     { deep: true }
 );
 watch(
-    () => dialogIsShow,
-    (newV) => {
-        emit("update:modelValue", newV);
+    () => dialogIsShow.value,
+    () => {
+        emit("update:modelValue", dialogIsShow.value);
     },
     { deep: true }
 );
