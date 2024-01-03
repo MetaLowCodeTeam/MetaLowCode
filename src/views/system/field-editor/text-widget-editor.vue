@@ -68,9 +68,7 @@
 </template>
 
 <script>
-import {addField, getField, updateField} from '@/api/system-manager'
 import FieldState from '@/views/system/field-state-variables'
-import {copyObj} from "@/utils/util";
 import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
 
 export default {

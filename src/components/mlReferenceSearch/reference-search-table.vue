@@ -106,7 +106,7 @@ export default {
 			this.$emit('recordSelected', {
 				'id': row[this.idField],
 				'label': row[this.nameField],
-			})
+			}, row)
 		},
 
 		doSearch() {

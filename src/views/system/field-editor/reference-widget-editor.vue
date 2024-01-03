@@ -362,7 +362,7 @@ export default {
             }
         },
 
-        saveField() {
+		saveField() {
             this.$refs["editorForm"].validate(async (success) => {
                 if (!success) {
                     this.$message.error("数据不合规范，请检查");
@@ -498,6 +498,7 @@ export default {
         async loadEntityList() {
             let res = await filterEntitySet(this.queryText);
             if (res && res.code == 200) {
+				this.tableData.length = 0
                 let entityItems = res.data;
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
