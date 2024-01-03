@@ -124,7 +124,7 @@
                                 :key="inx"
                                 :title="item.fieldLabel"
                             >
-                                <span class="lh">{{ item.type }}</span>
+                                <!-- <span class="lh">{{ item.type }}</span> -->
                                 {{ item.fieldLabel }}
                             </div>
                         </VueDraggableNext>
@@ -223,9 +223,22 @@ const fieldsAdd = reactive({
 });
 
 let loading = ref(false);
-let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
-let textType = ref(["Text", "TextArea"]);
-let optionsType = ref(["Option"]);
+
+let needType = ref([
+    "Integer",
+    "Decimal",
+    "Percent",
+    "Money",
+    "Text",
+    "TextArea",
+    "DateTime",
+    "Date",
+    "Reference",
+    "Boolean",
+    "Option",
+    "Status",
+    "Tag",
+]);
 const getEntityFields = async () => {
     loading.value = true;
     let res = await queryEntityFields(props.optionModel.dataEntity, true, true);
@@ -233,16 +246,13 @@ const getEntityFields = async () => {
     if (res && res.data) {
         fields.value = [];
         res.data.forEach((el) => {
-            if (
-                numType.value.includes(el.fieldType) ||
-                textType.value.includes(el.fieldType) || 
-                optionsType.value.includes(el.fieldType)
-            ) {
+            if (needType.value.includes(el.fieldType)) {
                 let newFieldsAdd = { ...fieldsAdd };
                 newFieldsAdd.alias = el.fieldLabel;
-                newFieldsAdd.type = numType.value.includes(el.fieldType)
-                    ? "N"
-                    : "T";
+                newFieldsAdd.type =  el.fieldType;
+                // newFieldsAdd.type = numType.value.includes(el.fieldType)
+                //     ? "N"
+                //     : "T";
                 let newField = Object.assign(newFieldsAdd, { ...el });
                 fields.value.push({ ...newField });
             }
