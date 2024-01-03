@@ -8,6 +8,7 @@
         <router-view></router-view>
     </el-config-provider>
     <div class="web-ver">{{ publicSetting.webVer }}</div>
+    <mlCustomerService v-if="publicSetting.trialVersionFlag" />
 </template>
 
 <script setup>
@@ -19,6 +20,7 @@ import {
     inject,
     ref,
 } from "vue";
+import mlCustomerService from "@/components/mlCustomerService/index.vue";
 import colorTool from "@/utils/color";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import { getPublicSetting } from "@/api/setting";
