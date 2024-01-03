@@ -67,7 +67,7 @@ export const referenceSchema = {
 		requiredHint: '',
 		validation: '',
 		validationHint: '',
-        newTest: '',
+		searchDialogWidth: '520px',  //搜索弹窗宽度
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

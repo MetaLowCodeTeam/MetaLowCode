@@ -315,6 +315,11 @@ export default {
 				fieldSchema.options.areaDataType = !fldObj.areaDataType ? fieldSchema.options.areaDataType : fldObj.areaDataType * 1
 			}
 
+			/* 处理一对一字段 */
+			if (fldObj.type === 'Reference') {
+				fieldSchema.options.searchDialogWidth = !fldObj.searchDialogWidth ? fieldSchema.options.searchDialogWidth : fldObj.searchDialogWidth
+			}
+
 			if (fieldSchema.options.hasOwnProperty('optionItems')) {
 				if (this.formOptionData.hasOwnProperty(fieldSchema.options.name)) {
 					fieldSchema.options.optionItems = deepClone( this.formOptionData[fieldSchema.options.name] )

@@ -33,7 +33,7 @@
 		<el-dialog title="请选择" v-if="showReferenceDialogFlag"
 				   v-model="showReferenceDialogFlag"
 				   :show-close="true" class="small-padding-dialog"
-				   :width="'580px'" draggable
+				   :width="dialogWidth" draggable
 				   :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true">
 			<ReferenceSearchTable ref="referST" :entity="entity" :refField="curRefField" :extraFilter="searchFilter"
 								  @recordSelected="setReferRecord"></ReferenceSearchTable>
@@ -105,7 +105,12 @@ export default {
 
 		contentForReadMode() {
 			return this.fieldModel ? this.fieldModel.name : '--'
-		}
+		},
+
+		dialogWidth() {
+			return this.field.options.searchDialogWidth || '520px'
+		},
+
 	},
 	watch: {
 		fieldModel: {
