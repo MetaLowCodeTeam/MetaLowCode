@@ -81,6 +81,7 @@ export const referenceSchema = {
 		onMounted: '',
 		onChange: '',
 		onValidate: '',
+		onRecordSelected: '',  //记录选择回填事件
 	}
 }
 

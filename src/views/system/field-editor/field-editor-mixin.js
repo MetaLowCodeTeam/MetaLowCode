@@ -42,7 +42,7 @@ export const fieldEditorMixin = {
 		},
 
 		async modifyOldField() {
-            let res = updateField(this.fieldProps, this.entity);
+            let res = await updateField(this.fieldProps, this.entity);
             if(res && res.code == 200){
                 this.$message.success('保存成功')
 				this.$emit('fieldSaved')

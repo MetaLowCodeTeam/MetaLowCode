@@ -33,7 +33,7 @@
 		<el-dialog title="请选择" v-if="showReferenceDialogFlag"
 				   v-model="showReferenceDialogFlag"
 				   :show-close="true" class="small-padding-dialog"
-				   :width="'520px'" draggable
+				   :width="'580px'" draggable
 				   :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true">
 			<ReferenceSearchTable ref="referST" :entity="entity" :refField="curRefField" :extraFilter="searchFilter"
 								  @recordSelected="setReferRecord"></ReferenceSearchTable>
@@ -157,18 +157,30 @@ export default {
 			this.handleChangeEvent(this.fieldModel)
 		},
 
-		setReferRecord(recordObj) {
+		setReferRecord(recordObj, selectedRow) {
 			this.fieldModel = {
 				id: recordObj.id,
 				name: recordObj.label
 			}
 			this.handleChangeEvent(this.fieldModel)
+			this.handleRecordSelectedEvent(selectedRow)
 
 			this.showReferenceDialogFlag = false
 		},
 
 		setFilter(newFilter) {
 			this.searchFilter = newFilter
+		},
+
+		handleRecordSelectedEvent(selectedRow) {
+			if (!!this.designState) { //设计状态不触发事件
+				return
+			}
+
+			if (!!this.field.options.onRecordSelected) {
+				let customFn = new Function('selectedRow', this.field.options.onRecordSelected)
+				customFn.call(this, selectedRow)
+			}
 		},
 
 	}
