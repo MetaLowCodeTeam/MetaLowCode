@@ -23,7 +23,10 @@
             <el-header class="main-header w-100">
                 <div class="title fl">{{ cutNode.label }}</div>
                 <div class="section-fr fr">
-                    <el-button @click.stop="operateItem(false,'add')" :disabled="treeList.length < 1">
+                    <el-button
+                        @click.stop="operateItem(false,'add')"
+                        :disabled="treeList.length < 1"
+                    >
                         <span class="btn-icon-t1">
                             <el-icon>
                                 <ElIconPlus />
@@ -280,24 +283,33 @@ const delItem = (inx, item) => {
                     field: cutNode.value.name,
                     value: item.value,
                 });
-                if(res){
-                    if(res.data){
+                if (res) {
+                    if (res.data) {
+                        onSave("删除成功");
                         mainList.value.splice(inx, 1);
-                        $ElMessage.success("删除成功");
-                    }else {
+                        
+                    } else {
                         $ElMessage.warning("该选项有数据正在使用，无法删除。");
                     }
                 }
             } else {
                 mainList.value.splice(inx, 1);
-                $ElMessage.success("删除成功");
+                onSave("删除成功");
             }
         })
         .catch(() => {});
 };
 
 // 保存
-const onSave = async () => {
+const onSave = async (msg) => {
+    // 如果是多选选管理，value = label
+    if (props.title == "多选项管理") {
+        mainList.value.map(el => {
+            if(el.value != el.label){
+                el.value = el.label;
+            }
+        })
+    }
     mainLoading.value = true;
     let res = await props.saveFn(
         cutNode.value.parentName,
@@ -305,7 +317,7 @@ const onSave = async () => {
         mainList.value
     );
     if (res) {
-        $ElMessage.success("保存成功");
+        $ElMessage.success(msg || "保存成功");
         getMainList();
     }
 
