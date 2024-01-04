@@ -333,7 +333,7 @@ const getMenuFn = () => {
 const layoutSave = async () => {
     let { layoutConfigId, list } = menuData;
     let newConfig = {
-        navList: list.filter((el) => el.layoutConfigId),
+        navList: list.filter((el) => el.layoutConfigId || el.type == 2),
     };
     menuData.config = JSON.stringify(newConfig);
     let param = {};

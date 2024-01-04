@@ -38,7 +38,17 @@
                                 </div>
                                 <div class="action-icon">
                                     <span
+                                        class="icon-span add-icon mr-5 is-disabled"
+                                        v-if="parent.type != 1"
+                                        title="非关联项不可添加子菜单"
+                                    >
+                                        <el-icon size="16">
+                                            <ElIconCloseBold />
+                                        </el-icon>
+                                    </span>
+                                    <span
                                         class="icon-span add-icon mr-5"
+                                        v-else
                                         @click.stop="addChildrenMenu(parent)"
                                     >
                                         <el-icon size="16">
@@ -101,8 +111,8 @@
                 <div class="fl right-div" v-else>
                     <el-tabs v-model="cutMenu.type">
                         <el-tab-pane label="关联项" :name="1"></el-tab-pane>
-                        <el-tab-pane label="外部地址" :name="2"></el-tab-pane>
-                        <el-tab-pane label="自定义页面" :name="3"></el-tab-pane>
+                        <el-tab-pane label="外部地址" :name="2" :disabled="cutMenu.children && cutMenu.children.length > 0"></el-tab-pane>
+                        <el-tab-pane label="自定义页面" :name="3" :disabled="cutMenu.children && cutMenu.children.length > 0"></el-tab-pane>
                     </el-tabs>
                     <div
                         v-if="(cutMenu.type == 1 || cutMenu.type == 4) && (!cutMenu.children || (cutMenu.children && cutMenu.children.length < 1)) && cutMenu.entityCode != 'parentMenu'"
@@ -422,6 +432,9 @@ const addChildrenMenu = (menu) => {
     if (!menu.children) {
         menu.children = [];
     }
+    if(!menu.guid){
+        menu.guid = getGuid();
+    }
     let setMenu = Object.assign({}, defaultMenu);
     setMenu.parentGuid = menu.guid;
     setMenu.guid = getGuid();
@@ -470,6 +483,7 @@ const confirmMenu = () => {
         cutMenu.value.type = 4;
         cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
     }
+    console.log(cutMenu.value,'cutMenu.value')
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
         let inx = getMenuInx(menuData.list, cutMenu.value.guid);
@@ -737,6 +751,9 @@ div {
         }
         &:hover {
             color: #666;
+        }
+        &.is-disabled {
+            color: #aeb1b7;
         }
     }
 }
