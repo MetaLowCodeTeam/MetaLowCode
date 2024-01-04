@@ -186,7 +186,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if (el.type == 1) {
                 let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)
                 if (findNav.length > 0) {
-                    el.children = formatRouters(findNav[0].config)
+                    el.children = formatRouters(findNav[0].config, true)
                 }
             }
         })

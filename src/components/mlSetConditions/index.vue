@@ -320,7 +320,7 @@ export default {
                 this.fieldList = list.map((el) => {
                     return {
                         fieldName: el.name,
-                        op: this.getSelectOp(el)[0],
+                        op: "",
                         value: "",
                         value2: "",
                         isError: false,
@@ -413,8 +413,9 @@ export default {
             }
             let condition = this.$CloneDeep(this.fieldList[0]);
             // console.log(condition,'condition')
-            this.conditionConf.items.push(condition);
             this.fieldChange(condition);
+            this.conditionConf.items.push(condition);
+            
         },
         // 删除条件
         delConditions(inx) {
