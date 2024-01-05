@@ -42,10 +42,9 @@
 </template>
 
 <script>
-
 import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
-const { getEntityList } = useCommonStore();
+const { getEntityList, setUserInfo } = useCommonStore();
 export default {
     data() {
         return {
@@ -88,13 +87,12 @@ export default {
     mounted() {
         // console.log()
         let userInfo = this.$TOOL.cookie.get("userInfo");
-        if(userInfo){
+        if (userInfo) {
             userInfo = JSON.parse(userInfo);
-            this.form.user = userInfo.loginName
-            this.form.password = userInfo.password
-            this.form.autologin = userInfo.autologin
+            this.form.user = userInfo.loginName;
+            this.form.password = userInfo.password;
+            this.form.autologin = userInfo.autologin;
         }
-
     },
     methods: {
         async login() {
@@ -122,26 +120,22 @@ export default {
             // console.log(user,'user')
             // return
             if (user) {
-                let userInfo = {
-                    userName: user.data.userName,
-                    loginName: this.form.user,
-                    userId: user.data.userId,
-                    dashboard: "1",
-                    departmentId:user.data.departmentId,
-                    jobTitle:user.data.jobTitle,
-                    email:user.data.email,
-                    mobilePhone:user.data.mobilePhone,
-                    ownerTeam:user.data.ownerTeam,
-                };
-                this.$TOOL.data.set("USER_INFO", userInfo);
+                let userData = user.data;
+                userData.loginName = this.form.user;
+                setUserInfo(userData);
                 this.$TOOL.cookie.remove("userInfo");
                 // 勾选了记住密码
-                if(this.form.autologin){
+                if (this.form.autologin) {
+                    let userInfo = this.$TOOL.data.get('USER_INFO');
                     userInfo.password = this.form.password;
                     userInfo.autologin = this.form.autologin;
-                    this.$TOOL.cookie.set("userInfo", JSON.stringify(userInfo), {
-                        expires:  24 * 60 * 60 * 3,
-                    });
+                    this.$TOOL.cookie.set(
+                        "userInfo",
+                        JSON.stringify(userInfo),
+                        {
+                            expires: 24 * 60 * 60 * 3,
+                        }
+                    );
                 }
 
                 sessionStorage.setItem("userId", user.data.id); // 保存用户Id到本地会话

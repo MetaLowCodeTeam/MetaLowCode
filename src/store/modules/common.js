@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue'
 import { getEntitySet } from '@/api/system-manager'
-import { ElMessage } from 'element-plus'
+import tool from '@/utils/tool';
 const useCommonStore = defineStore('commonStore', () => {
     // 所有实体label
     let allEntityLabel = reactive({});
@@ -15,7 +15,7 @@ const useCommonStore = defineStore('commonStore', () => {
     let processEntityList = ref([]);
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.2.12 20240105"
+        webVer: "1.2.13 20240105"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -65,6 +65,21 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.trialVersionFlag = data.trialVersionFlag;
         publicSetting.value.webVer += "(" + data.version + ")";
     }
+    const setUserInfo = (user) => {
+        let userInfo = {
+            userName: user.userName,
+            loginName: user.loginName,
+            userId: user.userId,
+            dashboard: "1",
+            departmentId: user.departmentId,
+            jobTitle: user.jobTitle,
+            email: user.email,
+            mobilePhone: user.mobilePhone,
+            ownerTeam: user.ownerTeam,
+            departmentName: user.departmentName,
+        };
+        tool.data.set("USER_INFO", userInfo);
+    }
     return {
         allEntityLabel,
         getEntityList,
@@ -77,7 +92,8 @@ const useCommonStore = defineStore('commonStore', () => {
         queryEntityCodeById,
         queryEntityNameByLabel,
         publicSetting,
-        setPublicSetting
+        setPublicSetting,
+        setUserInfo
     }
 })
 

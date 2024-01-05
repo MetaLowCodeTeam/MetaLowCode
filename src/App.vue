@@ -30,7 +30,7 @@ import { storeToRefs } from "pinia";
 import { ElLoading } from "element-plus";
 import { getLoginUser } from "@/api/user";
 import { useRouter } from "vue-router";
-const { getEntityList, setPublicSetting } = useCommonStore();
+const { getEntityList, setPublicSetting,setUserInfo } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
@@ -64,19 +64,7 @@ const initApi = async () => {
     let res = await getLoginUser();
     if (res && res.data) {
         if (res.data.data) {
-            let user = res.data.data;
-            let userInfo = {
-                userName: user.userName,
-                loginName: user.loginName,
-                userId: user.userId,
-                dashboard: "1",
-                departmentId: user.departmentId,
-                jobTitle: user.jobTitle,
-                email: user.email,
-                mobilePhone: user.mobilePhone,
-                ownerTeam: user.ownerTeam,
-            };
-            $TOOL.data.set("USER_INFO", userInfo);
+            setUserInfo(res.data.data)
             // 轮循获取新消息
             roundRobin(5000);
             // 获取实体列表
