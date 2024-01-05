@@ -11,7 +11,7 @@
                     @onInput="filterEntityList"
                     style="margin-right: 10px;"
                 />
-                <el-button type="primary" @click="createNewEntity">
+                <el-button type="primary" @click="createNewEntity('create')">
                     <i class="el-icon-plus"></i>&nbsp;新建实体
                 </el-button>
             </div>
@@ -391,6 +391,10 @@ const createNewEntity = (target) => {
             }
             EPEditor.value.loading = false;
         });
+    }
+    // 新建
+    else {
+        newEntityProps.value.activeType = 1;
     }
 };
 

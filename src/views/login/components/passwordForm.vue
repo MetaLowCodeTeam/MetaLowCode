@@ -123,10 +123,15 @@ export default {
             // return
             if (user) {
                 let userInfo = {
-                    userName: user.data.name,
+                    userName: user.data.userName,
                     loginName: this.form.user,
-                    userId: user.data.id,
+                    userId: user.data.userId,
                     dashboard: "1",
+                    departmentId:user.data.departmentId,
+                    jobTitle:user.data.jobTitle,
+                    email:user.data.email,
+                    mobilePhone:user.data.mobilePhone,
+                    ownerTeam:user.data.ownerTeam,
                 };
                 this.$TOOL.data.set("USER_INFO", userInfo);
                 this.$TOOL.cookie.remove("userInfo");

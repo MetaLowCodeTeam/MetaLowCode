@@ -132,7 +132,7 @@ export function formatRefColumn(row, column, cellValue, index) {
 
 export function formatRefListColumn(row, column, cellValue, index) {
     let columnName = column.property
-    if (!!row[columnName] && (row[columnName].size() > 0)) {
+    if (!!row[columnName] && (row[columnName].length > 0)) {
         let columnValue = ''
         row[columnName].forEach(idName => {
             cellValue += idName.name + ', '

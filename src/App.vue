@@ -64,11 +64,17 @@ const initApi = async () => {
     let res = await getLoginUser();
     if (res && res.data) {
         if (res.data.data) {
+            let user = res.data.data;
             let userInfo = {
-                userName: res.data.data.name,
-                loginName: res.data.data.loginName,
-                userId: res.data.data.id,
+                userName: user.userName,
+                loginName: user.loginName,
+                userId: user.userId,
                 dashboard: "1",
+                departmentId: user.departmentId,
+                jobTitle: user.jobTitle,
+                email: user.email,
+                mobilePhone: user.mobilePhone,
+                ownerTeam: user.ownerTeam,
             };
             $TOOL.data.set("USER_INFO", userInfo);
             // 轮循获取新消息
