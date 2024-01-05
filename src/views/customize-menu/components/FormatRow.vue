@@ -9,6 +9,18 @@
     >{{ row[column.fieldName]?.label }}</div>
     <div
         class="text-ellipsis"
+        v-else-if="column.fieldType == 'AreaSelect'"
+    >
+        <span v-if="row[column.fieldName] && (row[column.fieldName][1] == '市辖区' || row[column.fieldName][1] == '县')">
+            {{ row[column.fieldName][0] }}-{{ row[column.fieldName][2] }}
+        </span>
+        <span v-else-if="row[column.fieldName] && (row[column.fieldName][1] != '市辖区' || row[column.fieldName][1] != '县')">
+            {{ row[column.fieldName].join("-") }}
+        </span>
+        <span v-else></span>
+    </div>
+    <div
+        class="text-ellipsis"
         v-else-if="column.fieldType == 'Percent'"
     >{{ row[column.fieldName] ? row[column.fieldName] + "%" : '' }}</div>
     <div
