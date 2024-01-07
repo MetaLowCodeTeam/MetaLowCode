@@ -228,7 +228,7 @@ export default {
     left: 0px;
     right: 0px;
     bottom: 0px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 160, 0.3);
     z-index: 1;
 }
 
@@ -237,6 +237,8 @@ export default {
     overflow: auto;
     display: flex;
     position: relative;
+	background: url("/img/login_bg.png") no-repeat;
+	background-size: cover;
 }
 .login-form {
     width: 400px;
