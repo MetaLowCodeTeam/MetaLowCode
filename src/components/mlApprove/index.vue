@@ -83,7 +83,7 @@
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
-                                <el-button type="primary" @click="confirmApprove(false)">同意</el-button>
+                                <el-button type="primary" @click="beforeConfirmApprove">同意</el-button>
                                 <el-button type="danger" @click="confirmApprove(true)">驳回</el-button>
                                 <el-button @click="canner">取消</el-button>
                             </div>
@@ -106,6 +106,22 @@
             </el-form-item>
         </el-form>
     </mlDialog>
+    <mlDialog v-model="esignConf.show" title="手写签名" width="845" appendToBody>
+        <vue-esign
+            ref="esignRef"
+            class="esignature"
+            :width="800"
+            :height="300"
+            :isCrop="esignConf.isCrop"
+            :lineWidth="esignConf.lineWidth"
+            :lineColor="esignConf.lineColor"
+            v-model:bgColor="esignConf.bgColor"
+        />
+        <div class="foot-btn w-100">
+            <el-button @click="handleReset">重签</el-button>
+            <el-button type="primary" @click="handleGenerate">确认</el-button>
+        </div>
+    </mlDialog>
 </template>
 
 <script setup>
@@ -116,6 +132,8 @@ import { queryById, saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
+// 签名组件
+import vueEsign from "vue-esign";
 const { allEntityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
@@ -268,6 +286,41 @@ async function confirmApostille() {
     otherLoading.value = false;
 }
 
+// 签名配置
+let esignRef = ref("");
+let esignConf = ref({
+    show: false,
+    // 画笔粗细
+    lineWidth: 6,
+    // 画笔颜色
+    lineColor: "#000000",
+    bgColor: "",
+    resultImg: "",
+    isCrop: false,
+});
+// 重新签名
+const handleReset = () => {
+    esignRef.value.reset();
+};
+
+// 确认签名
+const handleGenerate = async () => {
+    esignConf.value.resultImg = await esignRef.value.generate();
+    esignConf.value.show = false;
+    confirmApprove(false);
+};
+
+// 同意前触发
+const beforeConfirmApprove = () => {
+    // 需要手写签名
+    if(approvalTask.value.autograph){
+        esignConf.value.show = true;
+    }else {
+        confirmApprove(false);
+    }
+    
+};
+
 // 同意审批
 async function confirmApprove(isBacked) {
     let formData = await vFormRef.value.getFormData();
@@ -281,6 +334,7 @@ async function confirmApprove(isBacked) {
         if (saveRes) {
             form.value.entityId = props.entityId;
             form.value.isBacked = isBacked;
+            form.value.signatureImage = esignConf.value.resultImg;
             let res = await http.post("/approval/approvalProcess", form.value);
             if (res) {
                 let msg = isBacked ? "驳回" : "审批";
@@ -362,5 +416,10 @@ function canner() {
             top: 2px;
         }
     }
+}
+
+.esignature {
+    border: 2px solid #ccc;
+    margin-bottom: 10px;
 }
 </style>

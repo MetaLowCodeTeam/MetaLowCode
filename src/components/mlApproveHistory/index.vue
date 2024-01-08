@@ -90,6 +90,24 @@
                                         </span>
                                     </el-tooltip>
                                 </span>
+                                <span
+                                    class="ml-a-span"
+                                    v-if="activity.signatureImage"
+                                    @click="openPreview(activity.signatureImage)"
+                                >查看签名</span>
+                                <!-- <div class="demo-image__preview" v-if="activity.signatureImage">
+                                    <el-image
+                                        style="width: 40px; height: 20px"
+                                        :src="activity.signatureImage"
+                                        :zoom-rate="1.2"
+                                        :max-scale="7"
+                                        :min-scale="0.2"
+                                        :preview-src-list="[activity.signatureImage]"
+                                        :initial-index="4"
+                                        fit="cover"
+                                    />
+                                </div>-->
+
                                 <el-tag v-if="activity.operationState === 1" type="warning">转审</el-tag>
                                 <el-tag v-if="activity.operationState === 2" type="warning">加签</el-tag>
                             </div>
@@ -99,12 +117,45 @@
             </el-timeline>
             <el-empty v-else :image-size="100" description="未查询到流程记录" />
         </div>
+        <!-- <el-image-viewer v-if="previewShow" :url-list="previewList" @close="previewShow = false"/> -->
+        <mlDialog
+            v-model="previewShow"
+            title="查看签名"
+            width="645"
+            appendToBody
+            :top="previewHeight == '640px' ? '7vh' : '15vh'"
+        >
+            <div
+                class="imag-viewer-box"
+                :style="{ 'height': previewHeight, 'padding-top': previewHeight == '640px' ? '197px' : 0}"
+            >
+                <div class="image-viewer" :style="{ 'transform':'rotate('+ previewRotate +'deg)'}">
+                    <img :src="previewUrl" alt="签名" />
+                </div>
+            </div>
+
+            <div class="foot-btn w-100">
+                <el-button type="primary" @click="previewRotateChange">旋转</el-button>
+                <el-button type="primary" @click="previewShow = false">关闭</el-button>
+            </div>
+        </mlDialog>
+        <!-- <el-image
+            style="width: 0; height: 0"
+            :src="previewUrl"
+            :zoom-rate="1.2"
+            :max-scale="7"
+            :min-scale="0.2"
+            :preview-src-list="previewList"
+            :initial-index="4"
+            fit="cover"
+            ref="previewRef"
+        />-->
     </mlDialog>
 </template>
 
 <script setup>
 import http from "@/utils/request";
-import { watch, ref, onMounted, inject, reactive } from "vue";
+import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import { useRouter } from "vue-router";
 const Route = useRouter();
 const props = defineProps({
@@ -221,9 +272,32 @@ const goApprovalList = (activity) => {
         query: {
             approvalConfigId: activity.recordId,
             entityCode: queryEntityCodeById(props.entityId),
-            look:1
+            look: 1,
         },
     });
+};
+
+/**
+ * 签名预览
+ */
+
+let previewShow = ref("");
+let previewUrl = ref("");
+let previewRotate = ref(0);
+let previewHeight = ref("240px");
+// 打开预览
+const openPreview = (url) => {
+    previewShow.value = true;
+    previewUrl.value = url;
+};
+// 预览切换旋转角度
+const previewRotateChange = () => {
+    previewRotate.value += 90;
+    if (previewRotate.value % 180 == 0) {
+        previewHeight.value = "240px";
+    } else {
+        previewHeight.value = "640px";
+    }
 };
 
 // 关闭弹框
@@ -291,5 +365,19 @@ function canner() {
             }
         }
     }
+}
+.image-viewer {
+    border: 2px solid #ccc;
+    margin: 0 auto;
+    img {
+        transition: all 0.3s;
+        box-sizing: border-box;
+        width: 640px;
+        height: 240px;
+    }
+}
+.foot-btn {
+    margin-top: 20px;
+    text-align: right;
 }
 </style>

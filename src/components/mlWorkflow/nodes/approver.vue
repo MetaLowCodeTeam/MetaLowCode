@@ -115,6 +115,10 @@
                         <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
                     </el-radio-group>
                 </div>
+                <div class="lable-title mb-10 mt-20">高级扩展功能</div>
+                <div class="mt-10">
+                    <el-checkbox v-model="form.autograph" label="手写签名"/>
+                </div>
                 <div class="lable-title mb-10 mt-20">允许修改字段</div>
                 <div class="edit-field-list-box">
                     <div
