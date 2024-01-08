@@ -31,7 +31,7 @@
                                 :key="summaryInx"
                                 class="popover-item"
                                 :class="{'is-active':tag.calcMode == summary.code}"
-                                v-if="summary.type == 'N|T' || summary.type == tag.type"
+                                v-if="summary.type == 'N|T' || numType.includes(tag.type)"
                                 @click="onCalcModeChange(tag,summary.code,inx)"
                             >{{ summary.label }}</div>
                         </template>
@@ -248,6 +248,8 @@ let calcMode = ref([
         code: "min",
     },
 ]);
+
+let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 
 onMounted(() => {
     list.value = props.modelValue;
