@@ -17,7 +17,7 @@ import useCommonStore from "@/store/modules/common";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import Print from "@/utils/print";
-const { queryEntityNameById } = useCommonStore();
+const { queryEntityNameById,getEntityList } = useCommonStore();
 const router = useRouter();
 let entityId = ref("");
 let optionData = ref({});
@@ -28,12 +28,13 @@ let nameFieldName = ref("");
 // 打印标题
 let printerTitle = ref("");
 
-onMounted(() => {
+onMounted(async () => {
     entityId.value = router.currentRoute.value.query.entityId;
     nameFieldName.value = router.currentRoute.value.query.nameFieldName;
     if (entityId.value) {
         router.go(-1);
     }
+    await getEntityList();
     // 加载vform表单
     initVfromCom();
 });
