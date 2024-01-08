@@ -53,8 +53,6 @@ const useViewTagsStore = defineStore('viewTagsStore', () => {
         updateViewTagsTitle,
         clearViewTags
     }
-}, {
-    persist: true
 })
 
 export default useViewTagsStore

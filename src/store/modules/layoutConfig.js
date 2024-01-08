@@ -212,8 +212,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         getTopNavigation,
         getTopNavMenuList
     }
-}, {
-    persist: true
 })
 
 

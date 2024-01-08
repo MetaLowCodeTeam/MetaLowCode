@@ -14,8 +14,6 @@ const useCheckStatusStore = defineStore('checkStatusStore', () => {
         newMsgNum,
         setNewMsgNum
     }
-}, {
-    persist: true
 })
 
 export default useCheckStatusStore

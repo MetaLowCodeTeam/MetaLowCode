@@ -45,8 +45,6 @@ const useGlobalStore = defineStore('globalStore', () => {
         TOGGLE_layoutTags
     }
 
-}, {
-    persist: true
 })
 
 export default useGlobalStore

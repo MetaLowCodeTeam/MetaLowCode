@@ -10,8 +10,6 @@ const usePpprovalProcessStore = defineStore('approvalProcessStore', () => {
     return {
         style
     }
-}, {
-    persist: true
 })
 
 export default usePpprovalProcessStore
