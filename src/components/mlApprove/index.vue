@@ -223,9 +223,7 @@ const initFormLayout = async () => {
                 if (formData) {
                     vFormRef.value.setFormData(formData.data);
                     nextTick(() => {
-                        if (JSON.stringify(optionData.value) == "{}") {
-                            vFormRef.value.reloadOptionData();
-                        }
+                        vFormRef.value.reloadOptionData();
                         vFormRef.value.disableForm();
                         // 显示可编辑字段
                         let enableWidgets =

@@ -8,6 +8,7 @@
         :tableColumn="tableColumn"
         :filterItems="filterItems"
         queryUrl="/note/listQuery"
+        equation="AND"
     >
         <template #addbutton>
             <el-button type="primary" @click="markAllRead">全部设为已读</el-button>

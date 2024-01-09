@@ -137,6 +137,7 @@ const props = defineProps({
     tableColumn: { type: Array, default: () => [] },
     // 查询接口
     queryUrl: { type: String, default: "" },
+    equation: { type: String, default: "OR" },
 });
 let loading = ref(false);
 
@@ -166,14 +167,14 @@ const handleSizeChange = (size) => {
 // 获取表格数据
 async function getTableList() {
     loading.value = true;
-    let { mainEntity, fieldsList, fieldName, sortFields, filterItems } = props;
+    let { mainEntity, fieldsList, fieldName, sortFields, filterItems,equation } = props;
     let param = {
         mainEntity,
         fieldsList,
         pageSize: page.size,
         pageNo: page.no,
         filter: {
-            equation: "OR",
+            equation,
             items: [],
         },
         sortFields,
