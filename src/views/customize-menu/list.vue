@@ -30,7 +30,7 @@
                             </el-button>
                         </template>
                     </el-input>
-                    <span class="queick-edit" @click="openSelectFieldDialog">
+                    <span class="queick-edit" @click="openSelectFieldDialog" v-if="$TOOL.checkRole('r6008')">
                         <el-icon size="18">
                             <ElIconEditPen />
                         </el-icon>

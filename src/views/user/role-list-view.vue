@@ -476,7 +476,7 @@ let funcRight = shallowRef([
         value: "r6007",
     },
     {
-        label: "实体布局配置",
+        label: "列表页面设计",
         value: "r6008",
     },
     {

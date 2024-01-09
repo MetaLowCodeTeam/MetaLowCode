@@ -95,19 +95,6 @@
                                     v-if="activity.signatureImage"
                                     @click="openPreview(activity.signatureImage)"
                                 >查看签名</span>
-                                <!-- <div class="demo-image__preview" v-if="activity.signatureImage">
-                                    <el-image
-                                        style="width: 40px; height: 20px"
-                                        :src="activity.signatureImage"
-                                        :zoom-rate="1.2"
-                                        :max-scale="7"
-                                        :min-scale="0.2"
-                                        :preview-src-list="[activity.signatureImage]"
-                                        :initial-index="4"
-                                        fit="cover"
-                                    />
-                                </div>-->
-
                                 <el-tag v-if="activity.operationState === 1" type="warning">转审</el-tag>
                                 <el-tag v-if="activity.operationState === 2" type="warning">加签</el-tag>
                             </div>
@@ -117,7 +104,6 @@
             </el-timeline>
             <el-empty v-else :image-size="100" description="未查询到流程记录" />
         </div>
-        <!-- <el-image-viewer v-if="previewShow" :url-list="previewList" @close="previewShow = false"/> -->
         <mlDialog
             v-model="previewShow"
             title="查看签名"
@@ -139,17 +125,6 @@
                 <el-button type="primary" @click="previewShow = false">关闭</el-button>
             </div>
         </mlDialog>
-        <!-- <el-image
-            style="width: 0; height: 0"
-            :src="previewUrl"
-            :zoom-rate="1.2"
-            :max-scale="7"
-            :min-scale="0.2"
-            :preview-src-list="previewList"
-            :initial-index="4"
-            fit="cover"
-            ref="previewRef"
-        />-->
     </mlDialog>
 </template>
 
@@ -281,7 +256,7 @@ const goApprovalList = (activity) => {
  * 签名预览
  */
 
-let previewShow = ref("");
+let previewShow = ref(false);
 let previewUrl = ref("");
 let previewRotate = ref(0);
 let previewHeight = ref("240px");

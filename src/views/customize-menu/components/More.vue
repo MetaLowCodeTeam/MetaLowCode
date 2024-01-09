@@ -166,7 +166,7 @@ import DefaultFilterDialog from "./DefaultFilterDialog.vue";
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
-const { queryEntityNameById } = useCommonStore();
+const { queryEntityNameByCode } = useCommonStore();
 const router = useRouter();
 const emits = defineEmits([
     "changeColumnShow",
@@ -318,7 +318,7 @@ const editColumnConfirm = (v) => {
 let defaultFilterRefs = ref("");
 const openDefaultFilterDialog = () => {
     defaultFilterRefs.value.openDialog({
-        name: queryEntityNameById(props.detailId),
+        name: queryEntityNameByCode(props.entityCode),
         code: props.entityCode,
         defaultFilterSetting: props.defaultFilterSetting,
     });

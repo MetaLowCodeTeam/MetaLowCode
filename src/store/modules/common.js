@@ -15,7 +15,7 @@ const useCommonStore = defineStore('commonStore', () => {
     let processEntityList = ref([]);
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.2.18 20240108"
+        webVer: "1.2.19 20240109"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -49,6 +49,9 @@ const useCommonStore = defineStore('commonStore', () => {
     }
     const queryEntityNameByLabel = (name) => {
         return allEntityLabel[allEntityCode[name]];
+    }
+    const queryEntityNameByCode = (code) => {
+        return allEntityName[code];
     }
     const setPublicSetting = (data) => {
         publicSetting.value.APP_NAME = data.appName;
@@ -91,6 +94,7 @@ const useCommonStore = defineStore('commonStore', () => {
         queryEntityNameById,
         queryEntityCodeById,
         queryEntityNameByLabel,
+        queryEntityNameByCode,
         publicSetting,
         setPublicSetting,
         setUserInfo
