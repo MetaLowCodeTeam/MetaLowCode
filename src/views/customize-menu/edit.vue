@@ -122,9 +122,7 @@ const initFormLayout = async () => {
                         vFormRef.value.setFormData(formData.data);
 
                         nextTick(() => {
-                            if (JSON.stringify(optionData.value) == "{}") {
-                                vFormRef.value.reloadOptionData();
-                            }
+                            vFormRef.value.reloadOptionData();
                             if (
                                 row.approvalStatus.value == 1 ||
                                 row.approvalStatus.value == 3
@@ -158,9 +156,7 @@ const initFormLayout = async () => {
                         if (row.fieldName) {
                             vFormRef.value.disableWidgets([row.fieldName]);
                         }
-                        if (JSON.stringify(optionData.value) == "{}") {
-                            vFormRef.value.reloadOptionData();
-                        }
+                        vFormRef.value.reloadOptionData();
                         // 获取字段是否禁用
                         getFieldListOfEntityApi("creatable");
                     });

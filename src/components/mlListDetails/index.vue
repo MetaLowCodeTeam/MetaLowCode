@@ -149,9 +149,7 @@ const refresh = async () => {
                     }
                     vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
-                        if (JSON.stringify(optionData.value) == "{}") {
-                            vFormRef.value.reloadOptionData();
-                        }
+                        vFormRef.value.reloadOptionData();
                         vFormRef.value.setReadMode();
                     });
                 }

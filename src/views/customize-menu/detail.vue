@@ -245,9 +245,7 @@ const initData = async () => {
                     vFormRef.value.resetForm();
                     vFormRef.value.setFormData(resData);
                     nextTick(() => {
-                        if (JSON.stringify(optionData.value) == "{}") {
-                            vFormRef.value.reloadOptionData();
-                        }
+                        vFormRef.value.reloadOptionData();
                         approvalStatus.value =
                             queryByIdRes?.data.recordApprovalState || null;
                         if (approvalStatus.value) {
