@@ -111,8 +111,16 @@
                 <div class="fl right-div" v-else>
                     <el-tabs v-model="cutMenu.type">
                         <el-tab-pane label="关联项" :name="1"></el-tab-pane>
-                        <el-tab-pane label="外部地址" :name="2" :disabled="cutMenu.children && cutMenu.children.length > 0"></el-tab-pane>
-                        <el-tab-pane label="自定义页面" :name="3" :disabled="cutMenu.children && cutMenu.children.length > 0"></el-tab-pane>
+                        <el-tab-pane
+                            label="外部地址"
+                            :name="2"
+                            :disabled="cutMenu.children && cutMenu.children.length > 0"
+                        ></el-tab-pane>
+                        <el-tab-pane
+                            label="自定义页面"
+                            :name="3"
+                            :disabled="cutMenu.children && cutMenu.children.length > 0"
+                        ></el-tab-pane>
                     </el-tabs>
                     <div
                         v-if="(cutMenu.type == 1 || cutMenu.type == 4) && (!cutMenu.children || (cutMenu.children && cutMenu.children.length < 1)) && cutMenu.entityCode != 'parentMenu'"
@@ -179,6 +187,12 @@
                                 </span>
                             </template>
                         </el-input>
+                    </div>
+                    <div class="mt-10" v-if="cutMenu.type == 2">
+                        <el-radio-group v-model="cutMenu.openType">
+                            <el-radio :label="0">新窗口打开</el-radio>
+                            <el-radio :label="1">嵌入式</el-radio>
+                        </el-radio-group>
                     </div>
                     <div class="mt-5" v-if="cutMenu.children && cutMenu.children.length > 0">
                         <el-checkbox v-model="cutMenu.isOpeneds" label="默认展开" />
@@ -381,6 +395,8 @@ let defaultMenu = reactive({
     entityCode: null,
     // 外部地址
     outLink: "",
+    // 0 外部打开 1 内嵌（iframe）
+    openType: 0,
     // key
     guid: "",
     // 父节点
@@ -432,7 +448,7 @@ const addChildrenMenu = (menu) => {
     if (!menu.children) {
         menu.children = [];
     }
-    if(!menu.guid){
+    if (!menu.guid) {
         menu.guid = getGuid();
     }
     let setMenu = Object.assign({}, defaultMenu);
@@ -483,7 +499,6 @@ const confirmMenu = () => {
         cutMenu.value.type = 4;
         cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
     }
-    console.log(cutMenu.value,'cutMenu.value')
     // 是父级菜单
     if (!cutMenu.value.parentGuid) {
         let inx = getMenuInx(menuData.list, cutMenu.value.guid);

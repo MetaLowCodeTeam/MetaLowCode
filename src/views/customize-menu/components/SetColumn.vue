@@ -18,7 +18,10 @@
                                         <ElIconRank />
                                     </el-icon>
                                 </div>
-                                <div class="fl item text-ellipsis" :class="{'tag':isShowItemTag(parent)}">{{ parent.fieldLabel }}</div>
+                                <div
+                                    class="fl item text-ellipsis"
+                                    :class="{'tag':isShowItemTag(parent)}"
+                                >{{ parent.fieldLabel }}</div>
                                 <div class="action-icon">
                                     <span
                                         class="icon-span add-icon mr-5"
@@ -39,7 +42,12 @@
                     </VueDraggableNext>
                 </div>
                 <div class="fl right-div">
-                    <el-input class="right-div-input" v-model="searchField" placeholder="筛选字段" clearable>
+                    <el-input
+                        class="right-div-input"
+                        v-model="searchField"
+                        placeholder="筛选字段"
+                        clearable
+                    >
                         <template #prefix>
                             <el-icon class="el-input__icon">
                                 <ElIconSearch />
@@ -109,6 +117,26 @@
                             <ElIconBottom v-else />
                         </el-icon>
                     </span>
+                </el-form-item>
+                <el-form-item label="数据统计">
+                    <el-checkbox v-model="editColumnDialogData.dataStatistics" />
+                </el-form-item>
+                <el-form-item
+                    label="统计类型"
+                    v-if="editColumnDialogData.dataStatistics"
+                    class="is-required"
+                >
+                    <el-select v-model="editColumnDialogData.statisticType" placeholder="选择统计类型">
+                        <el-option
+                            v-for="item in getUptadeMode()"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="显示名称" v-if="editColumnDialogData.dataStatistics">
+                    <el-input v-model="editColumnDialogData.statisticName" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="confirmColumnEdit">保存</el-button>
@@ -182,7 +210,61 @@ let editColumnDialogData = reactive({
     columnWidth: 0,
     columnSort: "",
     columnAliasName: "",
+    // 字段类型
+    fieldType: "",
+    // 数据统计
+    dataStatistics: false,
+    // 统计类型
+    statisticType: "",
+    // 显示名称
+    statisticName: "",
 });
+let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
+// 获取聚合方式
+const getUptadeMode = () => {
+    // 如果是数字类型
+    if (numType.value.includes(editColumnDialogData.fieldType)) {
+        return [
+            {
+                label: "求和",
+                value: "sum",
+            },
+            {
+                label: "计数",
+                value: "count",
+            },
+            {
+                label: "去重计数",
+                value: "countSet",
+            },
+            {
+                label: "平均值",
+                value: "average",
+            },
+            {
+                label: "最大值",
+                value: "max",
+            },
+            {
+                label: "最小值",
+                value: "min",
+            },
+        ];
+    }
+    // 非数字类型
+    else {
+        return [
+            {
+                label: "计数",
+                value: "count",
+            },
+            {
+                label: "去重计数",
+                value: "countSet",
+            },
+        ];
+    }
+};
 // 编辑列排序
 const changeColumnSort = () => {
     if (editColumnDialogData.columnSort == "") {
@@ -196,32 +278,40 @@ const changeColumnSort = () => {
 
 // 编辑显示列
 const editColumn = (column, inx) => {
+    console.log(column, "column");
     editColumnDialogIsShow.value = true;
     let editObj = Object.assign({}, column);
     editObj.columnAliasName = column.columnAliasName || "";
     editObj.columnSort = column.columnSort || "";
     editObj.columnWidth = column.columnWidth || 0;
     editObj.columnEditInx = inx;
+    editObj.fieldType = column.fieldType;
+    editObj.dataStatistics = column.dataStatistics;
+    editObj.statisticType = column.statisticType;
+    editObj.statisticName = column.statisticName;
     editColumnDialogData = Object.assign(editColumnDialogData, editObj);
 };
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {
-    let { columnAliasName,columnSort,columnWidth } = column;
-    if(columnAliasName || columnSort || columnWidth> 0){
-        return true
+    let { columnAliasName, columnSort, columnWidth, dataStatistics } = column;
+    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics) {
+        return true;
     }
-    return false
-}
+    return false;
+};
 
 // 确认列修改
 const confirmColumnEdit = () => {
-    let oldData = Object.assign({},showColumn.value[editColumnDialogData.columnEditInx]);
+    let oldData = Object.assign(
+        {},
+        showColumn.value[editColumnDialogData.columnEditInx]
+    );
     // 排序有变化，清空所有排序，只保留当前字段排序
-    if(oldData.columnSort != editColumnDialogData.columnSort){
-        showColumn.value.forEach(el => {
+    if (oldData.columnSort != editColumnDialogData.columnSort) {
+        showColumn.value.forEach((el) => {
             el.columnSort = "";
-        })
+        });
     }
     showColumn.value[editColumnDialogData.columnEditInx] = Object.assign(
         {},
@@ -254,7 +344,9 @@ const getAllColumn = async () => {
                 hasFieldName.push(el.fieldName);
             });
         }
-        sourceColumn.value = res.data.filter(el=> !hasFieldName.includes(el.fieldName));
+        sourceColumn.value = res.data.filter(
+            (el) => !hasFieldName.includes(el.fieldName)
+        );
     }
     loading.value = false;
     // console.log(props.entityName);
@@ -277,7 +369,7 @@ const onSave = async () => {
     };
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(layoutConfigId, "LIST", param);
-    if (res ) {
+    if (res) {
         $ElMessage.success("保存成功！");
         isShow.value = false;
         emit("confirm");

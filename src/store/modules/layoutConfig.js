@@ -10,10 +10,16 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.component = "customize-menu/list";
     } else if (el.type == 2) {
         newRoute.path = el.guid;
+        // 需要内嵌
+        if (el.openType == 1) {
+            newRoute.path = "/web/custom-page/iframe" + (isTopNav ? '/' + el.guid : '');
+            newRoute.component = "custom-page/iframe";
+        }
     } else {
-        newRoute.path = "/web/custom-page/" + el.outLink;
+        newRoute.path = "/web/custom-page/" + el.outLink + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/" + el.outLink;
     }
+    newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
     return newRoute
 }
 
@@ -98,7 +104,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             let initMenu = {
                 meta: {},
             };
-            initMenu.name = el.guid;
             initMenu.meta.title = el.name;
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
@@ -113,10 +118,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
 
                 el.children.forEach((subEl) => {
                     let subRoute = {
-                        name: subEl.guid,
                         meta: {
                             title: subEl.name,
-                            type: subEl.type == 2 ? "link" : "",
+                            type: subEl.type == 2 && subEl.openType != 1 ? "link" : "",
                             entityCode: subEl.entityCode,
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
@@ -126,9 +130,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                         },
                     }
 
-                    let { path, component } = floamtRoute(subEl, isTopNav);
+                    let { path, component, name } = floamtRoute(subEl, isTopNav);
                     subRoute.path = path;
                     subRoute.component = component;
+                    subRoute.name = name;
                     // 如果是审批中心页面直接跳过权限判断
                     let approvalCenter = ["approvalHandle",
                         "approvalSubmit",
@@ -143,10 +148,11 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     }
                 });
             } else {
-                initMenu.meta.type = el.type == 2 ? "link" : "";
-                let { path, component } = floamtRoute(el, isTopNav);
+                initMenu.meta.type = el.type == 2 && el.openType != 1 ? "link" : "";
+                let { path, component, name } = floamtRoute(el, isTopNav);
                 initMenu.path = path;
                 initMenu.component = component;
+                initMenu.name = name;
             }
             // 格式化父菜单  修复父菜单下有子级，但是子级没权限父菜单还可点击
             if (initMenu.children && initMenu.children.length < 1) {
@@ -181,13 +187,18 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 icon: el.useIcon || 'set-up',
                 iconColor: el.iconColor || '',
                 type: el.type,
-                outLink: el.outLink
+                outLink: el.outLink,
             };
             if (el.type == 1) {
                 let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)
                 if (findNav.length > 0) {
                     el.children = formatRouters(findNav[0].config, true)
                 }
+            }
+            if (el.type == 2 && el.openType == 1) {
+                el.path = "/web/custom-page/iframe/" + el.guid;
+                el.component = "custom-page/iframe";
+                el.type = 1;
             }
         })
     }

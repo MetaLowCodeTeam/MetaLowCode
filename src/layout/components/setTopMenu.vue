@@ -101,6 +101,12 @@
                             </template>
                         </el-input>
                     </div>
+                    <div class="mt-10" v-if="cutMenu.type == 2">
+                        <el-radio-group v-model="cutMenu.openType">
+                            <el-radio :label="0">新窗口打开</el-radio>
+                            <el-radio :label="1">嵌入式</el-radio>
+                        </el-radio-group>
+                    </div>
                     <div class="mt-10">
                         <el-button @click="confirmMenu">确定</el-button>
                     </div>
@@ -230,6 +236,8 @@ let defaultMenu = reactive({
     layoutConfigId: null,
     // 外部地址
     outLink: "",
+    // 0 外部打开 1 内嵌（iframe）
+    openType: 0,
     // key
     guid: "",
     // 使用图标

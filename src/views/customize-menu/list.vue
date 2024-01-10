@@ -30,7 +30,11 @@
                             </el-button>
                         </template>
                     </el-input>
-                    <span class="queick-edit" @click="openSelectFieldDialog" v-if="$TOOL.checkRole('r6008')">
+                    <span
+                        class="queick-edit"
+                        @click="openSelectFieldDialog"
+                        v-if="$TOOL.checkRole('r6008')"
+                    >
                         <el-icon size="18">
                             <ElIconEditPen />
                         </el-icon>
@@ -113,8 +117,14 @@
                     @header-dragend="headerDragend"
                     @row-click="handleHighlightChangeTable"
                     @row-dblclick="rowDblclick"
+                    :show-summary="statisticsList.length > 0"
+                    :summary-method="getSummaries"
                 >
-                    <el-table-column type="selection" width="50" :align="'center'" />
+                    <el-table-column
+                        type="selection"
+                        :width="statisticsList.length > 0 ? 60 : 50"
+                        :align="'center'"
+                    />
                     <el-table-column
                         v-for="(column,columnInx) of tableColumn"
                         :key="columnInx"
@@ -338,12 +348,37 @@ const getLayoutList = async () => {
     }
 };
 
+// 列数据统计
+let statistics = ref([]);
+// 返回的统计数据
+let statisticsList = ref([]);
+// 格式化统计数据
+let formatterStatistics = ref({});
+
 // 刷新数据
 const refreshData = () => {
     // 获取所有列字段
-    allFields.value = tableColumn.value.map((el) => el.fieldName);
+    allFields.value = [];
     // 获取所有列排序
-    let findSortFields = tableColumn.value.filter((el) => el.columnSort);
+    let findSortFields = [];
+    // 获取所有列数据统计
+    statistics.value = [];
+    tableColumn.value.forEach((el) => {
+        // 字段
+        allFields.value.push(el.fieldName);
+        // 排序
+        if (el.columnSort) {
+            findSortFields.push(el);
+        }
+        // 统计
+        if (el.dataStatistics) {
+            statistics.value.push({
+                label: el.statisticName,
+                calcMode: el.statisticType,
+                fieldName: el.fieldName,
+            });
+        }
+    });
     // 如果有排序
     if (findSortFields.length > 0) {
         sortFields.value = [
@@ -408,17 +443,17 @@ const onAdd = () => {
     editRefs.value.openDialog(tempV);
 };
 
-const getEditBtnTitle = (row)=>{
+const getEditBtnTitle = (row) => {
     let str = "";
-    if(row.approvalStatus && row.approvalStatus.value == 3){
+    if (row.approvalStatus && row.approvalStatus.value == 3) {
         str = "记录已完成审批，禁止编辑";
-        return
+        return;
     }
-    if(row.approvalStatus && row.approvalStatus.value == 1){
-        str ="记录正在审批中，禁止编辑" ;
+    if (row.approvalStatus && row.approvalStatus.value == 1) {
+        str = "记录正在审批中，禁止编辑";
     }
     return str;
-}
+};
 // 编辑
 const onEditRow = (row) => {
     if (!row) {
@@ -539,6 +574,7 @@ const getTableList = async () => {
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
         builtInFilter: builtInFilter.value,
+        statistics: statistics.value,
     };
     dataExportData.queryParm = { ...param };
     let res = await getDataList(
@@ -550,32 +586,30 @@ const getTableList = async () => {
         param.sortFields,
         param.advFilter,
         param.quickFilter,
-        param.builtInFilter
+        param.builtInFilter,
+        param.statistics
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
         page.total = res.data.pagination.total;
         dataExportData.size = res.data.dataList.length;
         dataExportData.total = res.data.pagination.total;
+        statisticsList.value = res.data.statisticsList || [];
+        formatterStatistics.value = {};
+        if (statisticsList.value.length > 0) {
+            statisticsList.value.forEach((el) => {
+                formatterStatistics.value[el.fieldName] = {
+                    label: el.label,
+                    value: el.value,
+                };
+            });
+        }
     }
     pageLoading.value = false;
 };
 
 // 设置表格高度
 const setTableHeight = () => {
-    // let mainEl = document.querySelector(".customize-menu-list");
-
-    // let tableEl = document.querySelector(".el-table__body-wrapper");
-    // let offsetTop = 0;
-    // if (mainEl) {
-    //     offsetTop += mainEl.offsetTop;
-    // }
-    // if (tableEl) {
-    //     offsetTop += tableEl.offsetTop;
-    // }
-    // offsetTop += 150;
-    // let calcPx = offsetTop + "px";
-    // return 'calc(100% - 40px)'
     return "100%";
 };
 
@@ -598,6 +632,25 @@ const setColumnWidth = (column) => {
         return column.columnWidth;
     }
     return "150";
+};
+
+// 统计显示
+const getSummaries = (param) => {
+    const { columns, data } = param;
+    const sums = [];
+    columns.forEach((column, index) => {
+        if (index === 0) {
+            sums[index] = "统计";
+            return;
+        }
+        // property
+        if (formatterStatistics.value[column.property]) {
+            let { label, value } = formatterStatistics.value[column.property];
+            sums[index] = (label ? label + "：" : '') + (value || 0);
+        }
+    });
+
+    return sums;
 };
 
 /**
