@@ -1,3 +1,5 @@
+import { forIn } from "lodash";
+
 export default {
     // 所有类型
     op_type: {
@@ -46,7 +48,7 @@ export default {
     TextArea: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Text: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Reference: {
-        All: ["NL", "NT"],
+        All: ["LK", "NLK", "NL", "NT"],
         referenceFilters: ["Department", "User"],
         Department: ["LK", "NLK", "SFB", "NL", "NT"],
         User: ["LK", "NLK", "NL", "NT"],
@@ -112,26 +114,34 @@ export default {
             type: ["Tag", "Option", "Status"],
             op: ["EQ", "NEQ", "LK", "NLK"],
         },
+        // 应用类型搜索组件
+        referenceSearch: {
+            type: ["Reference"],
+            referTo: [],
+            op: ["LK", "NLK"],
+        },
     },
-    isShowCom: function (item, comName) {
+    getShowCom: function (item) {
         let { type, op, referTo } = item;
-        // console.log(comName,'comName')
-        let cutCom = this.comList[comName];
-        if (!cutCom) {
-            return false
+        for (const key in this.comList) {
+            if (Object.hasOwnProperty.call(this.comList, key)) {
+                const element = this.comList[key];
+                if (element.type.includes(type) && element.op.includes(op)) {
+                    // 如果不是引用字段
+                    if (type != 'Reference') {
+                        return key
+                    }
+                    // 如果是引用字段
+                    else {
+                        // 判断有没有 referTo 且在不在  组件的 referTo里。
+                        if (referTo && element.referTo && element.referTo.includes(referTo)) {
+                            return key
+                        } else {
+                            return "referenceSearch"
+                        }
+                    }
+                }
+            }
         }
-        if (!cutCom.op.includes(op)) {
-            return false
-        }
-        if (type && !cutCom.type.includes(type)) {
-            return false
-        }
-        if (referTo && !cutCom.referTo.includes(referTo)) {
-            return false
-        }
-        return true
     },
-
-
-
 }

@@ -41,7 +41,7 @@
                 </el-col>
                 <!-- 条件类型 -->
                 <el-col :span="4">
-                    <el-select v-model="item.op" size="default">
+                    <el-select v-model="item.op" size="default" @change="getOpCom(item)">
                         <el-option
                             v-for="op in getSelectOp(item)"
                             :key="op"
@@ -53,7 +53,7 @@
                 <!-- 条件值 -->
                 <el-col :span="10">
                     <!-- 日期选择器 -->
-                    <div v-if="conditionsConfig.isShowCom(item,'datePicker')">
+                    <div v-if="item.opCom =='datePicker'">
                         <el-date-picker
                             size="default"
                             v-model="item.value"
@@ -66,7 +66,7 @@
                         />
                     </div>
                     <!-- 日期区间 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'datePickerBw')">
+                    <div v-else-if="item.opCom =='datePickerBw'">
                         <el-date-picker
                             size="default"
                             v-model="item.value"
@@ -93,7 +93,7 @@
                         />
                     </div>
                     <!-- 数字输入框 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'numberInput')">
+                    <div v-else-if="item.opCom =='numberInput'">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -104,7 +104,7 @@
                         />
                     </div>
                     <!-- 数字输入框区间 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'numberInputBw')">
+                    <div v-else-if="item.opCom =='numberInputBw'">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -125,7 +125,7 @@
                         />
                     </div>
                     <!-- 文本输入框 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'textInput')">
+                    <div v-else-if="item.opCom =='textInput'">
                         <el-input
                             size="default"
                             v-model="item.value"
@@ -134,7 +134,7 @@
                         />
                     </div>
                     <!-- 布尔类型 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'booleanSelect')">
+                    <div v-else-if="item.opCom =='booleanSelect'">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -148,7 +148,7 @@
                         </el-select>
                     </div>
                     <!-- 用户下拉框 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'userSelect')">
+                    <div v-else-if="item.opCom =='userSelect'">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -169,7 +169,7 @@
                     </div>
 
                     <!-- 部门下拉框 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'departmentSelect')">
+                    <div v-else-if="item.opCom =='departmentSelect'">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -189,7 +189,7 @@
                         </el-select>
                     </div>
                     <!-- 类型为Tag 和 option的 -->
-                    <div v-else-if="conditionsConfig.isShowCom(item,'optionData')">
+                    <div v-else-if="item.opCom =='optionData'">
                         <el-select
                             size="default"
                             v-model="item.value"
@@ -205,6 +205,30 @@
                                 :key="userInx"
                             />
                         </el-select>
+                    </div>
+                    <div v-else-if="item.opCom =='referenceSearch'">
+                        <el-input v-model="item.value2" readonly>
+                            <template #append>
+                                <el-button @click="openReferenceDialog">
+                                    <el-icon>
+                                        <ElIconSearch />
+                                    </el-icon>
+                                </el-button>
+                            </template>
+                        </el-input>
+                        <el-dialog
+                            title="请选择"
+                            class="reference-dialog"
+                            v-model="showReferenceDialogFlag"
+                            append-to-body
+                            width="520"
+                        >
+                            <ReferenceSearchTable
+                                :entity="entityName"
+                                :refField="item.fieldName"
+                                @recordSelected="(event)=> setReferRecord(event,item) "
+                            />
+                        </el-dialog>
                     </div>
                 </el-col>
             </el-row>
@@ -246,7 +270,11 @@
 
 <script>
 import conditionsConfig from "@/config/conditionsConfig";
+import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 export default {
+    components: {
+        ReferenceSearchTable,
+    },
     props: {
         modelValue: null,
         footer: { type: Boolean, default: false },
@@ -287,6 +315,8 @@ export default {
             // 所有部门
             departmentList: [],
             conditionsConfig: {},
+            // 条件组件
+            showReferenceDialogFlag: false,
         };
     },
     watch: {
@@ -304,6 +334,14 @@ export default {
         this.op_type = { ...this.conditionsConfig.op_type };
     },
     methods: {
+        openReferenceDialog() {
+            this.showReferenceDialogFlag = true;
+        },
+        setReferRecord(event, item) {
+            item.value = event.id;
+            item.value2 = event.label;
+            this.showReferenceDialogFlag = false;
+        },
         async getFieldSet() {
             this.loading = true;
             // 获取条件字段接口
@@ -321,6 +359,7 @@ export default {
                     return {
                         fieldName: el.name,
                         op: "",
+                        opCom: "",
                         value: "",
                         value2: "",
                         isError: false,
@@ -361,6 +400,12 @@ export default {
             );
             Object.assign(item, metadata[0]);
             item.op = this.getSelectOp(item)[0];
+            // 获取条件组件
+            this.getOpCom(item);
+        },
+        // 条件组件
+        getOpCom(item) {
+            item.opCom = this.conditionsConfig.getShowCom(item);
         },
         clearError(item) {
             item.isError = false;
@@ -415,7 +460,6 @@ export default {
             // console.log(condition,'condition')
             this.fieldChange(condition);
             this.conditionConf.items.push(condition);
-            
         },
         // 删除条件
         delConditions(inx) {

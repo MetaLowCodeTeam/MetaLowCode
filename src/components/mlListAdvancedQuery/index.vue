@@ -12,7 +12,10 @@
                         @click="changeOp(op)"
                     >
                         <div class="item-text fl text-ellipsis">{{ op.configName }}</div>
-                        <div class="item-icon fl" v-if="op.layoutConfigId !== 'all' && $TOOL.checkRole('r6008')">
+                        <div
+                            class="item-icon fl"
+                            v-if="op.layoutConfigId !== 'all' && $TOOL.checkRole('r6008')"
+                        >
                             <span class="icon-span add-icon mr-5" @click.stop="editAdv(op)">
                                 <el-icon size="15">
                                     <ElIconEditPen />
@@ -28,7 +31,7 @@
                 </div>
             </template>
         </el-select>
-        <div class="select-filter"  @click="showAdvfilter = !showAdvfilter">
+        <div class="select-filter" @click="showAdvfilter = !showAdvfilter">
             <el-icon class="select-filter-icon" size="16">
                 <ElIconFilter />
             </el-icon>
@@ -134,7 +137,7 @@ import mlShareTo from "@/components/mlShareTo/index.vue";
 const $ElMessage = inject("$ElMessage");
 import { ElMessageBox } from "element-plus";
 const $API = inject("$API");
-const $TOOL = inject("$TOOL")
+const $TOOL = inject("$TOOL");
 const props = defineProps({
     modelValue: null,
     entityName: { type: String, default: "" },
@@ -201,13 +204,15 @@ onBeforeMount(() => {
         let box4 = document.querySelector(".el-overlay-dialog");
         let box5 = document.querySelector(".save-dialog");
         let box6 = document.querySelector(".mlselect-user-content");
+        let box7 = document.querySelector(".reference-dialog");
         if (
-            (box &&box.contains(e.target)) ||
-            (box2 &&box2.contains(e.target)) ||
-            (box3 &&box3.contains(e.target)) ||
+            (box && box.contains(e.target)) ||
+            (box2 && box2.contains(e.target)) ||
+            (box3 && box3.contains(e.target)) ||
             (box4 && box4.contains(e.target)) ||
             (box5 && box5.contains(e.target)) ||
-            (box6 && box6.contains(e.target))
+            (box6 && box6.contains(e.target)) ||
+            (box7 && box7.contains(e.target))
         ) {
             // 不隐藏
         } else {
