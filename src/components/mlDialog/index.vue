@@ -10,6 +10,7 @@
         :class="{'not-header':notHeader}"
         :top="top"
         v-if="isShow"
+        :draggable="draggable"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>

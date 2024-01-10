@@ -1,5 +1,5 @@
 <template>
-    <ml-dialog :title="row.dialogTitle" v-if="isShow" v-model="isShow" width="55%">
+    <ml-dialog :title="row.dialogTitle" v-if="isShow" v-model="isShow" width="55%" draggable>
         <div class="main" v-loading="loading">
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
