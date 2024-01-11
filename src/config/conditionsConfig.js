@@ -59,7 +59,6 @@ export default {
     Integer: ["EQ", "GT", "LT", "GE", "LE", "BW"],
     Decimal: ["EQ", "GT", "LT", "GE", "LE", "BW"],
     Percent: ["EQ", "GT", "LT", "GE", "LE", "BW"],
-    Percent: ["EQ", "GT", "LT", "GE", "LE", "BW"],
     Boolean: ["EQ", "NL", "NT"],
     Option: ["EQ", "NEQ", "NL", "NT"],
     Status: ["EQ", "NEQ", "NL", "NT"],

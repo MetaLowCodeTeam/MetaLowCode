@@ -475,10 +475,9 @@ export default {
         },
 		initTableData() {
 			getFieldListOfEntity(this.entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
+                if (res.code  != 200) {
+                    return
+                }
 
 				this.tableData = res.data
 				this.filteredData = copyNew(this.tableData)
@@ -494,11 +493,10 @@ export default {
 			this.showNewFieldDialogFlag = true
 		},
 
-		editTableData(row) {
+		async editTableData(row) {
 			if (!!row.type) {
 				fieldCanBeEdited(row.name, this.entity).then(res => {
-					if (res.error != null) {
-						this.$message({message: res.error, type: 'error'})
+					if (res.code  != 200) {
 						return
 					}
 
@@ -517,19 +515,15 @@ export default {
 			}
 		},
 
-		deleteTableData(row) {
+		async deleteTableData(row) {
             if(publicSetting.value.trialVersionFlag){
                 this.$message.error("试用版本已禁用删除字段功能，敬请谅解");
                 return
             }
 			if (!!this.entity && !!row.type && !!row.name) {
-				fieldCanBeDeleted(row.name, this.entity).then(res => {
-					if (res.error != null) {
-						this.$message({message: res.error, type: 'error'})
-						return
-					}
-
-					if (res.data !== true) {
+                let res = await fieldCanBeDeleted(row.name, this.entity);
+                if(res && res.code == 200){
+                    if (res.data !== true) {
 						this.$message.info('提示：系统字段/保留字段不能被删除！')
 						return
 					}
@@ -562,24 +556,17 @@ export default {
 					}).catch(() => {
 						this.$message({type: 'info', message: '已取消删除'});
 					});
-				}).catch(res => {
-					this.$message({message: res.message, type: 'error'})
-				})
+                }
+				
 			}
 		},
 
-		deleteField(field, entity) {
-			deleteField(field, entity).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message.success('字段已删除')
+		async deleteField(field, entity) {
+            let res = await deleteField(field, entity);
+            if(res && res.code == 200){
+                this.$message.success('字段已删除')
 				this.initTableData()
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+            }
 		},
 
 		onFieldSaved() {
@@ -593,14 +580,10 @@ export default {
 			this.showEditFieldDialogFlag = false
 		},
 
-		filterMainEntity(filterList, callBack) {
-			getEntitySet().then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				let entityItems = res.data
+		async filterMainEntity(filterList, callBack) {
+            let res = await getEntitySet();
+            if(res && res.code == 200){
+                let entityItems = res.data
 				filterList.length = 0  /* 清空数组，不能用filterList=[]，否则SimpleTable显示不出数据！！ */
 				filterList = entityItems.filter(entity => {
 					if (entity.systemEntityFlag || entity.internalEntityFlag) {
@@ -611,9 +594,7 @@ export default {
 				})
 
 				callBack()
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+            }
 		},
 
 		/*
@@ -638,52 +619,35 @@ export default {
 				inputValue: this.entityProps.label,
 				inputPattern: /^[A-Za-z\u4e00-\u9fa5\d]+$/, /* 匹配由字母大小写、汉字或数字组成的字符串 */
 				inputErrorMessage: '输入不正确'
-			}).then(({value}) => {
-				updateEntityLabel(this.entityProps.name, value).then(res => {
-					if (res.error != null) {
-						this.$message({message: res.error, type: 'error'})
-						return
-					}
-
-					this.entityProps.label = value
+			}).then(async ({value}) => {
+                let res = await updateEntityLabel(this.entityProps.name, value);
+                if(res && res.code == 200){
+                    this.entityProps.label = value
                     getEntityList()
 					this.$message({message: '修改成功', type: 'success'})
-				}).catch(res => {
-					this.$message({message: res.message, type: 'error'})
-				})
+                }
+				
 			}).catch(() => {
 				this.$message.info('已取消')
 			})
 		},
 
-		modifyEntityNameField() {
-			getTextFieldList(this.entityProps.name).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.nameFieldData = res.data
+		async modifyEntityNameField() {
+            let res = await getTextFieldList(this.entityProps.name);
+            if(res && res.code == 200){
+                this.nameFieldData = res.data
 				this.showNameFieldDialogFlag = true
-			}).catch(res => {
-
-			})
+            }
 		},
 
-		selectNameField(row) {
-			updateEntityNameField(this.entityProps.name, row.name).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-					return
-				}
-
-				this.$message({message: '修改成功', type: 'success'})
+		async selectNameField(row) {
+            let res = await updateEntityNameField(this.entityProps.name, row.name);
+            if(res && res.code == 200){
+                this.$message({message: '修改成功', type: 'success'})
 				this.entityProps.nameField = row.label
 				this.showNameFieldDialogFlag = false
 				this.initTableData()
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+            }
 		},
 
 		searchTableData() {

@@ -394,6 +394,7 @@ const createNewEntity = (target) => {
     }
     // 新建
     else {
+        newEntityProps.value.physicalName = "";
         newEntityProps.value.activeType = 1;
     }
 };
