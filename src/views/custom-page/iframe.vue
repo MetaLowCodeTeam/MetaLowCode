@@ -12,7 +12,6 @@ const Router = useRouter();
 let url = ref("https://v3.cn.vuejs.org");
 
 onMounted(()=>{
-    // console.log(Router.currentRoute.value);
     url.value = Router.currentRoute.value.meta.outLink;
 })
 

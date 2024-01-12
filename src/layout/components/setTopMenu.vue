@@ -71,13 +71,6 @@
                     >
                         <el-select v-model="parentMenu" filterable class="w-100" disabled></el-select>
                     </div>
-                    <div v-if="cutMenu.type == 2">
-                        <el-input
-                            v-model="cutMenu.outLink"
-                            placeholder="输入外部地址，例：https://www.baidu.com/"
-                            clearable
-                        ></el-input>
-                    </div>
                     <div class="mt-10">
                         <el-input
                             v-model="cutMenu.configName"
