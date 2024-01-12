@@ -89,18 +89,12 @@ const initApi = async () => {
 
 // 获取公开系统配置
 const queryPublicSetting = async () => {
-    const loading = ElLoading.service({
-        lock: true,
-        text: "Loading",
-        background: "rgba(0, 0, 0, 0.7)",
-    });
     let res = await getPublicSetting();
     if (res) {
         let resData = res.data || {};
         resData.themeColor = res.data.themeColor || "#409EFF";
         colorPrimary(resData.themeColor);
         setPublicSetting(resData);
-        loading.close();
     }
 };
 
