@@ -25,8 +25,32 @@
                     <el-switch v-model="scope.row.defaultChart" @change="changeDefault(scope.row)" />
                 </template>
             </el-table-column>
-            <el-table-column label="操作" :align="'center'" width="200" fixed="right">
+            <el-table-column label="操作" :align="'center'" width="230" fixed="right">
                 <template #default="scope">
+                    <el-dropdown
+                        trigger="click"
+                        @command="(command)=> handleCommand(command,scope.row)"
+                    >
+                        <el-button
+                            size="small"
+                            type="primary"
+                            link
+                            style="position: relative;top: 2px;left: -5px;"
+                        >
+                            <span class="mr-3">
+                                <el-icon>
+                                    <ElIconFilm />
+                                </el-icon>
+                            </span>
+                            <span>设计</span>
+                        </el-button>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item command="pc">PC</el-dropdown-item>
+                                <el-dropdown-item command="mobile">移动端</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                     <el-button size="small" type="primary" link @click="allowOpenDialog(scope.row)">
                         <span class="mr-3">
                             <el-icon>
@@ -69,11 +93,7 @@
         </div>
     </ml-dialog>
     <!-- 分配 -->
-    <Allocation
-        ref="allocationRefs"
-        idFieldName="chartId"
-        @allocationSuccess="allocationSuccess"
-    />
+    <Allocation ref="allocationRefs" idFieldName="chartId" @allocationSuccess="allocationSuccess" />
 </template>
    
 <script setup>
@@ -100,7 +120,6 @@ let tableColumn = ref([
     {
         prop: "chartName",
         label: "名称",
-        highlight: true,
     },
 
     {
@@ -206,15 +225,17 @@ const changeDefault = async (row) => {
     mlSingleListRef.value.loading = false;
 };
 
-// 高亮字段点击
-const highlightClick = (row) => {
+
+const handleCommand = (command, row) => {
     let routerData = {
         path: "/web/dashboard-design",
         query: {
             chartId: row.chartId,
+            type: command,
         },
     };
-    router.push(routerData);
+    let newUrl = router.resolve(routerData);
+    window.open(newUrl.href);
 };
 
 /**
@@ -230,9 +251,9 @@ const allowOpenDialog = (row) => {
     });
 };
 
-const allocationSuccess = ()=>{
+const allocationSuccess = () => {
     mlSingleListRef.value.getTableList();
-}
+};
 </script>
 <style lang="scss" scoped>
 </style>

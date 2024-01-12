@@ -3,12 +3,7 @@
     <div class="dashboard" v-loading="loading" v-if="isHasPlugin">
         <template v-if="dashboardList.length > 0">
             <v-form-render v-if="showFormRender" ref="dashboardWidget"></v-form-render>
-            <el-popover
-                placement="bottom"
-                :width="200"
-                trigger="click"
-                v-if="!routerDefaultId"
-            >
+            <el-popover placement="bottom" :width="200" trigger="click" v-if="!routerDefaultId">
                 <div class="dashboard-list">
                     <el-scrollbar>
                         <div
@@ -30,7 +25,7 @@
                 </template>
             </el-popover>
         </template>
-        <el-empty v-else description="暂无视图" />
+        <el-empty v-if="isShowEmpty" description="暂无视图" />
     </div>
     <div v-else class="not-plugin">数据分析 插件未安装！</div>
 </template>
@@ -63,12 +58,11 @@ let isHasPlugin = ref(false);
 
 let routerDefaultId = ref("");
 
-onMounted(() => {
+let isShowEmpty = ref(false);
+onMounted(async () => {
     pluginIdList.value = publicSetting.value.APP_PLUGINID || [];
     isHasPlugin.value = pluginIdList.value.includes("metaDataCube");
-
     routerDefaultId.value = router.currentRoute.value.query.default;
-
     if (isHasPlugin.value) {
         // 获取仪表盘数据
         getDashboardList();
@@ -77,6 +71,7 @@ onMounted(() => {
 
 const getDashboardList = async () => {
     loading.value = true;
+    isShowEmpty.value = false;
     defaultChartId.value = $TOOL.data.get("defaultChartId") || false;
     let filter = {
         equation: "AND",
@@ -104,9 +99,9 @@ const getDashboardList = async () => {
         //         return;
         //     }
         // }
-        
+
         // 查有没有路由ID
-        if(routerDefaultId.value){
+        if (routerDefaultId.value) {
             let routerDefault = dashboardList.value.filter(
                 (el) => el.chartId == routerDefaultId.value
             );
@@ -114,15 +109,12 @@ const getDashboardList = async () => {
                 dashboardDefaultId.value = routerDefault[0].chartId;
                 initFormConfig(dashboardDefaultId.value);
                 loading.value = false;
-            }else {
+            } else {
                 dashboardList.value = [];
                 loading.value = false;
             }
-            
         }
-       
-        
-        
+
         // 查找有没有默认
         let filterDefaultId = dashboardList.value.filter(
             (el) => el.defaultChart
@@ -133,13 +125,13 @@ const getDashboardList = async () => {
             loading.value = false;
             return;
         }
-
         // 如果都没有
         initFormConfig(dashboardList.value[0].chartId);
-        loading.value = false;
-    } else {
-        loading.value = false;
     }
+    if (dashboardList.length < 1) {
+        isShowEmpty.value = true;
+    }
+    loading.value = false;
 };
 
 const initFormConfig = async (chartId) => {

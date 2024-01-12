@@ -8,6 +8,12 @@
     >
         <!-- 配置工具按钮 -->
         <template #customToolButtons>
+            <el-button type="primary" link @click="copyCanvas">
+                <el-icon>
+                    <ElIconCopyDocument />
+                </el-icon>
+                从{{ isMobile ? 'PC' : '移动端' }}复制
+            </el-button>
             <el-button type="primary" link @click="clearCanvas">
                 <el-icon>
                     <ElIconDelete />
@@ -34,9 +40,9 @@ import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import { dashboard_container_schema } from "@/views/system/dashboard-design/charts/charts-schema";
 import { deepClone } from "@/utils/util";
 import { saveRecord, queryById } from "@/api/crud";
-import { onMounted, ref, onBeforeUnmount, nextTick } from "vue";
+import { onMounted, ref, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 const router = useRouter();
 const { Utils } = VisualDesign.VFormSDK;
 
@@ -57,31 +63,62 @@ let designerConfig = ref({
     chartLib: true,
 });
 let dbDesignerRef = ref();
-onMounted(() => {
+// 是否移动端
+let isMobile = ref(false);
+onMounted(async () => {
     chartId.value = router.currentRoute.value.query.chartId;
+    let type = router.currentRoute.value.query.type;
     if (!chartId.value) {
         router.push("/web/dashboard-list");
         return;
     }
-    initFormConfig();
+    if (type == "mobile") {
+        isMobile.value = true;
+    } else {
+        isMobile.value = false;
+    }
+    let key = isMobile.value ? "mobileChartData" : "chartData";
+    initFormConfig(key);
 });
 
 // 初始化数据
-const initFormConfig = async () => {
+const initFormConfig = async (key) => {
     loading.value = true;
-    let res = await queryById(chartId.value, "chartData");
-
+    let res = await queryById(chartId.value, key);
     if (res) {
-        if (!res.data.chartData) {
+        if (!res.data[key]) {
             clearCanvas();
         } else {
-            let blankFormJson = JSON.parse(res.data.chartData);
+            let blankFormJson = JSON.parse(res.data[key]);
             dbDesignerRef.value.setFormJson(blankFormJson);
         }
     } else {
         clearCanvas();
     }
     loading.value = false;
+};
+
+// 复制画布
+const copyCanvas = () => {
+    ElMessageBox.confirm(
+        "从" +
+            (isMobile.value ? "PC" : "移动端") +
+            "复制图表将会清空当前配置，是否确认复制?",
+        "提示：",
+        {
+            confirmButtonText: "确认",
+            cancelButtonText: "取消",
+            type: "warning",
+        }
+    )
+        .then(async () => {
+            // 先清空
+            clearCanvas();
+            // 如果是移动 就从PC复制，如果是PC就从移动复制
+            let key = isMobile.value ? "chartData" : "mobileChartData";
+            initFormConfig(key);
+        })
+        .catch(() => {});
 };
 
 // 清空画布
@@ -113,11 +150,22 @@ const saveDesign = async () => {
     loading.value = true;
     let param = {
         entity: "Chart",
-        formModel: {
-            chartData: JSON.stringify(dbDesignerRef.value.getFormJson(false)),
-        },
+        formModel: {},
         id: chartId.value,
     };
+    console.log(
+        dbDesignerRef.value.getFormJson(false),
+        " dbDesignerRef.value.getFormJson"
+    );
+    if (isMobile.value) {
+        param.formModel.mobileChartData = JSON.stringify(
+            dbDesignerRef.value.getFormJson(false)
+        );
+    } else {
+        param.formModel.chartData = JSON.stringify(
+            dbDesignerRef.value.getFormJson(false)
+        );
+    }
     let res = await saveRecord(param.entity, param.id, param.formModel);
     if (res) {
         ElMessage.success("保存成功");

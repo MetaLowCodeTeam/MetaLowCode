@@ -5,7 +5,13 @@
         :zIndex="$CONFIG.zIndex"
         :button="$CONFIG.button"
     >
-        <router-view></router-view>
+        <router-view v-if="isShowBody"></router-view>
+        <div class="app-loading" v-else>
+            <div class="app-loading__logo">
+            </div>
+            <div class="app-loading__loader"></div>
+            <div class="app-loading__title">Loading...</div>
+        </div>
     </el-config-provider>
     <div class="web-ver">{{ publicSetting.webVer }}</div>
     <mlCustomerService v-if="publicSetting.trialVersionFlag" />
@@ -30,7 +36,7 @@ import { storeToRefs } from "pinia";
 import { ElLoading } from "element-plus";
 import { getLoginUser } from "@/api/user";
 import { useRouter } from "vue-router";
-const { getEntityList, setPublicSetting,setUserInfo } = useCommonStore();
+const { getEntityList, setPublicSetting, setUserInfo } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
@@ -38,6 +44,7 @@ const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
 let { proxy } = instance;
+let isShowBody = ref(false);
 let config = reactive({
     size: "default",
     zIndex: 2000,
@@ -64,14 +71,17 @@ const initApi = async () => {
     let res = await getLoginUser();
     if (res && res.data) {
         if (res.data.data) {
-            setUserInfo(res.data.data)
+            isShowBody.value = false;
+            setUserInfo(res.data.data);
             // 轮循获取新消息
             roundRobin(5000);
-            // 获取实体列表
-            getEntityList();
             // 获取新消息
             getNewMsgNum();
+            // 获取实体列表
+            await getEntityList();
+            isShowBody.value = true;
         } else {
+            isShowBody.value = true;
             router.push({ path: "/web/login" });
         }
     }
@@ -135,5 +145,60 @@ const roundRobin = (ms) => {
     left: 0;
     bottom: 0;
     z-index: -1;
+}
+.app-loading {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #fff;
+}
+.app-loading__logo {
+    margin-bottom: 30px;
+}
+.app-loading__logo img {
+    width: 90px;
+    vertical-align: bottom;
+}
+.app-loading__loader {
+    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    border: 5px solid transparent;
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: 0.5s loader linear infinite;
+    position: relative;
+}
+.app-loading__loader:before {
+    box-sizing: border-box;
+    content: "";
+    display: block;
+    width: inherit;
+    height: inherit;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    border: 5px solid #ccc;
+    border-radius: 50%;
+    opacity: 0.5;
+}
+.app-loading__title {
+    font-size: 24px;
+    color: #333;
+    margin-top: 30px;
+}
+@keyframes loader {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>

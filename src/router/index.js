@@ -36,10 +36,9 @@ let routes_404_r = () => { }
 var isGetRouter = false;
 
 router.beforeEach(async (to, from, next) => {
+    
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
-    const { queryEntityNameByLabel } = useCommonStore();
-    const { getUseMenuList, getNavigationApi, getTopNavMenuList } = useLayoutConfigStore();
     NProgress.start()
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
@@ -64,9 +63,10 @@ router.beforeEach(async (to, from, next) => {
     }
     let routerEntityname = to.params?.entityname;
     if (routerEntityname && !to.meta.title) {
+        const { queryEntityNameByLabel } = useCommonStore();
         to.meta.title = queryEntityNameByLabel(routerEntityname)
     }
-    if(to.name == "inIframe"){
+    if (to.name == "inIframe") {
         to.meta.title = to.query.routerName
     }
     //整页路由处理
@@ -74,8 +74,10 @@ router.beforeEach(async (to, from, next) => {
         to.matched = [to.matched[to.matched.length - 1]]
 
     }
+
     //加载动态/静态路由
     if (!isGetRouter) {
+        const { getUseMenuList, getNavigationApi, getTopNavMenuList } = useLayoutConfigStore();
         await getNavigationApi(() => {
             isGetRouter = false;
             next({
@@ -86,7 +88,7 @@ router.beforeEach(async (to, from, next) => {
             return true
         })
         userMenu[0].children.push(...getUseMenuList())
-        userMenu.splice(1,0,...getTopNavMenuList())
+        userMenu.splice(1, 0, ...getTopNavMenuList())
         let menu = [...userMenu]
         var menuRouter = filterAsyncRouter(menu)
         menuRouter = flatAsyncRoutes(menuRouter)
@@ -109,28 +111,28 @@ router.afterEach((to, from) => {
     NProgress.done()
 });
 
-router.onError((error,to) => {
+router.onError((error, to) => {
     NProgress.done();
     // 如果是动态加载资源失败时 刷新页面
-    if(error.message.includes('Failed to fetch dynamically imported module')){
+    if (error.message.includes('Failed to fetch dynamically imported module')) {
         window.location = to.fullPath;
-    }else {
+    } else {
         ElNotification.error({
             title: '路由错误，请尝试刷新页面',
             message: error.message
         });
     }
-    
+
 });
 
 //入侵追加自定义方法、对象
 router.sc_getMenu = () => {
-    const { getUseMenuList,getTopNavMenuList } = useLayoutConfigStore();
+    const { getUseMenuList, getTopNavMenuList } = useLayoutConfigStore();
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
         return true
     })
     userMenu[0].children.push(...getUseMenuList())
-    userMenu.splice(1,0,...getTopNavMenuList())
+    userMenu.splice(1, 0, ...getTopNavMenuList())
     // userMenu.push(...apiMenu)
     var menu = [...userMenu]
     return menu

@@ -51,11 +51,7 @@ const formatItem = (list, target) => {
 
 // 图表数据获取接口
 export async function queryChartData(formModel, type) {
-    const { getEntityList } = useCommonStore();
     const { allEntityName } = storeToRefs(useCommonStore());
-    // 获取实体列表
-
-    await getEntityList();
     // getEntityList().then(() => {
     let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
     // 指标
