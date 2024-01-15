@@ -8,7 +8,6 @@
         fieldName="chartName"
         :tableColumn="tableColumn"
         :filterItems="filterItems"
-        @highlightClick="highlightClick"
     >
         <template #addbutton>
             <el-button type="primary" @click="addClick">
