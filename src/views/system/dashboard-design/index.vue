@@ -91,6 +91,9 @@ const initFormConfig = async (key) => {
         } else {
             let blankFormJson = JSON.parse(res.data[key]);
             dbDesignerRef.value.setFormJson(blankFormJson);
+            if (isMobile.value) {
+                dbDesignerRef.value.designer?.changeLayoutType("H5");
+            }
         }
     } else {
         clearCanvas();
@@ -132,6 +135,9 @@ const clearCanvas = () => {
         formConfig: Utils.getDefaultFormConfig(),
     };
     dbDesignerRef.value.setFormJson(blankFormJson);
+    if (isMobile.value) {
+        dbDesignerRef.value.designer?.changeLayoutType("H5");
+    }
 };
 
 const previewDesign = () => {
