@@ -271,6 +271,8 @@
 <script>
 import conditionsConfig from "@/config/conditionsConfig";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
 export default {
     components: {
         ReferenceSearchTable,
@@ -344,9 +346,13 @@ export default {
         },
         async getFieldSet() {
             this.loading = true;
+            let entity = this.entityName;
+            if(typeof (entity * 1) == 'number'){
+                entity = queryEntityNameByCode(entity);
+            }
             // 获取条件字段接口
             let param = {
-                entity: this.entityName,
+                entity: entity,
             };
             let res = await this.$API.common.getFieldListOfFilter(param);
             let resUser = await this.$API.common.getUser(param);
