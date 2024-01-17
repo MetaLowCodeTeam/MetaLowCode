@@ -272,7 +272,7 @@
 import conditionsConfig from "@/config/conditionsConfig";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import useCommonStore from "@/store/modules/common";
-const { queryEntityNameByCode } = useCommonStore();
+
 export default {
     components: {
         ReferenceSearchTable,
@@ -345,15 +345,17 @@ export default {
             this.showReferenceDialogFlag = false;
         },
         async getFieldSet() {
+            const { queryEntityNameByCode } = useCommonStore();
             this.loading = true;
             let entity = this.entityName;
-            if(typeof (entity * 1) == 'number'){
+            if(!isNaN(entity)){
                 entity = queryEntityNameByCode(entity);
             }
             // 获取条件字段接口
             let param = {
                 entity: entity,
             };
+            console.log(param,'entity');
             let res = await this.$API.common.getFieldListOfFilter(param);
             let resUser = await this.$API.common.getUser(param);
             let resDepartment = await this.$API.common.getDepartment(param);
