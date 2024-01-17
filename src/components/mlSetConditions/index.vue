@@ -222,9 +222,10 @@
                             v-model="showReferenceDialogFlag"
                             append-to-body
                             width="520"
+                            v-if="formatEntityName"
                         >
                             <ReferenceSearchTable
-                                :entity="entityName"
+                                :entity="formatEntityName"
                                 :refField="item.fieldName"
                                 @recordSelected="(event)=> setReferRecord(event,item) "
                             />
@@ -319,6 +320,8 @@ export default {
             conditionsConfig: {},
             // 条件组件
             showReferenceDialogFlag: false,
+            // 格式化的实体名称
+            formatEntityName: "",
         };
     },
     watch: {
@@ -348,14 +351,14 @@ export default {
             const { queryEntityNameByCode } = useCommonStore();
             this.loading = true;
             let entity = this.entityName;
-            if(!isNaN(entity)){
+            if (!isNaN(entity)) {
                 entity = queryEntityNameByCode(entity);
             }
+            this.formatEntityName = entity;
             // 获取条件字段接口
             let param = {
-                entity: entity,
+                entity,
             };
-            console.log(param,'entity');
             let res = await this.$API.common.getFieldListOfFilter(param);
             let resUser = await this.$API.common.getUser(param);
             let resDepartment = await this.$API.common.getDepartment(param);
