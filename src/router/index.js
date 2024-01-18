@@ -36,7 +36,7 @@ let routes_404_r = () => { }
 var isGetRouter = false;
 
 router.beforeEach(async (to, from, next) => {
-    
+
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
     NProgress.start()
@@ -113,8 +113,8 @@ router.afterEach((to, from) => {
 
 router.onError((error, to) => {
     NProgress.done();
-    // 如果是动态加载资源失败时 刷新页面
-    if (error.message.includes('Failed to fetch dynamically imported module')) {
+    const errors = ['Failed to fetch dynamically imported module', 'Unable to preload css'];
+    if (errors.some(e => error.message.includes(e))) {
         window.location = to.fullPath;
     } else {
         ElNotification.error({
@@ -122,7 +122,6 @@ router.onError((error, to) => {
             message: error.message
         });
     }
-
 });
 
 //入侵追加自定义方法、对象
