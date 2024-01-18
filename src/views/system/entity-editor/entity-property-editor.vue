@@ -43,6 +43,7 @@
                         v-model="myEntityProps.layoutable"
                         active-text="是"
                         inactive-text="否"
+                        @change="changeAuthorization"
                         :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
                 </el-form-item>
@@ -52,6 +53,7 @@
                         v-model="myEntityProps.listable"
                         active-text="是"
                         inactive-text="否"
+                        @change="changeAuthorization"
                         :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
                 </el-form-item>
@@ -290,6 +292,8 @@ let tableData = ref([]);
 const onToggleDetailEntityFlag = (val) => {
     if (!!val) {
         myEntityProps.value.authorizable = false;
+        myEntityProps.value.listable = false;
+        myEntityProps.value.layoutable = false;
     }
 };
 

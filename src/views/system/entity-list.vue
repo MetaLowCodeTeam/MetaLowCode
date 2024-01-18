@@ -156,48 +156,68 @@
                 @mouseenter="clearHideMenuTimer"
                 @mouseleave="setHideMenuTimer"
             >
-                <div
-                    v-if="checkRole('r6001')"
-                    class="context-menu__item"
-                    @click="gotoEntityManager()"
-                >字段管理</div>
-                <div
-                    v-if="checkRole('r6003')"
-                    class="context-menu__item"
-                    @click="gotoFormLayout()"
-                >表单设计</div>
-                <div
-                    v-if="checkRole('r6008')"
-                    class="context-menu__item"
-                    @click="gotoListView()"
-                >列表设计</div>
-                <div class="context-menu-divider"></div>
-                <div
-                    v-if="checkRole('r6016')"
-                    class="context-menu__item"
-                    @click="gotoRoute('process-list', true,)"
-                >流程设计</div>
-                <div
-                    v-if="checkRole('r6015')"
-                    class="context-menu__item"
-                    @click="gotoRoute('trigger-list', false)"
-                >触发器设计</div>
-                <div
-                    v-if="checkRole('r45-2')"
-                    class="context-menu__item"
-                    @click="gotoRoute('templates-list', true)"
-                >报表设计</div>
-                <div class="context-menu-divider"></div>
-				<div
-					class="context-menu__item"
-					@click="createNewEntity('copy')"
-					v-if="!selectedEntityObj.systemEntityFlag"
-				>复制实体</div>
-                <div
-                    v-if="checkRole('r6002')"
-                    class="context-menu__item"
-                    @click="deleteSelectedEntity()"
-                >删除实体</div>
+                <!-- 明细实体 -->
+                <template v-if="selectedEntityObj.detailEntityFlag">
+                    <div
+                        v-if="checkRole('r6001')"
+                        class="context-menu__item"
+                        @click="gotoEntityManager()"
+                    >字段管理</div>
+                    <div
+                        class="context-menu__item"
+                        @click="createNewEntity('copy')"
+                        v-if="!selectedEntityObj.systemEntityFlag"
+                    >复制实体</div>
+                    <div
+                        v-if="checkRole('r6002')"
+                        class="context-menu__item"
+                        @click="deleteSelectedEntity()"
+                    >删除实体</div>
+                </template>
+                <template v-else>
+                    <div
+                        v-if="checkRole('r6001')"
+                        class="context-menu__item"
+                        @click="gotoEntityManager()"
+                    >字段管理</div>
+                    <div
+                        v-if="checkRole('r6003')"
+                        class="context-menu__item"
+                        @click="gotoFormLayout()"
+                    >表单设计</div>
+                    <div
+                        v-if="checkRole('r6008')"
+                        class="context-menu__item"
+                        @click="gotoListView()"
+                    >列表设计</div>
+                    <div class="context-menu-divider"></div>
+                    <div
+                        v-if="checkRole('r6016')"
+                        class="context-menu__item"
+                        @click="gotoRoute('process-list', true,)"
+                    >流程设计</div>
+                    <div
+                        v-if="checkRole('r6015')"
+                        class="context-menu__item"
+                        @click="gotoRoute('trigger-list', false)"
+                    >触发器设计</div>
+                    <div
+                        v-if="checkRole('r45-2')"
+                        class="context-menu__item"
+                        @click="gotoRoute('templates-list', true)"
+                    >报表设计</div>
+                    <div class="context-menu-divider"></div>
+                    <div
+                        class="context-menu__item"
+                        @click="createNewEntity('copy')"
+                        v-if="!selectedEntityObj.systemEntityFlag"
+                    >复制实体</div>
+                    <div
+                        v-if="checkRole('r6002')"
+                        class="context-menu__item"
+                        @click="deleteSelectedEntity()"
+                    >删除实体</div>
+                </template>
             </div>
         </el-main>
     </el-container>
