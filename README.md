@@ -119,19 +119,6 @@ npm run fast-build
 
 ## 系统截图
 
-### PC端
-![仪表盘](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_01.png)
-
-![表单设计](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_02.png)
-
-![业务流程](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_03.png)
-
-![业务触发器](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_04.png)
-
-![客户详情](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_05.png)
-
-![报表引擎](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_06.png)
-
 ### 移动端
 
 <center>
@@ -151,6 +138,20 @@ npm run fast-build
 	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m08.png" width="32%">
 	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m09.png" width="32%">
 </center>
+
+### PC端
+![仪表盘](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_01.png)
+
+![表单设计](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_02.png)
+
+![业务流程](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_03.png)
+
+![业务触发器](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_04.png)
+
+![客户详情](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_05.png)
+
+![报表引擎](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_06.png)
+
 
 ## 开源协议
 MIT License
