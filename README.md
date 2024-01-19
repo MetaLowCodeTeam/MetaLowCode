@@ -133,23 +133,24 @@ npm run fast-build
 ![报表引擎](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_06.png)
 
 ### 移动端
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m01.png)
 
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m02.png)
+<center>
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m01.png" width="32%">
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m02.png" width="32%">
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m03.png" width="32%">
+</center>
 
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m03.png)
+<center>
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m04.png" width="32%">
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m05.png" width="32%">
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m06.png" width="32%">
+</center>
 
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m04.png)
-
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m05.png)
-
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m06.png)
-
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m07.png)
-
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m08.png)
-
-![移动端截图](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m09.png)
+<center>
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m07.png" width="32%">
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m08.png" width="32%">
+	<img src="https://mlimgs.ks3-cn-beijing.ksyuncs.com/mlc_screen_m09.png" width="32%">
+</center>
 
 ## 开源协议
 MIT License
