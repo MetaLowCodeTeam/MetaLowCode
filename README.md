@@ -27,14 +27,14 @@
 
 ## 官网和演示
 
-| 类型    | 链接                                                 |
-|-------|----------------------------------------------------|
-| 美乐官网  | https://melecode.com/                              |
-| 演示地址  | http://web1.demo.melecode.com/ （用户、密码：admin/admin） |
-| 演示地址2 | http://web2.demo.melecode.com/ （用户、密码：admin/admin） |
-| 📱移动端登录 | http://mdemo.melecode.com/ （用户、密码：admin/admin）     |
-| 用户手册  | https://melecode.com/docs/mlbook/user/readme.html  |
-| 视频教程合辑 | https://space.bilibili.com/3546568428882557/video  |
+| 类型          | 链接                                                 |
+|-------------|----------------------------------------------------|
+| 美乐官网        | https://melecode.com/                              |
+| 演示地址        | http://web1.demo.melecode.com/ （用户、密码：admin/admin） |
+| 演示地址2       | http://web2.demo.melecode.com/ （用户、密码：admin/admin） |
+| 📱**移动端登录** | http://mdemo.melecode.com/ （用户、密码：admin/admin）     |
+| 用户手册        | https://melecode.com/docs/mlbook/user/readme.html  |
+| 视频教程合辑      | https://space.bilibili.com/3546568428882557/video  |
 
 
 ## 系统架构图
