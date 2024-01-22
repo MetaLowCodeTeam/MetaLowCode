@@ -1,6 +1,7 @@
 <template>
 	<v-form-designer ref="vfDesigner"
 					 :designer-config="designerConfig"
+					 :global-dsv="globalDsv"
 					 :field-list-data="fieldListData"
 					 @field-widget-used="handleFWU"
 					 @field-widget-removed="handleFWR"
@@ -120,6 +121,9 @@ export default {
 				exportCodeButton: false,
 				generateSFCButton: false,
 				toolbarMaxWidth: 300,
+			},
+			globalDsv: {
+				uploadServer: import.meta.env.VITE_APP_BASE_API
 			},
 			fieldListData: {},
 			layoutId: null,
