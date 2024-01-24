@@ -207,7 +207,7 @@
                         </el-select>
                     </div>
                     <div v-else-if="item.opCom =='referenceSearch'">
-                        <el-input v-model="item.value2" readonly>
+                        <el-input v-model="item.value2" readonly :class="{'is-error':item.isError}">
                             <template #append>
                                 <el-button @click="openReferenceDialog">
                                     <el-icon>
@@ -477,13 +477,13 @@ export default {
             this.conditionConf.items.splice(inx, 1);
         },
         // 检测条件
-        checkConditionList() {
+        checkConditionList(notNeedMsg) {
             let flag = true;
             if (this.conditionConf.items.length > 0) {
                 this.conditionConf.items.forEach((el) => {
                     if (
                         !el.value &&
-                        el.value != 0 &&
+                        el.value !== 0 &&
                         !this.op_no_value.includes(el.op)
                     ) {
                         flag = false;
@@ -496,6 +496,10 @@ export default {
                     }
                 });
                 if (!flag) {
+                    // 不需要提示
+                    if(notNeedMsg){
+                        return
+                    }
                     this.$message.error("部分条件设置有误，请检查");
                     return;
                 }
@@ -606,6 +610,7 @@ export default {
         height: 40px;
         line-height: 40px;
         border-bottom: 1px solid #eee;
+        font-size: 14px;
         .add-icon {
             // margin-top: 10px;
             position: relative;

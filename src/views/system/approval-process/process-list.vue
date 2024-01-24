@@ -3,7 +3,7 @@
         ref="mlEntityMenuAndListRef"
         entityName="ApprovalConfig"
         aciveId="approvalConfigId"
-        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn"
+        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn,flowType"
         @goDetial="goDetial"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
@@ -137,6 +137,9 @@ const actionBtn = (data) => {
         dialogForm.value.type = "edit";
         dialogForm.value.form = { ...row };
     }
+    if (!dialogForm.value.form.flowType) {
+        dialogForm.value.form.flowType = 1;
+    }
     mlActiveDialogRefs.value.openDialog(dialogForm.value);
 };
 
@@ -161,6 +164,7 @@ const goDetial = (row) => {
         query: {
             approvalConfigId: row.approvalConfigId,
             entityCode: row.entityCode,
+            flowType: row.flowType || 1,
             // entityCode:
         },
     });

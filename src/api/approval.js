@@ -59,3 +59,12 @@ export function getEntityApprovalTaskList(entity, value) {
     return http.get('/approval/getEntityApprovalTaskList', { entity, type: value })
 }
 
+
+/**
+ * 复杂工作流
+ */
+
+// 保存流程
+export function saveComplexFlow(body) {
+    return http.post('/plugins/metaFlowable/workflow/deployProcess', body)
+}

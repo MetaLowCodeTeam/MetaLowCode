@@ -295,7 +295,7 @@ export const getSimplePinYin = (chStr) => {
  * @param {*} val 值
  * @returns 
  */
-export const getPreviewNum = (showDecimalPlaces,decimalPlaces,thousandsSeparator,val) => {
+export const getPreviewNum = (showDecimalPlaces, decimalPlaces, thousandsSeparator, val) => {
     let previewStr = val;
     if (showDecimalPlaces) {
         previewStr = Number(previewStr).toFixed(decimalPlaces);
@@ -325,3 +325,49 @@ const numberToCurrencyNo = (value) => {
     }
     return intPartFormat + floatPart;
 };
+
+
+/**
+ * 高级筛选条件排查
+ */
+
+// 不需要输入框的条件
+const op_no_value = [
+    "NL",
+    "NT",
+    "SFU",
+    "SFB",
+    "SFD",
+    "YTA",
+    "TDA",
+    "TTA",
+    "CUW",
+    "CUM",
+    "CUQ",
+    "CUY",
+];
+// 检测条件值
+export const checkConditionList = (data) => {
+    let flag = true;
+    if (data.length > 0) {
+        data.forEach((el) => {
+            if (
+                !el.value &&
+                el.value !== 0 &&
+                !op_no_value.includes(el.op)
+            ) {
+                flag = false;
+                el.isError = true;
+            }
+            // 区间
+            if (el.op === "BW" && (!el.value || !el.value2)) {
+                flag = false;
+                el.isError = true;
+            }
+        });
+        if (!flag) {
+            return false;
+        }
+    }
+    return flag;
+}
