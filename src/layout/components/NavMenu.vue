@@ -9,12 +9,16 @@
             </template>
             <NavMenu :navMenus="navMenu.children"></NavMenu>
         </el-menu-item-group>
-        <el-menu-item v-else-if="!hasChildren(navMenu)" :index="navMenu.path">
+        <el-menu-item v-else-if="!hasChildren(navMenu)" :index="navMenu.path" :class="{'isActive': activePath == navMenu.path}">
             <a
                 v-if="navMenu.meta&&navMenu.meta.type=='link'"
                 :href="navMenu.meta.outLink"
-                :target=" navMenu.meta.outLink.indexOf('/') == 0 ?'' : '_blank'"
+                :target="navMenu.meta.outLink.indexOf('/') == 0 ?'' : '_blank'"
                 @click.stop="()=>{}"
+            ></a>
+            <a
+                v-if="navMenu.meta&&navMenu.meta.query"
+                @click.stop="customPageClick(navMenu)"
             ></a>
             <el-icon
                 v-if="navMenu.meta&&navMenu.meta.icon"
@@ -48,7 +52,17 @@ export default {
     name: "NavMenu",
     props: ["navMenus"],
     data() {
-        return {};
+        return {
+            activePath: "",
+        };
+    },
+    watch: {
+        $route: function (newRouter, oldRouter) {
+            this.activePath = newRouter.path; //侧边栏选中
+        },
+    },
+    mounted(){
+        this.activePath = this.$route.path;
     },
     methods: {
         hasChildren(item) {
@@ -57,6 +71,18 @@ export default {
                 !item.children.every((item) => item.meta.hidden)
             );
         },
+        // 自定义页面点击
+        customPageClick(navMenu) {
+            this.$router.push({
+                path: navMenu.path,
+                query: navMenu.meta.query,
+            });
+        },
     },
 };
 </script>
+<style lang="scss" scoped>
+.isActive {
+    color: var(--el-color-primary) !important;
+}
+</style>

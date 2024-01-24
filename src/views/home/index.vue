@@ -84,6 +84,7 @@ const getDashboardList = async () => {
         // 如果没有数据
         if (dashboardList.value.length < 1) {
             loading.value = false;
+            isShowEmpty.value = true;
             return;
         }
         // // 如果有本地缓存ID
@@ -127,9 +128,6 @@ const getDashboardList = async () => {
         }
         // 如果都没有
         initFormConfig(dashboardList.value[0].chartId);
-    }
-    if (dashboardList.length < 1) {
-        isShowEmpty.value = true;
     }
     loading.value = false;
 };

@@ -12,11 +12,12 @@
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
         <template #footer>
-            <el-button @click="isShow = false">取消</el-button>
+            <el-button @click="isShow = false" :loading="loading">取消</el-button>
             <el-button
                 type="primary"
                 @click="confirm"
                 v-if="!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3)"
+                :loading="loading"
             >确认</el-button>
         </template>
     </ml-dialog>

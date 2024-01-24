@@ -7,16 +7,13 @@
         class="text-ellipsis"
         v-else-if="column.fieldType == 'Status'"
     >{{ row[column.fieldName]?.label }}</div>
-    <div
-        class="text-ellipsis"
-        v-else-if="column.fieldType == 'AreaSelect'"
-    >
-        <span v-if="row[column.fieldName] && (row[column.fieldName][1] == '市辖区' || row[column.fieldName][1] == '县')">
-            {{ row[column.fieldName][0] }}-{{ row[column.fieldName][2] }}
-        </span>
-        <span v-else-if="row[column.fieldName] && (row[column.fieldName][1] != '市辖区' || row[column.fieldName][1] != '县')">
-            {{ row[column.fieldName].join("-") }}
-        </span>
+    <div class="text-ellipsis" v-else-if="column.fieldType == 'AreaSelect'">
+        <span
+            v-if="row[column.fieldName] && (row[column.fieldName][1] == '市辖区' || row[column.fieldName][1] == '县')"
+        >{{ row[column.fieldName][0] }}-{{ row[column.fieldName][2] }}</span>
+        <span
+            v-else-if="row[column.fieldName] && (row[column.fieldName][1] != '市辖区' || row[column.fieldName][1] != '县')"
+        >{{ row[column.fieldName].join("-") }}</span>
         <span v-else></span>
     </div>
     <div
@@ -35,7 +32,10 @@
         <span class="ml-a-span" @click.stop="openDetailDialog(row)">{{ row[column.fieldName] }}</span>
     </div>
 
-    <div class="text-ellipsis" v-else-if="column.fieldType == 'Money'">{{ numberToCurrencyNo(row[column.fieldName]) }}</div>
+    <div
+        class="text-ellipsis"
+        v-else-if="column.fieldType == 'Money'"
+    >{{ numberToCurrencyNo(row[column.fieldName]) }}</div>
     <div
         class="text-ellipsis"
         v-else-if="column.fieldType == 'Picture'"
@@ -47,7 +47,7 @@
             alt
             v-for="(img,inx) of row[column.fieldName]"
             :key="inx"
-            @click.stop="downField(img.url,img.name)"
+            @click.stop="previewImg(img.url,img.name)"
         />
     </div>
 
@@ -82,6 +82,19 @@
                 >{{ field.name }}</span>
             </div>
         </el-scrollbar>
+    </mlDialog>
+    <mlDialog v-model="previewDialog" title="点击图片预览" appendToBody width="400px">
+        <div class="preview-box">
+            <el-image
+                :src="formatUrl(previewUrl)"
+                :zoom-rate="1.2"
+                :max-scale="7"
+                :min-scale="0.2"
+                :preview-src-list="[formatUrl(previewUrl)]"
+                :initial-index="4"
+                fit="cover"
+            />
+        </div>
     </mlDialog>
 </template>
 
@@ -139,6 +152,16 @@ const numberToCurrencyNo = (value) => {
     }
     return intPartFormat + floatPart;
 };
+
+/**
+ * 图片预览
+ */
+let previewUrl = ref("");
+let previewDialog = ref(false);
+const previewImg = (url) => {
+    previewUrl.value = url;
+    previewDialog.value = true;
+};
 </script>
 <style lang='scss' scoped>
 .row-img {
@@ -153,5 +176,8 @@ const numberToCurrencyNo = (value) => {
 }
 .field-item {
     margin-bottom: 5px;
+}
+.preview-box {
+    text-align: center;
 }
 </style>

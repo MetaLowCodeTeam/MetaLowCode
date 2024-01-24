@@ -16,12 +16,38 @@ const floamtRoute = (el, isTopNav) => {
             newRoute.component = "custom-page/iframe";
         }
     } else {
-        newRoute.path = "/web/custom-page/" + el.outLink + (isTopNav ? '/' + el.guid : '');
-        newRoute.component = "custom-page/" + el.outLink;
+        newRoute.path = "/web/custom-page/" + (isTopNav ? '/' + el.guid : '') + getCustomPageComponent(el.outLink);
+        newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
     return newRoute
 }
+
+// 获取自定义页签组件
+const getCustomPageComponent = (outLink) => {
+    // 如果没有?表示没有参数
+    if (outLink.indexOf('?') == -1) {
+        return outLink
+    } else {
+        return outLink.split('?')[0]
+    }
+}
+// 获取自定页签组件query参数
+const getCustomPageQuery = (outLink) => {
+    // 如果没有?表示没有参数
+    if (outLink.indexOf('?') == -1) {
+        return null
+    } else {
+        let query = {};
+        let quaryGroup = outLink.split('?')[1].split("&")
+        quaryGroup.forEach(el => {
+            let param = el.split("=");
+            query[param[0]] = param[1];
+        })
+        return query;
+    }
+}
+
 
 const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 导航列表
@@ -157,6 +183,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             // 格式化父菜单  修复父菜单下有子级，但是子级没权限父菜单还可点击
             if (initMenu.children && initMenu.children.length < 1) {
                 initMenu.meta.hidden = true;
+            }
+            if (el.type == 3) {
+                initMenu.meta.type = 3
+                initMenu.meta.query = getCustomPageQuery(el.outLink);
             }
             formatRoutrs.push(initMenu);
         });
