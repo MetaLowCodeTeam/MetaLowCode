@@ -1,21 +1,28 @@
 <template>
     <!--  -->
-    <mlSetConditions
-        v-if="entityCode"
-        ref="mlSetConditionsRef"
-        v-model="conditionConf"
-        :entityName="entityCode"
-    />
+    <el-collapse v-model="activeNames">
+        <el-collapse-item name="1">
+            <template #title>
+                <h3>审批设置</h3>
+            </template>
+            <mlSetConditions
+                v-if="entityCode"
+                ref="mlSetConditionsRef"
+                v-model="conditionConf"
+                :entityName="entityCode"
+            />
+        </el-collapse-item>
+    </el-collapse>
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
 });
-
+const activeNames = ref(["1"]);
 let myFormData = ref({
     // 发起条件
     filter: {
@@ -24,6 +31,16 @@ let myFormData = ref({
     },
 });
 
+watch(
+    () => props.formData,
+    () => {
+        myFormData.value = Object.assign(myFormData.value, props.formData);
+        let { filter } = { ...myFormData.value };
+        conditionConf = initFilter(filter);
+    },
+    { deep: true }
+);
+
 let entityCode = ref("");
 
 let conditionConf = reactive({});
@@ -31,7 +48,6 @@ let conditionConf = reactive({});
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;
     myFormData.value = Object.assign(myFormData.value, props.formData);
-    console.log(myFormData.value, "myFormData.value");
     let { filter } = { ...myFormData.value };
     conditionConf = initFilter(filter);
 });
@@ -51,7 +67,7 @@ const initFilter = (filter) => {
 
 let mlSetConditionsRef = ref("");
 const checkConditionList = () => {
-    mlSetConditionsRef.value.checkConditionList(true)
+    mlSetConditionsRef.value.checkConditionList(true);
 };
 
 /**
@@ -63,9 +79,8 @@ const getFormData = () => {
 };
 
 defineExpose({
-    getFormData
+    getFormData,
 });
 </script>
 <style lang='scss' scoped>
-
 </style>

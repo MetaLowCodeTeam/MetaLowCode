@@ -311,12 +311,11 @@ const handleGenerate = async () => {
 // 同意前触发
 const beforeConfirmApprove = () => {
     // 需要手写签名
-    if(approvalTask.value.autograph){
+    if (approvalTask.value.autograph) {
         esignConf.value.show = true;
-    }else {
+    } else {
         confirmApprove(false);
     }
-    
 };
 
 // 同意审批
@@ -330,20 +329,27 @@ async function confirmApprove(isBacked) {
             formData
         );
         if (saveRes) {
-            form.value.entityId = props.entityId;
-            form.value.isBacked = isBacked;
-            form.value.signatureImage = esignConf.value.resultImg;
-            let res = await http.post("/approval/approvalProcess", form.value);
-            if (res) {
-                let msg = isBacked ? "驳回" : "审批";
-                $ElMessage.success(msg + "成功");
-                canner();
-                emit("confirm");
+            // 是复杂工作流
+            if (approvalTask.value.flowType == 2) {
+                saveComplexFlow(isBacked ? 2 : 1);
+                return;
+            } else {
+                form.value.entityId = props.entityId;
+                form.value.isBacked = isBacked;
+                form.value.signatureImage = esignConf.value.resultImg;
+                let res = await http.post(
+                    "/approval/approvalProcess",
+                    form.value
+                );
+                if (res) {
+                    let msg = isBacked ? "驳回" : "审批";
+                    $ElMessage.success(msg + "成功");
+                    canner();
+                    emit("confirm");
+                }
             }
-            loading.value = false;
-        } else {
-            loading.value = false;
         }
+        loading.value = false;
     }
 }
 
@@ -355,6 +361,14 @@ async function getApprovalTaskById() {
     });
     if (res) {
         approvalTask.value = res.data;
+
+        // 如果是复杂工作流
+        if (approvalTask.value.flowType == 2) {
+            approvalTask.value = Object.assign(
+                approvalTask.value,
+                res.data.wfUseTask
+            );
+        }
         initFormLayout();
     } else {
         loading.value = false;
@@ -365,6 +379,41 @@ async function getApprovalTaskById() {
 function canner() {
     isShow.value = false;
 }
+
+/**
+ * 复杂工作流保存
+ */
+
+const DealWithTypeLabel = {
+    1: "同意",
+    2: "驳回",
+    4: "转审",
+    5: "加签",
+};
+
+const saveComplexFlow = async (dealWithType) => {
+    loading.value = true;
+    let param = {
+        approvalTaskId: props.taskId,
+        dealWithType,
+        wfTaskBo: {
+            comment: form.value.remark,
+            copyUserList: form.value.currentCCToUserList,
+            nextUserIds: form.value.nextApprovalUserList,
+        },
+    };
+    let res = await http.post(
+        "/plugins/metaWorkFlow/workflow/dealWithTask",
+        param
+    );
+    if (res && res.code == 200) {
+        let msg = DealWithTypeLabel[dealWithType];
+        $ElMessage.success(msg + "成功");
+        canner();
+        emit("confirm");
+    }
+    loading.value = false;
+};
 </script>
 
 <style lang="scss" scoped>

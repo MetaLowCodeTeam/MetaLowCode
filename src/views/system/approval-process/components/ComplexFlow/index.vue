@@ -73,73 +73,30 @@ import UserTask from "./UserTask.vue";
 import { checkConditionList } from "@/utils/util";
 
 // API
-import { saveComplexFlow } from "@/api/approval";
+import { saveComplexFlow, getComplexFlow } from "@/api/approval";
+
 import { useRouter } from "vue-router";
 
 const Router = useRouter();
 
 let approvalConfigId = ref("");
+let graphData = ref("");
 
 onMounted(() => {
     approvalConfigId.value = Router.currentRoute.value.query.approvalConfigId;
+    // 加载流程数据
+    loadComplexFlow();
 });
 
-let graphData =
-    ref(`<bpmn:definitions id="Definitions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="http://logic-flow.org" exporter="logicflow" exporterVersion="1.2.10">	
-  <bpmn:process isExecutable="true" id="Process">	
-      <bpmn:startEvent id="Event_iAV14iS" name="开始" flowJson="%7B%22type%22%3A0%2C%22nodeRoleType%22%3A1%2C%22nodeRoleList%22%3A%5B%5D%2C%22filter%22%3A%7B%22equation%22%3A%22%22%2C%22items%22%3A%5B%5D%7D%7D">	
-          <bpmn:outgoing>Flow_9t0kH4C</bpmn:outgoing>	
-      </bpmn:startEvent>	
-      <bpmn:userTask id="Activity_3fNkRr2" flowJson="%7B%22approvalType%22%3A1%2C%22nodeRoleType%22%3A1%2C%22nodeRoleList%22%3A%5B%5D%2C%22deptLevel%22%3A0%2C%22userSelectFlag%22%3Afalse%2C%22transferApproval%22%3Afalse%2C%22addSignaturesApproval%22%3Afalse%2C%22rejectType%22%3A1%2C%22emptyUserType%22%3A1%2C%22specificRole%22%3A%5B%5D%2C%22approvalMethodType%22%3A1%2C%22signUserNum%22%3A1%2C%22ccToUserList%22%3A%5B%5D%2C%22modifiableFields%22%3A%5B%5D%7D">	
-          <bpmn:incoming>Flow_9t0kH4C</bpmn:incoming>	
-          <bpmn:outgoing>Flow_HBojSbK</bpmn:outgoing>	
-      </bpmn:userTask>	
-      <bpmn:parallelGateway id="Gateway_6kIIcJR">	
-          <bpmn:incoming>Flow_HBojSbK</bpmn:incoming>	
-          <bpmn:outgoing>Flow_OYyy2wO</bpmn:outgoing>	
-      </bpmn:parallelGateway>	
-      <bpmn:endEvent id="Event_WuPdmCs" name="结束">	
-          <bpmn:incoming>Flow_OYyy2wO</bpmn:incoming>	
-      </bpmn:endEvent>	
-      <bpmn:sequenceFlow id="Flow_9t0kH4C" sourceRef="Event_iAV14iS" targetRef="Activity_3fNkRr2" flowJson="%7B%22filter%22%3A%7B%22equation%22%3A%22OR%22%2C%22items%22%3A%5B%5D%2C%22type%22%3A1%7D%7D" />	
-      <bpmn:sequenceFlow id="Flow_HBojSbK" sourceRef="Activity_3fNkRr2" targetRef="Gateway_6kIIcJR" flowJson="%7B%22filter%22%3A%7B%22equation%22%3A%22OR%22%2C%22items%22%3A%5B%5D%2C%22type%22%3A1%7D%7D" />	
-      <bpmn:sequenceFlow id="Flow_OYyy2wO" sourceRef="Gateway_6kIIcJR" targetRef="Event_WuPdmCs" flowJson="%7B%22filter%22%3A%7B%22equation%22%3A%22OR%22%2C%22items%22%3A%5B%5D%2C%22type%22%3A1%7D%7D" />	
-  </bpmn:process>	
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">	
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process">	
-        <bpmndi:BPMNEdge id="Flow_9t0kH4C_di" bpmnElement="Flow_9t0kH4C">	
-            <di:waypoint x="285" y="180" />	
-            <di:waypoint x="380" y="180" />	
-        </bpmndi:BPMNEdge>	
-        <bpmndi:BPMNEdge id="Flow_HBojSbK_di" bpmnElement="Flow_HBojSbK">	
-            <di:waypoint x="580" y="180" />	
-            <di:waypoint x="695" y="180" />	
-        </bpmndi:BPMNEdge>	
-        <bpmndi:BPMNEdge id="Flow_OYyy2wO_di" bpmnElement="Flow_OYyy2wO">	
-            <di:waypoint x="745" y="180" />	
-            <di:waypoint x="815" y="180" />	
-        </bpmndi:BPMNEdge>	
-        <bpmndi:BPMNShape id="Event_iAV14iS_di" bpmnElement="Event_iAV14iS">	
-          <dc:Bounds x="240" y="160" width="40" height="40" />	
-          <bpmndi:BPMNLabel>	
-            <dc:Bounds x="250" y="173" width="20" height="14" />	
-          </bpmndi:BPMNLabel>	
-        </bpmndi:BPMNShape>	
-        <bpmndi:BPMNShape id="Activity_3fNkRr2_di" bpmnElement="Activity_3fNkRr2">	
-          <dc:Bounds x="430" y="140" width="100" height="80" />	
-        </bpmndi:BPMNShape>	
-        <bpmndi:BPMNShape id="Gateway_6kIIcJR_di" bpmnElement="Gateway_6kIIcJR">	
-          <dc:Bounds x="670" y="140" width="100" height="80" />	
-        </bpmndi:BPMNShape>	
-        <bpmndi:BPMNShape id="Event_WuPdmCs_di" bpmnElement="Event_WuPdmCs">	
-          <dc:Bounds x="820" y="160" width="40" height="40" />	
-          <bpmndi:BPMNLabel>	
-            <dc:Bounds x="830" y="173" width="20" height="14" />	
-          </bpmndi:BPMNLabel>	
-        </bpmndi:BPMNShape>	
-    </bpmndi:BPMNPlane>	
-  </bpmndi:BPMNDiagram>	
-</bpmn:definitions>`);
+const loadComplexFlow = async () => {
+    //graphData.value = localStorage.getItem("TestXml");
+    //return
+    let res = await getComplexFlow(approvalConfigId.value);
+    console.log(res, "res");
+    if (res && res.code == 200) {
+        graphData.value = res.data;
+    }
+};
 
 // FL组件
 let MetaFlowDesignerRef = ref("");
@@ -231,7 +188,7 @@ const openDrawer = (data) => {
     if (data.properties?.flowJson) {
         drawerData.value.formData = getProperties(data.properties.flowJson);
     } else {
-        drawerData.value.formData = nodeDefaultData[data.type];
+        drawerData.value.formData = cloneDeep(nodeDefaultData[data.type]);
     }
 };
 
@@ -270,7 +227,6 @@ let setNodeData = () => {
 
 // 设置节点自定义属性
 const setProperties = (type, id, data) => {
-    console.log(type, "type");
     MetaFlowDesignerRef.value.lf[NodeTypeFn[type]](id).setProperties({
         flowJson: encodeURIComponent(JSON.stringify(data)),
     });
@@ -298,6 +254,7 @@ const confirmTitle = () => {
 const onSave = async () => {
     setNodeData();
     let mflData = MetaFlowDesignerRef.value.getJsonData();
+
     let { nodes, edges } = mflData;
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
@@ -342,12 +299,29 @@ const onSave = async () => {
         }
     }
 
+    // 开始保存
+    let flowJson = {};
+    let formatEdges = MetaFlowDesignerRef.value.getJsonData().edges;
+    let formatNodes = MetaFlowDesignerRef.value.getJsonData().nodes;
+    formatEdges.forEach((el) => {
+        flowJson[el.id] = el.properties.flowJson;
+    });
+    formatNodes.forEach((el) => {
+        if (el.type != "bpmn:endEvent" && el.type != "bpmn:parallelGateway") {
+            flowJson[el.id] = el.properties.flowJson;
+        }
+    });
     let param = {
         approvalConfigId: approvalConfigId.value,
-        bpmnXml: MetaFlowDesignerRef.value.getXmlData(),
+        logicFlow: {
+            logicFlowXml: MetaFlowDesignerRef.value.getXmlData(),
+            flowJson,
+        },
     };
     let res = await saveComplexFlow(param);
-    console.log(res);
+    if(res && res.code == 200){
+        ElMessage.success("保存成功")
+    }
 };
 
 // 设置节点变颜色
@@ -362,6 +336,10 @@ const clearData = () => {
     drawer.value = false;
     drawerData.value = {};
 };
+
+const cloneDeep = (data)=>{
+    return JSON.parse(JSON.stringify(data));
+}
 </script>
 <style lang='scss' scoped>
 .complex-flow-box {

@@ -22,7 +22,10 @@ export default {
         startApproval: async (entityId, approvalConfigId) => {
             return await http.get("/approval/startApproval", { entityId, approvalConfigId });
         },
-
+        // 提交复杂工作流
+        startComplexFlowApproval: async (body) => {
+            return await http.post("/plugins/metaWorkFlow/workflow/startRelatedProcess", body);
+        },
     },
     list: {
         // 获取实体列表
@@ -66,5 +69,10 @@ export function getEntityApprovalTaskList(entity, value) {
 
 // 保存流程
 export function saveComplexFlow(body) {
-    return http.post('/plugins/metaFlowable/workflow/deployProcess', body)
+    return http.post('/plugins/metaWorkFlow/workflow/deployProcess', body)
+}
+
+// 获取流程
+export function getComplexFlow(approvalConfigId) {
+    return http.get('/plugins/metaWorkFlow/workflow/getBpmnXmlStr', { approvalConfigId })
 }
