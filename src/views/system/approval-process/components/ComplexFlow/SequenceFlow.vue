@@ -35,21 +35,21 @@ watch(
     () => props.formData,
     () => {
         myFormData.value = Object.assign(myFormData.value, props.formData);
-        let { filter } = { ...myFormData.value };
-        conditionConf = initFilter(filter);
+        let { filter } = JSON.parse(JSON.stringify(myFormData.value))
+        conditionConf.value = initFilter(filter);
     },
     { deep: true }
 );
 
 let entityCode = ref("");
 
-let conditionConf = reactive({});
+let conditionConf = ref({});
 
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;
     myFormData.value = Object.assign(myFormData.value, props.formData);
-    let { filter } = { ...myFormData.value };
-    conditionConf = initFilter(filter);
+    let { filter } = JSON.parse(JSON.stringify(myFormData.value));
+    conditionConf.value = initFilter(filter);
 });
 const initFilter = (filter) => {
     let { equation } = filter;

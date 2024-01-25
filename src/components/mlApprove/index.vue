@@ -96,7 +96,12 @@
     <mlDialog v-model="otherDialog" :title="taskOperation.title" width="35%" appendToBody>
         <el-form label-position="top" label-width="100px" v-loading="otherLoading">
             <el-form-item :label="taskOperation.title + '到哪些用户'">
-                <mlSelectUser type="User" v-model="taskOperation.nodeRoleList" multiple clearable />
+                <mlSelectUser
+                    type="User"
+                    v-model="taskOperation.nodeRoleList"
+                    :multiple="!(approvalTask.flowType == 2 && taskOperation.title == '转审')"
+                    clearable
+                />
             </el-form-item>
             <el-form-item style="margin-bottom: 0;">
                 <div class="foot-btn w-100">
@@ -270,6 +275,11 @@ async function confirmApostille() {
         $ElMessage.warning("请选择要" + title + "到哪些人员");
         return;
     }
+    // 是复杂工作流
+    if (approvalTask.value.flowType == 2) {
+        saveComplexFlow(type == 1 ? 4 : 5);
+        return;
+    }
     otherLoading.value = true;
     let res = await http.post("/approval/taskOperation", taskOperation.value);
     if (res) {
@@ -392,7 +402,11 @@ const DealWithTypeLabel = {
 };
 
 const saveComplexFlow = async (dealWithType) => {
-    loading.value = true;
+    if (dealWithType == 1 || dealWithType == 2) {
+        loading.value = true;
+    } else {
+        otherLoading.value = true;
+    }
     let param = {
         approvalTaskId: props.taskId,
         dealWithType,
@@ -401,6 +415,11 @@ const saveComplexFlow = async (dealWithType) => {
             copyUserList: form.value.currentCCToUserList,
             nextUserIds: form.value.nextApprovalUserList,
         },
+        // 转审 或者 加签
+        nodeRoleList:
+            dealWithType == 4 || dealWithType == 5
+                ? taskOperation.value.nodeRoleList
+                : [],
     };
     let res = await http.post(
         "/plugins/metaWorkFlow/workflow/dealWithTask",
@@ -409,10 +428,17 @@ const saveComplexFlow = async (dealWithType) => {
     if (res && res.code == 200) {
         let msg = DealWithTypeLabel[dealWithType];
         $ElMessage.success(msg + "成功");
-        canner();
-        emit("confirm");
+        // 不是加签需要关闭弹框。
+        if(dealWithType != 5){
+            canner();
+            emit("confirm");
+        }
     }
-    loading.value = false;
+    if (dealWithType == 1 || dealWithType == 2) {
+        loading.value = false;
+    } else {
+        otherLoading.value = false;
+    }
 };
 </script>
 

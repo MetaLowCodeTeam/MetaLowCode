@@ -124,7 +124,7 @@
                         <el-radio :label="3">部分会签(部分审批人同意)</el-radio>
                     </el-radio-group>
                 </div>
-                <div v-if="myFormData.approvalMethodType == 2">
+                <div v-if="myFormData.approvalMethodType == 3">
                     <el-input-number
                         v-model="myFormData.signUserNum"
                         :min="1"
