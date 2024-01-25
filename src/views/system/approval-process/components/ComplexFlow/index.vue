@@ -139,6 +139,8 @@ let nodeDefaultData = reactive({
         nodeRoleList: [],
         // 部门层级(由审批 5、6)
         deptLevel: 0,
+        // 字段名称(由审批 7)
+        fieldName:"",
         // 同时允许自选
         userSelectFlag: false,
         // 允许审批人转审
@@ -275,6 +277,14 @@ const onSave = async () => {
             let { nodeRoleType, nodeRoleList } = properties;
             if (nodeRoleType == 3 && nodeRoleList.length < 1) {
                 ElMessage.error("开始节点：请选择指定用户");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+        }
+        // 如果是用户审批节点
+        if (el.type == "bpmn:userTask") {
+            if(!el.text){
+                ElMessage.error("用户节点：请填写节点名称");
                 setNodeBorderColor(el.type, el.id, "red");
                 return;
             }

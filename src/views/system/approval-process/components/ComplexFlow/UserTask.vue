@@ -71,6 +71,22 @@
                                 :value="item.value"
                             />
                         </el-select>
+                        <!-- 7 实体字段 -->
+                        <el-select
+                            v-model="myFormData.fieldName"
+                            v-loading="entityFieldsLoading"
+                            clearable
+                            value-key="name"
+                            placeholder="请选择字段"
+                            v-if="myFormData.nodeRoleType == 7"
+                        >
+                            <el-option
+                                v-for="(field,fieldInx) in entityFields"
+                                :key="fieldInx"
+                                :label="field.label"
+                                :value="field.name"
+                            />
+                        </el-select>
                     </div>
                 </div>
                 <div class="mt-10">
@@ -237,6 +253,8 @@ onMounted(() => {
     myFormData.value = Object.assign(myFormData.value, props.formData);
     // 获取部门负责人数据
     getDepartment();
+    // 获取所有实体字段
+    getEntityFields();
 });
 
 /**
@@ -330,6 +348,24 @@ const getDepartment = async () => {
     }
 
     departmentLoading.value = false;
+};
+
+// 获取所有实体字段
+let entityFields = ref([]);
+let entityFieldsLoading = ref(false);
+const getEntityFields = async () => {
+    let param = { entity: entityName.value };
+    entityFieldsLoading.value = true;
+    let res = await $API.common.getFieldListOfFilter(param);
+    if (res && res.code == 200) {
+        entityFields.value = res.data.filter(
+            (el) =>
+                el.type == "Reference" &&
+                (el.referTo == "User" || el.referTo == "Department")
+        );
+
+    }
+    entityFieldsLoading.value = false;
 };
 
 // 由谁审批切换
