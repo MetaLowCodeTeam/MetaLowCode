@@ -191,6 +191,7 @@ const saveProcess = async () => {
             let emitValue = {};
             emitValue[saveIdCode] = res.data.formData[saveIdCode];
             emitValue.entityCode = entityCode;
+            emitValue.flowType = res.data.formData.flowType
             emit("saveProcess", emitValue);
         } else {
             emit("saveProcess");
