@@ -51,6 +51,7 @@ const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
 });
+const emits = defineEmits(["setNodeData"]);
 const activeNames = ref(["1"]);
 let myFormData = ref({
     type: 0,
@@ -69,6 +70,14 @@ watch(
     () => props.formData,
     () => {
         myFormData.value = Object.assign(myFormData.value, props.formData);
+    },
+    { deep: true }
+);
+
+watch(
+    () => myFormData.value,
+    () => {
+        emits("setNodeData", myFormData.value);
     },
     { deep: true }
 );

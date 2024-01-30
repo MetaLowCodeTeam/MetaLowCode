@@ -22,6 +22,7 @@ const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
 });
+const emits = defineEmits(["setNodeData"]);
 const activeNames = ref(["1"]);
 let myFormData = ref({
     // 发起条件
@@ -31,19 +32,27 @@ let myFormData = ref({
     },
 });
 
+let conditionConf = ref({});
+
 watch(
     () => props.formData,
     () => {
         myFormData.value = Object.assign(myFormData.value, props.formData);
-        let { filter } = JSON.parse(JSON.stringify(myFormData.value))
+        let { filter } = JSON.parse(JSON.stringify(myFormData.value));
         conditionConf.value = initFilter(filter);
     },
     { deep: true }
 );
 
-let entityCode = ref("");
+watch(
+    () => conditionConf.value,
+    () => {
+        emits("setNodeData", { filter: conditionConf.value });
+    },
+    { deep: true }
+);
 
-let conditionConf = ref({});
+let entityCode = ref("");
 
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;

@@ -83,6 +83,14 @@ let tableColumn = ref([
         align: "center",
     },
     {
+        prop: "flowType",
+        label: "类型",
+        align: "center",
+        formatter: (row) => {
+            return row.flowType == 2 ? "复杂工作流" : "基础工作流";
+        },
+    },
+    {
         prop: "isDisabled",
         label: "启用",
         align: "center",

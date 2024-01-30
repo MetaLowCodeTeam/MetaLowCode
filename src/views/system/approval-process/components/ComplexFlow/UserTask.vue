@@ -233,6 +233,7 @@ const props = defineProps({
     formData: { Type: Object, default: () => {} },
 });
 const activeNames = ref(["1"]);
+const emits = defineEmits(["setNodeData"]);
 let myFormData = ref({});
 let entityCode = ref("");
 let entityName = ref("");
@@ -241,6 +242,14 @@ watch(
     () => props.formData,
     () => {
         myFormData.value = Object.assign(myFormData.value, props.formData);
+    },
+    { deep: true }
+);
+
+watch(
+    () => myFormData.value,
+    () => {
+        emits("setNodeData", myFormData.value);
     },
     { deep: true }
 );
@@ -363,7 +372,6 @@ const getEntityFields = async () => {
                 el.type == "Reference" &&
                 (el.referTo == "User" || el.referTo == "Department")
         );
-
     }
     entityFieldsLoading.value = false;
 };

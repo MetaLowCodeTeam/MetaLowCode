@@ -42,16 +42,19 @@
                     ref="StartEventRef"
                     v-if="drawerData.type == 'bpmn:startEvent'"
                     :formData="drawerData.formData"
+                    @setNodeData="setNodeData"
                 />
                 <SequenceFlow
                     ref="SequenceFlowRef"
                     v-if="drawerData.type == 'bpmn:sequenceFlow'"
                     :formData="drawerData.formData"
+                    @setNodeData="setNodeData"
                 />
                 <UserTask
                     ref="UserTaskRef"
                     v-if="drawerData.type == 'bpmn:userTask'"
                     :formData="drawerData.formData"
+                    @setNodeData="setNodeData"
                 />
             </div>
         </div>
@@ -89,10 +92,7 @@ onMounted(() => {
 });
 
 const loadComplexFlow = async () => {
-    //graphData.value = localStorage.getItem("TestXml");
-    //return
     let res = await getComplexFlow(approvalConfigId.value);
-    console.log(res, "res");
     if (res && res.code == 200) {
         graphData.value = res.data;
     }
@@ -140,7 +140,7 @@ let nodeDefaultData = reactive({
         // 部门层级(由审批 5、6)
         deptLevel: 0,
         // 字段名称(由审批 7)
-        fieldName:"",
+        fieldName: "",
         // 同时允许自选
         userSelectFlag: false,
         // 允许审批人转审
@@ -183,7 +183,6 @@ const openDrawer = (data) => {
         return;
     }
     drawer.value = true;
-    setNodeData();
     drawerData.value = data;
     drawerTitle.value = data.text?.value;
     drawerData.value.formData = {};
@@ -207,23 +206,9 @@ const getProperties = (jsonStr) => {
 };
 
 // 设置节点数据
-let setNodeData = () => {
-    // 判断是否存在数据，如果存在源数据
-    if (!drawerData.value.type) {
-        return;
-    }
-    console.log("存在源数据");
+let setNodeData = (data) => {
     let { type, id } = drawerData.value;
-    let setPropertiesData = {};
-    if (type == "bpmn:startEvent") {
-        setPropertiesData = StartEventRef.value.getFormData();
-    } else if (type == "bpmn:sequenceFlow") {
-        setPropertiesData = SequenceFlowRef.value.getFormData();
-    } else {
-        setPropertiesData = UserTaskRef.value.getFormData();
-    }
-
-    setProperties(type, id, setPropertiesData);
+    setProperties(type, id, data);
     setNodeBorderColor(type, id, "");
 };
 
@@ -254,9 +239,7 @@ const confirmTitle = () => {
 
 // 保存
 const onSave = async () => {
-    setNodeData();
     let mflData = MetaFlowDesignerRef.value.getJsonData();
-
     let { nodes, edges } = mflData;
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
@@ -283,7 +266,7 @@ const onSave = async () => {
         }
         // 如果是用户审批节点
         if (el.type == "bpmn:userTask") {
-            if(!el.text){
+            if (!el.text) {
                 ElMessage.error("用户节点：请填写节点名称");
                 setNodeBorderColor(el.type, el.id, "red");
                 return;
@@ -329,8 +312,8 @@ const onSave = async () => {
         },
     };
     let res = await saveComplexFlow(param);
-    if(res && res.code == 200){
-        ElMessage.success("保存成功")
+    if (res && res.code == 200) {
+        ElMessage.success("保存成功");
     }
 };
 
@@ -347,9 +330,9 @@ const clearData = () => {
     drawerData.value = {};
 };
 
-const cloneDeep = (data)=>{
+const cloneDeep = (data) => {
     return JSON.parse(JSON.stringify(data));
-}
+};
 </script>
 <style lang='scss' scoped>
 .complex-flow-box {
