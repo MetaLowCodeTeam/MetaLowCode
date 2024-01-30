@@ -76,3 +76,8 @@ export function saveComplexFlow(body) {
 export function getComplexFlow(approvalConfigId) {
     return http.get('/plugins/metaWorkFlow/workflow/getBpmnXmlStr', { approvalConfigId })
 }
+
+// 驳回类为3(驳回到任意节点)时需要获取所有节点
+export function getRejectNodeList(approvalTaskId) {
+    return http.get('/plugins/metaWorkFlow/workflow/returnList', { approvalTaskId })
+}

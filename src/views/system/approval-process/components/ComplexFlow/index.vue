@@ -1,7 +1,7 @@
 <template>
     <!--  -->
     <!--  -->
-    <div class="complex-flow-box">
+    <div class="complex-flow-box" v-loading="loading">
         <div class="complex-flow">
             <MetaFlowDesigner
                 ref="MetaFlowDesignerRef"
@@ -58,13 +58,14 @@
                 />
             </div>
         </div>
+        <div class="z-model" v-if="!$TOOL.checkRole('r6016') || isLookPage"></div>
     </div>
 </template>
 
 <script setup>
 import "@/../lib/flow-designer/style.css";
 import { ElMessage } from "element-plus";
-import { nextTick, onMounted, reactive, ref } from "vue";
+import { inject, nextTick, onMounted, reactive, ref } from "vue";
 // 开始节点
 import StartEvent from "./StartEvent.vue";
 // 线节点
@@ -80,22 +81,35 @@ import { saveComplexFlow, getComplexFlow } from "@/api/approval";
 
 import { useRouter } from "vue-router";
 
+const $TOOL = inject("$TOOL");
+
 const Router = useRouter();
+
+// 是否是查看页面
+let isLookPage = ref(false);
 
 let approvalConfigId = ref("");
 let graphData = ref("");
+let loading = ref(false);
 
 onMounted(() => {
     approvalConfigId.value = Router.currentRoute.value.query.approvalConfigId;
+    // 如果是查看页面
+    let look = Router.currentRoute.value.query.look;
+    if (look == 1) {
+        isLookPage.value = true;
+    }
     // 加载流程数据
     loadComplexFlow();
 });
 
 const loadComplexFlow = async () => {
+    loading.value = true;
     let res = await getComplexFlow(approvalConfigId.value);
     if (res && res.code == 200) {
         graphData.value = res.data;
     }
+    loading.value = false;
 };
 
 // FL组件
@@ -239,6 +253,10 @@ const confirmTitle = () => {
 
 // 保存
 const onSave = async () => {
+    if(!$TOOL.checkRole('r6016')){
+        ElMessage.error("暂无操作权限")
+        return
+    }
     let mflData = MetaFlowDesignerRef.value.getJsonData();
     let { nodes, edges } = mflData;
     // 把非结束节点的数据筛选出来
@@ -311,10 +329,12 @@ const onSave = async () => {
             flowJson,
         },
     };
+    loading.value = true;
     let res = await saveComplexFlow(param);
     if (res && res.code == 200) {
         ElMessage.success("保存成功");
     }
+    loading.value = false;
 };
 
 // 设置节点变颜色
@@ -339,6 +359,16 @@ const cloneDeep = (data) => {
     width: 100%;
     height: 100%;
     display: flex;
+    position: relative;
+    .z-model {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba($color: #000000, $alpha: 0.3);
+        z-index: 6666;
+    }
 }
 .complex-flow {
     height: 100%;
