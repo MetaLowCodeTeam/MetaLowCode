@@ -12,6 +12,7 @@
                 :graphData="graphData"
                 @onSave="onSave"
                 @clearData="clearData"
+                :look="isLookPage || !$TOOL.checkRole('r6016')"
             />
         </div>
         <div
@@ -58,7 +59,6 @@
                 />
             </div>
         </div>
-        <div class="z-model" v-if="!$TOOL.checkRole('r6016') || isLookPage"></div>
     </div>
 </template>
 
@@ -253,9 +253,9 @@ const confirmTitle = () => {
 
 // 保存
 const onSave = async () => {
-    if(!$TOOL.checkRole('r6016')){
-        ElMessage.error("暂无操作权限")
-        return
+    if (!$TOOL.checkRole("r6016")) {
+        ElMessage.error("暂无操作权限");
+        return;
     }
     let mflData = MetaFlowDesignerRef.value.getJsonData();
     let { nodes, edges } = mflData;
