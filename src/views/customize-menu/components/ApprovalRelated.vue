@@ -98,6 +98,27 @@
             title="审批历史"
         />
     </div>
+    <!-- 选择审批任务弹框 -->
+    <mlDialog v-model="approveTaskConf.isShow" title="选择审批任务" width="400" appendToBody>
+        <el-form label-width="100px">
+            <el-form-item label="选择审批任务">
+                <el-select v-model="approveTaskConf.taksId" placeholder="请选择审批任务" class="w-100">
+                    <el-option
+                        v-for="item in approveTaskConf.taskList"
+                        :key="item.approvalTaskId"
+                        :label="item.stepName"
+                        :value="item.approvalTaskId"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <div class="w-100" style="text-align: right;">
+                    <el-button @click="approveTaskConf.isShow = false">取消</el-button>
+                    <el-button type="primary" @click="confirmApproveTask">确认任务</el-button>
+                </div>
+            </el-form-item>
+        </el-form>
+    </mlDialog>
 </template>
 
 <script setup>
@@ -164,10 +185,41 @@ const openHistoryDialog = (row) => {
     approvalHistoryDialog.value = true;
 };
 
+/**
+ * 审批任务相关
+ */
+let approveTaskConf = ref({
+    isShow: false,
+    taskList: [],
+    taksId: null,
+});
+
+// 确认审批任务
+const confirmApproveTask = () => {
+    let { taksId } = approveTaskConf.value;
+    if(!taksId){
+        ElMessage.error("请选择审批任务")
+        return
+    }
+    myApproval.value.approvalTaskId = approveTaskConf.value.taksId;
+    approveTaskConf.value.isShow = false;
+    approveDialogIsShow.value = true;
+};
+
 // 审批
 let approveDialogIsShow = ref(false);
 const openApproveDialog = () => {
-    approveDialogIsShow.value = true;
+    let { parallelTasks } = myApproval.value;
+    // 如果有多条审批
+    if (parallelTasks && parallelTasks.length > 1) {
+        approveTaskConf.value = {
+            isShow: true,
+            taskList: [...parallelTasks],
+            taksId: null,
+        };
+    } else {
+        approveDialogIsShow.value = true;
+    }
 };
 
 // 确认审批
