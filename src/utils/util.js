@@ -1,3 +1,4 @@
+import { Flag } from '@element-plus/icons-vue';
 import moment from 'moment'
 import { pinyin } from 'pinyin-pro'
 
@@ -295,7 +296,7 @@ export const getSimplePinYin = (chStr) => {
  * @param {*} val 值
  * @returns 
  */
-export const getPreviewNum = (showDecimalPlaces,decimalPlaces,thousandsSeparator,val) => {
+export const getPreviewNum = (showDecimalPlaces, decimalPlaces, thousandsSeparator, val) => {
     let previewStr = val;
     if (showDecimalPlaces) {
         previewStr = Number(previewStr).toFixed(decimalPlaces);
@@ -325,3 +326,74 @@ const numberToCurrencyNo = (value) => {
     }
     return intPartFormat + floatPart;
 };
+
+
+// alt+shift+m+l 快捷键
+export const mlShortcutkeys = (cb) => {
+    let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0;
+    document.onkeydown = (e) => {
+        let keyCode = e.keyCode || e.which || e.charCode;
+        if (keyCode === 16) {
+            shiftKeyFlag = 1;
+        } else if (keyCode === 18) {
+            altKeyFlag = 1;
+        } else if (keyCode === 76 || keyCode === 108) {
+            lKeyFlag = 1;
+        } else if (keyCode === 77 || keyCode === 109) {
+            mKeyFlag = 1;
+        }
+        if (shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
+            cb();
+        }
+    }
+    document.onkeyup = (e) => {
+        let keyCode = e.keyCode || e.which || e.charCode
+        if (keyCode === 16) {
+            shiftKeyFlag = 0
+        } else if (keyCode === 18) {
+            altKeyFlag = 0
+        } else if (keyCode === 76 || keyCode === 108) {
+            lKeyFlag = 0
+        } else if (keyCode === 77 || keyCode === 109) {
+            mKeyFlag = 0
+        }
+    }
+    // let keyCode = e.keyCode || e.which || e.charCode;
+    // console.log(keyCode,'keyCode')
+    // let flag = false;
+    // let shiftKeyFlag = 0,
+    //     altKeyFlag = 0,
+    //     mKeyFlag = 0,
+    //     lKeyFlag = 0;
+    // // let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0
+    // // document.onkeydown = (e) => {
+    // //     let keyCode = e.keyCode || e.which || e.charCode
+    // if (keyCode === 16) {
+    //     shiftKeyFlag = 1
+    // } else if (keyCode === 18) {
+    //     altKeyFlag = 1
+    // } else if (keyCode === 76 || keyCode === 108) {
+    //     lKeyFlag = 1
+    // } else if (keyCode === 77 || keyCode === 109) {
+    //     mKeyFlag = 1
+    // }
+    // console.log(shiftKeyFlag, altKeyFlag, mKeyFlag, lKeyFlag);
+    // // ML快捷键
+    // if (target == 'ml' && shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
+    //     flag = true;
+    // }
+    // return flag
+    // document.onkeyup = (e) => {
+    //     let keyCode = e.keyCode || e.which || e.charCode
+    //     if (keyCode === 16) {
+    //         shiftKeyFlag = 0
+    //     } else if (keyCode === 18) {
+    //         altKeyFlag = 0
+    //     } else if (keyCode === 76 || keyCode === 108) {
+    //         lKeyFlag = 0
+    //     } else if (keyCode === 77 || keyCode === 109) {
+    //         mKeyFlag = 0
+    //     }
+    // }
+
+}

@@ -77,7 +77,7 @@ import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-edit
 import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
 
 //const visualDesign = import.meta.glob('@/../lib/visual-design/designer.umd.js')
-
+import { mlShortcutkeys } from "@/utils/util";
 export default {
 	name: "form-design",
 	components: {
@@ -145,45 +145,13 @@ export default {
 	},
 	mounted() {
 		this.loadDesign()
-
-		this.handleDocumentKeyEvent()
+        mlShortcutkeys(()=>{
+            window.advancedDevMode = !window.advancedDevMode
+			this.designerConfig.componentLib = !!window.advancedDevMode
+			this.designerConfig.eventCollapse = !!window.advancedDevMode
+        })
 	},
 	methods: {
-		handleDocumentKeyEvent() {
-			let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0
-			document.onkeydown = (e) => {
-				let keyCode = e.keyCode || e.which || e.charCode
-				if (keyCode === 16) {
-					shiftKeyFlag = 1
-				} else if (keyCode === 18) {
-					altKeyFlag = 1
-				} else if (keyCode === 76 || keyCode === 108) {
-					lKeyFlag = 1
-				} else if (keyCode === 77 || keyCode === 109) {
-					mKeyFlag = 1
-				}
-
-				if (shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
-					window.advancedDevMode = !window.advancedDevMode
-					this.designerConfig.componentLib = !!window.advancedDevMode
-					this.designerConfig.eventCollapse = !!window.advancedDevMode
-				}
-			}
-
-			document.onkeyup = (e) => {
-				let keyCode = e.keyCode || e.which || e.charCode
-				if (keyCode === 16) {
-					shiftKeyFlag = 0
-				} else if (keyCode === 18) {
-					altKeyFlag = 0
-				} else if (keyCode === 76 || keyCode === 108) {
-					lKeyFlag = 0
-				} else if (keyCode === 77 || keyCode === 109) {
-					mKeyFlag = 0
-				}
-			}
-		},
-
 		loadFieldListData() {
 			getMDFieldList(this.entity).then(res => {
 				if (res.data.fieldList) {

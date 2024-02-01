@@ -2,83 +2,95 @@
     <div class="common-config">
         <el-card shadow="never" v-loading="loading">
             <el-tabs v-model="activeName">
-                <el-tab-pane
-                    v-for="(card,cardInx) of confList"
-                    :key="cardInx"
-                    :name="card.code"
-                    :label="card.label"
-                >
-                    <el-descriptions :border="true" :column="1">
-                        <el-descriptions-item v-for="(item,inx) of card.confs" :key="inx">
-                            <template #label>
-                                <div class="config-label">
-                                    <div>
-                                        <span class="is-required" v-if="item.required">*</span>
-                                        {{ item.label }}
+                <template v-for="(card,cardInx) of confList" :key="cardInx">
+                    <el-tab-pane :name="card.code" :label="card.label" v-if="!card.isHide">
+                        <el-descriptions :border="true" :column="1">
+                            <el-descriptions-item v-for="(item,inx) of card.confs" :key="inx">
+                                <template #label>
+                                    <div class="config-label">
+                                        <div>
+                                            <span class="is-required" v-if="item.required">*</span>
+                                            {{ item.label }}
+                                        </div>
                                     </div>
+                                </template>
+                                <!-- 文本框 -->
+                                <div v-if="item.type == 'text'">
+                                    <span
+                                        v-if="item.keyFrom"
+                                    >{{ confData[item.keyFrom] ? confData[item.keyFrom][item.key] : '--'}}</span>
+                                    <span v-else>{{ confData[item.key] }}</span>
                                 </div>
-                            </template>
-                            <!-- 文本框 -->
-                            <div v-if="item.type == 'text'">
-                                <span
-                                    v-if="item.keyFrom"
-                                >{{ confData[item.keyFrom] ? confData[item.keyFrom][item.key] : '--'}}</span>
-                                <span v-else>{{ confData[item.key] }}</span>
-                            </div>
-                            <!-- 输入框 -->
-                            <div v-else-if="item.type == 'input'">
-                                <el-input
-                                    :class="{'is-error':item.isError}"
-                                    @focus="item.isError = false"
-                                    v-model="confData[item.key]"
-                                    clearable
-                                    :disabled="isDisabled(card,item) || item.disabled"
-                                    :placeholder="'请输入' + item.label"
-                                ></el-input>
-                                <div class="info-text">{{ item.subLabel }}</div>
-                            </div>
-                            <!-- 复选框 -->
-                            <div v-else-if="item.type == 'switch'">
-                                <el-tooltip
-                                    class="box-item"
-                                    effect="dark"
-                                    :content="'当前：' + publicSetting.productType?.displayName + ' 不支持该功能'"
-                                    placement="top"
-                                    v-if="needAuthentication.includes(item.key) && (publicSetting.productType?.value == 1 || publicSetting.productType?.value == 2)"
-                                >
-                                    <el-switch v-model="confData[item.key]" disabled />
-                                </el-tooltip>
-                                <el-switch v-else v-model="confData[item.key]" />
-                            </div>
-                            <!-- 颜色选择器 -->
-                            <div v-else-if="item.type == 'picker'">
-                                <el-color-picker v-model="confData[item.key]" />
-                            </div>
-                            <!-- 用户选择框 -->
-                            <div v-else-if="item.type == 'mlSelectUser'">
-                                <mlSelectUser type="Role" v-model="confData.nodeRole" clearable />
-                            </div>
-                            <!-- 数字类型输入框 -->
-                            <div v-else-if="item.type == 'numInput'">
-                                <el-input-number
-                                    v-model="confData[item.key]"
-                                    :min="1"
-                                    :max="99999"
-                                    :disabled="!confData.autoBackup"
-                                />
-                                <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>
-                            </div>
-                            <!-- 立即同步 -->
-                            <div v-else-if="item.type == 'autoSync'">
-                                <el-tooltip
-                                    popper-class="conmon-tooltip"
-                                    effect="dark"
-                                    :content="errorMessage || 'error'"
-                                    placement="top"
-                                    v-if="errorMessage"
-                                    style="width: 300px;"
-                                >
+                                <!-- 输入框 -->
+                                <div v-else-if="item.type == 'input'">
+                                    <el-input
+                                        :class="{'is-error':item.isError}"
+                                        @focus="item.isError = false"
+                                        v-model="confData[item.key]"
+                                        clearable
+                                        :disabled="isDisabled(card,item) || item.disabled"
+                                        :placeholder="'请输入' + item.label"
+                                    ></el-input>
+                                    <div class="info-text">{{ item.subLabel }}</div>
+                                </div>
+                                <!-- 复选框 -->
+                                <div v-else-if="item.type == 'switch'">
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        :content="'当前：' + publicSetting.productType?.displayName + ' 不支持该功能'"
+                                        placement="top"
+                                        v-if="needAuthentication.includes(item.key) && (publicSetting.productType?.value == 1 || publicSetting.productType?.value == 2)"
+                                    >
+                                        <el-switch v-model="confData[item.key]" disabled />
+                                    </el-tooltip>
+                                    <el-switch v-else v-model="confData[item.key]" />
+                                </div>
+                                <!-- 颜色选择器 -->
+                                <div v-else-if="item.type == 'picker'">
+                                    <el-color-picker v-model="confData[item.key]" />
+                                </div>
+                                <!-- 用户选择框 -->
+                                <div v-else-if="item.type == 'mlSelectUser'">
+                                    <mlSelectUser
+                                        type="Role"
+                                        v-model="confData.nodeRole"
+                                        clearable
+                                    />
+                                </div>
+                                <!-- 数字类型输入框 -->
+                                <div v-else-if="item.type == 'numInput'">
+                                    <el-input-number
+                                        v-model="confData[item.key]"
+                                        :min="1"
+                                        :max="99999"
+                                        :disabled="!confData.autoBackup"
+                                    />
+                                    <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>
+                                </div>
+                                <!-- 立即同步 -->
+                                <div v-else-if="item.type == 'autoSync'">
+                                    <el-tooltip
+                                        popper-class="conmon-tooltip"
+                                        effect="dark"
+                                        :content="errorMessage || 'error'"
+                                        placement="top"
+                                        v-if="errorMessage"
+                                        style="width: 300px;"
+                                    >
+                                        <el-button
+                                            :loading="autoSyncLoading"
+                                            :disabled="isDisabled(card,item)"
+                                            @click="autoSync"
+                                        >
+                                            <el-icon v-if="!autoSyncLoading">
+                                                <ElIconRefresh />
+                                            </el-icon>
+                                            <span class="ml-2">同步失败</span>
+                                        </el-button>
+                                    </el-tooltip>
                                     <el-button
+                                        v-else
                                         :loading="autoSyncLoading"
                                         :disabled="isDisabled(card,item)"
                                         @click="autoSync"
@@ -86,52 +98,41 @@
                                         <el-icon v-if="!autoSyncLoading">
                                             <ElIconRefresh />
                                         </el-icon>
-                                        <span class="ml-2">同步失败</span>
+                                        <span class="ml-2">立即同步</span>
                                     </el-button>
-                                </el-tooltip>
-                                <el-button
-                                    v-else
-                                    :loading="autoSyncLoading"
-                                    :disabled="isDisabled(card,item)"
-                                    @click="autoSync"
-                                >
-                                    <el-icon v-if="!autoSyncLoading">
-                                        <ElIconRefresh />
-                                    </el-icon>
-                                    <span class="ml-2">立即同步</span>
-                                </el-button>
-                            </div>
-                            <!-- 上传Logo -->
-                            <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
-                                <ml-upload
-                                    accept="image/*"
-                                    @on-success="onLogoSuccess"
-                                    class="ml-upload"
-                                    uploadUrl="/picture/upload"
-                                >
-                                    <template #trigger>
-                                        <div
-                                            class="avatar-box"
-                                            :class="{'is-error':item.isError}"
-                                            v-if="confData[item.key]"
-                                            @click="item.isError = false"
-                                        >
-                                            <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
-                                        </div>
-                                        <el-icon
-                                            @click="item.isError = false"
-                                            v-else
-                                            class="avatar-uploader-icon"
-                                            :class="{'is-error':item.isError}"
-                                        >
-                                            <ElIconPlus />
-                                        </el-icon>
-                                    </template>
-                                </ml-upload>
-                            </div>
-                        </el-descriptions-item>
-                    </el-descriptions>
-                </el-tab-pane>
+                                </div>
+                                <!-- 上传Logo -->
+                                <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
+                                    <ml-upload
+                                        accept="image/*"
+                                        @on-success="onLogoSuccess"
+                                        class="ml-upload"
+                                        uploadUrl="/picture/upload"
+                                    >
+                                        <template #trigger>
+                                            <div
+                                                class="avatar-box"
+                                                :class="{'is-error':item.isError}"
+                                                v-if="confData[item.key]"
+                                                @click="item.isError = false"
+                                            >
+                                                <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
+                                            </div>
+                                            <el-icon
+                                                @click="item.isError = false"
+                                                v-else
+                                                class="avatar-uploader-icon"
+                                                :class="{'is-error':item.isError}"
+                                            >
+                                                <ElIconPlus />
+                                            </el-icon>
+                                        </template>
+                                    </ml-upload>
+                                </div>
+                            </el-descriptions-item>
+                        </el-descriptions>
+                    </el-tab-pane>
+                </template>
             </el-tabs>
             <div class="footer mt-20">
                 <el-button
@@ -163,9 +164,14 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 
+import { mlShortcutkeys } from "@/utils/util";
+
 // import config from "@/config/table";
 onMounted(() => {
     initData();
+    mlShortcutkeys(()=>{
+        confList.value[4].isHide = !confList.value[4].isHide;
+    })
 });
 
 /**
@@ -206,7 +212,12 @@ let dingTalkFields = ref([
 ]);
 
 const initData = async () => {
-    confList.value = [...commonConfig];
+    confList.value = commonConfig.map((el) => {
+        if (el.code == "authLicense" && publicSetting.value.appMode == "prod") {
+            el.isHide = true;
+        }
+        return el;
+    });
     loading.value = true;
     let res = await getSettingInfo();
     if (res) {
@@ -549,6 +560,23 @@ const getHeavyTaskApi = async () => {
             ElMessage.success("同步成功");
         }
     }
+};
+
+// 页签显示
+const showTab = (code) => {
+    return code != "authLicense" || publicSetting.value.appMode != "prod";
+    // 非授权许可直接显示
+    // if (code != "authLicense") {
+    //     return true;
+    // }
+    // // 如果是授权许可
+    // else {
+    //     if (publicSetting.value.appMode != "prod") {
+    //         return true;
+    //     }else {
+
+    //     }
+    // }
 };
 </script>
 <style lang='scss' scoped>

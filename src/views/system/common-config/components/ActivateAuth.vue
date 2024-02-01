@@ -112,8 +112,8 @@ const onActive = async () => {
     let res = await registerLicenseApi(params);
     if (res) {
         let publicRes = await getPublicSetting();
-        if (publicRes) {
-            setPublicSetting(publicRes);
+        if (publicRes && publicRes.code == 200) {
+            setPublicSetting(publicRes.data);
         }
         ElMessage.success("激活成功");
         dialogConf.isShow = false;
