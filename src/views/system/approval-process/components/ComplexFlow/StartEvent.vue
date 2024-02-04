@@ -68,8 +68,10 @@ let myFormData = ref({
 
 watch(
     () => props.formData,
-    () => {
-        myFormData.value = Object.assign(myFormData.value, props.formData);
+    (newVal,oldVal) => {
+        if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
+            myFormData.value = Object.assign(myFormData.value, props.formData);
+        }
     },
     { deep: true }
 );

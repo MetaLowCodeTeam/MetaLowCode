@@ -175,6 +175,10 @@ let nodeDefaultData = reactive({
         ccToUserList: [],
         // 可修改字段
         modifiableFields: [],
+        // 前置脚本
+        qian: "12",
+        // 后置脚本
+        hou: "34",
     },
 });
 
@@ -273,6 +277,7 @@ const onSave = async () => {
         } else {
             properties = getProperties(el.properties.flowJson);
         }
+        console.log(properties,'properties');
         // 如果是开始节点
         if (el.type == "bpmn:startEvent") {
             let { nodeRoleType, nodeRoleList } = properties;
@@ -322,6 +327,7 @@ const onSave = async () => {
             flowJson[el.id] = el.properties.flowJson;
         }
     });
+    
     let param = {
         approvalConfigId: approvalConfigId.value,
         logicFlow: {

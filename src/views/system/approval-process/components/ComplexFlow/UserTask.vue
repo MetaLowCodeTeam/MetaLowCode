@@ -1,5 +1,6 @@
 <template>
     <el-collapse v-model="activeNames">
+        <!-- 审批设置 -->
         <el-collapse-item name="1">
             <template #title>
                 <h3>审批设置</h3>
@@ -15,7 +16,7 @@
                 </div>
             </div>
             <!-- 由谁审批 -->
-            <div class="work-flow-conditions mt-20">
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="lable-title mb-3">由谁审批</div>
                 <div class="mt-10">
                     <el-select
@@ -100,7 +101,7 @@
                 </div>
             </div>
             <!-- 驳回设置 -->
-            <div class="work-flow-conditions mt-20">
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="lable-title mb-3">驳回设置</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group class="radio-need-block" v-model="myFormData.rejectType">
@@ -111,7 +112,7 @@
                 </div>
             </div>
             <!-- 审批人为空时 -->
-            <div class="work-flow-conditions mt-20">
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="lable-title mb-3">审批人为空时</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group v-model="myFormData.emptyUserType">
@@ -124,11 +125,12 @@
                     v-if="myFormData.emptyUserType == 2"
                     v-model="myFormData.specificRole"
                     clearable
+                    type="User"
                     style="width: 214px;"
                 />
             </div>
             <!-- 审批方式 -->
-            <div class="work-flow-conditions mt-20">
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="lable-title mb-3">审批方式</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group
@@ -160,7 +162,40 @@
                 </div>
             </div>
         </el-collapse-item>
+        <!-- 事件设置 -->
         <el-collapse-item name="2">
+            <template #title>
+                <h3>事件设置</h3>
+            </template>
+            <!-- 说明 -->
+            <div class="work-flow-conditions">
+                <div class="lable-title mb-3">说明</div>
+                <div class="mb-10 mt-10">
+                    该事件在
+                    <span class="ml-a-span">该任务启动后</span> 执行，用户可以使用
+                    <span class="ml-a-span">execution</span> 做操作。
+                    <br />例如：
+                    <br />①、设置流程变量：execution.setVariable("total",100);
+                    <br />②、获取任务流程ID：execution.getId();
+                </div>
+            </div>
+            <!-- 前置脚本 -->
+            <div class="work-flow-conditions">
+                <div class="lable-title mb-3">前置脚本</div>
+                <div class="mb-10 mt-10">
+                    <mlCodeEditor v-model="myFormData.qian" mode="javascript" theme="darcula" />
+                </div>
+            </div>
+            <!-- 后置脚本 -->
+            <div class="work-flow-conditions">
+                <div class="lable-title mb-3">后置脚本</div>
+                <div class="mb-10 mt-10">
+                    <mlCodeEditor v-model="myFormData.hou" mode="javascript" theme="darcula" />
+                </div>
+            </div>
+        </el-collapse-item>
+        <!-- 抄送设置 -->
+        <el-collapse-item name="3">
             <template #title>
                 <h3>抄送设置</h3>
             </template>
@@ -172,7 +207,8 @@
                 </div>
             </div>
         </el-collapse-item>
-        <el-collapse-item name="3">
+        <!-- 表单设置 -->
+        <el-collapse-item name="4">
             <template #title>
                 <h3>表单设置</h3>
             </template>
@@ -226,22 +262,32 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 // 选择字段组件
 import mlSelectField from "@/components/mlSelectField/index.vue";
+// 代码编辑器
+import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
+
 const { allEntityName } = storeToRefs(useCommonStore());
 let $API = inject("$API");
 const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
 });
-const activeNames = ref(["1"]);
+const activeNames = ref(["1", "2"]);
 const emits = defineEmits(["setNodeData"]);
-let myFormData = ref({});
+let myFormData = ref({
+    qian: "// Demo code",
+    hou: "// Demo code",
+    specificRole:[],
+    modifiableFields:[],
+});
 let entityCode = ref("");
 let entityName = ref("");
 
 watch(
     () => props.formData,
-    () => {
-        myFormData.value = Object.assign(myFormData.value, props.formData);
+    (newVal,oldVal) => {
+        if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
+            myFormData.value = Object.assign(myFormData.value, props.formData);
+        }
     },
     { deep: true }
 );
@@ -250,6 +296,7 @@ watch(
     () => myFormData.value,
     () => {
         emits("setNodeData", myFormData.value);
+        
     },
     { deep: true }
 );
@@ -265,6 +312,7 @@ onMounted(() => {
     // 获取所有实体字段
     getEntityFields();
 });
+
 
 /**
  * ***********************************************   由谁审批 beg

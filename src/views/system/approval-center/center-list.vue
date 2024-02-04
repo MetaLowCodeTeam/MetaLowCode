@@ -189,6 +189,10 @@ let tableColumn = ref([
         },
     },
     {
+        prop: "stepName",
+        label: "审批节点",
+    },
+    {
         prop: "remark",
         label: "最近审批备注",
     },

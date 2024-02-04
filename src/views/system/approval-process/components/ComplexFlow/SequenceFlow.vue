@@ -36,10 +36,12 @@ let conditionConf = ref({});
 
 watch(
     () => props.formData,
-    () => {
-        myFormData.value = Object.assign(myFormData.value, props.formData);
-        let { filter } = JSON.parse(JSON.stringify(myFormData.value));
-        conditionConf.value = initFilter(filter);
+    (newVal, oldVal) => {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+            myFormData.value = Object.assign(myFormData.value, props.formData);
+            let { filter } = JSON.parse(JSON.stringify(myFormData.value));
+            conditionConf.value = initFilter(filter);
+        }
     },
     { deep: true }
 );
