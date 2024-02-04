@@ -12,11 +12,11 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = el.guid;
         // 需要内嵌
         if (el.openType == 1) {
-            newRoute.path = "/web/custom-page/iframe" + '/' + el.guid;
+            newRoute.path = "/web/custom-page/iframe" + '/' + el.guid + (isTopNav ? '/' + 'topNav' : '');
             newRoute.component = "custom-page/iframe";
         }
     } else {
-        newRoute.path = "/web/custom-page/" + (isTopNav ? '/' + el.guid : '') + getCustomPageComponent(el.outLink);
+        newRoute.path = "/web/custom-page/" +  getCustomPageComponent(el.outLink) +(isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
