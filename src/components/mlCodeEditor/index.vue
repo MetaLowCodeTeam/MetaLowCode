@@ -62,7 +62,9 @@ let textareaRef = ref();
 
 watch(
     () => props.modelValue,
-    () => {},
+    () => {
+        loadContentValue()
+    },
     { deep: true }
 );
 

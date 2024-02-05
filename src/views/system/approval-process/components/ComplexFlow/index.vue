@@ -209,6 +209,7 @@ const openDrawer = (data) => {
     } else {
         drawerData.value.formData = cloneDeep(nodeDefaultData[data.type]);
     }
+    console.log(drawerData.value.formData,"点击节点")
 };
 
 // 开始节点

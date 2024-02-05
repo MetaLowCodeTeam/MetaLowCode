@@ -287,6 +287,7 @@ watch(
     (newVal,oldVal) => {
         if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
             myFormData.value = Object.assign(myFormData.value, props.formData);
+            console.log(myFormData.value,'内部节点-watch formData')
         }
     },
     { deep: true }
@@ -307,6 +308,7 @@ onMounted(() => {
         entityName.value = allEntityName.value[entityCode.value];
     }
     myFormData.value = Object.assign(myFormData.value, props.formData);
+    console.log(myFormData.value,'内部节点-onMounted')
     // 获取部门负责人数据
     getDepartment();
     // 获取所有实体字段
