@@ -183,14 +183,14 @@
             <div class="work-flow-conditions">
                 <div class="lable-title mb-3">前置脚本</div>
                 <div class="mb-10 mt-10">
-                    <mlCodeEditor v-model="myFormData.qian" mode="javascript" theme="darcula" />
+                    <mlCodeEditor v-model="myFormData.createScript" mode="javascript" theme="darcula" />
                 </div>
             </div>
             <!-- 后置脚本 -->
             <div class="work-flow-conditions">
                 <div class="lable-title mb-3">后置脚本</div>
                 <div class="mb-10 mt-10">
-                    <mlCodeEditor v-model="myFormData.hou" mode="javascript" theme="darcula" />
+                    <mlCodeEditor v-model="myFormData.completeScript" mode="javascript" theme="darcula" />
                 </div>
             </div>
         </el-collapse-item>
@@ -274,8 +274,8 @@ const props = defineProps({
 const activeNames = ref(["1", "2"]);
 const emits = defineEmits(["setNodeData"]);
 let myFormData = ref({
-    qian: "// Demo code",
-    hou: "// Demo code",
+    createScript: "// Demo code",
+    completeScript: "// Demo code",
     specificRole:[],
     modifiableFields:[],
 });

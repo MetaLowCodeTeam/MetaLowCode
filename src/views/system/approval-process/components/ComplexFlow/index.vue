@@ -176,9 +176,9 @@ let nodeDefaultData = reactive({
         // 可修改字段
         modifiableFields: [],
         // 前置脚本
-        qian: "12",
+        createScript: "",
         // 后置脚本
-        hou: "34",
+        completeScript: "",
     },
 });
 
