@@ -165,11 +165,16 @@
     <!-- 默认查询设置 -->
     <DefaultFilterDialog ref="defaultFilterRefs" @defaultFilterChange="defaultFilterChange" />
     <!-- 树状分组筛选 -->
-    <TreeGroupFilter :entityCode="entityCode" v-model="treeGroupFilterIsShow"/>
+    <TreeGroupFilter
+        :entityCode="entityCode"
+        :layoutConfig="myLayoutConf"
+        v-model="treeGroupFilterIsShow"
+        @confirm="treGroupFilterConfirm"
+    />
 </template>
 
 <script setup>
-import { ref, inject, reactive } from "vue";
+import { ref, inject, reactive, watch, onMounted } from "vue";
 /**
  * 组件
  */
@@ -184,7 +189,7 @@ import ReportForms from "../ReportForms.vue";
 // 默认查询设置
 import DefaultFilterDialog from "./DefaultFilterDialog.vue";
 // 树状分组筛选设置
-import TreeGroupFilter from './TreeGroupFilter.vue';
+import TreeGroupFilter from "./TreeGroupFilter.vue";
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -195,6 +200,7 @@ const emits = defineEmits([
     "changeColumnShow",
     "editColumnConfirm",
     "defaultFilterChange",
+    "treGroupFilterConfirm",
 ]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
@@ -211,6 +217,24 @@ const props = defineProps({
     // 默认查询设置
     defaultFilterSetting: { type: Object, default: () => {} },
 });
+
+// layout配置
+let myLayoutConf = ref({});
+
+watch(
+    () => props.layoutConfig,
+    () => {
+        myLayoutConf.value = props.layoutConfig;
+    },
+    {
+        deep: true,
+    }
+);
+
+onMounted(() => {
+    myLayoutConf.value = props.layoutConfig;
+});
+
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
@@ -368,11 +392,15 @@ const openPrinter = () => {
     // });
 };
 
-
 /**
  * 树状分组筛选
  */
 let treeGroupFilterIsShow = ref(false);
+
+// 确认选择分组
+const treGroupFilterConfirm = () => {
+    emits("treGroupFilterConfirm");
+};
 
 defineExpose({
     editColumn,

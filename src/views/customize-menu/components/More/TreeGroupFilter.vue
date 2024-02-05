@@ -5,10 +5,10 @@
             <div class="header-box">
                 <el-button type="primary" @click="addGroup">新增筛选层级</el-button>
             </div>
-            <el-card class="box-card" shadow="never" v-if="groupList.length > 0">
+            <el-card class="box-card" shadow="never">
                 <div
                     class="item-group"
-                    v-for="(item,inx) of groupList"
+                    v-for="(item,inx) of groupConf.groupList"
                     :key="inx"
                     :class="['select-' + inx]"
                 >
@@ -34,8 +34,13 @@
                     </span>
                 </div>
             </el-card>
+            <div class="mt-5">
+                <el-checkbox v-model="groupConf.isOpen" label="开启树状分组" />
+                <el-checkbox v-model="groupConf.isMultiple" label="多选模式" />
+                <el-checkbox v-model="groupConf.isAccordion" label="手风琴模式" />
+            </div>
             <div class="footer-box">
-                <el-button style="width: 70px;">取消</el-button>
+                <el-button style="width: 70px;" @click="isShow = false">取消</el-button>
                 <el-button style="width: 70px;" type="primary" @click="confirmFieldGroup">确认</el-button>
             </div>
         </div>
@@ -45,23 +50,24 @@
 <script setup>
 import { onMounted, watch, ref } from "vue";
 import useCommonStore from "@/store/modules/common";
-
+import { ElMessage } from "element-plus";
 /**
  * API
  */
 import { getFieldSet } from "@/api/system-manager";
-import { ElMessage } from "element-plus";
+import layoutConfig from "@/api/layoutConfig";
 
 const { queryEntityNameByCode } = useCommonStore();
 const props = defineProps({
     modelValue: null,
     entityCode: { type: Number },
+    layoutConfig: { type: Object, default: () => {} },
 });
 
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue", "confirm"]);
 
 let isShow = ref(false);
-
+let myLayoutConf = ref({});
 watch(
     () => props.modelValue,
     () => {
@@ -69,6 +75,16 @@ watch(
         loadFields();
     },
     { deep: true }
+);
+
+watch(
+    () => props.layoutConfig,
+    () => {
+        initLayoutConf();
+    },
+    {
+        deep: true,
+    }
 );
 
 watch(
@@ -81,7 +97,10 @@ watch(
 
 onMounted(() => {
     isShow.value = props.modelValue;
+    // 加载字段
     loadFields();
+    // 初始化配置信息
+    initLayoutConf();
 });
 
 /**
@@ -136,12 +155,41 @@ const loadFields = async () => {
 /**
  * 分组数据
  */
-let groupList = ref([]);
+let layoutConfigId = ref("");
+let groupConf = ref({
+    // 分组数据
+    groupList: [
+        {
+            fieldGroup: [],
+            error: false,
+        },
+    ],
+    // 是否 开启树状分组
+    isOpen: true,
+    // 多选模式
+    isMultiple: false,
+    // 手风琴模式
+    isAccordion: false,
+});
+
+// 初始化数据
+const initLayoutConf = () => {
+    // 弹框显示才调接口
+    if (!isShow.value) {
+        return;
+    }
+    myLayoutConf.value = props.layoutConfig;
+    let { TREE_GROUP } = myLayoutConf.value;
+    if (TREE_GROUP) {
+        layoutConfigId.value = TREE_GROUP.layoutConfigId;
+        groupConf.value = JSON.parse(TREE_GROUP.config);
+    }
+};
 
 // 新建分组
 const addGroup = () => {
-    if (groupList.value.length < 5) {
-        groupList.value.push({
+    if (groupConf.value.groupList.length < 5) {
+        groupConf.value.groupList.push({
             fieldGroup: [],
             error: false,
         });
@@ -152,24 +200,40 @@ const addGroup = () => {
 
 // 删除分组
 const delGroup = (inx) => {
-    groupList.value.splice(inx, 1);
+    if (groupConf.value.groupList.length == 1) {
+        ElMessage.warning("至少保留1个层级");
+        return;
+    }
+    groupConf.value.groupList.splice(inx, 1);
 };
 
 // 确认字段分组
-const confirmFieldGroup = () => {
-    if (groupList.value.length < 1) {
-        ElMessage.error("还未新增筛选层级");
-        return;
-    }
-    for (let index = 0; index < groupList.value.length; index++) {
-        const element = groupList.value[index];
+const confirmFieldGroup = async () => {
+    for (let index = 0; index < groupConf.value.groupList.length; index++) {
+        const element = groupConf.value.groupList[index];
         if (element.fieldGroup.length < 1) {
             element.error = true;
             ElMessage.error("该层级还未选择分组字段");
             return;
         }
     }
-    // console.log(groupList.value);
+    let param = {
+        config: JSON.stringify(groupConf.value),
+        entityCode: props.entityCode,
+    };
+    loading.value = true;
+    let res = await layoutConfig.saveConfig(
+        layoutConfigId.value,
+        "TREE_GROUP",
+        param
+    );
+    if (res) {
+        ElMessage.success("保存成功");
+        emits("confirm");
+        isShow.value = false;
+    }
+    loading.value = false;
+    // console.log(groupConf.value.groupList);
 };
 </script>
 <style lang='scss' scoped>
@@ -217,7 +281,6 @@ const confirmFieldGroup = () => {
     }
 }
 .footer-box {
-    margin-top: 10px;
     text-align: right;
 }
 </style>

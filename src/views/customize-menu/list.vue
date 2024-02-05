@@ -68,6 +68,7 @@
                         :idFieldName="idFieldName"
                         :entityCode="entityCode"
                         @defaultFilterChange="getLayoutList"
+                        @treGroupFilterConfirm="getLayoutList"
                         :defaultFilterSetting="defaultFilterSetting"
                     />
                 </div>
@@ -105,6 +106,11 @@
                 </div>
             </div>
             <div v-else class="table-div">
+                <!-- 分组 -->
+                <div class="tree-froup-box">
+                    123
+                </div>
+                <!-- 表格 -->
                 <el-table
                     ref="elTables"
                     :data="tableData"
@@ -324,6 +330,7 @@ const getLayoutList = async () => {
         layoutConfig.value = {
             SELF,
             ALL,
+            TREE_GROUP: res.data.TREE_GROUP,
         };
 
         // 如果存在默认配置，用默认配置
@@ -646,7 +653,7 @@ const getSummaries = (param) => {
         // property
         if (formatterStatistics.value[column.property]) {
             let { label, value } = formatterStatistics.value[column.property];
-            sums[index] = (label ? label + "：" : '') + (value || 0);
+            sums[index] = (label ? label + "：" : "") + (value || 0);
         }
     });
 
