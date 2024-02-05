@@ -194,7 +194,7 @@ import { ref, onBeforeMount, inject, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
-import More from "./components/More.vue";
+import More from "./components/More/Index.vue";
 import Detail from "./detail.vue";
 import Edit from "./edit.vue";
 import FormatRow from "./components/FormatRow.vue";

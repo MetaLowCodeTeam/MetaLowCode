@@ -120,7 +120,7 @@ import { ref, reactive, inject, nextTick } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
-import More from "./components/More.vue";
+import More from "./components/More/Index.vue";
 import DetailTabCom from "./components/DetailTabCom.vue";
 import Edit from "./edit.vue";
 import NewRelated from "./components/NewRelated.vue";

@@ -123,6 +123,16 @@
                     @click="openDefaultFilterDialog"
                     v-if="$TOOL.checkRole('r6008')"
                 >默认查询设置</div>
+                <div
+                    class="pl-20 item"
+                    @click="treeGroupFilterIsShow = true"
+                    v-if="$TOOL.checkRole('r6008')"
+                >树状分组筛选</div>
+                <div
+                    class="pl-20 item"
+                    @click="openDefaultFilterDialog"
+                    v-if="$TOOL.checkRole('r6008')"
+                >批量编辑设置</div>
             </template>
         </div>
         <template #reference>
@@ -154,15 +164,28 @@
     <ReportForms ref="reportFormsRefs" />
     <!-- 默认查询设置 -->
     <DefaultFilterDialog ref="defaultFilterRefs" @defaultFilterChange="defaultFilterChange" />
+    <!-- 树状分组筛选 -->
+    <TreeGroupFilter :entityCode="entityCode" v-model="treeGroupFilterIsShow"/>
 </template>
 
 <script setup>
 import { ref, inject, reactive } from "vue";
-import SetColumn from "./SetColumn.vue";
-import DataExport from "./DataExport.vue";
-import Allocation from "./Allocation.vue";
-import ReportForms from "./ReportForms.vue";
+/**
+ * 组件
+ */
+// 设置列
+import SetColumn from "../SetColumn.vue";
+// 数据导出
+import DataExport from "../DataExport.vue";
+// 分配、共享、取消共享
+import Allocation from "../Allocation.vue";
+// 选择报表
+import ReportForms from "../ReportForms.vue";
+// 默认查询设置
 import DefaultFilterDialog from "./DefaultFilterDialog.vue";
+// 树状分组筛选设置
+import TreeGroupFilter from './TreeGroupFilter.vue';
+
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
@@ -332,13 +355,24 @@ const defaultFilterChange = () => {
  * 打印
  */
 const openPrinter = () => {
-    let newUrl = router.resolve("/web/Printer?entityId=" + props.detailId + "&nameFieldName=" + props.nameFieldName);
+    let newUrl = router.resolve(
+        "/web/Printer?entityId=" +
+            props.detailId +
+            "&nameFieldName=" +
+            props.nameFieldName
+    );
     window.open(newUrl.href);
     // router.push({
     //     path: "/web/Printer?entityId=" + props.detailId,
     //     target: "_blank",
     // });
 };
+
+
+/**
+ * 树状分组筛选
+ */
+let treeGroupFilterIsShow = ref(false);
 
 defineExpose({
     editColumn,
@@ -395,6 +429,17 @@ defineExpose({
             background: #fff;
             cursor: default;
         }
+    }
+}
+
+.list-settings-item {
+    height: 32px;
+    line-height: 32px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover {
+        color: var(--el-color-primary);
     }
 }
 </style>
