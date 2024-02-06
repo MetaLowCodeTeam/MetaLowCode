@@ -70,6 +70,7 @@ const initMyTreeGroupConf = () => {
         // console.log(groupList[0].fieldGroup, "groupList[0].fieldGroup");
         // treeData.value = await getGroupTree();
         treeData.value = groupList[0].fieldGroup.map((el, inx) => {
+            el.label = el.label;
             el.children = [{}];
             el.treeIndex = 0;
             el.treeId = inx + 1;
@@ -96,7 +97,7 @@ const getGroupTree = async (node) => {
             entityName: props.entityName,
             groupField: node.name,
             filterEasySql: node.filterSql,
-            filterList:[],
+            filterList: [],
         };
         let nodeChildren = [];
         let res = await groupTreeQuery(param);
@@ -117,7 +118,7 @@ const getGroupTree = async (node) => {
         return myTreeGroupConf.value.groupList[
             node.treeIndex + 1
         ].fieldGroup.map((el, inx) => {
-            el.label = "分组-" + el.label;
+            el.label = el.label;
             el.treeIndex = node.treeIndex + 1;
             el.filterSql = node.filterSql;
             el.treeId = node.treeId + "-" + (inx + 1);
@@ -160,6 +161,20 @@ const handleCheck = () => {
 </script>
 <style lang='scss' scoped>
 .flow-tree {
-    padding-right: 10px;
+    // box-sizing: border-box;
+    // overflow: auto !important;
+    :deep(.el-tree-node__content) {
+        // display: block !important;
+        align-self: baseline;
+    }
+    :deep(.el-tree-node__children) {
+        // overflow: visible !important;
+    }
+    // 　　.el-tree-node__content{
+    // 　　　　display: block!important;
+    // 　　}
+    // 　　.el-tree-node__children{
+    // 　　　　overflow: visible!important;
+    // 　　}
 }
 </style>
