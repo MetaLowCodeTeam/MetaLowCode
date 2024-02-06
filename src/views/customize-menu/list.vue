@@ -44,7 +44,6 @@
                     <el-tag type="success" closable @close="clearDataFilter">当前数据已过滤</el-tag>
                 </div>
                 <div class="fr table-setting">
-                    <!-- <el-button class="mr-15">按钮占用</el-button> -->
                     <el-button
                         icon="Notification"
                         :disabled="multipleSelection.length > 1"
@@ -107,8 +106,19 @@
             </div>
             <div v-else class="table-div">
                 <!-- 分组 -->
-                <div class="tree-froup-box">
-                    123
+                <div class="tree-froup-box" v-if="treeGroupConf.isOpen">
+                    <span class="tree-refresh" @click="treeRefresh">
+                        <el-icon>
+                            <ElIconRefresh />
+                        </el-icon>
+                    </span>
+                    <el-scrollbar>
+                        <ListTreeGropuFilter
+                            :treeGroupConf="treeGroupConf"
+                            :entityName="entityName"
+                            @check="treeGropuFilter"
+                        />
+                    </el-scrollbar>
                 </div>
                 <!-- 表格 -->
                 <el-table
@@ -209,6 +219,11 @@ import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
+/**
+ * 组件
+ */
+// 树状分组筛选
+import ListTreeGropuFilter from "./components/ListTreeGropuFilter.vue";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
@@ -306,6 +321,11 @@ const editColumn = (type) => {
     MoreRefs.value.editColumn(type);
 };
 
+/**
+ * 树状分组筛选
+ */
+let treeGroupConf = ref({});
+
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
@@ -332,6 +352,10 @@ const getLayoutList = async () => {
             ALL,
             TREE_GROUP: res.data.TREE_GROUP,
         };
+        if (res.data.TREE_GROUP) {
+            treeGroupConf.value = JSON.parse(res.data.TREE_GROUP.config);
+        }
+        // treeGroup.value = ? ;
 
         // 如果存在默认配置，用默认配置
         if (res.data.chosenListType) {
@@ -561,6 +585,19 @@ const clearDataFilter = () => {
     getTableList();
 };
 
+/**
+ * 分组查询
+ */
+let filterEasySql = ref("");
+const treeGropuFilter = (e) => {
+    filterEasySql.value = e;
+    getTableList();
+};
+const treeRefresh = ()=>{
+    filterEasySql.value = "";
+    getLayoutList();
+}
+
 const getTableList = async () => {
     if (
         routerParams.value.path &&
@@ -582,6 +619,7 @@ const getTableList = async () => {
         quickFilter: quickQuery.value,
         builtInFilter: builtInFilter.value,
         statistics: statistics.value,
+        filterEasySql: filterEasySql.value,
     };
     dataExportData.queryParm = { ...param };
     let res = await getDataList(
@@ -594,7 +632,8 @@ const getTableList = async () => {
         param.advFilter,
         param.quickFilter,
         param.builtInFilter,
-        param.statistics
+        param.statistics,
+        param.filterEasySql
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
@@ -716,6 +755,35 @@ div {
         }
         .table-div {
             height: calc(100% - 100px);
+            display: flex;
+            .tree-froup-box {
+                width: 300px;
+                border: 1px solid #ebeef5;
+                border-right: 0;
+                background: #fff;
+                box-sizing: border-box;
+                padding: 10px 0;
+                position: relative;
+                .tree-refresh {
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    top: 5px;
+                    right: 10px;
+                    z-index: 66;
+                    cursor: pointer;
+                    text-align: center;
+                    line-height: 20px;
+                    border-radius: 4px;
+                    box-sizing: border-box;
+                    padding-top: 2px;
+                    font-size: 16px;
+                    &:hover {
+                        background: #f2f6fc;
+                    }
+                }
+                // overflow:auto;
+            }
         }
     }
 }

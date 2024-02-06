@@ -41,13 +41,14 @@ export function deleteRecords(body) {
 * @param {*} advFilter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  常用查询
 * @param {*} quickFilter ""  快速查询
 * @param {*} builtInFilter ""  { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] } 参数查询
+* @param {*} filterEasySql ""  分组查询
 
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter,statistics) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter,statistics
+        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql
     })
 }
 
@@ -110,3 +111,11 @@ export function cancelShareRecord(body, userType) {
 // export function deleteRecord(body) {
 //     return http.post('/crud/deleteRecord', body)
 // }
+
+
+/**
+ * 分组查询
+ */
+export function groupTreeQuery(body) {
+    return http.post('/crud/groupTreeQuery', body)
+}

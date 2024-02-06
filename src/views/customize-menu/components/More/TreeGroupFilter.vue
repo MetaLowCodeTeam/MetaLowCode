@@ -19,12 +19,13 @@
                         clearable
                         :class="['box-select', item.error ? 'is-error' : '']"
                         @focus="item.error = false"
+                        value-key="name"
                     >
                         <el-option
                             v-for="item in fieldList"
                             :key="item.name"
                             :label="item.label"
-                            :value="item.name"
+                            :value="item"
                         />
                     </el-select>
                     <span class="del-group" @click="delGroup(inx)">
@@ -36,7 +37,6 @@
             </el-card>
             <div class="mt-5">
                 <el-checkbox v-model="groupConf.isOpen" label="开启树状分组" />
-                <el-checkbox v-model="groupConf.isMultiple" label="多选模式" />
                 <el-checkbox v-model="groupConf.isAccordion" label="手风琴模式" />
             </div>
             <div class="footer-box">
@@ -166,18 +166,12 @@ let groupConf = ref({
     ],
     // 是否 开启树状分组
     isOpen: true,
-    // 多选模式
-    isMultiple: false,
     // 手风琴模式
     isAccordion: false,
 });
 
 // 初始化数据
 const initLayoutConf = () => {
-    // 弹框显示才调接口
-    if (!isShow.value) {
-        return;
-    }
     myLayoutConf.value = props.layoutConfig;
     let { TREE_GROUP } = myLayoutConf.value;
     if (TREE_GROUP) {
