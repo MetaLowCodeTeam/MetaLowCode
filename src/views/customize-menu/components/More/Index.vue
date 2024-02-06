@@ -128,11 +128,11 @@
                     @click="treeGroupFilterIsShow = true"
                     v-if="$TOOL.checkRole('r6008')"
                 >树状分组筛选</div>
-                <div
+                <!-- <div
                     class="pl-20 item"
                     @click="openDefaultFilterDialog"
                     v-if="$TOOL.checkRole('r6008')"
-                >批量编辑设置</div>
+                >批量编辑设置</div> -->
             </template>
         </div>
         <template #reference>
