@@ -9,9 +9,16 @@
                     <div>内容</div>
                 </div>-->
                 <el-card class="item-card" v-for="(subItem,subInx) of item.children" :key="subInx">
-                    <div class="item-icon">{{  }}</div>
-                    <div class="item-text">
-                        {{ subItem.name }}
+                    <div class="content-card" :title="subItem.name" @click="goNav(subItem)">
+                        <div class="item-icon">
+                            <el-icon class="icon" v-if="!subItem.useIcon" color="#FFF">
+                                <SetUp />
+                            </el-icon>
+                            <el-icon class="icon" v-else color="#FFF">
+                                <component :is="subItem.useIcon" />
+                            </el-icon>
+                        </div>
+                        <div class="item-text">{{ subItem.name }}</div>
                     </div>
                 </el-card>
             </div>
@@ -31,6 +38,9 @@ const Router = useRouter();
 let layoutConfigId = ref("");
 let loading = ref(false);
 
+// 最近使用
+let recentlyUsed = ref([]);
+
 let navGroup = ref([
     {
         label: "最近使用",
@@ -44,7 +54,9 @@ let navGroup = ref([
 
 onMounted(() => {
     layoutConfigId.value = Router.currentRoute.value.query.layoutConfigId;
-    // console.log(layoutConfigId.value, "layoutConfigId.value");
+    let recentlyUsedNav = localStorage.getItem("RecentlyUsedNav");
+    recentlyUsed.value = recentlyUsedNav ? JSON.parse(recentlyUsedNav) : [];
+    navGroup.value[0].children = [...recentlyUsed.value];
     if (layoutConfigId.value) {
         getNavigationById();
     }
@@ -56,7 +68,6 @@ let navList = ref([]);
 const getNavigationById = async () => {
     loading.value = true;
     let res = await layoutConfig.getNavigationById(layoutConfigId.value);
-    console.log(res, "res");
     if (res && res.code == 200) {
         navList.value = res.data.config ? JSON.parse(res.data.config) : [];
         // 取有子集和没有子集的东西
@@ -74,9 +85,64 @@ const getNavigationById = async () => {
         }
         navGroup.value[1].children = [...notChildren];
         navGroup.value.push(...hasChildren);
-        console.log(navGroup.value, " navGroup.value");
     }
     loading.value = false;
+};
+
+// 跳转导航
+const goNav = (subItem) => {
+    let { type, outLink, openType, entityName, guid } = subItem;
+    // 是实体列表页面
+    if (type == 1) {
+        Router.push("/web/" + entityName + "/list");
+    }
+    // 是外部地址
+    else if (type == 2) {
+        // 内嵌
+        if (openType) {
+            Router.push("/web/custom-page/iframe/" + guid);
+        }
+        // 新窗口跳转
+        else {
+            window.open(outLink);
+        }
+    }
+    // 自定义
+    else if (type == 3) {
+        Router.push("/web/custom-page/" + outLink);
+    }
+    // 内置页面
+    else if (type == 4) {
+        Router.push("/web/custom-page/" + outLink);
+    }
+    let findInx = getItemInx(subItem);
+    // 如果item在最近使用列表里，把它删除
+    if (findInx != -1) {
+        recentlyUsed.value.splice(findInx, 1);
+    }
+    // 插入第一个，再保存
+    recentlyUsed.value.unshift(subItem);
+    saveRecentlyUsed();
+};
+
+// 取ITEM在最近使用列表里的缩影
+const getItemInx = (item) => {
+    for (let index = 0; index < recentlyUsed.value.length; index++) {
+        const el = recentlyUsed.value[index];
+        if (el.guid == item.guid) {
+            return index;
+        }
+    }
+    return -1;
+};
+
+// 将最近使用存储到本地
+const saveRecentlyUsed = () => {
+    if (recentlyUsed.value.length > 5) {
+        recentlyUsed.value.splice(5, 1);
+    }
+    localStorage.setItem("RecentlyUsedNav", JSON.stringify(recentlyUsed.value));
+    navGroup.value[0].children = [...recentlyUsed.value];
 };
 </script>
 <style lang='scss' scoped>
@@ -93,15 +159,40 @@ const getNavigationById = async () => {
         .box-card {
             display: flex;
             .item-card {
-                display: flex;
-                width: 200px;
-                height: 72px;
-                // line-height: 72px;
                 margin-bottom: 10px;
-                margin-right: 35px;
-                box-sizing: border-box;
+                height: 72px;
+                width: 200px;
+                margin-right: 30px;
+                cursor: pointer;
                 :deep(.el-card__body) {
-                    padding: 10px !important;
+                    padding: 0 !important;
+                }
+                .content-card {
+                    display: flex;
+                    padding: 10px;
+                    box-sizing: border-box;
+                    .item-icon {
+                        width: 50px;
+                        height: 50px;
+                        background: #fdb203;
+                        margin-right: 10px;
+                        border-radius: 4px;
+                        text-align: center;
+                        line-height: 50px;
+                        font-size: 28px;
+                        .icon {
+                            position: relative;
+                            top: 4px;
+                        }
+                    }
+                    .item-text {
+                        line-height: 50px;
+                        font-size: 18px;
+                        width: 120px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
                 }
             }
         }
