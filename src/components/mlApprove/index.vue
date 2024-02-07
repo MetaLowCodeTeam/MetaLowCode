@@ -15,6 +15,7 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
+                    <mlApproveBar :approvalInfo="approvalTask" />
                     <v-form-render
                         v-if="haveLayoutJson"
                         ref="vFormRef"
@@ -161,6 +162,11 @@ import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
+
+/**
+ * 组件
+ */
+import mlApproveBar from "@/components/mlApproveBar/index.vue";
 // 签名组件
 import vueEsign from "vue-esign";
 import { ElMessage } from "element-plus";

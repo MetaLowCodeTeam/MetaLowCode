@@ -46,7 +46,7 @@
                     style="width: 80%;"
                 ></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-if="publicSetting?.pluginIdList.includes('metaWorkFlow')">
                 <el-radio-group
                     v-model="dialogForm.form.flowType"
                     :disabled="dialogForm.type == 'edit'"
@@ -81,7 +81,7 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { unSystemEntityList, processEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList, processEntityList,publicSetting } = storeToRefs(useCommonStore());
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 let props = defineProps({
