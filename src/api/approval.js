@@ -22,7 +22,10 @@ export default {
         startApproval: async (entityId, approvalConfigId) => {
             return await http.get("/approval/startApproval", { entityId, approvalConfigId });
         },
-
+        // 提交复杂工作流
+        startComplexFlowApproval: async (body) => {
+            return await http.post("/plugins/metaWorkFlow/workflow/startRelatedProcess", body);
+        },
     },
     list: {
         // 获取实体列表
@@ -59,3 +62,22 @@ export function getEntityApprovalTaskList(entity, value) {
     return http.get('/approval/getEntityApprovalTaskList', { entity, type: value })
 }
 
+
+/**
+ * 复杂工作流
+ */
+
+// 保存流程
+export function saveComplexFlow(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/deployProcess', body)
+}
+
+// 获取流程
+export function getComplexFlow(approvalConfigId) {
+    return http.get('/plugins/metaWorkFlow/workflow/getBpmnXmlStr', { approvalConfigId })
+}
+
+// 驳回类为3(驳回到任意节点)时需要获取所有节点
+export function getRejectNodeList(approvalTaskId) {
+    return http.get('/plugins/metaWorkFlow/workflow/returnList', { approvalTaskId })
+}

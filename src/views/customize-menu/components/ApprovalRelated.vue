@@ -1,15 +1,25 @@
 <template>
-	<div class="group-button-label">流程操作</div>
+    <div class="group-button-label">流程操作</div>
     <!-- 未提交 -->
     <template v-if="myApproval.approvalStatus == 0">
         <el-row>
-            <el-button type="success" plain v-if="myApproval.startApproval" @click="openDialog('提交审批')">提交审批</el-button>
+            <el-button
+                type="success"
+                plain
+                v-if="myApproval.startApproval"
+                @click="openDialog('提交审批')"
+            >提交审批</el-button>
         </el-row>
     </template>
     <!-- 审核中 -->
     <template v-if="myApproval.approvalStatus == 1">
         <el-row>
-            <el-button type="success" plain v-if="myApproval.imApproval" @click="openApproveDialog">审批</el-button>
+            <el-button
+                type="success"
+                plain
+                v-if="myApproval.imApproval"
+                @click="openApproveDialog"
+            >审批</el-button>
         </el-row>
         <el-row>
             <el-button type="success" plain @click="openHistoryDialog">审批历史</el-button>
@@ -27,7 +37,12 @@
     <!-- 已完成 -->
     <template v-if="myApproval.approvalStatus == 3">
         <el-row>
-            <el-button type="success" plain @click="revokeApproval" v-if="$TOOL.checkRole('r6013')">撤销审批</el-button>
+            <el-button
+                type="success"
+                plain
+                @click="revokeApproval"
+                v-if="$TOOL.checkRole('r6013')"
+            >撤销审批</el-button>
         </el-row>
         <el-row>
             <el-button type="success" plain @click="openHistoryDialog">审批历史</el-button>
@@ -39,15 +54,16 @@
             <el-form-item label="选择审批流程">
                 <el-select
                     v-if="approvalList.length > 0"
-                    v-model="approvalDialog.approvalConfigId"
+                    v-model="approvalDialog.approvalConfig"
                     placeholder="请选择审批流程"
                     style="width: 233px;margin-bottom: 10px;"
+                    value-key="approvalConfigId"
                 >
                     <el-option
                         v-for="item in approvalList"
                         :key="item.approvalConfigId"
                         :label="item.flowName"
-                        :value="item.approvalConfigId"
+                        :value="item"
                     />
                 </el-select>
                 <div v-else class="info-text">
@@ -82,6 +98,27 @@
             title="审批历史"
         />
     </div>
+    <!-- 选择审批任务弹框 -->
+    <mlDialog v-model="approveTaskConf.isShow" title="选择审批任务" width="400" appendToBody>
+        <el-form label-width="100px">
+            <el-form-item label="选择审批任务">
+                <el-select v-model="approveTaskConf.taksId" placeholder="请选择审批任务" class="w-100">
+                    <el-option
+                        v-for="item in approveTaskConf.taskList"
+                        :key="item.approvalTaskId"
+                        :label="item.stepName"
+                        :value="item.approvalTaskId"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <div class="w-100" style="text-align: right;">
+                    <el-button @click="approveTaskConf.isShow = false">取消</el-button>
+                    <el-button type="primary" @click="confirmApproveTask">确认任务</el-button>
+                </div>
+            </el-form-item>
+        </el-form>
+    </mlDialog>
 </template>
 
 <script setup>
@@ -117,7 +154,7 @@ let approvalDialog = reactive({
     isShow: false,
     loading: false,
     title: "",
-    approvalConfigId: "",
+    approvalConfig: {},
 });
 
 // 打开弹框
@@ -148,10 +185,41 @@ const openHistoryDialog = (row) => {
     approvalHistoryDialog.value = true;
 };
 
+/**
+ * 审批任务相关
+ */
+let approveTaskConf = ref({
+    isShow: false,
+    taskList: [],
+    taksId: null,
+});
+
+// 确认审批任务
+const confirmApproveTask = () => {
+    let { taksId } = approveTaskConf.value;
+    if(!taksId){
+        ElMessage.error("请选择审批任务")
+        return
+    }
+    myApproval.value.approvalTaskId = approveTaskConf.value.taksId;
+    approveTaskConf.value.isShow = false;
+    approveDialogIsShow.value = true;
+};
+
 // 审批
 let approveDialogIsShow = ref(false);
 const openApproveDialog = () => {
-    approveDialogIsShow.value = true;
+    let { parallelTasks } = myApproval.value;
+    // 如果有多条审批
+    if (parallelTasks && parallelTasks.length > 1) {
+        approveTaskConf.value = {
+            isShow: true,
+            taskList: [...parallelTasks],
+            taksId: null,
+        };
+    } else {
+        approveDialogIsShow.value = true;
+    }
 };
 
 // 确认审批
@@ -185,16 +253,31 @@ const revokeApproval = () => {
 
 // 提交接口
 const onSubmit = async () => {
-    // let status = myApproval.value.approvalStatus;
-    if (!approvalDialog.approvalConfigId) {
+    let { approvalConfig } = approvalDialog;
+    let { flowType, approvalConfigId, wfProcDefId } = approvalConfig;
+    if (!approvalConfigId) {
         ElMessage.warning("请选择审批流程");
         return;
     }
+
     approvalDialog.loading = true;
-    let res = await $API.approval.detial.startApproval(
-        myApproval.value.recordId,
-        approvalDialog.approvalConfigId
-    );
+
+    let res;
+    // 简易工作流
+    if (flowType == 1) {
+        res = await $API.approval.detial.startApproval(
+            myApproval.value.recordId,
+            approvalConfigId
+        );
+    }
+    // 复杂工作流
+    else {
+        res = await $API.approval.detial.startComplexFlowApproval({
+            processDefId: wfProcDefId,
+            recordId: myApproval.value.recordId,
+        });
+    }
+
     if (res) {
         ElMessage.success("提交审批成功");
         emits("onSubmit");
@@ -210,8 +293,8 @@ const goApprovalList = () => {
 </script>
 <style lang='scss' scoped>
 .group-button-label {
-	font-size: 11px;
-	color: #999999;
-	margin-bottom: 5px;
+    font-size: 11px;
+    color: #999999;
+    margin-bottom: 5px;
 }
 </style>
