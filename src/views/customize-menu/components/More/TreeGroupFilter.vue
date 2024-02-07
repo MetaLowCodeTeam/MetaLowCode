@@ -1,6 +1,6 @@
 <template>
     <!--  -->
-    <ml-dialog title="树状分组筛选设置" v-model="isShow" append-to-body width="500">
+    <ml-dialog title="树状分组筛选设置" v-model="isShow" append-to-body width="500" draggable>
         <div v-loading="loading">
             <div class="header-box">
                 <el-button type="primary" @click="addGroup">新增筛选层级</el-button>

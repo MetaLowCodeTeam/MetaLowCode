@@ -29,5 +29,9 @@ export default {
     // 数据导出
     excelDataExcel: async (formModel) => {
         return http.post('/excelData/exportExcel', formModel)
+    },
+    // 获取导航数据
+    getNavigationById: async (layoutConfigId) => {
+        return await http.get("/layout/getNavigationById", { layoutConfigId });
     }
 }
