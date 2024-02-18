@@ -285,6 +285,7 @@ textarea {
 	flex: 1;
 	display: flex;
 	flex-flow: column;
+    flex-direction:column!important;
 }
 
 .adminui-topbar {

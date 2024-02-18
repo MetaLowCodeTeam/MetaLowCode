@@ -15,6 +15,7 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
+                    <mlApproveBar :approvalInfo="approvalTask" />
                     <v-form-render
                         v-if="haveLayoutJson"
                         ref="vFormRef"
@@ -84,7 +85,7 @@
                                     </template>
                                 </el-dropdown>
                                 <el-button type="primary" @click="beforeConfirmApprove">同意</el-button>
-                                <el-button type="danger" @click="confirmApprove(true)">驳回</el-button>
+                                <el-button type="danger" @click="beforeReject">驳回</el-button>
                                 <el-button @click="canner">取消</el-button>
                             </div>
                         </el-form-item>
@@ -96,7 +97,12 @@
     <mlDialog v-model="otherDialog" :title="taskOperation.title" width="35%" appendToBody>
         <el-form label-position="top" label-width="100px" v-loading="otherLoading">
             <el-form-item :label="taskOperation.title + '到哪些用户'">
-                <mlSelectUser type="User" v-model="taskOperation.nodeRoleList" multiple clearable />
+                <mlSelectUser
+                    type="User"
+                    v-model="taskOperation.nodeRoleList"
+                    :multiple="!(approvalTask.flowType == 2 && taskOperation.title == '转审')"
+                    clearable
+                />
             </el-form-item>
             <el-form-item style="margin-bottom: 0;">
                 <div class="foot-btn w-100">
@@ -122,6 +128,29 @@
             <el-button type="primary" @click="handleGenerate">确认</el-button>
         </div>
     </mlDialog>
+    <!-- 驳回弹框 -->
+    <mlDialog v-model="rejectDialogShow" title="选择驳回节点" width="400" appendToBody>
+        <div v-loading="rejectDialogLoading">
+            <el-form label-width="100px">
+                <el-form-item label="选择驳回节点">
+                    <el-select v-model="rejectNode" placeholder="请选择驳回节点" class="w-100">
+                        <el-option
+                            v-for="item in rejectNodeList"
+                            :key="item.targetKey"
+                            :label="item.targetName"
+                            :value="item.targetKey"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <div class="w-100" style="text-align: right;">
+                        <el-button @click="rejectDialogShow= false">取消</el-button>
+                        <el-button type="danger" @click="confirmReject">确认驳回</el-button>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+    </mlDialog>
 </template>
 
 <script setup>
@@ -129,11 +158,18 @@ import http from "@/utils/request";
 import { Avatar, CirclePlusFilled } from "@element-plus/icons-vue";
 import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import { queryById, saveRecord } from "@/api/crud";
+import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
+
+/**
+ * 组件
+ */
+import mlApproveBar from "@/components/mlApproveBar/index.vue";
 // 签名组件
 import vueEsign from "vue-esign";
+import { ElMessage } from "element-plus";
 const { allEntityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: null,
@@ -270,6 +306,11 @@ async function confirmApostille() {
         $ElMessage.warning("请选择要" + title + "到哪些人员");
         return;
     }
+    // 是复杂工作流
+    if (approvalTask.value.flowType == 2) {
+        saveComplexFlow(type == 1 ? 4 : 5);
+        return;
+    }
     otherLoading.value = true;
     let res = await http.post("/approval/taskOperation", taskOperation.value);
     if (res) {
@@ -311,12 +352,23 @@ const handleGenerate = async () => {
 // 同意前触发
 const beforeConfirmApprove = () => {
     // 需要手写签名
-    if(approvalTask.value.autograph){
+    if (approvalTask.value.autograph) {
         esignConf.value.show = true;
-    }else {
+    } else {
         confirmApprove(false);
     }
-    
+};
+
+// 驳回前触发
+const beforeReject = () => {
+    let { flowType, rejectType } = approvalTask.value;
+    // 如果是复杂工作流，且驳回类型是 3（驳回到任意节点）
+    if (flowType == 2 && rejectType == 3) {
+        // 打开驳回弹框
+        openRejectDialog();
+    } else {
+        confirmApprove(true);
+    }
 };
 
 // 同意审批
@@ -330,20 +382,27 @@ async function confirmApprove(isBacked) {
             formData
         );
         if (saveRes) {
-            form.value.entityId = props.entityId;
-            form.value.isBacked = isBacked;
-            form.value.signatureImage = esignConf.value.resultImg;
-            let res = await http.post("/approval/approvalProcess", form.value);
-            if (res) {
-                let msg = isBacked ? "驳回" : "审批";
-                $ElMessage.success(msg + "成功");
-                canner();
-                emit("confirm");
+            // 是复杂工作流
+            if (approvalTask.value.flowType == 2) {
+                saveComplexFlow(isBacked ? 2 : 1);
+                return;
+            } else {
+                form.value.entityId = props.entityId;
+                form.value.isBacked = isBacked;
+                form.value.signatureImage = esignConf.value.resultImg;
+                let res = await http.post(
+                    "/approval/approvalProcess",
+                    form.value
+                );
+                if (res) {
+                    let msg = isBacked ? "驳回" : "审批";
+                    $ElMessage.success(msg + "成功");
+                    canner();
+                    emit("confirm");
+                }
             }
-            loading.value = false;
-        } else {
-            loading.value = false;
         }
+        loading.value = false;
     }
 }
 
@@ -355,6 +414,14 @@ async function getApprovalTaskById() {
     });
     if (res) {
         approvalTask.value = res.data;
+
+        // 如果是复杂工作流
+        if (approvalTask.value.flowType == 2) {
+            approvalTask.value = Object.assign(
+                approvalTask.value,
+                res.data.wfUseTask
+            );
+        }
         initFormLayout();
     } else {
         loading.value = false;
@@ -365,6 +432,93 @@ async function getApprovalTaskById() {
 function canner() {
     isShow.value = false;
 }
+
+/**
+ * 驳回到任意节点弹框
+ */
+// 驳回弹框
+let rejectDialogShow = ref(false);
+let rejectDialogLoading = ref(false);
+// 驳回的节点集
+let rejectNodeList = ref([]);
+// 驳回节点
+let rejectNode = ref("");
+
+// 打开驳回节点弹框
+const openRejectDialog = async () => {
+    rejectDialogShow.value = true;
+    rejectDialogLoading.value = true;
+    rejectNode.value = "";
+    let res = await getRejectNodeList(props.taskId);
+    if (res && res.code == 200) {
+        rejectNodeList.value = res.data;
+    }
+    rejectDialogLoading.value = false;
+};
+
+// 确认驳回
+const confirmReject = () => {
+    if (!rejectNode.value) {
+        ElMessage.error("请选择要驳回到哪个节点");
+        return;
+    }
+    saveComplexFlow(3);
+    rejectDialogShow.value = false;
+};
+
+/**
+ * 复杂工作流保存
+ */
+
+const DealWithTypeLabel = {
+    1: "同意",
+    2: "驳回",
+    // 退回
+    3: "驳回",
+    4: "转审",
+    5: "加签",
+};
+
+const saveComplexFlow = async (dealWithType) => {
+    if (dealWithType == 1 || dealWithType == 2) {
+        loading.value = true;
+    } else {
+        otherLoading.value = true;
+    }
+    let param = {
+        approvalTaskId: props.taskId,
+        dealWithType,
+        wfTaskBo: {
+            comment: form.value.remark,
+            copyUserList: form.value.currentCCToUserList,
+            nextUserIds: form.value.nextApprovalUserList,
+            targetKey: dealWithType == 3 ? rejectNode.value : "",
+        },
+        // 转审 或者 加签
+        nodeRoleList:
+            dealWithType == 4 || dealWithType == 5
+                ? taskOperation.value.nodeRoleList
+                : [],
+    };
+    let res = await http.post(
+        "/plugins/metaWorkFlow/workflow/dealWithTask",
+        param
+    );
+    if (res && res.code == 200) {
+        let msg = DealWithTypeLabel[dealWithType];
+        $ElMessage.success(msg + "成功");
+        // 不是加签需要关闭弹框。
+        if (dealWithType != 5) {
+            canner();
+            emit("confirm");
+        }
+    }
+    if (dealWithType == 1 || dealWithType == 2) {
+        loading.value = false;
+    } else {
+        otherLoading.value = false;
+    }
+};
 </script>
 
 <style lang="scss" scoped>

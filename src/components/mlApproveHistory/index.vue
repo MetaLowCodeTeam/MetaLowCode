@@ -248,6 +248,7 @@ const goApprovalList = (activity) => {
             approvalConfigId: activity.recordId,
             entityCode: queryEntityCodeById(props.entityId),
             look: 1,
+            flowType: activity.flowType || 1,
         },
     });
 };

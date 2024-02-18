@@ -328,6 +328,7 @@ const numberToCurrencyNo = (value) => {
 };
 
 
+
 // alt+shift+m+l 快捷键
 export const mlShortcutkeys = (cb) => {
     let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0;
@@ -395,5 +396,48 @@ export const mlShortcutkeys = (cb) => {
     //         mKeyFlag = 0
     //     }
     // }
+}
+/**
+ * 高级筛选条件排查
+ */
 
+// 不需要输入框的条件
+const op_no_value = [
+    "NL",
+    "NT",
+    "SFU",
+    "SFB",
+    "SFD",
+    "YTA",
+    "TDA",
+    "TTA",
+    "CUW",
+    "CUM",
+    "CUQ",
+    "CUY",
+];
+// 检测条件值
+export const checkConditionList = (data) => {
+    let flag = true;
+    if (data.length > 0) {
+        data.forEach((el) => {
+            if (
+                !el.value &&
+                el.value !== 0 &&
+                !op_no_value.includes(el.op)
+            ) {
+                flag = false;
+                el.isError = true;
+            }
+            // 区间
+            if (el.op === "BW" && (!el.value || !el.value2)) {
+                flag = false;
+                el.isError = true;
+            }
+        });
+        if (!flag) {
+            return false;
+        }
+    }
+    return flag;
 }
