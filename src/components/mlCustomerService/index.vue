@@ -2,7 +2,7 @@
     <!--  -->
     <div ref="el" :style="style" style="position: fixed; user-select: none;">
         <div class="customer-service" @click="open" title="咨询客服">
-            <SvgIcon icon-name="customer-service" size="36" />
+            <SvgIcon icon-name="customer-service" size="36" title="咨询客服" />
         </div>
     </div>
 </template>
