@@ -167,32 +167,49 @@
             <template #title>
                 <h3>事件设置</h3>
             </template>
-            <!-- 说明 -->
-            <div class="work-flow-conditions">
-                <div class="lable-title mb-3">说明</div>
-                <div class="mb-10 mt-10">
-                    该事件在
-                    <span class="ml-a-span">该任务启动后</span> 执行，用户可以使用
-                    <span class="ml-a-span">execution</span> 做操作。
-                    <br />例如：
-                    <br />①、设置流程变量：execution.setVariable("total",100);
-                    <br />②、获取任务流程ID：execution.getId();
-                </div>
-            </div>
-            <!-- 前置脚本 -->
-            <div class="work-flow-conditions">
-                <div class="lable-title mb-3">前置脚本</div>
-                <div class="mb-10 mt-10">
-                    <mlCodeEditor v-model="myFormData.createScript" mode="javascript" theme="darcula" />
-                </div>
-            </div>
-            <!-- 后置脚本 -->
-            <div class="work-flow-conditions">
-                <div class="lable-title mb-3">后置脚本</div>
-                <div class="mb-10 mt-10">
-                    <mlCodeEditor v-model="myFormData.completeScript" mode="javascript" theme="darcula" />
-                </div>
-            </div>
+			<el-tabs>
+				<el-tab-pane label="前置脚本">
+					<!-- 说明 -->
+					<div class="work-flow-conditions">
+						<div class="lable-title mb-3">说明</div>
+						<div class="mb-10 mt-10">
+							该事件在
+							<span class="ml-a-span">节点任务启动后</span> 执行，用户可以使用
+							<span class="ml-a-span">execution</span> 做操作。
+							<br />例如：
+							<br />①、设置流程变量：execution.setVariable("total",100);
+							<br />②、获取任务流程ID：execution.getId();
+						</div>
+					</div>
+					<!-- 前置脚本 -->
+					<div class="work-flow-conditions">
+						<div class="mb-10 mt-10">
+							<mlCodeEditor v-model="myFormData.createScript" mode="javascript" theme="darcula" />
+						</div>
+					</div>
+				</el-tab-pane>
+				<el-tab-pane label="后置脚本">
+					<!-- 说明 -->
+					<div class="work-flow-conditions">
+						<div class="lable-title mb-3">说明</div>
+						<div class="mb-10 mt-10">
+							该事件在
+							<span class="ml-a-span">节点任务完成后</span> 执行，用户可以使用
+							<span class="ml-a-span">execution</span> 做操作。
+							<br />例如：
+							<br />①、设置流程变量：execution.setVariable("total",100);
+							<br />②、获取任务流程ID：execution.getId();
+						</div>
+					</div>
+					<!-- 后置脚本 -->
+					<div class="work-flow-conditions">
+						<div class="mb-10 mt-10">
+							<mlCodeEditor v-model="myFormData.completeScript" mode="javascript" theme="darcula" />
+						</div>
+					</div>
+				</el-tab-pane>
+			</el-tabs>
+
         </el-collapse-item>
         <!-- 抄送设置 -->
         <el-collapse-item name="3">
@@ -271,7 +288,7 @@ const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
 });
-const activeNames = ref(["1", "2"]);
+const activeNames = ref(["1"]);
 const emits = defineEmits(["setNodeData"]);
 let myFormData = ref({
     createScript: "// Demo code",
@@ -297,7 +314,7 @@ watch(
     () => myFormData.value,
     () => {
         emits("setNodeData", myFormData.value);
-        
+
     },
     { deep: true }
 );
