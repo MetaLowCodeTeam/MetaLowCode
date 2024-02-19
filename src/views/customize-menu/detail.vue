@@ -37,9 +37,11 @@
                     />
                     <!-- 详情 -->
                     <div v-if="cutTab == 'detail'">
+                        <mlApproveBar :approvalInfo="approvalStatus" />
                         <v-form-render
-                            v-if="haveLayoutJson"
+                            v-if="haveLayoutJson" 
                             :option-data="optionData"
+                            :global-dsv="globalDsv"
                             ref="vFormRef"
                         />
                         <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
@@ -127,6 +129,11 @@ import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
+/**
+ * 组件
+ */
+import mlApproveBar from "@/components/mlApproveBar/index.vue";
+
 const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onAdd"]);
 const $API = inject("$API");
@@ -224,6 +231,7 @@ const getLayoutList = async () => {
 let haveLayoutJson = ref(false);
 let noeData = ref(false);
 let optionData = ref({});
+let globalDsv = ref({});
 // 初始化数据
 const initData = async () => {
     loading.value = true;
@@ -237,6 +245,13 @@ const initData = async () => {
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let queryByIdRes = await queryById(detailId.value);
+                console.log(
+                    queryByIdRes.flowVariables,
+                    "queryByIdRes.flowVariables"
+                );
+                if (queryByIdRes.flowVariables) {
+                    globalDsv.value.flowVariables = queryByIdRes.flowVariables;
+                }
                 if (queryByIdRes && queryByIdRes.data) {
                     detailName.value = queryByIdRes.data[nameFieldName.value];
                     vFormRef.value.setFormJson(res.data.layoutJson);

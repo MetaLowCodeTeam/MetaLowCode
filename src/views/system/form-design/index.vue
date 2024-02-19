@@ -18,7 +18,6 @@
 						<el-dropdown-item command="BooleanWE">布尔 / Boolean</el-dropdown-item>
 						<el-dropdown-item command="IntegerWE">整数 / Integer</el-dropdown-item>
 						<el-dropdown-item command="DecimalWE">精度小数 / Decimal</el-dropdown-item>
-						<el-dropdown-item command="PercentWE">百分比 / Percent</el-dropdown-item>
 						<el-dropdown-item command="MoneyWE">金额 / Money</el-dropdown-item>
 						<el-dropdown-item command="TextWE" divided>文本 / Text</el-dropdown-item>
 						<el-dropdown-item command="TextAreaWE">长文本 / TextArea</el-dropdown-item>
@@ -84,7 +83,6 @@ export default {
 		BooleanWE,
 		IntegerWE,
 		DecimalWE,
-		PercentWE,
 		MoneyWE,
 		TextWE,
 		EmailWE,

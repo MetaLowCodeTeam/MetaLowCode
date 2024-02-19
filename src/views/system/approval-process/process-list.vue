@@ -3,7 +3,7 @@
         ref="mlEntityMenuAndListRef"
         entityName="ApprovalConfig"
         aciveId="approvalConfigId"
-        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn"
+        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn,flowType"
         @goDetial="goDetial"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
@@ -83,6 +83,14 @@ let tableColumn = ref([
         align: "center",
     },
     {
+        prop: "flowType",
+        label: "类型",
+        align: "center",
+        formatter: (row) => {
+            return row.flowType == 2 ? "复杂工作流" : "基础工作流";
+        },
+    },
+    {
         prop: "isDisabled",
         label: "启用",
         align: "center",
@@ -137,6 +145,9 @@ const actionBtn = (data) => {
         dialogForm.value.type = "edit";
         dialogForm.value.form = { ...row };
     }
+    if (!dialogForm.value.form.flowType) {
+        dialogForm.value.form.flowType = 1;
+    }
     mlActiveDialogRefs.value.openDialog(dialogForm.value);
 };
 
@@ -161,7 +172,7 @@ const goDetial = (row) => {
         query: {
             approvalConfigId: row.approvalConfigId,
             entityCode: row.entityCode,
-            // entityCode:
+            flowType: row.flowType || 1,
         },
     });
 };

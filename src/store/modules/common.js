@@ -15,7 +15,7 @@ const useCommonStore = defineStore('commonStore', () => {
     let processEntityList = ref([]);
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.3.9 20240206"
+        webVer: "1.3.16 20240207"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -66,6 +66,7 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.APP_COLOR = data.themeColor
         publicSetting.value.productType = data.productType;
         publicSetting.value.trialVersionFlag = data.trialVersionFlag;
+        publicSetting.value.pluginIdList = data.pluginIdList;
         publicSetting.value.webVer += "(" + data.version + ")";
         publicSetting.value.appMode = data.appMode;
     }

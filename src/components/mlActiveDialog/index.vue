@@ -2,7 +2,7 @@
 <template>
     <!-- 列表页面新增、编辑通用弹框 -->
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
-        <el-form label-width="120px" v-loading="loading" @submit.prevent>
+        <el-form label-width="120px" v-loading="loading" @submit.prevent class="action-form">
             <el-form-item :label="dialogForm.fromEntityLabel" v-if="dialogForm.type == 'add'">
                 <el-select
                     v-model="dialogForm.form.entityCode"
@@ -46,6 +46,15 @@
                     style="width: 80%;"
                 ></el-input>
             </el-form-item>
+            <el-form-item v-if="publicSetting?.pluginIdList.includes('metaWorkFlow')">
+                <el-radio-group
+                    v-model="dialogForm.form.flowType"
+                    :disabled="dialogForm.type == 'edit'"
+                >
+                    <el-radio :label="1">基础工作流</el-radio>
+                    <el-radio :label="2">复杂工作流</el-radio>
+                </el-radio-group>
+            </el-form-item>
             <el-form-item v-if="dialogForm.type == 'edit'">
                 <el-checkbox v-model="dialogForm.form.isDisabled" label="是否禁用" />
                 <el-tooltip
@@ -72,7 +81,7 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { unSystemEntityList, processEntityList } = storeToRefs(useCommonStore());
+const { unSystemEntityList, processEntityList,publicSetting } = storeToRefs(useCommonStore());
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 let props = defineProps({
@@ -134,7 +143,6 @@ let triggerList = ref([
         label: "回调URL",
         code: 14,
     },
-  
 ]);
 
 let dialogForm = ref({});
@@ -146,7 +154,7 @@ const openDialog = (data) => {
 const saveProcess = async () => {
     let { type, form, saveEntity, saveIdCode, checkCodes, codeErrMsg } =
         dialogForm.value;
-    let { entityCode, isDisabled, actionType } = form;
+    let { entityCode, isDisabled, actionType, flowType } = form;
     if (type == "add" && saveEntity != "TriggerConfig" && !entityCode) {
         message.error("请选择应用实体");
         return;
@@ -172,6 +180,10 @@ const saveProcess = async () => {
     checkCodes.forEach((el) => {
         params[el] = form[el];
     });
+    // 审批流程
+    if (props.isProcess) {
+        params.flowType = flowType;
+    }
     loading.value = true;
     let res = await saveRecord(saveEntity, form[saveIdCode] || "", params);
     if (res) {
@@ -179,6 +191,7 @@ const saveProcess = async () => {
             let emitValue = {};
             emitValue[saveIdCode] = res.data.formData[saveIdCode];
             emitValue.entityCode = entityCode;
+            emitValue.flowType = res.data.formData.flowType
             emit("saveProcess", emitValue);
         } else {
             emit("saveProcess");
@@ -195,6 +208,10 @@ defineExpose({
     saveProcess,
 });
 </script>
-
-<style>
+<style lang="scss" scoped>
+.action-form {
+    .el-form-item {
+        margin-bottom: 12px !important;
+    }
+}
 </style>
