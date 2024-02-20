@@ -46,7 +46,7 @@
                     style="width: 80%;"
                 ></el-input>
             </el-form-item>
-            <el-form-item v-if="publicSetting?.pluginIdList.includes('metaWorkFlow')">
+            <el-form-item v-if="publicSetting?.pluginIdList.includes('metaWorkFlow') && dialogForm.title == '添加审批流程'">
                 <el-radio-group
                     v-model="dialogForm.form.flowType"
                     :disabled="dialogForm.type == 'edit'"
@@ -75,7 +75,7 @@
         </el-form>
     </ml-dialog>
 </template>
- 
+
 <script setup>
 import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
