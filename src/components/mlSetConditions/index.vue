@@ -397,6 +397,7 @@ export default {
                 this.conditionConf.items.forEach((subEl) => {
                     if (el.fieldName === subEl.fieldName) {
                         let newItem = Object.assign({ ...el }, subEl);
+						this.getOpCom(newItem);
                         conditionList.push(newItem);
                     }
                 });
