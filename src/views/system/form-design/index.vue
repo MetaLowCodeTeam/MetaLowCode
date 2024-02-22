@@ -299,7 +299,6 @@ export default {
 					fieldSchema.options.optionItems = [
 						{ value: true, label: '是'},
 						{ value: false, label: '否'},
-						{ value: null, label: '未指定'},
 					]
 				}
 
