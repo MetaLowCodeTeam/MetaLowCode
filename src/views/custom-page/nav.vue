@@ -1,28 +1,30 @@
 <template>
     <!--  -->
     <div class="custom-nav" v-loading="loading">
-        <div class="nav-group" v-for="(item,inx) of navGroup" :key="inx">
-            <div class="nav-group-name">{{ item.label }}</div>
-            <div class="box-card">
-                <!-- <div class="item-card">
-                    <div>icon</div>
-                    <div>内容</div>
-                </div>-->
-                <el-card class="item-card" v-for="(subItem,subInx) of item.children" :key="subInx">
-                    <div class="content-card" :title="subItem.name" @click="goNav(subItem)">
-                        <div class="item-icon">
-                            <el-icon class="icon" v-if="!subItem.useIcon" color="#FFF">
-                                <SetUp />
-                            </el-icon>
-                            <el-icon class="icon" v-else color="#FFF">
-                                <component :is="subItem.useIcon" />
-                            </el-icon>
+        <template v-for="(item,inx) of navGroup" :key="inx">
+            <div class="nav-group" v-if="item.children && item.children.length > 0">
+                <div class="nav-group-name">{{ item.label }}</div>
+                <div class="box-card">
+                    <el-card
+                        class="item-card"
+                        v-for="(subItem,subInx) of item.children"
+                        :key="subInx"
+                    >
+                        <div class="content-card" :title="subItem.name" @click="goNav(subItem)">
+                            <div class="item-icon">
+                                <el-icon class="icon" v-if="!subItem.useIcon" color="#FFF">
+                                    <SetUp />
+                                </el-icon>
+                                <el-icon class="icon" v-else color="#FFF">
+                                    <component :is="subItem.useIcon" />
+                                </el-icon>
+                            </div>
+                            <div class="item-text">{{ subItem.name }}</div>
                         </div>
-                        <div class="item-text">{{ subItem.name }}</div>
-                    </div>
-                </el-card>
+                    </el-card>
+                </div>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 
@@ -70,6 +72,7 @@ const getNavigationById = async () => {
     let res = await layoutConfig.getNavigationById(layoutConfigId.value);
     if (res && res.code == 200) {
         navList.value = res.data.config ? JSON.parse(res.data.config) : [];
+        console.log(navList.value,'navList.value')
         // 取有子集和没有子集的东西
         let hasChildren = [];
         let notChildren = [];
