@@ -119,3 +119,11 @@ export function cancelShareRecord(body, userType) {
 export function groupTreeQuery(body) {
     return http.post('/crud/groupTreeQuery', body)
 }
+
+
+/**
+ * 批量编辑
+ */
+export function updateRecordList(body) {
+    return http.post('/crud/updateRecordList', body)
+}

@@ -1,5 +1,9 @@
 <template>
-    <mlDialog title="设置列显示" v-model="isShow" width="650px">
+    <mlDialog
+        :title="editColumnDialog.chosenListType != 'BATCH_UPDATE' ? '设置列显示' : '批量编辑设置'"
+        v-model="isShow"
+        width="650px"
+    >
         <div v-loading="loading">
             <div class="clearfix">
                 <div class="sortable-box fl">
@@ -26,6 +30,7 @@
                                     <span
                                         class="icon-span add-icon mr-5"
                                         @click.stop="editColumn(parent,inx)"
+                                        v-if="editColumnDialog.chosenListType != 'BATCH_UPDATE'"
                                     >
                                         <el-icon size="15">
                                             <ElIconEditPen />
@@ -328,47 +333,64 @@ const delColumn = (column, inx) => {
 
 // 获取所有列数据
 const getAllColumn = async () => {
+    let { config, entityCode, chosenListType } = props.editColumnDialog;
     loading.value = true;
     let res = await queryEntityFields(
-        props.editColumnDialog.entityCode,
-        true,
+        entityCode,
+        chosenListType != "BATCH_UPDATE",
         false,
         true
     );
     if (res) {
         showColumn.value = [];
         let hasFieldName = [];
-        if (props.editColumnDialog.config) {
-            JSON.parse(props.editColumnDialog.config).forEach((el) => {
+        if (config) {
+            JSON.parse(config).forEach((el) => {
                 showColumn.value.push(el);
                 hasFieldName.push(el.fieldName);
             });
         }
-        sourceColumn.value = res.data.filter(
-            (el) => !hasFieldName.includes(el.fieldName)
-        );
+        // 如果是批量编辑需要过滤掉图片、文件类型字段 且是能修改的字段
+        if (chosenListType == "BATCH_UPDATE") {
+            sourceColumn.value = res.data.filter(
+                (el) =>
+                    !hasFieldName.includes(el.fieldName) &&
+                    el.fieldType != "Picture" &&
+                    el.fieldType != "File" &&
+                    el.isUpdatable
+            );
+        } else {
+            sourceColumn.value = res.data.filter(
+                (el) => !hasFieldName.includes(el.fieldName)
+            );
+        }
     }
     loading.value = false;
-    // console.log(props.entityName);
 };
 
 const onSave = async () => {
-    // console.log(props.editColumnDialog, "editColumnDialog");
-    // console.log(showColumn.value);
-    if (showColumn.value.length < 1) {
+    let { entityCode, applyType, shareTo, layoutConfigId, chosenListType } =
+        props.editColumnDialog;
+
+    // 非批量编辑才需要判断
+    if (chosenListType != "BATCH_UPDATE" && showColumn.value.length < 1) {
         $ElMessage.warning("请至少选择 1 个列显示");
         return;
     }
-    let { entityCode, applyType, shareTo, layoutConfigId } =
-        props.editColumnDialog;
+
     let param = {
         config: JSON.stringify([...showColumn.value]),
         entityCode,
         applyType,
         shareTo,
     };
+    let apiType = chosenListType != "BATCH_UPDATE" ? "LIST" : "BATCH_UPDATE";
     loading.value = true;
-    let res = await $API.layoutConfig.saveConfig(layoutConfigId, "LIST", param);
+    let res = await $API.layoutConfig.saveConfig(
+        layoutConfigId,
+        apiType,
+        param
+    );
     if (res) {
         $ElMessage.success("保存成功！");
         isShow.value = false;

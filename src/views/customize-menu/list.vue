@@ -46,14 +46,21 @@
                 <div class="fr table-setting">
                     <el-button
                         icon="Notification"
-                        :disabled="multipleSelection.length > 1"
+                        :disabled="multipleSelection.length != 1"
                         @click="openDetailDialog(multipleSelection[0])"
                     >打开</el-button>
                     <el-button
                         icon="Edit"
-                        :disabled="multipleSelection.length > 1"
+                        :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
                     >编辑</el-button>
+                    <el-button
+                        icon="Edit"
+                        v-if="batchUpdateConf.length > 0"
+                        :disabled="multipleSelection.length < 1"
+                        @click="openBatchUpdateDialog"
+                    >批量编辑</el-button>
+
                     <el-button type="primary" icon="Plus" @click="onAdd">新建</el-button>
                     <More
                         ref="MoreRefs"
@@ -161,15 +168,30 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" :align="'center'" width="120">
                         <template #default="scope">
+                            <el-tooltip
+                                class="box-item"
+                                effect="dark"
+                                :content="getEditBtnTitle(scope.row)"
+                                placement="top"
+                                v-if="scope.row.approvalStatus && (scope.row.approvalStatus.value == 3 || scope.row.approvalStatus.value == 1)"
+                            >
+                                <el-button
+                                    size="small"
+                                    icon="el-icon-edit"
+                                    link
+                                    type="primary"
+                                    disabled
+                                >编辑</el-button>
+                            </el-tooltip>
                             <el-button
+                                v-else
                                 size="small"
                                 icon="el-icon-edit"
                                 link
                                 type="primary"
                                 @click.stop="onEditRow(scope.row)"
-                                :disabled="scope.row.approvalStatus && (scope.row.approvalStatus.value == 3 || scope.row.approvalStatus.value == 1)"
-                                :title="getEditBtnTitle(scope.row)"
                             >编辑</el-button>
+
                             <el-button
                                 size="small"
                                 link
@@ -202,6 +224,8 @@
             :entityName="entityName"
             :nameFieldName="nameFieldName"
         />
+        <!-- 批量编辑 -->
+        <ListBatchUpdate ref="ListBatchUpdateRef" @onConfirm="getTableList" />
     </div>
 </template>
 
@@ -224,6 +248,8 @@ import { ElMessage } from "element-plus";
  */
 // 树状分组筛选
 import ListTreeGropuFilter from "./components/ListTreeGropuFilter.vue";
+// 批量编辑
+import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
@@ -324,7 +350,21 @@ const editColumn = (type) => {
 /**
  * 树状分组筛选
  */
-let treeGroupConf = ref({});
+let treeGroupConf = ref([]);
+/**
+ * 批量编辑
+ */
+let batchUpdateConf = ref([]);
+let ListBatchUpdateRef = ref("");
+// 打开批量编辑弹框
+const openBatchUpdateDialog = () => {
+    ListBatchUpdateRef.value.openDialog(
+        batchUpdateConf.value,
+        multipleSelection.value,
+        entityName.value,
+        idFieldName.value
+    );
+};
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -351,9 +391,15 @@ const getLayoutList = async () => {
             SELF,
             ALL,
             TREE_GROUP: res.data.TREE_GROUP,
+            BATCH_UPDATE: res.data.BATCH_UPDATE,
         };
+        // 树状分组筛选
         if (res.data.TREE_GROUP) {
             treeGroupConf.value = JSON.parse(res.data.TREE_GROUP.config);
+        }
+        // 批量编辑
+        if (res.data.BATCH_UPDATE) {
+            batchUpdateConf.value = JSON.parse(res.data.BATCH_UPDATE.config);
         }
         // treeGroup.value = ? ;
 
@@ -478,7 +524,6 @@ const getEditBtnTitle = (row) => {
     let str = "";
     if (row.approvalStatus && row.approvalStatus.value == 3) {
         str = "记录已完成审批，禁止编辑";
-        return;
     }
     if (row.approvalStatus && row.approvalStatus.value == 1) {
         str = "记录正在审批中，禁止编辑";
@@ -593,10 +638,10 @@ const treeGropuFilter = (e) => {
     filterEasySql.value = e;
     getTableList();
 };
-const treeRefresh = ()=>{
+const treeRefresh = () => {
     filterEasySql.value = "";
     getLayoutList();
-}
+};
 
 const getTableList = async () => {
     if (

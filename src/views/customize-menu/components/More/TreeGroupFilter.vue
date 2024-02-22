@@ -147,7 +147,6 @@ const loadFields = async () => {
             "Date",
         ];
         fieldList.value = res.data.filter((el) => needType.includes(el.type));
-        console.log(fieldList.value, "可选字段");
     }
     loading.value = false;
 };
