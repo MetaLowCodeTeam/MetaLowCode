@@ -14,7 +14,7 @@
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
-            <span class="fr close-icon" @click="close">
+            <span class="fr close-icon" @click="close" v-if="showClose">
                 <el-icon size="20">
                     <ElIconClose />
                 </el-icon>
@@ -38,6 +38,7 @@ const props = defineProps({
     notHeader: { type: Boolean, default: false },
     top: { type: String, default: "15vh" },
     draggable: { type: Boolean, default: false },
+    showClose: { type: Boolean, default: true },
 });
 const emit = defineEmits(["update:modelValue"]);
 watch(

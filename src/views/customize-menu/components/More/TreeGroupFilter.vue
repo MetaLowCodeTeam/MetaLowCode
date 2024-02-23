@@ -171,6 +171,9 @@ let groupConf = ref({
 
 // 初始化数据
 const initLayoutConf = () => {
+    if(!props.layoutConfig){
+        return
+    }
     myLayoutConf.value = props.layoutConfig;
     let { TREE_GROUP } = myLayoutConf.value;
     if (TREE_GROUP) {
