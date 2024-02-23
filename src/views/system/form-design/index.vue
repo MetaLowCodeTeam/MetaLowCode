@@ -46,7 +46,7 @@
                         <Finished />
                     </el-icon>保存设计
                 </el-button>
-                <el-button type="primary" link @click="saveAsDesign">
+                <el-button type="primary" link @click="saveAsDesign" v-if="saveAsBtnShow">
                     <el-icon>
                         <Finished />
                     </el-icon>另存为
@@ -232,6 +232,7 @@ export default {
                 isShow: false,
                 list: [],
             },
+            saveAsBtnShow:false,
             // 另存为弹框
             saveAsDialogConf: {
                 isShow: false,
@@ -253,6 +254,7 @@ export default {
             window.advancedDevMode = !window.advancedDevMode;
             this.designerConfig.componentLib = !!window.advancedDevMode;
             this.designerConfig.eventCollapse = !!window.advancedDevMode;
+            this.saveAsBtnShow = !this.saveAsBtnShow;
         });
     },
     methods: {
