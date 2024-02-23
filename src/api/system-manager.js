@@ -163,8 +163,11 @@ export function getRefFieldExtras(field, entity) {
 
 
 export function createFormLayout(entity, layoutJson, layoutName, shareTo) {
-    return http.post('formLayout/save', layoutJson, {
-        params: { entity, layoutName, shareTo }
+    return http.post('formLayout/save', {
+        layoutJson:JSON.stringify(layoutJson),
+        shareTo,
+    }, {
+        params: { entity, layoutName, }
     })
 }
 
@@ -175,8 +178,8 @@ export function updateFormLayout(layoutId, layoutJson) {
 }
 
 export function updateNameFormLayout(layoutId, layoutName, shareTo) {
-    return http.post('formLayout/updateName', {}, {
-        params: { layoutId, layoutName, shareTo }
+    return http.post('formLayout/updateName', { shareTo }, {
+        params: { layoutId, layoutName, }
     })
 }
 
