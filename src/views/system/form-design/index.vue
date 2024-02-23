@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="pageLoading">
+    <div v-loading="pageLoading" style="height:100%">
         <v-form-designer
             ref="vfDesigner"
             :designer-config="designerConfig"
