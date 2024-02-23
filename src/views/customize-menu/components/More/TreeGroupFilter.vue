@@ -121,7 +121,7 @@ const loadFields = async () => {
     loading.value = true;
     let res = await getFieldSet(entityName.value);
     if (res && res.code == 200) {
-        // 这些类型无法选择
+        // 只有这些类型可以筛选
         let needType = [
             // 引用
             "Reference",
@@ -145,6 +145,7 @@ const loadFields = async () => {
             "AreaSelect",
             // 时间
             "Date",
+            "DateTime",
         ];
         fieldList.value = res.data.filter((el) => needType.includes(el.type));
     }
