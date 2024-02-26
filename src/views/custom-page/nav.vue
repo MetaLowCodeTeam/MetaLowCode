@@ -171,6 +171,7 @@ const saveRecentlyUsed = () => {
                     padding: 0 !important;
                 }
                 .content-card {
+                    width:200px;
                     display: flex;
                     padding: 10px;
                     box-sizing: border-box;
