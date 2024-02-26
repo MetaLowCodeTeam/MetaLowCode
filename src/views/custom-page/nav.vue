@@ -4,7 +4,7 @@
         <template v-for="(item,inx) of navGroup" :key="inx">
             <div class="nav-group" v-if="item.children && item.children.length > 0">
                 <div class="nav-group-name">{{ item.label }}</div>
-                <div class="box-card">
+                <div class="box-card clearfix">
                     <el-card
                         class="item-card"
                         v-for="(subItem,subInx) of item.children"
@@ -160,15 +160,18 @@ const saveRecentlyUsed = () => {
             margin-bottom: 10px;
         }
         .box-card {
-            display: flex;
+            // display: flex;
+            // float: left;
             .item-card {
                 margin-bottom: 10px;
                 height: 72px;
                 width: 200px;
                 margin-right: 30px;
+                float: left;
                 cursor: pointer;
                 :deep(.el-card__body) {
                     padding: 0 !important;
+                    width: 200px;
                 }
                 .content-card {
                     width:200px;
