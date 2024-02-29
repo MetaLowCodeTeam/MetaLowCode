@@ -63,10 +63,11 @@ export function getBlankRoleData() {
     })
 }
 
-export function getLoginUser() {
+export function getLoginUser(loginToken) {
     return request({
         url: 'user/getLoginUser',
         method: 'get',
+        params: { loginToken }
     })
 }
 
