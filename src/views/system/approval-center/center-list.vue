@@ -1,43 +1,4 @@
 <template>
-    <!-- <mlSingleList
-        :title="pageType[type].title"
-        mainEntity="ApprovalTask"
-        fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName,approvalConfigId.entityCode"
-        :sortFields="sortFields"
-        fieldName="approvalConfigId.flowName"
-        :tableColumn="tableColumn"
-        :filterItems="pageType[type].filterItems"
-        ref="mlSingleListRef"
-        @highlightClick="highlightClick"
-    >
-        <template #activeRow>
-            <el-table-column
-                label="操作"
-                :align="'center'"
-                width="160"
-                key="1"
-                v-if="type === 'handle' || type === 'cc'"
-                fixed="right"
-            >
-                <template #default="scope">
-                    <el-button
-                        size="small"
-                        link
-                        @click="approveHistory(scope.row)"
-                        type="primary"
-                    >审批历史</el-button>
-                    <el-button
-                        link
-                        :disabled="!(scope.row.approvalStatus && scope.row.approvalStatus.value === 1)"
-                        size="small"
-                        type="success"
-                        @click="approveRow(scope.row)"
-                        v-if="type != 'cc'"
-                    >审批</el-button>
-                </template>
-            </el-table-column>
-        </template>
-    </mlSingleList>-->
     <mlEntityMenuAndList
         :title="pageType[type].title"
         entityName="ApprovalTask"
@@ -112,7 +73,7 @@ const props = defineProps({
     type: { type: String, default: "" },
 });
 let pageType = reactive({});
-let mlSingleListRef = ref();
+let mlSingleListRef = ref("");
 onBeforeMount(() => {
     const USER_INFO = $TOOL.data.get("USER_INFO");
     pageType = {
@@ -235,7 +196,7 @@ function approveRow(row) {
 }
 
 function confirm() {
-    mlSingleListRef.value.getTableList();
+    mlSingleListRef.value.getEntityList();
 }
 
 // 审批历史弹框
@@ -244,7 +205,6 @@ let approvalHistoryDialog = ref(false);
 function approveHistory(row) {
     approvalHistoryDialog.value = true;
     entityId.value = row.entityId.id;
-    // console.log(row.entityId.id,'row')
 }
 
 // 详情组件

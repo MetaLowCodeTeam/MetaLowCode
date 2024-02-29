@@ -170,6 +170,9 @@ const openDialog = async (title) => {
     );
     if (res) {
         approvalList.value = res.data || [];
+        if (approvalList.value.length == 1) {
+            approvalDialog.approvalConfig = approvalList.value[0];
+        }
     }
     approvalDialog.loading = false;
 };

@@ -25,11 +25,12 @@
 
 <script setup>
 import { reactive, ref, inject, nextTick } from "vue";
-import { getFormLayout,getFieldListOfEntity } from "@/api/system-manager";
+import { getFormLayout, getFieldListOfEntity } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
+import { ElMessage } from "element-plus";
 const { queryEntityNameById, queryEntityNameByLabel } = useCommonStore();
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
@@ -201,30 +202,49 @@ const confirm = async () => {
         isShow.value = false;
         return;
     }
-    let formData = await vFormRef.value.getFormData();
-    if (row.fieldName) {
-        formData[row.fieldName] = {
-            id: row.fieldNameVale,
-            name: row.fieldNameLabel,
-        };
-    }
-    if (formData) {
-        loading.value = true;
-        let saveRes;
-        if (props.isTeam) {
-            saveRes = await saveTeam(row.entityName, row.detailId, formData);
-        } else if (props.isUser) {
-            saveRes = await saveUser(row.entityName, row.detailId, formData);
-        } else {
-            saveRes = await saveRecord(row.entityName, row.detailId, formData);
-        }
-        if (saveRes && (saveRes.data?.code == 200 || saveRes.code == 200)) {
-            $ElMessage.success("保存成功");
-            emits("onConfirm");
-            isShow.value = false;
-        }
-        loading.value = false;
-    }
+    vFormRef.value
+        .getFormData()
+        .then(async (formData) => {
+            formData[row.fieldName] = {
+                id: row.fieldNameVale,
+                name: row.fieldNameLabel,
+            };
+            if (formData) {
+                loading.value = true;
+                let saveRes;
+                if (props.isTeam) {
+                    saveRes = await saveTeam(
+                        row.entityName,
+                        row.detailId,
+                        formData
+                    );
+                } else if (props.isUser) {
+                    saveRes = await saveUser(
+                        row.entityName,
+                        row.detailId,
+                        formData
+                    );
+                } else {
+                    saveRes = await saveRecord(
+                        row.entityName,
+                        row.detailId,
+                        formData
+                    );
+                }
+                if (
+                    saveRes &&
+                    (saveRes.data?.code == 200 || saveRes.code == 200)
+                ) {
+                    $ElMessage.success("保存成功");
+                    emits("onConfirm");
+                    isShow.value = false;
+                }
+                loading.value = false;
+            }
+        })
+        .catch(() => {
+            ElMessage.error("表单校验失败，请修改后重新提交");
+        });
 };
 defineExpose({
     openDialog,
