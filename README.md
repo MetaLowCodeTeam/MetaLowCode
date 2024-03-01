@@ -102,7 +102,7 @@ git clone https://gitee.com/MetaLowCode/MetaLowCode.git
 cd MetaLowCode
 
 # 安装依赖
-npm i
+npm i --registry=https://registry.npmmirror.com
 
 # 启动项目(开发模式)
 npm run dev
