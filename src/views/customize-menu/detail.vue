@@ -1,6 +1,6 @@
 <template>
     <el-drawer
-        size="62.4%"
+        :size="isFullSceen ? '100%' : '62.4%'"
         class="ml-drawer"
         v-model="detailDialog.isShow"
         direction="rtl"
@@ -11,6 +11,15 @@
                 <div class="detail-header-title">
                     {{ detailName }}
                     <div class="fr fr-box">
+                        <span
+                            class="fr-icon mr-10"
+                            @click="onFullSceen"
+                            v-if="styleConf?.detailConf.showFullScreen"
+                        >
+                            <el-icon size="20">
+                                <ElIconFullScreen />
+                            </el-icon>
+                        </span>
                         <span class="fr-icon mr-10" @click="refresh">
                             <el-icon>
                                 <ElIconRefresh />
@@ -39,7 +48,7 @@
                     <div v-if="cutTab == 'detail'">
                         <mlApproveBar :approvalInfo="approvalStatus" />
                         <v-form-render
-                            v-if="haveLayoutJson" 
+                            v-if="haveLayoutJson"
                             :option-data="optionData"
                             :global-dsv="globalDsv"
                             ref="vFormRef"
@@ -113,12 +122,17 @@
             </el-row>
             <el-empty v-else description="暂无数据" />
         </div>
-        <Edit ref="editRefs" @onConfirm="onConfirm" :nameFieldName="nameFieldName" />
+        <Edit
+            ref="editRefs"
+            @onConfirm="onConfirm"
+            :nameFieldName="nameFieldName"
+            :layoutConfig="myLayoutConfig"
+        />
     </el-drawer>
 </template>
 
 <script setup>
-import { ref, reactive, inject, nextTick } from "vue";
+import { ref, reactive, inject, nextTick, watch } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
@@ -133,6 +147,43 @@ import { ElMessage } from "element-plus";
  * 组件
  */
 import mlApproveBar from "@/components/mlApproveBar/index.vue";
+
+const props = defineProps({
+    layoutConfig: { type: Object, default: () => {} },
+});
+
+// 整体配置信息
+let myLayoutConfig = ref({});
+// 列表样式配置
+let styleConf = ref({
+    // 查看侧滑栏属性
+    detailConf: {
+        // 显示全屏按钮
+        showFullScreen: false,
+        // 弹框自动全屏
+        autoFullScreen: false,
+    },
+});
+watch(
+    () => props.layoutConfig,
+    () => {
+        loadMyLayoutConfig();
+    },
+    {
+        deep: true,
+    }
+);
+// 加载配置信息
+const loadMyLayoutConfig = () => {
+    myLayoutConfig.value = props.layoutConfig;
+    let { STYLE } = myLayoutConfig.value;
+    if (STYLE && STYLE.config) {
+        styleConf.value = JSON.parse(STYLE.config);
+        if (styleConf.value?.detailConf.autoFullScreen) {
+            isFullSceen.value = true;
+        }
+    }
+};
 
 const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onAdd"]);
@@ -169,7 +220,7 @@ const openDialog = (id) => {
     // let row = {};
     // row[idFieldName.value] = id;
     // console.log(row,'row')
-
+    loadMyLayoutConfig();
     // 加载数据
     refresh();
 };
@@ -328,6 +379,12 @@ const getEditBtnTitle = () => {
         str = "记录正在审批中，禁止编辑";
     }
     return str;
+};
+
+let isFullSceen = ref(false);
+// 全屏
+const onFullSceen = () => {
+    isFullSceen.value = !isFullSceen.value;
 };
 
 // 暴露方法给父组件调用

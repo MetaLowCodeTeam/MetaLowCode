@@ -20,6 +20,7 @@
                         :class="['box-select', item.error ? 'is-error' : '']"
                         @focus="item.error = false"
                         value-key="name"
+                        filterable
                     >
                         <el-option
                             v-for="item in fieldList"
@@ -214,6 +215,7 @@ const confirmFieldGroup = async () => {
             return;
         }
     }
+   
     let param = {
         config: JSON.stringify(groupConf.value),
         entityCode: props.entityCode,

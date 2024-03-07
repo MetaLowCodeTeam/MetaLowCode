@@ -74,7 +74,7 @@
                         :idFieldName="idFieldName"
                         :entityCode="entityCode"
                         @defaultFilterChange="getLayoutList"
-                        @treGroupFilterConfirm="getLayoutList"
+                        @treeGroupFilterConfirm="getLayoutList"
                         :defaultFilterSetting="defaultFilterSetting"
                     />
                 </div>
@@ -211,8 +211,8 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList" />
-        <Edit ref="editRefs" @onConfirm="getTableList" :nameFieldName="nameFieldName" />
+        <Detail ref="detailRefs" @onConfirm="getTableList" :layoutConfig="layoutConfig"/>
+        <Edit ref="editRefs" @onConfirm="getTableList" :nameFieldName="nameFieldName" :layoutConfig="layoutConfig"/>
         <!-- 快速搜索字段 -->
         <mlSelectField
             ref="SelectFieldDialog"
@@ -392,6 +392,7 @@ const getLayoutList = async () => {
             ALL,
             TREE_GROUP: res.data.TREE_GROUP,
             BATCH_UPDATE: res.data.BATCH_UPDATE,
+            STYLE:res.data.STYLE,
         };
         // 树状分组筛选
         if (res.data.TREE_GROUP) {

@@ -133,6 +133,11 @@
                     @click="editColumn('BATCH_UPDATE')"
                     v-if="$TOOL.checkRole('r6008')"
                 >批量编辑设置</div>
+                <div
+                    class="pl-20 item"
+                    @click="setListStyleDialogIsShow = true"
+                    v-if="$TOOL.checkRole('r6008')"
+                >列表样式设计</div>
             </template>
         </div>
         <template #reference>
@@ -165,11 +170,24 @@
     <!-- 默认查询设置 -->
     <DefaultFilterDialog ref="defaultFilterRefs" @defaultFilterChange="defaultFilterChange" />
     <!-- 树状分组筛选 -->
-    <TreeGroupFilter
+    <!-- <TreeGroupFilter
         :entityCode="entityCode"
         :layoutConfig="myLayoutConf"
         v-model="treeGroupFilterIsShow"
-        @confirm="treGroupFilterConfirm"
+        @confirm="treeGroupFilterConfirm"
+    />-->
+    <NewTreeGroupFilter
+        :entityCode="entityCode"
+        :layoutConfig="myLayoutConf"
+        v-model="treeGroupFilterIsShow"
+        @confirm="treeGroupFilterConfirm"
+    />
+    <!-- 列表样式设计 -->
+    <SetListStyleDialog
+        v-model="setListStyleDialogIsShow"
+        :entityCode="entityCode"
+        :layoutConfig="myLayoutConf"
+        @confirm="allocationSuccess"
     />
 </template>
 
@@ -190,6 +208,9 @@ import ReportForms from "../ReportForms.vue";
 import DefaultFilterDialog from "./DefaultFilterDialog.vue";
 // 树状分组筛选设置
 import TreeGroupFilter from "./TreeGroupFilter.vue";
+import NewTreeGroupFilter from "./NewTreeGroupFilter.vue";
+// 列表样式设计
+import SetListStyleDialog from "./SetListStyleDialog.vue";
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -200,7 +221,7 @@ const emits = defineEmits([
     "changeColumnShow",
     "editColumnConfirm",
     "defaultFilterChange",
-    "treGroupFilterConfirm",
+    "treeGroupFilterConfirm",
 ]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
@@ -400,9 +421,14 @@ const openPrinter = () => {
 let treeGroupFilterIsShow = ref(false);
 
 // 确认选择分组
-const treGroupFilterConfirm = () => {
-    emits("treGroupFilterConfirm");
+const treeGroupFilterConfirm = () => {
+    emits("treeGroupFilterConfirm");
 };
+
+/**
+ * 列表样式设计
+ */
+let setListStyleDialogIsShow = ref(false);
 
 defineExpose({
     editColumn,

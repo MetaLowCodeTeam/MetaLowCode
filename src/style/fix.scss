@@ -300,6 +300,16 @@ body .tox-tinymce-aux {
 				color: #fafafa;
 			}
 		}
+        .full-screen-icon {
+			position: relative;
+			top: 6px;
+            margin-right: 10px;
+			cursor: pointer;
+			color: #fff;
+			&:hover {
+				color: #fafafa;
+			}
+		}
 	}
 
 	.el-dialog__footer {
@@ -317,6 +327,10 @@ body .tox-tinymce-aux {
 			padding-top: 50px;
 		}
 	}
+    &.isFullSceen {
+        min-height: 100vh;
+        margin-bottom: 0;
+    }
 	div {
 		box-sizing: border-box;
 	}
