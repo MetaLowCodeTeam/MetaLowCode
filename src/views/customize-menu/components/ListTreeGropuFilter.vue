@@ -64,11 +64,8 @@ onMounted(() => {
 
 const initMyTreeGroupConf = () => {
     myTreeGroupConf.value = JSON.parse(JSON.stringify(props.treeGroupConf));
-    // console.log(myTreeGroupConf.value, "myTreeGroupConf.value");
     let { groupList } = myTreeGroupConf.value;
     if (groupList) {
-        // console.log(groupList[0].fieldGroup, "groupList[0].fieldGroup");
-        // treeData.value = await getGroupTree();
         treeData.value = groupList[0].fieldGroup.map((el, inx) => {
             el.label = el.label;
             el.children = [{}];
@@ -102,19 +99,17 @@ const getGroupTree = async (node) => {
         let nodeChildren = [];
         let res = await groupTreeQuery(param);
         if (res) {
-            nodeChildren = res.data.map((el, inx) => {
-                el.treeIndex = node.treeIndex;
-                el.treeId = node.treeId + "-" + (inx + 1);
-                el.children =
-                    node.treeIndex == myTreeGroupConf.value.groupList.length - 1
-                        ? null
-                        : [{}];
-                el.isSelected = false;
-                return el;
-            });
+            nodeChildren = formatNodeChildren(
+                res.data,
+                node.treeId,
+                node.treeIndex
+            );
         }
         return nodeChildren;
     } else {
+        if(node.treeIndex == myTreeGroupConf.value.groupList.length - 1){
+            return null;
+        }
         return myTreeGroupConf.value.groupList[
             node.treeIndex + 1
         ].fieldGroup.map((el, inx) => {
@@ -127,6 +122,20 @@ const getGroupTree = async (node) => {
             return el;
         });
     }
+};
+
+const formatNodeChildren = (list, treeId, treeIndex) => {
+    let newList = list.map((el, inx) => {
+        el.treeIndex = treeIndex;
+        el.treeId = treeId + "-" + (inx + 1);
+        el.isSelected = false;
+        el.children =
+            el.children && el.children.length > 0
+                ? formatNodeChildren(el.children, el.treeId, treeIndex)
+                : [{}];
+        return el;
+    });
+    return list;
 };
 
 let TreeRef = ref("");

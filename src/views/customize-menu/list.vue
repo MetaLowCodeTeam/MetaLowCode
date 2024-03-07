@@ -114,12 +114,28 @@
             <div v-else class="table-div">
                 <!-- 分组 -->
                 <div class="tree-froup-box" v-if="treeGroupConf.isOpen">
-                    <span class="tree-refresh" @click="treeRefresh">
-                        <el-icon>
-                            <ElIconRefresh />
-                        </el-icon>
-                    </span>
+                    <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
+                        <span class="tree-refresh" @click="treeRefresh">
+                            <el-icon>
+                                <ElIconRefresh />
+                            </el-icon>
+                        </span>
+                    </el-tooltip>
+                    <el-tooltip class="box-item" effect="dark" content="保存" placement="bottom">
+                        <span class="tree-refresh tree-save" @click="treeSave">
+                            <el-icon>
+                                <ElIconWallet />
+                            </el-icon>
+                        </span>
+                    </el-tooltip>
                     <el-scrollbar>
+                        <ListcommonGroupFilter
+                            ref="ListcommonGroupFilterRefs"
+                            :entityCode="entityCode"
+                            :layoutConfig="layoutConfig"
+                            @nodeClick="treeGropuFilter"
+                            @onRefresh="getLayoutList"
+                        />
                         <ListTreeGropuFilter
                             :treeGroupConf="treeGroupConf"
                             :entityName="entityName"
@@ -211,8 +227,13 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList" :layoutConfig="layoutConfig"/>
-        <Edit ref="editRefs" @onConfirm="getTableList" :nameFieldName="nameFieldName" :layoutConfig="layoutConfig"/>
+        <Detail ref="detailRefs" @onConfirm="getTableList" :layoutConfig="layoutConfig" />
+        <Edit
+            ref="editRefs"
+            @onConfirm="getTableList"
+            :nameFieldName="nameFieldName"
+            :layoutConfig="layoutConfig"
+        />
         <!-- 快速搜索字段 -->
         <mlSelectField
             ref="SelectFieldDialog"
@@ -250,6 +271,9 @@ import { ElMessage } from "element-plus";
 import ListTreeGropuFilter from "./components/ListTreeGropuFilter.vue";
 // 批量编辑
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
+// 列表常用分组查询
+import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
+import { Message } from "@element-plus/icons-vue";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
@@ -392,7 +416,8 @@ const getLayoutList = async () => {
             ALL,
             TREE_GROUP: res.data.TREE_GROUP,
             BATCH_UPDATE: res.data.BATCH_UPDATE,
-            STYLE:res.data.STYLE,
+            STYLE: res.data.STYLE,
+            COM_TREE_GROUP: res.data.COM_TREE_GROUP,
         };
         // 树状分组筛选
         if (res.data.TREE_GROUP) {
@@ -634,14 +659,27 @@ const clearDataFilter = () => {
 /**
  * 分组查询
  */
+// 常用分组查询保存弹框
+let ListcommonGroupFilterRefs = ref("");
 let filterEasySql = ref("");
 const treeGropuFilter = (e) => {
     filterEasySql.value = e;
+    console.log(filterEasySql.value, "filterEasySql.value");
     getTableList();
 };
+// 分组刷新
 const treeRefresh = () => {
     filterEasySql.value = "";
     getLayoutList();
+};
+
+// 分组保存
+const treeSave = () => {
+    if (!filterEasySql.value) {
+        $ElMessage.warning("请勾选有效的筛选");
+        return;
+    }
+    ListcommonGroupFilterRefs.value.openSaveDialog(filterEasySql.value);
 };
 
 const getTableList = async () => {
@@ -827,6 +865,9 @@ div {
                     &:hover {
                         background: #f2f6fc;
                     }
+                }
+                .tree-save {
+                    right: 35px;
                 }
                 // overflow:auto;
             }
