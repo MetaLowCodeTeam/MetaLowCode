@@ -664,7 +664,6 @@ let ListcommonGroupFilterRefs = ref("");
 let filterEasySql = ref("");
 const treeGropuFilter = (e) => {
     filterEasySql.value = e;
-    console.log(filterEasySql.value, "filterEasySql.value");
     getTableList();
 };
 // 分组刷新
