@@ -133,10 +133,11 @@
                             ref="ListcommonGroupFilterRefs"
                             :entityCode="entityCode"
                             :layoutConfig="layoutConfig"
-                            @nodeClick="treeGropuFilter"
+                            @nodeClick="commonGroupFilterNodeClick"
                             @onRefresh="getLayoutList"
                         />
                         <ListTreeGropuFilter
+                            ref="ListTreeGropuFilterRefs"
                             :treeGroupConf="treeGroupConf"
                             :entityName="entityName"
                             @check="treeGropuFilter"
@@ -661,8 +662,11 @@ const clearDataFilter = () => {
  */
 // 常用分组查询保存弹框
 let ListcommonGroupFilterRefs = ref("");
+// 列表分组树过滤组件
+let ListTreeGropuFilterRefs = ref("");
 let filterEasySql = ref("");
 const treeGropuFilter = (e) => {
+    ListcommonGroupFilterRefs.value.resetChecked();
     filterEasySql.value = e;
     getTableList();
 };
@@ -679,6 +683,13 @@ const treeSave = () => {
         return;
     }
     ListcommonGroupFilterRefs.value.openSaveDialog(filterEasySql.value);
+};
+
+// 常用分组查询点击
+const commonGroupFilterNodeClick = (e) => {
+    ListTreeGropuFilterRefs.value.resetChecked();
+    filterEasySql.value = e;
+    getTableList();
 };
 
 const getTableList = async () => {

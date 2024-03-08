@@ -52,7 +52,15 @@ const $ElMessage = inject("$ElMessage");
 // 整体配置信息
 let myLayoutConfig = ref({});
 // 列表样式配置
-let styleConf = ref({});
+let styleConf = ref({
+    // 新建编辑弹框属性
+    actionConf: {
+        // 显示全屏按钮
+        showFullScreen: false,
+        // 弹框自动全屏
+        autoFullScreen: false,
+    },
+});
 watch(
     () => props.layoutConfig,
     () => {

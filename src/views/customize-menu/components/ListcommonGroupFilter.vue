@@ -6,11 +6,14 @@
         class="mb-5"
         @node-click="handleNodeClick"
         v-if="treeData.length > 0"
+        highlight-current
+        ref="TreeRef"
+        node-key="layoutConfigId"
     >
         <template #default="{ node, data }">
             <span class="custom-tree-node">
                 <span>{{ node.label }}</span>
-                <span v-if="data.layoutConfigId">
+                <span v-if="data.layoutConfigId" class="custom-tree-btn">
                     <a @click.stop="editNode(data)">
                         <el-icon>
                             <ElIconEdit />
@@ -44,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, nextTick } from "vue";
 const props = defineProps({
     entityCode: { type: Number },
     layoutConfig: { type: Object, default: () => {} },
@@ -66,6 +69,7 @@ let layoutConfigId = ref("");
 let saveLoading = ref(false);
 
 let treeData = ref([]);
+
 const defaultProps = {
     children: "children",
     label: "configName",
@@ -101,9 +105,24 @@ const loadLayoutConf = () => {
     }
 };
 
+let TreeRef = ref("");
+
+let filterEasySql = ref("");
+
 // 树节点点击
 const handleNodeClick = (node) => {
-    emits("nodeClick", node.config);
+    // 点击标题无需处理
+    if (node.configName == "常用分组查询") {
+        return;
+    }
+
+    if (filterEasySql.value) {
+        resetChecked();
+    } else {
+        filterEasySql.value = node.config;
+    }
+
+    emits("nodeClick", filterEasySql.value);
 };
 
 const editNode = (data) => {
@@ -167,8 +186,14 @@ const onSave = async () => {
     saveLoading.value = false;
 };
 
+const resetChecked = () => {
+    filterEasySql.value = "";
+    TreeRef.value.setCurrentKey(null, false);
+};
+
 defineExpose({
     openSaveDialog,
+    resetChecked,
 });
 </script>
 <style lang='scss' scoped>
@@ -179,5 +204,13 @@ defineExpose({
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
+    .custom-tree-btn {
+        display: none;
+    }
+    &:hover {
+        .custom-tree-btn {
+            display: block;
+        }
+    }
 }
 </style>

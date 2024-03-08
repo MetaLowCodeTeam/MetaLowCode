@@ -107,7 +107,7 @@ const getGroupTree = async (node) => {
         }
         return nodeChildren;
     } else {
-        if(node.treeIndex == myTreeGroupConf.value.groupList.length - 1){
+        if (node.treeIndex == myTreeGroupConf.value.groupList.length - 1) {
             return null;
         }
         return myTreeGroupConf.value.groupList[
@@ -167,6 +167,13 @@ const handleCheck = () => {
     }
     emits("check", sqlStr);
 };
+
+const resetChecked = () => {
+    TreeRef.value?.setCheckedKeys([], false);
+};
+defineExpose({
+    resetChecked,
+});
 </script>
 <style lang='scss' scoped>
 .flow-tree {
