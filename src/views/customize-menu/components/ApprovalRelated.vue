@@ -127,6 +127,9 @@ import { onMounted, watch, ref, reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 import mlApprove from "@/components/mlApprove/index.vue";
 import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 import http from "@/utils/request";
 const Route = useRouter();
 const $API = inject("$API");
@@ -167,6 +170,9 @@ const openDialog = async (title) => {
     );
     if (res) {
         approvalList.value = res.data || [];
+        if (approvalList.value.length == 1) {
+            approvalDialog.approvalConfig = approvalList.value[0];
+        }
     }
     approvalDialog.loading = false;
 };
@@ -197,9 +203,9 @@ let approveTaskConf = ref({
 // 确认审批任务
 const confirmApproveTask = () => {
     let { taksId } = approveTaskConf.value;
-    if(!taksId){
-        ElMessage.error("请选择审批任务")
-        return
+    if (!taksId) {
+        ElMessage.error("请选择审批任务");
+        return;
     }
     myApproval.value.approvalTaskId = approveTaskConf.value.taksId;
     approveTaskConf.value.isShow = false;
@@ -263,19 +269,20 @@ const onSubmit = async () => {
     approvalDialog.loading = true;
 
     let res;
-    // 简易工作流
-    if (flowType == 1) {
-        res = await $API.approval.detial.startApproval(
-            myApproval.value.recordId,
-            approvalConfigId
-        );
-    }
-    // 复杂工作流
-    else {
+    // 插件存在，且flowType == 2 走复杂
+    if (
+        publicSetting.value.pluginIdList.includes("metaWorkFlow") &&
+        flowType == 2
+    ) {
         res = await $API.approval.detial.startComplexFlowApproval({
             processDefId: wfProcDefId,
             recordId: myApproval.value.recordId,
         });
+    } else {
+        res = await $API.approval.detial.startApproval(
+            myApproval.value.recordId,
+            approvalConfigId
+        );
     }
 
     if (res) {

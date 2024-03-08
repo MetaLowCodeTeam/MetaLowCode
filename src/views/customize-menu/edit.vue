@@ -38,6 +38,7 @@ import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
+import { ElMessage } from "element-plus";
 const { queryEntityNameById, queryEntityNameByLabel } = useCommonStore();
 const emits = defineEmits(["onConfirm"]);
 const props = defineProps({
@@ -47,7 +48,6 @@ const props = defineProps({
     nameFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
 });
-const $ElMessage = inject("$ElMessage");
 
 // 整体配置信息
 let myLayoutConfig = ref({});
@@ -114,7 +114,7 @@ const openDialog = async (v) => {
         initFormLayout();
         loadMyLayoutConfig();
     } else {
-        $ElMessage.error(
+        ElMessage.error(
             "当前用户没有" + (v.detailId ? "编辑" : "新建") + "权限"
         );
     }
@@ -277,7 +277,7 @@ const confirm = async () => {
                     saveRes &&
                     (saveRes.data?.code == 200 || saveRes.code == 200)
                 ) {
-                    $ElMessage.success("保存成功");
+                    ElMessage.success("保存成功");
                     emits("onConfirm");
                     isShow.value = false;
                 }
@@ -285,7 +285,7 @@ const confirm = async () => {
             }
         })
         .catch(() => {
-            $ElMessage.error("表单校验失败，请修改后重新提交");
+            ElMessage.error("表单校验失败，请修改后重新提交");
         });
 };
 defineExpose({

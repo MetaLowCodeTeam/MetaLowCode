@@ -285,9 +285,8 @@ const delItem = (inx, item) => {
                 });
                 if (res) {
                     if (res.data) {
-                        onSave("删除成功");
                         mainList.value.splice(inx, 1);
-                        
+                        onSave("删除成功");
                     } else {
                         $ElMessage.warning("该选项有数据正在使用，无法删除。");
                     }

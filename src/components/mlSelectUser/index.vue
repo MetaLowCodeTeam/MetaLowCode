@@ -149,7 +149,7 @@ let tabList = ref([]);
 // 页签数据
 let tabData = ref([]);
 // 当前页签
-let cutTabCode = ref("Role");
+let cutTabCode = ref("User");
 let cutTabItem = reactive({});
 watch(
     () => props.modelValue,
