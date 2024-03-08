@@ -134,7 +134,7 @@
                             :entityCode="entityCode"
                             :layoutConfig="layoutConfig"
                             @nodeClick="commonGroupFilterNodeClick"
-                            @onRefresh="getLayoutList"
+                            @onRefresh="treeRefresh"
                         />
                         <ListTreeGropuFilter
                             ref="ListTreeGropuFilterRefs"
