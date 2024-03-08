@@ -188,7 +188,9 @@ const onSave = async () => {
 
 const resetChecked = () => {
     filterEasySql.value = "";
-    TreeRef.value.setCurrentKey(null, false);
+    if (TreeRef.value) {
+        TreeRef.value.setCurrentKey(null, false);
+    }
 };
 
 defineExpose({
