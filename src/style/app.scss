@@ -285,7 +285,7 @@ textarea {
 	flex: 1;
 	display: flex;
 	flex-flow: column;
-    flex-direction:column!important;
+	flex-direction: column !important;
 }
 
 .adminui-topbar {
@@ -466,7 +466,7 @@ textarea {
 	}
 }
 
-$values: 3, 5, 8, 10, 12, 15, 16, 20, 24, 30;
+$values: 0, 1, 2, 3, 5, 8, 10, 12, 15, 16, 20, 24, 30, 35, 40;
 $names: (
 	p: padding,
 	m: margin,
@@ -504,9 +504,9 @@ $names: (
 }
 
 .render-form .readonly-mode-field {
-    color: #000;
+	color: #000;
 }
 
 .conmon-tooltip {
-    width: 300px;
+	width: 300px;
 }
