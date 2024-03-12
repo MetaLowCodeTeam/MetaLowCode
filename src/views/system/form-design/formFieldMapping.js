@@ -124,6 +124,7 @@ export const formFieldMapping = {
 
 	'Picture': {
 		type: 'picture-upload',
+		uploadURLReadonly: true,  //禁止修改上传URL！！
 		options: {
 			uploadURL: "DSV['uploadServer'] + '/picture/upload'",
 			withCredentials: true,
@@ -132,6 +133,7 @@ export const formFieldMapping = {
 
 	'File': {
 		type: 'file-upload',
+		uploadURLReadonly: true,  //禁止修改上传URL！！
 		options: {
 			uploadURL: "DSV['uploadServer'] + '/file/upload'",
 			withCredentials: true,
