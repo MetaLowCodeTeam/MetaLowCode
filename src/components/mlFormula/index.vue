@@ -13,7 +13,7 @@
             <span ref="buttonRef" v-click-outside="onClickOutside" class="field-span">{&nbsp;}</span>
         </div>
         <div class="foot-box mt-10" v-if="showAdvanced">
-            <span class="help">如何使用高级计算公式?</span>
+            <span class="help" @click="goHelp">如何使用高级计算公式?</span>
             <el-button type="primary" class="fr" @click="confirm">确定</el-button>
         </div>
         <div class="input-box" v-if="!showAdvanced">
@@ -330,6 +330,11 @@ const isConfirm = () => {
     });
     emits("update:modelValue", isShow.value);
 };
+
+// 跳转 如何使用高级计算方式 帮助文档
+const goHelp = ()=>{
+    window.open("https://www.yuque.com/boyan-avfmj/aviatorscript/cpow90")
+}
 </script>
 <style lang='scss' scoped>
 .input-box {
