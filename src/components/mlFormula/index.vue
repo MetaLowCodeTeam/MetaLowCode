@@ -331,7 +331,7 @@ const isConfirm = () => {
     emits("update:modelValue", isShow.value);
 };
 
-// 跳转 如何使用高级计算方式 帮助文档
+// 跳转 如何使用高级计算公式 帮助文档
 const goHelp = ()=>{
     window.open("https://www.yuque.com/boyan-avfmj/aviatorscript/cpow90")
 }
