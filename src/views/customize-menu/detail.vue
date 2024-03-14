@@ -175,7 +175,7 @@ watch(
 );
 // 加载配置信息
 const loadMyLayoutConfig = () => {
-    myLayoutConfig.value = props.layoutConfig;
+    myLayoutConfig.value = props.layoutConfig || {};
     let { STYLE } = myLayoutConfig.value;
     if (STYLE && STYLE.config) {
         styleConf.value = JSON.parse(STYLE.config);
