@@ -328,10 +328,13 @@ body .tox-tinymce-aux {
 		}
 	}
     &.isFullSceen {
-        min-height: 100vh;
+        height: 100vh;
         margin-bottom: 0;
         .el-dialog__body {
-            min-height: calc(100vh - 115px);
+            height: calc(100vh - 120px);
+            .fullsceen-man {
+                max-height: 100%;
+            }
         }
     }
 	div {

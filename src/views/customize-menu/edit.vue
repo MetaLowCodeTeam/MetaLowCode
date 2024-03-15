@@ -8,7 +8,7 @@
         :showFullSceen="styleConf?.actionConf.showFullScreen"
         :autoFullScreen="styleConf?.actionConf.autoFullScreen"
     >
-        <div class="main" v-loading="loading">
+        <div class="main fullsceen-man" v-loading="loading">
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
             <v-form-render
