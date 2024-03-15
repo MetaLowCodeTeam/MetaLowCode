@@ -64,7 +64,7 @@
                     style="width: 80%;"
                 ></el-input>
             </el-form-item>
-            <el-form-item label="请选择绑定用户" v-if="dialogForm.saveEntity == 'ExternalForm'">
+            <el-form-item label="绑定用户" v-if="dialogForm.saveEntity == 'ExternalForm'">
                 <mlSelectUser
                     v-model="dialogForm.form.bindUsers"
                     type="User"
