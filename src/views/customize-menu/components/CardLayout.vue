@@ -26,8 +26,8 @@ onMounted(() => {
     if (props.layoutJson) {
         vFormRef.value.setFormJson(props.layoutJson);
         nextTick(() => {
+            vFormRef.value.setReadMode();
             vFormRef.value.setFormData(props.data);
-            vFormRef.value.disableForm();
         });
     }
 });
