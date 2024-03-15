@@ -35,7 +35,7 @@
 <script>
 import {setColumnFormatter} from '@/utils/util'
 import {refFieldQuery} from '@/api/crud'
-
+import { externalEefFieldQuery } from "@/api/external";
 export default {
 	props: {
 		entity: String,
@@ -44,7 +44,8 @@ export default {
 		tableHeight: {
 			type: String,
 			default: '480px'
-		}
+		},
+        gDsv: Object,
 	},
 	name: "ReferenceSearchTable",
 	data() {
@@ -81,26 +82,46 @@ export default {
 		},
 
 		loadTableTable() {
-			refFieldQuery(this.entity, this.refField, this.page.pageNo,
-				this.page.limit, this.queryText, this.extraFilter).then(res => {
-				if (res.error != null) {
-					this.$message({message: res.error, type: 'error'})
-				} else {
-					this.idField = res.data.idFieldName
-					this.nameField = res.data.nameFieldName
-					let columnList = res.data.columnList
-					columnList.forEach(cl => {
-						setColumnFormatter(cl)
-					})
-					this.columns = columnList
-					this.tableData = res.data.dataList
-					//console.log(this.tableData)
-					this.page.total = res.data.pagination.total
-				}
-			}).catch(res => {
-				this.$message({message: res.error, type: 'error'})
-			})
-		},
+            let paramStr, res;
+            // 如果是外部表单
+            if (this.gDsv.isExternalForm) {
+                paramStr = this.$route.query.externalId;
+                this.refFieldQueryApi(externalEefFieldQuery, paramStr);
+            } else {
+                paramStr = this.entity;
+                this.refFieldQueryApi(refFieldQuery, paramStr);
+            }
+        },
+
+        refFieldQueryApi(cb, paramStr) {
+            cb(
+                paramStr,
+                this.refField,
+                this.page.pageNo,
+                this.page.limit,
+                this.queryText,
+                this.extraFilter
+            )
+                .then((res) => {
+                    if (res.error != null) {
+                        this.$message({ message: res.error, type: "error" });
+                    } else {
+                        this.idField = res.data.idFieldName;
+                        this.nameField = res.data.nameFieldName;
+                        let columnList = res.data.columnList;
+                        columnList.forEach((cl) => {
+                            setColumnFormatter(cl);
+                        });
+                        this.columns = columnList;
+                        this.tableData = res.data.dataList;
+                        //console.log(this.tableData)
+                        this.page.total = res.data.pagination.total;
+                    }
+                })
+                .catch((res) => {
+                    this.$message({ message: res.error, type: "error" });
+                });
+        },
 
 		selectRecord(row) {
 			this.$emit('recordSelected', {

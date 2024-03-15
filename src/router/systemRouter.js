@@ -50,6 +50,15 @@ const routes = [
             title: "打印"
         }
     },
+    // 填写表单
+    {
+        path: "/web/inReport",
+        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/in-report.vue'),
+        name: "InReport",
+        meta: {
+            title: "填写表单"
+        }
+    },
     // 消息中心
     // {
     //     path: '/web/notification',

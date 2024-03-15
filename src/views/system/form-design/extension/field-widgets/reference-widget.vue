@@ -43,7 +43,7 @@
 				   :width="dialogWidth" draggable
 				   :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true">
 			<ReferenceSearchTable ref="referST" :entity="entity" :refField="curRefField" :extraFilter="searchFilter"
-								  @recordSelected="setReferRecord"></ReferenceSearchTable>
+								  @recordSelected="setReferRecord" :gDsv="gDsv"></ReferenceSearchTable>
 		</el-dialog>
 	</div>
 	<Detail ref="detailRef" />
@@ -102,6 +102,7 @@ export default {
 			entity: null,
 			curRefField: null,
 			searchFilter: '',
+            gDsv:{},
 		}
 	},
 	computed: {
@@ -137,8 +138,8 @@ export default {
 	},
 
 	created() {
-		const gDsv = this.getGlobalDsv()
-		this.entity = gDsv['formEntity'] || this.$route.query.entity || this.$route.meta.entityName
+		this.gDsv = this.getGlobalDsv();
+		this.entity = this.gDsv['formEntity'] || this.$route.query.entity || this.$route.meta.entityName
 		if (!!this.subFormItemFlag) {  //设置为明细实体名称！！
 			this.entity = this.subFormName
 		}

@@ -136,7 +136,7 @@
                         label="操作"
                         fixed="right"
                         :align="'center'"
-                        width="170"
+                        :width="actionColumnWidth"
                         key="defalut-btn"
                         v-if="entityName != 'ApprovalTask'"
                     >
@@ -169,6 +169,7 @@
                                 </span>
                                 <span>删除</span>
                             </el-button>
+                            <slot name="appendActionBtn" :scope="scope.row"></slot>
                         </template>
                     </el-table-column>
                     <slot name="activeRow"></slot>
@@ -218,8 +219,15 @@ const props = defineProps({
     // 默认过滤字段
     fieldName: { type: String, default: "entityCode" },
     approvalTaskType: { type: Number, default: 1 },
+    // 操作列宽度
+    actionColumnWidth: { type: Number, default: 170 },
 });
-const emit = defineEmits(["goDetial", "actionBtn", "changeSwitch","openAddDialog"]);
+const emit = defineEmits([
+    "goDetial",
+    "actionBtn",
+    "changeSwitch",
+    "openAddDialog",
+]);
 const message = inject("$ElMessage");
 const ListTile = reactive({
     ApprovalConfig: "审批流程",

@@ -63,6 +63,10 @@ onBeforeMount(() => {
     colorPrimary(app_color);
     // 获取公开系统配置
     queryPublicSetting();
+    if(location.pathname == '/web/inReport'){
+        isShowBody.value = true;
+        return
+    }
     initApi();
 });
 

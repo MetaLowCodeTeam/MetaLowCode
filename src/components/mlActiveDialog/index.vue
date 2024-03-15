@@ -3,7 +3,10 @@
     <!-- 列表页面新增、编辑通用弹框 -->
     <ml-dialog v-model="isShow" :title="dialogForm.title" width="30%">
         <el-form label-width="120px" v-loading="loading" @submit.prevent class="action-form">
-            <el-form-item :label="dialogForm.fromEntityLabel" v-if="dialogForm.type == 'add'">
+            <el-form-item
+                :label="dialogForm.fromEntityLabel"
+                v-if="dialogForm.type == 'add' && dialogForm.saveEntity != 'ExternalForm'"
+            >
                 <el-select
                     v-model="dialogForm.form.entityCode"
                     :placeholder="dialogForm.fromEntityLabel"
@@ -19,8 +22,23 @@
                 </el-select>
             </el-form-item>
             <el-form-item
+                :label="dialogForm.fromEntityLabel"
+                v-if="dialogForm.type == 'add' && dialogForm.saveEntity == 'ExternalForm'"
+            >
+                <el-select
+                    v-model="dialogForm.form.entityCode"
+                    :placeholder="dialogForm.fromEntityLabel"
+                    style="width: 80%;"
+                    filterable
+                >
+                    <template v-for="(op,inx) of unSystemEntityList" :key="inx">
+                        <el-option :label="op.label" :value="op.entityCode" v-if="!op.detailEntityFlag"/>
+                    </template>
+                </el-select>
+            </el-form-item>
+            <el-form-item
                 label="选择触发器"
-                v-if="dialogForm.type == 'add' && dialogForm.title == '添加触发器'"
+                v-if="dialogForm.type == 'add' && dialogForm.title == '添加触发器' && dialogForm.saveEntity != 'ExternalForm'"
             >
                 <el-select
                     v-model="dialogForm.form.actionType"
@@ -46,7 +64,18 @@
                     style="width: 80%;"
                 ></el-input>
             </el-form-item>
-            <el-form-item v-if="publicSetting?.pluginIdList.includes('metaWorkFlow') && dialogForm.title == '添加审批流程'">
+            <el-form-item label="请选择绑定用户" v-if="dialogForm.saveEntity == 'ExternalForm'">
+                <mlSelectUser
+                    v-model="dialogForm.form.bindUsers"
+                    type="User"
+                    clearable
+                    style="width: 80%;"
+                />
+            </el-form-item>
+
+            <el-form-item
+                v-if="publicSetting?.pluginIdList.includes('metaWorkFlow') && dialogForm.title == '添加审批流程'"
+            >
                 <el-radio-group
                     v-model="dialogForm.form.flowType"
                     :disabled="dialogForm.type == 'edit'"
@@ -81,7 +110,9 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { unSystemEntityList, processEntityList,publicSetting } = storeToRefs(useCommonStore());
+const { unSystemEntityList, processEntityList, publicSetting } = storeToRefs(
+    useCommonStore()
+);
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 let props = defineProps({
@@ -155,6 +186,10 @@ const saveProcess = async () => {
     let { type, form, saveEntity, saveIdCode, checkCodes, codeErrMsg } =
         dialogForm.value;
     let { entityCode, isDisabled, actionType, flowType } = form;
+    if (type == "add" && saveEntity == "ExternalForm" && !entityCode) {
+        message.error("请选择源实体");
+        return;
+    }
     if (type == "add" && saveEntity != "TriggerConfig" && !entityCode) {
         message.error("请选择应用实体");
         return;
@@ -163,15 +198,15 @@ const saveProcess = async () => {
         message.error("请选择触发器");
         return;
     }
-
     // 开始验证必填
     for (let index = 0; index < checkCodes.length; index++) {
         const el = checkCodes[index];
         if (!form[el]) {
-            message.error(codeErrMsg[0]);
+            message.error(codeErrMsg[index]);
             return;
         }
     }
+
     // 开始塞入 params
     let params = {
         entityCode,
@@ -184,6 +219,13 @@ const saveProcess = async () => {
     if (props.isProcess) {
         params.flowType = flowType;
     }
+    if (saveEntity == "ExternalForm" && form.bindUsers.length < 1) {
+        message.error("请选择绑定用户");
+        return;
+    }
+    if (saveEntity == "ExternalForm" && form.bindUsers.length > 0) {
+        params.bindUsers = form.bindUsers[0].id;
+    }
     loading.value = true;
     let res = await saveRecord(saveEntity, form[saveIdCode] || "", params);
     if (res) {
@@ -191,7 +233,7 @@ const saveProcess = async () => {
             let emitValue = {};
             emitValue[saveIdCode] = res.data.formData[saveIdCode];
             emitValue.entityCode = entityCode;
-            emitValue.flowType = res.data.formData.flowType
+            emitValue.flowType = res.data.formData.flowType;
             emit("saveProcess", emitValue);
         } else {
             emit("saveProcess");
