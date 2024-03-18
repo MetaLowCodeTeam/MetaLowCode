@@ -94,6 +94,21 @@
                                 @click.stop="downField(field.url,field.name)"
                             >{{ field.name }}</span>
                         </el-tooltip>
+                        <!-- 如果有字段类型，且是密码类型 -->
+                        <span v-else-if="column.columnType && column.columnType == 'password'">
+                            <span v-if="scope.row.showPassword">{{ scope.row[column.prop] }}</span>
+                            <span v-else>******************</span>
+                            <span
+                                v-if="column.actionBtnShow"
+                                style="position: relative;margin-left: 10px;cursor: pointer;"
+                                :style="{'top': scope.row.showPassword ? '2px' : '0'}"
+                                @click.stop="scope.row.showPassword = !scope.row.showPassword"
+                            >
+                                <el-icon>
+                                    <ElIconView />
+                                </el-icon>
+                            </span>
+                        </span>
                         <!-- 默认 -->
                         <span v-else>{{ scope.row[column.prop] }}</span>
                     </template>
@@ -167,7 +182,14 @@ const handleSizeChange = (size) => {
 // 获取表格数据
 async function getTableList() {
     loading.value = true;
-    let { mainEntity, fieldsList, fieldName, sortFields, filterItems,equation } = props;
+    let {
+        mainEntity,
+        fieldsList,
+        fieldName,
+        sortFields,
+        filterItems,
+        equation,
+    } = props;
     let param = {
         mainEntity,
         fieldsList,

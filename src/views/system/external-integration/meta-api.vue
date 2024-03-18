@@ -28,7 +28,7 @@
                             </el-icon>
                         </span>
                         <span>编辑</span>
-                    </el-button> -->
+                    </el-button>-->
                     <el-button size="small" link type="primary" @click="delCick(scope.row)">
                         <span class="mr-3">
                             <el-icon>
@@ -90,6 +90,8 @@ let tableColumn = ref([
         prop: "appSecret",
         label: "appSecret",
         align: "center",
+        columnType: "password",
+        actionBtnShow: true,
     },
     {
         prop: "bindUser.name",
@@ -180,7 +182,7 @@ const saveApiKey = async () => {
     let res = await http.post("/metaApiConfig/saveRecord?id=", {
         bindUser: bindUser[0].id,
     });
-    if(res){
+    if (res) {
         ElMessage.success("添加成功");
         mlSingleListRef.value.getTableList();
         mlDialogConf.value.isShow = false;
