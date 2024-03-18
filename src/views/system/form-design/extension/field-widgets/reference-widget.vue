@@ -28,7 +28,7 @@
 			</el-input>
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog">{{ contentForReadMode }}
-					<el-button v-if="contentForReadMode" type="primary" circle size="small"
+					<el-button v-if="fieldModel && fieldModel.id" type="primary" circle size="small"
 							   class="small-circle-button" title="打开详情弹窗">
 						<el-icon >
 							<TopRight />

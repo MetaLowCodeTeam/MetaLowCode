@@ -18,7 +18,8 @@
                 class="ml-el-table"
                 :data="tableList"
                 style="width: 100%;"
-                :border="true"
+                border
+				stripe
                 ref="meTable"
             >
                 <el-table-column
@@ -126,7 +127,7 @@
         </el-main>
     </el-container>
 </template>
-  
+
 <script setup>
 import { onMounted, ref, reactive, inject } from "vue";
 import http from "@/utils/request";
