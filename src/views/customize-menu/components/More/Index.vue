@@ -170,18 +170,18 @@
     <!-- 默认查询设置 -->
     <DefaultFilterDialog ref="defaultFilterRefs" @defaultFilterChange="defaultFilterChange" />
     <!-- 树状分组筛选 -->
-    <!-- <TreeGroupFilter
-        :entityCode="entityCode"
-        :layoutConfig="myLayoutConf"
-        v-model="treeGroupFilterIsShow"
-        @confirm="treeGroupFilterConfirm"
-    />-->
-    <NewTreeGroupFilter
+    <TreeGroupFilter
         :entityCode="entityCode"
         :layoutConfig="myLayoutConf"
         v-model="treeGroupFilterIsShow"
         @confirm="treeGroupFilterConfirm"
     />
+    <!-- <NewTreeGroupFilter
+        :entityCode="entityCode"
+        :layoutConfig="myLayoutConf"
+        v-model="treeGroupFilterIsShow"
+        @confirm="treeGroupFilterConfirm"
+    /> -->
     <!-- 列表样式设计 -->
     <SetListStyleDialog
         v-model="setListStyleDialogIsShow"
