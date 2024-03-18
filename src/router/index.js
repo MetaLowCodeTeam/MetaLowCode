@@ -219,16 +219,14 @@ const routerCheckRole = (routeList) => {
                 if (tmp.children) {
                     tmp.children = routerCheckRole(tmp.children)
                 }
-                if (!tmp.meta.hidden) {
-                    res.push(tmp)
-                }
+                res.push(tmp)
 
             }
         } else {
             if (tmp.children) {
                 tmp.children = routerCheckRole(tmp.children)
             }
-            if ((!tmp.children || tmp.children.length) > 0 && !tmp.meta.hidden) {
+            if (!tmp.children || tmp.children.length > 0) {
                 res.push(tmp)
             }
         }
