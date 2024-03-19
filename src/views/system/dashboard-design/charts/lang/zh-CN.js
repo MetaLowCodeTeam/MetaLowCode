@@ -10,7 +10,8 @@ export default {
             progressbar: "进度条",
             radarChart: "雷达图",
             pivotTable: "透视表",
-            listTable: "数据列表"
+            listTable: "数据列表",
+            quickNav: "快捷导航"
         },
 
         setting: {

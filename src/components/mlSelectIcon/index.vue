@@ -45,8 +45,8 @@
                 <el-color-picker v-model="selectedIcon.color" />
                 <span class="ml-5">选择颜色</span>
             </span>
-            <el-button style="width: 80px;" @click="dialogIsShow = false">取消</el-button>
-            <el-button type="primary" style="width: 80px;" @click="confirmIcon">确认</el-button>
+            <el-button style="width: 80px;" @click="dialogIsShow = false" size="default">取消</el-button>
+            <el-button type="primary" style="width: 80px;" @click="confirmIcon" size="default">确认</el-button>
         </div>
     </mlDialog>
 </template>
@@ -124,7 +124,6 @@ const getIconName = (name) => {
 
 const selectIcon = (icon) => {
     selectedIcon.value.name = icon;
-    //
 };
 
 // 确认选中图标
