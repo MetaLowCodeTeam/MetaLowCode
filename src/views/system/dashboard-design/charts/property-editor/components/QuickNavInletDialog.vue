@@ -1,11 +1,12 @@
 <template>
-    <mlDialog title="添加快捷入口" v-model="isShow" width="480px">
+    <mlDialog :title="(pageStatus == 1 ? '新建' : '编辑') + '快捷入口'" v-model="isShow" width="480px" append-to-body>
         <div v-loading="loading">
             <el-tabs v-model="cutMenu.type">
                 <el-tab-pane label="关联项" :name="1"></el-tab-pane>
                 <el-tab-pane label="外部地址" :name="2"></el-tab-pane>
                 <el-tab-pane label="自定义页面" :name="3"></el-tab-pane>
             </el-tabs>
+            <!-- 关联项目 -->
             <div v-if="cutMenu.type == 1" class="content-box">
                 <el-select
                     v-model="cutMenu.entityCode"
@@ -20,15 +21,56 @@
                         :key="group.label"
                         :label="group.label"
                     >
-                        <el-option
-                            v-for="(op,inx) of group.options"
-                            :key="inx"
-                            :value="op.entityCode"
-                            :label="op.label"
-                        />
+                        <template v-for="(op,inx) of group.options" :key="inx">
+                            <el-option :value="op.entityCode" :label="op.label" />
+                        </template>
                     </el-option-group>
                 </el-select>
             </div>
+            <!-- 外部地址 -->
+            <div class="content-box" v-if="cutMenu.type == 2">
+                <el-input
+                    v-model="cutMenu.outLink"
+                    placeholder="输入外部地址，例：https://www.baidu.com/"
+                    clearable
+                    size="default"
+                ></el-input>
+            </div>
+            <!-- 自定义页面 -->
+            <div class="content-box" v-if="cutMenu.type == 3">
+                <el-select
+                    v-model="cutMenu.outLink"
+                    filterable
+                    placeholder="选择自定义页面"
+                    class="w-100"
+                    size="default"
+                    no-data-text="暂未配置自定义导航"
+                >
+                    <el-option
+                        v-for="(op,inx) of customPageList"
+                        :key="inx"
+                        :value="op.value"
+                        :label="op.label"
+                    />
+                </el-select>
+                <div class="mt-5">
+                    <el-checkbox v-model="cutMenu.pcShow" size="default">
+                        <span style="position: relative;top: 1px;">
+                            PC显示
+                            <span class="info-text">请确保PC端有该页面</span>
+                        </span>
+                    </el-checkbox>
+                </div>
+                <div>
+                    <el-checkbox v-model="cutMenu.mobielShow" size="default">
+                        <span style="position: relative;top: 1px;">
+                            移动端显示
+                            <span class="info-text">请确保移动端端有该页面</span>
+                        </span>
+                    </el-checkbox>
+                </div>
+            </div>
+            <!-- 入口名称 -->
             <div class="mt-10 content-box">
                 <el-input
                     v-model="cutMenu.name"
@@ -49,6 +91,31 @@
                     </template>
                 </el-input>
             </div>
+            <!-- 入口打开方式 -->
+            <div class="mt-10 content-box">
+                <el-radio-group v-model="cutMenu.openType">
+                    <el-radio :label="0">
+                        <span class="radio-span">
+                            新窗口打开
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="仅在电脑端生效，移动端为当前页面打开"
+                                placement="top"
+                            >
+                                <span style="position: relative;top: 2px;">
+                                    <el-icon>
+                                        <QuestionFilled />
+                                    </el-icon>
+                                </span>
+                            </el-tooltip>
+                        </span>
+                    </el-radio>
+                    <el-radio :label="1">
+                        <span class="radio-span">当前页面打开</span>
+                    </el-radio>
+                </el-radio-group>
+            </div>
         </div>
         <template #footer>
             <div class="footer-div">
@@ -65,17 +132,20 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 // 获取实体Store
 import useCommonStore from "@/store/modules/common";
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
+
 // 选择图标组件
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+
+const Router = useRouter();
+
 // 取所有实体
 const { unSystemEntityList } = storeToRefs(useCommonStore());
-
-const props = defineProps({
-    modelValue: null,
-});
-
-const emit = defineEmits(["update:modelValue"]);
+// 取所有路由
+const { getNavigationApi } = useLayoutConfigStore();
+const emit = defineEmits(["onConfirm"]);
 
 let isShow = ref(false);
 
@@ -86,34 +156,99 @@ let loading = ref(false);
 // 页面状态 1新建 2编辑
 let pageStatus = ref(1);
 // 当前操作菜单
-let cutMenu = ref({
+let cutMenu = ref({});
+
+// 已存在的实体集
+let hasEntityList = ref([]);
+// 自定义页面路由
+let customPageList = ref([]);
+
+// 默认入口
+const DefaultMenu = {
+    // 菜单名称
+    name: "未命名",
+    // 1 关联性  2 外部地址 3 自定义页面
     type: 1,
-});
+    // 关联项
+    entityCode: null,
+    // 外部地址、自定义页面、系统页面
+    outLink: "",
+    // 0 外部打开 1 当前页面打开
+    openType: 0,
+    // key
+    guid: "",
+    // 使用图标
+    useIcon: "",
+    // 图标颜色
+    iconColor: "",
+    // PC显示
+    pcShow: true,
+    // 移动端显示
+    mobielShow: false,
+};
 
 // 打开数据弹框
-const openDialog = (status, data) => {
-    cutMenu.value = data ? { ...data } : { type: 1 };
+const openDialog = async (status, cut, list) => {
+    cutMenu.value = cut ? cloneDeep(cut) : cloneDeep(DefaultMenu);
+    hasEntityList.value = cloneDeep(list);
     pageStatus.value = status;
+    isShow.value = true;
+    loading.value = true;
+
+    await getNavigationApi();
+    // 加载自定义列表
+    loadCustomPageList();
+    loading.value = false;
+};
+// 加载自定义列表
+const loadCustomPageList = () => {
+    const { getUseMenuList } = useLayoutConfigStore();
+    customPageList.value = [];
+    getUseMenuList().forEach((el) => {
+        // 判断有没有子集
+        if (el.children && el.children.length > 0) {
+            el.children.forEach((subEl) => {
+                // 如果是自定义页面
+                if (subEl.path.indexOf("/custom-page/") != -1) {
+                    customPageList.value.push({
+                        label:
+                            subEl.meta.title + "(" + subEl.meta.outLink + ")",
+                        value: subEl.meta.outLink,
+                    });
+                }
+            });
+        }
+        // 没有子集
+        else {
+            // 如果是自定义页面
+            if (el.path.indexOf("/custom-page/") != -1) {
+                customPageList.value.push({
+                    label: el.meta.title + "(" + el.meta.outLink + ")",
+                    value: el.meta.outLink,
+                });
+            }
+        }
+    });
 };
 
 // 实体分组
 const getGroupEntityList = () => {
     let systemOptions = [
-        {
-            label: "部门用户",
-            entityCode: 22,
-            name: "Department",
-        },
-        {
-            label: "权限角色",
-            entityCode: 23,
-            name: "Role",
-        },
-        {
-            label: "团队",
-            entityCode: 24,
-            name: "Team",
-        },
+        // {
+        //     label: "部门用户",
+        //     entityCode: 22,
+        //     name: "Department",
+        // },
+        // {
+        //     label: "权限角色",
+        //     entityCode: 23,
+        //     name: "Role",
+        // },
+        // {
+        //     label: "团队",
+        //     entityCode: 24,
+        //     name: "Team",
+        // },
         // {
         //     label: "跟进",
         //     entityCode: 54,
@@ -130,30 +265,30 @@ const getGroupEntityList = () => {
             label: "自定义实体",
             options: [...getEntityList()],
         },
-        {
-            label: "系统内置",
-            options: [...systemOptions],
-        },
-        {
-            label: "审批流程",
-            options: [
-                {
-                    label: "待我处理",
-                    name: "approvalHandle",
-                    entityCode: "approvalHandle",
-                },
-                {
-                    label: "我提交的",
-                    name: "approvalSubmit",
-                    entityCode: "approvalSubmit",
-                },
-                {
-                    label: "抄送我的",
-                    name: "capprovalCc",
-                    entityCode: "capprovalCc",
-                },
-            ],
-        },
+        // {
+        //     label: "系统内置",
+        //     options: [...systemOptions],
+        // },
+        // {
+        //     label: "审批流程",
+        //     options: [
+        //         {
+        //             label: "待我处理",
+        //             name: "approvalHandle",
+        //             entityCode: "approvalHandle",
+        //         },
+        //         {
+        //             label: "我提交的",
+        //             name: "approvalSubmit",
+        //             entityCode: "approvalSubmit",
+        //         },
+        //         {
+        //             label: "抄送我的",
+        //             name: "capprovalCc",
+        //             entityCode: "capprovalCc",
+        //         },
+        //     ],
+        // },
     ];
     return newEntityList;
 };
@@ -176,8 +311,7 @@ const associationChange = (entityCode) => {
             }
         }
     }
-    // console.log(linkEntity, "linkEntity");
-    // cutMenu.value.linkEntity = linkEntity;
+    cutMenu.value.isSystemEntity = false;
     cutMenu.value.name = linkEntity.label;
     cutMenu.value.entityCode = linkEntity.entityCode;
     cutMenu.value.entityName = linkEntity.name;
@@ -230,17 +364,58 @@ const SystemEntityPath = {
 
 // 弹框保存
 const layoutSave = () => {
-    let { type, entityCode, entityName } = cutMenu.value;
+    let { type, entityCode, entityName, outLink, guid } = cutMenu.value;
     if (type == 1 && !entityCode) {
         ElMessage.warning("请选择关联项");
         return;
     }
     // 如果是系统内置
-    if (SystemEntityName.includes(entityName)) {
+    if (type == 1 && SystemEntityName.includes(entityName)) {
         cutMenu.value.isSystemEntity = true;
         cutMenu.value.outLink = SystemEntityPath[cutMenu.value.entityName];
     }
-    console.log(cutMenu.value, "cutMenu.value");
+    // 外部地址、自定义页面
+    if (type == 2 || type == 3) {
+        if (!outLink) {
+            ElMessage.warning(
+                type == 2 ? "请输入外部地址" : "请选择自定义页面"
+            );
+            return;
+        }
+        cutMenu.value.entityCode = "";
+        cutMenu.value.entityName = "";
+    }
+    // 是新建
+    if (!guid) {
+        cutMenu.value.guid = getGuid();
+        hasEntityList.value.push(cutMenu.value);
+    }
+    // 是编辑
+    else {
+        hasEntityList.value.forEach((el, inx) => {
+            if (el.guid == guid) {
+                hasEntityList.value[inx] = cloneDeep(cutMenu.value);
+            }
+        });
+    }
+    emit("onConfirm", hasEntityList.value);
+    isShow.value = false;
+};
+
+/**
+ * 方法
+ */
+// 复制
+const cloneDeep = (data) => {
+    return JSON.parse(JSON.stringify(data));
+};
+// gudie
+const getGuid = () => {
+    return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0,
+            v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
 };
 
 /**
@@ -275,5 +450,9 @@ defineExpose({
     &:hover {
         background: #eeeeee;
     }
+}
+.radio-span {
+    font-size: 13px;
+    position: relative;
 }
 </style>

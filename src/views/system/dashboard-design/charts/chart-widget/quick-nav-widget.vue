@@ -1,14 +1,46 @@
 <template>
-    <div class="pivot-table-widget" @click.stop="setSelected" v-loading="loading">
-        <div class="no-data">
+    <div class="quick-nav-widget" @click.stop="setSelected" v-loading="loading">
+        <div v-if="myQuickNavConf.inletList.length > 0" class="clearfix">
+            <div v-for="(item,inx) of myQuickNavConf.inletList" :key="inx">
+                <!-- 列表 -->
+                <div
+                    :class="['li-item',myQuickNavConf.type == 1 ? 'list-item' : 'card-item',myQuickNavConf.borderIsShow ? 'not-border': '']"
+                    :style="{'borderColor':item.iconColor,'width':myQuickNavConf.itemWidth ? myQuickNavConf.itemWidth + 'px' : '100px'}"
+                    @click.stop="navClick(item)"
+                    v-if="designer || item.type != 3 || (item.type == 3 && item.pcShow)"
+                >
+                    <div class="item-icon" :style="{'background':item.iconColor || '#ddd',}">
+                        <el-icon
+                            class="icon-span"
+                            v-if="!item.useIcon"
+                            :color="contrastTextColor(item.iconColor)"
+                        >
+                            <SetUp />
+                        </el-icon>
+                        <el-icon
+                            class="icon-span"
+                            v-else
+                            :color="contrastTextColor(item.iconColor)"
+                        >
+                            <component :is="item.useIcon" />
+                        </el-icon>
+                    </div>
+                    <div class="item-span text-ellipsis" :title="item.name">{{ item.name }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="no-data" v-else>
             请通过右侧
-            <span class="lh">维度指标设置</span> 维度、指标栏来添加数据
+            <span class="lh">添加入口</span> 来添加数据
         </div>
     </div>
+    
 </template>
 <script setup>
-import { onMounted, ref, watch } from "vue";
-import { queryChartData } from "@/api/chart";
+import { nextTick, onMounted, ref, watch } from "vue";
+import { contrastTextColor } from "./CalculateColor";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 defineOptions({
     name: "quickNav-widget",
 });
@@ -16,57 +48,185 @@ const props = defineProps({
     field: Object,
     designer: Object,
 });
+
+const Router = useRouter();
+
 let cutField = ref({});
-let isNoData = ref(true);
 let loading = ref(false);
+
+let myQuickNavConf = ref({
+    // 入口集
+    inletList: [],
+    // 入口类型 1 列表 2卡片
+    type: 1,
+});
 
 watch(
     () => props.field,
     () => {
         cutField.value = props.field;
-        console.log("有变化")
+        console.log("有变化");
         initOption();
     },
     { deep: true }
 );
 onMounted(() => {
     cutField.value = props.field;
-    console.log("初始化")
+    console.log("初始化");
     initOption();
 });
 
-const initOption = ()=>{
-    console.log(cutField.value);
-}
-
+const initOption = () => {
+    myQuickNavConf.value = cutField.value.options?.setQuickNavConf;
+};
 
 const setSelected = () => {
     props.designer?.setSelected(props.field);
-    // localStorage.setItem("widget__list__selected", JSON.stringify(props.field));
 };
+
+const navClick = (item) => {
+    console.log(item, "item");
+    // 如果存在设计表示是在设计页面，无法点击
+    if (props.designer) {
+        return;
+    }
+
+    // 内部实体
+    if (item.type == 1) {
+        let path = "/web/" + item.entityName + "/list";
+        jumpLink(1, item.openType == 1 ? 1 : 2, path);
+    }
+    // 外部链接
+    else if (item.type == 2) {
+        jumpLink(2, item.openType == 1 ? 1 : 2, item.outLink);
+    }
+    // 自定义页面
+    else if (item.type == 3) {
+        jumpLink(
+            2,
+            item.openType == 1 ? 1 : 2,
+            "/web/custom-page/" + item.outLink
+        );
+    } else {
+        ElMessage.warning(item.type + " 未找到.");
+    }
+};
+/**
+ * func 跳转方式 1 路由 2 window
+ * target 跳转类型 1 当前页面 2 新窗口
+ * url 跳转的链接
+ */
+const jumpLink = (func, target, url) => {
+    // 如果是路由跳转
+    if (func == 1) {
+        // 如果是当前页面
+        if (target == 1) {
+            Router.push(url);
+        }
+        // 如果是新页面打开
+        else {
+            let newUrl = Router.resolve({
+                path: url,
+            });
+            window.open(newUrl.href);
+        }
+    }
+    // 如果是 window跳转
+    else {
+        // 如果是当前页面
+        if (target == 1) {
+            window.location(url);
+        }
+        // 如果是新页面打开
+        else {
+            window.open(url);
+        }
+    }
+};
+
+/**
+ * 修改入口
+ */
+// let QuickNavInletDialogRefs = ref("");
+
+// const openAddDiaog = (type, cut) => {
+//     QuickNavInletDialogRefs.value.openDialog(
+//         type,
+//         cut,
+//         myQuickNavConf.value.inletList
+//     );
+// };
+
+// // 入口确认
+// const inletConfirm = (list) => {
+//     myQuickNavConf.value.inletList = JSON.parse(JSON.stringify(list));
+// };
 </script>
 <style lang="scss" scoped>
-.pivot-table-widget {
+.quick-nav-widget {
     width: 100%;
     height: 100%;
-    .statistic-box {
-        // width: 10;
-        height: 100%;
-        container-type: inline-size;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        .statistic-dimension {
-            font-size: 5cqw;
+    .li-item {
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        box-sizing: border-box;
+        float: left;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        &:hover {
+            background: #f5f6f8;
+            .item-span {
+                color: var(--el-color-primary);
+            }
         }
-        .statistic-metrics {
-            font-size: 15cqw;
-            font-weight: bold;
-            padding: 0 20px;
-            .sub-text {
+        .item-icon {
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 4px;
+            .icon-span {
+                font-size: 15px;
+                position: relative;
+                top: 2px;
+            }
+        }
+        &.list-item {
+            height: 40px;
+            line-height: 40px;
+            border-radius: 4px;
+            width: 200px;
+            padding: 0 10px;
+            .item-icon {
+                float: left;
+                margin-top: 7px;
                 margin-right: 5px;
             }
+            .item-span {
+                display: inline-block;
+                width: calc(100% - 31px);
+            }
+        }
+        &.card-item {
+            height: 70px;
+            width: 180px;
+            box-sizing: border-box;
+            padding-top: 10px;
+            text-align: center;
+            box-shadow: var(--el-box-shadow-light);
+            .item-icon {
+                display: inline-block;
+                line-height: 26px;
+            }
+            .item-span {
+                margin-top: 5px;
+                padding: 0 20px;
+            }
+        }
+        &.not-border {
+            border: 0;
         }
     }
 }

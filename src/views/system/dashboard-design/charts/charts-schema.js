@@ -557,7 +557,13 @@ export const ext_charts_widgets = [
             // 显示入口样式
             setQuickNavConf: {
                 // 1 列表  2卡片
-                type: 1
+                type: 1,
+                // 入口
+                inletList: [],
+                // 宽度
+                itemWidth: 200,
+                // 边框颜色
+                borderColor:"#ddd",
             },
             customClass: [],
             dsEnabled: false,
