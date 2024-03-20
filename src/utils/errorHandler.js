@@ -18,10 +18,11 @@ export default (error, vm)=>{
 		EvalError: "错误的使用了Eval",
 		URIError: "URI错误"
 	}
+    console.warn(`[ML error]: ${error}`);
+	console.error(error);
 	var errorName = errorMap[error.name] || "未知错误"
 
-	console.warn(`[ML error]: ${error}`);
-	console.error(error);
+	
 	//throw error;
 
 	vm.$nextTick(() => {
