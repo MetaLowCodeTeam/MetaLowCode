@@ -1,11 +1,11 @@
 <template>
     <div class="quick-nav-widget" @click.stop="setSelected" v-loading="loading">
         <div v-if="myQuickNavConf.inletList.length > 0" class="clearfix">
-            <div v-for="(item,inx) of myQuickNavConf.inletList" :key="inx">
+            <div v-for="(item,inx) of myQuickNavConf.inletList" :key="inx" class="list-box fl" :style="getItemStyle()">
                 <!-- 列表 -->
                 <div
-                    :class="['li-item',myQuickNavConf.type == 1 ? 'list-item' : 'card-item',myQuickNavConf.borderIsShow ? 'not-border': '']"
-                    :style="{'borderColor':item.iconColor,'width':myQuickNavConf.itemWidth ? myQuickNavConf.itemWidth + 'px' : '100px'}"
+                    :class="['li-item',myQuickNavConf.type == 1 ? 'list-item' : 'card-item',myQuickNavConf.borderIsShow ? '': 'not-border']"
+                    :style="{'borderColor':item.iconColor}"
                     @click.stop="navClick(item)"
                     v-if="designer || item.type != 3 || (item.type == 3 && item.pcShow)"
                 >
@@ -34,7 +34,6 @@
             <span class="lh">添加入口</span> 来添加数据
         </div>
     </div>
-    
 </template>
 <script setup>
 import { nextTick, onMounted, ref, watch } from "vue";
@@ -53,6 +52,8 @@ const Router = useRouter();
 
 let cutField = ref({});
 let loading = ref(false);
+// 当前设备，用于判断是PC还是移动
+let cutDevice = ref("pc");
 
 let myQuickNavConf = ref({
     // 入口集
@@ -65,14 +66,19 @@ watch(
     () => props.field,
     () => {
         cutField.value = props.field;
-        console.log("有变化");
         initOption();
     },
     { deep: true }
 );
 onMounted(() => {
     cutField.value = props.field;
-    console.log("初始化");
+    let queryType = Router.currentRoute.value.query.type;
+    if (queryType == "mobile") {
+        cutDevice.value = "mobile";
+    } else {
+        cutDevice.value = "pc";
+    }
+
     initOption();
 });
 
@@ -85,7 +91,6 @@ const setSelected = () => {
 };
 
 const navClick = (item) => {
-    console.log(item, "item");
     // 如果存在设计表示是在设计页面，无法点击
     if (props.designer) {
         return;
@@ -144,35 +149,48 @@ const jumpLink = (func, target, url) => {
     }
 };
 
-/**
- * 修改入口
- */
-// let QuickNavInletDialogRefs = ref("");
+//
+// 获取列宽
+const getItemStyle = () => {
+    let itemStyle = {
+    };
+    // 如果是PC
+    if (cutDevice.value == "pc") {
+        itemStyle.width = myQuickNavConf.value.itemWidth
+            ? myQuickNavConf.value.itemWidth + "px"
+            : "100px";
+    }
+    // 如果是移动
+    else {
+        // 如果是删格12
+        if (myQuickNavConf.value.itemCol == 1) {
+            itemStyle.width = "50%";
+        }
+        // 如果是删格24
+        else {
+            itemStyle.width = "100%";
+        }
+    }
+    return itemStyle;
+};
 
-// const openAddDiaog = (type, cut) => {
-//     QuickNavInletDialogRefs.value.openDialog(
-//         type,
-//         cut,
-//         myQuickNavConf.value.inletList
-//     );
-// };
 
-// // 入口确认
-// const inletConfirm = (list) => {
-//     myQuickNavConf.value.inletList = JSON.parse(JSON.stringify(list));
-// };
 </script>
 <style lang="scss" scoped>
 .quick-nav-widget {
     width: 100%;
     height: 100%;
+    .list-box {
+        box-sizing: border-box;
+        padding: 0 5px;
+    }
     .li-item {
         border-radius: 4px;
         cursor: pointer;
         font-size: 14px;
         box-sizing: border-box;
         float: left;
-        margin-right: 10px;
+        // margin-right: 10px;
         border: 1px solid #ddd;
         margin-bottom: 10px;
         &:hover {
@@ -197,7 +215,8 @@ const jumpLink = (func, target, url) => {
             height: 40px;
             line-height: 40px;
             border-radius: 4px;
-            width: 200px;
+            // width: 200px;
+            width: 100%;
             padding: 0 10px;
             .item-icon {
                 float: left;
@@ -211,7 +230,8 @@ const jumpLink = (func, target, url) => {
         }
         &.card-item {
             height: 70px;
-            width: 180px;
+            // width: 180px;
+            width: 100%;
             box-sizing: border-box;
             padding-top: 10px;
             text-align: center;

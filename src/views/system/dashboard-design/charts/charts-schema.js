@@ -562,6 +562,8 @@ export const ext_charts_widgets = [
                 inletList: [],
                 // 宽度
                 itemWidth: 200,
+                // 移动端宽度栅格  1 = 12   2 =24
+                itemCol:1,
                 // 边框颜色
                 borderColor:"#ddd",
             },

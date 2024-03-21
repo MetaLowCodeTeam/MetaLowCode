@@ -11,8 +11,18 @@
                 </el-radio>
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="宽度">
+        <el-form-item label="宽度" v-if="cutDevice == 'pc'">
             <el-input-number v-model="optionModel.setQuickNavConf.itemWidth" :min="100"></el-input-number>
+        </el-form-item>
+        <el-form-item label="宽度(删格)" v-if="cutDevice == 'mobile'">
+            <el-radio-group v-model="optionModel.setQuickNavConf.itemCol">
+                <el-radio :label="1">
+                    <span class="radio-span">12</span>
+                </el-radio>
+                <el-radio :label="2">
+                    <span class="radio-span">24</span>
+                </el-radio>
+            </el-radio-group>
         </el-form-item>
         <el-form-item label="边框是否显示">
             <el-switch v-model="optionModel.setQuickNavConf.borderIsShow"></el-switch>
@@ -65,6 +75,7 @@ import { ref, watch, onMounted } from "vue";
 import QuickNavInletDialog from "./components/QuickNavInletDialog.vue";
 // 拖拽组件
 import { VueDraggableNext } from "vue-draggable-next";
+import { useRouter } from "vue-router";
 
 defineOptions({
     name: "setQuickNavConf-editor",
@@ -75,10 +86,14 @@ const props = defineProps({
     optionModel: Object,
 });
 
+const Router = useRouter();
+
 const emits = defineEmits(["update:optionModel"]);
 
 let quickNavConf = ref({});
 let myOptionModel = ref({});
+
+let cutDevice = ref("pc");
 
 watch(
     () => props.optionModel,
@@ -92,6 +107,7 @@ onMounted(() => {
         event.preventDefault();
         event.stopPropagation();
     };
+    cutDevice.value = Router.currentRoute.value.query.type;
     initQuickNavConf();
 });
 
