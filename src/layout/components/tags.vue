@@ -40,6 +40,11 @@
                     <el-icon-folder-delete />
                 </el-icon>关闭其他标签
             </li>
+			<li @click="closeAllTabs()">
+				<el-icon>
+					<el-icon-folder-delete />
+				</el-icon>关闭所有标签
+			</li>
             <hr />
             <li @click="maximize()">
                 <el-icon>
@@ -121,8 +126,8 @@ export default {
         },
     },
     created() {
-        var menu = this.$router.sc_getMenu();
-        var dashboardRoute = this.treeFind(
+        let menu = this.$router.sc_getMenu();
+        let dashboardRoute = this.treeFind(
             menu,
             (node) => node.path == this.$CONFIG.DASHBOARD_URL
         );
@@ -182,7 +187,14 @@ export default {
                 } else {
                     this.$router.push("/");
                 }
-            }
+            } else if (!autoPushLatestView) { //激活显示第一个页签
+				const lastView = this.tagList[0];
+				if (lastView) {
+					this.$router.push(lastView);
+				} else {
+					this.$router.push("/");
+				}
+			}
         },
         //tag右键
         openContextMenu(e, tag) {
@@ -228,16 +240,16 @@ export default {
             }, 0);
         },
         //TAB 关闭
-        closeTabs() {
-            var nowTag = this.contextMenuItem;
+        closeTabs(notPushLatestView = false) {
+            let nowTag = this.contextMenuItem;
             if (!nowTag.meta.affix) {
-                this.closeSelectedTag(nowTag);
+                this.closeSelectedTag(nowTag, !notPushLatestView);
                 this.contextMenuVisible = false;
             }
         },
         //TAB 关闭其他
         closeOtherTabs() {
-            var nowTag = this.contextMenuItem;
+            let nowTag = this.contextMenuItem;
             //判断是否当前路由，否的话跳转
             if (this.$route.fullPath != nowTag.fullPath) {
                 this.$router.push({
@@ -245,7 +257,7 @@ export default {
                     query: nowTag.query,
                 });
             }
-            var tags = [...this.tagList];
+            let tags = [...this.tagList];
             tags.forEach((tag) => {
                 if (
                     (tag.meta && tag.meta.affix) ||
@@ -258,9 +270,22 @@ export default {
             });
             this.contextMenuVisible = false;
         },
+
+		closeAllTabs() {
+			//先关闭其他标签
+			this.closeOtherTabs();
+
+			//然后关闭当前页签
+			let curTag = this.contextMenuItem;
+			if (curTag && !curTag.meta.affix) {
+				this.closeSelectedTag(curTag, false);
+				this.contextMenuVisible = false;
+			}
+		},
+
         //TAB 最大化
         maximize() {
-            var nowTag = this.contextMenuItem;
+            let nowTag = this.contextMenuItem;
             this.contextMenuVisible = false;
             //判断是否当前路由，否的话跳转
             if (this.$route.fullPath != nowTag.fullPath) {
@@ -273,8 +298,8 @@ export default {
         },
         //新窗口打开
         openWindow() {
-            var nowTag = this.contextMenuItem;
-            var url = nowTag.href || "/";
+            let nowTag = this.contextMenuItem;
+            let url = nowTag.href || "/";
             if (!nowTag.meta.affix) {
                 this.closeSelectedTag(nowTag);
             }

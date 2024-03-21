@@ -64,8 +64,11 @@ const initVfromCom = async () => {
                         vFormRef.value.reloadOptionData();
                     }
                     vFormRef.value.setReadMode();
-                    // window.print();
-                    Print('.printer-content')
+                    // 
+                    setTimeout(() => {
+                        Print('.printer-content')
+                        // window.print();
+                    }, 500);
                     // printMe();
                 });
             }
@@ -84,6 +87,8 @@ const initVfromCom = async () => {
 }
 .printer {
     padding-top: 30px;
+    background: #FFF;
+    min-height: 100%;
     .printer-content {
         width: 52%;
         margin: 0 auto; 
