@@ -15,8 +15,12 @@ const floamtRoute = (el, isTopNav) => {
             newRoute.path = "/web/custom-page/iframe" + '/' + el.guid + (isTopNav ? '/' + 'topNav' : '');
             newRoute.component = "custom-page/iframe";
         }
+    } else if (el.type == 5) {
+
+        newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
+        newRoute.component = "custom-page/dashboard";
     } else {
-        newRoute.path = "/web/custom-page/" +  getCustomPageComponent(el.outLink) +(isTopNav ? '/' + el.guid : '');
+        newRoute.path = "/web/custom-page/" + getCustomPageComponent(el.outLink) + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
@@ -160,6 +164,12 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     subRoute.path = path;
                     subRoute.component = component;
                     subRoute.name = name;
+                    if (subEl.type == 5) {
+                        subRoute.meta.type = 3;
+                        subRoute.meta.query = {
+                            default: subEl.chartId
+                        }
+                    }
                     // 如果是审批中心页面直接跳过权限判断
                     let approvalCenter = ["approvalHandle",
                         "approvalSubmit",
@@ -187,6 +197,12 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if (el.type == 3) {
                 initMenu.meta.type = 3
                 initMenu.meta.query = getCustomPageQuery(el.outLink);
+            }
+            if (el.type == 5) {
+                initMenu.meta.type = 3;
+                initMenu.meta.query = {
+                    default: el.chartId
+                }
             }
             formatRoutrs.push(initMenu);
         });
