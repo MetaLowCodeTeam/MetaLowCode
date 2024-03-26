@@ -300,10 +300,10 @@ body .tox-tinymce-aux {
 				color: #fafafa;
 			}
 		}
-        .full-screen-icon {
+		.full-screen-icon {
 			position: relative;
 			top: 6px;
-            margin-right: 10px;
+			margin-right: 10px;
 			cursor: pointer;
 			color: #fff;
 			&:hover {
@@ -327,16 +327,16 @@ body .tox-tinymce-aux {
 			padding-top: 50px;
 		}
 	}
-    &.isFullSceen {
-        height: 100vh;
-        margin-bottom: 0;
-        .el-dialog__body {
-            height: calc(100vh - 120px);
-            .fullsceen-man {
-                max-height: 100%;
-            }
-        }
-    }
+	&.isFullSceen {
+		height: 100vh;
+		margin-bottom: 0;
+		.el-dialog__body {
+			height: calc(100vh - 120px);
+			.fullsceen-man {
+				max-height: 100%;
+			}
+		}
+	}
 	div {
 		box-sizing: border-box;
 	}
@@ -452,4 +452,9 @@ body .tox-tinymce-aux {
 
 .ml-select-popper {
 	padding: 5px 0 !important;
+}
+
+.el-tree-node__content {
+	height: 32px;
+	line-height: 32px;
 }
