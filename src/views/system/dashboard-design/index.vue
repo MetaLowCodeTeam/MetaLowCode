@@ -38,7 +38,7 @@
 <script setup>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import { dashboard_container_schema } from "@/views/system/dashboard-design/charts/charts-schema";
-import { deepClone } from "@/utils/util";
+import {deepClone, mlShortcutkeys} from "@/utils/util";
 import { saveRecord, queryById } from "@/api/crud";
 import { onMounted, ref, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
@@ -79,6 +79,11 @@ onMounted(async () => {
     }
     let key = isMobile.value ? "mobileChartData" : "chartData";
     initFormConfig(key);
+
+	mlShortcutkeys(() => {
+		window.advancedDevMode = !window.advancedDevMode;
+		designerConfig.value.componentLib = !!window.advancedDevMode;
+	});
 });
 
 // 初始化数据
@@ -201,7 +206,7 @@ onBeforeUnmount(() => {
     padding: 20px !important;
 }
 
-.chart-widget-item {
+.chart-container-widget-item, .chart-widget-item {
     height: 72px !important;
 
     div.svg-icon-label {
