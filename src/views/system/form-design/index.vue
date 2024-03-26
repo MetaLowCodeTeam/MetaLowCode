@@ -147,7 +147,6 @@ import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import BooleanWE from "@/views/system/field-editor/boolean-widget-editor.vue";
 import IntegerWE from "@/views/system/field-editor/integer-widget-editor.vue";
 import DecimalWE from "@/views/system/field-editor/decimal-widget-editor.vue";
-import PercentWE from "@/views/system/field-editor/percent-widget-editor.vue";
 import MoneyWE from "@/views/system/field-editor/money-widget-editor.vue";
 import TextWE from "@/views/system/field-editor/text-widget-editor.vue";
 import EmailWE from "@/views/system/field-editor/email-widget-editor.vue";
@@ -467,7 +466,6 @@ export default {
                     fieldSchema.options.optionItems = [
                         { value: true, label: "是" },
                         { value: false, label: "否" },
-                        { value: null, label: "未指定" },
                     ];
                 }
 
