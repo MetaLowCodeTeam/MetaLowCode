@@ -19,7 +19,7 @@ export default (error, vm)=>{
 		URIError: "URI错误"
 	}
     console.warn(`[ML error]: ${error}`);
-	console.error(error);
+	console.error(error); 
 	var errorName = errorMap[error.name] || "未知错误"
 
 	

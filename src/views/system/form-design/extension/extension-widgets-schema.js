@@ -68,6 +68,8 @@ export const referenceSchema = {
 		validation: '',
 		validationHint: '',
 		searchDialogWidth: '520px',  //搜索弹窗宽度
+        fillBackEnabled: false,
+        fillBackConfig: [],
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
@@ -76,6 +78,7 @@ export const referenceSchema = {
 		prefixIcon: '',
 		suffixIcon: '',
 		buttonIcon: 'Search',
+
 		//-------------------
 		onCreated: '',
 		onMounted: '',

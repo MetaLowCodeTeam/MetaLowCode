@@ -1,13 +1,14 @@
 export default {
-	extension: {
-		widgetLabel: {
-			'check-tag': '标签选择',
-			'reference': '引用',
-		},
+    extension: {
+        widgetLabel: {
+            'check-tag': '标签选择',
+            'reference': '引用',
+        },
 
-		setting: {
-			//
-		},
+        setting: {
+            //
+            fillBackBtnText: "回填设置",
+        },
 
-	}
+    }
 }

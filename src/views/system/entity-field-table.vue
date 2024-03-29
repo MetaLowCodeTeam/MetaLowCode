@@ -122,6 +122,7 @@
 						</template>
 					</el-input>
 				</div>
+                <el-button class="ml-10" type="primary" @click="goFormDesign">表单设计</el-button>
 			</el-header>
 
 			<el-main ref="tableContainer">
@@ -394,6 +395,16 @@ export default {
             }
 		},
 
+        // 进入表单设计
+        goFormDesign(){
+            this.$router.push({
+                path:"/web/form-design",
+                query:{
+                    entity: this.entityProps.name,
+                    entityLabel: this.entityProps.label
+                }
+            })
+        },
 
 		initEntityProps() {
             this.propsLoading = true;

@@ -1,13 +1,14 @@
 export default {
-	extension: {
-		widgetLabel: {
-			'check-tag': 'CheckTag',
-			'reference': 'Reference',
-		},
+    extension: {
+        widgetLabel: {
+            'check-tag': 'CheckTag',
+            'reference': 'Reference',
+        },
 
-		setting: {
-			//
-		},
+        setting: {
+            //
+            fillBackBtnText: "settingFillBack",
+        },
 
-	}
+    }
 }

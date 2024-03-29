@@ -15,7 +15,13 @@
                   :align="item.align ? item.align:'center'"
                   :width="item.width"
                   :show-overflow-tooltip="true"
-                  :formatter="item.formatter ? item.formatter : formatterValue">
+          >
+                <template #default="scope">
+                    <FormatRow
+                        :row="scope.row"
+                        :column="item"
+                    />
+                </template>
           </el-table-column>
         </template>
         <template v-if="showOperationColumn">
@@ -45,7 +51,7 @@
 
 <script>
   //TODO: 如果实体对应的数据库表已经存在数据记录，则不允许修改引用实体，防止数据错乱！！
-
+  import FormatRow from './FormatRow.vue';
   export default {
     name: 'SimpleTable',
     props: {
@@ -77,6 +83,9 @@
         type: Boolean,
         default: false
       }
+    },
+    components:{
+        FormatRow
     },
     methods: {
       handleSelectionChange(val) {
