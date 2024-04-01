@@ -5,6 +5,8 @@
         v-model="detailDialog.isShow"
         direction="rtl"
         :show-close="false"
+        :append-to-body="true"
+        :modal-append-to-body="false"
     >
         <template #header>
             <div class="detail-header">

@@ -310,7 +310,6 @@ export default {
 					}
 				});
 			}
-            console.log(widgetList,'widgetList')
 			this.targetColumn = [...widgetList];
 		},
 		// 源字段切换
