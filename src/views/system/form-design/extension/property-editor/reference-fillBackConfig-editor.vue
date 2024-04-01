@@ -210,16 +210,17 @@ export default {
 		// 打开回填弹框
 		openFillBackDialog() {
 			this.fillBackDialogConf.isShow = true;
-            let optionFillBackConfig = this.optionModel.fillBackConfig || [];
+			let optionFillBackConfig = this.optionModel.fillBackConfig || [];
 			// 加载已有数据
-			this.fillBackDialogConf.fllBackItems =
-                optionFillBackConfig.map((el) => {
+			this.fillBackDialogConf.fllBackItems = optionFillBackConfig.map(
+				(el) => {
 					this.selectedTargetColumn.push(el.targetField);
 					let newItem = Object.assign({}, el);
 					el.sourceError = false;
 					el.targetError = false;
 					return newItem;
-				});
+				}
+			);
 			// 加载第一列数据
 			this.loadSourceColumn();
 			// 加载第二列数据
@@ -233,7 +234,7 @@ export default {
 			let res = await refFieldQuery(entity, refField, 1, 10, "");
 			if (res) {
 				this.sourceColumn = res.data.columnList.map((el) => {
-                    el.formFieldType = formFieldMapping[el.type]?.type
+					el.formFieldType = formFieldMapping[el.type]?.type;
 					return el;
 				});
 			}
@@ -253,7 +254,9 @@ export default {
 			// 所有子表单字段组件
 			let subFormWidgets = [];
 			// 所有子表单字段名称
-			let subFormFieldName = [];
+			let subFormFieldIds = [];
+			// 多行子表单字段
+			let gridSubFormIds = [];
 			allContainerWidgets.forEach((el) => {
 				if (el.type == "sub-form" || el.type == "grid-sub-form") {
 					Utils.traverseFieldWidgetsOfContainer(
@@ -264,9 +267,13 @@ export default {
 								label: fw.options.label,
 								targetSubForm: el.container.options.name,
 								fieldType: fw.type,
+								id: fw.id,
 							};
 							subFormWidgets.push(subFw);
-							subFormFieldName.push(fw.options.name);
+							subFormFieldIds.push(fw.id);
+							if (el.type == "grid-sub-form") {
+								gridSubFormIds.push(fw.id);
+							}
 						}
 					);
 				}
@@ -274,14 +281,17 @@ export default {
 			// 第2列字段
 			let widgetList = [];
 			// 取选中字段
-			let selectedWidgetName = this.designer.selectedWidgetName;
-			// 如果不是子表单
-			if (!this.isSubFormChildWidget()) {
+			let selectedId = this.designer.selectedId;
+			// 如果不是子表单 并且 多行子表单里没有这个选中的组件
+			if (
+				!this.isSubFormChildWidget() &&
+				!gridSubFormIds.includes(selectedId)
+			) {
 				// 遍历所有字段，把自己和子表单字段排除
 				allFieldWidgets.forEach((el) => {
 					if (
-						el.name != selectedWidgetName &&
-						!subFormFieldName.includes(el.name)
+						el.field.id != selectedId &&
+						!subFormFieldIds.includes(el.field.id)
 					) {
 						widgetList.push({
 							name: el.name,
@@ -297,7 +307,7 @@ export default {
 				// 取当前子表单名称
 				let targetSubForm = "";
 				subFormWidgets.forEach((el) => {
-					if (el.name == selectedWidgetName) {
+					if (el.id == selectedId) {
 						targetSubForm = el.targetSubForm;
 					}
 				});
@@ -305,7 +315,7 @@ export default {
 				subFormWidgets.forEach((el) => {
 					if (
 						el.targetSubForm == targetSubForm &&
-						el.name != selectedWidgetName
+						el.id != selectedId
 					) {
 						widgetList.push(el);
 					}
@@ -318,7 +328,9 @@ export default {
 			let findColumn = this.sourceColumn.filter(
 				(el) => el.prop == item.sourceField
 			);
-			item.sourceFieldType = findColumn[0] ? findColumn[0].formFieldType : "";
+			item.sourceFieldType = findColumn[0]
+				? findColumn[0].formFieldType
+				: "";
 			this.selectedTargetColumn.splice(inx, 1);
 			// 字段一对一(只能回填类型跟他一样的)
 			item.targetTypes = [item.sourceFieldType];
@@ -453,8 +465,8 @@ export default {
 		cursor: pointer;
 		.delete-span-icon {
 			color: #747679;
-            position: relative;
-            top: -3px;
+			position: relative;
+			top: -3px;
 		}
 		&:hover {
 			background: #747679;
