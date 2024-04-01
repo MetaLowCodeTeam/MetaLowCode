@@ -358,7 +358,7 @@ const showDataFormat = (tag, inx) => {
 };
 // 效果预览
 const getPreviewNum = () => {
-    let { showFormat, thousandsSeparator, showDecimalPlaces, decimalPlaces } =
+    let { thousandsSeparator, showDecimalPlaces, decimalPlaces } =
         dialogConf.data;
     let previewStr = "99999999";
     if (showDecimalPlaces) {
