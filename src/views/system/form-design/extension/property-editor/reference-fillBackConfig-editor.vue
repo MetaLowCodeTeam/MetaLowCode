@@ -210,9 +210,10 @@ export default {
 		// 打开回填弹框
 		openFillBackDialog() {
 			this.fillBackDialogConf.isShow = true;
+            let optionFillBackConfig = this.optionModel.fillBackConfig || [];
 			// 加载已有数据
 			this.fillBackDialogConf.fllBackItems =
-				this.optionModel.fillBackConfig.map((el) => {
+                optionFillBackConfig.map((el) => {
 					this.selectedTargetColumn.push(el.targetField);
 					let newItem = Object.assign({}, el);
 					el.sourceError = false;
@@ -441,17 +442,19 @@ export default {
 	}
 	.delete-btn {
 		float: right;
-		width: 28px;
-		height: 28px;
+		width: 23px;
+		height: 23px;
 		box-sizing: border-box;
 		border: 1px solid #747679;
-		margin-top: 5px;
+		margin-top: 8px;
 		border-radius: 50%;
 		text-align: center;
-		font-size: 16px;
+		font-size: 13px;
 		cursor: pointer;
 		.delete-span-icon {
 			color: #747679;
+            position: relative;
+            top: -3px;
 		}
 		&:hover {
 			background: #747679;

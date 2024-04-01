@@ -84,7 +84,6 @@
                 @changeSwitch="changeSwitch"
             >
                 <template #addbutton>
-                    <el-button @click="resetting">重置</el-button>
                     <el-button
                         type="primary"
                         @click="addClick"
