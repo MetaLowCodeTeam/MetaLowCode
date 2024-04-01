@@ -50,8 +50,8 @@ export default {
     Reference: {
         All: ["LK", "NLK", "NL", "NT"],
         referenceFilters: ["Department", "User"],
-        Department: ["LK", "NLK", "SFB", "NL", "NT"],
-        User: ["LK", "NLK", "NL", "NT"],
+        Department: ["LK", "NLK", "SFB", "SFD", "NL", "NT"],
+        User: ["LK", "NLK", "NL", "NT", "SFU"],
     },
     Date: ["EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     DateTime: ["EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],

@@ -84,7 +84,7 @@ export default {
 		loadTableTable() {
             let paramStr, res;
             // 如果是外部表单
-            if (this.gDsv.isExternalForm) {
+            if (this.gDsv?.isExternalForm) {
                 paramStr = this.$route.query.externalId;
                 this.refFieldQueryApi(externalEefFieldQuery, paramStr);
             } else {
