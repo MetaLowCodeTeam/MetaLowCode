@@ -68,7 +68,6 @@ const initOption = async () => {
 			isNoData.value = true;
 			return;
 		}
-		console.log(metrics, "options");
 		isNoData.value = false;
         numericUnits.value = metrics[0].numericUnits == '无' ? '' : metrics[0].numericUnits;
 		await getChartData(options, type);
