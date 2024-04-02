@@ -6,7 +6,7 @@
 		v-if="optionModel.fillBackEnabled"
 	>
 		<el-button class="w-100" @click="openFillBackDialog"
-			>表单设置</el-button
+			>设置回填规则</el-button
 		>
 	</el-form-item>
 	<!--  -->
@@ -226,7 +226,7 @@ export default {
 			this.loadTargetColumn();
 			// 加载第一列数据
 			this.loadSourceColumn();
-			
+
 		},
 		// 加载第一列数据
 		async loadSourceColumn() {

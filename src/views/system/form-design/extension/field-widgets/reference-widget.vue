@@ -221,7 +221,12 @@ export default {
 			};
 			this.handleChangeEvent(this.fieldModel);
 			this.handleRecordSelectedEvent(selectedRow);
+			this.doFillBack(recordObj, selectedRow);
 
+			this.showReferenceDialogFlag = false;
+		},
+
+		doFillBack(recordObj, selectedRow) {
 			// 判断是否启用回填
 			if (this.field.options.fillBackEnabled) {
 				let { fillBackConfig } = this.field.options;
@@ -236,15 +241,27 @@ export default {
 							return;
 						}
 
-                        // 执行回填操作
+						// 执行回填操作
 						this.getWidgetRef(el.targetField).setValue(
 							selectedRow[el.sourceField]
 						);
+					} else {
+						const targetFieldName = el.targetField + '@row' + this.subFormRowId
+						let targetFieldValue = this.getWidgetRef(
+							targetFieldName
+						).getValue();
+						// 如果目标字段有值 且 不是强制回填 不往下执行
+						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
+							return;
+						}
 
+						// 执行回填操作
+						this.getWidgetRef(targetFieldName).setValue(
+							selectedRow[el.sourceField]
+						);
 					}
 				});
 			}
-			this.showReferenceDialogFlag = false;
 		},
 
 		setFilter(newFilter) {
