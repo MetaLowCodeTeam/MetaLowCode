@@ -175,6 +175,7 @@ export default {
 	},
 	data() {
 		return {
+            subFormName:"",
 			defaultFllBackItem: {
 				// 源字段
 				sourceField: "",
@@ -221,15 +222,16 @@ export default {
 					return newItem;
 				}
 			);
+            // 加载第二列数据
+			this.loadTargetColumn();
 			// 加载第一列数据
 			this.loadSourceColumn();
-			// 加载第二列数据
-			this.loadTargetColumn();
+			
 		},
 		// 加载第一列数据
 		async loadSourceColumn() {
 			this.fillBackDialogConf.loading = true;
-			let entity = this.$route.query.entity;
+			let entity = this.subFormName || this.$route.query.entity;
 			let refField = this.optionModel.name;
 			let res = await refFieldQuery(entity, refField, 1, 10, "");
 			if (res) {
@@ -309,6 +311,7 @@ export default {
 				subFormWidgets.forEach((el) => {
 					if (el.id == selectedId) {
 						targetSubForm = el.targetSubForm;
+                        this.subFormName = el.targetSubForm;
 					}
 				});
 				// 取自身子表单所有字段组件，且把自身过滤掉
