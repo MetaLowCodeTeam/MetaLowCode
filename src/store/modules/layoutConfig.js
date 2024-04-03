@@ -20,11 +20,25 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/dashboard";
     } else {
-        newRoute.path = "/web/custom-page/" + getCustomPageComponent(el.outLink) + (isTopNav ? '/' + el.guid : '');
+        newRoute.path = "/web/custom-page/" + getCustomPageComponent(el.outLink) + setPathQuery(el.outLink) + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
     return newRoute
+}
+
+const setPathQuery = (outLink) => {
+    if (outLink.indexOf('?') == -1) {
+        return ""
+    } else {
+        let query = "";
+        let quaryGroup = outLink.split('?')[1].split("&")
+        quaryGroup.forEach(el => {
+            let param = el.split("=");
+            query += "/" + param[1];
+        })
+        return query;
+    }
 }
 
 // 获取自定义页签组件
