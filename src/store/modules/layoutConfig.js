@@ -170,6 +170,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             default: subEl.chartId
                         }
                     }
+                    if (subEl.type == 3) {
+                        subRoute.meta.type = 3
+                        subRoute.meta.query = getCustomPageQuery(subEl.outLink);
+                    }
                     // 如果是审批中心页面直接跳过权限判断
                     let approvalCenter = ["approvalHandle",
                         "approvalSubmit",
