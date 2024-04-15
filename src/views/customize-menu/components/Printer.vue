@@ -36,13 +36,13 @@ onMounted(async () => {
     }
     await getEntityList();
     // 加载vform表单
-    initVfromCom();
+    initVformCom();
 });
 
 let vFormRef = ref();
 let fromBoxRef = ref();
 // 加载vform表单
-const initVfromCom = async () => {
+const initVformCom = async () => {
     loading.value = true;
     let res = await getFormLayout(queryEntityNameById(entityId.value));
     haveLayoutJson.value = false;
