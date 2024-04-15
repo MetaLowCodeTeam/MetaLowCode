@@ -421,6 +421,10 @@ const getUptadeModeList = () => {
                 label: "置空",
                 value: "toNull",
             },
+            {
+                label: "计算公式",
+                value: "forCompile",
+            },
         ];
     }
     if (
@@ -505,7 +509,6 @@ const uptadeModeChange = (e) => {
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
         if (
-            toFixedForFieldType.value == "Reference" ||
             toFixedForFieldType.value == "Option"
         ) {
             uptadeRule.sourceField = {};
