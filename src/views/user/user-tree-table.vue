@@ -489,6 +489,7 @@ export default {
                                 this.$refs.departmentFormRef.setFormData(
                                     departmentFormData
                                 );
+                                this.departmentDsv["formStatus"] = "new";
                             });
                         });
                     } else {
@@ -537,7 +538,7 @@ export default {
                                 ) {
                                     !!parentDpt && parentDpt.setRequired(false);
                                 }
-
+                                this.departmentDsv["formStatus"] = "edit";
                                 this.$refs.departmentFormRef.setFormData(
                                     res.data.formData
                                 );

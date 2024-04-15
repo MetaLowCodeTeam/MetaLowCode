@@ -274,6 +274,7 @@ const initFormLayout = async () => {
                             (el) => (el.isRequired ? el.name : null)
                         );
                         vFormRef.value.setWidgetsRequired(required, true);
+                        globalDsv.value.formStatus = "approval";
                     });
                 }
                 loading.value = false;

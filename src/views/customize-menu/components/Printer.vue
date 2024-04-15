@@ -64,6 +64,7 @@ const initVfromCom = async () => {
                         vFormRef.value.reloadOptionData();
                     }
                     vFormRef.value.setReadMode();
+                    globalDsv.value.formStatus = 'read'
                     // 
                     setTimeout(() => {
                         Print('.printer-content')

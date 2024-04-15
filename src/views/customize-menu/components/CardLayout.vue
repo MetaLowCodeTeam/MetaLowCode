@@ -28,6 +28,7 @@ onMounted(() => {
         nextTick(() => {
             vFormRef.value.setReadMode();
             vFormRef.value.setFormData(props.data);
+            globalDsv.value.formStatus = 'read'
         });
     }
 });

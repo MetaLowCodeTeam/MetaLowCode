@@ -176,6 +176,7 @@ const initFormLayout = async () => {
                             getFieldListOfEntityApi("updatable");
                         });
                     }
+                    globalDsv.value.formStatus = 'edit';
                     loading.value = false;
                 });
             }
@@ -201,6 +202,7 @@ const initFormLayout = async () => {
                         vFormRef.value.reloadOptionData();
                         // 获取字段是否禁用
                         getFieldListOfEntityApi("creatable");
+                        globalDsv.value.formStatus = 'new';
                     });
                 });
             }

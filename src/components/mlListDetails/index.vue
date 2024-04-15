@@ -38,6 +38,7 @@
                         <v-form-render
                             v-if="haveLayoutJson"
                             :option-data="optionData"
+                            :global-dsv="globalDsv"
                             ref="vFormRef"
                         />
                     </div>
@@ -129,6 +130,7 @@ const closeDialog = () => {
 let haveLayoutJson = ref(false);
 let vFormRef = ref();
 let optionData = ref({});
+let globalDsv = ref({});
 // 刷新数据
 const refresh = async () => {
     loading.value = true;
@@ -151,6 +153,7 @@ const refresh = async () => {
                     nextTick(() => {
                         vFormRef.value.reloadOptionData();
                         vFormRef.value.setReadMode();
+                        globalDsv.value.formStatus = "read";
                     });
                 }
                 loading.value = false;
