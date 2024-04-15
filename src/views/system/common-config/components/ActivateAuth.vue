@@ -115,7 +115,12 @@ const onActive = async () => {
         if (publicRes && publicRes.code == 200) {
             setPublicSetting(publicRes.data);
         }
-        ElMessage.success("激活成功");
+        if(publicRes.data.productType.value == 1){
+            ElMessage.error("激活失败，请查看后台日志");
+        }else {
+            ElMessage.success("激活成功");
+        }
+        
         dialogConf.isShow = false;
         dialogConf.loading = false;
         emits("registerActiveConfirm");
