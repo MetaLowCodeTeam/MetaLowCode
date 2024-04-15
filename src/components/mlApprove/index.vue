@@ -241,7 +241,7 @@ const vFormRef = ref();
 let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
-let globalDsv = reactive({});
+let globalDsv = ref({});
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
