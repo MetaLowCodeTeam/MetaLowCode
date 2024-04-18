@@ -824,7 +824,7 @@ div {
     position: relative;
     height: 100%;
     box-sizing: border-box;
-
+    min-width: 1200px;
     .table-box {
         height: 100%;
         border-top: 3px solid var(--el-color-primary);
