@@ -99,6 +99,7 @@ const initExternalData = async () => {
                     approvalStatus.value = res.data.recordData.approvalStatus;
                     vFormRef.value.setFormData(res.data.recordData);
                     globalDsv.value.formStatus = 'read'
+                    globalDsv.value.formEntityId = externalId.value;
                     nextTick(() => {
                         if (
                             approvalStatus.value == 1 ||

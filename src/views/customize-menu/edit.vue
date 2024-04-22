@@ -177,6 +177,7 @@ const initFormLayout = async () => {
                         });
                     }
                     globalDsv.value.formStatus = 'edit';
+                    globalDsv.value.formEntityId = row.detailId;
                     loading.value = false;
                 });
             }

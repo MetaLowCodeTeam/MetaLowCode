@@ -154,6 +154,7 @@ const refresh = async () => {
                         vFormRef.value.reloadOptionData();
                         vFormRef.value.setReadMode();
                         globalDsv.value.formStatus = "read";
+                        globalDsv.value.formEntityId = detailDialog.id;
                     });
                 }
                 loading.value = false;

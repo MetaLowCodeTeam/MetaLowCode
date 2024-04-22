@@ -275,6 +275,7 @@ const initFormLayout = async () => {
                         );
                         vFormRef.value.setWidgetsRequired(required, true);
                         globalDsv.value.formStatus = "approval";
+                        globalDsv.value.formEntityId = props.entityId;
                     });
                 }
                 loading.value = false;

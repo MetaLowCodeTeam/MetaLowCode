@@ -65,6 +65,7 @@ const initVformCom = async () => {
                     }
                     vFormRef.value.setReadMode();
                     globalDsv.value.formStatus = 'read'
+                    globalDsv.value.formEntityId = entityId.value;
                     // 
                     setTimeout(() => {
                         Print('.printer-content')

@@ -336,6 +336,7 @@ const initData = async () => {
 						vFormRef.value.setReadMode();
 						globalDsv.value.openCreateDialog = openCreateDialog;
                         globalDsv.value.formStatus = 'read';
+                        globalDsv.value.formEntityId = detailId.value;
 					});
 
 					noeData.value = false;
