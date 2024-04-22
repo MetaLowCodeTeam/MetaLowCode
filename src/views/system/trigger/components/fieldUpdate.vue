@@ -407,47 +407,47 @@ let uptadeModeList = ref([
 ]);
 
 const getUptadeModeList = () => {
-    if (toFixedForFieldType.value == "Reference") {
-        return [
-            {
-                label: "字段值",
-                value: "forField",
-            },
-            {
-                label: "固定值",
-                value: "toFixed",
-            },
-            {
-                label: "置空",
-                value: "toNull",
-            },
-            {
-                label: "计算公式",
-                value: "forCompile",
-            },
-        ];
-    }
-    if (
-        toFixedForFieldType.value == "Option" ||
-        toFixedForFieldType.value == "Tag"
-    ) {
-        return [
-            {
-                label: "字段值",
-                value: "forField",
-            },
-            {
-                label: "固定值",
-                value: "toFixed",
-            },
-            {
-                label: "置空",
-                value: "toNull",
-            },
-        ];
-    } else {
+    // if (toFixedForFieldType.value == "Reference") {
+    //     return [
+    //         {
+    //             label: "字段值",
+    //             value: "forField",
+    //         },
+    //         {
+    //             label: "固定值",
+    //             value: "toFixed",
+    //         },
+    //         {
+    //             label: "置空",
+    //             value: "toNull",
+    //         },
+    //         {
+    //             label: "计算公式",
+    //             value: "forCompile",
+    //         },
+    //     ];
+    // }
+    // if (
+    //     toFixedForFieldType.value == "Option" ||
+    //     toFixedForFieldType.value == "Tag"
+    // ) {
+    //     return [
+    //         {
+    //             label: "字段值",
+    //             value: "forField",
+    //         },
+    //         {
+    //             label: "固定值",
+    //             value: "toFixed",
+    //         },
+    //         {
+    //             label: "置空",
+    //             value: "toNull",
+    //         },
+    //     ];
+    // } else {
         return uptadeModeList.value;
-    }
+    // }
 };
 
 // 聚合方式
