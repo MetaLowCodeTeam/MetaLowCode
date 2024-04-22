@@ -5,6 +5,7 @@
                 v-model="trigger.actionContent.approvalConfigId"
                 placeholder="Select"
                 style="width: 400px;"
+                @change="workflowChange"
             >
                 <el-option
                     v-for="item in approvalList"
@@ -21,7 +22,9 @@
             </div>
             <div class="w-100 mt-5">
                 <el-row>
-                    <el-checkbox v-model="trigger.actionContent.submitMode" label="提交模式" />
+                    <el-checkbox v-model="trigger.actionContent.submitMode" :disabled="isSelectedComplexWorkflow">
+                        提交模式<span v-if="isSelectedComplexWorkflow">（复杂工作流暂时只支持提交模式）</span>
+                    </el-checkbox>
                 </el-row>
                 <el-row>
                     <span class="info-text">1.勾选提交模式当满足条件将自动提交审批，但不会自动审核，需审核人人工审核。</span>
@@ -55,6 +58,8 @@ let trigger = ref({
     actionContent: {},
 });
 
+
+
 let approvalList = ref([]);
 onMounted(() => {
     trigger.value = props.modelValue;
@@ -66,7 +71,7 @@ onMounted(() => {
 const getApprovalList = async () => {
     let param = {
         mainEntity: "ApprovalConfig",
-        fieldsList: "approvalConfigId,entityCode,flowName",
+        fieldsList: "approvalConfigId,entityCode,flowName,flowType",
         filter: {
             equation: "AND",
             items: [
@@ -97,6 +102,7 @@ const getApprovalList = async () => {
         if (!trigger.value.actionContent.approvalConfigId) {
             trigger.value.actionContent.approvalConfigId = "";
         }
+        workflowChange();
     } 
     contentLoading.value = false;
 };
@@ -107,6 +113,24 @@ const goProcess = () => {
         path: "/web/process-list",
     });
 };
+
+/**
+ * 工作切换
+ */
+// 是否选择复杂工作流
+let isSelectedComplexWorkflow = ref(false);
+
+const workflowChange = () => {
+    isSelectedComplexWorkflow.value = false;
+    let { approvalConfigId }  = trigger.value.actionContent;
+    for (let index = 0; index < approvalList.value.length; index++) {
+        const element = approvalList.value[index];
+        if(element.approvalConfigId == approvalConfigId && element.flowType == 2){
+            isSelectedComplexWorkflow.value = true;
+            return
+        }
+    }
+}
 </script>
 
 <style>

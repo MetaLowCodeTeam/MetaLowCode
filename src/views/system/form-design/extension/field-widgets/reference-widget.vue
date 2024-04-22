@@ -210,7 +210,7 @@ export default {
 		},
 
 		handleClearEvent() {
-			this.fieldModel = {};
+			this.fieldModel = null;
 			this.handleChangeEvent(this.fieldModel);
 		},
 

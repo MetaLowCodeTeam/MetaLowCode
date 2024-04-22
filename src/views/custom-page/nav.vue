@@ -35,6 +35,7 @@ import { useRouter } from "vue-router";
  * API
  */
 import layoutConfig from "@/api/layoutConfig";
+import { ElMessage } from "element-plus";
 const Router = useRouter();
 
 let layoutConfigId = ref("");
@@ -61,6 +62,8 @@ onMounted(() => {
     navGroup.value[0].children = [...recentlyUsed.value];
     if (layoutConfigId.value) {
         getNavigationById();
+    }else {
+        ElMessage.waring("没有找到：layoutConfigId")
     }
 });
 
