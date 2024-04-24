@@ -268,6 +268,10 @@ export default {
 			this.searchFilter = newFilter;
 		},
 
+		getFilter() {
+			return this.searchFilter;
+		},
+
 		handleRecordSelectedEvent(selectedRow) {
 			if (!!this.designState) {
 				//设计状态不触发事件
