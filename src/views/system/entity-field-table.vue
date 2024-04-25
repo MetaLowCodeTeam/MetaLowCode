@@ -122,7 +122,7 @@
 						</template>
 					</el-input>
 				</div>
-                <el-button class="ml-10" type="primary" @click="goFormDesign">表单设计</el-button>
+                <el-button class="ml-10" type="primary" @click="goFormDesign" v-if="!entityProps.detailEntityFlag">表单设计</el-button>
 			</el-header>
 
 			<el-main ref="tableContainer">
@@ -219,7 +219,7 @@
                         @keyup.enter="handleInputConfirm"
                         @blur="handleInputConfirm"
                     />
-                    <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="allTags?.length > 9">+ 新增标签</el-button>
+                    <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="allTags?.length > 49">+ 新增标签</el-button>
                 </div>
             </div>
 
