@@ -445,24 +445,12 @@ export default {
                     : fldObj.areaDataType * 1;
             }
 
-			/* 设置字段必填校验 */
-			if (fldObj.hasOwnProperty("required")) {
-				fieldSchema.options.required = fldObj["required"] === "1";
-			}
-
             /* 处理一对一字段 */
             if (fldObj.type === "Reference") {
                 fieldSchema.options.searchDialogWidth =
                     !fldObj.searchDialogWidth
                         ? fieldSchema.options.searchDialogWidth
                         : fldObj.searchDialogWidth;
-
-				/* 取消系统字段的必填校验 */
-				if (fieldSchema.options.name === "createdBy" || fieldSchema.options.name === "modifiedBy"
-					|| fieldSchema.options.name === "ownerUser" || fieldSchema.options.name === "ownerDepartment"
-					|| fieldSchema.options.name === "approvalConfigId" || fieldSchema.options.name === "lastApprovedBy") {
-					fieldSchema.options.required = false;
-				}
             }
 
 			/* 处理单选项字段 */
@@ -485,7 +473,21 @@ export default {
                 fieldSchema.optionItemsReadonly = true;
             }
 
-            //
+			/* 设置字段必填校验 */
+			if (fldObj.hasOwnProperty("required")) {
+				fieldSchema.options.required = fldObj["required"] === "1";
+			}
+
+			/* 取消系统字段的必填校验 */
+			if (fieldSchema.options.name === "createdOn" || fieldSchema.options.name === "createdBy"
+				|| fieldSchema.options.name === "modifiedOn" || fieldSchema.options.name === "modifiedBy"
+				|| fieldSchema.options.name === "ownerUser" || fieldSchema.options.name === "ownerDepartment"
+				|| fieldSchema.options.name === "approvalConfigId" || fieldSchema.options.name === "approvalStatus"
+				|| fieldSchema.options.name === "lastApprovedBy" || fieldSchema.options.name === "lastApprovedOn") {
+				fieldSchema.options.required = false;
+			}
+
+			//
         },
 
         handleFWU(fwName) {
