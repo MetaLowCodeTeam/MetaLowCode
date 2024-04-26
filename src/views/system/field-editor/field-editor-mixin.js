@@ -49,6 +49,15 @@ export const fieldEditorMixin = {
             }
 		},
 
+		validateField() {
+			if (this.fieldProps.fieldViewModel.minValue >= this.fieldProps.fieldViewModel.maxValue) {
+				this.$message.error('最小值必须小于最大值！')
+				return false;
+			} else {
+				return true;
+			}
+		},
+
 		doSave(fieldType) {
 			this.$refs['editorForm'].validate((success) => {
 				if (!success) {

@@ -419,6 +419,13 @@ export default {
             }
             // 处理图片、文件上传字段 -- 结束
 
+			/* 处理文本、长文本字段 */
+			if (fldObj.type === "Text" || fldObj.type === "TextArea") {
+				fieldSchema.options.maxLength = !fldObj.maxLength
+					? fieldSchema.options.maxLength
+					: fldObj.maxLength * 1;
+			}
+
             /* 处理精度小数字段 */
             if (
                 fldObj.type === "Integer" ||
