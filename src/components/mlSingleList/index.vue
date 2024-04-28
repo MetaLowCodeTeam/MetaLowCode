@@ -241,7 +241,7 @@ const handleSizeChange = (size) => {
 	getTableList();
 };
 
-let sortFields = ref(null);
+let listColumnSort = ref(null);
 
 // 排序切换
 const sortChange = (column) => {
@@ -253,10 +253,13 @@ const sortChange = (column) => {
 		columnSort.type = "DESC";
 		columnSort.fieldName = column.prop;
 	} else {
-        sortFields.value = JSON.parse(JSON.stringify(props.sortFields));
-		// columnSort = [...];
+        columnSort = null;
 	}
-	sortFields.value = [columnSort];
+    if(!columnSort){
+        listColumnSort.value = Object.assign(props.sortFields);
+    }else {
+        listColumnSort.value = [columnSort];
+    }
 	getTableList();
 };
 
@@ -264,9 +267,6 @@ const sortChange = (column) => {
 async function getTableList() {
 	loading.value = true;
 	let { mainEntity, fieldsList, fieldName, filterItems, equation } = props;
-	if (!sortFields.value) {
-		sortFields.value = JSON.parse(JSON.stringify(props.sortFields));
-	}
 	let param = {
 		mainEntity,
 		fieldsList,
@@ -276,7 +276,7 @@ async function getTableList() {
 			equation,
 			items: [],
 		},
-		sortFields: sortFields.value,
+		sortFields: listColumnSort.value,
 	};
 	param.filter.items = filterItems.map((el) => {
 		el.value = el.value ? el.value : keyword.value;
