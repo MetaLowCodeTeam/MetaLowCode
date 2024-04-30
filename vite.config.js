@@ -47,6 +47,18 @@ export default ({
             //ws: true,
             ws: false,
             rewrite: (path) => path.replace(/^\/api/, '')
+        },
+        '/picture': {
+            target: env.VITE_API_SERVER,
+            //ws: true,
+            ws: false,
+            rewrite: (path) => path
+        },
+        '/file': {
+            target: env.VITE_API_SERVER,
+            //ws: true,
+            ws: false,
+            rewrite: (path) => path
         }
     }
 
