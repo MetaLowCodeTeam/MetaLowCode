@@ -227,7 +227,9 @@ let page = reactive({
 	size: 20,
 	total: 0,
 });
+let listColumnSort = ref(null);
 onMounted(() => {
+    listColumnSort.value = Object.assign(props.sortFields);
 	getTableList();
 });
 
@@ -241,7 +243,7 @@ const handleSizeChange = (size) => {
 	getTableList();
 };
 
-let listColumnSort = ref(null);
+
 
 // 排序切换
 const sortChange = (column) => {
