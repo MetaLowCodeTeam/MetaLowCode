@@ -136,11 +136,11 @@
                             @nodeClick="commonGroupFilterNodeClick"
                             @onRefresh="treeRefresh"
                         />
-                        <ListTreeGropuFilter
-                            ref="ListTreeGropuFilterRefs"
+                        <ListTreeGroupFilter
+                            ref="ListTreeGroupFilterRefs"
                             :treeGroupConf="treeGroupConf"
                             :entityName="entityName"
-                            @check="treeGropuFilter"
+                            @check="treeGroupFilter"
                         />
                     </el-scrollbar>
                 </div>
@@ -269,11 +269,11 @@ import { ElMessage } from "element-plus";
  * 组件
  */
 // 树状分组筛选
-import ListTreeGropuFilter from "./components/ListTreeGropuFilter.vue";
+import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
 // 批量编辑
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
-import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
+import ListcommonGroupFilter from "./components/ListTreeGroupFilter.vue";
 import { Message } from "@element-plus/icons-vue";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
@@ -663,9 +663,9 @@ const clearDataFilter = () => {
 // 常用分组查询保存弹框
 let ListcommonGroupFilterRefs = ref("");
 // 列表分组树过滤组件
-let ListTreeGropuFilterRefs = ref("");
+let ListTreeGroupFilterRefs = ref("");
 let filterEasySql = ref("");
-const treeGropuFilter = (e) => {
+const treeGroupFilter = (e) => {
     ListcommonGroupFilterRefs.value.resetChecked();
     filterEasySql.value = e;
     getTableList();
@@ -687,7 +687,7 @@ const treeSave = () => {
 
 // 常用分组查询点击
 const commonGroupFilterNodeClick = (e) => {
-    ListTreeGropuFilterRefs.value.resetChecked();
+    ListTreeGroupFilterRefs.value.resetChecked();
     filterEasySql.value = e;
     getTableList();
 };
