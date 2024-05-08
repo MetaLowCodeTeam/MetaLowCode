@@ -273,7 +273,7 @@ import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
 // 批量编辑
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
-import ListcommonGroupFilter from "./components/ListTreeGroupFilter.vue";
+import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 import { Message } from "@element-plus/icons-vue";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();

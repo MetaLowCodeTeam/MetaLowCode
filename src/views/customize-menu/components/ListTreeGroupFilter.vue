@@ -1,84 +1,57 @@
 <template>
-    <!-- 列表常用分组查询 -->
+    <!-- 树状分组筛选 -->
     <el-tree
         :data="treeData"
-        :props="defaultProps"
-        class="mb-5"
-        @node-click="handleNodeClick"
-        v-if="treeData.length > 0"
-        highlight-current
+        :props="treeProps"
+        :accordion="myTreeGroupConf.isAccordion"
+        v-loading="loading"
+        show-checkbox
+        class="flow-tree"
+        node-key="treeId"
+        @check-change="handleCheckChange"
+        @check="handleCheck"
         ref="TreeRef"
-        node-key="layoutConfigId"
-    >
-        <template #default="{ node, data }">
-            <span class="custom-tree-node">
-                <span>{{ node.label }}</span>
-                <span v-if="data.layoutConfigId" class="custom-tree-btn">
-                    <a @click.stop="editNode(data)">
-                        <el-icon>
-                            <ElIconEdit />
-                        </el-icon>
-                    </a>
-
-                    <a style="margin-left: 8px" @click.stop="removeNode(data)">
-                        <el-icon>
-                            <ElIconDelete />
-                        </el-icon>
-                    </a>
-                </span>
-            </span>
-        </template>
-    </el-tree>
-    <mlDialog title="常用分组查询保存" width="500" v-model="saveDialogConf.isShow">
-        <div class="save-dialog" v-loading="saveLoading">
-            <el-form label-width="40px" @submit.prevent>
-                <el-form-item label="名称" class="mb-10">
-                    <el-input v-model="saveDialogConf.configName" />
-                </el-form-item>
-            </el-form>
-        </div>
-        <template #footer>
-            <div class="footer-div">
-                <el-button @click="saveDialogConf.isShow = false" :loading="saveLoading">取消</el-button>
-                <el-button type="primary" @click="onSave" :loading="saveLoading">保存</el-button>
-            </div>
-        </template>
-    </mlDialog>
+        @node-expand="nodeExpand"
+    />
 </template>
 
 <script setup>
-import { ref, watch, onMounted, nextTick } from "vue";
-const props = defineProps({
-    entityCode: { type: Number },
-    layoutConfig: { type: Object, default: () => {} },
-});
+import { onMounted, watch, ref } from "vue";
 /**
  * API
  */
-import layoutConfigApi from "@/api/layoutConfig";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { groupTreeQuery } from "@/api/crud";
+// @node-click="handleNodeClick"
+const props = defineProps({
+    treeGroupConf: {
+        type: Object,
+        default: () => {},
+    },
+    entityName: {
+        type: String,
+        default: "",
+    },
+});
 
-const emits = defineEmits(["nodeClick", "onRefresh"]);
+const emits = defineEmits(["check"]);
 
-// 常用分组查询数据
-let commonGroupFilterList = ref([]);
-let myLayoutConf = ref({});
-// 配置ID
-let layoutConfigId = ref("");
-// 保存loading
-let saveLoading = ref(false);
-
+// 树状分组配置
+let myTreeGroupConf = ref({});
+// 树数据
 let treeData = ref([]);
-
-const defaultProps = {
+// 树结构
+let treeProps = ref({
     children: "children",
-    label: "configName",
-};
-
+    label: "label",
+});
+// 默认展开节点-防止el-tree多次请求后折叠
+let expaAndList = ref([]);
+// 加载状态
+let loading = ref(false);
 watch(
-    () => props.layoutConfig,
+    () => props.treeGroupConf,
     () => {
-        loadLayoutConf();
+        initMyTreeGroupConf();
     },
     {
         deep: true,
@@ -86,133 +59,138 @@ watch(
 );
 
 onMounted(() => {
-    loadLayoutConf();
+    initMyTreeGroupConf();
 });
 
-// 初始化样式配置
-const loadLayoutConf = () => {
-    myLayoutConf.value = props.layoutConfig;
-    let { COM_TREE_GROUP } = myLayoutConf.value;
-    commonGroupFilterList.value = COM_TREE_GROUP || [];
-    treeData.value = [];
-    if (commonGroupFilterList.value.length > 0) {
-        treeData.value = [
-            {
-                configName: "常用分组查询",
-                children: [...commonGroupFilterList.value],
-            },
-        ];
+const initMyTreeGroupConf = () => {
+    myTreeGroupConf.value = JSON.parse(JSON.stringify(props.treeGroupConf));
+    let { groupList } = myTreeGroupConf.value;
+    if (groupList) {
+        treeData.value = groupList[0].fieldGroup.map((el, inx) => {
+            el.label = el.label;
+            el.children = [{}];
+            el.treeIndex = 0;
+            el.treeId = inx + 1;
+            el.isSelected = false;
+            return el;
+        });
     }
+};
+
+// 节点展开触发
+const nodeExpand = async (data) => {
+    if (data.children && JSON.stringify(data.children) != "[{}]") {
+        return;
+    }
+    loading.value = true;
+    let list = await getGroupTree(data);
+    data.children = JSON.parse(JSON.stringify(list));
+    loading.value = false;
+};
+
+const getGroupTree = async (node) => {
+    if (node.name) {
+        let param = {
+            entityName: props.entityName,
+            groupField: node.name,
+            filterEasySql: node.filterSql,
+            filterList: [],
+        };
+        let nodeChildren = [];
+        let res = await groupTreeQuery(param);
+        if (res) {
+            nodeChildren = formatNodeChildren(
+                res.data,
+                node.treeId,
+                node.treeIndex
+            );
+        }
+        return nodeChildren;
+    } else {
+        if (node.treeIndex == myTreeGroupConf.value.groupList.length - 1) {
+            return null;
+        }
+        return myTreeGroupConf.value.groupList[
+            node.treeIndex + 1
+        ].fieldGroup.map((el, inx) => {
+            el.label = el.label;
+            el.treeIndex = node.treeIndex + 1;
+            el.filterSql = node.filterSql;
+            el.treeId = node.treeId + "-" + (inx + 1);
+            el.children = [{}];
+            el.isSelected = false;
+            return el;
+        });
+    }
+};
+
+const formatNodeChildren = (list, treeId, treeIndex) => {
+    let newList = list.map((el, inx) => {
+        el.treeIndex = treeIndex;
+        el.treeId = treeId + "-" + (inx + 1);
+        el.isSelected = false;
+        el.children =
+            el.children && el.children.length > 0
+                ? formatNodeChildren(el.children, el.treeId, treeIndex)
+                : [{}];
+        return el;
+    });
+    return list;
 };
 
 let TreeRef = ref("");
+const handleCheckChange = (data, checked, indeterminate) => {
+    data.isSelected = checked;
+};
 
-let filterEasySql = ref("");
-
-// 树节点点击
-const handleNodeClick = (node) => {
-    // 点击标题无需处理
-    if (node.configName == "常用分组查询") {
+const getFilterSqlList = (list, sqlList) => {
+    if (!list || list.length == 0) {
         return;
     }
-
-    if (filterEasySql.value) {
-        resetChecked();
-    } else {
-        filterEasySql.value = node.config;
-    }
-
-    emits("nodeClick", filterEasySql.value);
-};
-
-const editNode = (data) => {
-    saveDialogConf.value = {
-        isShow: true,
-        filterEasySql: data.config,
-        configName: data.configName,
-    };
-    layoutConfigId.value = data.layoutConfigId;
-};
-
-const removeNode = (data) => {
-    ElMessageBox.confirm("是否确认删除?", "提示：", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "warning",
-    })
-        .then(async () => {
-            let res = await layoutConfigApi.deleteConfig(data.layoutConfigId);
-            if (res) {
-                emits("onRefresh");
+    list.forEach((el) => {
+        if (el.isSelected) {
+            if (el.filterSql) {
+                sqlList.push(el.filterSql);
             }
-        })
-        .catch(() => {});
-};
-// 保存配置
-let saveDialogConf = ref({
-    isShow: false,
-    filterEasySql: "",
-    configName: "",
-});
-
-// 打开保存弹框
-const openSaveDialog = (filterEasySql) => {
-    saveDialogConf.value = {
-        isShow: true,
-        filterEasySql,
-        configName: "",
-    };
+        } else {
+            getFilterSqlList(el.children, sqlList);
+        }
+    });
 };
 
-// 保存
-const onSave = async () => {
-    let { configName, filterEasySql } = saveDialogConf.value;
-    let param = {
-        configName,
-        config: filterEasySql,
-        entityCode: props.entityCode,
-    };
-    saveLoading.value = true;
-    let res = await layoutConfigApi.saveConfig(
-        layoutConfigId.value,
-        "COM_TREE_GROUP",
-        param
-    );
-    if (res) {
-        ElMessage.success("保存成功");
-        saveDialogConf.value.isShow = false;
-        emits("onRefresh");
+const handleCheck = () => {
+    let sqlList = [];
+    getFilterSqlList(treeData.value, sqlList);
+    let sqlStr = "";
+    if (sqlList && sqlList.length > 0) {
+        sqlStr = sqlList.join(" OR ");
     }
-    saveLoading.value = false;
+    emits("check", sqlStr);
 };
 
 const resetChecked = () => {
-    filterEasySql.value = "";
-    if (TreeRef.value) {
-        TreeRef.value.setCurrentKey(null, false);
-    }
+    TreeRef.value?.setCheckedKeys([], false);
 };
-
 defineExpose({
-    openSaveDialog,
     resetChecked,
 });
 </script>
 <style lang='scss' scoped>
-.custom-tree-node {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    padding-right: 8px;
-    .custom-tree-btn {
-        display: none;
+.flow-tree {
+    // box-sizing: border-box;
+    // overflow: auto !important;
+    :deep(.el-tree-node__content) {
+        // display: block !important;
+        align-self: baseline;
     }
-    &:hover {
-        .custom-tree-btn {
-            display: block;
-        }
+    :deep(.el-tree-node__children) {
+        // overflow: visible !important;
     }
+    // 　　.el-tree-node__content{
+    // 　　　　display: block!important;
+    // 　　}
+    // 　　.el-tree-node__children{
+    // 　　　　overflow: visible!important;
+    // 　　}
 }
 </style>
