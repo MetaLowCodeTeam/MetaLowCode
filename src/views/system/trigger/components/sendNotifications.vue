@@ -6,6 +6,7 @@
                 <el-radio :label="1">内部用户</el-radio>
                 <el-radio :label="2">外部人员</el-radio>
                 <el-radio :label="3" :disabled="!querySendState.dingState">钉钉机器人</el-radio>
+                <el-radio :label="4" :disabled="!querySendState.wxWorkState">企业微信机器人</el-radio>
             </el-radio-group>
             <div class="w-100 mt-5">
                 <mlSelectUser
@@ -43,6 +44,13 @@
             <el-input
                 v-model="trigger.actionContent.dingdingSign"
                 placeholder="钉钉机器人加签秘钥"
+                clearable
+            ></el-input>
+        </el-form-item>
+        <el-form-item class="mt-20" label="Webhook地址" v-if="trigger.actionContent.userType == 4">
+            <el-input
+                v-model="trigger.actionContent.wxWorkRobotUrl"
+                placeholder="企业微信机器人Webhook地址"
                 clearable
             ></el-input>
         </el-form-item>
@@ -138,6 +146,11 @@ let typeList = ref([
         label: "钉钉",
         value: 16,
         code: "dingState",
+    },
+    {
+        label: "企业微信通知",
+        value: 32,
+        code: "wxWorkState",
     },
 ]);
 // 选中集合
@@ -240,14 +253,7 @@ const insertStr = (source, start, newStr) => {
 // 源实体所有字段
 let cutEntityFields = ref([]);
 // 通知类型是否可用
-let querySendState = reactive({
-    // 邮件是否可用
-    emailState: false,
-    // 短信是否可用
-    smsState: false,
-    // 钉钉是否可用
-    dingState:false,
-});
+let querySendState = ref({});
 // 外部人员字段
 let sendToFields = ref([]);
 const getCutEntityFields = async () => {
@@ -257,9 +263,9 @@ const getCutEntityFields = async () => {
         cutEntityFields.value = res.data;
         sendToFields.value = res.data.filter((el) => el.fieldType == "Text");
         let querySendStateRes = await $API.trigger.detial.querySendState();
-        querySendState.emailState = querySendStateRes.data?.emailState;
-        querySendState.smsState = querySendStateRes.data?.smsState;
-        querySendState.dingState = querySendStateRes.data?.dingState;
+        if(querySendStateRes){
+            querySendState.value = querySendStateRes.data;
+        }   
         // 如果是内部用户
         if (trigger.value.actionContent.userType == 1) {
             if (trigger.value.actionContent.sendTo?.length > 0) {
