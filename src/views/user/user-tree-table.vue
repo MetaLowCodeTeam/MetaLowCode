@@ -24,6 +24,12 @@
                                 style="width: 15px;height: 15px;position: relative;top: 2px;"
                                 alt
                             />
+                            <img
+                                v-if="node.data.wxWorkDepartmentId"
+                                src="@/assets/imgs/WXWork.png"
+                                style="width: 15px;height: 15px;position: relative;top: 2px;"
+                                alt
+                            />
                             {{ node.label }}
                         </span>
                         <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
@@ -165,6 +171,7 @@ import eventBus from "@/utils/event-bus";
 import Edit from "@/views/customize-menu/edit.vue";
 import ListDetail from "./components/ListDetail.vue";
 import ddImg from "@/assets/imgs/dd.png";
+import wXWorkImg from "@/assets/imgs/WXWork.png";
 export default {
     name: "UserTreeTable",
     components: {
@@ -175,7 +182,7 @@ export default {
         return {
             entity: "User",
             fieldsList:
-                "userName, loginName, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar,dingTalkUserId",
+                "userName, loginName, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar,dingTalkUserId,wxWorkUserId",
             showFormDialogFlag: false,
             layout: {},
             formState: 1,
@@ -251,6 +258,9 @@ export default {
                     needImg: (row) => {
                         if (row.dingTalkUserId) {
                             return ddImg;
+                        }
+                        if (row.wxWorkUserId) {
+                            return wXWorkImg;
                         }
                         return false;
                     },
