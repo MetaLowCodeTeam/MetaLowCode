@@ -286,6 +286,20 @@ export default [
                 isError: false,
             },
             {
+                label: "应用首页地址",
+                subLabel: "请复制地址至企业微信相关配置",
+                key: "wxWorkHomeDir",
+                type: "input",
+                disabled: true,
+            },
+            {
+                label: "回调域名",
+                subLabel: "请复制地址至企业微信相关配置",
+                key: "homeURL",
+                type: "input",
+                disabled: true,
+            },
+            {
                 label: "用户默认角色",
                 key: "wxWorkNodeRole",
                 type: "mlSelectUser",

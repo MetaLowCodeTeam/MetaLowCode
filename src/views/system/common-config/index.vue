@@ -342,8 +342,10 @@ const initData = async () => {
         if (!confData.logo) {
             confData.logo = "/src/assets/imgs/logo.png";
         }
-        // 初始化应用首页地址
+        // 初始化钉钉集成 应用首页地址
         confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
+        // 初始化企业微信 应用首页地址
+        confData.wxWorkHomeDir = confData.homeURL + "/wxWork/userLogin";
         // 备份周期
         confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
