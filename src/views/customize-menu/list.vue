@@ -146,8 +146,8 @@
                 </div>
                 <!-- 表格 -->
                 <el-table
-                    ref="elTables"
-                    :data="tableData"
+                    ref="TableRef"
+                    :data="sliceTable"
                     :border="true"
                     stripe
                     style="width: 100%"
@@ -252,7 +252,14 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, inject, reactive } from "vue";
+import { 
+    ref, 
+    onBeforeMount, 
+    inject, 
+    reactive, 
+    onMounted, 
+    onUnmounted 
+} from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
@@ -274,7 +281,6 @@ import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
-import { Message } from "@element-plus/icons-vue";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
@@ -348,6 +354,8 @@ let nameFieldName = ref("");
 // 新建配置项
 let addConf = reactive({});
 
+let TableRef = ref("");
+
 onBeforeMount(() => {
     let routerEntityname = router.currentRoute.value.params?.entityname;
     if (routerEntityname) {
@@ -364,6 +372,54 @@ onBeforeMount(() => {
     quickQueryConf.entityCode = entityCode.value;
     // 获取导航配置
     getLayoutList();
+});
+
+onMounted(()=>{
+    // 挂载
+	TableRef.value &&
+		TableRef.value.$refs.bodyWrapper.addEventListener(
+			"mousewheel",
+			scrollBehavior
+		);
+})
+
+
+// 滚动行为
+function scrollBehavior(e) {
+	// 滚动方向判定
+	const scrollDirection = e.deltaY > 0 ? "down" : "up";
+	if (scrollDirection === "down") {
+		// 获取提供实际滚动的容器
+		const dom =
+			TableRef.value.$refs.bodyWrapper.getElementsByClassName(
+				"el-scrollbar__wrap"
+			)[0];
+		const { clientHeight, scrollTop, scrollHeight } = dom;
+		// 父容器高度 + 子容器距离父容器顶端的高度 = 子容器可滚动的高度
+		if (scrollHeight - (clientHeight + scrollTop) <= 300) {
+			
+            if(sliceTable.value.length == tableData.value.length){
+                // console.log(`所有数据加载完了，表长度${sliceTable.value.length}，源长度：${tableData.value.length}`)
+                return
+            }
+            // console.log("竖向滚动条已经滚动到底部，开始加载数据了~");
+			sliceTable.value.push(
+				...tableData.value.slice(
+					sliceTable.value.length,
+					sliceTable.value.length + 20
+				)
+			);
+		}
+	}
+}
+
+onUnmounted(() => {
+	// 卸载
+	TableRef.value &&
+		TableRef.value.$refs.bodyWrapper.removeEventListener(
+			"mousewheel",
+			scrollBehavior
+		);
 });
 
 // 配置自定义列显示
@@ -529,11 +585,11 @@ const handleSizeChange = (size) => {
 const handleSelectionChange = (val) => {
     multipleSelection.value = val;
 };
-let elTables = ref("");
+
 // 表格行点击选中
 const handleHighlightChangeTable = (row, column) => {
     if (!row.disabled) {
-        elTables.value.toggleRowSelection(row);
+        TableRef.value.toggleRowSelection(row);
     }
 };
 
@@ -692,6 +748,8 @@ const commonGroupFilterNodeClick = (e) => {
     getTableList();
 };
 
+let sliceTable = ref([]);
+
 const getTableList = async () => {
     if (
         routerParams.value.path &&
@@ -744,6 +802,7 @@ const getTableList = async () => {
                 };
             });
         }
+        sliceTable.value = tableData.value.slice(0, 20);
     }
     pageLoading.value = false;
 };
