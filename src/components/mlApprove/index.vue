@@ -250,6 +250,8 @@ const initFormLayout = async () => {
     );
     if (res) {
         if (res.data?.layoutJson) {
+			globalDsv.value.formStatus = "approval";
+			globalDsv.value.formEntityId = props.entityId;
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
             // // 根据数据渲染出页面填入的值，填过
@@ -274,8 +276,6 @@ const initFormLayout = async () => {
                             (el) => (el.isRequired ? el.name : null)
                         );
                         vFormRef.value.setWidgetsRequired(required, true);
-                        globalDsv.value.formStatus = "approval";
-                        globalDsv.value.formEntityId = props.entityId;
                     });
                 }
                 loading.value = false;

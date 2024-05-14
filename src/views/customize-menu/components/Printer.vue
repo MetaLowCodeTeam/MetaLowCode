@@ -51,6 +51,8 @@ const initVformCom = async () => {
         optionData.value = res.data.optionData || {};
         // 根据数据渲染出页面填入的值，填过
         nextTick(async () => {
+			globalDsv.value.formStatus = 'read'
+			globalDsv.value.formEntityId = entityId.value;
             let queryByIdRes = await queryById(entityId.value);
             if (queryByIdRes && queryByIdRes.data) {
                 vFormRef.value.setFormJson(res.data.layoutJson);
@@ -64,9 +66,7 @@ const initVformCom = async () => {
                         vFormRef.value.reloadOptionData();
                     }
                     vFormRef.value.setReadMode();
-                    globalDsv.value.formStatus = 'read'
-                    globalDsv.value.formEntityId = entityId.value;
-                    // 
+                    //
                     setTimeout(() => {
                         Print('.printer-content')
                         // window.print();
@@ -93,7 +93,7 @@ const initVformCom = async () => {
     min-height: 100%;
     .printer-content {
         width: 52%;
-        margin: 0 auto; 
+        margin: 0 auto;
         .title {
             font-size: 16px;
             font-weight: bold;

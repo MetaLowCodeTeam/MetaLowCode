@@ -155,15 +155,17 @@ const initFormLayout = async () => {
             if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过
                 nextTick(async () => {
-                    let formData = await queryById(row.detailId);
-                    vFormRef.value.setFormJson(res.data.layoutJson);
+					globalDsv.value.formStatus = 'edit';
+					globalDsv.value.formEntityId = row.detailId;
+					let formData = await queryById(row.detailId);
+					vFormRef.value.setFormJson(res.data.layoutJson);
                     if (formData && formData.data) {
                         row.dialogTitle =
                             "编辑" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
-                        vFormRef.value.setFormData(formData.data);
 
                         nextTick(() => {
+							vFormRef.value.setFormData(formData.data);
                             vFormRef.value.reloadOptionData();
                             if (
                                 row.approvalStatus.value == 1 ||
@@ -176,8 +178,6 @@ const initFormLayout = async () => {
                             getFieldListOfEntityApi("updatable");
                         });
                     }
-                    globalDsv.value.formStatus = 'edit';
-                    globalDsv.value.formEntityId = row.detailId;
                     loading.value = false;
                 });
             }
@@ -186,8 +186,8 @@ const initFormLayout = async () => {
                 nextTick(async () => {
                     row.dialogTitle =
                         "新建" + queryEntityNameByLabel(row.entityName);
+					globalDsv.value.formStatus = 'new';
                     vFormRef.value.setFormJson(res.data.layoutJson);
-                    // if(row.fieldName){}
                     let param = {};
                     if (row.fieldName) {
                         param[row.fieldName] = {
@@ -195,16 +195,17 @@ const initFormLayout = async () => {
                             name: row.fieldNameLabel,
                         };
                     }
-                    vFormRef.value.setFormData(param);
-                    nextTick(() => {
-                        if (row.fieldName) {
-                            vFormRef.value.disableWidgets([row.fieldName]);
-                        }
-                        vFormRef.value.reloadOptionData();
-                        // 获取字段是否禁用
-                        getFieldListOfEntityApi("creatable");
-                        globalDsv.value.formStatus = 'new';
-                    });
+					nextTick(() => {
+						vFormRef.value.setFormData(param);
+						nextTick(() => {
+							if (row.fieldName) {
+								vFormRef.value.disableWidgets([row.fieldName]);
+							}
+							vFormRef.value.reloadOptionData();
+							// 获取字段是否禁用
+							getFieldListOfEntityApi("creatable");
+						});
+					});
                 });
             }
         }

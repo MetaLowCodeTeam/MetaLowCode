@@ -331,9 +331,9 @@ export default {
         },
 
         departmentFormTitle() {
-            if (this.formState === FormState.NEW) {
+            if (this.departmentFormState === FormState.NEW) {
                 return "新建部门";
-            } else if (this.formState === FormState.EDIT) {
+            } else if (this.departmentFormState === FormState.EDIT) {
                 return "编辑部门";
             } else {
                 return "查看部门";
@@ -475,6 +475,7 @@ export default {
                         this.departmentFormState = FormState.NEW;
                         this.showDepartmentFormDialogFlag = true;
                         this.departmentDsv["formEntity"] = "Department";
+						this.departmentDsv["formStatus"] = "new";
                         this.$nextTick(() => {
                             this.$refs.departmentFormRef.setFormJson(
                                 res.data.layoutJson
@@ -489,7 +490,6 @@ export default {
                                 this.$refs.departmentFormRef.setFormData(
                                     departmentFormData
                                 );
-                                this.departmentDsv["formStatus"] = "new";
                             });
                         });
                     } else {
@@ -522,6 +522,7 @@ export default {
                         this.departmentFormState = FormState.EDIT;
                         this.showDepartmentFormDialogFlag = true;
                         this.departmentDsv["formEntity"] = "Department";
+						this.departmentDsv["formStatus"] = "edit";
                         this.$nextTick(() => {
                             this.$refs.departmentFormRef.setFormJson(
                                 res.data.layoutJson
@@ -538,7 +539,6 @@ export default {
                                 ) {
                                     !!parentDpt && parentDpt.setRequired(false);
                                 }
-                                this.departmentDsv["formStatus"] = "edit";
                                 this.$refs.departmentFormRef.setFormData(
                                     res.data.formData
                                 );

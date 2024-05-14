@@ -311,6 +311,8 @@ const initData = async () => {
 			optionData.value = res.data.optionData || {};
 			// 根据数据渲染出页面填入的值，填过
 			nextTick(async () => {
+				globalDsv.value.formStatus = 'read';
+				globalDsv.value.formEntityId = detailId.value;
 				let queryByIdRes = await queryById(detailId.value);
 				if (queryByIdRes.flowVariables) {
 					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
@@ -319,24 +321,24 @@ const initData = async () => {
 					detailName.value = queryByIdRes.data[nameFieldName.value];
 					vFormRef.value.setFormJson(res.data.layoutJson);
 					let resData = queryByIdRes.data || {};
-					// resData.logo = resData.logo || [];
 					vFormRef.value.resetForm();
-					vFormRef.value.setFormData(resData);
+
 					nextTick(() => {
-						vFormRef.value.reloadOptionData();
-						approvalStatus.value =
-							queryByIdRes?.data.recordApprovalState || null;
-						if (approvalStatus.value) {
-							approvalStatus.value.entityCode = entityCode.value;
-							approvalStatus.value.entityName = entityName.value;
-							approvalStatus.value.recordId = detailId.value;
-							approvalStatus.value.approvalName =
-								detailDialog.detailTitle;
-						}
-						vFormRef.value.setReadMode();
-						globalDsv.value.openCreateDialog = openCreateDialog;
-                        globalDsv.value.formStatus = 'read';
-                        globalDsv.value.formEntityId = detailId.value;
+						vFormRef.value.setFormData(resData);
+						nextTick(() => {
+							vFormRef.value.reloadOptionData();
+							approvalStatus.value =
+								queryByIdRes?.data.recordApprovalState || null;
+							if (approvalStatus.value) {
+								approvalStatus.value.entityCode = entityCode.value;
+								approvalStatus.value.entityName = entityName.value;
+								approvalStatus.value.recordId = detailId.value;
+								approvalStatus.value.approvalName =
+									detailDialog.detailTitle;
+							}
+							vFormRef.value.setReadMode();
+							globalDsv.value.openCreateDialog = openCreateDialog;
+						});
 					});
 
 					noeData.value = false;

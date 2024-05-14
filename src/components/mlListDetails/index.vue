@@ -138,6 +138,8 @@ const refresh = async () => {
     let res = await getFormLayout(detailDialog.entityName);
     if (res) {
         if (res.data?.layoutJson && activeTabName.value == "detail") {
+			globalDsv.value.formStatus = "read";
+			globalDsv.value.formEntityId = detailDialog.id;
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
             // 根据数据渲染出页面填入的值，填过
@@ -153,8 +155,6 @@ const refresh = async () => {
                     nextTick(() => {
                         vFormRef.value.reloadOptionData();
                         vFormRef.value.setReadMode();
-                        globalDsv.value.formStatus = "read";
-                        globalDsv.value.formEntityId = detailDialog.id;
                     });
                 }
                 loading.value = false;

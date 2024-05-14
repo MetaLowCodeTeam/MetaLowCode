@@ -24,11 +24,11 @@ const formData = reactive();
 const globalDsv = reactive({});
 onMounted(() => {
     if (props.layoutJson) {
+		globalDsv.value.formStatus = 'read'
         vFormRef.value.setFormJson(props.layoutJson);
         nextTick(() => {
             vFormRef.value.setReadMode();
             vFormRef.value.setFormData(props.data);
-            globalDsv.value.formStatus = 'read'
         });
     }
 });
