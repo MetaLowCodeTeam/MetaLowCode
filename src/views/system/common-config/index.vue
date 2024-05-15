@@ -235,7 +235,7 @@ let confData = reactive({
 let loading = ref(false);
 
 // 需要版本控制的
-let needAuthentication = ref(["dingTalkOpen"]);
+let needAuthentication = ref(["dingTalkOpen","wxWorkOpen"]);
 
 /**
  * *************************************** 初始化数据
