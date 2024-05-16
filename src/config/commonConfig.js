@@ -56,7 +56,7 @@ export default [
                 key: "backupCycle",
                 required: true,
                 type: "numInput",
-                suffixText:"天备份一次"
+                suffixText: "天备份一次"
             },
             {
                 label: "备份保留时间(天)",
@@ -64,7 +64,7 @@ export default [
                 required: true,
                 type: "numInput",
             },
-           
+
         ],
     },
     {
@@ -253,11 +253,64 @@ export default [
                 key: "nodeDep",
                 type: "autoSync",
             },
-
-
         ],
     },
-
+    {
+        label: "企业微信集成",
+        code: "wxWorkIntegration",
+        confs: [
+            {
+                label: "启用企业微信服务",
+                key: "wxWorkOpen",
+                type: "switch",
+            },
+            {
+                label: "企业微信id",
+                key: "wxWorkCorpId",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "企业微信应用id",
+                key: "wxWorkAgentId",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "企业微信应用密钥",
+                key: "wxWorkCorpSecret",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "应用首页地址",
+                subLabel: "请复制地址至企业微信相关配置",
+                key: "wxWorkHomeDir",
+                type: "input",
+                disabled: true,
+            },
+            {
+                label: "回调域名",
+                subLabel: "请复制地址至企业微信相关配置",
+                key: "homeURL",
+                type: "input",
+                disabled: true,
+            },
+            {
+                label: "用户默认角色",
+                key: "wxWorkNodeRole",
+                type: "mlSelectUser",
+            },
+            {
+                label: "自动同步企业微信组织架构",
+                key: "nodeDep2",
+                type: "autoSync2",
+            },
+        ],
+    },
     {
         label: "授权许可",
         code: 'authLicense',

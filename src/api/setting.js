@@ -36,6 +36,16 @@ export function getDingtalkSyncUser(defaultRole) {
     return http.get('/organizationSync/dingtalkSyncUser', { defaultRole })
 }
 
+
+/**
+ * 企业微信集成
+ */
+// -- 同步企业微信组织架构
+export function getWxWorkSyncUser(defaultRole) {
+    return http.get('/organizationSync/wxWorkSyncUser', { defaultRole })
+}
+
+
 // -- 异步任务状态
 export function getHeavyTask(taskId) {
     return http.get('/heavyTask/taskState?taskId=' + taskId);

@@ -116,7 +116,7 @@
 									width: 20px;
 									height: 20px;
 									position: relative;
-									top: 4px;
+									top: 5px;
 								"
 								alt
 							/>
