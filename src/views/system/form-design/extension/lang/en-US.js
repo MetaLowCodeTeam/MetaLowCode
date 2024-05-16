@@ -3,6 +3,7 @@ export default {
         widgetLabel: {
             'check-tag': 'CheckTag',
             'reference': 'Reference',
+            'location': 'Location',
         },
 
         setting: {

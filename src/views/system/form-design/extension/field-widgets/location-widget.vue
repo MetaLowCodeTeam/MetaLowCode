@@ -50,7 +50,7 @@
 			:title="posDialogTitle"
 			v-if="showLocationDialogFlag"
 			v-model="showLocationDialogFlag"
-			:show-close="true"
+			:show-close="false"
 			class="small-padding-dialog"
 			:width="dialogWidth"
 			draggable
@@ -71,13 +71,18 @@
 					/>
 					<el-amap-control-scale></el-amap-control-scale>
 					<el-amap-control-tool-bar :position="'RT'"></el-amap-control-tool-bar>
-					<el-amap-control-geolocation v-if="!posReadonly" @complete="getLocation"></el-amap-control-geolocation>
+					<el-amap-control-geolocation v-if="!posReadonly"
+                                                 :need-address="true"
+                                                 @complete="getLocation"></el-amap-control-geolocation>
 				</el-amap>
 			</div>
-			<el-form-item v-if="!posReadonly" label="当前定位: " style="margin-top: 12px">
+			<el-form-item v-if="!posReadonly" label="当前定位" style="margin-top: 12px">
 				<el-input v-model="newPosModel" placeholder="请点击地图上的定位按钮" readonly></el-input>
 			</el-form-item>
-			<el-form-item v-if="posReadonly" label="已定位: " style="margin-top: 12px">
+            <el-form-item v-if="!posReadonly" label="地址名称" style="margin-top: 12px">
+                <el-input v-model="newPosName" placeholder="定位所在地址，供参考" readonly></el-input>
+            </el-form-item>
+			<el-form-item v-if="posReadonly" label="已定位" style="margin-top: 12px">
 				<el-input v-model="fieldModel" readonly></el-input>
 			</el-form-item>
 			<template #footer>
@@ -140,6 +145,7 @@ export default {
 			curPos: [],
 			newPos: [],
 			newPosModel: null,
+            newPosName: '',
 
 			mapObj: null,
 			canvasObj: null,
@@ -207,7 +213,7 @@ export default {
 
 				//设置查看模式的回显经纬度
 				const posArray = this.fieldModel.split(',')
-				if (posArray.length !== 2) {
+				if ((posArray.length !== 2) && (posArray.length !== 3)) {
 					this.$message.warning('定位数据无效！')
 					return
 				}
@@ -221,6 +227,7 @@ export default {
 
 			this.newPos.length = 0;
 			this.newPosModel = null;
+            this.newPosName = '';
 			this.showLocationDialogFlag = true;
 		},
 
@@ -264,13 +271,12 @@ export default {
 		},
 
 		getLocation(value) {
-			console.error('getLocation: ', value)
-
 			if (value && value.position) {
 				this.newPos.length = 0
 				this.newPos.push(value.position.lng)
 				this.newPos.push(value.position.lat)
 				this.newPosModel = this.newPos[0] + ',' + this.newPos[1]
+                this.newPosName = value.formattedAddress || ''
 			}
 		},
 
@@ -280,7 +286,7 @@ export default {
 				return
 			}
 
-			this.fieldModel = this.newPos[0] + ',' + this.newPos[1]
+			this.fieldModel = this.newPos[0] + ',' + this.newPos[1] + ',' + this.newPosName
 			this.handleChangeEvent(this.fieldModel)
 			this.showLocationDialogFlag = false;
 		},
