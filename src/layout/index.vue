@@ -60,13 +60,10 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive :include="keepLiveRouteFn">
-                                    <component
-                                        :is="Component"
-                                        :key="$route.fullPath"
-                                        v-if="routeShowFn"
-                                    />
+                                <keep-alive>
+                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
                                 </keep-alive>
+                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -122,13 +119,10 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive :include="keepLiveRouteFn">
-                                    <component
-                                        :is="Component"
-                                        :key="$route.fullPath"
-                                        v-if="routeShowFn"
-                                    />
+                                <keep-alive>
+                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
                                 </keep-alive>
+                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -177,13 +171,10 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive :include="keepLiveRouteFn">
-                                    <component
-                                        :is="Component"
-                                        :key="$route.fullPath"
-                                        v-if="routeShowFn"
-                                    />
+                                <keep-alive>
+                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
                                 </keep-alive>
+                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -256,13 +247,10 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive :include="keepLiveRouteFn">
-                                    <component
-                                        :is="Component"
-                                        :key="$route.fullPath"
-                                        v-if="routeShowFn"
-                                    />
+                                <keep-alive>
+                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
                                 </keep-alive>
+                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
