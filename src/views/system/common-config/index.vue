@@ -44,7 +44,7 @@
                                     >
                                         <el-switch v-model="confData[item.key]" disabled />
                                     </el-tooltip>
-                                    <el-switch v-else v-model="confData[item.key]" />
+                                    <el-switch v-else @change="openStatusChange(item)" v-model="confData[item.key]" />
                                 </div>
                                 <!-- 颜色选择器 -->
                                 <div v-else-if="item.type == 'picker'">
@@ -230,6 +230,7 @@ let activeName = ref("common");
 let confData = reactive({
     nodeRole: [],
     homeDir: "",
+    wxWorkNodeRole:[],
 });
 // 加载状态
 let loading = ref(false);
@@ -330,13 +331,17 @@ const initData = async () => {
         for (const key in wxWorkSetting) {
             if (Object.hasOwnProperty.call(wxWorkSetting, key)) {
                 const element = wxWorkSetting[key];
-                confData[key] = element;
-                if (key == "nodeRole" && (!element || element.length < 1)) {
-                    confData.wxWorkNodeRole = [];
+                if (key == "nodeRole" ) {
+                    if(!element || element.length < 1){
+                        confData.wxWorkNodeRole = [];
+                    }else {
+                        confData.wxWorkNodeRole = Object.assign([],element);
+                    }
+                }else {
+                    confData[key] = element;
                 }
             }
         }
-
 
         // 初始化LOGO
         if (!confData.logo) {
@@ -705,6 +710,15 @@ const getHeavyTaskApi2 = async () => {
 };
 
 // 
+
+// 启用服务
+const openStatusChange = (item) => {
+    // console.log(item,'item')
+    // // 如果是开启钉钉
+    // if(item.key == 'dingTalkOpen'){
+        
+    // }
+}
 
 // 页签显示
 const showTab = (code) => {
