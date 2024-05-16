@@ -94,12 +94,12 @@ const initExternalData = async () => {
                     layoutData.formUploadParam.fileDownloadPrefix;
             }
             nextTick(async () => {
+				globalDsv.value.formStatus = 'read'
+				globalDsv.value.formEntityId = externalId.value;
                 vFormRef.value.setFormJson(layoutData.layoutJson);
                 if (res.data.recordData) {
                     approvalStatus.value = res.data.recordData.approvalStatus;
                     vFormRef.value.setFormData(res.data.recordData);
-                    globalDsv.value.formStatus = 'read'
-                    globalDsv.value.formEntityId = externalId.value;
                     nextTick(() => {
                         if (
                             approvalStatus.value == 1 ||

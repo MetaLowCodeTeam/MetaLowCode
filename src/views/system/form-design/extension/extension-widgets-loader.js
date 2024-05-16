@@ -2,7 +2,8 @@ import zhLang from './lang/zh-CN'
 import enLang from './lang/en-US'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {registerFieldWidgets} from "@/views/system/form-design/extension/field-widgets";
-import {checkTagSchema, referenceSchema} from "@/views/system/form-design/extension/extension-widgets-schema";
+import {checkTagSchema, referenceSchema, locationSchema}
+	from "@/views/system/form-design/extension/extension-widgets-schema";
 import newTestEditor from './property-editor/newTest-editor.vue'
 import CheckTagOptionItemsEditor
 	from "@/views/system/form-design/extension/property-editor/check-tag-optionItems-editor.vue";
@@ -29,7 +30,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
     PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)
-	
+
 
 	//注册扩展字段组件
 	registerFieldWidgets(app)
@@ -39,6 +40,7 @@ export const loadExtensionWidgets = (app) => {
 	//添加到设计器组件库
 	addBasicFieldSchema(checkTagSchema)
 	addAdvancedFieldSchema(referenceSchema)
+	addAdvancedFieldSchema(locationSchema)
 
     //PERegister.registerCPEditor(app, 'newTest', 'newTest-editor', newTestEditor)
 }

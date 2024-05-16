@@ -140,6 +140,13 @@ export const formFieldMapping = {
 		}
 	},
 
+	'Location': {
+		type: 'location',
+		options: {
+
+		}
+	},
+
 	'AreaSelect': {
 		type: 'cascader',
 		options: {

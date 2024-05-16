@@ -19,7 +19,17 @@ import * as MetaFlowDesigner from "@/../lib/flow-designer/meta-flow-designer.umd
 import {loadExtensionWidgets} from "@/views/system/form-design/extension/extension-widgets-loader";
 import {loadChartsExtension} from "@/views/system/dashboard-design/charts/charts-loader";
 import VueResizeObserver from "vue-resize-observer";
+import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
+import '@vuemap/vue-amap/dist/style.css'
+
 // console.log("1. 使用路由...",router)
+
+//初始化高德地图组件
+initAMapApiLoader({
+	key: '487d8f7268cf06102ecd3e637b0f892d',
+	securityJsCode: 'd9661ebb4e27ef5683446d960e820e9f' // 新版key需要配合安全密钥使用
+})
+
 const app = createApp(App);
 app.use(VueResizeObserver);
 app.use(router);
@@ -28,6 +38,7 @@ app.use(ElementPlus);
 app.use(VueSmartWidget)
 app.use(VisualDesign)
 app.use(MetaFlowDesigner)
+app.use(VueAMap)
 loadExtensionWidgets(app)
 loadChartsExtension(app)
 // app.use(Vue3MannerReport);

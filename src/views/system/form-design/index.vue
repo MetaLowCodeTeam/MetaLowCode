@@ -37,6 +37,7 @@
                             <el-dropdown-item command="DateTimeWE">日期时间 / DateTime</el-dropdown-item>
                             <el-dropdown-item command="PictureWE" divided>图片 / Picture</el-dropdown-item>
                             <el-dropdown-item command="FileWE">文件 / File</el-dropdown-item>
+                            <el-dropdown-item command="LocationWE">定位 / Location</el-dropdown-item>
                             <el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -160,6 +161,7 @@ import DateWE from "@/views/system/field-editor/date-widget-editor.vue";
 import DateTimeWE from "@/views/system/field-editor/datetime-widget-editor.vue";
 import PictureWE from "@/views/system/field-editor/picture-widget-editor.vue";
 import FileWE from "@/views/system/field-editor/file-widget-editor.vue";
+import LocationWE from "@/views/system/field-editor/location-widget-editor.vue";
 import ReferenceWE from "@/views/system/field-editor/reference-widget-editor.vue";
 import AnyReferenceWE from "@/views/system/field-editor/anyreference-widget-editor.vue";
 import ReferenceListWE from "@/views/system/field-editor/referencelist-widget-editor.vue";
@@ -185,6 +187,7 @@ export default {
         DateTimeWE,
         PictureWE,
         FileWE,
+		LocationWE,
         ReferenceWE,
         AnyReferenceWE,
         ReferenceListWE,
