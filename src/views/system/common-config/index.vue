@@ -287,9 +287,8 @@ const initData = async () => {
             wxWorkSetting
          } =
             confData;
-
         // 格式化短信
-        confData.smsOpen = smsSetting.openStatus;
+        confData.smsOpen = smsSetting?.openStatus;
         for (const key in smsSetting) {
             if (Object.hasOwnProperty.call(smsSetting, key)) {
                 const element = smsSetting[key];
@@ -297,7 +296,7 @@ const initData = async () => {
             }
         }
         // 格式化邮箱
-        confData.emailOpen = emailSetting.openStatus;
+        confData.emailOpen = emailSetting?.openStatus;
         for (const key in emailSetting) {
             if (Object.hasOwnProperty.call(emailSetting, key)) {
                 const element = emailSetting[key];
@@ -306,7 +305,7 @@ const initData = async () => {
         }
 
         // 格式化云存储
-        confData.cloudStorageOpen = cloudStorageSetting.openStatus;
+        confData.cloudStorageOpen = cloudStorageSetting?.openStatus;
         for (const key in cloudStorageSetting) {
             if (Object.hasOwnProperty.call(cloudStorageSetting, key)) {
                 const element = cloudStorageSetting[key];
@@ -315,7 +314,7 @@ const initData = async () => {
         }
 
         // 格式化钉钉集成
-        confData.dingTalkOpen = dingTalkSetting.openStatus;
+        confData.dingTalkOpen = dingTalkSetting?.openStatus;
         for (const key in dingTalkSetting) {
             if (Object.hasOwnProperty.call(dingTalkSetting, key)) {
                 const element = dingTalkSetting[key];
@@ -325,9 +324,8 @@ const initData = async () => {
                 }
             }
         }
-
         // 格式化企业微信集成
-        confData.wxWorkOpen = wxWorkSetting.openStatus;
+        confData.wxWorkOpen = wxWorkSetting?.openStatus;
         for (const key in wxWorkSetting) {
             if (Object.hasOwnProperty.call(wxWorkSetting, key)) {
                 const element = wxWorkSetting[key];
