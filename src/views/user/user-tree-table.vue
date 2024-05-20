@@ -626,9 +626,10 @@ export default {
                                 });
                                 return;
                             }
-
-                            this.$message.success("删除成功");
-                            this.initTreeData();
+                            if(res?.data && res.data?.code == 200){
+                                this.$message.success("删除成功");
+                                this.initTreeData();
+                            }
                         })
                         .catch((res) => {
                             this.$message({
