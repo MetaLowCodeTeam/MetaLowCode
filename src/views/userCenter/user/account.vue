@@ -43,7 +43,7 @@
 
 <script setup>
 import { inject, onMounted, ref, nextTick } from "vue";
-import { queryById } from "@/api/crud";
+import { getLoginUser } from "@/api/user";
 import { updateLoginUser } from "@/api/user";
 import { ElMessage } from "element-plus";
 
@@ -58,9 +58,9 @@ onMounted(() => {
 const getUserInfo = async () => {
     loading.value = true;
     let USER_INFO = $TOOL.data.get("USER_INFO") || {};
-    let res = await queryById(USER_INFO.userId);
+    let res = await getLoginUser(USER_INFO.userId);
     if (res) {
-        userInfo.value = res.data || {};
+        userInfo.value = res.data?.data || {};
     }
     loading.value = false;
 };

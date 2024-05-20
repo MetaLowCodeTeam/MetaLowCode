@@ -4,7 +4,7 @@
 import http from "@/utils/request"
 
 export default {
-    detial: {
+    detail: {
         // 字段更新-获取目标实体（所有实体）
         dataUpdateEntityList: async (entityCode) => {
             return await http.get("/plugins/metaTrigger/trigger/dataUpdate/entityList", { entityCode });
@@ -24,6 +24,10 @@ export default {
         // 保存
         triggerSave: async (recordId, dataMap) => {
             return await http.post("/plugins/metaTrigger/trigger/save?id=" + recordId, dataMap);
+        },
+        // 删除
+        triggerDelete: async (recordId) => {
+            return await http.post("/plugins/metaTrigger/trigger/delete?recordId=" + recordId);
         },
         // 立即执行
         execute: async (params) => {

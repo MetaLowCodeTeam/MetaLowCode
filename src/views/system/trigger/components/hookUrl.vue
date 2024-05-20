@@ -114,7 +114,7 @@ const callBackTest = async () => {
         return;
     }
     // let actionContent = JSON.stringify(trigger.value.actionContent);
-    let res = await $API.trigger.detial.callBackTest(
+    let res = await $API.trigger.detail.callBackTest(
         trigger.value.actionContent
     );
     testRes.value = res;

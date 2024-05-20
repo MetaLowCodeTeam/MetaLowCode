@@ -49,7 +49,7 @@ onMounted(() => {
 // 获取 当前实体 审批列表
 const getApprovalList = async () => {
     contentLoading.value = true;
-    let res = await $API.trigger.detial.getDataDeleteEntityList(
+    let res = await $API.trigger.detail.getDataDeleteEntityList(
         trigger.value.entityCode
     );
     if (res) {

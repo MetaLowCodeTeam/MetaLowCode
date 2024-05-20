@@ -307,7 +307,7 @@ const confirm = async () => {
     }
     numFormulaVal.value = checkVal;
     if (checkVal) {
-        let res = await $API.trigger.detial.aviatorValidate(checkVal);
+        let res = await $API.trigger.detail.aviatorValidate(checkVal);
         if (res) {
             // 错误的
             if (res.data) {

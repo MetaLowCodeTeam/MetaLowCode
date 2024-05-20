@@ -293,7 +293,7 @@ const getActionContentData = async () => {
 // 获取实体（目标实体）
 const getTagEntitys = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await $API.trigger.detial.dataUpdateEntityList(
+        let res = await $API.trigger.detail.dataUpdateEntityList(
             trigger.value.entityCode
         );
         if (res) {

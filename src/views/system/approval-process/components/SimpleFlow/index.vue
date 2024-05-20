@@ -44,7 +44,7 @@ onMounted(() => {
 
 const getApprovalConfig = async () => {
     loading.value = true;
-    let res = await $API.approval.detial.get({
+    let res = await $API.approval.detail.get({
         approvalConfigId: approvalConfigId.value,
     });
     if (res) {
@@ -71,7 +71,7 @@ const getApprovalConfig = async () => {
 
 const saveApprovalConfig = async () => {
     loading.value = true;
-    let res = await $API.approval.detial.save(data.value);
+    let res = await $API.approval.detail.save(data.value);
     if (res) {
         ElMessage.success("保存成功");
     }

@@ -67,13 +67,13 @@
                             <span
                                 v-if="column.highlight && !column.formatter"
                                 class="highlight"
-                                @click="goDetial(scope.row)"
+                                @click="goDetail(scope.row)"
                             >{{ scope.row[column.prop] }}</span>
                             <!-- 需要高亮的 且 要格式化的 -->
                             <span
                                 v-else-if="column.highlight && column.formatter"
                                 class="highlight"
-                                @click="goDetial(scope.row)"
+                                @click="goDetail(scope.row)"
                             >{{ column.formatter(scope.row) }}</span>
                             <!-- 不需要高亮 且 需要格式化的 -->
                             <span
@@ -197,6 +197,7 @@ import { getEntityApprovalTaskList } from "@/api/approval.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
+import trigger from "@/api/trigger.js";
 const router = useRouter();
 const $TOOL = inject("$TOOL");
 const props = defineProps({
@@ -223,7 +224,7 @@ const props = defineProps({
     actionColumnWidth: { type: Number, default: 170 },
 });
 const emit = defineEmits([
-    "goDetial",
+    "goDetail",
     "actionBtn",
     "changeSwitch",
     "openAddDialog",
@@ -481,7 +482,12 @@ const deleteProcess = (row) => {
         type: "warning",
     })
         .then(async () => {
-            let res = await deleteRecord(row[props.aciveId]);
+            let res;
+            if(props.entityName == 'TriggerConfig'){
+                res = await trigger.detail.triggerDelete(row[props.aciveId]);
+            }else {
+                res = await deleteRecord(row[props.aciveId]);
+            }
             loading.value = true;
             if (res) {
                 message.success("删除成功");
@@ -492,8 +498,8 @@ const deleteProcess = (row) => {
         .catch(() => {});
 };
 
-const goDetial = (row) => {
-    emit("goDetial", row);
+const goDetail = (row) => {
+    emit("goDetail", row);
 };
 
 const changeSwitch = (row) => {

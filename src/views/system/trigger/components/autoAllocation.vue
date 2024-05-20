@@ -83,13 +83,13 @@ onMounted(() => {
 // 获取 同时分配关联记录 实体列表
 const getAssignEntityList = async () => {
     contentLoading.value = true;
-    let res = await $API.trigger.detial.getAssignEntityList(
+    let res = await $API.trigger.detail.getAssignEntityList(
         trigger.value.entityCode
     );
     if (res) {
         assignEntityList.value = res.data;
         if (trigger.value.actionContent.assignTo?.length > 0) {
-            let idToIdNameRes = await $API.trigger.detial.idToIdName(
+            let idToIdNameRes = await $API.trigger.detail.idToIdName(
                 trigger.value.actionContent.assignTo
             );
             if (idToIdNameRes) {

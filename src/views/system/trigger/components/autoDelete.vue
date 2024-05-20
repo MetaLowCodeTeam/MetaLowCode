@@ -46,7 +46,7 @@ onMounted(() => {
 // 获取删除记录实体列表
 const getDataDeleteEntityList = async () => {
     contentLoading.value = true;
-    let res = await $API.trigger.detial.getDataDeleteEntityList(
+    let res = await $API.trigger.detail.getDataDeleteEntityList(
         trigger.value.entityCode
     );
     if (res) {

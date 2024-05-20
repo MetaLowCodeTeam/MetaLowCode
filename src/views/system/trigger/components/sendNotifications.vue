@@ -262,14 +262,14 @@ const getCutEntityFields = async () => {
     if (res) {
         cutEntityFields.value = res.data;
         sendToFields.value = res.data.filter((el) => el.fieldType == "Text");
-        let querySendStateRes = await $API.trigger.detial.querySendState();
+        let querySendStateRes = await $API.trigger.detail.querySendState();
         if(querySendStateRes){
             querySendState.value = querySendStateRes.data;
         }   
         // 如果是内部用户
         if (trigger.value.actionContent.userType == 1) {
             if (trigger.value.actionContent.sendTo?.length > 0) {
-                let idToIdNameRes = await $API.trigger.detial.idToIdName(
+                let idToIdNameRes = await $API.trigger.detail.idToIdName(
                     trigger.value.actionContent.sendTo
                 );
                 if (idToIdNameRes) {

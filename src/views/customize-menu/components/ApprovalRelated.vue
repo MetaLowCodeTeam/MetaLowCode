@@ -165,7 +165,7 @@ const openDialog = async (title) => {
     approvalDialog.isShow = true;
     approvalDialog.title = title;
     approvalDialog.loading = true;
-    let res = await $API.approval.detial.getApprovalList(
+    let res = await $API.approval.detail.getApprovalList(
         myApproval.value.recordId
     );
     if (res) {
@@ -274,12 +274,12 @@ const onSubmit = async () => {
         publicSetting.value.pluginIdList.includes("metaWorkFlow") &&
         flowType == 2
     ) {
-        res = await $API.approval.detial.startComplexFlowApproval({
+        res = await $API.approval.detail.startComplexFlowApproval({
             processDefId: wfProcDefId,
             recordId: myApproval.value.recordId,
         });
     } else {
-        res = await $API.approval.detial.startApproval(
+        res = await $API.approval.detail.startApproval(
             myApproval.value.recordId,
             approvalConfigId
         );

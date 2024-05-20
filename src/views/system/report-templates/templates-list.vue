@@ -4,7 +4,7 @@
         entityName="ReportConfig"
         aciveId="reportConfigId"
         fieldsList="reportName,entityCode,isDisabled,modifiedOn,modifiedBy,createdOn"
-        @goDetial="goDetial"
+        @goDetail="goDetail"
         :checkCodes="['reportName']"
         :codeErrMsg="['请输入模板名称']"
         :tableColumn="tableColumn"
@@ -117,7 +117,7 @@ const saveProcess = async () => {
 };
 
 // 跳转详情
-const goDetial = (row) => {
+const goDetail = (row) => {
     const to = router.resolve({
         path: "/web/luckysheet",
         query: {

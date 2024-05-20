@@ -5,7 +5,7 @@
 import http from "@/utils/request"
 
 export default {
-    detial: {
+    detail: {
         // 获取审批流程
         get: async (data) => {
             return await http.get("/approval/getFlowDefinitionByConfigId", data);

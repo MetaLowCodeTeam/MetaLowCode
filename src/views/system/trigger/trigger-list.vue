@@ -4,7 +4,7 @@
         entityName="TriggerConfig"
         aciveId="triggerConfigId"
         fieldsList="name,entityCode,actionType,actionContent,priority,isDisabled,modifiedOn,whenNum,createdOn"
-        @goDetial="goDetial"
+        @goDetail="goDetail"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
         :filterItems="filterItems"
@@ -139,7 +139,7 @@ const saveProcess = async () => {
 };
 
 // 跳转详情
-const goDetial = (row) => {
+const goDetail = (row) => {
     router.push({
         path: "/web/trigger-detail",
         query: {

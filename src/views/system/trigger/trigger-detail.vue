@@ -325,7 +325,7 @@ const onSave = async (target) => {
 
     initLoading.value = true;
 
-    let res = await $API.trigger.detial.triggerSave(
+    let res = await $API.trigger.detail.triggerSave(
         params.id,
         params.formModel
     );
@@ -351,7 +351,7 @@ const actionExecute = (params) => {
     )
         .then(async () => {
             initLoading.value = true;
-            let res = await $API.trigger.detial.execute({
+            let res = await $API.trigger.detail.execute({
                 entityCode: trigger.entityCode,
                 actionFilter: params.formModel.actionFilter || null,
                 actionContent: params.formModel.actionContent || null,

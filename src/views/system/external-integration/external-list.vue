@@ -4,7 +4,7 @@
         entityName="ExternalForm"
         aciveId="externalFormId"
         fieldsList="externalFormName,entityCode,bindUsers,isDisabled,createdOn,externalFormId"
-        @goDetial="goDetial"
+        @goDetail="goDetail"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
         :filterItems="filterItems"
@@ -191,7 +191,7 @@ const base64ToBlob = (base64) => {
 };
 
 // 跳转详情
-const goDetial = (row) => {
+const goDetail = (row) => {
     router.push({
         path: "/web/trigger-detail",
         query: {

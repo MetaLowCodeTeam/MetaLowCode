@@ -7,7 +7,7 @@
         :tableColumn="tableColumn"
         :filterItems="pageType[type].filterItems"
         ref="mlSingleListRef"
-        @goDetial="highlightClick"
+        @goDetail="highlightClick"
         fieldName="approvalConfigId.entityCode"
         :queryUrl="'/approval/listQuery'"
         :approvalTaskType="pageType[type].value"

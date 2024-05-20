@@ -4,7 +4,7 @@
         entityName="ApprovalConfig"
         aciveId="approvalConfigId"
         fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn,flowType"
-        @goDetial="goDetial"
+        @goDetail="goDetail"
         :tableColumn="tableColumn"
         defalutSortField="createdOn"
         :filterItems="filterItems"
@@ -154,7 +154,7 @@ const actionBtn = (data) => {
 // 保存流程
 const saveProcess = async (row) => {
     if (row) {
-        goDetial(row);
+        goDetail(row);
     } else {
         mlEntityMenuAndListRef.value.getEntityList();
     }
@@ -166,7 +166,7 @@ const addClick = () => {
 };
 
 // 跳转详情
-const goDetial = (row) => {
+const goDetail = (row) => {
     router.push({
         path: "/web/process-detail",
         query: {
