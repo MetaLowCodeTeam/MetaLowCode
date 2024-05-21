@@ -2,7 +2,8 @@
 	<el-drawer
 		:size="isFullSceen ? '100%' : '62.4%'"
 		class="ml-drawer"
-		v-model="detailDialog.isShow"
+        v-if="detailDialog.isShow"
+        v-model="detailDialog.isShow"
 		direction="rtl"
 		:show-close="false"
 		:append-to-body="true"
