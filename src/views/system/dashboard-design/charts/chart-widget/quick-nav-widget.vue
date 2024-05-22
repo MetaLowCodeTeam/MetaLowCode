@@ -1,5 +1,10 @@
 <template>
-    <div class="quick-nav-widget" @click.stop="setSelected" v-loading="loading">
+    <div 
+        class="quick-nav-widget" 
+        @click.stop="setSelected" 
+        v-loading="loading"
+        :class="cutField?.options.customClass"
+    >
         <div v-if="myQuickNavConf.inletList.length > 0" class="clearfix">
             <div v-for="(item,inx) of myQuickNavConf.inletList" :key="inx" class="list-box fl" :style="getItemStyle()">
                 <!-- 列表 -->

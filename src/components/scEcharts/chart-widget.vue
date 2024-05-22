@@ -1,5 +1,10 @@
 <template>
-    <div class="bar-chart" v-resize="handleResize" @click.stop="setSelected">
+    <div 
+        class="bar-chart" 
+        v-resize="handleResize" 
+        @click.stop="setSelected"
+        :class="field?.options.customClass"
+    >
         <template v-if="isShowEmpty">
             <div class="empty-div">
                 <span>暂无数据</span>

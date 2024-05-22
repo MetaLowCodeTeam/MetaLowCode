@@ -11,6 +11,7 @@
 		class="bar-progress"
 		@click.stop="setSelected"
 		v-loading="loading"
+        :class="cutField?.options.customClass"
 		v-else
 	>
 		<el-progress

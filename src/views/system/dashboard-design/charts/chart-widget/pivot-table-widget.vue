@@ -1,5 +1,10 @@
 <template>
-    <div class="pivot-table-widget" @click.stop="setSelected" v-loading="loading">
+    <div 
+        class="pivot-table-widget" 
+        @click.stop="setSelected" 
+        v-loading="loading"
+        :class="cutField?.options.customClass"
+    >
         <template v-if="!isNoData">
             <div class="table-box" id="container" :style="{'height': tableBoxHeight}">
                 <SheetComponent
@@ -9,16 +14,6 @@
                     :adaptive="adaptive"
                 />
             </div>
-            <!-- <div class="page-box">
-                <el-pagination
-                    style="justify-content:right"
-                    v-model:current-page="paginationConf.page"
-                    :page-size="paginationConf.pageSize"
-                    layout="total, prev, pager, next"
-                    :total="paginationConf.total"
-                    @current-change="handleCurrentChange"
-                />
-            </div> -->
         </template>
         <template v-else>
             <div class="no-data">
