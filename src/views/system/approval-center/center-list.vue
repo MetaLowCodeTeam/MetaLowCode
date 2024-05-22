@@ -98,6 +98,11 @@ onBeforeMount(() => {
                     op: "EQ",
                     value: USER_INFO.userId,
                 },
+                {
+                    fieldName: "wfProcInsId",
+                    op: "DISTINCT",
+                    value: "ApprovalTask",
+                },
             ],
         },
         cc: {
@@ -211,7 +216,12 @@ function approveHistory(row) {
 let detailRefs = ref("");
 // 高亮字段点击
 const highlightClick = (item) => {
-    detailRefs.value.openDialog(item.entityId.id);
+    // 如果是待我处理
+    if(props.type == 'handle'){
+        approveRow(item);
+    }else {
+        detailRefs.value.openDialog(item.entityId.id);
+    }
 };
 </script>
 <style lang="scss">

@@ -287,6 +287,22 @@ const initData = async () => {
             wxWorkSetting
          } =
             confData;
+
+        if(!emailSetting){
+            emailSetting = {};
+        }
+        if(!smsSetting){
+            smsSetting = {};
+        }
+        if(!cloudStorageSetting){
+            cloudStorageSetting = {};
+        }
+        if(!dingTalkSetting){
+            dingTalkSetting = {};
+        }
+        if(!wxWorkSetting){
+            wxWorkSetting = {};
+        }
         // 格式化短信
         confData.smsOpen = smsSetting?.openStatus;
         for (const key in smsSetting) {

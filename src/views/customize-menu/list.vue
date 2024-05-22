@@ -399,7 +399,6 @@ function scrollBehavior(e) {
 		if (scrollHeight - (clientHeight + scrollTop) <= 300) {
 			
             if(sliceTable.value.length == tableData.value.length){
-                // console.log(`所有数据加载完了，表长度${sliceTable.value.length}，源长度：${tableData.value.length}`)
                 return
             }
             // console.log("竖向滚动条已经滚动到底部，开始加载数据了~");
