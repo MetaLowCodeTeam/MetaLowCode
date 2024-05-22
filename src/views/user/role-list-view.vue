@@ -280,7 +280,7 @@ let tableConf = ref({
     tableColumn: [
         {
             prop: "roleName",
-            label: "用户名称",
+            label: "角色名称",
             width: "180",
         },
         {

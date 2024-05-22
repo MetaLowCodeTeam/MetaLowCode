@@ -95,6 +95,7 @@
         <mlApproveHistory
             v-model="approvalHistoryDialog"
             :entityId="myApproval.recordId"
+            @confirm="confirm"
             title="审批历史"
         />
     </div>
@@ -137,7 +138,7 @@ const $TOOL = inject("$TOOL");
 const props = defineProps({
     approvalStatus: { type: Object, default: () => {} },
 });
-const emits = defineEmits(["onSubmit"]);
+const emits = defineEmits(["onSubmit","closeDialog"]);
 let myApproval = ref({});
 watch(
     () => props.approvalStatus,
@@ -190,6 +191,11 @@ let approvalHistoryDialog = ref(false);
 const openHistoryDialog = (row) => {
     approvalHistoryDialog.value = true;
 };
+
+// 审批历史确认
+const confirm = () => {
+    emits("closeDialog")
+}
 
 /**
  * 审批任务相关

@@ -131,6 +131,7 @@
 									v-if="approvalStatus"
 									:approvalStatus="approvalStatus"
 									@onSubmit="onSubmitApproval"
+                                    @closeDialog="closeDialog"
 								/>
 							</el-col>
 						</el-row>
@@ -241,6 +242,10 @@ const openDialog = (id) => {
 	// 加载数据
 	refresh();
 };
+
+const closeDialog = () => {
+    detailDialog.isShow = false;
+}
 
 // 页签更换
 const tabChange = (tab) => {

@@ -132,10 +132,11 @@ let approvalName = ref("");
 const activeRow = (item) => {
     // 审批
     if (item.type == 10) {
-        approveDialogIsShow.value = true;
-        approvalTaskId.value = item.relatedRecord.id;
-        entityId.value = item.relatedRecord.id;
-        approvalName.value = item.relatedRecord.name;
+        router.push("/web/center-handle");
+        // approveDialogIsShow.value = true;
+        // approvalTaskId.value = item.relatedRecord.id;
+        // entityId.value = item.relatedRecord.id;
+        // approvalName.value = item.relatedRecord.name;
     }
     // 审批抄送
     else if (item.type == 11) {

@@ -242,6 +242,7 @@ function formatResData(data) {
 
 // 配置流程
 const goApprovalList = (activity) => {
+    isShow.value = false;
     Route.push({
         path: "/web/custom-page/approval-detail",
         query: {
@@ -251,6 +252,8 @@ const goApprovalList = (activity) => {
             flowType: activity.flowType || 1,
         },
     });
+    emit('confirm')
+
 };
 
 /**
