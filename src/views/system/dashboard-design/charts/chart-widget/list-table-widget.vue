@@ -3,7 +3,7 @@
     <div 
         class="pivot-table-widget"
         @click.stop="setSelected"
-        :class="cutField?.options.customClass"
+        :class="cutField?.options?.customClass"
     >
         <div class="table-box" v-if="tableColumn.length > 0" v-loading="tableLoading">
             <el-table

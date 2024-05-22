@@ -3,7 +3,7 @@
         class="bar-chart" 
         v-resize="handleResize" 
         @click.stop="setSelected"
-        :class="field?.options.customClass"
+        :class="field?.options?.customClass"
     >
         <template v-if="isShowEmpty">
             <div class="empty-div">

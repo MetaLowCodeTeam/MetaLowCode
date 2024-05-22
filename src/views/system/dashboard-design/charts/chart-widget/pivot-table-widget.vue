@@ -3,7 +3,7 @@
         class="pivot-table-widget" 
         @click.stop="setSelected" 
         v-loading="loading"
-        :class="cutField?.options.customClass"
+        :class="cutField?.options?.customClass"
     >
         <template v-if="!isNoData">
             <div class="table-box" id="container" :style="{'height': tableBoxHeight}">
