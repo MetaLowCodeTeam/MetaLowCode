@@ -155,7 +155,7 @@ const editZoom = (target) => {
         width: 100%;
         height: 100%;
         background: rgba($color: #000000, $alpha: 0.3);
-        z-index: 6666;
+        z-index: 7;
     }
 }
 
