@@ -21,7 +21,7 @@ import {loadChartsExtension} from "@/views/system/dashboard-design/charts/charts
 import VueResizeObserver from "vue-resize-observer";
 import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
 import '@vuemap/vue-amap/dist/style.css'
-
+import dayjs from "dayjs";
 // console.log("1. 使用路由...",router)
 
 //初始化高德地图组件
@@ -31,6 +31,9 @@ initAMapApiLoader({
 })
 
 const app = createApp(App);
+
+app.config.globalProperties.$dayjs = dayjs;
+
 app.use(VueResizeObserver);
 app.use(router);
 app.use(pinia);

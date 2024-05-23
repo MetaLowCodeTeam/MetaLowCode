@@ -82,7 +82,7 @@ let tableColumn = ref([
         prop: "createdOn",
         label: "创建时间",
         align: "center",
-        width: 100,
+        width: 160,
         fromNow: true,
     },
 ]);

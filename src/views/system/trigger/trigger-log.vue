@@ -96,7 +96,7 @@ let tableColumn = ref([
     {
         prop: "createdOn",
         label: "创建时间",
-        width: "120",
+        width: "160",
         align: "center",
         formatter: (row) => {
             return $fromNow(row.createdOn);

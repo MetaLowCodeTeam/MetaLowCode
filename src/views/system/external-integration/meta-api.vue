@@ -117,7 +117,7 @@ let tableColumn = ref([
         formatter: (row) => {
             return $fromNow(row.modifiedOn);
         },
-        width: 150,
+        width: 160,
     },
     {
         prop: "createdBy.name",
@@ -126,7 +126,7 @@ let tableColumn = ref([
         formatter: (row) => {
             return row.createdBy?.name;
         },
-        width: 150,
+        width: 160,
     },
 ]);
 
