@@ -409,7 +409,8 @@ const getAllColumn = async () => {
                     !hasFieldName.includes(el.fieldName) &&
                     el.fieldType != "Picture" &&
                     el.fieldType != "File" &&
-                    el.isUpdatable
+                    el.isUpdatable &&
+                    !el.isUnique
             );
         } else {
             sourceColumn.value = res.data.filter(
