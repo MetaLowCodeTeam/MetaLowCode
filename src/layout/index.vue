@@ -7,7 +7,7 @@
                     <mlLogo class="logo" />
                     <span>{{ appName }}</span>
                 </div>
-                <ul v-if="!ismobileFn" class="nav">
+                <!-- <ul v-if="!ismobileFn" class="nav">
                     <li
                         v-for="item in menu"
                         :key="item"
@@ -19,7 +19,29 @@
                         </el-icon>
                         <span>{{ item.meta.title }}</span>
                     </li>
-                </ul>
+                </ul> -->
+            </div>
+            <div 
+                class="adminui-header-center" 
+                v-if="!ismobileFn" 
+                :style="{'width': getHeaderCenterWidht}"
+            >
+                <el-scrollbar>
+                    <div class="scrollbar-flex-content">
+                        <p  
+                            v-for="item in menu"
+                            :key="item"
+                            class="scrollbar-demo-item"
+                            :class="pmenu.path==item.path ? 'active' : '' "
+                            @click="showMenu(item)"
+                        >
+                            <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
+                                <component :is="item.meta.icon || 'el-icon-menu'" />
+                            </el-icon>
+                            {{ item.meta.title }}
+                        </p>
+                    </div>
+                </el-scrollbar>
             </div>
             <div class="adminui-header-right">
                 <userbar></userbar>
@@ -368,12 +390,21 @@ export default {
         appName: () => {
             return publicSetting.value.APP_NAME;
         },
+        getHeaderCenterWidht(){
+            let computedWidth;
+            let nameLangth = this.appName.length;
+            if(nameLangth < 7){
+                computedWidth = 520;
+            }else {
+                computedWidth = 540 + ((nameLangth - 6 ) * 20);
+            }
+            return "calc(100% - "+ computedWidth +"px)";
+        },
     },
     created() {
         this.onLayoutResize();
         window.addEventListener("resize", this.onLayoutResize);
         var menu = this.$router.sc_getMenu();
-        console.log("4. 页面使用路由菜单...", menu);
         this.menu = this.filterUrl(menu);
         this.getDefaultOpeneds();
         this.showThis();
@@ -472,3 +503,30 @@ export default {
     },
 };
 </script>
+<style lang="scss" scoped>
+// .adminui-header-center {
+//     width: calc(100% - 560px);
+// }
+.scrollbar-flex-content {
+    display: flex;
+}
+.scrollbar-demo-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    text-align: center;
+    cursor: pointer;
+    height: 58px;
+    padding: 0 15px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    &.active {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    &:hover {
+        color: #fff;
+    }
+}
+</style>

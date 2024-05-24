@@ -108,12 +108,14 @@ textarea {
 .adminui-header-right {
 	display: flex;
 	align-items: center;
+    min-width: 330px;
 }
 .adminui-header .logo-bar {
 	font-size: 20px;
 	font-weight: bold;
 	display: flex;
 	align-items: center;
+    min-width: 190px;
 }
 .adminui-header .logo-bar .logo {
 	margin-right: 10px;
