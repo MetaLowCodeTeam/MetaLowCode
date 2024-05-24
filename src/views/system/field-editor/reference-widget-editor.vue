@@ -48,17 +48,12 @@
                         style="width: 100%"
                     ></el-input-number>
                 </el-form-item>
-                <!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
-                <!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
-                <!--							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">-->
-                <!--						<el-option-->
-                <!--							v-for="(vt, vtIdx) in validators"-->
-                <!--							:key="vtIdx"-->
-                <!--							:label="vt.label"-->
-                <!--							:value="vt.value">-->
-                <!--						</el-option>-->
-                <!--					</el-select>-->
-                <!--				</el-form-item>-->
+				<el-form-item label="字段值是否唯一/不可重复">
+					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
+						<el-radio :label="true">是</el-radio>
+						<el-radio :label="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
                 <el-form-item label="是否在列表中默认显示">
                     <el-radio-group
                         v-model="fieldProps.defaultMemberOfListFlag"
@@ -103,22 +98,44 @@
             width="560px"
         >
             <el-container>
-                <el-header>
-                    <el-input placeholder="请选择引用实体" v-model="refEntityFullName" :readonly="true">
-                        <template #append>
-                            <el-button
-                                v-if="fieldState === 1"
-                                icon="el-icon-search"
-                                title="选择"
-                                @click="showEntityListDialog"
-                            ></el-button>
-                        </template>
-                    </el-input>
+                <el-header style="height: 100%">
+					<el-row style="width: 100%">
+                        <!--
+						<el-col :span="24">
+							<el-checkbox v-model="refDetailEntityFlag">引用明细实体</el-checkbox>
+						</el-col>
+						-->
+						<el-col :span="24">
+							<el-input placeholder="请选择引用实体" v-model="refEntityFullName" :readonly="true">
+								<template #append>
+									<el-button
+										v-if="fieldState === 1"
+										icon="el-icon-search"
+										title="选择"
+										@click="showEntityListDialog"
+									></el-button>
+								</template>
+							</el-input>
+						</el-col>
+						<!-- -->
+						<el-col :span="24" v-if="refDetailEntityFlag && refDetailEntitySelected" style="margin-top: 12px">
+							<el-form-item label="请选择指向明细实体所属主实体的引用字段">
+								<el-select placeholder="请选择" style="width: 100%">
+									<el-option-group label="当前实体">
+										<!--										<el-option label="1" value="1"></el-option>-->
+									</el-option-group>
+									<el-option-group v-if="true" label="主实体">
+										<el-option label="2" value="2"></el-option>
+									</el-option-group>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<!-- -->
+					</el-row>
                 </el-header>
                 <el-main>
                     <div>
                         <div style="margin-bottom: 6px">选择实体搜索列表字段：</div>
-                        <!--            <hr style="border: 0;border-top: 1px solid rgb(220, 223, 230)" />-->
                         <el-card shadow="never">
                             <div style="font-style: italic" v-if="fieldItems.length <= 0">暂无字段可选</div>
                             <el-checkbox
@@ -240,6 +257,7 @@ export default {
                 creatable: true,
                 updatable: true,
                 fieldViewModel: {
+					uniqueness: false,
                     searchDialogWidth: 520,
                     validators: [],
                 },
@@ -289,6 +307,8 @@ export default {
             validators: [],
 
             currentRefEntity: "",
+			refDetailEntityFlag: false,
+			refDetailEntitySelected: false,
             refEntityAndFields: "",
 
             refEntityName: "",
@@ -444,6 +464,7 @@ export default {
             this.refEntityFullName =
                 this.refEntityLabel + "(" + this.refEntityName + ")";
             this.showEntityListDialogFlag = false;
+			this.refDetailEntitySelected = this.refDetailEntityFlag;
 
             this.fieldItems.length = 0;
             let res = await getFieldSet(this.refEntityName);
@@ -502,12 +523,12 @@ export default {
                 let entityItems = res.data;
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
-                        //if (entity.detailEntityFlag === false) {
+                        if (this.refDetailEntityFlag === entity.detailEntityFlag) {
                             this.tableData.push({
                                 name: entity.name,
                                 label: entity.label,
                             });
-                        //}
+                        }
                     });
                 }
             }
@@ -527,6 +548,8 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/form-layout/field-editor-common.scss";
 
+/* 注意：当el-dialog设置append-to-body为true后，scoped样式无法应用到el-dialog组件！！ */
+/*
 .refer-entity-dialog,
 .entity-list-dialog {
     :deep(.el-dialog__header) {
@@ -534,11 +557,29 @@ export default {
     }
 
     :deep(.el-dialog__body) {
-        padding: 6px;
+        padding: 6px !important;
     }
 
     .table-main-wrapper {
         padding: 6px !important;
     }
+}
+*/
+</style>
+
+<style lang="scss">
+.refer-entity-dialog,
+.entity-list-dialog {
+	.el-dialog__header {
+		padding: 15px 15px 3px;
+	}
+
+	.el-dialog__body {
+		padding: 6px !important;
+	}
+
+	.table-main-wrapper {
+		padding: 6px !important;
+	}
 }
 </style>

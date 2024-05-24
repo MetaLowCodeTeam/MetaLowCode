@@ -20,6 +20,12 @@
                         </template>
                     </el-input>
                 </el-form-item>
+				<el-form-item label="字段值是否唯一/不可重复">
+					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
+						<el-radio :label="true">是</el-radio>
+						<el-radio :label="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
                 <el-form-item label="是否在列表中默认显示">
                     <el-radio-group
                         v-model="fieldProps.defaultMemberOfListFlag"
@@ -158,15 +164,14 @@ export default {
                 nullable: false,
                 creatable: true,
                 updatable: true,
-                validators: [],
+				fieldViewModel: {
+					uniqueness: false,
+				},
             },
 
             optionItems: [],
-            test: "1222",
 
             hoverIdx: -1,
-
-            validators: [],
         };
     },
     mounted() {
