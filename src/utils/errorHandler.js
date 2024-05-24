@@ -22,7 +22,7 @@ export default (error, vm)=>{
 	console.error(error); 
 	var errorName = errorMap[error.name] || "未知错误"
 
-	
+	localStorage.setItem('errorHandlerMsg',error)
 	//throw error;
 
 	vm.$nextTick(() => {
