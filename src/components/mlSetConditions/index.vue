@@ -201,7 +201,7 @@
                             <el-option
                                 v-for="(userOp,userInx) of item.optionData"
                                 :label="userOp.label || userOp.value"
-                                :value="userOp.value"
+                                :value="userOp.value + ''"
                                 :key="userInx"
                             />
                         </el-select>
