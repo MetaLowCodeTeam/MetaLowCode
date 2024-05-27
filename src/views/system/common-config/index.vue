@@ -504,6 +504,9 @@ const onSubmit = async () => {
         }
         confData.wxWorkSetting.nodeRole = confData.wxWorkNodeRole;
     }
+    if(!confData.wxWorkSetting){
+        confData.wxWorkSetting = {};
+    }
     // 重新赋值企业微信集成开关
     confData.wxWorkSetting.openStatus = confData.wxWorkOpen;
     loading.value = true;;
