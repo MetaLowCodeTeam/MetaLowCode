@@ -72,6 +72,7 @@
 							:cutTab="cutTab"
 							:tabs="detailDialog.tab"
 							:entityId="detailId"
+                            @closeDialog="closeDialog"
 						/>
 					</div>
 				</el-col>
@@ -419,6 +420,8 @@ let isFullSceen = ref(false);
 const onFullSceen = () => {
 	isFullSceen.value = !isFullSceen.value;
 };
+
+
 
 // 暴露方法给父组件调用
 defineExpose({

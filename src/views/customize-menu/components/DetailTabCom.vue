@@ -141,6 +141,7 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     tabs: { type: Object, default: () => {} },
 });
+const emits = defineEmits(['closeDialog'])
 const $API = inject("$API");
 
 watch(
@@ -295,6 +296,7 @@ const goPath = () => {
         },
         quickFilter: quickQueryVal.value,
     });
+    emits("closeDialog")
 };
 
 // 分页

@@ -258,7 +258,8 @@ import {
     inject, 
     reactive, 
     onMounted, 
-    onUnmounted 
+    onUnmounted,
+    onActivated
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
@@ -356,8 +357,10 @@ let addConf = reactive({});
 
 let TableRef = ref("");
 
+let isMounted = ref(false);
+
 onBeforeMount(() => {
-    let routerEntityname = router.currentRoute.value.params?.entityname;
+    let routerEntityname = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
     if (routerEntityname) {
         entityCode.value = allEntityCode.value[routerEntityname];
         entityName.value = routerEntityname;
@@ -381,6 +384,7 @@ onMounted(()=>{
 			"mousewheel",
 			scrollBehavior
 		);
+    isMounted.value = true;
 })
 
 
@@ -750,14 +754,7 @@ const commonGroupFilterNodeClick = (e) => {
 let sliceTable = ref([]);
 
 const getTableList = async () => {
-    if (
-        routerParams.value.path &&
-        routerParams.value.path == router.currentRoute.value.path
-    ) {
-        quickQuery.value = routerParams.value.quickFilter;
-        builtInFilter.value = routerParams.value.filter;
-        isDataFilter.value = true;
-    }
+  
     pageLoading.value = true;
     let param = {
         mainEntity: entityName.value,
@@ -866,8 +863,26 @@ const changeColumnShow = (type) => {
 };
 
 /**
- *
+ * 缓存页面后依旧调用
  */
+ onActivated(() => {
+    if(isMounted.value){
+        isMounted.value = false;
+    }else {
+        if (
+            routerParams.value.path &&
+            routerParams.value.path == router.currentRoute.value.path
+        ) {
+            quickQuery.value = routerParams.value.quickFilter;
+            builtInFilter.value = routerParams.value.filter;
+            isDataFilter.value = true;
+        }
+        getTableList();
+    }
+ 
+})
+
+
 </script>
 <style lang='scss' scoped>
 div {
