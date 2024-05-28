@@ -12,6 +12,7 @@ import checkTagOptionValueTypeEditor
 import onRecordSelectedEditor
 	from "@/views/system/form-design/extension/property-editor/onRecordSelected-editor.vue";
 
+import searchDialogWidthEditor from '@/views/system/form-design/extension/property-editor/reference-searchDialogWidth-editor.vue';
 import referenceFillBackConfigEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackConfig-editor.vue';
 import referenceFillBackEnabledEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackEnabled-editor.vue';
 
@@ -27,10 +28,10 @@ export const loadExtensionWidgets = (app) => {
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
 	app.component('check-tag-optionValueType-editor', checkTagOptionValueTypeEditor)
 
-	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
-    PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
+	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
+	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)
-
+	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
 
 	//注册扩展字段组件
 	registerFieldWidgets(app)

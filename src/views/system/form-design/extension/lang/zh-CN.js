@@ -9,6 +9,7 @@ export default {
         setting: {
             //
             fillBackBtnText: "回填设置",
+			searchDialogWidth: "搜索弹窗宽度",
         },
 
     }

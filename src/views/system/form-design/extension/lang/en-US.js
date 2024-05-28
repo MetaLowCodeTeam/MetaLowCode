@@ -8,7 +8,8 @@ export default {
 
         setting: {
             //
-            fillBackBtnText: "settingFillBack",
+            fillBackBtnText: "Fill Back Setting",
+			searchDialogWidth: "Width Of Search Dialog",
         },
 
     }
