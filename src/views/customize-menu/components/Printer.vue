@@ -4,7 +4,7 @@
         <div class="printer-content" v-loading="loading">
             <div style="font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 20px;">{{ printerTitle }}</div>
             <div class="v-from-box">
-                <v-form-render v-if="haveLayoutJson" :option-data="optionData" ref="vFormRef" />
+                <v-form-render v-if="haveLayoutJson" :option-data="optionData" :global-dsv="globalDsv" ref="vFormRef" />
             </div>
         </div>
     </div>
@@ -41,6 +41,7 @@ onMounted(async () => {
 
 let vFormRef = ref();
 let fromBoxRef = ref();
+let globalDsv = ref({});
 // 加载vform表单
 const initVformCom = async () => {
     loading.value = true;

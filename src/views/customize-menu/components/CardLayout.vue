@@ -21,7 +21,7 @@ const props = defineProps({
 const vFormRef = ref();
 const optionData = reactive({});
 const formData = reactive();
-const globalDsv = reactive({});
+const globalDsv = ref({});
 onMounted(() => {
     if (props.layoutJson) {
 		globalDsv.value.formStatus = 'read'
