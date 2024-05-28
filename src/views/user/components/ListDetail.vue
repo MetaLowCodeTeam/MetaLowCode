@@ -57,8 +57,9 @@
         @onConfirm="onRefresh"
         :isTeam="detailEntity == 'Team'"
         :isUser="detailEntity == 'User'"
-        :nameFieldName="detailEntity == 'User' ? 'UserName' : 'TeamName'"
+        :nameFieldName="detailEntity == 'User' ? 'userName' : 'teamName'"
     />
+    
     <!-- 重置密码 -->
     <ml-dialog title="重置密码" v-model="resetPasswordDialogIsShow" appendToBody width="450px">
         <el-input v-model="newPassword" placeholder="输入密码" clearable>
