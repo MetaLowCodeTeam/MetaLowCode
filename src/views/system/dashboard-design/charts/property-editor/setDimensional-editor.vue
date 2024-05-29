@@ -10,9 +10,11 @@
                         <div class="input-box">
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
+                                    v-model="draggableDimension"
                                     class="draggable-box"
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimension')"
+                                    @end="onDraggableEnd('dimension')"
                                 >
                                     <DimensionCom
                                         v-model="dimension"
@@ -28,9 +30,11 @@
                         <div class="input-box">
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
+                                    v-model="draggableDimensionRow"
                                     class="draggable-box"
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimensionRow')"
+                                    @end="onDraggableEnd('dimensionRow')"
                                 >
                                     <DimensionCom
                                         v-model="dimensionRow"
@@ -46,9 +50,11 @@
                         <div class="input-box">
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
+                                    v-model="draggableDimensionCol"
                                     class="draggable-box"
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'dimensionCol')"
+                                    @end="onDraggableEnd('dimensionCol')"
                                 >
                                     <DimensionCom
                                         v-model="dimensionCol"
@@ -64,9 +70,11 @@
                         <div class="input-box">
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
+                                    v-model="draggableMetrics"
                                     class="draggable-box"
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'metrics')"
+                                    @end="onDraggableEnd('metrics')"
                                 >
                                     <DimensionCom
                                         v-model="metrics"
@@ -88,9 +96,11 @@
                         <div class="input-box">
                             <el-scrollbar max-height="132px">
                                 <VueDraggableNext
+                                    v-model="draggableShowFields"
                                     class="draggable-box"
                                     :group="{ name: 'list', pull: false}"
                                     @add="(e) => addCom(e,'showFields')"
+                                    @end="onDraggableEnd('showFields')"
                                 >
                                     <DimensionCom
                                         v-model="showFields"
@@ -156,6 +166,8 @@ const props = defineProps({
 
 const $ElMessage = inject("$ElMessage");
 const emits = defineEmits(["update:optionModel"]);
+
+let myOptionModel = ref({});
 // // 记录元数据
 // let meteOption = ref({});
 
@@ -181,18 +193,45 @@ let dimensionCol = ref([]);
 let metrics = ref([]);
 // 显示字段
 let showFields = ref([]);
+
+// 拖拽维度
+let draggableDimension = ref([]);
+// 拖拽维度行
+let draggableDimensionRow = ref([]);
+// 拖拽维度列
+let draggableDimensionCol = ref([]);
+// 拖拽指标
+let draggableMetrics = ref([]);
+// 拖拽显示字段
+let draggableShowFields = ref([]);
+
 // 初始化纬度、指标
 const initDimensional = () => {
+    myOptionModel.value = props.optionModel;
     chartType.value = props.selectedWidget.type;
     dimension.value = props.optionModel.setDimensional?.dimension || [];
     metrics.value = props.optionModel.setDimensional?.metrics || [];
     showFields.value = props.optionModel.setDimensional?.showFields || [];
     dimensionRow.value = props.optionModel.setDimensional?.dimensionRow || [];
     dimensionCol.value = props.optionModel.setDimensional?.dimensionCol || [];
+    // 初始化拖拽绑定数据
+    initDraggableModel();
     nextTick(() => {
         setItemBoxHeight();
     });
 };
+
+const initDraggableModel = () => {
+    draggableDimension.value = cloneDeep(dimension.value)
+    draggableDimensionRow.value = cloneDeep(dimensionRow.value)
+    draggableDimensionCol.value = cloneDeep(dimensionCol.value)
+    draggableMetrics.value = cloneDeep(metrics.value)
+    draggableShowFields.value = cloneDeep(showFields.value)
+}
+
+const cloneDeep = (data) => {
+    return JSON.parse(JSON.stringify(data))
+}
 
 /**
  * 所有字段
@@ -210,6 +249,8 @@ const fieldsAdd = reactive({
     type: "N",
     // 排序
     sort: "",
+    // 时间格式化处理
+    dateFormat: 1,
     // 汇总方式
     calcMode: "count",
     // 千分符
@@ -303,36 +344,40 @@ const setItemBoxHeight = () => {
  * 拖拽
  */
 
+ 
 // 新加字段
 const addCom = (e, target) => {
     let cutField = { ...fields.value[e.oldIndex] };
-    let checkHasDimensionRow = dimensionRow.value.filter(
-        (el) => el.fieldLabel == cutField.fieldLabel
-    );
-    let checkHasDimensionCol = dimensionCol.value.filter(
-        (el) => el.fieldLabel == cutField.fieldLabel
-    );
-    let checkHasDimension = dimension.value.filter(
-        (el) => el.fieldLabel == cutField.fieldLabel
-    );
+    // let checkHasDimensionRow = dimensionRow.value.filter(
+    //     (el) => el.fieldLabel == cutField.fieldLabel
+    // );
+    // let checkHasDimensionCol = dimensionCol.value.filter(
+    //     (el) => el.fieldLabel == cutField.fieldLabel
+    // );
+    // let checkHasDimension = dimension.value.filter(
+    //     (el) => el.fieldLabel == cutField.fieldLabel
+    // );
     let checkHasMetrics = metrics.value.filter(
         (el) => el.fieldLabel == cutField.fieldLabel
     );
     let checkHasShowFields = showFields.value.filter(
         (el) => el.fieldLabel == cutField.fieldLabel
     );
-    if (checkHasDimension.length > 0) {
-        $ElMessage.warning("添加失败，同一字段不能重复添加维度");
-        return;
+    if(target == 'dimensionRow' || target == 'dimensionCol' || target == 'dimension'){
+        checkHasMetrics = [];
     }
-    if (checkHasDimensionRow.length > 0) {
-        $ElMessage.warning("添加失败，同一字段不能重复添加维度行");
-        return;
-    }
-    if (checkHasDimensionCol.length > 0) {
-        $ElMessage.warning("添加失败，同一字段不能重复添加维度列");
-        return;
-    }
+    // if (checkHasDimension.length > 0) {
+    //     $ElMessage.warning("添加失败，同一字段不能重复添加维度");
+    //     return;
+    // }
+    // if (checkHasDimensionRow.length > 0) {
+    //     $ElMessage.warning("添加失败，同一字段不能重复添加维度行");
+    //     return;
+    // }
+    // if (checkHasDimensionCol.length > 0) {
+    //     $ElMessage.warning("添加失败，同一字段不能重复添加维度列");
+    //     return;
+    // }
     if (checkHasMetrics.length > 0) {
         $ElMessage.warning("添加失败，同一字段不能重复添加指标");
         return;
@@ -403,6 +448,8 @@ const addCom = (e, target) => {
     else if (target == "dimensionCol") {
         dimensionCol.value.push(cutField);
     }
+    // 初始化拖拽绑定数据
+    initDraggableModel();
 };
 const onSort = (e) => {
     dimension.value.forEach((el) => {
@@ -421,7 +468,37 @@ const onSort = (e) => {
         el.sort = "";
     });
     e.tag.sort = e.target;
+    // 初始化拖拽绑定数据
+    initDraggableModel();
 };
+
+const onDraggableEnd = (target) => {
+    switch (target) {
+        case "dimension":
+            dimension.value = cloneDeep(draggableDimension.value)
+            myOptionModel.value.setDimensional.dimension = dimension.value;
+            break;
+        case "dimensionRow":
+            dimensionRow.value = cloneDeep(draggableDimensionRow.value)
+            myOptionModel.value.setDimensional.dimensionRow = dimensionRow.value;
+            break;
+        case "dimensionCol":
+            dimensionCol.value = cloneDeep(draggableDimensionCol.value)
+            myOptionModel.value.setDimensional.dimensionCol = dimensionCol.value;
+            break;
+        case "metrics":
+            metrics.value = cloneDeep(draggableMetrics.value)
+            myOptionModel.value.setDimensional.metrics = metrics.value;
+            break;
+        case "showFields":
+            showFields.value = cloneDeep(draggableShowFields.value)
+            myOptionModel.value.setDimensional.showFields = showFields.value;
+            break;
+    
+        default:
+            break;
+    }
+}
 
 // 维度是否显示
 const isShowDimension = () => {

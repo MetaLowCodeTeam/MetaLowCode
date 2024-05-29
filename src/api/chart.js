@@ -44,6 +44,11 @@ const formatItem = (list, target) => {
                 numericUnits: el.showNumericUnits && el.numericUnits != '无' ? el.numericUnits : "",
             }
         }
+        if(target == "latitude"){
+            if(el.fieldType == "DateTime" || el.fieldType == "Date"){
+                newItem.dateFormat = el.dateFormat
+            }
+        }
         return { ...newItem }
     })
     return items

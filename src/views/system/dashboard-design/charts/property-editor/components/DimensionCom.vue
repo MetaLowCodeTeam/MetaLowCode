@@ -16,6 +16,37 @@
         >
             <div class="popover-div" v-if="!tag.showEdit">
                 <div class="popover-item" @click="editAlias(tag)">修改显示名</div>
+                <!-- 时间格式化 -->
+                <el-popover
+                    placement="right"
+                    :width="60"
+                    trigger="hover"
+                    popper-class="fields-popover"
+                    ref="dateModeRefs"
+                    v-if="chartType != 'listTable' && isDimension && (tag.type == 'DateTime' || tag.type == 'Date')"
+                >
+                    <div class="popover-div">
+                        <template v-for="(dateOp, dateOpInx) of dateModeOps" :key="dateOpInx">
+                            <div
+                                class="popover-item"
+                                :class="{'is-active': tag.dateFormat == dateOp.value}"
+                                @click="onDateModeChange(tag, dateOp.value, inx)"
+                            >
+                                {{ dateOp.label }}
+                            </div>
+                        </template>
+                    </div>
+                    <template #reference>
+                        <div class="popover-item">
+                            时间格式化
+                            <span style="position: relative;top:2px;float: right;">
+                                <el-icon>
+                                    <ElIconArrowRight />
+                                </el-icon>
+                            </span>
+                        </div>
+                    </template>
+                </el-popover>
                 <!-- 汇总方式 -->
                 <el-popover
                     placement="right"
@@ -102,13 +133,14 @@
                             <ElIconArrowDown />
                         </el-icon>
                     </span>
-                    <SvgIcon class="sort-icon ml-3" v-if="tag.sort=='ASC'" icon-name="fields-asc" />
+                    <SvgIcon class="sort-icon ml-3" v-if="tag.sort == 'ASC'" icon-name="fields-asc" />
                     <SvgIcon
                         class="sort-icon ml-3"
-                        v-if="tag.sort=='DESC'"
-                        icon-name="fields-desc"
-                    />
-                    {{ tag.alias }}{{ !isDimension ? "("+CalcMode[tag.calcMode]+")" : '' }}
+                        v-if="tag.sort == 'DESC'"
+                        :icon-name="'fields-desc'"
+                    >
+                    </SvgIcon>
+                    {{ tag.alias }}{{ getFormatText(tag) }}
                 </span>
             </template>
         </el-popover>
@@ -204,6 +236,45 @@ const CalcMode = {
     max: "最大值",
     min: "最小值",
 };
+
+const DateMode = reactive({
+    1: "年月日",
+    2: "年季度",
+    3: "年月",
+    4: "年",
+    5: "月",
+    6: "日"
+});
+
+let dateModeOps = ref([
+    {
+        label: "年月日",
+        value: 1
+    },
+    {
+        label: "年季度",
+        value: 2
+    },
+    {
+        label: "年月",
+        value: 3
+    },
+    {
+        label: "年",
+        value: 4
+    },
+    {
+        label: "月",
+        value: 5
+    },
+    {
+        label: "日",
+        value: 6
+    },
+])
+
+
+
 const emits = defineEmits(["update:modelValue", "onSort"]);
 
 let list = ref([]);
@@ -251,6 +322,9 @@ let calcMode = ref([
 
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 
+
+
+
 onMounted(() => {
     list.value = props.modelValue;
 });
@@ -293,6 +367,17 @@ let options = ref([
     },
 ]);
 
+// 获取格式化文本
+const getFormatText = (tag) => {
+    if(!props.isDimension){
+        return "("+ CalcMode[tag.calcMode] + ")"
+    }else {
+        if(tag.type == "DateTime" || tag.type == "Date"){
+            return "("+ DateMode[tag.dateFormat] + ")"
+        }
+    }
+}
+
 // 删除字段
 const delCom = (inx) => {
     list.value.splice(inx, 1);
@@ -324,6 +409,16 @@ const onCalcModeChange = (tag, target, inx) => {
     tag.calcMode = target;
     emits("update:modelValue", list.value);
 };
+
+// 时间格式化
+let dateModeRefs = ref();
+const onDateModeChange = (tag, target, inx) => {
+    dateModeRefs.value[inx].hide();
+    sortPopoverRefs.value[inx].hide();
+    tag.dateFormat = target;
+    emits("update:modelValue", list.value);
+};
+
 // 字段排序
 const onSort = (tag, target, inx) => {
     fieldsPopoverRefs.value[inx].hide();
