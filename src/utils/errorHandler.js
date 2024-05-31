@@ -21,8 +21,6 @@ export default (error, vm)=>{
     console.warn(`[ML error]: ${error}`);
 	console.error(error); 
 	var errorName = errorMap[error.name] || "未知错误"
-
-	localStorage.setItem('errorHandlerMsg',error)
 	//throw error;
 
 	vm.$nextTick(() => {
