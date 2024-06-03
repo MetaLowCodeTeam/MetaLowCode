@@ -240,9 +240,23 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     let topNavMenuList = ref([]);
     // 设置顶部导航数据
     const setTopNavigation = (data) => {
+        // let 
         let formatConfig = data.config ? JSON.parse(data.config) : {};
-        topNavigation.value = { ...data };
         let navList = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];
+        topNavigation.value = { ...data };
+        // 如果没有顶部导航配置权限
+        if(!tool.checkRole('r6007')){
+            // 取所有导航ID
+            let getAllNavId = navigationList.value.map(el => el.layoutConfigId);
+            let newList = [];
+            // 遍历顶部导航，把自定义导航和存在于所有导航里的导航给取出来
+            navList.forEach(el => {
+                if(el.type != 1 || getAllNavId.includes(el.layoutConfigId)){
+                    newList.push(el)
+                }
+            })
+            navList = JSON.parse(JSON.stringify(newList));
+        }
         topNavigation.value.navList = JSON.parse(JSON.stringify(navList))
         topNavMenuList.value = navList;
         topNavMenuList.value.forEach(el => {
