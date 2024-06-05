@@ -209,7 +209,7 @@
                     <div v-else-if="item.opCom =='referenceSearch'">
                         <el-input v-model="item.value2" readonly :class="{'is-error':item.isError}">
                             <template #append>
-                                <el-button @click="openReferenceDialog">
+                                <el-button @click="openReferenceDialog(item)">
                                     <el-icon>
                                         <ElIconSearch />
                                     </el-icon>
@@ -217,9 +217,9 @@
                             </template>
                         </el-input>
                         <el-dialog
-                            title="请选择"
+                            title="请选择1"
                             class="reference-dialog"
-                            v-model="showReferenceDialogFlag"
+                            v-model="item.showReferenceDialogFlag"
                             append-to-body
                             width="520"
                             v-if="formatEntityName"
@@ -318,8 +318,6 @@ export default {
             // 所有部门
             departmentList: [],
             conditionsConfig: {},
-            // 条件组件
-            showReferenceDialogFlag: false,
             // 格式化的实体名称
             formatEntityName: "",
         };
@@ -339,13 +337,13 @@ export default {
         this.op_type = { ...this.conditionsConfig.op_type };
     },
     methods: {
-        openReferenceDialog() {
-            this.showReferenceDialogFlag = true;
+        openReferenceDialog(item) {
+            item.showReferenceDialogFlag = true;
         },
         setReferRecord(event, item) {
             item.value = event.id;
             item.value2 = event.label;
-            this.showReferenceDialogFlag = false;
+            item.showReferenceDialogFlag = false;
         },
         async getFieldSet() {
             const { queryEntityNameByCode } = useCommonStore();
@@ -395,6 +393,7 @@ export default {
             let conditionList = [];
             this.fieldList.forEach((el) => {
                 this.conditionConf.items.forEach((subEl) => {
+                    el.showReferenceDialogFlag = false;
                     if (el.fieldName === subEl.fieldName) {
                         let newItem = Object.assign({ ...el }, subEl);
 						this.getOpCom(newItem);
