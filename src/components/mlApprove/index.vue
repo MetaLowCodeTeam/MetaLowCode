@@ -495,6 +495,7 @@ const saveComplexFlow = async (dealWithType) => {
             copyUserList: form.value.currentCCToUserList,
             nextUserIds: form.value.nextApprovalUserList,
             targetKey: dealWithType == 3 ? rejectNode.value : "",
+            signatureImage: esignConf.value.resultImg,
         },
         // 转审 或者 加签
         nodeRoleList:

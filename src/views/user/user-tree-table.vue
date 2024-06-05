@@ -434,174 +434,120 @@ export default {
             }
 
             this.$confirm("是否删除该用户?", "删除确认")
-                .then(() => {
-                    deleteUserById(row.userId)
-                        .then((res) => {
-                            if (res && res.data) {
-                                this.$message.success("删除成功");
-                                this.onRefresh();
-                            }
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                message: res.message,
-                                type: "error",
-                            });
-                        });
+                .then(async () => {
+                    let res = await deleteUserById(row.userId);
+                    if (res && res.data) {
+                        this.$message.success("删除成功");
+                        this.onRefresh();
+                    }
                 })
                 .catch(() => {
                     this.$message.info("取消删除");
                 });
         },
-        initTreeData() {
-            getDepartmentTree()
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                        return;
-                    }
-
-                    this.treeData = res.data.data;
-                })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                });
+        async initTreeData() {
+            let res = await getDepartmentTree()
+            if(res){
+                this.treeData = res.data.data;
+            }
         },
 
         buildLayoutObj() {
             return createLayoutObj(eventBus);
         },
 
-        addDepartment(node, data) {
-            createRecord("Department")
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                        return;
-                    }
-
-                    if (!!res.data && !!res.data.layoutJson) {
-                        this.curDepartmentId = null;
-                        this.departmentFormState = FormState.NEW;
-                        this.showDepartmentFormDialogFlag = true;
-                        this.departmentDsv["formEntity"] = "Department";
-						this.departmentDsv["formStatus"] = "new";
+        async addDepartment(node, data) {
+            let res = await createRecord("Department");
+            if (res) {
+                if (!!res.data && !!res.data.layoutJson) {
+                    this.curDepartmentId = null;
+                    this.departmentFormState = FormState.NEW;
+                    this.showDepartmentFormDialogFlag = true;
+                    this.departmentDsv["formEntity"] = "Department";
+                    this.departmentDsv["formStatus"] = "new";
+                    this.$nextTick(() => {
+                        this.$refs.departmentFormRef.setFormJson(res.data.layoutJson);
+                        const departmentFormData = {
+                            parentDepartmentId: {
+                                id: node.data.id,
+                                name: node.data.label,
+                            },
+                        };
                         this.$nextTick(() => {
-                            this.$refs.departmentFormRef.setFormJson(
-                                res.data.layoutJson
+                            this.$refs.departmentFormRef.setFormData(
+                                departmentFormData
                             );
-                            const departmentFormData = {
-                                parentDepartmentId: {
-                                    id: node.data.id,
-                                    name: node.data.label,
-                                },
-                            };
-                            this.$nextTick(() => {
-                                this.$refs.departmentFormRef.setFormData(
-                                    departmentFormData
-                                );
-                            });
                         });
-                    } else {
-                        this.$message({
-                            message: "加载表单布局出错",
-                            type: "error",
-                        });
-                    }
-                })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                });
+                    });
+                } else {
+                    this.$message({
+                        message: "加载表单布局出错",
+                        type: "error",
+                    });
+                }
+            }
         },
 
-        editDepartment(node, data) {
+        async editDepartment(node, data) {
             if (node.data.id === "0000022-00000000000000000000000000000001") {
                 this.$message.info("根部门不可编辑！");
                 return;
             }
 
             this.curDepartmentId = node.data.id;
-            updateRecord("Department", this.curDepartmentId)
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                        return;
-                    }
-
-                    if (!!res.data && !!res.data.layoutJson) {
-                        this.departmentFormState = FormState.EDIT;
-                        this.showDepartmentFormDialogFlag = true;
-                        this.departmentDsv["formEntity"] = "Department";
-						this.departmentDsv["formStatus"] = "edit";
+            let res = await updateRecord("Department", this.curDepartmentId);
+            if (res) {
+                if (!!res.data && !!res.data.layoutJson) {
+                    this.departmentFormState = FormState.EDIT;
+                    this.showDepartmentFormDialogFlag = true;
+                    this.departmentDsv["formEntity"] = "Department";
+                    this.departmentDsv["formStatus"] = "edit";
+                    this.$nextTick(() => {
+                        this.$refs.departmentFormRef.setFormJson(res.data.layoutJson);
                         this.$nextTick(() => {
-                            this.$refs.departmentFormRef.setFormJson(
-                                res.data.layoutJson
-                            );
-                            this.$nextTick(() => {
-                                const parentDpt =
-                                    this.$refs.departmentFormRef.getWidgetRef(
-                                        "parentDepartmentId"
-                                    );
-                                !!parentDpt && parentDpt.setDisabled(true);
-                                if (
-                                    node.data.id ===
-                                    "0000022-00000000000000000000000000000001"
-                                ) {
-                                    !!parentDpt && parentDpt.setRequired(false);
-                                }
-                                this.$refs.departmentFormRef.setFormData(
-                                    res.data.formData
+                            const parentDpt =
+                                this.$refs.departmentFormRef.getWidgetRef(
+                                    "parentDepartmentId"
                                 );
-                            });
+                            !!parentDpt && parentDpt.setDisabled(true);
+                            if (
+                                node.data.id ===
+                                "0000022-00000000000000000000000000000001"
+                            ) {
+                                !!parentDpt && parentDpt.setRequired(false);
+                            }
+                            this.$refs.departmentFormRef.setFormData(res.data.formData);
                         });
-                    } else {
-                        this.$message({
-                            message: "加载表单布局出错",
-                            type: "error",
-                        });
-                    }
-                })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                });
+                    });
+                } else {
+                    this.$message({
+                        message: "加载表单布局出错",
+                        type: "error",
+                    });
+                }
+            }
         },
 
         saveDepartment() {
             this.$refs.departmentFormRef
                 .getFormData()
-                .then((formData) => {
+                .then(async (formData) => {
                     this.departmentFormModel = formData;
-                    saveDepartment(
+                    let res = await saveDepartment(
                         "Department",
-                        this.departmentFormState === FormState.NEW
-                            ? ""
-                            : this.curDepartmentId,
+                        this.departmentFormState === FormState.NEW ? "" : this.curDepartmentId,
                         this.departmentFormModel
-                    )
-                        .then((res) => {
-                            if (res.error != null) {
-                                this.$message({
-                                    message: res.error,
-                                    type: "error",
-                                });
-                                return;
-                            }
-
-                            this.departmentFormModel = res.data.formData;
-                            this.departmentLabelsModel = res.data.labelData;
-                            this.$message({
-                                message: "保存成功",
-                                type: "success",
-                            });
-                            this.showDepartmentFormDialogFlag = false;
-                            this.initTreeData();
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                message: res.message,
-                                type: "error",
-                            });
+                    );
+                    if (res) {
+                        this.departmentFormModel = res.data.formData;
+                        this.departmentLabelsModel = res.data.labelData;
+                        this.$message({
+                            message: "保存成功",
+                            type: "success",
                         });
+                        this.showDepartmentFormDialogFlag = false;
+                        this.initTreeData();
+                    }
                 })
                 .catch((err) => {
                     this.$message({ message: "数据校验失败", type: "error" });
@@ -616,27 +562,12 @@ export default {
 
             let dptId = node.data.id;
             this.$confirm("是否删除该部门?", "删除确认")
-                .then(() => {
-                    deleteDepartmentById(dptId)
-                        .then((res) => {
-                            if (res.error != null) {
-                                this.$message({
-                                    message: res.error,
-                                    type: "error",
-                                });
-                                return;
-                            }
-                            if(res?.data && res.data?.code == 200){
-                                this.$message.success("删除成功");
-                                this.initTreeData();
-                            }
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                message: res.message,
-                                type: "error",
-                            });
-                        });
+                .then(async () => {
+                    let res = await deleteDepartmentById(dptId);
+                    if (res?.data && res.data?.code == 200) {
+                        this.$message.success("删除成功");
+                        this.initTreeData();
+                    }
                 })
                 .catch(() => {
                     this.$message.info("取消删除");

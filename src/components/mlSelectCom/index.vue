@@ -1,11 +1,23 @@
 <template>
     <!--  -->
+    <div 
+        class="ml-select is-disabled" 
+        v-if="disabled"
+    >
+        {{ getItemText() }}
+        <span class="ml-select-icon">
+            <el-icon>
+                <ElIconArrowDown />
+            </el-icon>
+        </span>
+    </div>
     <el-tooltip
         ref="tooltipRef"
         placement="bottom"
         effect="light"
         trigger="click"
         popper-class="ml-select-popper"
+        v-else
     >
         <template #content>
             <div
@@ -16,7 +28,10 @@
                 @click="selectedItem(op)"
             >{{ op.label }}</div>
         </template>
-        <div class="ml-select" v-if="!isShowSlots">
+        <div 
+            class="ml-select" 
+            v-if="!isShowSlots"
+        >
             {{ getItemText() }}
             <span class="ml-select-icon">
                 <el-icon>
@@ -36,6 +51,7 @@ const props = defineProps({
     modelValue: null,
     options: { type: Array, default: () => [] },
     noFilterText: { type: String, default: "无权限" },
+    disabled: { type: Boolean, default: false },
 });
 const emits = defineEmits(["update:modelValue","onChange"]);
 let selectValue = ref("");
@@ -91,9 +107,14 @@ const selectedItem = (op) => {
     font-size: 13px;
     border-radius: 4px;
     padding: 0 5px;
+    // background: ;
     .ml-select-icon {
         float: right;
         margin-top: 2px;
+    }
+    &.is-disabled {
+        background: #f5f7fa;
+        color: #c0c2c8;
     }
 }
 

@@ -86,6 +86,11 @@ export function queryEntityFields(entityCode, queryReference, queryReserved, fir
     return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved, firstReference })
 }
 
+// 列显示
+export function queryEntityListableFields(entityCode) {
+    return http.get('/crud/queryEntityListableFields', { entityCode})
+}
+
 /**
  * 分配
  */

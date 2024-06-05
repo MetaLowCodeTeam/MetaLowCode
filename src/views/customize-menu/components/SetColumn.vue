@@ -3,6 +3,7 @@
         :title="editColumnDialog.chosenListType != 'BATCH_UPDATE' ? '设置列显示' : '批量编辑设置'"
         v-model="isShow"
         width="650px"
+        appendToBody
     >
         <div v-loading="loading">
             <div class="clearfix">
@@ -201,7 +202,7 @@
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
 import { watch, ref, onMounted, inject, reactive } from "vue";
-import { queryEntityFields } from "@/api/crud";
+import { queryEntityListableFields } from "@/api/crud";
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -387,11 +388,8 @@ const delColumn = (column, inx) => {
 const getAllColumn = async () => {
     let { config, entityCode, chosenListType } = props.editColumnDialog;
     loading.value = true;
-    let res = await queryEntityFields(
+    let res = await queryEntityListableFields(
         entityCode,
-        chosenListType != "BATCH_UPDATE",
-        false,
-        true
     );
     if (res) {
         showColumn.value = [];

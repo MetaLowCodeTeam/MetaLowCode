@@ -7,7 +7,12 @@
         :show-close="false"
         @close="close"
         :close-on-click-modal="closeOnClickModal"
-        :class="{'not-header':notHeader,'isFullSceen':isFullSceen}"
+        :class="{
+            'not-header':notHeader,
+            'isFullSceen':isFullSceen,
+            'has-footer': isShowFooter,
+            'body-no-padding':bodyNoPadding
+        }"
         :top="isFullSceen ? '0' : top"
         v-if="isShow"
         :draggable="draggable"
@@ -51,8 +56,10 @@ const props = defineProps({
     showFullSceen: { type: Boolean, default: false },
     // 自动全屏
     autoFullScreen: { type: Boolean, default: false },
+    // body没有内边距
+    bodyNoPadding: { type: Boolean, default: false },
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", 'fullSceenChange']);
 watch(
     () => props.modelValue,
     () => {
@@ -88,6 +95,7 @@ const close = () => {
 // 全屏切换
 const onFullSceen = () => {
     isFullSceen.value = !isFullSceen.value;
+    emit('fullSceenChange', isFullSceen.value)
 };
 </script>
 

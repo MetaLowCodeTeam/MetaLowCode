@@ -319,6 +319,11 @@ body .tox-tinymce-aux {
 		line-height: 50px;
 		padding-right: 20px;
 	}
+    &.body-no-padding {
+        .el-dialog__body {
+			padding: 0;
+		}
+    }
 	&.not-header {
 		.el-dialog__header {
 			height: 0;
@@ -330,8 +335,15 @@ body .tox-tinymce-aux {
 	&.isFullSceen {
 		height: 100vh;
 		margin-bottom: 0;
+        .el-dialog__body {
+            height: calc(100% - 60px);
+        }
+        &.has-footer {
+            .el-dialog__body {
+                height: calc(100% - 120px);
+            }
+        }
 		.el-dialog__body {
-			height: calc(100vh - 120px);
 			.fullsceen-man {
 				max-height: 100%;
 			}

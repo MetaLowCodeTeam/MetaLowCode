@@ -161,6 +161,11 @@
                     </el-tooltip>
                 </div>
             </div>
+            <!-- 手写签名 -->
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
+                <div class="lable-title mb-3">高级扩展功能</div>
+                <el-checkbox v-model="myFormData.autograph" label="手写签名"/>
+            </div>
         </el-collapse-item>
         <!-- 事件设置 -->
         <el-collapse-item name="2">
