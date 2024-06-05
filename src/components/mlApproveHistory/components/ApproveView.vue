@@ -71,6 +71,10 @@ const loadFlowDesignerFn = async () => {
             mflData.nodes.forEach(el => {
                 allNodeId.push(el.id)
             })
+            const { editConfigModel } = lf.graphModel;
+			editConfigModel.updateEditConfig({
+				isSilentMode: true,
+			});
 			// 获取要渲染的数据
 			let hisActivityInsList = res.data.hisActivityInsList || [];
 			// 遍历要渲染的数据
@@ -85,10 +89,6 @@ const loadFlowDesignerFn = async () => {
                     }
                     setProperties(lf, el.activityType, el.activityId, properties, true);
                 }
-			});
-			const { editConfigModel } = lf.graphModel;
-			editConfigModel.updateEditConfig({
-				isSilentMode: true,
 			});
 		});
 	}
@@ -152,7 +152,9 @@ const getByIdFunc = (type) => {
  * @param {*} properties 节点自定义属性
  */
 const setProperties = (lf, type, id, properties, isAnimatio) => {
-	lf[getByIdFunc(type)](id).setProperties(properties);
+    if(lf[getByIdFunc(type)](id)){
+        lf[getByIdFunc(type)](id).setProperties(properties);
+    }
 	// 如果是线
 	if (type == "sequenceFlow" && isAnimatio) {
 		lf.openEdgeAnimation(id);
