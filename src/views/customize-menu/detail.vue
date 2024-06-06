@@ -460,7 +460,7 @@ defineExpose({
 	}
 }
 .detail-main {
-	padding: 20px;
+	// padding: 20px;
 	font-size: 14px;
 	.detail-right {
 		.group-el-button {
