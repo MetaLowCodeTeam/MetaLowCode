@@ -1,74 +1,73 @@
 <template>
-    <template v-if="showApprovalRelated">
-        <!-- 未提交 -->
-        <template v-if="myApproval.approvalStatus == 0">
-            <el-row>
-                <el-button
-                    type="success"
-                    plain
-                    v-if="myApproval.startApproval"
-                    @click="openDialog('提交审批')"
-                >提交审批</el-button>
-            </el-row>
-        </template>
-        <!-- 审核中 -->
-        <template v-if="myApproval.approvalStatus == 1">
-            <el-row>
-                <el-button
-                    type="success"
-                    plain
-                    v-if="myApproval.imApproval"
-                    @click="openApproveDialog"
-                >审批</el-button>
-            </el-row>
-            <el-row>
-                <el-button 
-                    type="success" 
-                    plain 
-                    @click="openHistoryDialog"
-                    :loading="approveHistoryLoading"
-                >
-                    审批历史
-                </el-button>
-            </el-row>
-        </template>
-        <!-- 已驳回 -->
-        <template v-if="myApproval.approvalStatus == 2 || myApproval.approvalStatus == 4">
-            <el-row>
-                <el-button type="success" plain @click="openDialog('提交审批')">提交审批</el-button>
-            </el-row>
-            <el-row>
-                <el-button 
-                    type="success" 
-                    plain 
-                    @click="openHistoryDialog"
-                    :loading="approveHistoryLoading"
-                >
-                    审批历史
-                </el-button>
-            </el-row>
-        </template>
-        <!-- 已完成 -->
-        <template v-if="myApproval.approvalStatus == 3">
-            <el-row>
-                <el-button
-                    type="success"
-                    plain
-                    @click="revokeApproval"
-                    v-if="$TOOL.checkRole('r6013')"
-                >撤销审批</el-button>
-            </el-row>
-            <el-row>
-                <el-button 
-                    type="success" 
-                    plain 
-                    @click="openHistoryDialog"
-                    :loading="approveHistoryLoading"
-                >
-                    审批历史
-                </el-button>
-            </el-row>
-        </template>
+    <div class="group-button-label">流程操作</div>
+    <!-- 未提交 -->
+    <template v-if="myApproval.approvalStatus == 0">
+        <el-row>
+            <el-button
+                type="success"
+                plain
+                v-if="myApproval.startApproval"
+                @click="openDialog('提交审批')"
+            >提交审批</el-button>
+        </el-row>
+    </template>
+    <!-- 审核中 -->
+    <template v-if="myApproval.approvalStatus == 1">
+        <el-row>
+            <el-button
+                type="success"
+                plain
+                v-if="myApproval.imApproval"
+                @click="openApproveDialog"
+            >审批</el-button>
+        </el-row>
+        <el-row>
+            <el-button 
+                type="success" 
+                plain 
+                @click="openHistoryDialog"
+                :loading="approveHistoryLoading"
+            >
+                审批历史
+            </el-button>
+        </el-row>
+    </template>
+    <!-- 已驳回 -->
+    <template v-if="myApproval.approvalStatus == 2 || myApproval.approvalStatus == 4">
+        <el-row>
+            <el-button type="success" plain @click="openDialog('提交审批')">提交审批</el-button>
+        </el-row>
+        <el-row>
+            <el-button 
+                type="success" 
+                plain 
+                @click="openHistoryDialog"
+                :loading="approveHistoryLoading"
+            >
+                审批历史
+            </el-button>
+        </el-row>
+    </template>
+    <!-- 已完成 -->
+    <template v-if="myApproval.approvalStatus == 3">
+        <el-row>
+            <el-button
+                type="success"
+                plain
+                @click="revokeApproval"
+                v-if="$TOOL.checkRole('r6013')"
+            >撤销审批</el-button>
+        </el-row>
+        <el-row>
+            <el-button 
+                type="success" 
+                plain 
+                @click="openHistoryDialog"
+                :loading="approveHistoryLoading"
+            >
+                审批历史
+            </el-button>
+        </el-row>
     </template>
     
     <!-- 审批弹框 -->
@@ -160,8 +159,8 @@ const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const props = defineProps({
     approvalStatus: { type: Object, default: () => {} },
-    // 是否现在这个按钮
-    showApprovalRelated:  { type: Boolean, default: false },
+    // 是否显示这个按钮
+    showApprovalRelated:  { type: Boolean, default: true },
 });
 const emits = defineEmits(["onSubmit","closeDialog"]);
 let myApproval = ref({});
