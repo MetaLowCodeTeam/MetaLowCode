@@ -217,7 +217,7 @@
                             </template>
                         </el-input>
                         <el-dialog
-                            title="请选择1"
+                            title="请选择"
                             class="reference-dialog"
                             v-model="item.showReferenceDialogFlag"
                             append-to-body
