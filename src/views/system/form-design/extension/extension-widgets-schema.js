@@ -69,7 +69,10 @@ export const referenceSchema = {
 		validationHint: '',
 		searchDialogWidth: '520px',  //搜索弹窗宽度
         fillBackEnabled: false,
+        // 表单回填
         fillBackConfig: [],
+        // 子表单回填
+        subFormFillBackConfig: [],
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

@@ -93,7 +93,7 @@
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import Detail from "@/views/customize-menu/detail.vue";
-
+import { queryById } from "@/api/crud";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
 export default {
@@ -219,6 +219,7 @@ export default {
 				id: recordObj.id,
 				name: recordObj.label,
 			};
+
 			this.handleChangeEvent(this.fieldModel);
 			this.handleRecordSelectedEvent(selectedRow);
 			this.doFillBack(recordObj, selectedRow);
@@ -226,7 +227,7 @@ export default {
 			this.showReferenceDialogFlag = false;
 		},
 
-		doFillBack(recordObj, selectedRow) {
+		async doFillBack(recordObj, selectedRow) {
 			// 判断是否启用回填
 			if (this.field.options.fillBackEnabled) {
 				let { fillBackConfig } = this.field.options;
@@ -254,13 +255,44 @@ export default {
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;
 						}
-
 						// 执行回填操作
 						this.getWidgetRef(targetFieldName).setValue(
 							selectedRow[el.sourceField]
 						);
 					}
 				});
+                let { subFormFillBackConfig } = this.field.options;
+                // 没有回填数据
+                if(subFormFillBackConfig.length < 1){
+                    return
+                }
+                let res = await queryById(recordObj.id);;
+                if(res){
+                    let resData = res.data || {};
+                    subFormFillBackConfig.forEach(el => {
+                        let subFormCom = this.getWidgetRef(el.targetWidget.name);
+                        if(el.fllBackItems){
+                            let subFormFllBackItems = [];
+                            resData[el.sourceWidget.entityName].forEach(fllBackEl => {
+                                let fllBackItem = {};
+                                el.fllBackItems.forEach(subEl => {
+                                    fllBackItem[subEl.targetField] = fllBackEl[subEl.sourceField];
+                                })
+                                subFormFllBackItems.push(fllBackItem)
+                            })
+                            // 如果是覆盖模式
+                            if(el.forceFillBack){
+                                subFormCom.setSubFormValues(subFormFllBackItems)
+                            }
+                            // 追加模式
+                            else {
+                                let subFormValues = subFormCom.getSubFormValues();
+                                subFormValues.push(...subFormFllBackItems);
+                                subFormCom.setSubFormValues(subFormValues);
+                            }
+                        }
+                    })
+                } 
 			}
 		},
 

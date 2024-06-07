@@ -86,6 +86,17 @@ export function queryEntityFields(entityCode, queryReference, queryReserved, fir
     return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved, firstReference })
 }
 
+/**
+ * 通用查询-获取实体字段
+ * @param {*} entityCodes 实体
+ * @param {*} queryReference 是否查询引用实体的字段（单引用）  true or false 默认 false
+ * @param {*} queryReserved 是否查询系统字段  true or false 默认 false
+ * @param {*} firstReference 是否查询引用字段（不包含引用实体字段）  true or false 默认 false
+ */
+export function queryEntityListFields(entityCodes, queryReference, queryReserved, firstReference) {
+    return http.post('/crud/queryEntityListFields', [...entityCodes], { params: { queryReference, queryReserved, firstReference } })
+}
+
 // 列显示
 export function queryEntityListableFields(entityCode) {
     return http.get('/crud/queryEntityListableFields', { entityCode})
