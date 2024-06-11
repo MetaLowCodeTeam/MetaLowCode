@@ -90,6 +90,8 @@ const loadFlowDesignerFn = async () => {
                     setProperties(lf, el.activityType, el.activityId, properties, true);
                 }
 			});
+
+            console.log(MetaFlowDesignerRef.value.getJsonData(),'MetaFlowDesignerRef.value.getJsonData')
 		});
 	}
 	loadingConf.loading = false;

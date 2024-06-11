@@ -267,6 +267,10 @@
 							<el-radio :label="1">嵌入式</el-radio>
 						</el-radio-group>
 					</div>
+                    <div class="mt-5" v-if="cutMenu.type == 1">
+                        <el-checkbox v-model="cutMenu.useCustom" label="是否使用自定义列表模板" />
+
+                    </div>
 					<div
 						class="mt-5"
 						v-if="cutMenu.children && cutMenu.children.length > 0"

@@ -78,86 +78,133 @@
 				</el-col>
 				<el-col :span="3">
 					<div class="detail-right" style="padding-top: 40px">
-						<div class="group-button-label">基本操作</div>
-						<el-row
-							class="group-el-button"
-							style="margin-bottom: 30px"
-						>
-							<el-col :span="24">
-								<NewRelated
-									:entityName="entityName"
-									:entityCode="entityCode"
-									:addConf="addConf"
-									@confirm="newRelatedConfirm"
-									@add="onAdd"
-									v-if="$TOOL.checkRole('r6008')"
-								/>
-							</el-col>
-							<el-col :span="24">
-								<el-button
-									type="primary"
-									plain
-									@click="onEditRow"
-									:disabled="
-										approvalStatus &&
-										(approvalStatus.approvalStatus == 3 ||
-											approvalStatus.approvalStatus == 1)
-									"
-									:title="getEditBtnTitle()"
-								>
-									<span class="mr-5">
-										<el-icon>
-											<ElIconEditPen />
-										</el-icon>
-									</span>
-									编辑
-								</el-button>
-							</el-col>
-							<el-col :span="24">
-								<More
-									type="detail"
-									:multipleSelection="multipleSelection"
-									:entityCode="entityCode"
-									:detailId="detailId"
-									:idFieldName="idFieldName"
-									:nameFieldName="nameFieldName"
-									@editColumnConfirm="editColumnConfirm"
-								/>
-							</el-col>
-						</el-row>
+                        <template v-if="detailParamConf.showBasicBlock">
+                            <div class="group-button-label">基本操作</div>
+                            <el-row
+                                class="group-el-button"
+                                style="margin-bottom: 30px"
+                            >
+                                <el-col :span="24" v-if="contentSlots.beforeNewRelatedBtn">
+                                    <slot name="beforeNewRelatedBtn"></slot>
+                                </el-col>
+                                <el-col :span="24">
+                                    <NewRelated
+                                        :entityName="entityName"
+                                        :entityCode="entityCode"
+                                        :addConf="addConf"
+                                        @confirm="newRelatedConfirm"
+                                        @add="onAdd"
+                                        :showNewRelatedBtn="$TOOL.checkRole('r6008') && detailParamConf.showNewRelatedBtn"
+                                    />
+                                </el-col>
+                                <el-col :span="24" v-if="contentSlots.beforeEditBtn">
+                                    <slot name="beforeEditBtn"></slot>
+                                </el-col>
+                                <el-col :span="24" v-if="detailParamConf.showEditBtn">
+                                    <el-button
+                                        type="primary"
+                                        plain
+                                        @click="onEditRow"
+                                        :disabled="
+                                            approvalStatus &&
+                                            (approvalStatus.approvalStatus == 3 ||
+                                                approvalStatus.approvalStatus == 1)
+                                        "
+                                        :title="getEditBtnTitle()"
+                                    >
+                                        <span class="mr-5">
+                                            <el-icon>
+                                                <ElIconEditPen />
+                                            </el-icon>
+                                        </span>
+                                        编辑
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="24" v-if="contentSlots.beforeMoreBtn">
+                                    <slot name="beforeMoreBtn"></slot>
+                                </el-col>
+                                <el-col :span="24">
+                                    <More
+                                        ref="MoreRefs"
+                                        :showMoreBtn="detailParamConf.showMoreBtn"
+                                        type="detail"
+                                        :multipleSelection="multipleSelection"
+                                        :entityCode="entityCode"
+                                        :detailId="detailId"
+                                        :idFieldName="idFieldName"
+                                        :nameFieldName="nameFieldName"
+                                        @editColumnConfirm="editColumnConfirm"
+                                    />
+                                </el-col>
+                                <el-col :span="24" v-if="contentSlots.afterMoreBtn">
+                                    <slot name="afterMoreBtn"></slot>
+                                </el-col>
+                            </el-row>
+                        </template>
 
-						<el-row class="group-el-button">
-							<el-col :span="24">
+						<el-row class="group-el-button" v-if="detailParamConf.showProcessBlock && (contentSlots.processBlockUnshift || approvalStatus || contentSlots.processBlockPush)">
+                            <div class="group-button-label">流程操作</div>
+                            <el-col :span="24" v-if="contentSlots.processBlockUnshift">
+                                <slot name="processBlockUnshift"></slot>
+                            </el-col>
+							<el-col :span="24" v-if="approvalStatus">
 								<ApprovalRelated
-									v-if="approvalStatus"
 									:approvalStatus="approvalStatus"
 									@onSubmit="onSubmitApproval"
                                     @closeDialog="closeDialog"
 								/>
 							</el-col>
+                            <el-col :span="24" v-if="contentSlots.processBlockPush">
+                                <slot name="processBlockPush"></slot>
+                            </el-col>
 						</el-row>
 					</div>
 				</el-col>
 			</el-row>
 			<el-empty v-else description="暂无数据" />
 		</div>
-		<Edit
+		<!-- <Edit
 			ref="editRefs"
 			@onConfirm="onConfirm"
 			:nameFieldName="nameFieldName"
 			:layoutConfig="myLayoutConfig"
-		/>
+		/> -->
+        <mlCustomEdit 	
+            @onConfirm="onConfirm"
+			:nameFieldName="nameFieldName"
+			:layoutConfig="myLayoutConfig" 
+        />
 	</el-drawer>
 </template>
 
 <script setup>
-import { ref, reactive, inject, nextTick, watch } from "vue";
+defineOptions({
+    name: "default-detail",
+});
+
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+
+import { 
+    ref, 
+    reactive, 
+    inject, 
+    nextTick, 
+    watch,
+    watchEffect,
+    onMounted,
+    useSlots
+ } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import More from "./components/More/Index.vue";
 import DetailTabCom from "./components/DetailTabCom.vue";
-import Edit from "./edit.vue";
+// import Edit from "./edit.vue";
+
+// import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+// console.log(mlCustomEdit,'mlCustomEdit');
+// import sss from '@/components/mlCustomEdit/index.vue';
+
 import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
@@ -169,7 +216,36 @@ import mlApproveBar from "@/components/mlApproveBar/index.vue";
 
 const props = defineProps({
 	layoutConfig: { type: Object, default: () => {} },
+    // 详情配置
+    detailConf: {
+        type: Object,
+        default: () => {}
+    },
 });
+
+
+
+// Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/nqyxilpbxch417c8?singleDoc#
+// 配置项
+const detailParamConf = ref({
+    showBasicBlock: true,
+    showProcessBlock: true,
+    showNewRelatedBtn: true,
+    showEditBtn: true,
+    showMoreBtn: true,
+})
+
+// 插槽内容
+let contentSlots = reactive({});
+
+watchEffect(() => {
+    detailParamConf.value = Object.assign(detailParamConf.value, props.detailConf)
+})
+
+onMounted(() => {
+    // 取插槽内容
+    contentSlots = useSlots();
+})
 
 // 整体配置信息
 let myLayoutConfig = ref({});
@@ -183,6 +259,8 @@ let styleConf = ref({
 		autoFullScreen: false,
 	},
 });
+
+
 watch(
 	() => props.layoutConfig,
 	() => {
@@ -205,7 +283,7 @@ const loadMyLayoutConfig = () => {
 };
 
 const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
-const emits = defineEmits(["onConfirm", "onAdd"]);
+const emits = defineEmits(["onConfirm", "onEdit"]);
 const $API = inject("$API");
 let vFormRef = ref();
 let detailDialog = reactive({
@@ -222,6 +300,9 @@ let detailId = ref("");
 let idFieldName = ref("");
 let detailName = ref("");
 let nameFieldName = ref("");
+
+// 当前行数据
+let rowResData = ref({});
 
 // 当前页签
 let cutTab = ref("detail");
@@ -321,17 +402,18 @@ const initData = async () => {
 				globalDsv.value.formStatus = 'read';
 				globalDsv.value.formEntityId = detailId.value;
 				let queryByIdRes = await queryById(detailId.value);
-				if (queryByIdRes.flowVariables) {
+				if (queryByIdRes?.flowVariables) {
 					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
 				}
 				if (queryByIdRes && queryByIdRes.data) {
 					detailName.value = queryByIdRes.data[nameFieldName.value];
 					vFormRef.value.setFormJson(res.data.layoutJson);
-					let resData = queryByIdRes.data || {};
+                    rowResData.value = queryByIdRes.data || {};
 					vFormRef.value.resetForm();
 
+
 					nextTick(() => {
-						vFormRef.value.setFormData(resData);
+						vFormRef.value.setFormData(rowResData.value);
 						nextTick(() => {
 							vFormRef.value.reloadOptionData();
 							approvalStatus.value =
@@ -365,19 +447,25 @@ const initData = async () => {
 // 打开编辑
 let editRefs = ref();
 const onEditRow = () => {
-	editRefs.value.openDialog({ detailId: detailId.value });
+	// editRefs.value.openDialog({ detailId: detailId.value });
+    editEmits({ detailId: detailId.value })
 };
 
 // 新建
 const onAdd = (e) => {
-	console.log(e, "e");
-	let tempV = {};
-	tempV.entityName = e.entityName;
-	tempV.fieldName = e.fieldName;
-	tempV.fieldNameVale = detailId.value;
-	tempV.fieldNameLabel = detailName.value;
-	editRefs.value.openDialog(tempV);
+	// let tempV = {};
+	// tempV.entityName = e.entityName;
+	// tempV.fieldName = e.fieldName;
+	// tempV.fieldNameVale = detailId.value;
+	// tempV.fieldNameLabel = detailName.value;
+	// editRefs.value.openDialog(tempV);
+    editEmits(tempV)
 };
+
+const editEmits = (obj) => {
+    // emits('onEdit', obj)
+    editRefs.value.openDialog(obj);
+}
 
 // DSV新建
 const openCreateDialog = (entityName, fieldName) => {
@@ -421,11 +509,55 @@ const onFullSceen = () => {
 	isFullSceen.value = !isFullSceen.value;
 };
 
+/**
+ * 导出方法
+ */
+
+// 获取实体信息
+const getCurEntity = () => {
+    return {
+        name: entityName.value,
+        code: entityCode.value,
+        idFieldName: idFieldName.value,
+        nameFieldName: nameFieldName.value,
+    }
+}
+
+// 获取当前详情数据
+const getCurDetailInfo = () => {
+    return rowResData.value;
+}
+
+// 编辑
+const toEdit = () => {
+    onEditRow();
+}
+
+const MoreRefs = ref();
+// 更多操作
+const toMoreAction = (type) => {
+    let allocationTypes = ['del', 'allocation', 'share', 'unShare'];
+    if(allocationTypes.includes(type)){
+        if(multipleSelection.value.length < 1){
+            ElMessage.warning("请先选择数据")
+            return
+        }
+        MoreRefs.value?.allocationFn(type);
+    }else if(type == 'reportForms'){
+        MoreRefs.value?.openReportForms();
+    }else if(type == 'printer'){
+        MoreRefs.value?.openPrinter();
+    }
+}
 
 
 // 暴露方法给父组件调用
 defineExpose({
 	openDialog,
+    getCurEntity,
+    getCurDetailInfo,
+    toEdit,
+    toMoreAction
 });
 </script>
 

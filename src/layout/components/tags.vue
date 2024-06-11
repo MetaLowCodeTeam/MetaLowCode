@@ -241,11 +241,13 @@ export default {
         },
         //TAB 关闭
         closeTabs(notPushLatestView = false) {
+            this.$route.meta.deleteCache = true;
             let nowTag = this.contextMenuItem;
             if (!nowTag.meta.affix) {
                 this.closeSelectedTag(nowTag, !notPushLatestView);
                 this.contextMenuVisible = false;
             }
+            // console.log()
         },
         //TAB 关闭其他
         closeOtherTabs() {

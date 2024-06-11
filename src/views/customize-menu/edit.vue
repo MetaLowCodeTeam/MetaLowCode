@@ -19,20 +19,40 @@
             />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
-        <template #footer>
-            <el-button @click="isShow = false" :loading="loading">取消</el-button>
+        <template #footer v-if="editParamConf.showFooter">
+            <slot name="beforeCancelBtn"></slot>
+            <el-button 
+                @click="cancel" 
+                :loading="loading"
+                v-if="editParamConf.showCancelBtn"
+            >
+                取消
+            </el-button>
+            <slot name="beforeConfirmBtn"></slot>
             <el-button
                 type="primary"
                 @click="confirm"
-                v-if="!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3)"
+                v-if="editParamConf.showConfirmBtn && (!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
                 :loading="loading"
             >确认</el-button>
+            <slot name="afterConfirmBtn"></slot>
         </template>
     </ml-dialog>
 </template>
 
 <script setup>
-import { reactive, ref, inject, nextTick, onMounted, watch } from "vue";
+defineOptions({
+    name: "default-edit",
+});
+import { 
+    reactive, 
+    ref, 
+    inject, 
+    nextTick, 
+    onMounted,
+    watch,
+    watchEffect,
+} from "vue";
 import { getFormLayout, getFieldListOfEntity } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
@@ -47,7 +67,27 @@ const props = defineProps({
     disableWidgets: { type: Array, default: () => [] },
     nameFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
+    // 新建编辑配置
+    editConf: {
+        type: Object,
+        default: () => {}
+    },
 });
+
+
+// Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/kon80ysuog88r0um?singleDoc# 《自定义实体新建编辑PC》
+// 配置项
+const editParamConf = ref({
+    showFooter: true,
+    showConfirmBtn: true,
+    showCancelBtn: true,
+})
+
+
+watchEffect(() => {
+    editParamConf.value = Object.assign(editParamConf.value, props.editConf)
+})
+
 
 // 整体配置信息
 let myLayoutConfig = ref({});
@@ -292,8 +332,44 @@ const confirm = async () => {
             ElMessage.error("表单校验失败，请修改后重新提交");
         });
 };
+
+/**
+ * 导出方法
+ */
+
+const refresh = () => {
+    emits("onConfirm");
+}
+
+const cancel = () => {
+    isShow.value = false
+}
+
+const getCurEntityName = () => {
+    return row.entityName
+}
+
+const getVFormRef = () => {
+    return vFormRef?.value
+}
+
+const getGlobalDsv = () => {
+    return globalDsv.value
+}
+
+const getDataId = () => {
+    return row.detailId
+}
+
 defineExpose({
     openDialog,
+    confirm,
+    refresh,
+    cancel,
+    getCurEntityName,
+    getVFormRef,
+    getGlobalDsv,
+    getDataId
 });
 </script>
 <style lang='scss' scoped>

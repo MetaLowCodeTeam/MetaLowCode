@@ -47,7 +47,7 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <Edit ref="editRefs" @onConfirm="onRefresh" isTeam nameFieldName="teamName"/>
+    <mlCustomEdit ref="editRefs" @onConfirm="onRefresh" isTeam nameFieldName="teamName"/>
     <!-- 列表详情 -->
     <ListDetail
         ref="mlListDetailsRefs"
@@ -61,7 +61,7 @@
 import { ref, inject } from "vue";
 import { $fromNow } from "@/utils/util";
 import { ElMessageBox, ElMessage } from "element-plus";
-import Edit from "@/views/customize-menu/edit.vue";
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import ListDetail from "./components/ListDetail.vue";
 import { delTeam } from "@/api/team";
 const $TOOL = inject("$TOOL");

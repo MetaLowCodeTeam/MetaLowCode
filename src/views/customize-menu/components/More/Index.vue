@@ -1,5 +1,5 @@
 <template>
-    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}">
+    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}" v-if="showMoreBtn">
         <div class="table-setting-item-box">
             <!-- 操作 -->
             <div class="pl-5 item div-disabled">操作</div>
@@ -215,6 +215,7 @@ import SetListStyleDialog from "./SetListStyleDialog.vue";
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
+import { ElMessage } from "element-plus";
 const { queryEntityNameByCode } = useCommonStore();
 const router = useRouter();
 const emits = defineEmits([
@@ -237,6 +238,8 @@ const props = defineProps({
     detailId: { type: String, default: "" },
     // 默认查询设置
     defaultFilterSetting: { type: Object, default: () => {} },
+    // 是否显示按钮
+    showMoreBtn: { type: Boolean, default: true },
 });
 
 // layout配置
@@ -362,6 +365,10 @@ let editColumnDialog = ref({
     isShow: false,
 });
 const editColumn = (type) => {
+    if(type == 'ALL' && !$TOOL.checkRole('r6008')){
+        ElMessage.error("当前无权操作。")
+        return
+    }
     editColumnDialog.value = {};
     editColumnDialog.value.isShow = true;
     editColumnDialog.value.chosenListType = type;
@@ -430,8 +437,45 @@ const treeGroupFilterConfirm = () => {
  */
 let setListStyleDialogIsShow = ref(false);
 
+
+const listMoreSeting = (type) => {
+    if(!$TOOL.checkRole('r6008')){
+        ElMessage.error("当前无权操作。")
+        return
+    }
+    switch (type) {
+        // 默认查询设置
+        case "defaultFilter":
+            openDefaultFilterDialog()
+            break;
+        // 树状分组筛选
+        case "treeGroupFilter":
+            treeGroupFilterIsShow.value = true;
+            break;
+        // 批量编辑设置
+        case "batchEditing":
+            editColumn('BATCH_UPDATE')
+            break;
+        // 列表样式设置
+        case "listStyleSeting":
+            setListStyleDialogIsShow.value = true;
+            break;
+    
+        default:
+            ElMessage.error("参数错误，当前参数：" + type)
+            break;
+    }
+}
+
 defineExpose({
     editColumn,
+    allocationFn,
+    dataExportFn,
+    dataUploadFn,
+    editColumn,
+    listMoreSeting,
+    openReportForms,
+    openPrinter
 });
 </script>
 <style lang='scss' scoped>

@@ -52,7 +52,7 @@
             </el-row>
         </template>
     </mlListDetails>
-    <Edit
+    <mlCustomEdit
         ref="editRefs"
         @onConfirm="onRefresh"
         :isTeam="detailEntity == 'Team'"
@@ -78,7 +78,7 @@
 import { inject, ref } from "vue";
 import AddMembers from "./AddMembers.vue";
 import TabMemberList from "./TabMemberList.vue";
-import Edit from "@/views/customize-menu/edit.vue";
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import useCommonStore from "@/store/modules/common";
 import { getTeamMembers, delTeam } from "@/api/team";
 import { deleteUserById, getUserRole } from "@/api/user";

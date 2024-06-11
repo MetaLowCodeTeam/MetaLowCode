@@ -36,7 +36,6 @@ let routes_404_r = () => { }
 var isGetRouter = false;
 
 router.beforeEach(async (to, from, next) => {
-
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
     NProgress.start()

@@ -1,19 +1,25 @@
 <template>
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
-            <div class="table-search-box">
+            <div 
+                class="table-search-box"
+                v-if="listParamConf.showHeader"
+            >
+                <slot name="beforeAdvancedQuery"></slot>
                 <mlListAdvancedQuery
-                    v-if="entityCode"
+                    v-if="entityCode && listParamConf.showAdvancedQuery"
                     v-model="advFilter"
                     :entityName="entityName"
                     :entityCode="entityCode"
                     @queryNow="queryNow"
-                    @refresh="refresh"
+                    @refresh="refreshAdvancedQuery"
                     @onAddAdv="getLayoutList"
                     @changeAdvFilter="changeAdvFilter"
                     :filter="advancedFilter"
+                    class="mr-15"
                 />
-                <div class="quick-query">
+                <slot name="beforeQuickQuery"></slot>
+                <div class="quick-query" v-if="listParamConf.showQuickQuery">
                     <el-input
                         v-model="quickQuery"
                         class="w-50 m-2"
@@ -40,29 +46,49 @@
                         </el-icon>
                     </span>
                 </div>
+                <slot name="afterQuickQuery"></slot>
                 <div class="data-filter" v-if="isDataFilter">
                     <el-tag type="success" closable @close="clearDataFilter">当前数据已过滤</el-tag>
                 </div>
                 <div class="fr table-setting">
+                    <slot name="beforeOpenBtn"></slot>
                     <el-button
                         icon="Notification"
                         :disabled="multipleSelection.length != 1"
                         @click="openDetailDialog(multipleSelection[0])"
-                    >打开</el-button>
+                        v-if="listParamConf.showOpenBtn"
+                    >
+                        打开
+                    </el-button>
+                    <slot name="beforeEditBtn"></slot>
                     <el-button
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                    >编辑</el-button>
+                        v-if="listParamConf.showEditBtn"
+                    >
+                        编辑
+                    </el-button>
                     <el-button
                         icon="Edit"
                         v-if="batchUpdateConf.length > 0"
                         :disabled="multipleSelection.length < 1"
                         @click="openBatchUpdateDialog"
-                    >批量编辑</el-button>
-
-                    <el-button type="primary" icon="Plus" @click="onAdd">新建</el-button>
+                    >
+                        批量编辑
+                    </el-button>
+                    <slot name="beforeAddBtn"></slot>
+                    <el-button 
+                        type="primary" 
+                        icon="Plus" 
+                        @click="onAdd"
+                        v-if="listParamConf.showAddBtn"
+                    >
+                        新建
+                    </el-button>
+                    <slot name="beforeMoreBtn"></slot>
                     <More
+                        :showMoreBtn="listParamConf.showMoreBtn"
                         ref="MoreRefs"
                         :layoutConfig="layoutConfig"
                         :defaultColumnShow="defaultColumnShow"
@@ -77,6 +103,7 @@
                         @treeGroupFilterConfirm="getLayoutList"
                         :defaultFilterSetting="defaultFilterSetting"
                     />
+                    <slot name="afterMoreBtn"></slot>
                 </div>
             </div>
             <!-- 如果是默认列显示，但是默认列没有值 -->
@@ -183,7 +210,14 @@
                             />
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" :align="'center'" width="120">
+                    <slot name="actionColumn" v-if="showActionColumnSlot"></slot>
+                    <el-table-column 
+                        v-else
+                        label="操作" 
+                        fixed="right" 
+                        :align="'center'" 
+                        width="120"
+                    >
                         <template #default="scope">
                             <el-tooltip
                                 class="box-item"
@@ -224,16 +258,18 @@
             :no="page.no"
             :size="page.size"
             :total="page.total"
+            :pageSizes="page.pageSizes"
             @pageChange="pageChange"
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <Detail ref="detailRefs" @onConfirm="getTableList" :layoutConfig="layoutConfig" />
-        <Edit
+        <mlCustomDetail ref="detailRefs" :entityName="entityName"/>
+        <mlCustomEdit 
             ref="editRefs"
-            @onConfirm="getTableList"
+            :entityName="entityName"
             :nameFieldName="nameFieldName"
             :layoutConfig="layoutConfig"
+            @onConfirm="getTableList"
         />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -259,14 +295,21 @@ import {
     reactive, 
     onMounted, 
     onUnmounted,
-    onActivated
+    onActivated,
+    watchEffect,
+    useSlots,
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More/Index.vue";
-import Detail from "./detail.vue";
-import Edit from "./edit.vue";
+// import Detail from "./detail.vue";
+// import Edit from "./edit.vue";
+import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+
+
+
 import FormatRow from "./components/FormatRow.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
@@ -282,12 +325,62 @@ import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
+
+
+const props = defineProps({
+    listConf: {
+        type: Object,
+        default: () => {}
+    },
+    paginationConf: {
+        type: Object,
+        default: () => {}
+    },
+})
+
+// 分页
+let page = reactive({
+    no: 1,
+    size: 20,
+    pageSizes: [20, 40, 80, 100, 200, 300, 400, 500],
+    total: 0,
+});
+
+// 插槽内容
+let contentSlots = reactive({});
+// 是否显示操作列插槽
+let showActionColumnSlot = ref(false);
+
+// Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
+// 配置项
+const listParamConf = ref({
+    showHeader: true,
+    showAdvancedQuery: true,
+    showQuickQuery: true,
+    showOpenBtn: true,
+    showEditBtn: true,
+    showAddBtn: true,
+    showMoreBtn: true,
+})
+
+watchEffect(() => {
+    listParamConf.value = Object.assign(listParamConf.value, props.listConf)
+    page.size = props.paginationConf?.size || 20;
+    page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
+})
+
+
+// 是否显示高级查询
+// isShowAdvancedQuery: true,
+            
+
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
 
 const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 // 页面Loading
 let pageLoading = ref(false);
@@ -303,12 +396,7 @@ let tableData = ref([]);
 
 // 表格多选数据
 let multipleSelection = ref([]);
-// 分页
-let page = reactive({
-    no: 1,
-    size: 20,
-    total: 0,
-});
+
 // 自定义配置数据
 let layoutConfig = ref({});
 // 默认列显示
@@ -385,6 +473,10 @@ onMounted(()=>{
 			scrollBehavior
 		);
     isMounted.value = true;
+    // 取插槽内容
+    contentSlots = useSlots();
+    // 判断是否有操作列插槽
+    showActionColumnSlot.value = contentSlots.actionColumn ? true : false;
 })
 
 
@@ -693,9 +785,8 @@ const queryNow = (e) => {
     queryFilter = { ...e };
     getTableList();
 };
-
-// 重置
-const refresh = () => {
+// 重置高级筛选
+const refreshAdvancedQuery = () => {
     queryFilter = { equation: "AND", items: [] };
     getTableList();
 };
@@ -876,12 +967,117 @@ const changeColumnShow = (type) => {
             quickQuery.value = routerParams.value.quickFilter;
             builtInFilter.value = routerParams.value.filter;
             isDataFilter.value = true;
+            getTableList();
         }
-        getTableList();
     }
  
 })
 
+/**
+ * 导出方法
+ */
+
+// 重置表格数据
+const resetList = () => {
+    quickQuery.value = "";
+    queryFilter = { equation: "AND", items: [] };
+    getLayoutList();
+}
+
+// 刷新表格数据
+const refreshList = () => {
+    getTableList();
+}
+
+// 获取实体信息
+const getCurEntity = () => {
+    return {
+        name: entityName.value,
+        code: entityCode.value,
+        idFieldName: idFieldName.value,
+        nameFieldName: nameFieldName.value,
+    }
+}
+// 获取选中数据
+const getSelectedRow = () => {
+    return multipleSelection.value 
+}
+
+// 编辑数据
+const toEdit = () => {
+    if(multipleSelection.value.length < 1){
+        ElMessage.warning("请先选择数据")
+        return
+    }
+    if(multipleSelection.value.length > 1){
+        ElMessage.warning("仅支持编辑单条数据")
+        return
+    }
+    let row = multipleSelection.value[0];
+    if(row.approvalStatus && (row.approvalStatus.value == 3 || row.approvalStatus.value == 1)){
+        ElMessage.warning("当前数据这个在审批中或者已审批结束，不可编辑。")
+        return
+    }
+    onEditRow(row);
+}
+
+// 查看详情
+const toDetail = () => {
+    if(multipleSelection.value.length < 1){
+        ElMessage.warning("请先选择数据")
+        return
+    }
+    if(multipleSelection.value.length > 1){
+        ElMessage.warning("仅支持查看单条数据详情")
+        return
+    }
+    let row = multipleSelection.value[0];
+    openDetailDialog(row)
+}
+
+// 新建数据
+const toAdd = () => {
+    onAdd();
+}
+
+// 更多操作
+const toMoreAction = (type) => {
+    let allocationTypes = ['del', 'allocation', 'share', 'unShare'];
+    if(allocationTypes.includes(type)){
+        if(multipleSelection.value.length < 1){
+            ElMessage.warning("请先选择数据")
+            return
+        }
+        MoreRefs.value?.allocationFn(type);
+    }else if(type == 'dataExport'){
+        MoreRefs.value?.dataExportFn(type);
+    }else if(type == 'dataUpload'){
+        MoreRefs.value?.dataUploadFn(type);
+    }
+}
+
+// 显示列设置
+const showColumnSeting = (type) => {
+    MoreRefs.value?.editColumn(type)
+}
+
+// 更多列表设置
+const listMoreSeting = (type) => {
+    MoreRefs.value?.listMoreSeting(type)
+}
+
+defineExpose({
+    resetList,
+    refreshList,
+    getCurEntity,
+    getSelectedRow,
+    toEdit,
+    toAdd,
+    toDetail,
+    toMoreAction,
+    showColumnSeting,
+    listMoreSeting
+})
 
 </script>
 <style lang='scss' scoped>
@@ -900,14 +1096,14 @@ div {
     min-width: 1200px;
     .table-box {
         height: 100%;
-        border-top: 3px solid var(--el-color-primary);
         // padding: 20px 0;
         .table-search-box {
+            border-top: 3px solid var(--el-color-primary);
             background: #fff;
             height: 60px;
             line-height: 60px;
             padding: 0 20px;
-
+            box-sizing: border-box;
             .table-setting {
                 // margin-top: 5px;
                 .el-dropdown-link {
@@ -922,6 +1118,7 @@ div {
         }
         .table-div {
             height: calc(100% - 100px);
+            width: 100%;
             display: flex;
             .tree-froup-box {
                 width: 300px;
@@ -974,7 +1171,6 @@ div {
 
 .quick-query {
     display: inline-block;
-    margin-left: 15px;
     width: 300px;
     padding-right: 30px;
     position: relative;

@@ -22,6 +22,9 @@ import VueResizeObserver from "vue-resize-observer";
 import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
 import '@vuemap/vue-amap/dist/style.css'
 import dayjs from "dayjs";
+
+import { registerCustomDetailCmp } from '@/views/custom-page/customEntryDetail.js';
+import { registerCustomEditCmp } from '@/views/custom-page/customEntryEdit.js';
 // console.log("1. 使用路由...",router)
 
 //初始化高德地图组件
@@ -44,6 +47,8 @@ app.use(MetaFlowDesigner)
 app.use(VueAMap)
 loadExtensionWidgets(app)
 loadChartsExtension(app)
+registerCustomDetailCmp(app);
+registerCustomEditCmp(app);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);

@@ -1,6 +1,6 @@
 <template>
     <!--  -->
-    <el-dropdown trigger="click" @command="handleCommand">
+    <el-dropdown trigger="click" @command="handleCommand" v-if="showNewRelatedBtn">
         <el-button type="primary" plain icon="plus">新建相关</el-button>
         <template #dropdown>
             <el-dropdown-menu>
@@ -31,6 +31,8 @@ const props = defineProps({
     entityName: { type: String, default: "" },
     entityCode: { type: Number },
     addConf: { type: Object, default: () => {} },
+    // 是否显示按钮
+    showNewRelatedBtn: { type: Boolean, default: true },
 });
 const emits = defineEmits(["confirm", "add"]);
 // let addConfList = ref([]);

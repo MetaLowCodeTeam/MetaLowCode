@@ -1,5 +1,4 @@
 <template>
-    <div class="group-button-label">流程操作</div>
     <!-- 未提交 -->
     <template v-if="myApproval.approvalStatus == 0">
         <el-row>
@@ -69,7 +68,6 @@
             </el-button>
         </el-row>
     </template>
-    
     <!-- 审批弹框 -->
     <mlDialog v-model="approvalDialog.isShow" :title="approvalDialog.title" width="460">
         <el-form label-width="120px" v-loading="approvalDialog.loading">
@@ -159,8 +157,6 @@ const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const props = defineProps({
     approvalStatus: { type: Object, default: () => {} },
-    // 是否显示这个按钮
-    showApprovalRelated:  { type: Boolean, default: true },
 });
 const emits = defineEmits(["onSubmit","closeDialog"]);
 let myApproval = ref({});

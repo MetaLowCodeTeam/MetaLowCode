@@ -138,7 +138,7 @@
             </mlSingleList>
         </el-container>
         <!-- 新建、编辑用户 -->
-        <Edit
+        <mlCustomEdit
             ref="editRefs"
             @onConfirm="onRefresh"
             nameFieldName="userName"
@@ -168,14 +168,14 @@ import {
 import { createRecord, updateRecord } from "@/api/crud";
 import FormState from "@/views/system/form-state-variables";
 import eventBus from "@/utils/event-bus";
-import Edit from "@/views/customize-menu/edit.vue";
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import ListDetail from "./components/ListDetail.vue";
 import ddImg from "@/assets/imgs/dd.png";
 import wXWorkImg from "@/assets/imgs/WXWork.png";
 export default {
     name: "UserTreeTable",
     components: {
-        Edit,
+        mlCustomEdit,
         ListDetail,
     },
     data() {
