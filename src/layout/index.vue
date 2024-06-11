@@ -82,10 +82,9 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive>
-                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.fullPath" />
+                                <keep-alive :include="[...keepLiveRouteFn]">
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
                                 </keep-alive>
-                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.fullPath" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -141,10 +140,9 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive>
-                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
+                                <keep-alive :include="[...keepLiveRouteFn]">
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
                                 </keep-alive>
-                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -193,10 +191,9 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive>
-                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
+                                <keep-alive :include="[...keepLiveRouteFn]">
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
                                 </keep-alive>
-                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -269,10 +266,9 @@
                         >{{ pluginInfo[$route.name].errMsg }}</div>
                         <template v-else>
                             <router-view v-slot="{ Component }">
-                                <keep-alive>
-                                    <component :is="Component"  v-if="$route.meta.keepAlive" :key="$route.path" />
+                                <keep-alive :include="[...keepLiveRouteFn]">
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
                                 </keep-alive>
-                                <component :is="Component" v-if="!$route.meta.keepAlive" :key="$route.path" />
                             </router-view>
                             <iframe-view></iframe-view>
                         </template>
@@ -320,7 +316,8 @@ const { ismobile, layout, layoutTags, menuIsCollapse } = storeToRefs(
 );
 
 const { SET_ismobile, TOGGLE_menuIsCollapse } = useGlobalStore();
-
+import { h } from "vue";
+const wrapperMap = new Map()
 export default {
     name: "index",
     components: {
@@ -421,6 +418,25 @@ export default {
         },
     },
     methods: {
+        // 为keep-alive里的component接收的组件包上一层自定义name的壳
+        wrap(fullPath, component) {
+            let wrapper
+            if (component) {
+                const wrapperName = this.$route.name;
+                if (wrapperMap.has(wrapperName)) {
+                    wrapper = wrapperMap.get(wrapperName);
+                } else {
+                    wrapper = {
+                        name: wrapperName,
+                        render() {
+                            return h(component);
+                        },
+                    };
+                    wrapperMap.set(wrapperName, wrapper);
+                }
+                return h(wrapper);
+            }
+        },
         checkPlugin(route) {
             let pluginIdList = publicSetting.value.APP_PLUGINID || [];
             let name = route.name;
