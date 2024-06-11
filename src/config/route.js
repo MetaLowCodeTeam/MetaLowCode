@@ -104,7 +104,6 @@ const routes = [
                 name: "MenuTrendsList",
                 "meta": {
                     hidden: true,
-                    keepAlive: true,
                 },
                 component: 'customize-menu/list',
             },

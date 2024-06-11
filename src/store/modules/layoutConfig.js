@@ -156,7 +156,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.iconColor = el.iconColor || "";
             initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
             initMenu.meta.outLink = el.outLink;
-            initMenu.meta.keepAlive = true;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
                 initMenu.path = "/" + el.guid;
@@ -172,7 +171,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             iconColor: subEl.iconColor || '',
                             // hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                             outLink: subEl.outLink,
-                            keepAlive: true,
                         },
                     }
 
@@ -268,7 +266,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 iconColor: el.iconColor || '',
                 type: el.type,
                 outLink: el.outLink,
-                keepAlive: true,
             };
             if (el.type == 1) {
                 let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)
