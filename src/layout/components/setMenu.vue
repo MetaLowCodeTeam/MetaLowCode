@@ -269,7 +269,20 @@
 					</div>
                     <div class="mt-5" v-if="cutMenu.type == 1">
                         <el-checkbox v-model="cutMenu.useCustom" label="是否使用自定义列表模板" />
-
+                    </div>
+                    <div class="mt-5" v-if="cutMenu.type == 1 && cutMenu.useCustom">
+                        <el-select 
+                            v-model="cutMenu.useComponent" 
+                            placeholder="选择自定义列表模板" 
+                            style="width: 100%"
+                        >
+                            <el-option
+                                v-for="item in CustomEntryList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
                     </div>
 					<div
 						class="mt-5"
@@ -321,6 +334,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import mlShareTo from "@/components/mlShareTo/index.vue";
 import { getDataList } from "@/api/crud";
+import { CustomEntryList } from "@/views/custom-page/customEntryList";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
@@ -499,6 +513,10 @@ let defaultMenu = reactive({
 	iconColor: "",
 	// 仪表盘ID
 	chartId: "",
+    // 是否使用自定义列表模板
+    useCustom: false,
+    // 当前使用的末班
+    useComponent: "",
 });
 
 const getGuid = () => {

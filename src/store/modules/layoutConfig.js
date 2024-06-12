@@ -148,6 +148,11 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             let initMenu = {
                 meta: {},
             };
+            // 如果是实体列表 且 使用了自定义列表模板
+            if(el.type == 1 && el.useCustom){
+                el.type = 3;
+                el.outLink = el.useComponent + "?entity=" + el.entityName;
+            }
             initMenu.meta.title = el.name;
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
@@ -222,6 +227,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     default: el.chartId
                 }
             }
+        
             formatRoutrs.push(initMenu);
         });
         return formatRoutrs
