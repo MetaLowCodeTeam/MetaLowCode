@@ -143,3 +143,12 @@ export function groupTreeQuery(body) {
 export function updateRecordList(body) {
     return http.post('/crud/updateRecordList', body)
 }
+
+
+
+
+
+// 根据 entityCode 获取关联的引用实体
+export function queryDetailEntityFields(entityName) {
+    return http.get('/crud/queryDetailEntityFields', { entityName })
+}

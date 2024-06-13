@@ -315,11 +315,12 @@ const onSubmit = async () => {
         res = await $API.approval.detail.startComplexFlowApproval({
             processDefId: wfProcDefId,
             recordId: myApproval.value.recordId,
+            approvalConfigId: approvalConfigId,
         });
     } else {
         res = await $API.approval.detail.startApproval(
             myApproval.value.recordId,
-            approvalConfigId
+            approvalConfigId,
         );
     }
 
