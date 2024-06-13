@@ -88,7 +88,7 @@
 |------------------|:-----------------------------------------------------|---------------------------------------------------------------------------------------|
 | **开发工具**         | VSCode                                               | [下载地址](https://code.visualstudio.com/Download)                                        |
 | **美乐后端集成环境**     | MetaServer                                           | [下载地址](https://melecode.com/#downloadModal)   <br/> [**安装必读**](https://docs.qq.com/doc/p/9415a4c09eebbf6dd31c7566579647049fadcaaa) |
-| **运行环境**         | 1. Node 16 +       <br/> 2. npm 8.0 +                | [下载地址](http://nodejs.cn/download)                                                     |
+| **运行环境**         | 1. Node 16 +       <br/> 2. npm 8.0 +       <br/> 3. 查看npm源npm config get registry<br/>（推荐使用npm config set registry https://registry.npmjs.org）                | [下载地址](http://nodejs.cn/download)                                                     |
 | **VSCode插件(必装)** | 1. `Vue Language Features (Volar) ` <br/> 2. `Vetur` |                                                                                       |
 
 
