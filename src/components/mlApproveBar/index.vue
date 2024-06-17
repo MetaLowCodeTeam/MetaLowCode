@@ -5,8 +5,12 @@
     <div class="approval-bar success" v-if="approvalStatus == 3">当前记录已审批完成</div>
     <div
         class="approval-bar error"
-        v-if="approvalStatus == 2 || approvalStatus == 4"
+        v-if="approvalStatus == 4"
     >审批已撤销，请在信息完善后再次提交</div>
+    <div
+        class="approval-bar error"
+        v-if="approvalStatus == 2"
+    >审批已驳回，请在信息完善后再次提交</div>
 </template>
 
 <script setup>
