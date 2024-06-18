@@ -1,7 +1,13 @@
 import http, { request } from '@/utils/request'
 
-export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraFilter) {
-    return http.get('crud/refFieldQuery', { entity, 'refField': field, pageNo, pageSize, queryText, extraFilter });
+export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraFilter, formFilter) {
+    return http.post(
+        'crud/refFieldQuery',
+        formFilter,
+        {
+            params: { entity, 'refField': field, pageNo, pageSize, queryText, extraFilter }
+        }
+    );
 }
 
 export function createRecord(entity) {
