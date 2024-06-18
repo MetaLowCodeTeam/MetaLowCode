@@ -33,8 +33,8 @@
 				</el-scrollbar>
 				<el-empty v-else description="没有数据" />
 			</el-tab-pane>
-			<el-tab-pane label="从表字段" name="subFormFields">
-				<el-scrollbar max-height="400px">
+			<el-tab-pane label="从表字段" name="subFormFields" v-if="subFormFields.length > 0">
+				<el-scrollbar max-height="400px" >
 					<div
 						v-for="(item, inx) of subFormFields"
 						:key="inx"
