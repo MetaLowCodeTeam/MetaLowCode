@@ -193,7 +193,8 @@ const NodeTypeFn = {
 const EliminateNode = [
     "bpmn:parallelGateway",
     "bpmn:endEvent",
-    "bpmn:exclusiveGateway"
+    "bpmn:exclusiveGateway",
+    "bpmn:inclusiveGateway"
 ];
 
 // 节点删除
@@ -207,6 +208,7 @@ const openDrawer = (data) => {
     if (EliminateNode.includes(data.type)) {
         return;
     }
+    console.log(data,'data')
     drawer.value = true;
     drawerData.value = data;
     drawerTitle.value = data.text?.value;

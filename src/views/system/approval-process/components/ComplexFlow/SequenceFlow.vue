@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, watch } from "vue";
+import { onMounted, ref, reactive, watch, watchEffect} from "vue";
 import { useRouter } from "vue-router";
 const Router = useRouter();
 const props = defineProps({
@@ -36,15 +36,15 @@ let conditionConf = ref({});
 
 watch(
     () => props.formData,
-    (newVal, oldVal) => {
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-            myFormData.value = Object.assign(myFormData.value, props.formData);
-            let { filter } = JSON.parse(JSON.stringify(myFormData.value));
-            conditionConf.value = initFilter(filter);
-        }
+    () => {
+        myFormData.value = Object.assign(myFormData.value, props.formData);
+        let { filter } = JSON.parse(JSON.stringify(myFormData.value));
+        conditionConf.value = initFilter(filter);
     },
     { deep: true }
 );
+
+
 
 watch(
     () => conditionConf.value,
