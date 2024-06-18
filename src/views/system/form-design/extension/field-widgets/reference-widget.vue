@@ -81,6 +81,7 @@
 				:entity="entity"
 				:refField="curRefField"
 				:extraFilter="searchFilter"
+                :filterConditions="filterConditions"
 				@recordSelected="setReferRecord"
 				:gDsv="gDsv"
 			></ReferenceSearchTable>
@@ -138,9 +139,11 @@ export default {
 			rules: [],
 
 			showReferenceDialogFlag: false,
+
 			entity: null,
 			curRefField: null,
 			searchFilter: "",
+            filterConditions:{},
 			gDsv: {},
 		};
 	},
@@ -206,6 +209,42 @@ export default {
 	methods: {
 		onAppendButtonClick() {
 			this.curRefField = this.field.options.name;
+            let optionsFilterConditions = {};
+            if(this.field.options?.filterConditions){
+                optionsFilterConditions = JSON.parse(JSON.stringify(this.field.options?.filterConditions));
+            }
+            // 获取过滤参数
+            let filterConditions = Object.assign(
+                {
+					type: 1,
+					equation: "",
+					items: [],
+				},
+                optionsFilterConditions
+            )
+            for (let index = 0; index < filterConditions.items.length; index++) {
+                const el = filterConditions.items[index];
+                let fieldWidget;
+                if(el.value.indexOf('.') == -1){
+                    fieldWidget = this.getWidgetRef(el.value);
+                }else {
+                    let subFormFieldName = el.value.split(".")[1];
+                    fieldWidget = this.getWidgetRef(subFormFieldName + '@row' + this.subFormRowId);
+                }
+                if(fieldWidget){
+                    let fieldLabel = fieldWidget.field.options.label;
+                    let fieldValue = fieldWidget.getValue();
+                    if(!fieldValue){
+                        this.$message.error("请填写：" + fieldLabel);
+                        return
+                    }
+                    el.value = fieldValue;
+                    if(typeof fieldValue == 'object'){
+                        el.value = fieldValue.id;
+                    }
+                }
+            }
+            this.filterConditions = filterConditions;
 			this.showReferenceDialogFlag = true;
 		},
 
@@ -222,6 +261,7 @@ export default {
 
 			this.handleChangeEvent(this.fieldModel);
 			this.handleRecordSelectedEvent(selectedRow);
+            // 回填
 			this.doFillBack(recordObj, selectedRow);
 
 			this.showReferenceDialogFlag = false;

@@ -73,6 +73,8 @@ export const referenceSchema = {
         fillBackConfig: [],
         // 子表单回填
         subFormFillBackConfig: [],
+        // 过滤条件
+        filterConditions: {},
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

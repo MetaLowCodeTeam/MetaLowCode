@@ -46,6 +46,11 @@ export default {
 			default: '480px'
 		},
         gDsv: Object,
+        // 过滤条件
+        filterConditions: {
+            type: Object,
+            default: () => {}
+        },
 	},
 	name: "ReferenceSearchTable",
 	data() {
@@ -89,38 +94,32 @@ export default {
                 this.refFieldQueryApi(externalEefFieldQuery, paramStr);
             } else {
                 paramStr = this.entity;
-                this.refFieldQueryApi(refFieldQuery, paramStr);
+                this.refFieldQueryApi(refFieldQuery, paramStr, this.filterConditions);
             }
         },
 
-        refFieldQueryApi(cb, paramStr) {
-            cb(
+        async refFieldQueryApi(cb, paramStr, filterConditions) {
+            let res = await cb(
                 paramStr,
                 this.refField,
                 this.page.pageNo,
                 this.page.limit,
                 this.queryText,
-                this.extraFilter
-            )
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                    } else {
-                        this.idField = res.data.idFieldName;
-                        this.nameField = res.data.nameFieldName;
-                        let columnList = res.data.columnList;
-                        columnList.forEach((cl) => {
-                            setColumnFormatter(cl);
-                        });
-                        this.columns = columnList;
-                        this.tableData = res.data.dataList;
-                        //console.log(this.tableData)
-                        this.page.total = res.data.pagination.total;
-                    }
-                })
-                .catch((res) => {
-                    this.$message({ message: res.error, type: "error" });
+                this.extraFilter,
+                filterConditions
+            );
+            if(res){
+                this.idField = res.data.idFieldName;
+                this.nameField = res.data.nameFieldName;
+                let columnList = res.data.columnList;
+                columnList.forEach((cl) => {
+                    setColumnFormatter(cl);
                 });
+                this.columns = columnList;
+                this.tableData = res.data.dataList;
+                //console.log(this.tableData)
+                this.page.total = res.data.pagination.total;
+            }
         },
 
 		selectRecord(row) {
