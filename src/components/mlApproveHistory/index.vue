@@ -231,24 +231,15 @@ function getContainHeight(item) {
     };
 }
 
-// 获取审核参数
-// async function getTaskDetailsById() {
-//     loading.value = true;
-//     let res = await http.get("/approval/getTaskDetailsById", {
-//         entityId: props.entityId,
-//     });
-//     if (res) {
-//         isComplexWorkFlow.value = res.data.flowType == 2;
-//         approveHistory.value = formatResData(res.data.approvalStepsList || []);
-//         isShow.value = true;
-//     }
-//     loading.value = false;
-// }
 
 const openDialog = (flowType, approvalStepsList) => {
     isComplexWorkFlow.value = flowType == 2;
     approveHistory.value = formatResData(approvalStepsList);
     isShow.value = true;
+    nextTick(()=>{
+        let dom = document.querySelectorAll('.timeline-div')[0];
+        dom.scrollTop = dom.scrollHeight - dom.clientHeight;
+    })
 }
 
 // 格式化数据

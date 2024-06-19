@@ -1,20 +1,20 @@
 <template>
     <!-- 未提交 -->
-    <div class="approval-bar info" v-if="approvalStatus == 0">当前记录尚未提交审批，请在信息完善后尽快提交</div>
-    <div class="approval-bar warning" v-if="approvalStatus == 1">当前记录正在审批中</div>
-    <div class="approval-bar success" v-if="approvalStatus == 3">当前记录已审批完成</div>
+    <div class="approval-bar info" v-if="approvalStatus.value == 0">当前记录尚未提交审批，请在信息完善后尽快提交</div>
+    <div class="approval-bar warning" v-if="approvalStatus.value == 1">当前记录正在审批中</div>
+    <div class="approval-bar success" v-if="approvalStatus.value == 3">当前记录已审批完成</div>
     <div
         class="approval-bar error"
-        v-if="approvalStatus == 4"
+        v-if="approvalStatus.value == 4"
     >审批已撤销，请在信息完善后再次提交</div>
     <div
         class="approval-bar error"
-        v-if="approvalStatus == 2"
+        v-if="approvalStatus.value == 2"
     >审批已驳回，请在信息完善后再次提交</div>
 </template>
 
 <script setup>
-import { onMounted, watch, ref } from "vue";
+import {  watchEffect, ref } from "vue";
 
 const props = defineProps({
     approvalInfo: {
@@ -23,19 +23,11 @@ const props = defineProps({
 });
 let approvalStatus = ref({});
 
-watch(
-    () => props.approvalInfo,
-    () => {
-        approvalStatus.value =
-            props.approvalInfo?.approvalStatus || props.approvalInfo?.type;
-    },
-    { deep: true }
-);
+watchEffect(() => {
+    approvalStatus.value = props.approvalInfo || {};
+})
 
-onMounted(() => {
-    approvalStatus.value =
-        props.approvalInfo?.approvalStatus || props.approvalInfo?.type;
-});
+
 </script>
 <style lang='scss' scoped>
 .approval-bar {

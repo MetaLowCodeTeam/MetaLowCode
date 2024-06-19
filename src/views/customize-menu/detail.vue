@@ -100,8 +100,8 @@
 									@click="onEditRow"
 									:disabled="
 										approvalStatus &&
-										(approvalStatus.approvalStatus == 3 ||
-											approvalStatus.approvalStatus == 1)
+										(approvalStatus.value == 3 ||
+											approvalStatus.value == 1)
 									"
 									:title="getEditBtnTitle()"
 								>
@@ -129,8 +129,8 @@
 						<el-row class="group-el-button">
 							<el-col :span="24">
 								<ApprovalRelated
-									v-if="approvalStatus"
-									:approvalStatus="approvalStatus"
+									v-if="recordApproval"
+									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
                                     @closeDialog="closeDialog"
 								/>
@@ -166,6 +166,10 @@ import { ElMessage } from "element-plus";
  * 组件
  */
 import mlApproveBar from "@/components/mlApproveBar/index.vue";
+/**
+ * API
+ */
+import { getRecordApprovalState } from '@/api/approval';
 
 const props = defineProps({
 	layoutConfig: { type: Object, default: () => {} },
@@ -214,8 +218,10 @@ let detailDialog = reactive({
 });
 let loading = ref(false);
 let multipleSelection = ref([]);
+// 审批状态
 let approvalStatus = ref(null);
-
+// 审批信息
+let recordApproval = ref(null);
 let entityCode = ref("");
 let entityName = ref("");
 let detailId = ref("");
@@ -320,6 +326,12 @@ const initData = async () => {
 			nextTick(async () => {
 				globalDsv.value.formStatus = 'read';
 				globalDsv.value.formEntityId = detailId.value;
+                // 获取审批信息
+                let recordApprovalRes = await getRecordApprovalState(detailId.value);
+                if(recordApprovalRes){
+                    recordApproval.value = recordApprovalRes.data;
+                }
+                // queryById
 				let queryByIdRes = await queryById(detailId.value);
 				if (queryByIdRes.flowVariables) {
 					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
@@ -329,20 +341,14 @@ const initData = async () => {
 					vFormRef.value.setFormJson(res.data.layoutJson);
 					let resData = queryByIdRes.data || {};
 					vFormRef.value.resetForm();
+                    approvalStatus.value = queryByIdRes.data.approvalStatus;
+                   
 
 					nextTick(() => {
 						vFormRef.value.setFormData(resData);
 						nextTick(() => {
 							vFormRef.value.reloadOptionData();
-							approvalStatus.value =
-								queryByIdRes?.data.recordApprovalState || null;
-							if (approvalStatus.value) {
-								approvalStatus.value.entityCode = entityCode.value;
-								approvalStatus.value.entityName = entityName.value;
-								approvalStatus.value.recordId = detailId.value;
-								approvalStatus.value.approvalName =
-									detailDialog.detailTitle;
-							}
+							
 							vFormRef.value.setReadMode();
 							globalDsv.value.openCreateDialog = openCreateDialog;
 						});
@@ -405,11 +411,11 @@ const onConfirm = () => {
 
 const getEditBtnTitle = () => {
 	let str = "";
-	if (approvalStatus.value && approvalStatus.value.approvalStatus == 3) {
+	if (approvalStatus.value && approvalStatus.value.value == 3) {
 		str = "记录已完成审批，禁止编辑";
 		return;
 	}
-	if (approvalStatus.value && approvalStatus.value.approvalStatus == 1) {
+	if (approvalStatus.value && approvalStatus.value.value == 1) {
 		str = "记录正在审批中，禁止编辑";
 	}
 	return str;

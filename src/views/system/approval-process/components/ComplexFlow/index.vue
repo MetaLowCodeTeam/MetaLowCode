@@ -208,7 +208,6 @@ const openDrawer = (data) => {
     if (EliminateNode.includes(data.type)) {
         return;
     }
-    console.log(data,'data')
     drawer.value = true;
     drawerData.value = data;
     drawerTitle.value = data.text?.value;
@@ -218,7 +217,6 @@ const openDrawer = (data) => {
     } else {
         drawerData.value.formData = cloneDeep(nodeDefaultData[data.type]);
     }
-    console.log(drawerData.value.formData,"点击节点")
 };
 
 // 开始节点
@@ -336,11 +334,13 @@ const onSave = async () => {
             flowJson[el.id] = el.properties.flowJson;
         }
     });
-    
+    let logicFlowXml = MetaFlowDesignerRef.value.getXmlData() || '';
+    logicFlowXml = logicFlowXml.replace('<dc:Bounds x="null"','<dc:Bounds x="365"');
+    logicFlowXml = logicFlowXml.replace('width="null" height="14"','width="50" height="14"');
     let param = {
         approvalConfigId: approvalConfigId.value,
         logicFlow: {
-            logicFlowXml: MetaFlowDesignerRef.value.getXmlData(),
+            logicFlowXml,
             flowJson,
         },
     };

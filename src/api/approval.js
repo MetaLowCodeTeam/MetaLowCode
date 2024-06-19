@@ -87,3 +87,9 @@ export function getRejectNodeList(approvalTaskId) {
 export function getHisActivityIns(entityId) {
     return http.get('/approval/getHisActivityIns',  { entityId })
 }
+
+// 获取审批信息
+export function getRecordApprovalState(recordId) {
+    return http.get('/approval/recordApprovalState',  { recordId })
+}
+
