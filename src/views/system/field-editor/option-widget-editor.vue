@@ -57,7 +57,14 @@
                     <el-checkbox v-model="checkedSync"/>
                 </el-form-item>
                 <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
-                    123
+                    <el-select v-model="useFieldSync" placeholder="选择字段">
+                        <el-option
+                            v-for="item in fieldsSync"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
                 </el-form-item>
                 <el-card class="box-card" shadow="never" v-else>
                     <template #header>
@@ -185,13 +192,13 @@ export default {
             checkedSync: false,
             // 所有可选的同步字段
             fieldsSync: [],
+            // 选择的同步字段
+            useFieldSync: "",
         };
     },
     mounted() {
         // 初始化API
         this.initApi();
-       
-
     },
     methods: {
         async initApi(){
