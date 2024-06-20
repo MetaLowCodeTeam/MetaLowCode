@@ -53,7 +53,13 @@
                         <el-radio :label="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-card class="box-card" shadow="never">
+                <el-form-item label="开启选项数据同步功能">
+                    <el-checkbox v-model="checkedSync"/>
+                </el-form-item>
+                <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
+                    123
+                </el-form-item>
+                <el-card class="box-card" shadow="never" v-else>
                     <template #header>
                         <div class="clear-fix">
                             <span>选项管理</span>
@@ -136,6 +142,7 @@ import {
     updateOptionField,
     getField,
     getOptionItems,
+    getOptionFields,
 } from "@/api/system-manager";
 import { ElMessage, ElMessageBox as MessageBox } from "element-plus";
 import { copyObj, generateId } from "@/utils/util";
@@ -166,37 +173,65 @@ export default {
                 updatable: true,
 				fieldViewModel: {
 					uniqueness: false,
+                    entityName: '',
+                    fieldName: ''
 				},
             },
 
             optionItems: [],
 
             hoverIdx: -1,
+            // 同步是否勾选
+            checkedSync: false,
+            // 所有可选的同步字段
+            fieldsSync: [],
         };
     },
     mounted() {
-        if (this.fieldState === FieldState.EDIT) {
-            this.getFieldProps();
-        }
+        // 初始化API
+        this.initApi();
+       
+
     },
     methods: {
-        getFieldProps() {
-            getField(this.fieldName, this.entity)
-                .then((res) => {
-                    if (res.error != null) {
-                        this.$message({ message: res.error, type: "error" });
-                        return;
-                    }
-
-                    this.readFieldProps(res.data);
+        async initApi(){
+            // 取所有可同步的字段
+            let res = await getOptionFields();
+            this.fieldsSync = [];
+            if(res){
+                let fields = res.data || [];
+                fields.forEach(el => {
+                    el.fieldList.forEach(subEl => {
+                        this.fieldsSync.push({
+                            label: el.entityLabel + "." + subEl.fieldLabel,
+                            value: el.entityName + '.' + subEl.fieldName
+                        })
+                    })
                 })
-                .catch((res) => {
-                    this.$message({ message: res.message, type: "error" });
-                });
+            }
+            if (this.fieldState === FieldState.EDIT) {
+                this.getFieldProps();
+            }
+        },
+        async getFieldProps() {
+            let res = await getField(this.fieldName, this.entity);
+            if(res){
+                this.readFieldProps(res.data);
+            }
         },
 
         async readFieldProps(savedProps) {
             copyObj(this.fieldProps, savedProps);
+            // 如果不是新建
+            if(this.fieldState != -1){
+                // 如果有同步数据表示勾选了同步
+                let { entityName, fieldName } = this.fieldProps.fieldViewModel;
+                if(entityName || fieldName){
+                    this.checkedSync = true;
+                }
+            }
+            
+            // if(this.fieldProps.fieldViewModel )
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
             }
