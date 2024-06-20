@@ -53,11 +53,15 @@
                         <el-radio :label="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="开启选项数据同步功能">
-                    <el-checkbox v-model="checkedSync"/>
+                <el-form-item label="开启选项数据同步" >
+                    <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
                 </el-form-item>
                 <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
-                    <el-select v-model="useFieldSync" placeholder="选择字段">
+                    <el-select 
+                        v-model="useFieldSync" 
+                        placeholder="选择字段"
+                        :disabled="fieldState !== 1"
+                    >
                         <el-option
                             v-for="item in fieldsSync"
                             :key="item.value"
@@ -180,8 +184,11 @@ export default {
                 updatable: true,
 				fieldViewModel: {
 					uniqueness: false,
-                    entityName: '',
-                    fieldName: ''
+                    optionSyncModel: {
+                        entityName: '',
+                        fieldName: ''
+                    }
+                    
 				},
             },
 
@@ -209,10 +216,12 @@ export default {
                 let fields = res.data || [];
                 fields.forEach(el => {
                     el.fieldList.forEach(subEl => {
-                        this.fieldsSync.push({
-                            label: el.entityLabel + "." + subEl.fieldLabel,
-                            value: el.entityName + '.' + subEl.fieldName
-                        })
+                        if(!subEl.syncFlag == "1"){
+                            this.fieldsSync.push({
+                                label: el.entityLabel + "." + subEl.fieldLabel,
+                                value: el.entityName + '.' + subEl.fieldName
+                            })
+                        }
                     })
                 })
             }
@@ -230,11 +239,15 @@ export default {
         async readFieldProps(savedProps) {
             copyObj(this.fieldProps, savedProps);
             // 如果不是新建
-            if(this.fieldState != -1){
+            if(this.fieldState !== 1){
                 // 如果有同步数据表示勾选了同步
-                let { entityName, fieldName } = this.fieldProps.fieldViewModel;
-                if(entityName || fieldName){
-                    this.checkedSync = true;
+                let { optionSyncModel } = this.fieldProps.fieldViewModel;
+                if(optionSyncModel){
+                    let { entityName, fieldName } = optionSyncModel;
+                    if(entityName && fieldName){
+                        this.checkedSync = true;
+                        this.useFieldSync = entityName + '.' + fieldName
+                    }
                 }
             }
             
@@ -262,7 +275,15 @@ export default {
                         optionList.push({ key: item.label, value: item.value });
                     }
                 });
-
+                // 如果启用了同步 
+                if(this.checkedSync){
+                    let fieldSync = this.useFieldSync.split('.');
+                    let optionSyncModel = {
+                        entityName: fieldSync[0],
+                        fieldName: fieldSync[1]
+                    };
+                    this.fieldProps.fieldViewModel.optionSyncModel = optionSyncModel
+                }
                 let saveMethod = addOptionField;
                 if (this.fieldState === FieldState.EDIT) {
                     saveMethod = updateOptionField;
