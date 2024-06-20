@@ -244,7 +244,12 @@ export default {
                     }
                 }
             }
-            this.filterConditions = filterConditions;
+            if (filterConditions.items.length > 0) {
+                this.filterConditions = filterConditions;
+            } else {
+                this.filterConditions = null;
+            }
+            
 			this.showReferenceDialogFlag = true;
 		},
 
