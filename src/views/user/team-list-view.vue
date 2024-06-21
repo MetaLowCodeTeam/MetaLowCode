@@ -89,7 +89,7 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "createdBy.name",
+        prop: "createdBy",
         label: "创建用户",
         formatter: (row) => {
             return row.createdBy?.name;

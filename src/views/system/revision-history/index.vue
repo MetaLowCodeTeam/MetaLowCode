@@ -75,7 +75,7 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "entityId.name",
+        prop: "entityId",
         label: "关联记录",
         align: "center",
         highlight: true,
@@ -84,7 +84,7 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "revisionType.label",
+        prop: "revisionType",
         label: "变更类型",
         align: "center",
         formatter: (row) => {
@@ -92,7 +92,7 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "revisionBy.name",
+        prop: "revisionBy",
         label: "变更用户",
         align: "center",
         formatter: (row) => {
