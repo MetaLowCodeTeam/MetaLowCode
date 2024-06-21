@@ -86,7 +86,7 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "deletedBy.name",
+        prop: "deletedBy",
         label: "删除人",
         width: "150",
         align: "center",
@@ -104,7 +104,7 @@ let tableColumn = ref([
         },
     },
     {
-        prop: "restoreBy.name",
+        prop: "restoreBy",
         label: "恢复人",
         width: "150",
         align: "center",

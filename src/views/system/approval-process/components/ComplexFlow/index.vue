@@ -189,6 +189,14 @@ const NodeTypeFn = {
     "bpmn:userTask": "getNodeModelById",
 };
 
+// 排除的节点
+const EliminateNode = [
+    "bpmn:parallelGateway",
+    "bpmn:endEvent",
+    "bpmn:exclusiveGateway",
+    "bpmn:inclusiveGateway"
+];
+
 // 节点删除
 const nodeDelete = () => {
     drawer.value = false;
@@ -197,7 +205,7 @@ const nodeDelete = () => {
 // 节点点击
 const openDrawer = (data) => {
     // 如果是网关、结束节点。不做任何处理
-    if (data.type == "bpmn:parallelGateway" || data.type == "bpmn:endEvent") {
+    if (EliminateNode.includes(data.type)) {
         return;
     }
     drawer.value = true;
@@ -209,7 +217,6 @@ const openDrawer = (data) => {
     } else {
         drawerData.value.formData = cloneDeep(nodeDefaultData[data.type]);
     }
-    console.log(drawerData.value.formData,"点击节点")
 };
 
 // 开始节点
@@ -266,7 +273,7 @@ const onSave = async () => {
     let { nodes, edges } = mflData;
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
-        (el) => el.type != "bpmn:endEvent" && el.type != "bpmn:parallelGateway"
+        (el) => !EliminateNode.includes(el.type)
     );
     // 遍历节点
     for (let index = 0; index < newNodes.length; index++) {
@@ -278,7 +285,6 @@ const onSave = async () => {
         } else {
             properties = getProperties(el.properties.flowJson);
         }
-        console.log(properties,'properties');
         // 如果是开始节点
         if (el.type == "bpmn:startEvent") {
             let { nodeRoleType, nodeRoleList } = properties;
@@ -324,15 +330,17 @@ const onSave = async () => {
         flowJson[el.id] = el.properties.flowJson;
     });
     formatNodes.forEach((el) => {
-        if (el.type != "bpmn:endEvent" && el.type != "bpmn:parallelGateway") {
+        if (!EliminateNode.includes(el.type)) {
             flowJson[el.id] = el.properties.flowJson;
         }
     });
-    
+    let logicFlowXml = MetaFlowDesignerRef.value.getXmlData() || '';
+    logicFlowXml = logicFlowXml.replace('<dc:Bounds x="null"','<dc:Bounds x="365"');
+    logicFlowXml = logicFlowXml.replace('width="null" height="14"','width="50" height="14"');
     let param = {
         approvalConfigId: approvalConfigId.value,
         logicFlow: {
-            logicFlowXml: MetaFlowDesignerRef.value.getXmlData(),
+            logicFlowXml,
             flowJson,
         },
     };

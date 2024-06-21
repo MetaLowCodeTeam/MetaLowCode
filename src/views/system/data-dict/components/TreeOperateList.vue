@@ -21,7 +21,7 @@
 		</el-aside>
 		<el-container class="main-container">
 			<el-header class="main-header w-100">
-				<div class="title fl">{{ cutNode.label }}</div>
+				<div class="title fl">{{ cutNode.title }}</div>
 				<div class="section-fr fr">
 					<el-button
 						@click.stop="operateItem(false, 'add')"
@@ -160,9 +160,10 @@ const formatTree = (data) => {
 		};
 		el.fieldList.forEach((subEl, subInx) => {
 			let subObj = {
-				label: subEl.fieldLabel,
+				label: subEl.fieldLabel + (subEl.syncFlag == "1" ? "(已同步)" : ""),
 				name: subEl.fieldName,
 				parentName: el.entityName,
+                title: getSubElTitle(subEl),
 				$inx: `${inx + 1}-${subInx + 1}`,
 			};
 			obj.children.push(subObj);
@@ -173,6 +174,14 @@ const formatTree = (data) => {
 	});
 	return formatArr;
 };
+
+const getSubElTitle = (subEl) => {
+    let title = subEl.fieldLabel;
+    if(subEl.syncFlag == "1"){
+        title +=  " (已同步：[" + subEl.syncEntityLabel + '.' + subEl.syncFieldLabel + '])'
+    }
+    return title;
+}
 
 // 节点点击
 const handleTreeNodeClick = (node) => {

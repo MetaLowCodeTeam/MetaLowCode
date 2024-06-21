@@ -71,14 +71,14 @@ let tableColumn = ref([
         label: "消息",
     },
     {
-        prop: "relatedRecord.name",
+        prop: "relatedRecord",
         label: "相关记录",
         formatter: (row) => {
             return row.relatedRecord?.name;
         },
     },
     {
-        prop: "fromUser.name",
+        prop: "fromUser",
         label: "发送人",
         width: "120",
         align: "center",
