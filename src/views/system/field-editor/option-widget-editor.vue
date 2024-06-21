@@ -216,7 +216,7 @@ export default {
                 let fields = res.data || [];
                 fields.forEach(el => {
                     el.fieldList.forEach(subEl => {
-                        if(!subEl.syncFlag == "1"){
+                        if(subEl.syncFlag !== "1"){
                             this.fieldsSync.push({
                                 label: el.entityLabel + "." + subEl.fieldLabel,
                                 value: el.entityName + '.' + subEl.fieldName
