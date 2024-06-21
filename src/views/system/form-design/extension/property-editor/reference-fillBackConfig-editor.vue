@@ -476,7 +476,7 @@ export default {
 			this.fillBackDialogConf.loading = true;
 			this.entity = this.subFormName || this.$route.query.entity;
 			let refField = this.optionModel.name;
-			let res = await refFieldQuery(this.entity, refField, 1, 10, "");
+			let res = await refFieldQuery(this.entity, refField, 1, 10, "", null, null);
 			if (res) {
 				this.sourceColumn = res.data.columnList.map((el) => {
 					el.formFieldType = formFieldMapping[el.type]?.type;
