@@ -126,10 +126,9 @@
 							</el-col>
 						</el-row>
 
-						<el-row class="group-el-button">
+						<el-row class="group-el-button" v-if="showApprovalRelated()">
 							<el-col :span="24">
 								<ApprovalRelated
-									v-if="recordApproval"
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
                                     @closeDialog="closeDialog"
@@ -170,7 +169,7 @@ import mlApproveBar from "@/components/mlApproveBar/index.vue";
  * API
  */
 import { getRecordApprovalState } from '@/api/approval';
-
+const $TOOL = inject("$TOOL");
 const props = defineProps({
 	layoutConfig: { type: Object, default: () => {} },
 });
@@ -427,6 +426,32 @@ const onFullSceen = () => {
 	isFullSceen.value = !isFullSceen.value;
 };
 
+// 是否显示流程操作快
+const showApprovalRelated = () => {
+    // 如果没有审批流程
+    if(!recordApproval.value) {
+        return false;
+    }
+    let { 
+        imApproval, 
+        startApproval, 
+        queryHistory, 
+        revokeApproval 
+    } = recordApproval.value;
+    if(imApproval){
+        return true
+    }
+    if(startApproval){
+        return true
+    }
+    if($TOOL.checkRole('r6013') && revokeApproval){
+        return true
+    }
+    if(queryHistory){
+        return true
+    }
+    return false
+}
 
 
 // 暴露方法给父组件调用
