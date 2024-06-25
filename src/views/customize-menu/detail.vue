@@ -141,13 +141,12 @@
                                 </el-col>
                             </el-row>
                         </template>
-
 						<el-row class="group-el-button" v-if="detailParamConf.showProcessBlock && (contentSlots.processBlockUnshift || recordApproval || contentSlots.processBlockPush)">
-                            <div class="group-button-label">流程操作</div>
                             <el-col :span="24" v-if="contentSlots.processBlockUnshift">
                                 <slot name="processBlockUnshift"></slot>
                             </el-col>
-							<el-col :span="24" v-if="recordApproval">
+							<el-col :span="24" v-if="showApprovalRelated()">
+
 								<ApprovalRelated
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
@@ -217,7 +216,7 @@ import mlApproveBar from "@/components/mlApproveBar/index.vue";
  * API
  */
 import { getRecordApprovalState } from '@/api/approval';
-
+const $TOOL = inject("$TOOL");
 const props = defineProps({
 	layoutConfig: { type: Object, default: () => {} },
     // 详情配置
@@ -515,6 +514,7 @@ const onFullSceen = () => {
 	isFullSceen.value = !isFullSceen.value;
 };
 
+
 /**
  * 导出方法
  */
@@ -554,6 +554,34 @@ const toMoreAction = (type) => {
     }else if(type == 'printer'){
         MoreRefs.value?.openPrinter();
     }
+}
+
+// 是否显示流程操作快
+const showApprovalRelated = () => {
+    // 如果没有审批流程
+    if(!recordApproval.value) {
+        return false;
+    }
+    let { 
+        imApproval, 
+        startApproval, 
+        queryHistory, 
+        revokeApproval 
+    } = recordApproval.value;
+    if(imApproval){
+        return true
+    }
+    if(startApproval){
+        return true
+    }
+    if($TOOL.checkRole('r6013') && revokeApproval){
+        return true
+    }
+    if(queryHistory){
+        return true
+    }
+    return false
+
 }
 
 
