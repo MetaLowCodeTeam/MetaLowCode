@@ -15,7 +15,7 @@
         @onConfirm="onConfirm"
 	>
 		<!-- 更多插槽看 第4行 API -->
-		<template #afterConfirmBtn>
+		<template #beforeCancelBtn>
 			<el-button @click="test()">测试</el-button>
 		</template>
 	</EntityListEdit>

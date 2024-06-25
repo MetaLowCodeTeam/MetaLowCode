@@ -322,7 +322,7 @@ const confirm = async () => {
                     (saveRes.data?.code == 200 || saveRes.code == 200)
                 ) {
                     ElMessage.success("保存成功");
-                    emits("onConfirm");
+                    emits("onConfirm", saveRes.data);
                     isShow.value = false;
                 }
                 loading.value = false;
@@ -349,7 +349,7 @@ const getCurEntityName = () => {
     return row.entityName
 }
 
-const getVFormRef = () => {
+const getFormRef = () => {
     return vFormRef?.value
 }
 
@@ -357,7 +357,7 @@ const getGlobalDsv = () => {
     return globalDsv.value
 }
 
-const getDataId = () => {
+const getRecordId = () => {
     return row.detailId
 }
 
@@ -367,9 +367,9 @@ defineExpose({
     refresh,
     cancel,
     getCurEntityName,
-    getVFormRef,
+    getFormRef,
     getGlobalDsv,
-    getDataId
+    getRecordId
 });
 </script>
 <style lang='scss' scoped>
