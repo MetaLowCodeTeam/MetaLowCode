@@ -133,7 +133,7 @@
 
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
-import { ref, inject, reactive } from "vue";
+import { ref, inject, reactive, onMounted } from "vue";
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -156,6 +156,13 @@ let sourceColumn = ref([]);
 
 // 筛选字段
 let searchField = ref("");
+
+onMounted(() => {
+    document.body.ondrop = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+})
 
 const notShowColumn = () => {
     if (!searchField) {

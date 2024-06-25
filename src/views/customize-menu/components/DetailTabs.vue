@@ -104,15 +104,15 @@ const confirm = (e) => {
         position: absolute;
         top: 12px;
         right: 0;
-        display: none;
+        display: block;
         &:hover {
             color: var(--el-color-primary);
         }
     }
-    &:hover {
-        .setting-tabs {
-            display: block;
-        }
-    }
+    // &:hover {
+    //     .setting-tabs {
+    //         display: block;
+    //     }
+    // }
 }
 </style>

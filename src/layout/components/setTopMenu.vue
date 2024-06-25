@@ -170,6 +170,10 @@ watch(
 );
 
 onMounted(() => {
+    document.body.ondrop = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    };
     initDailog();
 });
 

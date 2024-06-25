@@ -126,6 +126,10 @@ watch(
     { deep: true }
 );
 onMounted(() => {
+    document.body.ondrop = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    };
     isShow.value = props.modelValue;
     // 加载字段
     loadFields();

@@ -179,6 +179,10 @@ watch(
     { deep: true }
 );
 onMounted(() => {
+    document.body.ondrop = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    };
     initDimensional();
 });
 // 图表类型
