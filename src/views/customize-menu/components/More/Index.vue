@@ -438,7 +438,7 @@ const treeGroupFilterConfirm = () => {
 let setListStyleDialogIsShow = ref(false);
 
 
-const listMoreSeting = (type) => {
+const listMoreSetting = (type) => {
     if(!$TOOL.checkRole('r6008')){
         ElMessage.error("当前无权操作。")
         return
@@ -473,7 +473,7 @@ defineExpose({
     dataExportFn,
     dataUploadFn,
     editColumn,
-    listMoreSeting,
+    listMoreSetting,
     openReportForms,
     openPrinter
 });

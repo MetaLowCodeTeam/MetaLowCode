@@ -1057,13 +1057,13 @@ const toMoreAction = (type) => {
 }
 
 // 显示列设置
-const showColumnSeting = (type) => {
+const showColumnSetting = (type) => {
     MoreRefs.value?.editColumn(type)
 }
 
 // 更多列表设置
-const listMoreSeting = (type) => {
-    MoreRefs.value?.listMoreSeting(type)
+const listMoreSetting = (type) => {
+    MoreRefs.value?.listMoreSetting(type)
 }
 
 defineExpose({
@@ -1075,8 +1075,8 @@ defineExpose({
     toAdd,
     toDetail,
     toMoreAction,
-    showColumnSeting,
-    listMoreSeting
+    showColumnSetting,
+    listMoreSetting
 })
 
 </script>
