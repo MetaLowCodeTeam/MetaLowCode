@@ -24,12 +24,12 @@
                         v-model="quickQuery"
                         class="w-50 m-2"
                         :placeholder="quickQueryPlaceholder"
-                        @keyup.enter="getTableList"
+                        @keyup.enter="onQuickQuery()"
                         clearable
-                        @clear="getTableList"
+                        @clear="onClearQuickQuery()"
                     >
                         <template #append>
-                            <el-button @click="getTableList">
+                            <el-button @click="onQuickQuery()">
                                 <el-icon>
                                     <ElIconSearch />
                                 </el-icon>
@@ -1003,6 +1003,22 @@ const resetList = () => {
 // 刷新表格数据
 const refreshList = () => {
     getTableList();
+}
+
+// 快速查询
+const onQuickQuery = () => {
+    if(!quickQueryPlaceholder.value){
+        ElMessage.warning("请配置快速查询字段!");
+        return
+    }
+    getTableList();
+}
+
+// 清空快速查询
+const onClearQuickQuery = () => {
+    if(quickQueryPlaceholder.value){
+        getTableList();
+    }
 }
 
 // 获取实体信息
