@@ -186,6 +186,7 @@
                     @row-dblclick="rowDblclick"
                     :show-summary="statisticsList.length > 0"
                     :summary-method="getSummaries"
+                    @select-all="selectAll"
                 >
                     <el-table-column
                         type="selection"
@@ -675,6 +676,21 @@ const handleSizeChange = (size) => {
     page.size = size;
     getTableList();
 };
+
+// 全选操作
+const selectAll = (e) => {
+    // 如果是选中状态
+    if(e.length > 0){
+        // 取所有已渲染的数据ID
+        let allSelectIdx = e.map(el => el[idFieldName.value]);
+        // 把没渲染的数据塞入选中
+        tableData.value.forEach(row => {
+            if(!allSelectIdx.includes(row[idFieldName.value])){
+                TableRef.value?.toggleRowSelection(row, undefined)
+            }   
+        })
+    }
+}
 
 // 表格多选
 const handleSelectionChange = (val) => {
