@@ -169,6 +169,7 @@
 			:layoutConfig="myLayoutConfig"
 		/> -->
         <mlCustomEdit 	
+            ref="editRefs"
             @onConfirm="onConfirm"
 			:nameFieldName="nameFieldName"
 			:layoutConfig="myLayoutConfig" 
