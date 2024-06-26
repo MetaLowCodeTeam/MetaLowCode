@@ -83,7 +83,6 @@ export function getRejectNodeList(approvalTaskId) {
 }
 
 // 获取审批历史流程配置
-// 保存流程
 export function getHisActivityIns(entityId) {
     return http.get('/approval/getHisActivityIns',  { entityId })
 }

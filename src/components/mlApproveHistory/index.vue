@@ -69,10 +69,10 @@
                                             effect="dark"
                                             :content="activity.remark || 'error'"
                                             placement="top"
+                                            v-if="activity.remark"
                                         >
                                             <span
                                                 style="position: relative;top: 2px;cursor: pointer;"
-                                                v-if="activity.remark"
                                             >
                                                 <el-icon>
                                                     <ElIconQuestionFilled />
@@ -86,10 +86,10 @@
                                             effect="dark"
                                             :content="activity.remark || 'error'"
                                             placement="top"
+                                            v-if="activity.remark"
                                         >
                                             <span
                                                 style="position: relative;top: 2px;cursor: pointer;"
-                                                v-if="activity.remark"
                                             >
                                                 <el-icon>
                                                     <ElIconQuestionFilled />
@@ -103,10 +103,10 @@
                                             effect="dark"
                                             :content="activity.remark || 'error'"
                                             placement="top"
+                                            v-if="activity.remark"
                                         >
                                             <span
                                                 style="position: relative;top: 2px;cursor: pointer;"
-                                                v-if="activity.remark"
                                             >
                                                 <el-icon>
                                                     <ElIconQuestionFilled />
