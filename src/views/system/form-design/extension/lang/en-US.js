@@ -1,6 +1,7 @@
 export default {
     extension: {
         widgetLabel: {
+            'list-sub-form': 'ListSubForm',
             'check-tag': 'CheckTag',
             'reference': 'Reference',
             'location': 'Location',

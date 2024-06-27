@@ -1,3 +1,22 @@
+/**
+ * 容器组件
+ */
+export const listSubFormSchema = {
+    type: "list-sub-form",
+    icon: 'list-sub-form',
+    category: 'container',
+    commonFlag: true,
+    widgetList: [],
+    options: {
+        name: "",
+        label: 'list-sub-form'
+    },
+};
+
+
+/**
+ * 字段组件
+ */
 export const checkTagSchema = {
 	type: 'check-tag',
 	icon: 'check-tag-field',
