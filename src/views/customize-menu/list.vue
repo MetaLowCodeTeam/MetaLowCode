@@ -299,6 +299,7 @@ import {
     onActivated,
     watchEffect,
     useSlots,
+    watch,
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
@@ -328,6 +329,15 @@ import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 
 
+const { allEntityCode } = storeToRefs(useCommonStore());
+const { setRouterParams } = routerParamsStore();
+const { routerParams } = storeToRefs(routerParamsStore());
+const router = useRouter();
+
+const $API = inject("$API");
+const $TOOL = inject("$TOOL");
+const $ElMessage = inject("$ElMessage");
+
 const props = defineProps({
     listConf: {
         type: Object,
@@ -337,7 +347,23 @@ const props = defineProps({
         type: Object,
         default: () => {}
     },
+    // 是否引入组件
+    isReferenceComp: {
+        type: Boolean,
+        default: false,
+    },
+    // 引入组件的引入实体
+    referenceEntity: {
+        type: String,
+        default: ""
+    },
 })
+
+// 页面Loading
+let pageLoading = ref(false);
+// 当前实体
+let entityCode = ref("");
+let entityName = ref("");
 
 // 分页
 let page = reactive({
@@ -364,10 +390,33 @@ const listParamConf = ref({
     showMoreBtn: true,
 })
 
+
+// 引入组件所用的实体
+let myReferenceEntity = ref("");
+
+const formatReferenceEntity = () => {
+    entityCode.value = allEntityCode.value[myReferenceEntity.value];
+    entityName.value = myReferenceEntity.value;
+    if (!entityCode.value) {
+        return;
+    }
+    quickQueryConf.entityCode = entityCode.value;
+    // 获取导航配置
+    getLayoutList();
+    // 如果是引入组件
+}
+
+
+
 watchEffect(() => {
     listParamConf.value = Object.assign(listParamConf.value, props.listConf)
     page.size = props.paginationConf?.size || 20;
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
+    if(props.isReferenceComp){
+        myReferenceEntity.value = props.referenceEntity;
+        console.log(myReferenceEntity.value,'myReferenceEntity.value')
+        formatReferenceEntity();
+    }
 })
 
 
@@ -375,19 +424,8 @@ watchEffect(() => {
 // isShowAdvancedQuery: true,
             
 
-const { allEntityCode } = storeToRefs(useCommonStore());
-const { setRouterParams } = routerParamsStore();
-const { routerParams } = storeToRefs(routerParamsStore());
-const router = useRouter();
 
-const $API = inject("$API");
-const $TOOL = inject("$TOOL");
-const $ElMessage = inject("$ElMessage");
-// 页面Loading
-let pageLoading = ref(false);
-// 当前实体
-let entityCode = ref("");
-let entityName = ref("");
+
 // 表格列
 let tableColumn = ref([]);
 // 所有字段
@@ -456,6 +494,10 @@ onBeforeMount(() => {
     } else {
         entityCode.value = router.currentRoute.value.meta.entityCode;
         entityName.value = router.currentRoute.value.meta.entityName;
+    }
+    // 是引入组件
+    if(props.isReferenceComp){
+        return
     }
     if (!entityCode.value) {
         ElMessage.warning("该实体不存在或者已删除");
