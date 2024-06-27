@@ -86,9 +86,9 @@
     >
         <div
             class="form-layout-item"
-            v-for="(item,inx) of formLayoutDialogConf.list"
-            :key="inx"
-            @click="selectedFormLayou(inx)"
+            v-for="(item, idx) of formLayoutDialogConf.list"
+            :key="idx"
+            @click="selectedFormLayout(idx)"
         >
             <div
                 class="form-layout-item-name yichu fl"
@@ -360,7 +360,7 @@ export default {
                                 return;
                             }
 
-                            if (this.usedFieldNames.hasOwnProperty(fld.name)) {
+                            if (this.usedFieldNames.hasOwnProperty(fld.detailEntity + '.' + fld.name)) {
                                 return; //跳过本次循环
                             }
 
@@ -381,6 +381,7 @@ export default {
                             fieldSchema.nameReadonly = true;
                             fieldSchema.options.name = fld.name;
                             fieldSchema.options.label = fld.label;
+                            fieldSchema.subFormName = fld.detailEntity;
                             this.adjustFieldSchema(fieldSchema, fld, mdResult);
                             detailDataItem.fieldList.push(fieldSchema);
                         }
@@ -500,8 +501,12 @@ export default {
 			//
         },
 
-        handleFWU(fwName) {
-            this.usedFieldNames[fwName] = 1;
+        handleFWU(fwName, subFormName) {
+			if (!subFormName) {
+				this.usedFieldNames[fwName] = 1;
+			} else {
+				this.usedFieldNames[subFormName + '.' + fwName] = 1;
+			}
 
             /* 必须延时处理，否则draggable会报错 */
             setTimeout(() => {
@@ -510,8 +515,12 @@ export default {
             }, 800);
         },
 
-        handleFWR(fwName) {
-            delete this.usedFieldNames[fwName];
+        handleFWR(fwName, subFormName) {
+			if (!subFormName) {
+				delete this.usedFieldNames[fwName];
+			} else {
+				delete this.usedFieldNames[subFormName + '.' + fwName];
+			}
 
             /* 必须延时处理，否则draggable会报错 */
             setTimeout(() => {
@@ -535,7 +544,11 @@ export default {
             this.usedFieldNames = {};
             const allFieldWidgets = this.$refs.vfDesigner.getFieldWidgets();
             allFieldWidgets.forEach((fwItem) => {
-                this.usedFieldNames[fwItem.name] = 1;
+				if (!fwItem.field.subFormName) {
+					this.usedFieldNames[fwItem.name] = 1;
+				} else {
+					this.usedFieldNames[fwItem.field.subFormName + '.' + fwItem.name] = 1;
+				}
             });
         },
 
@@ -560,8 +573,8 @@ export default {
         },
 
         // 选择表单
-        selectedFormLayou(inx) {
-            this.setDesign(this.formLayoutDialogConf.list[inx]);
+        selectedFormLayout(idx) {
+            this.setDesign(this.formLayoutDialogConf.list[idx]);
             this.formLayoutDialogConf.isShow = false;
         },
 

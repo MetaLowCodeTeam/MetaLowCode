@@ -178,7 +178,6 @@
                     :border="true"
                     stripe
                     style="width: 100%"
-                    @selection-change="handleSelectionChange"
                     :height="setTableHeight()"
                     @sort-change="sortChange"
                     @header-dragend="headerDragend"
@@ -186,13 +185,28 @@
                     @row-dblclick="rowDblclick"
                     :show-summary="statisticsList.length > 0"
                     :summary-method="getSummaries"
-                    @select-all="selectAll"
                 >
                     <el-table-column
-                        type="selection"
                         :width="statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
-                    />
+                    >
+                        <template #header>
+                            <el-checkbox 
+                                checked 
+                                v-if="selectedAllStatus == 1"
+                                @click="selectAllChange('clear')"
+                            />
+                            <el-checkbox 
+                                indeterminate 
+                                v-else-if="selectedAllStatus == 2"
+                                @click="selectAllChange('all')"
+                            />
+                            <el-checkbox v-else @click="selectAllChange('all')"/>
+                        </template>
+                        <template #default="scope">
+                            <el-checkbox v-model="scope.row.isSelected" />
+                        </template>
+                    </el-table-column>
                     <el-table-column
                         v-for="(column,columnInx) of tableColumn"
                         :key="columnInx"
@@ -299,7 +313,7 @@ import {
     onActivated,
     watchEffect,
     useSlots,
-    watch,
+    computed,
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
@@ -719,31 +733,43 @@ const handleSizeChange = (size) => {
     getTableList();
 };
 
-// 全选操作
-const selectAll = (e) => {
-    // 如果是选中状态
-    if(e.length > 0){
-        // 取所有已渲染的数据ID
-        let allSelectIdx = e.map(el => el[idFieldName.value]);
-        // 把没渲染的数据塞入选中
-        tableData.value.forEach(row => {
-            if(!allSelectIdx.includes(row[idFieldName.value])){
-                TableRef.value?.toggleRowSelection(row, undefined)
-            }   
-        })
+
+/**
+ * 全选状态
+ * 1 全选
+ * 2 半选
+ * 3 没有
+ */
+let selectedAllStatus = computed(() => {
+    let status = 3;
+    let findSelected = tableData.value.filter(el=> el.isSelected);
+    // 是全选
+    if(findSelected.length == tableData.value.length){
+        status = 1
     }
+    // 有选中
+    if(findSelected.length > 0 && findSelected.length < tableData.value.length){
+        status = 2
+    }
+    multipleSelection.value = [...findSelected];
+    // 没有任何选中
+    return status
+})
+
+// 全选切换
+const selectAllChange = (target) => {
+    tableData.value.forEach(el => {
+        el.isSelected = target == 'all';
+    })
+    sliceTable.value.forEach(el => {
+        el.isSelected = target == 'all';
+    })
 }
 
-// 表格多选
-const handleSelectionChange = (val) => {
-    multipleSelection.value = val;
-};
 
 // 表格行点击选中
 const handleHighlightChangeTable = (row, column) => {
-    if (!row.disabled) {
-        TableRef.value.toggleRowSelection(row);
-    }
+    row.isSelected = !row.isSelected;
 };
 
 // 编辑弹框
@@ -933,7 +959,10 @@ const getTableList = async () => {
         param.filterEasySql
     );
     if (res && res.data) {
-        tableData.value = res.data.dataList;
+        tableData.value = res.data.dataList.map(el => {
+            el.isSelected = false;
+            return el
+        });
         page.total = res.data.pagination.total;
         dataExportData.size = res.data.dataList.length;
         dataExportData.total = res.data.pagination.total;
