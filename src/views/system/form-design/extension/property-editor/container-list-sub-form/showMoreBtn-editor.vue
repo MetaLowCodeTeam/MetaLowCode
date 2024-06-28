@@ -1,16 +1,19 @@
 <template>
 	<!--  -->
-	<el-form-item label="是否显示更多按钮" label-width="120px">
+	<el-form-item :label="i18nt('extension.setting.showMoreBtn')" label-width="120px">
 		<el-switch v-model="optionModel.showMoreBtn" />
 	</el-form-item>
 </template>
 
 <script>
+import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+const { i18n } = VisualDesign.VFormSDK
 export default {
     name: "listSubForm-showMoreBtn-editor",
 	props: {
 		optionModel: Object,
 	},
+    mixins: [i18n],
 };
 </script>
 

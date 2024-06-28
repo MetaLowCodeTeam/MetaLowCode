@@ -44,6 +44,7 @@ import listSubFormShowAddBtnEditor from "@/views/system/form-design/extension/pr
 import listSubFormShowMoreBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showMoreBtn-editor.vue";
 import listSubFormShowPaginationEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showPagination-editor.vue";
 import listSubFormPaginationSizeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/paginationSize-editor.vue";
+import listSubFormListHeightEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormHeight-editor.vue";
 
 const {
     addContainerWidgetSchema,
@@ -68,6 +69,7 @@ export const loadExtensionWidgets = (app) => {
     /**
      * 容器组件-列表子表单-字段组件  beg
      */
+    PERegister.registerCPEditor(app, 'listSubFormHeight', 'listSubForm-listSubFormHeight-editor', listSubFormListHeightEditor)
     PERegister.registerCPEditor(app, 'showListHeader', 'listSubForm-showListHeader-editor', listSubFormShowHeaderEditor)
     PERegister.registerCPEditor(app, 'showAdvancedQuery', 'listSubForm-showAdvancedQuery-editor', listSubFormShowAdvancedQueryEditor)
     PERegister.registerCPEditor(app, 'showQuickQuery', 'listSubForm-showQuickQuery-editor', listSubFormShowQuickQueryEditor)

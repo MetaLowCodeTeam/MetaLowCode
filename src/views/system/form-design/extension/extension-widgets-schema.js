@@ -28,6 +28,8 @@ export const listSubFormSchema = {
         showPagination: true,
         // 分页每页显示多少条
         paginationSize: 20,
+        // 列表高度 - 默认294 空状态的高度
+        listSubFormHeight: 294
     },
 };
 

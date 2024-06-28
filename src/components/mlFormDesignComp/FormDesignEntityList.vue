@@ -1,6 +1,10 @@
 <template>
 	<!--  -->
 	<EntityList
+        class="mb-10"
+        :style="{
+            height: tableHeight + 'px'
+        }"
 		v-if="entityCode"
 		isReferenceComp
 		:referenceEntity="myReferenceEntity"
@@ -29,6 +33,10 @@ const props = defineProps({
 		type: [Number, String],
 		default: 20,
 	},
+    tableHeight: {
+        type: [Number, String],
+		default: 294,
+    }
 });
 
 let myReferenceEntity = ref("");
@@ -63,7 +71,15 @@ watchEffect(() => {
 });
 </script>
 <style lang="scss" scoped>
+.form-design-entity-list {
+    margin-bottom: 10px;
+}
 :deep(.table-footer) {
 	z-index: 998 !important;
+}
+:deep(.table-search-box) {
+    height: 63px !important;
+    border-left: 1px solid #ebeef5;
+    border-right: 1px solid #ebeef5;
 }
 </style>

@@ -24,6 +24,7 @@
                     'showPagination': widget.options.showPagination,
                 }"
                 :paginationSize="widget.options.paginationSize"
+                :tableHeight="widget.options.tableHeight"
             />
 		</div>
 	</container-wrapper>
