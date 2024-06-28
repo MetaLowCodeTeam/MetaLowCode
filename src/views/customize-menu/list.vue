@@ -204,7 +204,7 @@
                             <el-checkbox v-else @click="selectAllChange('all')"/>
                         </template>
                         <template #default="scope">
-                            <el-checkbox v-model="scope.row.isSelected" />
+                            <el-checkbox v-model="scope.row.isSelected" @change="handleHighlightChangeTable(scope.row)"/>
                         </template>
                     </el-table-column>
                     <el-table-column

@@ -178,7 +178,11 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             outLink: subEl.outLink,
                         },
                     }
-
+                    // 如果是实体列表 且 使用了自定义列表模板
+                    if(subEl.type == 1 && subEl.useCustom){
+                        subEl.type = 3;
+                        subEl.outLink = subEl.useComponent + "?entity=" + subEl.entityName
+                    }
                     let { path, component, name } = floamtRoute(subEl, isTopNav);
                     subRoute.path = path;
                     subRoute.component = component;

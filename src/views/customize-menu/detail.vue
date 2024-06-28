@@ -459,11 +459,11 @@ const onEditRow = () => {
 
 // 新建
 const onAdd = (e) => {
-	// let tempV = {};
-	// tempV.entityName = e.entityName;
-	// tempV.fieldName = e.fieldName;
-	// tempV.fieldNameVale = detailId.value;
-	// tempV.fieldNameLabel = detailName.value;
+	let tempV = {};
+	tempV.entityName = e.entityName;
+	tempV.fieldName = e.fieldName;
+	tempV.fieldNameVale = detailId.value;
+	tempV.fieldNameLabel = detailName.value;
 	// editRefs.value.openDialog(tempV);
     editEmits(tempV)
 };

@@ -56,7 +56,7 @@
                         title="列表视图"
                         style="margin-left: 0;padding: 8px;"
                         :class="{'is-active': defaultShowType == 'table'}"
-                        @click="defaultShowType = 'table'"
+                        @click="viewTableChange"
                     >
                         <SvgIcon icon-name="grid_n" />
                     </el-button>
@@ -103,11 +103,16 @@
                 />
             </div>
             <div class="min-table mt-20" v-else>
-                <el-collapse v-model="cardActiveNames" v-if="tableData.length > 0">
+                <el-collapse 
+                    v-model="cardActiveNames" 
+                    v-if="tableData.length > 0"
+                    @change="collapseChange"
+                >
                     <el-collapse-item
                         v-for="(item,inx) of tableData"
                         :key="inx"
                         :name="item[idFieldName]"
+                        :disabled="item.loading"
                     >
                         <template #title>
                             <div class="collapse-title">
@@ -115,7 +120,12 @@
                                 <i class="header-icon el-icon-info"></i>
                             </div>
                         </template>
-                        <CardLayout :layoutJson="layoutJson" :data="item" />
+                        <CardLayout 
+                            :layoutJson="layoutJson" 
+                            :recordId="item[idFieldName]" 
+                            :isLoadData="expandIdx.includes(item[idFieldName])"
+                            @loading="(loadingStatus) => cardLayoutLoading(loadingStatus, item)"
+                        />
                     </el-collapse-item>
                 </el-collapse>
                 <el-empty v-else :image-size="100" description="暂无数据" />
@@ -390,6 +400,7 @@ const refreshData = () => {
     getTableList();
 };
 
+
 let layoutJson = ref(null);
 const getTableList = async () => {
     loading.value = true;
@@ -426,10 +437,12 @@ const getTableList = async () => {
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;
-
-        cardActiveNames.value = tableData.value.map(
-            (el) => el[idFieldName.value]
-        );
+        tableData.value.forEach( el => {
+            el.loading = false;
+        })
+        // cardActiveNames.value = tableData.value.map(
+        //     (el) => el[idFieldName.value]
+        // );
         page.total = res.data.pagination.total;
         loading.value = true;
         let formLayoutRes = await getFormLayout(entityName.value);
@@ -441,6 +454,25 @@ const getTableList = async () => {
         loading.value = false;
     }
 };
+
+/**
+ * 折叠面板
+ */
+
+let expandIdx = ref([]);
+const collapseChange = (arr) => {
+    expandIdx.value = arr;
+}
+const cardLayoutLoading = (loadingStatus, item) => {
+    item.loading = loadingStatus;
+}
+
+const viewTableChange = () => {
+    defaultShowType.value = 'table';
+    cardActiveNames.value = [];
+}
+
+
 defineExpose({
     initData,
 });
