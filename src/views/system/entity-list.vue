@@ -164,6 +164,11 @@
                         @click="gotoEntityManager()"
                     >字段管理</div>
                     <div
+                        v-if="checkRole('r6003')"
+                        class="context-menu__item"
+                        @click="gotoFormLayout()"
+                    >表单设计</div>
+                    <div
                         class="context-menu__item"
                         @click="createNewEntity('copy')"
                         v-if="!selectedEntityObj.systemEntityFlag"

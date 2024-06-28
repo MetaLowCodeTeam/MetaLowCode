@@ -34,6 +34,16 @@ import { registerContainerItems } from '@/views/system/form-design/extension/con
 // 容器组件-列表子表单
 import listSubFormWidget from "@/views/system/form-design/extension/container-widgets/list-sub-form-widget.vue";
 import listSubFormItem from "@/views/system/form-design/extension/container-items/list-sub-form-item.vue";
+// 列表子表单-是否启用高级查询
+import listSubFormShowAdvancedQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAdvancedQuery-editor.vue";
+import listSubFormShowHeaderEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showListHeader-editor.vue";
+import listSubFormShowQuickQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showQuickQuery-editor.vue";
+import listSubFormShowOpenBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showOpenBtn-editor.vue";
+import listSubFormShowEditBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showEditBtn-editor.vue";
+import listSubFormShowAddBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAddBtn-editor.vue";
+import listSubFormShowMoreBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showMoreBtn-editor.vue";
+import listSubFormShowPaginationEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showPagination-editor.vue";
+import listSubFormPaginationSizeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/paginationSize-editor.vue";
 
 const {
     addContainerWidgetSchema,
@@ -55,6 +65,22 @@ export const loadExtensionWidgets = (app) => {
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
 	app.component('check-tag-optionValueType-editor', checkTagOptionValueTypeEditor)
 
+    /**
+     * 容器组件-列表子表单-字段组件  beg
+     */
+    PERegister.registerCPEditor(app, 'showListHeader', 'listSubForm-showListHeader-editor', listSubFormShowHeaderEditor)
+    PERegister.registerCPEditor(app, 'showAdvancedQuery', 'listSubForm-showAdvancedQuery-editor', listSubFormShowAdvancedQueryEditor)
+    PERegister.registerCPEditor(app, 'showQuickQuery', 'listSubForm-showQuickQuery-editor', listSubFormShowQuickQueryEditor)
+    PERegister.registerCPEditor(app, 'showOpenBtn', 'listSubForm-showOpenBtn-editor', listSubFormShowOpenBtnEditor)
+    PERegister.registerCPEditor(app, 'showEditBtn', 'listSubForm-showEditBtn-editor', listSubFormShowEditBtnEditor)
+    PERegister.registerCPEditor(app, 'showAddBtn', 'listSubForm-showAddBtn-editor', listSubFormShowAddBtnEditor)
+    PERegister.registerCPEditor(app, 'showMoreBtn', 'listSubForm-showMoreBtn-editor', listSubFormShowMoreBtnEditor)
+    PERegister.registerCPEditor(app, 'showPagination', 'listSubForm-showPagination-editor', listSubFormShowPaginationEditor)
+    PERegister.registerCPEditor(app, 'paginationSize', 'listSubForm-paginationSize-editor', listSubFormPaginationSizeEditor)
+    /**
+     * 容器组件-列表子表单-字段组件  end
+     */
+    
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)

@@ -53,9 +53,6 @@
       },
 
     },
-    mounted(){
-        console.log("11111111111")
-    },
     methods: {
       updateWidgetNameAndRef(newName) {
         let oldName = this.designer.selectedWidgetName
@@ -67,7 +64,6 @@
 
         if (!!this.designer.formWidget) {
           const widgetId = this.designer.selectedId
-          console.log(this.designer.formWidget,'this.designer')
           let foundRef = this.designer.formWidget.getWidgetRefById(widgetId, newName) // 检查newName是否已存在！！
           if (!!foundRef) {
             this.selectedWidget.options.name = oldName

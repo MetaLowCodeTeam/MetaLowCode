@@ -138,7 +138,7 @@
                     <span class="lh-span-a" @click="editColumn('SELF')">前去配置</span>
                 </div>
             </div>
-            <div v-else class="table-div">
+            <div v-else class="table-div" :class="{'showPagination':listParamConf.showPagination}">
                 <!-- 分组 -->
                 <div class="tree-froup-box" v-if="treeGroupConf.isOpen">
                     <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
@@ -277,6 +277,7 @@
             @pageChange="pageChange"
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
+            v-if="listParamConf.showPagination"
         />
         <mlCustomDetail ref="detailRefs" :entityName="entityName"/>
         <mlCustomEdit 
@@ -314,6 +315,7 @@ import {
     watchEffect,
     useSlots,
     computed,
+    watch,
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
@@ -379,67 +381,6 @@ let pageLoading = ref(false);
 let entityCode = ref("");
 let entityName = ref("");
 
-// 分页
-let page = reactive({
-    no: 1,
-    size: 20,
-    pageSizes: [20, 40, 80, 100, 200, 300, 400, 500],
-    total: 0,
-});
-
-// 插槽内容
-let contentSlots = reactive({});
-// 是否显示操作列插槽
-let showActionColumnSlot = ref(false);
-
-// Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
-// 配置项
-const listParamConf = ref({
-    showHeader: true,
-    showAdvancedQuery: true,
-    showQuickQuery: true,
-    showOpenBtn: true,
-    showEditBtn: true,
-    showAddBtn: true,
-    showMoreBtn: true,
-})
-
-
-// 引入组件所用的实体
-let myReferenceEntity = ref("");
-
-const formatReferenceEntity = () => {
-    entityCode.value = allEntityCode.value[myReferenceEntity.value];
-    entityName.value = myReferenceEntity.value;
-    if (!entityCode.value) {
-        return;
-    }
-    quickQueryConf.entityCode = entityCode.value;
-    // 获取导航配置
-    getLayoutList();
-    // 如果是引入组件
-}
-
-
-
-watchEffect(() => {
-    listParamConf.value = Object.assign(listParamConf.value, props.listConf)
-    page.size = props.paginationConf?.size || 20;
-    page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
-    if(props.isReferenceComp){
-        myReferenceEntity.value = props.referenceEntity;
-        console.log(myReferenceEntity.value,'myReferenceEntity.value')
-        formatReferenceEntity();
-    }
-})
-
-
-// 是否显示高级查询
-// isShowAdvancedQuery: true,
-            
-
-
-
 // 表格列
 let tableColumn = ref([]);
 // 所有字段
@@ -500,6 +441,67 @@ let TableRef = ref("");
 
 let isMounted = ref(false);
 
+// 分页
+let page = reactive({
+    no: 1,
+    size: 20,
+    pageSizes: [20, 40, 80, 100, 200, 300, 400, 500],
+    total: 0,
+});
+
+// 插槽内容
+let contentSlots = reactive({});
+// 是否显示操作列插槽
+let showActionColumnSlot = ref(false);
+
+// Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
+// 配置项
+const listParamConf = ref({
+    showHeader: true,
+    showAdvancedQuery: true,
+    showQuickQuery: true,
+    showOpenBtn: true,
+    showEditBtn: true,
+    showAddBtn: true,
+    showMoreBtn: true,
+    showPagination: true,
+})
+
+
+
+watch(
+    () => props.referenceEntity,
+    () => {
+        formatReferenceEntity();
+    },
+    {
+        deep: true,
+    }
+)
+
+const formatReferenceEntity = () => {
+    entityCode.value = allEntityCode.value[props.referenceEntity];
+    entityName.value = props.referenceEntity;
+    if (!entityCode.value) {
+        return;
+    }
+    quickQueryConf.entityCode = entityCode.value;
+    // 获取导航配置
+    getLayoutList();
+    // 如果是引入组件
+}
+
+
+
+
+// 是否显示高级查询
+// isShowAdvancedQuery: true,
+            
+
+
+
+
+
 onBeforeMount(() => {
     let routerEntityname = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
     if (routerEntityname) {
@@ -511,6 +513,7 @@ onBeforeMount(() => {
     }
     // 是引入组件
     if(props.isReferenceComp){
+        formatReferenceEntity();
         return
     }
     if (!entityCode.value) {
@@ -1060,6 +1063,15 @@ const changeColumnShow = (type) => {
  
 })
 
+
+
+watchEffect(() => {
+    listParamConf.value = Object.assign(listParamConf.value, props.listConf)
+    page.size = props.paginationConf?.size || 20;
+    page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
+})
+
+
 /**
  * 导出方法
  */
@@ -1220,7 +1232,10 @@ div {
             }
         }
         .table-div {
-            height: calc(100% - 100px);
+            height: calc(100% - 60px);
+            &.showPagination {
+                height: calc(100% - 100px);
+            }
             width: 100%;
             display: flex;
             .tree-froup-box {

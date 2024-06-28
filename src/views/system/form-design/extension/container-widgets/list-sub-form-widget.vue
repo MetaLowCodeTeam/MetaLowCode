@@ -11,7 +11,20 @@
 			:class="{ selected: selected }"
 			@click.stop="selectWidget(widget)"
 		>
-			<EntityList isReferenceComp :referenceEntity="widget.options.name"> </EntityList>
+			<FormDesignEntityList 
+                :referenceEntity="widget.options.name" 
+                :listConf="{
+                    'showHeader': widget.options.showListHeader,
+                    'showAdvancedQuery': widget.options.showAdvancedQuery,
+                    'showQuickQuery': widget.options.showQuickQuery,
+                    'showOpenBtn': widget.options.showOpenBtn,
+                    'showEditBtn': widget.options.showEditBtn,
+                    'showAddBtn': widget.options.showAddBtn,
+                    'showMoreBtn': widget.options.showMoreBtn,
+                    'showPagination': widget.options.showPagination,
+                }"
+                :paginationSize="widget.options.paginationSize"
+            />
 		</div>
 	</container-wrapper>
 </template>
@@ -19,7 +32,7 @@
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 const { i18n, containerMixin, refMixinDesign } = VisualDesign.VFormSDK;
-import EntityList from "@/views/customize-menu/list.vue";
+import FormDesignEntityList from "@/components/mlFormDesignComp/FormDesignEntityList.vue";
 export default {
 	name: "list-sub-form-widget",
 	props: {
@@ -44,7 +57,7 @@ export default {
 		},
 	},
 	components: {
-		EntityList,
+		FormDesignEntityList,
 	},
 };
 </script>

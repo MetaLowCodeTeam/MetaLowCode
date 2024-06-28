@@ -9,7 +9,25 @@ export const listSubFormSchema = {
     widgetList: [],
     options: {
         name: "",
-        label: 'list-sub-form'
+        label: 'list-sub-form',
+        // 是否显示头部
+        showListHeader: true,
+        // 是否显示高级查询
+        showAdvancedQuery: true,
+        // 是否显示快速查询
+        showQuickQuery: true,
+        // 是否显示打开按钮
+        showOpenBtn: true,
+        // 是否显示编辑按钮
+        showEditBtn: true,
+        // 是否显示新建按钮
+        showAddBtn: true,
+        // 是否显示更多按钮
+        showMoreBtn: true,
+        // 是否显示分页
+        showPagination: true,
+        // 分页每页显示多少条
+        paginationSize: 20,
     },
 };
 
