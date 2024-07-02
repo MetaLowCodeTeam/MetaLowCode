@@ -131,6 +131,8 @@ let row = reactive({
     fieldNameLabel: "",
     fieldNameVale: "",
     idFieldName:"",
+    formEntityId:"",
+    mainDetailField:"",
 });
 const globalDsv = ref({});
 globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
@@ -144,6 +146,8 @@ let referenceCompFormData = ref({});
 const openDialog = async (v) => {
     row.dialogTitle = "Loading...";
     row.detailId = v.detailId;
+    row.formEntityId = v.formEntityId;
+    row.mainDetailField = v.mainDetailField;
     row.entityName = v.detailId
         ? queryEntityNameById(v.detailId)
         : v.entityName;
@@ -320,14 +324,16 @@ const confirm = async () => {
                     let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
                     delete referenceCompFormData.value.referenceCompName
                     delete referenceCompFormData.value.referenceCompEntity
+                    
+                    let saveFormData = row.formEntityId ? formData : referenceCompFormData.value;
                     referenceCompFormData.value[referenceCompName] = [Object.assign({}, formData)];
-                    console.log( row.detailId,'01  row.detailId')
-                    console.log(row.entityName,'02 row.entityName')
-                    console.log(referenceCompEntity,'03 referenceCompEntity')
+                    if(row.formEntityId){
+                        saveFormData[row.mainDetailField] = row.formEntityId;
+                    }
                     saveRes = await saveRecord(
-                        row.detailId ? row.entityName : referenceCompEntity,
+                        row.formEntityId ? row.entityName : referenceCompEntity,
                         row.detailId,
-                        row.detailId ? formData : referenceCompFormData.value
+                        saveFormData,
                     );
                 }else {
                     if (props.isTeam) {
@@ -357,7 +363,7 @@ const confirm = async () => {
                     ElMessage.success("保存成功");
                     let resData = saveRes.data.formData;
                     resData.needCb = false;
-                    if(isReferenceComp.value && !row.detailId){
+                    if(isReferenceComp.value && !row.formEntityId){
                         resData.needCb = true;
                     }
                     emits("saveFinishCallBack", resData);
@@ -377,9 +383,8 @@ const confirm = async () => {
 
 // 列表子表单回调所需
 const setRowRecordId = (id) => {
-    if(!row.detailId){
-        row.detailId = id;
-    }
+    row.detailId = id;
+    console.log(row,'数据回填')
 }
 
 const refresh = () => {

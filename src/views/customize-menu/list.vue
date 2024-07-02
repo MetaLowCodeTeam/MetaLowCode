@@ -804,6 +804,8 @@ const onAdd = () => {
             tempV.formData = formData;
             tempV.isReferenceComp = true;
             tempV.idFieldName = idFieldName.value;
+            tempV.formEntityId = myFormEntityId.value;
+            tempV.mainDetailField = mainDetailField.value;
             editRefs.value.openDialog(tempV);
         });
         return
@@ -846,7 +848,10 @@ const editConfirm = (e) => {
 
 // 子表单引用回调
 const saveSubFormListCb = (data) => {
-    myFormEntityId.value = data.recordId;
+    if(data.needCb){
+        myFormEntityId.value = data.recordId;
+        console.log("需要回调吗？")
+    }
     getLayoutList();
 }
 
@@ -991,6 +996,7 @@ const getTableList = async () => {
         filterEasySql: filterEasySql.value,
     };
     dataExportData.queryParm = { ...param };
+    console.log(myFormEntityId.value,'myFormEntityId.value')
     if(props.isReferenceComp){
         param.filter.items.push({
             fieldName: mainDetailField.value,
