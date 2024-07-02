@@ -307,7 +307,7 @@ const getTagEntitys = () => {
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.value.entityCode, true, true);
+        let res = await queryEntityFields(trigger.value.entityCode, true, true, true);
         if (res) {
             cutEntityFields.value = res.data || [];
             res.data.forEach((el) => {
@@ -474,7 +474,7 @@ const uptadeModeChange = (e) => {
             toFixedForFieldType.value == "Reference" ||
             toFixedForFieldType.value == "Option"
         ) {
-            uptadeRule.sourceField = {};
+            uptadeRule.sourceField = e == 'forCompile' ? '' : {};
         } else if (toFixedForFieldType.value == "Tag") {
             uptadeRule.sourceField = [];
         } else {
@@ -686,6 +686,8 @@ const floatSourceFieldList = () => {
     // 字符串字段
     let strField = ["Email", "Url", "TextArea", "Text"];
     let { fieldType, referenceName } = seleteTargetField.value;
+    console.log(fieldType,'fieldType')
+    console.log(referenceName,'referenceName')
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
