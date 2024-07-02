@@ -167,6 +167,7 @@ import { useRouter } from "vue-router";
 import ApproveView from './components/ApproveView.vue';
 const Route = useRouter();
 const props = defineProps({
+    modelValue: null,
     entityId: { type: String, default: "" },
     title: { type: String, default: "" },
 });
@@ -189,7 +190,48 @@ let isComplexWorkFlow = ref(false);
 let fullSceen = ref(false);
 
 
+watch(
+    () => props.modelValue,
+    () => {
+        isShow.value = props.modelValue
+    },
+    {
+        deep: true
+    }
+)
+
+watch(
+    () => isShow.value,
+    (v) => {
+        emit("update:modelValue", v)
+    },
+    {
+        deep: true
+    }
+)
+
+onMounted(()=>{
+    isShow.value = props.modelValue
+    if(isShow.value){
+        getTaskDetailsById();
+    }
+})
+
 let approveHistory = ref([]);
+
+
+const getTaskDetailsById = async () => {
+    loading.value = true;
+    let res = await http.get("/approval/getTaskDetailsById", {
+        entityId: props.entityId
+    })
+    if(res) {
+        approveHistory.value = formatResData(res.data.approvalStepsList);
+    }
+    loading.value = false;
+}
+
+
 
 const getTimelineType = (index, activity) => {
     if (index == 0) {
