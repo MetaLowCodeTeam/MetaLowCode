@@ -12,6 +12,8 @@
 		:paginationConf="listPaginationConf"
         :formEntityId="formEntityId"
 		@referenceCompAdd="referenceCompAdd"
+        @saveFinishCallBack="saveFinishCallBack"
+        ref="EntityListRefs"
 	/>
 	<el-empty v-else description="请先绑定明细实体" />
 </template>
@@ -60,7 +62,9 @@ export default {
 			this.entityCode =
 				useCommonStore().allEntityCode[this.myReferenceEntity];
 		},
-
+        formEntityId(newV) {
+			this.myFormEntityId = newV;
+		},
 	},
 	data() {
 		return {
@@ -85,6 +89,7 @@ export default {
 			listPaginationConf: {
 				size: 20,
 			},
+            myFormEntityId: "",
 		};
 	},
 	mounted() {
@@ -113,6 +118,17 @@ export default {
 					this.$message.error("表单校验失败，请修改后重新提交");
 				});
 		},
+        // 新建\编辑成功后回调
+        saveFinishCallBack(data){
+            // console.log(this.formRef.getGlobalDsv(),'回调后的DVS')
+            let formEntityIdFieldName = this.formRef.getGlobalDsv().formEntityIdFieldName;
+            this.myFormEntityId = data[formEntityIdFieldName];
+            // console.log(data,'00 回调后拿到的数据');
+            // console.log(this.myFormEntityId,'01 获取回调主表的行ID');
+            data.recordId = this.myFormEntityId;
+            this.formRef.getGlobalDsv()?.setRowRecordId(this.myFormEntityId)
+            this.$refs.EntityListRefs.saveSubFormListCb(data);
+        },
 	},
 };
 </script>

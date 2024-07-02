@@ -60,7 +60,7 @@ import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
 const { queryEntityNameById, queryEntityNameByLabel } = useCommonStore();
-const emits = defineEmits(["onConfirm"]);
+
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
@@ -73,6 +73,8 @@ const props = defineProps({
         default: () => {}
     },
 });
+
+const emits = defineEmits(['saveFinishCallBack']);
 
 
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/kon80ysuog88r0um?singleDoc# 《自定义实体新建编辑PC》
@@ -128,6 +130,7 @@ let row = reactive({
     fieldName: "",
     fieldNameLabel: "",
     fieldNameVale: "",
+    idFieldName:"",
 });
 const globalDsv = ref({});
 globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
@@ -147,6 +150,7 @@ const openDialog = async (v) => {
     row.fieldName = v.fieldName;
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
+    row.idFieldName = v.idFieldName;
     isReferenceComp.value = v.isReferenceComp;
     // 如果是引用组件调用，有引用组件表单数据
     if(isReferenceComp.value){
@@ -182,6 +186,8 @@ let haveLayoutJson = ref(false);
 const initFormLayout = async () => {
     loading.value = true;
     globalDsv.value.formEntity = row.entityName;
+    globalDsv.value.formEntityIdFieldName = row.idFieldName;
+    globalDsv.value.setRowRecordId = setRowRecordId;
     let res = await getFormLayout(row.entityName);
     if (res) {
         if (res.data?.layoutJson) {
@@ -310,14 +316,18 @@ const confirm = async () => {
                 loading.value = true;
                 let saveRes;
                 if(isReferenceComp.value){
+                 
                     let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
                     delete referenceCompFormData.value.referenceCompName
                     delete referenceCompFormData.value.referenceCompEntity
                     referenceCompFormData.value[referenceCompName] = [Object.assign({}, formData)];
+                    console.log( row.detailId,'01  row.detailId')
+                    console.log(row.entityName,'02 row.entityName')
+                    console.log(referenceCompEntity,'03 referenceCompEntity')
                     saveRes = await saveRecord(
-                        referenceCompEntity,
+                        row.detailId ? row.entityName : referenceCompEntity,
                         row.detailId,
-                        referenceCompFormData.value
+                        row.detailId ? formData : referenceCompFormData.value
                     );
                 }else {
                     if (props.isTeam) {
@@ -345,12 +355,12 @@ const confirm = async () => {
                     (saveRes.data?.code == 200 || saveRes.code == 200)
                 ) {
                     ElMessage.success("保存成功");
-                    console.log(saveRes.data,'sss');
-                    row.detailId = saveRes.data.formData[myLayoutConfig.value.idFieldName];
-                    globalDsv.value.formEntityId = row.detailId;
                     let resData = saveRes.data.formData;
-                    resData.formEntityId = row.detailId;
-                    emits("onConfirm", resData);
+                    resData.needCb = false;
+                    if(isReferenceComp.value && !row.detailId){
+                        resData.needCb = true;
+                    }
+                    emits("saveFinishCallBack", resData);
                     isShow.value = false;
                 }
                 loading.value = false;
@@ -365,8 +375,15 @@ const confirm = async () => {
  * 导出方法
  */
 
+// 列表子表单回调所需
+const setRowRecordId = (id) => {
+    if(!row.detailId){
+        row.detailId = id;
+    }
+}
+
 const refresh = () => {
-    emits("onConfirm");
+    emits("saveFinishCallBack", {});
 }
 
 const cancel = () => {
@@ -397,7 +414,7 @@ defineExpose({
     getCurEntityName,
     getFormRef,
     getGlobalDsv,
-    getRecordId
+    getRecordId,
 });
 </script>
 <style lang='scss' scoped>

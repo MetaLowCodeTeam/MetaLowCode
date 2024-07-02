@@ -286,7 +286,7 @@
             :entityName="entityName"
             :nameFieldName="nameFieldName"
             :layoutConfig="layoutConfig"
-            @onConfirm="editConfirm"
+            @saveFinishCallBack="editConfirm"
         />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -803,12 +803,14 @@ const onAdd = () => {
             tempV.entityName = entityName.value;
             tempV.formData = formData;
             tempV.isReferenceComp = true;
+            tempV.idFieldName = idFieldName.value;
             editRefs.value.openDialog(tempV);
         });
         return
     }
     let tempV = {};
     tempV.entityName = entityName.value;
+    tempV.idFieldName = idFieldName.value;
     editRefs.value.openDialog(tempV);
 };
 
@@ -835,8 +837,16 @@ const onEditRow = (row) => {
 
 // 编辑成功后回调
 const editConfirm = (e) => {
-    console.log(e,'ssss')
-    // myFormEntityId.value = res.formEntityId;
+    if(props.isReferenceComp && e.needCb){
+        emits('saveFinishCallBack', e);
+    }else {
+        getLayoutList();
+    }
+}
+
+// 子表单引用回调
+const saveSubFormListCb = (data) => {
+    myFormEntityId.value = data.recordId;
     getLayoutList();
 }
 
@@ -985,7 +995,7 @@ const getTableList = async () => {
         param.filter.items.push({
             fieldName: mainDetailField.value,
             op: "EQ",
-            value: props.formEntityId,
+            value: myFormEntityId.value,
         })
     }
     let res = await getDataList(
@@ -1232,7 +1242,8 @@ defineExpose({
     toDetail,
     toMoreAction,
     showColumnSetting,
-    listMoreSetting
+    listMoreSetting,
+    saveSubFormListCb,
 })
 
 </script>

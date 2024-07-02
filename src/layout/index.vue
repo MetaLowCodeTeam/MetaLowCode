@@ -389,7 +389,7 @@ export default {
         },
         getHeaderCenterWidht(){
             let computedWidth;
-            let nameLangth = this.appName.length;
+            let nameLangth = this.appName?.length;
             if(nameLangth < 7){
                 computedWidth = 520;
             }else {
