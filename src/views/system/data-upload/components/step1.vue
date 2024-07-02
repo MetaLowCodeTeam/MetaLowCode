@@ -135,7 +135,7 @@ const changeEntity = () => {
 // 获取当前实体所有字段
 const getEntityFields = async () => {
     loading.value = true;
-    let res = await queryEntityFields(entityCode.value, true, false, true);
+    let res = await queryEntityFields(entityCode.value, false, false, true);
     if (res) {
         fromData.value.fields = res.data || [];
         let importFields = [];
