@@ -311,7 +311,7 @@ const getTagEntitys = () => {
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.value.entityCode, true, true);
+        let res = await queryEntityFields(trigger.value.entityCode, true, true, true);
         if (res) {
             cutEntityFields.value = res.data || [];
             res.data.forEach((el) => {
@@ -509,9 +509,10 @@ const uptadeModeChange = (e) => {
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
         if (
+            toFixedForFieldType.value == "Reference" ||
             toFixedForFieldType.value == "Option"
         ) {
-            uptadeRule.sourceField = {};
+            uptadeRule.sourceField = e == 'forCompile' ? '' : {};
         } else if (toFixedForFieldType.value == "Tag") {
             uptadeRule.sourceField = [];
         } else {

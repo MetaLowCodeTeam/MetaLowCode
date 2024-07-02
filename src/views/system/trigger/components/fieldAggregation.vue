@@ -245,7 +245,7 @@ const getTagEntitys = () => {
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.value.entityCode, true, true);
+        let res = await queryEntityFields(trigger.value.entityCode, true, true, true);
         if (res) {
             cutEntityFields.value = res.data;
             res.data.forEach((el) => {
@@ -417,11 +417,20 @@ const getUptadeMode = () => {
 
 // 聚合方式切换
 const uptadeModeChange = (e) => {
-    if (e != "forCompile") {
+    if (e.value == "forField") {
         // 源字段默认选中第一个
         uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        uptadeRule.sourceField = "";
+        if (
+            toFixedForFieldType.value == "Reference" ||
+            toFixedForFieldType.value == "Option"
+        ) {
+            uptadeRule.sourceField = e == 'forCompile' ? '' : {};
+        } else if (toFixedForFieldType.value == "Tag") {
+            uptadeRule.sourceField = [];
+        } else {
+            uptadeRule.sourceField = null;
+        }
     }
 };
 
