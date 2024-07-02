@@ -278,7 +278,7 @@
             @handleSizeChange="handleSizeChange"
             style="background: #fff;"
         />
-        <mlCustomDetail ref="detailRefs" :entityName="entityName"/>
+        <mlCustomDetail ref="detailRefs" :entityName="entityName" @updateData="getTableList"/>
         <mlCustomEdit 
             ref="editRefs"
             :entityName="entityName"
