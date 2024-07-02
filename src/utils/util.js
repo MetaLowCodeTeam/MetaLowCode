@@ -479,3 +479,18 @@ export const checkConditionList = (data) => {
     }
     return flag;
 }
+
+// 获取配置ModelName
+export const getModelName = () => {
+    let modelName = null;
+    let pathname = location.pathname;
+    if(pathname.indexOf('/custom-page/') !== -1){
+        let splitPathname = pathname.split("/");
+        let newSplitName = [];
+        if(splitPathname[3]){
+            newSplitName.push(splitPathname[3])
+        }
+        modelName = newSplitName.join(".")
+    }
+    return modelName;
+}

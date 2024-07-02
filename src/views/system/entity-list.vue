@@ -492,10 +492,10 @@ const gotoEntityManager = () => {
 };
 
 const gotoFormLayout = () => {
-    if (selectedEntityObj.value.layoutable !== true) {
-        ElMessage.info("当前实体不允许设计表单");
-        return;
-    }
+    // if (selectedEntityObj.value.layoutable !== true) {
+    //     ElMessage.info("当前实体不允许设计表单");
+    //     return;
+    // }
 
     router.push({
         name: "FormDesign",

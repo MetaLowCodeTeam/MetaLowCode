@@ -1,85 +1,131 @@
 <template>
 	<!--  -->
 	<EntityList
-        class="mb-10"
-        :style="{
-            height: tableHeight + 'px'
-        }"
+		class="mb-10"
+		:style="{
+			height: tableHeight + 'px',
+		}"
 		v-if="entityCode"
 		isReferenceComp
 		:referenceEntity="myReferenceEntity"
 		:listConf="listParamConf"
 		:paginationConf="listPaginationConf"
+        :formEntityId="formEntityId"
+		@referenceCompAdd="referenceCompAdd"
 	/>
 	<el-empty v-else description="请先绑定明细实体" />
 </template>
 
-<script setup>
+<script>
 import EntityList from "@/views/customize-menu/list.vue";
-import { ref, watchEffect } from "vue";
 import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
-const { allEntityCode } = storeToRefs(useCommonStore());
-const props = defineProps({
-	referenceEntity: {
-		type: String,
-		default: "",
+// import { storeToRefs } from "pinia";
+// const { allEntityCode } = useCommonStore();
+export default {
+	components: {
+		EntityList,
 	},
-	listConf: {
-		type: Object,
-		default: () => {},
+	props: {
+        formEntityId: {
+			type: String,
+			default: "",
+		},
+		referenceEntity: {
+			type: String,
+			default: "",
+		},
+		listConf: {
+			type: Object,
+			default: () => {},
+		},
+		paginationSize: {
+			type: [Number, String],
+			default: 20,
+		},
+		tableHeight: {
+			type: [Number, String],
+			default: 294,
+		},
+		formRef: {},
 	},
-	paginationSize: {
-		type: [Number, String],
-		default: 20,
+	watch: {
+		listConf(newV) {
+			this.listParamConf = Object.assign(this.listParamConf, newV);
+		},
+		paginationSize(newV) {
+			this.listPaginationConf.size = newV ? newV * 1 : 20;
+		},
+		referenceEntity(newV) {
+			this.myReferenceEntity = newV;
+			this.entityCode =
+				useCommonStore().allEntityCode[this.myReferenceEntity];
+		},
+
 	},
-    tableHeight: {
-        type: [Number, String],
-		default: 294,
-    }
-});
-
-let myReferenceEntity = ref("");
-let entityCode = ref("");
-
-let listParamConf = ref({
-	// 是否显示头部
-	showHeader: true,
-	// 是否显示高级查询
-	showAdvancedQuery: true,
-	// 是否显示快速查询
-	showQuickQuery: true,
-	// 是否显示打开按钮
-	showOpenBtn: true,
-	// 是否显示编辑按钮
-	showEditBtn: true,
-	// 是否显示新建按钮
-	showAddBtn: true,
-	// 是否显示更多按钮
-	showMoreBtn: true,
-});
-
-let listPaginationConf = ref({
-	size: 20,
-});
-
-watchEffect(() => {
-	myReferenceEntity.value = props.referenceEntity;
-	entityCode.value = allEntityCode.value[myReferenceEntity.value];
-	listParamConf.value = Object.assign(listParamConf.value, props.listConf);
-	listPaginationConf.value.size = props.paginationSize ?  props.paginationSize * 1 : 20;
-});
+	data() {
+		return {
+			myReferenceEntity: "",
+			entityCode: "",
+			listParamConf: {
+				// 是否显示头部
+				showHeader: true,
+				// 是否显示高级查询
+				showAdvancedQuery: true,
+				// 是否显示快速查询
+				showQuickQuery: true,
+				// 是否显示打开按钮
+				showOpenBtn: true,
+				// 是否显示编辑按钮
+				showEditBtn: true,
+				// 是否显示新建按钮
+				showAddBtn: true,
+				// 是否显示更多按钮
+				showMoreBtn: true,
+			},
+			listPaginationConf: {
+				size: 20,
+			},
+		};
+	},
+	mounted() {
+		this.listParamConf = Object.assign(this.listParamConf, this.listConf);
+		this.listPaginationConf.size = this.paginationSize
+			? this.paginationSize * 1
+			: 20;
+		this.myReferenceEntity = this.referenceEntity;
+		this.entityCode =
+			useCommonStore().allEntityCode[this.myReferenceEntity];
+        
+	},
+	methods: {
+		referenceCompAdd(cb) {
+            console.log(this.formRef.getGlobalDsv().formEntity,'this.formRef')
+			this.formRef
+				.getFormData()
+				.then((formData) => {
+                    let newFromData = formData;
+                    newFromData.referenceCompName = this.formRef.referenceCompName;
+                    newFromData.referenceCompEntity = this.formRef.getGlobalDsv().formEntity;
+					cb(newFromData);
+				})
+				.catch((err) => {
+					console.log(err, "err");
+					this.$message.error("表单校验失败，请修改后重新提交");
+				});
+		},
+	},
+};
 </script>
 <style lang="scss" scoped>
 .form-design-entity-list {
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 :deep(.table-footer) {
 	z-index: 998 !important;
 }
 :deep(.table-search-box) {
-    height: 63px !important;
-    border-left: 1px solid #ebeef5;
-    border-right: 1px solid #ebeef5;
+	height: 63px !important;
+	border-left: 1px solid #ebeef5;
+	border-right: 1px solid #ebeef5;
 }
 </style>

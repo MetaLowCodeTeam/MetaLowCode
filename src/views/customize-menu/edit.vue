@@ -111,6 +111,7 @@ watch(
     }
 );
 
+
 // 加载配置信息
 const loadMyLayoutConfig = () => {
     myLayoutConfig.value = props.layoutConfig || {};
@@ -133,6 +134,10 @@ globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
 let optionData = ref({});
 let loading = ref(false);
 let isShow = ref(false);
+// 是否引用组件调用保存
+let isReferenceComp = ref(false);
+// 引用组件的表单数据
+let referenceCompFormData = ref({});
 const openDialog = async (v) => {
     row.dialogTitle = "Loading...";
     row.detailId = v.detailId;
@@ -142,6 +147,11 @@ const openDialog = async (v) => {
     row.fieldName = v.fieldName;
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
+    isReferenceComp.value = v.isReferenceComp;
+    // 如果是引用组件调用，有引用组件表单数据
+    if(isReferenceComp.value){
+        referenceCompFormData.value = v.formData;
+    }
     let param = {
         id: v.detailId,
         // 2新建 3更新
@@ -296,33 +306,51 @@ const confirm = async () => {
                 };
             }
             if (formData) {
+               
                 loading.value = true;
                 let saveRes;
-                if (props.isTeam) {
-                    saveRes = await saveTeam(
-                        row.entityName,
-                        row.detailId,
-                        formData
-                    );
-                } else if (props.isUser) {
-                    saveRes = await saveUser(
-                        row.entityName,
-                        row.detailId,
-                        formData
-                    );
-                } else {
+                if(isReferenceComp.value){
+                    let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
+                    delete referenceCompFormData.value.referenceCompName
+                    delete referenceCompFormData.value.referenceCompEntity
+                    referenceCompFormData.value[referenceCompName] = [Object.assign({}, formData)];
                     saveRes = await saveRecord(
-                        row.entityName,
+                        referenceCompEntity,
                         row.detailId,
-                        formData
+                        referenceCompFormData.value
                     );
+                }else {
+                    if (props.isTeam) {
+                        saveRes = await saveTeam(
+                            row.entityName,
+                            row.detailId,
+                            formData
+                        );
+                    } else if (props.isUser) {
+                        saveRes = await saveUser(
+                            row.entityName,
+                            row.detailId,
+                            formData
+                        );
+                    } else {
+                        saveRes = await saveRecord(
+                            row.entityName,
+                            row.detailId,
+                            formData
+                        );
+                    }
                 }
                 if (
                     saveRes &&
                     (saveRes.data?.code == 200 || saveRes.code == 200)
                 ) {
                     ElMessage.success("保存成功");
-                    emits("onConfirm", saveRes.data);
+                    console.log(saveRes.data,'sss');
+                    row.detailId = saveRes.data.formData[myLayoutConfig.value.idFieldName];
+                    globalDsv.value.formEntityId = row.detailId;
+                    let resData = saveRes.data.formData;
+                    resData.formEntityId = row.detailId;
+                    emits("onConfirm", resData);
                     isShow.value = false;
                 }
                 loading.value = false;

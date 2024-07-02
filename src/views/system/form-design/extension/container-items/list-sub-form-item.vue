@@ -13,13 +13,17 @@
 				showPagination: widget.options.showPagination,
 			}"
 			:paginationSize="widget.options.paginationSize"
-            :tableHeight="widget.options.tableHeight"
+			:tableHeight="widget.options.tableHeight"
+			:formRef="getForm()"
+            :formEntityId="getFormEntityId()"
 		/>
 	</container-item-wrapper>
 </template>
 
 <script>
 import FormDesignEntityList from "@/components/mlFormDesignComp/FormDesignEntityList.vue";
+import VisualDesign from "@/../lib/visual-design/designer.umd.js";
+const { emitter, i18n, containerItemMixin, refMixin } = VisualDesign.VFormSDK;
 export default {
 	name: "list-sub-form-item",
 	props: {
@@ -27,6 +31,24 @@ export default {
 	},
 	components: {
 		FormDesignEntityList,
+	},
+	mixins: [emitter, i18n, containerItemMixin, refMixin],
+	inject: ["refList", "sfRefList", "globalModel"],
+	created() {
+		this.initRefList();
+	},
+	beforeUnmount() {
+		this.unregisterFromRefList();
+	},
+	methods: {
+		getForm() {
+			let formRef = this.getFormRef();
+			formRef.referenceCompName = this.widget.options.name;
+			return formRef;
+		},
+        getFormEntityId(){
+            return this.getFormRef().getGlobalDsv().formEntityId;
+        },
 	},
 };
 </script>
@@ -41,7 +63,7 @@ export default {
 }
 </style>
 <style>
-.el-dialog--center .mldialog .el-dialog__footer{
-    text-align: right;
+.el-dialog--center .mldialog .el-dialog__footer {
+	text-align: right;
 }
 </style>

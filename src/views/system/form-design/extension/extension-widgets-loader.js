@@ -21,7 +21,7 @@ import searchDialogWidthEditor from '@/views/system/form-design/extension/proper
 import referenceFillBackConfigEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackConfig-editor.vue';
 import referenceFillBackEnabledEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackEnabled-editor.vue';
 import referenceFilterConditionsEditor from '@/views/system/form-design/extension/property-editor/reference-filterConditions-editor.vue';
-import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/list-sub-form-name-editor.vue"
+import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/list-sub-form-name-editor.vue"
 
 /**
  * 容器组件

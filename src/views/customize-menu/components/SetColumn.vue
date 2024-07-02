@@ -432,13 +432,13 @@ const onSave = async () => {
         $ElMessage.warning("请至少选择 1 个列显示");
         return;
     }
-
     let param = {
         config: JSON.stringify([...showColumn.value]),
         entityCode,
         applyType,
         shareTo,
     };
+    // console.log(param,'param')
     let apiType = chosenListType != "BATCH_UPDATE" ? "LIST" : "BATCH_UPDATE";
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(
@@ -453,6 +453,8 @@ const onSave = async () => {
     }
     loading.value = false;
 };
+
+
 </script>
 <style lang='scss' scoped>
 div {

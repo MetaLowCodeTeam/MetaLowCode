@@ -19,6 +19,7 @@
                 class="pl-20 item"
                 @click="allocationFn('allocation')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                v-if="!isReferenceComp"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -31,6 +32,7 @@
                 class="pl-20 item"
                 @click="allocationFn('share')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                v-if="!isReferenceComp"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -43,6 +45,7 @@
                 class="pl-20 item"
                 @click="allocationFn('unShare')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                v-if="!isReferenceComp"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -69,23 +72,25 @@
             </div>
             <!-- 导入导出 -->
             <template v-if="type == 'list'">
-                <div class="pl-5 mt-15 item div-disabled">导入导出</div>
-                <div class="pl-20 item" @click="dataExportFn">
-                    <span class="icon-t1">
-                        <el-icon>
-                            <ElIconDownload />
-                        </el-icon>
-                    </span>
-                    数据导出
-                </div>
-                <div class="pl-20 item" @click="dataUploadFn" v-if="$TOOL.checkRole('r6011')">
-                    <span class="icon-t1">
-                        <el-icon>
-                            <ElIconUpload />
-                        </el-icon>
-                    </span>
-                    数据导入
-                </div>
+                <template v-if="!isReferenceComp">
+                    <div class="pl-5 mt-15 item div-disabled">导入导出</div>
+                    <div class="pl-20 item" @click="dataExportFn">
+                        <span class="icon-t1">
+                            <el-icon>
+                                <ElIconDownload />
+                            </el-icon>
+                        </span>
+                        数据导出
+                    </div>
+                    <div class="pl-20 item" @click="dataUploadFn" v-if="$TOOL.checkRole('r6011')">
+                        <span class="icon-t1">
+                            <el-icon>
+                                <ElIconUpload />
+                            </el-icon>
+                        </span>
+                        数据导入
+                    </div>
+                </template>
                 <!-- 列显示 -->
                 <div class="pl-5 mt-15 div-disabled">列显示</div>
                 <div
@@ -117,27 +122,35 @@
                     </div>
                 </div>
                 <!-- 列表设置 -->
-                <div class="pl-5 mt-15 div-disabled" v-if="$TOOL.checkRole('r6008')">列表设置</div>
-                <div
-                    class="pl-20 item"
-                    @click="openDefaultFilterDialog"
-                    v-if="$TOOL.checkRole('r6008')"
-                >默认查询设置</div>
-                <div
-                    class="pl-20 item"
-                    @click="treeGroupFilterIsShow = true"
-                    v-if="$TOOL.checkRole('r6008')"
-                >树状分组筛选</div>
-                <div
-                    class="pl-20 item"
-                    @click="editColumn('BATCH_UPDATE')"
-                    v-if="$TOOL.checkRole('r6008')"
-                >批量编辑设置</div>
-                <div
-                    class="pl-20 item"
-                    @click="setListStyleDialogIsShow = true"
-                    v-if="$TOOL.checkRole('r6008')"
-                >列表样式设计</div>
+                <template v-if="$TOOL.checkRole('r6008') && !isReferenceComp">
+                    <div class="pl-5 mt-15 div-disabled">列表设置</div>
+                    <div
+                        class="pl-20 item"
+                        @click="openDefaultFilterDialog"
+                    >
+                        默认查询设置
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="treeGroupFilterIsShow = true"
+                    >
+                        树状分组筛选
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="editColumn('BATCH_UPDATE')"
+                    >
+                        批量编辑设置
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="setListStyleDialogIsShow = true"
+                    >
+                        列表样式设计
+                    </div>
+                </template>
+                
+                
             </template>
         </div>
         <template #reference>
@@ -240,6 +253,8 @@ const props = defineProps({
     defaultFilterSetting: { type: Object, default: () => {} },
     // 是否显示按钮
     showMoreBtn: { type: Boolean, default: true },
+    // 是否引用实体
+    isReferenceComp: { type: Boolean, default: true },
 });
 
 // layout配置

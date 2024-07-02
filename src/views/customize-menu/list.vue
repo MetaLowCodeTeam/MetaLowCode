@@ -102,6 +102,7 @@
                         @defaultFilterChange="getLayoutList"
                         @treeGroupFilterConfirm="getLayoutList"
                         :defaultFilterSetting="defaultFilterSetting"
+                        :isReferenceComp="isReferenceComp"
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
@@ -285,7 +286,7 @@
             :entityName="entityName"
             :nameFieldName="nameFieldName"
             :layoutConfig="layoutConfig"
-            @onConfirm="getTableList"
+            @onConfirm="editConfirm"
         />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -334,6 +335,7 @@ import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
+import { getModelName } from "@/utils/util";
 /**
  * 组件
  */
@@ -354,6 +356,8 @@ const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 
+const emits = defineEmits(['referenceCompAdd'])
+
 const props = defineProps({
     listConf: {
         type: Object,
@@ -373,6 +377,12 @@ const props = defineProps({
         type: String,
         default: ""
     },
+    // 引入组件的父实体行ID
+    formEntityId: {
+        type: String,
+        default: ""
+    },
+    
 })
 
 // 页面Loading
@@ -602,14 +612,17 @@ const openBatchUpdateDialog = () => {
     );
 };
 
+let mainDetailField = ref("");
+
 // 获取导航配置
 const getLayoutList = async () => {
-    let res = await $API.layoutConfig.getLayoutList(entityName.value);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, getModelName());
     if (res && res.data) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
+        mainDetailField.value = res.data.mainDetailField;
         defaultFilterSetting.value = res.data.DEFAULT_FILTER || {};
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
         addConf = res.data.ADD ? { ...res.data.ADD } : {};
@@ -630,6 +643,8 @@ const getLayoutList = async () => {
             BATCH_UPDATE: res.data.BATCH_UPDATE,
             STYLE: res.data.STYLE,
             COM_TREE_GROUP: res.data.COM_TREE_GROUP,
+            idFieldName: idFieldName.value,
+            nameFieldName: nameFieldName.value
         };
         // 树状分组筛选
         if (res.data.TREE_GROUP) {
@@ -777,9 +792,21 @@ const handleHighlightChangeTable = (row, column) => {
 
 // 编辑弹框
 let editRefs = ref();
+// 引用组件所关联的主表行ID
+let myFormEntityId = ref("");
 
 // 新建
 const onAdd = () => {
+    if(props.isReferenceComp){
+        emits('referenceCompAdd',(formData) => {
+            let tempV = {};
+            tempV.entityName = entityName.value;
+            tempV.formData = formData;
+            tempV.isReferenceComp = true;
+            editRefs.value.openDialog(tempV);
+        });
+        return
+    }
     let tempV = {};
     tempV.entityName = entityName.value;
     editRefs.value.openDialog(tempV);
@@ -805,6 +832,13 @@ const onEditRow = (row) => {
     tempV.detailId = row[idFieldName.value];
     editRefs.value.openDialog(tempV);
 };
+
+// 编辑成功后回调
+const editConfirm = (e) => {
+    console.log(e,'ssss')
+    // myFormEntityId.value = res.formEntityId;
+    getLayoutList();
+}
 
 let detailRefs = ref("");
 
@@ -932,14 +966,13 @@ const commonGroupFilterNodeClick = (e) => {
 let sliceTable = ref([]);
 
 const getTableList = async () => {
-  
     pageLoading.value = true;
     let param = {
         mainEntity: entityName.value,
         fieldsList: allFields.value.join(),
         pageSize: page.size,
         pageNo: page.no,
-        filter: { ...queryFilter },
+        filter: JSON.parse(JSON.stringify(queryFilter)),
         advFilter: { ...comQueriesList },
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
@@ -948,6 +981,13 @@ const getTableList = async () => {
         filterEasySql: filterEasySql.value,
     };
     dataExportData.queryParm = { ...param };
+    if(props.isReferenceComp){
+        param.filter.items.push({
+            fieldName: mainDetailField.value,
+            op: "EQ",
+            value: props.formEntityId,
+        })
+    }
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,
@@ -1069,6 +1109,7 @@ watchEffect(() => {
     listParamConf.value = Object.assign(listParamConf.value, props.listConf)
     page.size = props.paginationConf?.size || 20;
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
+    myFormEntityId.value = props.formEntityId;
 })
 
 
