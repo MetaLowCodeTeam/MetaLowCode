@@ -25,5 +25,10 @@ export default {
     taskCancel: async (taskId) => {
         return await http.get("/heavyTask/cancel", { taskId });
     },
+
+    // 获取实体字段
+    queryEntityFields: async (entityCode) => {
+        return await http.get("/excelData/queryEntityFields", { entityCode });
+    },
     
 }
