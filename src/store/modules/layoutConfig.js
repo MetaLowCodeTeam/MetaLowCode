@@ -231,7 +231,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     default: el.chartId
                 }
             }
-        
+            if(el.isOpeneds){
+                topDefaultUnfold.value.push(initMenu.path);
+            }
             formatRoutrs.push(initMenu);
         });
         return formatRoutrs
@@ -246,6 +248,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 顶部导航数据
     let topNavigation = ref({});
     let topNavMenuList = ref([]);
+    // 顶部导航默认选中数据
+    let topDefaultUnfold = ref([]);
     // 设置顶部导航数据
     const setTopNavigation = (data) => {
         // let 
@@ -309,7 +313,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         getUseMenuList,
         setTopNavigation,
         getTopNavigation,
-        getTopNavMenuList
+        getTopNavMenuList,
+        topDefaultUnfold,
     }
 })
 

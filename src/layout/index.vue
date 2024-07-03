@@ -306,8 +306,10 @@ import useKeepAliveStore from "@/store/modules/keepAlive";
 import useGlobalStore from "@/store/modules/global";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
 const { publicSetting } = storeToRefs(useCommonStore());
-
+const { topDefaultUnfold } = storeToRefs(useLayoutConfigStore());
+// 
 import navigation from "./components/navigationList.vue";
 
 const { keepLiveRoute, routeShow } = storeToRefs(useKeepAliveStore());
@@ -458,6 +460,7 @@ export default {
                     this.defaultOpeneds.push(el.path);
                 }
             });
+            this.defaultOpeneds = Object.assign([], this.defaultOpeneds, topDefaultUnfold.value);
         },
         openSetting() {
             this.settingDialog = true;

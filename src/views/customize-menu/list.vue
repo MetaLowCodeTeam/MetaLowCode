@@ -531,6 +531,7 @@ onBeforeMount(() => {
         return;
     }
     quickQueryConf.entityCode = entityCode.value;
+    loadRouterParams();
     // 获取导航配置
     getLayoutList();
 });
@@ -1106,15 +1107,7 @@ const changeColumnShow = (type) => {
     if(isMounted.value){
         isMounted.value = false;
     }else {
-        if (
-            routerParams.value.path &&
-            routerParams.value.path == router.currentRoute.value.path
-        ) {
-            quickQuery.value = routerParams.value.quickFilter;
-            builtInFilter.value = routerParams.value.filter;
-            isDataFilter.value = true;
-            getTableList();
-        }
+        loadRouterParams(true)
     }
  
 })
@@ -1128,6 +1121,19 @@ watchEffect(() => {
     myFormEntityId.value = props.formEntityId;
 })
 
+const loadRouterParams = (cbApi) => {
+    if (
+        routerParams.value.path &&
+        routerParams.value.path == router.currentRoute.value.path
+    ) {
+        quickQuery.value = routerParams.value.quickFilter;
+        builtInFilter.value = routerParams.value.filter;
+        isDataFilter.value = true;
+        if(cbApi){
+            getTableList();
+        }
+    }
+}
 
 /**
  * 导出方法

@@ -6,7 +6,7 @@
             :mainEntity="tableConf.entity"
             :fieldsList="tableConf.fieldsList"
             :sortFields="tableConf.sortFields"
-            :fieldName="tableConf.roleName"
+            fieldName="roleName"
             :tableColumn="tableConf.tableColumn"
             :filterItems="tableConf.filterItems"
         >

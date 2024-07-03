@@ -136,7 +136,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, inject, reactive, ref } from "vue";
+import { onMounted, watch, inject, reactive, ref, nextTick } from "vue";
 import { getFormLayout } from "@/api/system-manager";
 import { getDataList } from "@/api/crud";
 import { useRouter } from "vue-router";
@@ -289,9 +289,6 @@ const initData = async () => {
 };
 
 const goPath = () => {
-    router.push({
-        path: "/web/" + props.cutTab + "/list",
-    });
     setRouterParams({
         path: "/web/" + props.cutTab + "/list",
         filter: {
@@ -306,6 +303,12 @@ const goPath = () => {
         },
         quickFilter: quickQueryVal.value,
     });
+    nextTick(()=>{
+        router.push({
+            path: "/web/" + props.cutTab + "/list",
+        });
+    })
+    
     emits("closeDialog")
 };
 
