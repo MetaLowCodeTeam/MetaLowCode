@@ -756,17 +756,18 @@ const layoutSave = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
 	if (res) {
+        router.go(0);
 		// 如果默认选中导航就是当前修改导航 并且 如果数据有变化
-		if (
-			chosenNavigationId.value &&
-			chosenNavigationId.value == menuData.layoutConfigId &&
-			$TOOL.checkIsEdit(sourceData.config, menuData.config)
-		) {
-			router.go(0);
-		} else {
-			getNavigationApi();
-			isShow.value = false;
-		}
+		// if (
+		// 	chosenNavigationId.value &&
+		// 	chosenNavigationId.value == menuData.layoutConfigId &&
+		// 	$TOOL.checkIsEdit(sourceData.config, menuData.config)
+		// ) {
+		// 	router.go(0);
+		// } else {
+		// 	getNavigationApi();
+		// 	isShow.value = false;
+		// }
 	}
 	loading.value = false;
 };
