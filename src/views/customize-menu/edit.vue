@@ -316,7 +316,7 @@ const confirm = async () => {
                 };
             }
             if (formData) {
-               
+                console.log(formData,'formData')
                 loading.value = true;
                 let saveRes;
                 if(isReferenceComp.value){
@@ -325,8 +325,8 @@ const confirm = async () => {
                     delete referenceCompFormData.value.referenceCompName
                     delete referenceCompFormData.value.referenceCompEntity
                     
-                    let saveFormData = row.formEntityId ? formData : referenceCompFormData.value;
-                    referenceCompFormData.value[referenceCompName] = [Object.assign({}, formData)];
+                    let saveFormData = row.formEntityId ? cloneDeep(formData) : referenceCompFormData.value;
+                    referenceCompFormData.value[referenceCompName] = [cloneDeep(formData)];
                     if(row.formEntityId){
                         saveFormData[row.mainDetailField] = row.formEntityId;
                     }
@@ -376,6 +376,10 @@ const confirm = async () => {
             ElMessage.error("表单校验失败，请修改后重新提交");
         });
 };
+
+const cloneDeep = (data) => {
+    return JSON.parse(JSON.stringify(data));
+}
 
 /**
  * 导出方法

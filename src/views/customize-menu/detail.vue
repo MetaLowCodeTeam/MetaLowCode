@@ -423,9 +423,6 @@ const initData = async () => {
                     rowResData.value = queryByIdRes.data || {};
 					vFormRef.value.resetForm();
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
-                   
-
-
 					nextTick(() => {
 						vFormRef.value.setFormData(rowResData.value);
 						nextTick(() => {
