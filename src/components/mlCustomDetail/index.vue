@@ -1,6 +1,6 @@
 <template>
 	<!-- 实体列表详情 -->
-	<component v-if="comName" :is="comName" ref="DetailRef"></component>
+	<component v-if="comName" :is="comName" ref="DetailRef" @onConfirm="updateData"></component>
 </template>
 
 <script setup>
@@ -16,6 +16,8 @@ const props = defineProps({
 	},
 });
 
+const emits = defineEmits(['updateData'])
+
 let comName = ref("");
 
 onMounted(()=>{
@@ -29,6 +31,12 @@ let DetailRef = ref();
 const openDialog = (e) => {
     DetailRef.value?.openDialog(e);
 }
+
+
+const updateData = () => {
+    emits('updateData')
+}
+
 defineExpose({
     openDialog
 })

@@ -280,7 +280,7 @@
             style="background: #fff;"
             v-if="listParamConf.showPagination"
         />
-        <mlCustomDetail ref="detailRefs" :entityName="entityName"/>
+        <mlCustomDetail ref="detailRefs" :entityName="entityName" @updateData="getTableList"/>
         <mlCustomEdit 
             ref="editRefs"
             :entityName="entityName"
