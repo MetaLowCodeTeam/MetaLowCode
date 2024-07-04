@@ -56,7 +56,7 @@
                         icon="Notification"
                         :disabled="multipleSelection.length != 1"
                         @click="openDetailDialog(multipleSelection[0])"
-                        v-if="listParamConf.showOpenBtn"
+                        v-if="listParamConf.showOpenBtn && !mainDetailField"
                     >
                         打开
                     </el-button>
@@ -65,7 +65,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp "
                     >
                         编辑
                     </el-button>
@@ -103,6 +103,7 @@
                         @treeGroupFilterConfirm="getLayoutList"
                         :defaultFilterSetting="defaultFilterSetting"
                         :isReferenceComp="isReferenceComp"
+                        :isMainDetailField="!!mainDetailField"
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
@@ -238,9 +239,9 @@
                             <el-tooltip
                                 class="box-item"
                                 effect="dark"
-                                :content="getEditBtnTitle(scope.row)"
+                                :content="getEditBtnTitle(scope.row) || '此状态不可编辑'"
                                 placement="top"
-                                v-if="scope.row.approvalStatus && (scope.row.approvalStatus.value == 3 || scope.row.approvalStatus.value == 1)"
+                                v-if="scope.row.approvalStatus && (scope.row.approvalStatus.value == 3 || scope.row.approvalStatus.value == 1) || referenceCompStatus == 'read'"
                             >
                                 <el-button
                                     size="small"
@@ -379,6 +380,11 @@ const props = defineProps({
     },
     // 引入组件的父实体行ID
     formEntityId: {
+        type: String,
+        default: ""
+    },
+    // 引入组件的父组件状态
+    referenceCompStatus: {
         type: String,
         default: ""
     },
@@ -771,6 +777,7 @@ let selectedAllStatus = computed(() => {
         status = 2
     }
     multipleSelection.value = [...findSelected];
+    console.log(findSelected,'findSelected')
     // 没有任何选中
     return status
 })
@@ -814,6 +821,7 @@ const onAdd = () => {
     let tempV = {};
     tempV.entityName = entityName.value;
     tempV.idFieldName = idFieldName.value;
+    tempV.formEntityId = "";
     editRefs.value.openDialog(tempV);
 };
 
@@ -851,7 +859,6 @@ const editConfirm = (e) => {
 const saveSubFormListCb = (data) => {
     if(data.needCb){
         myFormEntityId.value = data.recordId;
-        console.log("需要回调吗？")
     }
     getLayoutList();
 }
@@ -867,6 +874,14 @@ const openDetailDialog = (row) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
+    }
+    // 是明细表编辑
+    if(mainDetailField.value){
+        let tempV = {};
+        tempV.isRead = true;
+        tempV.detailId = row[idFieldName.value];
+        editRefs.value.openDialog(tempV);
+        return
     }
     detailRefs.value.openDialog(row[idFieldName.value]);
 };
@@ -997,7 +1012,6 @@ const getTableList = async () => {
         filterEasySql: filterEasySql.value,
     };
     dataExportData.queryParm = { ...param };
-    console.log(myFormEntityId.value,'myFormEntityId.value')
     if(props.isReferenceComp){
         param.filter.items.push({
             fieldName: mainDetailField.value,
@@ -1113,12 +1127,24 @@ const changeColumnShow = (type) => {
 })
 
 
-
 watchEffect(() => {
     listParamConf.value = Object.assign(listParamConf.value, props.listConf)
     page.size = props.paginationConf?.size || 20;
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
     myFormEntityId.value = props.formEntityId;
+    if(mainDetailField.value){
+        listParamConf.value.showAddBtn = false;
+    }
+    if(props.isReferenceComp){
+        if(props.referenceCompStatus == 'new'){
+            listParamConf.value.showAddBtn = true;
+        }
+        if(props.referenceCompStatus == 'read'){
+            listParamConf.value.showAddBtn = false;
+            listParamConf.value.showEditBtn = false;
+            listParamConf.value.showMoreBtn = false;
+        }
+    }
 })
 
 const loadRouterParams = (cbApi) => {

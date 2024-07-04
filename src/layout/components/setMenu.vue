@@ -386,7 +386,7 @@ let parentMenu = ref("父级菜单");
 
 // 格式化实体
 const getEntityList = () => {
-	return unSystemEntityList.value.filter((el) => !el.detailEntityFlag);
+	return unSystemEntityList.value;
 };
 
 // 实体分组
@@ -517,6 +517,7 @@ let defaultMenu = reactive({
     useCustom: false,
     // 当前使用的末班
     useComponent: "",
+
 });
 
 const getGuid = () => {
@@ -545,6 +546,8 @@ const associationChange = (entityCode) => {
 	cutMenu.value.name = linkEntity.label;
 	cutMenu.value.entityCode = linkEntity.entityCode;
 	cutMenu.value.entityName = linkEntity.name;
+    cutMenu.value.detailEntityFlag = linkEntity.detailEntityFlag;
+	cutMenu.value.mainEntityCode = linkEntity.mainEntityCode;
 };
 
 

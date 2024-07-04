@@ -133,6 +133,7 @@ let row = reactive({
     idFieldName:"",
     formEntityId:"",
     mainDetailField:"",
+    isRead: false,
 });
 const globalDsv = ref({});
 globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
@@ -152,6 +153,7 @@ const openDialog = async (v) => {
         ? queryEntityNameById(v.detailId)
         : v.entityName;
     row.fieldName = v.fieldName;
+    row.isRead = v.isRead;
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
     row.idFieldName = v.idFieldName;
@@ -229,7 +231,8 @@ const initFormLayout = async () => {
                             vFormRef.value.reloadOptionData();
                             if (
                                 row.approvalStatus.value == 1 ||
-                                row.approvalStatus.value == 3
+                                row.approvalStatus.value == 3 ||
+                                row.isRead
                             ) {
                                 vFormRef.value.disableForm();
                                 return;
@@ -306,6 +309,12 @@ const confirm = async () => {
         isShow.value = false;
         return;
     }
+    let listSubForm = [];
+    vFormRef.value.getContainerWidgets().forEach(el => {
+        if(el.type == 'list-sub-form'){
+            listSubForm.push(el.name);
+        }
+    })
     vFormRef.value
         .getFormData()
         .then(async (formData) => {
@@ -316,7 +325,9 @@ const confirm = async () => {
                 };
             }
             if (formData) {
-                console.log(formData,'formData')
+                listSubForm.forEach(el => {
+                    delete formData[el];
+                })
                 loading.value = true;
                 let saveRes;
                 if(isReferenceComp.value){

@@ -11,6 +11,7 @@
 		:listConf="listParamConf"
 		:paginationConf="listPaginationConf"
         :formEntityId="formEntityId"
+        :referenceCompStatus="formStatus"
 		@referenceCompAdd="referenceCompAdd"
         @saveFinishCallBack="saveFinishCallBack"
         ref="EntityListRefs"
@@ -90,6 +91,7 @@ export default {
 				size: 20,
 			},
             myFormEntityId: "",
+            formStatus:"",
 		};
 	},
 	mounted() {
@@ -100,11 +102,10 @@ export default {
 		this.myReferenceEntity = this.referenceEntity;
 		this.entityCode =
 			useCommonStore().allEntityCode[this.myReferenceEntity];
-        
+        this.formStatus = this.formRef?.getGlobalDsv().formStatus;
 	},
 	methods: {
 		referenceCompAdd(cb) {
-            console.log(this.formRef.getGlobalDsv().formEntity,'this.formRef')
 			this.formRef
 				.getFormData()
 				.then((formData) => {
@@ -120,11 +121,8 @@ export default {
 		},
         // 新建\编辑成功后回调
         saveFinishCallBack(data){
-            // console.log(this.formRef.getGlobalDsv(),'回调后的DVS')
             let formEntityIdFieldName = this.formRef.getGlobalDsv().formEntityIdFieldName;
             this.myFormEntityId = data[formEntityIdFieldName];
-            // console.log(data,'00 回调后拿到的数据');
-            // console.log(this.myFormEntityId,'01 获取回调主表的行ID');
             data.recordId = this.myFormEntityId;
             this.formRef.getGlobalDsv()?.setRowRecordId(this.myFormEntityId)
             this.$refs.EntityListRefs.saveSubFormListCb(data);

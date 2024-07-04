@@ -159,7 +159,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
             initMenu.meta.iconColor = el.iconColor || "";
-            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' + el.entityCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
+            let checkCode = el.detailEntityFlag ? el.mainEntityCode : el.entityCode;
+            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' +checkCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
             initMenu.meta.outLink = el.outLink;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
@@ -174,7 +175,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             entityName: subEl.entityName,
                             icon: subEl.useIcon || 'set-up',
                             iconColor: subEl.iconColor || '',
-                            // hidden: subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'),
                             outLink: subEl.outLink,
                         },
                     }
@@ -198,15 +198,18 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                         subRoute.meta.query = getCustomPageQuery(subEl.outLink);
                     }
                     // 如果是审批中心页面直接跳过权限判断
-                    let approvalCenter = ["approvalHandle",
+                    let approvalCenter = [
+                        "approvalHandle",
                         "approvalSubmit",
-                        "capprovalCc"];
+                        "capprovalCc"
+                    ];
                     if (approvalCenter.includes(subEl.entityCode)) {
                         initMenu.children.push(subRoute);
                         return
                     }
+                    let checkSubCode = subEl.detailEntityFlag ? subEl.mainEntityCode : subEl.entityCode;
                     // 有权限才push
-                    if (!(subEl.entityCode && !tool.checkRole('r' + subEl.entityCode + '-1'))) {
+                    if (!(subEl.entityCode && !tool.checkRole('r' + checkSubCode + '-1'))) {
                         initMenu.children.push(subRoute);
                     }
                 });

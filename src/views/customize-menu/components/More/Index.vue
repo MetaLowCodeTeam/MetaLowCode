@@ -19,7 +19,7 @@
                 class="pl-20 item"
                 @click="allocationFn('allocation')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp"
+                v-if="!isReferenceComp && !isMainDetailField"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -32,7 +32,7 @@
                 class="pl-20 item"
                 @click="allocationFn('share')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp"
+                v-if="!isReferenceComp && !isMainDetailField"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -45,7 +45,7 @@
                 class="pl-20 item"
                 @click="allocationFn('unShare')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp"
+                v-if="!isReferenceComp && !isMainDetailField"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -122,7 +122,7 @@
                     </div>
                 </div>
                 <!-- 列表设置 -->
-                <template v-if="$TOOL.checkRole('r6008') && !isReferenceComp">
+                <template v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField">
                     <div class="pl-5 mt-15 div-disabled">列表设置</div>
                     <div
                         class="pl-20 item"
@@ -254,7 +254,9 @@ const props = defineProps({
     // 是否显示按钮
     showMoreBtn: { type: Boolean, default: true },
     // 是否引用实体
-    isReferenceComp: { type: Boolean, default: true },
+    isReferenceComp: { type: Boolean, default: false },
+    // 是否明细实体
+    isMainDetailField: { type: Boolean, default: false },
 });
 
 // layout配置
