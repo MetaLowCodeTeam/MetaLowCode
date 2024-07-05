@@ -777,7 +777,6 @@ let selectedAllStatus = computed(() => {
         status = 2
     }
     multipleSelection.value = [...findSelected];
-    console.log(findSelected,'findSelected')
     // 没有任何选中
     return status
 })

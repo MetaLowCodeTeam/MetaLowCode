@@ -16,12 +16,6 @@ export const listSubFormSchema = {
         showAdvancedQuery: true,
         // 是否显示快速查询
         showQuickQuery: true,
-        // 是否显示打开按钮
-        showOpenBtn: true,
-        // 是否显示编辑按钮
-        showEditBtn: true,
-        // 是否显示新建按钮
-        showAddBtn: true,
         // 是否显示更多按钮
         showMoreBtn: true,
         // 是否显示分页
