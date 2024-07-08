@@ -399,7 +399,6 @@ const cloneDeep = (data) => {
 // 列表子表单回调所需
 const setRowRecordId = (id) => {
     row.detailId = id;
-    console.log(row,'数据回填')
 }
 
 const refresh = () => {
