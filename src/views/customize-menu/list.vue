@@ -997,6 +997,9 @@ let sliceTable = ref([]);
 
 const getTableList = async () => {
     pageLoading.value = true;
+    if(props.isReferenceComp){
+        filterEasySql.value = `${mainDetailField.value} = '${myFormEntityId.value}'`
+    }
     let param = {
         mainEntity: entityName.value,
         fieldsList: allFields.value.join(),
@@ -1011,13 +1014,7 @@ const getTableList = async () => {
         filterEasySql: filterEasySql.value,
     };
     dataExportData.queryParm = { ...param };
-    if(props.isReferenceComp){
-        param.filter.items.push({
-            fieldName: mainDetailField.value,
-            op: "EQ",
-            value: myFormEntityId.value,
-        })
-    }
+    
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,

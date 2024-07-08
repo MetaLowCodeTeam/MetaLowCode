@@ -47,7 +47,8 @@ export function deleteRecords(body) {
 * @param {*} advFilter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  常用查询
 * @param {*} quickFilter ""  快速查询
 * @param {*} builtInFilter ""  { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] } 参数查询
-* @param {*} filterEasySql ""  分组查询
+* @param {*} statistics ""  
+* @param {*} filterEasySql ""  自定义SQL查询
 
 */
 export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql) {
