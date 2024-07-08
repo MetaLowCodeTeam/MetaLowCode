@@ -342,7 +342,7 @@ const toText = (nodeConfig) => {
     } else if (nodeConfig.nodeRoleType == 5) {
         return "发起人部门负责人";
     } else if (nodeConfig.nodeRoleType == 6) {
-        return "数据所属部分负责人";
+        return "数据所属部门负责人";
     } else {
         if (nodeConfig.nodeRoleList && nodeConfig.nodeRoleList.length > 0) {
             return nodeConfig.nodeRoleList.map((item) => item.name).join("、");
