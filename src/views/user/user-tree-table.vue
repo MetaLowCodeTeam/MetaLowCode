@@ -327,6 +327,8 @@ export default {
             memberList: [],
             // 要禁用的字段
             disableWidgets: [],
+            // 部门树节点
+            node:{},
         };
     },
     computed: {
@@ -359,6 +361,7 @@ export default {
         },
         // 重置
         resetting() {
+            this.node = {};
             this.filterItems = [];
             this.$nextTick(() => {
                 this.$refs.mlSingleListRef.keyword = "";
@@ -367,6 +370,7 @@ export default {
         },
         // 节点点击
         nodeClick(node) {
+            this.node = node;
             this.filterItems = [
                 {
                     fieldName: "departmentId",
@@ -383,6 +387,11 @@ export default {
             let tempV = {};
             tempV.entityName = "User";
             this.disableWidgets = [];
+            if(this.node?.id){
+                tempV.fieldName = "departmentId";
+                tempV.fieldNameVale = this.node.id;
+                tempV.fieldNameLabel = this.node.label;
+            }
             this.$refs.editRefs.openDialog(tempV);
         },
         // 编辑用户
