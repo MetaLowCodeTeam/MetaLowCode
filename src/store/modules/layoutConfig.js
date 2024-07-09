@@ -253,9 +253,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         // 1 如果有实体CODE
         // 2 并且没有权限
         // 3 并且不是父菜单
-        // 4 并且类型为1 关联项
+        // 4 并且类型为1 关联项 4 内置实体
         let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
-        if(item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 1){
+        if(item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && (item.type == 1 || item.type == 4)){
             isHidden = true;
         }
         // 1 如果有自定义CODE
