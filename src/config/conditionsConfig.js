@@ -54,7 +54,7 @@ export default {
         User: ["LK", "NLK", "NL", "NT", "SFU"],
     },
     Date: ["EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
-    DateTime: ["EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
+    DateTime: ["GE", "LE", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     Money: ["EQ", "GT", "LT", "GE", "LE", "BW"],
     Integer: ["EQ", "GT", "LT", "GE", "LE", "BW"],
     Decimal: ["EQ", "GT", "LT", "GE", "LE", "BW"],

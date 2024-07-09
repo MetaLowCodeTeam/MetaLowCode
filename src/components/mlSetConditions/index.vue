@@ -15,6 +15,7 @@
                 v-for="(item,inx) of conditionConf.items"
                 :key="inx"
             >
+                <el-col :span="24">{{ item.type + "---" +item.opCom + '---' + item.op}}</el-col>
                 <!-- 字段名 -->
                 <el-col :span="10">
                     <div class="field-one">
@@ -66,7 +67,7 @@
                         />
                     </div>
                     <!-- 日期区间 -->
-                    <div v-else-if="item.opCom =='datePickerBw'">
+                    <div v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime'">
                         <el-date-picker
                             size="default"
                             v-model="item.value"
@@ -92,8 +93,39 @@
                             @focus="clearError(item)"
                         />
                     </div>
+                    <!-- 时间区间 -->
+                    <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime'">
+                        <el-date-picker
+                            size="default"
+                            v-model="item.value"
+                            type="datetime"
+                            style="width: 100%;"
+                            class="bw-start-icon mb-5"
+                            :class="{'is-error':item.isError && !item.value}"
+                            format="YYYY/MM/DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            @change="bwChange(item)"
+                            @focus="clearError(item)"
+                            :default-time="defaultTimeLE"
+                            clearable
+                        />
+                        <el-date-picker
+                            size="default"
+                            v-model="item.value2"
+                            type="datetime"
+                            style="width: 100%;"
+                            class="bw-end-icon"
+                            :class="{'is-error':item.isError && !item.value2}"
+                            format="YYYY/MM/DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            @change="bwChange(item)"
+                            @focus="clearError(item)"
+                            :default-time="defaultTimeGE"
+                            clearable
+                        />
+                    </div>
                     <!-- 数字输入框 -->
-                    <div v-else-if="item.opCom =='numberInput'">
+                    <div v-else-if="item.opCom =='numberInput' && (item.type == 'DateTime' && item.op != 'LE' && item.op != 'GE')">
                         <el-input-number
                             size="default"
                             v-model="item.value"
@@ -231,6 +263,32 @@
                             />
                         </el-dialog>
                     </div>
+                    <!-- DateTime类型 -->
+                    <div v-else-if="item.type == 'DateTime'">
+                        <el-date-picker
+                            v-model="item.value"
+                            type="datetime"
+                            format="YYYY/MM/DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            :default-time="defaultTimeLE"
+                            v-if="item.op == 'LE'"
+                        />
+                        <el-date-picker
+                            v-model="item.value"
+                            type="datetime"
+                            format="YYYY/MM/DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            :default-time="defaultTimeGE"
+                            v-else-if="item.op == 'GE'"
+                        />
+                        <el-date-picker
+                            v-model="item.value"
+                            type="datetime"
+                            format="YYYY/MM/DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            v-else
+                        />
+                    </div>
                 </el-col>
             </el-row>
         </div>
@@ -320,6 +378,8 @@ export default {
             conditionsConfig: {},
             // 格式化的实体名称
             formatEntityName: "",
+            defaultTimeLE:"",
+            defaultTimeGE:"",
         };
     },
     watch: {
@@ -335,6 +395,8 @@ export default {
         this.getFieldSet();
         this.conditionsConfig = { ...conditionsConfig };
         this.op_type = { ...this.conditionsConfig.op_type };
+        this.defaultTimeLE = new Date(2000, 1, 1, 0, 0, 1);
+        this.defaultTimeGE = new Date(2000, 1, 1, 23, 59, 59);
     },
     methods: {
         openReferenceDialog(item) {

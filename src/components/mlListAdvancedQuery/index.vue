@@ -38,6 +38,9 @@
             <span v-if="isShowTag" class="select-filter-tag">●</span>
         </div>
         <div class="dropdown-menu-advfilter" :class="{'isShow':showAdvfilter}">
+            <div class="close-icon" @click="showAdvfilter = false">
+                <el-icon><CircleClose /></el-icon>
+            </div>
             <div class="conditionConf">
                 <mlSetConditions
                     ref="mlSetConditionsRefs"
@@ -183,45 +186,48 @@ watch(
 );
 
 onBeforeMount(() => {
-    document.addEventListener("click", (e) => {
-        let skipClass = [
-            "field-one",
-            "el-icon remove-icon",
-            "el-overlay-dialog",
-        ];
-        let isSkipClass = skipClass.includes(
-            e.target.parentElement?.parentElement?.className
-        );
-        if (isSkipClass) {
-            return;
-        }
-        if (skipClass.includes(e.target.className)) {
-            return;
-        }
-        let box = document.querySelector(".dropdown-menu-advfilter");
-        let box2 = document.querySelector(".select-filter");
-        let box3 = document.querySelector(".advfilter-popper");
-        let box4 = document.querySelector(".el-overlay-dialog");
-        let box5 = document.querySelector(".save-dialog");
-        let box6 = document.querySelector(".mlselect-user-content");
-        let box7 = document.querySelector(".reference-dialog");
-        if (
-            (box && box.contains(e.target)) ||
-            (box2 && box2.contains(e.target)) ||
-            (box3 && box3.contains(e.target)) ||
-            (box4 && box4.contains(e.target)) ||
-            (box5 && box5.contains(e.target)) ||
-            (box6 && box6.contains(e.target)) ||
-            (box7 && box7.contains(e.target))
-        ) {
-            // 不隐藏
-        } else {
-            showAdvfilter.value = false;
-        }
-    });
+    // document.addEventListener("click", (e) => {
+    //     let skipClass = [
+    //         "field-one",
+    //         "el-icon remove-icon",
+    //         "el-overlay-dialog",
+    //         "el-picker-panel__body-wrapper",
+    //         "el-picker-panel__body"
+    //     ];
+    //     let isSkipClass = skipClass.includes(
+    //         e.target.parentElement?.parentElement?.className
+    //     );
+    //     if (isSkipClass) {
+    //         return;
+    //     }
+    //     console.log(e.target.className,'e.target.className')
+    //     if (skipClass.includes(e.target.className)) {
+    //         return;
+    //     }
+    //     let box = document.querySelector(".dropdown-menu-advfilter");
+    //     let box2 = document.querySelector(".select-filter");
+    //     let box3 = document.querySelector(".advfilter-popper");
+    //     let box4 = document.querySelector(".el-overlay-dialog");
+    //     let box5 = document.querySelector(".save-dialog");
+    //     let box6 = document.querySelector(".mlselect-user-content");
+    //     let box7 = document.querySelector(".reference-dialog");
+    //     if (
+    //         (box && box.contains(e.target)) ||
+    //         (box2 && box2.contains(e.target)) ||
+    //         (box3 && box3.contains(e.target)) ||
+    //         (box4 && box4.contains(e.target)) ||
+    //         (box5 && box5.contains(e.target)) ||
+    //         (box6 && box6.contains(e.target)) ||
+    //         (box7 && box7.contains(e.target))
+    //     ) {
+    //         // 不隐藏
+    //     } else {
+    //         showAdvfilter.value = false;
+    //     }
+    // });
 });
 onBeforeUnmount(() => {
-    document.removeEventListener("click", null);
+    // document.removeEventListener("click", null);
 });
 onMounted(() => {
     initData();
@@ -503,7 +509,7 @@ const handleCommand = (e) => {
     padding-bottom: 0;
     line-height: 34px;
     font-size: 14px;
-
+    padding-top: 30px;
     &.isShow {
         display: block;
     }
@@ -511,6 +517,26 @@ const handleCommand = (e) => {
         border-top: 1px solid #eee;
         padding: 10px 20px 10px 0;
         text-align: right;
+    }
+    .close-icon {
+        width: 26px;
+        height: 26px;
+        text-align: center;
+        line-height: 26px;
+        position: absolute;
+        right: 0;
+        top: 0px;
+        border-radius: 0 3px 0 0;
+        cursor: pointer;
+        font-size: 18px;
+        box-sizing: border-box;
+        padding-top: 4px;
+        padding-left: 1px;
+        color: #9c9da0;
+        &:hover {
+            background: #f2f6fc;
+            color: #303030;
+        }
     }
 }
 .conditionConf {
