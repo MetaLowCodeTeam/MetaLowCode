@@ -38,3 +38,8 @@ export default {
         return await http.get("/layout/getNavigationById", { layoutConfigId });
     }
 }
+
+
+export function checkTables(body, recordId) {
+    return http.post('/layout/checkTables', body, { params: { recordId } })
+}

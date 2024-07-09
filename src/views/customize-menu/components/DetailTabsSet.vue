@@ -83,40 +83,6 @@
                 <el-button type="primary" @click="onSave" :loading="loading">保存</el-button>
             </div>
         </template>
-        <mlDialog
-            v-model="editColumnDialogIsShow"
-            v-if="editColumnDialogIsShow"
-            appendToBody
-            title="显示项设置"
-            width="510"
-            top="25vh"
-            
-        >
-            <div style="padding-right: 50px;">
-                <el-form label-width="120px" @submit.prevent>
-                    <el-form-item label="别名">
-                        <el-input v-model="editColumnDialogData.columnAliasName" />
-                    </el-form-item>
-                    <!-- <el-form-item label="附加过滤条件">
-                        <el-row>
-                            <el-col :span="24">
-                                <div
-                                    class="ml-a-span"
-                                    @click="setCondition"
-                                >{{ getSetConditionText() }}</div>
-                            </el-col>
-                            <el-col :span="24">
-                                <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
-                            </el-col>
-                        </el-row>
-                    </el-form-item> -->
-                    <el-form-item>
-                        <el-button type="primary" @click="confirmColumnEdit">保存</el-button>
-                        <el-button @click="editColumnDialogIsShow = false">取消</el-button>
-                    </el-form-item>
-                </el-form>
-            </div>
-        </mlDialog>
         <div v-if="dialogIsShow">
             <mlDialog title="附加过滤条件" append-to-body width="37%" v-model="dialogIsShow">
                 <mlSetConditions
@@ -128,6 +94,37 @@
                 />
             </mlDialog>
         </div>
+    </mlDialog>
+    <mlDialog
+        v-model="editColumnDialogIsShow"
+        v-if="editColumnDialogIsShow"
+        appendToBody
+        title="显示项设置"
+        width="510"
+        top="25vh"
+        
+    >
+        <div style="padding-right: 50px;">
+            <el-form label-width="120px" @submit.prevent>
+                <el-form-item label="别名">
+                    <el-input v-model="editColumnDialogData.columnAliasName" />
+                </el-form-item>
+                <el-form-item label="附加过滤条件">
+                    <el-row>
+                        <el-col :span="24">
+                            <div
+                                class="ml-a-span"
+                                @click="setCondition"
+                            >{{ getSetConditionText() }}</div>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+            </el-form>
+        </div>
+        <template #footer>
+            <el-button @click="editColumnDialogIsShow = false">取消</el-button>
+            <el-button type="primary" @click="confirmColumnEdit">确认</el-button>
+        </template>
     </mlDialog>
 </template>
 

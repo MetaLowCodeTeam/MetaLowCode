@@ -217,6 +217,8 @@ import mlApproveBar from "@/components/mlApproveBar/index.vue";
  * API
  */
 import { getRecordApprovalState } from '@/api/approval';
+import { checkTables } from "@/api/layoutConfig";
+
 const $TOOL = inject("$TOOL");
 const props = defineProps({
 	layoutConfig: { type: Object, default: () => {} },
@@ -376,7 +378,28 @@ const getLayoutList = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
-		detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
+        // 取页签配置
+		let tabsConf = res.data.TAB ? { ...res.data.TAB } : {};
+        // 如果有页签配置
+        if(tabsConf.config){
+            // 取所有页签数据
+            let tabConfig = JSON.parse(tabsConf.config);
+            // 拿所有页签过滤参数
+            let filterList = tabConfig.map(el => el.filter);
+            // 调用查询接口判断该页签是否显示
+            let tabRes = await checkTables(filterList, detailId.value);
+            if(tabRes){
+                let newConfig = [];
+                tabConfig.forEach((el,inx) => {
+                    if(tabRes.data[inx]){
+                        newConfig.push(el);
+                    }
+                })
+                tabsConf.config = JSON.stringify(newConfig);
+            }
+        }
+        detailDialog.tab = JSON.parse(JSON.stringify(tabsConf));
+        
 		addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
 		idFieldName.value = res.data.idFieldName;
 		nameFieldName.value = res.data.nameFieldName;
