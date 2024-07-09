@@ -231,6 +231,13 @@
 							/>
 						</el-select>
 					</div>
+                    <div v-if="cutMenu.type == 3 || cutMenu.type == 2 || cutMenu.type == 5" class="mt-10">
+                        <el-input
+                            v-model="cutMenu.customCode"
+                            placeholder="权限Code"
+                            clearable
+                        ></el-input>
+                    </div>
 					<div class="mt-10">
 						<el-input
 							v-model="cutMenu.name"

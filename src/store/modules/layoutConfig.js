@@ -159,8 +159,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
             initMenu.meta.iconColor = el.iconColor || "";
-            let checkCode = el.detailEntityFlag ? el.mainEntityCode : el.entityCode;
-            initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' +checkCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
+            // let checkCode = el.detailEntityFlag ? el.mainEntityCode : el.entityCode;
+            // initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' +checkCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
+            initMenu.meta.hidden = checkAuth(el);
             initMenu.meta.outLink = el.outLink;
             if (el.children && el.children.length > 0) {
                 initMenu.children = [];
@@ -207,9 +208,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                         initMenu.children.push(subRoute);
                         return
                     }
-                    let checkSubCode = subEl.detailEntityFlag ? subEl.mainEntityCode : subEl.entityCode;
+                    // let checkSubCode = subEl.detailEntityFlag ? subEl.mainEntityCode : subEl.entityCode;
                     // 有权限才push
-                    if (!(subEl.entityCode && !tool.checkRole('r' + checkSubCode + '-1'))) {
+                    if (!checkAuth(subEl)) {
                         initMenu.children.push(subRoute);
                     }
                 });
@@ -244,6 +245,27 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 获取左侧菜单
     const getUseMenuList = () => {
         return [...useMenuList.value]
+    }
+     // 检测是否有权限
+     const checkAuth = (item) => {
+        let isHidden = false;
+        // console.log(tool.checkRole('r1023-3'),'检测是否有权限')
+        // 1 如果有实体CODE
+        // 2 并且没有权限
+        // 3 并且不是父菜单
+        // 4 并且类型为1 关联项
+        let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
+        if(item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 1){
+            isHidden = true;
+        }
+        // 1 如果有自定义CODE
+        // 2 并且没有权限
+        // 3 并且不是父菜单
+        // 4 并且类型是2、3、5  外部地址、自定义页面、仪表盘
+        if(item.customCode && !tool.checkRole(item.customCode.trim()) && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5)){
+            isHidden = true;
+        }
+        return isHidden;
     }
     /**
      * 顶部导航相关
