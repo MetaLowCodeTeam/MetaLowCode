@@ -23,25 +23,26 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref, watch } from "vue";
+import { inject, onMounted, ref, watch, watchEffect } from "vue";
 import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
-    modelValue: null,
     cutTab: { type: String, default: "" },
+    checkTabsFilter: { type: Object, default: () => {} },
+    tabsConf: { type: Object, default: () => {} },
 });
 const emits = defineEmits(["update:modelValue", "tabChange","confirm"]);
 const $TOOL = inject("$TOOL");
 let detailDialog = ref({});
 let tabs = ref();
 
-watch(
-    () => props.modelValue,
-    () => {
-        detailDialog.value = props.modelValue;
-        initTabs();
-    },
-    { deep: true }
-);
+// watch(
+//     () => props.modelValue,
+//     () => {
+//         detailDialog.value = props.modelValue;
+//         initTabs();
+//     },
+//     { deep: true }
+// );
 watch(
     () => props.cutTab,
     () => {
@@ -50,10 +51,12 @@ watch(
     { deep: true }
 );
 let activeName = ref("");
-onMounted(() => {
-    detailDialog.value = props.modelValue;
-    initTabs();
-});
+let myCheckTabsFilter = ref({});
+// onMounted(() => {
+//     detailDialog.value = props.modelValue;
+//     initTabs();
+// });
+
 
 // 初始化tab
 const initTabs = () => {
@@ -66,12 +69,21 @@ const initTabs = () => {
     let config = detailDialog.value.tab.config;
     if (config) {
         config = JSON.parse(config);
-        config.forEach((el) => {
-            tabs.value.push(el);
+        config.forEach((el,inx) => {
+            if(myCheckTabsFilter.value[inx]){
+                tabs.value.push(el);
+            }
         });
     }
     activeName.value = tabs.value[0].entityName;
 };
+
+
+watchEffect(() => {
+    detailDialog.value = props.tabsConf;
+    myCheckTabsFilter.value = props.checkTabsFilter;
+    initTabs();
+})
 
 // 打开显示项设置
 let detailTabsSetRefs = ref("");
