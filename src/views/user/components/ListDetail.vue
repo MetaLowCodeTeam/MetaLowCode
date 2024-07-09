@@ -54,7 +54,7 @@
     </mlListDetails>
     <mlCustomEdit
         ref="editRefs"
-        @onConfirm="onRefresh"
+        @saveFinishCallBack="onRefresh"
         :isTeam="detailEntity == 'Team'"
         :isUser="detailEntity == 'User'"
         :nameFieldName="detailEntity == 'User' ? 'userName' : 'teamName'"

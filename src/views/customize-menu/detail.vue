@@ -170,7 +170,7 @@
 		/> -->
         <mlCustomEdit 	
             ref="editRefs"
-            @onConfirm="onConfirm"
+            @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
 			:layoutConfig="myLayoutConfig" 
         />
