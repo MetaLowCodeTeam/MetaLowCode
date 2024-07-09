@@ -250,6 +250,7 @@ const initFormLayout = async () => {
                     row.dialogTitle =
                         "新建" + queryEntityNameByLabel(row.entityName);
 					globalDsv.value.formStatus = 'new';
+                    globalDsv.value.formEntityId = "";
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let param = {};
                     if (row.fieldName) {
