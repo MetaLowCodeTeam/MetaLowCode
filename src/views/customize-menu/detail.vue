@@ -505,7 +505,7 @@ const editColumnConfirm = (v) => {
 // 编辑确认
 const onConfirm = () => {
 	if (cutTab.value == "detail") {
-		initData();
+		getLayoutList();
 	} else {
 		detailTabComRefs.value.initData();
 	}
