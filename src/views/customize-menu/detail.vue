@@ -382,7 +382,7 @@ const getLayoutList = async () => {
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
         // 如果有页签配置
-        if(res.data.TAB.config){
+        if(res.data.TAB?.config){
             // 取所有页签数据
             let tabConfig = JSON.parse(res.data.TAB.config);
             // 拿所有页签过滤参数
