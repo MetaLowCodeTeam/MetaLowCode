@@ -47,7 +47,7 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <mlCustomEdit ref="editRefs" @onConfirm="onRefresh" isTeam nameFieldName="teamName"/>
+    <mlCustomEdit ref="editRefs" @saveFinishCallBack="onRefresh" isTeam nameFieldName="teamName"/>
     <!-- 列表详情 -->
     <ListDetail
         ref="mlListDetailsRefs"

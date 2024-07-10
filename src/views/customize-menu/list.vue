@@ -65,7 +65,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp "
+                        v-if="listParamConf.showEditBtn && !isReferenceComp"
                     >
                         编辑
                     </el-button>
@@ -1132,7 +1132,7 @@ watchEffect(() => {
         listParamConf.value.showAddBtn = false;
     }
     if(props.isReferenceComp){
-        if(props.referenceCompStatus == 'new'){
+        if(props.referenceCompStatus == 'new' || props.referenceCompStatus == 'edit'){
             listParamConf.value.showAddBtn = true;
         }
         if(props.referenceCompStatus == 'read'){

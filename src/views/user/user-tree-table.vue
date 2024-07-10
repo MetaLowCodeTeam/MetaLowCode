@@ -140,7 +140,7 @@
         <!-- 新建、编辑用户 -->
         <mlCustomEdit
             ref="editRefs"
-            @onConfirm="onRefresh"
+            @saveFinishCallBack="onRefresh"
             nameFieldName="userName"
             isUser
             :disableWidgets="disableWidgets"

@@ -69,7 +69,9 @@
                 </el-checkbox>
             </el-checkbox-group>
         </el-form-item>
-
+        <el-form-item class="mt-0" label=" " v-if="typeSelecteds.includes(2)">
+            <span class="info-text">勾选通知后将同步发送企业微信和钉钉消息通知。</span>
+        </el-form-item>
         <el-form-item class="mt-20" v-if="typeSelecteds.includes(8)" label="邮件标题">
             <el-input v-model="trigger.actionContent.title" placeholder="你有一条新通知"></el-input>
         </el-form-item>
