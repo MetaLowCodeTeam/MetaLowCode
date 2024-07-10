@@ -95,12 +95,12 @@
                 :title="item.layoutName"
             >{{ item.layoutName }}</div>
             <div class="form-layout-item-icon fl">
-                <span class="form-layout-item-edit" @click.stop="editActionFormLayout(inx)">
+                <span class="form-layout-item-edit" @click.stop="editActionFormLayout(idx)">
                     <el-icon size="18">
                         <ElIconEdit />
                     </el-icon>
                 </span>
-                <span class="form-layout-item-del" @click.stop="delActionFormLayout(inx)">
+                <span class="form-layout-item-del" @click.stop="delActionFormLayout(idx)">
                     <el-icon size="18">
                         <ElIconDelete />
                     </el-icon>
