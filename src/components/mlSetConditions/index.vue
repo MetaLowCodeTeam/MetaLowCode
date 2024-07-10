@@ -15,7 +15,6 @@
                 v-for="(item,inx) of conditionConf.items"
                 :key="inx"
             >
-                <el-col :span="24">{{ item.type + "---" +item.opCom + '---' + item.op}}</el-col>
                 <!-- 字段名 -->
                 <el-col :span="10">
                     <div class="field-one">
@@ -280,6 +279,17 @@
                             value-format="YYYY-MM-DD HH:mm:ss"
                             :default-time="defaultTimeGE"
                             v-else-if="item.op == 'GE'"
+                        />
+                        <el-date-picker
+                            size="default"
+                            v-model="item.value"
+                            type="date"
+                            style="width: 100%;"
+                            format="YYYY/MM/DD"
+                            value-format="YYYY-MM-DD"
+                            :class="{'is-error':item.isError}"
+                            @focus="clearError(item)"
+                            v-else-if="item.op == 'DEQ'"
                         />
                         <el-date-picker
                             v-model="item.value"
