@@ -1,120 +1,70 @@
 <template>
-    <!--  -->
-    <div class="ml-code-editor" :style="{'height':_height}">
-        <textarea ref="textareaRef" v-model="contentValue"></textarea>
-    </div>
+	<!--  -->
+	<codemirror
+		v-model="contentValue"
+		placeholder="Code gose here..."
+		:style="{ height: _height }"
+		:autofocus="true"
+		:indent-with-tab="true"
+		:tabSize="2"
+		:extensions="extensions"
+		@change="change"
+	/>
 </template>
 
 <script setup>
-import { markRaw, onMounted, ref, watch, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 
-//框架
-import CodeMirror from "codemirror";
-import "codemirror/lib/codemirror.css";
-
-//主题
-import "codemirror/theme/idea.css";
-import "codemirror/theme/darcula.css";
-
-//功能
-import "codemirror/addon/selection/active-line";
-
-//语言
-import "codemirror/mode/javascript/javascript";
-import "codemirror/mode/sql/sql";
+import { Codemirror } from "vue-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { oneDark } from "@codemirror/theme-one-dark";
 
 const props = defineProps({
-    modelValue: {
-        type: String,
-        default: "",
-    },
-    mode: {
-        type: String,
-        default: "javascript",
-    },
-    height: {
-        type: [String, Number],
-        default: 300,
-    },
-    options: {
-        type: Object,
-        default: () => {},
-    },
-    theme: {
-        type: String,
-        default: "idea",
-    },
-    readOnly: {
-        type: Boolean,
-        default: false,
-    },
+	modelValue: {
+		type: String,
+		default: "",
+	},
+	height: {
+		type: [String, Number],
+		default: 300,
+	},
+	theme: {
+		type: String,
+		// ""(默认白色) or "oneDark"(深色)
+		default: "oneDark",
+	},
 });
 
 const emits = defineEmits(["update:modelValue"]);
 
 let contentValue = ref();
 
-let opt = ref({});
+const extensions = ref([javascript(), oneDark]);
 
-let coder = ref();
-
-let textareaRef = ref();
-
-watch(
-    () => props.modelValue,
-    () => {
-        loadContentValue()
-    },
-    { deep: true }
-);
-
-onMounted(() => {
-    init();
+watchEffect(() => {
+	contentValue.value = props.modelValue;
+	if (props.theme == "oneDark") {
+		extensions.value = [javascript(), oneDark];
+	} else {
+		extensions.value = [javascript()];
+	}
 });
 
-// 初始化
-const init = () => {
-    opt.value = {
-        theme: props.theme, //主题
-        styleActiveLine: true, //高亮当前行
-        lineNumbers: true, //行号
-        lineWrapping: false, //自动换行
-        tabSize: 4, //Tab缩进
-        indentUnit: 4, //缩进单位
-        indentWithTabs: true, //自动缩进
-        mode: props.mode, //语言
-        readOnly: props.readOnly, //只读
-        ...props.options,
-    }; 
-    coder.value = markRaw(
-        CodeMirror.fromTextArea(textareaRef.value, opt.value)
-    );
-    coder.value.on("change", (coder) => {
-        contentValue.value = coder.getValue();
-        emits("update:modelValue", contentValue.value);
-    });
-    loadContentValue();
-};
-
-// 加载value
-const loadContentValue = () => {
-    contentValue.value = props.modelValue;
-    if (contentValue.value !== coder.value.getValue()) {
-        coder.value.setValue(contentValue.value);
-    }
+const change = (v) => {
+	emits("update:modelValue", v);
 };
 
 const _height = computed(() => {
-    return Number(props.height) ? Number(props.height) + "px" : props.height;
+	return Number(props.height) ? Number(props.height) + "px" : props.height;
 });
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .ml-code-editor {
-    font-size: 14px;
-    border: 1px solid #ddd;
-    line-height: 150%;
+	font-size: 14px;
+	border: 1px solid #ddd;
+	line-height: 150%;
 }
 .ml-code-editor:deep(.CodeMirror) {
-    height: 100%;
+	height: 100%;
 }
 </style>

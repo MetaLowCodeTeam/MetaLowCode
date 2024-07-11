@@ -113,53 +113,6 @@
                             </el-icon>
                         </span>
                     </el-form-item>
-                    <el-form-item label="默认列宽" class="mb-10">
-                        <el-input-number
-                            v-model="editColumnDialogData.columnWidth"
-                            :min="0"
-                            :max="500"
-                            controls-position="right"
-                            :step="10"
-                        />
-                        <span
-                            class="info-text ml-10"
-                        >{{ editColumnDialogData.columnWidth > 0 ? "宽度 " + editColumnDialogData.columnWidth : '默认' }}</span>
-                    </el-form-item>
-                    <el-form-item label="字体大小" class="mb-10">
-                        <el-input-number
-                            v-model="editColumnDialogData.fontSize"
-                            :min="12"
-                            :max="24"
-                            controls-position="right"
-                            :step="1"
-                        />
-                        <span class="info-text ml-10">
-                            <span class="mr-5">表字体</span>
-                            <span :style="{'font-size':editColumnDialogData.fontSize + 'px'}">大小</span>
-                        </span>
-                    </el-form-item>
-                    <el-form-item label="字体粗细" class="mb-10">
-                        <el-select v-model="editColumnDialogData.fontWeight" style="width: 150px;">
-                            <el-option :label="100" :value="100" />
-                            <el-option :label="200" :value="200" />
-                            <el-option :label="300" :value="300" />
-                            <el-option label="400(默认)" :value="400" />
-                            <el-option :label="500" :value="500" />
-                            <el-option :label="600" :value="600" />
-                            <el-option label="700(加粗)" :value="700" />
-                        </el-select>
-                        <span class="info-text ml-10">
-                            <span class="mr-5">表字体</span>
-                            <span :style="{'font-weight':editColumnDialogData.fontWeight}">粗细</span>
-                        </span>
-                    </el-form-item>
-                    <el-form-item label="字体颜色" class="mb-5">
-                        <el-color-picker v-model="editColumnDialogData.fontColor" />
-                        <span class="info-text ml-10">
-                            <span class="mr-5">表字体</span>
-                            <span :style="{'color':editColumnDialogData.fontColor}">颜色</span>
-                        </span>
-                    </el-form-item>
                     <el-form-item label="数据统计" class="mb-3">
                         <el-checkbox v-model="editColumnDialogData.dataStatistics" />
                     </el-form-item>
@@ -187,6 +140,64 @@
                     >
                         <el-input v-model="editColumnDialogData.statisticName" />
                     </el-form-item>
+                    <el-form-item label="默认列宽" class="mb-10">
+                        <el-input-number
+                            v-model="editColumnDialogData.columnWidth"
+                            :min="0"
+                            :max="500"
+                            controls-position="right"
+                            :step="10"
+                        />
+                        <span
+                            class="info-text ml-10"
+                        >{{ editColumnDialogData.columnWidth > 0 ? "宽度 " + editColumnDialogData.columnWidth : '默认' }}</span>
+                    </el-form-item>
+                    <el-tabs v-model="editColumnDialogData.renderType">
+                        <el-tab-pane label="默认渲染" name="defaultRender">
+                            <el-form-item label="字体大小" class="mb-10">
+                                <el-input-number
+                                    v-model="editColumnDialogData.fontSize"
+                                    :min="12"
+                                    :max="24"
+                                    controls-position="right"
+                                    :step="1"
+                                />
+                                <span class="info-text ml-10">
+                                    <span class="mr-5">表字体</span>
+                                    <span :style="{'font-size':editColumnDialogData.fontSize + 'px'}">大小</span>
+                                </span>
+                            </el-form-item>
+                            <el-form-item label="字体粗细" class="mb-10">
+                                <el-select v-model="editColumnDialogData.fontWeight" style="width: 150px;">
+                                    <el-option :label="100" :value="100" />
+                                    <el-option :label="200" :value="200" />
+                                    <el-option :label="300" :value="300" />
+                                    <el-option label="400(默认)" :value="400" />
+                                    <el-option :label="500" :value="500" />
+                                    <el-option :label="600" :value="600" />
+                                    <el-option label="700(加粗)" :value="700" />
+                                </el-select>
+                                <span class="info-text ml-10">
+                                    <span class="mr-5">表字体</span>
+                                    <span :style="{'font-weight':editColumnDialogData.fontWeight}">粗细</span>
+                                </span>
+                            </el-form-item>
+                            <el-form-item label="字体颜色" class="mb-5">
+                                <el-color-picker v-model="editColumnDialogData.fontColor" />
+                                <span class="info-text ml-10">
+                                    <span class="mr-5">表字体</span>
+                                    <span :style="{'color':editColumnDialogData.fontColor}">颜色</span>
+                                </span>
+                            </el-form-item>
+                        </el-tab-pane>
+                        <el-tab-pane label="自定义渲染" name="customizeRender">
+                            <div class="mb-10">
+                                <span class="">自定义渲染</span>
+                                <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/yu0gqztx7dhdkp8e?singleDoc#">使用文档</a>
+                            </div>
+                            <mlCodeEditor v-model="editColumnDialogData.columnRender"/>
+                        </el-tab-pane>
+                    </el-tabs>
                 </el-form>
             </div>
             <template #footer>
@@ -203,6 +214,8 @@
 import { VueDraggableNext } from "vue-draggable-next";
 import { watch, ref, onMounted, inject, reactive } from "vue";
 import { queryEntityListableFields } from "@/api/crud";
+// 代码编辑器
+import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -228,6 +241,8 @@ onMounted(() => {
     isShow.value = props.modelValue;
     getAllColumn();
 });
+
+let activeTab = ref("defaultRender");
 
 // 已显示列
 let showColumn = ref([]);
@@ -280,6 +295,10 @@ let editColumnDialogData = reactive({
     statisticType: "",
     // 显示名称
     statisticName: "",
+    // 渲染类型 defaultRender 默认渲染  customizeRender 自定义渲染
+    renderType: "defaultRender",
+    // 自定义渲染JS
+    columnRender:"",
 });
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
@@ -340,7 +359,6 @@ const changeColumnSort = () => {
 
 // 编辑显示列
 const editColumn = (column, inx) => {
-    console.log(column, "column");
     editColumnDialogIsShow.value = true;
     let editObj = Object.assign({}, column);
     editObj.columnAliasName = column.columnAliasName || "";
@@ -356,8 +374,8 @@ const editColumn = (column, inx) => {
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {
-    let { columnAliasName, columnSort, columnWidth, dataStatistics } = column;
-    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics) {
+    let { columnAliasName, columnSort, columnWidth, dataStatistics, renderType, columnRender} = column;
+    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || (renderType == 'customizeRender' && !!columnRender)) {
         return true;
     }
     return false;

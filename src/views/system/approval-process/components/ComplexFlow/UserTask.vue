@@ -189,7 +189,7 @@
 					<!-- 前置脚本 -->
 					<div class="work-flow-conditions">
 						<div class="mb-10 mt-10">
-							<mlCodeEditor v-model="myFormData.createScript" mode="javascript" theme="darcula" />
+							<mlCodeEditor v-model="myFormData.createScript"/>
 						</div>
 					</div>
 				</el-tab-pane>
@@ -209,7 +209,7 @@
 					<!-- 后置脚本 -->
 					<div class="work-flow-conditions">
 						<div class="mb-10 mt-10">
-							<mlCodeEditor v-model="myFormData.completeScript" mode="javascript" theme="darcula" />
+							<mlCodeEditor v-model="myFormData.completeScript"/>
 						</div>
 					</div>
 				</el-tab-pane>

@@ -1,5 +1,14 @@
 <template>
-    <div :style="{'fontSize':column.fontSize + 'px','fontWeight':column.fontWeight,'color':column.fontColor}">
+    <!-- 自定义渲染 -->
+    <div v-if="column.renderType == 'customizeRender'">
+        <table-column-custom-render 
+            :row="row" 
+            :column="column" 
+            :renderFn="getColumnRender(column)" 
+        />
+    </div>
+    <!-- 默认 -->
+    <div :style="{'fontSize':column.fontSize + 'px','fontWeight':column.fontWeight,'color':column.fontColor}" v-else>
         <div
             class="text-ellipsis"
             v-if="column.fieldType == 'Reference'"
@@ -103,7 +112,7 @@
 
 <script setup>
 import { ref } from "vue";
-
+import TableColumnCustomRender from "./table-column-custom-render";
 const props = defineProps({
     row: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
@@ -124,6 +133,8 @@ const downField = (url, fileName) => {
 const openDetailDialog = (row) => {
     emits("openDetailDialog", row);
 };
+
+
 
 /**
  * 多文件下载
@@ -165,6 +176,13 @@ const previewImg = (url) => {
     previewUrl.value = url;
     previewDialog.value = true;
 };
+
+// 自定义渲染
+const getColumnRender = (column)=> {
+    return new Function('h', 'params', column.columnRender)
+}
+
+
 </script>
 <style lang='scss' scoped>
 .row-img {
