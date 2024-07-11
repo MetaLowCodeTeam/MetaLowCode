@@ -33,7 +33,7 @@
       selectedWidget: Object,
       optionModel: Object,
     },
-    inject: ['getServerSubFormList', 'getDesignerConfig'],
+    inject: ['getServerSubFormList', 'getDesignerConfig', 'getServerReferenceFormList'],
     data() {
       return {
         nameRequiredRule: [{required: true, message: 'name required'}],
@@ -43,7 +43,9 @@
       serverSubFormList() {
         return this.getServerSubFormList()
       },
-
+      serverReferenceFormList() {
+        return this.getServerReferenceFormList()
+      },
       noSubFormList() {
         return !this.serverSubFormList || (this.serverSubFormList.length <= 0)
       },

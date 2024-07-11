@@ -349,6 +349,14 @@ const routes = [
                         meta: { title: '数据库备份', icon: 'el-icon-Collection', role: 'r6014' },
                         component: 'system/data-base/backups',
                     },
+                    // 数据转化
+                    {
+						path: '/web/data-transformation',
+						name: 'DataTransformation',
+						component: 'system/data-transformation/index',
+						meta: { title: '数据转化', icon: 'el-icon-Cpu', role: 'r48-1' },
+					}
+
                 ]
             },
 
