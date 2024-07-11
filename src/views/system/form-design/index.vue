@@ -266,9 +266,11 @@ export default {
                     if (res.data.fieldList) {
                         this.fieldListData.fieldList = res.data.fieldList;
                         if (res.data.subFormList) {
-                            this.fieldListData.subFormList =
-                                res.data.subFormList;
+                            this.fieldListData.subFormList = res.data.subFormList;
                         }
+						if (res.data.referenceFormList) {
+							this.fieldListData.referenceFormList = res.data.referenceFormList;
+						}
                         this.meteFieldsResult = res;
                         const metaFields = this.buildMetaFields(
                             this.meteFieldsResult
