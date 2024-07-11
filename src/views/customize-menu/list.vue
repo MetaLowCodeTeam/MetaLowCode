@@ -997,7 +997,7 @@ let sliceTable = ref([]);
 
 const getTableList = async () => {
     pageLoading.value = true;
-    if(props.isReferenceComp){
+    if(props.isReferenceComp && mainDetailField.value){
         filterEasySql.value = `${mainDetailField.value} = '${myFormEntityId.value}'`
     }
     let param = {
