@@ -859,8 +859,15 @@ const onEditRow = (row) => {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    let tempV = {};
+    let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
+    let tempV = {
+        detailEntityFlag,
+        refEntityBindingField,
+    };
     tempV.detailId = row[idFieldName.value];
+    tempV.idFieldName = idFieldName.value;
+    tempV.formEntityId = myFormEntityId.value;
+    tempV.mainDetailField = mainDetailField.value;
     editRefs.value.openDialog(tempV);
 };
 

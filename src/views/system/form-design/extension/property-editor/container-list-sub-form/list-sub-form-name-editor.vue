@@ -7,12 +7,11 @@
 					effect="light"
 					:content="i18nt('designer.setting.editNameHelp')"
 				>
-					<!-- <svg-icon icon-class="el-info" /> -->
 					<el-icon><InfoFilled /></el-icon>
 				</el-tooltip>
 			</span>
 		</template>
-		<template v-if="noSubFormList">
+		<template v-if="noSubFormList && serverReferenceFormList?.length < 1">
 			<el-input
 				type="text"
 				v-model="optionModel.name"

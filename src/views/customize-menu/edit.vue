@@ -225,7 +225,7 @@ const initFormLayout = async () => {
 					globalDsv.value.formStatus = 'edit';
 					globalDsv.value.formEntityId = row.detailId;
 					let formData = await queryById(row.detailId);
-					vFormRef.value.setFormJson(res.data.layoutJson);
+					vFormRef.value?.setFormJson(res.data.layoutJson);
                     if (formData && formData.data) {
                         row.dialogTitle =
                             "编辑" + formData.data[props.nameFieldName];
@@ -233,17 +233,22 @@ const initFormLayout = async () => {
 
                         nextTick(() => {
 							vFormRef.value.setFormData(formData.data);
-                            vFormRef.value.reloadOptionData();
-                            if (
-                                row.approvalStatus.value == 1 ||
-                                row.approvalStatus.value == 3 ||
-                                row.isRead
-                            ) {
-                                vFormRef.value.disableForm();
-                                return;
-                            }
+                            nextTick(() => {
+                                vFormRef.value.reloadOptionData();
+                                if (
+                                    row.approvalStatus.value == 1 ||
+                                    row.approvalStatus.value == 3 ||
+                                    row.isRead
+                                ) {
+                                    vFormRef.value.disableForm();
+                                    return;
+                                }
+                                if(row.refEntityBindingField && !row.detailEntityFlag){
+                                    vFormRef.value.disableWidgets([row.refEntityBindingField]);
+                                }
 
-                            getFieldListOfEntityApi("updatable");
+                                getFieldListOfEntityApi("updatable");
+                            })
                         });
                     }
                     loading.value = false;
@@ -264,12 +269,21 @@ const initFormLayout = async () => {
                             name: row.fieldNameLabel,
                         };
                     }
+                    if(isReferenceComp.value && !row.detailEntityFlag){
+                        param[row.refEntityBindingField] = {
+                            id: row.formEntityId,
+                            name: row.formEntityId,
+                        }
+                    }
 					nextTick(() => {
 						vFormRef.value.setFormData(param);
 						nextTick(() => {
 							if (row.fieldName) {
 								vFormRef.value.disableWidgets([row.fieldName]);
 							}
+                            if(isReferenceComp.value && !row.detailEntityFlag){
+                                vFormRef.value.disableWidgets([row.refEntityBindingField]);
+                            }
 							vFormRef.value.reloadOptionData();
 							// 获取字段是否禁用
 							getFieldListOfEntityApi("creatable");
