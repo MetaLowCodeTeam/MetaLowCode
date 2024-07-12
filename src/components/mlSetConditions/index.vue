@@ -291,13 +291,6 @@
                             @focus="clearError(item)"
                             v-else-if="item.op == 'DEQ'"
                         />
-                        <el-date-picker
-                            v-model="item.value"
-                            type="datetime"
-                            format="YYYY/MM/DD HH:mm:ss"
-                            value-format="YYYY-MM-DD HH:mm:ss"
-                            v-else
-                        />
                     </div>
                 </el-col>
             </el-row>
