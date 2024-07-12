@@ -10,6 +10,9 @@ export const listSubFormSchema = {
     options: {
         name: "",
         label: 'list-sub-form',
+        // 是否从实体
+        detailEntityFlag: true,
+        refEntityBindingField: '',
         // 是否显示头部
         showListHeader: true,
         // 是否显示高级查询
@@ -23,7 +26,8 @@ export const listSubFormSchema = {
         // 分页每页显示多少条
         paginationSize: 20,
         // 列表高度 - 默认294 空状态的高度
-        listSubFormHeight: 294
+        listSubFormHeight: 294,
+        
     },
 };
 

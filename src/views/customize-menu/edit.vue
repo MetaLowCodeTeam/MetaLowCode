@@ -124,6 +124,7 @@ const loadMyLayoutConfig = () => {
 };
 
 let row = reactive({
+    dialogTitle:"",
     approvalStatus: {},
     detailId: "",
     entityName: "",
@@ -134,6 +135,8 @@ let row = reactive({
     formEntityId:"",
     mainDetailField:"",
     isRead: false,
+    detailEntityFlag: true,
+    refEntityBindingField: "",
 });
 const globalDsv = ref({});
 globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
@@ -157,6 +160,8 @@ const openDialog = async (v) => {
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
     row.idFieldName = v.idFieldName;
+    row.detailEntityFlag = v.detailEntityFlag;
+    row.refEntityBindingField = v.refEntityBindingField;
     isReferenceComp.value = v.isReferenceComp;
     // 如果是引用组件调用，有引用组件表单数据
     if(isReferenceComp.value){
@@ -332,15 +337,13 @@ const confirm = async () => {
                 loading.value = true;
                 let saveRes;
                 if(isReferenceComp.value){
-                 
                     let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
                     delete referenceCompFormData.value.referenceCompName
                     delete referenceCompFormData.value.referenceCompEntity
-                    
                     let saveFormData = row.formEntityId ? cloneDeep(formData) : referenceCompFormData.value;
                     referenceCompFormData.value[referenceCompName] = [cloneDeep(formData)];
                     if(row.formEntityId){
-                        saveFormData[row.mainDetailField] = row.formEntityId;
+                        saveFormData[row.detailEntityFlag ? row.mainDetailField : row.refEntityBindingField] = row.formEntityId;
                     }
                     saveRes = await saveRecord(
                         row.formEntityId ? row.entityName : referenceCompEntity,

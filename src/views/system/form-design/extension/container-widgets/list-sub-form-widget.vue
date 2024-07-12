@@ -25,6 +25,8 @@
 				}"
 				:paginationSize="widget.options.paginationSize"
 				:tableHeight="widget.options.tableHeight"
+                :detailEntityFlag="widget.options?.detailEntityFlag"
+                :refEntityBindingField="widget.options?.refEntityBindingField"
 			/>
 		</div>
 	</container-wrapper>

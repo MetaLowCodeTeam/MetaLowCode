@@ -388,7 +388,16 @@ const props = defineProps({
         type: String,
         default: ""
     },
-    
+    // 是否从实体
+    detailEntityFlag: {
+        type: Boolean,
+        default: true,
+    },
+    // 非从实体绑定字段
+    refEntityBindingField: {
+        type: String,
+        default: "",
+    },
 })
 
 // 页面Loading
@@ -630,6 +639,7 @@ const getLayoutList = async () => {
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         mainDetailField.value = res.data.mainDetailField;
+        filterEasySql.value = "";
         defaultFilterSetting.value = res.data.DEFAULT_FILTER || {};
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
         addConf = res.data.ADD ? { ...res.data.ADD } : {};
@@ -804,12 +814,20 @@ let myFormEntityId = ref("");
 
 // 新建
 const onAdd = () => {
-    if(props.isReferenceComp){
+    let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
+    if(isReferenceComp){
+        if(!detailEntityFlag && !myFormEntityId.value){
+            ElMessage.info("主表单未保存，不能新建关联引用记录。")
+            return
+        }
         emits('referenceCompAdd',(formData) => {
-            let tempV = {};
+            let tempV = {
+                isReferenceComp: true,
+                detailEntityFlag,
+                refEntityBindingField,
+            };
             tempV.entityName = entityName.value;
             tempV.formData = formData;
-            tempV.isReferenceComp = true;
             tempV.idFieldName = idFieldName.value;
             tempV.formEntityId = myFormEntityId.value;
             tempV.mainDetailField = mainDetailField.value;
@@ -817,7 +835,8 @@ const onAdd = () => {
         });
         return
     }
-    let tempV = {};
+    let tempV = {
+    };
     tempV.entityName = entityName.value;
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";
@@ -997,8 +1016,15 @@ let sliceTable = ref([]);
 
 const getTableList = async () => {
     pageLoading.value = true;
-    if(props.isReferenceComp && mainDetailField.value){
-        filterEasySql.value = `${mainDetailField.value} = '${myFormEntityId.value}'`
+    let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
+    // 如果是列表子表单引用组件
+    if(isReferenceComp){
+        // 如果是明细实体
+        if(detailEntityFlag){
+            filterEasySql.value = `${mainDetailField.value} = '${myFormEntityId.value}'`
+        }else {
+            filterEasySql.value = `${refEntityBindingField} = '${myFormEntityId.value}'`
+        }
     }
     let param = {
         mainEntity: entityName.value,

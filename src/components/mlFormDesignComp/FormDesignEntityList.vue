@@ -12,6 +12,8 @@
 		:paginationConf="listPaginationConf"
         :formEntityId="formEntityId"
         :referenceCompStatus="formStatus"
+        :detailEntityFlag="detailEntityFlag"
+        :refEntityBindingField="refEntityBindingField"
 		@referenceCompAdd="referenceCompAdd"
         @saveFinishCallBack="saveFinishCallBack"
         ref="EntityListRefs"
@@ -34,6 +36,14 @@ export default {
 			default: "",
 		},
 		referenceEntity: {
+			type: String,
+			default: "",
+		},
+		detailEntityFlag: {
+			type: Boolean,
+			default: true,
+		},
+		refEntityBindingField: {
 			type: String,
 			default: "",
 		},
@@ -127,6 +137,7 @@ export default {
             this.formRef.getGlobalDsv()?.setRowRecordId(this.myFormEntityId)
             this.$refs.EntityListRefs.saveSubFormListCb(data);
         },
+
 	},
 };
 </script>
