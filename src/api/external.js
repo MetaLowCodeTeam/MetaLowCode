@@ -8,6 +8,6 @@ export function saveRecord(externalFormId, body) {
     return http.post('/external/saveRecord', body, { params: { externalFormId } });
 }
 
-export function externalEefFieldQuery(externalFormId, field, pageNo, pageSize, queryText, extraFilter) {
+export function externalRefFieldQuery(externalFormId, field, pageNo, pageSize, queryText, extraFilter) {
     return http.get('/external/refFieldQuery', { externalFormId, 'refField': field, pageNo, pageSize, queryText, extraFilter });
 }

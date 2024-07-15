@@ -35,7 +35,7 @@
 <script>
 import {setColumnFormatter} from '@/utils/util'
 import {refFieldQuery} from '@/api/crud'
-import { externalEefFieldQuery } from "@/api/external";
+import {externalRefFieldQuery} from "@/api/external";
 export default {
 	props: {
 		entity: String,
@@ -91,7 +91,7 @@ export default {
             // 如果是外部表单
             if (this.gDsv?.isExternalForm) {
                 paramStr = this.$route.query.externalId;
-                this.refFieldQueryApi(externalEefFieldQuery, paramStr);
+                this.refFieldQueryApi(externalRefFieldQuery, paramStr);
             } else {
                 paramStr = this.entity;
                 this.refFieldQueryApi(refFieldQuery, paramStr, this.filterConditions);
