@@ -202,10 +202,16 @@ export default {
 		async openFilterDialog() {
 			this.filterDialogConf.isShow = true;
 			this.filterDialogConf.loading = true;
+            let paramEntity = "";
+            if(this.selectedWidget.subFormName) {
+                paramEntity = this.selectedWidget.subFormName;
+            }else {
+                paramEntity = this.$route.query.entity;
+            }
 			// 通过引入字段，当前实体获取引入字段的实体
 			let refRes = await getRefFieldExtras(
 				this.optionModel.name,
-				this.$route.query.entity
+				paramEntity
 			);
 			if (refRes) {
 				// 引用实体
