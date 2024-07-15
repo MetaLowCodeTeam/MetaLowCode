@@ -390,7 +390,7 @@ const confirm = async () => {
                     (saveRes.data?.code == 200 || saveRes.code == 200)
                 ) {
                     ElMessage.success("保存成功");
-                    let resData = saveRes.data.formData;
+                    let resData = saveRes.data.formData || {};
                     resData.needCb = false;
                     if(isReferenceComp.value && !row.formEntityId){
                         resData.needCb = true;
@@ -401,7 +401,8 @@ const confirm = async () => {
                 loading.value = false;
             }
         })
-        .catch(() => {
+        .catch((err) => {
+            console.log(err,'err')
             ElMessage.error("表单校验失败，请修改后重新提交");
         });
 };
