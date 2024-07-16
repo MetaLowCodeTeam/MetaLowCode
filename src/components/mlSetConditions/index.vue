@@ -63,6 +63,7 @@
                             value-format="YYYY-MM-DD"
                             :class="{'is-error':item.isError}"
                             @focus="clearError(item)"
+                            clearable
                         />
                     </div>
                     <!-- 日期区间 -->
@@ -78,6 +79,7 @@
                             value-format="YYYY-MM-DD"
                             @change="bwChange(item)"
                             @focus="clearError(item)"
+                            clearable
                         />
                         <el-date-picker
                             size="default"
@@ -90,6 +92,7 @@
                             value-format="YYYY-MM-DD"
                             @change="bwChange(item)"
                             @focus="clearError(item)"
+                            clearable
                         />
                     </div>
                     <!-- 时间区间 -->
@@ -132,6 +135,7 @@
                             class="mlnumer-input w-100"
                             :class="{'is-error':item.isError}"
                             @focus="clearError(item)"
+                            clearable
                         />
                     </div>
                     <!-- 数字输入框区间 -->
@@ -144,6 +148,7 @@
                             :class="{'is-error':item.isError && !item.value}"
                             @focus="clearError(item)"
                             @change="bwChange(item)"
+                            clearable
                         />
                         <el-input-number
                             size="default"
@@ -153,6 +158,7 @@
                             :class="{'is-error':item.isError && !item.value2}"
                             @focus="clearError(item)"
                             @change="bwChange(item)"
+                            clearable
                         />
                     </div>
                     <!-- 文本输入框 -->
@@ -162,6 +168,7 @@
                             v-model="item.value"
                             :class="{'is-error':item.isError}"
                             @focus="clearError(item)"
+                            clearable
                         />
                     </div>
                     <!-- 布尔类型 -->
@@ -173,6 +180,7 @@
                             :class="{'is-error':item.isError}"
                             @focus="clearError(item)"
                             placeholder=" "
+                            clearable
                         >
                             <el-option label="是" value="1" />
                             <el-option label="否" value="0" />
@@ -189,6 +197,7 @@
                             placeholder=" "
                             filterable
                             no-match-text="无匹配文本"
+                            clearable
                         >
                             <el-option
                                 v-for="(userOp,userInx) of userList"
@@ -210,6 +219,7 @@
                             placeholder=" "
                             filterable
                             no-match-text="无匹配文本"
+                            clearable
                         >
                             <el-option
                                 v-for="(departmentOp,departmentInx) of departmentList"
@@ -228,6 +238,7 @@
                             :class="{'is-error':item.isError}"
                             @focus="clearError(item)"
                             placeholder=" "
+                            clearable
                         >
                             <el-option
                                 v-for="(userOp,userInx) of item.optionData"
@@ -238,7 +249,12 @@
                         </el-select>
                     </div>
                     <div v-else-if="item.opCom =='referenceSearch'">
-                        <el-input v-model="item.value2" readonly :class="{'is-error':item.isError}">
+                        <el-input 
+                            v-model="item.value2" 
+                            readonly 
+                            :class="{'is-error':item.isError}" 
+                            @focus="clearError(item)"
+                        >
                             <template #append>
                                 <el-button @click="openReferenceDialog(item)">
                                     <el-icon>
@@ -295,15 +311,16 @@
                 </el-col>
             </el-row>
         </div>
-        <div class="mladd-conditions">
+        <div class="mladd-conditions mt-20">
             <span class="ml-a-span" @click="addConditions">
                 <el-icon size="18" class="add-icon">
                     <ElIconCirclePlusFilled />
                 </el-icon>
                 <span class="ml-8">添加条件</span>
             </span>
+            <slot name="afterAddConditions"></slot>
         </div>
-        <div class="mlconditions-mode mt-10">
+        <div class="mlconditions-mode mt-10" v-if="!notType">
             <el-radio-group
                 v-model="conditionConf.type"
                 @change="conditionTypeChange"
@@ -344,6 +361,8 @@ export default {
         footer: { type: Boolean, default: false },
         // 实体名称兼CODE
         entityName: { type: [String, Number], default: "" },
+        // 是否需要显示类型
+        notType: { type: Boolean, default: false }
     },
     data() {
         return {
@@ -404,6 +423,7 @@ export default {
     methods: {
         openReferenceDialog(item) {
             item.showReferenceDialogFlag = true;
+            this.clearError(item);
         },
         setReferRecord(event, item) {
             item.value = event.id;

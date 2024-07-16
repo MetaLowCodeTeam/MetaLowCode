@@ -49,10 +49,10 @@ export default {
     TextArea: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Text: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Reference: {
-        All: ["LK", "NLK", "NL", "NT"],
+        All: ["EQ", "NEQ", "NL", "NT"],
         referenceFilters: ["Department", "User"],
-        Department: ["LK", "NLK", "SFB", "SFD", "NL", "NT"],
-        User: ["LK", "NLK", "NL", "NT", "SFU"],
+        Department: ["EQ", "NEQ", "SFB", "SFD", "NL", "NT"],
+        User: ["EQ", "NEQ", "NL", "NT", "SFU"],
     },
     Date: ["EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     DateTime: ["DEQ", "GE", "LE", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
@@ -118,7 +118,7 @@ export default {
         referenceSearch: {
             type: ["Reference"],
             referTo: [],
-            op: ["LK", "NLK"],
+            op: ["EQ", "NEQ"],
         },
     },
     getShowCom: function (item) {

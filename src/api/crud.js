@@ -10,6 +10,16 @@ export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraF
     );
 }
 
+export function saveRefFilterPanel(entity, field, filter) {
+    return http.post(
+        'crud/saveRefFilterPanel',
+        filter,
+        {
+            params: { entity, 'refField': field}
+        }
+    );
+}
+
 export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2) {
 	return http.post(
 		'crud/refFieldQuery2',

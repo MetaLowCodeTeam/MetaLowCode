@@ -228,7 +228,6 @@ export default {
                     query: nowTag.query,
                 });
             }
-
             refreshIframe(nowTag);
             setTimeout(() => {
                 removeKeepLive(nowTag.name);
