@@ -68,6 +68,7 @@
 
 <script setup>
 import { inject, ref, shallowRef } from "vue";
+import { useRouter } from "vue-router";
 /**
  * 组件
  */
@@ -75,6 +76,10 @@ import { inject, ref, shallowRef } from "vue";
 import Edit from "./Edit/index.vue";
 
 const $TOOL = inject("$TOOL");
+const Router = useRouter();
+
+// ID字段名
+const idFieldName = "roleId";
 
 let mlSingleListRef = ref();
 // 表格参数
@@ -123,7 +128,10 @@ const addRow = () => {
     EditRefs.value?.openDialog();
 };
 // 编辑行
-const editRow = (row) => {};
+const editRow = (row) => {
+    console.log(row[idFieldName],'row')
+    Router.push('/web/data-transformation/' + row[idFieldName])
+};
 
 // 删除行
 const deleteRow = (row) => {
