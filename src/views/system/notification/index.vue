@@ -9,6 +9,7 @@
         :filterItems="filterItems"
         queryUrl="/note/listQuery"
         equation="AND"
+        ref="mlSingleListRefs"
     >
         <template #addbutton>
             <el-button type="primary" @click="markAllRead">全部设为已读</el-button>
@@ -43,6 +44,7 @@ import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
+import { ElMessage } from "element-plus";
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
@@ -166,10 +168,18 @@ const markRead = (item) => {
     http.post("/note/read?id=" + item.notificationId);
 };
 
+
+let mlSingleListRefs = ref();
+
 //标记全部已读
-const markAllRead = () => {
-    http.post("/note/readAll");
-    setNewMsgNum(0);
+const markAllRead = async () => {
+    let res = await http.post("/note/readAll");
+    if(res){
+        setNewMsgNum(0);
+        mlSingleListRefs.value.getTableList();
+        ElMessage.success("设置成功")
+    }
+    
 };
 </script>
 <style>
