@@ -73,6 +73,7 @@ const { viewTags } = storeToRefs(viewTagsStore);
 const { pushViewTags,removeViewTags } = viewTagsStore;
 const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
 const { removeIframeList,refreshIframe } = iframeStore;
+
 export default {
     name: "tags",
     data() {
@@ -237,10 +238,10 @@ export default {
                     setRouteShow(true);
                 });
             }, 0);
+
         },
         //TAB 关闭
         closeTabs(notPushLatestView = false) {
-            this.$route.meta.deleteCache = true;
             let nowTag = this.contextMenuItem;
             if (!nowTag.meta.affix) {
                 this.closeSelectedTag(nowTag, !notPushLatestView);
