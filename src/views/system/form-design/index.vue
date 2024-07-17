@@ -166,7 +166,6 @@ import ReferenceWE from "@/views/system/field-editor/reference-widget-editor.vue
 import AnyReferenceWE from "@/views/system/field-editor/anyreference-widget-editor.vue";
 import ReferenceListWE from "@/views/system/field-editor/referencelist-widget-editor.vue";
 import MlShareTo from "@/components/mlShareTo/index.vue";
-//const visualDesign = import.meta.glob('@/../lib/visual-design/designer.umd.js')
 import { mlShortcutkeys } from "@/utils/util";
 export default {
     name: "form-design",
@@ -468,13 +467,15 @@ export default {
 
 			/* 处理单选项字段 */
             if (fieldSchema.options.hasOwnProperty("optionItems")) {
-                if (
-                    this.formOptionData.hasOwnProperty(fieldSchema.options.name)
-                ) {
-                    fieldSchema.options.optionItems = deepClone(
-                        this.formOptionData[fieldSchema.options.name]
-                    );
-                }
+				let optionDataKeyName = fieldSchema.options.name
+				if (fieldSchema.subFormName) {
+					optionDataKeyName = fieldSchema.subFormName + '.' + fieldSchema.options.name
+				}
+				if (this.formOptionData.hasOwnProperty(optionDataKeyName)) {
+					fieldSchema.options.optionItems = deepClone(
+						this.formOptionData[optionDataKeyName]
+					);
+				}
 
                 if (fldObj.type === "Boolean") {
                     fieldSchema.options.optionItems = [
