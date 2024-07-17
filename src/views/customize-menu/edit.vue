@@ -59,7 +59,7 @@ import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-const { queryEntityNameById, queryEntityNameByLabel } = useCommonStore();
+const { queryEntityNameById, queryEntityLabelByName } = useCommonStore();
 
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -258,7 +258,7 @@ const initFormLayout = async () => {
             else {
                 nextTick(async () => {
                     row.dialogTitle =
-                        "新建" + queryEntityNameByLabel(row.entityName);
+                        "新建" + queryEntityLabelByName(row.entityName);
 					globalDsv.value.formStatus = 'new';
                     globalDsv.value.formEntityId = "";
                     vFormRef.value.setFormJson(res.data.layoutJson);

@@ -9,6 +9,8 @@
 			fieldName="roleName"
 			:tableColumn="tableConf.tableColumn"
 			:filterItems="tableConf.filterItems"
+			queryUrl="/transform/listQuery"
+			@changeSwitch="changeSwitch"
 		>
 			<template #addbutton>
 				<el-button
@@ -63,12 +65,15 @@
 			</template>
 		</mlSingleList>
 	</el-container>
-	<Edit ref="EditRefs" />
+	<Edit ref="EditRefs" @saveFinish="updateData" />
 </template>
 
 <script setup>
 import { inject, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { queryEntityLabelByName } = useCommonStore();
 /**
  * 组件
  */
@@ -81,13 +86,16 @@ const Router = useRouter();
 // ID字段名
 const idFieldName = "roleId";
 
-let mlSingleListRef = ref();
+// 列表组件
+let mlSingleListRef = shallowRef();
+
 // 表格参数
 let tableConf = ref({
-	entity: "Role",
-	fieldsList: "roleName, disabled, description,createdBy",
+	entity: "Transform",
+	fieldsList:
+		"transformName, disabled, sourceEntity, targetEntity, fieldMapping, backfill, isPreview",
 	// 默认搜索字段
-	fieldName: "roleName",
+	fieldName: "transformName",
 	// 默认排序
 	sortFields: [
 		{
@@ -99,22 +107,31 @@ let tableConf = ref({
 	filterItems: [],
 	tableColumn: [
 		{
-			prop: "roleName",
-			label: "角色名称",
+			prop: "transformName",
+			label: "转化名称",
 			width: "180",
 		},
 		{
-			prop: "disabled",
-			label: "是否禁用",
-			align: "center",
-			width: "120",
+			prop: "sourceEntity",
+			label: "源实体",
 			formatter: (row) => {
-				return row.disabled ? "是" : "否";
+				return queryEntityLabelByName(row.sourceEntity);
 			},
 		},
 		{
-			prop: "description",
-			label: "角色描述",
+			prop: "targetEntity",
+			label: "目标实体",
+			formatter: (row) => {
+				return queryEntityLabelByName(row.targetEntity);
+			},
+		},
+		{
+			prop: "disabled",
+			label: "启用",
+			align: "center",
+			customSlot: "switch",
+			isNegation: true,
+			width: 80,
 		},
 	],
 });
@@ -125,12 +142,31 @@ let tableConf = ref({
 let EditRefs = shallowRef();
 // 添加行
 const addRow = () => {
-    EditRefs.value?.openDialog();
+	EditRefs.value?.openDialog();
 };
 // 编辑行
 const editRow = (row) => {
-    console.log(row[idFieldName],'row')
-    Router.push('/web/data-transformation/' + row[idFieldName])
+	EditRefs.value?.openDialog(row);
+	// console.log(row[idFieldName],'row')
+	// Router.push('/web/data-transformation/' + row[idFieldName])
+};
+
+// 启用开关
+const changeSwitch = (row) => {
+    // 保存需要的key
+    let toSaveKey = [
+        'transformName',
+        'sourceEntity',
+        'targetEntity',
+        'disabled',
+        'isPreview',
+    ];
+    let saveData = {};
+    toSaveKey.forEach(el => {
+        saveData[el] = row[el];
+    })
+    mlSingleListRef.value.loading = true;
+    EditRefs.value?.doSave(row.transformId, saveData, '设置成功');
 };
 
 // 删除行
@@ -151,6 +187,11 @@ const deleteRow = (row) => {
 	//     .catch(() => {
 	//         ElMessage.info("取消删除");
 	//     });
+};
+
+// 更新数据
+const updateData = () => {
+	mlSingleListRef.value?.getTableList();
 };
 </script>
 

@@ -106,7 +106,7 @@ let tableColumn = ref([
     //     prop: "isDisabled",
     //     label: "启用",
     //     align: "center",
-    //     customSolt: "switch",
+    //     customSlot: "switch",
     //     isNegation: true,
     //     width: 80,
     // },

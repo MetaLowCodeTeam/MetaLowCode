@@ -81,7 +81,7 @@
 						</span>
 						<span
 							v-else-if="
-								column.customSolt === 'switch' &&
+								column.customSlot === 'switch' &&
 								column.isNegation
 							"
 						>
@@ -94,7 +94,7 @@
 						</span>
 						<span
 							v-else-if="
-								column.customSolt === 'switch' &&
+								column.customSlot === 'switch' &&
 								!column.isNegation
 							"
 						>

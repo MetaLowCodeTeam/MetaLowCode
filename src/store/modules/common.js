@@ -41,15 +41,19 @@ const useCommonStore = defineStore('commonStore', () => {
             }
         })
     }
+    // 根据ID查实体名称
     const queryEntityNameById = (id) => {
         return allEntityName[parseInt(id.split('-')[0])];
     }
+    // 根据ID查实体Code
     const queryEntityCodeById = (id) => {
         return parseInt(id.split('-')[0]);
     }
-    const queryEntityNameByLabel = (name) => {
+    // 根据实体名称查实体label
+    const queryEntityLabelByName = (name) => {
         return allEntityLabel[allEntityCode[name]];
     }
+    // 根据code查实体名称
     const queryEntityNameByCode = (code) => {
         return allEntityName[code];
     }
@@ -96,7 +100,7 @@ const useCommonStore = defineStore('commonStore', () => {
         allEntityCode,
         queryEntityNameById,
         queryEntityCodeById,
-        queryEntityNameByLabel,
+        queryEntityLabelByName,
         queryEntityNameByCode,
         publicSetting,
         setPublicSetting,

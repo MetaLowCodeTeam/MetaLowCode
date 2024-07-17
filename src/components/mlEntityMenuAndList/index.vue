@@ -105,16 +105,16 @@
                                 v-else-if="column.needField"
                             >{{ scope.row[column.prop] && scope.row[column.prop][column.needField] }}</span>
                             <!-- 自定义 -->
-                            <span v-else-if="column.customSolt === 'whenNum'">
+                            <span v-else-if="column.customSlot === 'whenNum'">
                                 <span
                                     v-if="scope.row.whenNum > 0"
                                 >{{ formatterWhenNum(scope.row.whenNum) }}</span>
                                 <span v-else style="color: #fbbc05;">(无触发动作)</span>
                             </span>
-                            <span v-else-if="column.customSolt === 'priority'">
+                            <span v-else-if="column.customSlot === 'priority'">
                                 <span class="num-span">{{ scope.row.priority }}</span>
                             </span>
-                            <span v-else-if="column.customSolt === 'switch' && column.isNegation">
+                            <span v-else-if="column.customSlot === 'switch' && column.isNegation">
                                 <el-switch
                                     v-model="scope.row[column.prop]"
                                     :active-value="false"
@@ -122,7 +122,7 @@
                                     @change="changeSwitch(scope.row)"
                                 />
                             </span>
-                            <span v-else-if="column.customSolt === 'switch' && !column.isNegation">
+                            <span v-else-if="column.customSlot === 'switch' && !column.isNegation">
                                 <el-switch
                                     v-model="scope.row[column.prop]"
                                     @change="changeSwitch(scope.row)"

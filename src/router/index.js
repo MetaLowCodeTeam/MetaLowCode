@@ -62,8 +62,8 @@ router.beforeEach(async (to, from, next) => {
     }
     let routerEntityname = to.params?.entityname;
     if (routerEntityname && !to.meta.title) {
-        const { queryEntityNameByLabel } = useCommonStore();
-        to.meta.title = queryEntityNameByLabel(routerEntityname)
+        const { queryEntityLabelByName } = useCommonStore();
+        to.meta.title = queryEntityLabelByName(routerEntityname)
     }
     if (to.name == "inIframe") {
         to.meta.title = to.query.routerName
