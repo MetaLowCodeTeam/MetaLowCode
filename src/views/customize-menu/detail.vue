@@ -387,11 +387,14 @@ const getLayoutList = async () => {
             let tabConfig = JSON.parse(res.data.TAB.config);
             // 拿所有页签过滤参数
             let filterList = tabConfig.map(el => el.filter);
-            // 调用查询接口判断该页签是否显示
-            let tabRes = await checkTables(filterList, detailId.value);
-            if(tabRes){
-                checkTabsFilter.value = tabRes.data;
+            if(tabConfig && tabConfig.length > 0){
+                // 调用查询接口判断该页签是否显示
+                let tabRes = await checkTables(filterList, detailId.value);
+                if(tabRes){
+                    checkTabsFilter.value = tabRes.data;
+                }
             }
+           
         }
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         
