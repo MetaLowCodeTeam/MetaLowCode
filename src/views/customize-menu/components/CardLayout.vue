@@ -54,6 +54,7 @@ const loadFormData = async () => {
 	if (props.layoutJson) {
 		vFormRef.value.setFormJson(props.layoutJson);
 		globalDsv.value.formStatus = "read";
+		globalDsv.value.formEntityId = props.recordId;
 		emits("loading", true);
 		loading.value = true;
 		let queryByIdRes = await queryById(props.recordId);

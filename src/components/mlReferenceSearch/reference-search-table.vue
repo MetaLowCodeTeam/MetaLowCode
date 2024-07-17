@@ -1,152 +1,298 @@
 <template>
-	<el-container>
-		<el-header>
-			<el-input v-model="queryText" type="text" placeholder="请输入关键词搜索"
-					  @keyup.enter.native="doSearch"
-			          clearable @clear="cancelSearch">
-				<template #append>
-					<el-button @click="doSearch">
-						<el-icon>
-							<Search/>
-						</el-icon>
-					</el-button>
-				</template>
-			</el-input>
-		</el-header>
-		<el-main>
-			<SimpleTable :columns="columns" :data="tableData" :pagination="page" :show-check-box="false"
-						 :height="tableHeight"
-						 :show-operation-column="true"
-						 @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
-						 table-size="small" table-width="100% !important">
-				<template #table_operation="{scope}">
-					<el-button @click="selectRecord(scope.row)">
-						<el-icon>
-							<Check/>
-						</el-icon>
-						选择
-					</el-button>
-				</template>
-			</SimpleTable>
-		</el-main>
-	</el-container>
+    <div class="reference-search-main">
+        <div 
+            class="reference-search-table" 
+            v-loading="loading" 
+            :element-loading-text="loadingText"
+        >
+            <div class="work-flow-conditions w-100" v-if="referenceEntityName">
+                <mlSetConditions
+                    ref="mlSetConditionsRef"
+                    v-model="conditionConf"
+                    :entityName="referenceEntityName"
+                    notType
+                >
+                    <template #afterAddConditions>
+                        <div class="fr">
+                            <el-dropdown trigger="click" @command="onSearch" class="mr-10 pt-5">
+                                <el-button type="primary">
+                                    查询<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                </el-button>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                    <el-dropdown-item command="OR">符合任一条件</el-dropdown-item>
+                                    <el-dropdown-item command="AND">符合全部条件</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                            <el-button type="primary" plain @click="onReset">重置</el-button>
+                            <el-button type="primary" plain @click="onSave" v-if="$TOOL.checkRole('r6008')">保存查询面板</el-button>
+                        </div>
+                    </template>
+                </mlSetConditions>
+            </div>
+            <div 
+                class="main-table mt-10" 
+                :style="{'max-height': tableHeight}" 
+            >
+                <SimpleTable
+                    :columns="columns"
+                    :data="tableData"
+                    :pagination="page"
+                    :show-check-box="subFormItemFlag"
+                    :show-operation-column="!subFormItemFlag"
+                    @handleSizeChange="handleSizeChange"
+                    @handleCurrentChange="handleCurrentChange"
+                    table-size="small"
+                    table-width="100% !important"
+                    @handleSelectionChange="handleSelectionChange"
+                >
+                    <template #table_operation="{ scope }">
+                        <el-button @click="selectRecord(scope.row)">
+                            <el-icon>
+                                <Check />
+                            </el-icon>
+                            选择
+                        </el-button>
+                    </template>
+                </SimpleTable>
+            </div>
+        </div>
+        <div class="footer-box" v-if="subFormItemFlag">
+            <el-button type="primary" @click="multipleSelectRecord">确认选择</el-button>
+        </div>
+    </div>
+	
 </template>
 
 <script>
 import {setColumnFormatter} from '@/utils/util'
-import {refFieldQuery} from '@/api/crud'
-import { externalEefFieldQuery } from "@/api/external";
+import {refFieldQuery2, saveRefFilterPanel} from '@/api/crud'
+import {externalRefFieldQuery} from "@/api/external";
 export default {
 	props: {
 		entity: String,
 		refField: String,
-		extraFilter: String,  // 查询条件
+		extraFilter: String, // 查询条件
 		tableHeight: {
 			type: String,
-			default: '480px'
+			default: "480px",
 		},
-        gDsv: Object,
-        // 过滤条件
-        filterConditions: {
-            type: Object,
-            default: () => {}
-        },
+		gDsv: Object,
+		// 过滤条件
+		filterConditions: {
+			type: Object,
+			default: () => {},
+		},
+        // 是否子表
+        subFormItemFlag: {
+            type: Boolean,
+            default: false
+        }
 	},
 	name: "ReferenceSearchTable",
 	data() {
 		return {
 			idField: null,
 			nameField: null,
-			queryText: '',
+			queryText: "",
 			columns: [],
 			tableData: [],
 			page: {
 				pageNo: 1,
 				limit: 10,
 				sizes: [10, 20, 30],
-				total: 0
+				total: 0,
 			},
-		}
+            loading: false,
+            loadingText: "数据加载中...",
+			conditionConf: {
+				equation: "AND",
+				items: [],
+			},
+            referenceEntityName:"",
+            // 表格多选数据
+            multipleSelection: [],
+		};
 	},
 
 	mounted() {
-		this.loadTableTable()
+		this.loadTableTable('isReset');
 	},
 
 	methods: {
+        /**
+         * 筛选条件方法 beg
+         */
+        // 执行搜索
+        onSearch(target){
+            if(!this.$refs.mlSetConditionsRef.checkConditionList()){
+                return
+            }
+            this.conditionConf.equation = target;
+            this.loadTableTable();
+        },
+        // 重置
+        onReset(){
+            this.conditionConf.items.forEach(el => {
+                el.value = null;
+                el.value2 = null;
+            })
+            this.loadTableTable('isReset');
+        },
+        // 保存
+        async onSave(){
+            let saveConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
+            saveConditionConf.items.forEach(el => {
+                el.value = null;
+                el.value2 = null;
+            })
+            this.loading = true;
+            let res = await saveRefFilterPanel(this.entity, this.refField, saveConditionConf);
+            if(res){
+                this.$message.success("保存成功");
+            }
+            this.loading = false;
+        },
+        /**
+         * 筛选条件方法 end
+         */
 		// 改变分页大小处理
 		handleSizeChange(val) {
-			this.page.limit = val
-			this.loadTableTable()
+			this.page.limit = val;
+			this.loadTableTable();
 		},
 
 		// 翻页处理
 		handleCurrentChange(val) {
-			this.page.pageNo = val
-			this.loadTableTable()
+			this.page.pageNo = val;
+			this.loadTableTable();
 		},
 
-		loadTableTable() {
+		loadTableTable(type) {
             let paramStr, res;
             // 如果是外部表单
             if (this.gDsv?.isExternalForm) {
                 paramStr = this.$route.query.externalId;
-                this.refFieldQueryApi(externalEefFieldQuery, paramStr);
+                this.refFieldQueryApi(externalRefFieldQuery(
+                    paramStr,
+                    this.refField,
+                    this.page.pageNo,
+                    this.page.limit,
+                    this.queryText,
+                    this.extraFilter,
+                ));
             } else {
                 paramStr = this.entity;
-                this.refFieldQueryApi(refFieldQuery, paramStr, this.filterConditions);
+                this.refFieldQueryApi(refFieldQuery2(
+                    paramStr,
+                    this.refField,
+                    this.page.pageNo,
+                    this.page.limit,
+                    this.extraFilter,
+                    this.filterConditions || null,
+                    type == 'isReset' ? null : this.conditionConf
+                ));
             }
         },
 
-        async refFieldQueryApi(cb, paramStr, filterConditions) {
-            let res = await cb(
-                paramStr,
-                this.refField,
-                this.page.pageNo,
-                this.page.limit,
-                this.queryText,
-                this.extraFilter,
-                filterConditions
-            );
-            if(res){
-                this.idField = res.data.idFieldName;
-                this.nameField = res.data.nameFieldName;
-                let columnList = res.data.columnList;
-                columnList.forEach((cl) => {
-                    setColumnFormatter(cl);
-                });
-                this.columns = columnList;
-                this.tableData = res.data.dataList;
-                //console.log(this.tableData)
-                this.page.total = res.data.pagination.total;
-            }
-        },
-
-		selectRecord(row) {
-			this.$emit('recordSelected', {
-				'id': row[this.idField],
-				'label': row[this.nameField],
-			}, row)
+		async refFieldQueryApi(cb) {
+            this.loading = true;
+			let res = await cb;
+			if (res) {
+				this.idField = res.data.idFieldName;
+				this.nameField = res.data.nameFieldName;
+				let columnList = res.data.columnList;
+				columnList.forEach((cl) => {
+					setColumnFormatter(cl);
+				});
+				this.columns = columnList;
+				this.tableData = res.data.dataList;
+				//console.log(this.tableData)
+				this.page.total = res.data.pagination.total;
+                if(!this.referenceEntityName && res.data.filter){
+                    this.conditionConf = JSON.parse(JSON.stringify(res.data.filter));
+                }
+                this.referenceEntityName = res.data.entityName;
+			}
+            this.loading = false;
 		},
+        // 多选回填
+        multipleSelectRecord(){
+            if(this.multipleSelection.length < 1){
+                this.$message.info("还未选择数据...")
+                return
+            }
+            this.$emit(
+				"multipleRecordSelected",
+                {
+					id: this.idField,
+					label: this.nameField,
+				},
+				this.multipleSelection
+			);
+        },
+        // 点选回填
+		selectRecord(row) {
+			this.$emit(
+				"recordSelected",
+				{
+					id: row[this.idField],
+					label: row[this.nameField],
+				},
+				row
+			);
+		},
+        // 表格多选
+        handleSelectionChange(v) {
+            this.multipleSelection = v;
+        },
 
 		doSearch() {
-			this.loadTableTable()
+			this.loadTableTable();
 		},
 
 		cancelSearch() {
-			this.loadTableTable()
-		}
-
-	}
-}
+			this.loadTableTable();
+		},
+	},
+};
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-header) {
-	padding: 0 12px;
-}
+// :deep(.el-header) {
+// 	padding: 0 12px;
+// }
 
 :deep(.el-main) {
-	padding: 6px;
+	padding: 0px;
+}
+
+.reference-search-table {
+	max-height: 600px;
+	padding: 10px 20px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.footer-box {
+    border-top: 1px solid #e5e5e5;
+    line-height: 40px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    text-align: right;
+}
+</style>
+
+<style>
+.reference-dialog .el-dialog__body{
+	/* padding-top: 10px !important;
+	padding-bottom: 10px !important; */
+	padding: 0 !important;
+}
+#simpleTableFooter {
+    padding: 0 !important;
+    margin-top: 8px;
+    border-top: 0;
 }
 </style>

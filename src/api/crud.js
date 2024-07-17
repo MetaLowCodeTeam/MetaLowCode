@@ -10,6 +10,26 @@ export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraF
     );
 }
 
+export function saveRefFilterPanel(entity, field, filter) {
+    return http.post(
+        'crud/saveRefFilterPanel',
+        filter,
+        {
+            params: { entity, 'refField': field}
+        }
+    );
+}
+
+export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2) {
+	return http.post(
+		'crud/refFieldQuery2',
+		[formFilter, formFilter2],
+		{
+			params: { entity, 'refField': field, pageNo, pageSize, extraFilter }
+		}
+	);
+}
+
 export function createRecord(entity) {
     return http.get('crud/formCreateQuery', { entity })
 }
@@ -47,7 +67,7 @@ export function deleteRecords(body) {
 * @param {*} advFilter { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] }  常用查询
 * @param {*} quickFilter ""  快速查询
 * @param {*} builtInFilter ""  { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] } 参数查询
-* @param {*} statistics ""  
+* @param {*} statistics ""
 * @param {*} filterEasySql ""  自定义SQL查询
 
 */

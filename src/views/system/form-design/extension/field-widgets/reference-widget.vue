@@ -83,7 +83,9 @@
 				:extraFilter="searchFilter"
                 :filterConditions="filterConditions"
 				@recordSelected="setReferRecord"
+                @multipleRecordSelected="multipleSetReferRecord"
 				:gDsv="gDsv"
+                :subFormItemFlag="subFormItemFlag"
 			></ReferenceSearchTable>
 		</el-dialog>
 	</div>
@@ -257,7 +259,138 @@ export default {
 			this.fieldModel = null;
 			this.handleChangeEvent(this.fieldModel);
 		},
+        // 多选数据回填
+        multipleSetReferRecord(recordObj, rows) {
+            // 通过子表名称取子表组件
+            let subFormCom = this.getWidgetRef(this.getSubFormName());
+            // 取字表所有数据
+            let subFormValues = subFormCom.getSubFormValues();
+            let sourceSubFormValues = subFormValues.map(el => el[this.fieldKeyName]?.id);
+            // 是否有重复的
+            let hasRepeat = false;
+            rows.forEach(el => {
+                if(sourceSubFormValues.includes(el[recordObj.id])){
+                    hasRepeat = true;
+                }
+            })
+            
+            // 是否存在重复的
+            if(hasRepeat){
+                this.$confirm(
+                    "选中的记录在表单数据中已存在，是否再次追加？不追加则仅回填表单中不存在的记录。",
+                    '操作确认',
+                    {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '追加回填',
+                        cancelButtonText: '不追加回填', 
+                        type: "warning"
+                    }
+                ).then(() => {
+                    this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, true);
+                }) .catch((action) => {
+                    if(action == 'cancel'){
+                        this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, false);
+                    }
+                })
+            }else {
+                this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, true);
+            }
+            
+        },
+        doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, isAll) {
+            // 是否追加回填
+            if(isAll){
+                // 第一条选中数据回填
+                this.doFillBack(this.fieldModel, rows[0]);
+                // 赋值当前选中数据
+                this.fieldModel = {
+                    id: rows[0][recordObj.id],
+                    name: rows[0][recordObj.label],
+                };
+                this.handleChangeEvent(this.fieldModel);
+                this.handleRecordSelectedEvent(rows[0]);
+                rows.forEach((selectedRow,subInx) => {
+                    // 把后面的数据已追加的方式追加进去。
+                    if(subInx != 0){
+                        let temp = {};
+                        temp[this.fieldKeyName] = {
+                            id: selectedRow[recordObj.id],
+                            name: selectedRow[recordObj.label],
+                        };
+                        // 如果设置了回填
+                        if(this.field.options.fillBackEnabled){
+                            let { fillBackConfig } = this.field.options;
+                            fillBackConfig.forEach((el) => {
+                                temp[el.targetField] = selectedRow[el.sourceField];
+                            });
+                        }
+                        subFormValues.push(temp);
+                    }
+                })
+            }
+            // 不追加回填
+            else {
+                // 如果第一条数据不存在
+                if(!sourceSubFormValues.includes(rows[0][recordObj.id])){
+                    // 第一条选中数据回填
+                    this.doFillBack(this.fieldModel, rows[0]);
+                    // 赋值当前选中数据
+                    this.fieldModel = {
+                        id: rows[0][recordObj.id],
+                        name: rows[0][recordObj.label],
+                    };
+                    this.handleChangeEvent(this.fieldModel);
+                    this.handleRecordSelectedEvent(rows[0]);
+                }
+                rows.forEach((selectedRow,subInx) => {
+                    // 把后面的数据已追加的方式追加进去。
+                    if(subInx != 0 && !sourceSubFormValues.includes(selectedRow[recordObj.id])){
+                        let temp = {};
+                        temp[this.fieldKeyName] = {
+                            id: selectedRow[recordObj.id],
+                            name: selectedRow[recordObj.label],
+                        };
+                        // 如果设置了回填
+                        if(this.field.options.fillBackEnabled){
+                            let { fillBackConfig } = this.field.options;
+                            fillBackConfig.forEach((el) => {
+                                temp[el.targetField] = selectedRow[el.sourceField];
+                            });
+                        }
+                        subFormValues.push(temp);
+                    }
+                })
+            }
 
+            subFormCom.setSubFormValues(subFormValues);
+            
+
+            // // 遍历多选数据
+            // rows.forEach((selectedRow,subInx) => {
+            //     // 把后面的数据已追加的方式追加进去。
+            //     if(subInx != 0 && (isAll || (!isAll && sourceSubFormValues.includes(selectedRow[recordObj.id])))){
+            //         let temp = {};
+            //         temp[this.fieldKeyName] = {
+            //             id: selectedRow[recordObj.id],
+			// 	        name: selectedRow[recordObj.label],
+            //         };
+            //         // 如果设置了回填
+            //         if(this.field.options.fillBackEnabled){
+            //             let { fillBackConfig } = this.field.options;
+            //             fillBackConfig.forEach((el) => {
+            //                 temp[el.targetField] = selectedRow[el.sourceField];
+            //             });
+            //         }
+            //         subFormValues.push(temp);
+            //     }
+            // })
+            // // 设置数据
+            // subFormCom.setSubFormValues(subFormValues);
+           
+            // 关闭弹框
+            this.showReferenceDialogFlag = false;
+        },
+        // 单选回填
 		setReferRecord(recordObj, selectedRow) {
 			this.fieldModel = {
 				id: recordObj.id,
@@ -268,10 +401,9 @@ export default {
 			this.handleRecordSelectedEvent(selectedRow);
             // 回填
 			this.doFillBack(recordObj, selectedRow);
-
 			this.showReferenceDialogFlag = false;
 		},
-
+       
 		async doFillBack(recordObj, selectedRow) {
 			// 判断是否启用回填
 			if (this.field.options.fillBackEnabled) {

@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import {ElAmap, ElAmapControlGeolocation, initAMapApiLoader} from "@vuemap/vue-amap";
+import {ElAmap, ElAmapControlGeolocation} from "@vuemap/vue-amap";
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;

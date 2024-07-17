@@ -470,3 +470,10 @@ body .tox-tinymce-aux {
 	height: 32px;
 	line-height: 32px;
 }
+
+.new-message .el-drawer__body {
+    padding: 0 !important;
+}
+.new-message .el-footer {
+    padding: 13px 15px;
+}

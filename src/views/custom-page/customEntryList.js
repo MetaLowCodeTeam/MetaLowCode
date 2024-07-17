@@ -13,4 +13,11 @@ export const CustomEntryList = [
         // 也就是说你要先建立一个 TestList.vue，再来这里写名字  
         value: "TestList"
     },
+    {
+        // 模板名称
+        label: "自定义组织架构模板",
+        // 对应的模板组件， 该组件指向  views\custom-page\TestList2.vue
+        // 也就是说你要先建立一个 TestList2.vue，再来这里写名字  
+        value: "TestList2"
+    },
 ];

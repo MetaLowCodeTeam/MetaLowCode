@@ -83,7 +83,7 @@
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="[...keepLiveRouteFn]">
-                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" v-if="routeShowFn"/>
                                 </keep-alive>
                             </router-view>
                             <iframe-view></iframe-view>

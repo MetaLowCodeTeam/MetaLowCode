@@ -10,7 +10,7 @@
 			class="sub-form-container"
 			:class="{ selected: selected }"
 			@click.stop="selectWidget(widget)"
-		>
+		>   
 			<FormDesignEntityList
 				:referenceEntity="widget.options.name"
 				:listConf="{
@@ -24,7 +24,9 @@
 					showPagination: widget.options.showPagination,
 				}"
 				:paginationSize="widget.options.paginationSize"
-				:tableHeight="widget.options.tableHeight"
+				:tableHeight="widget.options.listSubFormHeight"
+                :detailEntityFlag="widget.options?.detailEntityFlag"
+                :refEntityBindingField="widget.options?.refEntityBindingField"
 			/>
 		</div>
 	</container-wrapper>

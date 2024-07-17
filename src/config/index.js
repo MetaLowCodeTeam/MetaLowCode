@@ -36,6 +36,7 @@ const DEFAULT_CONFIG = {
 	//dock将关闭标签和面包屑栏
 	//LAYOUT: 'default',
 	LAYOUT: 'header',
+	//LAYOUT: 'menu',
 
 	//菜单是否折叠
 	MENU_IS_COLLAPSE: false,

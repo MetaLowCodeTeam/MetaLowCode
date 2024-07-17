@@ -16,6 +16,8 @@
 			:tableHeight="widget.options.tableHeight"
 			:formRef="getForm()"
             :formEntityId="getFormEntityId()"
+            :detailEntityFlag="widget.options?.detailEntityFlag"
+            :refEntityBindingField="widget.options?.refEntityBindingField"
 		/>
 	</container-item-wrapper>
 </template>
