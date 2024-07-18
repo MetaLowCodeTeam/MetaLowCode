@@ -52,7 +52,6 @@
                 </el-col>
                 <!-- 条件值 -->
                 <el-col :span="10">
-                    {{ item.opCom }}--{{ item.type }}--{{ item.op }}
                     <!-- 日期选择器 -->
                     <div v-if="item.opCom =='datePicker'">
                         <el-date-picker
