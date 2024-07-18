@@ -388,7 +388,7 @@ const getTagEntityFields = async (entityCode) => {
             updateRule.targetField = getRuleEntityFields()[0].fieldName;
 
             // 获取目标字段类型
-            toFixedForFieldType.value = getupdateRuleTargetFieldType(
+            toFixedForFieldType.value = getUpdateRuleTargetFieldType(
                 getRuleEntityFields()[0].fieldName
             );
             // 聚合方式默认选中
@@ -465,7 +465,7 @@ const delupdateRule = (inx) => {
 const targetFieldChange = (e) => {
     updateRule.targetField = e.fieldName;
     // 获取字段的type
-    toFixedForFieldType.value = getupdateRuleTargetFieldType(e.fieldName);
+    toFixedForFieldType.value = getUpdateRuleTargetFieldType(e.fieldName);
     updateRule.calcMode = getUptadeMode()[0].value;
     // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
     if (updateRule.calcMode !== "forCompile") {
@@ -560,7 +560,7 @@ const uptadeModeChange = (e) => {
 let actionContentItems = ref([]);
 
 // 添加聚合规则
-const addupdateRule = () => {
+const addUpdateRule = () => {
     let { targetField, calcMode, sourceField, simpleFormula, updateMode } =
         updateRule;
     if (!targetField) {
@@ -736,7 +736,7 @@ const formulaConfirm = (formula) => {
  */
 
 // 获取目标字段类型
-const getupdateRuleTargetFieldType = (fieldName) => {
+const getUpdateRuleTargetFieldType = (fieldName) => {
     let field = tagEntityFields.value.filter((el) => el.fieldName == fieldName);
     return field[0].fieldType;
 };

@@ -9,9 +9,9 @@
 			<el-scrollbar height="100%">
 				<el-form label-width="100px">
 					<el-form-item class="info-form-item">
-						<el-row :gutter="10" style="width: 600px">
+						<el-row :gutter="10" style="width: 680px">
 							<el-col :span="9">{{ targetEntity.label }}</el-col>
-							<el-col :span="9" :offset="6">
+							<el-col :span="9" :offset="4">
 								{{ sourceEntity.label }}
 							</el-col>
 						</el-row>
@@ -20,16 +20,17 @@
 						<MappingComp
 							v-if="isFinish"
 							v-model="fieldMapping"
-							:sourcesFields="sourceEntity.fields"
-							:targetFields="targetEntity.fields"
+							:sourceEntity="sourceEntity"
+							:targetEntity="targetEntity"
+							title="转化字段映射"
 						/>
 					</el-form-item>
 					<el-form-item class="info-form-item">
-						<el-row :gutter="10" style="width: 600px">
+						<el-row :gutter="10" style="width: 680px">
 							<el-col :span="9">
 								{{ sourceEntity.label }}
 							</el-col>
-							<el-col :span="9" :offset="6">
+							<el-col :span="9" :offset="4">
 								{{ targetEntity.label }}
 							</el-col>
 						</el-row>
@@ -38,8 +39,9 @@
 						<MappingComp
 							v-if="isFinish"
 							v-model="backfill"
-							:sourcesFields="targetEntity.fields"
-							:targetFields="sourceEntity.fields"
+							:sourceEntity="targetEntity"
+							:targetEntity="sourceEntity"
+							title="回填字段映射"
 						/>
 					</el-form-item>
 					<el-form-item>
@@ -55,6 +57,22 @@
 			</el-scrollbar>
 		</div>
 	</div>
+	<ml-dialog v-model="notTitleDialogShow" width="500" not-header top="30vh">
+		<div class="save-success">
+			<div>
+				<el-icon class="save-icon" size="50">
+					<ElIconWarning />
+				</el-icon>
+			</div>
+			<div class="mt-5 save-info">保存成功</div>
+			<div class="mt-20">
+				<el-button @click="goDataTransformation">返回列表</el-button>
+				<el-button type="primary" @click="notTitleDialogShow = false">
+					继续编辑
+				</el-button>
+			</div>
+		</div>
+	</ml-dialog>
 </template>
 
 <script setup>
@@ -126,7 +144,7 @@ const queryTransformById = async () => {
 				sourceEntity.value.code,
 				true,
 				true,
-				false
+				true
 			);
 			if (sourceRes) {
 				sourceEntity.value.fields = sourceRes.data;
@@ -139,7 +157,7 @@ const queryTransformById = async () => {
 				targetEntity.value.code,
 				true,
 				true,
-				false
+				true
 			);
 			if (targetRes) {
 				targetEntity.value.fields = targetRes.data;
@@ -172,9 +190,34 @@ const formatEntityData = (target, key) => {
 };
 
 // 保存
-const onSave = () => {
-	console.log(fieldMapping.value, "转化字段映射");
-	console.log(backfill.value, "回填字段映射");
+const onSave = async () => {
+	loading.value = true;
+	loadingText.value = "数据保存中...";
+	let res = await http.post(
+		"/transform/saveRecord",
+		{
+			fieldMapping: JSON.stringify(fieldMapping.value),
+			backfill: JSON.stringify(backfill.value),
+		},
+		{
+			params: { recordId: recordId.value },
+		}
+	);
+	if (res) {
+		notTitleDialogShow.value = true;
+	}
+	loading.value = false;
+};
+
+// 保存回调弹框
+let notTitleDialogShow = ref(false);
+
+// 返回列表
+const goDataTransformation = () => {
+	notTitleDialogShow.value = false;
+	Router.push({
+		path: "/web/data-transformation",
+	});
 };
 </script>
 <style lang="scss" scoped>
@@ -195,6 +238,19 @@ const onSave = () => {
 	}
 	.el-form-item {
 		align-items: initial;
+	}
+}
+.save-success {
+	text-align: center;
+	.save-icon {
+		color: var(--el-color-primary);
+		position: relative;
+		left: 12px;
+	}
+	.save-info {
+		font-size: 13px;
+		font-weight: bold;
+		color: #404040;
 	}
 }
 </style>

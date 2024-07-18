@@ -144,12 +144,7 @@ const initDetailData = async () => {
     initLoading.value = false;
 };
 
-// 返回列表
-const goTriggerList = () => {
-    router.push({
-        path: "/web/trigger-list",
-    });
-};
+
 
 // 无标题弹框
 let notTitleDialog = reactive({
@@ -157,6 +152,14 @@ let notTitleDialog = reactive({
     // 1 保存
     type: 1,
 });
+
+// 返回列表
+const goTriggerList = () => {
+    notTitleDialog.isShow = false
+    router.push({
+        path: "/web/trigger-list",
+    });
+};
 
 // 保存调用
 const onSave = async (target) => {

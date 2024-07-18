@@ -115,14 +115,14 @@
                         <el-option label="禁用" value="0" />
                     </el-select>
                     <el-date-picker
-                        v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Time')"
+                        v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Date')"
                         v-model="updateRule.sourceField"
                         format="YYYY/MM/DD hh:mm:ss"
                         value-format="YYYY-MM-DD hh:mm:ss a"
                         type="datetime"
                     />
                     <el-input
-                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
+                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
                         v-model="updateRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
@@ -337,7 +337,7 @@ const getTagEntityFields = async (entityCode) => {
             seleteTargetField.value = res.data[0];
             updateRule.targetField = res.data[0].fieldName;
             // 获取目标字段类型
-            toFixedForFieldType.value = getupdateRuleTargetFieldType(
+            toFixedForFieldType.value = getUpdateRuleTargetFieldType(
                 res.data[0].fieldName
             );
             if (toFixedForFieldType.value == "Reference") {
@@ -474,7 +474,7 @@ let optionItemLoading = ref(false);
 const targetFieldChange = async (e) => {
     updateRule.targetField = e.fieldName;
     // 获取字段的type
-    toFixedForFieldType.value = getupdateRuleTargetFieldType(e.fieldName);
+    toFixedForFieldType.value = getUpdateRuleTargetFieldType(e.fieldName);
     // 如果更新方式是字段值，源字段默认选中第一个
     if (updateRule.updateMode == "forField") {
         updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
@@ -525,7 +525,7 @@ const uptadeModeChange = (e) => {
 let actionContentItems = ref([]);
 
 // 添加更新规则
-const addupdateRule = () => {
+const addUpdateRule = () => {
     let { targetField, updateMode, sourceField, simpleFormula } = updateRule;
     if (!targetField) {
         return;
@@ -714,7 +714,7 @@ const formulaConfirm = (formula) => {
  */
 
 // 获取目标字段类型
-const getupdateRuleTargetFieldType = (fieldName) => {
+const getUpdateRuleTargetFieldType = (fieldName) => {
     let field = tagEntityFields.value.filter((el) => el.fieldName == fieldName);
     return field[0].fieldType;
 };

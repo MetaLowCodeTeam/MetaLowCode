@@ -160,7 +160,6 @@ const openDialog = (row) => {
             }
         }
 	}
-    console.log(formData,'formData')
 	dialogConf.value.title = (!!row ? "编辑" : "新建") + "记录转化";
 	dialogConf.value.show = true;
 };

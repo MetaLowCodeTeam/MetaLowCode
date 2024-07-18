@@ -93,7 +93,7 @@ let mlSingleListRef = shallowRef();
 let tableConf = ref({
 	entity: "Transform",
 	fieldsList:
-		"transformName, disabled, sourceEntity, targetEntity, fieldMapping, backfill, isPreview",
+		"transformName, disabled, sourceEntity, targetEntity, isPreview",
 	// 默认搜索字段
 	fieldName: "transformName",
 	// 默认排序

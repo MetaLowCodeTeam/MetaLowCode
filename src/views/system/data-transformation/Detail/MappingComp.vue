@@ -7,71 +7,21 @@
 			:key="inx"
 			:class="[inx != myUseFields.length - 1 ? 'mb-10' : '']"
 		>
-			<!-- 目标字段 -->
-			<el-col :span="9">
-				<el-select
-					v-model="item.targetField"
-					filterable
-					class="w-100"
-					@change="targetFieldChange(item)"
-				>
-					<el-option
-						v-for="(op, inx) in targetFields"
-						:key="inx"
-						:label="op.fieldLabel + '(' + op.fieldType + ')'"
-						:value="op.fieldName"
-					/>
-				</el-select>
-			</el-col>
-			<!-- 更新方式 -->
-			<el-col :span="5">
-				<el-select
-					v-model="item.updateMode"
-					filterable
-					class="w-100"
-					@change="updateModeChange(item)"
-				>
-					<el-option
-						v-for="(op, inx) in updateModes"
-						:key="inx"
-						:label="op.label"
-						:value="op.value"
-					/>
-				</el-select>
-			</el-col>
-			<!-- 源字段 -->
-			<el-col :span="9">
-				<!-- 字段值 -->
-				<el-select
-					v-if="item.updateMode == 'forField'"
-					v-model="item.sourceField"
-					filterable
-					class="w-100"
-				>
-					<el-option
-						v-for="(op, inx) in floatSourceFieldList(item)"
-						:key="inx"
-						:label="op.fieldLabel"
-						:value="op.fieldName"
-					/>
-				</el-select>
-				<!-- 固定值-布尔 -->
-				<el-select
-					v-if="
-						item.updateMode == 'toFixed' &&
-						item.fieldType == 'Boolean'
-					"
-					v-model="item.sourceField"
-					filterable
-					class="w-100"
-				>
-					<el-option label="正常" value="1" />
-					<el-option label="禁用" value="0" />
-				</el-select>
+			<FormatRowComp
+				:sourceEntity="sourceEntity"
+				:targetEntity="targetEntity"
+				v-model="myUseFields[inx]"
+				:type="2"
+			/>
+			<!-- 编辑 -->
+			<el-col :span="1">
+				<div class="del-icon-div" @click="actionOperate('edit', inx)">
+					<el-icon><Edit /></el-icon>
+				</div>
 			</el-col>
 			<!-- 删除 -->
 			<el-col :span="1">
-				<div class="del-icon-div" @click="onDel(inx)">
+				<div class="del-icon-div" @click="actionOperate('del', inx)">
 					<el-icon><Delete /></el-icon>
 				</div>
 			</el-col>
@@ -80,60 +30,77 @@
 			<el-col :span="9">
 				<span class="info-text">目标字段</span>
 			</el-col>
+			<el-col :span="4">
+				<span class="info-text">更新方式</span>
+			</el-col>
+			<el-col :span="9">
+				<span class="info-text">源字段/固定值/更新方式</span>
+			</el-col>
+		</el-row>
+		<div class="w-100">
+			<el-button type="primary" plain @click="actionOperate('add')">
+				添加
+			</el-button>
+		</div>
+	</div>
+	<ml-dialog :title="title" width="600px" v-model="dialogConf.show">
+		<el-row :gutter="10" class="text-center">
+			<el-col :span="9">{{ targetEntity.label }}</el-col>
+			<el-col :span="9" :offset="6">
+				{{ sourceEntity.label }}
+			</el-col>
+		</el-row>
+		<el-row :gutter="10">
+			<FormatRowComp
+				ref="EditFormatRowCompRef"
+				:sourceEntity="sourceEntity"
+				:targetEntity="targetEntity"
+				v-model="dialogConf.data"
+                :useFields="myUseFields"
+			/>
+		</el-row>
+		<el-row :gutter="10">
+			<el-col :span="9">
+				<span class="info-text">目标字段</span>
+			</el-col>
 			<el-col :span="6">
 				<span class="info-text">更新方式</span>
 			</el-col>
 			<el-col :span="9">
-				<span class="info-text">源字段</span>
+				<span class="info-text">源字段/固定值/更新方式</span>
 			</el-col>
 		</el-row>
-		<div class="w-100">
-			<el-button type="primary" plain @click="onAdd">添加</el-button>
-		</div>
-	</div>
+		<template #footer>
+			<el-button @click="dialogConf.show = false">取消</el-button>
+			<el-button type="primary" @click="confirmEdit">确认</el-button>
+		</template>
+	</ml-dialog>
 </template>
 
 <script setup>
-import { ref, reactive, watchEffect } from "vue";
+import { ElMessage } from "element-plus";
+import { ref, reactive, watchEffect, shallowRef, nextTick } from "vue";
 
+import FormatRowComp from "./FormatRowComp.vue";
 const props = defineProps({
 	modelValue: null,
-	// 源字段S
-	sourcesFields: {
+	// 目标实体
+	targetEntity: {
 		type: Object,
-		default: () => [],
+		default: () => {},
 	},
-	// 目标字段S
-	targetFields: {
+	// 目标实体
+	sourceEntity: {
 		type: Object,
-		default: () => [],
+		default: () => {},
+	},
+	// 标题
+	title: {
+		type: String,
+		default: "",
 	},
 });
 
-// 源字段S
-let mySourcesFields = ref([]);
-// 目标字段S
-let myTargetFields = ref([]);
-
-// 更新方式
-const updateModes = reactive([
-	{
-		label: "字段值",
-		value: "forField",
-	},
-	{
-		label: "固定值",
-		value: "toFixed",
-	},
-	{
-		label: "置空",
-		value: "toNull",
-	},
-	{
-		label: "计算公式",
-		value: "forCompile",
-	},
-]);
 // 使用的字段
 let myUseFields = ref([]);
 
@@ -152,114 +119,92 @@ const updateItem = reactive({
 });
 
 watchEffect(() => {
-	mySourcesFields.value = props.sourcesFields;
-	myTargetFields.value = props.targetFields;
 	myUseFields.value = props.modelValue;
-	console.log(mySourcesFields.value, "传入的左边字段集");
-	console.log(myTargetFields.value, "传入的右边字段集");
-	console.log(myUseFields.value, "传入使用字段");
 });
 
-// 添加
-const onAdd = () => {
-    let newUpdateItem = JSON.parse(JSON.stringify(updateItem));
-    // if(myTargetFields.value.length > 0){
-    //     newUpdateItem.targetField = myTargetFields.value[0].fieldName;
-    // }
-    // if(mySourcesFields.value.length > 0){
-    //     newUpdateItem.sourceField = mySourcesFields.value[0].fieldName;
-    // }
-	myUseFields.value.push(newUpdateItem);
+// 执行操作
+const actionOperate = (target, inx) => {
+	if (target == "add") {
+		openEditDialog(updateItem, target);
+	} else if (target == "del") {
+		myUseFields.value.splice(inx, 1);
+	} else {
+		openEditDialog(myUseFields.value[inx], inx);
+	}
+};
 
-};
-// 删除
-const onDel = (inx) => {
-	myUseFields.value.splice(inx, 1);
-};
+
 
 /**
- * 字段格式化 beg
+ * 新建、编辑 弹框
  */
 
-// 目标字段切换
-const targetFieldChange = (item) => {
-	let curtField = getCurField(item);
-	item.fieldType = curtField.fieldType;
-	item.referenceName = curtField.referenceName;
-	item.sourceField = null;
+let EditFormatRowCompRef = ref();
+
+let dialogConf = ref({
+	show: false,
+	data: {},
+    sourceData: {},
+	target: "",
+});
+// 打开编辑弹框
+const openEditDialog = (data, target) => {
+	dialogConf.value.data = cloneDeep(data);
+	dialogConf.value.sourceData = cloneDeep(data);
+	dialogConf.value.target = target;
+	dialogConf.value.show = true;
+	nextTick(() => {
+		EditFormatRowCompRef.value?.targetFieldChange(
+			dialogConf.value.data,
+			"edit"
+		);
+	});
+};
+// 确认编辑
+const confirmEdit = () => {
+	let { data, target, sourceData } = dialogConf.value;
+	let { sourceField, targetField } = data;
+	if (!targetField) {
+		ElMessage.error("请先选择目标字段。");
+        return;
+	}
+	if (!sourceField || JSON.stringify(sourceField) == '[]' || JSON.stringify(sourceField) == '{}') {
+		ElMessage.error("请先选择源字段/固定值/更新方式。");
+        return;
+	}
+    // 查询字段是否存在
+	let findTargetField = myUseFields.value.filter(
+		(el) => el.targetField == data.targetField
+	);
+    // 如果字段已存在，并且是新增就提示存在
+    // 如果字段已存在，并且是修改并且字段名有修改就提示存在
+	if (findTargetField.length > 0 && (target == 'add' || (target != 'add' && data.targetField != sourceData.targetField))) {
+		ElMessage.error("目标字段：" + data.targetField + " 已存在");
+		return;
+	}
+	if (target == "add") {
+		myUseFields.value.push(cloneDeep(data));
+	} else {
+		myUseFields.value[target] = cloneDeep(data);
+	}
+
+	dialogConf.value.show = false;
 };
 
-// 更新方式切换
-const updateModeChange = (item) => {
-    item.sourceField = null;
+const cloneDeep = (data) => {
+    return JSON.parse(JSON.stringify(data));
 }
 
-// 格式化源字段显示
-const floatSourceFieldList = (item) => {
-	// 字符串字段
-	let strField = ["Email", "Url", "TextArea", "Text"];
-
-	let { fieldType, referenceName } = item;
-	// 如果是字符串字段，显示所有字符串字段
-	// 如果不是就显示通类型字段
-	if (strField.includes(fieldType)) {
-		return mySourcesFields.value.filter(
-			(el) => el.fieldType != "Reference"
-		);
-	} else {
-		if (fieldType == "Reference") {
-			let showFields = [];
-			mySourcesFields.value.forEach((el) => {
-				if (
-					el.fieldType == fieldType &&
-					el.referenceName == referenceName
-				) {
-					showFields.push(el);
-				}
-			});
-			return showFields;
-		} else {
-			let showFields = [];
-			mySourcesFields.value.forEach((el) => {
-				if (el.fieldType == fieldType || el.fieldType == "Text") {
-					showFields.push(el);
-				}
-			});
-			if (showFields.length < 1) {
-				return mySourcesFields.value.filter(
-					(el) => el.fieldType != "Reference"
-				);
-			} else {
-				return showFields;
-			}
-		}
-	}
-};
-
-// 取当前选择字段
-const getCurField = (item) => {
-	let findTargetField = myTargetFields.value.filter(
-		(el) => el.fieldName == item.targetField
-	);
-	if (findTargetField.length > 0) {
-		return findTargetField[0];
-	} else {
-		return {};
-	}
-};
-
-/**
- * 字段格式化 end
- */
 </script>
 <style lang="scss" scoped>
 .mapping-comp {
-	width: 600px;
+	width: 680px;
 	background: #f7f7f7;
 	border-radius: 4px;
 	padding: 10px;
 	box-sizing: border-box;
 	.del-icon-div {
+		// display: inline-block;
 		height: 30px;
 		box-sizing: border-box;
 		padding-top: 4px;
@@ -269,5 +214,8 @@ const getCurField = (item) => {
 			color: var(--el-color-primary);
 		}
 	}
+}
+.text-center {
+	text-align: center;
 }
 </style>
