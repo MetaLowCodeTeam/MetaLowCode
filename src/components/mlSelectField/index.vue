@@ -133,7 +133,8 @@ const getAllFields = async () => {
 	if (res) {
 		let resList = [];
 		res.data.forEach((el) => {
-			if (el.type !== "PrimaryKey") {
+            let showType = ['TextArea','Text','Money','Decimal','Integer'];
+			if (showType.includes(el.type)) {
 				el.isSelected = false;
 				if (hasFieldNames.value.includes(el.name)) {
 					let filterFields = selectedFields.value.filter(

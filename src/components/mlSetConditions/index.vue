@@ -126,8 +126,9 @@
                             clearable
                         />
                     </div>
+                    
                     <!-- 数字输入框 -->
-                    <div v-else-if="item.opCom =='numberInput' && (item.type == 'DateTime' && item.op != 'LE' && item.op != 'GE')">
+                    <div v-else-if="item.opCom =='numberInput' && (item.type != 'DateTime' || (item.type == 'DateTime' && item.op != 'LE' && item.op != 'GE'))">
                         <el-input-number
                             size="default"
                             v-model="item.value"
