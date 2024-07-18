@@ -52,6 +52,7 @@
                 </el-col>
                 <!-- 条件值 -->
                 <el-col :span="10">
+                    {{ item.opCom }}--{{ item.type }}--{{ item.op }}
                     <!-- 日期选择器 -->
                     <div v-if="item.opCom =='datePicker'">
                         <el-date-picker
@@ -128,7 +129,7 @@
                     </div>
                     
                     <!-- 数字输入框 -->
-                    <div v-else-if="item.opCom =='numberInput' && (item.type != 'DateTime' && item.op != 'LE' && item.op != 'GE')">
+                    <div v-else-if="item.opCom =='numberInput'">
                         <el-input-number
                             size="default"
                             v-model="item.value"
