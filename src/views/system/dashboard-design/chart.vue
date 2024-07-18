@@ -9,7 +9,7 @@
         :tableColumn="tableColumn"
         :filterItems="filterItems"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button type="primary" @click="addClick">
                 <el-icon size="14">
                     <ElIconPlus />

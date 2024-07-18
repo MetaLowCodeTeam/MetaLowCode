@@ -154,12 +154,18 @@ const openDialog = (row) => {
 		// 赋值ID
 		dialogConf.value.recordId = row.transformId;
 		// 覆盖数据
-		formData = Object.assign(formData, row);
+        for (const key in formData) {
+            if (Object.hasOwnProperty.call(formData, key)) {
+                formData[key] = row[key]
+            }
+        }
 	}
     console.log(formData,'formData')
 	dialogConf.value.title = (!!row ? "编辑" : "新建") + "记录转化";
 	dialogConf.value.show = true;
 };
+
+
 // 提交表单
 const submitForm = (formEl) => {
 	if (!formEl) return;

@@ -11,7 +11,7 @@
         equation="AND"
         ref="mlSingleListRefs"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button type="primary" @click="markAllRead">全部设为已读</el-button>
         </template>
         <template #activeRow>

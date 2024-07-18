@@ -13,7 +13,7 @@
         @openAddDialog="openAddDialog"
         checkRole="r48"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button
                 type="primary"
                 @click="actionBtn({target:'add'})"

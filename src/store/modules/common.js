@@ -57,6 +57,10 @@ const useCommonStore = defineStore('commonStore', () => {
     const queryEntityNameByCode = (code) => {
         return allEntityName[code];
     }
+    // 根据名称查实体Code
+    const queryEntityCodeByName = (name) => {
+        return allEntityCode[name];
+    }
     const setPublicSetting = (data) => {
         publicSetting.value.APP_NAME = data.appName;
         publicSetting.value.APP_VER = data.dbVersion;
@@ -102,6 +106,7 @@ const useCommonStore = defineStore('commonStore', () => {
         queryEntityCodeById,
         queryEntityLabelByName,
         queryEntityNameByCode,
+        queryEntityCodeByName,
         publicSetting,
         setPublicSetting,
         setUserInfo

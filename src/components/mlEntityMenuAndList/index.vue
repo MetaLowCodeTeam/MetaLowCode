@@ -40,7 +40,7 @@
                         @confirm="getApprovalList"
                         style="margin-right: 10px;"
                     />
-                    <slot name="addbutton"></slot>
+                    <slot name="addButton"></slot>
                 </div>
             </el-header>
             <el-main>

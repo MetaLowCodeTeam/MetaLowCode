@@ -155,7 +155,7 @@ const handleCommand = (e) => {
     font-weight: bold;
 }
 
-.uptade-rule {
+.update-rule {
     .info-text {
         font-size: 13px;
     }
@@ -168,8 +168,8 @@ const handleCommand = (e) => {
     resize: none; //禁止拉伸
     color: #f07178;
 }
-.uptade-rule-row {
-    .uptade-rule-span {
+.update-rule-row {
+    .update-rule-span {
         display: inline-block;
         background: #fbbc05;
         line-height: 20px;
@@ -185,7 +185,7 @@ const handleCommand = (e) => {
             color: #f07178;
         }
     }
-    .uptade-rule-col-last {
+    .update-rule-col-last {
         .del-icon {
             margin-left: 2px;
             color: #9999b1;

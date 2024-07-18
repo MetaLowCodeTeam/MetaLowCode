@@ -25,25 +25,25 @@
             <div class="w-100 mb-10" v-if="actionContentItems.length > 0">
                 <el-row
                     :gutter="20"
-                    class="uptade-rule-row w-100 mb-5"
+                    class="update-rule-row w-100 mb-5"
                     v-for="(item,inx) of actionContentItems"
                     :key="inx"
                 >
                     <el-col :span="9">
-                        <span class="uptade-rule-span">{{ item.targetField }}</span>
+                        <span class="update-rule-span">{{ item.targetField }}</span>
                     </el-col>
                     <el-col :span="5">
-                        <span class="uptade-rule-span">{{ item.calcMode }}</span>
+                        <span class="update-rule-span">{{ item.calcMode }}</span>
                     </el-col>
-                    <el-col :span="9" class="uptade-rule-col-last">
+                    <el-col :span="9" class="update-rule-col-last">
                         <span
-                            class="uptade-rule-span"
+                            class="update-rule-span"
                             :class="{'toFixed':item.calcMode == 'toFixed','forCompile':item.calcMode == 'forCompile'}"
                         >
                             {{ item.sourceField }}
                             <span
                                 class="del-icon"
-                                @click="delUptadeRule(inx)"
+                                @click="delupdateRule(inx)"
                             >
                                 <el-icon>
                                     <ElIconCloseBold />
@@ -53,7 +53,7 @@
                     </el-col>
                 </el-row>
             </div>
-            <el-row class="w-100 mb-10 uptade-rule" :gutter="20" v-loading="changeTagEntityLoading">
+            <el-row class="w-100 mb-10 update-rule" :gutter="20" v-loading="changeTagEntityLoading">
                 <el-col :span="9">
                     <el-select
                         v-model="seleteTargetField"
@@ -70,7 +70,7 @@
                 </el-col>
                 <el-col :span="5">
                     <el-select
-                        v-model="uptadeRule.calcMode"
+                        v-model="updateRule.calcMode"
                         class="w-100"
                         @change="uptadeModeChange"
                     >
@@ -85,8 +85,8 @@
                 </el-col>
                 <el-col :span="9">
                     <el-select
-                        v-if="uptadeRule.calcMode !== 'forCompile'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.calcMode !== 'forCompile'"
+                        v-model="updateRule.sourceField"
                         filterable
                         class="w-100"
                     >
@@ -99,7 +99,7 @@
                     </el-select>
                     <el-input
                         v-else
-                        v-model="uptadeRule.sourceField"
+                        v-model="updateRule.sourceField"
                         placeholder="计算公式"
                         autosize
                         type="textarea"
@@ -107,13 +107,13 @@
                     ></el-input>
                     <div
                         class="w-100 info-text mt-3"
-                        v-if="uptadeRule.calcMode !== 'toNull'"
+                        v-if="updateRule.calcMode !== 'toNull'"
                     >{{ getSourceFieldInfo() }}</div>
                 </el-col>
             </el-row>
         </el-form-item>
         <el-form-item label=" ">
-            <el-button type="primary" plain @click="addUptadeRule">+ 添加</el-button>
+            <el-button type="primary" plain @click="addupdateRule">+ 添加</el-button>
         </el-form-item>
         <el-form-item class="mt-20" label="聚合数据条件">
             <el-row>
@@ -271,25 +271,25 @@ const getTagEntityFields = async (entityCode) => {
         if (tagEntityFields.value.length > 0) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = tagEntityFields.value[0];
-            uptadeRule.targetField = tagEntityFields.value[0].fieldName;
+            updateRule.targetField = tagEntityFields.value[0].fieldName;
 
             // 获取目标字段类型
-            toFixedForFieldType.value = getUptadeRuleTargetFieldType(
+            toFixedForFieldType.value = getupdateRuleTargetFieldType(
                 tagEntityFields.value[0].fieldName
             );
             // 聚合方式默认选中
-            uptadeRule.calcMode = getUptadeMode()[0].value;
+            updateRule.calcMode = getUptadeMode()[0].value;
             // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
-            if (uptadeRule.calcMode !== "forCompile") {
-                uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+            if (updateRule.calcMode !== "forCompile") {
+                updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
             // 格式化规则列表
             formatActionContentItems();
         } else {
             seleteTargetField.value = {};
-            uptadeRule.targetField = "";
-            uptadeRule.calcMode = "";
-            uptadeRule.sourceField = "";
+            updateRule.targetField = "";
+            updateRule.calcMode = "";
+            updateRule.sourceField = "";
         }
     }
     changeTagEntityLoading.value = false;
@@ -306,7 +306,7 @@ let seleteTargetField = ref({});
  * *************************************** 更新规则相关 beg
  */
 //  更新规则
-let uptadeRule = reactive({
+let updateRule = reactive({
     // 目标字段
     targetField: "",
     // 聚合方式
@@ -334,22 +334,22 @@ const uptadeModeLabel = reactive({
 let toFixedForFieldType = ref("");
 
 // 删除规则
-const delUptadeRule = (inx) => {
+const delupdateRule = (inx) => {
     trigger.value.actionContent.items.splice(inx, 1);
     actionContentItems.value.splice(inx, 1);
 };
 
 // 目标字段切换
 const targetFieldChange = (e) => {
-    uptadeRule.targetField = e.fieldName;
+    updateRule.targetField = e.fieldName;
     // 获取字段的type
-    toFixedForFieldType.value = getUptadeRuleTargetFieldType(e.fieldName);
-    uptadeRule.calcMode = getUptadeMode()[0].value;
+    toFixedForFieldType.value = getupdateRuleTargetFieldType(e.fieldName);
+    updateRule.calcMode = getUptadeMode()[0].value;
     // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
-    if (uptadeRule.calcMode !== "forCompile") {
-        uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+    if (updateRule.calcMode !== "forCompile") {
+        updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        uptadeRule.sourceField = "";
+        updateRule.sourceField = "";
     }
 };
 
@@ -419,17 +419,17 @@ const getUptadeMode = () => {
 const uptadeModeChange = (e) => {
     if (e.value == "forField") {
         // 源字段默认选中第一个
-        uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+        updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
         if (
             toFixedForFieldType.value == "Reference" ||
             toFixedForFieldType.value == "Option"
         ) {
-            uptadeRule.sourceField = e == 'forCompile' ? '' : {};
+            updateRule.sourceField = e == 'forCompile' ? '' : {};
         } else if (toFixedForFieldType.value == "Tag") {
-            uptadeRule.sourceField = [];
+            updateRule.sourceField = [];
         } else {
-            uptadeRule.sourceField = null;
+            updateRule.sourceField = null;
         }
     }
 };
@@ -438,9 +438,9 @@ const uptadeModeChange = (e) => {
 let actionContentItems = ref([]);
 
 // 添加更新规则
-const addUptadeRule = () => {
+const addupdateRule = () => {
     let { targetField, calcMode, sourceField, simpleFormula, updateMode } =
-        uptadeRule;
+        updateRule;
     if (!targetField) {
         return;
     }
@@ -475,11 +475,11 @@ const addUptadeRule = () => {
     actionContentItems.value.push({
         targetField: formatTargetField(targetField),
         calcMode: formatCalcMode(calcMode),
-        sourceField: formatSourceField(uptadeRule),
+        sourceField: formatSourceField(updateRule),
         simpleFormula,
     });
     if (calcMode == "forCompile") {
-        uptadeRule.sourceField = "";
+        updateRule.sourceField = "";
     }
 };
 
@@ -572,7 +572,7 @@ const checkMlFormula = () => {
     //         showAdvancedFormula(
     //             cutEntityFields.value,
     //             true,
-    //             uptadeRule.sourceField
+    //             updateRule.sourceField
     //         );
     //         return;
     //     }
@@ -581,7 +581,7 @@ const checkMlFormula = () => {
     // }
     // // 不是数字类型，显示高级计算公式
     // else {
-    showAdvancedFormula(cutEntityFields.value, true, uptadeRule.sourceField);
+    showAdvancedFormula(cutEntityFields.value, true, updateRule.sourceField);
     // }
 };
 // 执行显示 计算公式
@@ -596,13 +596,13 @@ const showAdvancedFormula = (sourceFields, isAdvanced, value) => {
     mlFormulaFields.value = sourceFields;
     mlIsAdvanced.value = isAdvanced;
     mlFormulaVal.value = isAdvanced ? value : "";
-    uptadeRule.simpleFormula = isAdvanced;
+    updateRule.simpleFormula = isAdvanced;
 };
 
 // 确认计算方式
 const formulaConfirm = (formula) => {
     formulaVal.value = formula;
-    uptadeRule.sourceField = formula.label;
+    updateRule.sourceField = formula.label;
 };
 
 /**
@@ -614,7 +614,7 @@ const formulaConfirm = (formula) => {
  */
 
 // 获取目标字段类型
-const getUptadeRuleTargetFieldType = (fieldName) => {
+const getupdateRuleTargetFieldType = (fieldName) => {
     let field = tagEntityFields.value.filter((el) => el.fieldName == fieldName);
     return field[0].fieldType;
 };
@@ -624,7 +624,7 @@ const floatSourceFieldList = () => {
     // let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
     let needShowNumType = ["sum", "average", "max", "min"];
     // 如果选择是数字类
-    if (needShowNumType.includes(uptadeRule.calcMode)) {
+    if (needShowNumType.includes(updateRule.calcMode)) {
         let showFields = [];
         cutEntityFields.value.forEach((el) => {
             if (
@@ -641,7 +641,7 @@ const floatSourceFieldList = () => {
 
 // 获取源字段info
 const getSourceFieldInfo = () => {
-    if (uptadeRule.calcMode == "forCompile") {
+    if (updateRule.calcMode == "forCompile") {
         return "计算公式";
     } else {
         return "聚合字段";
@@ -718,8 +718,8 @@ const targetEntityChange = () => {
 };
 </script>
 <style lang='scss' scoped>
-.uptade-rule-row {
-    .uptade-rule-span {
+.update-rule-row {
+    .update-rule-span {
         display: inline-block;
         background: #fbbc05;
         line-height: 20px;
@@ -735,10 +735,10 @@ const targetEntityChange = () => {
             color: #f07178;
         }
     }
-    .uptade-rule-col-last {
+    .update-rule-col-last {
         position: relative;
         word-break: break-all;
-        .uptade-rule-span {
+        .update-rule-span {
             position: relative;
             .del-icon {
                 position: absolute;
@@ -754,7 +754,7 @@ const targetEntityChange = () => {
             }
         }
     }
-    &:hover .uptade-rule-col-last .uptade-rule-span {
+    &:hover .update-rule-col-last .update-rule-span {
         .del-icon {
             z-index: 1;
         }

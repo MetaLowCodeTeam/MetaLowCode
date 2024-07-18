@@ -13,7 +13,7 @@
 					placeholder="查询"
 					@confirm="getTableList"
 				/>
-				<slot name="addbutton"></slot>
+				<slot name="addButton"></slot>
 			</div>
 		</el-header>
 
@@ -35,7 +35,7 @@
 					:align="column.align"
 					:width="column.width"
 					:formatter="column.formatter"
-					sortable
+					:sortable="column.sortable"
 				>
 					<template #default="scope">
 						<!-- 需要高亮的 且不要格式化的 -->

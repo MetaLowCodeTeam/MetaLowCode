@@ -10,7 +10,7 @@
             :tableColumn="tableConf.tableColumn"
             :filterItems="tableConf.filterItems"
         >
-            <template #addbutton>
+            <template #addButton>
                 <el-button type="primary" @click="addNewRole" :disabled="!$TOOL.checkRole('r23-2')">
                     <el-icon size="14">
                         <ElIconPlus />

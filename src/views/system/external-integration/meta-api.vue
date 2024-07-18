@@ -10,7 +10,7 @@
         :filterItems="filterItems"
         @changeSwitch="changeSwitch"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button type="primary" @click="addClick">
                 <el-icon size="14">
                     <ElIconPlus />

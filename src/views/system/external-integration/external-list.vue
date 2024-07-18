@@ -14,7 +14,7 @@
         checkRole="r57"
         :actionColumnWidth="320"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button
                 type="primary"
                 @click="actionBtn({target:'add'})"

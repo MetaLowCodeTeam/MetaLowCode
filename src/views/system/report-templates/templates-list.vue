@@ -15,7 +15,7 @@
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button type="primary" @click="actionBtn({target:'add'})">
                 <el-icon size="14">
                     <ElIconPlus />

@@ -13,7 +13,7 @@
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
     >
-        <template #addbutton>
+        <template #addButton>
             <!-- <el-dropdown
                 split-button
                 type="primary"

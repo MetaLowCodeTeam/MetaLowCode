@@ -29,25 +29,25 @@
             <div class="w-100 mb-10" v-if="trigger.actionContent?.items?.length > 0">
                 <el-row
                     :gutter="20"
-                    class="uptade-rule-row w-100 mb-5"
+                    class="update-rule-row w-100 mb-5"
                     v-for="(item,inx) of trigger.actionContent.items"
                     :key="inx"
                 >
                     <el-col :span="9">
-                        <span class="uptade-rule-span">{{ getTargeFieldLabel(item.targetField) }}</span>
+                        <span class="update-rule-span">{{ getTargeFieldLabel(item.targetField) }}</span>
                     </el-col>
                     <el-col :span="5">
-                        <span class="uptade-rule-span">{{ getUpdateModeLabel(item.updateMode) }}</span>
+                        <span class="update-rule-span">{{ getUpdateModeLabel(item.updateMode) }}</span>
                     </el-col>
-                    <el-col :span="9" class="uptade-rule-col-last">
+                    <el-col :span="9" class="update-rule-col-last">
                         <span
-                            class="uptade-rule-span"
+                            class="update-rule-span"
                             :class="{'toFixed':item.updateMode == 'toFixed','forCompile':item.updateMode == 'forCompile','toNull':item.updateMode == 'toNull'}"
                         >
                             {{ getSourceFieldLabel(item) }}
                             <span
                                 class="del-icon"
-                                @click="delUptadeRule(inx)"
+                                @click="delupdateRule(inx)"
                             >
                                 <el-icon>
                                     <ElIconCloseBold />
@@ -57,7 +57,7 @@
                     </el-col>
                 </el-row>
             </div>
-            <el-row class="w-100 mb-10 uptade-rule" :gutter="20" v-loading="changeTagEntityLoading">
+            <el-row class="w-100 mb-10 update-rule" :gutter="20" v-loading="changeTagEntityLoading">
                 <el-col :span="9">
                     <el-select
                         v-model="seleteTargetField"
@@ -77,12 +77,12 @@
                 </el-col>
                 <el-col :span="5">
                     <el-select
-                        v-model="uptadeRule.updateMode"
+                        v-model="updateRule.updateMode"
                         class="w-100"
                         @change="uptadeModeChange"
                     >
                         <el-option
-                            v-for="(op,inx) in getUptadeModeList()"
+                            v-for="(op,inx) in getUpdateModeList()"
                             :key="inx"
                             :label="op.label"
                             :value="op.value"
@@ -92,8 +92,8 @@
                 </el-col>
                 <el-col :span="9">
                     <el-select
-                        v-if="uptadeRule.updateMode == 'forField'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'forField'"
+                        v-model="updateRule.sourceField"
                         filterable
                         class="w-100"
                     >
@@ -106,8 +106,8 @@
                     </el-select>
 
                     <el-select
-                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Boolean'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Boolean'"
+                        v-model="updateRule.sourceField"
                         filterable
                         class="w-100"
                     >
@@ -115,20 +115,20 @@
                         <el-option label="禁用" value="0" />
                     </el-select>
                     <el-date-picker
-                        v-if="uptadeRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Time')"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Time')"
+                        v-model="updateRule.sourceField"
                         format="YYYY/MM/DD hh:mm:ss"
                         value-format="YYYY-MM-DD hh:mm:ss a"
                         type="datetime"
                     />
                     <el-input
-                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Time'"
+                        v-model="updateRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
                     <el-input
-                        v-if="uptadeRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference'"
-                        v-model="uptadeRule.sourceField.label"
+                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference'"
+                        v-model="updateRule.sourceField.label"
                         placeholder="固定值"
                     >
                         <template #append>
@@ -140,8 +140,8 @@
                         </template>
                     </el-input>
                     <el-select
-                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
+                        v-model="updateRule.sourceField"
                         v-loading="optionItemLoading"
                         filterable
                         class="w-100"
@@ -154,8 +154,8 @@
                         />
                     </el-select>
                     <el-select
-                        v-if="uptadeRule.updateMode == 'toFixed' && toFixedForFieldType == 'Tag'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Tag'"
+                        v-model="updateRule.sourceField"
                         v-loading="optionItemLoading"
                         filterable
                         class="w-100"
@@ -169,8 +169,8 @@
                         />
                     </el-select>
                     <el-input
-                        v-if="uptadeRule.updateMode == 'forCompile'"
-                        v-model="uptadeRule.sourceField"
+                        v-if="updateRule.updateMode == 'forCompile'"
+                        v-model="updateRule.sourceField"
                         placeholder="计算公式"
                         autosize
                         type="textarea"
@@ -178,13 +178,13 @@
                     ></el-input>
                     <div
                         class="w-100 info-text mt-3"
-                        v-if="uptadeRule.updateMode !== 'toNull'"
+                        v-if="updateRule.updateMode !== 'toNull'"
                     >{{ getSourceFieldInfo() }}</div>
                 </el-col>
             </el-row>
         </el-form-item>
         <el-form-item label=" ">
-            <el-button type="primary" plain @click="addUptadeRule">+ 添加</el-button>
+            <el-button type="primary" plain @click="addupdateRule">+ 添加</el-button>
         </el-form-item>
         <div v-if="mlFormulaIsShow">
             <mlFormula
@@ -210,7 +210,7 @@
             <ReferenceSearchTable
                 ref="referST"
                 :entity="trigger.defaultTargetEntity.entityName"
-                :refField="uptadeRule.targetField"
+                :refField="updateRule.targetField"
                 @recordSelected="setReferRecord"
             ></ReferenceSearchTable>
         </el-dialog>
@@ -335,27 +335,27 @@ const getTagEntityFields = async (entityCode) => {
         ) {
             // 目标字段 默认选中 第一个
             seleteTargetField.value = res.data[0];
-            uptadeRule.targetField = res.data[0].fieldName;
+            updateRule.targetField = res.data[0].fieldName;
             // 获取目标字段类型
-            toFixedForFieldType.value = getUptadeRuleTargetFieldType(
+            toFixedForFieldType.value = getupdateRuleTargetFieldType(
                 res.data[0].fieldName
             );
             if (toFixedForFieldType.value == "Reference") {
-                uptadeRule.updateMode = "forField";
-                uptadeRule.sourceField = {};
+                updateRule.updateMode = "forField";
+                updateRule.sourceField = {};
             }
             if (toFixedForFieldType.value == "Option") {
-                uptadeRule.updateMode = "toFixed";
-                uptadeRule.sourceField = "";
+                updateRule.updateMode = "toFixed";
+                updateRule.sourceField = "";
             }
             if (toFixedForFieldType.value == "Tag") {
-                uptadeRule.updateMode = "toFixed";
-                uptadeRule.sourceField = [];
+                updateRule.updateMode = "toFixed";
+                updateRule.sourceField = [];
             }
             // 如果更新方式是字段值
-            if (uptadeRule.updateMode == "forField") {
+            if (updateRule.updateMode == "forField") {
                 // 源字段 默认选中第一个
-                uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+                updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
             // 格式化规则列表
             formatActionContentItems();
@@ -375,7 +375,7 @@ let seleteTargetField = ref({});
  * *************************************** 更新规则相关 beg
  */
 //  更新规则
-let uptadeRule = reactive({
+let updateRule = reactive({
     // 目标字段
     targetField: "",
     // 更新方式
@@ -387,7 +387,7 @@ let uptadeRule = reactive({
 });
 
 // 更新方式
-let uptadeModeList = ref([
+let updateModeList = ref([
     {
         label: "字段值",
         value: "forField",
@@ -406,7 +406,7 @@ let uptadeModeList = ref([
     },
 ]);
 
-const getUptadeModeList = () => {
+const getUpdateModeList = () => {
     // if (toFixedForFieldType.value == "Reference") {
     //     return [
     //         {
@@ -446,7 +446,7 @@ const getUptadeModeList = () => {
     //         },
     //     ];
     // } else {
-        return uptadeModeList.value;
+        return updateModeList.value;
     // }
 };
 
@@ -462,7 +462,7 @@ const uptadeModeLabel = reactive({
 let toFixedForFieldType = ref("");
 
 // 删除规则
-const delUptadeRule = (inx) => {
+const delupdateRule = (inx) => {
     trigger.value.actionContent.items.splice(inx, 1);
     actionContentItems.value.splice(inx, 1);
 };
@@ -472,14 +472,14 @@ let optionItemLoading = ref(false);
 
 // 目标字段切换
 const targetFieldChange = async (e) => {
-    uptadeRule.targetField = e.fieldName;
+    updateRule.targetField = e.fieldName;
     // 获取字段的type
-    toFixedForFieldType.value = getUptadeRuleTargetFieldType(e.fieldName);
+    toFixedForFieldType.value = getupdateRuleTargetFieldType(e.fieldName);
     // 如果更新方式是字段值，源字段默认选中第一个
-    if (uptadeRule.updateMode == "forField") {
-        uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+    if (updateRule.updateMode == "forField") {
+        updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
-        uptadeRule.sourceField = "";
+        updateRule.sourceField = "";
     }
     if (e.fieldType == "Tag" || e.fieldType == "Option") {
         optionItemLoading.value = true;
@@ -488,12 +488,12 @@ const targetFieldChange = async (e) => {
         let res;
         if (e.fieldType == "Tag") {
             res = await getTagItems(typeEntityName, typeFieldName);
-            uptadeRule.updateMode = "toFixed";
-            uptadeRule.sourceField = [];
+            updateRule.updateMode = "toFixed";
+            updateRule.sourceField = [];
         } else {
             res = await getOptionItems(typeEntityName, typeFieldName);
-            uptadeRule.updateMode = "toFixed";
-            uptadeRule.sourceField = {};
+            updateRule.updateMode = "toFixed";
+            updateRule.sourceField = {};
         }
         if (res && res.data) {
             optionItems.value = res.data;
@@ -506,17 +506,17 @@ const targetFieldChange = async (e) => {
 const uptadeModeChange = (e) => {
     if (e.value == "forField") {
         // 源字段默认选中第一个
-        uptadeRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+        updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
         if (
             toFixedForFieldType.value == "Reference" ||
             toFixedForFieldType.value == "Option"
         ) {
-            uptadeRule.sourceField = e == 'forCompile' ? '' : {};
+            updateRule.sourceField = e == 'forCompile' ? '' : {};
         } else if (toFixedForFieldType.value == "Tag") {
-            uptadeRule.sourceField = [];
+            updateRule.sourceField = [];
         } else {
-            uptadeRule.sourceField = null;
+            updateRule.sourceField = null;
         }
     }
 };
@@ -525,8 +525,8 @@ const uptadeModeChange = (e) => {
 let actionContentItems = ref([]);
 
 // 添加更新规则
-const addUptadeRule = () => {
-    let { targetField, updateMode, sourceField, simpleFormula } = uptadeRule;
+const addupdateRule = () => {
+    let { targetField, updateMode, sourceField, simpleFormula } = updateRule;
     if (!targetField) {
         return;
     }
@@ -577,11 +577,11 @@ const addUptadeRule = () => {
     actionContentItems.value.push({
         targetField: formatTargetField(targetField),
         updateMode: formatUpdateMode(updateMode),
-        sourceField: formatSourceField(uptadeRule),
+        sourceField: formatSourceField(updateRule),
         simpleFormula,
     });
     if (updateMode != "forField") {
-        uptadeRule.sourceField = "";
+        updateRule.sourceField = "";
     }
 };
 
@@ -673,7 +673,7 @@ const checkMlFormula = () => {
     //         showAdvancedFormula(
     //             cutEntityFields.value,
     //             true,
-    //             uptadeRule.sourceField
+    //             updateRule.sourceField
     //         );
     //         return;
     //     }
@@ -682,7 +682,7 @@ const checkMlFormula = () => {
     // }
     // // 不是数字类型，显示高级计算公式
     // else {
-    showAdvancedFormula(cutEntityFields.value, true, uptadeRule.sourceField);
+    showAdvancedFormula(cutEntityFields.value, true, updateRule.sourceField);
     // }
 };
 // 执行显示 计算公式
@@ -697,12 +697,12 @@ const showAdvancedFormula = (sourceFields, isAdvanced, value) => {
     mlFormulaFields.value = sourceFields;
     mlIsAdvanced.value = isAdvanced;
     mlFormulaVal.value = isAdvanced ? value : "";
-    uptadeRule.simpleFormula = isAdvanced;
+    updateRule.simpleFormula = isAdvanced;
 };
 
 // 确认计算方式
 const formulaConfirm = (formula) => {
-    uptadeRule.sourceField = formula.label;
+    updateRule.sourceField = formula.label;
 };
 
 /**
@@ -714,7 +714,7 @@ const formulaConfirm = (formula) => {
  */
 
 // 获取目标字段类型
-const getUptadeRuleTargetFieldType = (fieldName) => {
+const getupdateRuleTargetFieldType = (fieldName) => {
     let field = tagEntityFields.value.filter((el) => el.fieldName == fieldName);
     return field[0].fieldType;
 };
@@ -770,7 +770,7 @@ const getTargeFieldLabel = (fieldName) => {
 
 // 获取更新方式显示label
 const getUpdateModeLabel = (value) => {
-    let filterVal = uptadeModeList.value.filter((el) => el.value == value);
+    let filterVal = updateModeList.value.filter((el) => el.value == value);
     return filterVal[0]?.label;
 };
 
@@ -800,13 +800,13 @@ const getSourceFieldLabel = (item) => {
 
 // 获取源字段info
 const getSourceFieldInfo = () => {
-    if (uptadeRule.updateMode == "forField") {
+    if (updateRule.updateMode == "forField") {
         return "源字段";
     }
-    if (uptadeRule.updateMode == "toFixed") {
+    if (updateRule.updateMode == "toFixed") {
         return "固定值";
     }
-    if (uptadeRule.updateMode == "forCompile") {
+    if (updateRule.updateMode == "forCompile") {
         return "计算公式";
     }
 };
@@ -838,13 +838,13 @@ const targetEntityChange = () => {
 
 // 引用字段弹框选择
 const setReferRecord = (e) => {
-    uptadeRule.sourceField = e;
+    updateRule.sourceField = e;
     showReferenceDialogFlag.value = false;
 };
 </script>
 <style lang='scss' scoped>
-.uptade-rule-row {
-    .uptade-rule-span {
+.update-rule-row {
+    .update-rule-span {
         display: inline-block;
         background: #fbbc05;
         line-height: 20px;
@@ -867,10 +867,10 @@ const setReferRecord = (e) => {
             }
         }
     }
-    .uptade-rule-col-last {
+    .update-rule-col-last {
         position: relative;
         word-break: break-all;
-        .uptade-rule-span {
+        .update-rule-span {
             position: relative;
             .del-icon {
                 position: absolute;

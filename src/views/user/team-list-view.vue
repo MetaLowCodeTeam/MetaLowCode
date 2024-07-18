@@ -10,7 +10,7 @@
         :filterItems="filterItems"
         @highlightClick="highlightClick"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button type="primary" @click="addClick" :disabled="!$TOOL.checkRole('r24-3')">
                 <el-icon size="14">
                     <ElIconPlus />

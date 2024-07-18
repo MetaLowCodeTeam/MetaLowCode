@@ -11,7 +11,7 @@
         ref="mlSingleListRef"
         queryUrl="/systemManager/backup/log"
     >
-        <template #addbutton>
+        <template #addButton>
             <el-button type="primary" @click="backupDB">
                 <span class="ml-5">立即备份</span>
             </el-button>

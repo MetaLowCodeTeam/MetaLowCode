@@ -89,7 +89,7 @@
                 @highlightClick="highlightClick"
                 @changeSwitch="changeSwitch"
             >
-                <template #addbutton>
+                <template #addButton>
                     <el-button
                         type="primary"
                         @click="addClick"

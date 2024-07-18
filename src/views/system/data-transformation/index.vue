@@ -6,13 +6,14 @@
 			:mainEntity="tableConf.entity"
 			:fieldsList="tableConf.fieldsList"
 			:sortFields="tableConf.sortFields"
-			fieldName="roleName"
+			fieldName="transformName"
 			:tableColumn="tableConf.tableColumn"
 			:filterItems="tableConf.filterItems"
 			queryUrl="/transform/listQuery"
 			@changeSwitch="changeSwitch"
+			@highlightClick="goDetail"
 		>
-			<template #addbutton>
+			<template #addButton>
 				<el-button
 					type="primary"
 					@click="addRow"
@@ -72,7 +73,6 @@
 import { inject, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
 const { queryEntityLabelByName } = useCommonStore();
 /**
  * 组件
@@ -84,7 +84,7 @@ const $TOOL = inject("$TOOL");
 const Router = useRouter();
 
 // ID字段名
-const idFieldName = "roleId";
+const idFieldName = "transformId";
 
 // 列表组件
 let mlSingleListRef = shallowRef();
@@ -110,10 +110,13 @@ let tableConf = ref({
 			prop: "transformName",
 			label: "转化名称",
 			width: "180",
+			highlight: true,
+			sortable: true,
 		},
 		{
 			prop: "sourceEntity",
 			label: "源实体",
+            sortable: true,
 			formatter: (row) => {
 				return queryEntityLabelByName(row.sourceEntity);
 			},
@@ -121,6 +124,7 @@ let tableConf = ref({
 		{
 			prop: "targetEntity",
 			label: "目标实体",
+            sortable: true,
 			formatter: (row) => {
 				return queryEntityLabelByName(row.targetEntity);
 			},
@@ -147,26 +151,29 @@ const addRow = () => {
 // 编辑行
 const editRow = (row) => {
 	EditRefs.value?.openDialog(row);
-	// console.log(row[idFieldName],'row')
-	// Router.push('/web/data-transformation/' + row[idFieldName])
 };
 
 // 启用开关
 const changeSwitch = (row) => {
-    // 保存需要的key
-    let toSaveKey = [
-        'transformName',
-        'sourceEntity',
-        'targetEntity',
-        'disabled',
-        'isPreview',
-    ];
-    let saveData = {};
-    toSaveKey.forEach(el => {
-        saveData[el] = row[el];
-    })
-    mlSingleListRef.value.loading = true;
-    EditRefs.value?.doSave(row.transformId, saveData, '设置成功');
+	// 保存需要的key
+	let toSaveKey = [
+		"transformName",
+		"sourceEntity",
+		"targetEntity",
+		"disabled",
+		"isPreview",
+	];
+	let saveData = {};
+	toSaveKey.forEach((el) => {
+		saveData[el] = row[el];
+	});
+	mlSingleListRef.value.loading = true;
+	EditRefs.value?.doSave(row[idFieldName], saveData, "设置成功");
+};
+
+// 跳转详情
+const goDetail = (row) => {
+	Router.push("/web/data-transformation/" + row[idFieldName]);
 };
 
 // 删除行
