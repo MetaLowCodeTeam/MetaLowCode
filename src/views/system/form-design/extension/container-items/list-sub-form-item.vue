@@ -13,7 +13,7 @@
 				showPagination: widget.options.showPagination,
 			}"
 			:paginationSize="widget.options.paginationSize"
-			:tableHeight="widget.options.tableHeight"
+			:tableHeight="widget.options.listSubFormHeight"
 			:formRef="getForm()"
             :formEntityId="getFormEntityId()"
             :detailEntityFlag="widget.options?.detailEntityFlag"
