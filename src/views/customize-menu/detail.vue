@@ -381,6 +381,13 @@ const getLayoutList = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
+        let { STYLE } = res.data;
+        if (STYLE && STYLE.config) {
+            styleConf.value = JSON.parse(STYLE.config);
+            if (styleConf.value?.detailConf.autoFullScreen) {
+                isFullSceen.value = true;
+            }
+        }
         // 如果有页签配置
         if(res.data.TAB?.config){
             // 取所有页签数据
