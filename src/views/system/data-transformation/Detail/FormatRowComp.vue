@@ -149,6 +149,7 @@
 			autosize
 			type="textarea"
 			@click="checkMlFormula"
+            :disabled="type == 2 || !curtItem.targetField"
 		></el-input>
 	</el-col>
 	<el-dialog
@@ -257,8 +258,6 @@ const targetFieldChange = (item, target) => {
 	let { fieldType, referenceName } = curtField;
 	item.fieldType = fieldType;
 	item.referenceName = referenceName;
-    console.log(item,'item')
-    console.log(target,'target')
 	updateModeChange(item, target);
 };
 

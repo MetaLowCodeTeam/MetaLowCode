@@ -98,7 +98,6 @@ const formatMembers = () => {
 
 // 删除成员
 const delMember = (item) => {
-    console.log(item,'item')
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
