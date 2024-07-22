@@ -306,6 +306,9 @@
 </template>
 
 <script setup>
+defineOptions({
+    name: "default-list",
+});
 import { 
     ref, 
     onBeforeMount, 
@@ -370,6 +373,11 @@ const props = defineProps({
     },
     // 是否引入组件
     isReferenceComp: {
+        type: Boolean,
+        default: false,
+    },
+    // 是否表单设计模式
+    isVFormDesignMode: {
         type: Boolean,
         default: false,
     },
@@ -1152,7 +1160,6 @@ const changeColumnShow = (type) => {
     }else {
         loadRouterParams(true)
     }
- 
 })
 
 
@@ -1172,6 +1179,12 @@ watchEffect(() => {
             listParamConf.value.showAddBtn = false;
             listParamConf.value.showEditBtn = false;
             listParamConf.value.showMoreBtn = false;
+        }
+        if(props.isVFormDesignMode){
+            listParamConf.value.showOpenBtn = false;
+            listParamConf.value.showAddBtn = false;
+            listParamConf.value.showEditBtn = false;
+            // listParamConf.value.showMoreBtn = false;
         }
     }
 })

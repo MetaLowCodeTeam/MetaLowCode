@@ -445,6 +445,7 @@ const initData = async () => {
 					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
 				}
 				if (queryByIdRes && queryByIdRes.data) {
+                    globalDsv.value.rowRecordData = queryByIdRes.data;
 					detailName.value = queryByIdRes.data[nameFieldName.value];
                     // console.log(res.data.layoutJson,'res.data.layoutJson')
 					vFormRef.value.setFormJson(res.data.layoutJson);
