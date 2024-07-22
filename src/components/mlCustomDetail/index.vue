@@ -6,7 +6,7 @@
 <script setup>
 
 import { onMounted, ref } from "vue";
-import { getDetailCmpByEntityName } from '@/views/custom-page/customEntryDetail.js';
+import { getDetailCmpByEntityName } from '@/views/custom-page/customDetailEntry.js';
 
 // SimpleTable
 const props = defineProps({
