@@ -9,9 +9,13 @@
             <div class="work-flow-conditions">
                 <div class="lable-title mb-3">审批类型</div>
                 <div class="mb-10 mt-10">
-                    <el-radio-group v-model="myFormData.approvalType">
+                    <el-radio-group 
+                        v-model="myFormData.approvalType" 
+                        @change="approvalTypeChange"
+                    >
                         <el-radio :label="1">人工审批</el-radio>
                         <el-radio :label="2">自动驳回</el-radio>
+                        <el-radio :label="3">发起子流程</el-radio>
                     </el-radio-group>
                 </div>
             </div>
@@ -166,6 +170,42 @@
                 <div class="lable-title mb-3">高级扩展功能</div>
                 <el-checkbox v-model="myFormData.autograph" label="手写签名"/>
             </div>
+            <!-- 发起子流程 -->
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
+                <div class="lable-title mb-3">选择子流程</div>
+                <el-select 
+                    v-model="myFormData.approvalConfigId" 
+                    style="width: 100%"
+                    v-loading="loadFlowListLoading"
+                    clearable
+                    @change="selectedSubApproval"
+                >
+                    <el-option
+                        v-for="item in flowList"
+                        :key="item.approvalConfigId"
+                        :label="item.flowName"
+                        :value="item.approvalConfigId"
+                    />
+                </el-select>
+            </div>
+            <!-- 选择数据转换 -->
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
+                <div class="lable-title mb-3">选择数据转换</div>
+                <el-select 
+                    v-model="myFormData.approvalConfigId" 
+                    style="width: 100%"
+                    v-loading="loadFlowListLoading"
+                    clearable
+                    :disabled="!myFormData.approvalConfigId"
+                >
+                    <el-option
+                        v-for="item in flowList"
+                        :key="item.approvalConfigId"
+                        :label="item.flowName"
+                        :value="item.approvalConfigId"
+                    />
+                </el-select>
+            </div>
         </el-collapse-item>
         <!-- 事件设置 -->
         <el-collapse-item name="2">
@@ -286,6 +326,7 @@ import { storeToRefs } from "pinia";
 import mlSelectField from "@/components/mlSelectField/index.vue";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
+import http from "@/utils/request";
 
 const { allEntityName } = storeToRefs(useCommonStore());
 let $API = inject("$API");
@@ -309,7 +350,6 @@ watch(
     (newVal,oldVal) => {
         if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
             myFormData.value = Object.assign(myFormData.value, props.formData);
-            console.log(myFormData.value,'内部节点-watch formData')
         }
     },
     { deep: true }
@@ -330,11 +370,12 @@ onMounted(() => {
         entityName.value = allEntityName.value[entityCode.value];
     }
     myFormData.value = Object.assign(myFormData.value, props.formData);
-    console.log(myFormData.value,'内部节点-onMounted')
     // 获取部门负责人数据
     getDepartment();
     // 获取所有实体字段
     getEntityFields();
+    // 审批类型切换
+    approvalTypeChange();
 });
 
 
@@ -492,6 +533,55 @@ const fieldRequiredChange = (field) => {
 const getFormData = () => {
     return { ...myFormData.value };
 };
+
+
+/**
+ * 选择子流程相关 beg
+ */
+
+// 加载流程loading
+let loadFlowListLoading = ref(false);
+// 流程list
+let flowList = ref([]);
+
+// 审批类型切换
+const approvalTypeChange = async () => {
+    // 选择发起子流程才调接口
+    if(myFormData.value.approvalType == 3){
+        loadFlowListLoading.value = true;
+        let res = await http.post("/approval/configList", {
+            mainEntity: 'ApprovalConfig',
+            fieldsList: 'flowName, entityCode',
+            filter: {
+                equation:"AND",
+                items: [
+                    {
+                        fieldName: "flowType",
+                        op: "LK",
+                        value: 2
+                    }
+                ]
+            },
+            pageSize: 99999,
+            pageNo: 1,
+        });
+        if(res){
+            flowList.value = res.data.dataList;
+        }
+        loadFlowListLoading.value = false;
+    }
+}
+
+// 选择子流程切换
+const selectedSubApproval = () => {
+    
+}
+
+
+/**
+ * 选择子流程相关 end
+ */
+
 
 defineExpose({
     getFormData,

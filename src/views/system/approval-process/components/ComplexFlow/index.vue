@@ -145,7 +145,7 @@ let nodeDefaultData = reactive({
         },
     },
     "bpmn:userTask": {
-        // 审批类型(1.人工审批 2.自动驳回)
+        // 审批类型(1.人工审批 2.自动驳回 3. 发起子流程)
         approvalType: 1,
         // 由审批（3.指定审批人  4. 指定部门负责人 5. 发起人部门负责人 6.数据所属部门负责人 7. 实体字段）
         nodeRoleType: 3,
@@ -179,6 +179,12 @@ let nodeDefaultData = reactive({
         createScript: "",
         // 后置脚本
         completeScript: "",
+        // 数据转化ID
+        transformId: "",
+        // 审批配置ID
+        approvalConfigId: "",
+        // 是否阻断流程
+        isBlocked: false,
     },
 });
 
