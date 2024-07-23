@@ -135,6 +135,7 @@
                                         :idFieldName="idFieldName"
                                         :nameFieldName="nameFieldName"
                                         @editColumnConfirm="editColumnConfirm"
+                                        :layoutConfig="myLayoutConfig"
                                     />
                                 </el-col>
                                 <el-col :span="24" v-if="contentSlots.afterMoreBtn">
