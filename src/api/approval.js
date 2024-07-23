@@ -92,3 +92,9 @@ export function getRecordApprovalState(recordId) {
     return http.get('/approval/recordApprovalState',  { recordId })
 }
 
+
+
+// 获取审批信息
+export function createApprovalSystemFields(entityName) {
+    return http.post('/approval/createApprovalSystemFields?entityName=' + entityName)
+}

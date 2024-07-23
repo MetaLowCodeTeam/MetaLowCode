@@ -61,6 +61,15 @@
                 <div class="lable-title mb-10 mt-20">发起条件</div>
                 <div class="ml-a-span mb-3" @click="setCondition">{{ getSetConditionText() }}</div>
                 <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
+                <div class="lable-title mb-10 mt-20">同步审批状态</div>
+                <div class="mt-10">
+                    <MlAssociatedRecords
+                        v-model="form.cascades"
+                        :entityCode="entityCode"
+                        @loadDataFinish="associatedRecordsFinish"
+                    />
+                </div>
+                <div class="info-text mt-5">同步审批状态会强制修改相关数据的审批状态，请谨慎选择！！</div>
             </div>
             <template #footer>
                 <div style="flex: auto">
@@ -86,11 +95,13 @@
 <script setup>
 import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import addNode from "./addNode.vue";
+import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 const router = useRouter();
 let message = inject("$ElMessage");
+const $API = inject("$API");
 let cloneDeep = inject("$CloneDeep");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
@@ -116,10 +127,22 @@ watch(
     }
 );
 onMounted(() => {
-    
     nodeConfig.value = props.modelValue;
     entityCode.value = router.currentRoute.value.query?.entityCode;
 });
+
+let associatedEntityList = ref([]);
+const associatedRecordsFinish = (v) => {
+    associatedEntityList.value = v;
+    if(form.cascades){
+        form.cascades.forEach((el,inx) => {
+            let findEl = associatedEntityList.value.filter(subEl => subEl.entityName == el.entityName && subEl.fieldName == el.fieldName);
+            if(findEl.length > 0){
+                form.cascades[inx] = {...findEl[0]};
+            }
+        })
+    }
+}
 
 const show = () => {
     form = Object.assign(form, nodeConfig.value);

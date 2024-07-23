@@ -146,7 +146,7 @@
                         class="pl-20 item"
                         @click="setListStyleDialogIsShow = true"
                     >
-                        列表样式设计
+                        其他列表设置
                     </div>
                 </template>
                 
@@ -177,6 +177,7 @@
         :idFieldName="idFieldName"
         @allocationSuccess="allocationSuccess"
         :entityCode="entityCode"
+        :layoutConfig="myLayoutConf"
     />
     <!-- 报表 -->
     <ReportForms ref="reportFormsRefs" />
@@ -195,7 +196,7 @@
         v-model="treeGroupFilterIsShow"
         @confirm="treeGroupFilterConfirm"
     /> -->
-    <!-- 列表样式设计 -->
+    <!-- 其他列表设置 -->
     <SetListStyleDialog
         v-model="setListStyleDialogIsShow"
         :entityCode="entityCode"
@@ -222,7 +223,7 @@ import DefaultFilterDialog from "./DefaultFilterDialog.vue";
 // 树状分组筛选设置
 import TreeGroupFilter from "./TreeGroupFilter.vue";
 import NewTreeGroupFilter from "./NewTreeGroupFilter.vue";
-// 列表样式设计
+// 其他列表设置
 import SetListStyleDialog from "./SetListStyleDialog.vue";
 
 import { checkRight } from "@/api/user";
@@ -450,7 +451,7 @@ const treeGroupFilterConfirm = () => {
 };
 
 /**
- * 列表样式设计
+ * 其他列表设置
  */
 let setListStyleDialogIsShow = ref(false);
 

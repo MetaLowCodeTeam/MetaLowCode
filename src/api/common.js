@@ -37,8 +37,9 @@ export default {
      * @param queryReferenced 是否查询引用主实体的实体
      * @param querySystem     是否查询系统实体
      * @param queryBuiltIn    是否查询内置实体
+     * @param queryLevel      往下查几层
      * */
-    queryEntityList: async (entityCode, queryMain = false, queryReference = false, queryReferenced = false, querySystem = false, queryBuiltIn = false) => {
-        return http.get('/systemManager/queryEntityList', { entityCode, queryMain, queryReference, queryReferenced, querySystem, queryBuiltIn })
+    queryEntityList: async (entityCode, queryMain = false, queryReference = false, queryReferenced = false, querySystem = false, queryBuiltIn = false, queryLevel = null) => {
+        return http.get('/systemManager/queryEntityList', { entityCode, queryMain, queryReference, queryReferenced, querySystem, queryBuiltIn, queryLevel })
     }
 }

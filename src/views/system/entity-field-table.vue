@@ -12,8 +12,14 @@
 							<el-form-item label="显示名称：">
 								<el-input link type="primary" v-model="entityProps.label" :readonly="true">
 									<template #suffix>
-										<el-button link type="primary" icon="el-icon-edit" title="修改显示名称"
-												   @click="modifyEntityLabel"></el-button>
+										<el-button 
+                                            link 
+                                            type="primary" 
+                                            icon="el-icon-edit" 
+                                            title="修改显示名称"
+											@click="modifyEntityLabel"
+                                        >
+                                        </el-button>
 									</template>
 								</el-input>
 							</el-form-item>
@@ -26,8 +32,13 @@
 							<el-form-item label="名称字段：">
 								<el-input link type="primary" v-model="entityProps.nameField" :readonly="true">
 									<template #suffix>
-										<el-button link type="primary" icon="el-icon-edit" title="修改名称字段"
-												   @click="modifyEntityNameField"></el-button>
+										<el-button 
+                                            link 
+                                            type="primary" 
+                                            icon="el-icon-edit" 
+                                            title="修改名称字段"
+                                            @click="modifyEntityNameField">
+                                        </el-button>
 									</template>
 								</el-input>
 							</el-form-item>
@@ -41,8 +52,21 @@
 								<el-switch v-model="entityProps.authorizable" style="float: right" disabled></el-switch>
 							</el-form-item>
 							<el-form-item label="是否明细实体：">
-								<el-switch v-model="entityProps.detailEntityFlag" style="float: right"
-										   disabled></el-switch>
+								<el-switch 
+                                    v-model="entityProps.detailEntityFlag" 
+                                    style="float: right"
+									disabled
+                                >
+                                </el-switch>
+							</el-form-item>
+                            <el-form-item label="开启审批字段：">
+								<el-switch 
+                                    v-model="openApprovalField" 
+                                    style="float: right"
+									:disabled="openApprovalField"
+                                    :before-change="toOpenApprovalField"
+                                >
+                                </el-switch>
 							</el-form-item>
                             <el-form-item label="标签">
 								<el-tag
@@ -65,12 +89,16 @@
                                 </div>
 							</el-form-item>
 							<el-form-item label="所属主实体：" v-if="!!entityProps.detailEntityFlag">
-								<el-input link type="primary" v-model="entityProps.mainEntity.label"
-										  disabled></el-input>
+								<el-input 
+                                    link 
+                                    type="primary" 
+                                    v-model="entityProps.mainEntity.label"
+									disabled
+                                >
+                                </el-input>
 							</el-form-item>
 						</el-form>
 					</div>
-
 					<!--
 					<div style="text-align: center">
 					  <el-button type="" size="small" @click="modifyEntity">修改实体设置</el-button>
@@ -80,7 +108,7 @@
 			</el-scrollbar>
 		</el-aside>
 
-		<el-container>
+		<el-container v-loading="mainLoading">
 			<el-header class="list-search-panel">
 				<div class="search-panel-left">
 					<el-dropdown @command="handleNewFieldCommand" size="small">
@@ -115,9 +143,17 @@
 				</div>
 				<div style="flex: 1"></div>
 				<div class="search-panel-right">
-					<el-input link type="primary" v-model="searchText" :clearable="true" @clear="clearTableSearch"
-							  class="v-middle"
-							  @keyup.enter="searchTableData" size="small" placeholder="请输入关键词搜索">
+					<el-input 
+                        link 
+                        type="primary" 
+                        v-model="searchText" 
+                        :clearable="true" 
+                        @clear="clearTableSearch"
+						class="v-middle"
+						@keyup.enter="searchTableData" 
+                        size="small" 
+                        placeholder="请输入关键词搜索"
+                    >
 						<template #append>
 							<el-button icon="el-icon-search" @click="searchTableData"></el-button>
 						</template>
@@ -128,17 +164,35 @@
 
 			<el-main ref="tableContainer">
 				<div>
-					<SimpleTable :columns="columns" :data="filteredData" :show-pagination="false"
-								 :show-check-box="false"
-								 :show-operation-column="true"
-								 :height="'100%'" table-size="small" table-width="100% !important">
+					<SimpleTable 
+                        :columns="columns" 
+                        :data="filteredData" 
+                        :show-pagination="false"
+						:show-check-box="false"
+						:show-operation-column="true"
+						:height="'100%'" 
+                        table-size="small" 
+                        table-width="100% !important"
+                    >
 						<template #table_operation="{scope}">
 							<template v-if="!scope.row['reserved']">
-								<el-button type="primary" link size="small" icon="el-icon-edit"
-										   @click="editTableData(scope.row)">修改
+								<el-button 
+                                    type="primary" 
+                                    link 
+                                    size="small" 
+                                    icon="el-icon-edit"
+									@click="editTableData(scope.row)"
+                                >
+                                    修改
 								</el-button>
-								<el-button type="primary" link size="small" icon="el-icon-delete"
-										   @click="deleteTableData(scope.row)">删除
+								<el-button 
+                                    type="primary" 
+                                    link 
+                                    size="small" 
+                                    icon="el-icon-delete"
+									@click="deleteTableData(scope.row)"
+                                >
+                                    删除
 								</el-button>
 							</template>
 						</template>
@@ -153,43 +207,102 @@
 				</div>
 			</el-footer>
 
-			<el-dialog title="修改名称字段" v-model="showNameFieldDialogFlag" v-if="showNameFieldDialogFlag"
-					   :append-to-body="true" :destroy-on-close="true" class="name-field-dialog" width="480px">
-				<div class="name-field-hint"><i class="el-icon-bell"></i>提示：只有文本(Text)类型字段可设置为名称字段。
+			<el-dialog 
+                title="修改名称字段" 
+                v-model="showNameFieldDialogFlag" 
+                v-if="showNameFieldDialogFlag"
+				:append-to-body="true" 
+                :destroy-on-close="true" 
+                class="name-field-dialog" 
+                width="480px"
+            >
+				<div class="name-field-hint">
+                    <i class="el-icon-bell"></i>
+                    提示：只有文本(Text)类型字段可设置为名称字段。
 				</div>
-				<SimpleTable :show-pagination="false" :show-check-box="false" :table-size="'small'"
-							 :show-operation-column="true"
-							 :columns="nameFieldColumns" :data="nameFieldData" :max-height="420">
+				<SimpleTable 
+                    :show-pagination="false" 
+                    :show-check-box="false" 
+                    :table-size="'small'"
+					:show-operation-column="true"
+					:columns="nameFieldColumns" 
+                    :data="nameFieldData" 
+                    :max-height="420"
+                >
 					<template #table_operation="{scope}">
-						<el-button v-if="!scope.row.nameFieldFlag" class="" icon="el-icon-check"
-								   @click="selectNameField(scope.row)">选择
+						<el-button 
+                            v-if="!scope.row.nameFieldFlag" 
+                            class="" 
+                            icon="el-icon-check"
+							@click="selectNameField(scope.row)"
+                        >
+                            选择
 						</el-button>
 						<el-button v-else :disabled="true">当前名称字段</el-button>
 					</template>
 				</SimpleTable>
 			</el-dialog>
 
-			<el-dialog :title="'新建字段 / ' + curEditorType" v-model="showNewFieldDialogFlag"
-					   v-if="showNewFieldDialogFlag"
-					   :show-close="true" :destroy-on-close="true" :close-on-click-modal="false"
-					   :close-on-press-escape="false" class="no-padding field-setting-dialog" width="620px">
-				<component :is="curFWEditor" :entity="entity" @fieldSaved="onFieldSaved" @cancelSave="onCancelSaveField"
-						   :showingInDialog="true"></component>
+			<el-dialog 
+                :title="'新建字段 / ' + curEditorType" 
+                v-model="showNewFieldDialogFlag"
+				v-if="showNewFieldDialogFlag"
+				:show-close="true" 
+                :destroy-on-close="true" 
+                :close-on-click-modal="false"
+				:close-on-press-escape="false" 
+                class="no-padding field-setting-dialog"
+                width="620px"
+            >
+				<component 
+                    :is="curFWEditor" 
+                    :entity="entity" 
+                    @fieldSaved="onFieldSaved" 
+                    @cancelSave="onCancelSaveField"
+					:showingInDialog="true"
+                >
+                </component>
 			</el-dialog>
 
-			<el-dialog :title="'编辑字段 / ' + curEditorType" v-model="showEditFieldDialogFlag"
-					   v-if="showEditFieldDialogFlag"
-					   :show-close="false" :destroy-on-close="true" :close-on-click-modal="false"
-					   :close-on-press-escape="false" class="no-padding field-setting-dialog" width="620px">
-				<component :is="curFWEditor" :entity="entity" @fieldSaved="onFieldSaved" @cancelSave="onCancelSaveField"
-						   :showingInDialog="true" :field-name="editingFieldName" :field-state="2"></component>
+			<el-dialog 
+                :title="'编辑字段 / ' + curEditorType" 
+                v-model="showEditFieldDialogFlag"
+				v-if="showEditFieldDialogFlag"
+				:show-close="false" 
+                :destroy-on-close="true" 
+                :close-on-click-modal="false"
+				:close-on-press-escape="false" 
+                class="no-padding field-setting-dialog" 
+                width="620px"
+            >
+				<component 
+                    :is="curFWEditor" 
+                    :entity="entity" 
+                    @fieldSaved="onFieldSaved" 
+                    @cancelSave="onCancelSaveField"
+					:showingInDialog="true" 
+                    :field-name="editingFieldName" 
+                    :field-state="2"
+                >
+                </component>
 			</el-dialog>
 
-			<el-dialog title="编辑实体属性" v-model="showEntityPropsDialogFlag" v-if="showEntityPropsDialogFlag"
-					   :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
-					   :destroy-on-close="true">
-				<EntityPropEditor ref="EPEditor" :entityProps="entityProps" :show-title="false"
-								  :filter-entity-method="filterMainEntity"></EntityPropEditor>
+			<el-dialog 
+                title="编辑实体属性" 
+                v-model="showEntityPropsDialogFlag" 
+                v-if="showEntityPropsDialogFlag"
+				:show-close="false" 
+                :close-on-click-modal="false" 
+                :close-on-press-escape="false"
+				:destroy-on-close="true"
+            >
+				<EntityPropEditor 
+                    ref="EPEditor" 
+                    :entityProps="entityProps" 
+                    :show-title="false"
+					:filter-entity-method="filterMainEntity"
+                >
+                </EntityPropEditor>
 				<template #footer>
 					<div class="dialog-footer">
 						<el-button type="primary" @click="saveEntity">保 存</el-button>
@@ -220,7 +333,14 @@
                         @keyup.enter="handleInputConfirm"
                         @blur="handleInputConfirm"
                     />
-                    <el-button v-else class="mb-5 button-new-tag ml-1" @click="showInput" :disabled="allTags?.length > 49">+ 新增标签</el-button>
+                    <el-button 
+                        v-else 
+                        class="mb-5 button-new-tag ml-1" 
+                        @click="showInput" 
+                        :disabled="allTags?.length > 49"
+                    >
+                        + 新增标签
+                    </el-button>
                 </div>
             </div>
 
@@ -230,9 +350,15 @@
                         type="primary"
                         @click="setConfirmTags"
                         v-loading="addTagDialogLoading"
-                    >确 定</el-button>
-                    <el-button @click="addTagDialogIsShow = false" v-loading="addTagDialogLoading"
-                    >取 消</el-button>
+                    >
+                        确 定
+                    </el-button>
+                    <el-button 
+                        @click="addTagDialogIsShow = false" 
+                        v-loading="addTagDialogLoading"
+                    >
+                        取 消
+                    </el-button>
                 </div>
             </template>
         </ml-dialog>
@@ -253,6 +379,7 @@ import {
     updateEntityTags,
     getAllTagsOfEntity
 } from '@/api/system-manager'
+import { createApprovalSystemFields } from "@/api/approval";
 import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
 import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor.vue";
 import {ElMessage} from "element-plus";
@@ -372,11 +499,14 @@ export default {
 			},
 			entity: "",
             propsLoading:false,
+            mainLoading: false,
             allTags:[],
             addTagDialogIsShow:false,
             addTagDialogLoading:false,
             inputVisible:false,
             tagValue:"",
+            // 开启审批字段
+            openApprovalField: false,
 		}
 	},
 	created() {
@@ -409,26 +539,20 @@ export default {
             })
         },
 
-		initEntityProps() {
+		async initEntityProps() {
             this.propsLoading = true;
-			getEntityProps(this.entity).then(res => {
-                if(res && res.data){
-                    this.entityProps = res.data
-                    this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
-                    this.getAllTags();
-                }
-				this.propsLoading = false;
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-                this.propsLoading = false;
-			})
-
+			let res = await getEntityProps(this.entity)
+            if(res && res.data){
+                this.entityProps = res.data
+                this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
+                this.getAllTags();
+            }
+            this.propsLoading = false;
 		},
 
 		initPageData() {
 			this.initEntityProps()
 			this.initTableData()
-
 		},
         // 获取所有tag
         async getAllTags(){
@@ -485,18 +609,18 @@ export default {
             this.inputVisible = false;
             this.tagValue = "";
         },
-		initTableData() {
-			getFieldListOfEntity(this.entity).then(res => {
-                if (res.code  != 200) {
-                    return
-                }
-
-				this.tableData = res.data
-				this.filteredData = copyNew(this.tableData)
-				this.searchText = ''
-			}).catch(res => {
-				this.$message({message: res.message, type: 'error'})
-			})
+		async initTableData() {
+            this.mainLoading = true;
+			let res = await getFieldListOfEntity(this.entity);
+            if(res){
+                this.tableData = res.data
+                this.filteredData = copyNew(this.tableData)
+                this.searchText = '';
+                // 查找是否有审批字段
+                let findApprovalStatus = this.tableData.filter(el => el.physicalName == 'approvalStatus');
+                this.openApprovalField = findApprovalStatus.length > 0;
+            }
+            this.mainLoading = false;
 		},
 
 		handleNewFieldCommand(command) {
@@ -507,23 +631,17 @@ export default {
 
 		async editTableData(row) {
 			if (!!row.type) {
-				fieldCanBeEdited(row.name, this.entity).then(res => {
-					if (res.code  != 200) {
-						return
-					}
-
-					if (res.data !== true) {
+				let res = await fieldCanBeEdited(row.name, this.entity)
+                if(res && res.code == 200){
+                    if (res.data !== true) {
 						this.$message.info('提示：系统字段/保留字段不能编辑！')
 						return
 					}
-
-					this.curEditorType = row.type
+                    this.curEditorType = row.type
 					this.curFWEditor = row.type + 'WE'
 					this.editingFieldName = row.name
 					this.showEditFieldDialogFlag = true
-				}).catch(res => {
-					this.$message({message: res.message, type: 'error'})
-				})
+                }
 			}
 		},
 
@@ -679,6 +797,39 @@ export default {
 		clearTableSearch() {
 			this.filteredData = copyNew(this.tableData)
 		},
+
+        // 开启审批字段
+        toOpenApprovalField(){
+            
+            
+            return new Promise((resolve) => {
+                this.$confirm(
+                    "是否确认开启审批字段?",
+                    "审批字段开启确认",
+                    {
+                        confirmButtonText: '确认',
+                        cancelButtonText: '取消',
+                        type: 'info',
+                    }
+                ).then(async () => {
+                    this.propsLoading = true;
+                    let res = await createApprovalSystemFields(this.entity);
+                    if(res){
+                        this.initTableData()
+                        this.propsLoading = false;
+                        return resolve(true)
+                    }else {
+                        this.propsLoading = false;
+                        return resolve(false)
+                    }
+                    
+                })
+                .catch(() => {
+                    return resolve(false)
+                })
+                
+            })
+        }
 
 	}
 }

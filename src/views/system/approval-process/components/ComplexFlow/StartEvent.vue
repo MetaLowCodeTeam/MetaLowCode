@@ -27,6 +27,14 @@
                 <div class="lable-title mb-10 mt-20">发起条件</div>
                 <div class="ml-a-span mb-3" @click="setCondition">{{ getSetConditionText() }}</div>
                 <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
+                <div class="lable-title mb-10 mt-20">同步审批状态</div>
+                <div class="mt-10" v-if="entityCode">
+                    <MlAssociatedRecords
+                        v-model="myFormData.cascades"
+                        :entityCode="entityCode"
+                    />
+                </div>
+                <div class="info-text mt-5">同步审批状态会强制修改相关数据的审批状态，请谨慎选择！！</div>
             </div>
         </el-collapse-item>
     </el-collapse>
@@ -45,8 +53,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, watch } from "vue";
+import { onMounted, ref, reactive, watch, inject } from "vue";
 import { useRouter } from "vue-router";
+import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
+const $API = inject("$API");
 const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
@@ -89,7 +99,22 @@ let entityCode = ref("");
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;
     myFormData.value = Object.assign(myFormData.value, props.formData);
+    showAssociatedRecords();
 });
+
+let associatedEntityList = ref([]);
+// 同时分配关联记录
+const showAssociatedRecords = async () => {
+    let res = await $API.common.queryEntityList(
+        entityCode.value,
+        false,
+        true,
+        true
+    );
+    if (res) {
+        associatedEntityList.value = res.data || [];
+    }
+};
 
 const nodeRoleTypeChange = () => {
     if (myFormData.value.nodeRoleType !== 3) {

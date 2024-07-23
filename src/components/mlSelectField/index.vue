@@ -134,7 +134,8 @@ const getAllFields = async () => {
 		let resList = [];
 		res.data.forEach((el) => {
             let showType = ['TextArea','Text','Money','Decimal','Integer'];
-			if (showType.includes(el.type)) {
+            let flag = props.isQuickQuery ? showType.includes(el.type) : el.type !== 'PrimaryKey';
+			if (flag) {
 				el.isSelected = false;
 				if (hasFieldNames.value.includes(el.name)) {
 					let filterFields = selectedFields.value.filter(
@@ -150,7 +151,7 @@ const getAllFields = async () => {
 					selectedFields.value.length < 1 &&
 					el.name == props.nameFieldName
 				) {
-					el.isSelected = true;
+					el.isSelected = true; 
 				}
 				resList.push(el);
 			}
