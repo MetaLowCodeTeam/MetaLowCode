@@ -27,6 +27,7 @@
 				:tableHeight="widget.options.listSubFormHeight"
                 :detailEntityFlag="widget.options?.detailEntityFlag"
                 :refEntityBindingField="widget.options?.refEntityBindingField"
+                isVFormDesignMode
 			/>
 		</div>
 	</container-wrapper>

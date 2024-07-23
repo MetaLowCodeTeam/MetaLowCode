@@ -48,24 +48,15 @@
                 >
                     <span
                         class="ml-a-span"
-                        @click="showAssociatedRecords"
+                        @click="formData.isAssociatedRecords = true"
                     >同时{{ labelData.label }}关联记录</span>
                 </el-form-item>
                 <el-form-item label="选择相关记录" v-if="formData.isAssociatedRecords" class="mb-10">
-                    <el-select
+                    <MlAssociatedRecords
                         v-model="formData.associatedRecords"
-                        multiple
-                        filterable
-                        class="w-100"
-                        value-key="label"
-                    >
-                        <el-option
-                            v-for="item in entityList"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item"
-                        />
-                    </el-select>
+                        :entityCode="entityCode"
+                        :queryLevel="null"
+                    />
                 </el-form-item>
                 <el-form-item label=" " v-if="labelData.type == 'share'">
                     <el-checkbox v-model="formData.withUpdate" label="允许编辑 (不勾选则仅共享读取权限)" />
@@ -81,29 +72,20 @@
                 </span>
                 确认删除选中的 {{ formData.list.length }} 条记录？
             </div>
-            <div class="mt-10">
-                <el-checkbox
-                    @change="delRecordsChange"
-                    v-model="formData.isAssociatedRecords"
-                    label="同时删除关联记录"
-                />
-            </div>
-            <div class="mt-10" v-if="formData.isAssociatedRecords">
-                <el-select
-                    v-model="formData.associatedRecords"
-                    multiple
-                    filterable
-                    class="w-100"
-                    value-key="label"
-                >
-                    <el-option
-                        v-for="item in entityList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item"
+            <template v-if="delConf.allowUsersSelect">
+                <div class="mt-10">
+                    <el-checkbox
+                        v-model="formData.isAssociatedRecords"
+                        label="同时删除关联记录"
                     />
-                </el-select>
-            </div>
+                </div>
+                <div class="mt-10" v-if="formData.isAssociatedRecords">
+                    <MlAssociatedRecords
+                        v-model="formData.associatedRecords"
+                        :entityCode="entityCode"
+                    />
+                </div>
+            </template>
         </div>
         <template #footer>
             <el-button @click="dialogShow=false" :loading="loading">取消</el-button>
@@ -114,6 +96,7 @@
 
 <script setup>
 import { reactive, ref, inject } from "vue";
+import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
 import { useRouter } from "vue-router";
 import {
     assignRecord,
@@ -125,6 +108,7 @@ const emits = defineEmits("allocationSuccess");
 const props = defineProps({
     idFieldName: { type: String, default: "" },
     entityCode: { type: [String, Number], default: "" },
+    layoutConfig: { type: Object, default: () => {} },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -152,6 +136,13 @@ let labelData = reactive({
     label: "",
     pageType: "list",
 });
+
+// 删除配置
+let delConf = ref({
+    allowUsersSelect: true,
+    associatedRecords: [],
+});
+
 const openDialog = (data) => {
     dialogShow.value = true;
     formData.list = [...data.list];
@@ -173,6 +164,14 @@ const openDialog = (data) => {
     }
     if (data.type == "del") {
         labelData.label = "删除";
+        let styleConfig = props.layoutConfig.STYLE?.config || "";
+        if(styleConfig) {
+            delConf.value = Object.assign(delConf.value, JSON.parse(styleConfig)?.delConf);
+            formData.associatedRecords = delConf.value.associatedRecords;
+            if(delConf.value.associatedRecords.length > 0){
+                formData.isAssociatedRecords = true;
+            }
+        }
     }
     // labelData.label =
     //     data.type == "allocation"
@@ -182,30 +181,6 @@ const openDialog = (data) => {
     //         : "取消共享";
 };
 
-// 删除关联记录切换
-const delRecordsChange = async (v) => {
-    // console.log(v);
-    if (v) {
-        showAssociatedRecords();
-    }
-};
-
-// 同时分配关联记录
-const showAssociatedRecords = async () => {
-    formData.isAssociatedRecords = true;
-    loading.value = true;
-    let entityCode = props.entityCode;
-    let res = await $API.common.queryEntityList(
-        entityCode,
-        false,
-        labelData.type == "share" || labelData.type == "del" ? true : false,
-        true
-    );
-    if (res) {
-        entityList.value = res.data || [];
-    }
-    loading.value = false;
-};
 
 // 确认
 const confirm = async () => {

@@ -23,8 +23,9 @@ import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
 import '@vuemap/vue-amap/dist/style.css'
 import dayjs from "dayjs";
 
-import { registerCustomDetailCmp } from '@/views/custom-page/customEntryDetail.js';
-import { registerCustomEditCmp } from '@/views/custom-page/customEntryEdit.js';
+import { registerCustomDetailCmp } from '@/views/custom-page/customDetailEntry.js';
+import { registerCustomEditCmp } from '@/views/custom-page/customEditEntry.js';
+import { registerCustomListSubFormCmp } from '@/views/custom-page/ListSubFormCmp/customListSubFormEntry.js';
 // console.log("1. 使用路由...",router)
 
 //初始化高德地图组件
@@ -49,6 +50,7 @@ loadExtensionWidgets(app)
 loadChartsExtension(app)
 registerCustomDetailCmp(app);
 registerCustomEditCmp(app);
+registerCustomListSubFormCmp(app);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);

@@ -381,6 +381,13 @@ const getLayoutList = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
+        let { STYLE } = res.data;
+        if (STYLE && STYLE.config) {
+            styleConf.value = JSON.parse(STYLE.config);
+            if (styleConf.value?.detailConf.autoFullScreen) {
+                isFullSceen.value = true;
+            }
+        }
         // 如果有页签配置
         if(res.data.TAB?.config){
             // 取所有页签数据
@@ -438,6 +445,7 @@ const initData = async () => {
 					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
 				}
 				if (queryByIdRes && queryByIdRes.data) {
+                    globalDsv.value.rowRecordData = queryByIdRes.data;
 					detailName.value = queryByIdRes.data[nameFieldName.value];
                     // console.log(res.data.layoutJson,'res.data.layoutJson')
 					vFormRef.value.setFormJson(res.data.layoutJson);

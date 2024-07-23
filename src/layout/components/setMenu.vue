@@ -284,7 +284,7 @@
                             style="width: 100%"
                         >
                             <el-option
-                                v-for="item in CustomEntryList"
+                                v-for="item in customListEntry"
                                 :key="item.value"
                                 :label="item.label"
                                 :value="item.value"
@@ -341,7 +341,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import mlShareTo from "@/components/mlShareTo/index.vue";
 import { getDataList } from "@/api/crud";
-import { CustomEntryList } from "@/views/custom-page/customEntryList";
+import { customListEntry } from "@/views/custom-page/customListEntry";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");

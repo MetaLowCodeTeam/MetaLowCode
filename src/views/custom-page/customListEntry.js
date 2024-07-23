@@ -5,7 +5,7 @@
  * 自定义实体列表模板
  */
 
-export const CustomEntryList = [
+export const customListEntry = [
     {
         // 模板名称
         label: "自定义测试实体模板",

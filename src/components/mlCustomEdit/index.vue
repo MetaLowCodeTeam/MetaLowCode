@@ -15,7 +15,7 @@
 
 <script setup>
 import { onMounted, ref, watchEffect } from "vue";
-import { getEditCmpByEntityName } from "@/views/custom-page/customEntryEdit.js";
+import { getEditCmpByEntityName } from "@/views/custom-page/customEditEntry.js";
 
 // SimpleTable
 const props = defineProps({
