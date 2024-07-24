@@ -70,6 +70,7 @@
                     />
                 </div>
                 <div class="info-text mt-5">同步审批状态会强制修改相关数据的审批状态，请谨慎选择！！</div>
+                <div class="info-text mt-5">注：同步审批状态的实体需在字段管理中开启审批字段后方可生效！！</div>
             </div>
             <template #footer>
                 <div style="flex: auto">
