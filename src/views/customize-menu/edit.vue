@@ -412,9 +412,12 @@ const confirm = async (target) => {
                         resData.needCb = true;
                     }
                     emits("saveFinishCallBack", resData);
-                    row.detailId = resData[row.idFieldName];
+                    
                     if(target != 'notCloseDialog'){
                         isShow.value = false;
+                    }else {
+                        row.detailId = resData[row.idFieldName];
+                        initFormLayout()
                     }
                 }
                 loading.value = false;
