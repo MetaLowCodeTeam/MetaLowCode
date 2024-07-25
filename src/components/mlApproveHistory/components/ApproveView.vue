@@ -87,6 +87,8 @@ const loadFlowDesignerFn = async () => {
                     if(el.activityState == 'reject'){
                         properties.stroke = "#F56C6C";
                     }
+
+                    console.log(el.activityType, properties,'properties')
                     setProperties(lf, el.activityType, el.activityId, properties, true);
                 }
 			});
@@ -95,44 +97,7 @@ const loadFlowDesignerFn = async () => {
 		});
 	}
 	loadingConf.loading = false;
-	// nextTick(() => {
-	// 	let type = "bpmn:userTask";
-	// 	let id = "Activity_0AnmzVs";
-	// 	// // console.log(MetaFlowDesignerRef.value?.lf[NodeTypeFn[type]](id));
-	// 	let lf = MetaFlowDesignerRef.value?.lf || {};
-	// 	// if(lf){
-	// 	lf.openEdgeAnimation("Flow_mZWgpxe");
-	// 	lf[NodeTypeFn["bpmn:sequenceFlow"]]("Flow_mZWgpxe").setProperties({
-	// 		stroke: "red",
-	// 	});
-	// 	// }
-	// 	//    console.log( MetaFlowDesignerRef.value?.lf.getGraphRawData())
-	// 	let mflData = MetaFlowDesignerRef.value.getJsonData();
-	// 	console.log(mflData, "mflData");
-	// 	let { nodes, edges } = mflData;
-	// 	console.log(mflData, "mflData");
-	// 	nodes.forEach((el) => {
-	// 		console.log(el, "节点");
-	// 		if (el.properties.flowJson) {
-	// 			let flowJson = getProperties(el.properties.flowJson);
-	// 			console.log(
-	// 				`----------节点名称：${el.text.value}  节点属性 beg ↓ -------------`
-	// 			);
-	// 			console.log(flowJson, "节点属性");
-	// 			console.log(
-	// 				`----------节点名称：${el.text.value}  节点属性 end ↑ -------------`
-	// 			);
-	// 			lf[NodeTypeFn[type]](id).setProperties({
-	// 				stroke: "red",
-	// 			});
-	// 		}
-	// 	});
-	//     const { editConfigModel } = lf.graphModel;
-	//     editConfigModel.updateEditConfig({
-	//         isSilentMode: true,
-	//         stopMoveGraph: true,
-	//     });
-	// });
+	
 };
 
 // 获取节点类型对应的ID函数

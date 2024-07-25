@@ -178,7 +178,8 @@
                     style="width: 100%"
                     v-loading="loadFlowListLoading"
                     clearable
-                    @change="selectedSubApproval"
+                    @change="changeSubApproval"
+                    filterable
                 >
                     <el-option
                         v-for="item in flowList"
@@ -192,19 +193,31 @@
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
                 <div class="lable-title mb-3">选择数据转换</div>
                 <el-select 
-                    v-model="myFormData.approvalConfigId" 
+                    v-model="myFormData.transformId" 
                     style="width: 100%"
-                    v-loading="loadFlowListLoading"
+                    v-loading="loadDTLoading"
                     clearable
                     :disabled="!myFormData.approvalConfigId"
+                    filterable
                 >
                     <el-option
-                        v-for="item in flowList"
-                        :key="item.approvalConfigId"
-                        :label="item.flowName"
-                        :value="item.approvalConfigId"
+                        v-for="item in formatDtOpList"
+                        :key="item.transformId"
+                        :label="item.transformName"
+                        :value="item.transformId"
                     />
                 </el-select>
+            </div>
+            <!-- 自动提交规则 -->
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
+                <div class="lable-title mb-3">自动提交规则</div>
+                <el-radio-group
+                    class="radio-need-block"
+                    v-model="myFormData.isBlocked"
+                >
+                    <el-radio :label="false">发起子流程，自动进入下一个节点</el-radio>
+                    <el-radio :label="true">发起子流程，等待审批完成后再进入下一个节点</el-radio>
+                </el-radio-group>
             </div>
         </el-collapse-item>
         <!-- 事件设置 -->
@@ -341,6 +354,7 @@ let myFormData = ref({
     completeScript: "// Demo code",
     specificRole:[],
     modifiableFields:[],
+    isBlocked: false,
 });
 let entityCode = ref("");
 let entityName = ref("");
@@ -543,11 +557,51 @@ const getFormData = () => {
 let loadFlowListLoading = ref(false);
 // 流程list
 let flowList = ref([]);
+// 当前选择的子流程
+let curSelectedFlow = ref({});
+// 加载数据转换 DataTransformationLoading
+let loadDTLoading = ref(false);
+// 数据转换List DataTransformationList
+let dtList = ref([]);
+// 选择子流程后渲染的oplist
+let formatDtOpList = ref([]);
 
 // 审批类型切换
 const approvalTypeChange = async () => {
     // 选择发起子流程才调接口
     if(myFormData.value.approvalType == 3){
+        loadDTLoading.value = true;
+        let dtRes = await http.post("/transform/listQuery", {
+            mainEntity: 'Transform',
+            fieldsList: 'transformName, sourceEntity, targetEntity',
+            filter: {
+                equation:"AND",
+                items: [
+                    {
+                        fieldName: "disabled",
+                        op: "EQ",
+                        value: 0,
+                    },
+                    {
+                        fieldName: "isPreview",
+                        op: "EQ",
+                        value: 0,
+                    },
+                    {
+                        fieldName: "sourceEntity",
+                        op: "EQ",
+                        value: entityName.value,
+                    }
+                ]
+            },
+            pageSize: 99999,
+            pageNo: 1,
+        });
+        if(dtRes){
+            dtList.value = dtRes.data.dataList;
+        }
+        loadDTLoading.value = false;
+
         loadFlowListLoading.value = true;
         let res = await http.post("/approval/configList", {
             mainEntity: 'ApprovalConfig',
@@ -567,14 +621,33 @@ const approvalTypeChange = async () => {
         });
         if(res){
             flowList.value = res.data.dataList;
+            selectedSubApproval();
         }
         loadFlowListLoading.value = false;
+        
     }
 }
 
+
+
 // 选择子流程切换
-const selectedSubApproval = () => {
-    
+const changeSubApproval = () => {
+    selectedSubApproval(()=>{
+        myFormData.value.transformId = "";
+    })
+}
+const selectedSubApproval = (cb) => {
+    let findSelectedFlow = flowList.value.filter(el => el.approvalConfigId == myFormData.value.approvalConfigId);
+    if(findSelectedFlow.length > 0){
+        curSelectedFlow.value = findSelectedFlow[0];
+        formatDtOpList.value = dtList.value.filter(el => el.targetEntity == allEntityName.value[curSelectedFlow.value.entityCode]);
+    }else {
+        curSelectedFlow.value = {};
+        formatDtOpList.value = [];
+    }
+    if(cb){
+        cb();
+    }
 }
 
 

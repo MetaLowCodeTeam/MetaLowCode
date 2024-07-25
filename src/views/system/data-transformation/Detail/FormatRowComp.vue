@@ -11,9 +11,15 @@
 			<el-option
 				v-for="(op, inx) in myTargetFields"
 				:key="inx"
-				:label="op.fieldLabel + '(' + op.fieldType + ')'"
+				:label="
+					(!op.isNullable ? '*' : '') +
+					op.fieldLabel +
+					'(' +
+					op.fieldType +
+					')'
+				"
 				:value="op.fieldName"
-                :disabled="myUseFields.includes(op.fieldName)"
+				:disabled="myUseFields.includes(op.fieldName)"
 			/>
 		</el-select>
 	</el-col>
@@ -149,7 +155,7 @@
 			autosize
 			type="textarea"
 			@click="checkMlFormula"
-            :disabled="type == 2 || !curtItem.targetField"
+			:disabled="type == 2 || !curtItem.targetField"
 		></el-input>
 	</el-col>
 	<el-dialog
@@ -314,43 +320,59 @@ const getCurField = (item) => {
 // 格式化源字段显示
 const floatSourceFieldList = (item) => {
 	// 字符串字段
-	let strField = ["Email", "Url", "TextArea", "Text"];
+    // let strField = ["TextArea", "Text"];
+    let { fieldType, referenceName } = item;
+    if(fieldType != 'Reference'){
+        return mySourcesFields.value.filter(
+            (el) => el.fieldType == fieldType
+        )
+    }
+    // console.log(referenceName,'referenceName')
+    // console.log(props.sourceEntity.name,'props.sourceEntity.name')
+    // return mySourcesFields.value
+    return mySourcesFields.value.filter(
+        (el) => (el.fieldType == 'Reference' && el.referenceName == referenceName) || (el.fieldType == 'PrimaryKey' && referenceName == props.sourceEntity.name)
+    )
 
-	let { fieldType, referenceName } = item;
-	// 如果是字符串字段，显示所有字符串字段
-	// 如果不是就显示通类型字段
-	if (strField.includes(fieldType)) {
-		return mySourcesFields.value.filter(
-			(el) => el.fieldType != "Reference"
-		);
-	} else {
-		if (fieldType == "Reference") {
-			let showFields = [];
-			mySourcesFields.value.forEach((el) => {
-				if (
-					el.fieldType == fieldType &&
-					el.referenceName == referenceName
-				) {
-					showFields.push(el);
-				}
-			});
-			return showFields;
-		} else {
-			let showFields = [];
-			mySourcesFields.value.forEach((el) => {
-				if (el.fieldType == fieldType || el.fieldType == "Text") {
-					showFields.push(el);
-				}
-			});
-			if (showFields.length < 1) {
-				return mySourcesFields.value.filter(
-					(el) => el.fieldType != "Reference"
-				);
-			} else {
-				return showFields;
-			}
-		}
-	}
+
+
+
+
+	// let { fieldType, referenceName } = item;
+	// // 如果是字符串字段，显示所有字符串字段
+	// // 如果不是就显示通类型字段
+	// if (strField.includes(fieldType)) {
+	// 	return mySourcesFields.value.filter(
+	// 		(el) => el.fieldType != "Reference"
+	// 	);
+	// } else {
+	// 	if (fieldType == "Reference") {
+	// 		let showFields = [];
+	// 		mySourcesFields.value.forEach((el) => {
+	// 			if (
+	// 				el.fieldType == fieldType &&
+	// 				el.referenceName == referenceName
+	// 			) {
+	// 				showFields.push(el);
+	// 			}
+	// 		});
+	// 		return showFields;
+	// 	} else {
+	// 		let showFields = [];
+	// 		mySourcesFields.value.forEach((el) => {
+	// 			if (el.fieldType == fieldType || el.fieldType == "Text") {
+	// 				showFields.push(el);
+	// 			}
+	// 		});
+	// 		if (showFields.length < 1) {
+	// 			return mySourcesFields.value.filter(
+	// 				(el) => el.fieldType != "Reference"
+	// 			);
+	// 		} else {
+	// 			return showFields;
+	// 		}
+	// 	}
+	// }
 };
 
 /**

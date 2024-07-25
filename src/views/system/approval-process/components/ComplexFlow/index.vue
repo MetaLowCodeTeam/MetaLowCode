@@ -241,7 +241,7 @@ const getProperties = (jsonStr) => {
 let setNodeData = (data) => {
     let { type, id } = drawerData.value;
     setProperties(type, id, data);
-    setNodeBorderColor(type, id, "");
+    setNodeBorderColor(type, id, "#337ecc");
 };
 
 // 设置节点自定义属性
@@ -307,6 +307,17 @@ const onSave = async () => {
                 setNodeBorderColor(el.type, el.id, "red");
                 return;
             }
+            let { approvalType, approvalConfigId, transformId } = properties;
+            if(approvalType == 3 && !approvalConfigId){
+                ElMessage.error(el.text?.value + "节点：请选择子流程");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+            if(approvalType == 3 && !transformId){
+                ElMessage.error(el.text?.value + "节点：请选择数据转换");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
         }
     }
     // 遍历线
@@ -361,7 +372,9 @@ const onSave = async () => {
 // 设置节点变颜色
 const setNodeBorderColor = (type, id, stroke) => {
     MetaFlowDesignerRef.value.lf[NodeTypeFn[type]](id).setProperties({
-        stroke,
+        rectNodeNodeStyle: {
+            stroke
+        },
     });
 };
 

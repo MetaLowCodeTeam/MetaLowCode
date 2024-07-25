@@ -1,6 +1,6 @@
 <template>
 	<!--  -->
-	<div class="mapping-comp">
+	<div class="mapping-comp" :class="{'is-error': myError}">
 		<el-row
 			:gutter="10"
 			v-for="(item, inx) of myUseFields"
@@ -99,7 +99,14 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 错误提示
+    isError: {
+        type: Boolean,
+        default: false,
+    }
 });
+
+const emits = defineEmits(["clearError"])
 
 // 使用的字段
 let myUseFields = ref([]);
@@ -118,12 +125,17 @@ const updateItem = reactive({
 	referenceName: "",
 });
 
+// 错误提示边框变红
+let myError = ref(false);
+
 watchEffect(() => {
 	myUseFields.value = props.modelValue;
+    myError.value = props.isError;
 });
 
 // 执行操作
 const actionOperate = (target, inx) => {
+    emits('clearError')
 	if (target == "add") {
 		openEditDialog(updateItem, target);
 	} else if (target == "del") {
@@ -203,6 +215,10 @@ const cloneDeep = (data) => {
 	border-radius: 4px;
 	padding: 10px;
 	box-sizing: border-box;
+    border: 1px solid #f7f7f7;
+    &.is-error {
+        border-color: red;
+    }
 	.del-icon-div {
 		// display: inline-block;
 		height: 30px;
