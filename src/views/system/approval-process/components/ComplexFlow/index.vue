@@ -180,9 +180,9 @@ let nodeDefaultData = reactive({
         // 后置脚本
         completeScript: "",
         // 数据转化ID
-        transformId: "",
+        transformId: null,
         // 审批配置ID
-        approvalConfigId: "",
+        approvalConfigId: null,
         // 是否阻断流程
         isBlocked: false,
     },

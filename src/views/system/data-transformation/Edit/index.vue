@@ -160,7 +160,7 @@ const openDialog = (row) => {
             }
         }
 	}
-	dialogConf.value.title = (!!row ? "编辑" : "新建") + "记录转化";
+	dialogConf.value.title = (!!row ? "编辑" : "新建") + "数据转化";
 	dialogConf.value.show = true;
 };
 

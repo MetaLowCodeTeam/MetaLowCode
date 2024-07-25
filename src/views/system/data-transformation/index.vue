@@ -22,7 +22,7 @@
 					<el-icon size="14">
 						<ElIconPlus />
 					</el-icon>
-					<span class="ml-5">新建记录转化</span>
+					<span class="ml-5">新建数据转化</span>
 				</el-button>
 			</template>
 			<template #activeRow>

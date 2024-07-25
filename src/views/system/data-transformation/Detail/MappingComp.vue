@@ -34,7 +34,7 @@
 				<span class="info-text">更新方式</span>
 			</el-col>
 			<el-col :span="9">
-				<span class="info-text">源字段/固定值/更新方式</span>
+				<span class="info-text">源字段/固定值/计算公式</span>
 			</el-col>
 		</el-row>
 		<div class="w-100">
@@ -67,7 +67,7 @@
 				<span class="info-text">更新方式</span>
 			</el-col>
 			<el-col :span="9">
-				<span class="info-text">源字段/固定值/更新方式</span>
+				<span class="info-text">源字段/固定值/计算公式</span>
 			</el-col>
 		</el-row>
 		<template #footer>
@@ -181,7 +181,7 @@ const confirmEdit = () => {
         return;
 	}
 	if (!sourceField || JSON.stringify(sourceField) == '[]' || JSON.stringify(sourceField) == '{}') {
-		ElMessage.error("请先选择源字段/固定值/更新方式。");
+		ElMessage.error("请先选择源字段/固定值/计算公式。");
         return;
 	}
     // 查询字段是否存在
