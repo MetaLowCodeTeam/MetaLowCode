@@ -62,6 +62,7 @@ const loadFormData = async () => {
 			if (queryByIdRes?.flowVariables) {
 				globalDsv.value.flowVariables = queryByIdRes.flowVariables;
 			}
+            globalDsv.value.rowRecordData = queryByIdRes.data;
 			nextTick(() => {
 				vFormRef.value.setFormData(queryByIdRes.data);
 				nextTick(() => {

@@ -7,6 +7,7 @@
         draggable
         :showFullSceen="styleConf?.actionConf.showFullScreen"
         :autoFullScreen="styleConf?.actionConf.autoFullScreen"
+        append-to-body
     >
         <div class="main fullsceen-man" v-loading="loading">
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
@@ -34,8 +35,22 @@
                 @click="confirm"
                 v-if="editParamConf.showConfirmBtn && (!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
                 :loading="loading"
-            >确认</el-button>
-            <slot name="afterConfirmBtn"></slot>
+                icon="Select"
+            >
+                保存
+            </el-button>
+            <slot name="beforeConfirmRefreshBtn"></slot>
+            <el-button
+                type="primary"
+                @click="confirmRefresh"
+                v-if="editParamConf.showConfirmRefreshBtn && (!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
+                :loading="loading"
+                plain
+                icon="Refresh"
+            >
+                保存并刷新
+            </el-button>
+            <slot name="afterConfirmRefreshBtn"></slot>
         </template>
     </ml-dialog>
 </template>
@@ -83,6 +98,7 @@ const editParamConf = ref({
     showFooter: true,
     showConfirmBtn: true,
     showCancelBtn: true,
+    showConfirmRefreshBtn: true,
 })
 
 
@@ -230,7 +246,7 @@ const initFormLayout = async () => {
                         row.dialogTitle =
                             "编辑" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
-
+                        globalDsv.value.rowRecordData = formData.data;
                         nextTick(() => {
 							vFormRef.value.setFormData(formData.data);
                             nextTick(() => {
@@ -324,7 +340,7 @@ const getFieldListOfEntityApi = async (tag) => {
  *
  */
 // 保存
-const confirm = async () => {
+const confirm = async (target) => {
     if (!vFormRef.value) {
         isShow.value = false;
         return;
@@ -396,7 +412,13 @@ const confirm = async () => {
                         resData.needCb = true;
                     }
                     emits("saveFinishCallBack", resData);
-                    isShow.value = false;
+                    
+                    if(target != 'notCloseDialog'){
+                        isShow.value = false;
+                    }else {
+                        row.detailId = resData[row.idFieldName];
+                        initFormLayout()
+                    }
                 }
                 loading.value = false;
             }
@@ -411,9 +433,14 @@ const cloneDeep = (data) => {
     return JSON.parse(JSON.stringify(data));
 }
 
+
 /**
  * 导出方法
  */
+
+const confirmRefresh = () => {
+    confirm('notCloseDialog')
+}
 
 // 列表子表单回调所需
 const setRowRecordId = (id) => {

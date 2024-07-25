@@ -259,7 +259,9 @@ const initFormLayout = async () => {
                 let formData = await queryById(props.entityId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
+                    globalDsv.value.rowRecordData = formData.data;
                     vFormRef.value.setFormData(formData.data);
+                    
                     nextTick(() => {
                         vFormRef.value.reloadOptionData();
                         vFormRef.value.disableForm();

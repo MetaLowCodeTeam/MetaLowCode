@@ -135,6 +135,7 @@
                                         :idFieldName="idFieldName"
                                         :nameFieldName="nameFieldName"
                                         @editColumnConfirm="editColumnConfirm"
+                                        :layoutConfig="myLayoutConfig"
                                     />
                                 </el-col>
                                 <el-col :span="24" v-if="contentSlots.afterMoreBtn">
@@ -280,6 +281,7 @@ watch(
 // 加载配置信息
 const loadMyLayoutConfig = () => {
 	myLayoutConfig.value = props.layoutConfig || {};
+
 	let { STYLE } = myLayoutConfig.value;
 	if (STYLE && STYLE.config) {
 		styleConf.value = JSON.parse(STYLE.config);
@@ -359,6 +361,7 @@ const newRelatedConfirm = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
+        myLayoutConfig.value = res.data;
 		addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
 		if (cutTab.value == "detail") {
 			initData();
@@ -381,6 +384,7 @@ const getLayoutList = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
+        myLayoutConfig.value = res.data;
         let { STYLE } = res.data;
         if (STYLE && STYLE.config) {
             styleConf.value = JSON.parse(STYLE.config);
