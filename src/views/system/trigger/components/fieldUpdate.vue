@@ -184,7 +184,7 @@
             </el-row>
         </el-form-item>
         <el-form-item label=" ">
-            <el-button type="primary" plain @click="addupdateRule">+ 添加</el-button>
+            <el-button type="primary" plain @click="addUpdateRule">+ 添加</el-button>
         </el-form-item>
         <div v-if="mlFormulaIsShow">
             <mlFormula

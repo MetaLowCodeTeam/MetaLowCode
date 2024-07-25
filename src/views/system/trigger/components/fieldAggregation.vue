@@ -113,7 +113,7 @@
             </el-row>
         </el-form-item>
         <el-form-item label=" ">
-            <el-button type="primary" plain @click="addupdateRule">+ 添加</el-button>
+            <el-button type="primary" plain @click="addUpdateRule">+ 添加</el-button>
         </el-form-item>
         <el-form-item class="mt-20" label="聚合数据条件">
             <el-row>
