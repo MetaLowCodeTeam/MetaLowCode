@@ -230,7 +230,7 @@ const initFormLayout = async () => {
                         row.dialogTitle =
                             "编辑" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
-
+                        globalDsv.value.rowRecordData = formData.data;
                         nextTick(() => {
 							vFormRef.value.setFormData(formData.data);
                             nextTick(() => {
