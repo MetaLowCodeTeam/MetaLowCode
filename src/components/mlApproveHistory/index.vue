@@ -138,10 +138,6 @@
                 <el-empty v-else :image-size="100" description="未查询到流程记录" />
             </div>
         </div>
-        
-        <!-- <template #footer>
-            <el-button @click="openApproveView">查看审批</el-button>
-        </template> -->
     </mlDialog>
     <!-- 查看签名 -->
     <mlDialog

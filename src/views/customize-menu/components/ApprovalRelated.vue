@@ -111,12 +111,12 @@
 			</el-form-item>
 			<el-form-item>
 				<div class="w-100" style="text-align: right">
-					<el-button @click="approveTaskConf.isShow = false"
-						>取消</el-button
-					>
-					<el-button type="primary" @click="confirmApproveTask"
-						>确认任务</el-button
-					>
+					<el-button @click="approveTaskConf.isShow = false">
+                        取消
+                    </el-button>
+					<el-button type="primary" @click="confirmApproveTask">
+                        确认任务
+                    </el-button>
 				</div>
 			</el-form-item>
 		</el-form>
