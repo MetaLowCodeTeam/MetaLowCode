@@ -317,7 +317,11 @@ let rowResData = ref({});
 
 // 当前页签
 let cutTab = ref("detail");
-const openDialog = (id) => {
+// 表单数据
+let optionData = ref({});
+let globalDsv = ref({});
+
+const openDialog = (id, localDsv) => {
 	detailId.value = id;
 	entityCode.value = queryEntityCodeById(id);
 	entityName.value = queryEntityNameById(id);
@@ -325,6 +329,9 @@ const openDialog = (id) => {
 		ElMessage.warning("当前实体未找到");
 		return;
 	}
+    if(localDsv){
+        globalDsv.value = Object.assign(globalDsv.value, localDsv);
+    }
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
@@ -423,8 +430,7 @@ const getLayoutList = async () => {
 
 let haveLayoutJson = ref(false);
 let noeData = ref(false);
-let optionData = ref({});
-let globalDsv = ref({});
+
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
@@ -482,9 +488,12 @@ const initData = async () => {
 
 // 打开编辑
 let editRefs = ref();
-const onEditRow = () => {
-	// editRefs.value.openDialog({ detailId: detailId.value });
-    editEmits({ detailId: detailId.value })
+const onEditRow = (localDsv) => {
+    let tempV = {
+        detailId: detailId.value
+    };
+    !!localDsv && (tempV.localDsv = localDsv)
+    editEmits(tempV)
 };
 
 // 新建
@@ -494,7 +503,6 @@ const onAdd = (e) => {
 	tempV.fieldName = e.fieldName;
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
-	// editRefs.value.openDialog(tempV);
     editEmits(tempV)
 };
 
@@ -566,8 +574,8 @@ const getCurDetailInfo = () => {
 }
 
 // 编辑
-const toEdit = () => {
-    onEditRow();
+const toEdit = (localDsv) => {
+    onEditRow(localDsv);
 }
 
 const MoreRefs = ref();

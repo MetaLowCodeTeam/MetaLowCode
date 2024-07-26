@@ -820,7 +820,7 @@ let editRefs = ref();
 let myFormEntityId = ref("");
 
 // 新建
-const onAdd = () => {
+const onAdd = (localDsv) => {
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
         if(!detailEntityFlag && !myFormEntityId.value){
@@ -847,6 +847,7 @@ const onAdd = () => {
     tempV.entityName = entityName.value;
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";
+    !!localDsv && (tempV.localDsv = localDsv)
     editRefs.value.openDialog(tempV);
 };
 
@@ -861,7 +862,7 @@ const getEditBtnTitle = (row) => {
     return str;
 };
 // 编辑
-const onEditRow = (row) => {
+const onEditRow = (row, localDsv) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
@@ -875,6 +876,7 @@ const onEditRow = (row) => {
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
+    !!localDsv && (tempV.localDsv = localDsv)
     editRefs.value.openDialog(tempV);
 };
 
@@ -902,7 +904,7 @@ const rowDblclick = (row) => {
 };
 
 // 打开详情
-const openDetailDialog = (row) => {
+const openDetailDialog = (row, localDsv) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
@@ -915,7 +917,7 @@ const openDetailDialog = (row) => {
         editRefs.value.openDialog(tempV);
         return
     }
-    detailRefs.value.openDialog(row[idFieldName.value]);
+    detailRefs.value.openDialog(row[idFieldName.value], localDsv);
 };
 
 // 列排序
@@ -1249,7 +1251,7 @@ const getSelectedRow = () => {
 }
 
 // 编辑数据
-const toEdit = () => {
+const toEdit = (localDsv) => {
     if(multipleSelection.value.length < 1){
         ElMessage.warning("请先选择数据")
         return
@@ -1263,11 +1265,11 @@ const toEdit = () => {
         ElMessage.warning("当前数据这个在审批中或者已审批结束，不可编辑。")
         return
     }
-    onEditRow(row);
+    onEditRow(row, localDsv);
 }
 
 // 查看详情
-const toDetail = () => {
+const toDetail = (localDsv) => {
     if(multipleSelection.value.length < 1){
         ElMessage.warning("请先选择数据")
         return
@@ -1277,12 +1279,12 @@ const toDetail = () => {
         return
     }
     let row = multipleSelection.value[0];
-    openDetailDialog(row)
+    openDetailDialog(row, localDsv)
 }
 
 // 新建数据
-const toAdd = () => {
-    onAdd();
+const toAdd = (localDsv) => {
+    onAdd(localDsv);
 }
 
 // 更多操作
