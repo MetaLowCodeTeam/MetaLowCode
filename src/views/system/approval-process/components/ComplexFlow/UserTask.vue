@@ -177,7 +177,7 @@
                     v-model="myFormData.approvalConfigId" 
                     style="width: 100%"
                     v-loading="loadFlowListLoading"
-                    @change="changeSubApproval"
+                    @change="selectedSubApproval"
                     filterable
                 >
                     <el-option
@@ -358,7 +358,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject, watch } from "vue";
+import { ref, onMounted, inject, watch, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
@@ -392,7 +392,7 @@ watch(
     () => props.formData,
     (newVal,oldVal) => {
         if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
-            myFormData.value = Object.assign(myFormData.value, props.formData);
+            initApi();
         }
     },
     { deep: true }
@@ -407,11 +407,17 @@ watch(
     { deep: true }
 );
 
+
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;
     if (entityCode) {
         entityName.value = allEntityName.value[entityCode.value];
     }
+    initApi();
+});
+
+// 初始化API
+const initApi = () => {
     myFormData.value = Object.assign(myFormData.value, props.formData);
     // 获取部门负责人数据
     getDepartment();
@@ -419,7 +425,7 @@ onMounted(() => {
     getEntityFields();
     // 审批类型切换
     approvalTypeChange();
-});
+}
 
 
 /**
@@ -600,6 +606,7 @@ const approvalTypeChange = async () => {
     // 选择发起子流程才调接口
     if(myFormData.value.approvalType == 3){
         loadDTLoading.value = true;
+        // 加载数据转换List
         let dtRes = await http.post("/transform/listQuery", {
             mainEntity: 'Transform',
             fieldsList: 'transformName, sourceEntity, targetEntity',
@@ -628,9 +635,10 @@ const approvalTypeChange = async () => {
         });
         if(dtRes){
             dtList.value = dtRes.data.dataList;
+
         }
         loadDTLoading.value = false;
-
+        // 加载子流程List
         loadFlowListLoading.value = true;
         let res = await http.post("/approval/configList", {
             mainEntity: 'ApprovalConfig',
@@ -658,14 +666,7 @@ const approvalTypeChange = async () => {
 }
 
 
-
-// 选择子流程切换
-const changeSubApproval = () => {
-    selectedSubApproval(()=>{
-        myFormData.value.transformId = "";
-    })
-}
-const selectedSubApproval = (cb) => {
+const selectedSubApproval = () => {
     let findSelectedFlow = flowList.value.filter(el => el.approvalConfigId == myFormData.value.approvalConfigId);
     if(findSelectedFlow.length > 0){
         curSelectedFlow.value = findSelectedFlow[0];
@@ -674,8 +675,15 @@ const selectedSubApproval = (cb) => {
         curSelectedFlow.value = {};
         formatDtOpList.value = [];
     }
-    if(cb){
-        cb();
+    // 如果格式化后的数据转换是空，清空数据转换绑定字段
+    if(formatDtOpList.value.length < 1){
+        myFormData.value.transformId = "";
+        return
+    }
+    // 如果格式化后的数据有值，但是没有 数据转换绑定字段的 item 也清空 数据转换绑定字段
+    let findTransformId = formatDtOpList.value.filter(el => el.transformId == myFormData.value.transformId);
+    if(findTransformId.length < 1){
+        myFormData.value.transformId = "";
     }
 }
 
