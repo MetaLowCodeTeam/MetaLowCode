@@ -463,6 +463,9 @@ export default {
                     !fldObj.searchDialogWidth
                         ? fieldSchema.options.searchDialogWidth
                         : fldObj.searchDialogWidth;
+
+				fieldSchema.refUserFlag = !!fldObj.refUserFlag
+				fieldSchema.refDepartmentFlag = !!fldObj.refDepartmentFlag
             }
 
 			/* 处理单选项字段 */
@@ -656,9 +659,6 @@ export default {
                 this.updateNameFormLayout(layoutName, shareTo);
             }
         },
-        // openSaveAsDialog() {
-        //     console.log("点击修改");
-        // },
 
         saveDesign() {
             //TODO: 检查表单设计是否符合规范！！！

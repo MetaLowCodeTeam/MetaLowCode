@@ -11,6 +11,9 @@ export default {
             //
             fillBackBtnText: "回填设置",
 			searchDialogWidth: "搜索弹窗宽度",
+			useCurrentUser: '默认使用登录用户',
+			useCurrentDepartment: '默认使用登录部门',
+
             // 列表子表单语言配置
             listSubFormHeight: "列表高度",
             showListHeader: "是否显示头部",

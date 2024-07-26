@@ -27,7 +27,7 @@ export const listSubFormSchema = {
         paginationSize: 20,
         // 列表高度 - 默认294 空状态的高度
         listSubFormHeight: 294,
-        
+
     },
 };
 
@@ -105,6 +105,8 @@ export const referenceSchema = {
 		validation: '',
 		validationHint: '',
 		searchDialogWidth: '520px',  //搜索弹窗宽度
+		useCurrentUser: false,  //默认值使用当前登录用户
+		useCurrentDepartment: false,  //默认值使用当前登录用户所属部门
         fillBackEnabled: false,
         // 表单回填
         fillBackConfig: [],

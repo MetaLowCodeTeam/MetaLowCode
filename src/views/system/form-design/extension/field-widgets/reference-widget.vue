@@ -28,7 +28,7 @@
 				<template #suffix>
 					<el-icon
 						title="清除"
-						v-if="!!displayValue && !isReadMode"
+						v-if="!!displayValue && !isReadMode && !field.options.disabled"
 						class="el-input__icon"
 						@click="handleClearEvent"
 					>
@@ -202,6 +202,7 @@ export default {
 
 	mounted() {
 		this.handleOnMounted();
+		this.setDefaultValue()
 	},
 
 	beforeUnmount() {
@@ -209,6 +210,37 @@ export default {
 	},
 
 	methods: {
+		setDefaultValue() {
+			if (this.field.options.disabled || this.isReadMode) {
+				return
+			}
+
+			if (this.getValue()) {
+				return
+			}
+
+			let loginUser = null
+			if (localStorage.getItem('USER_INFO')) {
+				loginUser = JSON.parse(localStorage.getItem('USER_INFO')).content
+			}
+			if (loginUser && this.field.options.useCurrentUser) {
+				if (loginUser.userId) {
+					this.setValue({
+						id: loginUser.userId,
+						name: loginUser.userName
+					})
+				}
+			}
+			if (loginUser && this.field.options.useCurrentDepartment) {
+				if (loginUser.departmentId) {
+					this.setValue({
+						id: loginUser.departmentId,
+						name: loginUser.departmentName
+					})
+				}
+			}
+		},
+
 		onAppendButtonClick() {
 			this.curRefField = this.field.options.name;
             let optionsFilterConditions = {};
@@ -251,7 +283,7 @@ export default {
             } else {
                 this.filterConditions = null;
             }
-            
+
 			this.showReferenceDialogFlag = true;
 		},
 
@@ -273,7 +305,7 @@ export default {
                     hasRepeat = true;
                 }
             })
-            
+
             // 是否存在重复的
             if(hasRepeat){
                 this.$confirm(
@@ -282,7 +314,7 @@ export default {
                     {
                         distinguishCancelAndClose: true,
                         confirmButtonText: '追加回填',
-                        cancelButtonText: '不追加回填', 
+                        cancelButtonText: '不追加回填',
                         type: "warning"
                     }
                 ).then(() => {
@@ -295,7 +327,7 @@ export default {
             }else {
                 this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, true);
             }
-            
+
         },
         doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, isAll) {
             // 是否追加回填
@@ -363,7 +395,7 @@ export default {
             }
 
             subFormCom.setSubFormValues(subFormValues);
-            
+
 
             // // 遍历多选数据
             // rows.forEach((selectedRow,subInx) => {
@@ -386,7 +418,7 @@ export default {
             // })
             // // 设置数据
             // subFormCom.setSubFormValues(subFormValues);
-           
+
             // 关闭弹框
             this.showReferenceDialogFlag = false;
         },
@@ -403,7 +435,7 @@ export default {
 			this.doFillBack(recordObj, selectedRow);
 			this.showReferenceDialogFlag = false;
 		},
-       
+
 		async doFillBack(recordObj, selectedRow) {
 			// 判断是否启用回填
 			if (this.field.options.fillBackEnabled) {
@@ -469,7 +501,7 @@ export default {
                             }
                         }
                     })
-                } 
+                }
 			}
 		},
 

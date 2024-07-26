@@ -11,6 +11,9 @@ export default {
             //
             fillBackBtnText: "Fill Back Setting",
 			searchDialogWidth: "Width Of Search Dialog",
+			useCurrentUser: 'Use Current User',
+			useCurrentDepartment: 'Use Current Department',
+
             // list-sub-form lang
             listSubFormHeight: "set list sub form height",
             showListHeader: "Display the header",

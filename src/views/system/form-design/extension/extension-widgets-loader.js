@@ -3,8 +3,8 @@ import enLang from './lang/en-US'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {registerFieldWidgets} from "@/views/system/form-design/extension/field-widgets";
 import {
-    checkTagSchema, 
-    referenceSchema, 
+    checkTagSchema,
+    referenceSchema,
     locationSchema,
     // 列表子表单
     listSubFormSchema
@@ -18,6 +18,7 @@ import onRecordSelectedEditor
 	from "@/views/system/form-design/extension/property-editor/onRecordSelected-editor.vue";
 
 import searchDialogWidthEditor from '@/views/system/form-design/extension/property-editor/reference-searchDialogWidth-editor.vue';
+import referenceUseCurrentUserEditor from '@/views/system/form-design/extension/property-editor/reference-useCurrentUser-editor.vue';
 import referenceFillBackConfigEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackConfig-editor.vue';
 import referenceFillBackEnabledEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackEnabled-editor.vue';
 import referenceFilterConditionsEditor from '@/views/system/form-design/extension/property-editor/reference-filterConditions-editor.vue';
@@ -45,11 +46,11 @@ import listSubFormListHeightEditor from "@/views/system/form-design/extension/pr
 
 const {
     addContainerWidgetSchema,
-    addBasicFieldSchema, 
-    addAdvancedFieldSchema, 
-    addCustomWidgetSchema, 
+    addBasicFieldSchema,
+    addAdvancedFieldSchema,
+    addCustomWidgetSchema,
     addZHExtensionLang,
-	addENExtensionLang, 
+	addENExtensionLang,
     PERegister
 } = VisualDesign.VFormSDK
 
@@ -57,7 +58,7 @@ export const loadExtensionWidgets = (app) => {
 	//加载语言文件
 	addZHExtensionLang(zhLang)
 	addENExtensionLang(enLang)
-    
+
 	//注册属性编辑器
     app.component('list-sub-form-name-editor', listSubFormNameEditor)
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
@@ -76,8 +77,9 @@ export const loadExtensionWidgets = (app) => {
     /**
      * 容器组件-列表子表单-字段组件  end
      */
-    
+
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
+	PERegister.registerCPEditor(app, 'useCurrentUser', 'reference-useCurrentUser-editor', referenceUseCurrentUserEditor)
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
@@ -100,7 +102,7 @@ export const loadExtensionWidgets = (app) => {
     // 添加到容器组件库
     // addCustomWidgetSchema(listSubFormSchema)
     addContainerWidgetSchema(listSubFormSchema)
-    // registerCWGenerator('list-sub-form', cardTemplateGenerator) 
+    // registerCWGenerator('list-sub-form', cardTemplateGenerator)
 
     //PERegister.registerCPEditor(app, 'newTest', 'newTest-editor', newTestEditor)
 }
