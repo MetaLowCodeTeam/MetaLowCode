@@ -242,7 +242,7 @@ export default {
                     }
                     el.value = fieldValue;
                     if(typeof fieldValue == 'object'){
-                        el.value = fieldValue.id;
+                        el.value = fieldValue.value || fieldValue.id;
                     }
                 }
             }
