@@ -91,6 +91,7 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import http from "@/utils/request";
 import { ElMessage } from "element-plus";
+import { saveRecord } from "@/api/crud";
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 
 const emits = defineEmits(["saveFinish"]);
@@ -179,9 +180,7 @@ const submitForm = (formEl) => {
 // 执行保存
 const doSave = async (recordId, data, msg) => {
 	dialogConf.value.loading = true;
-	let res = await http.post("/transform/saveRecord", data, {
-		params: { recordId },
-	});
+	let res = await saveRecord('Transform', recordId, data)
 	if (res) {
 		ElMessage.success(msg || "保存成功");
 		emits("saveFinish");

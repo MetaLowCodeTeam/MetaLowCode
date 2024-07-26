@@ -177,7 +177,6 @@
                     v-model="myFormData.approvalConfigId" 
                     style="width: 100%"
                     v-loading="loadFlowListLoading"
-                    clearable
                     @change="changeSubApproval"
                     filterable
                 >
@@ -196,7 +195,6 @@
                     v-model="myFormData.transformId" 
                     style="width: 100%"
                     v-loading="loadDTLoading"
-                    clearable
                     :disabled="!myFormData.approvalConfigId"
                     filterable
                 >
@@ -225,7 +223,7 @@
             <template #title>
                 <h3>事件设置</h3>
             </template>
-			<el-tabs>
+			<el-tabs @tab-change="eventTabChange">
 				<el-tab-pane label="前置脚本">
 					<!-- 说明 -->
 					<div class="work-flow-conditions">
@@ -265,6 +263,35 @@
 							<mlCodeEditor v-model="myFormData.completeScript"/>
 						</div>
 					</div>
+				</el-tab-pane>
+                <el-tab-pane label="触发器事件">
+					<!-- 说明 -->
+					<div class="work-flow-conditions">
+						<div class="lable-title mb-3">说明</div>
+						<div class="mb-10 mt-10">
+							该事件在
+							<span class="ml-a-span">节点任务完成后</span> 执行，会自动执行对应触发器。
+						</div>
+					</div>
+                    <div class="lable-title mb-3">选择触发器</div>
+                    <div class="mb-10 mt-10">
+                        <el-select 
+                            v-model="myFormData.triggerConfigIdList" 
+                            style="width: 100%"
+                            v-loading="loadTCLoading"
+                            clearable
+                            filterable
+                            multiple
+                            no-data-text="未找到相关触发器"
+                        >
+                            <el-option
+                                v-for="item in triggerConfigList"
+                                :key="item.triggerConfigId"
+                                :label="item.name"
+                                :value="item.triggerConfigId"
+                            />
+                        </el-select>
+                    </div>
 				</el-tab-pane>
 			</el-tabs>
 
@@ -335,6 +362,7 @@ import { ref, onMounted, inject, watch } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { getDataList } from "@/api/crud";
 // 选择字段组件
 import mlSelectField from "@/components/mlSelectField/index.vue";
 // 代码编辑器
@@ -355,6 +383,7 @@ let myFormData = ref({
     specificRole:[],
     modifiableFields:[],
     isBlocked: false,
+    triggerConfigIdList:[],
 });
 let entityCode = ref("");
 let entityName = ref("");
@@ -655,6 +684,49 @@ const selectedSubApproval = (cb) => {
  * 选择子流程相关 end
  */
 
+ /**
+  * 事件设置相关
+  */
+// 事件设置出发切换
+const eventTabChange = (name) => {
+    if(name == 2){
+        loadTriggerConfigList()
+    }
+}
+
+// 触发器列表
+let triggerConfigList = ref([]);
+let loadTCLoading = ref(false);
+
+let loadTriggerConfigList = async () => {
+    loadTCLoading.value = true;
+    let res = await getDataList(
+        "TriggerConfig",
+        "name",
+        {
+            equation:"AND",
+            items: [
+                {
+                    fieldName: "entityCode",
+                    op: "EQ",
+                    value: entityCode.value
+                },
+                {
+                    fieldName: "isDisabled",
+                    op: "EQ",
+                    value: 0
+                }
+            ]
+        },
+        99999,
+        1,
+    )
+    
+    if(res){
+        triggerConfigList.value = res.data.dataList;
+    }
+    loadTCLoading.value = false;
+}
 
 defineExpose({
     getFormData,

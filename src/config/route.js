@@ -354,7 +354,7 @@ const routes = [
 						path: '/web/data-transformation',
 						name: 'DataTransformation',
 						component: 'system/data-transformation/index',
-						meta: { title: '数据转化', icon: 'el-icon-Cpu', role: 'r48-1' },
+						meta: { title: '数据转化', icon: 'el-icon-Cpu', role: 'r58-1' },
 					},
                     // 数据转化-详情
                     {

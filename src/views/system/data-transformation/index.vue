@@ -9,7 +9,6 @@
 			fieldName="transformName"
 			:tableColumn="tableConf.tableColumn"
 			:filterItems="tableConf.filterItems"
-			queryUrl="/transform/listQuery"
 			@changeSwitch="changeSwitch"
 			@highlightClick="goDetail"
 		>
@@ -74,6 +73,8 @@ import { inject, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 const { queryEntityLabelByName } = useCommonStore();
+import { deleteRecord } from "@/api/crud";
+import { ElMessage, ElMessageBox } from "element-plus";
 /**
  * 组件
  */
@@ -99,7 +100,7 @@ let tableConf = ref({
 	// 默认排序
 	sortFields: [
 		{
-			fieldName: "createdBy",
+			fieldName: "createdOn",
 			type: "DESC",
 		},
 	],
@@ -178,22 +179,17 @@ const goDetail = (row) => {
 
 // 删除行
 const deleteRow = (row) => {
-	// ElMessageBox.confirm("是否删除该权限角色?", "删除确认")
-	//     .then(() => {
-	//         deleteRowById(row.roleId)
-	//             .then((res) => {
-	//                 if (res.data.code == 200) {
-	//                     ElMessage.success("删除成功");
-	//                     mlSingleListRef.value.getTableList();
-	//                 }
-	//             })
-	//             .catch((res) => {
-	//                 ElMessage.error(res.message);
-	//             });
-	//     })
-	//     .catch(() => {
-	//         ElMessage.info("取消删除");
-	//     });
+	ElMessageBox.confirm("是否删除该数据转换?", "删除确认")
+	    .then(async () => {
+            let res = await deleteRecord(row.transformId);
+            if(res){
+                ElMessage.success("删除成功");
+	            updateData()
+            }
+	    })
+	    .catch(() => {
+	        ElMessage.info("取消删除");
+	    });
 };
 
 // 更新数据

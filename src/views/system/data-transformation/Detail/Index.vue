@@ -89,9 +89,9 @@
 </template>
 
 <script setup>
-import http from "@/utils/request";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { saveRecord, queryById } from "@/api/crud";
 const Router = useRouter();
 
 import useCommonStore from "@/store/modules/common";
@@ -162,7 +162,7 @@ const queryTransformById = async () => {
 	loading.value = true;
 	loadingText.value = "数据加载中...";
 	isFinish.value = false;
-	let res = await http.get("/transform/queryById?recordId=" + recordId.value);
+	let res = await queryById(recordId.value);
 	if (res) {
 		row.value = res.data || {};
 		// 格式化源实体
@@ -257,17 +257,15 @@ const onSave = async () => {
 	}
 	loading.value = true;
 	loadingText.value = "数据保存中...";
-	let res = await http.post(
-		"/transform/saveRecord",
-		{
+	let res = await saveRecord(
+        'Transform', 
+        recordId.value,
+        {
 			fieldMapping: JSON.stringify(fieldMapping.value),
 			backfill: JSON.stringify(backfill.value),
 			isPreview: false,
 		},
-		{
-			params: { recordId: recordId.value },
-		}
-	);
+    )
 	if (res) {
 		notTitleDialogShow.value = true;
 	}

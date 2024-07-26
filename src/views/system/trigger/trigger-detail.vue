@@ -171,10 +171,10 @@ const onSave = async (target) => {
         defaultTargetEntity,
     } = trigger;
     // 如果是更新规则
-    if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
-        $ElMessage.warning("请至少添加 1 个更新规则");
-        return;
-    }
+    // if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
+    //     $ElMessage.warning("请至少添加 1 个更新规则");
+    //     return;
+    // }
     // 如果是聚合规则
     if (trigger.actionType.value == 2 && actionContent.items.length < 1) {
         $ElMessage.warning("请至少添加 1 个聚合规则");

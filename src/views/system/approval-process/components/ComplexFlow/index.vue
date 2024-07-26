@@ -185,6 +185,8 @@ let nodeDefaultData = reactive({
         approvalConfigId: null,
         // 是否阻断流程
         isBlocked: false,
+        // 选择触发器
+        triggerConfigIdList: [],
     },
 });
 

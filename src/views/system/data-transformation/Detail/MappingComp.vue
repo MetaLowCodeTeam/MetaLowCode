@@ -175,12 +175,12 @@ const openEditDialog = (data, target) => {
 // 确认编辑
 const confirmEdit = () => {
 	let { data, target, sourceData } = dialogConf.value;
-	let { sourceField, targetField } = data;
+	let { sourceField, targetField, updateMode } = data;
 	if (!targetField) {
 		ElMessage.error("请先选择目标字段。");
         return;
 	}
-	if (!sourceField || JSON.stringify(sourceField) == '[]' || JSON.stringify(sourceField) == '{}') {
+	if (updateMode != 'toNull' && (!sourceField || JSON.stringify(sourceField) == '[]' || JSON.stringify(sourceField) == '{}')) {
 		ElMessage.error("请先选择源字段/固定值/计算公式。");
         return;
 	}

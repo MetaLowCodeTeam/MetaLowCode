@@ -266,16 +266,27 @@ export default {
                     fieldWidget = this.getWidgetRef(subFormFieldName + '@row' + this.subFormRowId);
                 }
                 if(fieldWidget){
+                    let fieldType = fieldWidget.field.type;
                     let fieldLabel = fieldWidget.field.options.label;
                     let fieldValue = fieldWidget.getValue();
-                    if(!fieldValue){
-                        this.$message.error("请填写：" + fieldLabel);
-                        return
+                    // 如果是单选
+                    if(fieldType == "radio"){
+                        el.value = fieldValue || false;
+                    }else {
+                        if(!fieldValue){
+                            this.$message.error("请填写：" + fieldLabel);
+                            return
+                        }
+                        el.value = fieldValue;
+                        if(typeof fieldValue == 'object'){
+                            if(fieldType == "select"){
+                                el.value = fieldValue.value
+                            }else {
+                                el.value = fieldValue.id;
+                            }
+                        }
                     }
-                    el.value = fieldValue;
-                    if(typeof fieldValue == 'object'){
-                        el.value = fieldValue.value || fieldValue.id;
-                    }
+                    
                 }
             }
             if (filterConditions.items.length > 0) {
