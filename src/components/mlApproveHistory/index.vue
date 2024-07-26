@@ -58,7 +58,16 @@
                                 >
                                     <span class="contain-span">{{ activity.singLabel }}</span>
                                 </div>
-                                <div class="item-title">
+                                <div class="item-title"  v-if="activity.subRecord?.id">
+                                    <span 
+                                        class="mr-5"
+                                    >   
+                                        等待子流程 【
+                                        <span class="ml-a-span" @click="goSubRecord(activity.subRecord?.id)">{{ activity.subRecord?.name }}</span>
+                                        】 审批 
+                                    </span>
+                                </div>
+                                <div class="item-title" v-else>
                                     <span
                                         class="mr-5"
                                         v-if="activity.state === 0"
@@ -158,6 +167,7 @@
     </mlDialog>
     <!-- 查看审批流程 -->
     <!-- <ApproveView ref="ApproveViewRefs"/> -->
+    <defaultEntityDetail ref="detailRefs" />
 </template>
 
 <script setup>
@@ -165,6 +175,9 @@ import http from "@/utils/request";
 import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import ApproveView from './components/ApproveView.vue';
+// import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
+import defaultEntityDetail from "@/views/customize-menu/detail.vue";
+
 const Route = useRouter();
 const props = defineProps({
     modelValue: null,
@@ -341,6 +354,11 @@ const previewRotateChange = () => {
         previewHeight.value = "640px";
     }
 };
+
+let detailRefs = ref();
+const goSubRecord = (approvalConfigId) => {
+    detailRefs.value.openDialog(approvalConfigId)
+}
 
 
 

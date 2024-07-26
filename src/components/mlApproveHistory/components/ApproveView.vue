@@ -46,7 +46,6 @@ let MetaFlowDesignerRef = ref();
 const loadFlowDesignerFn = async () => {
 	loadingConf.loading = true;
 	let res = await getHisActivityIns(props.entityId);
-	console.log(res);
 	if (res) {
 		graphData.value = res.data.bpmnXmlStr;
 		nextTick(() => {
@@ -87,13 +86,9 @@ const loadFlowDesignerFn = async () => {
                     if(el.activityState == 'reject'){
                         properties.stroke = "#F56C6C";
                     }
-
-                    console.log(el.activityType, properties,'properties')
                     setProperties(lf, el.activityType, el.activityId, properties, true);
                 }
 			});
-
-            console.log(MetaFlowDesignerRef.value.getJsonData(),'MetaFlowDesignerRef.value.getJsonData')
 		});
 	}
 	loadingConf.loading = false;
