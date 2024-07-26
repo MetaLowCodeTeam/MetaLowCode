@@ -339,7 +339,6 @@ import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-import { getModelName } from "@/utils/util";
 /**
  * 组件
  */
@@ -640,7 +639,7 @@ let mainDetailField = ref("");
 
 // 获取导航配置
 const getLayoutList = async () => {
-    let res = await $API.layoutConfig.getLayoutList(entityName.value, getModelName());
+    let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res && res.data) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
