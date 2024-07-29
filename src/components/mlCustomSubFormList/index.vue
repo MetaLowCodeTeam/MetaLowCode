@@ -10,6 +10,7 @@
 		:paginationSize="paginationSize"
         :formRef="formRef"
         :isVFormDesignMode="isVFormDesignMode"
+        :modelName="modelName"
 	></component>
 </template>
 
@@ -45,6 +46,10 @@ export default {
 			type: [Number, String],
 			default: 20,
 		},
+        modelName: {
+            type: String,
+			default: "",
+        },
 		formRef: {},
 	},
     watch: {

@@ -14,6 +14,7 @@
         :tableHeight="tableHeight"
         :formRef="formRef"
         :isVFormDesignMode="isVFormDesignMode"
+        :modelName="modelName"
 	/>
 	<el-empty v-else description="请先绑定明细实体" />
 </template>
@@ -54,6 +55,10 @@ export default {
 			type: [Number, String],
 			default: 294,
 		},
+        modelName: {
+            type: String,
+			default: "",
+        },
 		formRef: {},
 
 	},

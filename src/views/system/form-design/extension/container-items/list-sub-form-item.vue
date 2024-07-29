@@ -18,6 +18,7 @@
             :formEntityId="getFormEntityId()"
             :detailEntityFlag="widget.options?.detailEntityFlag"
             :refEntityBindingField="widget.options?.refEntityBindingField"
+            :modelName="getListSubFormConfId()"
 		/>
 	</container-item-wrapper>
 </template>
@@ -50,6 +51,9 @@ export default {
 		},
         getFormEntityId(){
             return this.getFormRef().getGlobalDsv().formEntityId;
+        },
+        getListSubFormConfId(){
+            return this.widget.id + '-' + this.widget.options.name;
         },
 	},
 };

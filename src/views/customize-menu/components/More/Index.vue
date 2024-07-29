@@ -168,6 +168,7 @@
         v-if="editColumnDialog.isShow"
         :editColumnDialog="editColumnDialog"
         @confirm="editColumnConfirm"
+        :modelName="modelName"
     />
     <!-- 数据导入导出 -->
     <DataExport ref="dataExportRefs" />
@@ -182,13 +183,18 @@
     <!-- 报表 -->
     <ReportForms ref="reportFormsRefs" />
     <!-- 默认查询设置 -->
-    <DefaultFilterDialog ref="defaultFilterRefs" @defaultFilterChange="defaultFilterChange" />
+    <DefaultFilterDialog 
+        ref="defaultFilterRefs" 
+        @defaultFilterChange="defaultFilterChange"
+        :modelName="modelName"
+    />
     <!-- 树状分组筛选 -->
     <TreeGroupFilter
         :entityCode="entityCode"
         :layoutConfig="myLayoutConf"
         v-model="treeGroupFilterIsShow"
         @confirm="treeGroupFilterConfirm"
+        :modelName="modelName"
     />
     <!-- <NewTreeGroupFilter
         :entityCode="entityCode"
@@ -202,6 +208,7 @@
         :entityCode="entityCode"
         :layoutConfig="myLayoutConf"
         @confirm="allocationSuccess"
+        :modelName="modelName"
     />
 </template>
 
@@ -258,6 +265,11 @@ const props = defineProps({
     isReferenceComp: { type: Boolean, default: false },
     // 是否明细实体
     isMainDetailField: { type: Boolean, default: false },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
 });
 
 // layout配置

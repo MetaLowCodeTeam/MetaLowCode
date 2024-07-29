@@ -61,6 +61,11 @@ const props = defineProps({
 	modelValue: null,
 	entityCode: { type: Number },
 	layoutConfig: { type: Object, default: () => {} },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
 });
 const emits = defineEmits(["update:modelValue", "confirm"]);
 let isShow = ref(false);
@@ -145,7 +150,8 @@ const onSave = async () => {
 	let res = await layoutConfig.saveConfig(
 		layoutConfigId.value,
 		"STYLE",
-		param
+		param,
+        props.modelName
 	);
 	if (res) {
 		ElMessage.success("保存成功");

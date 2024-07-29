@@ -16,6 +16,7 @@
                     @onAddAdv="getLayoutList"
                     @changeAdvFilter="changeAdvFilter"
                     :filter="advancedFilter"
+                    :modelName="modelName"
                     class="mr-15"
                 />
                 <slot name="beforeQuickQuery"></slot>
@@ -104,6 +105,7 @@
                         :defaultFilterSetting="defaultFilterSetting"
                         :isReferenceComp="isReferenceComp"
                         :isMainDetailField="!!mainDetailField"
+                        :modelName="modelName"
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
@@ -299,6 +301,7 @@
             @onConfirm="getLayoutList"
             :entityName="entityName"
             :nameFieldName="nameFieldName"
+            :modelName="modelName"
         />
         <!-- 批量编辑 -->
         <ListBatchUpdate ref="ListBatchUpdateRef" @onConfirm="getTableList" />
@@ -405,6 +408,12 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
+
 })
 
 // 页面Loading
@@ -451,7 +460,7 @@ let titleWidthForAll = reactive({});
 let titleWidthForSelf = reactive({});
 // 默认查询设置
 let defaultFilterSetting = ref({});
-
+let defaultFilter = ref({});
 // 快捷查询
 let quickQuery = ref("");
 let quickQueryPlaceholder = ref("");
@@ -636,10 +645,11 @@ const openBatchUpdateDialog = () => {
 };
 
 let mainDetailField = ref("");
-
+// 用于区分保存配置
+let myModelName = ref("");
 // 获取导航配置
 const getLayoutList = async () => {
-    let res = await $API.layoutConfig.getLayoutList(entityName.value);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, myModelName.value);
     if (res && res.data) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
@@ -648,6 +658,9 @@ const getLayoutList = async () => {
         mainDetailField.value = res.data.mainDetailField;
         filterEasySql.value = "";
         defaultFilterSetting.value = res.data.DEFAULT_FILTER || {};
+        if(defaultFilterSetting.value.config){
+            defaultFilter.value = JSON.parse(defaultFilterSetting.value.config);
+        }
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
         addConf = res.data.ADD ? { ...res.data.ADD } : {};
         let { ALL, SELF } = res.data.LIST;
@@ -1054,6 +1067,7 @@ const getTableList = async () => {
         builtInFilter: builtInFilter.value,
         statistics: statistics.value,
         filterEasySql: filterEasySql.value,
+        defaultFilter: defaultFilter.value,
     };
     dataExportData.queryParm = { ...param };
     
@@ -1068,7 +1082,8 @@ const getTableList = async () => {
         param.quickFilter,
         param.builtInFilter,
         param.statistics,
-        param.filterEasySql
+        param.filterEasySql,
+        param.defaultFilter
     );
     if (res && res.data) {
         tableData.value = res.data.dataList.map(el => {
@@ -1169,6 +1184,7 @@ watchEffect(() => {
     page.size = props.paginationConf?.size || 20;
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
     myFormEntityId.value = props.formEntityId;
+    myModelName.value = props.modelName;
     if(mainDetailField.value){
         listParamConf.value.showAddBtn = false;
     }

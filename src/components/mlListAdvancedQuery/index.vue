@@ -146,6 +146,11 @@ const props = defineProps({
     entityName: { type: String, default: "" },
     entityCode: { type: Number, default: "" },
     filter: { type: Array, default: () => [] },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
 });
 const emits = defineEmits([
     "queryNow",
@@ -317,7 +322,8 @@ let saveConfirm = async () => {
     let res = await $API.layoutConfig.saveConfig(
         saveDialog.layoutConfigId,
         "FILTER",
-        param
+        param,
+        props.modelName
     );
     if (res) {
         $ElMessage.success("保存成功");

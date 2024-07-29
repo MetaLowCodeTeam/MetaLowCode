@@ -28,6 +28,7 @@
                 :detailEntityFlag="widget.options?.detailEntityFlag"
                 :refEntityBindingField="widget.options?.refEntityBindingField"
                 isVFormDesignMode
+                :modelName="getListSubFormConfId()"
 			/>
 		</div>
 	</container-wrapper>
@@ -72,6 +73,9 @@ export default {
 		forceUpdate() {
 			this.subFormKey = "sfKey" + Utils.generateId();
 		},
+        getListSubFormConfId(){
+            return this.widget.id + '-' + this.widget.options.name;
+        },
 	},
 };
 </script>

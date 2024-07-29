@@ -286,7 +286,6 @@ export default {
                             }
                         }
                     }
-                    
                 }
             }
             if (filterConditions.items.length > 0) {

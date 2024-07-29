@@ -83,6 +83,11 @@ const props = defineProps({
 	isQuickQuery: { type: Boolean, defalut: false },
 	quickQueryConf: { type: Object, default: () => {} },
 	entityName: { type: String, defalut: "DemoContact" },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
 });
 const emit = defineEmits(["update:modelValue", "onConfirm"]);
 // 选中的数据列表
@@ -206,7 +211,8 @@ const confirm = async () => {
 		let res = await $API.layoutConfig.saveConfig(
 			layoutConfigId,
 			"SEARCH",
-			param
+			param,
+            props.modelName
 		);
 		if (res) {
 			$ElMessage.success("保存成功！");

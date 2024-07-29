@@ -221,6 +221,11 @@ const props = defineProps({
     modelValue: null,
     // 数据
     editColumnDialog: { type: Object, default: () => {} },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
 });
 const emit = defineEmits(["update:modelValue", "confirm"]);
 const $ElMessage = inject("$ElMessage");
@@ -462,7 +467,8 @@ const onSave = async () => {
     let res = await $API.layoutConfig.saveConfig(
         layoutConfigId,
         apiType,
-        param
+        param,
+        props.modelName
     );
     if (res) {
         $ElMessage.success("保存成功！");

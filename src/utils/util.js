@@ -490,7 +490,10 @@ export const getModelName = () => {
         if(splitPathname[3]){
             newSplitName.push(splitPathname[3])
         }
-        modelName = newSplitName.join(".")
+        if(splitPathname[4]){
+            newSplitName.push(splitPathname[4])
+        }
+        modelName = newSplitName.join("-")
     }
     return modelName;
 }

@@ -69,13 +69,14 @@ export function deleteRecords(body) {
 * @param {*} builtInFilter ""  { equation="AND", items:[{  "fieldName": "flowName", "op": "LK", "value": "修改"}] } 参数查询
 * @param {*} statistics ""
 * @param {*} filterEasySql ""  自定义SQL查询
+* @param {*} defaultFilter ""  默认查询
 
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql
+        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter
     })
 }
 

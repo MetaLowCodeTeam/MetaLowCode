@@ -18,6 +18,14 @@ import { ElMessage } from "element-plus";
 import { ref, inject } from "vue";
 const $API = inject("$API");
 const emits = defineEmits(["defaultFilterChange"]);
+const props = defineProps({
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
+
+})
 let isShow = ref(false);
 let entityName = ref("");
 let entityCode = ref("");
@@ -66,7 +74,8 @@ const conditionConfirm = async (conf) => {
     let res = await $API.layoutConfig.saveConfig(
         layoutId.value,
         "DEFAULT_FILTER",
-        param
+        param,
+        props.modelName,
     );
     if (res) {
         ElMessage.success("保存成功");
