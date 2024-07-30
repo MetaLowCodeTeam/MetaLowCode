@@ -122,6 +122,7 @@
                         </template>
                         <CardLayout 
                             :layoutJson="layoutJson" 
+                            :optionData="optionData"
                             :recordId="item[idFieldName]" 
                             :isLoadData="expandIdx.includes(item[idFieldName])"
                             @loading="(loadingStatus) => cardLayoutLoading(loadingStatus, item)"
@@ -405,6 +406,7 @@ const refreshData = () => {
 
 
 let layoutJson = ref(null);
+let optionData = ref({});
 const getTableList = async () => {
     loading.value = true;
 
@@ -451,6 +453,7 @@ const getTableList = async () => {
         let formLayoutRes = await getFormLayout(entityName.value);
         if (formLayoutRes) {
             layoutJson.value = formLayoutRes.data?.layoutJson || null;
+            optionData.value = formLayoutRes.data?.optionData || {};
         }
         loading.value = false;
     } else {

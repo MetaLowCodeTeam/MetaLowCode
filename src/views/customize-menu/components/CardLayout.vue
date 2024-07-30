@@ -23,13 +23,13 @@ const props = defineProps({
 	layoutJson: { type: String, default: "" },
 	recordId: { type: String, default: "" },
 	isLoadData: { type: Boolean, default: false },
-	// data: { type: Object, default: () => {} },
+	optionData: { type: Object, default: () => {} },
 });
 
 const emits = defineEmits(["loading"]);
 
 const vFormRef = ref();
-const optionData = reactive({});
+const optionData = ref({});
 const formData = reactive();
 const globalDsv = ref({});
 
@@ -52,6 +52,7 @@ watch(
 
 const loadFormData = async () => {
 	if (props.layoutJson) {
+        optionData.value = props.optionData || {};
 		vFormRef.value.setFormJson(props.layoutJson);
 		globalDsv.value.formStatus = "read";
 		globalDsv.value.formEntityId = props.recordId;
