@@ -26,6 +26,7 @@
 <script>
 import FormDesignEntityList from "@/components/mlFormDesignComp/FormDesignEntityList.vue";
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
+import { getModelName } from "@/utils/util";
 const { emitter, i18n, containerItemMixin, refMixin } = VisualDesign.VFormSDK;
 export default {
 	name: "list-sub-form-item",
@@ -53,7 +54,11 @@ export default {
             return this.getFormRef().getGlobalDsv().formEntityId;
         },
         getListSubFormConfId(){
-            return this.widget.id + '-' + this.widget.options.name;
+            if(getModelName()){
+                return getModelName() + "-" + this.widget.id + '-' + this.widget.options.name
+            }else {
+                return this.widget.id + '-' + this.widget.options.name;
+            }   
         },
 	},
 };

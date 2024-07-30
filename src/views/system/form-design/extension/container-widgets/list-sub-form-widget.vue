@@ -38,6 +38,7 @@
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 const { i18n, containerMixin, refMixinDesign, Utils } = VisualDesign.VFormSDK;
 import FormDesignEntityList from "@/components/mlFormDesignComp/FormDesignEntityList.vue";
+import { getModelName } from "@/utils/util";
 export default {
 	name: "list-sub-form-widget",
 	props: {
@@ -74,7 +75,11 @@ export default {
 			this.subFormKey = "sfKey" + Utils.generateId();
 		},
         getListSubFormConfId(){
-            return this.widget.id + '-' + this.widget.options.name;
+            if(getModelName()){
+                return getModelName() + "-" + this.widget.id + '-' + this.widget.options.name
+            }else {
+                return this.widget.id + '-' + this.widget.options.name;
+            }   
         },
 	},
 };
