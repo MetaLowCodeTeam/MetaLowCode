@@ -189,6 +189,7 @@
                     @row-dblclick="rowDblclick"
                     :show-summary="statisticsList.length > 0"
                     :summary-method="getSummaries"
+                    :row-style="setRowStyle"
                 >
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
@@ -644,6 +645,18 @@ const openBatchUpdateDialog = () => {
     );
 };
 
+// 设置行样式
+let renderRowStyle = ref("");
+const setRowStyle = ({row, rowIndex}) => {
+    let rowStyle = {};
+    if(rowIndex % 2 == 1){
+        rowStyle.background = "var(--el-fill-color-lighter)"
+    }
+    let newRowStyle = new Function('row, rowIndex', renderRowStyle.value)(row, rowIndex);
+    rowStyle = Object.assign(rowStyle, newRowStyle);
+    return rowStyle;
+}
+
 let mainDetailField = ref("");
 // 用于区分保存配置
 let myModelName = ref("");
@@ -683,6 +696,13 @@ const getLayoutList = async () => {
             idFieldName: idFieldName.value,
             nameFieldName: nameFieldName.value
         };
+        // 自定义行样式
+        if(res.data.STYLE && res.data.STYLE.config){
+            let styleConfig = JSON.parse(res.data.STYLE.config);
+            if(styleConfig.rowConf && styleConfig.rowConf.rowStyleRender){
+                renderRowStyle.value = styleConfig.rowConf.rowStyleRender;
+            }
+        }
         // 树状分组筛选
         if (res.data.TREE_GROUP) {
             treeGroupConf.value = JSON.parse(res.data.TREE_GROUP.config);
@@ -1417,6 +1437,12 @@ div {
                     right: 35px;
                 }
                 // overflow:auto;
+            }
+
+            :deep(.el-table__row){
+                td {
+                    background: initial !important;
+                }
             }
         }
     }

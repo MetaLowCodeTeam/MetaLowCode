@@ -31,6 +31,22 @@
 					:entityCode="entityCode"
 				/>
 			</div>
+            <div class="from-title mt-15">自定义行样式设置</div>
+			<div class="from-item">
+                <div class="mb-10">
+                    <span class="">自定义渲染</span>
+                    <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#">使用文档</a>
+                </div>
+                <mlCodeEditor v-model="styleConf.rowConf.rowStyleRender"/>
+				<!-- <el-checkbox v-model="styleConf.delConf.allowUsersSelect">
+					允许用户选择级联删除
+				</el-checkbox>
+                <div class="info-text mt-5 mb-2">默认级联删除</div>
+				<MlAssociatedRecords
+					v-model="styleConf.delConf.associatedRecords"
+					:entityCode="entityCode"
+				/> -->
+			</div>
 		</div>
 		<template #footer>
 			<div class="footer-div">
@@ -56,7 +72,8 @@ import layoutConfig from "@/api/layoutConfig";
  * 组件
  */
 import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
-
+// 代码编辑器
+import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 const props = defineProps({
 	modelValue: null,
 	entityCode: { type: Number },
@@ -93,7 +110,11 @@ let styleConf = ref({
         allowUsersSelect: true,
         // 默认级联删除
         associatedRecords: [],
-    }
+    },
+    // 行设置
+    rowConf: {
+        rowStyleRender: ""
+    },
 });
 watch(
 	() => props.modelValue,
