@@ -152,11 +152,14 @@ const refresh = async () => {
                     if (props.titleFromApi) {
                         detailDialog.title = formData.data[props.titleFromApi];
                     }
-                    vFormRef.value.setFormData(detailDialog.formData);
                     nextTick(() => {
-                        vFormRef.value.reloadOptionData();
-                        vFormRef.value.setReadMode();
-                    });
+                        vFormRef.value.setFormData(detailDialog.formData);
+                        nextTick(() => {
+                            vFormRef.value.reloadOptionData();
+                            vFormRef.value.setReadMode();
+                        });
+                    })
+                   
                 }
                 loading.value = false;
             });

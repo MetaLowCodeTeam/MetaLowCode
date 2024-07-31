@@ -50,7 +50,7 @@ let defaultSheets = shallowRef([
         hide: 0, //是否隐藏
         row: 40, //行数
         column: 20, //列数
-        defaultRowHeight: 19, //自定义行高
+        defaultRowHeight: 22, //自定义行高
         defaultColWidth: 73, //自定义列宽
         celldata: [], //初始化使用的单元格数据
         config: {

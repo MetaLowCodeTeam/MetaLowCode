@@ -260,29 +260,32 @@ const initFormLayout = async () => {
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
                     globalDsv.value.rowRecordData = formData.data;
-                    vFormRef.value.setFormData(formData.data);
-                    
-                    nextTick(() => {
-                        vFormRef.value.reloadOptionData();
-                        vFormRef.value.disableForm();
+                    nextTick(()=>{
+                        vFormRef.value.setFormData(formData.data);
                         nextTick(() => {
-                            // 显示可编辑字段
-                            let enableWidgets =
-                                approvalTask.value.modifiableFields.map(
-                                    (el) => el.name
+                            vFormRef.value.reloadOptionData();
+                            vFormRef.value.disableForm();
+                            nextTick(() => {
+                                // 显示可编辑字段
+                                let enableWidgets =
+                                    approvalTask.value.modifiableFields.map(
+                                        (el) => el.name
+                                    );
+                                vFormRef.value.enableWidgets(enableWidgets);
+                                
+                                // 显示可编辑的字段。即使设置了隐藏。
+                                vFormRef.value.showWidgets(enableWidgets);
+                                // 显示必填字段
+                                let required = approvalTask.value.modifiableFields.map(
+                                    (el) => (el.isRequired ? el.name : null)
                                 );
-                            vFormRef.value.enableWidgets(enableWidgets);
-                            
-                            // 显示可编辑的字段。即使设置了隐藏。
-                            vFormRef.value.showWidgets(enableWidgets);
-                            // 显示必填字段
-                            let required = approvalTask.value.modifiableFields.map(
-                                (el) => (el.isRequired ? el.name : null)
-                            );
-                            vFormRef.value.setWidgetsRequired(required, true);
-                        })
-                       
-                    });
+                                vFormRef.value.setWidgetsRequired(required, true);
+                            })
+                        
+                        });
+                    })
+                    
+                    
                 }
                 loading.value = false;
             });

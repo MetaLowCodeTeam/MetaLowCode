@@ -1,34 +1,35 @@
 <template>
-    <ml-dialog title="选择报表" v-model="dialogShow" width="500px" appendToBody>
-        <div v-loading="loading" style="max-height: 500px;" v-if="isSupportFunc">
-            <el-scrollbar>
-                <el-empty v-if="reportList.length==0" :image-size="80">
-                    <template #description>
-                        暂无报表
-                        <span
-                            class="ml-a-span"
-                            @click="clcikSet"
-                            v-if="$TOOL.checkRole('r45-1')"
-                        >点击配置</span>
-                    </template>
-                </el-empty>
-                <div
-                    class="report-item text-ellipsis"
-                    v-for="(item,inx) of reportList"
-                    :key="inx"
-                    @click="downReport(item)"
-                >
-                    {{ item.reportName }}
-                    <span class="down-icon">
-                        <el-icon>
-                            <ElIconDownload />
-                        </el-icon>
-                    </span>
-                </div>
-            </el-scrollbar>
-        </div>
-        <div v-else class="not-plugin">在线报表 插件未安装！！</div>
-    </ml-dialog>
+	<ml-dialog title="选择报表" v-model="dialogShow" width="500px" appendToBody>
+		<div v-loading="loading" style="max-height: 500px" v-if="isSupportFunc">
+			<el-scrollbar>
+				<el-empty v-if="reportList.length == 0" :image-size="80">
+					<template #description>
+						暂无报表
+						<span
+							class="ml-a-span"
+							@click="clcikSet"
+							v-if="$TOOL.checkRole('r45-1')"
+							>点击配置</span
+						>
+					</template>
+				</el-empty>
+				<div
+					class="report-item text-ellipsis"
+					v-for="(item, inx) of reportList"
+					:key="inx"
+				>
+					{{ item.reportName }}
+					<span class="down-icon excel" @click="downReport(item)" v-if="defaultShow == 'ALL'">
+						<SvgIcon icon-name="export-excel" />
+					</span>
+                    <span class="down-icon pdf" @click="downPdf(item)" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+						<SvgIcon icon-name="export-pdf" />
+					</span>
+				</div>
+			</el-scrollbar>
+		</div>
+		<div v-else class="not-plugin">在线报表 插件未安装！！</div>
+	</ml-dialog>
 </template>
 
 <script setup>
@@ -47,70 +48,116 @@ let entityCode = ref("");
 let detailId = ref("");
 let reportList = ref([]);
 let isSupportFunc = ref(false);
+let defaultShow = ref("");
+let multipleSelection = ref([]);
 const openDialog = (data) => {
-    dialogShow.value = true;
-    entityCode.value = data.entityCode;
-    detailId.value = data.detailId;
-    let pluginIdList = publicSetting.value.APP_PLUGINID || [];
-    if (pluginIdList.includes("mannerReport")) {
-        isSupportFunc.value = true;
-        getReportConfigList();
-    }
+	dialogShow.value = true;
+	entityCode.value = data.entityCode;
+	detailId.value = data.detailId;
+    defaultShow.value = data.defaultShow;
+    multipleSelection.value = data.multipleSelection;
+	let pluginIdList = publicSetting.value.APP_PLUGINID || [];
+	if (pluginIdList.includes("mannerReport")) {
+		isSupportFunc.value = true;
+		getReportConfigList();
+	}
 };
 
 const getReportConfigList = async () => {
-    loading.value = true;
-    let res = await http.get("/plugins/mannerReport/getReportConfigList", {
-        entityCode: entityCode.value,
-    });
-    if (res) {
-        reportList.value = res.data || [];
-    }
-    loading.value = false;
+	loading.value = true;
+	let res = await http.get("/plugins/mannerReport/getReportConfigList", {
+		entityCode: entityCode.value,
+	});
+	if (res) {
+		reportList.value = res.data || [];
+	}
+	loading.value = false;
 };
 
 const downReport = async (item) => {
-    window.open(
-        import.meta.env.VITE_APP_BASE_API +
-            `/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
-    );
+    
+	window.open(
+		import.meta.env.VITE_APP_BASE_API +
+			`/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
+	);
+};
+
+const downPdf = async (item) => {
+    if(defaultShow.value == 'PDF'){
+        let res = await http.post(
+            "/plugins/mannerReport/exportPdfZip?reportConfigId=" + item.reportConfigId,
+            multipleSelection.value
+        )
+        if(res){
+            item.reportJson = res.data;
+            downloadApi(item)
+        }
+        return
+    }
+	window.open(
+		import.meta.env.VITE_APP_BASE_API +
+			`/plugins/mannerReport/exportPDF?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
+	);
+};
+
+const downloadApi = async (row) => {
+	let blob = base64ToBlob(row.reportJson);
+	let downloadElement = document.createElement("a");
+	let href = window.URL.createObjectURL(blob);
+	downloadElement.href = href;
+	downloadElement.download = row.reportName + ".zip";
+	document.body.appendChild(downloadElement);
+	downloadElement.click();
+};
+
+const base64ToBlob = (base64) => {
+	let baseContent = base64;
+	let mime = baseContent.match(/:(.*?);/); //获取分割后的base64前缀中的类型
+	let bstr = window.atob(baseContent);
+	let n = bstr.length;
+	let u8arr = new Uint8Array(n);
+	while (n--) {
+		u8arr[n] = bstr.charCodeAt(n);
+	}
+	return new Blob([u8arr], { type: mime });
 };
 
 const clcikSet = () => {
-    let temp = router.resolve({
-        name: "TemplatesList",
-    });
-    window.open(
-        temp.href + "?entityCode=" + entityCode.value,
-        "_blank"
-    );
+	let temp = router.resolve({
+		name: "TemplatesList",
+	});
+	window.open(temp.href + "?entityCode=" + entityCode.value, "_blank");
 };
 
 defineExpose({
-    openDialog,
+	openDialog,
 });
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .report-item {
-    font-size: 14px;
-    height: 32px;
-    line-height: 32px;
-    background: #f5f5f5;
-    padding-left: 20px;
-    position: relative;
-    cursor: pointer;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    padding-right: 30px;
-    .down-icon {
-        position: absolute;
-        font-size: 16px;
-        top: 4px;
-        right: 8px;
-    }
-    &:hover {
-        background: var(--el-color-primary);
-        color: #fff;
-    }
+	font-size: 14px;
+	height: 32px;
+	line-height: 32px;
+	background: #f5f5f5;
+	padding-left: 20px;
+	position: relative;
+	margin-bottom: 5px;
+	border-radius: 4px;
+	padding-right: 60px;
+	.down-icon {
+		position: absolute;
+		font-size: 16px;
+		cursor: pointer;
+        &.excel {
+            right: 32px;
+        }
+        &.pdf {
+            top: 1px;
+            right: 8px;
+        }
+		&:hover {
+			color: var(--el-color-primary);
+		}
+	}
 }
 </style>

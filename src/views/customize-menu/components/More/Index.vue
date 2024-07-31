@@ -54,6 +54,19 @@
                 </span>
                 取消共享
             </div>
+            <div 
+                class="pl-20 item" 
+                @click="openReportForms('PDF')" 
+                v-if="type == 'list'"
+                :class="{'div-disabled':multipleSelection.length < 1}"
+            >
+                <span class="icon-t1">
+                    <el-icon>
+                        <ElIconDownload />
+                    </el-icon>
+                </span>
+                导出PDF
+            </div>
             <div class="pl-20 item" @click="openReportForms()" v-if="type != 'list'">
                 <span class="icon-t1">
                     <el-icon>
@@ -353,10 +366,15 @@ const allocationSuccess = (v) => {
 
 // 打开报表
 let reportFormsRefs = ref("");
-const openReportForms = () => {
+const openReportForms = (target) => {
+    if(target == 'PDF' && props.multipleSelection.length < 1){
+        return
+    }
     reportFormsRefs.value.openDialog({
         entityCode: props.entityCode,
         detailId: props.detailId,
+        defaultShow: target == 'PDF' ? 'PDF' : 'ALL',
+        multipleSelection: props.multipleSelection.map(el => el[props.idFieldName])
     });
 };
 

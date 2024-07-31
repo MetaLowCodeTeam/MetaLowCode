@@ -49,7 +49,7 @@
 		"vue-resize-observer": "^2.0.15",
 		"vue-router": "4.1.6",
 		"vue-smart-widget": "^1.0.0-alpha.1",
-		"vue3-manner-report": "^0.1.10",
+		"vue3-manner-report": "^0.1.11",
 		"vue3-quill": "0.2.6",
 		"vuedraggable": "4.0.3",
 		"vuex": "^4.1.0"

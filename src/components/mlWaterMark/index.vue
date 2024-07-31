@@ -14,10 +14,23 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, ref, watchEffect } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
+const props = defineProps({
+    waterMarkConf: {
+        type: Object,
+        default: () => ({
+            open: false,
+            wmTitle: "",
+            wmSubTitle: "",
+            wmColor: "",
+            wmOpacity: "",
+            wmRotationAngle: "",
+        })
+    }
+})
 const $TOOL = inject("$TOOL");
 // 水印组件
 let mlWaterMarkRefs = ref();
@@ -33,15 +46,23 @@ onMounted(() => {
     title.value = $TOOL.data.get("USER_INFO")?.userName;
     subTitle.value = publicSetting.value.APP_NAME;
     let APP_WATERMARK = publicSetting.value.APP_WATERMARK;
-    if (APP_WATERMARK && APP_WATERMARK != "false") {
+    if ((APP_WATERMARK && APP_WATERMARK != "false")) {
         create(title.value, subTitle.value);
     } else {
         clear();
     }
 });
 
-// 创建
-const create = (title, subTitle, color, opacity) => {
+
+/**
+ * 创建水印
+ * @param {*} title 大标题
+ * @param {*} subTitle 小标题
+ * @param {*} color 颜色
+ * @param {*} opacity 透明度
+ * @param {*} rotationAngle 旋转角度
+ */
+const create = (title, subTitle, color, opacity, rotationAngle) => {
     clear();
     //创建画板
     var canvas = document.createElement("canvas");
@@ -50,7 +71,7 @@ const create = (title, subTitle, color, opacity) => {
     canvas.style.display = "none";
     //绘制文字
     var text = canvas.getContext("2d");
-    text.rotate((-45 * Math.PI) / 180);
+    text.rotate(((rotationAngle || -45) * Math.PI) / 180);
     text.translate(-75, 25);
     text.fillStyle = color || "rgba(128,128,128,0.2)";
     text.font = "bold 20px SimHei";
@@ -74,6 +95,23 @@ const clear = () => {
     var wmDom = mlWaterMarkRefs.value.querySelector(".watermark");
     wmDom && wmDom.remove();
 };
+
+// watchEffect(() => {
+//         let {   
+//             wmTitle,
+//             wmSubTitle,
+//             wmColor,
+//             wmOpacity,
+//             wmRotationAngle,
+//             open
+//         } = props.waterMarkConf
+//         if(open) {
+//             clear();
+//             create(wmTitle, wmSubTitle, wmColor, wmOpacity, wmRotationAngle);
+//         }
+        
+// })
+
 </script>
 
 <style scoped>

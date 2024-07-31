@@ -3,7 +3,7 @@
         ref="mlEntityMenuAndListRef"
         entityName="ReportConfig"
         aciveId="reportConfigId"
-        fieldsList="reportName,entityCode,isDisabled,modifiedOn,modifiedBy,createdOn"
+        fieldsList="reportName,entityCode,isDisabled,modifiedOn,modifiedBy,createdOn,pdfWatermark"
         @goDetail="goDetail"
         :checkCodes="['reportName']"
         :codeErrMsg="['请输入模板名称']"

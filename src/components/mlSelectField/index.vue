@@ -111,11 +111,17 @@ onMounted(() => {
 	selectedFields.value = props.modelValue;
 });
 
+// 存在字段对应的实体名称
+let hasFieldFormEntity = ref({});
+
 // 打开弹框
 const openDialg = async () => {
 	dialogIsShow.value = true;
 	loading.value = true;
-	hasFieldNames.value = selectedFields.value.map((el) => el.name);
+	hasFieldNames.value = selectedFields.value.map((el) => {
+        hasFieldFormEntity.value[el.name] = el.formEntity;
+        return el.name
+    });
 	await getAllFields();
 	// 非列表快速查询
 	if (!props.isQuickQuery) {
@@ -244,7 +250,7 @@ const getDetailEntityFields = async () => {
 					subEl.name = subEl.fieldName;
 					subEl.label = subEl.fieldLabel;
                     subEl.formEntity = el.entityName;
-					if (hasFieldNames.value.includes(subEl.fieldName)) {
+					if (hasFieldNames.value.includes(subEl.fieldName) && hasFieldFormEntity.value[subEl.fieldName] == el.entityName) {
 						let filterFields = selectedFields.value.filter(
 							(subEl2) => subEl.fieldName == subEl2.name
 						);

@@ -96,6 +96,13 @@
                         <ElIconInfoFilled />
                     </el-icon>
                 </el-tooltip>
+                <span 
+                    class="ml-a-span ml-40" 
+                    v-if="dialogForm.saveEntity == 'ReportConfig'"
+                    @click="openSetWatermarkDialog"
+                >
+                    水印设置
+                </span>
             </el-form-item>
             <el-form-item>
                 <el-button @click="saveProcess" type="primary">保存</el-button>
@@ -103,6 +110,7 @@
             </el-form-item>
         </el-form>
     </ml-dialog>
+    <SetWatermark ref="SetWatermarkRefs" @confirm="confirmSetWatermark"/>
 </template>
 
 <script setup>
@@ -110,6 +118,8 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+// 水印设置组件
+import SetWatermark from './components/setWatermark.vue';
 const { unSystemEntityList, processEntityList, publicSetting } = storeToRefs(
     useCommonStore()
 );
@@ -118,6 +128,7 @@ const message = inject("$ElMessage");
 let props = defineProps({
     isProcess: { type: Boolean, default: false },
 });
+
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);
@@ -179,13 +190,24 @@ let triggerList = ref([
 let dialogForm = ref({});
 const openDialog = (data) => {
     dialogForm.value = data;
+    let { form, saveEntity } = dialogForm.value;
+    // 格式化水印设置
+    if(saveEntity == 'ReportConfig' && form.pdfWatermark) {
+        form.pdfWatermark = JSON.parse(form.pdfWatermark)
+    }
     isShow.value = true;
 };
 
 const saveProcess = async () => {
-    let { type, form, saveEntity, saveIdCode, checkCodes, codeErrMsg } =
-        dialogForm.value;
-    let { entityCode, isDisabled, actionType, flowType } = form;
+    let { 
+        type, 
+        form, 
+        saveEntity, 
+        saveIdCode, 
+        checkCodes, 
+        codeErrMsg 
+    } = dialogForm.value;
+    let { entityCode, isDisabled, actionType, flowType, pdfWatermark } = form;
     if (type == "add" && saveEntity == "ExternalForm" && !entityCode) {
         message.error("请选择源实体");
         return;
@@ -211,6 +233,7 @@ const saveProcess = async () => {
     let params = {
         entityCode,
         isDisabled: isDisabled ? isDisabled : false,
+        pdfWatermark: JSON.stringify(pdfWatermark)
     };
     checkCodes.forEach((el) => {
         params[el] = form[el];
@@ -244,6 +267,22 @@ const saveProcess = async () => {
 
     loading.value = false;
 };
+
+
+
+/**
+ * 水印设置相关  
+ */
+let SetWatermarkRefs = ref();
+// 打开水印设置弹框
+const openSetWatermarkDialog = () => {
+    SetWatermarkRefs.value?.openDialog(dialogForm.value.form.pdfWatermark);
+}
+// 确认设置样式
+const confirmSetWatermark = (v) => {
+    dialogForm.value.form.pdfWatermark = JSON.parse(JSON.stringify(v));
+}
+
 defineExpose({
     openDialog,
     dialogForm,
