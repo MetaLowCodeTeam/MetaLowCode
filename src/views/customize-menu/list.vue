@@ -1349,6 +1349,17 @@ const listMoreSetting = (type) => {
     MoreRefs.value?.listMoreSetting(type)
 }
 
+// 编辑行
+const editRow = (row, localDsv) => {
+    onEditRow(row, localDsv);
+}
+
+// 查看行
+const viewRow = (row, localDsv) => {
+    openDetailDialog(row, localDsv)
+}
+
+
 defineExpose({
     resetList,
     refreshList,
@@ -1361,6 +1372,8 @@ defineExpose({
     showColumnSetting,
     listMoreSetting,
     saveSubFormListCb,
+    editRow,
+    viewRow,
 })
 
 </script>
