@@ -80,6 +80,13 @@ const routes = [
                     },
                 ]
             },
+            // 数据导入
+            {
+                path: '/web/data-upload2',
+                name: 'DataUpload2',
+                meta: { title: '数据导入', role: 'r6011', hidden: true },
+                component: 'system/data-upload/index',
+            },
             // 账号信息
             {
                 "name": "userCenter",

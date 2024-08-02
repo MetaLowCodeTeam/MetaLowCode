@@ -265,6 +265,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         if(item.customCode && !tool.checkRole(item.customCode.trim()) && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5)){
             isHidden = true;
         }
+        // 1 如果是自定义列表 
+        if(item.useCustom && item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 3){
+            isHidden = true;
+        }
         return isHidden;
     }
     /**

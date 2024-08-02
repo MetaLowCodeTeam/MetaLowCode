@@ -398,7 +398,7 @@ const dataExportFn = () => {
 // 数据导入
 const dataUploadFn = () => {
     router.push({
-        path: "/web/data-upload",
+        path: "/web/data-upload2",
     });
 };
 
