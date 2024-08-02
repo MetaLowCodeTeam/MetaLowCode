@@ -85,7 +85,8 @@
 				@recordSelected="setReferRecord"
                 @multipleRecordSelected="multipleSetReferRecord"
 				:gDsv="gDsv"
-                :subFormItemFlag="subFormItemFlag"
+                :showCheckBox="subFormItemFlag"
+                showMultipleSelectConfirm
 			></ReferenceSearchTable>
 		</el-dialog>
 	</div>

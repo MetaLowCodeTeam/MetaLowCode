@@ -5,6 +5,7 @@ import {copyObj, getSimplePinYin, upperFirstLetter} from "@/utils/util";
 export const fieldEditorMixin = {
 	data() {
 		return {
+            saveLoading: false,
 			rules: {
 				name: [
 					{required: true, message: '请输入字段名称', trigger: 'blur'},
@@ -34,19 +35,23 @@ export const fieldEditorMixin = {
 	},
 	methods: {
 		async createNewField() {
+            this.saveLoading = true;
             let res = await addField(this.fieldProps, this.entity);
             if(res && res.code == 200){
                 this.$message.success('保存成功')
                 this.$emit('fieldSaved')
             }
+            this.saveLoading = false;
 		},
 
 		async modifyOldField() {
+            this.saveLoading = true;
             let res = await updateField(this.fieldProps, this.entity);
             if(res && res.code == 200){
                 this.$message.success('保存成功')
 				this.$emit('fieldSaved')
             }
+            this.saveLoading = false;
 		},
 
 		validateField() {

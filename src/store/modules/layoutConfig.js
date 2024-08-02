@@ -32,8 +32,8 @@ const setPathQuery = (outLink) => {
         return ""
     } else {
         let query = "";
-        let quaryGroup = outLink.split('?')[1].split("&")
-        quaryGroup.forEach(el => {
+        let queryGroup = outLink.split('?')[1].split("&")
+        queryGroup.forEach(el => {
             let param = el.split("=");
             query += "/" + param[1];
         })
@@ -57,8 +57,8 @@ const getCustomPageQuery = (outLink) => {
         return null
     } else {
         let query = {};
-        let quaryGroup = outLink.split('?')[1].split("&")
-        quaryGroup.forEach(el => {
+        let queryGroup = outLink.split('?')[1].split("&")
+        queryGroup.forEach(el => {
             let param = el.split("=");
             query[param[0]] = param[1];
         })

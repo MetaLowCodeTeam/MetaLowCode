@@ -125,6 +125,9 @@ let drawer = ref(false);
 
 // 各节点默认数据
 let nodeDefaultData = reactive({
+    "bpmn:serviceTask": {
+        aaa: 111,
+    },
     "bpmn:startEvent": {
         type: 0,
         // 谁可以发起此审批
@@ -195,6 +198,7 @@ const NodeTypeFn = {
     "bpmn:startEvent": "getNodeModelById",
     "bpmn:sequenceFlow": "getEdgeModelById",
     "bpmn:userTask": "getNodeModelById",
+    "bpmn:serviceTask": "getNodeModelById",
 };
 
 // 排除的节点
@@ -202,7 +206,8 @@ const EliminateNode = [
     "bpmn:parallelGateway",
     "bpmn:endEvent",
     "bpmn:exclusiveGateway",
-    "bpmn:inclusiveGateway"
+    "bpmn:inclusiveGateway",
+    "bpmn:serviceTask"
 ];
 
 // 节点删除
@@ -279,9 +284,10 @@ const onSave = async () => {
     }
     let mflData = MetaFlowDesignerRef.value.getJsonData();
     let { nodes, edges } = mflData;
+    console.log(mflData,'mflData')
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
-        (el) => !EliminateNode.includes(el.type)
+        (el) => !EliminateNode.includes(el.type) || el.type == 'bpmn:serviceTask'
     );
     // 遍历节点
     for (let index = 0; index < newNodes.length; index++) {
@@ -349,7 +355,7 @@ const onSave = async () => {
         flowJson[el.id] = el.properties.flowJson;
     });
     formatNodes.forEach((el) => {
-        if (!EliminateNode.includes(el.type)) {
+        if (!EliminateNode.includes(el.type) || el.type == 'bpmn:serviceTask') {
             flowJson[el.id] = el.properties.flowJson;
         }
     });
@@ -363,6 +369,8 @@ const onSave = async () => {
             flowJson,
         },
     };
+    // console.log(param,'param')
+    // return
     loading.value = true;
     let res = await saveComplexFlow(param);
     if (res && res.code == 200) {

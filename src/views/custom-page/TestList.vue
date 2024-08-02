@@ -18,6 +18,21 @@
 			<el-button @click="test()">测试</el-button>
 		</template>
 	</EntityList>
+	<ml-dialog
+		title="被引用弹框"
+		width="700"
+		draggable
+		appendToBody
+		v-model="showReferenceDialogFlag"
+        bodyNoPadding
+	>
+		<ReferenceSearchTable
+			ref="ReferenceSearchTableRefs"
+			entity="Beiyinyongshiti"
+			refField="beiyinyongbanji"
+            showCheckBox
+		/>
+	</ml-dialog>
 </template>
 
 <script setup>
@@ -26,7 +41,7 @@
  */
 import EntityList from "@/views/customize-menu/list.vue";
 import { ref, reactive, shallowRef } from "vue";
-
+import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 let EntityListRefs = shallowRef();
 
 let listParamConf = ref({
@@ -46,11 +61,28 @@ let listParamConf = ref({
 	showMoreBtn: true,
 });
 
-
 let paginationConf = ref({});
 
+let showReferenceDialogFlag = ref(false);
+
 const test = () => {
-	EntityListRefs.value?.toDetail();
+	showReferenceDialogFlag.value = true;
+	// EntityListRefs.value?.toDetail();
 };
+
+let ReferenceSearchTableRefs = ref();
+
+const setReferRecord = (v, row) => {
+	console.log(v, "v");
+	console.log(row, "row");
+};
+
+const confirm = (v,row) => {
+    console.log(v, "v");
+	console.log(row, "row");
+    // console.log(ReferenceSearchTableRefs.value.getIdNameField(), "getIdNameField");
+    // console.log(ReferenceSearchTableRefs.value.getMultipleSelection(), "getMultipleSelection");
+}
+
 </script>
 <style lang="scss" scoped></style>

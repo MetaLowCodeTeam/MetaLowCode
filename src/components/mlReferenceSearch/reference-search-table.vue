@@ -5,7 +5,7 @@
             v-loading="loading" 
             :element-loading-text="loadingText"
         >
-            <div class="work-flow-conditions w-100" v-if="referenceEntityName">
+            <div class="work-flow-conditions w-100" v-if="referenceEntityName && showQueryPanel ">
                 <mlSetConditions
                     ref="mlSetConditionsRef"
                     v-model="conditionConf"
@@ -31,20 +31,18 @@
                     </template>
                 </mlSetConditions>
             </div>
-            <div 
-                class="main-table mt-10" 
-                :style="{'max-height': tableHeight}" 
-            >
+            <div class="main-table mt-10">
                 <SimpleTable
                     :columns="columns"
                     :data="tableData"
                     :pagination="page"
-                    :show-check-box="subFormItemFlag"
-                    :show-operation-column="!subFormItemFlag"
+                    :show-check-box="showCheckBox"
+                    :show-operation-column="!showCheckBox"
                     @handleSizeChange="handleSizeChange"
                     @handleCurrentChange="handleCurrentChange"
                     table-size="small"
                     table-width="100% !important"
+                    :maxHeight="tableHeight"
                     @handleSelectionChange="handleSelectionChange"
                 >
                     <template #table_operation="{ scope }">
@@ -58,7 +56,7 @@
                 </SimpleTable>
             </div>
         </div>
-        <div class="footer-box" v-if="subFormItemFlag">
+        <div class="footer-box" v-if="showMultipleSelectConfirm">
             <el-button type="primary" @click="multipleSelectRecord">确认选择</el-button>
         </div>
     </div>
@@ -75,8 +73,8 @@ export default {
 		refField: String,
 		extraFilter: String, // 查询条件
 		tableHeight: {
-			type: String,
-			default: "480px",
+			type: Number,
+			default: 480,
 		},
 		gDsv: Object,
 		// 过滤条件
@@ -84,10 +82,20 @@ export default {
 			type: Object,
 			default: () => {},
 		},
-        // 是否子表
-        subFormItemFlag: {
+        // 是否显示复选
+        showCheckBox: {
             type: Boolean,
             default: false
+        },
+        // 是否显示多选确认按钮
+        showMultipleSelectConfirm: {
+            type: Boolean,
+            default: false
+        },
+        // 是否显示查询条件
+        showQueryPanel: {
+            type: Boolean,
+            default: true
         }
 	},
 	name: "ReferenceSearchTable",
@@ -255,6 +263,17 @@ export default {
 		cancelSearch() {
 			this.loadTableTable();
 		},
+        // 获取IDNAME字段
+        getIdNameField(){
+            return {
+                idField: this.idField,
+                nameField: this.nameField,
+            }
+        },
+        // 获取所有选中数据
+        getMultipleSelection() {
+            return this.multipleSelection
+        }
 	},
 };
 </script>

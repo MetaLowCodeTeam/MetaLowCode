@@ -1,7 +1,7 @@
 <template>
   <el-container id="commonTable">
     <el-main>
-      <el-table :data="data" :height="height" :max-height="maxHeight" border stripe tooltip-effect="light"
+      <el-table :data="data" :max-height="maxHeight" border stripe tooltip-effect="light"
                 @selection-change="handleSelectionChange" :style="{width: tableWidth}"
                 :header-cell-style="{background: '#f6f8f9'}">
         <el-table-column v-if="showCheckBox" type="selection" width="45"></el-table-column>

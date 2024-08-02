@@ -1,5 +1,5 @@
 <template>
-	<el-container class="field-props-container">
+	<el-container class="field-props-container" v-loading="saveLoading">
 		<el-header class="field-props-header" v-if="!showingInDialog">[日期/时间]字段属性设置</el-header>
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
