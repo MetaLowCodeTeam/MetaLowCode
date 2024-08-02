@@ -131,9 +131,13 @@ const initDetailData = async () => {
         if (trigger.actionType.value == 6) {
             trigger.disabledActive = [4, 16, 32, 64, 128, 256, 1024, 2048];
         }
-        // 如果是自动分配
-        if (trigger.actionType.value == 9 || trigger.actionType.value == 10) {
-            trigger.disabledActive = [4, 32, 64];
+        // 如果是自动共享
+        if (trigger.actionType.value == 9) {
+            trigger.disabledActive = [4, 64];
+        }
+         // 如果是取消共享
+         if (trigger.actionType.value == 10) {
+            trigger.disabledActive = [4, 32];
         }
         // 如果是自动分配
         if (trigger.actionType.value == 8) {
@@ -292,8 +296,13 @@ const onSave = async (target) => {
         return;
     }
     // 如果是自动共享
-    if (trigger.actionType.value == 9 && actionContent.toUsersId.length < 1) {
+    if (trigger.actionType.value == 9 && actionContent.type == 1 && actionContent.toUsersId.length < 1) {
         $ElMessage.warning("请选择共享给谁");
+        return;
+    }
+     // 如果是自动共享
+     if (trigger.actionType.value == 9 && actionContent.type == 2 && actionContent.toUserFields.length < 1) {
+        $ElMessage.warning("请选择共享指定字段");
         return;
     }
     // 如果是自动取消共享
