@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import { registerCustomDetailCmp } from '@/views/custom-page/customDetailEntry.js';
 import { registerCustomEditCmp } from '@/views/custom-page/customEditEntry.js';
 import { registerCustomListSubFormCmp } from '@/views/custom-page/ListSubFormCmp/customListSubFormEntry.js';
+import { registerCustomServiceTaskCmp } from "@/views/system/approval-process/components/ComplexFlow/customServiceTaskCmp";
 // console.log("1. 使用路由...",router)
 
 //初始化高德地图组件
@@ -51,6 +52,7 @@ loadChartsExtension(app)
 registerCustomDetailCmp(app);
 registerCustomEditCmp(app);
 registerCustomListSubFormCmp(app);
+registerCustomServiceTaskCmp(app);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);

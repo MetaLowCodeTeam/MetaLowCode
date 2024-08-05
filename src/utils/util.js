@@ -495,5 +495,5 @@ export const getModelName = () => {
         }
         modelName = newSplitName.join("-")
     }
-    return modelName;
+    return modelName; 
 }

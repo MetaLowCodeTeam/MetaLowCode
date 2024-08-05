@@ -57,6 +57,11 @@
                     :formData="drawerData.formData"
                     @setNodeData="setNodeData"
                 />
+                <ServiceTask
+                    v-if="drawerData.type == 'bpmn:serviceTask'"
+                    :formData="drawerData.formData"
+                    @setNodeData="setNodeData"
+                />
             </div>
         </div>
     </div>
@@ -72,6 +77,8 @@ import StartEvent from "./StartEvent.vue";
 import SequenceFlow from "./SequenceFlow.vue";
 // 用户任务节点
 import UserTask from "./UserTask.vue";
+// 服务任务节点
+import ServiceTask from "./ServiceTask.vue";
 
 // 公用方法
 import { checkConditionList } from "@/utils/util";
@@ -126,7 +133,9 @@ let drawer = ref(false);
 // 各节点默认数据
 let nodeDefaultData = reactive({
     "bpmn:serviceTask": {
-        aaa: 111,
+        taskType: 1,
+        classPath: "",
+        customData: {}
     },
     "bpmn:startEvent": {
         type: 0,
@@ -207,7 +216,6 @@ const EliminateNode = [
     "bpmn:endEvent",
     "bpmn:exclusiveGateway",
     "bpmn:inclusiveGateway",
-    "bpmn:serviceTask"
 ];
 
 // 节点删除
@@ -287,7 +295,7 @@ const onSave = async () => {
     console.log(mflData,'mflData')
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
-        (el) => !EliminateNode.includes(el.type) || el.type == 'bpmn:serviceTask'
+        (el) => !EliminateNode.includes(el.type)
     );
     // 遍历节点
     for (let index = 0; index < newNodes.length; index++) {
@@ -355,7 +363,7 @@ const onSave = async () => {
         flowJson[el.id] = el.properties.flowJson;
     });
     formatNodes.forEach((el) => {
-        if (!EliminateNode.includes(el.type) || el.type == 'bpmn:serviceTask') {
+        if (!EliminateNode.includes(el.type)) {
             flowJson[el.id] = el.properties.flowJson;
         }
     });
