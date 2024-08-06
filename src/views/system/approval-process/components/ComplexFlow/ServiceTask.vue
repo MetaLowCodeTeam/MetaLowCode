@@ -6,7 +6,7 @@
 				placeholder="输入后端服务类名"
 			></el-input>
 		</el-form-item>
-		<el-form-item label="选择组件">
+		<el-form-item label="选择服务配置">
 			<el-select
 				v-model="myFormData.selectComp"
 				placeholder="选择你的自定义组件模板"

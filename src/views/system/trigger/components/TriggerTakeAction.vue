@@ -63,7 +63,7 @@
                         <el-button v-else disabled link>{{ getSetConditionText() }}</el-button>
                     </el-col>
                     <el-col :span="24">
-                        <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
+                        <div class="info-text">符合条件的记录才可以使用/选择此触发器</div>
                     </el-col>
                 </el-row>
             </el-form-item>
