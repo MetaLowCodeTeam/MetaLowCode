@@ -59,7 +59,7 @@
                                 >
                                 </el-switch>
 							</el-form-item>
-                            <el-form-item label="开启审批字段：">
+                            <el-form-item label="开启流程审批：">
 								<el-switch 
                                     v-model="openApprovalField" 
                                     style="float: right"

@@ -64,7 +64,7 @@
                                     @command="handleCommand"
                                     v-if="approvalTask.transferApproval || approvalTask.addSignaturesApproval"
                                 >
-                                    <span class="el-dropdown-link">
+                                    <span class="el-dropdown-link" style="position: relative;top: -1px">
                                         <el-icon class="el-icon--right">
                                             <ElIconMoreFilled />
                                         </el-icon>
@@ -84,9 +84,9 @@
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
-                                <el-button type="primary" @click="beforeConfirmApprove">同意</el-button>
-                                <el-button type="danger" @click="beforeReject">驳回</el-button>
-                                <el-button @click="canner">取消</el-button>
+                                <el-button type="primary" @click="beforeConfirmApprove" style="min-width: 60px !important;">同意</el-button>
+                                <el-button type="danger" @click="beforeReject" style="min-width: 60px !important;">驳回</el-button>
+                                <el-button @click="canner" style="min-width: 60px !important;">取消</el-button>
                             </div>
                         </el-form-item>
                     </el-form>
