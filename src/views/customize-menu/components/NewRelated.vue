@@ -1,12 +1,12 @@
 <template>
     <!--  -->
-    <el-dropdown trigger="click" @command="handleCommand" v-if="showNewRelatedBtn">
+    <el-dropdown trigger="click" @command="handleCommand">
         <el-button type="primary" plain icon="plus">新建相关</el-button>
         <template #dropdown>
             <el-dropdown-menu>
-                <template v-if="addConf?.config">
+                <template v-if="myAddConfig.length > 0">
                     <el-dropdown-item
-                        v-for="(item,inx) of JSON.parse(addConf.config)"
+                        v-for="(item,inx) of myAddConfig"
                         :key="inx"
                         :command="item"
                     >{{ item.columnAliasName || item.entityLabel }}</el-dropdown-item>
@@ -25,17 +25,32 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { inject, ref, watchEffect } from "vue";
 import DetailTabsSet from "./DetailTabsSet.vue";
+const $TOOL = inject("$TOOL")
 const props = defineProps({
     entityName: { type: String, default: "" },
     entityCode: { type: Number },
     addConf: { type: Object, default: () => {} },
-    // 是否显示按钮
-    showNewRelatedBtn: { type: Boolean, default: true },
+    // 是否显示新建项
+    checkNewRelatedFilter: {
+        type: Object,
+        default: () => ({})
+    }
 });
 const emits = defineEmits(["confirm", "add"]);
-// let addConfList = ref([]);
+let myAddConfig  = ref([]);
+watchEffect(() => {
+    myAddConfig.value = [];
+    if(props.addConf?.config) {
+        let config = JSON.parse(props.addConf.config);
+        config.forEach((el,inx) => {
+            if($TOOL.checkRole('r' + el.entityCode + '-2') && props.checkNewRelatedFilter[inx]){
+                myAddConfig.value.push(el);
+            }
+        });
+    }
+})
 
 const handleCommand = (e) => {
     if (e === "openSetDialog") {

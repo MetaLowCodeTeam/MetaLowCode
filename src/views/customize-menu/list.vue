@@ -476,9 +476,6 @@ let quickQueryConf = reactive({
 let idFieldName = ref("");
 // 标蓝字段
 let nameFieldName = ref("");
-// 新建配置项
-let addConf = reactive({});
-
 let TableRef = ref("");
 
 let isMounted = ref(false);
@@ -675,7 +672,6 @@ const getLayoutList = async () => {
             defaultFilter.value = JSON.parse(defaultFilterSetting.value.config);
         }
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
-        addConf = res.data.ADD ? { ...res.data.ADD } : {};
         let { ALL, SELF } = res.data.LIST;
         titleWidthForAll = res.data.titleWidthForAll
             ? { ...JSON.parse(res.data.titleWidthForAll) }

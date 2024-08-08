@@ -38,14 +38,6 @@
                     <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#">使用文档</a>
                 </div>
                 <mlCodeEditor v-model="styleConf.rowConf.rowStyleRender"/>
-				<!-- <el-checkbox v-model="styleConf.delConf.allowUsersSelect">
-					允许用户选择级联删除
-				</el-checkbox>
-                <div class="info-text mt-5 mb-2">默认级联删除</div>
-				<MlAssociatedRecords
-					v-model="styleConf.delConf.associatedRecords"
-					:entityCode="entityCode"
-				/> -->
 			</div>
 		</div>
 		<template #footer>

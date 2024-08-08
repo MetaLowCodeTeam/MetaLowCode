@@ -22,7 +22,7 @@
                                     <span v-else>{{ confData[item.key] }}</span>
                                 </div>
                                 <!-- 输入框 -->
-                                <div v-else-if="item.type == 'input'">
+                                <div v-else-if="item.type == 'input' || item.type == 'passwordInput'">
                                     <el-input
                                         :class="{'is-error':item.isError}"
                                         @focus="item.isError = false"
@@ -30,6 +30,8 @@
                                         clearable
                                         :disabled="isDisabled(card,item) || item.disabled"
                                         :placeholder="'请输入' + item.label"
+                                        :type="item.type == 'input' ? 'text' : 'password'"
+                                        :show-password="item.type == 'passwordInput'"
                                     ></el-input>
                                     <div class="info-text">{{ item.subLabel }}</div>
                                 </div>
@@ -264,6 +266,11 @@ let wxWorkFields = ref([
     "nodeDep2",
 ]);
 
+// 微信字段
+let wxFields = ref([
+    "wxMiniAppappId",
+    "wxMiniAppappSecret",
+]);
 
 
 const initData = async () => {
@@ -284,7 +291,8 @@ const initData = async () => {
             smsSetting, 
             cloudStorageSetting, 
             dingTalkSetting,
-            wxWorkSetting
+            wxWorkSetting,
+            wechatMiniAppSetting,
          } =
             confData;
 
@@ -302,6 +310,9 @@ const initData = async () => {
         }
         if(!wxWorkSetting){
             wxWorkSetting = {};
+        }
+        if(!wechatMiniAppSetting){
+            wechatMiniAppSetting = {};
         }
         // 格式化短信
         confData.smsOpen = smsSetting?.openStatus;
@@ -354,6 +365,14 @@ const initData = async () => {
                 }else {
                     confData[key] = element;
                 }
+            }
+        }
+        // 格式化微信集成(小程序)
+        confData.wxMiniAppOpen = wechatMiniAppSetting?.openStatus;
+        for (const key in wechatMiniAppSetting) {
+            if (Object.hasOwnProperty.call(wechatMiniAppSetting, key)) {
+                const element = wechatMiniAppSetting[key];
+                confData["wxMiniApp" + key] = element;
             }
         }
 
@@ -422,6 +441,14 @@ const isDisabled = (card, item) => {
         card.code == "wxWorkIntegration" &&
         !confData.wxWorkOpen &&
         wxWorkFields.value.includes(item.key)
+    ) {
+        return true;
+    }
+    // 如果是微信集成 且 没有开启小程序登录
+    if (
+        card.code == "wxIntegration" &&
+        !confData.wxMiniAppOpen &&
+        wxFields.value.includes(item.key)
     ) {
         return true;
     }
@@ -509,6 +536,25 @@ const onSubmit = async () => {
     }
     // 重新赋值企业微信集成开关
     confData.wxWorkSetting.openStatus = confData.wxWorkOpen;
+
+    if(!confData.wechatMiniAppSetting){
+        confData.wechatMiniAppSetting = {
+            appId: null,
+            appSecret: null,
+        };
+    }
+
+    // 如果微信集成-小程序登录
+    if (confData.wxMiniAppOpen) {
+        for (const key in confData.wechatMiniAppSetting) {
+            if (Object.hasOwnProperty.call(confData.wechatMiniAppSetting, key)) {
+                confData.wechatMiniAppSetting[key] = confData["wxMiniApp" + key];
+            }
+        }
+    }
+    // 重新赋值短信开关
+    confData.wechatMiniAppSetting.openStatus = confData.wxMiniAppOpen;
+
     loading.value = true;;
     let res = await updateSysSetting(confData);
     if (res) {
@@ -549,15 +595,11 @@ const checkOnSave = () => {
                 ElMessage.warning("请输入有效域名");
                 return false;
             }
-            // 如果字段是必填的，且该字段没有值 并且该字段不属于短信 或者 邮箱
+            let otherRequiredFields = ["appName", "appTitle"];
             if (
                 subEl.required &&
                 !confData[subEl.key] &&
-                !smsFields.value.includes(subEl.key) &&
-                !emailFields.value.includes(subEl.key) &&
-                !cloudStorageFields.value.includes(subEl.key) &&
-                !dingTalkFields.value.includes(subEl.key) &&
-                !wxWorkFields.value.includes(subEl.key)
+                otherRequiredFields.includes(subEl.key)
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
@@ -600,13 +642,36 @@ const checkOnSave = () => {
                 ElMessage.warning(MsgType[subEl.type] + subEl.label);
                 return false;
             }
-            // 如果字段是必填的，且该字段没有值 并且该字段属于云存储 并且邮箱是开启的
+            // 如果字段是必填的，且该字段没有值 并且该字段属于钉钉集成
             if (
                 subEl.required &&
                 !confData[subEl.key] &&
                 dingTalkFields.value.includes(subEl.key) &&
-                wxWorkFields.value.includes(subEl.key) &&
                 confData.dingTalkOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于企业微信集成
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                wxWorkFields.value.includes(subEl.key) &&
+                confData.wxWorkOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于微信集成
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                wxFields.value.includes(subEl.key) &&
+                confData.wxMiniAppOpen
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
@@ -615,11 +680,6 @@ const checkOnSave = () => {
             }
         }
     }
-    // if(confData.homeURL && confData.homeURL.indexOf('http://') == -1 && confData.homeURL.indexOf('https://') == -1){
-    //     ElMessage.warning("请输入有效域名");
-    //     confList.value[0].
-    //     return false
-    // }
     return true;
 };
 

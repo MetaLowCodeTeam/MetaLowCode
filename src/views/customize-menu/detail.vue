@@ -88,14 +88,14 @@
                                 <el-col :span="24" v-if="contentSlots.beforeNewRelatedBtn">
                                     <slot name="beforeNewRelatedBtn"></slot>
                                 </el-col>
-                                <el-col :span="24">
+                                <el-col :span="24" v-if="$TOOL.checkRole('r6008') && detailParamConf.showNewRelatedBtn">
                                     <NewRelated
                                         :entityName="entityName"
                                         :entityCode="entityCode"
                                         :addConf="addConf"
                                         @confirm="newRelatedConfirm"
                                         @add="onAdd"
-                                        :showNewRelatedBtn="$TOOL.checkRole('r6008') && detailParamConf.showNewRelatedBtn"
+                                        :checkNewRelatedFilter="checkNewRelatedFilter"
                                     />
                                 </el-col>
                                 <el-col :span="24" v-if="contentSlots.beforeEditBtn">
@@ -369,7 +369,8 @@ const newRelatedConfirm = async () => {
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
         myLayoutConfig.value = res.data;
-		addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
+		// 新建配置项
+		formatNewRelated(res.data.ADD);
 		if (cutTab.value == "detail") {
 			initData();
 		} else {
@@ -386,6 +387,9 @@ const onSubmitApproval = () => {
 
 // 检测页签过滤
 let checkTabsFilter = ref({});
+// 新建项过滤
+let checkNewRelatedFilter= ref({});
+
 // 加载页签
 const getLayoutList = async () => {
 	loading.value = true;
@@ -415,8 +419,8 @@ const getLayoutList = async () => {
            
         }
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
-        
-		addConf.value = res.data.ADD ? { ...res.data.ADD } : {};
+        // 新建配置项
+		formatNewRelated(res.data.ADD);
 		idFieldName.value = res.data.idFieldName;
 		nameFieldName.value = res.data.nameFieldName;
 		let row = {};
@@ -427,6 +431,26 @@ const getLayoutList = async () => {
 		loading.value = false;
 	}
 };
+
+// 格式化新建相关-新加接口判断过滤条件
+const formatNewRelated = async (conf) => {
+    addConf.value = conf || {};
+    // 如果有新建相关
+    if(addConf.value.config) {
+        // 取所有新建项数
+        let addConfig = JSON.parse(addConf.value.config);
+        // 取所有新建项过滤参数
+        let filterList = addConfig.map(el => el.filter);
+        if(addConfig && addConfig.length > 0){
+            // 调用查询接口判断该页签是否显示
+            let newAddRes = await checkTables(filterList, detailId.value);
+            if(newAddRes){
+                checkNewRelatedFilter.value = newAddRes.data;
+            }
+        }
+    }
+}
+
 
 let haveLayoutJson = ref(false);
 let noeData = ref(false);
