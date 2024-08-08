@@ -148,6 +148,10 @@ export default {
 		},
 
 		onCheckTagChange(item, checked) {
+			if (this.field.options.disabled) {
+				return
+			}
+
 			if (checked) {
 				this.fieldModel = !this.fieldModel ? item.label : this.fieldModel + ',' + item.label
 			} else {
