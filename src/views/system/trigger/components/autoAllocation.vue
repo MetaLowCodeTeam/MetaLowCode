@@ -4,6 +4,7 @@
             <el-radio-group v-model="trigger.actionContent.assignType">
                 <el-radio :label="1">跟随主实体</el-radio>
                 <el-radio :label="2" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 自定义">自定义</el-radio>
+                <el-radio :label="3" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 根据字段分配">根据字段分配</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item class="mt-20" label="分配给谁" v-if="trigger.actionContent.assignType == 2">
@@ -14,6 +15,24 @@
                 <el-radio :label="1">依次平均分配</el-radio>
                 <el-radio :label="2">随机分配</el-radio>
             </el-radio-group>
+        </el-form-item>
+        <el-form-item class="mt-20" label="分配指定字段" v-if="trigger.actionContent.assignType == 3">
+            <el-select
+                v-model="trigger.actionContent.assignToField"
+                multiple
+                placeholder="请选择共享指定字段"
+                style="width: 100%"
+                clearable
+                filterable
+                v-loading="loadUserFieldsLoading"
+            >
+                <el-option
+                    v-for="(op,inx) of userFields"
+                    :key="inx"
+                    :value="op.fieldName"
+                    :label="op.fieldLabel"
+                ></el-option>
+            </el-select>
         </el-form-item>
         <el-form-item class="mt-20" label="同时分配关联记录">
             <el-select
@@ -38,6 +57,7 @@
 
 <script setup>
 import { ref, onMounted, inject, watch } from "vue";
+import { queryEntityFields } from "@/api/crud";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -55,7 +75,7 @@ watch(
     () => {
         if (
             (trigger.value.whenNum & 16) > 0 &&
-            trigger.value.actionContent.assignType == 2
+            (trigger.value.actionContent.assignType == 2 || trigger.value.actionContent.assignType == 3)
         ) {
             trigger.value.actionContent.assignType = 1;
         }
@@ -78,6 +98,8 @@ onMounted(() => {
         trigger.value.actionContent.cascades = [];
     }
     getAssignEntityList();
+    // 获取用户字段
+    getUserFields();
 });
 
 // 获取 同时分配关联记录 实体列表
@@ -102,6 +124,17 @@ const getAssignEntityList = async () => {
     } 
     contentLoading.value = false;
 };
+
+let userFields = ref([]);
+let loadUserFieldsLoading = ref(false);
+const getUserFields = async () => {
+    loadUserFieldsLoading.value = false;
+    let res = await queryEntityFields(trigger.value.entityCode, false, true, true);
+    if (res) {
+        userFields.value = res.data.filter(el => el.fieldType == "Reference" && el.referenceName == "User");
+    }
+    loadUserFieldsLoading.value = false;
+}
 </script>
 
 <style>
