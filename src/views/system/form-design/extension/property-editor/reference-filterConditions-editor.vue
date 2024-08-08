@@ -194,20 +194,72 @@ export default {
 				"CUQ",
 				"CUY",
 			],
+            subFormName: "",
 		};
 	},
 	inject: ["isSubFormChildWidget"],
 	methods: {
 		// 打开过滤条件弹框
 		async openFilterDialog() {
+            let paramEntity = "";
+            // 1 获取表单上的字段组件
+			let allFieldWidgets = Utils.getAllFieldWidgets(
+				this.designer.widgetList
+			);
+			// 2. 用getAllContainerWidgets获取表达上的容器组件；
+			let allContainerWidgets = Utils.getAllContainerWidgets(
+				this.designer.widgetList
+			);
+            // 3. 遍历上述容器组件，找出子表单容器，type是sub-form或grid-sub-form；获取到子表单内部的字段组件；
+			// 所有子表单字段组件
+			let subFormWidgets = [];
+			// 所有子表单字段名称
+			let subFormFieldIds = [];
+			// 多行子表单字段
+			let gridSubFormIds = [];
+            // 所有子表单组件
+            this.allSubFormWidgets = [];
+			allContainerWidgets.forEach((el) => {
+				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+                    this.allSubFormWidgets.push(el);
+					Utils.traverseFieldWidgetsOfContainer(
+						el.container,
+						(fw) => {
+							let subFw = {
+								name: fw.options.name,
+								label: fw.options.label,
+								targetSubForm: el.container.options.name,
+								fieldType: fw.type,
+								id: fw.id,
+							};
+							subFormWidgets.push(subFw);
+							subFormFieldIds.push(fw.id);
+							if (el.type == "grid-sub-form") {
+								gridSubFormIds.push(fw.id);
+							}
+						}
+					);
+				}
+			});
+			// 取选中字段
+			let selectedId = this.designer.selectedId;
+			// 如果不是子表单 并且 多行子表单里没有这个选中的组件
+			if (
+				!this.isSubFormChildWidget() &&
+				!gridSubFormIds.includes(selectedId)
+			) {
+				paramEntity = this.$route.query.entity;
+			}
+			// 如果是子表单
+			else {
+				subFormWidgets.forEach((el) => {
+					if (el.id == selectedId) {
+                        paramEntity = el.targetSubForm;
+					}
+				});
+			}
 			this.filterDialogConf.isShow = true;
 			this.filterDialogConf.loading = true;
-            let paramEntity = "";
-            if(this.selectedWidget.subFormName) {
-                paramEntity = this.selectedWidget.subFormName;
-            }else {
-                paramEntity = this.$route.query.entity;
-            }
 			// 通过引入字段，当前实体获取引入字段的实体
 			let refRes = await getRefFieldExtras(
 				this.optionModel.name,

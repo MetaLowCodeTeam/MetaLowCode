@@ -19,8 +19,7 @@
         <el-form-item class="mt-20" label="分配指定字段" v-if="trigger.actionContent.assignType == 3">
             <el-select
                 v-model="trigger.actionContent.assignToField"
-                multiple
-                placeholder="请选择共享指定字段"
+                placeholder="请选择分配指定字段"
                 style="width: 100%"
                 clearable
                 filterable
