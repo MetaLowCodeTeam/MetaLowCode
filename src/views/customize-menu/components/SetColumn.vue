@@ -4,6 +4,7 @@
         v-model="isShow"
         width="650px"
         appendToBody
+        draggable
     >
         <div v-loading="loading">
             <div class="clearfix">
@@ -92,11 +93,11 @@
             v-if="editColumnDialogIsShow"
             appendToBody
             title="列设置"
-            width="450"
+            width="460"
             top="25vh"
         >
-            <div class="pr-40">
-                <el-form label-width="100px">
+            <div>
+                <el-form label-width="80px">
                     <el-form-item label="别名" class="mb-10">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
                     </el-form-item>
@@ -112,6 +113,13 @@
                                 <ElIconBottom v-else />
                             </el-icon>
                         </span>
+                    </el-form-item>
+                    <el-form-item label="冻结列" class="mb-5">
+                        <el-radio-group v-model="editColumnDialogData.fixed">
+                            <el-radio :label="false">不冻结</el-radio>
+                            <el-radio label="left">向左冻结</el-radio>
+                            <el-radio label="right">向右冻结</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                     <el-form-item label="数据统计" class="mb-3">
                         <el-checkbox v-model="editColumnDialogData.dataStatistics" />
@@ -304,6 +312,8 @@ let editColumnDialogData = reactive({
     renderType: "defaultRender",
     // 自定义渲染JS
     columnRender:"",
+    // 冻结列  默认false  向左left 向右right
+    fixed: false,
 });
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
@@ -379,9 +389,21 @@ const editColumn = (column, inx) => {
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {
-    let { columnAliasName, columnSort, columnWidth, dataStatistics, renderType, columnRender} = column;
+    let { 
+        columnAliasName, 
+        columnSort, 
+        columnWidth, 
+        dataStatistics, 
+        renderType, 
+        columnRender, 
+        fixed
+    } = column;
     if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || (renderType == 'customizeRender' && !!columnRender)) {
         return true;
+    }
+    // 设置了冻结列
+    if(fixed)  {
+        return true; 
     }
     return false;
 };

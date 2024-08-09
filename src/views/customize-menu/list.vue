@@ -194,6 +194,7 @@
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
+                        :fixed="checkedColumnFixed"
                     >
                         <template #header>
                             <el-checkbox 
@@ -220,6 +221,7 @@
                         :width="setColumnWidth(column)"
                         sortable
                         show-overflow-tooltip
+                        :fixed="column.fixed"
                     >
                         <template #default="scope">
                             <FormatRow
@@ -425,6 +427,8 @@ let entityName = ref("");
 
 // 表格列
 let tableColumn = ref([]);
+// 勾选列冻结
+let checkedColumnFixed = ref(false);
 // 所有字段
 let allFields = ref([]);
 // 表格数据
@@ -720,6 +724,8 @@ const getLayoutList = async () => {
         }
         // 如果存在列
         if (tableColumn.value.length > 0) {
+            let hasFixed = tableColumn.value.filter(el => el.fixed == 'left');
+            checkedColumnFixed.value = hasFixed.length > 0 ? true : false;
             refreshData();
         }
         // 如果存在快速搜索字段
