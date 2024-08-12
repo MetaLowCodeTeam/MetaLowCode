@@ -613,6 +613,11 @@ export default {
                     return;
                 }
             }
+            items.forEach(el => {
+                if(el.value) {
+                    el.value = el.value.replace(/\s/g, '');
+                }
+            })
             this.$emit("confirm", { equation, items });
         },
         // 取消

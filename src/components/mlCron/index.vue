@@ -115,102 +115,7 @@
 </style>
 <template>
     <div class="vue3-cron-div">
-        <!-- <el-button
-            class="language"
-            text
-            type="primary"
-            @click="state.language = state.language === 'en' ? 'cn' : 'en'"
-        >
-            {{
-            state.language === 'en' ? 'cn' : 'en'
-            }}
-        </el-button>-->
         <el-tabs type="border-card" v-model="activeTab">
-            <!-- <el-tab-pane name="second">
-                <template #label>
-                    <span>
-                        <i class="el-icon-date"></i>
-                        {{ state.text.Seconds.name }}
-                    </span>
-                </template>
-                <div class="tabBody myScroller" :style="{ 'max-height': maxHeight }">
-                    <el-row>
-                        <el-radio v-model="state.second.cronEvery" label="1" :disabled="disabled">
-                            {{
-                            state.text.Seconds.every
-                            }}
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio v-model="state.second.cronEvery" label="2" :disabled="disabled">
-                            {{ state.text.Seconds.interval[0]
-                            }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.second.incrementIncrement"
-                                :min="1"
-                                :max="60"
-                                :disabled="disabled"
-                            ></el-input-number>
-                            {{ state.text.Seconds.interval[1] || "" }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.second.incrementStart"
-                                :min="0"
-                                :max="59"
-                                :disabled="disabled"
-                            ></el-input-number>
-                            {{ state.text.Seconds.interval[2] || "" }}
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio
-                            class="long"
-                            v-model="state.second.cronEvery"
-                            label="3"
-                            :disabled="disabled"
-                        >
-                            {{
-                            state.text.Seconds.specific
-                            }}
-                            <el-select
-                                size="small"
-                                multiple
-                                v-model="state.second.specificSpecific"
-                                :disabled="disabled"
-                                
-                            >
-                                <el-option
-                                    v-for="(val, index) in 60"
-                                    :key="index"
-                                    :value="val - 1"
-                                >{{ val - 1 }}</el-option>
-                            </el-select>
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio v-model="state.second.cronEvery" label="4" :disabled="disabled">
-                            {{ state.text.Seconds.cycle[0] }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.second.rangeStart"
-                                :min="1"
-                                :max="60"
-                                :disabled="disabled"
-                            ></el-input-number>
-                            {{ state.text.Seconds.cycle[1] || "" }}
-                            <el-input-number
-                                size="small"
-                                v-model="state.second.rangeEnd"
-                                :min="0"
-                                :max="59"
-                                :disabled="disabled"
-                            ></el-input-number>
-                            {{ state.text.Seconds.cycle[2] || "" }}
-                        </el-radio>
-                    </el-row>
-                </div>
-            </el-tab-pane> -->
             <el-tab-pane name="minute">
                 <template #label>
                     <span>
@@ -699,11 +604,11 @@
 <script>
 import Language from "./language";
 import cronParser from "cron-parser";
-import { reactive, computed, toRefs, defineComponent, ref } from "vue";
+import { reactive, computed, toRefs, defineComponent, ref, watch } from "vue";
 export default defineComponent({
     name: "vue3Cron",
     props: {
-        cronValue: {},
+        cronValue: "",
         i18n: {},
         maxHeight: {},
         disabled: {
@@ -1254,11 +1159,12 @@ export default defineComponent({
             emit("onConfirm", state.cron);
         };
         // watch(
-        //     () => state.cron,
+        //     () => props.cronValue,
         //     (newValue, oldValue) => {
-        //         emit("change", state.cron);
+        //         console.log(1,'1')
+        //         
         //     },
-        //     { deep: false }
+        //     { deep: true }
         // );
         const rest = (data) => {
             for (let i in data) {
@@ -1279,6 +1185,7 @@ export default defineComponent({
         const setValue = (value) => {
             const cronArr = value.split(" ");
             state.secondsText = cronArr[0];
+            console.log(state.secondsText,'state.secondsText')
             state.minutesText = cronArr[1];
             state.hoursText = cronArr[2];
             state.daysText = cronArr[3];
@@ -1292,6 +1199,9 @@ export default defineComponent({
                 state.day.cronEvery = "1";
             }
         };
+        if(props.cronValue){
+            setValue(props.cronValue);
+        }
         const reset = () => {
             activeTab.value = "second";
             setValue("* * * * * ?");

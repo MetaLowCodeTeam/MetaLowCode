@@ -47,6 +47,7 @@
                             i18n="cn"
                             @onConfirm="setCron"
                             @close="cronDialogIsShow = false"
+                            :cronValue="trigger.whenCron"
                         ></mlCron>
                     </mlDialog>
                     <div class="info-text mt-5">

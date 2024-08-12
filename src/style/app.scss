@@ -515,3 +515,7 @@ $names: (
 .conmon-tooltip {
 	width: 300px;
 }
+
+.table-box-el-table .el-table__row td {
+    background: inherit !important;
+}

@@ -190,6 +190,7 @@
                     :show-summary="statisticsList.length > 0"
                     :summary-method="getSummaries"
                     :row-style="setRowStyle"
+                    class="table-box-el-table"
                 >
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
@@ -1264,6 +1265,7 @@ const onQuickQuery = () => {
         ElMessage.warning("请配置快速查询字段!");
         return
     }
+    quickQuery.value = quickQuery.value.replace(/\s/g, '');
     getTableList();
 }
 
@@ -1454,11 +1456,11 @@ div {
                 // overflow:auto;
             }
 
-            :deep(.el-table__row){
-                td {
-                    background: initial !important;
-                }
-            }
+            // :deep(.el-table__row){
+            //     td {
+            //         background: initial;
+            //     }
+            // }
         }
     }
 }
