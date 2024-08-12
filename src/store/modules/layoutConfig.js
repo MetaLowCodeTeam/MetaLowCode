@@ -150,7 +150,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         let list = JSON.parse(tempConfig);
         let testRoutes = [...list]
-        let formatRouters = [];
+        let routers = [];
         testRoutes.forEach((el) => {
             let initMenu = {
                 meta: {},
@@ -245,9 +245,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if(el.isOpeneds){
                 topDefaultUnfold.value.push(initMenu.path);
             }
-            formatRouters.push(initMenu);
+            routers.push(initMenu);
         });
-        return formatRouters
+        return routers
     }
     // 获取左侧菜单
     const getUseMenuList = () => {
