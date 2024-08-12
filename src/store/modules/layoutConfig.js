@@ -20,7 +20,14 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/dashboard";
     } else {
-        newRoute.path = "/web/custom-page/" + getCustomPageComponent(el.outLink) + setPathQuery(el.outLink) + (isTopNav ? '/' + el.guid : '');
+        // 自定义页面目录
+        newRoute.path = "/web/custom-page/";
+        // 自定义路由拼接
+        newRoute.path += getCustomPageComponent(el.outLink);
+        // 如果是自定义列表需要拼接参数
+        newRoute.path += el.useCustom ? setPathQuery(el.outLink) : "";
+        // 如果是顶部导航需要拼接guid作为唯一值
+        newRoute.path += isTopNav ? '/' + el.guid : '';
         newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
