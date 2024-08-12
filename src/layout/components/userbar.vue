@@ -39,6 +39,18 @@
                 </el-icon>
             </div>
         </el-tooltip>
+        <el-dropdown class="user panel-item" @command="handleUser">
+            <div class="user-avatar internationalization-div">
+                <SvgIcon class="internationalization" icon-name="internationalization" />
+            </div>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item command="uc">帐号信息</el-dropdown-item>
+                    <el-dropdown-item command="clearCache">清除缓存</el-dropdown-item>
+                    <el-dropdown-item divided command="outLogin">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
         <el-tooltip class="box-item" effect="light" content="消息" placement="bottom">
             <div class="msg panel-item" @click="showMsg">
                 <el-badge :hidden="newMsgNum == 0" :value="newMsgNum" class="badge" type="danger">
@@ -89,7 +101,7 @@
                 </el-drawer>
             </div>
         </el-tooltip>
-
+        <!--  -->
         <el-dropdown class="user panel-item" trigger="click" @command="handleUser">
             <div class="user-avatar">
                 <el-avatar :size="30">
@@ -434,5 +446,8 @@ const tasksFn = () => {
         width: 100%;
         align-items: center;
     }
+}
+.internationalization-div {
+    color: #fff;
 }
 </style>

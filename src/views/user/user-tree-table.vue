@@ -79,7 +79,7 @@
         <el-container>
             <mlSingleList
                 ref="mlSingleListRef"
-                title="用户管理"
+                :title="$t('nav.organizationalStructure.children.userManagement')"
                 :mainEntity="entity"
                 :fieldsList="fieldsList"
                 :sortFields="sortFields"

@@ -35,5 +35,17 @@ export default {
 		nightmode_msg: 'Suitable for low light environment,The current night mode is beta',
 		language: 'language',
 		language_msg: 'Translation in progress,Temporarily translated the text of this view',
-	}
+	},
+    nav: {
+        organizationalStructure: {
+            name: "OrganizationalStructure",
+            children: {
+                userManagement: "UserManagement",
+                addUser: "AddUser",
+            }
+        }
+    },
+    operate: {
+        operate: "Operate",
+    }
 }
