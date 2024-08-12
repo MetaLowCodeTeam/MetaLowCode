@@ -343,16 +343,17 @@ export default {
         doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, isAll) {
             // 是否追加回填
             if(isAll){
-                // 第一条选中数据回填
-                this.doFillBack(this.fieldModel, rows[0]);
-                // 赋值当前选中数据
-                this.fieldModel = {
-                    id: rows[0][recordObj.id],
-                    name: rows[0][recordObj.label],
-                };
-                this.handleChangeEvent(this.fieldModel);
-                this.handleRecordSelectedEvent(rows[0]);
+                
                 rows.forEach((selectedRow,subInx) => {
+                    // 赋值当前选中数据
+                    this.fieldModel = {
+                        id: selectedRow[recordObj.id],
+                        name: selectedRow[recordObj.label],
+                    };
+                    // 第一条选中数据回填
+                    this.doFillBack(this.fieldModel, selectedRow);
+                    this.handleChangeEvent(this.fieldModel);
+                    this.handleRecordSelectedEvent(selectedRow);
                     // 把后面的数据已追加的方式追加进去。
                     if(subInx != 0){
                         let temp = {};
@@ -375,8 +376,6 @@ export default {
             else {
                 // 如果第一条数据不存在
                 if(!sourceSubFormValues.includes(rows[0][recordObj.id])){
-                    // 第一条选中数据回填
-                    this.doFillBack(this.fieldModel, rows[0]);
                     // 赋值当前选中数据
                     this.fieldModel = {
                         id: rows[0][recordObj.id],
@@ -384,6 +383,8 @@ export default {
                     };
                     this.handleChangeEvent(this.fieldModel);
                     this.handleRecordSelectedEvent(rows[0]);
+                    // 第一条选中数据回填
+                    this.doFillBack(this.fieldModel, rows[0]);
                 }
                 rows.forEach((selectedRow,subInx) => {
                     // 把后面的数据已追加的方式追加进去。
@@ -435,6 +436,7 @@ export default {
         },
         // 单选回填
 		setReferRecord(recordObj, selectedRow) {
+           
 			this.fieldModel = {
 				id: recordObj.id,
 				name: recordObj.label,
@@ -486,7 +488,7 @@ export default {
                 if(subFormFillBackConfig.length < 1){
                     return
                 }
-                let res = await queryById(recordObj.id);;
+                let res = await queryById(recordObj.id);
                 if(res){
                     let resData = res.data || {};
                     subFormFillBackConfig.forEach(el => {
