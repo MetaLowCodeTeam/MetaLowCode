@@ -614,7 +614,7 @@ export default {
                 }
             }
             items.forEach(el => {
-                if(el.value) {
+                if(el.value && typeof el.value == 'string') {
                     el.value = el.value.replace(/\s/g, '');
                 }
             })
