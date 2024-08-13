@@ -23,7 +23,7 @@
                 </el-col>
             </el-row>
         </el-form-item>
-        <!-- 更新规则、聚合规则 -->
+        <!-- 更新规则 -->
         <el-form-item>
             <template #label>更新规则</template>
             <div class="w-100 mb-10" v-if="trigger.actionContent?.items?.length > 0">
@@ -656,6 +656,7 @@ let mlFormulaFields = ref([]);
 // 高级 计算公式 回显值
 let mlFormulaVal = ref("");
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
+let timeType = ref(["DateTime", "Date"]);
 let mlIsAdvanced = ref(false);
 // 判断计算公式显示
 const checkMlFormula = () => {
