@@ -804,8 +804,8 @@ export default {
             
             return new Promise((resolve) => {
                 this.$confirm(
-                    "是否确认开启审批字段?",
-                    "审批字段开启确认",
+                    "是否确认开启流程审批?",
+                    "开启流程审批确认",
                     {
                         confirmButtonText: '确认',
                         cancelButtonText: '取消',
