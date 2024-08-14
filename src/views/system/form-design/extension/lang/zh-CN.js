@@ -30,6 +30,7 @@ export default {
             paginationPage: '页',
             // 引用组件语言配置
             useTreeDataSelect: "树形数据选择弹窗",
+            treeDataOperatingBtn: "配置",
             treeDataDialogTitle: "配置树形数据的父子关系字段",
             treeDataDialogLoading: "字段加载中...",
             treeDataDialogPlaceholder: "请选择父子引用字段",

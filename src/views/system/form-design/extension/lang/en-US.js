@@ -30,6 +30,7 @@ export default {
             paginationPage: 'page',
             // 引用组件语言配置
             useTreeDataSelect: "Use Tree Select",
+            treeDataOperatingBtn: "Configuration",
             treeDataDialogTitle: "Configure parent-child relationship fields for tree data",
             treeDataDialogLoading: "Field loading in progress ...",
             treeDataDialogPlaceholder: "Please select parent-child reference field",
