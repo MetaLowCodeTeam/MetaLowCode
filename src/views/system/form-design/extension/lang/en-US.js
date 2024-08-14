@@ -28,6 +28,13 @@ export default {
             paginationPlaceholder:"Please select the number of entries per page",
             paginationLabel: 'num',
             paginationPage: 'page',
+            // 引用组件语言配置
+            useTreeDataSelect: "Use Tree Select",
+            treeDataDialogTitle: "Configure parent-child relationship fields for tree data",
+            treeDataDialogLoading: "Field loading in progress ...",
+            treeDataDialogPlaceholder: "Please select parent-child reference field",
+            treeDataDialogCancel: "cancel",
+            treeDataDialogConfirm: "confirm",
         },
 
     }

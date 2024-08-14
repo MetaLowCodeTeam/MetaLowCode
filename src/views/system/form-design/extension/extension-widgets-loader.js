@@ -22,6 +22,8 @@ import referenceUseCurrentUserEditor from '@/views/system/form-design/extension/
 import referenceFillBackConfigEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackConfig-editor.vue';
 import referenceFillBackEnabledEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackEnabled-editor.vue';
 import referenceFilterConditionsEditor from '@/views/system/form-design/extension/property-editor/reference-filterConditions-editor.vue';
+import referenceTreeDataSelectEditor from '@/views/system/form-design/extension/property-editor/reference-treeDataSelect-editor.vue';
+
 import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/list-sub-form-name-editor.vue"
 
 /**
@@ -83,6 +85,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
+	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
     // 容器组件添加到设计器
 	PERegister.registerCPEditor(app, 'listSubFormWidget', 'listSubForm-widget', listSubFormWidget)

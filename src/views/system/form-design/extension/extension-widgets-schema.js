@@ -114,6 +114,12 @@ export const referenceSchema = {
         subFormFillBackConfig: [],
         // 过滤条件
         filterConditions: {},
+        // 启用树模式
+        useTreeDataSelect: false, 
+        // 树引用字段
+        treeCascadeFieldName: "",
+        // 树数据源(实体名称)
+        treeDataEntityName: "",
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

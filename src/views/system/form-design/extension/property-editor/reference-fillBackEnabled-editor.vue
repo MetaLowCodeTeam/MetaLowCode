@@ -1,6 +1,6 @@
 <template>
-	<!--  -->
-	<el-form-item label="启用表单回填" label-width="120px">
+	<!--  --> 
+	<el-form-item label="启用表单回填" label-width="120px" v-if="!optionModel.useTreeDataSelect">
 		<el-switch v-model="optionModel.fillBackEnabled" />
 	</el-form-item>
 </template>

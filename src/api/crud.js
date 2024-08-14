@@ -115,6 +115,25 @@ export function queryEntityFields(entityCode, queryReference, queryReserved, fir
 }
 
 /**
+ * 通用查询- 实体名称+实体自动 查引用实体的所有字段
+ * @param {*} entityName 实体名称
+ * @param {*} fieldName 实体字段
+ * @param {*} queryReference 是否查询引用实体的字段（单引用）  true or false 默认 false
+ * @param {*} queryReserved 是否查询系统字段  true or false 默认 false
+ * @param {*} firstReference 是否查询引用字段（不包含引用实体字段）  true or false 默认 false
+ */
+export function queryReferToEntityFields(entityName, fieldName, queryReference, queryReserved, firstReference) {
+    return http.get('/crud/queryReferToEntityFields', { entityName, fieldName, queryReference, queryReserved, firstReference })
+}
+
+export function queryRecordTree(entityName, parentFieldName) {
+    return http.get('/crud/queryRecordTree', { entityName, parentFieldName })
+}
+
+
+
+
+/**
  * 通用查询-获取实体字段
  * @param {*} entityCodes 实体
  * @param {*} queryReference 是否查询引用实体的字段（单引用）  true or false 默认 false

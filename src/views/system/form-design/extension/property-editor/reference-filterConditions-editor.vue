@@ -1,6 +1,6 @@
 <template>
 	<!--  -->
-	<el-form-item label="过滤条件" label-width="120px">
+	<el-form-item label="过滤条件" label-width="120px" v-if="!optionModel.useTreeDataSelect">
 		<el-button class="w-100" @click="openFilterDialog">
 			设置过滤条件
 		</el-button>

@@ -64,7 +64,7 @@
 				</span>
 			</template>
 		</form-item-wrapper>
-		<el-dialog
+		<ml-dialog
 			title="请选择"
 			v-if="showReferenceDialogFlag"
 			v-model="showReferenceDialogFlag"
@@ -86,9 +86,20 @@
                 @multipleRecordSelected="multipleSetReferRecord"
 				:gDsv="gDsv"
                 :showCheckBox="subFormItemFlag"
-                showMultipleSelectConfirm
+                :showMultipleSelectConfirm="subFormItemFlag"
+                v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
-		</el-dialog>
+            <ReferenceSearchTree 
+                v-else 
+                ref="referTree" 
+                :treeConf="treeDialogConf"
+                :defaultSelected="fieldModel"
+            />
+            <template #footer v-if="referenceDialogType == 'tree'">
+                <el-button @click="showReferenceDialogFlag = false">取消</el-button>
+                <el-button type="primary" @click="treeDialogConfirm">确认</el-button>
+            </template>
+		</ml-dialog>
 	</div>
 	<Detail ref="detailRef" />
 </template>
@@ -96,6 +107,7 @@
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import Detail from "@/views/customize-menu/detail.vue";
 import { queryById } from "@/api/crud";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
@@ -132,6 +144,7 @@ export default {
 	components: {
 		FormItemWrapper,
 		ReferenceSearchTable,
+        ReferenceSearchTree,
 		Detail,
 	},
 	data() {
@@ -140,9 +153,10 @@ export default {
 			fieldModel: null,
 			displayValue: "",
 			rules: [],
-
+            // 引用组件弹框类型，table与tree
+            referenceDialogType: 'table',
 			showReferenceDialogFlag: false,
-
+            treeDialogConf: {},
 			entity: null,
 			curRefField: null,
 			searchFilter: "",
@@ -243,7 +257,21 @@ export default {
 		},
 
 		onAppendButtonClick() {
-			this.curRefField = this.field.options.name;
+            // 默认树
+            this.referenceDialogType = 'table';
+            let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
+			this.curRefField = name;
+            // 如果启用了树形数据选择弹框，且选择了父子级联字段
+            if(useTreeDataSelect && treeCascadeFieldName) {
+                
+                this.referenceDialogType = 'tree';
+                this.showReferenceDialogFlag = true;
+                this.treeDialogConf = {
+                    treeCascadeFieldName,
+                    treeDataEntityName
+                };
+                return
+            }
             let optionsFilterConditions = {};
             if(this.field.options?.filterConditions){
                 optionsFilterConditions = JSON.parse(JSON.stringify(this.field.options?.filterConditions));
@@ -408,35 +436,11 @@ export default {
 
             subFormCom.setSubFormValues(subFormValues);
 
-
-            // // 遍历多选数据
-            // rows.forEach((selectedRow,subInx) => {
-            //     // 把后面的数据已追加的方式追加进去。
-            //     if(subInx != 0 && (isAll || (!isAll && sourceSubFormValues.includes(selectedRow[recordObj.id])))){
-            //         let temp = {};
-            //         temp[this.fieldKeyName] = {
-            //             id: selectedRow[recordObj.id],
-			// 	        name: selectedRow[recordObj.label],
-            //         };
-            //         // 如果设置了回填
-            //         if(this.field.options.fillBackEnabled){
-            //             let { fillBackConfig } = this.field.options;
-            //             fillBackConfig.forEach((el) => {
-            //                 temp[el.targetField] = selectedRow[el.sourceField];
-            //             });
-            //         }
-            //         subFormValues.push(temp);
-            //     }
-            // })
-            // // 设置数据
-            // subFormCom.setSubFormValues(subFormValues);
-
             // 关闭弹框
             this.showReferenceDialogFlag = false;
         },
         // 单选回填
 		setReferRecord(recordObj, selectedRow) {
-           
 			this.fieldModel = {
 				id: recordObj.id,
 				name: recordObj.label,
@@ -448,7 +452,19 @@ export default {
 			this.doFillBack(recordObj, selectedRow);
 			this.showReferenceDialogFlag = false;
 		},
-
+        // 树选择回填
+        treeDialogConfirm() {
+            let selectedNodes = this.$refs.referTree?.getSelectedNode();
+            if(selectedNodes.length < 1) {
+                this.$message.error("还未选择数据...")
+                return
+            }
+            this.fieldModel = {
+				id: selectedNodes[0].id,
+				name: selectedNodes[0].label,
+			};
+            this.showReferenceDialogFlag = false;
+        },
 		async doFillBack(recordObj, selectedRow) {
 			// 判断是否启用回填
 			if (this.field.options.fillBackEnabled) {
