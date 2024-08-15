@@ -98,6 +98,13 @@ export default {
             default: true
         }
 	},
+    watch: {
+        refField: {
+            handler(newVal) {
+                this.loadTableTable();
+            },
+        }
+    },
 	name: "ReferenceSearchTable",
 	data() {
 		return {
