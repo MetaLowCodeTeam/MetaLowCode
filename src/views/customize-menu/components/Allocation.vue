@@ -54,7 +54,7 @@
                 <el-form-item label="选择相关记录" v-if="formData.isAssociatedRecords" class="mb-10">
                     <MlAssociatedRecords
                         v-model="formData.associatedRecords"
-                        :entityCode="entityCode"
+                        :entityCode="layoutConfig.entityCode"
                         :queryLevel="null"
                     />
                 </el-form-item>
@@ -82,7 +82,7 @@
                 <div class="mt-10" v-if="formData.isAssociatedRecords">
                     <MlAssociatedRecords
                         v-model="formData.associatedRecords"
-                        :entityCode="entityCode"
+                        :entityCode="layoutConfig.entityCode"
                     />
                 </div>
             </template>
@@ -106,8 +106,6 @@ import {
 } from "@/api/crud";
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
-    idFieldName: { type: String, default: "" },
-    entityCode: { type: [String, Number], default: "" },
     layoutConfig: { type: Object, default: () => {} },
 });
 const router = useRouter();
@@ -200,7 +198,7 @@ const confirm = async () => {
         let param = {
             body: {
                 toUser: formData.allocationTo[0].id,
-                recordIds: formData.list.map((el) => el[props.idFieldName]),
+                recordIds: formData.list.map((el) => el[props.layoutConfig.idFieldName]),
                 cascades: formData.associatedRecords.map((el) => el),
             },
         };
@@ -211,7 +209,7 @@ const confirm = async () => {
         let param = {
             body: {
                 toUsersId: formData.allocationTo.map((el) => el.id),
-                recordIds: formData.list.map((el) => el[props.idFieldName]),
+                recordIds: formData.list.map((el) => el[props.layoutConfig.idFieldName]),
                 cascades: formData.associatedRecords.map((el) => el),
                 withUpdate: formData.withUpdate,
             },
@@ -226,7 +224,7 @@ const confirm = async () => {
                     formData.userType == 1
                         ? []
                         : formData.allocationTo.map((el) => el.id),
-                recordIds: formData.list.map((el) => el[props.idFieldName]),
+                recordIds: formData.list.map((el) => el[props.layoutConfig.idFieldName]),
             },
         };
         res = await cancelShareRecord(param.body, formData.userType);
@@ -235,7 +233,7 @@ const confirm = async () => {
     else {
         let param = {
             body: {
-                recordIds: formData.list.map((el) => el[props.idFieldName]),
+                recordIds: formData.list.map((el) => el[props.layoutConfig.idFieldName]),
                 cascades: formData.associatedRecords.map((el) => el),
             },
         };

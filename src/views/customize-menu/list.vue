@@ -106,6 +106,7 @@
                         :isReferenceComp="isReferenceComp"
                         :isMainDetailField="!!mainDetailField"
                         :modelName="modelName"
+                        @copySuccess="copySuccess"
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
@@ -355,7 +356,6 @@ import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
-
 
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { setRouterParams } = routerParamsStore();
@@ -695,7 +695,9 @@ const getLayoutList = async () => {
             STYLE: res.data.STYLE,
             COM_TREE_GROUP: res.data.COM_TREE_GROUP,
             idFieldName: idFieldName.value,
-            nameFieldName: nameFieldName.value
+            nameFieldName: nameFieldName.value,
+            entityName: entityName.value,
+            entityCode: entityCode.value,
         };
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
@@ -1240,6 +1242,25 @@ const loadRouterParams = (cbApi) => {
         if(cbApi){
             getTableList();
         }
+    }
+}
+
+// 复制成功
+const copySuccess = ({type, recordId}) => {
+    getTableList();
+    if(type == 1){
+        let { detailEntityFlag, refEntityBindingField } = props;
+        let tempV = {
+            detailEntityFlag,
+            refEntityBindingField,
+        };
+        tempV.detailId = recordId;
+        tempV.idFieldName = idFieldName.value;
+        tempV.formEntityId = myFormEntityId.value;
+        tempV.mainDetailField = mainDetailField.value;
+        editRefs.value.openDialog(tempV);
+    }else {
+        detailRefs.value.openDialog(recordId);
     }
 }
 

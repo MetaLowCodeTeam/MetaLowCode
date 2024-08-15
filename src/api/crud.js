@@ -132,7 +132,6 @@ export function queryRecordTree(entityName, parentFieldName) {
 
 
 
-
 /**
  * 通用查询-获取实体字段
  * @param {*} entityCodes 实体
@@ -167,6 +166,14 @@ export function shareRecord(body) {
 export function cancelShareRecord(body, userType) {
     return http.post('/crud/cancelShareRecord', body, { params: { userType } })
 }
+
+/**
+ * 复制
+ */
+export function cloneRecord(body) {
+    return http.post('/crud/cloneRecord', body)
+}
+
 
 /**
  * 删除
