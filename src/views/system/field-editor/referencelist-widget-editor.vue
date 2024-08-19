@@ -1,5 +1,5 @@
 <template>
-    <el-container class="field-props-container">
+    <el-container class="field-props-container" v-loading="saveLoading" element-loading-text="数据加载中...">
         <el-header class="field-props-header" v-if="!showingInDialog">[多对多引用]字段属性设置</el-header>
         <el-main class="field-props-pane">
             <el-form
@@ -20,7 +20,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="引用实体设置">
+                <el-form-item label="引用实体设置" v-if="referenceList.length < 1">
                     <el-button style="float: right" icon="el-icon-plus" @click="addRefEntity">添加</el-button>
                 </el-form-item>
                 <hr style="border: 0;margin-bottom: 15px" />
@@ -36,16 +36,20 @@
                                 title="清除"
                                 v-if="!!refEntity.currentRefEntity"
                                 @click="clearReferTo(refIdx)"
+                                style="margin-right: 5px"
+                                :disabled="fieldState !== 1"
                             ></el-button>
                             <el-button
                                 icon="el-icon-search"
                                 title="选择"
                                 @click="showRefEntitySettingDialog(refIdx)"
+                                style="margin-right: 5px"
                             ></el-button>
                             <el-button
                                 icon="el-icon-delete"
                                 title="删除"
                                 @click="deleteRefEntity(refIdx)"
+                                :disabled="fieldState !== 1"
                             ></el-button>
                         </template>
                     </el-input>
@@ -102,12 +106,13 @@
         >
             <el-container>
                 <el-header>
-                    <el-input placeholder="请选择引用实体" v-model="refEntityFullName">
+                    <el-input placeholder="请选择引用实体" v-model="refEntityFullName" :disabled="fieldState !== 1">
                         <template #append>
                             <el-button
                                 icon="el-icon-search"
                                 title="选择"
                                 @click="showEntityListDialog"
+                                :disabled="fieldState !== 1"
                             ></el-button>
                         </template>
                     </el-input>
@@ -121,6 +126,7 @@
                             <el-checkbox
                                 v-for="(fieldItem, idx) in fieldItems"
                                 :key="idx"
+                                :checked="isSelectedField(fieldItem)"
                                 @change="(value) => setRefEntityListField(fieldItem, value)"
                             >{{ fieldItem.label }}({{ fieldItem.name }})</el-checkbox>
                         </el-card>
@@ -198,6 +204,7 @@ export default {
     },
     data() {
         return {
+            saveLoading: false,
             fieldProps: {
                 name: "",
                 label: "",
@@ -300,17 +307,20 @@ export default {
     },
     methods: {
         async getFieldProps() {
+            this.saveLoading = true;
             let res = await getField(this.fieldName, this.entity);
             if (res && res.code == 200) {
                 if (res.data) {
                     this.readFieldProps(res.data);
                 }
+            }else {
+                this.saveLoading = false;
             }
+            
         },
 
-        readFieldProps(savedProps) {
+        async readFieldProps(savedProps) {
             copyObj(this.fieldProps, savedProps);
-            //console.log(this.fieldProps)
             if (!this.fieldProps.fieldViewModel) {
                 //设置搜索弹窗默认宽度
                 this.fieldProps["fieldViewModel"] = {
@@ -320,7 +330,28 @@ export default {
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
             }
-            //console.log(JSON.stringify(this.fieldProps))
+            this.saveLoading = true;
+            let res = await getRefFieldExtras(savedProps.name, this.entity);
+            if (res && res.code == 200) {
+                if (res.data) {
+                    console.log(res.data,'res.data')
+                    this.refEntityName = res.data.refEntityName;
+                    this.refEntityLabel = res.data.refEntityLabel;
+                    this.refEntityFullName = res.data.refEntityFullName;
+
+                    this.fieldItems = res.data.fieldItems;
+                    this.selectedFieldItems = res.data.selectedFieldItems;
+
+                    this.referenceList = [
+                        {
+                            currentRefEntity: res.data.currentRefEntity,
+                            selectedFieldItems: res.data.selectedFieldItems,
+                            refEntityAndFields: res.data.refEntityAndFields,
+                        },
+                    ];
+                }
+            }
+            this.saveLoading = false;
 
             /*
 			// TODO: 需参考reference-widget-editor.vue实现字段已保存属性的加载显示！！
@@ -351,7 +382,7 @@ export default {
                         referToEntities += item;
                     }
                 });
-
+                
                 let saveMethod = addAnyRefField;
                 if (this.fieldState === FieldState.EDIT) {
                     saveMethod = updateAnyRefField;
@@ -382,13 +413,21 @@ export default {
             this.showRefEntityDialogFlag = true;
             this.refEntityIndex = refIdx;
 
-            this.refEntityName = "";
-            this.refEntityLabel = "";
-            this.refEntityFullName = "";
-            this.fieldItems.length = 0;
-            this.selectedFieldItems.length = 0;
+            // this.refEntityName = "";
+            // this.refEntityLabel = "";
+            // this.refEntityFullName = "";
+            // this.fieldItems.length = 0;
+            // this.selectedFieldItems.length = 0;
         },
-
+        isSelectedField(fieldItem) {
+            let matchedFlag = false;
+            this.selectedFieldItems.forEach((item) => {
+                if (fieldItem.name === item.name) {
+                    matchedFlag = true;
+                }
+            });
+            return matchedFlag;
+        },
         setRefEntity() {
             if (this.selectedFieldItems.length <= 0) {
                 this.$message.info("请至少选择一个显示字段！");

@@ -39,6 +39,7 @@
                             <el-dropdown-item command="FileWE">文件 / File</el-dropdown-item>
                             <el-dropdown-item command="LocationWE">定位 / Location</el-dropdown-item>
                             <el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference</el-dropdown-item>
+                            <el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
@@ -304,8 +305,7 @@ export default {
                         }
 
                         if (
-                            fld.type === "AnyReference" ||
-                            fld.type === "ReferenceList"
+                            fld.type === "AnyReference"
                         ) {
                             return;
                         }
@@ -355,8 +355,7 @@ export default {
                         ) {
                             //跳过id主键
                             if (
-                                fld.type === "AnyReference" ||
-                                fld.type === "ReferenceList"
+                                fld.type === "AnyReference"
                             ) {
                                 return;
                             }

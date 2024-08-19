@@ -138,6 +138,64 @@ export const referenceSchema = {
 	}
 }
 
+
+export const referenceListSchema = {
+	type: 'reference-list',  //引用字段组件
+	alias: '',  //组件别名，可以自定义
+	icon: 'reference-field',
+	formItemFlag: true,
+	options: {
+		name: '',
+		keyNameEnabled: false,
+		keyName: '',  //数据键值名称
+		label: '',
+		labelAlign: '',
+		placeholder: '',
+		columnWidth: '200px',
+		size: '',
+		labelWidth: null,
+		labelHidden: false,
+		labelWrap: false,  //标签超长换行
+		disabled: false,
+		hidden: false,
+		required: false,
+		requiredHint: '',
+		validation: '',
+		validationHint: '',
+		searchDialogWidth: '520px',  //搜索弹窗宽度
+		useCurrentUser: false,  //默认值使用当前登录用户
+		useCurrentDepartment: false,  //默认值使用当前登录用户所属部门
+        // fillBackEnabled: false,
+        // 表单回填
+        // fillBackConfig: [],
+        // 子表单回填
+        // subFormFillBackConfig: [],
+        // 过滤条件
+        // filterConditions: {},
+        // 启用树模式
+        useTreeDataSelect: false, 
+        // 树引用字段
+        treeCascadeFieldName: "",
+        // 树数据源(实体名称)
+        treeDataEntityName: "",
+		//-------------------
+		customClass: '',  //自定义css类名
+		labelIconClass: null,
+		labelIconPosition: 'rear',
+		labelTooltip: null,
+		prefixIcon: '',
+		suffixIcon: '',
+		buttonIcon: 'Search',
+
+		//-------------------
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+		onValidate: '',
+		onRecordSelected: '',  //记录选择回填事件
+	}
+}
+
 export const locationSchema = {
 	type: 'location',  //引用字段组件
 	alias: '',  //组件别名，可以自定义

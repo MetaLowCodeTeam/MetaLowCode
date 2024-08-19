@@ -133,9 +133,11 @@
 								<el-dropdown-item command="LocationWE">定位 / Location</el-dropdown-item>
 								<el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference
 								</el-dropdown-item>
+                                <el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
 								<!--
 								<el-dropdown-item command="AnyReferenceWE">一对多引用 / AnyReference</el-dropdown-item>
 								<el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
+								
 								-->
 							</el-dropdown-menu>
 						</template>

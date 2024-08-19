@@ -23,6 +23,7 @@
 				node-key="id"
 				:filter-node-method="filterNode"
                 :default-checked-keys="defaultCheckedKeys"
+                :show-checkbox="showCheckbox"
 			/>
 		</el-scrollbar>
 	</div>
@@ -44,6 +45,10 @@ const props = defineProps({
 		type: Object,
 		data: () => {},
 	},
+    showCheckbox : {
+        type: Boolean,
+        default: false
+    }
 });
 // 节点配置
 let myTreeConf = ref({});
@@ -83,11 +88,14 @@ const loadTreeData = async (entityName, parentFieldName) => {
 		if (treeData.value.length > 0) {
 			firstLevelKeys.value = [treeData.value[0].id];
 		}
-        if(props.defaultSelected?.id){
+        if(!props.showCheckbox && props.defaultSelected?.id){
             let { id } = props.defaultSelected;
             nextTick(() => {
                 treeRef.value?.setCurrentKey(id, true)
             })
+        }
+        if(props.showCheckbox && props.defaultSelected.length > 0){
+            treeRef.value?.setCheckedKeys(props.defaultSelected.map(el => el.id))
         }
 	}
 	loading.value = false;
@@ -112,7 +120,12 @@ watchEffect(() => {
 });
 
 const getSelectedNode = () => {
-    return cutSelectedNode.value;
+    if(props.showCheckbox){
+        return treeRef.value?.getCheckedNodes();
+    }else {
+        return cutSelectedNode.value;
+    }
+    
 }
 
 defineExpose({

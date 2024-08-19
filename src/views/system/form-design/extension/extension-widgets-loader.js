@@ -5,6 +5,7 @@ import {registerFieldWidgets} from "@/views/system/form-design/extension/field-w
 import {
     checkTagSchema,
     referenceSchema,
+    referenceListSchema,
     locationSchema,
     // 列表子表单
     listSubFormSchema
@@ -101,6 +102,7 @@ export const loadExtensionWidgets = (app) => {
 	//添加到设计器组件库
 	addBasicFieldSchema(checkTagSchema)
 	addAdvancedFieldSchema(referenceSchema)
+	addAdvancedFieldSchema(referenceListSchema)
 	addAdvancedFieldSchema(locationSchema)
     // 添加到容器组件库
     // addCustomWidgetSchema(listSubFormSchema)

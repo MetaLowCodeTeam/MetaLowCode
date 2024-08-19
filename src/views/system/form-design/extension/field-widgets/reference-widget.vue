@@ -456,7 +456,8 @@ export default {
         treeDialogConfirm() {
             let selectedNodes = this.$refs.referTree?.getSelectedNode();
             if(selectedNodes.length < 1) {
-                this.$message.error("还未选择数据...")
+                this.fieldModel = null;
+                this.showReferenceDialogFlag = false;
                 return
             }
             this.fieldModel = {
