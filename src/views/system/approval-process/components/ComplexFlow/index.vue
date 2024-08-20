@@ -37,6 +37,11 @@
                     @keyup.enter="confirmTitle"
                     @blur="confirmTitle"
                 ></el-input>
+                <span class="close-icon" @click="drawer = false" v-if="!drawerIsEditTitle">
+                    <el-icon>
+                        <ElIconClose />
+                    </el-icon>
+                </span>
             </div>
             <div class="drawer-body">
                 <StartEvent
@@ -446,6 +451,7 @@ const cloneDeep = (data) => {
         padding: 0 20px;
         height: 46px;
         line-height: 46px;
+        position: relative;
         .title {
             font-size: 18px;
             margin-right: 5px;
@@ -459,6 +465,13 @@ const cloneDeep = (data) => {
             &:hover {
                 color: #333;
             }
+        }
+        .close-icon {
+            position: absolute;
+            right: 15px;
+            top: 2px;
+            font-size: 16px;
+            cursor: pointer;
         }
     }
     .drawer-body {
