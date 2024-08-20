@@ -344,7 +344,6 @@ export default {
                     hasRepeat = true;
                 }
             })
-
             // 是否存在重复的
             if(hasRepeat){
                 this.$confirm(
@@ -371,17 +370,7 @@ export default {
         doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, isAll) {
             // 是否追加回填
             if(isAll){
-                
                 rows.forEach((selectedRow,subInx) => {
-                    // 赋值当前选中数据
-                    this.fieldModel = {
-                        id: selectedRow[recordObj.id],
-                        name: selectedRow[recordObj.label],
-                    };
-                    // 第一条选中数据回填
-                    this.doFillBack(this.fieldModel, selectedRow);
-                    this.handleChangeEvent(this.fieldModel);
-                    this.handleRecordSelectedEvent(selectedRow);
                     // 把后面的数据已追加的方式追加进去。
                     if(subInx != 0){
                         let temp = {};
@@ -397,6 +386,16 @@ export default {
                             });
                         }
                         subFormValues.push(temp);
+                    }else {
+                        // 赋值当前选中数据
+                        this.fieldModel = {
+                            id: selectedRow[recordObj.id],
+                            name: selectedRow[recordObj.label],
+                        };
+                        // 第一条选中数据回填
+                        this.doFillBack(this.fieldModel, selectedRow);
+                        this.handleChangeEvent(this.fieldModel);
+                        this.handleRecordSelectedEvent(selectedRow);
                     }
                 })
             }

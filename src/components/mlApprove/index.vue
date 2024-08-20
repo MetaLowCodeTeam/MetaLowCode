@@ -1,5 +1,12 @@
 <template>
-    <el-drawer size="73%" class="ml-drawer" v-model="isShow" direction="rtl" :show-close="false">
+    <el-drawer 
+        size="73%" 
+        class="ml-drawer" 
+        v-model="isShow" 
+        direction="rtl" 
+        :show-close="false"
+        :append-to-body="true"
+    >
         <template #header>
             <div class="detail-header">
                 {{ approvalName }} 审批

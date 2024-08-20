@@ -699,4 +699,13 @@ defineExpose({
 		margin-bottom: 5px !important;
 	}
 }
+
+.detail-right {
+    .group-el-button {
+        .el-button {
+            margin-bottom: 5px;
+            min-width: 110px !important;
+        }
+    }
+}
 </style>
