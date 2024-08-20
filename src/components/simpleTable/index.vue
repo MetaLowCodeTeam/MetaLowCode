@@ -153,6 +153,7 @@ export default {
 			this.$emit("handleCurrentChange", val);
 		},
 		selects(selection, row) {
+            this.handleSelectionChange(selection)
 			this.$emit("selects", selection, row);
 		},
 		formatterValue(row, column, cellValue) {
