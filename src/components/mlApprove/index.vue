@@ -397,9 +397,8 @@ const beforeReject = () => {
 };
 
 // 同意审批
-async function confirmApprove(isBacked) {
-    let formData = await vFormRef.value.getFormData();
-    if (formData) {
+function confirmApprove(isBacked) {
+    vFormRef.value.getFormData().then(async (formData) => {
         loading.value = true;
         let saveRes = await saveRecord(
             allEntityName.value[approvalTask.value.entityCode],
@@ -428,7 +427,10 @@ async function confirmApprove(isBacked) {
             }
         }
         loading.value = false;
-    }
+
+    }).catch(err => {
+        $ElMessage.error("表单校验失败，请修改后重新提交");
+    })
 }
 
 // 获取审核参数
