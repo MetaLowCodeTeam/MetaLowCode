@@ -106,16 +106,13 @@ const numberToCurrencyNo = (value) => {
 };
 
 const setSelected = () => {
-    console.log(props.field, "选中触发----2024-08-21");
-    localStorage.setItem('tempTest', JSON.stringify(props.field))
 	props.designer?.setSelected(props.field);
+    initOption();
 	// localStorage.setItem("widget__list__selected", JSON.stringify(props.field));
 };
 
 watchEffect(() => {
 	cutField.value = props.field;
-	console.log(props.field, "props.field----2024-08-21");
-    localStorage.setItem('tempTestField', JSON.stringify(props.field))
 	initOption();
 });
 </script>
