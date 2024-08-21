@@ -54,7 +54,8 @@ const {
     addCustomWidgetSchema,
     addZHExtensionLang,
 	addENExtensionLang,
-    PERegister
+    PERegister,
+	PEFactory
 } = VisualDesign.VFormSDK
 
 export const loadExtensionWidgets = (app) => {
@@ -88,7 +89,11 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
 	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
-    // 容器组件添加到设计器
+
+	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
+		PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
+
+	// 注册容器组件属性编辑器
 	PERegister.registerCPEditor(app, 'listSubFormWidget', 'listSubForm-widget', listSubFormWidget)
 	PERegister.registerCPEditor(app, 'listSubFormItem', 'listSubForm-item', listSubFormItem)
 
@@ -105,9 +110,7 @@ export const loadExtensionWidgets = (app) => {
 	addAdvancedFieldSchema(referenceListSchema)
 	addAdvancedFieldSchema(locationSchema)
     // 添加到容器组件库
-    // addCustomWidgetSchema(listSubFormSchema)
     addContainerWidgetSchema(listSubFormSchema)
-    // registerCWGenerator('list-sub-form', cardTemplateGenerator)
 
     //PERegister.registerCPEditor(app, 'newTest', 'newTest-editor', newTestEditor)
 }

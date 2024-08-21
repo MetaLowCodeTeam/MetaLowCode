@@ -115,7 +115,7 @@ export const referenceSchema = {
         // 过滤条件
         filterConditions: {},
         // 启用树模式
-        useTreeDataSelect: false, 
+        useTreeDataSelect: false,
         // 树引用字段
         treeCascadeFieldName: "",
         // 树数据源(实体名称)
@@ -163,17 +163,8 @@ export const referenceListSchema = {
 		validation: '',
 		validationHint: '',
 		searchDialogWidth: '520px',  //搜索弹窗宽度
-		useCurrentUser: false,  //默认值使用当前登录用户
-		useCurrentDepartment: false,  //默认值使用当前登录用户所属部门
-        // fillBackEnabled: false,
-        // 表单回填
-        // fillBackConfig: [],
-        // 子表单回填
-        // subFormFillBackConfig: [],
-        // 过滤条件
-        // filterConditions: {},
         // 启用树模式
-        useTreeDataSelect: false, 
+        useTreeDataSelect: false,
         // 树引用字段
         treeCascadeFieldName: "",
         // 树数据源(实体名称)
@@ -220,6 +211,7 @@ export const locationSchema = {
 		validation: '',
 		validationHint: '',
 		searchDialogWidth: '50%',  //定位地图弹窗宽度
+		positionSelectable: false,  //是否允许用户手动选择位置
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

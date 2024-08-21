@@ -36,6 +36,8 @@ export default {
             treeDataDialogPlaceholder: "请选择父子引用字段",
             treeDataDialogCancel: "取消",
             treeDataDialogConfirm: "确认",
+			// 地图定位组件
+			positionSelectable: '允许用户自选位置',
         },
 
     }
