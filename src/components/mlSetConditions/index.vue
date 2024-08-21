@@ -391,7 +391,7 @@ export default {
             loading: false,
             fieldType: "",
             // 最多可添加多少个条件
-            maxConditionsLength: 9,
+            maxConditionsLength: 99,
             // 无效高级表达式
             errorEquation: false,
             // 所有用户

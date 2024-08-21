@@ -11,6 +11,7 @@
         :formRef="formRef"
         :isVFormDesignMode="isVFormDesignMode"
         :modelName="modelName"
+        ref="listSubForm"
 	></component>
 </template>
 
@@ -71,6 +72,11 @@ export default {
 			this.comName = "default-list-sub-form";
 		}
 	},
+    methods: {
+        getTableDataList(){
+            return this.$refs.listSubForm?.getTableDataList();
+        }
+    }
 };
 </script>
 <style lang="scss" scoped>

@@ -112,6 +112,9 @@ export default {
             this.formRef.getGlobalDsv()?.setRowRecordId(this.myFormEntityId)
             this.$refs.EntityListRefs.saveSubFormListCb(data);
         },
+        getTableDataList(){
+            return this.$refs.EntityListRefs.getTableDataList();
+        }
 
 	},
 };

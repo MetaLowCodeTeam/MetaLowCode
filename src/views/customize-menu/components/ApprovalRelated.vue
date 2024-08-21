@@ -125,7 +125,7 @@
 
 <script setup>
 import { ElMessageBox, ElMessage } from "element-plus";
-import { onMounted, watch, ref, reactive, inject } from "vue";
+import { onMounted, watch, ref, reactive, inject, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import mlApprove from "@/components/mlApprove/index.vue";
 import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
@@ -143,16 +143,7 @@ const props = defineProps({
 });
 const emits = defineEmits(["onSubmit", "closeDialog"]);
 let myApproval = ref({});
-watch(
-	() => props.recordApproval,
-	() => {
-		myApproval.value = props.recordApproval;
-	},
-	{ deep: true }
-);
-onMounted(() => {
-	myApproval.value = props.recordApproval;
-});
+
 
 // 审批流程
 let approvalList = ref([]);
@@ -318,6 +309,11 @@ const onSubmit = async () => {
 const goApprovalList = () => {
 	Route.push("/web/process-list");
 };
+
+watchEffect(() => {
+    myApproval.value = props.recordApproval;
+})
+
 </script>
 <style lang="scss" scoped>
 .group-button-label {

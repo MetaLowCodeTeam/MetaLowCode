@@ -1384,6 +1384,11 @@ const viewRow = (row, localDsv) => {
     openDetailDialog(row, localDsv)
 }
 
+// 获取列表数据
+const getTableDataList = () => {
+    return sliceTable.value;
+}
+
 
 defineExpose({
     resetList,
@@ -1399,6 +1404,7 @@ defineExpose({
     saveSubFormListCb,
     editRow,
     viewRow,
+    getTableDataList,
 })
 
 </script>

@@ -3,7 +3,7 @@
 		class="pivot-table-widget"
 		@click.stop="setSelected"
 		v-loading="loading"
-        :class="cutField?.options?.customClass"
+		:class="cutField?.options?.customClass"
 	>
 		<div
 			class="statistic-box"
@@ -31,7 +31,7 @@
 	</div>
 </template>
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { ref, watchEffect } from "vue";
 import { queryChartData } from "@/api/chart";
 defineOptions({
 	name: "statistic-widget",
@@ -47,19 +47,6 @@ let loading = ref(false);
 // 数字量级
 let numericUnits = ref("");
 
-watch(
-	() => props.field,
-	() => {
-		cutField.value = props.field;
-		initOption();
-	},
-	{ deep: true }
-);
-onMounted(() => {
-	cutField.value = props.field;
-	initOption();
-});
-
 let metricsNum = ref("");
 const initOption = async () => {
 	let { options, type } = cutField.value;
@@ -70,7 +57,8 @@ const initOption = async () => {
 			return;
 		}
 		isNoData.value = false;
-        numericUnits.value = metrics[0].numericUnits == '无' ? '' : metrics[0].numericUnits;
+		numericUnits.value =
+			metrics[0].numericUnits == "无" ? "" : metrics[0].numericUnits;
 		await getChartData(options, type);
 		getPreviewNum(metrics[0]);
 	} else {
@@ -118,9 +106,18 @@ const numberToCurrencyNo = (value) => {
 };
 
 const setSelected = () => {
+    console.log(props.field, "选中触发----2024-08-21");
+    localStorage.setItem('tempTest', JSON.stringify(props.field))
 	props.designer?.setSelected(props.field);
 	// localStorage.setItem("widget__list__selected", JSON.stringify(props.field));
 };
+
+watchEffect(() => {
+	cutField.value = props.field;
+	console.log(props.field, "props.field----2024-08-21");
+    localStorage.setItem('tempTestField', JSON.stringify(props.field))
+	initOption();
+});
 </script>
 <style lang="scss" scoped>
 .pivot-table-widget {

@@ -119,6 +119,9 @@ export default {
         getFormRef() {
             console.log(this.formRef);
         },
+        getTableDataList(){
+            return this.$refs.EntityListRefs.getTableDataList();
+        }
 
 	},
 };

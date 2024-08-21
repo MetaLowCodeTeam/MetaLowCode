@@ -165,6 +165,7 @@ import http from "@/utils/request";
 import { Avatar, CirclePlusFilled } from "@element-plus/icons-vue";
 import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import { queryById, saveRecord } from "@/api/crud";
+import { getRecordApprovalState } from '@/api/approval';
 import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
@@ -263,9 +264,15 @@ const initFormLayout = async () => {
             optionData.value = res.data.optionData || {};
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
+                // 获取审批信息
+                let recordApprovalRes = await getRecordApprovalState(props.entityId);
+                if(recordApprovalRes.data?.flowVariables){
+                    globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+                }
                 let formData = await queryById(props.entityId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
+                   
                     globalDsv.value.rowRecordData = formData.data;
                     nextTick(()=>{
                         vFormRef.value.setFormData(formData.data);

@@ -443,11 +443,9 @@ const initData = async () => {
                 let recordApprovalRes = await getRecordApprovalState(detailId.value);
                 if(recordApprovalRes){
                     recordApproval.value = recordApprovalRes.data;
+                    globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
                 }
 				let queryByIdRes = await queryById(detailId.value);
-				if (queryByIdRes?.flowVariables) {
-					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
-				}
 				if (queryByIdRes && queryByIdRes.data) {
 		            multipleSelection.value = [queryByIdRes.data];
                     globalDsv.value.rowRecordData = queryByIdRes.data;
@@ -627,6 +625,7 @@ const showApprovalRelated = () => {
     if(queryHistory){
         return true
     }
+
     return false
 
 }

@@ -15,6 +15,7 @@
         :formRef="formRef"
         :isVFormDesignMode="isVFormDesignMode"
         :modelName="modelName"
+        ref="listSubForm"
 	/>
 	<el-empty v-else description="请先绑定明细实体" />
 </template>
@@ -77,5 +78,10 @@ export default {
         this.entityCode =
 				useCommonStore().allEntityCode[this.referenceEntity];
     },
+    methods: {
+        getTableDataList(){
+            return this.$refs.listSubForm.getTableDataList();
+        }
+    }
 };
 </script>
