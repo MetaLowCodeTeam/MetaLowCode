@@ -496,7 +496,8 @@ const confirmReject = () => {
  */
 
 const DealWithTypeLabel = {
-    1: "同意",
+    // 同意
+    1: "审批", 
     2: "驳回",
     // 退回
     3: "驳回",
