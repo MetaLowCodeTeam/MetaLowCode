@@ -293,7 +293,10 @@ let cutTab = ref("detail");
 let optionData = ref({});
 let globalDsv = ref({});
 
-const openDialog = (id, localDsv) => {
+// 指定表单ID
+let formId = ref("");
+
+const openDialog = (id, localDsv, paramFormId) => {
 	detailId.value = id;
 	entityCode.value = queryEntityCodeById(id);
 	entityName.value = queryEntityNameById(id);
@@ -303,6 +306,9 @@ const openDialog = (id, localDsv) => {
 	}
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
+    }
+    if(paramFormId) {
+        formId.value = paramFormId;
     }
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
@@ -334,7 +340,7 @@ let detailTabComRefs = ref();
 // 新建相关完成触发
 const newRelatedConfirm = async () => {
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value);
+	let res = await $API.layoutConfig.getLayoutList(entityName.value, formId.value);
 	if (res) {
         myLayoutConfig.value = res.data;
         myLayoutConfig.value.entityCode = entityCode.value;
@@ -494,11 +500,12 @@ const copySuccess = ({type, recordId}) => {
 
 // 打开编辑
 let editRefs = ref();
-const onEditRow = (localDsv) => {
+const onEditRow = (localDsv, formId) => {
     let tempV = {
         detailId: detailId.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
+    !!formId && (tempV.formId = formId)
     editEmits(tempV)
 };
 
@@ -580,8 +587,8 @@ const getCurDetailInfo = () => {
 }
 
 // 编辑
-const toEdit = (localDsv) => {
-    onEditRow(localDsv);
+const toEdit = (localDsv, formId) => {
+    onEditRow(localDsv, formId);
 }
 
 const MoreRefs = ref();
