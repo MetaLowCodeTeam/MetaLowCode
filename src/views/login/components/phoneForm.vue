@@ -184,15 +184,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .login-msg-yzm {
-//     .login-img-yzm {
-//         margin-left: 10px;
-//         height: 42px;
-//         width: 156px;
-//         box-sizing: border-box;
-//         border: 1px solid #dedede;
-//     }
-// }
 .login-img-yzm {
 	display: flex;
 	width: 100%;
