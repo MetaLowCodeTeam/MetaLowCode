@@ -21,6 +21,9 @@
                     <el-tab-pane :label="$t('login.accountLogin')" lazy>
                         <password-form></password-form>
                     </el-tab-pane>
+                    <el-tab-pane :label="$t('login.mobileLogin')" lazy v-if="mobilePhoneLogin">
+                        <phone-form></phone-form>
+                    </el-tab-pane>
                 </el-tabs>
             </div>
         </div>
@@ -120,6 +123,9 @@ export default {
         },
         appVer: () => {
             return publicSetting.value.APP_VER;
+        },
+        mobilePhoneLogin: () => {
+            return publicSetting.value.mobilePhoneLogin;
         },
     },
     created: function () {

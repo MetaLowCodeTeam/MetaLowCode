@@ -35,7 +35,7 @@
                                     ></el-input>
                                     <div class="info-text">{{ item.subLabel }}</div>
                                 </div>
-                                <!-- 复选框 -->
+                                <!-- 开关 -->
                                 <div v-else-if="item.type == 'switch'">
                                     <el-tooltip
                                         class="box-item"
@@ -43,6 +43,15 @@
                                         :content="'当前：' + publicSetting.productType?.displayName + ' 不支持该功能'"
                                         placement="top"
                                         v-if="needAuthentication.includes(item.key) && (publicSetting.productType?.value == 1 || publicSetting.productType?.value == 2)"
+                                    >
+                                        <el-switch v-model="confData[item.key]" disabled />
+                                    </el-tooltip>
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="需要先开启短信服务"
+                                        placement="top"
+                                        v-else-if="item.key == 'mobilePhoneLogin' && !confData.smsOpen"
                                     >
                                         <el-switch v-model="confData[item.key]" disabled />
                                     </el-tooltip>
@@ -790,7 +799,8 @@ const getHeavyTaskApi2 = async () => {
 
 // 启用服务
 const openStatusChange = (item) => {
-    // console.log(item,'item')
+
+    // return false
     // // 如果是开启钉钉
     // if(item.key == 'dingTalkOpen'){
         

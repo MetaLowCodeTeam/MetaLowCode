@@ -21,11 +21,15 @@ export default {
 		smsError: '请输入短信验证码',
 		smsGet: '获取验证码',
 		smsSent: '已发送短信至手机号码',
+        imgPlaceholder: '图片验证码',
+		imgError: '请输入图片验证码',
 		noAccount: '还没有账号?',
 		createAccount: '创建新账号',
 		wechatLoginTitle: '二维码登录',
 		wechatLoginMsg: '请使用微信扫一扫登录 | 模拟3秒后自动扫描',
-		wechatLoginResult: '已扫描 | 请在设备中点击授权登录'
+		wechatLoginResult: '已扫描 | 请在设备中点击授权登录',
+        rememberPassword: '记住密码',
+        loginSuccess: '登录成功',
 	},
 	user: {
 		dynamic: '近期动态',

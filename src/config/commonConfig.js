@@ -93,6 +93,11 @@ export default [
                 key: "pageFooter",
                 type: "input",
             },
+            {
+                label: "手机号登录",
+                key: "mobilePhoneLogin",
+                type: "switch",
+            },
         ],
     },
     {

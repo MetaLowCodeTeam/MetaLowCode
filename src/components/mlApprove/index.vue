@@ -250,6 +250,7 @@ let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
 let globalDsv = ref({});
+globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;

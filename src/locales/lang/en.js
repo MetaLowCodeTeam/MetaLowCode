@@ -21,11 +21,15 @@ export default {
 		smsError: 'Please input sms code',
 		smsGet: 'Get SMS Code',
 		smsSent: 'SMS sent to mobile number',
+        imgPlaceholder: 'IMG Code',
+		imgError: 'Please input img code',
 		noAccount: 'No account?',
 		createAccount: 'Create a new account',
 		wechatLoginTitle: 'QR code sign in',
 		wechatLoginMsg: 'Please use wechat to scan and log in | Auto scan after 3 seconds of simulation',
-		wechatLoginResult: 'Scanned | Please click authorize login in the device'
+		wechatLoginResult: 'Scanned | Please click authorize login in the device',
+		rememberPassword: 'Remember password',
+        loginSuccess: 'Login Success',
 	},
 	user: {
 		dynamic: 'Dynamic',

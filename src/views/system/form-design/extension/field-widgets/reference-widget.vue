@@ -372,7 +372,17 @@ export default {
             if(isAll){
                 rows.forEach((selectedRow,subInx) => {
                     // 把后面的数据已追加的方式追加进去。
-                    if(subInx != 0){
+                    if(subInx == 0){
+                        // 赋值当前选中数据
+                        this.fieldModel = {
+                            id: selectedRow[recordObj.id],
+                            name: selectedRow[recordObj.label],
+                        };
+                        // 第一条选中数据回填
+                        this.doFillBack(this.fieldModel, selectedRow);
+                        this.handleChangeEvent(this.fieldModel);
+                        this.handleRecordSelectedEvent(selectedRow);
+                    }else {
                         let temp = {};
                         temp[this.fieldKeyName] = {
                             id: selectedRow[recordObj.id],
@@ -386,16 +396,6 @@ export default {
                             });
                         }
                         subFormValues.push(temp);
-                    }else {
-                        // 赋值当前选中数据
-                        this.fieldModel = {
-                            id: selectedRow[recordObj.id],
-                            name: selectedRow[recordObj.label],
-                        };
-                        // 第一条选中数据回填
-                        this.doFillBack(this.fieldModel, selectedRow);
-                        this.handleChangeEvent(this.fieldModel);
-                        this.handleRecordSelectedEvent(selectedRow);
                     }
                 })
             }
