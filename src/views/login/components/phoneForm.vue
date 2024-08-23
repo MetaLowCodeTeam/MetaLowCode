@@ -77,7 +77,7 @@ export default {
 	data() {
 		return {
 			form: {
-				phone: "18811754868",
+				phone: "",
 				yzm: "",
 				imgYzm: "",
 			},
