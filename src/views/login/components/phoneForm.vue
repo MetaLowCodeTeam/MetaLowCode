@@ -120,8 +120,7 @@ export default {
 			this.yzmLoading = true;
 			let res = await sendSMSCode(phone, imgYzm);
 			if (res && res.data && res.data.code == 200) {
-                console.log(res.data,'res.data');
-				this.$message.success(this.$t("login.smsSent") + res.data.data);
+				this.$message.success(this.$t("login.smsSent"));
 				this.disabled = true;
 				this.time = 60;
 				var t = setInterval(() => {
