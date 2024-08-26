@@ -14,7 +14,7 @@
 		>
 			<el-input
 				ref="fieldEditor"
-				v-model="fieldModel"
+				v-model="formatFieldModel"
 				:disabled="field.options.disabled"
 				readonly
 				:size="field.options.size"
@@ -235,7 +235,9 @@ export default {
 
 			return this.field.options.type;
 		},
-
+        formatFieldModel(){
+            return this.fieldModel ? this.fieldModel.split(',')[2] : null;
+        },
 		runOnMobile() {
 			return this.getGlobalDsv() && this.getGlobalDsv().runOnMobile;
 		},
