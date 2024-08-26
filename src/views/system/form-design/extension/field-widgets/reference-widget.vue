@@ -89,9 +89,9 @@
                 :showMultipleSelectConfirm="subFormItemFlag"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
-            <ReferenceSearchTree 
-                v-else 
-                ref="referTree" 
+            <ReferenceSearchTree
+                v-else
+                ref="referTree"
                 :treeConf="treeDialogConf"
                 :defaultSelected="fieldModel"
             />
@@ -263,7 +263,7 @@ export default {
 			this.curRefField = name;
             // 如果启用了树形数据选择弹框，且选择了父子级联字段
             if(useTreeDataSelect && treeCascadeFieldName) {
-                
+
                 this.referenceDialogType = 'tree';
                 this.showReferenceDialogFlag = true;
                 this.treeDialogConf = {
@@ -357,13 +357,19 @@ export default {
                     }
                 ).then(() => {
                     this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, true);
-                }) .catch((action) => {
+					if (subFormCom.recalculateFormula) {
+						subFormCom.recalculateFormula()
+					}
+                }).catch((action) => {
                     if(action == 'cancel'){
                         this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, false);
                     }
                 })
-            }else {
+            } else {
                 this.doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, true);
+				if (subFormCom.recalculateFormula) {
+					subFormCom.recalculateFormula()
+				}
             }
 
         },

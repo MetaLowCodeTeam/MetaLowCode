@@ -4,6 +4,7 @@ export default {
             'list-sub-form': 'ListSubForm',
             'check-tag': 'CheckTag',
             'reference': 'Reference',
+            'reference-list': 'Reference List',
             'location': 'Location',
         },
 

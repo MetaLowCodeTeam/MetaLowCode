@@ -4,6 +4,7 @@ export default {
             'list-sub-form': '列表子表单',
             'check-tag': '标签选择',
             'reference': '引用',
+            'reference-list': '多对多引用',
             'location': '定位',
         },
 
