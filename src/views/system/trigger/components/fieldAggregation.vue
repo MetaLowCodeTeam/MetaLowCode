@@ -19,7 +19,7 @@
                 </el-col>
             </el-row>
         </el-form-item>
-        <!-- 更新规则、聚合规则 -->
+        <!-- 聚合规则 -->
         <el-form-item>
             <template #label>聚合规则</template>
             <div class="w-100 mb-10" v-if="actionContentItems.length > 0">
@@ -263,7 +263,7 @@ const getTagEntityFields = async (entityCode) => {
     if (res) {
         tagEntityFields.value = [];
         res.data.forEach((el) => {
-            if (el.fieldType &&(numType.value.includes(el.fieldType) || textType.value.includes(el.fieldType))) {
+            if (el.fieldType &&(numType.value.includes(el.fieldType) || textType.value.includes(el.fieldType) || dateType.value.includes(el.fieldType))) {
                 tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
                 tagEntityFields.value.push(el);
             }
@@ -385,6 +385,18 @@ const getUptadeMode = () => {
             {
                 label: "计算公式",
                 value: "forCompile",
+            },
+        ];
+    }
+    else if (dateType.value.includes(toFixedForFieldType.value)) {
+        return [
+            {
+                label: "最大值",
+                value: "max",
+            },
+            {
+                label: "最小值",
+                value: "min",
             },
         ];
     }
@@ -554,6 +566,7 @@ let mlFormulaFields = ref([]);
 let mlFormulaVal = ref("");
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 let textType = ref(["Text", "TextArea"]);
+let dateType = ref(["Date", "DateTime"]);
 let mlIsAdvanced = ref(false);
 let formulaVal = ref({});
 // 判断计算公式显示
@@ -622,6 +635,17 @@ const getUpdateRuleTargetFieldType = (fieldName) => {
 // 格式化源字段显示
 const floatSourceFieldList = () => {
     // let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
+    if(dateType.value.includes(toFixedForFieldType.value)){
+        let showFields = [];
+        cutEntityFields.value.forEach((el) => {
+            if (
+                dateType.value.includes(el.fieldType)
+            ) {
+                showFields.push(el);
+            }
+        });
+        return showFields;
+    }
     let needShowNumType = ["sum", "average", "max", "min"];
     // 如果选择是数字类
     if (needShowNumType.includes(updateRule.calcMode)) {

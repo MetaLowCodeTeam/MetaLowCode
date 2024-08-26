@@ -139,3 +139,13 @@ export function checkRight(id, rightType, entityName) {
         params: { id, rightType, entityName }
     })
 }
+
+// 获取手机验证码
+export function sendSMSCode(mobilePhone, imgCode) {
+    return request.get(`/user/sendSMSCode?mobilePhone=${mobilePhone}&imgCode=${imgCode}`)
+}
+
+// 手机登录
+export function codeLogin(body) {
+    return request.post("/user/codeLogin", body)
+}

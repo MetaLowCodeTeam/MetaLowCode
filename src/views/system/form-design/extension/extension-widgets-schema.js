@@ -114,6 +114,61 @@ export const referenceSchema = {
         subFormFillBackConfig: [],
         // 过滤条件
         filterConditions: {},
+        // 启用树模式
+        useTreeDataSelect: false,
+        // 树引用字段
+        treeCascadeFieldName: "",
+        // 树数据源(实体名称)
+        treeDataEntityName: "",
+		//-------------------
+		customClass: '',  //自定义css类名
+		labelIconClass: null,
+		labelIconPosition: 'rear',
+		labelTooltip: null,
+		prefixIcon: '',
+		suffixIcon: '',
+		buttonIcon: 'Search',
+
+		//-------------------
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+		onValidate: '',
+		onRecordSelected: '',  //记录选择回填事件
+	}
+}
+
+
+export const referenceListSchema = {
+	type: 'reference-list',  //引用字段组件
+	alias: '',  //组件别名，可以自定义
+	icon: 'reference-field',
+	formItemFlag: true,
+	options: {
+		name: '',
+		keyNameEnabled: false,
+		keyName: '',  //数据键值名称
+		label: '',
+		labelAlign: '',
+		placeholder: '',
+		columnWidth: '200px',
+		size: '',
+		labelWidth: null,
+		labelHidden: false,
+		labelWrap: false,  //标签超长换行
+		disabled: false,
+		hidden: false,
+		required: false,
+		requiredHint: '',
+		validation: '',
+		validationHint: '',
+		searchDialogWidth: '520px',  //搜索弹窗宽度
+        // 启用树模式
+        useTreeDataSelect: false,
+        // 树引用字段
+        treeCascadeFieldName: "",
+        // 树数据源(实体名称)
+        treeDataEntityName: "",
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
@@ -156,6 +211,7 @@ export const locationSchema = {
 		validation: '',
 		validationHint: '',
 		searchDialogWidth: '50%',  //定位地图弹窗宽度
+		positionSelectable: false,  //是否允许用户手动选择位置
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

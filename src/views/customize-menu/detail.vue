@@ -136,6 +136,7 @@
                                         :nameFieldName="nameFieldName"
                                         @editColumnConfirm="editColumnConfirm"
                                         :layoutConfig="myLayoutConfig"
+                                        @copySuccess="copySuccess"
                                     />
                                 </el-col>
                                 <el-col :span="24" v-if="contentSlots.afterMoreBtn">
@@ -164,17 +165,10 @@
 			</el-row>
 			<el-empty v-else description="暂无数据" />
 		</div>
-		<!-- <Edit
-			ref="editRefs"
-			@onConfirm="onConfirm"
-			:nameFieldName="nameFieldName"
-			:layoutConfig="myLayoutConfig"
-		/> -->
         <mlCustomEdit 	
             ref="editRefs"
             @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
-			:layoutConfig="myLayoutConfig" 
         />
 	</el-drawer>
 </template>
@@ -269,28 +263,6 @@ let styleConf = ref({
 });
 
 
-watch(
-	() => props.layoutConfig,
-	() => {
-		loadMyLayoutConfig();
-	},
-	{
-		deep: true,
-	}
-);
-// 加载配置信息
-const loadMyLayoutConfig = () => {
-	myLayoutConfig.value = props.layoutConfig || {};
-
-	let { STYLE } = myLayoutConfig.value;
-	if (STYLE && STYLE.config) {
-		styleConf.value = JSON.parse(STYLE.config);
-		if (styleConf.value?.detailConf.autoFullScreen) {
-			isFullSceen.value = true;
-		}
-	}
-};
-
 const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onEdit"]);
 const $API = inject("$API");
@@ -321,7 +293,10 @@ let cutTab = ref("detail");
 let optionData = ref({});
 let globalDsv = ref({});
 
-const openDialog = (id, localDsv) => {
+// 指定表单ID
+let formId = ref("");
+
+const openDialog = (id, localDsv, paramFormId) => {
 	detailId.value = id;
 	entityCode.value = queryEntityCodeById(id);
 	entityName.value = queryEntityNameById(id);
@@ -332,13 +307,12 @@ const openDialog = (id, localDsv) => {
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }
+    if(paramFormId) {
+        formId.value = paramFormId;
+    }
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
-	// let row = {};
-	// row[idFieldName.value] = id;
-	// console.log(row,'row')
-	loadMyLayoutConfig();
 	// 加载数据
 	refresh();
 };
@@ -366,9 +340,11 @@ let detailTabComRefs = ref();
 // 新建相关完成触发
 const newRelatedConfirm = async () => {
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value);
+	let res = await $API.layoutConfig.getLayoutList(entityName.value, formId.value);
 	if (res) {
         myLayoutConfig.value = res.data;
+        myLayoutConfig.value.entityCode = entityCode.value;
+        myLayoutConfig.value.entityName = entityName.value;
 		// 新建配置项
 		formatNewRelated(res.data.ADD);
 		if (cutTab.value == "detail") {
@@ -396,6 +372,8 @@ const getLayoutList = async () => {
 	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
         myLayoutConfig.value = res.data;
+        myLayoutConfig.value.entityCode = entityCode.value;
+        myLayoutConfig.value.entityName = entityName.value;
         let { STYLE } = res.data;
         if (STYLE && STYLE.config) {
             styleConf.value = JSON.parse(STYLE.config);
@@ -423,9 +401,7 @@ const getLayoutList = async () => {
 		formatNewRelated(res.data.ADD);
 		idFieldName.value = res.data.idFieldName;
 		nameFieldName.value = res.data.nameFieldName;
-		let row = {};
-		row[idFieldName.value] = detailId.value;
-		multipleSelection.value = [row];
+	
 		initData();
 	} else {
 		loading.value = false;
@@ -473,12 +449,11 @@ const initData = async () => {
                 let recordApprovalRes = await getRecordApprovalState(detailId.value);
                 if(recordApprovalRes){
                     recordApproval.value = recordApprovalRes.data;
+                    globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
                 }
 				let queryByIdRes = await queryById(detailId.value);
-				if (queryByIdRes?.flowVariables) {
-					globalDsv.value.flowVariables = queryByIdRes.flowVariables;
-				}
 				if (queryByIdRes && queryByIdRes.data) {
+		            multipleSelection.value = [queryByIdRes.data];
                     globalDsv.value.rowRecordData = queryByIdRes.data;
 					detailName.value = queryByIdRes.data[nameFieldName.value];
                     // console.log(res.data.layoutJson,'res.data.layoutJson')
@@ -510,13 +485,27 @@ const initData = async () => {
 	}
 };
 
+// 复制成功
+const copySuccess = ({type, recordId}) => {
+    emits("onConfirm");
+    if(type == 1){
+        let tempV = {
+            detailId: detailId.value
+        };
+        editEmits(tempV)
+    }else {
+        openDialog(recordId)
+    }
+}
+
 // 打开编辑
 let editRefs = ref();
-const onEditRow = (localDsv) => {
+const onEditRow = (localDsv, formId) => {
     let tempV = {
         detailId: detailId.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
+    !!formId && (tempV.formId = formId)
     editEmits(tempV)
 };
 
@@ -598,8 +587,8 @@ const getCurDetailInfo = () => {
 }
 
 // 编辑
-const toEdit = (localDsv) => {
-    onEditRow(localDsv);
+const toEdit = (localDsv, formId) => {
+    onEditRow(localDsv, formId);
 }
 
 const MoreRefs = ref();
@@ -643,6 +632,7 @@ const showApprovalRelated = () => {
     if(queryHistory){
         return true
     }
+
     return false
 
 }
@@ -714,5 +704,14 @@ defineExpose({
 	.el-form-item {
 		margin-bottom: 5px !important;
 	}
+}
+
+.detail-right {
+    .group-el-button {
+        .el-button {
+            margin-bottom: 5px;
+            min-width: 110px !important;
+        }
+    }
 }
 </style>

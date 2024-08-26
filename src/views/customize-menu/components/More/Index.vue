@@ -15,6 +15,11 @@
                 </span>
                 删除
             </div>
+            <RowCopy 
+                :multipleSelection="multipleSelection" 
+                :layoutConfig="myLayoutConf"
+                @copySuccess="copySuccess"
+            />
             <div
                 class="pl-20 item"
                 @click="allocationFn('allocation')"
@@ -188,7 +193,6 @@
     <!-- 分配 -->
     <Allocation
         ref="allocationRefs"
-        :idFieldName="idFieldName"
         @allocationSuccess="allocationSuccess"
         :entityCode="entityCode"
         :layoutConfig="myLayoutConf"
@@ -245,6 +249,8 @@ import TreeGroupFilter from "./TreeGroupFilter.vue";
 import NewTreeGroupFilter from "./NewTreeGroupFilter.vue";
 // 其他列表设置
 import SetListStyleDialog from "./SetListStyleDialog.vue";
+// 行复制
+import RowCopy from './RowCopy.vue';
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -257,6 +263,7 @@ const emits = defineEmits([
     "editColumnConfirm",
     "defaultFilterChange",
     "treeGroupFilterConfirm",
+    "copySuccess"
 ]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
@@ -513,6 +520,11 @@ const listMoreSetting = (type) => {
             ElMessage.error("参数错误，当前参数：" + type)
             break;
     }
+}
+
+// 复制
+const copySuccess = (v) => {
+    emits("copySuccess", v);
 }
 
 defineExpose({

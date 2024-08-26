@@ -26,7 +26,7 @@
         </el-form-item>
         <el-form-item style="margin-bottom: 10px;">
             <el-col :span="12">
-                <el-checkbox label="记住密码" v-model="form.autologin"></el-checkbox>
+                <el-checkbox :label="$t('login.rememberPassword')" v-model="form.autologin"></el-checkbox>
             </el-col>
         </el-form-item>
         <el-form-item>
@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
 const { getEntityList, setUserInfo } = useCommonStore();
 export default {
@@ -96,7 +95,6 @@ export default {
     },
     methods: {
         async login() {
-            // console.log(http,'http')
             var validate = await this.$refs.loginForm
                 .validate()
                 .catch(() => {});
@@ -108,8 +106,6 @@ export default {
             var data = {
                 user: this.form.user,
                 password: this.form.password,
-                //username: this.form.user
-                //password: this.$TOOL.crypto.MD5(this.form.password)
             };
 
             //eslint-disable-next-line
@@ -137,8 +133,7 @@ export default {
                         }
                     );
                 }
-
-                sessionStorage.setItem("userId", user.data.id); // 保存用户Id到本地会话
+                sessionStorage.setItem("userId", user.data.userId); // 保存用户Id到本地会话
                 this.$TOOL.cookie.set("uid", user.data, {
                     expires: 24 * 60 * 60 * 3,
                 });
@@ -151,7 +146,7 @@ export default {
                     path: "/",
                 });
                 console.log("2. 点击了登录...");
-                this.$message.success("登录成功");
+                this.$message.success(this.$t("login.loginSuccess"));
             }
             this.islogin = false;
         },

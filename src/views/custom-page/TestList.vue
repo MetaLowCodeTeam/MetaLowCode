@@ -66,8 +66,8 @@ let paginationConf = ref({});
 let showReferenceDialogFlag = ref(false);
 
 const test = () => {
-	showReferenceDialogFlag.value = true;
-	// EntityListRefs.value?.toDetail();
+	// showReferenceDialogFlag.value = true;
+	EntityListRefs.value?.toAdd(null, "0000008-efc30c5e2d3545d19aec5a10554cfdbd");
 };
 
 let ReferenceSearchTableRefs = ref();

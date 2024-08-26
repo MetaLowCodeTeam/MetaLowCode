@@ -1,5 +1,12 @@
 <template>
-    <el-drawer size="73%" class="ml-drawer" v-model="isShow" direction="rtl" :show-close="false">
+    <el-drawer 
+        size="73%" 
+        class="ml-drawer" 
+        v-model="isShow" 
+        direction="rtl" 
+        :show-close="false"
+        :append-to-body="true"
+    >
         <template #header>
             <div class="detail-header">
                 {{ approvalName }} 审批
@@ -158,6 +165,7 @@ import http from "@/utils/request";
 import { Avatar, CirclePlusFilled } from "@element-plus/icons-vue";
 import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import { queryById, saveRecord } from "@/api/crud";
+import { getRecordApprovalState } from '@/api/approval';
 import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
@@ -242,6 +250,7 @@ let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
 let globalDsv = ref({});
+globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
@@ -256,9 +265,15 @@ const initFormLayout = async () => {
             optionData.value = res.data.optionData || {};
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
+                // 获取审批信息
+                let recordApprovalRes = await getRecordApprovalState(props.entityId);
+                if(recordApprovalRes.data?.flowVariables){
+                    globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+                }
                 let formData = await queryById(props.entityId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
+                   
                     globalDsv.value.rowRecordData = formData.data;
                     nextTick(()=>{
                         vFormRef.value.setFormData(formData.data);
@@ -383,9 +398,8 @@ const beforeReject = () => {
 };
 
 // 同意审批
-async function confirmApprove(isBacked) {
-    let formData = await vFormRef.value.getFormData();
-    if (formData) {
+function confirmApprove(isBacked) {
+    vFormRef.value.getFormData().then(async (formData) => {
         loading.value = true;
         let saveRes = await saveRecord(
             allEntityName.value[approvalTask.value.entityCode],
@@ -414,7 +428,10 @@ async function confirmApprove(isBacked) {
             }
         }
         loading.value = false;
-    }
+
+    }).catch(err => {
+        $ElMessage.error("表单校验失败，请修改后重新提交");
+    })
 }
 
 // 获取审核参数
@@ -482,7 +499,8 @@ const confirmReject = () => {
  */
 
 const DealWithTypeLabel = {
-    1: "同意",
+    // 同意
+    1: "审批", 
     2: "驳回",
     // 退回
     3: "驳回",

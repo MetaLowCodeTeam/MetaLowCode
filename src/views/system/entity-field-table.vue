@@ -133,9 +133,11 @@
 								<el-dropdown-item command="LocationWE">定位 / Location</el-dropdown-item>
 								<el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference
 								</el-dropdown-item>
+                                <el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
 								<!--
 								<el-dropdown-item command="AnyReferenceWE">一对多引用 / AnyReference</el-dropdown-item>
 								<el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
+								
 								-->
 							</el-dropdown-menu>
 						</template>
@@ -804,8 +806,8 @@ export default {
             
             return new Promise((resolve) => {
                 this.$confirm(
-                    "是否确认开启审批字段?",
-                    "审批字段开启确认",
+                    "是否确认开启流程审批?",
+                    "开启流程审批确认",
                     {
                         confirmButtonText: '确认',
                         cancelButtonText: '取消',

@@ -386,11 +386,18 @@ export default {
         addClick() {
             let tempV = {};
             tempV.entityName = "User";
-            this.disableWidgets = [];
+            this.disableWidgets = ["departmentId"];
             if(this.node?.id){
                 tempV.fieldName = "departmentId";
                 tempV.fieldNameVale = this.node.id;
                 tempV.fieldNameLabel = this.node.label;
+            }else {
+                if(this.treeData[0]){
+                    tempV.fieldName = "departmentId";
+                    tempV.fieldNameVale = this.treeData[0]?.id;
+                    tempV.fieldNameLabel = this.treeData[0]?.label;
+                }
+                
             }
             this.$refs.editRefs.openDialog(tempV);
         },

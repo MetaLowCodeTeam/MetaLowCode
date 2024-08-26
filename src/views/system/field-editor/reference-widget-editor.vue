@@ -1,5 +1,5 @@
 <template>
-    <el-container class="field-props-container" v-loading="saveLoading">
+    <el-container class="field-props-container" v-loading="saveLoading" element-loading-text="数据加载中...">
         <el-header class="field-props-header" v-if="!showingInDialog">[一对一引用]字段属性设置</el-header>
         <el-main class="field-props-pane">
             <el-form
@@ -248,6 +248,8 @@ export default {
     },
     data() {
         return {
+            
+            saveLoading: false,
             fieldProps: {
                 name: "",
                 label: "",
@@ -347,12 +349,16 @@ export default {
     },
     methods: {
         async getFieldProps() {
+            this.saveLoading = true;
             let res = await getField(this.fieldName, this.entity);
             if (res && res.code == 200) {
                 if (res.data) {
                     this.readFieldProps(res.data);
                 }
+            }else {
+                this.saveLoading = false;
             }
+            
         },
 
         async readFieldProps(savedProps) {
@@ -367,7 +373,7 @@ export default {
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
             }
-            //console.log(JSON.stringify(this.fieldProps))
+            this.saveLoading = true;
             let res = await getRefFieldExtras(savedProps.name, this.entity);
             if (res && res.code == 200) {
                 if (res.data) {
@@ -380,6 +386,7 @@ export default {
                     this.selectedFieldItems = res.data.selectedFieldItems;
                 }
             }
+            this.saveLoading = false;
         },
 
 		saveField() {

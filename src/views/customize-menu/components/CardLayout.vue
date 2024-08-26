@@ -19,6 +19,7 @@
 <script setup>
 import { ref, reactive, nextTick, watch } from "vue";
 import { queryById } from "@/api/crud";
+import { getRecordApprovalState } from '@/api/approval';
 const props = defineProps({
 	layoutJson: { type: String, default: "" },
 	recordId: { type: String, default: "" },
@@ -58,11 +59,14 @@ const loadFormData = async () => {
 		globalDsv.value.formEntityId = props.recordId;
 		emits("loading", true);
 		loading.value = true;
+        // 获取审批信息
+        let recordApprovalRes = await getRecordApprovalState(props.recordId);
+        if(recordApprovalRes.data?.flowVariables){
+            globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+        }
 		let queryByIdRes = await queryById(props.recordId);
+        
 		if (queryByIdRes) {
-			if (queryByIdRes?.flowVariables) {
-				globalDsv.value.flowVariables = queryByIdRes.flowVariables;
-			}
             globalDsv.value.rowRecordData = queryByIdRes.data;
 			nextTick(() => {
 				vFormRef.value.setFormData(queryByIdRes.data);

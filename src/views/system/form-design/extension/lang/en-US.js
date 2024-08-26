@@ -15,7 +15,7 @@ export default {
 			useCurrentDepartment: 'Use Current Department',
 
             // list-sub-form lang
-            listSubFormHeight: "set list sub form height",
+            listSubFormHeight: "Set list sub form height",
             showListHeader: "Display the header",
             showAdvancedQuery: "Display the advanced query",
             showQuickQuery: "Display the quick query",
@@ -24,10 +24,20 @@ export default {
             showAddBtn: "Display the add button",
             showMoreBtn: "Display the more button",
             showPagination: "Display the pagination",
-            paginationSize: "list page size",
+            paginationSize: "List page size",
             paginationPlaceholder:"Please select the number of entries per page",
-            paginationLabel: 'num',
-            paginationPage: 'page',
+            paginationLabel: 'Num',
+            paginationPage: 'Page',
+            // reference lang
+            useTreeDataSelect: "Use Tree Select",
+            treeDataOperatingBtn: "Configuration",
+            treeDataDialogTitle: "Configure parent-child relationship fields for tree data",
+            treeDataDialogLoading: "Field loading in progress ...",
+            treeDataDialogPlaceholder: "Please select parent-child reference field",
+            treeDataDialogCancel: "Cancel",
+            treeDataDialogConfirm: "Confirm",
+			// location lang
+			positionSelectable: 'Position selectable',
         },
 
     }

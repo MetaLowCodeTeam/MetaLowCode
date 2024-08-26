@@ -28,6 +28,16 @@ export default {
             paginationPlaceholder:"请选择每页条数",
             paginationLabel: '条',
             paginationPage: '页',
+            // 引用组件语言配置
+            useTreeDataSelect: "树形数据选择弹窗",
+            treeDataOperatingBtn: "配置",
+            treeDataDialogTitle: "配置树形数据的父子关系字段",
+            treeDataDialogLoading: "字段加载中...",
+            treeDataDialogPlaceholder: "请选择父子引用字段",
+            treeDataDialogCancel: "取消",
+            treeDataDialogConfirm: "确认",
+			// 地图定位组件
+			positionSelectable: '允许用户自选位置',
         },
 
     }

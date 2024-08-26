@@ -391,7 +391,7 @@ export default {
             loading: false,
             fieldType: "",
             // 最多可添加多少个条件
-            maxConditionsLength: 9,
+            maxConditionsLength: 99,
             // 无效高级表达式
             errorEquation: false,
             // 所有用户
@@ -613,6 +613,11 @@ export default {
                     return;
                 }
             }
+            items.forEach(el => {
+                if(el.value && typeof el.value == 'string') {
+                    el.value = el.value.replace(/\s/g, '');
+                }
+            })
             this.$emit("confirm", { equation, items });
         },
         // 取消

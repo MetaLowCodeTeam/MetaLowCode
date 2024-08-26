@@ -46,6 +46,7 @@
 				</template>
 			</el-input>
 		</form-item-wrapper>
+
 		<el-dialog
 			:title="posDialogTitle"
 			v-if="showLocationDialogFlag"
@@ -90,12 +91,79 @@
 				<el-button v-if="!posReadonly" type="primary" @click="saveLocation()">保存定位</el-button>
 			</template>
 		</el-dialog>
+
+		<el-dialog
+			:title="posDialogTitle"
+			v-if="showLocationPickDialogFlag"
+			v-model="showLocationPickDialogFlag"
+			:show-close="false"
+			class="small-padding-dialog"
+			:width="dialogWidth"
+			draggable
+			:fullscreen="runOnMobile"
+			:close-on-click-modal="false"
+			:close-on-press-escape="false"
+			destroy-on-close
+			:append-to-body="true"
+		>
+			<el-form-item label="所在城市">
+				<el-cascader
+					ref="cityCascader"
+					v-model="curAreaCode"
+					:options="cityCodes"
+					:props="{emitPath: false}"
+					@change="handleCityChange"
+					style="width: 360px"
+				/>
+			</el-form-item>
+			<div class="vue-amap-container">
+				<el-amap
+					:center="curPos"
+					:zoom="zoomLevel"
+					@click="handelMapClick"
+					@init="initMap2"
+				>
+					<el-amap-layer-custom
+						:canvas="canvasObj"
+						:render="render"
+						:always-render="false"
+						:visible="true"
+					/>
+					<el-amap-search-box
+						:visible="searchBoxVisible"
+						:city="cityCode"
+						:citylimit="true"
+						:debounce="1000"
+						placeholder="输入关键词搜索详细地址"
+						@select="selectPOI"
+						@choose="choosePOI"
+					/>
+					<el-amap-control-scale></el-amap-control-scale>
+					<el-amap-control-tool-bar :position="'RT'"></el-amap-control-tool-bar>
+				</el-amap>
+			</div>
+			<el-form-item v-if="!posReadonly" label="已选位置" style="margin-top: 12px">
+				<el-input v-model="newPosModel" placeholder="请点击地图上的定位按钮" readonly></el-input>
+			</el-form-item>
+			<el-form-item v-if="!posReadonly" label="位置名称" style="margin-top: 12px">
+				<el-input v-model="newPosName" placeholder="定位所在地址，供参考" readonly></el-input>
+			</el-form-item>
+			<el-form-item v-if="posReadonly" label="已定位" style="margin-top: 12px">
+				<el-input v-model="fieldModel" readonly></el-input>
+			</el-form-item>
+			<template #footer>
+				<el-button @click="showLocationPickDialogFlag=false">关闭</el-button>
+				<el-button v-if="!posReadonly" type="primary" @click="saveSelectedPosition()">保存位置</el-button>
+			</template>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-import {ElAmap, ElAmapControlGeolocation} from "@vuemap/vue-amap";
+import {ElAmap, ElAmapControlGeolocation, ElAmapSearchBox} from "@vuemap/vue-amap";
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
+import CityCodes from "@/views/system/form-design/extension/field-widgets/cityCodes";
+import {deepClone} from "@/utils/util";
 
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
@@ -132,6 +200,7 @@ export default {
 		FormItemWrapper,
 		ElAmap,
 		ElAmapControlGeolocation,
+		ElAmapSearchBox,
 	},
 	data() {
 		return {
@@ -150,6 +219,12 @@ export default {
 			mapObj: null,
 			canvasObj: null,
 			pathObj: null,
+
+			showLocationPickDialogFlag: false,
+			curAreaCode: null,  //curAreaCode: '310100',
+			cityCodes: CityCodes,
+			cityCode: '全国',  //cityCode: '310100',
+			searchBoxVisible: true,
 		};
 	},
 	computed: {
@@ -174,7 +249,7 @@ export default {
 		},
 
 		posDialogTitle() {
-			return this.posReadonly ? '查看定位' : '选择定位';
+			return this.posReadonly ? '查看位置' : '选择位置';
 		},
 
 	},
@@ -205,17 +280,65 @@ export default {
 
 	methods: {
 		onAppendButtonClick() {
+			if (this.field.options.positionSelectable) {
+				this.showLocationPickDialogFlag = this.initPositionDialog()
+				return;
+			}
+
+			this.showLocationDialogFlag = this.initLocationDialog()
+		},
+
+		initPositionDialog() {
 			if (this.posReadonly) {
 				if (!this.fieldModel) {
-					this.$message.warning('没有定位数据！')
-					return
+					this.$message.warning('没有地图位置数据！')
+					return false
 				}
 
 				//设置查看模式的回显经纬度
 				const posArray = this.fieldModel.split(',')
 				if ((posArray.length !== 2) && (posArray.length !== 3)) {
-					this.$message.warning('定位数据无效！')
-					return
+					this.$message.warning('地图位置数据无效！')
+					return false
+				}
+
+				this.curPos.length = 0
+				this.curPos.push( posArray[0] * 1)
+				this.curPos.push( posArray[1] * 1)
+				this.zoomLevel = 20
+			} else {
+				if (this.fieldModel) {
+					const posArray = this.fieldModel.split(',')
+					this.curPos.length = 0
+					this.curPos.push( posArray[0] * 1)
+					this.curPos.push( posArray[1] * 1)
+
+					this.newPos.length = 0
+					this.newPos.push( posArray[0] * 1)
+					this.newPos.push( posArray[1] * 1)
+					this.newPosModel = deepClone(this.fieldModel)
+					this.newPosName = posArray[1]
+					this.zoomLevel = 20
+				} else {
+					this.zoomLevel = 18
+				}
+			}
+
+			return true;
+		},
+
+		initLocationDialog() {
+			if (this.posReadonly) {
+				if (!this.fieldModel) {
+					this.$message.warning('没有地图位置数据！')
+					return false
+				}
+
+				//设置查看模式的回显经纬度
+				const posArray = this.fieldModel.split(',')
+				if ((posArray.length !== 2) && (posArray.length !== 3)) {
+					this.$message.warning('地图位置数据无效！')
+					return false
 				}
 				this.curPos.length = 0
 				this.curPos.push( posArray[0] * 1)
@@ -225,10 +348,10 @@ export default {
 				this.zoomLevel = 18
 			}
 
-			this.newPos.length = 0;
-			this.newPosModel = null;
-            this.newPosName = '';
-			this.showLocationDialogFlag = true;
+			this.newPos.length = 0
+			this.newPosModel = null
+			this.newPosName = ''
+			return true;
 		},
 
 		handleClearEvent() {
@@ -290,6 +413,80 @@ export default {
 			this.handleChangeEvent(this.fieldModel)
 			this.showLocationDialogFlag = false;
 		},
+
+		/* 以下为用户自选地图位置的相关代码 */
+
+		handleCityChange(e) {
+			this.cityCode = this.curAreaCode
+			const checkNodes = this.$refs.cityCascader.getCheckedNodes(true)
+			if (checkNodes && (checkNodes.length > 0)) {
+				this.mapObj.setCity(checkNodes[0].label)
+			}
+		},
+
+		initMap2(mapInstance) {
+			this.mapObj = mapInstance;
+			const size = mapInstance.getSize();
+			this.canvasObj = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+			this.canvasObj.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+			this.canvasObj.setAttribute('width', size.width);
+			this.canvasObj.setAttribute('height', size.height);
+
+			this.pathObj = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+			this.pathObj.onclick = function () {
+				console.log('svg path clicked')
+			};
+			const styleText = [];
+			styleText.push('stroke:red');
+			styleText.push('fill:green');
+			styleText.push('fill-opacity:0.3');
+			this.pathObj.style.cssText = styleText.join(';');
+			this.canvasObj.appendChild(this.pathObj);
+		},
+
+		selectPOI(e) {
+			this.newPos.length = 0
+			this.newPos.push(e.poi.location.lng)
+			this.newPos.push(e.poi.location.lat)
+			this.newPosModel = this.newPos[0] + ',' + this.newPos[1]
+			this.newPosName = e.poi.name
+
+			this.curPos.length = 0
+			this.curPos.push(e.poi.location.lng)
+			this.curPos.push(e.poi.location.lat)
+			this.zoomLevel = 18
+		},
+
+		choosePOI(e) {
+			this.newPos.length = 0
+			this.newPos.push(e.poi.location.lng)
+			this.newPos.push(e.poi.location.lat)
+			this.newPosModel = this.newPos[0] + ',' + this.newPos[1]
+			this.newPosName = e.poi.name
+
+			this.curPos.length = 0
+			this.curPos.push(e.poi.location.lng)
+			this.curPos.push(e.poi.location.lat)
+			this.zoomLevel = 18
+		},
+
+		handelMapClick(e) {
+			this.curPos.length = 0
+			this.curPos.push(e.lnglat.lng)
+			this.curPos.push(e.lnglat.lat)
+		},
+
+		saveSelectedPosition() {
+			if (!this.newPos || (this.newPos.length <= 0)) {
+				this.$message.warning('未指定地图位置，请在地图上搜索然后从下拉列表选择位置')
+				return
+			}
+
+			this.fieldModel = this.newPos[0] + ',' + this.newPos[1] + ',' + this.newPosName
+			this.handleChangeEvent(this.fieldModel)
+			this.showLocationPickDialogFlag = false;
+		},
+
 	},
 };
 </script>
@@ -313,5 +510,9 @@ export default {
 		height: 16px !important;
 		width: 16px !important;
 	}
+}
+
+.amap-sug-result {
+	z-index: 9999;
 }
 </style>

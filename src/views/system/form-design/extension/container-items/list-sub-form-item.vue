@@ -19,6 +19,7 @@
             :detailEntityFlag="widget.options?.detailEntityFlag"
             :refEntityBindingField="widget.options?.refEntityBindingField"
             :modelName="getListSubFormConfId()"
+            ref="listSubForm"
 		/>
 	</container-item-wrapper>
 </template>
@@ -60,6 +61,10 @@ export default {
                 return this.widget.id + '-' + this.widget.options.name;
             }   
         },
+        getTableDataList(){
+            return this.$refs.listSubForm.getTableDataList();
+        }
+
 	},
 };
 </script>

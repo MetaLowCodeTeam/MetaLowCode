@@ -395,7 +395,7 @@ export default {
             if(nameLangth < 7){
                 computedWidth = 520;
             }else {
-                computedWidth = 540 + ((nameLangth - 6 ) * 20);
+                computedWidth = 560 + ((nameLangth - 6 ) * 20);
             }
             return "calc(100% - "+ computedWidth +"px)";
         },

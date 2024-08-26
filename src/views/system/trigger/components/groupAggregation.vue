@@ -676,6 +676,7 @@ let mlFormulaFields = ref([]);
 let mlFormulaVal = ref("");
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 let textType = ref(["Text", "TextArea"]);
+let timeType = ref(["DateTime", "Date"]);
 let mlIsAdvanced = ref(false);
 let formulaVal = ref({});
 // 判断计算公式显示
@@ -842,7 +843,7 @@ const targetEntityChange = () => {
 // 聚合规则所有字段
 const getRuleEntityFields = () => {
     return tagEntityFields.value.filter(
-        (el) => el.fieldType && numType.value.includes(el.fieldType)
+        (el) => el.fieldType && (numType.value.includes(el.fieldType) || timeType.value.includes(el.fieldType))
     );
 };
 
