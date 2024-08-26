@@ -8,6 +8,7 @@
         :showFullSceen="styleConf?.actionConf.showFullScreen"
         :autoFullScreen="styleConf?.actionConf.autoFullScreen"
         append-to-body
+        bodyNoPadding
     >
         <div class="main fullsceen-man" v-loading="loading">
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
@@ -496,6 +497,8 @@ defineExpose({
     max-height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px;
     .info-box {
         height: 26px;
         line-height: 26px;

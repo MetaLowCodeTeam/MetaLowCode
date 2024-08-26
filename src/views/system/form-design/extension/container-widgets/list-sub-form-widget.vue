@@ -7,9 +7,12 @@
 		:index-of-parent-list="indexOfParentList"
 	>
 		<div
-			class="sub-form-container"
+			class="sub-form-container mb-10"
 			:class="{ selected: selected }"
 			@click.stop="selectWidget(widget)"
+            :style="{
+                height: widget.options.listSubFormHeight + 'px',
+            }"
 		>   
 			<FormDesignEntityList
 				:referenceEntity="widget.options.name"
@@ -22,9 +25,10 @@
 					showAddBtn: widget.options.showAddBtn,
 					showMoreBtn: widget.options.showMoreBtn,
 					showPagination: widget.options.showPagination,
+					showOperateColumn: widget.options.showOperateColumn,
+					showDelBtn: widget.options.showDelBtn,
 				}"
 				:paginationSize="widget.options.paginationSize"
-				:tableHeight="widget.options.listSubFormHeight"
                 :detailEntityFlag="widget.options?.detailEntityFlag"
                 :refEntityBindingField="widget.options?.refEntityBindingField"
                 isVFormDesignMode

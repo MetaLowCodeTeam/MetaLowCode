@@ -473,6 +473,9 @@ const getGroupEntityList = () => {
 const nodeClick = (node) => {
 	cutMenu.value = Object.assign({}, node);
 	cutMenu.value.useIcon = cutMenu.value.useIcon || "";
+    if(cutMenu.value.type == 4) {
+        cutMenu.value.type = 1;
+    }
 };
 
 let isShowIconDialog = ref(false);

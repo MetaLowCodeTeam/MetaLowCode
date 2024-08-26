@@ -13,6 +13,10 @@ export const listSubFormSchema = {
         // 是否从实体
         detailEntityFlag: true,
         refEntityBindingField: '',
+        // 是否显示新增
+        showAddBtn: true,
+        // 是否显示删除
+        showDelBtn: true,
         // 是否显示头部
         showListHeader: true,
         // 是否显示高级查询
@@ -21,6 +25,8 @@ export const listSubFormSchema = {
         showQuickQuery: true,
         // 是否显示更多按钮
         showMoreBtn: true,
+        // 是否显示操作列
+        showOperateColumn: true,
         // 是否显示分页
         showPagination: true,
         // 分页每页显示多少条

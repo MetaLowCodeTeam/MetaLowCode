@@ -1,20 +1,17 @@
 <template>
 	<!--  -->
+	
 	<MlCustomSubFormList
-		class="mb-10"
-		:style="{
-			height: tableHeight + 'px',
-		}"
 		v-if="entityCode"
         :formEntityId="formEntityId"
 		:referenceEntity="referenceEntity"
         :detailEntityFlag="detailEntityFlag"
         :refEntityBindingField="refEntityBindingField"
         :paginationSize="paginationSize"
-        :tableHeight="tableHeight"
         :formRef="formRef"
         :isVFormDesignMode="isVFormDesignMode"
         :modelName="modelName"
+        :listConf="listConf"
         ref="listSubForm"
 	/>
 	<el-empty v-else description="请先绑定明细实体" />
@@ -28,11 +25,15 @@ export default {
 		MlCustomSubFormList,
 	},
 	props: {
-        isVFormDesignMode: {
-            type: Boolean,
-            default: false,
-        },
-        formEntityId: {
+        listConf: {
+			type: Object,
+			default: () => {},
+		},
+		isVFormDesignMode: {
+			type: Boolean,
+			default: false,
+		},
+		formEntityId: {
 			type: String,
 			default: "",
 		},
@@ -56,32 +57,29 @@ export default {
 			type: [Number, String],
 			default: 294,
 		},
-        modelName: {
-            type: String,
+		modelName: {
+			type: String,
 			default: "",
-        },
+		},
 		formRef: {},
-
 	},
-    watch: {
+	watch: {
 		referenceEntity(newV) {
-			this.entityCode =
-				useCommonStore().allEntityCode[newV];
+			this.entityCode = useCommonStore().allEntityCode[newV];
 		},
 	},
-    data() {
+	data() {
 		return {
 			entityCode: "",
 		};
 	},
-    mounted(){
-        this.entityCode =
-				useCommonStore().allEntityCode[this.referenceEntity];
-    },
-    methods: {
-        getTableDataList(){
-            return this.$refs.listSubForm.getTableDataList();
-        }
-    }
+	mounted() {
+		this.entityCode = useCommonStore().allEntityCode[this.referenceEntity];
+	},
+	methods: {
+		getTableDataList() {
+			return this.$refs.listSubForm.getTableDataList();
+		},
+	},
 };
 </script>

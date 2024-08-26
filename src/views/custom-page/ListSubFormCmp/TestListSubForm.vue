@@ -2,7 +2,7 @@
 	<EntityList
 		isReferenceComp
 		:referenceEntity="myReferenceEntity"
-		:listConf="listParamConf"
+		:listConf="useListConf"
 		:paginationConf="listPaginationConf"
         :formEntityId="formEntityId"
         :referenceCompStatus="formStatus"
@@ -59,7 +59,7 @@ export default {
 	},
 	watch: {
 		listConf(newV) {
-			this.listParamConf = Object.assign(this.listParamConf, newV);
+            this.useListConf = Object.assign({}, newV, this.listParamConf)
 		},
 		paginationSize(newV) {
 			this.listPaginationConf.size = newV ? newV * 1 : 20;
@@ -75,7 +75,12 @@ export default {
 		return {
 			myReferenceEntity: "",
 			entityCode: "",
+            // 绑定的列表配置文件
+            useListConf: {},
+            // 实际控制列表配置文件，
+            // 列表配置以 listParamConf 为主。比如这里按钮设置true，无论你表单设置什么都以这里为主
 			listParamConf: {
+                // showAddBtn: true,
 			},
 			listPaginationConf: {
 				size: 20,
@@ -85,7 +90,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.listParamConf = Object.assign(this.listParamConf, this.listConf);
+        this.useListConf = Object.assign({}, this.listConf, this.listParamConf)
 		this.listPaginationConf.size = this.paginationSize
 			? this.paginationSize * 1
 			: 20;

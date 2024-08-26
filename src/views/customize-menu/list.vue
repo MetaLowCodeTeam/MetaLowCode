@@ -89,7 +89,7 @@
                     </el-button>
                     <slot name="beforeMoreBtn"></slot>
                     <More
-                        :showMoreBtn="listParamConf.showMoreBtn"
+                        :listParamConf="listParamConf"
                         ref="MoreRefs"
                         :layoutConfig="layoutConfig"
                         :defaultColumnShow="defaultColumnShow"
@@ -219,7 +219,7 @@
                         v-for="(column,columnInx) of tableColumn"
                         :key="columnInx"
                         :prop="column.fieldName"
-                        :label="column.columnAliasName ?column.columnAliasName : column.fieldLabel"
+                        :label="column.columnAliasName ? column.columnAliasName : column.fieldLabel"
                         :width="setColumnWidth(column)"
                         sortable
                         show-overflow-tooltip
@@ -234,9 +234,9 @@
                             />
                         </template>
                     </el-table-column>
-                    <slot name="actionColumn" v-if="showActionColumnSlot"></slot>
+                    <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
                     <el-table-column 
-                        v-else
+                        v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
                         label="操作" 
                         fixed="right" 
                         :align="'center'" 
@@ -507,7 +507,9 @@ const listParamConf = ref({
     showOpenBtn: true,
     showEditBtn: true,
     showAddBtn: true,
+    showDelBtn: true,
     showMoreBtn: true,
+    showOperateColumn: true,
     showPagination: true,
 })
 
@@ -1214,13 +1216,7 @@ watchEffect(() => {
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
     myFormEntityId.value = props.formEntityId;
     myModelName.value = props.modelName;
-    if(mainDetailField.value){
-        listParamConf.value.showAddBtn = false;
-    }
     if(props.isReferenceComp){
-        if(props.referenceCompStatus == 'new' || props.referenceCompStatus == 'edit'){
-            listParamConf.value.showAddBtn = true;
-        }
         if(props.referenceCompStatus == 'read'){
             listParamConf.value.showAddBtn = false;
             listParamConf.value.showEditBtn = false;
@@ -1230,7 +1226,6 @@ watchEffect(() => {
             listParamConf.value.showOpenBtn = false;
             listParamConf.value.showAddBtn = false;
             listParamConf.value.showEditBtn = false;
-            // listParamConf.value.showMoreBtn = false;
         }
     }
 })
