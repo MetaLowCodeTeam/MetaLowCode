@@ -108,7 +108,6 @@ const numberToCurrencyNo = (value) => {
 const setSelected = () => {
 	props.designer?.setSelected(props.field);
     initOption();
-	// localStorage.setItem("widget__list__selected", JSON.stringify(props.field));
 };
 
 watchEffect(() => {

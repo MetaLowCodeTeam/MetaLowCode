@@ -10,12 +10,13 @@
             footer
             @cancel="dialogIsShow = false"
             @confirm="conditionConfirm"
-            :entityName="allEntityName[cutOption.dataEntity]"
-        />
+            :entityName="cutEntityName"
+        >
+        </mlSetConditions>
     </mlDialog>
 </template>
 <script setup>
-import { ref, watch, onMounted, inject } from "vue";
+import { ref, watch, onMounted, inject, watchEffect } from "vue";
 const $ElMessage = inject("$ElMessage");
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
@@ -30,32 +31,9 @@ const props = defineProps({
 });
 const emits = defineEmits(["update:optionModel"]);
 let cutOption = ref({});
-watch(
-    () => props.optionModel,
-    () => {
-        cutOption.value = props.optionModel;
-        getSetConditionText();
-    },
-    { deep: true }
-);
-watch(
-    () => props.optionModel.dataEntity,
-    () => {
-        if (props.optionModel.name == cutOption.value.name) {
-            cutOption.value.setChartFilter = {
-                equation: "OR",
-                items: [],
-            };
-            getSetConditionText();
-        }
-    },
-    { deep: true }
-);
-onMounted(() => {
-    cutOption.value = props.optionModel;
-    getSetConditionText();
-    // console.log(cutOption,'cutOption')
-});
+
+let cutEntityName = ref("");
+
 
 /***
  *  ****************************************** 过滤条件相关 beg
@@ -105,6 +83,12 @@ const conditionConfirm = (e) => {
     dialogIsShow.value = false;
     emits("update:optionModel", cutOption.value);
 };
+
+watchEffect(()=>{
+    cutOption.value = props.optionModel;
+    cutEntityName.value = allEntityName.value[cutOption.value.dataEntity];
+    getSetConditionText();
+})
 
 /***
  *  ****************************************** 过滤条件相关 end
