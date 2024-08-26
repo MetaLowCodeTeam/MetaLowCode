@@ -526,7 +526,7 @@ export default {
 	methods: {
 		resizeTableHeight() {  /* table自适应高度 */
             if(this.$refs.tableContainer){
-                this.tableHeight = this.$refs.tableContainer.$el.offsetHeight - 42 + 42/*覆盖表格页脚高度*/
+                this.tableHeight = this.$refs.tableContainer.$el?.offsetHeight - 42 + 42/*覆盖表格页脚高度*/
             }
 		},
 

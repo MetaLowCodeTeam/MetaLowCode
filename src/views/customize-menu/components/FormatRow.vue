@@ -82,6 +82,12 @@
                 >{{ field.name }}</span>
             </template>
         </div>
+        <div 
+            class="text-ellipsos" 
+            v-else-if="column.fieldType == 'Location'"
+        >
+            {{ row[column.fieldName] ? row[column.fieldName].split(',')[2] : '' }}
+        </div>
         <div class="text-ellipsis" v-else>{{ row[column.fieldName] }}</div>
     </div>
 

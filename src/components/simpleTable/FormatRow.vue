@@ -34,6 +34,12 @@
 	<div class="text-ellipsis" v-else-if="column.type == 'Money'">
 		{{ numberToCurrencyNo(row[column.prop]) }}
 	</div>
+    <div 
+        class="text-ellipsos" 
+        v-else-if="column.type == 'Location'"
+    >
+        {{ row[column.prop] ? row[column.prop].split(',')[2] : '' }}
+    </div>
 	<div
 		class="text-ellipsis"
 		v-else-if="column.type == 'Picture'"
