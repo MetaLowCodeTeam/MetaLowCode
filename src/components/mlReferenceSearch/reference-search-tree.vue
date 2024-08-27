@@ -94,7 +94,7 @@ const loadTreeData = async (entityName, parentFieldName) => {
                 treeRef.value?.setCurrentKey(id, true)
             })
         }
-        if(props.showCheckbox && props.defaultSelected.length > 0){
+        if(props.showCheckbox && props.defaultSelected && props.defaultSelected.length > 0){
             treeRef.value?.setCheckedKeys(props.defaultSelected.map(el => el.id))
         }
 	}

@@ -16,9 +16,11 @@ const floamtRoute = (el, isTopNav) => {
             newRoute.component = "custom-page/iframe";
         }
     } else if (el.type == 5) {
-
         newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/dashboard";
+    } else if (el.type == 6) {
+        newRoute.path = "/web/custom-page/vFrom" + (isTopNav ? '/' + el.guid : '');
+        newRoute.component = "custom-page/ListVFromCmp/index";
     } else {
         // 自定义页面目录
         newRoute.path = "/web/custom-page/";
@@ -240,6 +242,13 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.meta.type = 3;
                 initMenu.meta.query = {
                     default: el.chartId
+                }
+            }
+            if (el.type == 6) {
+                initMenu.meta.type = 6;
+                initMenu.meta.query = {
+                    formId: el.formId,
+                    formEntityCode: el.formEntityCode,
                 }
             }
             if(el.isOpeneds){

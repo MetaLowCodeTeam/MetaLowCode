@@ -1,5 +1,5 @@
 <template>
-	<mlDialog title="设置导航菜单" v-model="isShow" width="680px">
+	<mlDialog title="设置导航菜单" v-model="isShow" width="780px">
 		<div v-loading="loading">
 			<el-form label-width="70px" label-position="left" @submit.prevent>
 				<el-form-item label="导航名称">
@@ -156,6 +156,13 @@
 								cutMenu.children && cutMenu.children.length > 0
 							"
 						></el-tab-pane>
+						<el-tab-pane
+							label="自定义表单"
+							:name="6"
+							:disabled="
+								cutMenu.children && cutMenu.children.length > 0
+							"
+						></el-tab-pane>
 					</el-tabs>
 					<div
 						v-if="
@@ -231,13 +238,58 @@
 							/>
 						</el-select>
 					</div>
-                    <div v-if="cutMenu.type == 3 || cutMenu.type == 2 || cutMenu.type == 5" class="mt-10">
-                        <el-input
-                            v-model="cutMenu.customCode"
-                            placeholder="权限Code"
-                            clearable
-                        ></el-input>
-                    </div>
+					<div v-if="cutMenu.type == 6">
+						<el-select
+							v-model="cutMenu.formEntityCode"
+							filterable
+							placeholder="选择实体"
+							class="w-100"
+							@change="formEntityCodeChange"
+						>
+							<el-option-group
+								v-for="group in getGroupEntityList(6)"
+								:key="group.label"
+								:label="group.label"
+							>
+								<el-option
+									v-for="(op, inx) of group.options"
+									:key="inx"
+									:value="op.entityCode"
+									:label="op.label"
+								/>
+							</el-option-group>
+						</el-select>
+						<div class="mt-10" v-loading="formLoading">
+							<el-select
+								v-model="cutMenu.formId"
+								filterable
+								placeholder="选择表单"
+								class="w-100"
+							>
+								<el-option
+									v-for="(op, inx) of formList"
+									:key="inx"
+									:value="op.formLayoutId"
+									:label="op.layoutName"
+								/>
+							</el-select>
+						</div>
+					</div>
+					<div
+						v-if="
+							cutMenu.type == 3 ||
+							cutMenu.type == 2 ||
+							cutMenu.type == 5 ||
+							cutMenu.type == 6
+						"
+						class="mt-10"
+					>
+						<el-input
+							v-model="cutMenu.customCode"
+							placeholder="权限Code"
+							clearable
+						></el-input>
+					</div>
 					<div class="mt-10">
 						<el-input
 							v-model="cutMenu.name"
@@ -274,23 +326,35 @@
 							<el-radio :label="1">嵌入式</el-radio>
 						</el-radio-group>
 					</div>
-                    <div class="mt-5" v-if="cutMenu.type == 1 && (!cutMenu.children || cutMenu.children.length < 1)">
-                        <el-checkbox v-model="cutMenu.useCustom" label="是否使用自定义列表模板" />
-                    </div>
-                    <div class="mt-5" v-if="cutMenu.type == 1 && cutMenu.useCustom">
-                        <el-select 
-                            v-model="cutMenu.useComponent" 
-                            placeholder="选择自定义列表模板" 
-                            style="width: 100%"
-                        >
-                            <el-option
-                                v-for="item in customListEntry"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
-                    </div>
+					<div
+						class="mt-5"
+						v-if="
+							cutMenu.type == 1 &&
+							(!cutMenu.children || cutMenu.children.length < 1)
+						"
+					>
+						<el-checkbox
+							v-model="cutMenu.useCustom"
+							label="是否使用自定义列表模板"
+						/>
+					</div>
+					<div
+						class="mt-5"
+						v-if="cutMenu.type == 1 && cutMenu.useCustom"
+					>
+						<el-select
+							v-model="cutMenu.useComponent"
+							placeholder="选择自定义列表模板"
+							style="width: 100%"
+						>
+							<el-option
+								v-for="item in customListEntry"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							/>
+						</el-select>
+					</div>
 					<div
 						class="mt-5"
 						v-if="cutMenu.children && cutMenu.children.length > 0"
@@ -316,12 +380,16 @@
 				<div class="share-to fl">
 					<mlShareTo v-model="menuData.shareTo" />
 				</div>
-				<el-button @click="isShow = false" :loading="loading"
-					>取消</el-button
+				<el-button @click="isShow = false" :loading="loading">
+					取消
+				</el-button>
+				<el-button
+					type="primary"
+					@click="layoutSave"
+					:loading="loading"
 				>
-				<el-button type="primary" @click="layoutSave" :loading="loading"
-					>保存</el-button
-				>
+					保存
+				</el-button>
 			</div>
 		</template>
 	</mlDialog>
@@ -342,11 +410,13 @@ import { useRouter } from "vue-router";
 import mlShareTo from "@/components/mlShareTo/index.vue";
 import { getDataList } from "@/api/crud";
 import { customListEntry } from "@/views/custom-page/customListEntry";
+import { getFormLayoutList } from "@/api/system-manager";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const { unSystemEntityList } = storeToRefs(useCommonStore());
+const { queryEntityNameByCode } = useCommonStore();
 const { getNavigationApi } = useLayoutConfigStore();
 const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
 const props = defineProps({
@@ -397,7 +467,7 @@ const getEntityList = () => {
 };
 
 // 实体分组
-const getGroupEntityList = () => {
+const getGroupEntityList = (target) => {
 	let systemOptions = [
 		{
 			label: "部门用户",
@@ -445,7 +515,9 @@ const getGroupEntityList = () => {
 			label: "系统内置",
 			options: [...systemOptions],
 		},
-		{
+	];
+	if (target != 6) {
+		newEntityList.push({
 			label: "审批流程",
 			options: [
 				{
@@ -464,8 +536,8 @@ const getGroupEntityList = () => {
 					entityCode: "capprovalCc",
 				},
 			],
-		},
-	];
+		});
+	}
 	return newEntityList;
 };
 
@@ -473,9 +545,9 @@ const getGroupEntityList = () => {
 const nodeClick = (node) => {
 	cutMenu.value = Object.assign({}, node);
 	cutMenu.value.useIcon = cutMenu.value.useIcon || "";
-    if(cutMenu.value.type == 4) {
-        cutMenu.value.type = 1;
-    }
+	if (cutMenu.value.type == 4) {
+		cutMenu.value.type = 1;
+	}
 };
 
 let isShowIconDialog = ref(false);
@@ -523,11 +595,14 @@ let defaultMenu = reactive({
 	iconColor: "",
 	// 仪表盘ID
 	chartId: "",
-    // 是否使用自定义列表模板
-    useCustom: false,
-    // 当前使用的末班
-    useComponent: "",
-
+	// 是否使用自定义列表模板
+	useCustom: false,
+	// 当前使用的末班
+	useComponent: "",
+	// 表单实体
+	formEntityCode: "",
+	// 表单Id
+	formId: "",
 });
 
 const getGuid = () => {
@@ -541,7 +616,7 @@ const getGuid = () => {
 let cutMenu = ref(null);
 
 // 关联项切换
-const associationChange = (entityCode) => {
+const associationChange = (entityCode, target) => {
 	let linkEntity;
 	for (let index = 0; index < getGroupEntityList().length; index++) {
 		const element = getGroupEntityList()[index];
@@ -554,12 +629,31 @@ const associationChange = (entityCode) => {
 		}
 	}
 	cutMenu.value.name = linkEntity.label;
-	cutMenu.value.entityCode = linkEntity.entityCode;
-	cutMenu.value.entityName = linkEntity.name;
-    cutMenu.value.detailEntityFlag = linkEntity.detailEntityFlag;
+	// 非自定义表单
+	if (target != 6) {
+		cutMenu.value.entityCode = linkEntity.entityCode;
+		cutMenu.value.entityName = linkEntity.name;
+	}
+	cutMenu.value.detailEntityFlag = linkEntity.detailEntityFlag;
 	cutMenu.value.mainEntityCode = linkEntity.mainEntityCode;
 };
 
+// 表单组件
+let formList = ref([]);
+let formLoading = ref(false);
+
+// 自定义表单实体切换
+const formEntityCodeChange = async (entityCode) => {
+	associationChange(entityCode, 6);
+	cutMenu.value.formId = "";
+	formLoading.value = true;
+	let res = await getFormLayoutList(queryEntityNameByCode(entityCode));
+	console.log(res);
+	if (res) {
+		formList.value = res.data;
+	}
+	formLoading.value = false;
+};
 
 // 添加父菜单
 const addMenu = () => {
@@ -616,6 +710,10 @@ const confirmMenu = () => {
 	}
 	if (cutMenu.value.type == 3 && !cutMenu.value.outLink) {
 		$ElMessage.warning("请输入自定义页面名称");
+		return;
+	}
+    if (cutMenu.value.type == 6 && !cutMenu.value.formId) {
+		$ElMessage.warning("请选择表单");
 		return;
 	}
 	// 如果是系统内置
@@ -725,9 +823,6 @@ let getChartList = async () => {
 	loading.value = false;
 };
 
-
-
-
 // 导航保存
 const layoutSave = async () => {
 	let { layoutConfigId, configName } = menuData;
@@ -747,7 +842,6 @@ const layoutSave = async () => {
 		}
 	});
 	menuData.config = JSON.stringify(newMenuList);
- 
 	let param = {};
 	// 检测数据有没变化
 	if ($TOOL.checkIsEdit(sourceData.configName, menuData.configName)) {
@@ -769,7 +863,7 @@ const layoutSave = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
 	if (res) {
-        router.go(0);
+		router.go(0);
 		// 如果默认选中导航就是当前修改导航 并且 如果数据有变化
 		// if (
 		// 	chosenNavigationId.value &&
@@ -792,6 +886,7 @@ const formatMenuList = () => {
 	menuData.list.forEach((el) => {
 		// 必须存在关联或者外部链接才是菜单
 		if (
+			el.formId ||
             el.chartId ||
 			el.entityCode ||
 			el.outLink ||
@@ -818,7 +913,13 @@ const formatMenuList = () => {
 		) {
 			saveMenu.splice(inx, 1);
 		}
-		if (!el.chartId && !el.entityCode && !el.outLink && el.children.length < 1) {
+		if (
+            !el.formId &&
+			!el.chartId &&
+			!el.entityCode &&
+			!el.outLink &&
+			el.children.length < 1
+		) {
 			saveMenu.splice(inx, 1);
 		}
 	});
@@ -837,7 +938,7 @@ div {
 	z-index: 1;
 	margin-bottom: 12px;
 	overflow-x: auto;
-	width: 42%;
+	width: 268px;
 	&::-webkit-scrollbar {
 		display: none;
 	}
@@ -849,7 +950,7 @@ div {
 }
 
 .right-div {
-	width: calc(58% - 20px);
+	width: calc(100% - 288px);
 	margin-left: 20px;
 }
 

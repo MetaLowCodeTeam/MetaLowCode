@@ -265,7 +265,7 @@ export default {
 				});
 				this.columns = columnList;
 				this.tableData = res.data.dataList;
-                if(this.defaultSelected.length > 0 && this.selectsdata.length < 1) {
+                if(this.defaultSelected && this.defaultSelected.length > 0 && this.selectsdata && this.selectsdata.length < 1) {
                     this.selectsdata = this.defaultSelected.map(el => {
                         let row = {};
                         row[this.idField] = el.id;
