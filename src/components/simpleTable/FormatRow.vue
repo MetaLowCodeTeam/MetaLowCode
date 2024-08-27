@@ -40,6 +40,12 @@
     >
         {{ row[column.prop] ? row[column.prop].split(',')[2] : '' }}
     </div>
+    <div 
+        class="text-ellipsos" 
+        v-else-if="column.type == 'ReferenceList'"
+    >
+        {{  formatReferenceList(row[column.fieldName])  }}
+    </div>
 	<div
 		class="text-ellipsis"
 		v-else-if="column.type == 'Picture'"
@@ -137,6 +143,15 @@ const downField = (url, fileName) => {
 const openDetailDialog = (row) => {
 	emits("openDetailDialog", row);
 };
+
+// 格式化多引用显示
+const formatReferenceList = (list) => {
+    if(list && list.length > 0){
+        let names = list.map((item) => item.name);
+        return names.join(",");
+    }
+    return ""
+}
 
 /**
  * 多文件下载

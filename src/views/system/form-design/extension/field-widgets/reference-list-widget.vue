@@ -170,7 +170,7 @@ export default {
 			deep: true,
 			immediate: true,
 			handler(val) {
-				this.displayValue = this.fieldModel.map(el => el.name);
+				this.displayValue =  val && val.length > 0 ? val.map(el => el.name) : ""; 
 			},
 		},
 	},
@@ -184,8 +184,8 @@ export default {
 		},
 
 		contentForReadMode() {
-            let names = this.fieldModel.filter(el => el.name);
-			return names.length > 0 ? names.split(",") : "--";
+            let names = this.fieldModel && this.fieldModel.length > 0 ? this.fieldModel.map(el => el.name) : "";
+			return names.length > 0 ? names.join(",") : "--";
 		},
 
 		dialogWidth() {
@@ -207,7 +207,12 @@ export default {
 			//设置为明细实体名称！！
 			this.entity = this.subFormName;
 		}
-        
+
+        this.registerToRefList();
+		this.initFieldModel();
+		this.initEventHandler();
+		this.buildFieldRules();
+		this.handleOnCreated();
 	},
 
 	mounted() {
