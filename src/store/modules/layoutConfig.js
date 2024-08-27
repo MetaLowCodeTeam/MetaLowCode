@@ -203,6 +203,13 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             default: subEl.chartId
                         }
                     }
+                    if (subEl.type == 6) {
+                        subRoute.meta.type = 6;
+                        subRoute.meta.query = {
+                            formId: subEl.formId,
+                            formEntityCode: subEl.formEntityCode,
+                        }
+                    }
                     if (subEl.type == 3) {
                         subRoute.meta.type = 3
                         subRoute.meta.query = getCustomPageQuery(subEl.outLink);
