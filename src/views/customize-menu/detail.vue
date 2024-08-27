@@ -127,7 +127,7 @@
                                 <el-col :span="24">
                                     <More
                                         ref="MoreRefs"
-                                        :showMoreBtn="detailParamConf.showMoreBtn"
+                                        :listParamConf="detailParamConf"
                                         type="detail"
                                         :multipleSelection="multipleSelection"
                                         :entityCode="entityCode"
