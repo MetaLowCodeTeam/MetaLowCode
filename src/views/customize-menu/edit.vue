@@ -183,7 +183,11 @@ const openDialog = async (v) => {
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     formId.value = v.formId;
+    
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
+    if(v.sourceRow) {
+        globalDsv.value.sourceRow = v.sourceRow;
+    }
     isReferenceComp.value = v.isReferenceComp;
     // 如果是引用组件调用，有引用组件表单数据
     if(isReferenceComp.value){
