@@ -2,7 +2,7 @@
 	<EntityList
 		isReferenceComp
 		:referenceEntity="myReferenceEntity"
-		:listConf="listParamConf"
+		:listConf="useListConf"
 		:paginationConf="listPaginationConf"
         :formEntityId="formEntityId"
         :referenceCompStatus="formStatus"
