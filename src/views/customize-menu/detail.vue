@@ -340,7 +340,7 @@ let detailTabComRefs = ref();
 // 新建相关完成触发
 const newRelatedConfirm = async () => {
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value, formId.value);
+	let res = await $API.layoutConfig.getLayoutList(entityName.value);
 	if (res) {
         myLayoutConfig.value = res.data;
         myLayoutConfig.value.entityCode = entityCode.value;
@@ -434,7 +434,7 @@ let noeData = ref(false);
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
-	let res = await getFormLayout(entityName.value);
+	let res = await getFormLayout(entityName.value, formId.value);
 	haveLayoutJson.value = false;
 	noeData.value = false;
 	if (res) {

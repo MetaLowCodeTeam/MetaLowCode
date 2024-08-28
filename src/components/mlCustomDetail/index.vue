@@ -28,8 +28,8 @@ onMounted(()=>{
 })
 
 let DetailRef = ref();
-const openDialog = (e) => {
-    DetailRef.value?.openDialog(e);
+const openDialog = (recordId, localDsv, formId) => {
+    DetailRef.value?.openDialog(recordId, localDsv, formId);
 }
 
 

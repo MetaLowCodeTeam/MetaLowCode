@@ -948,7 +948,7 @@ const rowDblclick = (row) => {
 };
 
 // 打开详情
-const openDetailDialog = (row, localDsv) => {
+const openDetailDialog = (row, localDsv, formId) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
@@ -961,7 +961,7 @@ const openDetailDialog = (row, localDsv) => {
         editRefs.value.openDialog(tempV);
         return
     }
-    detailRefs.value.openDialog(row[idFieldName.value], localDsv);
+    detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
 };
 
 // 列排序
