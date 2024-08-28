@@ -185,8 +185,8 @@ const openDialog = async (v) => {
     formId.value = v.formId;
     
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
-    if(v.sourceRow) {
-        globalDsv.value.sourceRow = v.sourceRow;
+    if(v.sourceRecord) {
+        globalDsv.value.sourceRecord = v.sourceRecord;
     }
     isReferenceComp.value = v.isReferenceComp;
     // 如果是引用组件调用，有引用组件表单数据

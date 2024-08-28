@@ -516,7 +516,7 @@ const onAdd = (e) => {
 	tempV.fieldName = e.fieldName;
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
-    tempV.sourceRow = multipleSelection.value[0];
+    tempV.sourceRecord = multipleSelection.value[0];
     editEmits(tempV)
 };
 
