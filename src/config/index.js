@@ -21,7 +21,7 @@ const DEFAULT_CONFIG = {
 	TIMEOUT: 200000,
 
 	//TokenName
-	TOKEN_NAME: "Authorization",
+	TOKEN_NAME: "LoginToken",
 
 	//Token前缀，注意最后有个空格，如不需要需设置空字符串
 	TOKEN_PREFIX: "Bearer ",

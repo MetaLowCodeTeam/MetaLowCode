@@ -355,6 +355,17 @@
 							/>
 						</el-select>
 					</div>
+                    <div class="mt-5" v-if="!cutMenu.children || cutMenu.children.length < 1">
+                        <el-checkbox
+							v-model="cutMenu.pcShow"
+							label="是否在PC端显示"
+						/>
+                        <el-checkbox
+                            class="ml-5"
+							v-model="cutMenu.mobileShow"
+							label="是否在移动端显示"
+						/>
+                    </div>
 					<div
 						class="mt-5"
 						v-if="cutMenu.children && cutMenu.children.length > 0"
@@ -548,6 +559,12 @@ const nodeClick = (node) => {
 	if (cutMenu.value.type == 4) {
 		cutMenu.value.type = 1;
 	}
+    if(cutMenu.value.pcShow == undefined){
+        cutMenu.value.pcShow = true;
+    }
+    if(cutMenu.value.mobileShow == undefined){
+        cutMenu.value.mobileShow = true;
+    }
 };
 
 let isShowIconDialog = ref(false);
@@ -603,6 +620,10 @@ let defaultMenu = reactive({
 	formEntityCode: "",
 	// 表单Id
 	formId: "",
+    // 是否在PC显示
+    pcShow: true,
+    // 是否在Mobile显示
+    mobileShow: true,
 });
 
 const getGuid = () => {
@@ -716,6 +737,11 @@ const confirmMenu = () => {
 		$ElMessage.warning("请选择表单");
 		return;
 	}
+    // 非父级菜单
+    if(cutMenu.value.parentGuid && !cutMenu.value.pcShow && !cutMenu.value.mobileShow){
+        $ElMessage.warning("请至少选择PC端或Mobile端显示");
+        return 
+    }
 	// 如果是系统内置
 	if (systemEntityName.value.includes(cutMenu.value.entityName)) {
 		cutMenu.value.type = 4;
@@ -841,6 +867,7 @@ const layoutSave = async () => {
 			el.entityName = "parentMenu";
 		}
 	});
+    
 	menuData.config = JSON.stringify(newMenuList);
 	let param = {};
 	// 检测数据有没变化

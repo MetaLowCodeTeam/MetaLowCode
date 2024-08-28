@@ -154,6 +154,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         let testRoutes = [...list]
         let routers = [];
         testRoutes.forEach((el) => {
+            if(el.pcShow != undefined && !el.pcShow) {
+                return
+            }
             let initMenu = {
                 meta: {},
             };
@@ -177,6 +180,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.path = "/" + el.guid;
 
                 el.children.forEach((subEl) => {
+                    if(subEl.pcShow != undefined && !subEl.pcShow) {
+                        return
+                    }
                     let subRoute = {
                         meta: {
                             title: subEl.name,
