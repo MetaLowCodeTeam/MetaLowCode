@@ -154,9 +154,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         let testRoutes = [...list]
         let routers = [];
         testRoutes.forEach((el) => {
-            if(el.pcShow != undefined && !el.pcShow) {
-                return
-            }
             let initMenu = {
                 meta: {},
             };
@@ -180,9 +177,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.path = "/" + el.guid;
 
                 el.children.forEach((subEl) => {
-                    if(subEl.pcShow != undefined && !subEl.pcShow) {
-                        return
-                    }
                     let subRoute = {
                         meta: {
                             title: subEl.name,
@@ -296,6 +290,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         // 1 如果是自定义列表 
         if(item.useCustom && item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 3){
+            isHidden = true;
+        }
+        if(item.pcShow != undefined && !item.pcShow) {
             isHidden = true;
         }
         return isHidden;

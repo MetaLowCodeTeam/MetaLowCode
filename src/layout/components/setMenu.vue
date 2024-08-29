@@ -737,11 +737,6 @@ const confirmMenu = () => {
 		$ElMessage.warning("请选择表单");
 		return;
 	}
-    // 非父级菜单
-    if(cutMenu.value.parentGuid && !cutMenu.value.pcShow && !cutMenu.value.mobileShow){
-        $ElMessage.warning("请至少选择PC端或Mobile端显示");
-        return 
-    }
 	// 如果是系统内置
 	if (systemEntityName.value.includes(cutMenu.value.entityName)) {
 		cutMenu.value.type = 4;
