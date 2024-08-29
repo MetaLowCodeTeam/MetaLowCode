@@ -72,7 +72,7 @@
                     </el-button>
                     <el-button
                         icon="Edit"
-                        v-if="batchUpdateConf.length > 0"
+                        v-if="batchUpdateConf.length > 0 && listParamConf.showBatchUpdateBtn"
                         :disabled="multipleSelection.length < 1"
                         @click="openBatchUpdateDialog"
                     >
@@ -511,6 +511,8 @@ const listParamConf = ref({
     showMoreBtn: true,
     showOperateColumn: true,
     showPagination: true,
+    showBatchUpdateSet: true,
+    showBatchUpdateBtn: true,
 })
 
 
@@ -641,6 +643,14 @@ let batchUpdateConf = ref([]);
 let ListBatchUpdateRef = ref("");
 // 打开批量编辑弹框
 const openBatchUpdateDialog = () => {
+    if(batchUpdateConf.value.length < 1) {
+        ElMessage.error("该实体没有设置可编辑字段");
+        return
+    }
+    if(multipleSelection.value.length < 1) {
+        ElMessage.error("请选择要批量编辑的数据");
+        return
+    }
     ListBatchUpdateRef.value.openDialog(
         batchUpdateConf.value,
         multipleSelection.value,
@@ -920,7 +930,7 @@ const onEditRow = (row, localDsv, formId) => {
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
     !!localDsv && (tempV.localDsv = localDsv)
-    !!formId && (tempV.localDsv = formId)
+    !!formId && (tempV.formId = formId)
     editRefs.value.openDialog(tempV);
 };
 
@@ -1404,6 +1414,7 @@ defineExpose({
     editRow,
     viewRow,
     getTableDataList,
+    openBatchUpdateDialog,
 })
 
 </script>

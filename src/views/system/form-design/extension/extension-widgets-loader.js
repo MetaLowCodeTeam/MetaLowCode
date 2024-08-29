@@ -45,6 +45,8 @@ import listSubFormShowQuickQueryEditor from "@/views/system/form-design/extensio
 import listSubFormShowMoreBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showMoreBtn-editor.vue";
 import listSubFormShowAddBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAddBtn-editor.vue";
 import listSubFormShowDelBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showDelBtn-editor.vue";
+import listSubFormShowBatchUpdateSetEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showBatchUpdateSet-editor.vue";
+import listSubFormShowBatchUpdateBtnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showBatchUpdateBtn-editor.vue";
 import listSubFormShowOperateColumnEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showOperateColumn-editor.vue";
 import listSubFormShowPaginationEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showPagination-editor.vue";
 import listSubFormPaginationSizeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/paginationSize-editor.vue";
@@ -81,6 +83,8 @@ export const loadExtensionWidgets = (app) => {
     PERegister.registerCPEditor(app, 'showMoreBtn', 'listSubForm-showMoreBtn-editor', listSubFormShowMoreBtnEditor)
     PERegister.registerCPEditor(app, 'showAddBtn', 'listSubForm-showAddBtn-editor', listSubFormShowAddBtnEditor)
     PERegister.registerCPEditor(app, 'showDelBtn', 'listSubForm-showDelBtn-editor', listSubFormShowDelBtnEditor)
+    PERegister.registerCPEditor(app, 'showBatchUpdateSet', 'listSubForm-showBatchUpdateSet-editor', listSubFormShowBatchUpdateSetEditor)
+    PERegister.registerCPEditor(app, 'showBatchUpdateBtn', 'listSubForm-showBatchUpdateBtn-editor', listSubFormShowBatchUpdateBtnEditor)
     PERegister.registerCPEditor(app, 'showOperateColumn', 'listSubForm-showOperateColumn-editor', listSubFormShowOperateColumnEditor)
     PERegister.registerCPEditor(app, 'showPagination', 'listSubForm-showPagination-editor', listSubFormShowPaginationEditor)
     PERegister.registerCPEditor(app, 'paginationSize', 'listSubForm-paginationSize-editor', listSubFormPaginationSizeEditor)

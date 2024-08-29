@@ -29,6 +29,10 @@ export const listSubFormSchema = {
         showOperateColumn: true,
         // 是否显示分页
         showPagination: true,
+        // 是否显示批量编辑设置
+        showBatchUpdateSet: true,
+        // 是否显示批量编辑按钮
+        showBatchUpdateBtn: true,
         // 分页每页显示多少条
         paginationSize: 20,
         // 列表高度 - 默认294 空状态的高度

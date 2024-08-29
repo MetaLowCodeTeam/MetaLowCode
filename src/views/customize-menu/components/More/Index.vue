@@ -141,34 +141,39 @@
                     </div>
                 </div>
                 <!-- 列表设置 -->
-                <div class="pl-5 mt-15 div-disabled">列表设置</div>
-                <div
-                    class="pl-20 item"
-                    @click="openDefaultFilterDialog"
-                    v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField"
-                >
-                    默认查询设置
-                </div>
-                <div
-                    class="pl-20 item"
-                    @click="treeGroupFilterIsShow = true"
-                    v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField"
-                >
-                    树状分组筛选
-                </div>
-                <div
-                    class="pl-20 item"
-                    @click="editColumn('BATCH_UPDATE')"
-                >
-                    批量编辑设置
-                </div>
-                <div
-                    class="pl-20 item"
-                    @click="setListStyleDialogIsShow = true"
-                    v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField"
-                >
-                    其他列表设置
-                </div>
+                <template v-if="$TOOL.checkRole('r6008')"> 
+                    <div class="pl-5 mt-15 div-disabled" v-if="!isReferenceComp && !isMainDetailField">列表设置</div>
+                    <div class="pl-5 mt-15 div-disabled" v-if="(isReferenceComp || isMainDetailField) && listParamConf.showBatchUpdateSet">列表设置</div>
+                    <div
+                        class="pl-20 item"
+                        @click="openDefaultFilterDialog"
+                        v-if="!isReferenceComp && !isMainDetailField"
+                    >
+                        默认查询设置
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="treeGroupFilterIsShow = true"
+                        v-if="!isReferenceComp && !isMainDetailField"
+                    >
+                        树状分组筛选
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="editColumn('BATCH_UPDATE')"
+                        v-if="listParamConf.showBatchUpdateSet"
+                    >
+                        批量编辑设置
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="setListStyleDialogIsShow = true"
+                        v-if="!isReferenceComp && !isMainDetailField"
+                    >
+                        其他列表设置
+                    </div>
+                </template>
+                
             </template>
         </div>
         <template #reference>

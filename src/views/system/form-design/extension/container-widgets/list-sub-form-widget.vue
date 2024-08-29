@@ -27,6 +27,8 @@
 					showPagination: widget.options.showPagination,
 					showOperateColumn: widget.options.showOperateColumn,
 					showDelBtn: widget.options.showDelBtn,
+                    showBatchUpdateSet: widget.options.showBatchUpdateSet,
+                    showBatchUpdateBtn: widget.options.showBatchUpdateBtn,
 				}"
 				:paginationSize="widget.options.paginationSize"
                 :detailEntityFlag="widget.options?.detailEntityFlag"
