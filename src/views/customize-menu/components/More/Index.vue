@@ -141,35 +141,34 @@
                     </div>
                 </div>
                 <!-- 列表设置 -->
-                <template v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField">
-                    <div class="pl-5 mt-15 div-disabled">列表设置</div>
-                    <div
-                        class="pl-20 item"
-                        @click="openDefaultFilterDialog"
-                    >
-                        默认查询设置
-                    </div>
-                    <div
-                        class="pl-20 item"
-                        @click="treeGroupFilterIsShow = true"
-                    >
-                        树状分组筛选
-                    </div>
-                    <div
-                        class="pl-20 item"
-                        @click="editColumn('BATCH_UPDATE')"
-                    >
-                        批量编辑设置
-                    </div>
-                    <div
-                        class="pl-20 item"
-                        @click="setListStyleDialogIsShow = true"
-                    >
-                        其他列表设置
-                    </div>
-                </template>
-                
-                
+                <div class="pl-5 mt-15 div-disabled">列表设置</div>
+                <div
+                    class="pl-20 item"
+                    @click="openDefaultFilterDialog"
+                    v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField"
+                >
+                    默认查询设置
+                </div>
+                <div
+                    class="pl-20 item"
+                    @click="treeGroupFilterIsShow = true"
+                    v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField"
+                >
+                    树状分组筛选
+                </div>
+                <div
+                    class="pl-20 item"
+                    @click="editColumn('BATCH_UPDATE')"
+                >
+                    批量编辑设置
+                </div>
+                <div
+                    class="pl-20 item"
+                    @click="setListStyleDialogIsShow = true"
+                    v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField"
+                >
+                    其他列表设置
+                </div>
             </template>
         </div>
         <template #reference>
