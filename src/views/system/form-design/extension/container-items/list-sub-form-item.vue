@@ -1,26 +1,37 @@
 <template>
 	<container-item-wrapper :widget="widget">
-		<FormDesignEntityList
-			:referenceEntity="widget.options.name"
-			:listConf="{
-				showHeader: widget.options.showListHeader,
-				showAdvancedQuery: widget.options.showAdvancedQuery,
-				showQuickQuery: widget.options.showQuickQuery,
-				showOpenBtn: widget.options.showOpenBtn,
-				showEditBtn: widget.options.showEditBtn,
-				showAddBtn: widget.options.showAddBtn,
-				showMoreBtn: widget.options.showMoreBtn,
-				showPagination: widget.options.showPagination,
-			}"
-			:paginationSize="widget.options.paginationSize"
-			:tableHeight="widget.options.listSubFormHeight"
-			:formRef="getForm()"
-            :formEntityId="getFormEntityId()"
-            :detailEntityFlag="widget.options?.detailEntityFlag"
-            :refEntityBindingField="widget.options?.refEntityBindingField"
-            :modelName="getListSubFormConfId()"
-            ref="listSubForm"
-		/>
+        <div 
+            class="mb-10"
+            :style="{
+                height: widget.options.listSubFormHeight + 'px',
+            }"
+        >
+            <FormDesignEntityList
+                :referenceEntity="widget.options.name"
+                :listConf="{
+                    showHeader: widget.options.showListHeader,
+                    showAdvancedQuery: widget.options.showAdvancedQuery,
+                    showQuickQuery: widget.options.showQuickQuery,
+                    showOpenBtn: widget.options.showOpenBtn,
+                    showEditBtn: widget.options.showEditBtn,
+                    showAddBtn: widget.options.showAddBtn,
+                    showMoreBtn: widget.options.showMoreBtn,
+                    showPagination: widget.options.showPagination,
+                    showOperateColumn: widget.options.showOperateColumn,
+                    showDelBtn: widget.options.showDelBtn,
+                    showBatchUpdateSet: widget.options.showBatchUpdateSet,
+                    showBatchUpdateBtn: widget.options.showBatchUpdateBtn,
+                }"
+                :paginationSize="widget.options.paginationSize"
+                :formRef="getForm()"
+                :formEntityId="getFormEntityId()"
+                :detailEntityFlag="widget.options?.detailEntityFlag"
+                :refEntityBindingField="widget.options?.refEntityBindingField"
+                :modelName="getListSubFormConfId()"
+                ref="listSubForm"
+            />
+        </div>
+		
 	</container-item-wrapper>
 </template>
 

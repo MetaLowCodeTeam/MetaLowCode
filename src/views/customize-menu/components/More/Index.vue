@@ -1,5 +1,5 @@
 <template>
-    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}" v-if="showMoreBtn">
+    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}" v-if="listParamConf.showMoreBtn">
         <div class="table-setting-item-box">
             <!-- 操作 -->
             <div class="pl-5 item div-disabled">操作</div>
@@ -7,6 +7,7 @@
                 class="pl-20 item"
                 @click="allocationFn('del')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                v-if="listParamConf.showDelBtn"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -140,34 +141,38 @@
                     </div>
                 </div>
                 <!-- 列表设置 -->
-                <template v-if="$TOOL.checkRole('r6008') && !isReferenceComp && !isMainDetailField">
-                    <div class="pl-5 mt-15 div-disabled">列表设置</div>
+                <template v-if="$TOOL.checkRole('r6008')"> 
+                    <div class="pl-5 mt-15 div-disabled" v-if="!isReferenceComp && !isMainDetailField">列表设置</div>
+                    <div class="pl-5 mt-15 div-disabled" v-if="(isReferenceComp || isMainDetailField) && listParamConf.showBatchUpdateSet">列表设置</div>
                     <div
                         class="pl-20 item"
                         @click="openDefaultFilterDialog"
+                        v-if="!isReferenceComp && !isMainDetailField"
                     >
                         默认查询设置
                     </div>
                     <div
                         class="pl-20 item"
                         @click="treeGroupFilterIsShow = true"
+                        v-if="!isReferenceComp && !isMainDetailField"
                     >
                         树状分组筛选
                     </div>
                     <div
                         class="pl-20 item"
                         @click="editColumn('BATCH_UPDATE')"
+                        v-if="listParamConf.showBatchUpdateSet"
                     >
                         批量编辑设置
                     </div>
                     <div
                         class="pl-20 item"
                         @click="setListStyleDialogIsShow = true"
+                        v-if="!isReferenceComp && !isMainDetailField"
                     >
                         其他列表设置
                     </div>
                 </template>
-                
                 
             </template>
         </div>
@@ -279,8 +284,8 @@ const props = defineProps({
     detailId: { type: String, default: "" },
     // 默认查询设置
     defaultFilterSetting: { type: Object, default: () => {} },
-    // 是否显示按钮
-    showMoreBtn: { type: Boolean, default: true },
+    // 列配置
+    listParamConf: { type: Object, default: () => {} },
     // 是否引用实体
     isReferenceComp: { type: Boolean, default: false },
     // 是否明细实体

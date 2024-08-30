@@ -72,7 +72,7 @@
                     </el-button>
                     <el-button
                         icon="Edit"
-                        v-if="batchUpdateConf.length > 0"
+                        v-if="batchUpdateConf.length > 0 && listParamConf.showBatchUpdateBtn"
                         :disabled="multipleSelection.length < 1"
                         @click="openBatchUpdateDialog"
                     >
@@ -89,7 +89,7 @@
                     </el-button>
                     <slot name="beforeMoreBtn"></slot>
                     <More
-                        :showMoreBtn="listParamConf.showMoreBtn"
+                        :listParamConf="listParamConf"
                         ref="MoreRefs"
                         :layoutConfig="layoutConfig"
                         :defaultColumnShow="defaultColumnShow"
@@ -219,7 +219,7 @@
                         v-for="(column,columnInx) of tableColumn"
                         :key="columnInx"
                         :prop="column.fieldName"
-                        :label="column.columnAliasName ?column.columnAliasName : column.fieldLabel"
+                        :label="column.columnAliasName ? column.columnAliasName : column.fieldLabel"
                         :width="setColumnWidth(column)"
                         sortable
                         show-overflow-tooltip
@@ -234,9 +234,9 @@
                             />
                         </template>
                     </el-table-column>
-                    <slot name="actionColumn" v-if="showActionColumnSlot"></slot>
+                    <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
                     <el-table-column 
-                        v-else
+                        v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
                         label="操作" 
                         fixed="right" 
                         :align="'center'" 
@@ -507,8 +507,12 @@ const listParamConf = ref({
     showOpenBtn: true,
     showEditBtn: true,
     showAddBtn: true,
+    showDelBtn: true,
     showMoreBtn: true,
+    showOperateColumn: true,
     showPagination: true,
+    showBatchUpdateSet: true,
+    showBatchUpdateBtn: true,
 })
 
 
@@ -639,6 +643,14 @@ let batchUpdateConf = ref([]);
 let ListBatchUpdateRef = ref("");
 // 打开批量编辑弹框
 const openBatchUpdateDialog = () => {
+    if(batchUpdateConf.value.length < 1) {
+        ElMessage.error("该实体没有设置可编辑字段");
+        return
+    }
+    if(multipleSelection.value.length < 1) {
+        ElMessage.error("请选择要批量编辑的数据");
+        return
+    }
     ListBatchUpdateRef.value.openDialog(
         batchUpdateConf.value,
         multipleSelection.value,
@@ -918,7 +930,7 @@ const onEditRow = (row, localDsv, formId) => {
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
     !!localDsv && (tempV.localDsv = localDsv)
-    !!formId && (tempV.localDsv = formId)
+    !!formId && (tempV.formId = formId)
     editRefs.value.openDialog(tempV);
 };
 
@@ -946,7 +958,7 @@ const rowDblclick = (row) => {
 };
 
 // 打开详情
-const openDetailDialog = (row, localDsv) => {
+const openDetailDialog = (row, localDsv, formId) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
@@ -959,7 +971,7 @@ const openDetailDialog = (row, localDsv) => {
         editRefs.value.openDialog(tempV);
         return
     }
-    detailRefs.value.openDialog(row[idFieldName.value], localDsv);
+    detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
 };
 
 // 列排序
@@ -1214,13 +1226,7 @@ watchEffect(() => {
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
     myFormEntityId.value = props.formEntityId;
     myModelName.value = props.modelName;
-    if(mainDetailField.value){
-        listParamConf.value.showAddBtn = false;
-    }
     if(props.isReferenceComp){
-        if(props.referenceCompStatus == 'new' || props.referenceCompStatus == 'edit'){
-            listParamConf.value.showAddBtn = true;
-        }
         if(props.referenceCompStatus == 'read'){
             listParamConf.value.showAddBtn = false;
             listParamConf.value.showEditBtn = false;
@@ -1230,7 +1236,6 @@ watchEffect(() => {
             listParamConf.value.showOpenBtn = false;
             listParamConf.value.showAddBtn = false;
             listParamConf.value.showEditBtn = false;
-            // listParamConf.value.showMoreBtn = false;
         }
     }
 })
@@ -1409,6 +1414,7 @@ defineExpose({
     editRow,
     viewRow,
     getTableDataList,
+    openBatchUpdateDialog,
 })
 
 </script>

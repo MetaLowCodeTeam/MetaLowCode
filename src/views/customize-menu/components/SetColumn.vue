@@ -156,9 +156,7 @@
                             controls-position="right"
                             :step="10"
                         />
-                        <span
-                            class="info-text ml-10"
-                        >{{ editColumnDialogData.columnWidth > 0 ? "宽度 " + editColumnDialogData.columnWidth : '默认' }}</span>
+                        <span class="ml-a-span ml-10" @click="applyColumns">应用到所有列</span>
                     </el-form-item>
                     <el-tabs v-model="editColumnDialogData.renderType">
                         <el-tab-pane label="默认渲染" name="defaultRender">
@@ -224,6 +222,7 @@ import { watch, ref, onMounted, inject, reactive } from "vue";
 import { queryEntityListableFields } from "@/api/crud";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -386,6 +385,21 @@ const editColumn = (column, inx) => {
     editObj.statisticName = column.statisticName;
     editColumnDialogData = Object.assign(editColumnDialogData, editObj);
 };
+
+// 列宽应用到所有列
+const applyColumns = () => {
+    ElMessageBox.confirm("是否确认将此列宽应用到所有列?","提示：",  {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    }).then( () => {
+        showColumn.value.forEach((el) => {
+            el.columnWidth = editColumnDialogData.columnWidth;
+        });
+        ElMessage.success("应用成功!")
+    })
+    .catch(() => {});
+}
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {

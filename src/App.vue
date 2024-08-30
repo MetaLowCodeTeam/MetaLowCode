@@ -70,6 +70,7 @@ onBeforeMount(() => {
 });
 
 const initApi = async () => {
+    $TOOL.cookie.set("TOKEN", getQueryString("loginToken"));
     let res = await getLoginUser(getQueryString("loginToken"));
     if (res && res.data) {
         if (res.data.data) {

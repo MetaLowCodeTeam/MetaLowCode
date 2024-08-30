@@ -16,9 +16,11 @@ const floamtRoute = (el, isTopNav) => {
             newRoute.component = "custom-page/iframe";
         }
     } else if (el.type == 5) {
-
         newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/dashboard";
+    } else if (el.type == 6) {
+        newRoute.path = "/web/custom-page/vFrom" + (isTopNav ? '/' + el.guid : '');
+        newRoute.component = "custom-page/ListVFromCmp/index";
     } else {
         // 自定义页面目录
         newRoute.path = "/web/custom-page/";
@@ -201,6 +203,13 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             default: subEl.chartId
                         }
                     }
+                    if (subEl.type == 6) {
+                        subRoute.meta.type = 6;
+                        subRoute.meta.query = {
+                            formId: subEl.formId,
+                            formEntityCode: subEl.formEntityCode,
+                        }
+                    }
                     if (subEl.type == 3) {
                         subRoute.meta.type = 3
                         subRoute.meta.query = getCustomPageQuery(subEl.outLink);
@@ -242,6 +251,13 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     default: el.chartId
                 }
             }
+            if (el.type == 6) {
+                initMenu.meta.type = 6;
+                initMenu.meta.query = {
+                    formId: el.formId,
+                    formEntityCode: el.formEntityCode,
+                }
+            }
             if(el.isOpeneds){
                 topDefaultUnfold.value.push(initMenu.path);
             }
@@ -262,7 +278,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         // 3 并且不是父菜单
         // 4 并且类型为1 关联项 4 内置实体
         let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
-        if(item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && (item.type == 1 || item.type == 4)){
+        if(item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 1){
             isHidden = true;
         }
         // 1 如果有自定义CODE
@@ -274,6 +290,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         }
         // 1 如果是自定义列表 
         if(item.useCustom && item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 3){
+            isHidden = true;
+        }
+        if(item.pcShow != undefined && !item.pcShow) {
             isHidden = true;
         }
         return isHidden;
