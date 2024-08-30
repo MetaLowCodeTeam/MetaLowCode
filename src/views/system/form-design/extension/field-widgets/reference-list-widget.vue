@@ -27,6 +27,14 @@
                 multiline
 			>
 				<template #suffix>
+                    <el-icon
+						title="查看"
+						v-if="displayValue.length > 0"
+						class="el-input__icon"
+						@click="handleViewEvent"
+					>
+                        <TopRight />
+					</el-icon>
 					<el-icon
 						title="清除"
 						v-if="displayValue.length > 0 && !isReadMode && !field.options.disabled"
@@ -101,6 +109,32 @@
                 <el-button type="primary" @click="treeDialogConfirm">确认</el-button>
             </template>
 		</ml-dialog>
+        <ml-dialog 
+            title="查看字段内容" 
+            v-model="viewDialogConf.show" 
+            :append-to-body="true"
+            width="520px"
+            showFullSceen
+        >
+            <el-input 
+                class="mb-10"
+                v-model="viewDialogConf.search" 
+                placeholder="请输入关键词搜索" 
+                clearable
+                @input="filterFieldModel"
+            />
+            <el-scrollbar max-height="500px">
+                <el-tag 
+                    v-for="(field,inx) in viewDialogConf.data" 
+                    :key="inx" 
+                    closable 
+                    class="mr-5 mb-10"
+                    @close="delField(field)"
+                >
+                    {{ field.name }}
+                </el-tag>
+            </el-scrollbar>
+        </ml-dialog>
 	</div>
 	<Detail ref="detailRef" />
 </template>
@@ -110,7 +144,7 @@ import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import Detail from "@/views/customize-menu/detail.vue";
-import { queryById } from "@/api/crud";
+import { deepClone } from '@/utils/util';
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
 export default {
@@ -163,6 +197,11 @@ export default {
 			searchFilter: "",
             filterConditions:{},
 			gDsv: {},
+            viewDialogConf: {
+                show: false,
+                search: "",
+                data: []
+            }, 
 		};
 	},
     watch: {
@@ -326,6 +365,37 @@ export default {
 				this.$refs.detailRef.openDialog(refId);
 			}
 		},
+        handleViewEvent() {
+            this.viewDialogConf.show = true;
+            this.filterFieldModel();
+        },
+        filterFieldModel() {
+            let { search } = this.viewDialogConf;
+            if(search) {
+                this.viewDialogConf.data = this.fieldModel.filter(el => {
+                    return el.name.indexOf(this.viewDialogConf.search) != -1
+                })
+            }else {
+                this.viewDialogConf.data = deepClone(this.fieldModel)
+            }
+        },
+        // 删除Field
+        delField(field){
+            this.$confirm("是否确认删除【" + field.name + "】?", "提示：", {
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                type: "warning",
+            }).then(() => {
+                for (let index = 0; index < this.fieldModel.length; index++) {
+                    const element = this.fieldModel[index];
+                    if(field.id == element.id){
+                        this.fieldModel.splice(index,1)
+                    }
+                }
+                this.filterFieldModel();
+            })
+            .catch(() => {});
+        },
 	},
 };
 </script>
@@ -344,5 +414,8 @@ export default {
 		height: 16px !important;
 		width: 16px !important;
 	}
+}
+.el-input__icon {
+    cursor: pointer;
 }
 </style>
