@@ -56,8 +56,24 @@
 				</template>
 			</el-input>
 			<template v-if="isReadMode">
-				<span class="readonly-mode-field" @click.stop="openRefDialog"
-					>{{ contentForReadMode }}
+				<span 
+                    class="readonly-mode-field" 
+                    @click.stop="openRefDialog"
+				>
+                    {{ contentForReadMode }}
+                    <el-button
+						v-if="!(fieldModel && fieldModel.id)"
+						type="primary"
+						circle
+						size="small"
+						class="small-circle-button"
+						title="打开详情弹窗"
+                        @click="handleViewEvent"
+					>
+						<el-icon>
+							<TopRight />
+						</el-icon>
+					</el-button>
 					<el-button
 						v-if="fieldModel && fieldModel.id"
 						type="primary"
@@ -125,15 +141,26 @@
             />
             <el-scrollbar max-height="500px">
                 <el-tag 
-                    v-for="(field,inx) in viewDialogConf.data" 
+                    v-for="(tag,inx) in viewDialogConf.data" 
                     :key="inx" 
-                    closable 
                     class="mr-5 mb-10"
-                    @close="delField(field)"
+                    @close="delField(tag)"
+                    :closable="!isReadMode && !field.options.disabled"
+                    size="large"
                 >
-                    {{ field.name }}
+                    {{ tag.name }}
                 </el-tag>
             </el-scrollbar>
+            <template #footer v-if="!isReadMode && !field.options.disabled">
+                <el-button @click="viewDialogConf.show = false">取消</el-button>
+                <el-button 
+                    type="primary" 
+                    @click="confirmDelField"
+                    v-if="viewDialogConf.sourceData.length != this.fieldModel.length"
+                >
+                    保存
+                </el-button>
+            </template>
         </ml-dialog>
 	</div>
 	<Detail ref="detailRef" />
@@ -200,7 +227,8 @@ export default {
             viewDialogConf: {
                 show: false,
                 search: "",
-                data: []
+                data: [],
+                sourceData: [],
             }, 
 		};
 	},
@@ -367,34 +395,34 @@ export default {
 		},
         handleViewEvent() {
             this.viewDialogConf.show = true;
+            this.viewDialogConf.sourceData = deepClone(this.fieldModel);
             this.filterFieldModel();
         },
         filterFieldModel() {
-            let { search } = this.viewDialogConf;
+            let { search, sourceData } = this.viewDialogConf;
             if(search) {
-                this.viewDialogConf.data = this.fieldModel.filter(el => {
+                this.viewDialogConf.data = sourceData.filter(el => {
                     return el.name.indexOf(this.viewDialogConf.search) != -1
                 })
             }else {
-                this.viewDialogConf.data = deepClone(this.fieldModel)
+                this.viewDialogConf.data = deepClone(sourceData)
             }
         },
         // 删除Field
         delField(field){
-            this.$confirm("是否确认删除【" + field.name + "】?", "提示：", {
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                type: "warning",
-            }).then(() => {
-                for (let index = 0; index < this.fieldModel.length; index++) {
-                    const element = this.fieldModel[index];
-                    if(field.id == element.id){
-                        this.fieldModel.splice(index,1)
-                    }
+            let { sourceData } = this.viewDialogConf;
+            for (let index = 0; index < sourceData.length; index++) {
+                const element = sourceData[index];
+                if(field.id == element.id){
+                    sourceData.splice(index,1)
                 }
-                this.filterFieldModel();
-            })
-            .catch(() => {});
+            }
+            this.filterFieldModel();
+        },
+        // 确认删除
+        confirmDelField(){
+            this.fieldModel = deepClone(this.viewDialogConf.sourceData);
+            this.viewDialogConf.show = false;
         },
 	},
 };
