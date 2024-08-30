@@ -18,6 +18,7 @@
 
 <script>
 import EntityList from "@/views/customize-menu/list.vue";
+import { deepClone } from '@/utils/util';
 export default {
 	name: "default-list-sub-form",
 	components: {
@@ -95,18 +96,13 @@ export default {
 	},
 	methods: {
 		referenceCompAdd(cb) {
-			this.formRef
-				.getFormData()
-				.then((formData) => {
-                    let newFromData = formData;
-                    newFromData.referenceCompName = this.formRef.referenceCompName;
-                    newFromData.referenceCompEntity = this.formRef.getGlobalDsv().formEntity;
-					cb(newFromData);
-				})
-				.catch((err) => {
-					console.log(err, "err");
-					this.$message.error("表单校验失败，请修改后重新提交");
-				});
+			let formData = this.formRef.getFormData(false);
+            if(formData) {
+                let newFormData = deepClone(formData);
+                newFormData.referenceCompName = this.formRef.referenceCompName;
+                newFormData.referenceCompEntity = this.formRef.getGlobalDsv().formEntity;
+                cb(newFormData);
+            }
 		},
         // 新建\编辑成功后回调
         saveFinishCallBack(data){
