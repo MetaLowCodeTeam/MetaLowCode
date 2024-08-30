@@ -103,6 +103,9 @@
                 <div>
                     <el-checkbox v-model="myFormData.transferApproval" label="允许审批人转审" />
                 </div>
+                <div>
+                    <el-checkbox v-model="myFormData.prohibitRejection" label="禁止审批人驳回" />
+                </div>
             </div>
             <!-- 驳回设置 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
@@ -216,6 +219,9 @@
                     <el-radio :label="false">发起子流程，自动进入下一个节点</el-radio>
                     <el-radio :label="true">发起子流程，等待审批完成后再进入下一个节点</el-radio>
                 </el-radio-group>
+            </div>
+            <div class="work-flow-conditions mt-10">
+                <span class="ml-a-span" @click="openCustomTextDialog">审批按钮文案自定义</span>
             </div>
         </el-collapse-item>
         <!-- 事件设置 -->
@@ -355,10 +361,51 @@
             </div>
         </el-collapse-item>
     </el-collapse>
+    <ml-dialog
+        v-model="customTextDialogConf.show"
+        title="审批按钮文案自定义"
+        width="520px"
+        :append-to-body="true"
+    >
+        <el-form label-width="85px">
+            <el-form-item style="margin-bottom: 0;text-align: center">
+                <el-row :gutter="10" class="w-100">
+                    <el-col :span="12">默认文案</el-col>
+                    <el-col :span="12">自定义文案</el-col>
+                </el-row>
+            </el-form-item>
+            <el-form-item 
+                v-for="(item,inx) of customTextDialogConf.rows" 
+                :key="inx"
+                class="mb-10"
+                :label="item.label + '：'"
+            >
+                <el-row :gutter="10" class="w-100">
+                    <el-col :span="12">
+                        <el-input 
+                            v-model="customTextDialogConf.customTextSet[item.key].default"
+                            disabled
+                        />
+                    </el-col>
+                    <el-col :span="12">
+                        <el-input 
+                            v-model="customTextDialogConf.customTextSet[item.key].custom"
+                            clearable
+                            :maxlength="4"
+                        />
+                    </el-col>
+                </el-row>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button @click="customTextDialogConf.show = false">取消</el-button>
+            <el-button type="primary" @click="saveCustomText">确认</el-button>
+        </template>
+    </ml-dialog>
 </template>
 
 <script setup>
-import { ref, onMounted, inject, watch, watchEffect } from "vue";
+import { ref, onMounted, inject, watch, watchEffect, reactive } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
@@ -368,6 +415,7 @@ import mlSelectField from "@/components/mlSelectField/index.vue";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import http from "@/utils/request";
+import { deepClone } from "@/utils/util";
 
 const { allEntityName } = storeToRefs(useCommonStore());
 let $API = inject("$API");
@@ -425,6 +473,9 @@ const initApi = () => {
     getEntityFields();
     // 审批类型切换
     approvalTypeChange();
+    if(myFormData.value.customButtonJson) {
+        customButtonJson.value = JSON.parse(myFormData.value.customButtonJson);
+    }
 }
 
 
@@ -736,6 +787,72 @@ let loadTriggerConfigList = async () => {
     loadTCLoading.value = false;
 }
 
+/**
+ * 审批按钮文案自定义
+ */
+let customTextDialogConf = ref({
+    show: false,
+    rows: [
+        {
+            label:"确认文案",
+            key: "confirmButtonText",
+        },
+        {
+            label:"驳回文案",
+            key: "rejectButtonText",
+        },
+        {
+            label:"取消文案",
+            key: "cancelButtonText",
+        },
+        {
+            label:"转审文案",
+            key: "specialReviewButtonText",
+        },
+        {
+            label:"加签文案",
+            key: "addSignatureButtonText",
+        },
+    ],
+    customTextSet: {},
+});
+
+
+let customButtonJson = ref({
+    confirmButtonText: {
+        default: '同意',
+        custom:""
+    },
+    rejectButtonText: {
+        default: '驳回',
+        custom:""
+    },
+    cancelButtonText: {
+        default: '取消',
+        custom:""
+    },
+    specialReviewButtonText: {
+        default: '转审',
+        custom:""
+    },
+    addSignatureButtonText: {
+        default: '加签',
+        custom:""
+    },
+})
+
+const openCustomTextDialog = () => {
+    customTextDialogConf.value.show = true;
+    customTextDialogConf.value.customTextSet = deepClone(customButtonJson.value);
+}
+
+const saveCustomText = () => {
+    customButtonJson.value = deepClone(customTextDialogConf.value.customTextSet);
+    myFormData.value.customButtonJson = JSON.stringify(customButtonJson.value);
+    customTextDialogConf.value.show = false;
+};
+
+
 defineExpose({
     getFormData,
 });
@@ -767,5 +884,10 @@ defineExpose({
             margin-right: 30px;
         }
     }
+}
+</style>
+<style scoped lang="scss">
+.mb-10 {
+    margin-bottom: 10px !important;
 }
 </style>

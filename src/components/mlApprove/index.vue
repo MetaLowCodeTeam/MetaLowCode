@@ -82,18 +82,40 @@
                                                 v-if="approvalTask.transferApproval"
                                                 :icon="Avatar"
                                                 :command="1"
-                                            >转审</el-dropdown-item>
+                                            >
+                                                {{ customButtonText.specialReviewButtonText }}
+                                            </el-dropdown-item>
                                             <el-dropdown-item
                                                 v-if="approvalTask.addSignaturesApproval"
                                                 :icon="CirclePlusFilled"
                                                 :command="2"
-                                            >加签</el-dropdown-item>
+                                            >
+                                                {{ customButtonText.addSignatureButtonText }}
+                                            </el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
-                                <el-button type="primary" @click="beforeConfirmApprove" style="min-width: 60px !important;">同意</el-button>
-                                <el-button type="danger" @click="beforeReject" style="min-width: 60px !important;">驳回</el-button>
-                                <el-button @click="canner" style="min-width: 60px !important;">取消</el-button>
+                                <el-button 
+                                    type="primary" 
+                                    @click="beforeConfirmApprove" 
+                                    style="min-width: 60px !important;"
+                                >
+                                    {{ customButtonText.confirmButtonText }}
+                                </el-button>
+                                <el-button 
+                                    type="danger" 
+                                    @click="beforeReject" 
+                                    style="min-width: 60px !important;"
+                                    v-if="!approvalTask.prohibitRejection"
+                                >
+                                    {{ customButtonText.rejectButtonText }}
+                                </el-button>
+                                <el-button 
+                                    @click="canner" 
+                                    style="min-width: 60px !important;"
+                                >
+                                    {{ customButtonText.cancelButtonText }}
+                                </el-button>
                             </div>
                         </el-form-item>
                     </el-form>
@@ -136,11 +158,11 @@
         </div>
     </mlDialog>
     <!-- 驳回弹框 -->
-    <mlDialog v-model="rejectDialogShow" title="选择驳回节点" width="400" appendToBody>
+    <mlDialog v-model="rejectDialogShow" :title="`选择${customButtonText.rejectButtonText}节点`" width="400" appendToBody>
         <div v-loading="rejectDialogLoading">
             <el-form label-width="100px">
-                <el-form-item label="选择驳回节点">
-                    <el-select v-model="rejectNode" placeholder="请选择驳回节点" class="w-100">
+                <el-form-item :label="`选择${customButtonText.rejectButtonText}节点`">
+                    <el-select v-model="rejectNode" :placeholder="`选择${customButtonText.rejectButtonText}节点`" class="w-100">
                         <el-option
                             v-for="item in rejectNodeList"
                             :key="item.targetKey"
@@ -152,7 +174,7 @@
                 <el-form-item>
                     <div class="w-100" style="text-align: right;">
                         <el-button @click="rejectDialogShow= false">取消</el-button>
-                        <el-button type="danger" @click="confirmReject">确认驳回</el-button>
+                        <el-button type="danger" @click="confirmReject">确认{{ customButtonText.rejectButtonText }}</el-button>
                     </div>
                 </el-form-item>
             </el-form>
@@ -434,6 +456,15 @@ function confirmApprove(isBacked) {
     })
 }
 
+const customButtonText = ref({
+    confirmButtonText: '同意',
+    rejectButtonText: '驳回',
+    cancelButtonText: '取消',
+    specialReviewButtonText: '转审',
+    addSignatureButtonText: '加签',
+})
+
+
 // 获取审核参数
 async function getApprovalTaskById() {
     loading.value = true;
@@ -442,13 +473,22 @@ async function getApprovalTaskById() {
     });
     if (res) {
         approvalTask.value = res.data;
-
         // 如果是复杂工作流
         if (approvalTask.value.flowType == 2) {
             approvalTask.value = Object.assign(
                 approvalTask.value,
                 res.data.wfUseTask
             );
+        } 
+        let { customButtonJson } = approvalTask.value;
+        if(customButtonJson) {
+            let newCustomButtonJson = JSON.parse(customButtonJson);
+            for (const key in newCustomButtonJson) {
+                if (Object.prototype.hasOwnProperty.call(newCustomButtonJson, key)) {
+                    const element = newCustomButtonJson[key];
+                    customButtonText.value[key] = element.custom || element.default
+                }
+            }
         }
         initFormLayout();
     } else {

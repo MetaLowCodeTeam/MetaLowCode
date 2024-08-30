@@ -27,6 +27,14 @@
                 multiline
 			>
 				<template #suffix>
+                    <el-icon
+						title="查看"
+						v-if="displayValue.length > 0"
+						class="el-input__icon"
+						@click="handleViewEvent"
+					>
+                        <TopRight />
+					</el-icon>
 					<el-icon
 						title="清除"
 						v-if="displayValue.length > 0 && !isReadMode && !field.options.disabled"
@@ -48,8 +56,24 @@
 				</template>
 			</el-input>
 			<template v-if="isReadMode">
-				<span class="readonly-mode-field" @click.stop="openRefDialog"
-					>{{ contentForReadMode }}
+				<span 
+                    class="readonly-mode-field" 
+                    @click.stop="openRefDialog"
+				>
+                    {{ contentForReadMode }}
+                    <el-button
+						v-if="!(fieldModel && fieldModel.id)"
+						type="primary"
+						circle
+						size="small"
+						class="small-circle-button"
+						title="打开详情弹窗"
+                        @click="handleViewEvent"
+					>
+						<el-icon>
+							<TopRight />
+						</el-icon>
+					</el-button>
 					<el-button
 						v-if="fieldModel && fieldModel.id"
 						type="primary"
@@ -101,6 +125,43 @@
                 <el-button type="primary" @click="treeDialogConfirm">确认</el-button>
             </template>
 		</ml-dialog>
+        <ml-dialog 
+            title="查看字段内容" 
+            v-model="viewDialogConf.show" 
+            :append-to-body="true"
+            width="520px"
+            showFullSceen
+        >
+            <el-input 
+                class="mb-10"
+                v-model="viewDialogConf.search" 
+                placeholder="请输入关键词搜索" 
+                clearable
+                @input="filterFieldModel"
+            />
+            <el-scrollbar max-height="500px">
+                <el-tag 
+                    v-for="(tag,inx) in viewDialogConf.data" 
+                    :key="inx" 
+                    class="mr-5 mb-10"
+                    @close="delField(tag)"
+                    :closable="!isReadMode && !field.options.disabled"
+                    size="large"
+                >
+                    {{ tag.name }}
+                </el-tag>
+            </el-scrollbar>
+            <template #footer v-if="!isReadMode && !field.options.disabled">
+                <el-button @click="viewDialogConf.show = false">取消</el-button>
+                <el-button 
+                    type="primary" 
+                    @click="confirmDelField"
+                    v-if="viewDialogConf.sourceData.length != this.fieldModel.length"
+                >
+                    保存
+                </el-button>
+            </template>
+        </ml-dialog>
 	</div>
 	<Detail ref="detailRef" />
 </template>
@@ -110,7 +171,7 @@ import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import Detail from "@/views/customize-menu/detail.vue";
-import { queryById } from "@/api/crud";
+import { deepClone } from '@/utils/util';
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
 export default {
@@ -163,6 +224,12 @@ export default {
 			searchFilter: "",
             filterConditions:{},
 			gDsv: {},
+            viewDialogConf: {
+                show: false,
+                search: "",
+                data: [],
+                sourceData: [],
+            }, 
 		};
 	},
     watch: {
@@ -326,6 +393,37 @@ export default {
 				this.$refs.detailRef.openDialog(refId);
 			}
 		},
+        handleViewEvent() {
+            this.viewDialogConf.show = true;
+            this.viewDialogConf.sourceData = deepClone(this.fieldModel);
+            this.filterFieldModel();
+        },
+        filterFieldModel() {
+            let { search, sourceData } = this.viewDialogConf;
+            if(search) {
+                this.viewDialogConf.data = sourceData.filter(el => {
+                    return el.name.indexOf(this.viewDialogConf.search) != -1
+                })
+            }else {
+                this.viewDialogConf.data = deepClone(sourceData)
+            }
+        },
+        // 删除Field
+        delField(field){
+            let { sourceData } = this.viewDialogConf;
+            for (let index = 0; index < sourceData.length; index++) {
+                const element = sourceData[index];
+                if(field.id == element.id){
+                    sourceData.splice(index,1)
+                }
+            }
+            this.filterFieldModel();
+        },
+        // 确认删除
+        confirmDelField(){
+            this.fieldModel = deepClone(this.viewDialogConf.sourceData);
+            this.viewDialogConf.show = false;
+        },
 	},
 };
 </script>
@@ -344,5 +442,8 @@ export default {
 		height: 16px !important;
 		width: 16px !important;
 	}
+}
+.el-input__icon {
+    cursor: pointer;
 }
 </style>
