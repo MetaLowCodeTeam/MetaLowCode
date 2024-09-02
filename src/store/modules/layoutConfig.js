@@ -224,11 +224,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                         initMenu.children.push(subRoute);
                         return
                     }
-                    // let checkSubCode = subEl.detailEntityFlag ? subEl.mainEntityCode : subEl.entityCode;
-                    // 有权限才push
-                    if (!checkAuth(subEl)) {
-                        initMenu.children.push(subRoute);
-                    }
+                    subRoute.meta.hidden = checkAuth(subEl);
+                    initMenu.children.push(subRoute);
                 });
             } else {
                 initMenu.meta.type = el.type == 2 && el.openType != 1 ? "link" : "";
@@ -260,6 +257,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             }
             if(el.isOpeneds){
                 topDefaultUnfold.value.push(initMenu.path);
+            }
+            if(initMenu.children) {
+                initMenu.meta.hidden = initMenu.children.every((item) => item.meta.hidden);
             }
             routers.push(initMenu);
         });
