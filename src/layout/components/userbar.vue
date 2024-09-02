@@ -39,15 +39,14 @@
                 </el-icon>
             </div>
         </el-tooltip>
-        <el-dropdown class="user panel-item" @command="handleUser">
+        <el-dropdown class="user panel-item" trigger="click" @command="changeLanger">
             <div class="user-avatar internationalization-div">
                 <SvgIcon class="internationalization" icon-name="internationalization" />
             </div>
             <template #dropdown>
                 <el-dropdown-menu>
-                    <el-dropdown-item command="uc">帐号信息</el-dropdown-item>
-                    <el-dropdown-item command="clearCache">清除缓存</el-dropdown-item>
-                    <el-dropdown-item divided command="outLogin">退出登录</el-dropdown-item>
+                    <el-dropdown-item command="uc">中文</el-dropdown-item>
+                    <el-dropdown-item command="clearCache">English</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
@@ -349,6 +348,14 @@ const searchFn = () => {
 const tasksFn = () => {
     tasksVisible.value = true;
 };
+
+
+/**
+ * 多语言切换
+ */
+const changeLanger = () => {
+
+}
 
 /**
  * 

@@ -50,7 +50,9 @@ let listParamConf = ref({
 let paginationConf = ref({});
 
 const test = () => {
-	EntityListRefs.value?.toDetail();
+    // let row = EntityListRefs.value?.getSelectedRow()[0]
+    // EntityListRefs.value.editRow(row,null,'1231231221332')
+    EntityListRefs.value.openBatchUpdateDialog()
 };
 </script>
 <style lang="scss" scoped></style>
