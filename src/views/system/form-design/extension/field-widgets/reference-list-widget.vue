@@ -152,6 +152,11 @@
                 </el-tag>
             </el-scrollbar>
             <template #footer v-if="!isReadMode && !field.options.disabled">
+                <div class="fl pl-20" style="font-size: 14px">
+                    <span>已选</span>
+                    <span>{{ viewDialogConf.sourceData.length }}</span>
+                    <span>条</span>
+                </div>
                 <el-button @click="viewDialogConf.show = false">取消</el-button>
                 <el-button 
                     type="primary" 

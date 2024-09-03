@@ -158,6 +158,9 @@
                         />
                         <span class="ml-a-span ml-10" @click="applyColumns">应用到所有列</span>
                     </el-form-item>
+                    <el-form-item label="是否在移动端显示" label-width="135px" class="mb-10">
+                        <el-checkbox v-model="editColumnDialogData.mobileShow" />
+                    </el-form-item>
                     <el-tabs v-model="editColumnDialogData.renderType">
                         <el-tab-pane label="默认渲染" name="defaultRender">
                             <el-form-item label="字体大小" class="mb-10">
@@ -313,6 +316,8 @@ let editColumnDialogData = reactive({
     columnRender:"",
     // 冻结列  默认false  向左left 向右right
     fixed: false,
+    // 是否在移动端展示
+    mobileShow: true,
 });
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
@@ -383,6 +388,9 @@ const editColumn = (column, inx) => {
     editObj.dataStatistics = column.dataStatistics;
     editObj.statisticType = column.statisticType;
     editObj.statisticName = column.statisticName;
+    if(editObj.mobileShow == undefined) {
+        editObj.mobileShow = true;
+    }
     editColumnDialogData = Object.assign(editColumnDialogData, editObj);
 };
 
@@ -403,6 +411,7 @@ const applyColumns = () => {
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {
+    
     let { 
         columnAliasName, 
         columnSort, 
@@ -410,13 +419,18 @@ const isShowItemTag = (column) => {
         dataStatistics, 
         renderType, 
         columnRender, 
-        fixed
+        fixed,
+        mobileShow
     } = column;
     if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || (renderType == 'customizeRender' && !!columnRender)) {
         return true;
     }
     // 设置了冻结列
     if(fixed)  {
+        return true; 
+    }
+    // 设置了不在移动端显示
+    if(mobileShow != undefined && !mobileShow)  {
         return true; 
     }
     return false;

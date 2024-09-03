@@ -1,6 +1,6 @@
 <template>
     <el-config-provider
-        :locale="locale"
+        :locale="zhCn"
         :size="$CONFIG.size"
         :zIndex="$CONFIG.zIndex"
         :button="$CONFIG.button"
@@ -34,6 +34,7 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getLoginUser } from "@/api/user";
 import { useRouter } from "vue-router";
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 const { getEntityList, setPublicSetting, setUserInfo } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -53,7 +54,8 @@ let config = reactive({
 let loading = ref(false);
 // computed()
 let locale = computed(() => {
-    return proxy.$i18n.messages[proxy.$i18n.locale].el;
+    // return $TOOL.data.get("APP_LANG");
+    return ""
 });
 
 onBeforeMount(() => {
@@ -65,6 +67,9 @@ onBeforeMount(() => {
     if(location.pathname == '/web/inReport'){
         isShowBody.value = true;
         return
+    }
+    if(!$TOOL.data.get("APP_LANG")) {
+        $TOOL.data.set("APP_LANG",'zh-cn')
     }
     initApi();
 });
