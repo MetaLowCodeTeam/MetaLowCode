@@ -69,6 +69,7 @@ export const checkTagSchema = {
 		labelKey: 'label',
 		valueKey: 'value',
 		optionValueType: '',
+        showCheckbox: false, // 是否显示勾选框
 		optionItems: [
 			{label: 'check 1', value: 1},
 			{label: 'check 2', value: 2},

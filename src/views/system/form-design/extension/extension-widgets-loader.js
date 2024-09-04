@@ -12,9 +12,11 @@ import {
 } from "@/views/system/form-design/extension/extension-widgets-schema";
 import newTestEditor from './property-editor/newTest-editor.vue'
 import CheckTagOptionItemsEditor
-	from "@/views/system/form-design/extension/property-editor/check-tag-optionItems-editor.vue";
+	from "@/views/system/form-design/extension/property-editor/check-tag/check-tag-optionItems-editor.vue";
 import checkTagOptionValueTypeEditor
-	from "@/views/system/form-design/extension/property-editor/check-tag-optionValueType-editor.vue";
+	from "@/views/system/form-design/extension/property-editor/check-tag/check-tag-optionValueType-editor.vue";
+import checkTagShowCheckboxEditor from "@/views/system/form-design/extension/property-editor/check-tag/check-tag-showCheckbox-editor.vue"
+
 import onRecordSelectedEditor
 	from "@/views/system/form-design/extension/property-editor/onRecordSelected-editor.vue";
 
@@ -72,6 +74,8 @@ export const loadExtensionWidgets = (app) => {
     app.component('list-sub-form-name-editor', listSubFormNameEditor)
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
 	app.component('check-tag-optionValueType-editor', checkTagOptionValueTypeEditor)
+    
+    PERegister.registerCPEditor(app, 'showCheckbox', 'check-tag-showCheckbox-editor', checkTagShowCheckboxEditor)
 
     /**
      * 容器组件-列表子表单-字段组件  beg
@@ -91,6 +95,7 @@ export const loadExtensionWidgets = (app) => {
     /**
      * 容器组件-列表子表单-字段组件  end
      */
+    
 
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
 	PERegister.registerCPEditor(app, 'useCurrentUser', 'reference-useCurrentUser-editor', referenceUseCurrentUserEditor)
@@ -101,7 +106,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
 
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
-		PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
+	PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
 
 	// 注册容器组件属性编辑器
 	PERegister.registerCPEditor(app, 'listSubFormWidget', 'listSubForm-widget', listSubFormWidget)
