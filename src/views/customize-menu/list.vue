@@ -358,6 +358,7 @@ import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
+const { queryNameByObj } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
@@ -888,14 +889,17 @@ const onAdd = (localDsv, formId) => {
             tempV.idFieldName = idFieldName.value;
             tempV.formEntityId = myFormEntityId.value;
             tempV.mainDetailField = mainDetailField.value;
-            !!localDsv && (tempV.localDsv = localDsv)
+            tempV.fieldNameLabel = queryNameByObj(myFormEntityId.value, formData);
+            tempV.localDsv = {
+                sourceRecord: formData,
+                ...localDsv,
+            };
             !!formId && (tempV.formId = formId)
             editRefs.value.openDialog(tempV);
         });
         return
     }
-    let tempV = {
-    };
+    let tempV = {};
     tempV.entityName = entityName.value;
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";

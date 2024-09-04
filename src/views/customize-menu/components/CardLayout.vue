@@ -67,7 +67,7 @@ const loadFormData = async () => {
 		let queryByIdRes = await queryById(props.recordId);
         
 		if (queryByIdRes) {
-            globalDsv.value.rowRecordData = queryByIdRes.data;
+            globalDsv.value.sourceRecord = queryByIdRes.data;
 			nextTick(() => {
 				vFormRef.value.setFormData(queryByIdRes.data);
 				nextTick(() => {

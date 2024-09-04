@@ -109,7 +109,7 @@
                 :filterConditions="filterConditions"
 				:gDsv="gDsv"
                 showCheckBox
-                :showMultipleSelectConfirm="subFormItemFlag"
+                :showMultipleSelectConfirm="false"
                 :defaultSelected="fieldModel"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>

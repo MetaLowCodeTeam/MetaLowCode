@@ -454,9 +454,8 @@ const initData = async () => {
 				let queryByIdRes = await queryById(detailId.value);
 				if (queryByIdRes && queryByIdRes.data) {
 		            multipleSelection.value = [queryByIdRes.data];
-                    globalDsv.value.rowRecordData = queryByIdRes.data;
+                    globalDsv.value.sourceRecord = queryByIdRes.data;
 					detailName.value = queryByIdRes.data[nameFieldName.value];
-                    // console.log(res.data.layoutJson,'res.data.layoutJson')
 					vFormRef.value.setFormJson(res.data.layoutJson);
                     rowResData.value = queryByIdRes.data || {};
 					vFormRef.value.resetForm();
@@ -516,7 +515,7 @@ const onAdd = (e) => {
 	tempV.fieldName = e.fieldName;
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
-    tempV.sourceRecord = multipleSelection.value[0];
+	tempV.sourceRecord = multipleSelection.value[0];
     editEmits(tempV)
 };
 

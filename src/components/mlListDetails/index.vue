@@ -147,7 +147,7 @@ const refresh = async () => {
                 let formData = await queryById(detailDialog.id);
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
-                    globalDsv.value.rowRecordData = formData.data;
+                    globalDsv.value.sourceRecord = formData.data;
                     detailDialog.formData = formData.data;
                     if (props.titleFromApi) {
                         detailDialog.title = formData.data[props.titleFromApi];

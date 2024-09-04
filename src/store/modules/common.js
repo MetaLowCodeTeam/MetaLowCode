@@ -3,6 +3,8 @@ import { reactive, ref } from 'vue'
 import { getEntitySet } from '@/api/system-manager'
 import tool from '@/utils/tool';
 const useCommonStore = defineStore('commonStore', () => {
+    // 所有源实体
+    let allEntityList = ref([]);
     // 所有实体label
     let allEntityLabel = reactive({});
     // 所有实体Name
@@ -13,9 +15,10 @@ const useCommonStore = defineStore('commonStore', () => {
     let unSystemEntityList = ref([]);
     // 审批流程实体
     let processEntityList = ref([]);
+
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.52 20240904"
+        webVer: "1.6.53 20240904"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -39,11 +42,28 @@ const useCommonStore = defineStore('commonStore', () => {
             if (!el.systemEntityFlag && !el.detailEntityFlag) {
                 processEntityList.value.push(el);
             }
+            allEntityList.value.push(el);
         })
     }
     // 根据ID查实体名称
     const queryEntityNameById = (id) => {
         return allEntityName[parseInt(id.split('-')[0])];
+    }
+    // 根据ID查名称字段
+    const queryNameByObj = (id, obj) => {
+        let entityName = queryEntityNameById(id);
+        if(!entityName || !obj){
+            return id;
+        }
+        let findCurtEntity = allEntityList.value.filter(el=> entityName == el.name);
+        if(findCurtEntity.length < 1) {
+            return id;
+        }
+        let nameFieldName = obj[findCurtEntity[0].nameFieldName];
+        if(nameFieldName == null) {
+            return id;
+        }
+        return nameFieldName;
     }
     // 根据ID查实体Code
     const queryEntityCodeById = (id) => {
@@ -110,7 +130,8 @@ const useCommonStore = defineStore('commonStore', () => {
         queryEntityCodeByName,
         publicSetting,
         setPublicSetting,
-        setUserInfo
+        setUserInfo,
+        queryNameByObj,
     }
 })
 

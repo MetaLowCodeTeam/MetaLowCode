@@ -256,7 +256,7 @@ const initFormLayout = async () => {
                         row.dialogTitle =
                             "编辑" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
-                        globalDsv.value.rowRecordData = formData.data;
+                        globalDsv.value.sourceRecord = formData.data;
                         nextTick(() => {
 							vFormRef.value.setFormData(formData.data);
                             nextTick(() => {
@@ -298,7 +298,7 @@ const initFormLayout = async () => {
                     if(isReferenceComp.value && !row.detailEntityFlag){
                         param[row.refEntityBindingField] = {
                             id: row.formEntityId,
-                            name: row.formEntityId,
+                            name: row.fieldNameLabel,
                         }
                     }
 					nextTick(() => {
