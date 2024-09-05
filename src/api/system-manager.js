@@ -190,8 +190,8 @@ export function deleteFormLayout(layoutId) {
 }
 
 
-export function getFormLayout(entity, formId) {
-    return http.get('formLayout/get', { entity, formId })
+export function getFormLayout(entity, formId, forcefully) {
+    return http.get('formLayout/get', { entity, formId, forcefully })
 }
 
 

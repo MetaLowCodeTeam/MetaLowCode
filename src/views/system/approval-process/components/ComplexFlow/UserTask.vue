@@ -320,9 +320,26 @@
             <template #title>
                 <h3>表单设置</h3>
             </template>
+            <div class="work-flow-conditions">
+                <div class="lable-title mb-5">指定表单</div>
+                <div class="edit-field-list-box">
+                    <el-select 
+                        v-model="myFormData.formLayoutId" 
+                        placeholder="选择指定表单"
+                        class="w-100"
+                    >
+                        <el-option
+                            v-for="item in myFormList"
+                            :key="item.formLayoutId"
+                            :label="item.layoutName"
+                            :value="item.formLayoutId"
+                        />
+                    </el-select>
+                </div>
+            </div>
             <!-- 允许修改字段 -->
             <div class="work-flow-conditions mt-20">
-                <div class="lable-title mb-10 mt-20">允许修改字段</div>
+                <div class="lable-title">允许修改字段</div>
                 <div class="edit-field-list-box">
                     <div
                         class="edit-field-list"
@@ -422,6 +439,7 @@ let $API = inject("$API");
 const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
+    formList: { Type: Object, default: () => [] },
 });
 const activeNames = ref(["1"]);
 const emits = defineEmits(["setNodeData"]);
@@ -450,10 +468,11 @@ watch(
     () => myFormData.value,
     () => {
         emits("setNodeData", myFormData.value);
-
     },
     { deep: true }
 );
+let myFormList = ref([]);
+
 
 
 onMounted(() => {
@@ -478,6 +497,9 @@ const initApi = () => {
     }
 }
 
+watchEffect(() => {
+    myFormList.value = props.formList;
+})
 
 /**
  * ***********************************************   由谁审批 beg

@@ -51,13 +51,6 @@ const loadFlowDesignerFn = async () => {
 		nextTick(() => {
 			// // 获取流程配置
 			let lf = MetaFlowDesignerRef.value?.lf || {};
-			// console.log(lf.)
-			// let mflData = MetaFlowDesignerRef.value.getJsonData();
-			// console.log(mflData,'mflData')
-			// lf[NodeTypeFn["bpmn:sequenceFlow"]]("Flow_mZWgpxe").setProperties({
-			// 	stroke: "red",
-			// });
-			// console.log(lf,'lf')
 			let mflData = MetaFlowDesignerRef.value.getJsonData();
             // 所有节点ID
             let allNodeId = [];

@@ -149,7 +149,6 @@
                                 <slot name="processBlockUnshift"></slot>
                             </el-col>
 							<el-col :span="24" v-if="showApprovalRelated()">
-
 								<ApprovalRelated
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"

@@ -274,10 +274,12 @@ let formData = reactive({});
 let globalDsv = ref({});
 globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
 // 初始化自定义表单
-const initFormLayout = async () => {
+const initFormLayout = async (formLayoutId) => {
     loading.value = true;
     let res = await getFormLayout(
-        allEntityName.value[approvalTask.value.entityCode]
+        allEntityName.value[approvalTask.value.entityCode],
+        formLayoutId,
+        true
     );
     if (res) {
         if (res.data?.layoutJson) {
@@ -489,7 +491,7 @@ async function getApprovalTaskById() {
                 }
             }
         }
-        initFormLayout();
+        initFormLayout(approvalTask.value.formLayoutId);
     } else {
         loading.value = false;
     }

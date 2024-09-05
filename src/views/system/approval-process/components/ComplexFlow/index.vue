@@ -60,6 +60,7 @@
                     ref="UserTaskRef"
                     v-if="drawerData.type == 'bpmn:userTask'"
                     :formData="drawerData.formData"
+                    :formList="entityFromList"
                     @setNodeData="setNodeData"
                 />
                 <ServiceTask
@@ -87,9 +88,13 @@ import ServiceTask from "./ServiceTask.vue";
 
 // 公用方法
 import { checkConditionList } from "@/utils/util";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
+
 
 // API
 import { saveComplexFlow, getComplexFlow } from "@/api/approval";
+import { getFormLayoutList } from "@/api/system-manager";
 
 import { useRouter } from "vue-router";
 
@@ -115,11 +120,22 @@ onMounted(() => {
     loadComplexFlow();
 });
 
+// 该实体所有表单
+let entityFromList = ref([]);
 const loadComplexFlow = async () => {
     loading.value = true;
     let res = await getComplexFlow(approvalConfigId.value);
     if (res && res.code == 200) {
         graphData.value = res.data;
+    }
+    // 加载实体表单
+    let entityCode = Router.currentRoute.value.query.entityCode;
+    if(entityCode) {
+        let entityName = queryEntityNameByCode(entityCode);
+        let fromRes = await getFormLayoutList(entityName);
+        if(fromRes) {
+            entityFromList.value = fromRes.data;
+        }
     }
     loading.value = false;
 };
@@ -204,6 +220,8 @@ let nodeDefaultData = reactive({
         isBlocked: false,
         // 选择触发器
         triggerConfigIdList: [],
+        // 指定表单
+        formLayoutId: "",
     },
 });
 
@@ -297,7 +315,6 @@ const onSave = async () => {
     }
     let mflData = MetaFlowDesignerRef.value.getJsonData();
     let { nodes, edges } = mflData;
-    console.log(mflData,'mflData')
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
         (el) => !EliminateNode.includes(el.type)
