@@ -106,7 +106,7 @@
 			destroy-on-close
 			:append-to-body="true"
 		>
-			<el-form-item label="所在城市">
+			<el-form-item v-if="!posReadonly" label="所在城市">
 				<el-cascader
 					ref="cityCascader"
 					v-model="curAreaCode"
@@ -319,7 +319,7 @@ export default {
 					this.newPos.push( posArray[0] * 1)
 					this.newPos.push( posArray[1] * 1)
 					this.newPosModel = deepClone(this.fieldModel)
-					this.newPosName = posArray[1]
+					this.newPosName = posArray[2]
 					this.zoomLevel = 20
 				} else {
 					this.zoomLevel = 18
