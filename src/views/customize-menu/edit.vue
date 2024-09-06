@@ -11,7 +11,7 @@
         bodyNoPadding
     >
         <div class="main fullsceen-man" v-loading="loading">
-            <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 3">记录已完成审批，禁止编辑</div>
+            <div class="info-box" v-if="row.detailId && !checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
             <v-form-render
                 v-if="haveLayoutJson"
@@ -75,7 +75,7 @@ import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-const { queryEntityNameById, queryEntityLabelByName } = useCommonStore();
+const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
 
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -261,8 +261,7 @@ const initFormLayout = async () => {
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
                                 if (
-                                    row.approvalStatus.value == 1 ||
-                                    row.approvalStatus.value == 3 ||
+                                    !checkModifiableEntity(row.detailId, row.approvalStatus.value) ||
                                     row.isRead
                                 ) {
                                     vFormRef.value.disableForm();

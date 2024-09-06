@@ -248,7 +248,7 @@
                                 effect="dark"
                                 :content="getEditBtnTitle(scope.row) || '此状态不可编辑'"
                                 placement="top"
-                                v-if="scope.row.approvalStatus && (scope.row.approvalStatus.value == 3 || scope.row.approvalStatus.value == 1) || referenceCompStatus == 'read'"
+                                v-if="!checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
                             >
                                 <el-button
                                     size="small"
@@ -256,7 +256,9 @@
                                     link
                                     type="primary"
                                     disabled
-                                >编辑</el-button>
+                                >
+                                    编辑
+                                </el-button>
                             </el-tooltip>
                             <el-button
                                 v-else
@@ -265,7 +267,9 @@
                                 link
                                 type="primary"
                                 @click.stop="onEditRow(scope.row)"
-                            >编辑</el-button>
+                            >
+                                编辑
+                            </el-button>
 
                             <el-button
                                 size="small"
@@ -358,7 +362,7 @@ import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
-const { queryNameByObj } = useCommonStore();
+const { queryNameByObj, checkModifiableEntity } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();

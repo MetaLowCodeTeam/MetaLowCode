@@ -106,11 +106,7 @@
                                         type="primary"
                                         plain
                                         @click="onEditRow"
-                                        :disabled="
-                                            approvalStatus &&
-                                            (approvalStatus.value == 3 ||
-                                                approvalStatus.value == 1)
-                                        "
+                                        :disabled="!checkModifiableEntity(detailId, approvalStatus?.value)"
                                         :title="getEditBtnTitle()"
                                     >
                                         <span class="mr-5">
@@ -262,7 +258,7 @@ let styleConf = ref({
 });
 
 
-const { queryEntityNameById, queryEntityCodeById } = useCommonStore();
+const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onEdit"]);
 const $API = inject("$API");
 let vFormRef = ref();

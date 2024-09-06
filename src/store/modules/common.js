@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.59 20240906"
+        webVer: "1.6.60 20240906"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -99,6 +99,7 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.appMode = data.appMode;
         publicSetting.value.homeURL = data.homeURL;
         publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
+        publicSetting.value.approvalModifiableEntity = data.approvalModifiableEntity || "";
     }
     const setUserInfo = (user) => {
         let userInfo = {
@@ -114,6 +115,20 @@ const useCommonStore = defineStore('commonStore', () => {
             departmentName: user.departmentName,
         };
         tool.data.set("USER_INFO", userInfo);
+    }
+    // 检测实体审批状态是否可编辑  返回true 可编辑  false 不可编辑
+    const checkModifiableEntity = (id, status) => {
+        let curtEntityName = queryEntityNameById(id);
+        let approvalModifiableEntity = publicSetting.value.approvalModifiableEntity.split(",");
+        // 审批中... 不可编辑
+        if(status == 1) {
+            return false;
+        }else if(status == 3) {
+            // 审批完成 返回true false
+            return approvalModifiableEntity.includes(curtEntityName)
+        }else {
+            return true;
+        }
     }
     return {
         allEntityLabel,
@@ -132,6 +147,7 @@ const useCommonStore = defineStore('commonStore', () => {
         setPublicSetting,
         setUserInfo,
         queryNameByObj,
+        checkModifiableEntity,
     }
 })
 
