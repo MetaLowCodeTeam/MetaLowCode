@@ -99,7 +99,6 @@ const initExternalData = async () => {
                 vFormRef.value.setFormJson(layoutData.layoutJson);
                 if (res.data.recordData) {
                     approvalStatus.value = res.data.recordData.approvalStatus;
-                    globalDsv.value.sourceRecord = res.data.recordData;
                     vFormRef.value.setFormData(res.data.recordData);
                     nextTick(() => {
                         if (

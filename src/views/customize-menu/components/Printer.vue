@@ -56,7 +56,6 @@ const initVformCom = async () => {
 			globalDsv.value.formEntityId = entityId.value;
             let queryByIdRes = await queryById(entityId.value);
             if (queryByIdRes && queryByIdRes.data) {
-                globalDsv.value.sourceRecord = queryByIdRes.data;
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 let resData = queryByIdRes.data || {};
                 printerTitle.value = resData[nameFieldName.value];

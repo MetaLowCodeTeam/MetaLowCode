@@ -453,7 +453,6 @@ const initData = async () => {
 				let queryByIdRes = await queryById(detailId.value);
 				if (queryByIdRes && queryByIdRes.data) {
 		            multipleSelection.value = [queryByIdRes.data];
-                    globalDsv.value.sourceRecord = queryByIdRes.data;
 					detailName.value = queryByIdRes.data[nameFieldName.value];
 					vFormRef.value.setFormJson(res.data.layoutJson);
                     rowResData.value = queryByIdRes.data || {};
