@@ -221,7 +221,7 @@ let nodeDefaultData = reactive({
         // 选择触发器
         triggerConfigIdList: [],
         // 指定表单
-        formLayoutId: "",
+        formLayoutId: null,
     },
 });
 
