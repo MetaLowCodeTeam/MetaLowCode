@@ -375,10 +375,10 @@ export default {
         },
         doMultipleFillBack(rows, recordObj, subFormCom, subFormValues, sourceSubFormValues, isAll) {
             // 是否追加回填
-            if(isAll){
+            if (isAll) {
                 rows.forEach((selectedRow,subInx) => {
                     // 把后面的数据已追加的方式追加进去。
-                    if(subInx == 0){
+                    if (subInx === 0) {
                         // 赋值当前选中数据
                         this.fieldModel = {
                             id: selectedRow[recordObj.id],
@@ -386,9 +386,9 @@ export default {
                         };
                         // 第一条选中数据回填
                         this.doFillBack(this.fieldModel, selectedRow);
-                        this.handleChangeEvent(this.fieldModel);
+						this.syncUpdateFormModel(this.fieldModel);
                         this.handleRecordSelectedEvent(selectedRow);
-                    }else {
+                    } else {
                         let temp = {};
                         temp[this.fieldKeyName] = {
                             id: selectedRow[recordObj.id],
@@ -414,7 +414,7 @@ export default {
                         id: rows[0][recordObj.id],
                         name: rows[0][recordObj.label],
                     };
-                    this.handleChangeEvent(this.fieldModel);
+					this.syncUpdateFormModel(this.fieldModel);
                     this.handleRecordSelectedEvent(rows[0]);
                     // 第一条选中数据回填
                     this.doFillBack(this.fieldModel, rows[0]);
@@ -469,6 +469,7 @@ export default {
 				id: selectedNodes[0].id,
 				name: selectedNodes[0].label,
 			};
+			this.handleChangeEvent(this.fieldModel);
             this.showReferenceDialogFlag = false;
         },
 		async doFillBack(recordObj, selectedRow) {
