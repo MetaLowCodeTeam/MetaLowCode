@@ -204,7 +204,7 @@ const onSave = async (target) => {
     params.formModel.whenNum = whenNum;
     // 如果有附加过滤条件
     params.formModel.actionFilter = "";
-    if (trigger.actionFilter.items.length > 0) {
+    if (trigger.actionFilter.items.length > 0 || (trigger.actionFilter.modifiedFields && trigger.actionFilter.modifiedFields.length > 0)) {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
     // 如果是聚合规则 或者 字段更新
@@ -421,5 +421,8 @@ const actionExecute = (params) => {
     .save-warning .save-icon {
         color: #e6a23c;
     }
+}
+:deep(.el-form-item) {
+    align-items: initial !important;
 }
 </style>

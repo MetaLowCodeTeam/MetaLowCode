@@ -3,11 +3,11 @@
     <div class="trigger-take-action">
         <el-form label-width="120px" :disabled="!$TOOL.checkRole('r48-3')">
             <el-form-item label="源实体">
-                <span class="blod">{{ allEntityLabel[trigger.entityCode] }}</span>
+                <span class="bold">{{ allEntityLabel[trigger.entityCode] }}</span>
             </el-form-item>
             <el-form-item label="触发动作">
                 <div>
-                    <el-checkbox-group v-model="actionSelecteds" @change="actionTypeChange">
+                    <el-checkbox-group v-model="actionSelected" @change="actionTypeChange">
                        
                         <el-row :gutter="20">
                             <el-col
@@ -17,6 +17,13 @@
                             >
                                 <el-checkbox :label="item.code" :disabled="trigger.disabledActive?.includes(item.code)">
                                     {{ item.label }}
+                                    <el-icon  
+                                        class="item-tip" 
+                                        size="14" 
+                                        v-if="item.code == 8 && trigger.disabledActive?.includes(item.code)"
+                                    >
+                                        <Setting />
+                                    </el-icon>
                                     <el-tooltip
                                         effect="dark"
                                         content="审批通过后管理可以撤销重审"
@@ -28,6 +35,22 @@
                                         </el-icon>
                                     </el-tooltip>
                                 </el-checkbox>
+                                <el-tooltip
+                                    effect="dark"
+                                    content="指定字段"
+                                    placement="top"
+                                    v-if="item.code == 8"
+                                >
+                                    <span 
+                                        class="ml-a-span setting-span ml-3" 
+                                        v-if="!trigger.disabledActive?.includes(item.code)"
+                                        @click.stop="openFieldSetting"
+                                    >
+                                        <el-icon size="14">
+                                            <ElIconSetting />
+                                        </el-icon>
+                                    </span>
+                                </el-tooltip>
                             </el-col>
                         </el-row>
                     </el-checkbox-group>
@@ -52,7 +75,7 @@
                     </mlDialog>
                     <div class="info-text mt-5">
                         注意：定期执行将会对
-                        <span class="blod">{{ allEntityLabel[trigger.entityCode] }}</span> 中所有数据执行操作。设置的执行周期请勿过于频繁！
+                        <span class="bold">{{ allEntityLabel[trigger.entityCode] }}</span> 中所有数据执行操作。设置的执行周期请勿过于频繁！
                     </div>
                 </div>
             </el-form-item>
@@ -80,6 +103,10 @@
                 />
             </mlDialog>
         </div>
+        <SpecifyFieldsDialog 
+            ref="specifyFieldsRef"
+            @confirm="confirmFields"
+        />
     </div>
 </template>
 
@@ -89,6 +116,8 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { allEntityLabel } = storeToRefs(useCommonStore());
 import mlCron from "@/components/mlCron/index.vue";
+import SpecifyFieldsDialog from './SpecifyFieldsDialog.vue';
+
 const $TOOL = inject("$TOOL");
 const props = defineProps({
     modelValue: null,
@@ -147,7 +176,7 @@ let actionList = ref([
     },
 ]);
 // 已勾选的合集
-let actionSelecteds = ref([]);
+let actionSelected = ref([]);
 // 选择条件弹框
 let dialogIsShow = ref(false);
 // 条件框传值
@@ -167,24 +196,29 @@ onMounted(() => {
     formatActionType();
 });
 
+
 /***
  *  ****************************************** 触发动作相关 beg
  */
 
 // 格式化触发动作
 const formatActionType = () => {
-    actionSelecteds.value = [];
+    actionSelected.value = [];
     actionList.value.forEach((el) => {
         if ((trigger.value.whenNum & el.code) > 0) {
-            actionSelecteds.value.push(el.code);
+            actionSelected.value.push(el.code);
         }
     });
+    if(!trigger.value.actionFilter) {
+        trigger.value.actionFilter = {};
+    }
 };
+
 
 // 触发动作切换
 const actionTypeChange = () => {
     let whenNum = 0;
-    actionSelecteds.value.forEach((el) => {
+    actionSelected.value.forEach((el) => {
         whenNum = whenNum | el;
     });
     trigger.value.whenNum = whenNum;
@@ -205,7 +239,7 @@ let cronDialogIsShow = ref(false);
 
 // cron表达式是否显示
 const cronPopoverIsShow = () => {
-    return actionSelecteds.value.includes(512);
+    return actionSelected.value.includes(512);
 };
 
 // 确认设置表达式
@@ -235,7 +269,6 @@ const cronFormat = () => {
 const setCondition = () => {
     let { actionFilter } = Object.assign({}, trigger.value);
     actionFilter = initFilter(actionFilter);
-
     conditionConf.value = JSON.parse(JSON.stringify(actionFilter));
     dialogIsShow.value = true;
 };
@@ -264,7 +297,7 @@ const getSetConditionText = () => {
 
 // 确认设置条件
 const conditionConfirm = (e) => {
-    trigger.value.actionFilter = Object.assign({}, e);
+    trigger.value.actionFilter = Object.assign(trigger.value.actionFilter, e);
     dialogIsShow.value = false;
     emit("update:modelValue", trigger.value);
 };
@@ -272,18 +305,35 @@ const conditionConfirm = (e) => {
 /***
  *  ****************************************** 过滤条件相关 end
  */
+
+let specifyFieldsRef = ref("");
+// 打开指定字段弹框
+const openFieldSetting = () => {
+    let { entityCode, actionFilter} = trigger.value;
+    specifyFieldsRef.value?.openDialog(entityCode, actionFilter.modifiedFields || []);
+}   
+const confirmFields = (v) => {
+    trigger.value.actionFilter.modifiedFields = v.map(el => el.fieldName);
+    emit("update:modelValue", trigger.value);
+}
+
 </script>
 
 <style lang="scss" scoped>
 .trigger-take-action {
     padding-bottom: 30px;
 }
-.blod {
+.bold {
     font-weight: bold;
 }
 .item-tip {
     position: relative;
-    top: 1px;
+    top: 2px;
+}
+.setting-span {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
 }
 :deep(.el-form-item) {
     margin-bottom: 8px;
