@@ -750,13 +750,13 @@ const selectedSubApproval = () => {
     }
     // 如果格式化后的数据转换是空，清空数据转换绑定字段
     if(formatDtOpList.value.length < 1){
-        myFormData.value.transformId = "";
+        myFormData.value.transformId = null;
         return
     }
     // 如果格式化后的数据有值，但是没有 数据转换绑定字段的 item 也清空 数据转换绑定字段
     let findTransformId = formatDtOpList.value.filter(el => el.transformId == myFormData.value.transformId);
     if(findTransformId.length < 1){
-        myFormData.value.transformId = "";
+        myFormData.value.transformId = null;
     }
 }
 
