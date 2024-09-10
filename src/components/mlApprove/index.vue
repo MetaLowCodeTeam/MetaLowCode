@@ -303,20 +303,32 @@ const initFormLayout = async (formLayoutId) => {
                             vFormRef.value.reloadOptionData();
                             vFormRef.value.disableForm();
                             nextTick(() => {
-                                // 显示可编辑字段
-                                let enableWidgets =
-                                    approvalTask.value.modifiableFields.map(
-                                        (el) => el.name
-                                    );
+                                let modifiableFields = approvalTask.value?.modifiableFields || [];
+                                // 显示可编辑的字段
+                                let enableWidgets = [];
+                                // 显示必填字段
+                                let requiredWidgets = [];
+                                modifiableFields.forEach(el => {
+                                    // 主表字段
+                                    if(!el.formEntity) {
+                                        enableWidgets.push(el.name);
+                                        if(el.isRequired) {
+                                            requiredWidgets.push(el.name);
+                                        }
+                                    }
+                                    // 字表字段
+                                    else {
+                                        let subFormField = el.name + "@sf=" + el.formEntity;
+                                        enableWidgets.push(subFormField);
+                                        if(el.isRequired) {
+                                            requiredWidgets.push(subFormField);
+                                        }
+                                    }
+                                });
                                 vFormRef.value.enableWidgets(enableWidgets);
-                                
+                                vFormRef.value.setWidgetsRequired(requiredWidgets, true);
                                 // 显示可编辑的字段。即使设置了隐藏。
                                 vFormRef.value.showWidgets(enableWidgets);
-                                // 显示必填字段
-                                let required = approvalTask.value.modifiableFields.map(
-                                    (el) => (el.isRequired ? el.name : null)
-                                );
-                                vFormRef.value.setWidgetsRequired(required, true);
                             })
                         
                         });

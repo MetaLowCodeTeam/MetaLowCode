@@ -46,7 +46,7 @@
                 </div>
             </template>
             <div class="work-flow-conditions mb-20">
-                <div class="lable-title mb-3">由谁审批</div>
+                <div class="label-title mb-3">由谁审批</div>
                 <div class="mt-10">
                     <el-select
                         v-model="form.nodeRoleType"
@@ -108,46 +108,23 @@
                 <div>
                     <el-checkbox v-model="form.addSignaturesApproval" label="允许审批人加签" />
                 </div>
-                <div class="lable-title mb-10 mt-20">当有多人审批时</div>
+                <div class="label-title mb-10 mt-20">当有多人审批时</div>
                 <div class="mt-10">
                     <el-radio-group class="radio-need-block" v-model="form.multiPersonApproval">
                         <el-radio :label="1">会签 (需所有审批人同意)</el-radio>
                         <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
                     </el-radio-group>
                 </div>
-                <div class="lable-title mb-10 mt-20">高级扩展功能</div>
+                <div class="label-title mb-10 mt-20">高级扩展功能</div>
                 <div class="mt-10">
                     <el-checkbox v-model="form.autograph" label="手写签名"/>
                 </div>
-                <div class="lable-title mb-10 mt-20">允许修改字段</div>
-                <div class="edit-field-list-box">
-                    <div
-                        class="edit-field-list"
-                        v-for="(field,fieldInx) of form.modifiableFields"
-                        :key="fieldInx"
-                    >
-                        {{ field.label }}
-                        <span
-                            class="fr del-icon"
-                            @click="delSelectedField(fieldInx)"
-                        >
-                            <el-icon size="16">
-                                <ElIconClose />
-                            </el-icon>
-                        </span>
-
-                        <span class="required-icon fr" :title="field.reserved ? '系统字段无法修改' : ''">
-                            <el-checkbox
-                                @change="fieldRequiredChange(field)"
-                                :disabled="field.reserved"
-                                v-model="field.isRequired"
-                                label="必填"
-                            />
-                        </span>
-                    </div>
-                </div>
-                <div class="add-field-div mt-10">
-                    <el-button icon="el-icon-plus" @click="openSelectFieldDialog">选择字段</el-button>
+                 <!-- 允许修改字段 -->
+                <div class="mt-20">
+                    <ModifiableFields 
+                        :formData="form" 
+                        :entityName="myEntityName"
+                    />
                 </div>
             </div>
 
@@ -175,6 +152,8 @@ import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+// 允许修改字段组件
+import ModifiableFields from "@/components/mlApprove/ModifiableFields.vue";
 const router = useRouter();
 let message = inject("$ElMessage");
 let $API = inject("$API");
@@ -188,7 +167,6 @@ let nodeConfig = ref({});
 let isEditTitle = ref(false);
 let form = reactive({});
 let drawer = ref(false);
-let SelectFieldDialog = ref();
 let nodeTitle = ref();
 let myEntityName = ref("");
 let nodeRoleTypeList = ref([
@@ -349,56 +327,8 @@ const toText = (nodeConfig) => {
         }
     }
 };
-/**
- * 添加字段
- */
-const openSelectFieldDialog = () => {
-    SelectFieldDialog.value.openDialg();
-};
-// 删除选择字段
-const delSelectedField = (inx) => {
-    form.modifiableFields.splice(inx, 1);
-};
-// 字段是否允许修改切换
-const fieldEditChange = (field) => {
-    if (!field.isEdit && field.isRequired) {
-        field.isRequired = false;
-    }
-};
-// 字段是否必填切换
-const fieldRequiredChange = (field) => {
-    if (!field.isEdit && field.isRequired) {
-        field.isEdit = true;
-    }
-};
 </script>
 
 <style lang="scss" scoped>
-.edit-field-list-box {
-    .edit-field-list {
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        height: 38px;
-        line-height: 38px;
-        font-size: 13px;
-        color: #404040;
-        &:last-child {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        .del-icon {
-            margin-right: 3px;
-            position: relative;
-            top: 2px;
-            cursor: pointer;
-            color: #999;
-            &:hover {
-                color: #6f6f6f;
-            }
-        }
-        .required-icon {
-            position: relative;
-            top: 1px;
-            margin-right: 30px;
-        }
-    }
-}
+
 </style>

@@ -321,4 +321,7 @@ watchEffect(() => {
 	color: #999999;
 	margin-bottom: 5px;
 }
+:deep(.el-form-item) {
+    align-items: initial !important;
+}
 </style>

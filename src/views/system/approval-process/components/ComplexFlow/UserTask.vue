@@ -7,7 +7,7 @@
             </template>
             <!-- 审批类型 -->
             <div class="work-flow-conditions">
-                <div class="lable-title mb-3">审批类型</div>
+                <div class="label-title mb-3">审批类型</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group 
                         v-model="myFormData.approvalType" 
@@ -21,7 +21,7 @@
             </div>
             <!-- 由谁审批 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
-                <div class="lable-title mb-3">由谁审批</div>
+                <div class="label-title mb-3">由谁审批</div>
                 <div class="mt-10">
                     <el-select
                         v-model="myFormData.nodeRoleType"
@@ -109,7 +109,7 @@
             </div>
             <!-- 驳回设置 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
-                <div class="lable-title mb-3">驳回设置</div>
+                <div class="label-title mb-3">驳回设置</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group class="radio-need-block" v-model="myFormData.rejectType">
                         <el-radio :label="1">驳回至未提交</el-radio>
@@ -120,7 +120,7 @@
             </div>
             <!-- 审批人为空时 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
-                <div class="lable-title mb-3">审批人为空时</div>
+                <div class="label-title mb-3">审批人为空时</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group v-model="myFormData.emptyUserType">
                         <el-radio :label="1">自动通过</el-radio>
@@ -138,7 +138,7 @@
             </div>
             <!-- 审批方式 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
-                <div class="lable-title mb-3">审批方式</div>
+                <div class="label-title mb-3">审批方式</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group
                         class="radio-need-block"
@@ -170,12 +170,12 @@
             </div>
             <!-- 手写签名 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
-                <div class="lable-title mb-3">高级扩展功能</div>
+                <div class="label-title mb-3">高级扩展功能</div>
                 <el-checkbox v-model="myFormData.autograph" label="手写签名"/>
             </div>
             <!-- 发起子流程 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
-                <div class="lable-title mb-3">选择子流程</div>
+                <div class="label-title mb-3">选择子流程</div>
                 <el-select 
                     v-model="myFormData.approvalConfigId" 
                     style="width: 100%"
@@ -193,7 +193,7 @@
             </div>
             <!-- 选择数据转换 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
-                <div class="lable-title mb-3">选择数据转换</div>
+                <div class="label-title mb-3">选择数据转换</div>
                 <el-select 
                     v-model="myFormData.transformId" 
                     style="width: 100%"
@@ -211,7 +211,7 @@
             </div>
             <!-- 自动提交规则 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 3">
-                <div class="lable-title mb-3">自动提交规则</div>
+                <div class="label-title mb-3">自动提交规则</div>
                 <el-radio-group
                     class="radio-need-block"
                     v-model="myFormData.isBlocked"
@@ -233,7 +233,7 @@
 				<el-tab-pane label="前置脚本">
 					<!-- 说明 -->
 					<div class="work-flow-conditions">
-						<div class="lable-title mb-3">说明</div>
+						<div class="label-title mb-3">说明</div>
 						<div class="mb-10 mt-10">
 							该事件在
 							<span class="ml-a-span">节点任务启动后</span> 执行，用户可以使用
@@ -253,7 +253,7 @@
 				<el-tab-pane label="后置脚本">
 					<!-- 说明 -->
 					<div class="work-flow-conditions">
-						<div class="lable-title mb-3">说明</div>
+						<div class="label-title mb-3">说明</div>
 						<div class="mb-10 mt-10">
 							该事件在
 							<span class="ml-a-span">节点任务完成后</span> 执行，用户可以使用
@@ -273,13 +273,13 @@
                 <el-tab-pane label="触发器事件">
 					<!-- 说明 -->
 					<div class="work-flow-conditions">
-						<div class="lable-title mb-3">说明</div>
+						<div class="label-title mb-3">说明</div>
 						<div class="mb-10 mt-10">
 							该事件在
 							<span class="ml-a-span">节点任务完成后</span> 执行，会自动执行对应触发器。
 						</div>
 					</div>
-                    <div class="lable-title mb-3">选择触发器</div>
+                    <div class="label-title mb-3">选择触发器</div>
                     <div class="mb-10 mt-10">
                         <el-select 
                             v-model="myFormData.triggerConfigIdList" 
@@ -309,7 +309,7 @@
             </template>
             <!-- 抄送用户 -->
             <div class="work-flow-conditions mt-20">
-                <div class="lable-title mb-3">抄送用户</div>
+                <div class="label-title mb-3">抄送用户</div>
                 <div class="mb-10 mt-10">
                     <mlSelectUser v-model="myFormData.ccToUserList" multiple clearable />
                 </div>
@@ -321,7 +321,7 @@
                 <h3>表单设置</h3>
             </template>
             <div class="work-flow-conditions">
-                <div class="lable-title mb-5">指定表单</div>
+                <div class="label-title mb-5">指定表单</div>
                 <div class="edit-field-list-box">
                     <el-select 
                         v-model="myFormData.formLayoutId" 
@@ -338,41 +338,9 @@
                 </div>
             </div>
             <!-- 允许修改字段 -->
-            <div class="work-flow-conditions mt-20">
-                <div class="lable-title">允许修改字段</div>
-                <div class="edit-field-list-box">
-                    <div
-                        class="edit-field-list"
-                        v-for="(field,fieldInx) of myFormData.modifiableFields"
-                        :key="fieldInx"
-                    >
-                        {{ field.label }}
-                        <span
-                            class="fr del-icon"
-                            @click="delSelectedField(fieldInx)"
-                        >
-                            <el-icon size="16">
-                                <ElIconClose />
-                            </el-icon>
-                        </span>
-
-                        <span class="required-icon fr" :title="field.reserved ? '系统字段无法修改' : ''">
-                            <el-checkbox
-                                @change="fieldRequiredChange(field)"
-                                :disabled="field.reserved"
-                                v-model="field.isRequired"
-                                label="必填"
-                            />
-                        </span>
-                    </div>
-                    <div class="add-field-div mt-10">
-                        <el-button icon="el-icon-plus" @click="openSelectFieldDialog">选择字段</el-button>
-                    </div>
-                </div>
-                <mlSelectField
-                    ref="SelectFieldDialog"
-                    v-model="myFormData.modifiableFields"
-                    title="选择可修改字段"
+            <div class="mt-20">
+                <ModifiableFields 
+                    :formData="myFormData" 
                     :entityName="entityName"
                 />
             </div>
@@ -427,8 +395,9 @@ import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getDataList } from "@/api/crud";
-// 选择字段组件
-import mlSelectField from "@/components/mlSelectField/index.vue";
+// 允许修改字段组件
+import ModifiableFields from "@/components/mlApprove/ModifiableFields.vue";
+
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import http from "@/utils/request";
@@ -620,34 +589,7 @@ const nodeRoleTypeChange = () => {
  * ***********************************************   由谁审批 end
  */
 
-/**
- * ***********************************************   允许修改字段 beg
- */
-/**
- * ***********************************************   允许修改字段 beg
- */
-let SelectFieldDialog = ref(false);
 
-//  打开选择字段弹框
-const openSelectFieldDialog = () => {
-    SelectFieldDialog.value.openDialg();
-};
-// 删除选择字段
-const delSelectedField = (inx) => {
-    myFormData.value.modifiableFields.splice(inx, 1);
-};
-// 字段是否允许修改切换
-const fieldEditChange = (field) => {
-    if (!field.isEdit && field.isRequired) {
-        field.isRequired = false;
-    }
-};
-// 字段是否必填切换
-const fieldRequiredChange = (field) => {
-    if (!field.isEdit && field.isRequired) {
-        field.isEdit = true;
-    }
-};
 
 /**
  * 结束 获取数据

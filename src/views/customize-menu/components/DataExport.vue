@@ -1,7 +1,7 @@
 <template>
     <ml-dialog title="数据导出" v-model="dialogShow" width="500px">
         <div v-loading="loading">
-            <div class="lable-title mb-3">选择数据范围</div>
+            <div class="label-title mb-3">选择数据范围</div>
             <div class="mb-10 mt-10">
                 <el-radio-group class="radio-need-block" v-model="selection">
                     <el-radio :label="1">当前页的记录 (共 {{ formData.size }} 条)</el-radio>
@@ -57,7 +57,7 @@ defineExpose({
 </script>
 <style lang='scss' scoped>
 
-.lable-title {
+.label-title {
     font-size: 14px;
     font-weight: bold;
     color: #666;

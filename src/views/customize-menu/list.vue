@@ -1019,7 +1019,7 @@ const headerDragend = (newWidth, oldWidth, column) => {
 
 let SelectFieldDialog = ref();
 const openSelectFieldDialog = () => {
-    SelectFieldDialog.value.openDialg();
+    SelectFieldDialog.value.openDialog();
 };
 
 // 常用查询切换

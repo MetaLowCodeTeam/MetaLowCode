@@ -40,7 +40,7 @@
                 </div>
             </template>
             <div class="work-flow-conditions mb-20">
-                <div class="lable-title mb-3">谁可以发起此审批</div>
+                <div class="label-title mb-3">谁可以发起此审批</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group
                         class="radio-need-block"
@@ -58,10 +58,10 @@
                     multiple
                     clearable
                 />
-                <div class="lable-title mb-10 mt-20">发起条件</div>
+                <div class="label-title mb-10 mt-20">发起条件</div>
                 <div class="ml-a-span mb-3" @click="setCondition">{{ getSetConditionText() }}</div>
                 <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
-                <div class="lable-title mb-10 mt-20">同步审批状态</div>
+                <div class="label-title mb-10 mt-20">同步审批状态</div>
                 <div class="mt-10">
                     <MlAssociatedRecords
                         v-model="form.cascades"

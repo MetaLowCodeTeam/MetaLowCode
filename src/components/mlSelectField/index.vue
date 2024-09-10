@@ -115,7 +115,7 @@ onMounted(() => {
 let hasFieldFormEntity = ref({});
 
 // 打开弹框
-const openDialg = async () => {
+const openDialog = async () => {
 	dialogIsShow.value = true;
 	loading.value = true;
 	hasFieldNames.value = selectedFields.value.map((el) => {
@@ -250,6 +250,7 @@ const getDetailEntityFields = async () => {
 					subEl.name = subEl.fieldName;
 					subEl.label = subEl.fieldLabel;
                     subEl.formEntity = el.entityName;
+                    subEl.formEntityLabel = el.entityLabel;
 					if (hasFieldNames.value.includes(subEl.fieldName) && hasFieldFormEntity.value[subEl.fieldName] == el.entityName) {
 						let filterFields = selectedFields.value.filter(
 							(subEl2) => subEl.fieldName == subEl2.name
@@ -268,7 +269,7 @@ const getDetailEntityFields = async () => {
 
 // 暴露方法给父组件调用
 defineExpose({
-	openDialg,
+	openDialog,
 });
 </script>
 

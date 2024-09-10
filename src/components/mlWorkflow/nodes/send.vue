@@ -46,7 +46,7 @@
                 </div>
             </template>
             <div class="work-flow-conditions mb-20">
-                <div class="lable-title mb-3">审批结果抄送给谁</div>
+                <div class="label-title mb-3">审批结果抄送给谁</div>
                 <mlSelectUser class="mt-5 mb-5" v-model="form.nodeUserList" multiple clearable />
                 <div>
                     <el-checkbox v-model="form.userSelectFlag" label="同时允许自选" />
@@ -54,7 +54,7 @@
                 <div>
                     <el-checkbox v-model="form.automaticSharing" label="抄送人无读取权限时自动共享" />
                 </div>
-                <div class="lable-title mb-3 mt-20">抄送给外部人员</div>
+                <div class="label-title mb-3 mt-20">抄送给外部人员</div>
                 <mlSelectUser class="mt-5 mb-5" v-model="form.externalUserList" multiple clearable />
                 <div class="info-text">选择外部人员的电话 (手机) 或邮箱字段</div>
             </div>

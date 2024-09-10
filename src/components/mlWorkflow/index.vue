@@ -604,7 +604,7 @@ const editZoom = (target) => {
 
 .work-flow-conditions {
     font-size: 14px;
-    .lable-title {
+    .label-title {
         font-weight: bold;
         color: #666;
     }
