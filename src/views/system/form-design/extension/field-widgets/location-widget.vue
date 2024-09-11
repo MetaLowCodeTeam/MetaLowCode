@@ -15,6 +15,7 @@
 			<el-input
 				ref="fieldEditor"
 				v-model="formatFieldModel"
+				v-show="!isReadMode"
 				:disabled="field.options.disabled"
 				readonly
 				:size="field.options.size"
@@ -45,6 +46,16 @@
 					</el-button>
 				</template>
 			</el-input>
+			<template v-if="isReadMode">
+				<span class="readonly-mode-field">
+					{{formatFieldModel}}
+					<el-button link @click="onAppendButtonClick">
+						<el-icon>
+							<component :is="field.options.buttonIcon" />
+						</el-icon>
+					</el-button>
+				</span>
+			</template>
 		</form-item-wrapper>
 
 		<el-dialog
