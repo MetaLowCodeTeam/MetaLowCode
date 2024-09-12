@@ -68,6 +68,12 @@
                     :formData="drawerData.formData"
                     @setNodeData="setNodeData"
                 />
+                <!-- 中间事件节点 -->
+                <CenterEventNode 
+                    v-if="drawerData.type == 'bpmn:intermediateCatchEvent'"
+                    :formData="drawerData.formData"
+                    @setNodeData="setNodeData"
+                />
             </div>
         </div>
     </div>
@@ -85,6 +91,8 @@ import SequenceFlow from "./SequenceFlow.vue";
 import UserTask from "./UserTask.vue";
 // 服务任务节点
 import ServiceTask from "./ServiceTask.vue";
+// 中间事件节点
+import CenterEventNode from './centerEventNode/index.vue';
 
 // 公用方法
 import { checkConditionList } from "@/utils/util";
@@ -223,6 +231,10 @@ let nodeDefaultData = reactive({
         // 指定表单
         formLayoutId: null,
     },
+    "bpmn:intermediateCatchEvent": {
+        // 信号名称
+        signalName: "SignalName_",
+    },
 });
 
 // 节点触发事件
@@ -231,6 +243,7 @@ const NodeTypeFn = {
     "bpmn:sequenceFlow": "getEdgeModelById",
     "bpmn:userTask": "getNodeModelById",
     "bpmn:serviceTask": "getNodeModelById",
+    "bpmn:intermediateCatchEvent": "getNodeModelById",
 };
 
 // 排除的节点
@@ -240,6 +253,11 @@ const EliminateNode = [
     "bpmn:exclusiveGateway",
     "bpmn:inclusiveGateway",
 ];
+
+// 默认节点颜色
+const DefaultNodeColor = {
+    "bpmn:intermediateCatchEvent": "#707070"
+}
 
 // 节点删除
 const nodeDelete = () => {
@@ -260,6 +278,9 @@ const openDrawer = (data) => {
         drawerData.value.formData = getProperties(data.properties.flowJson);
     } else {
         drawerData.value.formData = cloneDeep(nodeDefaultData[data.type]);
+        if(data.type == "bpmn:intermediateCatchEvent" && drawerData.value.formData.signalName == "SignalName_"){
+            drawerData.value.formData.signalName += $TOOL.generateRandomString(6);
+        }
     }
 };
 
@@ -279,7 +300,7 @@ const getProperties = (jsonStr) => {
 let setNodeData = (data) => {
     let { type, id } = drawerData.value;
     setProperties(type, id, data);
-    setNodeBorderColor(type, id, "#337ecc");
+    setNodeBorderColor(type, id, DefaultNodeColor[type] || "#337ecc");
 };
 
 // 设置节点自定义属性
@@ -357,6 +378,15 @@ const onSave = async () => {
                 return;
             }
         }
+        // 如果是中间捕获事件节点
+        if(el.type == "bpmn:intermediateCatchEvent") {
+            let { signalName } = properties;
+            if(!signalName){
+                ElMessage.error(el.text?.value + "节点：请填写信号名称");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+        }
     }
     // 遍历线
     for (let index = 0; index < edges.length; index++) {
@@ -411,11 +441,24 @@ const onSave = async () => {
 
 // 设置节点变颜色
 const setNodeBorderColor = (type, id, stroke) => {
-    MetaFlowDesignerRef.value.lf[NodeTypeFn[type]](id).setProperties({
-        rectNodeNodeStyle: {
-            stroke
-        },
-    });
+    console.log(stroke,'stroke')
+    let properties = {};
+    // 中间事件节点
+    if(type == "bpmn:intermediateCatchEvent") {
+        properties = { 
+            rectNodeNodeStyle: {
+                fill: stroke,
+            }
+        }
+    }else {
+        properties = {
+            rectNodeNodeStyle: {
+                stroke
+            }
+        }
+    }
+
+    MetaFlowDesignerRef.value.lf[NodeTypeFn[type]](id).setProperties(properties);
 };
 
 // 重置

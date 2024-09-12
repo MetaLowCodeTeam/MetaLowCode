@@ -1,5 +1,5 @@
 <template>
-    <!--  -->
+    <!-- 线节点 -->
     <el-collapse v-model="activeNames">
         <el-collapse-item name="1">
             <template #title>

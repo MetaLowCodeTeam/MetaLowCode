@@ -256,4 +256,19 @@ tool.checkRole = (key) => {
 
 }
 
+// 获取a-z A-Z 0-9 的随机字符串
+tool.generateRandomString = (length) => {
+    // 可选字符集，包括大写字母、小写字母和数字
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        // 随机选择一个字符添加到结果字符串中
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return result;
+}
+
+
 export default tool

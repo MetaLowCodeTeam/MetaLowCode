@@ -70,8 +70,12 @@
                                 <div class="item-title" v-else>
                                     <span
                                         class="mr-5"
-                                        v-if="activity.state === 0"
+                                        v-if="activity.state === 0 && activity.stepUserName"
                                     >等待 {{ activity.stepUserName }} 审批</span>
+                                    <span
+                                        class="mr-5"
+                                        v-if="activity.state === 0 && !activity.stepUserName"
+                                    >等待中</span>
                                     <span class="mr-5" v-if="activity.state === 1">
                                         由 {{ activity.stepUserName }} 审批同意
                                         <el-tooltip
