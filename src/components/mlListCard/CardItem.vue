@@ -8,6 +8,7 @@
 	border: 1px solid var(--el-border-color-light);
 	position: relative;
     margin-bottom: 10px;
+	box-shadow: var(--el-box-shadow-light);
 	&.selected {
 		border-color: var(--el-color-primary);
 	}
@@ -29,6 +30,9 @@
 		&.not-show {
 			display: none !important;
 		}
+        &.show {
+            display: block;;
+        }
 	}
 	.operate-row {
 		display: none;
@@ -38,7 +42,7 @@
 		}
 	}
 	&:hover {
-		box-shadow: var(--el-box-shadow-light);
+        border-color: var(--el-color-primary);
 		.select-row {
 			display: block;
 		}
@@ -64,7 +68,7 @@
 			:global-dsv="globalDsv"
 			:option-data="optionData"
 		/>
-		<div class="select-row" :class="{ 'not-show': row.isVfEdit }">
+		<div class="select-row" :class="{ 'not-show': row.isVfEdit, 'show': row.isVfSelected }">
 			<span
 				class="ml-a-span"
 				@click="row.isVfSelected = !row.isVfSelected"

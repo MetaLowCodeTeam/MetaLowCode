@@ -176,8 +176,8 @@
                     </div>
                     <div
                         class="pl-20 item"
-                        @click="setListStyleDialogIsShow = true"
-                        v-if="!isListCard"
+                        @click="cardListSettingShow = true"
+                        v-if="isListCard"
                     >
                         卡边列表设置
                     </div>
@@ -242,6 +242,13 @@
         :isListCard="isListCard"
         :modelName="modelName"
     />
+    <!-- 卡片列表设置 -->
+    <CardListSetting 
+        v-model="cardListSettingShow"
+        :modelName="modelName"
+        :layoutConfig="myLayoutConf"
+        :entityCode="entityCode"
+    />
 </template>
 
 <script setup>
@@ -264,6 +271,8 @@ import TreeGroupFilter from "./TreeGroupFilter.vue";
 import NewTreeGroupFilter from "./NewTreeGroupFilter.vue";
 // 其他列表设置
 import SetListStyleDialog from "./SetListStyleDialog.vue";
+// 卡片列表设置
+import CardListSetting from "./CardListSetting.vue";
 // 行复制
 import RowCopy from './RowCopy.vue';
 
@@ -537,6 +546,12 @@ const listMoreSetting = (type) => {
             break;
     }
 }
+
+
+/**
+ * 卡片列表样式设置
+ */
+ let cardListSettingShow = ref(false);
 
 // 复制
 const copySuccess = (v) => {

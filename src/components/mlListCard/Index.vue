@@ -256,7 +256,7 @@ let showEmpty = ref(false);
 let layoutConf = ref({});
 
 let listCardConf = ref({
-	span: 6,
+	span: 4,
 	formId: "",
 	formLayout: {},
 });
@@ -417,13 +417,16 @@ const editRow = (row) => {
 };
 
 const formatEditData = (row) => {
-    return {
+    let param = {
         entityName: entity.value.name,
         idFieldName: layoutConf.value.idFieldName,
         nameFieldName: layoutConf.value.nameFieldName,
         formId: listCardConf.value.formId,
-        detailId: row ? row[layoutConf.value.idFieldName] : ""
     };
+    if(row) {
+        param.detailId = row[layoutConf.value.idFieldName];
+    }
+    return param;
 }
 
 

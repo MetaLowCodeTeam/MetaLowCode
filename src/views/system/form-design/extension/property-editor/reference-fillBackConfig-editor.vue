@@ -741,7 +741,7 @@ export default {
         async loadSourceEntityFields(cb){
             this.widgetMappingDialogConf.loading = true;
             this.fillBackDialogConf.loading = true;
-            let res = await queryEntityListFields(this.sourceEntityCodes, false, false, false);
+            let res = await queryEntityListFields(this.sourceEntityCodes, false, true, true);
             if(res){
                 this.entityListFields = res.data || {};
                 if(cb){
