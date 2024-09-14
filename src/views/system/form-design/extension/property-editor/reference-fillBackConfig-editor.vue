@@ -15,7 +15,7 @@
 	<mlDialog v-model="fillBackDialogConf.isShow" title="表单回填" width="760">
 		<div v-loading="fillBackDialogConf.loading">
             <el-tabs v-model="activeTabName" class="demo-tabs">
-                <el-tab-pane label="主表单回填" name="mainTableFillBack">
+                <el-tab-pane label="同级表单回填" name="mainTableFillBack">
                     <el-form-item
                         label-width="75"
                         :class="{
@@ -146,7 +146,7 @@
                     </el-form-item>
                 </el-tab-pane>
                 <el-tab-pane 
-                    label="子表单回填" 
+                    label="子级表单回填" 
                     name="subFormFillBack"
                 >
                     <el-row class="mb-10">

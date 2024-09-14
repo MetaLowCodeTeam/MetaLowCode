@@ -291,7 +291,7 @@ const initFormLayout = async (formLayoutId) => {
             nextTick(async () => {
                 // 获取审批信息
                 let recordApprovalRes = await getRecordApprovalState(props.entityId);
-                if(recordApprovalRes.data?.flowVariables){
+                if(recordApprovalRes && recordApprovalRes.data?.flowVariables){
                     globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
                 }
                 let formData = await queryById(props.entityId);
@@ -623,6 +623,8 @@ const saveComplexFlow = async (dealWithType) => {
 .detail-main {
     // padding: 20px;
     font-size: 14px;
+    box-sizing: border-box;
+    padding: 0 20px;
 }
 .icon {
     position: relative;
