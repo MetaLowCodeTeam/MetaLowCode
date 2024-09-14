@@ -57,6 +57,8 @@
 .list-card-footer {
 	height: 41px;
 }
+
+
 </style>
 
 <template>
@@ -167,10 +169,20 @@
 							v-for="(row, inx) of tableData"
 							:key="inx"
 						>
-							<CardItem
-								:row="row"
-								:form-layout="listCardConf.formLayout"
-							/>
+							<!-- <div
+								:class="[
+									'list-card-row',
+									row.isSelected ? 'selected' : '',
+								]"
+							> -->
+                            <CardItem
+                                :row="row"
+                                :form-layout="listCardConf.formLayout"
+                                :nameFieldName="layoutConf.nameFieldName"
+                                :idFieldName="layoutConf.idFieldName"
+                            />
+								
+							<!-- </div> -->
 						</el-col>
 					</el-row>
 				</div>
@@ -525,7 +537,8 @@ const getTableList = async () => {
 	);
 	if (res) {
 		tableData.value = res.data.dataList.map((el) => {
-			el.isSelected = false;
+			el.isVfSelected = false;
+            el.isVfEdit = false;
 			return el;
 		});
 		if (tableData.value.length == 0) {
