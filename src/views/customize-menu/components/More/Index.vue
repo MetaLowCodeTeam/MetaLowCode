@@ -111,11 +111,12 @@
                     </div>
                 </template>
                 <!-- 列显示 -->
-                <div class="pl-5 mt-15 div-disabled">列显示</div>
+                <div class="pl-5 mt-15 div-disabled" v-if="!isListCard">列显示</div>
                 <div
                     class="pl-20 item"
                     :class="{'is-active':defaultColumnShow == 'SELF'}"
                     @click="changeColumnShow('SELF')"
+                    v-if="!isListCard"
                 >
                     自定义列显示
                     <div class="action-icon">
@@ -130,6 +131,7 @@
                     class="pl-20 item"
                     :class="{'is-active':defaultColumnShow == 'ALL'}"
                     @click="changeColumnShow('ALL')"
+                    v-if="!isListCard"
                 >
                     默认列显示
                     <div class="action-icon" v-if="$TOOL.checkRole('r6008')">
@@ -154,7 +156,7 @@
                     <div
                         class="pl-20 item"
                         @click="treeGroupFilterIsShow = true"
-                        v-if="!isReferenceComp && !isMainDetailField"
+                        v-if="!isReferenceComp && !isMainDetailField && !isListCard"
                     >
                         树状分组筛选
                     </div>
@@ -171,6 +173,13 @@
                         v-if="!isReferenceComp && !isMainDetailField"
                     >
                         其他列表设置
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="setListStyleDialogIsShow = true"
+                        v-if="!isListCard"
+                    >
+                        卡边列表设置
                     </div>
                 </template>
                 
@@ -230,6 +239,7 @@
         :entityCode="entityCode"
         :layoutConfig="myLayoutConf"
         @confirm="allocationSuccess"
+        :isListCard="isListCard"
         :modelName="modelName"
     />
 </template>
@@ -272,8 +282,6 @@ const emits = defineEmits([
 ]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
-    idFieldName: { type: String, default: "" },
-    nameFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
     tableColumn: { type: Array, default: () => [] },
     multipleSelection: { type: Array, default: () => [] },
@@ -282,8 +290,6 @@ const props = defineProps({
     entityCode: { type: Number, default: 0 },
     // 当前详情ID
     detailId: { type: String, default: "" },
-    // 默认查询设置
-    defaultFilterSetting: { type: Object, default: () => {} },
     // 列配置
     listParamConf: { type: Object, default: () => {} },
     // 是否引用实体
@@ -295,6 +301,11 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    // 是否卡片列表
+    isListCard: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 // layout配置
@@ -345,7 +356,7 @@ const allocationFn = async (type) => {
             let param = {
                 id:
                     props.detailId ||
-                    props.multipleSelection[0][props.idFieldName],
+                    props.multipleSelection[0][props.layoutConfig.idFieldName],
                 rightType: RightType[type].type,
             };
             let res = await checkRight(param.id, param.rightType);
@@ -386,7 +397,7 @@ const openReportForms = (target) => {
         entityCode: props.entityCode,
         detailId: props.detailId,
         defaultShow: target == 'PDF' ? 'PDF' : 'ALL',
-        multipleSelection: props.multipleSelection.map(el => el[props.idFieldName])
+        multipleSelection: props.multipleSelection.map(el => el[props.layoutConfig.idFieldName])
     });
 };
 
@@ -457,7 +468,7 @@ const openDefaultFilterDialog = () => {
     defaultFilterRefs.value.openDialog({
         name: queryEntityNameByCode(props.entityCode),
         code: props.entityCode,
-        defaultFilterSetting: props.defaultFilterSetting,
+        defaultFilterSetting: props.layoutConfig.DEFAULT_FILTER || {},
     });
 };
 
@@ -473,7 +484,7 @@ const openPrinter = () => {
         "/web/Printer?entityId=" +
             props.detailId +
             "&nameFieldName=" +
-            props.nameFieldName
+            props.layoutConfig.nameFieldName
     );
     window.open(newUrl.href);
     // router.push({

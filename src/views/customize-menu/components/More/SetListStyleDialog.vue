@@ -31,8 +31,8 @@
 					:entityCode="entityCode"
 				/>
 			</div>
-			<div class="from-title">复制设置</div>
-			<div class="from-item mb-30">
+			<div class="from-title" v-if="!isListCard">复制设置</div>
+			<div class="from-item mb-30" v-if="!isListCard">
 				<el-checkbox v-model="styleConf.copyConf.openCopy">
 					打开复制功能
 				</el-checkbox>
@@ -59,8 +59,8 @@
 				/>
 			</div>
 
-			<div class="from-title">自定义行样式设置</div>
-			<div class="from-item">
+			<div class="from-title" v-if="!isListCard">自定义行样式设置</div>
+			<div class="from-item" v-if="!isListCard">
 				<div class="mb-10 mt-10">
 					<span>自定义渲染</span>
 					<a
@@ -109,6 +109,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 是否卡片列表
+    isListCard: {
+        type: Boolean,
+        default: false,
+    }
 });
 const emits = defineEmits(["update:modelValue", "confirm"]);
 let isShow = ref(false);
@@ -152,6 +157,11 @@ let styleConf = ref({
 	rowConf: {
 		rowStyleRender: "",
 	},
+    // 卡片列表设置
+    listCardConf: {
+        pc: {},
+        mobile: {},
+    }
 });
 watch(
 	() => props.modelValue,

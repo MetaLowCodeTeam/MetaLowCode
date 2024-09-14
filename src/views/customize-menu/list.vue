@@ -38,7 +38,7 @@
                         </template>
                     </el-input>
                     <span
-                        class="queick-edit"
+                        class="quick-edit"
                         @click="openSelectFieldDialog"
                         v-if="$TOOL.checkRole('r6008')"
                     >
@@ -47,10 +47,11 @@
                         </el-icon>
                     </span>
                 </div>
-                <slot name="afterQuickQuery"></slot>
                 <div class="data-filter" v-if="isDataFilter">
                     <el-tag type="success" closable @close="clearDataFilter">当前数据已过滤</el-tag>
                 </div>
+                <slot name="afterQuickQuery"></slot>
+                
                 <div class="fr table-setting">
                     <slot name="beforeOpenBtn"></slot>
                     <el-button
@@ -98,11 +99,9 @@
                         :dataExportData="dataExportData"
                         @changeColumnShow="changeColumnShow"
                         @editColumnConfirm="getLayoutList"
-                        :idFieldName="idFieldName"
                         :entityCode="entityCode"
                         @defaultFilterChange="getLayoutList"
                         @treeGroupFilterConfirm="getLayoutList"
-                        :defaultFilterSetting="defaultFilterSetting"
                         :isReferenceComp="isReferenceComp"
                         :isMainDetailField="!!mainDetailField"
                         :modelName="modelName"
@@ -457,20 +456,18 @@ let defaultSortFields = ref([
     },
 ]);
 // 表格查询过滤
-let queryFilter = reactive({
+let queryFilter = ref({
     equation: "AND",
     items: [],
 });
 // 高级查询过滤
 let advancedFilter = ref([]);
 let advFilter = ref("all");
-let comQueriesList = reactive({});
+let comQueriesList = ref({});
 // 默认列宽度
 let titleWidthForAll = reactive({});
 // 自定义列宽度
 let titleWidthForSelf = reactive({});
-// 默认查询设置
-let defaultFilterSetting = ref({});
 let defaultFilter = ref({});
 // 快捷查询
 let quickQuery = ref("");
@@ -689,9 +686,8 @@ const getLayoutList = async () => {
         advancedFilter.value = res.data.FILTER;
         mainDetailField.value = res.data.mainDetailField;
         filterEasySql.value = "";
-        defaultFilterSetting.value = res.data.DEFAULT_FILTER || {};
-        if(defaultFilterSetting.value.config){
-            defaultFilter.value = JSON.parse(defaultFilterSetting.value.config);
+        if(res.data.DEFAULT_FILTER){
+            defaultFilter.value = JSON.parse(res.data.DEFAULT_FILTER.config);
         }
         quickQueryPlaceholder.value = res.data.quickFilterLabel;
         let { ALL, SELF } = res.data.LIST;
@@ -711,6 +707,7 @@ const getLayoutList = async () => {
             BATCH_UPDATE: res.data.BATCH_UPDATE,
             STYLE: res.data.STYLE,
             COM_TREE_GROUP: res.data.COM_TREE_GROUP,
+            DEFAULT_FILTER: res.data.DEFAULT_FILTER,
             idFieldName: idFieldName.value,
             nameFieldName: nameFieldName.value,
             entityName: entityName.value,
@@ -815,7 +812,7 @@ const refreshData = () => {
             (el) => el.layoutConfigId == advFilter.value
         );
         let config = JSON.parse(filterAdvancedFilter[0].config);
-        comQueriesList = { ...config };
+        comQueriesList.value = { ...config };
     }
     getTableList();
 };
@@ -1024,24 +1021,25 @@ const openSelectFieldDialog = () => {
 
 // 常用查询切换
 const changeAdvFilter = (e) => {
-    comQueriesList = { ...e };
+    comQueriesList.value = { ...e };
     getTableList();
 };
 
 // 立即查询
 const queryNow = (e) => {
-    queryFilter = { ...e };
+    queryFilter.value = { ...e };
     getTableList();
 };
 // 重置高级筛选
 const refreshAdvancedQuery = () => {
-    queryFilter = { equation: "AND", items: [] };
+    queryFilter.value = { equation: "AND", items: [] };
     getTableList();
 };
 
 // 导入到出数据
 let dataExportData = reactive({
     queryParm: {},
+    size: 0,
     total: 0,
 });
 
@@ -1109,8 +1107,8 @@ const getTableList = async () => {
         fieldsList: allFields.value.join(),
         pageSize: page.size,
         pageNo: page.no,
-        filter: JSON.parse(JSON.stringify(queryFilter)),
-        advFilter: { ...comQueriesList },
+        filter: JSON.parse(JSON.stringify(queryFilter.value)),
+        advFilter: { ...comQueriesList.value },
         sortFields: sortFields.value,
         quickFilter: quickQuery.value,
         builtInFilter: builtInFilter.value,
@@ -1288,7 +1286,7 @@ const copySuccess = ({type, recordId}) => {
 // 重置表格数据
 const resetList = () => {
     quickQuery.value = "";
-    queryFilter = { equation: "AND", items: [] };
+    queryFilter.value = { equation: "AND", items: [] };
     getLayoutList();
 }
 
@@ -1532,7 +1530,7 @@ div {
     .quick-query-icon {
         cursor: pointer;
     }
-    .queick-edit {
+    .quick-edit {
         position: absolute;
         width: 18px;
         height: 18px;
@@ -1546,7 +1544,7 @@ div {
         }
     }
     &:hover {
-        .queick-edit {
+        .quick-edit {
             display: block;
         }
     }

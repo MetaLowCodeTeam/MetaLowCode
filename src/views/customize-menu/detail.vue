@@ -128,8 +128,6 @@
                                         :multipleSelection="multipleSelection"
                                         :entityCode="entityCode"
                                         :detailId="detailId"
-                                        :idFieldName="idFieldName"
-                                        :nameFieldName="nameFieldName"
                                         @editColumnConfirm="editColumnConfirm"
                                         :layoutConfig="myLayoutConfig"
                                         @copySuccess="copySuccess"

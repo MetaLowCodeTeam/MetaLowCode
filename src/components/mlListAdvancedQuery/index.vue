@@ -253,8 +253,10 @@ const initData = () => {
 const autoCurrentLabel = (key) => {
     nextTick(() => {
         let findOp = opList.value.filter((el) => el.layoutConfigId == key);
-        defaultValue.value = findOp[0].configName;
-        defaultId.value = findOp[0].layoutConfigId;
+        if(findOp && findOp.length > 0) {
+            defaultValue.value = findOp[0].configName;
+            defaultId.value = findOp[0].layoutConfigId;
+        }
     });
 };
 
