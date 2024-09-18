@@ -53,11 +53,11 @@
 			}
 		}
 	}
-    .list-card-content {
-        height: calc(100% - 60px);
-        overflow: auto;
-        overflow-x: hidden;
-    }
+	.list-card-content {
+		height: calc(100% - 60px);
+		overflow: auto;
+		overflow-x: hidden;
+	}
 }
 .list-card-footer {
 	height: 41px;
@@ -120,14 +120,14 @@
 					<el-button
 						icon="Notification"
 						:disabled="multipleSelection.length != 1"
-						@click="openDetailDialog(multipleSelection[0])"
+						@click="viewRow(multipleSelection[0])"
 					>
 						打开
 					</el-button>
 					<el-button
 						icon="Edit"
 						:disabled="multipleSelection.length != 1"
-						@click="onEditRow(multipleSelection[0])"
+						@click="editRow(multipleSelection[0])"
 					>
 						编辑
 					</el-button>
@@ -169,7 +169,7 @@
 				<div v-else>
 					<el-row :gutter="20">
 						<el-col
-							:span="listCardConf.span"
+							:span="24 / listCardConf.rowNum"
 							v-for="(row, inx) of tableData"
 							:key="inx"
 						>
@@ -179,6 +179,10 @@
 								:nameFieldName="layoutConf.nameFieldName"
 								:idFieldName="layoutConf.idFieldName"
 								:entity="entity"
+								:ref="
+									(el) =>
+										handleSetFromMap(el, row.cardRecordId)
+								"
 							/>
 						</el-col>
 					</el-row>
@@ -200,12 +204,19 @@
 	</div>
 	<!-- 批量编辑 -->
 	<ListBatchUpdate ref="ListBatchUpdateRef" @onConfirm="getTableList" />
+	<!-- 编辑 -->
 	<mlCustomEdit
 		ref="editRefs"
 		:entityName="entity.name"
 		:nameFieldName="layoutConf.nameFieldName"
 		:layoutConfig="layoutConf"
 		@saveFinishCallBack="getTableList"
+	/>
+	<!-- 详情 -->
+	<mlCustomDetail
+		ref="detailRefs"
+		:entityName="entity.name"
+		@updateData="getTableList"
 	/>
 </template>
 
@@ -236,7 +247,9 @@ import CardItem from "./CardItem.vue";
 // 批量编辑
 import ListBatchUpdate from "@/views/customize-menu/components/ListBatchUpdate.vue";
 // 新建编辑
-import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+import mlCustomEdit from "@/components/mlCustomEdit/index.vue";
+// 查看详情
+import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 
 const $TOOL = inject("$TOOL");
 
@@ -256,8 +269,8 @@ let showEmpty = ref(false);
 let layoutConf = ref({});
 
 let listCardConf = ref({
-	span: 4,
-	formId: "",
+	rowNum: 4,
+	pcFormId: "",
 	formLayout: {},
 });
 
@@ -403,51 +416,79 @@ const openSelectFieldDialog = () => {
  */
 
 /**
+ * 动态设置Refs
+ */
+const fromRefMap = ref({});
+
+/** 动态设置From Ref */
+const handleSetFromMap = (el, cardRecordId) => {
+	if (el) {
+		fromRefMap.value[`From_Ref_${cardRecordId}`] = el;
+	}
+};
+
+/**
  * 操作按钮 ---------------- begin
  */
 // 编辑弹框
 let editRefs = ref();
+// 详情弹框
+let detailRefs = ref();
+// 记录更新的CardID
+let curtEditCardRecordId = ref("");
 // 新建行
 const createRow = () => {
-    editRefs.value.openDialog(formatEditData());
+	editRefs.value.openDialog(formatEditData());
 };
 // 编辑行
 const editRow = (row) => {
-    editRefs.value.openDialog(formatEditData(row));
+	curtEditCardRecordId.value = row.cardRecordId;
+	editRefs.value.openDialog(formatEditData(row));
+};
+// 查看行
+const viewRow = (row) => {
+	curtEditCardRecordId.value = row.cardRecordId;
+	detailRefs.value.openDialog(row.cardRecordId);
+};
+// 编辑完成后加载当前Card数据
+const reloadCardItem = () => {
+    if(curtEditCardRecordId.value) {
+        fromRefMap.value[`From_Ref_${curtEditCardRecordId.value}`]?.initData();
+    }
+    curtEditCardRecordId.value = "";
 };
 
 const formatEditData = (row) => {
-    let param = {
-        entityName: entity.value.name,
-        idFieldName: layoutConf.value.idFieldName,
-        nameFieldName: layoutConf.value.nameFieldName,
-        formId: listCardConf.value.formId,
-    };
-    if(row) {
-        param.detailId = row[layoutConf.value.idFieldName];
-    }
-    return param;
-}
-
+	let param = {
+		entityName: entity.value.name,
+		idFieldName: layoutConf.value.idFieldName,
+		nameFieldName: layoutConf.value.nameFieldName,
+		formId: listCardConf.value.pcFormId,
+	};
+	if (row) {
+		param.detailId = row[layoutConf.value.idFieldName];
+	}
+	return param;
+};
 
 // 批量编辑
 let ListBatchUpdateRef = ref("");
 // 打开批量编辑弹框
 const openBatchUpdateDialog = () => {
-    if(batchUpdateConf.value.length < 1) {
-        ElMessage.error("该实体没有设置可编辑字段");
-        return
-    }
-    if(multipleSelection.value.length < 1) {
-        ElMessage.error("请选择要批量编辑的数据");
-        return
-    }
-    ListBatchUpdateRef.value.openDialog(
-        batchUpdateConf.value,
-        multipleSelection.value,
-        entity.name,
-        layoutConf.value.idFieldName
-    );
+	if (batchUpdateConf.value.length < 1) {
+		ElMessage.error("该实体没有设置可编辑字段");
+		return;
+	}
+	if (multipleSelection.value.length < 1) {
+		ElMessage.error("请选择要批量编辑的数据");
+		return;
+	}
+	ListBatchUpdateRef.value.openDialog(
+		batchUpdateConf.value,
+		multipleSelection.value,
+		entity.name,
+		layoutConf.value.idFieldName
+	);
 };
 
 /**
@@ -496,6 +537,7 @@ const loadLayoutConf = async () => {
 			chosenListType,
 			SEARCH,
 			STYLE,
+            CARD,
 		} = res.data;
 		// 快速查询底纹
 		quickQueryConf.placeholder = quickFilterLabel;
@@ -507,6 +549,10 @@ const loadLayoutConf = async () => {
 		if (BATCH_UPDATE) {
 			batchUpdateConf.value = JSON.parse(BATCH_UPDATE.config);
 		}
+        // CARD配置
+        if(CARD) {
+            listCardConf.value = Object.assign(listCardConf.value, JSON.parse(CARD.config));
+        }
 		// 如果存在快速搜索字段
 		if (SEARCH) {
 			quickQueryConf.dialogConf = {
@@ -575,7 +621,8 @@ const getTableList = async () => {
 	if (res) {
 		tableData.value = res.data.dataList.map((el) => {
 			el.isVfSelected = false;
-            el.isVfEdit = false;
+			el.isVfEdit = false;
+			el.cardRecordId = el[layoutConf.value.idFieldName];
 			return el;
 		});
 		if (tableData.value.length == 0) {
@@ -584,6 +631,7 @@ const getTableList = async () => {
 		page.total = res.data.pagination.total;
 		dataExportData.size = res.data.dataList.length;
 		dataExportData.total = res.data.pagination.total;
+        reloadCardItem();
 		console.log("列表数据----------------", tableData.value);
 	}
 	pageLoading.value = false;
@@ -591,7 +639,7 @@ const getTableList = async () => {
 
 // 加载表单配置
 const loadFormLayout = async () => {
-	let res = await getFormLayout(entity.value.name, listCardConf.value.formId);
+	let res = await getFormLayout(entity.value.name, listCardConf.value.pcFormId);
 	if (res) {
 		console.log(res, "res");
 		// formLayout.value = res.data;

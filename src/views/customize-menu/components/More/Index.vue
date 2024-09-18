@@ -246,8 +246,9 @@
     <CardListSetting 
         v-model="cardListSettingShow"
         :modelName="modelName"
-        :layoutConfig="myLayoutConf"
+        :layout="myLayoutConf"
         :entityCode="entityCode"
+        @confirm="allocationSuccess"
     />
 </template>
 

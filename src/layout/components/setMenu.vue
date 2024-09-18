@@ -346,6 +346,7 @@
 							v-model="cutMenu.useComponent"
 							placeholder="选择自定义列表模板"
 							style="width: 100%"
+                            @change="useComponentChange"
 						>
 							<el-option
 								v-for="item in customListEntry"
@@ -363,6 +364,7 @@
                         <el-checkbox
                             class="ml-5"
 							v-model="cutMenu.mobileShow"
+                            :disabled="disabledMobileShow"
 							label="是否在移动端显示"
 						/>
                     </div>
@@ -565,6 +567,7 @@ const nodeClick = (node) => {
     if(cutMenu.value.mobileShow == undefined){
         cutMenu.value.mobileShow = true;
     }
+    useComponentChange();
 };
 
 let isShowIconDialog = ref(false);
@@ -737,6 +740,10 @@ const confirmMenu = () => {
 		$ElMessage.warning("请选择表单");
 		return;
 	}
+    if(cutMenu.value.type == 1 && cutMenu.useCustom && !cutMenu.useComponent) {
+        $ElMessage.warning("请选择自定义列表模板");
+		return;
+    }
 	// 如果是系统内置
 	if (systemEntityName.value.includes(cutMenu.value.entityName)) {
 		cutMenu.value.type = 4;
@@ -947,6 +954,16 @@ const formatMenuList = () => {
 	});
 	return saveMenu;
 };
+// 禁止在移动端显示
+let disabledMobileShow = ref(false);
+// 自定义列表模板切换
+const useComponentChange = () => {
+    if(cutMenu.value.useComponent == 'ListCard') {
+        disabledMobileShow.value = true;
+        cutMenu.value.mobileShow = false;
+    }
+    
+}
 </script>
 
 <style lang="scss" scoped>

@@ -7,7 +7,7 @@
 	padding: 10px;
 	border: 1px solid var(--el-border-color-light);
 	position: relative;
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 	box-shadow: var(--el-box-shadow-light);
 	&.selected {
 		border-color: var(--el-color-primary);
@@ -30,9 +30,9 @@
 		&.not-show {
 			display: none !important;
 		}
-        &.show {
-            display: block;;
-        }
+		&.show {
+			display: block;
+		}
 	}
 	.operate-row {
 		display: none;
@@ -42,7 +42,7 @@
 		}
 	}
 	&:hover {
-        border-color: var(--el-color-primary);
+		border-color: var(--el-color-primary);
 		.select-row {
 			display: block;
 		}
@@ -51,6 +51,9 @@
 .prt-2 {
 	position: relative;
 	top: 2px;
+}
+.disabled {
+	color: #a8abb2;
 }
 </style>
 
@@ -68,7 +71,10 @@
 			:global-dsv="globalDsv"
 			:option-data="optionData"
 		/>
-		<div class="select-row" :class="{ 'not-show': row.isVfEdit, 'show': row.isVfSelected }">
+		<div
+			class="select-row"
+			:class="{ 'not-show': row.isVfEdit, show: row.isVfSelected }"
+		>
 			<span
 				class="ml-a-span"
 				@click="row.isVfSelected = !row.isVfSelected"
@@ -78,7 +84,37 @@
 				</el-icon>
 				{{ row.isVfSelected ? "取消选中" : "选中" }}
 			</span>
-			<span class="ml-a-span fr" @click="editRow">
+			<el-tooltip
+				class="box-item"
+				effect="dark"
+				content="记录正在审批中，禁止编辑"
+				placement="top"
+				v-if="row.approvalStatus.value == 1"
+			>
+				<span class="ml-a-span fr disabled">
+					<el-icon class="prt-2"><Edit /></el-icon>
+					编辑
+				</span>
+			</el-tooltip>
+			<el-tooltip
+				class="box-item"
+				effect="dark"
+				content="记录已完成审批，禁止编辑"
+				placement="top"
+				v-else-if="
+					row.approvalStatus.value != 1 &&
+					!checkModifiableEntity(
+						row[idFieldName],
+						row.approvalStatus.value
+					)
+				"
+			>
+				<span class="ml-a-span fr disabled">
+					<el-icon class="prt-2"><Edit /></el-icon>
+					编辑
+				</span>
+			</el-tooltip>
+			<span class="ml-a-span fr" @click="editRow" v-else>
 				<el-icon class="prt-2"><Edit /></el-icon>
 				编辑
 			</span>
@@ -99,12 +135,15 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, onMounted, ref, watch } from "vue";
+import useCommonStore from "@/store/modules/common";
+const { checkModifiableEntity } = useCommonStore();
 /**
  * Api
  */
 import { saveRecord } from "@/api/crud";
 import { ElMessage } from "element-plus";
+
 const props = defineProps({
 	formLayout: {
 		type: Object,
@@ -127,7 +166,16 @@ const props = defineProps({
 		default: "",
 	},
 });
+
 let curtFormLayout = ref({});
+
+watch(
+	() => props.formLayout,
+	() => {
+		initData();
+	},
+	{ deep: true }
+);
 
 let globalDsv = ref({
 	uploadServer: import.meta.env.VITE_APP_BASE_API,
@@ -137,6 +185,10 @@ let optionData = ref({});
 let vFormRef = ref();
 
 onMounted(() => {
+	initData();
+});
+
+const initData = () => {
 	curtFormLayout.value = props.formLayout || {};
 	let { optionData, formUploadParam, layoutJson } = curtFormLayout.value;
 	optionData.value = optionData || {};
@@ -160,7 +212,7 @@ onMounted(() => {
 			});
 		});
 	});
-});
+};
 
 let loading = ref(false);
 
@@ -188,10 +240,14 @@ const confirmOperate = () => {
 		.then(async (formData) => {
 			if (formData) {
 				let { entity, idFieldName, row } = props;
-				let res = await saveRecord(entity.name, row[idFieldName], formData);
+				let res = await saveRecord(
+					entity.name,
+					row[idFieldName],
+					formData
+				);
 				if (res) {
 					props.row.isVfEdit = false;
-                    vFormRef.value.setReadMode(true);
+					vFormRef.value.setReadMode(true);
 					ElMessage.success("保存成功");
 				} else {
 					ElMessage.error("保存失败");
@@ -208,4 +264,8 @@ const confirmOperate = () => {
 	//     loading.value = false;
 	// }, 2000);
 };
+
+defineExpose({
+	initData,
+});
 </script>

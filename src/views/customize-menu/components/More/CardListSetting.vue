@@ -21,26 +21,30 @@
 <template>
 	<!--  -->
 	<mlDialog title="卡片列表设置" v-model="isShow" width="600px">
-		<div v-loading="loading" class="set-list-style">
+		<div
+			v-loading="loading"
+			:element-loading-text="loadingText"
+			class="set-list-style"
+		>
 			<el-row :gutter="20">
-				<el-col :span="12">
+				<el-col :span="24">
 					<div class="from-title">选择渲染表单（PC）</div>
 					<div class="from-item mb-20">
 						<el-select
-							v-model="value"
+							v-model="cardSetting.pcFormId"
 							placeholder="清选择渲染表单"
 							class="w-100"
 						>
 							<el-option
-								v-for="item in options"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
+								v-for="item in formList"
+								:key="item.formLayoutId"
+								:label="item.layoutName"
+								:value="item.formLayoutId"
 							/>
 						</el-select>
 					</div>
 				</el-col>
-				<el-col :span="12">
+				<!-- <el-col :span="12">
 					<div class="from-title">选择渲染表单（移动端）</div>
 					<div class="from-item mb-20">
 						<el-select
@@ -56,67 +60,26 @@
 							/>
 						</el-select>
 					</div>
-				</el-col>
+				</el-col> -->
 				<el-col :span="24">
 					<div class="from-title">
 						一排展示几个
 						<span class="text-info">
-							（仅PC生效，移动端因尺寸问题固定展示1个）
+							<!-- （仅PC生效，移动端因尺寸问题固定展示1个） -->
+							（仅PC生效，移动端暂不支持）
 						</span>
+					</div>
+					<div class="from-item">
+						<el-radio-group v-model="cardSetting.rowNum">
+							<el-radio :label="1">1</el-radio>
+							<el-radio :label="2">2</el-radio>
+							<el-radio :label="3">3</el-radio>
+							<el-radio :label="4">4</el-radio>
+							<el-radio :label="6">6</el-radio>
+						</el-radio-group>
 					</div>
 				</el-col>
 			</el-row>
-			<!-- <div>
-				<div class="from-title">选择渲染表单（PC）</div>
-				<div class="from-item mb-20">
-					<el-select
-						v-model="value"
-						placeholder="清选择渲染表单"
-						class="w-100"
-					>
-						<el-option
-							v-for="item in options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						/>
-					</el-select>
-				</div>
-			</div>
-            <div>
-				<div class="from-title">选择渲染表单（移动端）</div>
-				<div class="from-item mb-20">
-					<el-select
-						v-model="value"
-						placeholder="清选择渲染表单"
-						class="w-100"
-					>
-						<el-option
-							v-for="item in options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						/>
-					</el-select>
-				</div>
-			</div>
-            <div>
-				<div class="from-title">是否显示卡片Title</div>
-				<div class="from-item mb-30">
-					<el-select
-						v-model="value"
-						placeholder="清选择渲染表单"
-						class="w-100"
-					>
-						<el-option
-							v-for="item in options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						/>
-					</el-select>
-				</div>
-			</div> -->
 		</div>
 		<template #footer>
 			<div class="footer-div">
@@ -137,54 +100,104 @@ import { ElMessage } from "element-plus";
 /**
  * API
  */
+import { getFormLayoutList } from "@/api/system-manager";
 import layoutConfig from "@/api/layoutConfig";
-// 代码编辑器
-import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
+
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
+
 const props = defineProps({
 	modelValue: null,
-	layoutConfig: { type: Object, default: () => {} },
+	layout: { type: Object, default: () => {} },
 	// 实体模块名称
 	modelName: {
 		type: String,
 		default: "",
 	},
+	entityCode: { type: Number },
 });
 
-const options = [
-	{
-		value: "Option1",
-		label: "Option1",
-	},
-	{
-		value: "Option2",
-		label: "Option2",
-	},
-	{
-		value: "Option3",
-		label: "Option3",
-	},
-	{
-		value: "Option4",
-		label: "Option4",
-	},
-	{
-		value: "Option5",
-		label: "Option5",
-	},
-];
 const emits = defineEmits(["update:modelValue", "confirm"]);
 
 let isShow = ref(false);
 
+let loading = ref(false);
+let loadingText = ref("");
+
+let cardSetting = ref({
+	// PC表单
+	pcFormId: "",
+	// 移动端表单
+	mobileFormId: "",
+	// 一排展示几个
+	rowNum: 4,
+});
+// 保存时的ID
+let layoutConfigId = ref("");
+
 watch(
 	() => isShow.value,
 	(v) => {
+		console.log(v, "v");
 		emits("update:modelValue", v);
 	},
 	{ deep: true }
 );
 
+let formList = ref([]);
+// 加载表单
+const loadFormList = async () => {
+	loading.value = true;
+	loadingText.value = "表单加载中...";
+	let res = await getFormLayoutList(queryEntityNameByCode(props.entityCode));
+	if (res) {
+		formList.value = res.data;
+	}
+	loading.value = false;
+};
+
 watchEffect(() => {
+	let { modelValue, modelName, layout } = props;
 	isShow.value = props.modelValue;
+	if (isShow.value) {
+		layoutConfigId.value = "";
+		if (layout.CARD) {
+			cardSetting.value = Object.assign(
+				cardSetting.value,
+				JSON.parse(layout.CARD.config)
+			);
+			layoutConfigId.value = layout.CARD.layoutConfigId;
+		}
+
+		loadFormList();
+		console.log(layout, "layoutConfig");
+	}
 });
+
+// 保存设置
+const onSave = async () => {
+	if (!cardSetting.value.pcFormId) {
+		ElMessage.error("请先选择渲染表单...");
+		return;
+	}
+	let param = {
+		config: JSON.stringify(cardSetting.value),
+		entityCode: props.entityCode,
+	};
+
+	loading.value = true;
+	loadingText.value = "设置保存中...";
+	let res = await layoutConfig.saveConfig(
+		layoutConfigId.value,
+		"CARD",
+		param,
+		props.modelName
+	);
+	if (res) {
+		ElMessage.success("保存成功");
+		emits("confirm");
+		emits("update:modelValue", false);
+	}
+	loading.value = false;
+};
 </script>
