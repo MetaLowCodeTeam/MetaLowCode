@@ -109,7 +109,16 @@
                 <el-form-item label="别名">
                     <el-input v-model="editColumnDialogData.columnAliasName" />
                 </el-form-item>
-                <el-form-item label="附加过滤条件">
+                <el-form-item label="数据过滤条件" v-if="editColumnDialogData.isCustomLabel">
+                    <el-input
+                        v-model="editColumnDialogData.filterEasySql"
+                        class="w-100"
+                        :autosize="{ minRows: 2, maxRows: 4 }"
+                        type="textarea"
+                        placeholder="请输入过滤条件"
+                    />
+                </el-form-item>
+                <el-form-item label="显示过滤条件">
                     <el-row>
                         <el-col :span="24">
                             <div
@@ -212,13 +221,7 @@ const addShowColumn = (column) => {
 // 列弹框
 let editColumnDialogIsShow = ref(false);
 // 编辑列数据
-let editColumnDialogData = reactive({
-    columnAliasName: "",
-    filter: {
-        equation: "OR",
-        items: [],
-    },
-});
+let editColumnDialogData = reactive();
 
 // 编辑显示列
 const editColumn = (column, inx) => {
@@ -226,7 +229,17 @@ const editColumn = (column, inx) => {
     let editObj = Object.assign({}, column);
     editObj.columnAliasName = column.columnAliasName || "";
     editObj.columnEditInx = inx;
-    editColumnDialogData = Object.assign(editColumnDialogData, editObj);
+    editColumnDialogData = Object.assign(
+        {},
+        {
+            columnAliasName: "",
+            filter: {
+                equation: "OR",
+                items: [],
+            },
+        }, 
+        editObj
+    );
 };
 
 // 是否显示列标记 * 号
@@ -547,5 +560,8 @@ div {
     &.is-active {
         color: var(--el-color-primary);
     }
+}
+.el-form-item {
+    align-items: initial;
 }
 </style>

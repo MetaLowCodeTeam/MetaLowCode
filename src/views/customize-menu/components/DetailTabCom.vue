@@ -150,6 +150,7 @@ const router = useRouter();
 const props = defineProps({
     cutTab: { type: String },
     entityId: { type: String, default: "" },
+    idFieldName: { type: String, default: "" },
     tabs: { type: Object, default: () => {} },
 });
 const emits = defineEmits(['closeDialog'])
@@ -418,7 +419,7 @@ const getTableList = async () => {
     let filterEasySql = null;
     // 是自定义标签
     if(curtTab.value.isCustomLabel) {
-        filterEasySql = curtTab.value.filterEasySql.replace(`{${idFieldName.value}}`,`'${props.entityId}'`);
+        filterEasySql = curtTab.value.filterEasySql.replace(`{${props.idFieldName}}`,`'${props.entityId}'`);
     }else {
         filter = {
             equation: "AND",

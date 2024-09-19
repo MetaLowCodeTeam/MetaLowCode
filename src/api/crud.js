@@ -206,3 +206,12 @@ export function updateRecordList(body) {
 export function queryDetailEntityFields(entityName) {
     return http.get('/crud/queryDetailEntityFields', { entityName })
 }
+
+// 详情-修改历史
+export function queryByRecordId(recordId, pageNo, pageSize) {
+    return http.get('/revisionHistory/queryByRecordId', { recordId, pageNo, pageSize })
+}
+// 修改历史-修改记录详情
+export function revisionHistoryDetailsById(revisionHistoryId) {
+    return http.get('/revisionHistory/detailsById', { revisionHistoryId })
+}

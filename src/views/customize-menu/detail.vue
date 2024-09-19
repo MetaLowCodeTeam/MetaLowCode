@@ -73,6 +73,7 @@
 							:cutTab="cutTab"
 							:tabs="detailDialog.tab"
 							:entityId="detailId"
+                            :idFieldName="idFieldName"
                             @closeDialog="closeDialog"
 						/>
 					</div>
@@ -115,6 +116,23 @@
                                             </el-icon>
                                         </span>
                                         编辑
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="24" v-if="contentSlots.beforeRevisionHistory">
+                                    <slot name="beforeRevisionHistory"></slot>
+                                </el-col>
+                                <el-col :span="24" v-if="detailParamConf.showRevisionHistory">
+                                    <el-button
+                                        type="primary"
+                                        plain
+                                        @click="toRevisionHistory(detailId)"
+                                    >
+                                        <span class="mr-5 icon-top-1">
+                                            <el-icon>
+                                                <ElIconClock />
+                                            </el-icon>
+                                        </span>
+                                        修改历史
                                     </el-button>
                                 </el-col>
                                 <el-col :span="24" v-if="contentSlots.beforeMoreBtn">
@@ -163,6 +181,7 @@
             @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
         />
+        <DetailRevisionHistoryDialog ref="DetailRevisionHistoryRef"/>
 	</el-drawer>
 </template>
 
@@ -202,6 +221,8 @@ import { ElMessage } from "element-plus";
  * 组件
  */
 import mlApproveBar from "@/components/mlApproveBar/index.vue";
+// 修改历史
+import DetailRevisionHistoryDialog from './components/DetailRevisionHistoryDialog.vue';
 /**
  * API
  */
@@ -228,6 +249,7 @@ const detailParamConf = ref({
     showNewRelatedBtn: true,
     showEditBtn: true,
     showMoreBtn: true,
+    showRevisionHistory: true,
 })
 
 // 插槽内容
@@ -394,7 +416,6 @@ const getLayoutList = async () => {
 		formatNewRelated(res.data.ADD);
 		idFieldName.value = res.data.idFieldName;
 		nameFieldName.value = res.data.nameFieldName;
-	
 		initData();
 	} else {
 		loading.value = false;
@@ -456,7 +477,6 @@ const initData = async () => {
 						vFormRef.value.setFormData(rowResData.value);
 						nextTick(() => {
 							vFormRef.value.reloadOptionData();
-							
 							vFormRef.value.setReadMode();
 							globalDsv.value.openCreateDialog = openCreateDialog;
 						});
@@ -630,6 +650,12 @@ const showApprovalRelated = () => {
 
 }
 
+// 修改历史
+let DetailRevisionHistoryRef = ref();
+const toRevisionHistory = (recordId) => {
+    DetailRevisionHistoryRef.value?.openDialog(recordId);
+}
+
 
 // 暴露方法给父组件调用
 defineExpose({
@@ -637,7 +663,8 @@ defineExpose({
     getCurEntity,
     getCurDetailInfo,
     toEdit,
-    toMoreAction
+    toMoreAction,
+    toRevisionHistory,
 });
 </script>
 
