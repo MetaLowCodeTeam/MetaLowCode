@@ -226,11 +226,7 @@ export default {
 
 	methods: {
 		setDefaultValue() {
-			if (this.field.options.disabled || this.isReadMode) {
-				return
-			}
-
-			if (this.getValue()) {
+			if (this.isReadMode || this.getValue()) {
 				return
 			}
 
