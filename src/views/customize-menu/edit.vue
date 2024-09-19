@@ -441,14 +441,16 @@ const cloneDeep = (data) => {
     return JSON.parse(JSON.stringify(data));
 }
 
+// 保存并刷新
+const confirmRefresh = () => {
+    confirm('notCloseDialog')
+}
 
 /**
  * 导出方法
  */
 
-const confirmRefresh = () => {
-    confirm('notCloseDialog')
-}
+
 
 // 列表子表单回调所需
 const setRowRecordId = (id) => {

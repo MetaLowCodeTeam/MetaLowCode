@@ -244,8 +244,11 @@ const cardSortCommand = (e) => {
     getTableList();
 };
 
+let curtTab = ref({});
+
 // 初始化数据
 const initData = async () => {
+    tableData.value = [];
     tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
     defaultShowType.value = "table";
     let filterTabs = tabs.value.filter((el) => el.entityName == props.cutTab);
@@ -253,6 +256,7 @@ const initData = async () => {
         entityCode.value = filterTabs[0].entityCode;
         entityName.value = filterTabs[0].entityName;
         fieldName.value = filterTabs[0].fieldName;
+        curtTab.value = filterTabs[0];
     }
     // console.log(tabs);
     loading.value = true;
@@ -285,8 +289,9 @@ const initData = async () => {
         if (tableColumn.value.length > 0) {
             refreshData();
         }
+    }else {
+        loading.value = false;
     }
-    loading.value = false;
 };
 
 const goPath = () => {
@@ -409,14 +414,13 @@ let layoutJson = ref(null);
 let optionData = ref({});
 const getTableList = async () => {
     loading.value = true;
-
-    let param = {
-        mainEntity: entityName.value,
-        fieldsList: allFields.value.join(),
-        pageSize: page.size,
-        pageNo: page.no,
-        // entityId
-        filter: {
+    let filter = null;
+    let filterEasySql = null;
+    // 是自定义标签
+    if(curtTab.value.isCustomLabel) {
+        filterEasySql = curtTab.value.filterEasySql.replace(`{${idFieldName.value}}`,`'${props.entityId}'`);
+    }else {
+        filter = {
             equation: "AND",
             items: [
                 {
@@ -425,20 +429,30 @@ const getTableList = async () => {
                     value: props.entityId,
                 },
             ],
-        },
-        // advFilter: { ...comQueriesList },
+        };
+    }
+    // let 
+    // curtTab.value
+    let param = {
+        mainEntity: entityName.value,
+        fieldsList: allFields.value.join(),
+        pageSize: page.size,
+        pageNo: page.no,
         sortFields: sortFields.value,
         quickFilter: quickQueryVal.value,
     };
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,
-        param.filter,
+        filter,
         param.pageSize,
         param.pageNo,
         param.sortFields,
         param.advFilter,
-        param.quickFilter
+        param.quickFilter,
+        null,
+        null,
+        filterEasySql
     );
     if (res && res.data) {
         tableData.value = res.data.dataList;

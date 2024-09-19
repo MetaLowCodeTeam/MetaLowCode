@@ -1,5 +1,5 @@
 <template>
-    <mlDialog title="配置显示项" v-model="isShow" width="650px">
+    <mlDialog :title="title" v-model="isShow" width="650px">
         <div v-loading="loading">
             <div class="clearfix">
                 <div class="sortable-box fl">
@@ -56,14 +56,14 @@
                     </el-input>
                     <div
                         class="source-column-box"
-                        v-if="notShowColumn().length > 0"
-                        :class="{'need-auto':notShowColumn().length > 8}"
+                        v-if="columnList.length > 0"
+                        :class="{'need-auto':columnList.length > 8}"
                     >
                         <div
                             class="column-li"
-                            v-for="(column,inx) of notShowColumn()"
+                            v-for="(column,inx) of columnList"
                             :key="inx"
-                            @click="addShowColumn(column)"
+                            @click="beforeAddShowColumn(column)"
                         >
                             <div class="fl column-item text-ellipsis">{{ column.entityLabel }}</div>
                             <span class="fr icon-span">
@@ -126,17 +126,24 @@
             <el-button type="primary" @click="confirmColumnEdit">确认</el-button>
         </template>
     </mlDialog>
+    <DetailCustomLabelDialog ref="DetailCustomLabelRef" @confirm="addShowColumn"/>
 </template>
 
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
 import { ref, inject, reactive, onMounted } from "vue";
+/**
+ * 组件
+ */
+// 自定义标签设置组件
+import DetailCustomLabelDialog from './DetailCustomLabelDialog.vue';
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
     entityCode: { type: Number, default: 0 },
     entityName: { type: String, default: "" },
     applyType: { type: String, default: "TAB" },
+    title: { type: String, default: "配置页签" }
 });
 const emit = defineEmits(["update:modelValue", "confirm"]);
 const $ElMessage = inject("$ElMessage");
@@ -154,6 +161,8 @@ let sourceColumn = ref([]);
 // 筛选字段
 let searchField = ref("");
 
+let columnList = ref([]);
+
 onMounted(() => {
     document.body.ondrop = function (event) {
         event.preventDefault();
@@ -161,16 +170,32 @@ onMounted(() => {
     };
 })
 
-const notShowColumn = () => {
+const formatShowColumn = () => {
     if (!searchField) {
-        return sourceColumn.value;
+        columnList.value = [...sourceColumn.value];
     } else {
-        return sourceColumn.value.filter(
+        columnList.value = sourceColumn.value.filter(
             (el) => el.entityLabel?.indexOf(searchField.value) != -1
         );
     }
+    if(props.applyType == 'TAB') {
+        columnList.value.push({
+            entityLabel: "自定义标签",
+            entityName: "custom",
+        })
+    }
 };
-
+// 指定哦标签设置Ref
+let DetailCustomLabelRef = ref();
+// 添加显示列前
+const beforeAddShowColumn = (column) => {
+    // 如果是添加自定义标签
+    if(column.entityName == 'custom') {
+        DetailCustomLabelRef.value?.openDialog()
+    }else {
+        addShowColumn(column);
+    }
+}
 // 添加显示列
 const addShowColumn = (column) => {
     showColumn.value.push(column);
@@ -178,6 +203,7 @@ const addShowColumn = (column) => {
         const el = sourceColumn.value[index];
         if (column.entityName == el.entityName) {
             sourceColumn.value.splice(index, 1);
+            formatShowColumn();
             return;
         }
     }
@@ -224,7 +250,11 @@ const confirmColumnEdit = () => {
 // 删除显示列
 const delColumn = (column, inx) => {
     showColumn.value.splice(inx, 1);
-    sourceColumn.value.push(column);
+    // 非自定义实体
+    if(!column.isCustomLabel) {
+        sourceColumn.value.push(column);
+    }
+    formatShowColumn();
 };
 
 // 打开弹框
@@ -259,6 +289,7 @@ const getAllColumn = async () => {
             sourceColumn.value = res.data.filter(
                 (el) => !hasEntityName.value.includes(el.entityName)
             );
+            formatShowColumn();
         }
     }
     loading.value = false;
@@ -271,6 +302,7 @@ const onSave = async () => {
         entityCode: props.entityCode,
         applyType: props.applyType,
     };
+    // return
     loading.value = true;
     let res = await $API.layoutConfig.saveConfig(
         layoutConfigId.value,

@@ -21,6 +21,7 @@
         :entityName="entityName"
         @confirm="confirm"
         applyType="ADD"
+        title="配置新建相关"
     />
 </template>
 

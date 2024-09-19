@@ -493,7 +493,8 @@ const copySuccess = ({type, recordId}) => {
 let editRefs = ref();
 const onEditRow = (localDsv, formId) => {
     let tempV = {
-        detailId: detailId.value
+        detailId: detailId.value,
+        idFieldName: idFieldName.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
     !!formId && (tempV.formId = formId)
