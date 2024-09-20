@@ -67,7 +67,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp && $TOOL.checkRole('r' + entityCode + '-3')"
                     >
                         编辑
                     </el-button>
@@ -84,7 +84,7 @@
                         type="primary" 
                         icon="Plus" 
                         @click="onAdd"
-                        v-if="listParamConf.showAddBtn"
+                        v-if="listParamConf.showAddBtn && $TOOL.checkRole('r' + entityCode + '-2')" 
                     >
                         新建
                     </el-button>
@@ -260,7 +260,7 @@
                                 </el-button>
                             </el-tooltip>
                             <el-button
-                                v-else
+                                v-else-if="$TOOL.checkRole('r' + entityCode + '-3')"
                                 size="small"
                                 icon="el-icon-edit"
                                 link

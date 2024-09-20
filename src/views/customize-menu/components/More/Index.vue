@@ -7,7 +7,7 @@
                 class="pl-20 item"
                 @click="allocationFn('del')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="listParamConf.showDelBtn"
+                v-if="listParamConf.showDelBtn && $TOOL.checkRole('r' + entityCode + '-4')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -25,7 +25,7 @@
                 class="pl-20 item"
                 @click="allocationFn('allocation')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField"
+                v-if="!isReferenceComp && !isMainDetailField && $TOOL.checkRole('r' + entityCode + '-5')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -38,7 +38,7 @@
                 class="pl-20 item"
                 @click="allocationFn('share')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField"
+                v-if="!isReferenceComp && !isMainDetailField && $TOOL.checkRole('r' + entityCode + '-6')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -51,7 +51,7 @@
                 class="pl-20 item"
                 @click="allocationFn('unShare')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField"
+                v-if="!isReferenceComp && !isMainDetailField && $TOOL.checkRole('r' + entityCode + '-6')"
             >
                 <span class="icon-t1">
                     <el-icon>
