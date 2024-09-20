@@ -92,7 +92,11 @@
         </div>
     </ml-dialog>
     <!-- 分配 -->
-    <Allocation ref="allocationRefs" idFieldName="chartId" @allocationSuccess="allocationSuccess" />
+    <Allocation 
+        ref="allocationRefs" 
+        :layoutConfig="{'idFieldName': 'chartId'}" 
+        @allocationSuccess="allocationSuccess" 
+    />
 </template>
    
 <script setup>

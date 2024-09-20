@@ -75,6 +75,7 @@
 							:entityId="detailId"
                             :idFieldName="idFieldName"
                             @closeDialog="closeDialog"
+                            @addRow="onAdd"
 						/>
 					</div>
 				</el-col>
@@ -109,7 +110,6 @@
                                         @click="onEditRow"
                                         :disabled="!checkModifiableEntity(detailId, approvalStatus?.value)"
                                         :title="getEditBtnTitle()"
-                                        v-if="$TOOL.checkRole('r' + entityCode + '-3')"
                                     >
                                         <span class="mr-5">
                                             <el-icon>
@@ -472,7 +472,6 @@ const initData = async () => {
 					detailName.value = queryByIdRes.data[nameFieldName.value];
 					vFormRef.value.setFormJson(res.data.layoutJson);
                     rowResData.value = queryByIdRes.data || {};
-					vFormRef.value.resetForm();
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
 					nextTick(() => {
 						vFormRef.value.setFormData(rowResData.value);
@@ -482,7 +481,6 @@ const initData = async () => {
 							globalDsv.value.openCreateDialog = openCreateDialog;
 						});
 					});
-
 					noeData.value = false;
 				} else {
 					noeData.value = true;
@@ -532,6 +530,8 @@ const onAdd = (e) => {
 	tempV.sourceRecord = multipleSelection.value[0];
     editEmits(tempV)
 };
+
+
 
 const editEmits = (obj) => {
     // emits('onEdit', obj)

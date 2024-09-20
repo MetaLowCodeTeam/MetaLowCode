@@ -60,6 +60,14 @@
                     >
                         <SvgIcon icon-name="grid_n" />
                     </el-button>
+                    <el-button 
+                        type="primary" 
+                        icon="Plus" 
+                        @click="onAdd"
+                        v-if="$TOOL.checkRole('r' + entityCode + '-2')" 
+                    >
+                        新建
+                    </el-button>
                 </div>
             </div>
             <div class="min-table mt-20" v-if="defaultShowType == 'table'">
@@ -153,7 +161,7 @@ const props = defineProps({
     idFieldName: { type: String, default: "" },
     tabs: { type: Object, default: () => {} },
 });
-const emits = defineEmits(['closeDialog'])
+const emits = defineEmits(['closeDialog','addRow'])
 const $API = inject("$API");
 
 watch(
@@ -491,6 +499,12 @@ const cardLayoutLoading = (loadingStatus, item) => {
 const viewTableChange = () => {
     defaultShowType.value = 'table';
     cardActiveNames.value = [];
+}
+
+const onAdd = () => {
+    emits("addRow", {
+        entityName: entityName.value
+    });
 }
 
 

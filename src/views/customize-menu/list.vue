@@ -67,7 +67,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp && $TOOL.checkRole('r' + entityCode + '-3')"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp"
                     >
                         编辑
                     </el-button>
@@ -260,7 +260,7 @@
                                 </el-button>
                             </el-tooltip>
                             <el-button
-                                v-else-if="$TOOL.checkRole('r' + entityCode + '-3')"
+                                v-else
                                 size="small"
                                 icon="el-icon-edit"
                                 link
