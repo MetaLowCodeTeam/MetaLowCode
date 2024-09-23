@@ -219,7 +219,7 @@ const operateItem = (inx, targe, item) => {
 		cancelButtonText: "取消",
 		inputValue,
 		inputPattern:
-			/^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+			/^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
 		inputErrorMessage: "输入不正确",
 		beforeClose: (action, instance, done) => {
 			if (action === "confirm") {

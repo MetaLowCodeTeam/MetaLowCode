@@ -12,10 +12,10 @@
 							<el-form-item label="显示名称：">
 								<el-input link type="primary" v-model="entityProps.label" :readonly="true">
 									<template #suffix>
-										<el-button 
-                                            link 
-                                            type="primary" 
-                                            icon="el-icon-edit" 
+										<el-button
+                                            link
+                                            type="primary"
+                                            icon="el-icon-edit"
                                             title="修改显示名称"
 											@click="modifyEntityLabel"
                                         >
@@ -32,10 +32,10 @@
 							<el-form-item label="名称字段：">
 								<el-input link type="primary" v-model="entityProps.nameField" :readonly="true">
 									<template #suffix>
-										<el-button 
-                                            link 
-                                            type="primary" 
-                                            icon="el-icon-edit" 
+										<el-button
+                                            link
+                                            type="primary"
+                                            icon="el-icon-edit"
                                             title="修改名称字段"
                                             @click="modifyEntityNameField">
                                         </el-button>
@@ -52,16 +52,16 @@
 								<el-switch v-model="entityProps.authorizable" style="float: right" disabled></el-switch>
 							</el-form-item>
 							<el-form-item label="是否明细实体：">
-								<el-switch 
-                                    v-model="entityProps.detailEntityFlag" 
+								<el-switch
+                                    v-model="entityProps.detailEntityFlag"
                                     style="float: right"
 									disabled
                                 >
                                 </el-switch>
 							</el-form-item>
                             <el-form-item label="开启流程审批：">
-								<el-switch 
-                                    v-model="openApprovalField" 
+								<el-switch
+                                    v-model="openApprovalField"
                                     style="float: right"
 									:disabled="openApprovalField"
                                     :before-change="toOpenApprovalField"
@@ -89,9 +89,9 @@
                                 </div>
 							</el-form-item>
 							<el-form-item label="所属主实体：" v-if="!!entityProps.detailEntityFlag">
-								<el-input 
-                                    link 
-                                    type="primary" 
+								<el-input
+                                    link
+                                    type="primary"
                                     v-model="entityProps.mainEntity.label"
 									disabled
                                 >
@@ -137,7 +137,7 @@
 								<!--
 								<el-dropdown-item command="AnyReferenceWE">一对多引用 / AnyReference</el-dropdown-item>
 								<el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
-								
+
 								-->
 							</el-dropdown-menu>
 						</template>
@@ -145,15 +145,15 @@
 				</div>
 				<div style="flex: 1"></div>
 				<div class="search-panel-right">
-					<el-input 
-                        link 
-                        type="primary" 
-                        v-model="searchText" 
-                        :clearable="true" 
+					<el-input
+                        link
+                        type="primary"
+                        v-model="searchText"
+                        :clearable="true"
                         @clear="clearTableSearch"
 						class="v-middle"
-						@keyup.enter="searchTableData" 
-                        size="small" 
+						@keyup.enter="searchTableData"
+                        size="small"
                         placeholder="请输入关键词搜索"
                     >
 						<template #append>
@@ -166,31 +166,31 @@
 
 			<el-main ref="tableContainer">
 				<div>
-					<SimpleTable 
-                        :columns="columns" 
-                        :data="filteredData" 
+					<SimpleTable
+                        :columns="columns"
+                        :data="filteredData"
                         :show-pagination="false"
 						:show-check-box="false"
 						:show-operation-column="true"
-						:height="'100%'" 
-                        table-size="small" 
+						:height="'100%'"
+                        table-size="small"
                         table-width="100% !important"
                     >
 						<template #table_operation="{scope}">
 							<template v-if="!scope.row['reserved']">
-								<el-button 
-                                    type="primary" 
-                                    link 
-                                    size="small" 
+								<el-button
+                                    type="primary"
+                                    link
+                                    size="small"
                                     icon="el-icon-edit"
 									@click="editTableData(scope.row)"
                                 >
                                     修改
 								</el-button>
-								<el-button 
-                                    type="primary" 
-                                    link 
-                                    size="small" 
+								<el-button
+                                    type="primary"
+                                    link
+                                    size="small"
                                     icon="el-icon-delete"
 									@click="deleteTableData(scope.row)"
                                 >
@@ -209,32 +209,32 @@
 				</div>
 			</el-footer>
 
-			<el-dialog 
-                title="修改名称字段" 
-                v-model="showNameFieldDialogFlag" 
+			<el-dialog
+                title="修改名称字段"
+                v-model="showNameFieldDialogFlag"
                 v-if="showNameFieldDialogFlag"
-				:append-to-body="true" 
-                :destroy-on-close="true" 
-                class="name-field-dialog" 
+				:append-to-body="true"
+                :destroy-on-close="true"
+                class="name-field-dialog"
                 width="480px"
             >
 				<div class="name-field-hint">
                     <i class="el-icon-bell"></i>
                     提示：只有文本(Text)类型字段可设置为名称字段。
 				</div>
-				<SimpleTable 
-                    :show-pagination="false" 
-                    :show-check-box="false" 
+				<SimpleTable
+                    :show-pagination="false"
+                    :show-check-box="false"
                     :table-size="'small'"
 					:show-operation-column="true"
-					:columns="nameFieldColumns" 
-                    :data="nameFieldData" 
+					:columns="nameFieldColumns"
+                    :data="nameFieldData"
                     :max-height="420"
                 >
 					<template #table_operation="{scope}">
-						<el-button 
-                            v-if="!scope.row.nameFieldFlag" 
-                            class="" 
+						<el-button
+                            v-if="!scope.row.nameFieldFlag"
+                            class=""
                             icon="el-icon-check"
 							@click="selectNameField(scope.row)"
                         >
@@ -245,62 +245,62 @@
 				</SimpleTable>
 			</el-dialog>
 
-			<el-dialog 
-                :title="'新建字段 / ' + curEditorType" 
+			<el-dialog
+                :title="'新建字段 / ' + curEditorType"
                 v-model="showNewFieldDialogFlag"
 				v-if="showNewFieldDialogFlag"
-				:show-close="true" 
-                :destroy-on-close="true" 
+				:show-close="true"
+                :destroy-on-close="true"
                 :close-on-click-modal="false"
-				:close-on-press-escape="false" 
+				:close-on-press-escape="false"
                 class="no-padding field-setting-dialog"
                 width="620px"
             >
-				<component 
-                    :is="curFWEditor" 
-                    :entity="entity" 
-                    @fieldSaved="onFieldSaved" 
+				<component
+                    :is="curFWEditor"
+                    :entity="entity"
+                    @fieldSaved="onFieldSaved"
                     @cancelSave="onCancelSaveField"
 					:showingInDialog="true"
                 >
                 </component>
 			</el-dialog>
 
-			<el-dialog 
-                :title="'编辑字段 / ' + curEditorType" 
+			<el-dialog
+                :title="'编辑字段 / ' + curEditorType"
                 v-model="showEditFieldDialogFlag"
 				v-if="showEditFieldDialogFlag"
-				:show-close="false" 
-                :destroy-on-close="true" 
+				:show-close="false"
+                :destroy-on-close="true"
                 :close-on-click-modal="false"
-				:close-on-press-escape="false" 
-                class="no-padding field-setting-dialog" 
+				:close-on-press-escape="false"
+                class="no-padding field-setting-dialog"
                 width="620px"
             >
-				<component 
-                    :is="curFWEditor" 
-                    :entity="entity" 
-                    @fieldSaved="onFieldSaved" 
+				<component
+                    :is="curFWEditor"
+                    :entity="entity"
+                    @fieldSaved="onFieldSaved"
                     @cancelSave="onCancelSaveField"
-					:showingInDialog="true" 
-                    :field-name="editingFieldName" 
+					:showingInDialog="true"
+                    :field-name="editingFieldName"
                     :field-state="2"
                 >
                 </component>
 			</el-dialog>
 
-			<el-dialog 
-                title="编辑实体属性" 
-                v-model="showEntityPropsDialogFlag" 
+			<el-dialog
+                title="编辑实体属性"
+                v-model="showEntityPropsDialogFlag"
                 v-if="showEntityPropsDialogFlag"
-				:show-close="false" 
-                :close-on-click-modal="false" 
+				:show-close="false"
+                :close-on-click-modal="false"
                 :close-on-press-escape="false"
 				:destroy-on-close="true"
             >
-				<EntityPropEditor 
-                    ref="EPEditor" 
-                    :entityProps="entityProps" 
+				<EntityPropEditor
+                    ref="EPEditor"
+                    :entityProps="entityProps"
                     :show-title="false"
 					:filter-entity-method="filterMainEntity"
                 >
@@ -335,10 +335,10 @@
                         @keyup.enter="handleInputConfirm"
                         @blur="handleInputConfirm"
                     />
-                    <el-button 
-                        v-else 
-                        class="mb-5 button-new-tag ml-1" 
-                        @click="showInput" 
+                    <el-button
+                        v-else
+                        class="mb-5 button-new-tag ml-1"
+                        @click="showInput"
                         :disabled="allTags?.length > 49"
                     >
                         + 新增标签
@@ -355,8 +355,8 @@
                     >
                         确 定
                     </el-button>
-                    <el-button 
-                        @click="addTagDialogIsShow = false" 
+                    <el-button
+                        @click="addTagDialogIsShow = false"
                         v-loading="addTagDialogLoading"
                     >
                         取 消
@@ -449,22 +449,41 @@ export default {
 				{prop: 'physicalName', label: '数据库字段名', align: 'left'},
 				{prop: 'type', label: '字段类型', width: '100', align: 'left'},
 				{prop: 'referTo', label: '引用实体', width: '120', align: 'center'},
-				{prop: 'idFieldFlag', label: '主键字段', width: '70', align: 'center', formatter: formatBooleanColumn},
+				{
+					prop: 'idFieldFlag',
+					label: '主键字段',
+					width: '80',
+					align: 'center',
+					formatter: formatBooleanColumn
+				},
 				{
 					prop: 'nameFieldFlag',
 					label: '名称字段',
-					width: '70',
+					width: '80',
 					align: 'center',
 					formatter: formatBooleanColumn
 				},
 				{
 					prop: 'mainDetailFieldFlag',
 					label: '主从字段',
-					width: '70',
+					width: '80',
 					align: 'center',
 					formatter: formatBooleanColumn
 				},
-				{prop: 'reserved', label: '系统字段', width: '70', align: 'center', formatter: formatBooleanColumn},
+				{
+					prop: 'nullable',
+					label: '允许空值',
+					width: '80',
+					align: 'center',
+					formatter: formatBooleanColumn
+				},
+				{
+					prop: 'reserved',
+					label: '系统字段',
+					width: '80',
+					align: 'center',
+					formatter: formatBooleanColumn
+				},
 			],
 			tableData: [],
 			filteredData: [],
@@ -802,8 +821,8 @@ export default {
 
         // 开启审批字段
         toOpenApprovalField(){
-            
-            
+
+
             return new Promise((resolve) => {
                 this.$confirm(
                     "是否确认开启流程审批?",
@@ -824,12 +843,12 @@ export default {
                         this.propsLoading = false;
                         return resolve(false)
                     }
-                    
+
                 })
                 .catch(() => {
                     return resolve(false)
                 })
-                
+
             })
         }
 

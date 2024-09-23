@@ -57,8 +57,8 @@
                     <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
                 </el-form-item>
                 <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
-                    <el-select 
-                        v-model="useFieldSync" 
+                    <el-select
+                        v-model="useFieldSync"
                         placeholder="选择字段"
                         :disabled="fieldState !== 1"
                     >
@@ -188,7 +188,7 @@ export default {
                         entityName: '',
                         fieldName: ''
                     }
-                    
+
 				},
             },
 
@@ -250,7 +250,7 @@ export default {
                     }
                 }
             }
-            
+
             // if(this.fieldProps.fieldViewModel )
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
@@ -275,7 +275,7 @@ export default {
                         optionList.push({ key: item.label, value: item.value });
                     }
                 });
-                // 如果启用了同步 
+                // 如果启用了同步
                 if(this.checkedSync){
                     let fieldSync = this.useFieldSync.split('.');
                     let optionSyncModel = {
@@ -328,7 +328,7 @@ export default {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 inputPattern:
-                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
@@ -359,7 +359,7 @@ export default {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 inputPattern:
-                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
@@ -418,7 +418,7 @@ export default {
                 cancelButtonText: "取消",
                 inputValue: oldOptionLabel,
                 inputPattern:
-                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
