@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.85 20240923"
+        webVer: "1.6.86 20240923"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -105,6 +105,14 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
         publicSetting.value.approvalModifiableEntity = data.approvalModifiableEntity || "";
     }
+    // 传入实体名称拿主实体或者明细实体CODE
+    const queryEntityCodeByEntityName = (name) => {
+        let entity = allEntityList.value.filter(el => el.name == name && el.detailEntityFlag ? el.mainEntityCode : el.entityCode);
+        if (entity.length > 0) {
+            return entity[0].entityCode;
+        }
+        return "";
+    }
     const setUserInfo = (user) => {
         let userInfo = {
             userName: user.userName,
@@ -153,6 +161,7 @@ const useCommonStore = defineStore('commonStore', () => {
         queryNameByObj,
         checkModifiableEntity,
         queryAllEntityList,
+        queryEntityCodeByEntityName
     }
 })
 

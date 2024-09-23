@@ -84,7 +84,7 @@
                         type="primary" 
                         icon="Plus" 
                         @click="onAdd"
-                        v-if="listParamConf.showAddBtn && $TOOL.checkRole('r' + entityCode + '-2')" 
+                        v-if="listParamConf.showAddBtn && $TOOL.checkRole('r' + queryEntityCodeByEntityName(isReferenceComp ? referenceEntity : entityName) + '-2')" 
                     >
                         新建
                     </el-button>
@@ -104,6 +104,7 @@
                         @treeGroupFilterConfirm="getLayoutList"
                         :isReferenceComp="isReferenceComp"
                         :isMainDetailField="!!mainDetailField"
+                        :referenceEntity="referenceEntity"
                         :modelName="modelName"
                         @copySuccess="copySuccess"
                     />
@@ -361,7 +362,7 @@ import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
-const { queryNameByObj, checkModifiableEntity } = useCommonStore();
+const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();

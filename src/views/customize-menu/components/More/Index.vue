@@ -7,7 +7,7 @@
                 class="pl-20 item"
                 @click="allocationFn('del')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="listParamConf.showDelBtn && $TOOL.checkRole('r' + entityCode + '-4')"
+                v-if="listParamConf.showDelBtn && checkRoleNum('-4')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -25,7 +25,7 @@
                 class="pl-20 item"
                 @click="allocationFn('allocation')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField && $TOOL.checkRole('r' + entityCode + '-5')"
+                v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-5')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -38,7 +38,7 @@
                 class="pl-20 item"
                 @click="allocationFn('share')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField && $TOOL.checkRole('r' + entityCode + '-6')"
+                v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -51,7 +51,7 @@
                 class="pl-20 item"
                 @click="allocationFn('unShare')"
                 :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField && $TOOL.checkRole('r' + entityCode + '-6')"
+                v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
             >
                 <span class="icon-t1">
                     <el-icon>
@@ -281,7 +281,7 @@ import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-const { queryEntityNameByCode } = useCommonStore();
+const { queryEntityNameByCode, queryEntityCodeByEntityName } = useCommonStore();
 const router = useRouter();
 const emits = defineEmits([
     "changeColumnShow",
@@ -306,6 +306,11 @@ const props = defineProps({
     isReferenceComp: { type: Boolean, default: false },
     // 是否明细实体
     isMainDetailField: { type: Boolean, default: false },
+    // 引用实体名称
+    referenceEntity: {
+        type: String,
+        default: "",
+    },
     // 实体模块名称
     modelName: {
         type: String,
@@ -548,6 +553,12 @@ const listMoreSetting = (type) => {
     }
 }
 
+// 检测 - 权限
+const checkRoleNum = (target) => {
+    let { entityCode, isReferenceComp, referenceEntity } = props;
+    let checkCode = isReferenceComp ? queryEntityCodeByEntityName(referenceEntity) : entityCode
+    return $TOOL.checkRole('r' + checkCode  + target)
+}
 
 /**
  * 卡片列表样式设置
