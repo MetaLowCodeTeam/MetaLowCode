@@ -179,7 +179,7 @@
                         @click="cardListSettingShow = true"
                         v-if="isListCard"
                     >
-                        卡边列表设置
+                        卡片列表设置
                     </div>
                 </template>
                 
