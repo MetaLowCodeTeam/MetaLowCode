@@ -47,7 +47,7 @@
 					<DetailTabs
 						:tabsConf="detailDialog"
 						@tabChange="tabChange"
-						:cutTab="cutTab"
+						:cutTabIndex="cutTabIndex"
 						@confirm="refresh"
                         :checkTabsFilter="checkTabsFilter"
 					/>
@@ -305,6 +305,7 @@ let rowResData = ref({});
 
 // 当前页签
 let cutTab = ref("detail");
+let cutTabIndex = ref(0);
 // 表单数据
 let optionData = ref({});
 let globalDsv = ref({});
@@ -339,8 +340,9 @@ const closeDialog = () => {
 
 // 页签更换
 const tabChange = (tab) => {
-	cutTab.value = tab;
-	if (tab == "detail") {
+	cutTab.value = tab.props.name;
+    cutTabIndex.value = tab.index;
+	if (cutTab.value == "detail") {
 		refresh();
 	}
 };

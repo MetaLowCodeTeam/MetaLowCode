@@ -255,21 +255,25 @@ const cardSortCommand = (e) => {
 
 let curtTab = ref({});
 
+
+
 // 初始化数据
 const initData = async () => {
     tableData.value = [];
     tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
+
     defaultShowType.value = "table";
-    let filterTabs = tabs.value.filter((el) => el.entityName == props.cutTab);
+    let filterTabs = tabs.value.filter((el,inx) => {
+        return el.entityName + '-' + (inx + 1) == props.cutTab;
+    });
     if (filterTabs[0]) {
         entityCode.value = filterTabs[0].entityCode;
         entityName.value = filterTabs[0].entityName;
         fieldName.value = filterTabs[0].fieldName;
         curtTab.value = filterTabs[0];
     }
-    // console.log(tabs);
     loading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(props.cutTab);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value);
     if (res) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
@@ -305,7 +309,7 @@ const initData = async () => {
 
 const goPath = () => {
     setRouterParams({
-        path: "/web/" + props.cutTab + "/list",
+        path: "/web/" + entityName.value + "/list",
         filter: {
             equation: "AND",
             items: [
@@ -320,7 +324,7 @@ const goPath = () => {
     });
     nextTick(()=>{
         router.push({
-            path: "/web/" + props.cutTab + "/list",
+            path: "/web/" + entityName.value + "/list",
         });
     })
     

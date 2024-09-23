@@ -5,7 +5,7 @@
                 v-for="(tab,tabInx) of tabs"
                 :key="tabInx"
                 :label="tab.columnAliasName || tab.entityLabel"
-                :name="tab.entityName"
+                :name="tab.entityName + '-' + tabInx"
             ></el-tab-pane>
         </el-tabs>
         <span class="setting-tabs" @click="openDialog" v-if="$TOOL.checkRole('r6008')">
@@ -26,7 +26,7 @@
 import { inject, onMounted, ref, watch, watchEffect } from "vue";
 import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
-    cutTab: { type: String, default: "" },
+    cutTabIndex: { type: [String,Number], default: 0 },
     checkTabsFilter: { type: Object, default: () => {} },
     tabsConf: { type: Object, default: () => {} },
 });
@@ -38,7 +38,7 @@ let tabs = ref();
 // watch(
 //     () => props.modelValue,
 //     () => {
-//         detailDialog.value = props.modelValue;
+//         detailDialog.value = tabs.value[0].entityName;
 //         initTabs();
 //     },
 //     { deep: true }
@@ -46,7 +46,7 @@ let tabs = ref();
 watch(
     () => props.cutTab,
     () => {
-        activeName.value = props.cutTab
+        activeName.value = tabs.value[props.cutTab].entityName + '-' + props.cutTab
     },
     { deep: true }
 );
@@ -75,7 +75,7 @@ const initTabs = () => {
             }
         });
     }
-    activeName.value = tabs.value[0].entityName;
+    activeName.value = tabs.value[0].entityName + '-0';
 };
 
 
@@ -92,7 +92,7 @@ const openDialog = () => {
 };
 
 const handleClick = (e) => {
-    emits("tabChange", e.props.name);
+    emits("tabChange", e);
 };
 
 const confirm = (e) => {
