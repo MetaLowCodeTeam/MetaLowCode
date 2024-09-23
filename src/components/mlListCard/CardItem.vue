@@ -203,12 +203,12 @@ const initData = () => {
 	globalDsv.value.formStatus = "read";
 	globalDsv.value.formEntityId = props.row[props.idFieldName];
 	nextTick(() => {
-		vFormRef.value.setFormJson(layoutJson);
+		vFormRef.value?.setFormJson(layoutJson);
 		nextTick(() => {
-			vFormRef.value.setFormData(props.row);
+			vFormRef.value?.setFormData(props.row);
 			nextTick(() => {
-				vFormRef.value.reloadOptionData();
-				vFormRef.value.setReadMode(true);
+				vFormRef.value?.reloadOptionData();
+				vFormRef.value?.setReadMode(true);
 			});
 		});
 	});
