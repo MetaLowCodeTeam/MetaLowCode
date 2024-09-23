@@ -4,6 +4,7 @@
         <el-form-item class="mt-20" label="发送给谁">
             <el-radio-group v-model="trigger.actionContent.userType" @change="userTypeChange">
                 <el-radio :label="1">内部用户</el-radio>
+                <el-radio :label="5">表单字段</el-radio>
                 <el-radio :label="2">外部人员</el-radio>
                 <el-radio :label="3" :disabled="!querySendState.dingState">钉钉机器人</el-radio>
                 <el-radio :label="4" :disabled="!querySendState.wxWorkState">企业微信机器人</el-radio>
@@ -22,15 +23,16 @@
                     style="width: 100%"
                     clearable
                     filterable
-                    v-if="trigger.actionContent.userType == 2"
+                    v-if="trigger.actionContent.userType == 2 || trigger.actionContent.userType == 5"
                 >
                     <el-option
-                        v-for="(op,opInx) in sendToFields"
+                        v-for="(op,opInx) in trigger.actionContent.userType == 2 ? sendToFields : formFields"
                         :key="opInx"
                         :label="op.fieldLabel"
                         :value="op.fieldName"
                     />
                 </el-select>
+                
             </div>
         </el-form-item>
         <el-form-item class="mt-20" label="Webhook地址" v-if="trigger.actionContent.userType == 3">
@@ -215,6 +217,7 @@ const userTypeChange = (e) => {
         trigger.value.actionContent.type = trigger.value.actionContent.type - 16;
         setTypeSelecteds();
     }
+    trigger.value.actionContent.outUserList = [];
 };
 
 // 字段弹出
@@ -258,12 +261,18 @@ let cutEntityFields = ref([]);
 let querySendState = ref({});
 // 外部人员字段
 let sendToFields = ref([]);
+// 表单字段
+let formFields = ref([]);
 const getCutEntityFields = async () => {
     contentLoading.value = true;
-    let res = await queryEntityFields(trigger.value.entityCode, true, true);
+    let res = await queryEntityFields(trigger.value.entityCode, true, true, true);
     if (res) {
         cutEntityFields.value = res.data;
         sendToFields.value = res.data.filter((el) => el.fieldType == "Text");
+        let formReferenceName = ["User", "Department", "Role", "Team"];
+        formFields.value = res.data.filter((el) => {
+            return el.fieldType == "Reference" && formReferenceName.includes(el.referenceName)
+        });
         let querySendStateRes = await $API.trigger.detail.querySendState();
         if(querySendStateRes){
             querySendState.value = querySendStateRes.data;
