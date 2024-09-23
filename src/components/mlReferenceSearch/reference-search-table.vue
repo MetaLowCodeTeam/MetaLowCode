@@ -23,38 +23,48 @@
 								class="mr-10 pt-5"
 							>
 								<el-button type="primary">
-									查询<el-icon class="el-icon--right"
-										><arrow-down
-									/></el-icon>
+									查询
+									<el-icon class="el-icon--right">
+										<arrow-down />
+									</el-icon>
 								</el-button>
 								<template #dropdown>
 									<el-dropdown-menu>
-										<el-dropdown-item command="OR"
-											>符合任一条件</el-dropdown-item
-										>
-										<el-dropdown-item command="AND"
-											>符合全部条件</el-dropdown-item
-										>
+										<el-dropdown-item command="OR">
+											符合任一条件
+										</el-dropdown-item>
+										<el-dropdown-item command="AND">
+											符合全部条件
+										</el-dropdown-item>
 									</el-dropdown-menu>
 								</template>
 							</el-dropdown>
-							<el-button type="primary" plain @click="onReset"
-								>重置</el-button
-							>
+							<el-button type="primary" plain @click="onReset">
+								重置
+							</el-button>
 							<el-button
 								type="primary"
 								plain
 								@click="onSave"
 								v-if="$TOOL.checkRole('r6008')"
-								>保存查询面板</el-button
 							>
+								保存查询面板
+							</el-button>
+                            <el-button
+								type="success"
+								plain
+								@click="onAdd"
+                                v-if="$TOOL.checkRole('r' + queryEntityCode(referenceEntityName) + '-2')"
+							>
+								新建
+							</el-button>
 						</div>
 					</template>
 				</mlSetConditions>
 			</div>
 			<div class="main-table mt-10">
 				<SimpleTable
-                    ref="SimpleTableRef"
+					ref="SimpleTableRef"
 					:columns="columns"
 					:data="tableData"
 					:pagination="page"
@@ -82,18 +92,26 @@
 			</div>
 		</div>
 		<div class="footer-box" v-if="showMultipleSelectConfirm">
-			<el-button type="primary" @click="multipleSelectRecord"
-				>确认选择</el-button
-			>
+			<el-button type="primary" @click="multipleSelectRecord">
+				确认选择
+			</el-button>
 		</div>
+        <mlCustomEdit ref="editRefs" @saveFinishCallBack="loadTableTable" :nameFieldName="referenceEntityNameFieldName"/>
 	</div>
+    <!--  -->
 </template>
 
 <script>
 import { setColumnFormatter } from "@/utils/util";
 import { refFieldQuery2, saveRefFilterPanel } from "@/api/crud";
 import { externalRefFieldQuery } from "@/api/external";
+import useCommonStore from "@/store/modules/common";
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+// 
 export default {
+    components:{
+        mlCustomEdit,
+    },
 	props: {
 		entity: String,
 		refField: String,
@@ -144,7 +162,7 @@ export default {
 			queryText: "",
 			columns: [],
 			tableData: [],
-			selectsdata: [],
+			selectedData: [],
 			page: {
 				pageNo: 1,
 				limit: 10,
@@ -158,6 +176,7 @@ export default {
 				items: [],
 			},
 			referenceEntityName: "",
+            referenceEntityNameFieldName: "",
 			// 表格多选数据
 			multipleSelection: [],
 		};
@@ -265,20 +284,25 @@ export default {
 				});
 				this.columns = columnList;
 				this.tableData = res.data.dataList;
-                if(this.defaultSelected && this.defaultSelected.length > 0 && this.selectsdata && this.selectsdata.length < 1) {
-                    this.selectsdata = this.defaultSelected.map(el => {
-                        let row = {};
-                        row[this.idField] = el.id;
-                        row[this.nameField] = el.name;
-                        return row;
-                    })
-                }
-                if (this.selectsdata.length > 0) {
-                    this.$refs.SimpleTableRef?.toggleRowSelection(
-                        this.selectsdata,
-                        this.idField,
-                    );
-                }
+				if (
+					this.defaultSelected &&
+					this.defaultSelected.length > 0 &&
+					this.selectedData &&
+					this.selectedData.length < 1
+				) {
+					this.selectedData = this.defaultSelected.map((el) => {
+						let row = {};
+						row[this.idField] = el.id;
+						row[this.nameField] = el.name;
+						return row;
+					});
+				}
+				if (this.selectedData.length > 0) {
+					this.$refs.SimpleTableRef?.toggleRowSelection(
+						this.selectedData,
+						this.idField
+					);
+				}
 				this.page.total = res.data.pagination.total;
 				if (!this.referenceEntityName && res.data.filter) {
 					this.conditionConf = JSON.parse(
@@ -286,6 +310,7 @@ export default {
 					);
 				}
 				this.referenceEntityName = res.data.entityName;
+                this.referenceEntityNameFieldName = res.data.nameFieldName;
 			}
 			this.loading = false;
 		},
@@ -336,35 +361,35 @@ export default {
 		},
 		// 获取所有选中数据
 		getMultipleSelection() {
-			return this.selectsdata;
+			return this.selectedData;
 		},
 		// 多选触发
 		selects(selection, row) {
-			if (this.selectsdata.length === 0) {
-				this.selectsdata = selection;
+			if (this.selectedData.length === 0) {
+				this.selectedData = selection;
 			} else {
-				if (this.selectsdata.length > 0 && !row) {
+				if (this.selectedData.length > 0 && !row) {
 					// 然后修改 回显数据
 					// this.tableData 是所有的数据
 					if (selection.length > 0) {
 						//全选了
 						this.tableData.forEach((item) => {
-							let find = this.selectsdata.find((selectedItem) => {
+							let find = this.selectedData.find((selectedItem) => {
 								return (
 									selectedItem[this.idField] ==
 									item[this.idField]
 								);
 							});
 							if (!find) {
-								this.selectsdata.push(item);
+								this.selectedData.push(item);
 							}
 						});
 					} else {
 						// 仅保留当前页数据中未选中的行
-						this.selectsdata = this.selectsdata.filter((item) => {
+						this.selectedData = this.selectedData.filter((item) => {
 							// 检查当前行是否存在于当前页数据中
 							let find = this.tableData.find(
-								(pageItem) =>
+								(pageItem) => 
 									pageItem[this.idField] ===
 									item[this.idField]
 							);
@@ -375,21 +400,32 @@ export default {
 					return;
 				} else {
 					// 点击的时候有就删，没有就加
-					const doms = this.selectsdata.find(
+					const doms = this.selectedData.find(
 						(item) => item[this.idField] === row[this.idField]
 					);
-					// 如果点击的行已经存在于 selectsdata 中，则将其删除
+					// 如果点击的行已经存在于 selectedData 中，则将其删除
 					if (doms) {
-						this.selectsdata = this.selectsdata.filter(
+						this.selectedData = this.selectedData.filter(
 							(item) => item[this.idField] !== row[this.idField]
 						);
 					} else {
-						// 如果点击的行不存在于 selectsdata 中，则将其添加到 selectsdata 中
-						this.selectsdata.push(row);
+						// 如果点击的行不存在于 selectedData 中，则将其添加到 selectedData 中
+						this.selectedData.push(row);
 					}
 				}
 			}
 		},
+        // 新建
+        onAdd() {
+            this.$refs.editRefs?.openDialog({
+                entityName: this.referenceEntityName
+            })
+        },
+        // 查询实体Code
+        queryEntityCode(entityName){
+            const { queryEntityCodeByName } = useCommonStore();
+            return queryEntityCodeByName(entityName)
+        },
 	},
 };
 </script>
