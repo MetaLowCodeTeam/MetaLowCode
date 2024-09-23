@@ -427,7 +427,8 @@ const getTableList = async () => {
     let filterEasySql = null;
     // 是自定义标签
     if(curtTab.value.isCustomLabel) {
-        filterEasySql = curtTab.value.filterEasySql.replace(`{${props.idFieldName}}`,`'${props.entityId}'`);
+        const regex = new RegExp(`{${props.idFieldName}}`, 'g');
+        filterEasySql = curtTab.value.filterEasySql.replace(regex,`'${props.entityId}'`);
     }else {
         filter = {
             equation: "AND",
