@@ -20,6 +20,7 @@
 					clearable
                     :class="{'is-error' : selectEntityError}"
                     @focus="selectEntityError = false"
+                    filterable
 				>
 					<el-option
 						v-for="item in entityList"
@@ -83,6 +84,7 @@ const confirm = () => {
     }
     curtEntity.value.filterEasySql = filterEasySql.value;
     emit("confirm", curtEntity.value);
+    curtEntity.value = {};
     isShow.value = false;
 }
 

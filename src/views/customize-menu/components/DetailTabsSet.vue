@@ -221,7 +221,7 @@ const addShowColumn = (column) => {
 // 列弹框
 let editColumnDialogIsShow = ref(false);
 // 编辑列数据
-let editColumnDialogData = reactive();
+let editColumnDialogData = ref({});
 
 // 编辑显示列
 const editColumn = (column, inx) => {
@@ -229,7 +229,7 @@ const editColumn = (column, inx) => {
     let editObj = Object.assign({}, column);
     editObj.columnAliasName = column.columnAliasName || "";
     editObj.columnEditInx = inx;
-    editColumnDialogData = Object.assign(
+    editColumnDialogData.value = Object.assign(
         {},
         {
             columnAliasName: "",
@@ -253,9 +253,9 @@ const isShowItemTag = (column) => {
 
 // 确认列修改
 const confirmColumnEdit = () => {
-    showColumn.value[editColumnDialogData.columnEditInx] = Object.assign(
+    showColumn.value[editColumnDialogData.value.columnEditInx] = Object.assign(
         {},
-        editColumnDialogData
+        editColumnDialogData.value
     );
     editColumnDialogIsShow.value = false;
 };
@@ -340,7 +340,7 @@ let dialogIsShow = ref(false);
 let conditionConf = ref({});
 // 设置条件
 const setCondition = () => {
-    let { filter } = editColumnDialogData;
+    let { filter } = editColumnDialogData.value;
     filter = initFilter(filter);
 
     conditionConf.value = JSON.parse(JSON.stringify(filter));
@@ -363,14 +363,14 @@ const initFilter = (filter) => {
 
 // 获取设置条件文案
 const getSetConditionText = () => {
-    let { filter } = editColumnDialogData;
+    let { filter } = editColumnDialogData.value;
     let length = filter && filter.items ? filter.items.length : 0;
     return length > 0 ? `已设置条件（${length}）` : "点击设置";
 };
 
 // 确认设置条件
 const conditionConfirm = (e) => {
-    editColumnDialogData.filter = { ...e };
+    editColumnDialogData.value.filter = { ...e };
     dialogIsShow.value = false;
 };
 
