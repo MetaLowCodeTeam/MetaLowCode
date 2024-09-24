@@ -107,9 +107,9 @@ const useCommonStore = defineStore('commonStore', () => {
     }
     // 传入实体名称拿主实体或者明细实体CODE
     const queryEntityCodeByEntityName = (name) => {
-        let entity = allEntityList.value.filter(el => el.name == name && el.detailEntityFlag ? el.mainEntityCode : el.entityCode);
+        let entity = allEntityList.value.filter(el => el.name == name);
         if (entity.length > 0) {
-            return entity[0].entityCode;
+            return entity[0].detailEntityFlag ? entity[0].mainEntityCode : entity[0].entityCode;
         }
         return "";
     }
