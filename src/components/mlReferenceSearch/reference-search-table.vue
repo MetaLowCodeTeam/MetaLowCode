@@ -54,7 +54,7 @@
 								type="success"
 								plain
 								@click="onAdd"
-                                v-if="$TOOL.checkRole('r' + queryEntityCode(referenceEntityName) + '-2')"
+                                v-if="$TOOL.checkRole('r' + queryEntityCode(referenceEntityName) + '-2') && !isDetailEntityFlag(referenceEntityName)"
 							>
 								新建
 							</el-button>
@@ -425,6 +425,11 @@ export default {
         queryEntityCode(entityName){
             const { queryEntityCodeByName } = useCommonStore();
             return queryEntityCodeByName(entityName)
+        },
+        // 检查是否明细实体
+        isDetailEntityFlag(entityName){
+            const { checkDetailEntityFlag } = useCommonStore();
+            return checkDetailEntityFlag(entityName)
         },
 	},
 };

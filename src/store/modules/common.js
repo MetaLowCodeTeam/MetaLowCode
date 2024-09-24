@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.88 20240924"
+        webVer: "1.6.89 20240924"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -113,6 +113,18 @@ const useCommonStore = defineStore('commonStore', () => {
         }
         return "";
     }
+    // 检查实体是否明细(传入实体名称 or 实体CODE)
+    const checkDetailEntityFlag = (value) => {
+        let flag = false;
+        for (let index = 0; index < allEntityList.value.length; index++) {
+            const el = allEntityList.value[index];
+            if (el.name == value || el.entityCode == value) {
+                return el.detailEntityFlag;
+            }
+            
+        }
+        return flag
+    }
     const setUserInfo = (user) => {
         let userInfo = {
             userName: user.userName,
@@ -161,7 +173,8 @@ const useCommonStore = defineStore('commonStore', () => {
         queryNameByObj,
         checkModifiableEntity,
         queryAllEntityList,
-        queryEntityCodeByEntityName
+        queryEntityCodeByEntityName,
+        checkDetailEntityFlag
     }
 })
 

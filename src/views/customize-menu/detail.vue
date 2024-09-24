@@ -280,7 +280,7 @@ let styleConf = ref({
 
 
 const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity } = useCommonStore();
-const emits = defineEmits(["onConfirm", "onEdit", "layoutFinish"]);
+const emits = defineEmits(["onConfirm", "onEdit", "onLayoutFinish"]);
 const $API = inject("$API");
 let vFormRef = ref();
 let detailDialog = reactive({
@@ -488,15 +488,15 @@ const initData = async () => {
 					noeData.value = true;
 				}
 				loading.value = false;
-                emits('layoutFinish')
+                emits('onLayoutFinish')
 			});
 		} else {
 			loading.value = false;
-            emits('layoutFinish')
+            emits('onLayoutFinish')
 		}
 	} else {
 		loading.value = false;
-        emits('layoutFinish')
+        emits('onLayoutFinish')
 	}
 };
 
