@@ -17,6 +17,7 @@
                 :Key="inx"
                 v-model="item.checked" 
                 :label="item.label" 
+                :disabled="field.options.disabled"
             />
         </template>
         <template v-else-if="!field.options.showCheckbox && !isReadMode">

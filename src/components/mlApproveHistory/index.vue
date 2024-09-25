@@ -50,7 +50,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="item-content" v-if="index != 0 && activity.state != 13">
+                            <div class="item-content hh clearfix" v-if="index != 0 && activity.state != 13">
                                 <div
                                     class="contain-div"
                                     v-if="activity.singLabel && activity.needRow > 1"
@@ -135,6 +135,13 @@
                                     <el-tag v-if="activity.operationState === 1" type="warning">转审</el-tag>
                                     <el-tag v-if="activity.operationState === 2" type="warning">加签</el-tag>
                                 </div>
+                                <span 
+                                    class="ml-a-span fr" 
+                                    v-if="!activity.subRecord?.id && activity.state === 0 && $TOOL.checkRole('r6000') && activity.approvalTaskId && activity.approvalTaskId != approveHistory[index - 1].approvalTaskId"
+                                    @click="openChangeApproverDialog(activity)"
+                                >
+                                    修改审批人
+                                </span>
                             </div>
                         </div>
                     </el-timeline-item>
@@ -168,6 +175,7 @@
     <!-- 查看审批流程 -->
     <!-- <ApproveView ref="ApproveViewRefs"/> -->
     <defaultEntityDetail ref="detailRefs" />
+    <ChangeApproverDialog ref="ChangeApproverRef" @onChange="getTaskDetailsById"/>
 </template>
 
 <script setup>
@@ -177,7 +185,8 @@ import { useRouter } from "vue-router";
 import ApproveView from './components/ApproveView.vue';
 // import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 import defaultEntityDetail from "@/views/customize-menu/detail.vue";
-
+import ChangeApproverDialog from './components/ChangeApproverDialog.vue';
+const $TOOL = inject("$TOOL");
 const Route = useRouter();
 const props = defineProps({
     modelValue: null,
@@ -383,6 +392,14 @@ const fullSceenChange = (v) => {
     fullSceen.value = v;
 }
 
+let ChangeApproverRef = ref();
+// 打开修改审批人弹框
+const openChangeApproverDialog = (activity) => {
+    if(activity.approvalTaskId) {
+        ChangeApproverRef.value?.openDialog(activity);
+    }
+}
+
 defineExpose({
     openDialog
 })
@@ -443,6 +460,13 @@ defineExpose({
             .contain-span {
                 float: right;
                 margin-right: -40px;
+            }
+        }
+        &.hh {
+            line-height: 20px;
+            .item-title {
+                display: inline-block;
+                width: calc(100% - 70px);
             }
         }
     }

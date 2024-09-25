@@ -98,3 +98,8 @@ export function getRecordApprovalState(recordId) {
 export function createApprovalSystemFields(entityName) {
     return http.post('/approval/createApprovalSystemFields?entityName=' + entityName)
 }
+
+// 修改审批人
+export function updateApprovalUser(approvalTaskId, body) {
+    return http.post('/approval/updateApprovalUser',body, { params: { approvalTaskId } })
+}
