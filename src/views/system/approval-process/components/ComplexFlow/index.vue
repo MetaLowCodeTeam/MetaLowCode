@@ -244,6 +244,7 @@ const NodeTypeFn = {
     "bpmn:userTask": "getNodeModelById",
     "bpmn:serviceTask": "getNodeModelById",
     "bpmn:intermediateCatchEvent": "getNodeModelById",
+    "bpmn:subProcess": "getNodeModelById",
 };
 
 // 排除的节点
@@ -252,6 +253,7 @@ const EliminateNode = [
     "bpmn:endEvent",
     "bpmn:exclusiveGateway",
     "bpmn:inclusiveGateway",
+    "bpmn:subProcess"
 ];
 
 // 默认节点颜色
@@ -441,7 +443,6 @@ const onSave = async () => {
 
 // 设置节点变颜色
 const setNodeBorderColor = (type, id, stroke) => {
-    console.log(stroke,'stroke')
     let properties = {};
     // 中间事件节点
     if(type == "bpmn:intermediateCatchEvent") {
