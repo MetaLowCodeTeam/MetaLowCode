@@ -253,6 +253,7 @@ const detailParamConf = ref({
     showNewRelatedBtn: true,
     showEditBtn: true,
     showMoreBtn: true,
+    showDelBtn: true,
     showRevisionHistory: true,
 })
 
