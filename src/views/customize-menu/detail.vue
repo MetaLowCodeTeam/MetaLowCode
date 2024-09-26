@@ -66,11 +66,13 @@
 							description="未查询到相关配置数据"
 						/>
 					</div>
+                    <!-- <div v-else-if="cutTab == 'annex'">
+					</div> -->
 					<!-- 非详情 -->
 					<div v-else>
 						<DetailTabCom
 							ref="detailTabComRefs"
-							:cutTab="cutTab"
+							:cutTab="cutTabCom"
 							:tabs="detailDialog.tab"
 							:entityId="detailId"
                             :idFieldName="idFieldName"
@@ -306,6 +308,7 @@ let rowResData = ref({});
 // 当前页签
 let cutTab = ref("detail");
 let cutTabIndex = ref(0);
+let cutTabCom = ref("");
 // 表单数据
 let optionData = ref({});
 let globalDsv = ref({});
@@ -340,7 +343,8 @@ const closeDialog = () => {
 
 // 页签更换
 const tabChange = (tab) => {
-	cutTab.value = tab.props.name;
+	cutTab.value = tab.props.name.split("-")[0];
+    cutTabCom.value = tab.props.name;
     cutTabIndex.value = tab.index;
 	if (cutTab.value == "detail") {
 		refresh();
