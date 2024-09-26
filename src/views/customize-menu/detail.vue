@@ -74,6 +74,7 @@
 							ref="detailTabComRefs"
 							:cutTab="cutTabCom"
 							:tabs="detailDialog.tab"
+                            :cutTabIndex="cutTabIndex"
 							:entityId="detailId"
                             :idFieldName="idFieldName"
                             @closeDialog="closeDialog"

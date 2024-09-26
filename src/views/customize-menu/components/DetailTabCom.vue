@@ -160,6 +160,7 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     idFieldName: { type: String, default: "" },
     tabs: { type: Object, default: () => {} },
+    cutTabIndex: { type: String, default: "0" }
 });
 const emits = defineEmits(['closeDialog','addRow'])
 const $API = inject("$API");
@@ -261,10 +262,9 @@ let curtTab = ref({});
 const initData = async () => {
     tableData.value = [];
     tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
-
     defaultShowType.value = "table";
     let filterTabs = tabs.value.filter((el,inx) => {
-        return el.entityName + '-' + (inx + 1) == props.cutTab;
+        return el.entityName + '-' + props.cutTabIndex == props.cutTab;
     });
     if (filterTabs[0]) {
         entityCode.value = filterTabs[0].entityCode;
