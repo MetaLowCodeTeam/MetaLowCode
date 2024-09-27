@@ -378,7 +378,7 @@
 						/>
 					</div>
 					<div class="mt-10">
-						<el-button @click="confirmMenu">确定</el-button>
+						<el-button type="primary" plain :icon="Select" @click="confirmMenu">确定</el-button>
 					</div>
 				</div>
 			</div>
@@ -400,6 +400,7 @@
 					type="primary"
 					@click="layoutSave"
 					:loading="loading"
+					:icon="Finished"
 				>
 					保存
 				</el-button>
@@ -440,6 +441,7 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 import { VueDraggableNext } from "vue-draggable-next";
+import { Select, Finished } from "@element-plus/icons-vue";
 
 // 弹框是否显示
 let isShow = ref(false);
@@ -869,7 +871,7 @@ const layoutSave = async () => {
 			el.entityName = "parentMenu";
 		}
 	});
-    
+
 	menuData.config = JSON.stringify(newMenuList);
 	let param = {};
 	// 检测数据有没变化
@@ -963,7 +965,7 @@ const useComponentChange = () => {
         disabledMobileShow.value = true;
         cutMenu.value.mobileShow = false;
     }
-    
+
 }
 </script>
 
