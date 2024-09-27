@@ -58,29 +58,16 @@
 			<template v-if="isReadMode">
 				<span 
                     class="readonly-mode-field" 
-                    @click.stop="openRefDialog"
 				>
                     {{ contentForReadMode }}
                     <el-button
-						v-if="!(fieldModel && fieldModel.id)"
+						v-if="fieldModel && fieldModel.length > 0"
 						type="primary"
 						circle
 						size="small"
 						class="small-circle-button"
 						title="打开详情弹窗"
                         @click="handleViewEvent"
-					>
-						<el-icon>
-							<TopRight />
-						</el-icon>
-					</el-button>
-					<el-button
-						v-if="fieldModel && fieldModel.id"
-						type="primary"
-						circle
-						size="small"
-						class="small-circle-button"
-						title="打开详情弹窗"
 					>
 						<el-icon>
 							<TopRight />
@@ -390,14 +377,6 @@ export default {
 			return this.searchFilter;
 		},
 
-	
-
-		openRefDialog() {
-			let refId = this.fieldModel ? this.fieldModel.id : null;
-			if (refId && this.$refs.detailRef) {
-				this.$refs.detailRef.openDialog(refId);
-			}
-		},
         handleViewEvent() {
             this.viewDialogConf.show = true;
             this.viewDialogConf.sourceData = deepClone(this.fieldModel);
