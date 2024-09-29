@@ -253,13 +253,20 @@ export default {
 		},
 
 		onAppendButtonClick() {
+			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
+				let customFn = new Function(
+					this.field.options.onAppendButtonClick
+				);
+				customFn.call(this);
+				return
+			}
+
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
 			this.curRefField = name;
             // 如果启用了树形数据选择弹框，且选择了父子级联字段
             if(useTreeDataSelect && treeCascadeFieldName) {
-
                 this.referenceDialogType = 'tree';
                 this.showReferenceDialogFlag = true;
                 this.treeDialogConf = {

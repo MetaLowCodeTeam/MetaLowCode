@@ -145,6 +145,7 @@ export const referenceSchema = {
 		onMounted: '',
 		onChange: '',
 		onValidate: '',
+		onAppendButtonClick: '',  //后置按钮点击事件
 		onRecordSelected: '',  //记录选择回填事件
 	}
 }
@@ -194,7 +195,8 @@ export const referenceListSchema = {
 		onMounted: '',
 		onChange: '',
 		onValidate: '',
-		onRecordSelected: '',  //记录选择回填事件
+		onAppendButtonClick: '',  //后置按钮点击事件
+		//onRecordSelected: '',  //记录选择回填事件（暂未实现）
 	}
 }
 

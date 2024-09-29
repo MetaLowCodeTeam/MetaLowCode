@@ -56,8 +56,8 @@
 				</template>
 			</el-input>
 			<template v-if="isReadMode">
-				<span 
-                    class="readonly-mode-field" 
+				<span
+                    class="readonly-mode-field"
 				>
                     {{ contentForReadMode }}
                     <el-button
@@ -100,9 +100,9 @@
                 :defaultSelected="fieldModel"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
-            <ReferenceSearchTree 
-                v-else 
-                ref="referTree" 
+            <ReferenceSearchTree
+                v-else
+                ref="referTree"
                 :treeConf="treeDialogConf"
                 :defaultSelected="fieldModel"
                 show-checkbox
@@ -112,24 +112,24 @@
                 <el-button type="primary" @click="treeDialogConfirm">确认</el-button>
             </template>
 		</ml-dialog>
-        <ml-dialog 
-            title="查看字段内容" 
-            v-model="viewDialogConf.show" 
+        <ml-dialog
+            title="查看字段内容"
+            v-model="viewDialogConf.show"
             :append-to-body="true"
             width="520px"
             showFullSceen
         >
-            <el-input 
+            <el-input
                 class="mb-10"
-                v-model="viewDialogConf.search" 
-                placeholder="请输入关键词搜索" 
+                v-model="viewDialogConf.search"
+                placeholder="请输入关键词搜索"
                 clearable
                 @input="filterFieldModel"
             />
             <el-scrollbar max-height="500px">
-                <el-tag 
-                    v-for="(tag,inx) in viewDialogConf.data" 
-                    :key="inx" 
+                <el-tag
+                    v-for="(tag,inx) in viewDialogConf.data"
+                    :key="inx"
                     class="mr-5 mb-10"
                     @close="delField(tag)"
                     :closable="!isReadMode && !field.options.disabled"
@@ -145,8 +145,8 @@
                     <span>条</span>
                 </div>
                 <el-button @click="viewDialogConf.show = false">取消</el-button>
-                <el-button 
-                    type="primary" 
+                <el-button
+                    type="primary"
                     @click="confirmDelField"
                     v-if="viewDialogConf.sourceData.length != this.fieldModel.length"
                 >
@@ -221,7 +221,7 @@ export default {
                 search: "",
                 data: [],
                 sourceData: [],
-            }, 
+            },
 		};
 	},
     watch: {
@@ -229,7 +229,7 @@ export default {
 			deep: true,
 			immediate: true,
 			handler(val) {
-				this.displayValue =  val && val.length > 0 ? val.map(el => el.name) : ""; 
+				this.displayValue =  val && val.length > 0 ? val.map(el => el.name) : "";
 			},
 		},
 	},
@@ -315,6 +315,14 @@ export default {
 		},
 
 		onAppendButtonClick() {
+			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
+				let customFn = new Function(
+					this.field.options.onAppendButtonClick
+				);
+				customFn.call(this);
+				return
+			}
+
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
@@ -336,7 +344,7 @@ export default {
 			this.fieldModel = [];
             this.handleChangeEvent(this.fieldModel);
 		},
-     
+
         // 树选择回填
         treeDialogConfirm() {
             if(this.referenceDialogType === 'tree') {
@@ -367,7 +375,7 @@ export default {
             }
             this.showReferenceDialogFlag = false;
         },
-		
+
 
 		setFilter(newFilter) {
 			this.searchFilter = newFilter;

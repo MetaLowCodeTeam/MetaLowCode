@@ -19,6 +19,8 @@ import checkTagShowCheckboxEditor from "@/views/system/form-design/extension/pro
 
 import onRecordSelectedEditor
 	from "@/views/system/form-design/extension/property-editor/onRecordSelected-editor.vue";
+import onAppendButtonClickEditor
+	from "@/views/system/form-design/extension/property-editor/onAppendButtonClick-editor.vue";
 
 import searchDialogWidthEditor from '@/views/system/form-design/extension/property-editor/reference-searchDialogWidth-editor.vue';
 import referenceUseCurrentUserEditor from '@/views/system/form-design/extension/property-editor/reference-useCurrentUser-editor.vue';
@@ -54,6 +56,7 @@ import listSubFormShowPaginationEditor from "@/views/system/form-design/extensio
 import listSubFormPaginationSizeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/paginationSize-editor.vue";
 import listSubFormListHeightEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormHeight-editor.vue";
 
+
 const {
     addContainerWidgetSchema,
     addBasicFieldSchema,
@@ -74,7 +77,7 @@ export const loadExtensionWidgets = (app) => {
     app.component('list-sub-form-name-editor', listSubFormNameEditor)
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
 	app.component('check-tag-optionValueType-editor', checkTagOptionValueTypeEditor)
-    
+
     PERegister.registerCPEditor(app, 'showCheckbox', 'check-tag-showCheckbox-editor', checkTagShowCheckboxEditor)
 
     /**
@@ -95,7 +98,7 @@ export const loadExtensionWidgets = (app) => {
     /**
      * 容器组件-列表子表单-字段组件  end
      */
-    
+
 
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
 	PERegister.registerCPEditor(app, 'useCurrentUser', 'reference-useCurrentUser-editor', referenceUseCurrentUserEditor)
@@ -104,6 +107,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
 	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
+	PERegister.registerEPEditor(app, 'onAppendButtonClick', 'onAppendButtonClick-editor', onAppendButtonClickEditor)
 
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
 	PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
@@ -127,5 +131,4 @@ export const loadExtensionWidgets = (app) => {
     // 添加到容器组件库
     addContainerWidgetSchema(listSubFormSchema)
 
-    //PERegister.registerCPEditor(app, 'newTest', 'newTest-editor', newTestEditor)
 }
