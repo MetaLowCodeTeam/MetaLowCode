@@ -31,13 +31,13 @@
 		:title="approvalDialog.title"
 		width="460"
 	>
-		<el-form label-width="120px" v-loading="approvalDialog.loading">
+		<el-form label-width="100px" v-loading="approvalDialog.loading">
 			<el-form-item label="选择审批流程">
 				<el-select
 					v-if="approvalList.length > 0"
 					v-model="approvalDialog.approvalConfig"
 					placeholder="请选择审批流程"
-					style="width: 233px; margin-bottom: 10px"
+					style="width: 100%;margin-bottom: 10px"
 					value-key="approvalConfigId"
 				>
 					<el-option
@@ -53,21 +53,32 @@
 						class="ml-a-span"
 						@click="goApprovalList"
 						v-if="$TOOL.checkRole('r30-1')"
-						>点击配置</span
 					>
+                        点击配置
+                    </span>
 				</div>
+
+                <!-- -->
 			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" style="width: 80px" @click="onSubmit"
-					>提交</el-button
-				>
-				<el-button
-					style="width: 80px"
-					@click="approvalDialog.isShow = false"
-					>取消</el-button
-				>
-			</el-form-item>
+            <el-form-item label="自选审批人" v-if="approvalDialog.approvalConfig.userSelectFlag">
+                <mlSelectUser
+                    v-model="optionalApprovals"
+                    multiple
+                    clearable
+                />
+            </el-form-item>
 		</el-form>
+        <template #footer>
+            <el-button
+                style="width: 80px"
+                @click="approvalDialog.isShow = false"
+            >
+                取消
+            </el-button>
+            <el-button type="primary" style="width: 80px" @click="onSubmit">
+                提交
+            </el-button>
+        </template>
 	</mlDialog>
 	<div v-if="approveDialogIsShow">
 		<mlApprove
@@ -267,7 +278,8 @@ const revokeApproval = () => {
 		})
 		.catch(() => {});
 };
-
+// 自选审批人
+let optionalApprovals = ref([]);
 // 提交接口
 const onSubmit = async () => {
 	let { approvalConfig } = approvalDialog;
@@ -293,7 +305,10 @@ const onSubmit = async () => {
 	} else {
 		res = await $API.approval.detail.startApproval(
 			myApproval.value.recordId,
-			approvalConfigId
+			approvalConfigId,
+            {
+                optionalApprovals: optionalApprovals.value.map(el => el.id)
+            },
 		);
 	}
 
@@ -309,6 +324,8 @@ const onSubmit = async () => {
 const goApprovalList = () => {
 	Route.push("/web/process-list");
 };
+
+
 
 watchEffect(() => {
     myApproval.value = props.recordApproval;

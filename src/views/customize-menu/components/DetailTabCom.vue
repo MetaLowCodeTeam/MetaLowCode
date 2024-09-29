@@ -518,6 +518,7 @@ defineExpose({
 });
 </script>
 <style lang='scss' scoped>
+
 .main-header {
     height: 32px;
     line-height: 32px;
@@ -544,6 +545,9 @@ defineExpose({
         height: 32px;
         line-height: 32px;
         margin-right: 5px;
+    }
+    .el-dropdown {
+        cursor: pointer;
     }
 }
 

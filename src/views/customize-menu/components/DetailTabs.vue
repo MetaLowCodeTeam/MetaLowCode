@@ -81,7 +81,7 @@ const initTabs = () => {
 
 watchEffect(() => {
     detailDialog.value = props.tabsConf;
-    myCheckTabsFilter.value = props.checkTabsFilter;
+    myCheckTabsFilter.value = props.checkTabsFilter || {};
     initTabs();
 })
 

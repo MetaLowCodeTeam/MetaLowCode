@@ -79,6 +79,7 @@ const uploadFile = async (data) => {
     }
 
     if (res) {
+        res.data.fileSize = file.size;
         emits("on-success", res.data);
     }
     loading.value = false;

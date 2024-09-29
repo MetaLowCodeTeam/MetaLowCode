@@ -19,8 +19,8 @@ export default {
             return await http.get("/approval/getEntityApprovalConfigList", { recordId });
         },
         // 提交审批
-        startApproval: async (entityId, approvalConfigId) => {
-            return await http.get("/approval/startApproval", { entityId, approvalConfigId });
+        startApproval: async (entityId, approvalConfigId, body) => {
+            return await http.post("/approval/startApproval", body, { params: { entityId, approvalConfigId } } );
         },
         // 提交复杂工作流
         startComplexFlowApproval: async (body) => {

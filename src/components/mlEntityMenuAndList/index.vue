@@ -318,7 +318,7 @@ const getApprovalList = async () => {
         sortFields: tableSort.value,
     };
     param.filter.items = filterItems.map((el) => {
-        el.value = el.value ? el.value : keyword.value;
+        el.value = keyword.value ? keyword.value : "" ;
         return el;
     });
     if (defaultCode.value != "all") {

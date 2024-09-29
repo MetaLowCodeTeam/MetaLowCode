@@ -239,6 +239,10 @@ export default {
             // 默认排序
             sortFields: [
                 {
+                    fieldName: 'displayOrder',
+                    type: "DESC",
+                },
+                {
                     fieldName: "createdOn",
                     type: "DESC",
                 },

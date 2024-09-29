@@ -66,8 +66,9 @@
 							description="未查询到相关配置数据"
 						/>
 					</div>
-                    <!-- <div v-else-if="cutTab == 'annex'">
-					</div> -->
+                    <div v-else-if="cutTab == 'Attachment'">
+                        <Attachment :entityCode="entityCode" :recordId="detailId"/>
+					</div>
 					<!-- 非详情 -->
 					<div v-else>
 						<DetailTabCom
@@ -227,6 +228,8 @@ import { ElMessage } from "element-plus";
 import mlApproveBar from "@/components/mlApproveBar/index.vue";
 // 修改历史
 import DetailRevisionHistoryDialog from './components/DetailRevisionHistoryDialog.vue';
+// 附件
+import Attachment from "./components/Attachment/Index.vue";
 /**
  * API
  */

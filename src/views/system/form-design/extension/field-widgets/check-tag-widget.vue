@@ -18,6 +18,7 @@
                 v-model="item.checked" 
                 :label="item.label" 
                 :disabled="field.options.disabled"
+                @change="onCheckboxChange"
             />
         </template>
         <template v-else-if="!field.options.showCheckbox && !isReadMode">
@@ -81,23 +82,9 @@ export default {
 		FormItemWrapper,
 	},
     watch: {
-        options: {
-            handler(newValue, oldValue) {
-                let selected = [];
-                newValue.forEach(el => {
-                    if(el.checked) {
-                        selected.push(el.label)
-                    }
-                });
-                this.fieldModel = selected.join(",");
-                this.handleChangeEvent(this.fieldModel);
-            },
-            deep: true
-        },
         fieldModel: {
             handler(newValue, oldValue) {
-                // this.handleChangeEvent(newValue);
-                this.initOptions();
+                this.initOptionsChecked();
             },
             deep: true
         }
@@ -111,16 +98,7 @@ export default {
 		};
 	},
 	computed: {
-        // options() {
-        //     return this.field.options.optionItems.map(el => {
-        //         let newValue = el.label || el.value;
-        //         return {
-        //             value: newValue,
-        //             label: newValue,
-        //             checked: this.fieldModel ? this.fieldModel.split(",").includes(newValue) : false
-        //         }
-        //     });
-        // }
+
     },
 	beforeCreate() {
 		/* 这里不能访问方法和属性！！ */
@@ -140,7 +118,6 @@ export default {
 
 	mounted() {
 		this.handleOnMounted();
-        this.initOptions();
 	},
 
 	beforeUnmount() {
@@ -148,7 +125,7 @@ export default {
 	},
 
 	methods: {
-        initOptions(){
+        initOptionsChecked(){
             this.options = this.field.options.optionItems.map(el => {
                 let newValue = el.label || el.value;
                 return {
@@ -259,6 +236,18 @@ export default {
 
 			this.handleChangeEvent(this.fieldModel);
 		},
+        
+        // 单选组件切换
+        onCheckboxChange(){
+            let selected = [];
+            this.options.forEach(el => {
+                if(el.checked) {
+                    selected.push(el.label)
+                }
+            });
+            this.fieldModel = selected.join(",");
+            this.handleChangeEvent(this.fieldModel);
+        }
 	},
 };
 </script>

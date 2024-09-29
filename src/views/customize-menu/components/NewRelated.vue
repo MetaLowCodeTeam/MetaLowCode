@@ -45,9 +45,10 @@ watchEffect(() => {
     myAddConfig.value = [];
     if(props.addConf?.config) {
         let config = JSON.parse(props.addConf.config);
+        let checkNewRelatedFilter = props.checkNewRelatedFilter || {};;
         config.forEach((el,inx) => {
             // 有查看权限且过滤条件通过
-            if($TOOL.checkRole('r' + el.entityCode + '-2') && props.checkNewRelatedFilter[inx]){
+            if($TOOL.checkRole('r' + el.entityCode + '-2') && checkNewRelatedFilter[inx]){
                 myAddConfig.value.push(el);
             }
         });
