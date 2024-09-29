@@ -20,7 +20,7 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.component = "custom-page/dashboard";
     } else if (el.type == 6) {
         newRoute.path = "/web/custom-page/vFrom" + (isTopNav ? '/' + el.guid : '');
-        newRoute.component = "custom-page/ListVFromCmp/index";
+        newRoute.component = "custom-page/ListVFormCmp/index";
     } else {
         // 自定义页面目录
         newRoute.path = "/web/custom-page/";
