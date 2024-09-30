@@ -24,6 +24,7 @@
 						@on-success="onSuccess"
 						class="ml-upload"
 						uploadUrl="/file/upload"
+                        skipMaxSize
 					>
 						<template #trigger>
 							<el-button>

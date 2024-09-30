@@ -20,9 +20,13 @@ const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const props = defineProps({
     action: { type: String, default: "" },
-    accept: { type: String, default: "image/gif, image/jpeg, image/png" },
+    accept: { type: String, default: "" },
     maxSize: { type: Number, default: 10 },
     uploadUrl: { type: String, default: "" },
+    skipMaxSize : {
+        type: Boolean,
+        default: false
+    }
 });
 const emits = defineEmits(["on-success"]);
 let uploaderRefs = ref("");
@@ -41,27 +45,35 @@ onMounted(() => {
 
 const uploadFile = async (data) => {
     let { file } = data;
-    // 取上传文件后缀
-    let fileExtension = file.name.substring(file.name.lastIndexOf(".") + 1);
-    const acceptIncludes = props.accept.includes(fileExtension);
-    // 如果上传文件限制的类型不是 image/* 且 上传的文件后缀不在限制类型里。
-    if (!acceptIncludes && props.accept != "image/*") {
-        $ElMessage.warning("请选择" + props.accept + "类型");
-        clearFiles();
-        return false;
+    let { accept, skipMaxSize } = props;
+    // 如果有accept 不等于空就说明要检测上传类型
+    if(accept) {
+        // 取上传文件后缀
+        let fileExtension = file.name.substring(file.name.lastIndexOf(".") + 1);
+        const acceptIncludes = accept.includes(fileExtension);
+        // 如果上传文件限制的类型不是 image/* 且 上传的文件后缀不在限制类型里。
+        if (!acceptIncludes && accept != "image/*") {
+            $ElMessage.warning("请选择" + accept + "类型");
+            clearFiles();
+            return false;
+        }
+        // 如果上传的文件指定类型 image/*  且 上传的文件的类型不包含 image
+        if (accept == "image/*" && !file.type.includes("image")) {
+            $ElMessage.warning("请选择" + accept + "类型");
+            clearFiles();
+            return false;
+        }
     }
-    // 如果上传的文件指定类型 image/*  且 上传的文件的类型不包含 image
-    if (props.accept == "image/*" && !file.type.includes("image")) {
-        $ElMessage.warning("请选择" + props.accept + "类型");
-        clearFiles();
-        return false;
+    // 如果没有跳过大小限制需要验证文件大小
+    if(!skipMaxSize) {
+        const maxSize = file.size / 1024 / 1024 < props.maxSize;
+        if (!maxSize) {
+            $ElMessage.warning(`上传文件大小不能超过 ${props.maxSize}MB!`);
+            clearFiles();
+            return false;
+        }
     }
-    const maxSize = file.size / 1024 / 1024 < props.maxSize;
-    if (!maxSize) {
-        $ElMessage.warning(`上传文件大小不能超过 ${props.maxSize}MB!`);
-        clearFiles();
-        return false;
-    }
+    
     let formData = new FormData();
    
     loading.value = true;

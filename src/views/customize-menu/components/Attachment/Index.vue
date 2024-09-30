@@ -479,10 +479,7 @@ const openDialog = (type, row) => {
 		fileUrl: "",
 		fileName: "",
 		operateType: "",
-		directoryLabel: getNodeLabel(
-			fileDirectory.value,
-			dirList.value
-		),
+		directoryLabel: curtNode.value?.label || '根目录',
 	};
 	// 如果是文件
 	if (type == "file") {
@@ -493,34 +490,39 @@ const openDialog = (type, row) => {
 	else {
 		param.operateType = row ? "edit" : "add";
 		param.attachmentId = row ? row.value : null;
-		param.fileName = row ? getNodeLabel(
-			row.value,
-			dirList.value
-		) : null;
+		param.fileName = row ? row.label : null
         // 是编辑 父级目录用父级目录
         if(param.operateType == 'edit') {
             param.parentDirectory = row ? row.parentId : null;
         }
-        // 是 父级目录 用自身目录
+        // 是新建 父级目录 用自身目录
         else {
             param.parentDirectory = fileDirectory.value;
         }
 		param.directoryLabel = getNodeLabel(
 			param.parentDirectory,
 			dirList.value
-		);
+		) || '根目录';
 	}
 	OperateDialogRef.value?.openDialog(param);
 };
 
 const getNodeLabel = (id, list) => {
-	for (let index = 0; index < list.length; index++) {
-		const element = list[index];
-		if (element.value == id) {
-			return element.label;
-		}
-		return getNodeLabel(id, element.children);
-	}
+    for (let index = 0; index < list.length; index++) {
+        const element = list[index];
+        if (element.value === id) {
+            return element.label;
+        }
+        if (element.children && element.children.length > 0) {
+            // 递归查找子节点，并检查结果是否为 undefined
+            const result = getNodeLabel(id, element.children);
+            if (result !== undefined) {
+                return result;
+            }
+        }
+    }
+    // 如果没有找到对应的 id，则返回 undefined 或者其他默认值
+    return undefined;
 };
 
 // 删除
