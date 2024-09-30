@@ -414,6 +414,7 @@ export default {
         // 确认删除
         confirmDelField(){
             this.fieldModel = deepClone(this.viewDialogConf.sourceData);
+            this.handleChangeEvent(this.fieldModel);
             this.viewDialogConf.show = false;
         },
 	},
