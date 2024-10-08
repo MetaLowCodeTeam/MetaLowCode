@@ -3,7 +3,7 @@
         :title="pageType[type].title"
         entityName="ApprovalTask"
         fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName,approvalConfigId.entityCode"
-        defalutSortField="modifiedOn"
+        defaultSortField="modifiedOn"
         :tableColumn="tableColumn"
         :filterItems="pageType[type].filterItems"
         ref="mlSingleListRef"

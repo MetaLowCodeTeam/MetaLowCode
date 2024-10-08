@@ -2,11 +2,11 @@
     <mlEntityMenuAndList
         ref="mlEntityMenuAndListRef"
         entityName="TriggerConfig"
-        aciveId="triggerConfigId"
+        activeId="triggerConfigId"
         fieldsList="name,entityCode,actionType,actionContent,priority,isDisabled,modifiedOn,whenNum,createdOn"
         @goDetail="goDetail"
         :tableColumn="tableColumn"
-        defalutSortField="createdOn"
+        defaultSortField="createdOn"
         :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"

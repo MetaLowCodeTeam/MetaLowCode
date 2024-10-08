@@ -2,11 +2,11 @@
     <mlEntityMenuAndList
         ref="mlEntityMenuAndListRef"
         entityName="ApprovalConfig"
-        aciveId="approvalConfigId"
+        activeId="approvalConfigId"
         fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn,flowType"
         @goDetail="goDetail"
         :tableColumn="tableColumn"
-        defalutSortField="createdOn"
+        defaultSortField="createdOn"
         :filterItems="filterItems"
         @actionBtn="actionBtn"
         queryUrl="/approval/configList"

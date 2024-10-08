@@ -206,11 +206,11 @@ const props = defineProps({
     // 字段列表
     fieldsList: { type: String, default: "" },
     // 操作ID
-    aciveId: { type: String, default: "" },
+    activeId: { type: String, default: "" },
     // 自定义表格列
     tableColumn: { type: Array, default: () => [] },
     // 默认排序字段
-    defalutSortField: { type: String, default: "" },
+    defaultSortField: { type: String, default: "" },
     // 权限字段
     checkRole: { type: String, default: "" },
     // 查询接口
@@ -256,7 +256,7 @@ let page = reactive({
 // 排序值
 let tableSort = ref([
     {
-        fieldName: props.defalutSortField,
+        fieldName: props.defaultSortField,
         type: "DESC",
     },
 ]);
@@ -396,7 +396,7 @@ const sortChange = (column, prop, order) => {
     } else {
         sortType = "";
         tableSort.value[0] = {
-            fieldName: props.defalutSortField,
+            fieldName: props.defaultSortField,
             type: "Desc",
         };
     }
@@ -486,9 +486,9 @@ const deleteProcess = (row) => {
         .then(async () => {
             let res;
             if(props.entityName == 'TriggerConfig'){
-                res = await trigger.detail.triggerDelete(row[props.aciveId]);
+                res = await trigger.detail.triggerDelete(row[props.activeId]);
             }else {
-                res = await deleteRecord(row[props.aciveId]);
+                res = await deleteRecord(row[props.activeId]);
             }
             loading.value = true;
             if (res) {

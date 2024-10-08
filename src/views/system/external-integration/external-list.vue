@@ -2,11 +2,11 @@
     <mlEntityMenuAndList
         ref="mlEntityMenuAndListRef"
         entityName="ExternalForm"
-        aciveId="externalFormId"
+        activeId="externalFormId"
         fieldsList="externalFormName,entityCode,bindUsers,isDisabled,createdOn,externalFormId"
         @goDetail="goDetail"
         :tableColumn="tableColumn"
-        defalutSortField="createdOn"
+        defaultSortField="createdOn"
         :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
