@@ -22,6 +22,12 @@
 					<el-input v-model.number="fieldProps.fieldViewModel.maxValue"
 							  type="number" style="width: 100%"></el-input>
 				</el-form-item>
+				<el-form-item label="字段值是否唯一/不可重复">
+					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
+						<el-radio :label="true">是</el-radio>
+						<el-radio :label="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
 				<el-form-item label="是否在列表中默认显示">
 					<el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
 						<el-radio :label="true">是</el-radio>
@@ -86,6 +92,7 @@ export default {
 				'fieldViewModel': {
 					'minValue': -999999999,
 					'maxValue': 999999999,
+					uniqueness: false,
 					'validators': [],
 				},
 			},

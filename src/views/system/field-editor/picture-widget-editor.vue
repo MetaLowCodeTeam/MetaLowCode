@@ -124,7 +124,7 @@ export default {
 				name: [
 					{required: true, message: '请输入字段名称', trigger: 'blur'},
 					{
-						pattern: /^[a-z]+[A-Za-z\d]*$/,
+						pattern: /^[a-z]+[A-Za-z\d_]*$/,
 						message: '请以小写英文字母开头，中间可输入字母或数字，禁止中文',
 						trigger: 'blur'
 					},

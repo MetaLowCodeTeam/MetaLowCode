@@ -248,7 +248,7 @@ export default {
     },
     data() {
         return {
-            
+
             saveLoading: false,
             fieldProps: {
                 name: "",
@@ -274,7 +274,7 @@ export default {
                         trigger: "blur",
                     },
                     {
-                        pattern: /^[a-z]+[A-Za-z\d]*$/,
+                        pattern: /^[a-z]+[A-Za-z\d_]*$/,
                         message:
                             "请以小写英文字母开头，中间可输入字母或数字，禁止中文",
                         trigger: "blur",
@@ -358,7 +358,7 @@ export default {
             }else {
                 this.saveLoading = false;
             }
-            
+
         },
 
         async readFieldProps(savedProps) {
