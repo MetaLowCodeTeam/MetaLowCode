@@ -317,10 +317,12 @@ const getApprovalList = async () => {
         },
         sortFields: tableSort.value,
     };
-    param.filter.items = filterItems.map((el) => {
-        el.value = keyword.value ? keyword.value : "" ;
-        return el;
-    });
+    if(props.entityName != 'ApprovalTask') {
+        param.filter.items = filterItems.map((el) => {
+            el.value = keyword.value ? keyword.value : "" ;
+            return el;
+        });
+    }
     if (defaultCode.value != "all") {
         param.filter.items.push({
             fieldName,
