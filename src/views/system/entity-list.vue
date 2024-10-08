@@ -34,32 +34,87 @@
                         shadow="hover"
                         v-for="(entityItem, entityIdx) in notGroup"
                         :key="entityIdx"
-                        @click=" (event) => showContextMenu(entityItem, event) "
-                        @contextmenu.prevent=" (event) => showContextMenu(entityItem, event) "
                         @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
                         @mouseleave="onLeaveEntity"
                     >
                         <template #header>
                             <div>
-                                <span>{{ entityItem.label }}</span>
+								<span>{{ entityItem.label }}</span>
                             </div>
                         </template>
+						<div class="entity-flag-wrapper">
+							<span v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
+										<i title="系统实体">系</i>
+									</span>
+							<span v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
+										<i title="主实体">主</i>
+									</span>
+							<span v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
+										<i title="明细实体">从</i>
+									</span>
+							<span v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
+										<i title="内部实体">内</i>
+									</span>
+						</div>
                         <div>{{ entityItem.name }}</div>
-                        <div v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
-                            <i title="系统实体">系</i>
-                        </div>
-                        <div v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
-                            <i title="主实体">主</i>
-                        </div>
-                        <div v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
-                            <i title="明细实体">从</i>
-                        </div>
-                        <div
-                            v-if="!!entityItem.internalEntityFlag"
-                            class="entity-flag detail-entity"
-                        >
-                            <i title="内部实体">内</i>
-                        </div>
+						<div class="entity-menu-icon">
+							<el-dropdown @command="(command) => handleCommand(command, entityItem)">
+								<el-icon title="显示菜单"><Tools /></el-icon>
+								<template #dropdown>
+									<!-- 明细实体 -->
+									<template v-if="!entityItem.detailEntityFlag">
+										<el-dropdown-menu>
+											<el-dropdown-item v-if="checkRole('r6001')" command="c10">
+												<el-icon><Memo /></el-icon>字段管理
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6003')" command="c20">
+												<el-icon><Postcard /></el-icon>表单设计
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6008') && !entityItem.systemEntityFlag"
+															  command="c30">
+												<el-icon><ScaleToOriginal /></el-icon>列表设计
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6016') && !entityItem.systemEntityFlag"
+															  command="c40" divided>
+												<el-icon><Share /></el-icon>流程设计
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6015') && !entityItem.systemEntityFlag"
+															  command="c50">
+												<el-icon><Link /></el-icon>触发器设计
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r45-2') && !entityItem.systemEntityFlag"
+															  command="c60">
+												<el-icon><Files /></el-icon>报表设计
+											</el-dropdown-item>
+											<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+												<el-icon><CopyDocument /></el-icon>复制实体
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+															  command="c80">
+												<el-icon><Delete /></el-icon>删除实体
+											</el-dropdown-item>
+										</el-dropdown-menu>
+									</template>
+									<template v-else>
+										<el-dropdown-menu>
+											<el-dropdown-item v-if="checkRole('r6001')" command="c10">
+												<el-icon><Memo /></el-icon>字段管理
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6003')" command="c20">
+												<el-icon><Postcard /></el-icon>表单设计
+											</el-dropdown-item>
+											<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+												<el-icon><CopyDocument /></el-icon>复制实体
+											</el-dropdown-item>
+											<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+															  command="c80">
+												<el-icon><Delete /></el-icon>删除实体
+											</el-dropdown-item>
+										</el-dropdown-menu>
+									</template>
+								</template>
+							</el-dropdown>
+						</div>
                     </el-card>
                 </el-collapse-item>
                 <template v-for="(op,name,inx) of entityGroup" :key="inx">
@@ -79,8 +134,6 @@
                             shadow="hover"
                             v-for="(entityItem, entityIdx) in op"
                             :key="entityIdx"
-                            @click=" (event) => showContextMenu(entityItem, event) "
-                            @contextmenu.prevent=" (event) => showContextMenu(entityItem, event) "
                             @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
                             @mouseleave="onLeaveEntity"
                         >
@@ -89,31 +142,75 @@
                                     <span>{{ entityItem.label }}</span>
                                 </div>
                             </template>
+							<div class="entity-flag-wrapper">
+								<span v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
+										<i title="系统实体">系</i>
+									</span>
+								<span v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
+										<i title="主实体">主</i>
+									</span>
+								<span v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
+										<i title="明细实体">从</i>
+									</span>
+								<span v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
+										<i title="内部实体">内</i>
+									</span>
+							</div>
                             <div>{{ entityItem.name }}</div>
-                            <div
-                                v-if="!!entityItem.systemEntityFlag"
-                                class="system-flag system-entity"
-                            >
-                                <i title="系统实体">系</i>
-                            </div>
-                            <div
-                                v-if="!entityItem.detailEntityFlag"
-                                class="entity-flag main-entity"
-                            >
-                                <i title="主实体">主</i>
-                            </div>
-                            <div
-                                v-if="!!entityItem.detailEntityFlag"
-                                class="entity-flag detail-entity"
-                            >
-                                <i title="明细实体">从</i>
-                            </div>
-                            <div
-                                v-if="!!entityItem.internalEntityFlag"
-                                class="entity-flag detail-entity"
-                            >
-                                <i title="内部实体">内</i>
-                            </div>
+							<div class="entity-menu-icon">
+								<el-dropdown @command="(command) => handleCommand(command, entityItem)">
+									<el-icon title="显示菜单"><Tools /></el-icon>
+									<template #dropdown>
+										<!-- 明细实体 -->
+										<template v-if="!entityItem.detailEntityFlag">
+											<el-dropdown-menu>
+												<el-dropdown-item v-if="checkRole('r6001')" command="c10">
+													<el-icon><Memo /></el-icon>字段管理
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6003')" command="c20">
+													<el-icon><Postcard /></el-icon>表单设计
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6008')" command="c30">
+													<el-icon><ScaleToOriginal /></el-icon>列表设计
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6016')" command="c40" divided>
+													<el-icon><Share /></el-icon>流程设计
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6015')" command="c50">
+													<el-icon><Link /></el-icon>触发器设计
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r45-2')" command="c60">
+													<el-icon><Files /></el-icon>报表设计
+												</el-dropdown-item>
+												<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+													<el-icon><CopyDocument /></el-icon>复制实体
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+																  command="c80">
+													<el-icon><Delete /></el-icon>删除实体
+												</el-dropdown-item>
+											</el-dropdown-menu>
+										</template>
+										<template v-else>
+											<el-dropdown-menu>
+												<el-dropdown-item v-if="checkRole('r6001')" command="c10">
+													<el-icon><Memo /></el-icon>字段管理
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6003')" command="c20">
+													<el-icon><Postcard /></el-icon>表单设计
+												</el-dropdown-item>
+												<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+													<el-icon><CopyDocument /></el-icon>复制实体
+												</el-dropdown-item>
+												<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+																  command="c80">
+													<el-icon><Delete /></el-icon>删除实体
+												</el-dropdown-item>
+											</el-dropdown-menu>
+										</template>
+									</template>
+								</el-dropdown>
+							</div>
                         </el-card>
                     </el-collapse-item>
                 </template>
@@ -218,7 +315,7 @@
                         v-if="!selectedEntityObj.systemEntityFlag"
                     >复制实体</div>
                     <div
-                        v-if="checkRole('r6002')"
+                        v-if="checkRole('r6002') && !selectedEntityObj.systemEntityFlag"
                         class="context-menu__item"
                         @click="deleteSelectedEntity()"
                     >删除实体</div>
@@ -679,6 +776,27 @@ const setHideMenuTimer = () => {
 const clearHideMenuTimer = () => {
     clearTimeout(hideMenuTimerId.value);
 };
+
+const handleCommand = (command, entityItem) => {
+	selectedEntityObj.value = entityItem;
+	if (command === 'c10') {
+		gotoEntityManager();
+	} else if (command === 'c20') {
+		gotoFormLayout();
+	} else if (command === 'c30') {
+		gotoListView();
+	} else if (command === 'c40') {
+		gotoRoute('process-list', true);
+	} else if (command === 'c50') {
+		gotoRoute('trigger-list', false);
+	} else if (command === 'c60') {
+		gotoRoute('templates-list', true);
+	} else if (command === 'c70') {
+		createNewEntity('copy');
+	} else if (command === 'c80') {
+		deleteSelectedEntity();
+	}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -715,6 +833,16 @@ const clearHideMenuTimer = () => {
     border-bottom: 1px dashed #eeeeee;
 }
 
+.el-card.entity-card:hover {
+	border-color: var(--el-color-primary) !important;
+
+	.entity-menu-icon {
+		.el-icon {
+			display: block;
+		}
+	}
+}
+
 .el-card.entity-card {
     font-size: 13px;
     width: 180px;
@@ -732,6 +860,7 @@ const clearHideMenuTimer = () => {
         line-height: 36px;
         background: #f7f7f7;
         font-size: 13px;
+		white-space: nowrap;
     }
 
     :deep(.el-card__body) {
@@ -740,13 +869,12 @@ const clearHideMenuTimer = () => {
         padding: 12px 12px 16px 12px;
     }
 
+	.entity-flag-wrapper {
+		margin-top: -6px;
+	}
+
     .system-flag {
-        position: absolute;
-        bottom: 0;
-        right: 23px;
-        height: 22px;
-        line-height: 22px;
-        z-index: 9;
+		margin-right: 3px;
 
         i {
             font-size: 11px;
@@ -761,13 +889,6 @@ const clearHideMenuTimer = () => {
     }
 
     .entity-flag {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        height: 22px;
-        line-height: 22px;
-        z-index: 9;
-
         i {
             font-size: 11px;
             color: #fff;
@@ -777,12 +898,28 @@ const clearHideMenuTimer = () => {
     }
 
     .entity-flag.main-entity {
-        background: #4ab7bd;
+        background: var(--el-color-primary) !important;
     }
 
     .entity-flag.detail-entity {
-        background: #cccccc;
+        background: var(--el-color-primary) !important;
+		opacity: 0.5;
     }
+
+	.entity-menu-icon {
+		position: absolute;
+		bottom: 0;
+		right: 8px;
+		height: 22px;
+		line-height: 22px;
+		z-index: 10;
+
+		.el-icon {
+			font-size: 18px;
+			color: var(--el-color-primary) !important;
+			display: none;
+		}
+	}
 
     .entity-item-tool {
         .field-tool {
@@ -815,7 +952,6 @@ const clearHideMenuTimer = () => {
     /*height: 106px;*/
     font-size: 12px;
     color: #444040;
-    border-radius: 4px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 3px;
