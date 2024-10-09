@@ -1,6 +1,6 @@
 <template>
     <div class="customize-menu-list" v-loading="pageLoading">
-        <div class="table-box" :class="{ 'is-customize-query-panel': !topSearchConfig.isDefaultQueryPanel }">
+        <div class="table-box">
             <div 
                 class="table-search-box"
                 v-if="listParamConf.showHeader"
@@ -11,11 +11,13 @@
                 :modelName="modelName"
                 :topSearchConfig="topSearchConfig"
                 @queryNow="queryNow"
+                @uploadItems="topPanelUploadItems"
                 ref="ListCustomizeQueryRef"
                 v-if="!topSearchConfig.isDefaultQueryPanel"
             />
             <div>
                 <template v-if="topSearchConfig.isDefaultQueryPanel">
+                    <slot name="beforeAdvancedQuery"></slot>
                     <el-tooltip
                         effect="dark"
                         content="切换查询面板"
@@ -29,20 +31,11 @@
                             :loading="queryPanelLoading"
                             @click="changeQueryPanel(false)"
                         >
-                            <el-icon size="20" class="toggle-query-icon">
-                                <Filter />
+                            <el-icon size="16" class="toggle-query-icon">
+                                <Switch />
                             </el-icon>
                         </el-button>
-                        <!-- <span
-                            class="toggle-query-box"
-                            @click="changeQueryPanel(false)"
-                        >
-                            <el-icon size="20" class="toggle-query-icon">
-                                <Filter />
-                            </el-icon>
-                        </span> -->
                     </el-tooltip>
-                    <slot name="beforeAdvancedQuery"></slot>
                     <mlListAdvancedQuery
                         v-if="entityCode && listParamConf.showAdvancedQuery"
                         v-model="advFilter"
@@ -93,15 +86,18 @@
                 </template>
                 <template v-if="!topSearchConfig.isDefaultQueryPanel && $TOOL.checkRole('r6008')">
                     <el-button
+                        icon="Switch"
                         type="primary"
                         text
                         bg
                         :loading="queryPanelLoading"
                         @click="changeQueryPanel(true)"
+
                     >
                         切换查询面板
                     </el-button>
                     <el-button 
+                        icon="Setting"
                         @click="setCustomizeQueryPanel"
                         text
                         bg
@@ -109,6 +105,25 @@
                     > 
                         设计查询面板 
                     </el-button>
+                    <el-tooltip
+                        effect="dark"
+                        content="展开收起"
+                        placement="top"
+                        v-if="topSearchConfig.filter?.items?.length > 3"
+                    >
+                        <el-button
+                            class="mr-10"
+                            type="primary"
+                            text
+                            bg
+                            :loading="queryPanelLoading"
+                            @click="changeTopQueryPanelExpand"
+                        >
+                            <el-icon size="16" class="toggle-query-icon">
+                                <Sort />
+                            </el-icon>
+                        </el-button>
+                    </el-tooltip>
                 </template>
                 <div class="fr table-setting">
                     <slot name="beforeOpenBtn"></slot>
@@ -216,7 +231,12 @@
                     <span class="lh-span-a" @click="editColumn('SELF')">前去配置</span>
                 </div>
             </div>
-            <div v-else class="table-div" :class="{'showPagination':listParamConf.showPagination}">
+            <div 
+                v-else 
+                class="table-div" 
+                :class="{'showPagination':listParamConf.showPagination}"
+                :style="{'height':calculateHeight}"
+            >
                 <!-- 分组 -->
                 <div class="tree-froup-box" v-if="treeGroupConf.isOpen">
                     <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
@@ -765,6 +785,9 @@ let topSearchConfig = ref({
     },
 });
 let queryPanelLoading = ref(false);
+
+let calculateHeight = ref("");
+
 // 切换查询面板
 const changeQueryPanel = async (target) => {
     let param = {
@@ -781,9 +804,41 @@ const changeQueryPanel = async (target) => {
 		param,
 		myModelName.value
 	);
-    topSearchConfig.value.isDefaultQueryPanel = target;
+    if(res){
+        if(!topSearchConfig.value.layoutConfigId) {
+            topSearchConfig.value.layoutConfigId = res.data.formData.layoutConfigId
+        }
+        topSearchConfig.value.isDefaultQueryPanel = target;
+        if(target) {
+            calculateHeight.value = "";
+        }else {
+            calculateHeight.value = "calc(100% - 144px)"
+        }
+    }
+    
 	queryPanelLoading.value = false;
 }
+// 更新查询面板
+const topPanelUploadItems = (e) => {
+    topSearchConfig.value.filter = e;
+}
+// 展开收起查询面板
+let topQueryPanelExpand = ref(false);
+const changeTopQueryPanelExpand = () => {
+    topQueryPanelExpand.value = !topQueryPanelExpand.value;
+    let length = topSearchConfig.value.filter.items?.length;
+    if(topQueryPanelExpand.value) {
+        let sourceHeight = 106;
+        let formatHeight = Math.ceil(length / 3) * 38;    
+        calculateHeight.value = "calc(100% - "+( sourceHeight + formatHeight) +"px)";
+        ListCustomizeQueryRef.value?.changeCustomizeQueryHeight(formatHeight);
+    }else {
+        calculateHeight.value = "calc(100% - 144px)";
+        ListCustomizeQueryRef.value?.changeCustomizeQueryHeight(38);
+    }
+}
+
+
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -843,6 +898,9 @@ const getLayoutList = async () => {
         if(res.data.TOP_SEARCH) {
             topSearchConfig.value = JSON.parse(res.data.TOP_SEARCH.config);
             topSearchConfig.value.layoutConfigId = res.data.TOP_SEARCH.layoutConfigId;
+            if(!topSearchConfig.value.isDefaultQueryPanel) {
+                calculateHeight.value = "calc(100% - 144px)"
+            }
         };
         // treeGroup.value = ? ;
 
@@ -1566,12 +1624,10 @@ div {
         .table-search-box {
             border-top: 3px solid var(--el-color-primary);
             background: #fff;
-            height: 60px;
+            min-height: 60px;
             line-height: 32px;
-            
-            padding: 0 20px;
+            padding: 14px 20px;
             padding-left: 10px;
-            padding-top: 14px;
             box-sizing: border-box;
             // transition: all 0.3s;
             .toggle-query-box {
@@ -1640,14 +1696,14 @@ div {
             //     }
             // }
         }
-        &.is-customize-query-panel {
-            .table-search-box {
-                height: 104px;
-            }
-            .table-div {
-                height: calc(100% - 144px);
-            }
-        }
+        // &.is-customize-query-panel {
+        //     .table-search-box {
+        //         height: 104px;
+        //     }
+        //     .table-div {
+        //         height: calc(100% - 144px);
+        //     }
+        // }
     }
 }
 

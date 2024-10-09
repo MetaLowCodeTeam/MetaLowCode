@@ -354,6 +354,7 @@
                         :span="8"
                         v-for="(item,inx) of conditionConf.items"
                         :key="inx"
+                        class="mb-5"
                     >
                         <el-row :gutter="5">
                             <!-- 字段名 -->

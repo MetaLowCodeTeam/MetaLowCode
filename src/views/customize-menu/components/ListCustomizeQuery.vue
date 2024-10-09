@@ -1,38 +1,34 @@
 <style lang="scss" scoped>
 .ml-customize-query {
-	height: 44px;
+    margin-bottom: 6px;
 	display: flex;
+    overflow: hidden;
 	:deep(.is-horizontal) {
 		display: none !important;
 	}
 	.conditions-comp {
-		width: calc(100% - 160px);
+		width: calc(100% - 180px);
 	}
 	.conditions-action {
-		width: 160px;
+		width: 180px;
 		text-align: right;
 	}
 }
 </style>
 <!-- 列表自定义查询 -->
 <template>
-	<div class="ml-customize-query">
+	<div class="ml-customize-query" :style="{ 'height': customizeQueryHeight + 'px'}">
 		<div class="conditions-comp">
-			<el-scrollbar>
-				<mlSetConditions
-					v-model="compConditions"
-					:entityName="entityName"
-					displayedComp
-				/>
-			</el-scrollbar>
+            <mlSetConditions
+                v-model="compConditions"
+                :entityName="entityName"
+                displayedComp
+            />
 		</div>
 		<div class="conditions-action">
-			<el-dropdown trigger="click" @command="onSearch" class="mr-10 pt-1">
-				<el-button type="primary">
-					查询
-					<el-icon class="el-icon--right">
-						<arrow-down />
-					</el-icon>
+			<el-dropdown trigger="click" @command="onSearch" class="pt-1">
+				<el-button type="primary" icon="ArrowDown" style="width: 80px;margin-right: 12px" plain>
+                    查询
 				</el-button>
 				<template #dropdown>
 					<el-dropdown-menu>
@@ -45,8 +41,7 @@
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
-            
-			<el-button type="primary" plain @click="refreshAdvancedQuery">重置</el-button>
+			<el-button @click="refreshAdvancedQuery"  style="width: 74px;">重置</el-button>
 		</div>
 	</div>
 	<!-- 设计查询面板 -->
@@ -80,7 +75,7 @@ const props = defineProps({
 	// 查询条件
 	topSearchConfig: { type: Object, default: () => {} },
 });
-const emit = defineEmits(['queryNow'])
+const emit = defineEmits(['queryNow', 'uploadItems'])
 
 let isShow = ref(false);
 
@@ -91,6 +86,12 @@ let compConditions = ref({
 
 let loading = ref(false);
 let layoutConfigId = ref("");
+
+let customizeQueryHeight = ref(38);
+
+const changeCustomizeQueryHeight = (height) => {
+    customizeQueryHeight.value = height;
+}
 
 const onSearch = (command) => {
 	compConditions.value.equation = command;
@@ -136,12 +137,13 @@ const conditionsConfirm = async () => {
 		props.modelName
 	);
 	if (res) {
-        compConditions.value = JSON.parse(JSON.stringify(dialogConditions.value));
+        emit('uploadItems', dialogConditions.value)
         isShow.value = false;
 		ElMessage.success("设置成功");
 	}
 	loading.value = false;
 };
+
 
 
 watchEffect(() => {
@@ -151,5 +153,6 @@ watchEffect(() => {
 
 defineExpose({
 	openDialog,
+    changeCustomizeQueryHeight
 });
 </script>
