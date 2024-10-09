@@ -508,7 +508,8 @@ const viewTableChange = () => {
 
 const onAdd = () => {
     emits("addRow", {
-        entityName: entityName.value
+        entityName: entityName.value,
+        fieldName: fieldName.value
     });
 }
 
