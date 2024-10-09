@@ -1,57 +1,115 @@
 <template>
     <div class="customize-menu-list" v-loading="pageLoading">
-        <div class="table-box">
+        <div class="table-box" :class="{ 'is-customize-query-panel': !topSearchConfig.isDefaultQueryPanel }">
             <div 
                 class="table-search-box"
                 v-if="listParamConf.showHeader"
             >
-                <slot name="beforeAdvancedQuery"></slot>
-                <mlListAdvancedQuery
-                    v-if="entityCode && listParamConf.showAdvancedQuery"
-                    v-model="advFilter"
-                    :entityName="entityName"
-                    :entityCode="entityCode"
-                    @queryNow="queryNow"
-                    @refresh="refreshAdvancedQuery"
-                    @onAddAdv="getLayoutList"
-                    @changeAdvFilter="changeAdvFilter"
-                    :filter="advancedFilter"
-                    :modelName="modelName"
-                    class="mr-15"
-                />
-                <slot name="beforeQuickQuery"></slot>
-                <div class="quick-query" v-if="listParamConf.showQuickQuery">
-                    <el-input
-                        v-model="quickQuery"
-                        class="w-50 m-2"
-                        :placeholder="quickQueryPlaceholder"
-                        @keyup.enter="onQuickQuery()"
-                        clearable
-                        @clear="onClearQuickQuery()"
-                    >
-                        <template #append>
-                            <el-button @click="onQuickQuery()">
-                                <el-icon>
-                                    <ElIconSearch />
-                                </el-icon>
-                            </el-button>
-                        </template>
-                    </el-input>
-                    <span
-                        class="quick-edit"
-                        @click="openSelectFieldDialog"
+            <ListCustomizeQuery 
+                :entityName="entityName"
+                :entityCode="entityCode"
+                :modelName="modelName"
+                :topSearchConfig="topSearchConfig"
+                @queryNow="queryNow"
+                ref="ListCustomizeQueryRef"
+                v-if="!topSearchConfig.isDefaultQueryPanel"
+            />
+            <div>
+                <template v-if="topSearchConfig.isDefaultQueryPanel">
+                    <el-tooltip
+                        effect="dark"
+                        content="切换查询面板"
+                        placement="top"
                         v-if="$TOOL.checkRole('r6008')"
                     >
-                        <el-icon size="18">
-                            <ElIconEditPen />
-                        </el-icon>
-                    </span>
-                </div>
-                <div class="data-filter" v-if="isDataFilter">
-                    <el-tag type="success" closable @close="clearDataFilter">当前数据已过滤</el-tag>
-                </div>
-                <slot name="afterQuickQuery"></slot>
-                
+                        <el-button
+                            class="mr-10"
+                            type="primary"
+                            link
+                            :loading="queryPanelLoading"
+                            @click="changeQueryPanel(false)"
+                        >
+                            <el-icon size="20" class="toggle-query-icon">
+                                <Filter />
+                            </el-icon>
+                        </el-button>
+                        <!-- <span
+                            class="toggle-query-box"
+                            @click="changeQueryPanel(false)"
+                        >
+                            <el-icon size="20" class="toggle-query-icon">
+                                <Filter />
+                            </el-icon>
+                        </span> -->
+                    </el-tooltip>
+                    <slot name="beforeAdvancedQuery"></slot>
+                    <mlListAdvancedQuery
+                        v-if="entityCode && listParamConf.showAdvancedQuery"
+                        v-model="advFilter"
+                        :entityName="entityName"
+                        :entityCode="entityCode"
+                        @queryNow="queryNow"
+                        @refresh="refreshAdvancedQuery"
+                        @onAddAdv="getLayoutList"
+                        @changeAdvFilter="changeAdvFilter"
+                        :filter="advancedFilter"
+                        :modelName="modelName"
+                        class="mr-15"
+                    />
+                    <slot name="beforeQuickQuery"></slot>
+                    <div class="quick-query" v-if="listParamConf.showQuickQuery">
+                        <el-input
+                            v-model="quickQuery"
+                            class="w-50 m-2"
+                            :placeholder="quickQueryPlaceholder"
+                            @keyup.enter="onQuickQuery()"
+                            clearable
+                            @clear="onClearQuickQuery()"
+                        >
+                            <template #append>
+                                <el-button @click="onQuickQuery()">
+                                    <el-icon>
+                                        <ElIconSearch />
+                                    </el-icon>
+                                </el-button>
+                            </template>
+                        </el-input>
+                        <span
+                            class="quick-edit"
+                            @click="openSelectFieldDialog"
+                            v-if="$TOOL.checkRole('r6008')"
+                        >
+                            <el-icon size="18">
+                                <ElIconEditPen />
+                            </el-icon>
+                        </span>
+                    </div>
+                    <div class="data-filter" v-if="isDataFilter">
+                        <el-tag type="success" closable @close="clearDataFilter">
+                            当前数据已过滤
+                        </el-tag>
+                    </div>
+                    <slot name="afterQuickQuery"></slot>
+                </template>
+                <template v-if="!topSearchConfig.isDefaultQueryPanel && $TOOL.checkRole('r6008')">
+                    <el-button
+                        type="primary"
+                        text
+                        bg
+                        :loading="queryPanelLoading"
+                        @click="changeQueryPanel(true)"
+                    >
+                        切换查询面板
+                    </el-button>
+                    <el-button 
+                        @click="setCustomizeQueryPanel"
+                        text
+                        bg
+                        :loading="queryPanelLoading"
+                    > 
+                        设计查询面板 
+                    </el-button>
+                </template>
                 <div class="fr table-setting">
                     <slot name="beforeOpenBtn"></slot>
                     <el-button
@@ -73,18 +131,32 @@
                     </el-button>
                     <el-button
                         icon="Edit"
-                        v-if="batchUpdateConf.length > 0 && listParamConf.showBatchUpdateBtn"
+                        v-if="
+                            batchUpdateConf.length > 0 &&
+                            listParamConf.showBatchUpdateBtn
+                        "
                         :disabled="multipleSelection.length < 1"
                         @click="openBatchUpdateDialog"
                     >
                         批量编辑
                     </el-button>
                     <slot name="beforeAddBtn"></slot>
-                    <el-button 
-                        type="primary" 
-                        icon="Plus" 
+                    <el-button
+                        type="primary"
+                        icon="Plus"
                         @click="onAdd"
-                        v-if="listParamConf.showAddBtn && $TOOL.checkRole('r' + queryEntityCodeByEntityName(isReferenceComp ? referenceEntity : entityName) + '-2')" 
+                        v-if="
+                            listParamConf.showAddBtn &&
+                            $TOOL.checkRole(
+                                'r' +
+                                    queryEntityCodeByEntityName(
+                                        isReferenceComp
+                                            ? referenceEntity
+                                            : entityName
+                                    ) +
+                                    '-2'
+                            )
+                        "
                     >
                         新建
                     </el-button>
@@ -110,6 +182,7 @@
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
+            </div>
             </div>
             <!-- 如果是默认列显示，但是默认列没有值 -->
             <div v-if="defaultColumnShow == 'ALL' && tableColumn.length < 1" class="not-column-div">
@@ -360,6 +433,8 @@ import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
+// 自定义查询面板
+import ListCustomizeQuery from './components/ListCustomizeQuery.vue'
 
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
@@ -430,6 +505,8 @@ let pageLoading = ref(false);
 // 当前实体
 let entityCode = ref("");
 let entityName = ref("");
+
+
 
 // 表格列
 let tableColumn = ref([]);
@@ -677,6 +754,37 @@ const setRowStyle = ({row, rowIndex}) => {
 let mainDetailField = ref("");
 // 用于区分保存配置
 let myModelName = ref("");
+
+
+// 顶部查询面板配置
+let topSearchConfig = ref({
+    isDefaultQueryPanel: true,
+    filter: {
+        equation: "AND",
+	    items: [],
+    },
+});
+let queryPanelLoading = ref(false);
+// 切换查询面板
+const changeQueryPanel = async (target) => {
+    let param = {
+		config: JSON.stringify({
+            isDefaultQueryPanel: target,
+            filter: topSearchConfig.value.filter,
+        }),
+		entityCode: entityCode.value,
+	};
+    queryPanelLoading.value = true;
+	let res = await $API.layoutConfig.saveConfig(
+		topSearchConfig.value.layoutConfigId,
+		"TOP_SEARCH",
+		param,
+		myModelName.value
+	);
+    topSearchConfig.value.isDefaultQueryPanel = target;
+	queryPanelLoading.value = false;
+}
+
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value, myModelName.value);
@@ -686,6 +794,7 @@ const getLayoutList = async () => {
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         mainDetailField.value = res.data.mainDetailField;
+        
         filterEasySql.value = "";
         if(res.data.DEFAULT_FILTER){
             defaultFilter.value = JSON.parse(res.data.DEFAULT_FILTER.config);
@@ -714,6 +823,7 @@ const getLayoutList = async () => {
             entityName: entityName.value,
             entityCode: entityCode.value,
         };
+
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
             let styleConfig = JSON.parse(res.data.STYLE.config);
@@ -729,6 +839,11 @@ const getLayoutList = async () => {
         if (res.data.BATCH_UPDATE) {
             batchUpdateConf.value = JSON.parse(res.data.BATCH_UPDATE.config);
         }
+        // 顶部搜索
+        if(res.data.TOP_SEARCH) {
+            topSearchConfig.value = JSON.parse(res.data.TOP_SEARCH.config);
+            topSearchConfig.value.layoutConfigId = res.data.TOP_SEARCH.layoutConfigId;
+        };
         // treeGroup.value = ? ;
 
         // 如果存在默认配置，用默认配置
@@ -1280,6 +1395,12 @@ const copySuccess = ({type, recordId}) => {
     }
 }
 
+// 设计自定义查询面板
+let ListCustomizeQueryRef = ref();
+const setCustomizeQueryPanel = () => {
+    ListCustomizeQueryRef.value?.openDialog();
+}
+
 /**
  * 导出方法
  */
@@ -1446,9 +1567,22 @@ div {
             border-top: 3px solid var(--el-color-primary);
             background: #fff;
             height: 60px;
-            line-height: 60px;
+            line-height: 32px;
+            
             padding: 0 20px;
+            padding-left: 10px;
+            padding-top: 14px;
             box-sizing: border-box;
+            // transition: all 0.3s;
+            .toggle-query-box {
+                margin-right: 10px;
+                cursor: pointer;
+                .toggle-query-icon {
+                    position: relative;
+                    top: 7px;
+                }
+            }
+            
             .table-setting {
                 // margin-top: 5px;
                 .el-dropdown-link {
@@ -1463,10 +1597,10 @@ div {
         }
         .table-div {
             height: calc(100% - 60px);
+            width: 100%;
             &.showPagination {
                 height: calc(100% - 100px);
             }
-            width: 100%;
             display: flex;
             .tree-froup-box {
                 width: 300px;
@@ -1505,6 +1639,14 @@ div {
             //         background: initial;
             //     }
             // }
+        }
+        &.is-customize-query-panel {
+            .table-search-box {
+                height: 104px;
+            }
+            .table-div {
+                height: calc(100% - 144px);
+            }
         }
     }
 }

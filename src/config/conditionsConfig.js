@@ -48,6 +48,7 @@ export default {
     Url: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     TextArea: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Text: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
+    Location: ["LK", "NLK", "NL", "NT"],
     Reference: {
         All: ["EQ", "NEQ", "NL", "NT"],
         referenceFilters: ["Department", "User"],
@@ -69,7 +70,7 @@ export default {
     comList: {
         // 文本输入框
         textInput: {
-            type: ["Email", "Url", "TextArea", "Text"],
+            type: ["Email", "Url", "TextArea", "Text", "Location"],
             op: ["LK", "NLK", "EQ", "NEQ"],
         },
         // 日期选择器

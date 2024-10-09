@@ -42,7 +42,7 @@
                         <el-input-number
                             v-model="uptadeValue"
                             :controls="false"
-                            class="mlnumer-input w-100"
+                            class="ml-number-input w-100"
                         />
                     </div>
                     <!-- 布尔类型 -->

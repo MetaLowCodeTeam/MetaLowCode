@@ -404,7 +404,6 @@ const queryEntity = () => {
             (el) => el.label.indexOf(filterStr.value) != -1
         );
     }
-    console.log(filterEntityList,'filterEntityList')
     setTimeout(() => {
         roleFormDialogLoading.value = false;
     }, 300);
