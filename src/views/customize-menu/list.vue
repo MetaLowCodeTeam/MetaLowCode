@@ -119,8 +119,11 @@
                             :loading="queryPanelLoading"
                             @click="changeTopQueryPanelExpand"
                         >
-                            <el-icon size="16" class="toggle-query-icon">
-                                <Sort />
+                            <el-icon size="16" class="toggle-query-icon" v-if="!topQueryPanelExpand">
+                                <ArrowUp />
+                            </el-icon>
+                            <el-icon size="16" class="toggle-query-icon" v-else>
+                                <ArrowDown />
                             </el-icon>
                         </el-button>
                     </el-tooltip>
