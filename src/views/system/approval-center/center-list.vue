@@ -8,7 +8,7 @@
         :filterItems="pageType[type].filterItems"
         ref="mlSingleListRef"
         @goDetail="highlightClick"
-        fieldName="approvalConfigId.entityCode"
+        fieldName="approvalConfigId.flowName"
         :queryUrl="'/approval/listQuery'"
         :approvalTaskType="pageType[type].value"
     >

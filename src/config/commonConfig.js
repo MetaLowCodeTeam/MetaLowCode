@@ -342,6 +342,30 @@ export default [
         ],
     },
     {
+        label: "移动端样式配置",
+        code: "mobileStyleConfig",
+        confs: [
+            {
+                label: "列表展示样式",
+                key: "mobileTableStyleType",
+                type: "select",
+                selectWidth: "200px",
+                placeholder: "请选择列表展示样式",
+                options: [
+                    { label: "列表", value: "list" },
+                    { label: "卡片", value: "card" },
+                ],
+                
+            },
+            {
+                label: "列表是否显示操作按钮",
+                key: "mobileTableButtonIsShow",
+                type: "switch",
+                subLabel: "如果不显示操作按钮，点击内容区域则跳转详情页",
+            },
+        ],
+    },
+    {
         label: "授权许可",
         code: 'authLicense',
         confs: [

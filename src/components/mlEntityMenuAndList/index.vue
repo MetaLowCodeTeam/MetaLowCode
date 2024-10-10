@@ -322,6 +322,15 @@ const getApprovalList = async () => {
             el.value = keyword.value ? keyword.value : "" ;
             return el;
         });
+    }else {
+        param.filter.items = JSON.parse(JSON.stringify(filterItems));
+        if(keyword.value) {
+            param.filter.items.push({
+                fieldName,
+                op: "LK",
+                value: keyword.value,
+            });
+        }
     }
     if (defaultCode.value != "all") {
         param.filter.items.push({
