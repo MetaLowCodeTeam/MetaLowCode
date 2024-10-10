@@ -33,7 +33,22 @@
                                         :type="item.type == 'input' ? 'text' : 'password'"
                                         :show-password="item.type == 'passwordInput'"
                                     ></el-input>
-                                    <div class="info-text">{{ item.subLabel }}</div>
+                                    <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
+                                </div>
+                                <!-- 选择框 -->
+                                <div v-else-if="item.type == 'select'">
+                                    <el-select 
+                                        v-model="confData[item.key]" 
+                                        :placeholder="item.placeholder" 
+                                        :style="{'width': item.selectWidth }"
+                                    >
+                                        <el-option
+                                            v-for="op in item.options"
+                                            :key="op.value"
+                                            :label="op.label"
+                                            :value="op.value"
+                                        />
+                                    </el-select>
                                 </div>
                                 <!-- 开关 -->
                                 <div v-else-if="item.type == 'switch'">
@@ -56,6 +71,7 @@
                                         <el-switch v-model="confData[item.key]" disabled />
                                     </el-tooltip>
                                     <el-switch v-else @change="openStatusChange(item)" v-model="confData[item.key]" />
+                                    <span class="info-text ml-10" v-if="item.subLabel">{{ item.subLabel }}</span>
                                 </div>
                                 <!-- 颜色选择器 -->
                                 <div v-else-if="item.type == 'picker'">
