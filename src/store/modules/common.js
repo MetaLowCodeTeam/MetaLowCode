@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.112 20241009"
+        webVer: "1.6.113 20241010"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -96,14 +96,16 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.APP_WATERMARK = data.watermark;
         publicSetting.value.APP_PLUGINID = data.pluginIdList;
         publicSetting.value.APP_COLOR = data.themeColor
-        publicSetting.value.productType = data.productType;
-        publicSetting.value.trialVersionFlag = data.trialVersionFlag;
-        publicSetting.value.pluginIdList = data.pluginIdList;
         publicSetting.value.webVer += "(" + data.version + ")";
-        publicSetting.value.appMode = data.appMode;
-        publicSetting.value.homeURL = data.homeURL;
-        publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
+        publicSetting.value = Object.assign(publicSetting.value, data);
         publicSetting.value.approvalModifiableEntity = data.approvalModifiableEntity || "";
+        // publicSetting.value.appMode = data.appMode;
+        // publicSetting.value.homeURL = data.homeURL;
+        // publicSetting.value.productType = data.productType;
+        // publicSetting.value.trialVersionFlag = data.trialVersionFlag;
+        // publicSetting.value.pluginIdList = data.pluginIdList;
+        // publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
+        
     }
     // 传入实体名称拿主实体或者明细实体CODE
     const queryEntityCodeByEntityName = (name) => {
