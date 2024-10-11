@@ -376,10 +376,11 @@ export default {
                 this.fieldProps.type = "ReferenceList";
                 let referToEntities = "";
                 this.fieldProps.referTo.forEach((item, idx) => {
+                    let filed = item.name || item
                     if (idx !== this.fieldProps.referTo.length - 1) {
-                        referToEntities += item + ",";
+                        referToEntities += filed + ",";
                     } else {
-                        referToEntities += item;
+                        referToEntities += filed;
                     }
                 });
 
