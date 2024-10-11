@@ -413,6 +413,10 @@ const initData = async () => {
         confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
         confData.backupOverdueDay = confData.backupOverdueDay * 1 || 30;
+        // 初始化列表展示样式
+        confData.mobileTableStyleType = confData.mobileTableStyleType || 'list';
+        // 初始化工作台展示样式
+        confData.mobileStagingStyleType = confData.mobileStagingStyleType || 'pane';
     }
     loading.value = false;
 };
@@ -423,7 +427,6 @@ const initData = async () => {
 
 // logo上传成功
 const onLogoSuccess = (data) => {
-    console.log(data, "data");
     confData.logo = data.url;
 };
 

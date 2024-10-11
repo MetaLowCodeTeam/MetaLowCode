@@ -363,6 +363,22 @@ export default [
                 type: "switch",
                 subLabel: "如果不显示操作按钮，点击内容区域则跳转详情页",
             },
+            {
+                label: "工作台展示样式",
+                key: "mobileStagingStyleType",
+                type: "select",
+                selectWidth: "200px",
+                placeholder: "请选择工作台展示样式",
+                options: [
+                    { label: "长方块图标样式", value: "pane" },
+                    { label: "圆角图标样式", value: "round" },
+                ],
+            },
+            {
+                label: "工作台图标底色",
+                key: "mobileStagingIconBgc",
+                type: "picker",
+            },
         ],
     },
     {
