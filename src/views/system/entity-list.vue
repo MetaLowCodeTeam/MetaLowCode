@@ -34,7 +34,7 @@
                         shadow="hover"
                         v-for="(entityItem, entityIdx) in notGroup"
                         :key="entityIdx"
-                        @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
+                        @mouseenter="onEnterEntity(entityItem, entityIdx)"
                         @mouseleave="onLeaveEntity"
                     >
                         <template #header>
@@ -58,7 +58,7 @@
 						</div>
                         <div>{{ entityItem.name }}</div>
 						<div class="entity-menu-icon">
-							<el-dropdown @command="(command) => handleCommand(command, entityItem)">
+							<el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
 								<el-icon title="显示菜单"><Tools /></el-icon>
 								<template #dropdown>
 									<!-- 明细实体 -->
@@ -134,7 +134,7 @@
                             shadow="hover"
                             v-for="(entityItem, entityIdx) in op"
                             :key="entityIdx"
-                            @mouseenter="onEnterEntity(entityItem.name, entityItem.label, entityIdx)"
+                            @mouseenter="onEnterEntity(entityItem, entityIdx)"
                             @mouseleave="onLeaveEntity"
                         >
                             <template #header>
@@ -158,7 +158,7 @@
 							</div>
                             <div>{{ entityItem.name }}</div>
 							<div class="entity-menu-icon">
-								<el-dropdown @command="(command) => handleCommand(command, entityItem)">
+								<el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
 									<el-icon title="显示菜单"><Tools /></el-icon>
 									<template #dropdown>
 										<!-- 明细实体 -->
@@ -570,8 +570,9 @@ const saveNewEntity = () => {
     });
 };
 
-const onEnterEntity = (entityName, entityLabel, entityIdx) => {
+const onEnterEntity = (entityItem, entityIdx) => {
     hoverEntityIdx.value = entityIdx;
+	entityItem.showMenuFlag = true;
 };
 
 const onLeaveEntity = () => {
@@ -797,6 +798,7 @@ const handleCommand = (command, entityItem) => {
 		deleteSelectedEntity();
 	}
 };
+
 </script>
 
 <style lang="scss" scoped>

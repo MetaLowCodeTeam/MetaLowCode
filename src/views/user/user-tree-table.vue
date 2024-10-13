@@ -25,11 +25,12 @@
                                 alt
                             />
                             <img
-                                v-if="node.data.wxWorkDepartmentId"
+                                v-else-if="node.data.wxWorkDepartmentId"
                                 src="@/assets/imgs/WXWork.png"
                                 style="width: 15px;height: 15px;position: relative;top: 2px;"
                                 alt
                             />
+							<el-icon v-else><OfficeBuilding /></el-icon>
                             {{ node.label }}
                         </span>
                         <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
@@ -401,7 +402,6 @@ export default {
                     tempV.fieldNameVale = this.treeData[0]?.id;
                     tempV.fieldNameLabel = this.treeData[0]?.label;
                 }
-                
             }
             this.$refs.editRefs.openDialog(tempV);
         },

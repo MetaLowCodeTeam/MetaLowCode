@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.117 20241011"
+        webVer: "1.6.118 20241012"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -105,7 +105,7 @@ const useCommonStore = defineStore('commonStore', () => {
         // publicSetting.value.trialVersionFlag = data.trialVersionFlag;
         // publicSetting.value.pluginIdList = data.pluginIdList;
         // publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
-        
+
     }
     // 传入实体名称拿主实体或者明细实体CODE
     const queryEntityCodeByEntityName = (name) => {
