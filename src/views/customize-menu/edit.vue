@@ -245,17 +245,19 @@ const initFormLayout = async () => {
                     res.data.formUploadParam.fileDownloadPrefix;
             }
             // 是编辑
-            if (row.detailId) {
+            if (row.detailId) { 
                 // 根据数据渲染出页面填入的值，填过
                 nextTick(async () => {
 					globalDsv.value.formStatus = 'edit';
 					globalDsv.value.formEntityId = row.detailId;
 					let formData = await queryById(row.detailId);
+                    
 					vFormRef.value?.setFormJson(res.data.layoutJson);
                     if (formData && formData.data) {
                         row.dialogTitle =
                             "编辑" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
+                        globalDsv.value.recordData = formData.data;
                         nextTick(() => {
 							vFormRef.value.setFormData(formData.data);
                             nextTick(() => {
