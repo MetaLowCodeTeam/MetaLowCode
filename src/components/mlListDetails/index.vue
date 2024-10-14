@@ -148,6 +148,7 @@ const refresh = async () => {
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 if (formData) {
                     detailDialog.formData = formData.data;
+                    globalDsv.value.recordData = formData.data;
                     if (props.titleFromApi) {
                         detailDialog.title = formData.data[props.titleFromApi];
                     }

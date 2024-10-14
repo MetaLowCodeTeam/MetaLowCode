@@ -527,7 +527,6 @@ const loadLayoutConf = async () => {
 	pageLoading.value = true;
 	if (res && res.data) {
 		layoutConf.value = res.data;
-		console.log("实体配置信息---------------", layoutConf.value);
 		// 高级查询过滤
 		advFilter.value = res.data.advFilter || "all";
 		let {
@@ -596,7 +595,6 @@ const formatTableApi = () => {
 	tableParam.quickFilter = quickQueryConf.value;
 	// 导出数据
 	dataExportData.queryParm = { ...tableParam };
-	console.log("列表参数-----------------------", tableParam);
 };
 
 // 获取表格数据
@@ -632,7 +630,6 @@ const getTableList = async () => {
 		dataExportData.size = res.data.dataList.length;
 		dataExportData.total = res.data.pagination.total;
         reloadCardItem();
-		console.log("列表数据----------------", tableData.value);
 	}
 	pageLoading.value = false;
 };
@@ -641,8 +638,6 @@ const getTableList = async () => {
 const loadFormLayout = async () => {
 	let res = await getFormLayout(entity.value.name, listCardConf.value.pcFormId);
 	if (res) {
-		console.log(res, "res");
-		// formLayout.value = res.data;
 		listCardConf.value.formLayout = res.data;
 	}
 };
