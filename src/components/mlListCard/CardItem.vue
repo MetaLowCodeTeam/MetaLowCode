@@ -89,7 +89,7 @@
 				effect="dark"
 				content="记录正在审批中，禁止编辑"
 				placement="top"
-				v-if="row.approvalStatus.value == 1"
+				v-if="row.approvalStatus?.value == 1"
 			>
 				<span class="ml-a-span fr disabled">
 					<el-icon class="prt-2"><Edit /></el-icon>
@@ -102,10 +102,10 @@
 				content="记录已完成审批，禁止编辑"
 				placement="top"
 				v-else-if="
-					row.approvalStatus.value != 1 &&
+					row.approvalStatus?.value != 1 &&
 					!checkModifiableEntity(
 						row[idFieldName],
-						row.approvalStatus.value
+						row.approvalStatus?.value
 					)
 				"
 			>
