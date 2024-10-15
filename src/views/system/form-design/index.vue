@@ -215,6 +215,7 @@ export default {
             },
             globalDsv: {
                 uploadServer: import.meta.env.VITE_APP_BASE_API,
+                SERVER_API: import.meta.env.VITE_APP_BASE_API,
             },
             fieldListData: {},
             layoutId: null,
