@@ -9,11 +9,14 @@
 import defaultEntityEdit from "@/views/customize-menu/edit.vue";
 // 1. 引入你的自定义新建编辑组件
 import TestEdit from './TestEdit.vue';
+// 自定义流程表单编辑弹框
+import CustomFlowForm from './ListVFormCmp/components/CustomFlowForm.vue'
 
 const editCmpMapping = {
     default: defaultEntityEdit.name,
     // 2. 映射你的实体详情，实体名称:组件名称
     TestEdit: TestEdit.name,
+    CustomFlowForm: CustomFlowForm.name
 }
 
 // 多实体通用某一个编辑组件映射
@@ -21,7 +24,7 @@ const comEditCmpMapping = {
     // useComStep_1 代表所有实体用这一个详情组件， 详情组件名称:["*"]   *=>匹配所有，包括初始的详情
     // Sadasaduo: ["*"],
     // useSingleStep_1 详情组件名称:[对应的实体名称]
-    TestEdit: ['Chacaoyanshi'],
+    TestEdit: ['Chacaoyanshi',],
 };
 
 
@@ -48,4 +51,5 @@ export function registerCustomEditCmp(app) {
     app.component(defaultEntityEdit.name, defaultEntityEdit);
     // 3 注册你的实体详情组件  组件名称,组件
     app.component(TestEdit.name, TestEdit);
+    app.component(CustomFlowForm.name, CustomFlowForm);
 }

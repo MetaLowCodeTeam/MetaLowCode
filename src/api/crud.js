@@ -44,6 +44,12 @@ export function saveRecord(entity, id, formModel) {
     })
 }
 
+export function saveRecordAndStartProcess(entity, id, approvalConfigId, formModel) {
+    return http.post('crud/saveRecordAndStartProcess', formModel, {
+        params: { entity, id, approvalConfigId },
+    })
+}
+
 export function deleteRecord(id) {
     return http.post('crud/deleteRecord', {
         recordIds: [id],

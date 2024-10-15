@@ -15,6 +15,10 @@
 		</div>
 		<el-empty v-else description="暂无数据" />
 	</div>
+    <mlCustomEdit 
+        ref="editRefs"
+        entityName="CustomFlowForm"
+    />
 </template>
 
 <script setup>
@@ -27,6 +31,7 @@ import useCommonStore from "@/store/modules/common";
  * API
  */
 import { getFormLayout } from "@/api/system-manager";
+import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 
 const { queryEntityNameByCode } = useCommonStore();
 const Route = useRoute();
@@ -52,7 +57,8 @@ onMounted(() => {
 	}
 	entityCode.value = Route.query.formEntityCode;
 	entityName.value = queryEntityNameByCode(entityCode.value);
-	// console.log(entityName.value, formId.value, "-----------------------");
+    globalDsv.value.SERVER_API = import.meta.env.VITE_APP_BASE_API;
+    globalDsv.value.createAndSubmit = createAndSubmit;
 	loadForm();
 });
 
@@ -81,6 +87,18 @@ const loadForm = async () => {
 	}
 	loading.value = false;
 };
+
+
+let editRefs = ref();
+const createAndSubmit = (row) => {
+    let tempV = {
+        entityName: queryEntityNameByCode(row.entityCode),
+        approvalConfigId: row.approvalConfigId,
+    };
+    editRefs.value.openDialog(tempV);
+
+}
+
 </script>
 <style lang="scss" scoped>
 .form-main {
@@ -91,6 +109,7 @@ const loadForm = async () => {
 		border-radius: 4px;
 		background: #fff;
 		padding: 20px;
+        height: calc(100% - 40px);
 	}
 }
 </style>

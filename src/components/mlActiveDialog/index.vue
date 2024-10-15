@@ -78,11 +78,33 @@
             >
                 <el-radio-group
                     v-model="dialogForm.form.flowType"
-                    :disabled="dialogForm.type == 'edit'"
+                    @change="flowTypeChange"
                 >
                     <el-radio :label="1">基础工作流</el-radio>
                     <el-radio :label="2">复杂工作流</el-radio>
                 </el-radio-group>
+            </el-form-item>
+            <el-form-item
+                v-if="
+                    publicSetting?.pluginIdList.includes('metaWorkFlow') && 
+                    dialogForm.title == '添加审批流程' &&
+                    dialogForm.form.flowType == 2
+                "
+                label="流程标签"
+                v-loading="loadLabelOptionLoading"
+            >
+                <el-select 
+                    v-model="dialogForm.form.configTag" 
+                    placeholder="请选择流程标签"
+                    style="width: 80%;"
+                >
+                    <el-option
+                        v-for="item in labelOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
             </el-form-item>
             <el-form-item v-if="dialogForm.type == 'edit'">
                 <el-checkbox v-model="dialogForm.form.isDisabled" label="是否禁用" />
@@ -120,6 +142,7 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 // 水印设置组件
 import SetWatermark from './components/setWatermark.vue';
+import { getTagItems } from "@/api/system-manager";
 const { unSystemEntityList, processEntityList, publicSetting } = storeToRefs(
     useCommonStore()
 );
@@ -190,6 +213,7 @@ let triggerList = ref([
 let dialogForm = ref({});
 const openDialog = (data) => {
     dialogForm.value = data;
+    labelOptions.value = [];
     let { form, saveEntity } = dialogForm.value;
     // 格式化水印设置
     if(saveEntity == 'ReportConfig' && form.pdfWatermark) {
@@ -205,9 +229,9 @@ const saveProcess = async () => {
         saveEntity, 
         saveIdCode, 
         checkCodes, 
-        codeErrMsg 
+        codeErrMsg,
     } = dialogForm.value;
-    let { entityCode, isDisabled, actionType, flowType, pdfWatermark } = form;
+    let { entityCode, isDisabled, actionType, flowType, pdfWatermark, configTag } = form;
     if (type == "add" && saveEntity == "ExternalForm" && !entityCode) {
         message.error("请选择源实体");
         return;
@@ -228,12 +252,12 @@ const saveProcess = async () => {
             return;
         }
     }
-
     // 开始塞入 params
     let params = {
         entityCode,
         isDisabled: isDisabled ? isDisabled : false,
-        pdfWatermark: JSON.stringify(pdfWatermark)
+        pdfWatermark: JSON.stringify(pdfWatermark),
+        configTag: configTag || null
     };
     checkCodes.forEach((el) => {
         params[el] = form[el];
@@ -281,6 +305,22 @@ const openSetWatermarkDialog = () => {
 // 确认设置样式
 const confirmSetWatermark = (v) => {
     dialogForm.value.form.pdfWatermark = JSON.parse(JSON.stringify(v));
+}
+
+let labelOptions = ref([]);
+let loadLabelOptionLoading = ref(false);
+// 类型切换
+const flowTypeChange = async () => {
+    if(labelOptions.value.length > 0) {
+        return
+    }
+    loadLabelOptionLoading.value = true;
+    let res = await getTagItems("ApprovalConfig", "configTag");
+    if(res) {
+        labelOptions.value = res.data;
+    }
+    loadLabelOptionLoading.value = false;
+
 }
 
 defineExpose({

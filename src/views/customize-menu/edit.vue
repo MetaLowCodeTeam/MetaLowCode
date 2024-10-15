@@ -9,6 +9,7 @@
         :autoFullScreen="styleConf?.actionConf.autoFullScreen"
         append-to-body
         bodyNoPadding
+        :showClose="!loading"
     >
         <div class="main fullsceen-man" v-loading="loading">
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
@@ -492,6 +493,7 @@ defineExpose({
     getFormRef,
     getGlobalDsv,
     getRecordId,
+    loading,
 });
 </script>
 <style lang='scss' scoped>

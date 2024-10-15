@@ -139,7 +139,7 @@
 					点击左侧导航项进行编辑
 				</div>
 				<div class="fl right-div" v-else>
-					<el-tabs v-model="cutMenu.type">
+					<el-tabs v-model="cutMenu.type" @tab-change="useComponentChange">
 						<el-tab-pane label="关联项" :name="1"></el-tab-pane>
 						<el-tab-pane label="仪表盘" :name="5"> </el-tab-pane>
 						<el-tab-pane
@@ -330,7 +330,8 @@
 						class="mt-5"
 						v-if="
 							cutMenu.type == 1 &&
-							(!cutMenu.children || cutMenu.children.length < 1)
+							(!cutMenu.children || cutMenu.children.length < 1) &&
+                            !filterUseCustomEntity.includes(cutMenu.entityName)
 						"
 					>
 						<el-checkbox
@@ -340,7 +341,10 @@
 					</div>
 					<div
 						class="mt-5"
-						v-if="cutMenu.type == 1 && cutMenu.useCustom"
+						v-if="
+                            cutMenu.type == 1 && 
+                            cutMenu.useCustom &&
+                            !filterUseCustomEntity.includes(cutMenu.entityName)"
 					>
 						<el-select
 							v-model="cutMenu.useComponent"
@@ -481,6 +485,17 @@ const getEntityList = () => {
 	return unSystemEntityList.value;
 };
 
+// 自定列表模板过滤实体，这些实体不需要展示自定义列表模板
+const filterUseCustomEntity = [
+    "Department",
+    "Role",
+    "Team",
+    "parentMenu",
+    "approvalHandle",
+    "approvalSubmit",
+    "capprovalCc",
+];
+
 // 实体分组
 const getGroupEntityList = (target) => {
 	let systemOptions = [
@@ -570,6 +585,10 @@ const nodeClick = (node) => {
         cutMenu.value.mobileShow = true;
     }
     useComponentChange();
+    
+    if(cutMenu.value.type == 6) {
+        formEntityCodeChange(cutMenu.value.formEntityCode,'init');
+    }
 };
 
 let isShowIconDialog = ref(false);
@@ -662,6 +681,10 @@ const associationChange = (entityCode, target) => {
 	}
 	cutMenu.value.detailEntityFlag = linkEntity.detailEntityFlag;
 	cutMenu.value.mainEntityCode = linkEntity.mainEntityCode;
+    if(cutMenu.value.type == 1 && filterUseCustomEntity.includes(cutMenu.value.entityName)) {
+        cutMenu.value.useComponent = "";
+        useComponentChange();
+    }
 };
 
 // 表单组件
@@ -669,12 +692,14 @@ let formList = ref([]);
 let formLoading = ref(false);
 
 // 自定义表单实体切换
-const formEntityCodeChange = async (entityCode) => {
+const formEntityCodeChange = async (entityCode, target) => {
 	associationChange(entityCode, 6);
-	cutMenu.value.formId = "";
+    // 不是初始化清空表单ID
+    if(target != 'init') {
+        cutMenu.value.formId = "";
+    }
 	formLoading.value = true;
 	let res = await getFormLayoutList(queryEntityNameByCode(entityCode));
-	console.log(res);
 	if (res) {
 		formList.value = res.data;
 	}
@@ -961,7 +986,7 @@ let disabledMobileShow = ref(false);
 // 自定义列表模板切换
 const useComponentChange = () => {
     disabledMobileShow.value = false;
-    if(cutMenu.value.useComponent == 'ListCard') {
+    if(cutMenu.value.type == 1 && cutMenu.value.useComponent == 'ListCard') {
         disabledMobileShow.value = true;
         cutMenu.value.mobileShow = false;
     }

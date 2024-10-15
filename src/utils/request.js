@@ -53,7 +53,7 @@ axios.interceptors.response.use(
             router.replace({ path: '/web/login' });
             return response
         } else {
-            ElMessage.error(response.data.error)
+            ElMessage.error(response.data?.error)
             return {}
         }
     },

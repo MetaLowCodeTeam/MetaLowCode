@@ -3,7 +3,7 @@
         ref="mlEntityMenuAndListRef"
         entityName="ApprovalConfig"
         activeId="approvalConfigId"
-        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn,flowType"
+        fieldsList="entityCode,flowName,modifiedOn,isDisabled,runningTotal,completeTotal,createdOn,flowType,configTag"
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
@@ -155,9 +155,8 @@ const actionBtn = (data) => {
 const saveProcess = async (row) => {
     if (row) {
         goDetail(row);
-    } else {
-        mlEntityMenuAndListRef.value.getEntityList();
-    }
+    } 
+    mlEntityMenuAndListRef.value.getEntityList();
 };
 
 // 添加触发

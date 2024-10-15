@@ -20,7 +20,7 @@ export default {
         },
         // 提交审批
         startApproval: async (entityId, approvalConfigId, body) => {
-            return await http.post("/approval/startApproval", body, { params: { entityId, approvalConfigId } } );
+            return await http.post("/approval/startApproval", body, { params: { entityId, approvalConfigId } });
         },
         // 提交复杂工作流
         startComplexFlowApproval: async (body) => {
@@ -84,12 +84,12 @@ export function getRejectNodeList(approvalTaskId) {
 
 // 获取审批历史流程配置
 export function getHisActivityIns(entityId) {
-    return http.get('/approval/getHisActivityIns',  { entityId })
+    return http.get('/approval/getHisActivityIns', { entityId })
 }
 
 // 获取审批信息
 export function getRecordApprovalState(recordId) {
-    return http.get('/approval/recordApprovalState',  { recordId })
+    return http.get('/approval/recordApprovalState', { recordId })
 }
 
 
@@ -101,5 +101,50 @@ export function createApprovalSystemFields(entityName) {
 
 // 修改审批人
 export function updateApprovalUser(approvalTaskId, body) {
-    return http.post('/approval/updateApprovalUser',body, { params: { approvalTaskId } })
+    return http.post('/approval/updateApprovalUser', body, { params: { approvalTaskId } })
+}
+
+// 获取审批历史
+export function getTaskDetailsById(entityId) {
+    return http.get('/approval/getTaskDetailsById', { entityId })
+}
+
+
+/**
+ * 复杂审批流程监控
+ */
+
+// 复杂审批流程监控列表
+export function queryProcessInstanceList(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/queryProcessInstanceList', body)
+}
+
+// 中止
+export function workflowProcessDiscontinue(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/discontinue', body)
+}
+// 挂起
+export function workflowProcessSuspended(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/suspended', body)
+}
+// 恢复
+export function workflowProcessRestore(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/restore', body)
+}
+// 删除
+export function workflowProcessDelete(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/delete', body)
+}
+// 撤回
+export function workflowProcessWithdraw(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/withdraw', body)
+}
+// 获取可重置的任务
+export function queryTaskByInstanceId(processInstanceId) {
+    return http.get('/plugins/metaWorkFlow/workflow/process/queryTaskByInstanceId', { processInstanceId })
+}
+
+// 重置任务
+export function processReset(body) {
+    return http.post('/plugins/metaWorkFlow/workflow/process/reset', body)
 }

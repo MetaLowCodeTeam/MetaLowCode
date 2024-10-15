@@ -250,6 +250,13 @@ const routes = [
 						name: 'ProcessList',
 						component: 'system/approval-process/process-list',
 						meta: { title: '审批流程', icon: 'el-icon-share', role: 'r6016' }
+					},
+                    // 复杂流程监控
+					{
+						path: '/web/process-monitoring',
+						name: 'ProcessMonitoring',
+						component: 'system/approval-process/process-monitoring',
+						meta: { title: '复杂流程监控', icon: 'el-icon-data-line', role: 'r6016' }
 					}
 				]
 			},

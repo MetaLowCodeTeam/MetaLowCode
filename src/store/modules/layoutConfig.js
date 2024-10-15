@@ -19,7 +19,7 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/dashboard";
     } else if (el.type == 6) {
-        newRoute.path = "/web/custom-page/vFrom" + (isTopNav ? '/' + el.guid : '');
+        newRoute.path = "/web/custom-page/vForm/" + (isTopNav ? 'top/' : '') + el.guid;
         newRoute.component = "custom-page/ListVFormCmp/index";
     } else {
         // 自定义页面目录
