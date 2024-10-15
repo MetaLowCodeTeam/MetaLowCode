@@ -33,7 +33,7 @@
 							<el-icon v-else><OfficeBuilding /></el-icon>
                             {{ node.label }}
                         </span>
-                        <span :class="{'hidden-action-button': hoverNodeId !== node.id}">
+                        <span class="action-button" :class="{'hidden-action-button': hoverNodeId !== node.id}">
                             <el-button
                                 link
                                 type="primary"
@@ -693,5 +693,11 @@ export default {
     border-left: 1px solid #ebeef5;
     //height: 48px !important;
     //padding-top: 8px !important;
+}
+.action-button {
+    position: absolute;
+    right: 0;
+    z-index: 6;
+    background: #f5f7fa;
 }
 </style>
