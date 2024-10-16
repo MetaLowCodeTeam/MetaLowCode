@@ -1,11 +1,11 @@
 <template>
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
-            <div 
+            <div
                 class="table-search-box"
                 v-if="listParamConf.showHeader"
             >
-            <ListCustomizeQuery 
+            <ListCustomizeQuery
                 :entityName="entityName"
                 :entityCode="entityCode"
                 :modelName="modelName"
@@ -96,14 +96,14 @@
                     >
                         切换查询面板
                     </el-button>
-                    <el-button 
+                    <el-button
                         icon="Setting"
                         @click="setCustomizeQueryPanel"
                         text
                         bg
                         :loading="queryPanelLoading"
-                    > 
-                        设计查询面板 
+                    >
+                        设计查询面板
                     </el-button>
                     <el-tooltip
                         effect="dark"
@@ -120,10 +120,10 @@
                             @click="changeTopQueryPanelExpand"
                         >
                             <el-icon size="16" class="toggle-query-icon" v-if="!topQueryPanelExpand">
-                                <ArrowUp />
+                                <ArrowDown />
                             </el-icon>
                             <el-icon size="16" class="toggle-query-icon" v-else>
-                                <ArrowDown />
+                                <ArrowUp />
                             </el-icon>
                         </el-button>
                     </el-tooltip>
@@ -234,9 +234,9 @@
                     <span class="lh-span-a" @click="editColumn('SELF')">前去配置</span>
                 </div>
             </div>
-            <div 
-                v-else 
-                class="table-div" 
+            <div
+                v-else
+                class="table-div"
                 :class="{'showPagination':listParamConf.showPagination}"
                 :style="{'height':calculateHeight}"
             >
@@ -295,13 +295,13 @@
                         :fixed="checkedColumnFixed"
                     >
                         <template #header>
-                            <el-checkbox 
-                                checked 
+                            <el-checkbox
+                                checked
                                 v-if="selectedAllStatus == 1"
                                 @click="selectAllChange('clear')"
                             />
-                            <el-checkbox 
-                                indeterminate 
+                            <el-checkbox
+                                indeterminate
                                 v-else-if="selectedAllStatus == 2"
                                 @click="selectAllChange('all')"
                             />
@@ -331,11 +331,11 @@
                         </template>
                     </el-table-column>
                     <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
-                    <el-table-column 
+                    <el-table-column
                         v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
-                        label="操作" 
-                        fixed="right" 
-                        :align="'center'" 
+                        label="操作"
+                        fixed="right"
+                        :align="'center'"
                         width="120"
                     >
                         <template #default="scope">
@@ -389,7 +389,7 @@
             v-if="listParamConf.showPagination"
         />
         <mlCustomDetail ref="detailRefs" :entityName="entityName" @updateData="getTableList"/>
-        <mlCustomEdit 
+        <mlCustomEdit
             ref="editRefs"
             :entityName="entityName"
             :nameFieldName="nameFieldName"
@@ -417,12 +417,12 @@
 defineOptions({
     name: "default-list",
 });
-import { 
-    ref, 
-    onBeforeMount, 
-    inject, 
-    reactive, 
-    onMounted, 
+import {
+    ref,
+    onBeforeMount,
+    inject,
+    reactive,
+    onMounted,
     onUnmounted,
     onActivated,
     watchEffect,
@@ -647,7 +647,7 @@ const formatReferenceEntity = () => {
 
 // 是否显示高级查询
 // isShowAdvancedQuery: true,
-            
+
 
 
 
@@ -705,7 +705,7 @@ function scrollBehavior(e) {
 		const { clientHeight, scrollTop, scrollHeight } = dom;
 		// 父容器高度 + 子容器距离父容器顶端的高度 = 子容器可滚动的高度
 		if (scrollHeight - (clientHeight + scrollTop) <= 300) {
-			
+
             if(sliceTable.value.length == tableData.value.length){
                 return
             }
@@ -818,7 +818,7 @@ const changeQueryPanel = async (target) => {
             calculateHeight.value = "calc(100% - 144px)"
         }
     }
-    
+
 	queryPanelLoading.value = false;
 }
 // 更新查询面板
@@ -832,7 +832,7 @@ const changeTopQueryPanelExpand = () => {
     let length = topSearchConfig.value.filter.items?.length;
     if(topQueryPanelExpand.value) {
         let sourceHeight = 106;
-        let formatHeight = Math.ceil(length / 3) * 38;    
+        let formatHeight = Math.ceil(length / 3) * 38;
         calculateHeight.value = "calc(100% - "+( sourceHeight + formatHeight) +"px)";
         ListCustomizeQueryRef.value?.changeCustomizeQueryHeight(formatHeight);
     }else {
@@ -852,7 +852,7 @@ const getLayoutList = async () => {
         advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
         mainDetailField.value = res.data.mainDetailField;
-        
+
         filterEasySql.value = "";
         if(res.data.DEFAULT_FILTER){
             defaultFilter.value = JSON.parse(res.data.DEFAULT_FILTER.config);
@@ -1294,7 +1294,7 @@ const getTableList = async () => {
         defaultFilter: defaultFilter.value,
     };
     dataExportData.queryParm = { ...param };
-    
+
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,
@@ -1506,7 +1506,7 @@ const getCurEntity = () => {
 }
 // 获取选中数据
 const getSelectedRow = () => {
-    return multipleSelection.value 
+    return multipleSelection.value
 }
 
 // 编辑数据
@@ -1641,7 +1641,7 @@ div {
                     top: 7px;
                 }
             }
-            
+
             .table-setting {
                 // margin-top: 5px;
                 .el-dropdown-link {
