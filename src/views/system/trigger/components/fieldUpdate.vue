@@ -60,7 +60,7 @@
             <el-row class="w-100 mb-10 update-rule" :gutter="20" v-loading="changeTagEntityLoading">
                 <el-col :span="9">
                     <el-select
-                        v-model="seleteTargetField"
+                        v-model="selectTargetField"
                         filterable
                         class="w-100"
                         @change="targetFieldChange"
@@ -334,7 +334,7 @@ const getTagEntityFields = async (entityCode) => {
             res.data.length > 0
         ) {
             // 目标字段 默认选中 第一个
-            seleteTargetField.value = res.data[0];
+            selectTargetField.value = res.data[0];
             updateRule.targetField = res.data[0].fieldName;
             // 获取目标字段类型
             toFixedForFieldType.value = getUpdateRuleTargetFieldType(
@@ -369,7 +369,7 @@ const getTagEntityFields = async (entityCode) => {
  */
 
 // 当前选择的目标字段
-let seleteTargetField = ref({});
+let selectTargetField = ref({});
 
 /**
  * *************************************** 更新规则相关 beg
@@ -724,7 +724,7 @@ const getUpdateRuleTargetFieldType = (fieldName) => {
 const floatSourceFieldList = () => {
     // 字符串字段
     let strField = ["Email", "Url", "TextArea", "Text"];
-    let { fieldType, referenceName } = seleteTargetField.value;
+    let { fieldType, referenceName } = selectTargetField.value;
     // 如果是字符串字段，显示所有字符串字段
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
@@ -831,7 +831,7 @@ const targetEntityChange = () => {
     // 如果目标实体数据的code不存在，拿当前实体的所有字段
     if (!cutEntity.entityCode) {
         tagEntityFields.value = cutEntityFields.value;
-        seleteTargetField.value = tagEntityFields.value[0];
+        selectTargetField.value = tagEntityFields.value[0];
     } else {
         getTagEntityFields(cutEntity.entityCode);
     }

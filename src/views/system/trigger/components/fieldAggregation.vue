@@ -56,7 +56,7 @@
             <el-row class="w-100 mb-10 update-rule" :gutter="20" v-loading="changeTagEntityLoading">
                 <el-col :span="9">
                     <el-select
-                        v-model="seleteTargetField"
+                        v-model="selectTargetField"
                         filterable
                         class="w-100"
                         @change="targetFieldChange"
@@ -270,7 +270,7 @@ const getTagEntityFields = async (entityCode) => {
         });
         if (tagEntityFields.value.length > 0) {
             // 目标字段 默认选中 第一个
-            seleteTargetField.value = tagEntityFields.value[0];
+            selectTargetField.value = tagEntityFields.value[0];
             updateRule.targetField = tagEntityFields.value[0].fieldName;
 
             // 获取目标字段类型
@@ -286,7 +286,7 @@ const getTagEntityFields = async (entityCode) => {
             // 格式化规则列表
             formatActionContentItems();
         } else {
-            seleteTargetField.value = {};
+            selectTargetField.value = {};
             updateRule.targetField = "";
             updateRule.calcMode = "";
             updateRule.sourceField = "";
@@ -300,7 +300,7 @@ const getTagEntityFields = async (entityCode) => {
  */
 
 // 当前选择的目标字段
-let seleteTargetField = ref({});
+let selectTargetField = ref({});
 
 /**
  * *************************************** 更新规则相关 beg
@@ -735,7 +735,7 @@ const targetEntityChange = () => {
     // 如果目标实体数据的code不存在，拿当前实体的所有字段
     if (!cutEntity.entityCode) {
         tagEntityFields.value = cutEntityFields.value;
-        seleteTargetField.value = tagEntityFields.value[0];
+        selectTargetField.value = tagEntityFields.value[0];
     } else {
         getTagEntityFields(cutEntity.entityCode);
     }

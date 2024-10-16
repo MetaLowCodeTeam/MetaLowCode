@@ -69,7 +69,7 @@
 			v-if="curtFormLayout.layoutJson"
 			ref="vFormRef"
 			:global-dsv="globalDsv"
-			:option-data="optionData"
+			:option-data="myOptionData"
 		/>
 		<div
 			class="select-row"
@@ -180,7 +180,7 @@ watch(
 let globalDsv = ref({
 	uploadServer: import.meta.env.VITE_APP_BASE_API,
 });
-let optionData = ref({});
+let myOptionData = ref({});
 
 let vFormRef = ref();
 
@@ -191,7 +191,7 @@ onMounted(() => {
 const initData = () => {
 	curtFormLayout.value = props.formLayout || {};
 	let { optionData, formUploadParam, layoutJson } = curtFormLayout.value;
-	optionData.value = optionData || {};
+	myOptionData.value = optionData || {};
 	if (formUploadParam) {
 		globalDsv.value.cloudUploadToken = formUploadParam.cloudUploadToken;
 		globalDsv.value.cloudStorage = formUploadParam.cloudStorage;

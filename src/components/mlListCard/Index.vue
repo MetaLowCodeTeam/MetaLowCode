@@ -160,7 +160,7 @@
 					/>
 				</div>
 			</div>
-			<div class="list-card-content">
+			<div class="list-card-content" v-if="isSetPcFormId">
 				<el-empty
 					v-if="showEmpty"
 					:image-size="100"
@@ -188,6 +188,12 @@
 					</el-row>
 				</div>
 			</div>
+            <div class="list-card-content" v-else>
+                <el-empty
+					:image-size="100"
+					description="未指定PC卡片表单"
+				/>
+            </div>
 		</div>
 		<div class="list-card-footer">
 			<mlPagination
@@ -517,6 +523,8 @@ const handleSizeChange = (size) => {
 /**
  * 列表API ---------------- begin
  */
+// 是否设置了PC表单
+let isSetPcFormId = ref(false);
 
 // 加载layout 配置
 const loadLayoutConf = async () => {
@@ -560,7 +568,13 @@ const loadLayoutConf = async () => {
 				value: JSON.parse(SEARCH.config),
 			};
 		}
-		await loadFormLayout();
+        if(listCardConf.value.pcFormId) {
+            isSetPcFormId.value = true;
+            await loadFormLayout();
+        }else {
+            isSetPcFormId.value = false;
+        }
+		
 
 		// 格式化查询API
 		getTableList();

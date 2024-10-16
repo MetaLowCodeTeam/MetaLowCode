@@ -44,23 +44,23 @@
 						</el-select>
 					</div>
 				</el-col>
-				<!-- <el-col :span="12">
+				<el-col :span="24">
 					<div class="from-title">选择渲染表单（移动端）</div>
 					<div class="from-item mb-20">
 						<el-select
-							v-model="value"
+							v-model="cardSetting.mobileFormId"
 							placeholder="清选择渲染表单"
 							class="w-100"
 						>
-							<el-option
-								v-for="item in options"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
+                            <el-option
+								v-for="item in formList"
+								:key="item.formLayoutId"
+								:label="item.layoutName"
+								:value="item.formLayoutId"
 							/>
 						</el-select>
 					</div>
-				</el-col> -->
+				</el-col>
 				<el-col :span="24">
 					<div class="from-title">
 						一排展示几个
@@ -170,14 +170,13 @@ watchEffect(() => {
 		}
 
 		loadFormList();
-		console.log(layout, "layoutConfig");
 	}
 });
 
 // 保存设置
 const onSave = async () => {
-	if (!cardSetting.value.pcFormId) {
-		ElMessage.error("请先选择渲染表单...");
+	if (!cardSetting.value.pcFormId && !cardSetting.value.mobileFormId) {
+		ElMessage.error("请至少选择一个渲染表单");
 		return;
 	}
 	let param = {

@@ -986,10 +986,10 @@ let disabledMobileShow = ref(false);
 // 自定义列表模板切换
 const useComponentChange = () => {
     disabledMobileShow.value = false;
-    if(cutMenu.value.type == 1 && cutMenu.value.useComponent == 'ListCard') {
-        disabledMobileShow.value = true;
-        cutMenu.value.mobileShow = false;
-    }
+    // if(cutMenu.value.type == 1 && cutMenu.value.useComponent == 'ListCard') {
+    //     disabledMobileShow.value = true;
+    //     cutMenu.value.mobileShow = false;
+    // }
 
 }
 </script>
