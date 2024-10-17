@@ -43,7 +43,7 @@
                             {{ item.sourceField }}
                             <span
                                 class="del-icon"
-                                @click="delupdateRule(inx)"
+                                @click="delUpdateRule(inx)"
                             >
                                 <el-icon>
                                     <ElIconCloseBold />
@@ -72,7 +72,7 @@
                     <el-select
                         v-model="updateRule.calcMode"
                         class="w-100"
-                        @change="uptadeModeChange"
+                        @change="updateModeChange"
                     >
                         <el-option
                             v-for="(op,inx) in getUptadeMode()"
@@ -185,11 +185,11 @@ let tagEntitys = ref([]);
 // 目标实体所有字段
 let tagEntityFields = ref([]);
 // 目标实体所有字段 key-value
-let tagEntityFieldLable = ref({});
+let tagEntityFieldLabel = ref({});
 // 源实体所有字段
 let cutEntityFields = ref([]);
 // 源实体所有字段 key-value
-let cutEntityFieldLable = ref({});
+let cutEntityFieldLabel = ref({});
 // 切换目标实体Loading
 let changeTagEntityLoading = ref(false);
 
@@ -204,7 +204,7 @@ const getActionContentData = async () => {
             contentLoading.value = false;
             if (tagEntitys.value.length > 0) {
                 // 目标实体默认选中第1个
-                let defalutInx = 0;
+                let defaultInx = 0;
                 // 如果是编辑过的，找到之前选中的数据
                 if (trigger.value.isOnSave) {
                     let { actionContent } = trigger.value;
@@ -213,15 +213,15 @@ const getActionContentData = async () => {
                             el.fieldName == actionContent.fieldName &&
                             el.entityName == actionContent.entityName
                         ) {
-                            defalutInx = elInx;
+                            defaultInx = elInx;
                         }
                     });
                 }
                 // 设置选中
                 trigger.value.defaultTargetEntity =
-                    tagEntitys.value[defalutInx];
+                    tagEntitys.value[defaultInx];
                 // 获取选中实体的所有字段
-                getTagEntityFields(tagEntitys.value[defalutInx].entityCode);
+                getTagEntityFields(tagEntitys.value[defaultInx].entityCode);
             }
         });
     }
@@ -249,7 +249,7 @@ const getCutEntityFields = () => {
         if (res) {
             cutEntityFields.value = res.data;
             res.data.forEach((el) => {
-                cutEntityFieldLable.value[el.fieldName] = el.fieldLabel;
+                cutEntityFieldLabel.value[el.fieldName] = el.fieldLabel;
             });
         }
         resolve();
@@ -264,7 +264,7 @@ const getTagEntityFields = async (entityCode) => {
         tagEntityFields.value = [];
         res.data.forEach((el) => {
             if (el.fieldType &&(numType.value.includes(el.fieldType) || textType.value.includes(el.fieldType) || dateType.value.includes(el.fieldType))) {
-                tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
+                tagEntityFieldLabel.value[el.fieldName] = el.fieldLabel;
                 tagEntityFields.value.push(el);
             }
         });
@@ -318,7 +318,7 @@ let updateRule = reactive({
 });
 
 // 聚合方式
-const uptadeModeLabel = reactive({
+const updateModeLabel = reactive({
     forCompile: "计算公式",
     concatSet: "去重拼接",
     concat: "拼接",
@@ -334,7 +334,7 @@ const uptadeModeLabel = reactive({
 let toFixedForFieldType = ref("");
 
 // 删除规则
-const delupdateRule = (inx) => {
+const delUpdateRule = (inx) => {
     trigger.value.actionContent.items.splice(inx, 1);
     actionContentItems.value.splice(inx, 1);
 };
@@ -428,7 +428,7 @@ const getUptadeMode = () => {
 };
 
 // 聚合方式切换
-const uptadeModeChange = (e) => {
+const updateModeChange = (e) => {
     if (e.value == "forField") {
         // 源字段默认选中第一个
         updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
@@ -497,28 +497,28 @@ const addUpdateRule = () => {
 
 // 格式化 目标字段
 const formatTargetField = (targetField) => {
-    return tagEntityFieldLable.value[targetField];
+    return tagEntityFieldLabel.value[targetField];
 };
 
-// 格式化 港式
+// 格式化 更新方式
 const formatCalcMode = (calcMode) => {
-    return uptadeModeLabel[calcMode];
+    return updateModeLabel[calcMode];
 };
 
 // 格式化 源字段
 const formatSourceField = (item) => {
     if (item.calcMode == "forCompile") {
         if (!item.simpleFormula) {
-            return regSourceField(item.sourceField);
+            return registerSourceField(item.sourceField);
         } else {
             return item.sourceField;
         }
     } else {
-        return cutEntityFieldLable.value[item.sourceField];
+        return cutEntityFieldLabel.value[item.sourceField];
     }
 };
 
-const regSourceField = (sourceField) => {
+const registerSourceField = (sourceField) => {
     let str = sourceField;
     let regStr = str.match(/{([a-zA-Z0-9$\.]+)}/g);
     if (!regStr) {
@@ -528,8 +528,8 @@ const regSourceField = (sourceField) => {
         let formatStr = el.substring(1);
         formatStr = formatStr.substring(0, formatStr.length - 1);
         let splitStr = formatStr.split("$");
-        let replaceStr = `{${cutEntityFieldLable.value[splitStr[0]]}(${
-            uptadeModeLabel[splitStr[1]]
+        let replaceStr = `{${cutEntityFieldLabel.value[splitStr[0]]}(${
+            updateModeLabel[splitStr[1]]
         })}`;
         str = str.replace(el, replaceStr);
     });

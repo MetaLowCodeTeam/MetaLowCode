@@ -33,7 +33,7 @@
                     :key="inx"
                 >
                     <el-col :span="9">
-                        <span class="update-rule-span">{{ getTargeFieldLabel(item.targetField) }}</span>
+                        <span class="update-rule-span">{{ getTargetFieldLabel(item.targetField) }}</span>
                     </el-col>
                     <el-col :span="5">
                         <span class="update-rule-span">{{ getUpdateModeLabel(item.updateMode) }}</span>
@@ -46,7 +46,7 @@
                             {{ getSourceFieldLabel(item) }}
                             <span
                                 class="del-icon"
-                                @click="delupdateRule(inx)"
+                                @click="delUpdateRule(inx)"
                             >
                                 <el-icon>
                                     <ElIconCloseBold />
@@ -78,7 +78,7 @@
                     <el-select
                         v-model="updateRule.updateMode"
                         class="w-100"
-                        @change="uptadeModeChange"
+                        @change="updateModeChange"
                     >
                         <el-option
                             v-for="(op,inx) in getUpdateModeList()"
@@ -121,12 +121,12 @@
                         type="datetime"
                     />
                     <el-input
-                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
+                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'ReferenceList' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
                         v-model="updateRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
                     <el-input
-                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference'"
+                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference' || toFixedForFieldType == 'ReferenceList'"
                         v-model="updateRule.sourceField.label"
                         placeholder="固定值"
                     >
@@ -233,7 +233,6 @@ let contentLoading = ref(false);
 let trigger = ref({});
 onMounted(() => {
     trigger.value = props.modelValue;
-    // 获取操作内容数据
     getActionContentData();
 });
 
@@ -248,11 +247,11 @@ let tagEntityFields = ref([]);
 // 获取必填的所有字段
 let requiredFields = ref([]);
 // 目标实体所有字段 key-value
-let tagEntityFieldLable = ref({});
+let tagEntityFieldLabel = ref({});
 // 源实体所有字段
 let cutEntityFields = ref([]);
 // 源实体所有字段 key-value
-let cutEntityFieldLable = ref({});
+let cutEntityFieldLabel = ref({});
 // 切换目标实体Loading
 let changeTagEntityLoading = ref(false);
 // 引用实体弹框
@@ -266,7 +265,7 @@ const getActionContentData = async () => {
         contentLoading.value = false;
         if (tagEntitys.value.length > 0) {
             // 目标实体默认选中第1个
-            let defalutInx = 0;
+            let defaultInx = 0;
             // 如果是编辑过的，找到之前选中的数据
             if (trigger.value.isOnSave) {
                 let { actionContent } = trigger.value;
@@ -275,14 +274,14 @@ const getActionContentData = async () => {
                         el.fieldName == actionContent.fieldName &&
                         el.entityName == actionContent.entityName
                     ) {
-                        defalutInx = elInx;
+                        defaultInx = elInx;
                     }
                 });
             }
             // 设置选中
-            trigger.value.defaultTargetEntity = tagEntitys.value[defalutInx];
+            trigger.value.defaultTargetEntity = tagEntitys.value[defaultInx];
             // 获取选中实体的所有字段
-            getTagEntityFields(tagEntitys.value[defalutInx].entityCode);
+            getTagEntityFields(tagEntitys.value[defaultInx].entityCode);
         }
     });
 };
@@ -297,7 +296,7 @@ const getTagEntitys = () => {
             tagEntitys.value = [];
             res.data.forEach((el, inx) => {
                 el.entityInx = inx;
-                tagEntityFieldLable.value[el.fieldName] = el.fieldLabel;
+                tagEntityFieldLabel.value[el.fieldName] = el.fieldLabel;
                 tagEntitys.value.push(el);
             });
         }
@@ -311,7 +310,7 @@ const getCutEntityFields = () => {
         if (res) {
             cutEntityFields.value = res.data || [];
             res.data.forEach((el) => {
-                cutEntityFieldLable.value[el.fieldName] = el.fieldLabel;
+                cutEntityFieldLabel.value[el.fieldName] = el.fieldLabel;
             });
         }
         resolve();
@@ -342,7 +341,7 @@ const getTagEntityFields = async (entityCode) => {
             toFixedForFieldType.value = getUpdateRuleTargetFieldType(
                 res.data[0].fieldName
             );
-            if (toFixedForFieldType.value == "Reference") {
+            if (toFixedForFieldType.value == "Reference" || toFixedForFieldType.value == "ReferenceList") {
                 updateRule.updateMode = "forField";
                 updateRule.sourceField = {};
             }
@@ -413,7 +412,7 @@ const getUpdateModeList = () => {
 };
 
 // 聚合方式
-const uptadeModeLabel = reactive({
+const updateModeLabel = reactive({
     forField: "字段值",
     toFixed: "固定值",
     toNull: "置空",
@@ -424,7 +423,7 @@ const uptadeModeLabel = reactive({
 let toFixedForFieldType = ref("");
 
 // 删除规则
-const delupdateRule = (inx) => {
+const delUpdateRule = (inx) => {
     trigger.value.actionContent.items.splice(inx, 1);
     actionContentItems.value.splice(inx, 1);
 };
@@ -465,14 +464,15 @@ const targetFieldChange = async (e) => {
 };
 
 // 更新方式切换
-const uptadeModeChange = (e) => {
+const updateModeChange = (e) => {
     if (e.value == "forField") {
         // 源字段默认选中第一个
         updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
     } else {
         if (
             toFixedForFieldType.value == "Reference" ||
-            toFixedForFieldType.value == "Option"
+            toFixedForFieldType.value == "Option" ||
+            toFixedForFieldType.value == "ReferenceList"
         ) {
             updateRule.sourceField = e == 'forCompile' ? '' : {};
         } else if (toFixedForFieldType.value == "Tag") {
@@ -549,28 +549,28 @@ const addUpdateRule = () => {
 
 // 格式化 目标字段
 const formatTargetField = (targetField) => {
-    return tagEntityFieldLable.value[targetField];
+    return tagEntityFieldLabel.value[targetField];
 };
 
-// 格式化 港式
+// 格式化 更新方式
 const formatUpdateMode = (updateMode) => {
-    return uptadeModeLabel[updateMode];
+    return updateModeLabel[updateMode];
 };
 
 // 格式化 源字段
 const formatSourceField = (item) => {
     if (item.updateMode == "forCompile") {
         if (!item.simpleFormula) {
-            return regSourceField(item.sourceField);
+            return registerSourceField(item.sourceField);
         } else {
             return item.sourceField;
         }
     } else {
-        return cutEntityFieldLable.value[item.sourceField];
+        return cutEntityFieldLabel.value[item.sourceField];
     }
 };
 
-const regSourceField = (sourceField) => {
+const registerSourceField = (sourceField) => {
     let str = sourceField;
     let regStr = str.match(/{([a-zA-Z0-9$\.]+)}/g);
     if (!regStr) {
@@ -582,8 +582,8 @@ const regSourceField = (sourceField) => {
         let splitStr = formatStr.split("$");
         str = str.replace(
             el,
-            `{${cutEntityFieldLable.value[splitStr[0]]}(${
-                uptadeModeLabel[splitStr[1]]
+            `{${cutEntityFieldLabel.value[splitStr[0]]}(${
+                updateModeLabel[splitStr[1]]
             })`
         );
     });
@@ -690,10 +690,10 @@ const floatSourceFieldList = () => {
     // 如果不是就显示通类型字段
     if (strField.includes(fieldType)) {
         return cutEntityFields.value.filter(
-            (el) => el.fieldType != "Reference"
+            (el) => el.fieldType != "Reference" && el.fieldType != "ReferenceList"
         );
     } else {
-        if (fieldType == "Reference") {
+        if (fieldType == "Reference" || fieldType == "ReferenceList") {
             let showFields = [];
             cutEntityFields.value.forEach((el) => {
                 if (
@@ -713,7 +713,7 @@ const floatSourceFieldList = () => {
             });
             if (showFields.length < 1) {
                 return cutEntityFields.value.filter(
-                    (el) => el.fieldType != "Reference"
+                    (el) => el.fieldType != "Reference" && el.fieldType != "ReferenceList"
                 );
             } else {
                 return showFields;
@@ -723,7 +723,7 @@ const floatSourceFieldList = () => {
 };
 
 // 获取目标字段显示label
-const getTargeFieldLabel = (fieldName) => {
+const getTargetFieldLabel = (fieldName) => {
     let filterVal = tagEntityFields.value.filter(
         (el) => el.fieldName == fieldName
     );
