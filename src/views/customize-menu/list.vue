@@ -388,13 +388,20 @@
             style="background: #fff;"
             v-if="listParamConf.showPagination"
         />
-        <mlCustomDetail ref="detailRefs" :entityName="entityName" @updateData="getTableList"/>
+        <mlCustomDetail 
+            ref="detailRefs" 
+            :entityName="entityName" 
+            @updateData="getTableList"
+            :recordDetailFormId="listParamConf.recordDetailFormId"
+        />
         <mlCustomEdit
             ref="editRefs"
             :entityName="entityName"
             :nameFieldName="nameFieldName"
             :layoutConfig="layoutConfig"
             @saveFinishCallBack="editConfirm"
+            :recordNewFormId="listParamConf.recordNewFormId"
+            :recordEditFormId="listParamConf.recordEditFormId"
         />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -616,6 +623,12 @@ const listParamConf = ref({
     showPagination: true,
     showBatchUpdateSet: true,
     showBatchUpdateBtn: true,
+    // 新增记录表单id
+    recordNewFormId: "",
+    // 编辑记录表单id
+    recordEditFormId: "",
+    // 详情查看表单id
+    recordDetailFormId: "",
 })
 
 

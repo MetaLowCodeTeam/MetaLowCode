@@ -89,6 +89,16 @@ const props = defineProps({
         type: Object,
         default: () => {}
     },
+    // 新增记录表单id
+    recordNewFormId: {
+		type: String,
+		default: "",
+	},
+    // 编辑记录表单id
+    recordEditFormId: {
+		type: String,
+		default: "",
+	},
 });
 
 const emits = defineEmits(['saveFinishCallBack']);
@@ -226,7 +236,10 @@ const initFormLayout = async () => {
     globalDsv.value.formEntity = row.entityName;
     globalDsv.value.formEntityIdFieldName = row.idFieldName;
     globalDsv.value.setRowRecordId = setRowRecordId;
-    let res = await getFormLayout(row.entityName, formId.value);
+    let { recordNewFormId, recordEditFormId } = props;
+    // 表单ID使用： 复写方法ID > 传入ID
+    let useFormId = formId.value || (row.detailId ? recordEditFormId : recordNewFormId);
+    let res = await getFormLayout(row.entityName, useFormId);
     if (res) {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;

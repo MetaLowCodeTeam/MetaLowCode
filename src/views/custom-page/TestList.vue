@@ -59,6 +59,12 @@ let listParamConf = ref({
 	showAddBtn: true,
 	// 是否显示更多按钮
 	showMoreBtn: true,
+    // 新增记录表单id
+    recordNewFormId: "0000008-1756b2d621694763a8d3dbe9e838af0c",
+    // 编辑记录表单id
+    recordEditFormId: "0000008-a35747166bfa40cab8e740004f6aa47c",
+    // 详情查看表单id
+    recordDetailFormId: "0000008-f78185de1db64acdbb61e2c50cce3e09",
 });
 
 let paginationConf = ref({});
@@ -67,7 +73,7 @@ let showReferenceDialogFlag = ref(false);
 
 const test = () => {
 	// showReferenceDialogFlag.value = true;
-	EntityListRefs.value?.toAdd(null, "0000008-efc30c5e2d3545d19aec5a10554cfdbd");
+	EntityListRefs.value?.toAdd(null, "0000008-254dca5a57f34a1b8b5c01c47804a6cf");
 };
 
 let ReferenceSearchTableRefs = ref();

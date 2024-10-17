@@ -60,12 +60,12 @@
 				>{{ $t("login.signIn") }}</el-button
 			>
 		</el-form-item>
-		<div class="login-reg">
+		<!-- <div class="login-reg">
 			{{ $t("login.noAccount") }}
 			<router-link to="/web/user_register">{{
 				$t("login.createAccount")
 			}}</router-link>
-		</div>
+		</div> -->
 	</el-form>
 </template>
 

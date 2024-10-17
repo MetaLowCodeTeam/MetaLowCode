@@ -98,6 +98,11 @@ export default [
                 key: "mobilePhoneLogin",
                 type: "switch",
             },
+            {
+                label: "账密登录开启图片验证码",
+                key: "verificationCodeLogin",
+                type: "switch",
+            },
         ],
     },
     {

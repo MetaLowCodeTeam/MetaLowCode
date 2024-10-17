@@ -244,6 +244,11 @@ const props = defineProps({
         type: Object,
         default: () => {}
     },
+    // 详情记录表单id
+    recordDetailFormId: {
+		type: String,
+		default: "",
+	},
 });
 
 
@@ -460,7 +465,7 @@ let noeData = ref(false);
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
-	let res = await getFormLayout(entityName.value, formId.value);
+	let res = await getFormLayout(entityName.value, formId.value || props.recordDetailFormId);
 	haveLayoutJson.value = false;
 	noeData.value = false;
 	if (res) {

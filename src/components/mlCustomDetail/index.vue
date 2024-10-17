@@ -1,6 +1,12 @@
 <template>
 	<!-- 实体列表详情 -->
-	<component v-if="comName" :is="comName" ref="DetailRef" @onConfirm="updateData"></component>
+	<component 
+        v-if="comName" 
+        :is="comName" 
+        ref="DetailRef" 
+        @onConfirm="updateData" 
+        :recordDetailFormId="recordDetailFormId"
+    ></component>
 </template>
 
 <script setup>
@@ -13,6 +19,11 @@ const props = defineProps({
 	entityName: {
 		type: String,
 		default: "default-detail",
+	},
+    // 详情记录表单id
+    recordDetailFormId: {
+		type: String,
+		default: "",
 	},
 });
 
