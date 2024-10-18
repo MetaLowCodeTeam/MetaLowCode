@@ -390,6 +390,7 @@ const onSave = async () => {
             }
         }
     }
+    console.log(edges,'edges')
     // 遍历线
     for (let index = 0; index < edges.length; index++) {
         const el = edges[index];
@@ -452,13 +453,19 @@ const setNodeBorderColor = (type, id, stroke) => {
             }
         }
     }else {
-        properties = {
-            rectNodeNodeStyle: {
-                stroke
+        if(type == "bpmn:sequenceFlow") {
+            properties = {
+                stroke: stroke
+            }
+        }else {
+            properties = {
+                rectNodeNodeStyle: {
+                    stroke
+                }
             }
         }
+     
     }
-
     MetaFlowDesignerRef.value.lf[NodeTypeFn[type]](id).setProperties(properties);
 };
 
