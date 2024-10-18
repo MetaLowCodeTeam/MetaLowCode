@@ -181,6 +181,8 @@ export const referenceListSchema = {
         treeCascadeFieldName: "",
         // 树数据源(实体名称)
         treeDataEntityName: "",
+        // 过滤条件
+        filterConditions: {},
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
