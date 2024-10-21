@@ -931,14 +931,17 @@ const getLayoutList = async () => {
         // treeGroup.value = ? ;
 
         // 如果存在默认配置，用默认配置
-        if (res.data.chosenListType) {
-            tableColumn.value =
-                layoutConfig.value[res.data.chosenListType].FILTER;
-            defaultColumnShow.value = res.data.chosenListType;
-        } else {
-            tableColumn.value = ALL.FILTER;
-            defaultColumnShow.value = "ALL";
-        }
+        // if (res.data.chosenListType) {
+        //     tableColumn.value =
+        //         layoutConfig.value[res.data.chosenListType].FILTER;
+        //     defaultColumnShow.value = res.data.chosenListType;
+        // } else {
+        //     tableColumn.value = ALL.FILTER;
+        //     defaultColumnShow.value = "ALL";
+        // }
+        // 直接用默认的
+        tableColumn.value = ALL.FILTER;
+        defaultColumnShow.value = "ALL";
         // 如果存在列
         if (tableColumn.value.length > 0) {
             let hasFixed = tableColumn.value.filter(el => el.fixed == 'left');

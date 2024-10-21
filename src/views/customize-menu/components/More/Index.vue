@@ -112,7 +112,7 @@
                 </template>
                 <!-- 列显示 -->
                 <div class="pl-5 mt-15 div-disabled" v-if="!isListCard">列显示</div>
-                <div
+                <!-- <div
                     class="pl-20 item"
                     :class="{'is-active':defaultColumnShow == 'SELF'}"
                     @click="changeColumnShow('SELF')"
@@ -126,7 +126,7 @@
                             </el-icon>
                         </span>
                     </div>
-                </div>
+                </div> -->
                 <div
                     class="pl-20 item"
                     :class="{'is-active':defaultColumnShow == 'ALL'}"
