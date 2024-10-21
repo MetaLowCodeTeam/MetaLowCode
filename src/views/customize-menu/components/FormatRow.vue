@@ -129,6 +129,7 @@ const props = defineProps({
     row: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
     nameFieldName: { type: String, default: "" },
+    nameFieldClick: { type: Function, default: null },
 });
 const emits = defineEmits(["openDetailDialog"]);
 
@@ -143,7 +144,11 @@ const downField = (url, fileName) => {
 };
 
 const openDetailDialog = (row) => {
-    emits("openDetailDialog", row);
+    if(props.nameFieldClick) {
+        props.nameFieldClick(row);
+    }else {
+        emits("openDetailDialog", row);
+    }
 };
 
 // 格式化多引用显示

@@ -326,6 +326,7 @@
                                 :row="scope.row"
                                 :column="column"
                                 :nameFieldName="nameFieldName"
+                                :nameFieldClick="nameFieldClick"
                                 @openDetailDialog="openDetailDialog"
                             />
                         </template>
@@ -527,7 +528,16 @@ const props = defineProps({
         type: String,
         default: "",
     },
-
+    // 自定义双击行时间
+    listRowDblClick: {
+        type: Function,
+        default: null,
+    },
+    // 自定义名称字段点击
+    nameFieldClick: { 
+        type: Function, 
+        default: null 
+    },
 })
 
 // 页面Loading
@@ -1149,7 +1159,11 @@ const saveSubFormListCb = (data) => {
 let detailRefs = ref("");
 
 const rowDblclick = (row) => {
-    openDetailDialog(row);
+    if(props.listRowDblClick) {
+        props.listRowDblClick(row)
+    }else {
+        openDetailDialog(row);
+    }
 };
 
 // 打开详情
