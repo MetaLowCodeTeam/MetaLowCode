@@ -72,7 +72,16 @@ let tableOptions = ref({
             subTotalsDimensions: ["number"],
             label: "汇总",
             calcTotals: {
-                aggregation: "SUM",
+                calcFunc: (query, data, spreadsheet) => {
+                    let calc = 0;
+                    data.forEach(el => {
+                        let val = el[query.$$extra$$];
+                        if(val) {
+                            calc += parseFloat(val.replace(/,/g, ''));
+                        }
+                    })
+                    return Number.isInteger(calc) ? calc : Number(calc.toFixed(2));
+                },
             },
         },
         col: {
@@ -83,7 +92,16 @@ let tableOptions = ref({
             subTotalsDimensions: ["number"],
             label: "汇总",
             calcTotals: {
-                aggregation: "SUM",
+                calcFunc: (query, data, spreadsheet) => {
+                    let calc = 0;
+                    data.forEach(el => {
+                        let val = el[query.$$extra$$];
+                        if(val) {
+                            calc += parseFloat(val.replace(/,/g, ''));
+                        }
+                    })
+                    return Number.isInteger(calc) ? calc : Number(calc.toFixed(2));
+                },
             },
         },
     },
