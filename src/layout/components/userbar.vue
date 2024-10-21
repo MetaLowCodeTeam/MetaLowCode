@@ -20,6 +20,7 @@
                             <el-dropdown-item command="CenterHandle">待我处理</el-dropdown-item>
                             <el-dropdown-item command="CenterSubmit">我提交的</el-dropdown-item>
                             <el-dropdown-item command="CenterCc">抄送我的</el-dropdown-item>
+                            <el-dropdown-item command="CenterApproved">审批过的</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>

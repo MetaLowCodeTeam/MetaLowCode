@@ -334,7 +334,7 @@ const getApprovalList = async () => {
     }
     if (defaultCode.value != "all") {
         param.filter.items.push({
-            fieldName,
+            fieldName: props.entityName == 'ApprovalTask' ? 'approvalConfigId.entityCode' : 'entityCode',
             op: "EQ",
             value: defaultCode.value,
         });

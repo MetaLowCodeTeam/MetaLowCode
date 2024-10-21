@@ -82,7 +82,7 @@
 									</span>
 								</div>
 							</div>
-
+                            <!-- 二级菜单 -->
 							<VueDraggableNext
 								ghost-class="subghost"
 								chosen-class="subchosenClass"
@@ -119,6 +119,14 @@
 										{{ child.name }}
 									</div>
 									<div class="action-icon">
+                                        <span
+                                            class="icon-span add-icon mr-5"
+                                            @click.stop="addChildrenMenu(child)"
+                                        >
+                                            <el-icon size="16">
+                                                <ElIconCloseBold />
+                                            </el-icon>
+                                        </span>
 										<span
 											class="icon-span"
 											@click.stop="
@@ -130,7 +138,58 @@
 											</el-icon>
 										</span>
 									</div>
+                                    <!-- 三级菜单 -->
+                                    <VueDraggableNext
+                                        ghost-class="subghost2"
+                                        chosen-class="subchosenClass2"
+                                        animation="300"
+                                        :force-fallback="false"
+                                        handle=".submover"
+                                        :list="child.children"
+                                    >
+                                        <div
+                                            class="child2-div"
+                                            v-for="(child2, subInx2) of child.children"
+                                            :key="subInx2"
+                                            @click="nodeClick(child2)"
+                                            :class="{
+                                                'is-active':
+                                                    child?.guid == child2.guid,
+                                            }"
+                                        >
+                                            <div class="submover fl">
+                                                <el-icon size="20" class="icon">
+                                                    <ElIconRank />
+                                                </el-icon>
+                                            </div>
+                                            <div class="fl item text-ellipsis">
+                                                <el-icon
+                                                    class="icon"
+                                                    v-if="!child2.useIcon"
+                                                >
+                                                    <SetUp />
+                                                </el-icon>
+                                                <el-icon class="icon" v-else>
+                                                    <component :is="child2.useIcon" />
+                                                </el-icon>
+                                                {{ child2.name }}
+                                            </div>
+                                            <div class="action-icon">
+                                                <span
+                                                    class="icon-span"
+                                                    @click.stop="
+                                                        delMenu(child2, subInx, subInx2)
+                                                    "
+                                                >
+                                                    <el-icon size="16">
+                                                        <ElIconCloseBold />
+                                                    </el-icon>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </VueDraggableNext>
 								</div>
+                              
 							</VueDraggableNext>
 						</div>
 					</VueDraggableNext>
@@ -564,6 +623,11 @@ const getGroupEntityList = (target) => {
 					label: "抄送我的",
 					name: "capprovalCc",
 					entityCode: "capprovalCc",
+				},
+                {
+					label: "审批过的",
+					name: "centerApproved",
+					entityCode: "centerApproved",
 				},
 			],
 		});
@@ -1022,7 +1086,6 @@ div {
 }
 
 .parent-li {
-	// height: 888px;
 	font-size: 13px;
 	color: #303030;
 	text-decoration: none;
@@ -1136,6 +1199,14 @@ div {
 .subghost {
 	border: 1px dashed #999;
 	background: #fff !important;
+	.submover,
+	.item {
+		opacity: 0;
+	}
+}
+.subghost2 {
+    border: 1px dashed #999;
+	background: #000 !important;
 	.submover,
 	.item {
 		opacity: 0;

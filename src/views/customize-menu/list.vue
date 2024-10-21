@@ -528,7 +528,7 @@ const props = defineProps({
         type: String,
         default: "",
     },
-    // 自定义双击行时间
+    // 自定义双击行事件
     listRowDblClick: {
         type: Function,
         default: null,

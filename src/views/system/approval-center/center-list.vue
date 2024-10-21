@@ -18,7 +18,7 @@
                 :align="'center'"
                 width="160"
                 key="1"
-                v-if="type === 'handle' || type === 'cc'"
+                v-if="type === 'handle' || type === 'cc' || type === 'approved'"
                 fixed="right"
             >
                 <template #default="scope">
@@ -34,7 +34,7 @@
                         size="small"
                         type="success"
                         @click="approveRow(scope.row)"
-                        v-if="type != 'cc'"
+                        v-if="type != 'cc' && type != 'approved'"
                     >审批</el-button>
                 </template>
             </el-table-column>
@@ -114,6 +114,17 @@ onBeforeMount(() => {
                     op: "REF",
                     value: "approvalTaskId",
                     value2: USER_INFO.userId,
+                },
+            ],
+        },
+        approved: {
+            title: "审批过的",
+            value: 4,
+            filterItems: [
+                {
+                    fieldName: "approvalTaskId",
+                    op: "APPROVED",
+                    value: null
                 },
             ],
         },

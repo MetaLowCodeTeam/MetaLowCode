@@ -11,8 +11,23 @@
 		</el-button>
 	</el-row>
     <el-row v-if="$TOOL.checkRole('r6013') && myApproval.revokeApproval">
-		<el-button type="success" plain @click="revokeApproval">
+		<el-button 
+            type="success" 
+            plain 
+            @click="revokeApproval"
+            :loading="approvalDialog.loading"
+        >
 			撤销审批
+		</el-button>
+	</el-row>
+    <el-row v-if="myApproval.withdrawApproval">
+		<el-button 
+            type="success" 
+            plain 
+            @click="withdrawApproval" 
+            :loading="approvalDialog.loading"
+        >
+			撤回审批
 		</el-button>
 	</el-row>
 	<el-row v-if="myApproval.queryHistory">
@@ -278,6 +293,47 @@ const revokeApproval = () => {
 		})
 		.catch(() => {});
 };
+
+// 撤回审批
+const withdrawApproval = () => {
+	ElMessageBox.confirm("是否确认撤回审批?", "提示：", {
+		confirmButtonText: "确认",
+		cancelButtonText: "取消",
+		type: "warning",
+	})
+		.then(async () => {
+			approvalDialog.loading = true;
+            // 是否复杂工作流
+            let isFlowVariables = !!myApproval.value.flowVariables;
+            if(isFlowVariables){
+                // 复杂工作流
+                let res = await http.post(
+                    "/plugins/metaWorkFlow/workflow/process/withdraw", 
+                    [myApproval.value.flowVariables.processInstanceId]
+                );
+                if (res) {
+                	ElMessage.success("撤销成功");
+                	emits("onSubmit");
+                	closeDialog();
+                }
+            }else{
+                // 简单工作流
+                let res = await http.get(
+                    "/approval/withdraw?approvalTaskId=" +
+                        myApproval.value.approvalTaskId
+                );
+                if (res) {
+                	ElMessage.success("撤销成功");
+                	emits("onSubmit");
+                	closeDialog();
+                }
+            }
+			approvalDialog.loading = false;
+		})
+		.catch(() => {});
+}
+
+
 // 自选审批人
 let optionalApprovals = ref([]);
 // 提交接口

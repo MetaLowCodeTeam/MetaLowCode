@@ -78,6 +78,12 @@ const routes = [
                         component: 'system/approval-center/center-cc',
                         meta: { title: '抄送我的', hidden: true }
                     },
+                    {
+                        path: `/web/center-approved`,
+                        name: 'CenterApproved',
+                        component: 'system/approval-center/center-approved',
+                        meta: { title: '审批过的', hidden: true }
+                    },
                 ]
             },
             // 数据导入
