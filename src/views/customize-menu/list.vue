@@ -284,6 +284,7 @@
                     @header-dragend="headerDragend"
                     @row-click="handleHighlightChangeTable"
                     @row-dblclick="rowDblclick"
+                    @cell-click="TableCellClick"
                     :show-summary="statisticsList.length > 0"
                     :summary-method="getSummaries"
                     :row-style="setRowStyle"
@@ -477,7 +478,7 @@ const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 
-const emits = defineEmits(['referenceCompAdd'])
+const emits = defineEmits(['referenceCompAdd', 'onCellClick', 'onRowClick'])
 
 const props = defineProps({
     listConf: {
@@ -533,11 +534,22 @@ const props = defineProps({
         type: Function,
         default: null,
     },
+    // 自定义行事件
+    listRowClick: { 
+        type: Function, 
+        default: null 
+    },
     // 自定义名称字段点击
     nameFieldClick: { 
         type: Function, 
         default: null 
     },
+    // 自定义单元格点击
+    cellClick: { 
+        type: Function, 
+        default: null 
+    },
+    
 })
 
 // 页面Loading
@@ -1066,7 +1078,12 @@ const selectAllChange = (target) => {
 
 // 表格行点击选中
 const handleHighlightChangeTable = (row, column) => {
-    row.isSelected = !row.isSelected;
+    if(props.listRowClick){
+        props.listRowClick(row, column)
+    }else {
+        row.isSelected = !row.isSelected;
+        emits('onRowClick', row, column);
+    }
 };
 
 // 编辑弹框
@@ -1168,6 +1185,11 @@ const rowDblclick = (row) => {
         openDetailDialog(row);
     }
 };
+
+// 表格单元格点击
+const TableCellClick = (row, column, cell) => {
+    emits('onCellClick', row, column, cell)
+}
 
 // 打开详情
 const openDetailDialog = (row, localDsv, formId) => {
