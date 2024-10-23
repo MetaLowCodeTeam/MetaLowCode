@@ -321,6 +321,7 @@
                         sortable
                         show-overflow-tooltip
                         :fixed="column.fixed"
+                        :align="column.align"
                     >
                         <template #default="scope">
                             <FormatRow
@@ -1579,6 +1580,20 @@ const toEdit = (localDsv, formId) => {
     onEditRow(row, localDsv, formId);
 }
 
+// 删除行
+const toDel = (row) => {
+    if(!row){
+        ElMessage.warning("请先选择数据")
+        return
+    }
+    let dialogParam = {
+        type: 'del',
+        pageType: 'list',
+        list: [row],
+    }
+    MoreRefs.value?.allowOpenDialog(null, dialogParam);
+}
+
 // 查看详情
 const toDetail = (localDsv, formId) => {
     if(multipleSelection.value.length < 1){
@@ -1648,6 +1663,7 @@ defineExpose({
     toEdit,
     toAdd,
     toDetail,
+    toDel,
     toMoreAction,
     showColumnSetting,
     listMoreSetting,

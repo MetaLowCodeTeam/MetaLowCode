@@ -121,6 +121,13 @@
                             <el-radio label="right">向右冻结</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="对齐方式" class="mb-5">
+                        <el-radio-group v-model="editColumnDialogData.align">
+                            <el-radio label="left">居左</el-radio>
+                            <el-radio label="center">居中</el-radio>
+                            <el-radio label="right">居右</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="数据统计" class="mb-3">
                         <el-checkbox v-model="editColumnDialogData.dataStatistics" />
                     </el-form-item>
@@ -316,6 +323,8 @@ let editColumnDialogData = reactive({
     columnRender:"",
     // 冻结列  默认false  向左left 向右right
     fixed: false,
+    // 对齐方式
+    align: "left",
     // 是否在移动端展示
     mobileShow: true,
 });
@@ -420,9 +429,10 @@ const isShowItemTag = (column) => {
         renderType, 
         columnRender, 
         fixed,
-        mobileShow
+        mobileShow,
+        align
     } = column;
-    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || (renderType == 'customizeRender' && !!columnRender)) {
+    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || (renderType == 'customizeRender' && !!columnRender) || align != 'left') {
         return true;
     }
     // 设置了冻结列
@@ -473,6 +483,9 @@ const getAllColumn = async () => {
         let hasFieldName = [];
         if (config) {
             JSON.parse(config).forEach((el) => {
+                if(el.align == undefined) {
+                    el.align = 'left';
+                }
                 showColumn.value.push(el);
                 hasFieldName.push(el.fieldName);
             });

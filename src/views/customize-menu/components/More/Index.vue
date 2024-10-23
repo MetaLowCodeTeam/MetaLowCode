@@ -390,7 +390,11 @@ const allocationFn = async (type) => {
     }
 };
 
-const allowOpenDialog = (type) => {
+const allowOpenDialog = (type, dialogParam) => {
+    if(dialogParam) {
+        allocationRefs.value.openDialog(dialogParam);
+        return
+    }
     allocationRefs.value.openDialog({
         type,
         pageType: props.type,
@@ -487,6 +491,7 @@ const openDefaultFilterDialog = () => {
     });
 };
 
+
 const defaultFilterChange = () => {
     emits("defaultFilterChange");
 };
@@ -578,7 +583,8 @@ defineExpose({
     editColumn,
     listMoreSetting,
     openReportForms,
-    openPrinter
+    openPrinter,
+    allowOpenDialog
 });
 </script>
 <style lang='scss' scoped>
