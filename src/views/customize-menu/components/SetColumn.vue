@@ -429,7 +429,6 @@ const applyColumns = () => {
 
 // 是否显示列标记 * 号
 const isShowItemTag = (column) => {
-    
     let { 
         columnAliasName, 
         columnSort, 
@@ -442,15 +441,13 @@ const isShowItemTag = (column) => {
         align,
         mobileAlign,
     } = column;
-    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || (renderType == 'customizeRender' && !!columnRender) || align != 'left' || mobileAlign != 'left') {
-        return true;
-    }
-    // 设置了冻结列
-    if(fixed)  {
-        return true; 
-    }
-    // 设置了不在移动端显示
-    if(mobileShow != undefined && !mobileShow)  {
+    // 合并条件判断
+    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || 
+        (renderType === 'customizeRender' && !!columnRender) || 
+        (align && align !== 'left') || 
+        (mobileAlign && mobileAlign !== 'left') || 
+        fixed || 
+        (mobileShow !== undefined && !mobileShow)) {
         return true; 
     }
     return false;
