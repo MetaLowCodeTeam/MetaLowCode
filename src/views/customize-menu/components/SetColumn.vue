@@ -97,7 +97,7 @@
             top="25vh"
         >
             <div>
-                <el-form label-width="80px">
+                <el-form label-width="100px">
                     <el-form-item label="别名" class="mb-10">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
                     </el-form-item>
@@ -121,14 +121,14 @@
                             <el-radio label="right">向右冻结</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="对齐方式" class="mb-5">
+                    <el-form-item label="对齐(PC)" class="mb-5">
                         <el-radio-group v-model="editColumnDialogData.align">
                             <el-radio label="left">居左</el-radio>
                             <el-radio label="center">居中</el-radio>
                             <el-radio label="right">居右</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="移动端对齐方式" class="mb-3">
+                    <el-form-item label="对齐(Mobile)" class="mb-3">
                         <el-radio-group v-model="editColumnDialogData.mobileAlign">
                             <el-radio label="left">居左</el-radio>
                             <el-radio label="center">居中</el-radio>
