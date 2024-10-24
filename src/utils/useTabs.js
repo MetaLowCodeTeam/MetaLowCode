@@ -8,11 +8,10 @@ import useViewTagsStore from "@/store/modules/viewTags";
 import useKeepAliveStore from "@/store/modules/keepAlive";
 import useIframeStore from "@/store/modules/iframe";
 import { storeToRefs } from "pinia";
-const { viewTags } = storeToRefs(viewTagsStore);
 const viewTagsStore = useViewTagsStore();
 const keepAliveStore = useKeepAliveStore();
 const iframeStore = useIframeStore();
-const { removeViewTags,updateViewTagsTitle } = viewTagsStore;
+const { removeViewTags, updateViewTagsTitle, getViewTags } = viewTagsStore;
 const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
 const { removeIframeList } = iframeStore;
 
@@ -36,7 +35,7 @@ export default {
         removeViewTags(route);
 		removeIframeList(route)
 		removeKeepLive(route.name)
-		const tagList = viewTags.value;
+		const tagList = getViewTags();
 		const latestView = tagList.slice(-1)[0]
 		if (latestView) {
 			router.push(latestView)

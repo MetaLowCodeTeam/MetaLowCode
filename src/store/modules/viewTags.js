@@ -45,13 +45,18 @@ const useViewTagsStore = defineStore('viewTagsStore', () => {
         viewTags.value = []
     }
 
+    const getViewTags = () => {
+        return viewTags.value
+    }
+
     return {
         viewTags,
         pushViewTags,
         removeViewTags,
         updateViewTags,
         updateViewTagsTitle,
-        clearViewTags
+        clearViewTags,
+        getViewTags
     }
 })
 
