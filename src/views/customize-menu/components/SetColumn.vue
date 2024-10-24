@@ -122,18 +122,64 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="对齐(PC)" class="mb-5">
-                        <el-radio-group v-model="editColumnDialogData.align">
-                            <el-radio label="left">居左</el-radio>
-                            <el-radio label="center">居中</el-radio>
-                            <el-radio label="right">居右</el-radio>
-                        </el-radio-group>
+                        <el-row gutter="10">
+                            <el-col :span="12">
+                                <div class="small-label">表头对齐</div>
+                                <el-select 
+                                    v-model="editColumnDialogData.headerAlign"
+                                >
+                                    <el-option
+                                        v-for="item in alignOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="12">
+                                <div class="small-label">内容对齐</div>
+                                <el-select 
+                                    v-model="editColumnDialogData.align"
+                                >
+                                    <el-option
+                                        v-for="item in alignOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
                     <el-form-item label="对齐(Mobile)" class="mb-3">
-                        <el-radio-group v-model="editColumnDialogData.mobileAlign">
-                            <el-radio label="left">居左</el-radio>
-                            <el-radio label="center">居中</el-radio>
-                            <el-radio label="right">居右</el-radio>
-                        </el-radio-group>
+                        <el-row gutter="10">
+                            <el-col :span="12">
+                                <div class="small-label">表头对齐</div>
+                                <el-select 
+                                    v-model="editColumnDialogData.mobileHeaderAlign"
+                                >
+                                    <el-option
+                                        v-for="item in alignOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="12">
+                                <div class="small-label">内容对齐</div>
+                                <el-select 
+                                    v-model="editColumnDialogData.mobileAlign"
+                                >
+                                    <el-option
+                                        v-for="item in alignOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
                     <el-form-item label="数据统计" class="mb-3">
                         <el-checkbox v-model="editColumnDialogData.dataStatistics" />
@@ -262,6 +308,13 @@ watch(
     },
     { deep: true }
 );
+
+const alignOptions = ref([
+    { label: '居左', value: 'left' },
+    { label: '居中', value: 'center' },
+    { label: '居右', value: 'right' },
+]);
+
 onMounted(() => {
     document.body.ondrop = function (event) {
         event.preventDefault();
@@ -332,8 +385,10 @@ let editColumnDialogData = reactive({
     fixed: false,
     // 对齐方式
     align: "left",
+    headerAlign: "left",
     // 移动端对齐方式
     mobileAlign: "left",
+    mobileHeaderAlign: "left",
     // 是否在移动端展示
     mobileShow: true,
 });
@@ -440,12 +495,16 @@ const isShowItemTag = (column) => {
         mobileShow,
         align,
         mobileAlign,
+        headerAlign,
+        mobileHeaderAlign,
     } = column;
     // 合并条件判断
     if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || 
         (renderType === 'customizeRender' && !!columnRender) || 
         (align && align !== 'left') || 
         (mobileAlign && mobileAlign !== 'left') || 
+        (headerAlign && headerAlign !== 'left') || 
+        (mobileHeaderAlign && mobileHeaderAlign !== 'left') || 
         fixed || 
         (mobileShow !== undefined && !mobileShow)) {
         return true; 
@@ -490,12 +549,6 @@ const getAllColumn = async () => {
         let hasFieldName = [];
         if (config) {
             JSON.parse(config).forEach((el) => {
-                if(el.align == undefined) {
-                    el.align = 'left';
-                }
-                if(el.mobileAlign == undefined) {
-                    el.mobileAlign = 'left';
-                }
                 showColumn.value.push(el);
                 hasFieldName.push(el.fieldName);
             });
@@ -730,5 +783,11 @@ div {
     &.is-active {
         color: var(--el-color-primary);
     }
+}
+:deep(.el-form-item) {
+    align-items: initial !important;
+}
+.small-label {
+    color: #999;
 }
 </style>

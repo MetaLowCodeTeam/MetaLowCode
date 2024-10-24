@@ -322,6 +322,7 @@
                         show-overflow-tooltip
                         :fixed="column.fixed"
                         :align="column.align"
+                        :header-align="column.headerAlign"
                     >
                         <template #default="scope">
                             <FormatRow

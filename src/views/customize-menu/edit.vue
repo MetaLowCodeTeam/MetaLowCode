@@ -166,8 +166,12 @@ let row = reactive({
     detailEntityFlag: true,
     refEntityBindingField: "",
 });
-const globalDsv = ref({});
-globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
+let globalDsv = ref({
+    uploadServer: import.meta.env.VITE_APP_BASE_API,
+    baseApi: import.meta.env.VITE_APP_BASE_API,
+    SERVER_API: import.meta.env.VITE_APP_BASE_API,
+});
+
 let optionData = ref({});
 let loading = ref(false);
 let isShow = ref(false);
