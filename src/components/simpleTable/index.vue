@@ -27,7 +27,7 @@
 						:prop="item.prop"
 						:label="item.label"
 						:align="item.align ? item.align : 'center'"
-						:width="item.width"
+						:width="getColumnWidth(item)"
 						:show-overflow-tooltip="true"
 					>
 						<template #default="scope">
@@ -99,6 +99,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		autoColumnWidth: {
+			type: Boolean,
+			default: false,
+		}
 		// nameField: {
 		// 	type: Object,
 		// 	default: () => ({ idField: "id" }),
@@ -144,6 +148,10 @@ export default {
 		FormatRow,
 	},
 	methods: {
+		getColumnWidth(col) {
+			return this.autoColumnWidth ? 0 : col.width;
+		},
+
 		handleSelectionChange(val) {
 			this.$emit("handleSelectionChange", val);
 		},

@@ -70,6 +70,7 @@
 					:pagination="page"
 					:show-check-box="showCheckBox"
 					:show-operation-column="!showCheckBox"
+					:auto-column-width="true"
 					@handleSizeChange="handleSizeChange"
 					@handleCurrentChange="handleCurrentChange"
 					table-size="small"
@@ -107,7 +108,7 @@ import { refFieldQuery2, saveRefFilterPanel } from "@/api/crud";
 import { externalRefFieldQuery } from "@/api/external";
 import useCommonStore from "@/store/modules/common";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
-// 
+//
 export default {
     components:{
         mlCustomEdit,
@@ -389,7 +390,7 @@ export default {
 						this.selectedData = this.selectedData.filter((item) => {
 							// 检查当前行是否存在于当前页数据中
 							let find = this.tableData.find(
-								(pageItem) => 
+								(pageItem) =>
 									pageItem[this.idField] ===
 									item[this.idField]
 							);
@@ -470,5 +471,15 @@ export default {
 	padding: 0 !important;
 	margin-top: 8px;
 	border-top: 0;
+}
+
+.reference-search-table .work-flow-conditions .ml-add-conditions {
+	margin-top: 10px !important;
+	border-bottom-width: 0 !important;
+}
+
+.reference-search-table .work-flow-conditions {
+	padding-bottom: 4px !important;
+	border-bottom: 1px solid #eee;
 }
 </style>
