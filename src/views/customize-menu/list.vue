@@ -309,7 +309,11 @@
                             <el-checkbox v-else @click="selectAllChange('all')"/>
                         </template>
                         <template #default="scope">
-                            <el-checkbox v-model="scope.row.isSelected" @change="handleHighlightChangeTable(scope.row)"/>
+                            <el-checkbox 
+                                :disabled="scope.row.isCustomDisabled"
+                                v-model="scope.row.isSelected" 
+                                @change="handleHighlightChangeTable(scope.row)"
+                            />
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -799,6 +803,9 @@ const openBatchUpdateDialog = () => {
     );
 };
 
+// 行样式配置
+let rowStyleConf = ref({});
+
 // 设置行样式
 let renderRowStyle = ref("");
 const setRowStyle = ({row, rowIndex}) => {
@@ -921,9 +928,9 @@ const getLayoutList = async () => {
 
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
-            let styleConfig = JSON.parse(res.data.STYLE.config);
-            if(styleConfig.rowConf && styleConfig.rowConf.rowStyleRender){
-                renderRowStyle.value = styleConfig.rowConf.rowStyleRender;
+            rowStyleConf.value = JSON.parse(res.data.STYLE.config);
+            if(rowStyleConf.value.rowConf && rowStyleConf.value.rowConf.rowStyleRender){
+                renderRowStyle.value = rowStyleConf.value.rowConf.rowStyleRender;
             }
         }
         // 树状分组筛选
@@ -1053,38 +1060,55 @@ const handleSizeChange = (size) => {
  */
 let selectedAllStatus = computed(() => {
     let status = 3;
-    let findSelected = tableData.value.filter(el=> el.isSelected);
+    let findSelected = tableData.value.filter(el => el.isSelected && !el.isCustomDisabled); // 只计算未禁用的选项
     // 是全选
-    if(findSelected.length == tableData.value.length){
-        status = 1
+    if (findSelected.length == tableData.value.filter(el => !el.isCustomDisabled).length) { // 计算未禁用的总数
+        status = 1;
     }
     // 有选中
-    if(findSelected.length > 0 && findSelected.length < tableData.value.length){
-        status = 2
+    if (findSelected.length > 0 && findSelected.length < tableData.value.filter(el => !el.isCustomDisabled).length) {
+        status = 2;
     }
     multipleSelection.value = [...findSelected];
     // 没有任何选中
-    return status
+    return status;
 })
+
+
 
 // 全选切换
 const selectAllChange = (target) => {
-    tableData.value.forEach(el => {
-        el.isSelected = target == 'all';
-    })
-    sliceTable.value.forEach(el => {
-        el.isSelected = target == 'all';
-    })
+    if (target === 'clear') {
+        // 取消所有选择
+        tableData.value.forEach(el => {
+            el.isSelected = false;
+        });
+        sliceTable.value.forEach(el => {
+            el.isSelected = false;
+        });
+    } else {
+        // 全选
+        tableData.value.forEach(el => {
+            el.isSelected = target == 'all' && !el.isCustomDisabled;
+        });
+        sliceTable.value.forEach(el => {
+            el.isSelected = target == 'all' && !el.isCustomDisabled;
+        });
+    }
 }
 
 
 // 表格行点击选中
 const handleHighlightChangeTable = (row, column) => {
+    
     if(props.listRowClick){
         props.listRowClick(row, column)
     }else {
-        row.isSelected = !row.isSelected;
         emits('onRowClick', row, column);
+        if(row.isCustomDisabled){
+            return
+        }
+        row.isSelected = !row.isSelected;
     }
 };
 
@@ -1320,7 +1344,6 @@ const commonGroupFilterNodeClick = (e) => {
 };
 
 let sliceTable = ref([]);
-
 const getTableList = async () => {
     pageLoading.value = true;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
@@ -1348,7 +1371,6 @@ const getTableList = async () => {
         defaultFilter: defaultFilter.value,
     };
     dataExportData.queryParm = { ...param };
-
     let res = await getDataList(
         param.mainEntity,
         param.fieldsList,
@@ -1361,10 +1383,14 @@ const getTableList = async () => {
         param.builtInFilter,
         param.statistics,
         param.filterEasySql,
-        param.defaultFilter
+        param.defaultFilter,
+        myModelName.value
     );
     if (res && res.data) {
+        
+        let customDisabledFunc = rowStyleConf.value.rowConf.rowDisabledRender;
         tableData.value = res.data.dataList.map(el => {
+            el.isCustomDisabled = customDisabledFunc ? new Function('row', customDisabledFunc)(el) : false;
             el.isSelected = false;
             return el
         });

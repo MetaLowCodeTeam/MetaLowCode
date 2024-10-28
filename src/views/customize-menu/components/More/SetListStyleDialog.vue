@@ -58,7 +58,20 @@
 					:entityCode="entityCode"
 				/>
 			</div>
-
+            <div class="from-title" v-if="!isListCard">自定义行选中禁用设置</div>
+			<div class="from-item mb-30" v-if="!isListCard">
+				<div class="mb-10 mt-10">
+					<span>自定义渲染</span>
+					<a
+						class="ml-a-span"
+						target="_blank"
+						href="https://www.yuque.com/visualdev/melecode/pep81f9rs3qkbdgf?singleDoc#"
+					>
+						使用文档
+					</a>
+				</div>
+				<mlCodeEditor style="height: 100px" v-model="styleConf.rowConf.rowDisabledRender" />
+			</div>
 			<div class="from-title" v-if="!isListCard">自定义行样式设置</div>
 			<div class="from-item" v-if="!isListCard">
 				<div class="mb-10 mt-10">
@@ -71,7 +84,7 @@
 						使用文档
 					</a>
 				</div>
-				<mlCodeEditor v-model="styleConf.rowConf.rowStyleRender" />
+				<mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
 			</div>
 		</div>
 		<template #footer>
@@ -155,7 +168,10 @@ let styleConf = ref({
 	},
 	// 行设置
 	rowConf: {
+        // 行样式
 		rowStyleRender: "",
+        // 行禁用
+        rowDisabledRender: "return false",
 	},
     // 卡片列表设置
     listCardConf: {
