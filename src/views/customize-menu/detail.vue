@@ -205,7 +205,8 @@ import {
     watch,
     watchEffect,
     onMounted,
-    useSlots
+    useSlots,
+    getCurrentInstance,
  } from "vue";
 import DetailTabs from "./components/DetailTabs.vue";
 import { getFormLayout } from "@/api/system-manager";
@@ -267,9 +268,10 @@ const detailParamConf = ref({
 
 // 插槽内容
 let contentSlots = reactive({});
-
+let currentExposed = ref({});
 watchEffect(() => {
     detailParamConf.value = Object.assign(detailParamConf.value, props.detailConf)
+    currentExposed.value = getCurrentInstance().exposed;
 })
 
 onMounted(() => {
@@ -338,6 +340,7 @@ const openDialog = (id, localDsv, paramFormId) => {
 		ElMessage.warning("当前实体未找到");
 		return;
 	}
+    globalDsv.value.parentExposed = currentExposed.value;
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }

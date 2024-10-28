@@ -69,6 +69,7 @@ import {
     onMounted,
     watch,
     watchEffect,
+    getCurrentInstance,
 } from "vue";
 import { getFormLayout, getFieldListOfEntity } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
@@ -141,6 +142,11 @@ watch(
     }
 );
 
+let currentExposed = ref({});
+
+onMounted(() => {
+    currentExposed.value = getCurrentInstance().exposed;
+})
 
 // 加载配置信息
 const loadMyLayoutConfig = () => {
@@ -166,11 +172,15 @@ let row = reactive({
     detailEntityFlag: true,
     refEntityBindingField: "",
 });
+
+
 let globalDsv = ref({
     uploadServer: import.meta.env.VITE_APP_BASE_API,
     baseApi: import.meta.env.VITE_APP_BASE_API,
     SERVER_API: import.meta.env.VITE_APP_BASE_API,
 });
+
+
 
 let optionData = ref({});
 let loading = ref(false);
@@ -198,8 +208,8 @@ const openDialog = async (v) => {
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     formId.value = v.formId;
-    
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
+    globalDsv.value.parentExposed = currentExposed.value;
     if(v.sourceRecord) {
         globalDsv.value.sourceRecord = v.sourceRecord;
     }
@@ -500,6 +510,8 @@ const getGlobalDsv = () => {
 const getRecordId = () => {
     return row.detailId
 }
+
+
 
 defineExpose({
     openDialog,
