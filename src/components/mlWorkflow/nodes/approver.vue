@@ -119,6 +119,9 @@
                 <div class="mt-10">
                     <el-checkbox v-model="form.autograph" label="手写签名"/>
                 </div>
+                <div class="mt-10">
+                    <el-checkbox v-model="form.completedCC" label="完成审批时抄送当前审批人"/>
+                </div>
                  <!-- 允许修改字段 -->
                 <div class="mt-20">
                     <ModifiableFields 
