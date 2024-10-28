@@ -1387,8 +1387,7 @@ const getTableList = async () => {
         myModelName.value
     );
     if (res && res.data) {
-        
-        let customDisabledFunc = rowStyleConf.value.rowConf.rowDisabledRender;
+        let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
         tableData.value = res.data.dataList.map(el => {
             el.isCustomDisabled = customDisabledFunc ? new Function('row', customDisabledFunc)(el) : false;
             el.isSelected = false;
