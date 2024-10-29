@@ -135,18 +135,29 @@
 								'上一个' + calendarViewTip[currentCalendarView]
 							"
 						>
-							<el-button type="primary" icon="ArrowLeft" @click="toCalendarApi('prev')" />
+							<el-button 
+                                plain
+                                type="primary" 
+                                icon="ArrowLeft" 
+                                @click="toCalendarApi('prev')" 
+                            />
 						</el-tooltip>
 						<el-tooltip
 							:content="
 								'下一个' + calendarViewTip[currentCalendarView]
 							"
 						>
-							<el-button type="primary" icon="ArrowRight" @click="toCalendarApi('next')" />
+							<el-button 
+                                plain
+                                type="primary" 
+                                icon="ArrowRight" 
+                                @click="toCalendarApi('next')" 
+                            />
 						</el-tooltip>
 					</el-button-group>
 					<el-button 
                         type="primary" 
+                        plain
                         class="mr-10" 
                         @click="toCalendarApi('today')"
                         :disabled="mlCalendarData?.isTodayInRange"
@@ -157,13 +168,9 @@
 						<el-button
 							v-for="item in calendarViewOptions"
 							:key="item.value"
+                            :plain="currentCalendarView !== item.value"
 							type="primary"
 							@click="calendarViewChange(item.value)"
-							:class="
-								currentCalendarView === item.value
-									? 'btn-active'
-									: ''
-							"
 						>
 							{{ item.label }}
 						</el-button>
