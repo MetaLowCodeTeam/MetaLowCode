@@ -99,7 +99,7 @@
 				<!-- 快速查询 -->
 				<div class="quick-query fl">
 					<el-input
-						v-model="quickQueryConf.value"
+						v-model="quickQueryKeyWord"
 						class="w-50 m-2"
 						:placeholder="quickQueryConf.placeholder"
 						@keyup.enter="quickQuery()"
@@ -561,11 +561,9 @@ const loadLayoutConf = async () => {
 		quickQueryConf.entityCode = entity.value.code;
 		// 如果存在快速搜索字段
 		if (SEARCH) {
-			quickQueryConf = Object.assign(quickQueryConf, {
-				entityCode: SEARCH.entityCode,
-				layoutConfigId: SEARCH.layoutConfigId,
-				value: JSON.parse(SEARCH.config),
-			});
+            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
+            quickQueryConf.entityCode = res.data.SEARCH.entityCode;
+            quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
 		}
 		if (listCalendarConf.value.calendarField) {
 			isSetCalendarField.value = true;

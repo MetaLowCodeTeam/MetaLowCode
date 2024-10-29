@@ -574,12 +574,17 @@ const loadLayoutConf = async () => {
         quickQueryConf.entityCode = entity.value.code;
 		// 如果存在快速搜索字段
 		if (SEARCH) {
-			quickQueryConf = Object.assign(quickQueryConf, {
-                entityCode: SEARCH.entityCode,
-				layoutConfigId: SEARCH.layoutConfigId,
-				value: JSON.parse(SEARCH.config)
-            });
+            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
+            quickQueryConf.entityCode = res.data.SEARCH.entityCode;
+            quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
 		}
+        //  // 如果存在快速搜索字段
+        //  if (res.data.SEARCH) {
+        //     quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
+        //     quickQueryConf.entityCode = res.data.SEARCH.entityCode;
+        //     quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
+        //     console.log(quickQueryConf.value,'quickQueryConf.value')
+        // }
         if(listCardConf.value.pcFormId) {
             isSetPcFormId.value = true;
             await loadFormLayout();
@@ -624,7 +629,6 @@ const getTableList = async () => {
 	formatTableApi();
 	pageLoading.value = true;
 	showEmpty.value = false;
-    console.log(modelName.value,'modelName.value')
 	let res = await getDataList(
 		tableParam.mainEntity,
 		tableParam.fieldsList,
