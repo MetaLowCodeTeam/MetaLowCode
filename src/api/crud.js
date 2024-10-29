@@ -1,3 +1,5 @@
+import { getModelName } from "@/utils/util";
+
 import http, { request } from '@/utils/request'
 
 export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraFilter, formFilter) {
@@ -76,13 +78,14 @@ export function deleteRecords(body) {
 * @param {*} statistics ""
 * @param {*} filterEasySql ""  自定义SQL查询
 * @param {*} defaultFilter ""  默认查询
+* @param {*} modelName ""  模型名称
 
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter
+        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName: modelName || getModelName()
     })
 }
 

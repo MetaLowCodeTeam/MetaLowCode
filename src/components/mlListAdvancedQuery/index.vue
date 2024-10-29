@@ -432,6 +432,7 @@ const handleCommand = (e) => {
 .ml-list-advanced-query {
     display: inline-block;
     position: relative;
+    text-align: left;
 }
 .select-content {
     padding: 10px 0;

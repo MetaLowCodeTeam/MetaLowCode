@@ -255,9 +255,9 @@ watch(
     },
     { deep: true }
 );
+
 onMounted(() => {
     isShow.value = props.modelValue;
-
     getApprovalTaskById();
 });
 
@@ -271,8 +271,11 @@ const vFormRef = ref();
 let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
-let globalDsv = ref({});
-globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
+let globalDsv = ref({
+    uploadServer: import.meta.env.VITE_APP_BASE_API,
+    baseApi: import.meta.env.VITE_APP_BASE_API,
+    SERVER_API: import.meta.env.VITE_APP_BASE_API,
+});
 // 初始化自定义表单
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;

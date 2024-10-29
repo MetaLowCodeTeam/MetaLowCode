@@ -1,78 +1,80 @@
 <template>
     <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}" v-if="listParamConf.showMoreBtn">
         <div class="table-setting-item-box">
-            <!-- 操作 -->
-            <div class="pl-5 item div-disabled">操作</div>
-            <div
-                class="pl-20 item"
-                @click="allocationFn('del')"
-                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="listParamConf.showDelBtn && checkRoleNum('-4')"
-            >
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconDelete />
-                    </el-icon>
-                </span>
-                删除
-            </div>
-            <RowCopy 
-                :multipleSelection="multipleSelection" 
-                :layoutConfig="myLayoutConf"
-                @copySuccess="copySuccess"
-            />
-            <div
-                class="pl-20 item"
-                @click="allocationFn('allocation')"
-                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-5')"
-            >
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconShare />
-                    </el-icon>
-                </span>
-                分配
-            </div>
-            <div
-                class="pl-20 item"
-                @click="allocationFn('share')"
-                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
-            >
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconFolderChecked />
-                    </el-icon>
-                </span>
-                共享
-            </div>
-            <div
-                class="pl-20 item"
-                @click="allocationFn('unShare')"
-                :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
-                v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
-            >
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconFolderDelete />
-                    </el-icon>
-                </span>
-                取消共享
-            </div>
-            <div 
-                class="pl-20 item" 
-                @click="openReportForms('PDF')" 
-                v-if="type == 'list'"
-                :class="{'div-disabled':multipleSelection.length < 1}"
-            >
-                <span class="icon-t1">
-                    <el-icon>
-                        <ElIconDownload />
-                    </el-icon>
-                </span>
-                导出PDF
-            </div>
+            <template v-if="!isListCalendar">
+                <!-- 操作 -->
+                <div class="pl-5 item div-disabled">操作</div>
+                <div
+                    class="pl-20 item"
+                    @click="allocationFn('del')"
+                    :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                    v-if="listParamConf.showDelBtn && checkRoleNum('-4')"
+                >
+                    <span class="icon-t1">
+                        <el-icon>
+                            <ElIconDelete />
+                        </el-icon>
+                    </span>
+                    删除
+                </div>
+                <RowCopy 
+                    :multipleSelection="multipleSelection" 
+                    :layoutConfig="myLayoutConf"
+                    @copySuccess="copySuccess"
+                />
+                <div
+                    class="pl-20 item"
+                    @click="allocationFn('allocation')"
+                    :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                    v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-5')"
+                >
+                    <span class="icon-t1">
+                        <el-icon>
+                            <ElIconShare />
+                        </el-icon>
+                    </span>
+                    分配
+                </div>
+                <div
+                    class="pl-20 item"
+                    @click="allocationFn('share')"
+                    :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                    v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
+                >
+                    <span class="icon-t1">
+                        <el-icon>
+                            <ElIconFolderChecked />
+                        </el-icon>
+                    </span>
+                    共享
+                </div>
+                <div
+                    class="pl-20 item"
+                    @click="allocationFn('unShare')"
+                    :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                    v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
+                >
+                    <span class="icon-t1">
+                        <el-icon>
+                            <ElIconFolderDelete />
+                        </el-icon>
+                    </span>
+                    取消共享
+                </div>
+                <div 
+                    class="pl-20 item mb-15" 
+                    @click="openReportForms('PDF')" 
+                    v-if="type == 'list'"
+                    :class="{'div-disabled':multipleSelection.length < 1}"
+                >
+                    <span class="icon-t1">
+                        <el-icon>
+                            <ElIconDownload />
+                        </el-icon>
+                    </span>
+                    导出PDF
+                </div>
+            </template>
             <div class="pl-20 item" @click="openReportForms()" v-if="type != 'list'">
                 <span class="icon-t1">
                     <el-icon>
@@ -92,7 +94,7 @@
             <!-- 导入导出 -->
             <template v-if="type == 'list'">
                 <template v-if="!isReferenceComp">
-                    <div class="pl-5 mt-15 item div-disabled">导入导出</div>
+                    <div class="pl-5 item div-disabled">导入导出</div>
                     <div class="pl-20 item" @click="dataExportFn">
                         <span class="icon-t1">
                             <el-icon>
@@ -111,37 +113,42 @@
                     </div>
                 </template>
                 <!-- 列显示 -->
-                <div class="pl-5 mt-15 div-disabled" v-if="!isListCard">列显示</div>
-                <!-- <div
-                    class="pl-20 item"
-                    :class="{'is-active':defaultColumnShow == 'SELF'}"
-                    @click="changeColumnShow('SELF')"
-                    v-if="!isListCard"
-                >
-                    自定义列显示
-                    <div class="action-icon">
-                        <span class="icon-span edit-icon" @click.stop="editColumn('SELF')">
-                            <el-icon>
-                                <ElIconEditPen />
-                            </el-icon>
-                        </span>
+                <template v-if="!isListCard && !isListCalendar">   
+                    <div class="pl-5 mt-15 div-disabled">列显示</div>
+                    <!-- <div
+                        class="pl-20 item"
+                        :class="{'is-active':defaultColumnShow == 'SELF'}"
+                        @click="changeColumnShow('SELF')"
+                        v-if="!isListCard"
+                    >
+                        自定义列显示
+                        <div class="action-icon">
+                            <span class="icon-span edit-icon" @click.stop="editColumn('SELF')">
+                                <el-icon>
+                                    <ElIconEditPen />
+                                </el-icon>
+                            </span>
+                        </div>
+                    </div> -->
+                    <div
+                        class="pl-20 item"
+                        :class="{'is-active':defaultColumnShow == 'ALL'}"
+                        @click="changeColumnShow('ALL')"
+                        
+                    >
+                        默认列显示
+                        <div class="action-icon" v-if="$TOOL.checkRole('r6008')">
+                            <span class="icon-span edit-icon" @click.stop="editColumn('ALL')">
+                                <el-icon>
+                                    <ElIconEditPen />
+                                </el-icon>
+                            </span>
+                        </div>
                     </div>
-                </div> -->
-                <div
-                    class="pl-20 item"
-                    :class="{'is-active':defaultColumnShow == 'ALL'}"
-                    @click="changeColumnShow('ALL')"
-                    v-if="!isListCard"
-                >
-                    默认列显示
-                    <div class="action-icon" v-if="$TOOL.checkRole('r6008')">
-                        <span class="icon-span edit-icon" @click.stop="editColumn('ALL')">
-                            <el-icon>
-                                <ElIconEditPen />
-                            </el-icon>
-                        </span>
-                    </div>
-                </div>
+                </template>
+                    
+                    
+                   
                 <!-- 列表设置 -->
                 <template v-if="$TOOL.checkRole('r6008')"> 
                     <div class="pl-5 mt-15 div-disabled" v-if="!isReferenceComp && !isMainDetailField">列表设置</div>
@@ -156,21 +163,21 @@
                     <div
                         class="pl-20 item"
                         @click="treeGroupFilterIsShow = true"
-                        v-if="!isReferenceComp && !isMainDetailField && !isListCard"
+                        v-if="!isReferenceComp && !isMainDetailField && !isListCard && !isListCalendar"
                     >
                         树状分组筛选
                     </div>
                     <div
                         class="pl-20 item"
                         @click="editColumn('BATCH_UPDATE')"
-                        v-if="listParamConf.showBatchUpdateSet"
+                        v-if="listParamConf.showBatchUpdateSet && !isListCalendar"
                     >
                         批量编辑设置
                     </div>
                     <div
                         class="pl-20 item"
                         @click="setListStyleDialogIsShow = true"
-                        v-if="!isReferenceComp && !isMainDetailField"
+                        v-if="!isReferenceComp && !isMainDetailField && !isListCalendar"
                     >
                         其他列表设置
                     </div>
@@ -180,6 +187,13 @@
                         v-if="isListCard"
                     >
                         卡片列表设置
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        @click="calendarListSettingShow = true"
+                        v-if="isListCalendar"
+                    >
+                        日历视图设置
                     </div>
                 </template>
                 
@@ -250,6 +264,14 @@
         :entityCode="entityCode"
         @confirm="allocationSuccess"
     />
+    <!-- 日历列表设置 -->
+    <CalendarListSetting 
+        v-model="calendarListSettingShow"
+        :modelName="modelName"
+        :layout="myLayoutConf"
+        :entityCode="entityCode"
+        @confirm="allocationSuccess"
+    />
 </template>
 
 <script setup>
@@ -274,6 +296,8 @@ import NewTreeGroupFilter from "./NewTreeGroupFilter.vue";
 import SetListStyleDialog from "./SetListStyleDialog.vue";
 // 卡片列表设置
 import CardListSetting from "./CardListSetting.vue";
+// 日历列表设置
+import CalendarListSetting from "./CalendarListSetting.vue";
 // 行复制
 import RowCopy from './RowCopy.vue';
 
@@ -318,6 +342,11 @@ const props = defineProps({
     },
     // 是否卡片列表
     isListCard: {
+        type: Boolean,
+        default: false,
+    },
+    // 是否日历列表
+    isListCalendar: {
         type: Boolean,
         default: false,
     }
@@ -568,7 +597,11 @@ const checkRoleNum = (target) => {
 /**
  * 卡片列表样式设置
  */
- let cardListSettingShow = ref(false);
+let cardListSettingShow = ref(false);
+ /**
+  * 日历列表设置
+  */
+let calendarListSettingShow = ref(false);
 
 // 复制
 const copySuccess = (v) => {

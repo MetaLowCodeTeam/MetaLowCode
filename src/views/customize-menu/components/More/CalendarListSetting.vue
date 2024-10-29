@@ -9,18 +9,21 @@
 		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 10px;
+		text-align: left;
 	}
 }
 .text-info {
 	font-size: 14px;
 	font-weight: bold;
 	color: #a8abb2;
+    margin-top: 10px;
+    text-align: left;
 }
 </style>
 
 <template>
 	<!--  -->
-	<mlDialog title="卡片列表设置" v-model="isShow" width="600px">
+	<mlDialog title="日历视图设置" v-model="isShow" width="600px">
 		<div
 			v-loading="loading"
 			:element-loading-text="loadingText"
@@ -28,55 +31,24 @@
 		>
 			<el-row :gutter="20">
 				<el-col :span="24">
-					<div class="from-title">选择渲染表单（PC）</div>
+					<div class="from-title">选择日期维度</div>
 					<div class="from-item mb-20">
 						<el-select
-							v-model="cardSetting.pcFormId"
-							placeholder="请选择渲染表单"
+							v-model="calendarListSetting.calendarField"
+							placeholder="请选择日期维度字段"
 							class="w-100"
+                            @change="handleCalendarFieldChange"
 						>
 							<el-option
-								v-for="item in formList"
-								:key="item.formLayoutId"
-								:label="item.layoutName"
-								:value="item.formLayoutId"
+								v-for="(item, inx) in formList"
+								:key="inx"
+								:label="item.fieldLabel"
+								:value="item.fieldName"
 							/>
 						</el-select>
-					</div>
-				</el-col>
-				<el-col :span="24">
-					<div class="from-title">选择渲染表单（移动端）</div>
-					<div class="from-item mb-20">
-						<el-select
-							v-model="cardSetting.mobileFormId"
-							placeholder="请选择渲染表单"
-							class="w-100"
-						>
-                            <el-option
-								v-for="item in formList"
-								:key="item.formLayoutId"
-								:label="item.layoutName"
-								:value="item.formLayoutId"
-							/>
-						</el-select>
-					</div>
-				</el-col>
-				<el-col :span="24">
-					<div class="from-title">
-						一排展示几个
-						<span class="text-info">
-							<!-- （仅PC生效，移动端因尺寸问题固定展示1个） -->
-							（仅PC生效，移动端暂不支持）
-						</span>
-					</div>
-					<div class="from-item">
-						<el-radio-group v-model="cardSetting.rowNum">
-							<el-radio :label="1">1</el-radio>
-							<el-radio :label="2">2</el-radio>
-							<el-radio :label="3">3</el-radio>
-							<el-radio :label="4">4</el-radio>
-							<el-radio :label="6">6</el-radio>
-						</el-radio-group>
+                        <div class="text-info" v-if="calendarListSetting.isReserved || !calendarListSetting.isUpdatable">
+                            当前维度不支持拖动位置修改时间
+                        </div>
 					</div>
 				</el-col>
 			</el-row>
@@ -100,7 +72,7 @@ import { ElMessage } from "element-plus";
 /**
  * API
  */
-import { getFormLayoutList } from "@/api/system-manager";
+import { queryEntityFields } from "@/api/crud";
 import layoutConfig from "@/api/layoutConfig";
 
 import useCommonStore from "@/store/modules/common";
@@ -124,13 +96,15 @@ let isShow = ref(false);
 let loading = ref(false);
 let loadingText = ref("");
 
-let cardSetting = ref({
-	// PC表单
-	pcFormId: "",
-	// 移动端表单
-	mobileFormId: "",
-	// 一排展示几个
-	rowNum: 4,
+let calendarListSetting = ref({
+	// 日期维度字段
+	calendarField: "",
+	// 是否系统字段
+	isReserved: false,
+	// 是否可编辑字段
+	isUpdatable: false,
+    // 字段类型
+    fieldType: "",
 });
 // 保存时的ID
 let layoutConfigId = ref("");
@@ -148,38 +122,47 @@ let formList = ref([]);
 const loadFormList = async () => {
 	loading.value = true;
 	loadingText.value = "表单加载中...";
-	let res = await getFormLayoutList(queryEntityNameByCode(props.entityCode));
+	let res = await queryEntityFields(props.entityCode, true, true);
 	if (res) {
-		formList.value = res.data;
+		formList.value = res.data.filter(
+			(item) => item.fieldType === "Date" || item.fieldType === "DateTime"
+		);
 	}
 	loading.value = false;
 };
 
 watchEffect(() => {
-	let { modelValue, modelName, layout } = props;
+	let { layout } = props;
 	isShow.value = props.modelValue;
 	if (isShow.value) {
 		layoutConfigId.value = "";
-		if (layout.CARD) {
-			cardSetting.value = Object.assign(
-				cardSetting.value,
-				JSON.parse(layout.CARD.config)
+		if (layout.CALENDAR) {
+			calendarListSetting.value = Object.assign(
+				calendarListSetting.value,
+				JSON.parse(layout.CALENDAR.config)
 			);
-			layoutConfigId.value = layout.CARD.layoutConfigId;
+			layoutConfigId.value = layout.CALENDAR.layoutConfigId;
 		}
 
 		loadFormList();
 	}
 });
 
+const handleCalendarFieldChange = (v) => {
+    let field = formList.value.find(item => item.fieldName === v);
+    calendarListSetting.value.isReserved = field.isReserved;
+    calendarListSetting.value.isUpdatable = field.isUpdatable;
+    calendarListSetting.value.fieldType = field.fieldType;
+}
+
 // 保存设置
 const onSave = async () => {
-	if (!cardSetting.value.pcFormId && !cardSetting.value.mobileFormId) {
-		ElMessage.error("请至少选择一个渲染表单");
+	if (!calendarListSetting.value.calendarField) {
+		ElMessage.error("请至少选择一个日期维度");
 		return;
 	}
 	let param = {
-		config: JSON.stringify(cardSetting.value),
+		config: JSON.stringify(calendarListSetting.value),
 		entityCode: props.entityCode,
 	};
 
@@ -187,7 +170,7 @@ const onSave = async () => {
 	loadingText.value = "设置保存中...";
 	let res = await layoutConfig.saveConfig(
 		layoutConfigId.value,
-		"CARD",
+		"CALENDAR",
 		param,
 		props.modelName
 	);

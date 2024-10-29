@@ -27,6 +27,13 @@ export const customListEntry = [
         // 也就是说你要先建立一个 ListCard.vue，再来这里写名字  
         value: "ListCard"
     },
+    {
+        label: "自定义列表日历模板",
+        value: "ListViewCmp/FullCalendarView",
+        // 是否支持移动端
+        // 日历视图用的：FullCalendar，对移动端适配不友好，不建议开放
+        isMobileSupported: false,
+    },
 ];
 
 

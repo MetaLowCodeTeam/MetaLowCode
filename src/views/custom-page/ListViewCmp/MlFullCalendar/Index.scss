@@ -1,0 +1,316 @@
+$background-color: #f5f7fa;
+$tes-primary: #00b578;
+$tes-primary2: #e6f7ff;
+.plan_management {
+	.fc-col-header {
+		height: 32px;
+		line-height: 32px;
+		background-color: #f5f7fa;
+	}
+	.fc-theme-standard .fc-scrollgrid {
+		border: 0 !important;
+	}
+	.fc-daygrid-day-top {
+		line-height: 18px;
+		flex-direction: row !important;
+	}
+	.fc .fc-button-primary {
+		background-color: $background-color;
+		color: #606266;
+		border-color: #dcdfe6;
+	}
+	.fc .fc-button-primary:not(:disabled).fc-button-active,
+	.fc .fc-button-primary:not(:disabled):active {
+		color: #fff;
+		background-color: $tes-primary;
+		border-color: $tes-primary;
+	}
+	.fc .fc-button-primary:not(:disabled).fc-button-active:focus,
+	.fc .fc-button-primary:not(:disabled):active:focus,
+	.fc .fc-button-primary:focus {
+		box-shadow: none;
+	}
+	.fc-theme-standard td,
+	.fc-theme-standard .fc-scrollgrid {
+		border: 1px solid #ebeef5;
+	}
+	.fc-theme-standard td:first-child {
+		border-left: 0;
+		border-right: 0;
+	}
+	.fc-theme-standard th {
+		border-bottom: 1px solid #ebeef5;
+		border-right: 0;
+		border-left: 0;
+	}
+	.fc .fc-button-primary:hover {
+		color: $tes-primary;
+		background-color: #fff;
+		border-color: #dcdfe6;
+	}
+	.fc .fc-button-primary:disabled {
+		color: #fff;
+		background-color: $tes-primary;
+		border-color: $tes-primary;
+	}
+	.fc-event-title {
+		line-height: 16px;
+	}
+	.fc .fc-highlight {
+		background: $tes-primary2;
+	}
+	// 周视图
+	.fc .fc-timegrid-body {
+		.fc-timegrid-slots {
+			table tbody tr:nth-of-type(odd) td {
+				border-bottom-color: transparent;
+			}
+		}
+	}
+	// 列视图
+	.fc-theme-standard .fc-list-day-cushion {
+		line-height: 20px;
+		background-color: #f5f7fa;
+	}
+	.fc .fc-list-table td {
+		line-height: 18px;
+	}
+	.fc-theme-standard .fc-list {
+		border: 1px solid #ebeef5;
+	}
+	.fc .fc-daygrid-day-number {
+		margin: 8px 0 0 8px;
+		color: #303133;
+		font-weight: 500;
+	}
+	.fc-scrollgrid-sync-inner {
+		color: #303133;
+	}
+	.fc .fc-daygrid-day.fc-day-today {
+		background-color: $tes-primary2;
+		.fc-daygrid-day-number {
+			background-color: $tes-primary;
+			color: #fff;
+			border-radius: 4px;
+		}
+	}
+	.fc .fc-col-header-cell-cushion {
+		padding: 0;
+		user-select: none;
+	}
+	.fc-timegrid-slot-label-cushion {
+		user-select: none;
+	}
+	.fc-event-title {
+		line-height: 20px;
+	}
+	.fc .fc-daygrid-event {
+		margin: 0 0 4px 0;
+	}
+	.fc-theme-standard .fc-popover-header {
+		background-color: #fff;
+	}
+	.fc .fc-popover {
+		z-index: 20;
+	}
+	.fc .fc-popover-header {
+		padding: 20px 20px 14px 20px;
+		border-radius: 10px 10px 0 0;
+	}
+	.fc .fc-popover-title {
+		color: $tes-primary;
+		font-size: 20px;
+	}
+	.fc .fc-more-popover .fc-popover-body {
+		padding: 0 20px 16px 20px;
+		border-radius: 0 0 10px 10px;
+	}
+	.fc-theme-standard th {
+		font-weight: 400;
+	}
+	.fc-theme-standard .fc-popover {
+		border-radius: 4px;
+	}
+	.fc-daygrid-day-bottom {
+		color: $tes-primary;
+	}
+	.fc .fc-timegrid-col.fc-day-today {
+		background-color: $tes-primary2;
+	}
+	.fc .fc-timegrid-slot {
+		height: 48px;
+	}
+	.fc .fc-timegrid-divider {
+		padding: 0;
+	}
+	.fc .fc-daygrid-body-natural .fc-daygrid-day-events {
+		margin-bottom: 3px;
+	}
+	.fc-event {
+		position: relative;
+		line-height: 20px;
+		padding: 0 0 0 8px;
+		&:after {
+			content: "";
+			width: 4px;
+			height: 100%;
+			border-radius: 2px 0 0 2px;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		.plan_title {
+			color: #303133;
+			max-width: 98%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		span {
+			margin-right: 6px;
+		}
+	}
+
+	.green.fc-event {
+		&:after {
+			background-color: #00b578;
+		}
+		span {
+			color: #00b578;
+		}
+	}
+	.red.fc-event {
+		&:after {
+			background-color: #fa5151;
+		}
+		span {
+			color: #fa5151;
+		}
+	}
+	.orange.fc-event {
+		&:after {
+			background-color: #ff8f1f;
+		}
+		span {
+			color: #ff8f1f;
+		}
+	}
+	.yellow.fc-event {
+		&:after {
+			background-color: #ffc300;
+		}
+		span {
+			color: #ffc300;
+		}
+	}
+	.cyan.fc-event {
+		&:after {
+			background-color: #07b9b9;
+		}
+		span {
+			color: #07b9b9;
+		}
+	}
+	.blue.fc-event {
+		&:after {
+			background-color: #3662ec;
+		}
+		span {
+			color: #3662ec;
+		}
+	}
+	.purple.fc-event {
+		&:after {
+			background-color: #8a38f5;
+		}
+		span {
+			color: #8a38f5;
+		}
+	}
+	.magenta.fc-event {
+		&:after {
+			background-color: #eb2f96;
+		}
+		span {
+			color: #eb2f96;
+		}
+	}
+	.fc-h-event {
+		border-color: transparent;
+	}
+	.fc-direction-ltr .fc-daygrid-event.fc-event-end,
+	.fc-direction-rtl .fc-daygrid-event.fc-event-start {
+		margin-left: 4px;
+		margin-right: 4px;
+	}
+
+	.fc-event.fc-event-draggable {
+		overflow: hidden;
+	}
+
+	.fc-event.fc-daygrid-event {
+		transition: all 0.1s;
+	}
+
+	.fc-event.fc-daygrid-event.green {
+		background-color: rgba(0, 181, 120, 0.1);
+		&:hover {
+			background-color: rgba(0, 181, 120, 0.2);
+		}
+	}
+	.fc-event.fc-daygrid-event.red {
+		background-color: rgba(250, 81, 81, 0.1);
+		&:hover {
+			background-color: rgba(250, 81, 81, 0.2);
+		}
+	}
+	.fc-event.fc-daygrid-event.orange {
+		background-color: rgba(255, 143, 31, 0.1);
+		&:hover {
+			background-color: rgba(255, 143, 31, 0.2);
+		}
+	}
+	.fc-event.fc-daygrid-event.yellow {
+		background-color: rgba(255, 195, 0, 0.1);
+		&:hover {
+			background-color: rgba(255, 195, 0, 0.2);
+		}
+	}
+	.fc-event.fc-daygrid-event.cyan {
+		background-color: rgba(7, 185, 185, 0.1);
+		&:hover {
+			background-color: rgba(7, 185, 185, 0.2);
+		}
+	}
+	.fc-event.fc-daygrid-event.blue {
+		background-color: rgba(54, 98, 236, 0.1);
+		&:hover {
+			background-color: rgba(54, 98, 236, 0.2);
+		}
+	}
+	.fc-event.fc-daygrid-event.purple {
+		background-color: rgba(138, 56, 245, 0.1);
+		&:hover {
+			background-color: rgba(138, 56, 245, 0.2);
+		}
+	}
+	.fc-event.fc-event-draggable.magenta {
+		background-color: rgba(235, 47, 150, 0.1);
+		&:hover {
+			background-color: rgba(235, 47, 150, 0.2);
+		}
+	}
+	.fc-timegrid-event {
+		font-size: 14px;
+	}
+	.fc-event.fc-timegrid-event {
+		background-color: #fff;
+		border-radius: 0px 6px 6px 0px;
+		box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+		padding: 7px 7px 7px 12px;
+		height: 100%;
+	}
+	.fc-v-event {
+		border: 0;
+	}
+}

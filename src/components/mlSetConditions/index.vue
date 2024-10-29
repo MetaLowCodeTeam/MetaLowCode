@@ -938,7 +938,7 @@ export default {
                 }
             }
             items.forEach(el => {
-                if(el.value && typeof el.value == 'string') {
+                if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
                     el.value = el.value.replace(/\s/g, '');
                 }
             })

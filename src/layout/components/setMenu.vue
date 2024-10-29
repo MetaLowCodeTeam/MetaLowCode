@@ -986,10 +986,11 @@ let disabledMobileShow = ref(false);
 // 自定义列表模板切换
 const useComponentChange = () => {
     disabledMobileShow.value = false;
-    // if(cutMenu.value.type == 1 && cutMenu.value.useComponent == 'ListCard') {
-    //     disabledMobileShow.value = true;
-    //     cutMenu.value.mobileShow = false;
-    // }
+    let useComponent = customListEntry.find(el => el.value == cutMenu.value.useComponent);
+    if(cutMenu.value.type == 1 && useComponent && useComponent.isMobileSupported != undefined && !useComponent.isMobileSupported) {
+        disabledMobileShow.value = true;
+        cutMenu.value.mobileShow = false;
+    }
 
 }
 </script>
