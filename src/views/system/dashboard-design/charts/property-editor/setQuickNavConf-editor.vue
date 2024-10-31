@@ -57,7 +57,7 @@
                                 <EditPen />
                             </el-icon>
                         </span>
-                        <span class="action-icon del">
+                        <span class="action-icon del" @click.stop="deleteInlet(item)">
                             <el-icon>
                                 <Delete />
                             </el-icon>
@@ -115,6 +115,14 @@ const initQuickNavConf = () => {
     myOptionModel.value = props.optionModel;
     quickNavConf.value = props.optionModel.setQuickNavConf;
 };
+
+const deleteInlet = (item) => {
+    quickNavConf.value.inletList = quickNavConf.value.inletList.filter(el => el.guid != item.guid);
+    emits('update:optionModel',{
+        ...myOptionModel.value,
+        setQuickNavConf: quickNavConf.value
+    })
+}
 
 /**
  * 添加入口
