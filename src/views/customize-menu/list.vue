@@ -15,14 +15,13 @@
                 ref="ListCustomizeQueryRef"
                 v-if="!topSearchConfig.isDefaultQueryPanel"
             />
-            <div>
+            <div class="clearfix">
                 <template v-if="topSearchConfig.isDefaultQueryPanel">
                     <slot name="beforeAdvancedQuery"></slot>
                     <el-tooltip
                         effect="dark"
                         content="切换查询面板"
                         placement="top"
-                        v-if="$TOOL.checkRole('r6008')"
                     >
                         <el-button
                             class="mr-10"
@@ -84,7 +83,7 @@
                     </div>
                     <slot name="afterQuickQuery"></slot>
                 </template>
-                <template v-if="!topSearchConfig.isDefaultQueryPanel && $TOOL.checkRole('r6008')">
+                <template v-if="!topSearchConfig.isDefaultQueryPanel">
                     <el-button
                         icon="Switch"
                         type="primary"
@@ -102,6 +101,7 @@
                         text
                         bg
                         :loading="queryPanelLoading"
+                        v-if="$TOOL.checkRole('r6008')"
                     >
                         设计查询面板
                     </el-button>
@@ -837,6 +837,15 @@ let calculateHeight = ref("");
 
 // 切换查询面板
 const changeQueryPanel = async (target) => {
+    if(!$TOOL.checkRole('r6008')){
+        topSearchConfig.value.isDefaultQueryPanel = target;
+        if(target) {
+            calculateHeight.value = "";
+        }else {
+            calculateHeight.value = "calc(100% - 144px)"
+        }
+        return
+    }
     let param = {
 		config: JSON.stringify({
             isDefaultQueryPanel: target,
