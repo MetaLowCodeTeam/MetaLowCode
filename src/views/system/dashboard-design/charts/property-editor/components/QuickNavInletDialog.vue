@@ -62,7 +62,7 @@
                     </el-checkbox>
                 </div>
                 <div>
-                    <el-checkbox v-model="cutMenu.mobielShow" size="default">
+                    <el-checkbox v-model="cutMenu.mobileShow" size="default">
                         <span style="position: relative;top: 1px;">
                             移动端显示
                             <span class="info-text">请确保移动端端有该页面</span>
@@ -184,7 +184,7 @@ const DefaultMenu = {
     // PC显示
     pcShow: true,
     // 移动端显示
-    mobielShow: false,
+    mobileShow: false,
 };
 
 // 打开数据弹框

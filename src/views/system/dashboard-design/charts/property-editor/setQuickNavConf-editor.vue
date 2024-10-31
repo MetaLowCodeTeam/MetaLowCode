@@ -29,7 +29,7 @@
         </el-form-item>
 
         <div class="c-s-t mt-20">入口列表</div>
-        <span class="ml-a-span" @click="openAddDiaog(1,null)">+ 添加入口</span>
+        <span class="ml-a-span" @click="openAddDialog(1,null)">+ 添加入口</span>
     </div>
     <div class="sortable-box clearfix mt-5">
         <VueDraggableNext
@@ -52,7 +52,7 @@
                         {{ item.name }}
                     </div>
                     <div class="action-box fl">
-                        <span class="action-icon edit mr-5" @click.stop="openAddDiaog(2,item)">
+                        <span class="action-icon edit mr-5" @click.stop="openAddDialog(2,item)">
                             <el-icon>
                                 <EditPen />
                             </el-icon>
@@ -121,7 +121,7 @@ const initQuickNavConf = () => {
  */
 let QuickNavInletDialogRefs = ref("");
 
-const openAddDiaog = (type, cut) => {
+const openAddDialog = (type, cut) => {
     QuickNavInletDialogRefs.value.openDialog(
         type,
         cut,
