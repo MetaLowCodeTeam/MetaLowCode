@@ -41,10 +41,14 @@
     </div>
 </template>
 <script setup>
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, onMounted, ref, watch, inject } from "vue";
 import { contrastTextColor } from "./CalculateColor";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
+import { storeToRefs } from "pinia";
+import layoutConfigApi from "@/api/layoutConfig.js";
+const $TOOL = inject("$TOOL");
 defineOptions({
     name: "quickNav-widget",
 });
@@ -95,7 +99,7 @@ const setSelected = () => {
     props.designer?.setSelected(props.field);
 };
 
-const navClick = (item) => {
+const navClick = async (item) => {
     // 如果存在设计表示是在设计页面，无法点击
     if (props.designer) {
         return;
@@ -112,11 +116,23 @@ const navClick = (item) => {
     }
     // 自定义页面
     else if (item.type == 3) {
-        jumpLink(
-            2,
-            item.openType == 1 ? 1 : 2,
-            "/web/custom-page/" + item.outLink
-        );
+        const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
+        if(item.navigationId == chosenNavigationId.value){
+            jumpLink(
+                2,
+                item.openType == 1 ? 1 : 2,
+                "/web/custom-page/" + item.outLink
+            )  
+        }else {
+            let res = await layoutConfigApi.saveUserLayoutCache("NAV", item.navigationId);
+            if(res) {
+                location.reload();
+                $TOOL.data.set("QuickNavigation", {
+                    type: item.openType == 1 ? 1 : 2,
+                    url: "/web/custom-page/" + item.outLink
+                });
+            }
+        }
     } else {
         ElMessage.warning(item.type + " 未找到.");
     }

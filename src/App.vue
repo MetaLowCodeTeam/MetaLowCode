@@ -24,6 +24,8 @@ import {
     onBeforeMount,
     inject,
     ref,
+    nextTick,
+    onMounted
 } from "vue";
 import mlCustomerService from "@/components/mlCustomerService/index.vue";
 import colorTool from "@/utils/color";
@@ -72,7 +74,26 @@ onBeforeMount(() => {
         $TOOL.data.set("APP_LANG",'zh-cn')
     }
     initApi();
+    const quickNavigation = $TOOL.data.get("QuickNavigation");
+    if(quickNavigation){
+        $TOOL.data.remove("QuickNavigation");
+        jumpLink(quickNavigation.type, quickNavigation.url);
+    }
 });
+
+
+
+
+const jumpLink = (type, url) => {
+    // 如果是当前页面
+    if (type == 1) {
+        window.location(url);
+    }
+    // 如果是新页面打开
+    else {
+        window.open(url);
+    }
+}
 
 const initApi = async () => {
     $TOOL.cookie.set("TOKEN", getQueryString("loginToken"));

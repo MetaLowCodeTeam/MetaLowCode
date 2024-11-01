@@ -364,6 +364,7 @@ const SystemEntityPath = {
 
 // 弹框保存
 const layoutSave = () => {
+    const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
     let { type, entityCode, entityName, outLink, guid } = cutMenu.value;
     if (type == 1 && !entityCode) {
         ElMessage.warning("请选择关联项");
@@ -384,6 +385,7 @@ const layoutSave = () => {
         }
         cutMenu.value.entityCode = "";
         cutMenu.value.entityName = "";
+        cutMenu.value.navigationId = chosenNavigationId.value; // 添加所属导航ID
     }
     // 是新建
     if (!guid) {

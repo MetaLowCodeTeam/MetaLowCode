@@ -164,10 +164,6 @@ const saveDesign = async () => {
         formModel: {},
         id: chartId.value,
     };
-    console.log(
-        dbDesignerRef.value.getFormJson(false),
-        " dbDesignerRef.value.getFormJson"
-    );
     if (isMobile.value) {
         param.formModel.mobileChartData = JSON.stringify(
             dbDesignerRef.value.getFormJson(false)
