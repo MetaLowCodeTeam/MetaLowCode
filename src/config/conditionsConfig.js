@@ -57,6 +57,8 @@ export default {
     },
     Date: ["EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     DateTime: ["DEQ", "GE", "LE", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
+    Date: ["NL","NT","EQ", "GT", "LT", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
+    DateTime: ["NL","NT","DEQ", "GE", "LE", "BW", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     Money: ["EQ", "GT", "LT", "GE", "LE", "BW", "NL", "NT"],
     Integer: ["EQ", "GT", "LT", "GE", "LE", "BW", "NL", "NT"],
     Decimal: ["EQ", "GT", "LT", "GE", "LE", "BW", "NL", "NT"],

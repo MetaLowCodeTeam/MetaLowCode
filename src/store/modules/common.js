@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.158 20241104"
+        webVer: "1.6.159 20241104"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -32,6 +32,7 @@ const useCommonStore = defineStore('commonStore', () => {
     const refreshCache = (list) => {
         unSystemEntityList.value = [];
         processEntityList.value = [];
+        allEntityList.value = [];
         list.forEach(el => {
             allEntityLabel[el.entityCode] = el.label;
             allEntityName[el.entityCode] = el.name;
