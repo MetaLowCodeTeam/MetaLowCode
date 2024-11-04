@@ -194,7 +194,6 @@ const getSummaries = (param) => {
 	return sums;
 };
 
-let detailRef = ref("");
 
 const onRowClick = (row, column, event) => {
     // console.log(router,'router')
@@ -207,7 +206,7 @@ const onRowClick = (row, column, event) => {
             "router",
 			cutField.value.options.onRowClick
 		);
-		customFn.call(this, row, column, event, props.detailRef?.value, router);
+		customFn.call(this, row, column, event, props.detailRef, router);
 	}
 };
 
