@@ -33,7 +33,7 @@ export const registerChartLibProperties = (app, PERegister) => {
         'axisCoordinates', 
         'setChartStyle', 
         'setChartConf', 
-        'setQuickNavConf'
+        'setQuickNavConf',
     ];
     let newCom = [];
     const modules = import.meta.globEager('./*.vue')

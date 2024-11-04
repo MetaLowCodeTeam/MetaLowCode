@@ -25,6 +25,7 @@
                             :parent-list="widget.widgetList"
                             :index-of-parent-list="index"
                             :parent-widget="widget"
+                            :detail-ref="detailRef"
                         ></component>
                     </template>
                     <template v-else>
@@ -36,17 +37,23 @@
                             :index-of-parent-list="index"
                             :parent-widget="widget"
                             :design-state="true"
+                            :detail-ref="detailRef"
                         ></component>
                     </template>
                 </div>
             </smart-widget>
         </template>
     </smart-widget-grid>
+    <mlCustomDetail ref="detailRef" />
 </template>
 
 <script>
+import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
 export default {
     name: "dashboard-container-item",
+    components: {
+        mlCustomDetail,
+    },
     props: {
         widget: Object,
         parentWidget: Object,
@@ -54,7 +61,13 @@ export default {
         indexOfParentList: Number,
     },
     data() {
-        return {};
+        return {
+            detailRef: null,
+        };
+    },
+    mounted() {
+        // console.log(this.widget, 'widget')
+        this.detailRef = this.$refs.detailRef;
     },
     computed: {
         gridLayout() {

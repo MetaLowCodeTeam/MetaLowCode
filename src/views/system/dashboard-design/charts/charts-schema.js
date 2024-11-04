@@ -538,6 +538,7 @@ export const ext_charts_widgets = [
             y: 0,
             w: 12,
             h: 6,
+            onRowClick: '',
         }
     },
     // 快捷导航

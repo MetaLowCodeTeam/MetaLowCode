@@ -4,6 +4,9 @@ import {
 	ext_chart_containers as EC_CONS,
 	ext_charts_widgets as EC_WS
 } from "./charts-schema.js";
+
+import onRowClickEditor from "./property-editor/onRowClick-editor.vue";
+
 import DashboardContainerWidget from "./dashboard-container/dashboard-container-widget.vue";
 import DashboardContainerItem from "./dashboard-container/dashboard-container-item.vue";
 import SectionWidget from "./section/section-widget.vue";
@@ -17,11 +20,16 @@ const {
 	PERegister
 } = VisualDesign.VFormSDK
 
+
+
+
 export const loadChartsExtension = function (app) {
 	//加载语言文件
 	addZHExtensionLang(zhLang)
 	addENExtensionLang(enLang)
 	registerChartLibProperties(app, PERegister)
+
+    PERegister.registerEPEditor(app, 'listTable-onRowClick', 'listTable-onRowClick-editor', onRowClickEditor)
 
 	EC_CONS.forEach(con => {
 		addChartContainerSchema(con)

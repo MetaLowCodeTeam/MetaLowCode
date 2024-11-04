@@ -202,31 +202,29 @@ const openDialog = async (status, cut, list) => {
 };
 // 加载自定义列表
 const loadCustomPageList = () => {
-    const { getUseMenuList } = useLayoutConfigStore();
+    const { getAllNav } = useLayoutConfigStore();
     customPageList.value = [];
-    getUseMenuList().forEach((el) => {
-        // 判断有没有子集
-        if (el.children && el.children.length > 0) {
-            el.children.forEach((subEl) => {
-                // 如果是自定义页面
-                if (subEl.path.indexOf("/custom-page/") != -1) {
-                    customPageList.value.push({
-                        label:
-                            subEl.meta.title + "(" + subEl.meta.outLink + ")",
-                        value: subEl.meta.outLink,
-                    });
-                }
-            });
-        }
-        // 没有子集
-        else {
-            // 如果是自定义页面
-            if (el.path.indexOf("/custom-page/") != -1) {
+    let nav = getAllNav();
+    const processSubElements = (elements, layoutConfigId) => {
+        elements.forEach(el => {
+            if (el.type == 3) {
                 customPageList.value.push({
-                    label: el.meta.title + "(" + el.meta.outLink + ")",
-                    value: el.meta.outLink,
+                    label: el.name + '(' + el.outLink + ')',
+                    value: el.outLink,
+                    navigationId: layoutConfigId
                 });
             }
+            if (el.children) {
+                processSubElements(el.children, layoutConfigId); // 递归处理子元素
+            }
+        });
+    };
+    nav.forEach(el => { 
+        try {
+            let config = JSON.parse(el.config);
+            processSubElements(config, el.layoutConfigId); // 处理当前元素的配置
+        } catch (error) {
+            console.error("解析配置出错:", error); // 错误处理
         }
     });
 };
@@ -317,6 +315,7 @@ const associationChange = (entityCode) => {
     cutMenu.value.entityName = linkEntity.name;
 };
 
+
 /**
  * 图标弹框
  */
@@ -364,44 +363,68 @@ const SystemEntityPath = {
 
 // 弹框保存
 const layoutSave = () => {
-    const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
     let { type, entityCode, entityName, outLink, guid } = cutMenu.value;
+
+    // 验证关联项
     if (type == 1 && !entityCode) {
         ElMessage.warning("请选择关联项");
         return;
     }
-    // 如果是系统内置
+
+    // 处理系统内置逻辑
+    handleSystemEntity(type, entityName);
+
+    // 验证外部地址或自定义页面
+    if (!validateOutLink(type, outLink)) return;
+
+    // 处理新建或编辑逻辑
+    if (!guid) {
+        createNewEntry();
+    } else {
+        updateExistingEntry(guid);
+    }
+
+    emit("onConfirm", hasEntityList.value);
+    isShow.value = false;
+};
+
+// 处理系统内置逻辑
+const handleSystemEntity = (type, entityName) => {
     if (type == 1 && SystemEntityName.includes(entityName)) {
         cutMenu.value.isSystemEntity = true;
         cutMenu.value.outLink = SystemEntityPath[cutMenu.value.entityName];
     }
-    // 外部地址、自定义页面
+};
+
+// 验证外部地址或自定义页面
+const validateOutLink = (type, outLink) => {
     if (type == 2 || type == 3) {
         if (!outLink) {
-            ElMessage.warning(
-                type == 2 ? "请输入外部地址" : "请选择自定义页面"
-            );
-            return;
+            ElMessage.warning(type == 2 ? "请输入外部地址" : "请选择自定义页面");
+            return false;
         }
         cutMenu.value.entityCode = "";
         cutMenu.value.entityName = "";
-        cutMenu.value.navigationId = chosenNavigationId.value; // 添加所属导航ID
+        if (type == 3) {
+            cutMenu.value.navigationId = customPageList.value.find(el => outLink == el.value)?.navigationId;
+        }
     }
-    // 是新建
-    if (!guid) {
-        cutMenu.value.guid = getGuid();
-        hasEntityList.value.push(cutMenu.value);
-    }
-    // 是编辑
-    else {
-        hasEntityList.value.forEach((el, inx) => {
-            if (el.guid == guid) {
-                hasEntityList.value[inx] = cloneDeep(cutMenu.value);
-            }
-        });
-    }
-    emit("onConfirm", hasEntityList.value);
-    isShow.value = false;
+    return true;
+};
+
+// 创建新条目
+const createNewEntry = () => {
+    cutMenu.value.guid = getGuid();
+    hasEntityList.value.push(cutMenu.value);
+};
+
+// 更新现有条目
+const updateExistingEntry = (guid) => {
+    hasEntityList.value.forEach((el, inx) => {
+        if (el.guid == guid) {
+            hasEntityList.value[inx] = cloneDeep(cutMenu.value);
+        }
+    });
 };
 
 /**
