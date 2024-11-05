@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.161 20241104"
+        webVer: "1.6.162 20241105"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -157,6 +157,14 @@ const useCommonStore = defineStore('commonStore', () => {
             return true;
         }
     }
+    // 根据实体名称查 实体信息
+    const queryEntityInfoByName = (name) => {
+        let entity = allEntityList.value.filter(el => el.name == name);
+        if(entity.length > 0) {
+            return entity[0];
+        }
+        return {};
+    }
     return {
         allEntityLabel,
         getEntityList,
@@ -177,7 +185,8 @@ const useCommonStore = defineStore('commonStore', () => {
         checkModifiableEntity,
         queryAllEntityList,
         queryEntityCodeByEntityName,
-        checkDetailEntityFlag
+        checkDetailEntityFlag,
+        queryEntityInfoByName
     }
 })
 

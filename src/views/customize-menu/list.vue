@@ -1127,7 +1127,7 @@ let editRefs = ref();
 let myFormEntityId = ref("");
 
 // 新建
-const onAdd = (localDsv, formId) => {
+const onAdd = (localDsv, formId, targetEntity) => {
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
         if(!detailEntityFlag && !myFormEntityId.value){
@@ -1156,7 +1156,7 @@ const onAdd = (localDsv, formId) => {
         return
     }
     let tempV = {};
-    tempV.entityName = entityName.value;
+    tempV.entityName = targetEntity || entityName.value;
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";
     !!localDsv && (tempV.localDsv = localDsv)
@@ -1644,8 +1644,8 @@ const toDetail = (localDsv, formId) => {
 }
 
 // 新建数据
-const toAdd = (localDsv, formId) => {
-    onAdd(localDsv, formId);
+const toAdd = (localDsv, formId, targetEntity) => {
+    onAdd(localDsv, formId, targetEntity);
 }
 
 // 更多操作
