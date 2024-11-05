@@ -330,6 +330,9 @@ const initFormLayout = async () => {
                         }
                     }
 					nextTick(() => {
+                        if(globalDsv.value.backfillFormData) {
+                            param = Object.assign(param, globalDsv.value.backfillFormData);
+                        }
 						vFormRef.value.setFormData(param);
 						nextTick(() => {
 							if (row.fieldName) {
