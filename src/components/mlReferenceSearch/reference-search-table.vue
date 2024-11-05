@@ -21,8 +21,9 @@
 								trigger="click"
 								@command="onSearch"
 								class="mr-10 pt-5"
+                                size="default"
 							>
-								<el-button type="primary">
+								<el-button type="primary" size="default">
 									查询
 									<el-icon class="el-icon--right">
 										<arrow-down />
@@ -39,7 +40,7 @@
 									</el-dropdown-menu>
 								</template>
 							</el-dropdown>
-							<el-button type="primary" plain @click="onReset">
+							<el-button type="primary" plain @click="onReset" size="default">
 								重置
 							</el-button>
 							<el-button
@@ -47,6 +48,7 @@
 								plain
 								@click="onSave"
 								v-if="$TOOL.checkRole('r6008')"
+                                size="default"
 							>
 								保存查询面板
 							</el-button>
@@ -54,6 +56,7 @@
 								type="success"
 								plain
 								@click="onAdd"
+                                size="default"
                                 v-if="$TOOL.checkRole('r' + queryEntityCode(referenceEntityName) + '-2') && !isDetailEntityFlag(referenceEntityName)"
 							>
 								新建
@@ -73,7 +76,7 @@
 					:auto-column-width="true"
 					@handleSizeChange="handleSizeChange"
 					@handleCurrentChange="handleCurrentChange"
-					table-size="small"
+					table-size="default"
 					table-width="100% !important"
 					:maxHeight="tableHeight"
 					@handleSelectionChange="handleSelectionChange"
@@ -82,7 +85,7 @@
 					@selects="selects"
 				>
 					<template #table_operation="{ scope }">
-						<el-button @click="selectRecord(scope.row)">
+						<el-button @click="selectRecord(scope.row)" size="default">
 							<el-icon>
 								<Check />
 							</el-icon>

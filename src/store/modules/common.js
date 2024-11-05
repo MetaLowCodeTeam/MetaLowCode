@@ -18,8 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.6.162 20241105"
-        webVer: "1.6.163 20241105"
+        webVer: "1.6.164 20241105"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -84,8 +83,9 @@ const useCommonStore = defineStore('commonStore', () => {
         return allEntityCode[name];
     }
     // 获取所有实体
-    const queryAllEntityList = () => {
-        return allEntityList.value
+    const queryAllEntityList = (internalEntityFlag = false) => {
+         // showAll为true时返回所有实体，否则只返回internalEntityFlag为false的实体
+         return internalEntityFlag ? allEntityList.value : allEntityList.value.filter(el => !el.internalEntityFlag);
     }
     const setPublicSetting = (data) => {
         publicSetting.value.APP_NAME = data.appName;

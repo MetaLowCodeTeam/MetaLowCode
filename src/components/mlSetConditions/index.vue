@@ -253,10 +253,11 @@
                             </div>
                             <div v-else-if="item.opCom =='referenceSearch'">
                                 <el-input 
-                                    v-model="item.value2" 
+                                    v-model="item.refLabel" 
                                     readonly 
                                     :class="{'is-error':item.isError}" 
                                     @focus="clearError(item)"
+                                    size="default"
                                 >
                                     <template #append>
                                         <el-button @click="openReferenceDialog(item)">
@@ -273,6 +274,7 @@
                                     append-to-body
                                     width="520"
                                     v-if="formatEntityName"
+                                    size="default"
                                 >
                                     <ReferenceSearchTable
                                         :entity="formatEntityName"
@@ -290,6 +292,7 @@
                                     value-format="YYYY-MM-DD HH:mm:ss"
                                     :default-time="defaultTimeLE"
                                     v-if="item.op == 'LE'"
+                                    size="default"
                                 />
                                 <el-date-picker
                                     v-model="item.value"
@@ -298,6 +301,7 @@
                                     value-format="YYYY-MM-DD HH:mm:ss"
                                     :default-time="defaultTimeGE"
                                     v-else-if="item.op == 'GE'"
+                                    size="default"
                                 />
                                 <el-date-picker
                                     size="default"
@@ -597,7 +601,7 @@
                                 </div>
                                 <div v-else-if="item.opCom =='referenceSearch'">
                                     <el-input 
-                                        v-model="item.value2" 
+                                        v-model="item.refLabel" 
                                         readonly 
                                         :class="{'is-error':item.isError}" 
                                         @focus="clearError(item)"
@@ -707,6 +711,8 @@ export default {
                 "CUM",
                 "CUQ",
                 "CUY",
+                "REFD",
+                "REFU",
             ],
             // 数组类型的字段
             numberFieldType: ["Money", "Integer", "Decimal", "Percent"],
@@ -752,7 +758,7 @@ export default {
         },
         setReferRecord(event, item) {
             item.value = event.id;
-            item.value2 = event.label;
+            item.refLabel = event.label;
             item.showReferenceDialogFlag = false;
         },
         async getFieldSet() {
@@ -786,6 +792,7 @@ export default {
                         type: el.type,
                         label: el.label,
                         optionData: el.optionData,
+                        refLabel: "", 
                     };
                 });
                 // 初始化已有字段
@@ -804,9 +811,18 @@ export default {
             this.fieldList.forEach((el) => {
                 this.conditionConf.items.forEach((subEl) => {
                     el.showReferenceDialogFlag = false;
+                    
                     if (el.fieldName === subEl.fieldName) {
                         let newItem = Object.assign({ ...el }, subEl);
 						this.getOpCom(newItem);
+                        // 兼容老数据 如果是引用类型 且 label 为空 且 value2 有值
+                        if(newItem.type == "Reference" && !newItem.refLabel && newItem.value2){
+                            newItem.refLabel = newItem.value2;
+                        }
+                        if(newItem.op == "REF"){
+                            newItem.value = newItem.value2;
+                            newItem.value2 = "";
+                        }
                         conditionList.push(newItem);
                     }
                 });
@@ -847,7 +863,7 @@ export default {
             let { type, referTo } = item;
             let op = [];
             // 如果是引用类型
-            if (type == "Reference") {
+            if (type == "Reference" || type == "ReferenceList") {
                 let referenceObj = { ...this.conditionsConfig[type] };
                 // 有单独设定的 条件
                 if (referenceObj.referenceFilters.includes(referTo)) {
@@ -937,12 +953,27 @@ export default {
                     return;
                 }
             }
-            items.forEach(el => {
+            let tempItems = JSON.parse(JSON.stringify(items));
+            tempItems.forEach(el => {
                 if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
                     el.value = el.value.replace(/\s/g, '');
                 }
+                // 如果是多引用类型 且不是 为空不为空
+                if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
+                    const { queryEntityInfoByName } = useCommonStore();
+                    let idFieldName = queryEntityInfoByName(this.formatEntityName).idFieldName;
+                    // 如果是本人、本部门
+                    if(el.op == "REFD" || el.op == "REFU"){
+                        el.value = idFieldName;
+                    }
+                    // 如果是包含
+                    if(el.op == "REF"){
+                        el.value2 = el.value;
+                        el.value = idFieldName;
+                    }
+                }
             })
-            this.$emit("confirm", { equation, items });
+            this.$emit("confirm", { equation, items: tempItems });
         },
         // 取消
         cancel() {

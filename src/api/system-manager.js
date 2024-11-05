@@ -4,7 +4,7 @@ import config from "@/config"
 const SERVER_URL = config.FILE_SERVER_URL
 
 export function getEntitySet() {
-    return http.get('systemManager/getEntitySet')
+    return http.get('systemManager/getEntitySet?queryInternal=true')
 }
 
 export function filterEntitySet(keyword) {

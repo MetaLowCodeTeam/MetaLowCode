@@ -13,6 +13,7 @@
 				:header-cell-style="{ background: '#f6f8f9' }"
 				@select="selects"
 				@select-all="selects"
+                size="default"
 			>
 				<el-table-column
 					v-if="showCheckBox"

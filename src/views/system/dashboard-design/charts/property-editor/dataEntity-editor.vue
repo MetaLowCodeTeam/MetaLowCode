@@ -11,7 +11,7 @@
             <el-option
                 :label="op.label"
                 :value="op.entityCode"
-                v-for="(op,inx) of unSystemEntityList"
+                v-for="(op,inx) of queryAllEntityList(true)"
                 :key="inx"
             />
         </el-select>
@@ -20,7 +20,8 @@
 <script setup>
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-const { unSystemEntityList } = storeToRefs(useCommonStore());
+// const { allEntityList } = storeToRefs(useCommonStore());
+const { queryAllEntityList } = useCommonStore();
 import { ref, watch, onMounted } from "vue";
 defineOptions({
     name: "dataEntity-editor",

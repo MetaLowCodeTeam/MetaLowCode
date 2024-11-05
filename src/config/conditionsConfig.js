@@ -41,6 +41,8 @@ export default {
         CUM: "本月",
         CUQ: "本季度",
         CUY: "本年",
+        REFD: "包含本部门",
+        REFU: "包含本人",
     },
     // 所有字段
     Tag: ["LK", "NLK"],
@@ -54,6 +56,12 @@ export default {
         referenceFilters: ["Department", "User"],
         Department: ["EQ", "NEQ", "SFB", "SFD", "NL", "NT"],
         User: ["EQ", "NEQ", "NL", "NT", "SFU"],
+    },
+    ReferenceList: {
+        All: ["REF", "NL", "NT" ],
+        referenceFilters: ["Department", "User"],
+        Department: ["REF","NL", "NT", "REFD"],
+        User: ["REF", "NL", "NT", "REFU"],
     },
     Date: ["EQ", "GT", "LT", "BW", "NL", "NT", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     DateTime: ["DEQ", "GE",  "LE", "BW", "NL","NT", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
@@ -100,13 +108,13 @@ export default {
         },
         // 用户下拉框
         userSelect: {
-            type: ["Reference"],
+            type: ["Reference", "ReferenceList"],
             referTo: ["User"],
             op: ["LK", "NLK"],
         },
         // 部门下拉框
         departmentSelect: {
-            type: ["Reference"],
+            type: ["Reference", "ReferenceList"],
             referTo: ["Department"],
             op: ["LK", "NLK"],
         },
@@ -117,9 +125,9 @@ export default {
         },
         // 应用类型搜索组件
         referenceSearch: {
-            type: ["Reference"],
+            type: ["Reference", "ReferenceList"],
             referTo: [],
-            op: ["EQ", "NEQ"],
+            op: ["EQ", "NEQ", "REF"],
         },
     },
     getShowCom: function (item) {
@@ -129,7 +137,7 @@ export default {
                 const element = this.comList[key];
                 if (element.type.includes(type) && element.op.includes(op)) {
                     // 如果不是引用字段
-                    if (type != 'Reference') {
+                    if (type != 'Reference' && type != 'ReferenceList') {
                         return key
                     }
                     // 如果是引用字段
