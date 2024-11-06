@@ -360,7 +360,7 @@
 							/>
 						</el-select>
 					</div>
-                    <div class="mt-5" v-if="!cutMenu.children || cutMenu.children.length < 1">
+                    <div class="mt-5">
                         <el-checkbox
 							v-model="cutMenu.pcShow"
 							label="是否在PC端显示"
