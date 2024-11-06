@@ -1646,7 +1646,7 @@ const toDetail = (localDsv, formId) => {
 }
 
 // 新建数据
-const toAdd = (localDsv, formId, targetEntity) => {
+const toAdd = (localDsv, formId, targetEntity, dialogConf) => {
     onAdd(localDsv, formId, targetEntity, dialogConf);
 }
 
