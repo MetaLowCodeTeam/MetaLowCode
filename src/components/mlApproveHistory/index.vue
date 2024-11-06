@@ -3,16 +3,16 @@
         v-model="isShow" 
         :title="title" 
         :width="isComplexWorkFlow ? '75%' : '35%'"
-        :showFullSceen="isComplexWorkFlow"
+        :showFullScreen="isComplexWorkFlow"
         :bodyNoPadding="isComplexWorkFlow"
-        @fullSceenChange="fullSceenChange"
+        @fullScreenChange="fullScreenChange"
         appendToBody
     >
         <div 
             class="clearfix history-body" 
             :class="{
                 'complex-work-flow': isComplexWorkFlow,
-                'full-sceen':fullSceen
+                'full-screen':fullScreen
             }"
             v-loading="loading"
         >
@@ -209,7 +209,7 @@ let isShow = ref(null);
 // 是否复杂工作流
 let isComplexWorkFlow = ref(false);
 // 是否全屏
-let fullSceen = ref(false);
+let fullScreen = ref(false);
 
 
 watch(
@@ -388,8 +388,8 @@ const openApproveView = () => {
 }
 
 
-const fullSceenChange = (v) => {
-    fullSceen.value = v;
+const fullScreenChange = (v) => {
+    fullScreen.value = v;
 }
 
 let ChangeApproverRef = ref();
@@ -501,7 +501,7 @@ defineExpose({
             float: right;
         }
     }
-    &.full-sceen {
+    &.full-screen {
         height: 100%;
     }
     .approve-view-box {

@@ -1,6 +1,6 @@
 <template>
 	<el-drawer
-		:size="isFullSceen ? '100%' : '62.4%'"
+		:size="isFullScreen ? '100%' : '62.4%'"
 		class="ml-drawer"
         v-if="detailDialog.isShow"
         v-model="detailDialog.isShow"
@@ -16,7 +16,7 @@
 					<div class="fr fr-box">
 						<span
 							class="fr-icon mr-10"
-							@click="onFullSceen"
+							@click="onFullScreen"
 							v-if="styleConf?.detailConf.showFullScreen"
 						>
 							<el-icon size="20">
@@ -417,7 +417,7 @@ const getLayoutList = async () => {
         if (STYLE && STYLE.config) {
             styleConf.value = JSON.parse(STYLE.config);
             if (styleConf.value?.detailConf.autoFullScreen) {
-                isFullSceen.value = true;
+                isFullScreen.value = true;
             }
         }
         // 如果有页签配置
@@ -601,10 +601,10 @@ const getEditBtnTitle = () => {
 	return str;
 };
 
-let isFullSceen = ref(false);
+let isFullScreen = ref(false);
 // 全屏
-const onFullSceen = () => {
-	isFullSceen.value = !isFullSceen.value;
+const onFullScreen = () => {
+	isFullScreen.value = !isFullScreen.value;
 };
 
 

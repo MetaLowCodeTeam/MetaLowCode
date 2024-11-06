@@ -5,13 +5,13 @@
         v-model="isShow"
         width="55%"
         draggable
-        :showFullSceen="styleConf?.actionConf.showFullScreen"
-        :autoFullScreen="styleConf?.actionConf.autoFullScreen"
+        :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf.showFullScreen"
+        :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf.autoFullScreen"
         append-to-body
         bodyNoPadding
         :showClose="!loading"
     >
-        <div class="main fullsceen-man" v-loading="loading">
+        <div class="main fullScreen-man" v-loading="loading">
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
             <v-form-render
@@ -173,6 +173,8 @@ let row = reactive({
     refEntityBindingField: "",
 });
 
+const paramDialogConf = ref(null);
+
 
 let globalDsv = ref({
     uploadServer: import.meta.env.VITE_APP_BASE_API,
@@ -207,6 +209,7 @@ const openDialog = async (v) => {
     row.idFieldName = v.idFieldName;
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
+    paramDialogConf.value = v.dialogConf;
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
     globalDsv.value.parentExposed = currentExposed.value;

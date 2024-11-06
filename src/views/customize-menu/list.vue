@@ -1127,7 +1127,7 @@ let editRefs = ref();
 let myFormEntityId = ref("");
 
 // 新建
-const onAdd = (localDsv, formId, targetEntity) => {
+const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
         if(!detailEntityFlag && !myFormEntityId.value){
@@ -1151,6 +1151,7 @@ const onAdd = (localDsv, formId, targetEntity) => {
                 ...localDsv,
             };
             !!formId && (tempV.formId = formId)
+            !!dialogConf && (tempV.paramDialogConf = dialogConf)
             editRefs.value.openDialog(tempV);
         });
         return
@@ -1161,6 +1162,7 @@ const onAdd = (localDsv, formId, targetEntity) => {
     tempV.formEntityId = "";
     !!localDsv && (tempV.localDsv = localDsv)
     !!formId && (tempV.formId = formId)
+    !!dialogConf && (tempV.paramDialogConf = dialogConf)
     editRefs.value.openDialog(tempV);
 };
 
@@ -1645,7 +1647,7 @@ const toDetail = (localDsv, formId) => {
 
 // 新建数据
 const toAdd = (localDsv, formId, targetEntity) => {
-    onAdd(localDsv, formId, targetEntity);
+    onAdd(localDsv, formId, targetEntity, dialogConf);
 }
 
 // 更多操作

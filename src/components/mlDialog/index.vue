@@ -2,20 +2,20 @@
     <el-dialog
         class="mldialog"
         :append-to-body="appendToBody"
-        :width="isFullSceen ? '100%' : width"
+        :width="isFullScreen ? '100%' : width"
         v-model="isShow"
         :show-close="false"
         @close="close"
         :close-on-click-modal="closeOnClickModal"
         :class="{
             'not-header':notHeader,
-            'isFullSceen':isFullSceen,
+            'isFullScreen':isFullScreen,
             'has-footer': isShowFooter,
             'body-no-padding':bodyNoPadding
         }"
-        :top="isFullSceen ? '0' : top"
+        :top="isFullScreen ? '0' : top"
         v-if="isShow"
-        :draggable="isFullSceen ? false : draggable"
+        :draggable="isFullScreen ? false : draggable"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
@@ -25,7 +25,7 @@
                 </el-icon>
             </span>
 
-            <span class="fr full-screen-icon" @click="onFullSceen" v-if="showFullSceen">
+            <span class="fr full-screen-icon" @click="onFullScreen" v-if="showFullScreen">
                 <el-icon size="20">
                     <ElIconFullScreen />
                 </el-icon>
@@ -53,13 +53,13 @@ const props = defineProps({
     // 关闭
     showClose: { type: Boolean, default: true },
     // 全屏
-    showFullSceen: { type: Boolean, default: false },
+    showFullScreen: { type: Boolean, default: false },
     // 自动全屏
     autoFullScreen: { type: Boolean, default: false },
     // body没有内边距
     bodyNoPadding: { type: Boolean, default: false },
 });
-const emit = defineEmits(["update:modelValue", 'fullSceenChange']);
+const emit = defineEmits(["update:modelValue", 'fullScreenChange']);
 watch(
     () => props.modelValue,
     () => {
@@ -76,11 +76,11 @@ let isShowFooter = ref(false);
 // 嵌入内容
 let contentSlots = reactive({});
 // 是否全屏
-let isFullSceen = ref(false);
+let isFullScreen = ref(false);
 onMounted(() => {
     isShow.value = props.modelValue;
     if(props.autoFullScreen){
-        isFullSceen.value = true;
+        isFullScreen.value = true;
     }
     contentSlots = useSlots();
     if (contentSlots.footer) {
@@ -93,9 +93,9 @@ const close = () => {
     emit("update:modelValue", isShow.value);
 };
 // 全屏切换
-const onFullSceen = () => {
-    isFullSceen.value = !isFullSceen.value;
-    emit('fullSceenChange', isFullSceen.value)
+const onFullScreen = () => {
+    isFullScreen.value = !isFullScreen.value;
+    emit('fullScreenChange', isFullScreen.value)
 };
 </script>
 

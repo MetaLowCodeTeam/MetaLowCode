@@ -117,7 +117,7 @@
             v-model="viewDialogConf.show"
             :append-to-body="true"
             width="520px"
-            showFullSceen
+            showFullScreen
         >
             <el-input
                 class="mb-10"
