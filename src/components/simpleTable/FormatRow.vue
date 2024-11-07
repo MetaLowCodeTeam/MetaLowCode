@@ -1,5 +1,5 @@
 <template>
-	<div class="text-ellipsis" v-if="column.type == 'Reference'">
+	<div class="text-ellipsis" v-if="column.type == 'Reference' || column.type == 'AnyReference'">
 		{{ row[column.prop]?.name }}
 	</div>
 	<div class="text-ellipsis" v-else-if="column.type == 'Status'">

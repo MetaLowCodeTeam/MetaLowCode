@@ -11,7 +11,7 @@
     <div :style="{'fontSize':column.fontSize + 'px','fontWeight':column.fontWeight,'color':column.fontColor}" v-else>
         <div
             class="text-ellipsis"
-            v-if="column.fieldType == 'Reference'"
+            v-if="column.fieldType == 'Reference' || column.fieldType == 'AnyReference'"
         >{{ row[column.fieldName]?.name }}</div>
         <div
             class="text-ellipsis"

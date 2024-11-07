@@ -279,6 +279,7 @@ let needType = ref([
     "DateTime",
     "Date",
     "Reference",
+    "AnyReference",
     "Boolean",
     "Option",
     "Status",
@@ -286,7 +287,7 @@ let needType = ref([
 ]);
 const getEntityFields = async () => {
     loading.value = true;
-    let res = await queryEntityFields(props.optionModel.dataEntity, true, true);
+    let res = await queryEntityFields(props.optionModel.dataEntity, true, true, false, false, true);
     // fields.forEach()
     if (res && res.data) {
         fields.value = [];
