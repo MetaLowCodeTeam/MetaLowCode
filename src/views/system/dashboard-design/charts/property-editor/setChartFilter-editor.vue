@@ -86,7 +86,7 @@ const conditionConfirm = (e) => {
 
 watchEffect(()=>{
     cutOption.value = props.optionModel;
-    cutEntityName.value = allEntityName.value[cutOption.value.dataEntity];
+    cutEntityName.value = cutOption.value.dataEntity == 33 ? "ApprovalTask" : allEntityName.value[cutOption.value.dataEntity];
     getSetConditionText();
 })
 
