@@ -472,6 +472,7 @@ let noeData = ref(false);
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
+    globalDsv.value.useFormId = formId.value || props.recordDetailFormId;
 	let res = await getFormLayout(entityName.value, formId.value || props.recordDetailFormId);
 	haveLayoutJson.value = false;
 	noeData.value = false;

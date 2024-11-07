@@ -256,6 +256,7 @@ const initFormLayout = async () => {
     let { recordNewFormId, recordEditFormId } = props;
     // 表单ID使用： 复写方法ID > 传入ID
     let useFormId = formId.value || (row.detailId ? recordEditFormId : recordNewFormId);
+    globalDsv.value.useFormId = useFormId;
     let res = await getFormLayout(row.entityName, useFormId);
     if (res) {
         if (res.data?.layoutJson) {

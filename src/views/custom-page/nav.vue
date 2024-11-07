@@ -63,7 +63,7 @@ onMounted(() => {
     if (layoutConfigId.value) {
         getNavigationById();
     }else {
-        ElMessage.waring("没有找到：layoutConfigId")
+        ElMessage.warning("没有找到：layoutConfigId")
     }
 });
 
@@ -75,7 +75,6 @@ const getNavigationById = async () => {
     let res = await layoutConfig.getNavigationById(layoutConfigId.value);
     if (res && res.code == 200) {
         navList.value = res.data.config ? JSON.parse(res.data.config) : [];
-        console.log(navList.value,'navList.value')
         // 取有子集和没有子集的东西
         let hasChildren = [];
         let notChildren = [];

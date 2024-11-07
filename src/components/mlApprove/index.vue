@@ -279,6 +279,7 @@ let globalDsv = ref({
 // 初始化自定义表单
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;
+    globalDsv.value.useFormId = formLayoutId;
     let res = await getFormLayout(
         allEntityName.value[approvalTask.value.entityCode],
         formLayoutId,
