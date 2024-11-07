@@ -961,7 +961,7 @@ export default {
                 // 如果是多引用类型 且不是 为空不为空
                 if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
                     const { queryEntityInfoByName } = useCommonStore();
-                    let idFieldName = queryEntityInfoByName(this.formatEntityName).idFieldName;
+                    let idFieldName = this.formatEntityName == "ApprovalTask" ? "approvalTaskId" : queryEntityInfoByName(this.formatEntityName).idFieldName;
                     // 如果是本人、本部门
                     if(el.op == "REFD" || el.op == "REFU"){
                         el.value = idFieldName;
