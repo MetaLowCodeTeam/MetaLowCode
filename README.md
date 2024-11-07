@@ -117,6 +117,12 @@ npm run fast-build
 ## <mark>客服咨询、定制开发</mark>
 ![客服咨询](https://mlimgs.ks3-cn-beijing.ksyuncs.com/wework_contact.png)
 
+<br />
+<hr />
+
+## 加入微信交流群
+![微信交流群](https://mlimgs.ks3-cn-beijing.ksyuncs.com/mele_wxchat_group.png)
+
 ## 系统截图
 
 ### 移动端
