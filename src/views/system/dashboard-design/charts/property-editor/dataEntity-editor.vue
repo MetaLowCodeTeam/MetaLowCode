@@ -11,7 +11,7 @@
             <el-option
                 :label="op.label"
                 :value="op.entityCode"
-                v-for="(op,inx) of queryAllEntityList(true)"
+                v-for="(op,inx) of currentEntityList"
                 :key="inx"
             />
         </el-select>
@@ -37,17 +37,25 @@ let myOption = ref({});
 watch(
     () => props.optionModel,
     () => {
-        initchartStyle();
+        initChartStyle();
     },
     { deep: true }
 );
 onMounted(() => {
-    initchartStyle();
+    initChartStyle();
 });
 
+let currentEntityList = ref("");
+
 // 初始化图表样式
-const initchartStyle = () => {
+const initChartStyle = () => {
     myOption.value = { ...props.optionModel };
+    currentEntityList.value = queryAllEntityList();
+    currentEntityList.value.unshift({
+        label: "审批任务",
+        name: "ApprovalTask",
+        entityCode: 33,
+    });
 };
 const changeEntity = () => {
     myOption.value.setDimensional.dimension = [];

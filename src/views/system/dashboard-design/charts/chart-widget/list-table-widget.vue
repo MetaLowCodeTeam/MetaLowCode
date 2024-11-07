@@ -57,6 +57,7 @@ import { getDataList } from "@/api/crud";
 // import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
 import FormatRow from "@/components/simpleTable/FormatRow.vue";
 import { useRouter } from "vue-router";
+import http from "@/utils/request";
 const { allEntityName } = storeToRefs(useCommonStore());
 const router = useRouter();
 
@@ -112,24 +113,36 @@ const initOption = () => {
 };
 
 const getTableData = async (options) => {
+    let entity = options.dataEntity == 33 ? "ApprovalTask" : allEntityName.value[options.dataEntity];
 	tableLoading.value = true;
 	let param = {
-		mainEntity: allEntityName.value[options.dataEntity],
+		mainEntity: entity,
 		fieldsList: fieldsList.value.join(),
 		pageSize: options.setChartConf.pageSize,
 		pageNo: 1,
 		filter: options.setChartFilter,
 		sortFields: sortFields.value,
 	};
-
-	let res = await getDataList(
-		param.mainEntity,
-		param.fieldsList,
-		param.filter,
-		param.pageSize,
-		param.pageNo,
-		param.sortFields
-	);
+	let res;
+    if(entity == "ApprovalTask"){
+        res = await http.post("/approval/listQuery", {
+            mainEntity: param.mainEntity,
+            fieldsList: param.fieldsList,
+            filter: param.filter,
+            pageSize: param.pageSize,
+            pageNo: param.pageNo,
+            sortFields: param.sortFields
+    });
+    }else {
+        res = await getDataList(
+            param.mainEntity,
+            param.fieldsList,
+            param.filter,
+            param.pageSize,
+            param.pageNo,
+            param.sortFields
+        );
+    }
 	if (res) {
 		let list = res.data.dataList || [];
 		let showSumcol = cutField.value?.options.setChartConf.showSumcol;
