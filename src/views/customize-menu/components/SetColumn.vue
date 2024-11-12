@@ -101,7 +101,10 @@
                     <el-form-item label="别名" class="mb-10">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
                     </el-form-item>
-                    <el-form-item label="默认排序" class="mb-5">
+                    <el-form-item label="开启排序" class="mb-5">
+                        <el-checkbox v-model="editColumnDialogData.sortable" />
+                    </el-form-item>
+                    <el-form-item label="默认排序" class="mb-5" v-if="editColumnDialogData.sortable">
                         <span
                             class="sort-span"
                             :class="{'is-active': editColumnDialogData.columnSort != ''}"
@@ -391,6 +394,8 @@ let editColumnDialogData = reactive({
     mobileHeaderAlign: "left",
     // 是否在移动端展示
     mobileShow: true,
+    // 是否开启排序
+    sortable: false,
 });
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
@@ -464,6 +469,9 @@ const editColumn = (column, inx) => {
     if(editObj.mobileShow == undefined) {
         editObj.mobileShow = true;
     }
+    if(editObj.sortable == undefined) {
+        editObj.sortable = true;
+    }
     editColumnDialogData = Object.assign(editColumnDialogData, editObj);
 };
 
@@ -497,6 +505,7 @@ const isShowItemTag = (column) => {
         mobileAlign,
         headerAlign,
         mobileHeaderAlign,
+        sortable,
     } = column;
     // 合并条件判断
     if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || 
@@ -506,7 +515,9 @@ const isShowItemTag = (column) => {
         (headerAlign && headerAlign !== 'left') || 
         (mobileHeaderAlign && mobileHeaderAlign !== 'left') || 
         fixed || 
-        (mobileShow !== undefined && !mobileShow)) {
+        (mobileShow !== undefined && !mobileShow) ||
+        sortable
+    ) {
         return true; 
     }
     return false;

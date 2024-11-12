@@ -320,14 +320,16 @@
                         v-for="(column,columnInx) of tableColumn"
                         :key="columnInx"
                         :prop="column.fieldName"
-                        :label="column.columnAliasName ? column.columnAliasName : column.fieldLabel"
                         :width="setColumnWidth(column)"
-                        sortable
+                        :sortable="column.sortable == undefined ? true : column.sortable"
                         show-overflow-tooltip
                         :fixed="column.fixed"
                         :align="column.align"
                         :header-align="column.headerAlign"
                     >
+                        <template #header>
+                            <span v-html="column.columnAliasName ? column.columnAliasName.replace(/\\n/g, '<br>') : column.fieldLabel"></span>
+                        </template>
                         <template #default="scope">
                             <FormatRow
                                 :row="scope.row"
