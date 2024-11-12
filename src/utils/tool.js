@@ -10,8 +10,6 @@ import sysConfig from "@/config";
 
 const tool = {}
 
-let globalRightMap = null
-
 /* localStorage */
 tool.data = {
     set(key, data, datetime = 0) {
@@ -248,8 +246,7 @@ tool.getRole = (key) => {
 }
 // 获取权限
 tool.checkRole = (key) => {
-    let rightMap = globalRightMap || tool.data.get('rightMap') || {};
-	globalRightMap = rightMap;
+    let rightMap = tool.data.get('rightMap') || {};
 
     let auto = rightMap[key];
     if (key.indexOf('-') != -1) {

@@ -224,22 +224,25 @@
                 :close-on-click-modal="false"
                 :close-on-press-escape="false"
             >
-                <EntityPropEditor
-                    ref="EPEditor"
-                    :entityProps="newEntityProps"
-                    :show-title="false"
-                    :filter-entity-method="filterMainEntity"
-                ></EntityPropEditor>
+                <div v-loading="saveLoading">
+                    <EntityPropEditor
+                        ref="EPEditor"
+                        :entityProps="newEntityProps"
+                        :show-title="false"
+                        :filter-entity-method="filterMainEntity"
+                    />
+                </div>
+                   
                 <template #footer>
                     <div class="dialog-footer">
                         <el-button
                             type="primary"
                             @click="saveNewEntity"
                             style="width: 90px"
-                            v-loading="EPEditor?.loading "
+                            v-loading="saveLoading"
                         >保 存</el-button>
                         <el-button
-                            v-loading="EPEditor?.loading"
+                            v-loading="saveLoading"
                             @click="showNewEntityDialogFlag = false"
                         >取 消</el-button>
                     </div>
@@ -344,6 +347,7 @@ import { inject, h, onMounted, ref, nextTick } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import { textIsSystemKeyword } from "@/utils/keyword-check";
+import http from "@/utils/request";
 const { refreshCache } = useCommonStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
@@ -521,6 +525,8 @@ const createNewEntity = (target) => {
     }
 };
 
+let saveLoading = ref(false);
+
 const saveNewEntity = () => {
     EPEditor.value.validateForm(async () => {
         if (textIsSystemKeyword(newEntityProps.value.name)) {
@@ -535,7 +541,7 @@ const saveNewEntity = () => {
         const mainEntityName = !newEntityProps.value.mainEntity
             ? "null"
             : newEntityProps.value.mainEntity;
-        EPEditor.value.loading = true;
+        saveLoading.value = true;
         let tags = [];
         if (newEntityProps.value.useTag) {
             newEntityProps.value.useTag.forEach((el) => {
@@ -564,10 +570,18 @@ const saveNewEntity = () => {
         if (res && res.code == 200) {
             ElMessage.success("保存成功");
             showNewEntityDialogFlag.value = false;
+            await getRightMap();
             initEntity();
         }
-        EPEditor.value.loading = false;
+        saveLoading.value = false;
     });
+};
+
+const getRightMap = async () => {
+    let getRightMapRes = await http.get("/user/getRightMap");
+    if (getRightMapRes) {
+        $TOOL.data.set("rightMap", getRightMapRes.data || {});
+    }
 };
 
 const onEnterEntity = (entityItem, entityIdx) => {
