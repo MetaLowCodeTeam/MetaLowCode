@@ -11,6 +11,7 @@
         :isVFormDesignMode="isVFormDesignMode"
 		@referenceCompAdd="referenceCompAdd"
         @saveFinishCallBack="saveFinishCallBack"
+        :modelName="modelName"
         ref="EntityListRefs"
 	>
         <template #beforeOpenBtn>
@@ -56,6 +57,10 @@ export default {
 			type: [Number, String],
 			default: 20,
 		},
+        modelName: {
+            type: String,
+			default: "",
+        },
 		formRef: {},
 	},
 	watch: {
