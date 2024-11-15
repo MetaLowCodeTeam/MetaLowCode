@@ -13,6 +13,7 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
+import { ElMessage } from 'element-plus'
 const props = defineProps({
 	treeGroupConf: {
 		type: Object,
@@ -36,8 +37,10 @@ const nodeCheckChange = (list) => {
 
 const nodeClick = (node) => {
     if(node){
+        ElMessage.success('已过滤数据')
         formatTreeData([node])
     }else {
+        ElMessage.success('已取消数据过滤')
         emit('changeOtherFilters', [])
     }
 };

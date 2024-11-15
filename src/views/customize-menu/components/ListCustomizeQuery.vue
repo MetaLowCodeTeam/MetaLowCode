@@ -107,11 +107,13 @@ const onSearch = (command) => {
 };
 
 const refreshAdvancedQuery = () => {
+    let newCompConditions = JSON.parse(JSON.stringify(compConditions.value));
+    newCompConditions.items = [];
     compConditions.value.items.forEach(el => {
         el.value = "";
         el.value2 = "";
     })
-    emit('queryNow', compConditions.value)
+    emit('queryNow', newCompConditions)
 }
 
 /**
