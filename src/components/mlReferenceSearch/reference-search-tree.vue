@@ -26,6 +26,7 @@
                 :show-checkbox="showCheckbox"
                 :accordion="accordion"
                 @check="handleCheckChange"
+                :expand-on-click-node="false"
 			/>
 		</el-scrollbar>
 	</div>
