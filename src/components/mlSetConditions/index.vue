@@ -362,7 +362,12 @@
                     >
                         <el-row :gutter="5">
                             <!-- 字段名 -->
-                            <el-col :span="9">
+                            <el-col :span="9" class="text-right" v-if="forbidUserModifyField">
+                                <div class="field-label yichu">
+                                    {{ getFieldLabel(item.fieldName) }}
+                                </div>
+                            </el-col>
+                            <el-col :span="9" v-else>
                                 <el-select
                                     v-model="item.fieldName"
                                     @change="fieldChange(item)"
@@ -379,7 +384,7 @@
                                 </el-select>
                             </el-col>
                             <!-- 条件类型 -->
-                            <el-col :span="5">
+                            <el-col :span="5" v-if="!hideQueryMatchType">
                                 <el-select v-model="item.op" size="default" @change="getOpCom(item)">
                                     <el-option
                                         v-for="op in getSelectOp(item)"
@@ -390,7 +395,7 @@
                                 </el-select>
                             </el-col>
                             <!-- 条件值 -->
-                            <el-col :span="10">
+                            <el-col :span="hideQueryMatchType ? 15 : 10">
                                 <!-- 日期选择器 -->
                                 <div v-if="item.opCom =='datePicker'">
                                     <el-date-picker
@@ -691,7 +696,11 @@ export default {
         // 是否需要显示类型
         notType: { type: Boolean, default: false },
         // 是否作为组件暂时
-        displayedComp: { type: Boolean, default: false }
+        displayedComp: { type: Boolean, default: false },
+        // 禁止用户修改字段
+        forbidUserModifyField: { type: Boolean, default: false },
+        // 隐藏查询匹配类型
+        hideQueryMatchType: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -752,6 +761,9 @@ export default {
         this.defaultTimeGE = new Date(2000, 1, 1, 23, 59, 59);
     },
     methods: {
+        getFieldLabel(fieldName) {
+            return this.fieldList.find(el => el.fieldName === fieldName)?.label;
+        },
         openReferenceDialog(item) {
             item.showReferenceDialogFlag = true;
             this.clearError(item);
@@ -1066,5 +1078,11 @@ export default {
             top: 4px;
         }
     }
+}
+
+.field-label {
+    font-size: 14px;
+    margin-right: 10px;
+    color: #303030;
 }
 </style>

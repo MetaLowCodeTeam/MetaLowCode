@@ -241,7 +241,7 @@
                 :style="{'height':calculateHeight}"
             >
                 <!-- 分组 -->
-                <div class="tree-froup-box" v-if="treeGroupConf.isOpen">
+                <div class="tree-group-box" v-if="treeGroupConf.isOpen && treeGroupConf.groupType == 1">
                     <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
                         <span class="tree-refresh" @click="treeRefresh">
                             <el-icon>
@@ -271,6 +271,9 @@
                             @check="treeGroupFilter"
                         />
                     </el-scrollbar>
+                </div>
+                <div class="tree-group-box" v-else-if="treeGroupConf.isOpen && treeGroupConf.groupType == 2">
+                    <ListRefFieldGroupFilter :treeGroupConf="treeGroupConf" @changeOtherFilters="changeOtherFilters"/>
                 </div>
                 <!-- 表格 -->
                 <el-table
@@ -469,6 +472,8 @@ import { ElMessage } from "element-plus";
  */
 // 树状分组筛选
 import ListTreeGroupFilter from "./components/ListTreeGroupFilter.vue";
+// 引用字段分组筛选
+import ListRefFieldGroupFilter from "./components/ListRefFieldGroupFilter.vue";
 // 批量编辑
 import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 // 列表常用分组查询
@@ -828,6 +833,8 @@ let myModelName = ref("");
 // 顶部查询面板配置
 let topSearchConfig = ref({
     isDefaultQueryPanel: true,
+    forbidUserModifyField: false,
+    hideQueryMatchType: false,
     filter: {
         equation: "AND",
 	    items: [],
@@ -852,6 +859,8 @@ const changeQueryPanel = async (target) => {
 		config: JSON.stringify({
             isDefaultQueryPanel: target,
             filter: topSearchConfig.value.filter,
+            forbidUserModifyField: topSearchConfig.value.forbidUserModifyField,
+            hideQueryMatchType: topSearchConfig.value.hideQueryMatchType,
         }),
 		entityCode: entityCode.value,
 	};
@@ -878,7 +887,7 @@ const changeQueryPanel = async (target) => {
 }
 // 更新查询面板
 const topPanelUploadItems = (e) => {
-    topSearchConfig.value.filter = e;
+    topSearchConfig.value = { ...topSearchConfig.value, ...e };
 }
 // 展开收起查询面板
 let topQueryPanelExpand = ref(false);
@@ -995,6 +1004,14 @@ let statistics = ref([]);
 let statisticsList = ref([]);
 // 格式化统计数据
 let formatterStatistics = ref({});
+
+// 其他过滤
+let otherFilters = ref([]);
+
+const changeOtherFilters = (e) => {
+    otherFilters.value = e;
+    refreshData();
+}
 
 // 刷新数据
 const refreshData = () => {
@@ -1382,6 +1399,7 @@ const getTableList = async () => {
         statistics: statistics.value,
         filterEasySql: filterEasySql.value,
         defaultFilter: defaultFilter.value,
+        otherFilters: otherFilters.value,
     };
     dataExportData.queryParm = { ...param };
     let res = await getDataList(
@@ -1397,7 +1415,8 @@ const getTableList = async () => {
         param.statistics,
         param.filterEasySql,
         param.defaultFilter,
-        myModelName.value
+        myModelName.value,
+        param.otherFilters
     );
     if (res && res.data) {
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
@@ -1768,7 +1787,7 @@ div {
                 height: calc(100% - 100px);
             }
             display: flex;
-            .tree-froup-box {
+            .tree-group-box {
                 width: 300px;
                 border: 1px solid #ebeef5;
                 border-right: 0;

@@ -23,6 +23,8 @@
                 v-model="compConditions"
                 :entityName="entityName"
                 displayedComp
+                :forbidUserModifyField="forbidUserModifyField"
+                :hideQueryMatchType="hideQueryMatchType"
             />
 		</div>
 		<div class="conditions-action">
@@ -54,8 +56,15 @@
 			/>
 		</div>
 		<template #footer>
+            <div class="fl pl-20">
+                <el-checkbox v-model="forbidUserModifyField">禁止用户修改字段</el-checkbox>
+                <el-checkbox v-model="hideQueryMatchType">隐藏查询匹配类型</el-checkbox>
+            </div>
 			<el-button @click="isShow = false">取消</el-button>
-			<el-button type="primary" @click="conditionsConfirm">
+			<el-button 
+                type="primary" 
+                @click="conditionsConfirm"
+            >
 				确认
 			</el-button>
 		</template>
@@ -85,7 +94,6 @@ let compConditions = ref({
 });
 
 let loading = ref(false);
-let layoutConfigId = ref("");
 
 let customizeQueryHeight = ref(38);
 
@@ -114,6 +122,12 @@ let dialogConditions = ref({
 	equation: "AND",
 	items: [],
 });
+
+// 禁止用户修改字段
+let forbidUserModifyField = ref(false);
+// 隐藏查询匹配类型
+let hideQueryMatchType = ref(false);
+
 // 打开弹框
 const openDialog = () => {
 	isShow.value = true;
@@ -125,6 +139,8 @@ const conditionsConfirm = async () => {
     let param = {
 		config: JSON.stringify({
             isDefaultQueryPanel: false,
+            forbidUserModifyField: forbidUserModifyField.value,
+            hideQueryMatchType: hideQueryMatchType.value,
             filter: dialogConditions.value,
         }),
 		entityCode: props.entityCode,
@@ -137,7 +153,11 @@ const conditionsConfirm = async () => {
 		props.modelName
 	);
 	if (res) {
-        emit('uploadItems', dialogConditions.value)
+        emit('uploadItems', {
+            forbidUserModifyField: forbidUserModifyField.value,
+            hideQueryMatchType: hideQueryMatchType.value,
+            filter: dialogConditions.value,
+        })
         isShow.value = false;
 		ElMessage.success("设置成功");
 	}
@@ -148,6 +168,8 @@ const conditionsConfirm = async () => {
 
 watchEffect(() => {
     compConditions.value = props.topSearchConfig.filter;
+    forbidUserModifyField.value = props.topSearchConfig.forbidUserModifyField;
+    hideQueryMatchType.value = props.topSearchConfig.hideQueryMatchType;
 })
 
 

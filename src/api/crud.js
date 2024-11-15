@@ -79,13 +79,25 @@ export function deleteRecords(body) {
 * @param {*} filterEasySql ""  自定义SQL查询
 * @param {*} defaultFilter ""  默认查询
 * @param {*} modelName ""  模型名称
+* @param {*} otherFilters [] 其他过滤
 
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName, otherFilters) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName: modelName || getModelName()
+        filter, 
+        pageSize, 
+        pageNo, 
+        sortFields, 
+        advFilter, 
+        quickFilter, 
+        builtInFilter, 
+        statistics, 
+        filterEasySql, 
+        defaultFilter, 
+        modelName: modelName || getModelName(),
+        otherFilters
     })
 }
 

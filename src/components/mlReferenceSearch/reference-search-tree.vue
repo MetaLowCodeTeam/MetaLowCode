@@ -24,6 +24,7 @@
 				:filter-node-method="filterNode"
                 :default-checked-keys="defaultCheckedKeys"
                 :show-checkbox="showCheckbox"
+                @check="handleCheckChange"
 			/>
 		</el-scrollbar>
 	</div>
@@ -50,6 +51,7 @@ const props = defineProps({
         default: false
     }
 });
+const emit = defineEmits(['nodeClick', 'nodeCheckChange']);
 // 节点配置
 let myTreeConf = ref({});
 let loading = ref(false);
@@ -105,11 +107,24 @@ let cutSelectedNode = ref([]);
 
 // 树节点点击
 const handleNodeClick = (node) => {
-	cutSelectedNode.value[0] = {
-		id: node.id,
-		label: node.label,
-	};
+    // 如果当前节点已经被选中，则清空选中
+    if (cutSelectedNode.value[0]?.id === node.id) {
+        cutSelectedNode.value = [];
+        treeRef.value?.setCurrentKey(null);
+    } else {
+        // 否则选中当前节点
+        cutSelectedNode.value[0] = {
+            id: node.id,
+            label: node.label,
+        };
+    }
+    emit('nodeClick', cutSelectedNode.value[0] || null);
 };
+
+const handleCheckChange = () => {
+    // console.log("触发次数")
+    emit('nodeCheckChange', treeRef.value?.getCheckedNodes());
+}
 
 watchEffect(() => {
 	myTreeConf.value = props.treeConf;
@@ -124,9 +139,12 @@ const getSelectedNode = () => {
         return treeRef.value?.getCheckedNodes();
     }else {
         return cutSelectedNode.value;
-    }
-    
+    }   
 }
+
+const resetChecked = () => {
+    treeRef.value?.setCheckedKeys([], false);
+};
 
 defineExpose({
 	getSelectedNode,
