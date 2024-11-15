@@ -90,9 +90,16 @@ const initRefFieldList = async () => {
 		if (res.data.field.referTo && res.data.field.referTo[0]) {
 			groupConf.value.fieldReferTo = res.data.field.referTo[0]?.name;
 		}
+        let filterField = [
+            "createdBy",
+            "modifiedBy",
+            "ownerUser",
+            "ownerDepartment"
+        ];
 		let fieldList = res.data.fieldList || [];
 		referenceFieldParentList.value = fieldList.filter(
 			(el) =>
+                !filterField.includes(el.fieldName) &&
 				el.fieldType == "Reference" && el.referenceName == groupConf.value.fieldReferTo
 		);
 	}

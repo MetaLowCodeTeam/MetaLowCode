@@ -8,7 +8,10 @@
 		draggable
 	>
 		<div v-loading="loading">
-			<el-tabs v-model="groupConf.groupType" class="demo-tabs">
+            <div>
+				<el-checkbox v-model="groupConf.isOpen" label="开启树状分组" />
+            </div>
+			<el-tabs v-model="groupConf.groupType" class="demo-tabs" v-if="groupConf.isOpen">
 				<el-tab-pane
 					v-for="item in tabsList"
 					:key="item.value"
@@ -17,7 +20,7 @@
 				/>
 			</el-tabs>
 			<!-- 基于当前数据分组 -->
-			<template v-if="groupConf.groupType == 1">
+			<template v-if="groupConf.groupType == 1 && groupConf.isOpen">
 				<div class="header-box">
 					<el-button type="primary" @click="addGroup">
 						新增筛选层级
@@ -59,7 +62,7 @@
 				</el-card>
 			</template>
 			<!-- 基于引用实体分组 -->
-			<template v-if="groupConf.groupType == 2">
+			<template v-if="groupConf.groupType == 2 && groupConf.isOpen">
 				<GroupRefEntity
 					:reference-field-list="referenceFieldList"
 					:entityCode="entityCode"
@@ -68,8 +71,7 @@
 					ref="groupRefEntityRef"
 				/>
 			</template>
-			<div class="mt-5">
-				<el-checkbox v-model="groupConf.isOpen" label="开启树状分组" />
+			<div class="mt-5" v-if="groupConf.isOpen">
 				<el-checkbox
 					v-model="groupConf.isAccordion"
 					label="手风琴模式"

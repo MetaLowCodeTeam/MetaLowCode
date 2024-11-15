@@ -24,6 +24,7 @@
 				:filter-node-method="filterNode"
                 :default-checked-keys="defaultCheckedKeys"
                 :show-checkbox="showCheckbox"
+                :accordion="accordion"
                 @check="handleCheckChange"
 			/>
 		</el-scrollbar>
@@ -49,7 +50,11 @@ const props = defineProps({
     showCheckbox : {
         type: Boolean,
         default: false
-    }
+    },
+    accordion: {
+        type: Boolean,
+        default: false
+    }   
 });
 const emit = defineEmits(['nodeClick', 'nodeCheckChange']);
 // 节点配置
