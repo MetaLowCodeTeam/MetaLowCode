@@ -81,6 +81,11 @@
 					v-model="groupConf.isMultiple"
 					label="开启多选"
 				/>
+				<el-checkbox
+					v-model="groupConf.isStrictly"
+					v-if="groupConf.groupType == 2 && groupConf.isMultiple"
+					label="开启父子节点选择关联"
+				/>
 			</div>
 		</div>
 		<template #footer>
@@ -255,6 +260,8 @@ let groupConf = ref({
 	isOpen: true,
 	// 手风琴模式
 	isAccordion: false,
+	// 是否开启父子关联
+	isStrictly: true,
 });
 
 // 初始化数据
