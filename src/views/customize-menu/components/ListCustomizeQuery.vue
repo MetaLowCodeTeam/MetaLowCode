@@ -103,7 +103,11 @@ const changeCustomizeQueryHeight = (height) => {
 
 const onSearch = (command) => {
 	compConditions.value.equation = command;
-    emit('queryNow', compConditions.value)
+    let newCompConditions = {
+        equation: command,
+        items: compConditions.value.items.filter(el => el.value || el.value2)
+    };
+    emit('queryNow', newCompConditions)
 };
 
 const refreshAdvancedQuery = () => {
