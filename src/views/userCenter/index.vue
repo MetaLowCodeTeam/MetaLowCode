@@ -5,7 +5,7 @@
 				<el-header style="height: auto;display: block;">
 					<div class="user-info-top">
 						<el-avatar :size="70">
-                            <mlAvatar :userId="userInfo.userId"/>
+                            <mlAvatar :userId="userInfo.userId" needTimestamp/>
                         </el-avatar>
 						<h2>{{ userInfo.userName }}</h2>
 						<!-- <p><el-tag effect="dark" round size="large" disable-transitions>{{ user.role }}</el-tag></p> -->

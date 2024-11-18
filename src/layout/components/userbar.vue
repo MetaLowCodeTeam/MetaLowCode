@@ -94,7 +94,7 @@
         <el-dropdown class="user panel-item" trigger="click" @command="handleUser">
             <div class="user-avatar">
                 <el-avatar :size="30">
-                    <mlAvatar :userId="userId" />
+                    <mlAvatar :userId="userId" needTimestamp/>
                 </el-avatar>
                 <label>{{ userName }}</label>
                 <el-icon class="el-icon--right">
