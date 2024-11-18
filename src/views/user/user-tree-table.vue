@@ -420,6 +420,7 @@ export default {
         },
         // 高亮字段点击
         highlightClick(row) {
+            this.disableWidgets = ["loginName", "loginPwd"];
             this.$refs.mlListDetailsRefs.openDetailDialog(
                 row.userId,
                 row.userName
