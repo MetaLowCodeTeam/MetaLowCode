@@ -6,6 +6,7 @@
 			@nodeClick="nodeClick"
 			:showCheckbox="props.treeGroupConf.isMultiple"
             :accordion="props.treeGroupConf.isAccordion"
+            check-strictly
 		/>
 	</el-scrollbar>
 </template>

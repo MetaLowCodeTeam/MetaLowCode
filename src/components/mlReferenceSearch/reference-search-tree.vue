@@ -27,6 +27,7 @@
                 :accordion="accordion"
                 @check="handleCheckChange"
                 :expand-on-click-node="false"
+                :check-strictly="checkStrictly"
 			/>
 		</el-scrollbar>
 	</div>
@@ -55,7 +56,11 @@ const props = defineProps({
     accordion: {
         type: Boolean,
         default: false
-    }   
+    },
+    checkStrictly: {
+        type: Boolean,
+        default: false
+    }
 });
 const emit = defineEmits(['nodeClick', 'nodeCheckChange']);
 // 节点配置
