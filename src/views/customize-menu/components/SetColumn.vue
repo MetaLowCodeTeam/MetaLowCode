@@ -369,7 +369,7 @@ let editColumnDialogData = reactive({
     // 字体大小
     fontSize: 13,
     // 字体颜色
-    fontColor: "#606266",
+    fontColor: "",
     // 字体粗细
     fontWeight: 400,
     // 字段类型
@@ -395,7 +395,7 @@ let editColumnDialogData = reactive({
     // 是否在移动端展示
     mobileShow: true,
     // 是否开启排序
-    sortable: false,
+    sortable: true,
 });
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
@@ -506,20 +506,60 @@ const isShowItemTag = (column) => {
         headerAlign,
         mobileHeaderAlign,
         sortable,
+        fontColor
     } = column;
-    // 合并条件判断
-    if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || 
-        (renderType === 'customizeRender' && !!columnRender) || 
-        (align && align !== 'left') || 
-        (mobileAlign && mobileAlign !== 'left') || 
-        (headerAlign && headerAlign !== 'left') || 
-        (mobileHeaderAlign && mobileHeaderAlign !== 'left') || 
-        fixed || 
-        (mobileShow !== undefined && !mobileShow) ||
-        sortable
-    ) {
-        return true; 
+    if(columnAliasName) {
+        return true;
     }
+    if(columnSort) {
+        return true;
+    }
+    if(columnWidth > 0) {
+        return true;
+    }
+    if(dataStatistics) {
+        return true;
+    }
+    if(renderType === 'customizeRender' && !!columnRender) {
+        return true;
+    }
+    if(align && align !== 'left') {
+        return true;
+    }
+    if(mobileAlign && mobileAlign !== 'left') {
+        return true;
+    }
+    if(headerAlign && headerAlign !== 'left') {
+        return true;
+    }
+    if(mobileHeaderAlign && mobileHeaderAlign !== 'left') {
+        return true;
+    }
+    if(fixed) {
+        return true;
+    }
+    if(mobileShow !== undefined && !mobileShow) {
+        return true;
+    }
+    if(sortable !== undefined && !sortable) {
+        return true;
+    }
+    if(fontColor){
+        return true;
+    }
+    // // 合并条件判断
+    // if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || 
+    //     (renderType === 'customizeRender' && !!columnRender) || 
+    //     (align && align !== 'left') || 
+    //     (mobileAlign && mobileAlign !== 'left') || 
+    //     (headerAlign && headerAlign !== 'left') || 
+    //     (mobileHeaderAlign && mobileHeaderAlign !== 'left') || 
+    //     fixed || 
+    //     (mobileShow !== undefined && !mobileShow) ||
+    //     sortable
+    // ) {
+    //     return true; 
+    // }
     return false;
 };
 

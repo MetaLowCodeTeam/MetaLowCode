@@ -305,7 +305,7 @@ let groupRefEntityRef = ref(null);
 
 // 确认字段分组
 const confirmFieldGroup = async () => {
-	if (groupConf.value.groupType == 1) {
+	if (groupConf.value.groupType == 1 && groupConf.value.isOpen) {
 		for (let index = 0; index < groupConf.value.groupList.length; index++) {
 			const element = groupConf.value.groupList[index];
 			if (element.fieldGroup.length < 1) {
@@ -315,7 +315,7 @@ const confirmFieldGroup = async () => {
 			}
 		}
 	}
-	if (groupConf.value.groupType == 2) {
+	if (groupConf.value.groupType == 2 && groupConf.value.isOpen) {
 		groupConf.value = Object.assign(
 			groupConf.value,
 			groupRefEntityRef.value.groupConf
