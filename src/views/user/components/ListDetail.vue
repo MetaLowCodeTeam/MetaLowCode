@@ -58,6 +58,7 @@
         :isTeam="detailEntity == 'Team'"
         :isUser="detailEntity == 'User'"
         :nameFieldName="detailEntity == 'User' ? 'userName' : 'teamName'"
+        :disableWidgets="disableWidgets"
     />
     
     <!-- 重置密码 -->
@@ -88,6 +89,7 @@ const $TOOL = inject("$TOOL");
 const props = defineProps({
     idFieldName: { type: String, default: "" },
     nameFieldName: { type: String, default: "" },
+    disableWidgets: { type: Array, default: () => [] },
 });
 const emits = defineEmits(["onRefresh"]);
 // 详情组件

@@ -153,6 +153,7 @@
             idFieldName="userId"
             nameFieldName="userName"
             @onRefresh="onRefresh"
+            :disableWidgets="disableWidgets"
         />
     </el-container>
 </template>
