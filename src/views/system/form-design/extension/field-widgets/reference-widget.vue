@@ -489,11 +489,16 @@ export default {
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;
 						}
-
+                        
 						// 执行回填操作
-						this.getWidgetRef(el.targetField).setValue(
-							selectedRow[el.sourceField]
-						);
+                        let targetWidgetRef = this.getWidgetRef(el.targetField);
+                        if (targetWidgetRef) {
+                            targetWidgetRef.setValue(
+                                selectedRow[el.sourceField]
+                            );
+                        } else {
+                            this.$message.error("目标组件不存在：" + el.targetField);
+                        }
 					} else {
 						const targetFieldName = el.targetField + '@row' + this.subFormRowId
 						let targetFieldValue = this.getWidgetRef(
@@ -504,9 +509,14 @@ export default {
 							return;
 						}
 						// 执行回填操作
-						this.getWidgetRef(targetFieldName).setValue(
-							selectedRow[el.sourceField]
-						);
+                        let targetWidgetRef = this.getWidgetRef(targetFieldName);
+                        if (targetWidgetRef) {
+                            targetWidgetRef.setValue(
+                                selectedRow[el.sourceField]
+                            );
+                        } else {
+                            this.$message.error("目标组件不存在：" + targetFieldName);
+                        }
 					}
 				});
                 let { subFormFillBackConfig } = this.field.options;
