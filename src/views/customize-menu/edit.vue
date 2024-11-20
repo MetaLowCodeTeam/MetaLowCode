@@ -518,7 +518,11 @@ const getRecordId = () => {
     return row.detailId
 }
 
-
+// 传入ID从新建弹框变成编辑弹框
+const editById = (id) => {
+    row.detailId = id;
+    initFormLayout();
+}
 
 defineExpose({
     openDialog,
@@ -529,6 +533,7 @@ defineExpose({
     getFormRef,
     getGlobalDsv,
     getRecordId,
+    editById,
     loading,
 });
 </script>
