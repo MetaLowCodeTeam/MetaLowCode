@@ -203,6 +203,29 @@
         </section>
     </template>
 
+    <template v-else-if="layoutFn == 'noNav'">
+        <section class="aminui-wrapper">
+            <mlWaterMark>
+                <div class="aminui-body el-container">
+                    <div class="adminui-main" id="adminui-main">
+                        <div
+                            v-if="checkPlugin($route)"
+                            class="not-plugin"
+                        >{{ pluginInfo[$route.name].errMsg }}</div>
+                        <template v-else>
+                            <router-view v-slot="{ Component }">
+                                <keep-alive :include="[...keepLiveRouteFn]">
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
+                                </keep-alive>
+                            </router-view>
+                            <iframe-view></iframe-view>
+                        </template>
+                    </div>
+                </div>
+            </mlWaterMark>
+        </section>
+    </template>
+
     <!-- 默认布局 -->
     <template v-else>
         <section class="aminui-wrapper">
@@ -277,6 +300,8 @@
             </mlWaterMark>
         </section>
     </template>
+
+
 
     <div class="main-maximize-exit" @click="exitMaximize">
         <el-icon>
@@ -378,7 +403,7 @@ export default {
             return ismobile.value;
         },
         layoutFn() {
-            return layout.value;
+            return this.getUrlParams('layout') || layout.value;
         },
         layoutTagsFn() {
             return layoutTags.value;
@@ -420,6 +445,10 @@ export default {
         },
     },
     methods: {
+        getUrlParams(key) {
+            const params = this.$route.query;
+            return params[key];
+        },
         // 为keep-alive里的component接收的组件包上一层自定义name的壳
         wrap(fullPath, component) {
             let wrapper
