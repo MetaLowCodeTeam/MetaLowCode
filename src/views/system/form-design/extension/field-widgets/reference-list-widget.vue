@@ -412,6 +412,7 @@ export default {
                     }
                 });
                 this.handleChangeEvent(this.fieldModel);
+				this.handleRecordSelectedEvent(selectedNodes);
             }else {
                 let fieldNames = this.$refs.referST?.getIdNameField() || {};
                 let rows = this.$refs.referST?.getMultipleSelection() || [];
@@ -422,10 +423,25 @@ export default {
                     }
                 });
                 this.handleChangeEvent(this.fieldModel);
+				this.handleRecordSelectedEvent(rows);
             }
             this.showReferenceDialogFlag = false;
         },
 
+		handleRecordSelectedEvent(selectedRow) {
+			if (!!this.designState) {
+				//设计状态不触发事件
+				return;
+			}
+
+			if (!!this.field.options.onRecordSelected) {
+				let customFn = new Function(
+					"selectedRow",
+					this.field.options.onRecordSelected
+				);
+				customFn.call(this, selectedRow);
+			}
+		},
 
 		setFilter(newFilter) {
 			this.searchFilter = newFilter;

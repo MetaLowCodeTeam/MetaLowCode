@@ -198,7 +198,7 @@ export const referenceListSchema = {
 		onChange: '',
 		onValidate: '',
 		onAppendButtonClick: '',  //后置按钮点击事件
-		//onRecordSelected: '',  //记录选择回填事件（暂未实现）
+		onRecordSelected: '',  //记录选择回填事件
 	}
 }
 
