@@ -14,7 +14,7 @@
                 <div class="login-header">
                     <div class="logo">
                         <mlLogo />
-                        <label>{{ appTitle }}</label>
+                        <label>{{ appName }}</label>
                     </div>
                 </div>
                 <el-tabs>
@@ -114,6 +114,9 @@ export default {
         },
         appSubTitle: () => {
             return publicSetting.value.APP_SUB_TITLE;
+        },
+        appName: () => {
+            return publicSetting.value.APP_NAME;
         },
         appIntro: () => {
             return publicSetting.value.APP_INTRO;
