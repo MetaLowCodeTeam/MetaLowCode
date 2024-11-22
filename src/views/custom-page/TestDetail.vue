@@ -44,6 +44,10 @@ let detailConf = ref({
     beforeSubmitApproval: () => {
         console.log('your code')
         return true
+    },
+    // 提交审批后
+    afterSubmitApproval: () => {
+        console.log('afterSubmitApproval')
     }
 });
 
