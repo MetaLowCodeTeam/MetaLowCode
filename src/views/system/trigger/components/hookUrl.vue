@@ -4,6 +4,7 @@
         <el-form-item class="mt-20" label="回调类型">
             <el-radio-group v-model="trigger.actionContent.callBackType" class="ml-4">
                 <el-radio label="URL">URL回调</el-radio>
+                <el-radio label="liteFlowJavaScript">脚本回调</el-radio>
                 <el-radio label="FUNCTION">函数回调</el-radio>
             </el-radio-group>
         </el-form-item>
@@ -51,7 +52,7 @@
                 ，否则将视为调用失败
             </div>
         </el-form-item>
-        <el-form-item class="mt-10" label=" ">
+        <el-form-item class="mt-10" label=" " v-if="trigger.actionContent.callBackType != 'liteFlowJavaScript'">
             <el-row class="w-100">
                 <el-checkbox v-model="trigger.actionContent.pushAllData" label="推送全量数据" />
             </el-row>
@@ -77,13 +78,18 @@
                 <div class="pre-div">{{ testRes.error }}</div>
             </div>
         </el-form-item>
+        <el-form-item class="mt-15" label="回调脚本" v-if="trigger.actionContent.callBackType == 'liteFlowJavaScript'">
+            <lite-flow-java v-model="trigger.actionContent.script" style="width: 100%;"/>
+        </el-form-item>
+        <!-- <lite-flow-java v-if="trigger.actionContent.callBackType == 'liteFlowJavaScript'" label="回调脚本"> -->
+
     </div>
 </template>
 
 <script setup>
 import http from "@/utils/request";
 import { onMounted, ref, inject } from "vue";
-
+import LiteFlowJava from "@/components/mlFormula/LiteFlowJava.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({

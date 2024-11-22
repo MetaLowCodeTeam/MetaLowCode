@@ -4,7 +4,6 @@
         <el-form-item label="目标实体">
             <el-row class="w-100 mb-15" :gutter="20">
                 <el-col :span="9">
-                    <!-- {{ trigger.defaultTargetEntity }} -->
                     <el-select
                         v-model="trigger.defaultTargetEntity"
                         filterable
@@ -40,9 +39,28 @@
                         <span class="update-rule-span">{{ getUpdateModeLabel(item.updateMode) }}</span>
                     </el-col>
                     <el-col :span="9" class="update-rule-col-last">
+                        <div 
+                            v-if="item.updateMode == 'forCompile'"
+                            class="forCompile update-rule-span"
+                            style="width: calc(100% - 20px);cursor: pointer;"
+                            @click="openPreview(item.sourceField, item.scriptType, inx)"
+                        >
+                            <div class="w-100 yichu">
+                                {{ getSourceFieldLabel(item) }}
+                            </div>
+                            <span
+                                class="del-icon"
+                                @click.stop="delUpdateRule(inx)"
+                            >
+                                <el-icon>
+                                    <ElIconCloseBold />
+                                </el-icon>
+                            </span>
+                        </div>
                         <span
+                            v-else
                             class="update-rule-span"
-                            :class="{'toFixed':item.updateMode == 'toFixed','forCompile':item.updateMode == 'forCompile','toNull':item.updateMode == 'toNull'}"
+                            :class="{'toFixed':item.updateMode == 'toFixed','toNull':item.updateMode == 'toNull'}"
                         >
                             {{ getSourceFieldLabel(item) }}
                             <span
@@ -169,13 +187,19 @@
                         />
                     </el-select>
                     <el-input
-                        v-if="updateRule.updateMode == 'forCompile'"
+                        v-if="updateRule.updateMode == 'forCompile' && updateRule.scriptType == 'aviator'"
                         v-model="updateRule.sourceField"
                         placeholder="计算公式"
                         autosize
                         type="textarea"
                         @click="checkMlFormula"
                     ></el-input>
+                    <el-input 
+                        v-if="updateRule.updateMode == 'forCompile' && updateRule.scriptType == 'liteFlowJava'"
+                        v-model="updateRule.sourceField"
+                        placeholder="计算公式"
+                        @click="checkMlFormula"
+                    />
                     <div
                         class="w-100 info-text mt-3"
                         v-if="updateRule.updateMode !== 'toNull'"
@@ -188,11 +212,14 @@
         </el-form-item>
         <div v-if="mlFormulaIsShow">
             <mlFormula
+                ref="mlFormulaRef"
                 v-model="mlFormulaIsShow"
                 :fields="mlFormulaFields"
                 :defaultFormulaVal="mlFormulaVal"
                 :isAdvanced="mlIsAdvanced"
+                :scriptType="updateRule.scriptType"
                 @confirm="formulaConfirm"
+                @editValue="formulaEditValue"
             />
         </div>
         <el-dialog
@@ -219,7 +246,7 @@
 
 <script setup>
 import { queryEntityFields } from "@/api/crud";
-import { ref, onMounted, inject, reactive } from "vue";
+import { ref, onMounted, inject, reactive, nextTick } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
 import { getOptionItems, getTagItems } from "@/api/system-manager";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
@@ -384,6 +411,10 @@ let updateRule = reactive({
     sourceField: "",
     // 如果更新方式是 计算公式  判断是否是高级公式
     simpleFormula: false,
+    // 脚本类型  aviator 或 liteFlowJava
+    scriptType: 'aviator',
+    // 脚本id
+    scriptId: "",
 });
 
 // 更新方式
@@ -525,9 +556,11 @@ const updateModeChange = (e) => {
 // 规则列表
 let actionContentItems = ref([]);
 
+
+
 // 添加更新规则
 const addUpdateRule = () => {
-    let { targetField, updateMode, sourceField, simpleFormula } = updateRule;
+    let { targetField, updateMode, sourceField, simpleFormula, scriptType } = updateRule;
     if (!targetField) {
         return;
     }
@@ -574,16 +607,28 @@ const addUpdateRule = () => {
         updateMode,
         sourceField,
         simpleFormula,
+        scriptType,
+        scriptId: getGuid() + "_" + targetField,
     });
     actionContentItems.value.push({
         targetField: formatTargetField(targetField),
         updateMode: formatUpdateMode(updateMode),
         sourceField: formatSourceField(updateRule),
         simpleFormula,
+        scriptType,
+        scriptId: getGuid() + "_" + targetField,
     });
     if (updateMode != "forField") {
         updateRule.sourceField = "";
     }
+};
+
+const getGuid = () => {
+	return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+		var r = (Math.random() * 16) | 0,
+			v = c == "x" ? r : (r & 0x3) | 0x8;
+		return v.toString(16);
+	});
 };
 
 // 格式化 目标字段
@@ -687,6 +732,7 @@ const checkMlFormula = () => {
     showAdvancedFormula(cutEntityFields.value, true, updateRule.sourceField);
     // }
 };
+
 // 执行显示 计算公式
 /**
  *
@@ -705,6 +751,7 @@ const showAdvancedFormula = (sourceFields, isAdvanced, value) => {
 // 确认计算方式
 const formulaConfirm = (formula) => {
     updateRule.sourceField = formula.label;
+    updateRule.scriptType = formula.scriptType;
 };
 
 /**
@@ -844,6 +891,23 @@ const setReferRecord = (e) => {
     updateRule.sourceField = e;
     showReferenceDialogFlag.value = false;
 };
+
+// 计算公式 预览
+let mlFormulaRef = ref(null);
+const openPreview = (value, scriptType, index) => {
+    mlFormulaFields.value = cutEntityFields.value;
+    mlFormulaIsShow.value = true;
+    nextTick(()=>{
+        mlFormulaRef.value?.openPreview(value, scriptType, index);
+    })
+}
+
+const formulaEditValue = (index, value) => {
+    trigger.value.actionContent.items[index].sourceField = value;
+    mlFormulaIsShow.value = false;
+}
+
+
 </script>
 <style lang='scss' scoped>
 .update-rule-row {

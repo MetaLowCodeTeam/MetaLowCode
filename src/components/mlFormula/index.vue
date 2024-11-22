@@ -1,7 +1,28 @@
 <template>
     <!-- 计算公式 -->
-    <mlDialog v-model="isShow" width="550" title="计算公式" v-if="!isError">
-        <div class="input-box" v-if="showAdvanced">
+    <mlDialog v-model="isShow" width="850" title="计算公式" v-if="!isError">
+        <!-- 脚本类型 -->
+        <div class="script-type-box mb-10" v-if="!isPreview">
+            <span>脚本类型</span>
+            <el-select v-model="currentScriptType" placeholder="请选择脚本类型">
+                <el-option label="AviatorScript" value="aviator"></el-option>
+                <el-option label="Java" value="liteFlowJava"></el-option>
+            </el-select>
+            <span 
+                class="help"
+                @click="goHelp"
+                v-if="currentScriptType == 'aviator'"
+            >
+                如何使用 AviatorScript 公式?
+            </span>
+        </div>
+        <div 
+            class="input-box" 
+            v-if="showAdvanced && currentScriptType == 'aviator'" 
+            :class="{'loading':checkLoading}"
+            v-loading="checkLoading"
+            element-loading-text="脚本校验中..."
+        >
             <el-input
                 v-model="formulaVal"
                 placeholder="// 支持 AviatorScript"
@@ -12,11 +33,17 @@
             ></el-input>
             <span ref="buttonRef" v-click-outside="onClickOutside" class="field-span">{&nbsp;}</span>
         </div>
-        <div class="foot-box mt-10" v-if="showAdvanced">
+        <!-- <div class="foot-box mt-10" v-if="showAdvanced">
             <span class="help" @click="goHelp">如何使用高级计算公式?</span>
             <el-button type="primary" class="fr" @click="confirm">确定</el-button>
-        </div>
-        <div class="input-box" v-if="!showAdvanced">
+        </div> -->
+        <div 
+            class="input-box" 
+            v-if="!showAdvanced && currentScriptType == 'aviator'"
+            :class="{'loading':checkLoading}"
+            v-loading="checkLoading"
+            element-loading-text="脚本校验中..."
+        >
             <div class="formula-val mb-10 need-change" v-if="formulaNumList.length > 0">
                 <span class="change-span" @click.stop="showAdvanced = !showAdvanced">
                     <el-icon>
@@ -69,7 +96,7 @@
                         v-for="(item,inx) of fields"
                         :key="inx"
                         @click="fieldSelect(item,true)"
-                        :title="tem.fieldLabel"
+                        :title="item.fieldLabel"
                     >
                         <span class="active-type">N</span>
                         {{ item.fieldLabel }}
@@ -89,6 +116,13 @@
             </div>
         </div>
 
+        <LiteFlowJava 
+            v-if="currentScriptType == 'liteFlowJava'" 
+            v-model="javaScriptVal" 
+            v-loading="checkLoading"
+            element-loading-text="脚本校验中..."
+        />
+
         <el-popover
             ref="popoverRef"
             :virtual-ref="buttonRef"
@@ -105,6 +139,21 @@
                 :title="item.fieldLabel"
             >{{ item.fieldLabel }}</div>
         </el-popover>
+        <template #footer>
+            <el-button 
+                @click="isShow = false" 
+                :loading="checkLoading"
+            >
+                取消
+            </el-button>
+            <el-button 
+                type="primary" 
+                @click="confirm" 
+                :loading="checkLoading"
+            >
+                确定
+            </el-button>
+        </template>
     </mlDialog>
     <ml-dialog v-model="isError" width="500" not-header top="30vh" v-if="isError">
         <div class="save-success">
@@ -126,6 +175,7 @@
 <script setup>
 import { onMounted, ref, watch, unref, reactive, inject } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
+import LiteFlowJava from "./LiteFlowJava.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const buttonRef = ref();
@@ -138,8 +188,10 @@ const props = defineProps({
     defaultFormulaVal: { type: String, default: "" },
     // 是 高级的计算公式 还是 数字类型的 计算公式
     isAdvanced: { type: Boolean, default: false },
+    // 脚本类型  aviator 或 javascript
+    scriptType: { type: String, default: "aviator" },
 });
-const emits = defineEmits(["update:modelValue", "confirm"]);
+const emits = defineEmits(["update:modelValue", "confirm", "editValue"]);
 let isShow = ref(false);
 // 默认值
 let formulaVal = ref("");
@@ -170,6 +222,12 @@ let calculator = ref([
 ]);
 // 是否显示高级 计算方式
 let showAdvanced = ref();
+// 脚本类型  aviator 或 javascript
+let currentScriptType = ref("aviator");
+// java脚本
+let javaScriptVal = ref("");
+// 检查loading
+let checkLoading = ref(false);
 
 watch(
     () => isShow.value,
@@ -182,8 +240,13 @@ watch(
 );
 onMounted(() => {
     isShow.value = props.modelValue;
-    formulaVal.value = props.defaultFormulaVal;
     showAdvanced.value = props.isAdvanced;
+    currentScriptType.value = props.scriptType;
+    if(currentScriptType.value == "liteFlowJava"){
+        javaScriptVal.value = props.defaultFormulaVal;
+    }else {
+        formulaVal.value = props.defaultFormulaVal;
+    }
 });
 
 // 右边计数器点击
@@ -288,6 +351,25 @@ let numFormulaVal = ref("");
 
 // 确认
 const confirm = async () => {
+    if(currentScriptType.value == "liteFlowJava"){
+        checkLoading.value = true;
+        let res = await $API.trigger.detail.scriptValidator(javaScriptVal.value);
+        if(res.data){
+            if(isPreview.value){
+                isEditValue(javaScriptVal.value);
+                return
+            }
+            isConfirm({
+                label: javaScriptVal.value,
+                value: javaScriptVal.value,
+                scriptType: currentScriptType.value,
+            });
+        }else{
+            $ElMessage.error("脚本检查失败，请检查脚本语法。")
+        }
+        checkLoading.value = false;
+        return
+    }
     let checkVal = "";
     if (showAdvanced.value) {
         checkVal = formulaVal.value;
@@ -307,6 +389,7 @@ const confirm = async () => {
     }
     numFormulaVal.value = checkVal;
     if (checkVal) {
+        checkLoading.value = true;  
         let res = await $API.trigger.detail.aviatorValidate(checkVal);
         if (res) {
             // 错误的
@@ -316,25 +399,57 @@ const confirm = async () => {
             }
             // 正确的
             else {
-                isConfirm();
+                if(isPreview.value){
+                    isEditValue(numFormulaVal.value);
+                    return
+                }
+                isConfirm({
+                    label: formulaVal.value,
+                    value: numFormulaVal.value,
+                    scriptType: currentScriptType.value,
+                });
             }
         }
+        checkLoading.value = false;
     }
 };
-const isConfirm = () => {
+const isConfirm = (target) => {
     isShow.value = false;
     isError.value = false;
-    emits("confirm", {
-        label: formulaVal.value,
-        value: numFormulaVal.value,
-    });
+    emits("confirm", target);
     emits("update:modelValue", isShow.value);
 };
+
+const isEditValue = (value) => {
+    checkLoading.value = false;
+    emits("editValue", activeIndex.value, value);
+}
 
 // 跳转 如何使用高级计算公式 帮助文档
 const goHelp = ()=>{
     window.open("https://www.yuque.com/boyan-avfmj/aviatorscript/cpow90")
 }
+
+let isPreview = ref(false);
+let activeIndex = ref(0);
+const openPreview = (val, scriptType, index) => {
+    isPreview.value = true;
+    currentScriptType.value = scriptType || "aviator";
+    showAdvanced.value = true;
+    if(currentScriptType.value == "liteFlowJava"){
+        javaScriptVal.value = val;
+    }else {
+        formulaVal.value = val;
+    }
+    activeIndex.value = index;
+}
+
+
+
+defineExpose({
+    openPreview,
+})
+
 </script>
 <style lang='scss' scoped>
 .input-box {
@@ -521,5 +636,22 @@ const goHelp = ()=>{
     height: 128px;
     padding: 20px;
     color: #ea4335;
+}
+
+.script-type-box {
+    display: flex;
+    align-items: center;
+    span {
+        margin-right: 10px;
+    }
+    .help {
+        margin-left: 10px;
+        cursor: pointer;
+        color: var(--el-color-primary);
+        &:hover {
+            text-decoration: underline;
+            color: var(--el-color-primary-light-3);
+        }
+    }
 }
 </style>

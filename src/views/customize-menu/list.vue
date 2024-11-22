@@ -882,7 +882,7 @@ const changeQueryPanel = async (target) => {
             calculateHeight.value = "calc(100% - 144px)"
         }
     }
-
+    topQueryPanelExpand.value = false;
 	queryPanelLoading.value = false;
 }
 // 更新查询面板

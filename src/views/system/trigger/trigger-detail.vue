@@ -328,6 +328,20 @@ const onSave = async (target) => {
             $ElMessage.warning("请选择回调函数");
             return;
         }
+        if(actionContent.callBackType == 'liteFlowJavaScript'){
+            if(!actionContent.script){
+                $ElMessage.warning("请输入回调脚本");
+                return;
+            }
+            initLoading.value = true;
+            let res = await $API.trigger.detail.scriptValidator(actionContent.script);
+            if(!res.data){
+                $ElMessage.error("脚本检查失败，请检查脚本语法。")
+                initLoading.value = false;
+                return;
+            }
+            actionContent.scriptId = trigger.triggerConfigId;
+        }
     }
     params.formModel.actionContent = JSON.stringify(actionContent);
     if (target == "execute") {

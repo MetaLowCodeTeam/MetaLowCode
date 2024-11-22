@@ -21,6 +21,10 @@ export default {
         aviatorValidate: async (expression) => {
             return await http.post("/plugins/metaTrigger/trigger/aviator/validate", { expression });
         },
+        // 计算公式Java验证
+        scriptValidator: async (script) => {
+            return await http.post("/liteFlow/scriptValidator", { script });
+        },
         // 保存
         triggerSave: async (recordId, dataMap) => {
             return await http.post("/plugins/metaTrigger/trigger/save?id=" + recordId, dataMap);

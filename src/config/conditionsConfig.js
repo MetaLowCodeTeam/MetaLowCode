@@ -43,6 +43,7 @@ export default {
         CUY: "本年",
         REFD: "包含本部门",
         REFU: "包含本人",
+        BTD: "属于",
     },
     // 所有字段
     Tag: ["LK", "NLK"],
@@ -54,7 +55,7 @@ export default {
     Reference: {
         All: ["EQ", "NEQ", "NL", "NT"],
         referenceFilters: ["Department", "User"],
-        Department: ["EQ", "NEQ", "SFB", "SFD", "NL", "NT"],
+        Department: ["EQ", "NEQ", "BTD", "SFB", "SFD", "NL", "NT"],
         User: ["EQ", "NEQ", "NL", "NT", "SFU"],
     },
     ReferenceList: {
@@ -127,7 +128,7 @@ export default {
         referenceSearch: {
             type: ["Reference", "ReferenceList"],
             referTo: [],
-            op: ["EQ", "NEQ", "REF"],
+            op: ["EQ", "NEQ", "REF", "BTD"],
         },
     },
     getShowCom: function (item) {
