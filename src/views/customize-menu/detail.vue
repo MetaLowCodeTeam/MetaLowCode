@@ -167,6 +167,7 @@
                             </el-col>
 							<el-col :span="24" v-if="showApprovalRelated()">
 								<ApprovalRelated
+                                    :detailParamConf="detailParamConf"
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
                                     @closeDialog="closeDialog"
@@ -264,6 +265,8 @@ const detailParamConf = ref({
     showMoreBtn: true,
     showDelBtn: true,
     showRevisionHistory: true,
+    beforeSubmitApproval: () => true,
+    afterSubmitApproval: () => true,
 })
 
 // 插槽内容
@@ -398,6 +401,7 @@ const newRelatedConfirm = async () => {
 // 提交审批触发
 const onSubmitApproval = () => {
 	onConfirm();
+    detailParamConf.value.afterSubmitApproval();
 };
 
 // 检测页签过滤

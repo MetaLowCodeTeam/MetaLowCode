@@ -449,6 +449,7 @@ import {
     useSlots,
     computed,
     watch,
+    nextTick
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
@@ -737,6 +738,10 @@ onMounted(()=>{
     contentSlots = useSlots();
     // 判断是否有操作列插槽
     showActionColumnSlot.value = contentSlots.actionColumn ? true : false;
+    // 判断路由自动打开新建、编辑详情等页面
+    nextTick(() => {
+        checkRouterAutoOpen();
+    })
 })
 
 
@@ -1571,6 +1576,33 @@ const copySuccess = ({type, recordId}) => {
 let ListCustomizeQueryRef = ref();
 const setCustomizeQueryPanel = () => {
     ListCustomizeQueryRef.value?.openDialog();
+}
+
+// 通过检查是否自动打开相关页面 示例文档：https://www.yuque.com/visualdev/melecode/eyvzd0q1bh72ugnm
+const checkRouterAutoOpen = () => {
+    if(props.isReferenceComp){
+        return
+    }
+    let routeQuery = router.currentRoute.value.query;
+    // 自动打开新建
+    if(routeQuery.openAddDialog && routeQuery.openAddDialog == '1'){
+        onAdd(null, routeQuery.specifyFormId);
+        return
+    }
+    // 自动打开编辑
+    if(routeQuery.openEditDialog){
+        let row = {};
+        row[idFieldName.value] =routeQuery.openEditDialog;
+        onEditRow(row, null, routeQuery.specifyFormId);
+        return
+    }
+    // 自动打开详情
+    if(routeQuery.openDetailDialog){
+        let row = {};
+        row[idFieldName.value] =routeQuery.openDetailDialog;
+        openDetailDialog(row, null, routeQuery.specifyFormId);
+        return
+    }
 }
 
 /**

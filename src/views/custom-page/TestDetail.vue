@@ -40,6 +40,15 @@ let detailConf = ref({
 	showEditBtn: true,
 	// 显示更多按钮
 	showMoreBtn: true,
+    // 提交审批前
+    beforeSubmitApproval: () => {
+        console.log('your code')
+        return true
+    },
+    // 提交审批后
+    afterSubmitApproval: () => {
+        console.log('afterSubmitApproval')
+    }
 });
 
 
