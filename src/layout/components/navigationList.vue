@@ -154,4 +154,9 @@ const delMenu = (item, inx) => {
         padding: 0 10px;
     }
 }
+
+.adminui-side-bottom {
+	background-color: #{$--nav-menu-bg-color};
+	color: #{$--nav-menu-text-color};
+}
 </style>

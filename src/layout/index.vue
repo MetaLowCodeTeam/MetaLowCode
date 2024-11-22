@@ -21,14 +21,14 @@
                     </li>
                 </ul> -->
             </div>
-            <div 
-                class="adminui-header-center" 
-                v-if="!ismobileFn" 
+            <div
+                class="adminui-header-center"
+                v-if="!ismobileFn"
                 :style="{'width': getHeaderCenterWidht}"
             >
                 <el-scrollbar>
                     <div class="scrollbar-flex-content">
-                        <p  
+                        <p
                             v-for="item in menu"
                             :key="item"
                             class="scrollbar-demo-item"
@@ -57,10 +57,11 @@
                         <h2>{{ pmenu.meta.title }}</h2>
                     </div>
                     <div class="adminui-side-scroll">
-                        <el-scrollbar>
+                        <el-scrollbar class="nav-menu-scrollbar">
                             <el-menu
                                 :default-openeds="defaultOpeneds"
                                 :default-active="active"
+								class="main-nav-menu"
                                 router
                                 :collapse="menuIsCollapseFn"
                                 :unique-opened="$CONFIG.MENU_UNIQUE_OPENED"
@@ -203,7 +204,8 @@
         </section>
     </template>
 
-    <template v-else-if="layoutFn == 'noNav'">
+	<!-- 无导航布局 -->
+	<template v-else-if="layoutFn == 'noNav'">
         <section class="aminui-wrapper">
             <mlWaterMark>
                 <div class="aminui-body el-container">
@@ -301,14 +303,12 @@
         </section>
     </template>
 
-
-
     <div class="main-maximize-exit" @click="exitMaximize">
         <el-icon>
             <el-icon-close />
         </el-icon>
     </div>
-<!-- 
+<!--
     <div class="layout-setting" @click="openSetting"><el-icon><el-icon-brush-filled /></el-icon></div>
 
     <el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
@@ -334,7 +334,7 @@ import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 const { publicSetting } = storeToRefs(useCommonStore());
 const { topDefaultUnfold } = storeToRefs(useLayoutConfigStore());
-// 
+//
 import navigation from "./components/navigationList.vue";
 
 const { keepLiveRoute, routeShow } = storeToRefs(useKeepAliveStore());
@@ -403,7 +403,7 @@ export default {
             return ismobile.value;
         },
         layoutFn() {
-            return this.getUrlParams('layout') || layout.value;
+			return this.getUrlParams('layout') || layout.value;
         },
         layoutTagsFn() {
             return layoutTags.value;
@@ -445,10 +445,10 @@ export default {
         },
     },
     methods: {
-        getUrlParams(key) {
-            const params = this.$route.query;
-            return params[key];
-        },
+		getUrlParams(key) {
+			const params = this.$route.query;
+			return params[key];
+		},
         // 为keep-alive里的component接收的组件包上一层自定义name的壳
         wrap(fullPath, component) {
             let wrapper
@@ -562,7 +562,7 @@ export default {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     text-align: center;
     cursor: pointer;
     height: 58px;
@@ -576,5 +576,25 @@ export default {
     &:hover {
         color: #fff;
     }
+}
+
+.adminui-side-top {
+	background-color: #{$--nav-menu-bg-color};
+	h2 {
+		color: #{$--nav-menu-text-color};
+	}
+}
+
+.nav-menu-scrollbar {
+	:deep(.el-scrollbar__view) {
+		height: 100% !important;
+	}
+
+	.main-nav-menu {
+		--el-menu-bg-color: #{$--nav-menu-bg-color};
+		--el-menu-text-color: #{$--nav-menu-text-color};
+		--el-menu-active-color: var(--el-color-primary) !important;
+		height: 100%;
+	}
 }
 </style>

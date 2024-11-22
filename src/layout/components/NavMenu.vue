@@ -82,7 +82,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.isActive {
-    color: var(--el-color-primary) !important;
-}
+//.isActive {
+//    color: var(--el-color-primary) !important;
+//}
 </style>
