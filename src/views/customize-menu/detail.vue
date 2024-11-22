@@ -167,6 +167,7 @@
                             </el-col>
 							<el-col :span="24" v-if="showApprovalRelated()">
 								<ApprovalRelated
+                                    :detailParamConf="detailParamConf"
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
                                     @closeDialog="closeDialog"
@@ -264,6 +265,7 @@ const detailParamConf = ref({
     showMoreBtn: true,
     showDelBtn: true,
     showRevisionHistory: true,
+    beforeSubmitApproval: () => true
 })
 
 // 插槽内容

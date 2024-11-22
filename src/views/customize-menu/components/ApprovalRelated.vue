@@ -6,7 +6,7 @@
 		</el-button>
 	</el-row>
 	<el-row v-if="myApproval.startApproval">
-		<el-button type="success" plain @click="openDialog('提交审批')">
+		<el-button type="success" plain @click="openDialog">
 			提交审批
 		</el-button>
 	</el-row>
@@ -43,7 +43,7 @@
 	<!-- 审批弹框 -->
 	<mlDialog
 		v-model="approvalDialog.isShow"
-		:title="approvalDialog.title"
+		title="提交审批"
 		width="460"
 	>
 		<el-form label-width="100px" v-loading="approvalDialog.loading">
@@ -166,6 +166,7 @@ const props = defineProps({
 	recordApproval: { type: Object, default: () => {} },
 	// 是否显示这个按钮
 	showApprovalRelated: { type: Boolean, default: true },
+	detailParamConf: { type: Object, default: () => {} },
 });
 const emits = defineEmits(["onSubmit", "closeDialog"]);
 let myApproval = ref({});
@@ -177,12 +178,14 @@ let approvalList = ref([]);
 let approvalDialog = reactive({
 	isShow: false,
 	loading: false,
-	title: "",
 	approvalConfig: {},
 });
 
 // 打开弹框
 const openDialog = async (title) => {
+    if(!props.detailParamConf.test()){
+        return
+    }
 	approvalDialog.isShow = true;
 	approvalDialog.title = title;
 	approvalDialog.loading = true;
