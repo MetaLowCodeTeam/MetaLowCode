@@ -17,6 +17,7 @@ import { ref, computed, watchEffect } from "vue";
 
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
+import { java } from "@codemirror/lang-java";
 import { oneDark } from "@codemirror/theme-one-dark";
 
 const props = defineProps({
@@ -33,6 +34,10 @@ const props = defineProps({
 		// ""(默认白色) or "oneDark"(深色)
 		default: "oneDark",
 	},
+    mode: {
+        type: String,
+        default: "javascript",
+    }
 });
 
 const emits = defineEmits(["update:modelValue"]);
@@ -44,9 +49,9 @@ const extensions = ref([javascript(), oneDark]);
 watchEffect(() => {
 	contentValue.value = props.modelValue;
 	if (props.theme == "oneDark") {
-		extensions.value = [javascript(), oneDark];
+		extensions.value = [props.mode == "java" ? java() : javascript(), oneDark];
 	} else {
-		extensions.value = [javascript()];
+		extensions.value = [props.mode == "java" ? java() : javascript()];
 	}
 });
 
