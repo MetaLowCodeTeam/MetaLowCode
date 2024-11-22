@@ -183,7 +183,7 @@ let approvalDialog = reactive({
 
 // 打开弹框
 const openDialog = async (title) => {
-    if(!props.detailParamConf.test()){
+    if(!props.detailParamConf.beforeSubmitApproval()){
         return
     }
 	approvalDialog.isShow = true;
