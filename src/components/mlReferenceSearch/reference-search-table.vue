@@ -450,7 +450,6 @@ export default {
 
 .reference-search-table {
 	max-height: 600px;
-	padding: 10px 20px;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
