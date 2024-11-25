@@ -94,7 +94,7 @@
             <!-- 入口打开方式 -->
             <div class="mt-10 content-box">
                 <el-radio-group v-model="cutMenu.openType">
-                    <el-radio :label="0">
+                    <el-radio :value="0">
                         <span class="radio-span">
                             新窗口打开
                             <el-tooltip
@@ -111,7 +111,7 @@
                             </el-tooltip>
                         </span>
                     </el-radio>
-                    <el-radio :label="1">
+                    <el-radio :value="1">
                         <span class="radio-span">当前页面打开</span>
                     </el-radio>
                 </el-radio-group>

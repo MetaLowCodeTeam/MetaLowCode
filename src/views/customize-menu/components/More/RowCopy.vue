@@ -38,8 +38,8 @@
 			</div>
 			<div class="mt-10">
 				<el-radio-group v-model="copyDialogConf.type">
-					<el-radio :label="1">复制完成后打开编辑弹框</el-radio>
-					<el-radio :label="2">复制完成后打开详情弹框</el-radio>
+					<el-radio :value="1">复制完成后打开编辑弹框</el-radio>
+					<el-radio :value="2">复制完成后打开详情弹框</el-radio>
 				</el-radio-group>
 			</div>
 		</div>

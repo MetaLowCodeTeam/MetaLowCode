@@ -119,9 +119,9 @@
                     </el-form-item>
                     <el-form-item label="冻结列" class="mb-5">
                         <el-radio-group v-model="editColumnDialogData.fixed">
-                            <el-radio :label="false">不冻结</el-radio>
-                            <el-radio label="left">向左冻结</el-radio>
-                            <el-radio label="right">向右冻结</el-radio>
+                            <el-radio :value="false">不冻结</el-radio>
+                            <el-radio value="left">向左冻结</el-radio>
+                            <el-radio value="right">向右冻结</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="对齐(PC)" class="mb-5">

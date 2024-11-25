@@ -3,10 +3,10 @@
         <div class="c-s-t">入口样式</div>
         <el-form-item label="布局">
             <el-radio-group v-model="optionModel.setQuickNavConf.type">
-                <el-radio :label="1">
+                <el-radio :value="1">
                     <span class="radio-span">列表</span>
                 </el-radio>
-                <el-radio :label="2">
+                <el-radio :value="2">
                     <span class="radio-span">卡片</span>
                 </el-radio>
             </el-radio-group>
@@ -16,10 +16,10 @@
         </el-form-item>
         <el-form-item label="宽度(删格)" v-if="cutDevice == 'mobile'">
             <el-radio-group v-model="optionModel.setQuickNavConf.itemCol">
-                <el-radio :label="1">
+                <el-radio :value="1">
                     <span class="radio-span">12</span>
                 </el-radio>
-                <el-radio :label="2">
+                <el-radio :value="2">
                     <span class="radio-span">24</span>
                 </el-radio>
             </el-radio-group>

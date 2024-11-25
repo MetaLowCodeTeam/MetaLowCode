@@ -80,8 +80,8 @@
                     v-model="dialogForm.form.flowType"
                     @change="flowTypeChange"
                 >
-                    <el-radio :label="1">基础工作流</el-radio>
-                    <el-radio :label="2">复杂工作流</el-radio>
+                    <el-radio :value="1">基础工作流</el-radio>
+                    <el-radio :value="2">复杂工作流</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item

@@ -383,6 +383,22 @@ body .tox-tinymce-aux {
 	}
 }
 
+.bw-action-icon {
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background: var(--el-color-primary);
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    color: #fff;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
 .ml-number-input {
 	.el-input__inner {
 		text-align: left;

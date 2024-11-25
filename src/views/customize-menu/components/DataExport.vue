@@ -4,9 +4,9 @@
             <div class="label-title mb-3">选择数据范围</div>
             <div class="mb-10 mt-10">
                 <el-radio-group class="radio-need-block" v-model="selection">
-                    <el-radio :label="1">当前页的记录 (共 {{ formData.size }} 条)</el-radio>
-                    <el-radio :label="2">查询后的记录 (共 {{ formData.total }} 条)</el-radio>
-                    <el-radio :label="3">全部数据</el-radio>
+                    <el-radio :value="1">当前页的记录 (共 {{ formData.size }} 条)</el-radio>
+                    <el-radio :value="2">查询后的记录 (共 {{ formData.total }} 条)</el-radio>
+                    <el-radio :value="3">全部数据</el-radio>
                 </el-radio-group>
             </div>
         </div>

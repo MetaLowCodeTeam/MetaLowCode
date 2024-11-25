@@ -100,9 +100,9 @@
 					@change="conditionTypeChange"
 					size="default"
 				>
-					<el-radio :label="1">符合任一</el-radio>
-					<el-radio :label="2">符合全部</el-radio>
-					<el-radio :label="3">高级表达式</el-radio>
+					<el-radio :value="1">符合任一</el-radio>
+					<el-radio :value="2">符合全部</el-radio>
+					<el-radio :value="3">高级表达式</el-radio>
 				</el-radio-group>
 				<el-input
 					class="mt-5"

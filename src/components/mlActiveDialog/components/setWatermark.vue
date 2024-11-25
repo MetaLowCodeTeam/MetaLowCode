@@ -31,8 +31,8 @@
 			</el-form-item>
 			<el-form-item label="多行水印">
 				<el-radio-group v-model="watermarkConf.rosType">
-					<el-radio :label="1">单行</el-radio>
-					<el-radio :label="2">多行</el-radio>
+					<el-radio :value="1">单行</el-radio>
+					<el-radio :value="2">多行</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item
@@ -40,8 +40,8 @@
 				style="margin-bottom: 5px !important"
 			>
 				<el-radio-group v-model="watermarkConf.rotationAngle">
-					<el-radio :label="0">水平</el-radio>
-					<el-radio :label="35">倾斜</el-radio>
+					<el-radio :value="0">水平</el-radio>
+					<el-radio :value="35">倾斜</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item style="margin-bottom: 0 !important">

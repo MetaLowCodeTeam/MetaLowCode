@@ -336,9 +336,9 @@
                     @change="conditionTypeChange"
                     size="default"
                 >
-                    <el-radio :label="1">符合任一</el-radio>
-                    <el-radio :label="2">符合全部</el-radio>
-                    <el-radio :label="3">高级表达式</el-radio>
+                    <el-radio :value="1">符合任一</el-radio>
+                    <el-radio :value="2">符合全部</el-radio>
+                    <el-radio :value="3">高级表达式</el-radio>
                 </el-radio-group>
                 <el-input
                     class="mt-5"
@@ -412,7 +412,7 @@
                                 </div>
                                 <!-- 日期区间 -->
                                 <div 
-                                    v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime'"
+                                    v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime' && !displayedComp"
                                     style="line-height: 32px; height: 64px;"
                                 >
                                     <el-date-picker
@@ -442,9 +442,22 @@
                                         clearable
                                     />
                                 </div>
+                                <div v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime' && displayedComp">
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value3"
+                                        type="daterange"
+                                        unlink-panels
+                                        start-placeholder="起"
+                                        end-placeholder="止"
+                                        style="width: 90%;height: 32px;position: relative;top: 1px;"
+                                        value-format="YYYY-MM-DD"
+                                        @change="bwInputChange(item)"
+                                    />
+                                </div>
                                 <!-- 时间区间 -->
                                 <div 
-                                    v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime'"
+                                    v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime' && !displayedComp"
                                     style="line-height: 32px; height: 64px; "
                                 >
                                     <el-date-picker
@@ -476,6 +489,21 @@
                                         clearable
                                     />
                                 </div>
+                                <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime' && displayedComp">
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value3"
+                                        @change="bwInputChange(item)"
+                                        type="datetimerange"
+                                        start-placeholder="起"
+                                        end-placeholder="止"
+                                        format="YYYY-MM-DD HH:mm:ss"
+                                        date-format="YYYY/MM/DD ddd"
+                                        time-format="A hh:mm:ss"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
+                                        style="width: 90%;height: 32px;position: relative;top: 1px;"
+                                    />
+                                </div>
                                 
                                 <!-- 数字输入框 -->
                                 <div v-else-if="item.opCom =='numberInput' && (item.type != 'DateTime' || (item.type == 'DateTime' && item.op != 'LE' && item.op != 'GE'))">
@@ -492,7 +520,7 @@
                                 </div>
                                 <!-- 数字输入框区间 -->
                                 <div 
-                                    v-else-if="item.opCom =='numberInputBw'"
+                                    v-else-if="item.opCom =='numberInputBw' && !displayedComp"
                                     style="line-height: 36px; height: 64px; "
                                 >
                                     <el-input-number
@@ -504,6 +532,7 @@
                                         @focus="clearError(item)"
                                         @change="bwChange(item)"
                                         clearable
+                                        style="height: 32px;"
                                     />
                                     <el-input-number
                                         size="default"
@@ -511,11 +540,42 @@
                                         :controls="false"
                                         class="ml-number-input w-100 bw-end-icon"
                                         :class="{'is-error':item.isError && !item.value2}"
-                                        style="margin-top: 5px;"
+                                        style="margin-top: 5px;height: 32px;"
                                         @focus="clearError(item)"
                                         @change="bwChange(item)"
                                         clearable
                                     />
+                                </div>
+                                <div v-else-if="item.opCom =='numberInputBw' && displayedComp">
+                                    <el-input-number 
+                                        size="default"
+                                        v-model="item.value"
+                                        :class="{'is-error':item.isError && !item.value}"
+                                        @focus="clearError(item)"
+                                        @change="bwChange(item)"
+                                        clearable
+                                        :controls="false"
+                                        style="width: 49%;height: 32px;"
+                                    >
+                                        <template #prefix>
+                                            <span>起</span>
+                                        </template>
+                                    </el-input-number>
+                                    <el-input-number
+                                        size="default"
+                                        v-model="item.value2"
+                                        :class="{'is-error':item.isError && !item.value2}"
+                                        style="width: 49%;margin-left: 2%;height: 32px;"
+                                        @focus="clearError(item)"
+                                        @change="bwChange(item)"
+                                        :controls="false"
+                                        clearable
+                                        
+                                    >
+                                        <template #prefix>
+                                            <span>止</span>
+                                        </template>
+                                    </el-input-number>
                                 </div>
                                 <!-- 文本输入框 -->
                                 <div v-else-if="item.opCom =='textInput'">
@@ -1020,6 +1080,16 @@ export default {
             if (defaultV1 && defaultV2 && v1 > v2) {
                 item.value = defaultV2;
                 item.value2 = defaultV1;
+            }
+        },
+        // 区间Input组件赋值
+        bwInputChange(item) {
+            if(item.value3){
+                item.value = item.value3[0];
+                item.value2 = item.value3[1];
+            }else {
+                item.value = "";
+                item.value2 = "";
             }
         },
     },

@@ -13,9 +13,9 @@
                         v-model="myFormData.approvalType" 
                         @change="approvalTypeChange"
                     >
-                        <el-radio :label="1">人工审批</el-radio>
-                        <el-radio :label="2">自动驳回</el-radio>
-                        <el-radio :label="3">发起子流程</el-radio>
+                        <el-radio :value="1">人工审批</el-radio>
+                        <el-radio :value="2">自动驳回</el-radio>
+                        <el-radio :value="3">发起子流程</el-radio>
                     </el-radio-group>
                 </div>
             </div>
@@ -112,9 +112,9 @@
                 <div class="label-title mb-3">驳回设置</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group class="radio-need-block" v-model="myFormData.rejectType">
-                        <el-radio :label="1">驳回至未提交</el-radio>
-                        <el-radio :label="2">驳回至上一步审核</el-radio>
-                        <el-radio :label="3">驳回至任意步骤</el-radio>
+                        <el-radio :value="1">驳回至未提交</el-radio>
+                        <el-radio :value="2">驳回至上一步审核</el-radio>
+                        <el-radio :value="3">驳回至任意步骤</el-radio>
                     </el-radio-group>
                 </div>
             </div>
@@ -123,8 +123,8 @@
                 <div class="label-title mb-3">审批人为空时</div>
                 <div class="mb-10 mt-10">
                     <el-radio-group v-model="myFormData.emptyUserType">
-                        <el-radio :label="1">自动通过</el-radio>
-                        <el-radio :label="2">指定审批人</el-radio>
+                        <el-radio :value="1">自动通过</el-radio>
+                        <el-radio :value="2">指定审批人</el-radio>
                     </el-radio-group>
                 </div>
                 <!-- 2 指定审批人 -->
@@ -144,9 +144,9 @@
                         class="radio-need-block"
                         v-model="myFormData.approvalMethodType"
                     >
-                        <el-radio :label="1">会签 (需所有审批人同意)</el-radio>
-                        <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
-                        <el-radio :label="3">部分会签(部分审批人同意)</el-radio>
+                        <el-radio :value="1">会签 (需所有审批人同意)</el-radio>
+                        <el-radio :value="2">或签 (一名审批人同意或拒绝)</el-radio>
+                        <el-radio :value="3">部分会签(部分审批人同意)</el-radio>
                     </el-radio-group>
                 </div>
                 <div v-if="myFormData.approvalMethodType == 3">
@@ -216,8 +216,8 @@
                     class="radio-need-block"
                     v-model="myFormData.isBlocked"
                 >
-                    <el-radio :label="false">发起子流程，自动进入下一个节点</el-radio>
-                    <el-radio :label="true">发起子流程，等待审批完成后再进入下一个节点</el-radio>
+                    <el-radio :value="false">发起子流程，自动进入下一个节点</el-radio>
+                    <el-radio :value="true">发起子流程，等待审批完成后再进入下一个节点</el-radio>
                 </el-radio-group>
             </div>
             <div class="work-flow-conditions mt-10">

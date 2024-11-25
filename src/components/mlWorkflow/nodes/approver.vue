@@ -111,8 +111,8 @@
                 <div class="label-title mb-10 mt-20">当有多人审批时</div>
                 <div class="mt-10">
                     <el-radio-group class="radio-need-block" v-model="form.multiPersonApproval">
-                        <el-radio :label="1">会签 (需所有审批人同意)</el-radio>
-                        <el-radio :label="2">或签 (一名审批人同意或拒绝)</el-radio>
+                        <el-radio :value="1">会签 (需所有审批人同意)</el-radio>
+                        <el-radio :value="2">或签 (一名审批人同意或拒绝)</el-radio>
                     </el-radio-group>
                 </div>
                 <div class="label-title mb-10 mt-20">高级扩展功能</div>

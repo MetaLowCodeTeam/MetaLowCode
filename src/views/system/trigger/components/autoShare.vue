@@ -6,8 +6,8 @@
             v-if="trigger.actionType?.value == 9"
         >
             <el-radio-group v-model="trigger.actionContent.type">
-                <el-radio :label="1">共享给指定人</el-radio>
-                <el-radio :label="2">共享给指定字段</el-radio>
+                <el-radio :value="1">共享给指定人</el-radio>
+                <el-radio :value="2">共享给指定字段</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item

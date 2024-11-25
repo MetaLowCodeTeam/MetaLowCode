@@ -51,9 +51,9 @@
             </el-form-item>
             <el-form-item label="遇到重复记录时">
                 <el-radio-group v-model="fromData.repeatOpt">
-                    <el-radio :label="1">覆盖 (更新)</el-radio>
-                    <el-radio :label="2">跳过</el-radio>
-                    <el-radio :label="3">仍旧导入</el-radio>
+                    <el-radio :value="1">覆盖 (更新)</el-radio>
+                    <el-radio :value="2">跳过</el-radio>
+                    <el-radio :value="3">仍旧导入</el-radio>
                 </el-radio-group>
                 <div class="sm-title w-100 mt-5" v-if="fromData.repeatOpt != 3">
                     重复判断字段

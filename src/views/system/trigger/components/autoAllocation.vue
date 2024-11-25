@@ -2,9 +2,9 @@
     <div class="action-div" v-loading="contentLoading">
         <el-form-item label="分配类型">
             <el-radio-group v-model="trigger.actionContent.assignType">
-                <el-radio :label="1">跟随主实体</el-radio>
-                <el-radio :label="2" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 自定义">自定义</el-radio>
-                <el-radio :label="3" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 根据字段分配">根据字段分配</el-radio>
+                <el-radio :value="1">跟随主实体</el-radio>
+                <el-radio :value="2" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 自定义">自定义</el-radio>
+                <el-radio :value="3" :disabled="(trigger.whenNum & 16)> 0" title="分配时 触发不支持 根据字段分配">根据字段分配</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item class="mt-20" label="分配给谁" v-if="trigger.actionContent.assignType == 2">
@@ -12,8 +12,8 @@
         </el-form-item>
         <el-form-item class="mt-20" label="(多人)分配规则" v-if="trigger.actionContent.assignType == 2">
             <el-radio-group v-model="trigger.actionContent.assignRule">
-                <el-radio :label="1">依次平均分配</el-radio>
-                <el-radio :label="2">随机分配</el-radio>
+                <el-radio :value="1">依次平均分配</el-radio>
+                <el-radio :value="2">随机分配</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item class="mt-20" label="分配指定字段" v-if="trigger.actionContent.assignType == 3">

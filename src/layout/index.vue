@@ -552,6 +552,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+$--nav-menu-bg-color: #ffffff;
+$--nav-menu-text-color: rgb(48, 49, 51);
 // .adminui-header-center {
 //     width: calc(100% - 560px);
 // }

@@ -3,9 +3,9 @@
     <div class="action-div" v-loading="contentLoading">
         <el-form-item class="mt-20" label="回调类型">
             <el-radio-group v-model="trigger.actionContent.callBackType" class="ml-4">
-                <el-radio label="URL">URL回调</el-radio>
-                <el-radio label="liteFlowJavaScript">脚本回调</el-radio>
-                <el-radio label="FUNCTION">函数回调</el-radio>
+                <el-radio value="URL">URL回调</el-radio>
+                <el-radio value="liteFlowJavaScript">脚本回调</el-radio>
+                <el-radio value="FUNCTION">函数回调</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item

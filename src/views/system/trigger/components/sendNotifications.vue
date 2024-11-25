@@ -3,11 +3,11 @@
     <div class="action-div" v-loading="contentLoading">
         <el-form-item class="mt-20" label="发送给谁">
             <el-radio-group v-model="trigger.actionContent.userType" @change="userTypeChange">
-                <el-radio :label="1">内部用户</el-radio>
-                <el-radio :label="5">表单字段</el-radio>
-                <el-radio :label="2">外部人员</el-radio>
-                <el-radio :label="3" :disabled="!querySendState.dingState">钉钉机器人</el-radio>
-                <el-radio :label="4" :disabled="!querySendState.wxWorkState">企业微信机器人</el-radio>
+                <el-radio :value="1">内部用户</el-radio>
+                <el-radio :value="5">表单字段</el-radio>
+                <el-radio :value="2">外部人员</el-radio>
+                <el-radio :value="3" :disabled="!querySendState.dingState">钉钉机器人</el-radio>
+                <el-radio :value="4" :disabled="!querySendState.wxWorkState">企业微信机器人</el-radio>
             </el-radio-group>
             <div class="w-100 mt-5">
                 <mlSelectUser

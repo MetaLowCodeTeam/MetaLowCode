@@ -103,8 +103,8 @@
                     </div>
                     <div class="mt-10" v-if="cutMenu.type == 2">
                         <el-radio-group v-model="cutMenu.openType">
-                            <el-radio :label="0">新窗口打开</el-radio>
-                            <el-radio :label="1">嵌入式</el-radio>
+                            <el-radio :value="0">新窗口打开</el-radio>
+                            <el-radio :value="1">嵌入式</el-radio>
                         </el-radio-group>
                     </div>
                     <div class="mt-10">

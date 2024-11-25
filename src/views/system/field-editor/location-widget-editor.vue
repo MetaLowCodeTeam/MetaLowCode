@@ -17,20 +17,20 @@
 
 				<el-form-item label="是否允许空值">
 					<el-radio-group v-model="fieldProps.nullable" style="float: right">
-						<el-radio :label="true">是</el-radio>
-						<el-radio :label="false">否</el-radio>
+						<el-radio :value="true">是</el-radio>
+						<el-radio :value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="新建记录时允许修改字段">
 					<el-radio-group v-model="fieldProps.creatable" style="float: right">
-						<el-radio :label="true">是</el-radio>
-						<el-radio :label="false">否</el-radio>
+						<el-radio :value="true">是</el-radio>
+						<el-radio :value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="更新记录时允许修改字段">
 					<el-radio-group v-model="fieldProps.updatable" style="float: right">
-						<el-radio :label="true">是</el-radio>
-						<el-radio :label="false">否</el-radio>
+						<el-radio :value="true">是</el-radio>
+						<el-radio :value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<hr style="border: 0;margin-bottom: 15px" />
@@ -90,5 +90,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/style/form-layout/field-editor-common.scss";
+@use "@/style/form-layout/field-editor-common.scss";
 </style>

@@ -22,8 +22,8 @@
                 </el-form-item>
 				<el-form-item label="字段值是否唯一/不可重复">
 					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
-						<el-radio :label="true">是</el-radio>
-						<el-radio :label="false">否</el-radio>
+						<el-radio :value="true">是</el-radio>
+						<el-radio :value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
                 <el-form-item label="是否在列表中默认显示">
@@ -31,26 +31,26 @@
                         v-model="fieldProps.defaultMemberOfListFlag"
                         style="float: right"
                     >
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
+                        <el-radio :value="true">是</el-radio>
+                        <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否允许空值">
                     <el-radio-group v-model="fieldProps.nullable" style="float: right">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
+                        <el-radio :value="true">是</el-radio>
+                        <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="新建记录时允许修改字段">
                     <el-radio-group v-model="fieldProps.creatable" style="float: right">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
+                        <el-radio :value="true">是</el-radio>
+                        <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="更新记录时允许修改字段">
                     <el-radio-group v-model="fieldProps.updatable" style="float: right">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
+                        <el-radio :value="true">是</el-radio>
+                        <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="开启选项数据同步" >
@@ -452,7 +452,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/style/form-layout/field-editor-common.scss";
+@use "@/style/form-layout/field-editor-common.scss";
 
 .box-card {
     font-size: 14px;

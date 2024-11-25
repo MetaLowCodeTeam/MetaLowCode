@@ -47,9 +47,9 @@
                         v-model="form.nodeRoleType"
                         @change="nodeRoleTypeChange"
                     >
-                        <el-radio :label="1">所有人</el-radio>
-                        <el-radio :label="2">记录所属用户</el-radio>
-                        <el-radio :label="3">指定用户</el-radio>
+                        <el-radio :value="1">所有人</el-radio>
+                        <el-radio :value="2">记录所属用户</el-radio>
+                        <el-radio :value="3">指定用户</el-radio>
                     </el-radio-group>
                 </div>
                 <mlSelectUser

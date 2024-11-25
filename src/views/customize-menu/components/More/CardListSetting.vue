@@ -71,11 +71,11 @@
 					</div>
 					<div class="from-item">
 						<el-radio-group v-model="cardSetting.rowNum">
-							<el-radio :label="1">1</el-radio>
-							<el-radio :label="2">2</el-radio>
-							<el-radio :label="3">3</el-radio>
-							<el-radio :label="4">4</el-radio>
-							<el-radio :label="6">6</el-radio>
+							<el-radio :value="1">1</el-radio>
+							<el-radio :value="2">2</el-radio>
+							<el-radio :value="3">3</el-radio>
+							<el-radio :value="4">4</el-radio>
+							<el-radio :value="6">6</el-radio>
 						</el-radio-group>
 					</div>
 				</el-col>

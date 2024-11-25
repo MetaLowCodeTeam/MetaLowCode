@@ -169,7 +169,7 @@ const roundRobin = (ms) => {
 </script>
 
 <style lang="scss">
-@import "@/style/style.scss";
+@use "@/style/style.scss";
 .web-ver {
     width: 0;
     height: 0;

@@ -51,9 +51,9 @@
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
-			<el-button @click="refreshAdvancedQuery" style="width: 74px"
-				>重置</el-button
-			>
+			<el-button @click="refreshAdvancedQuery" style="width: 74px">
+				重置
+			</el-button>
 		</div>
 	</div>
 	<!-- 设计查询面板 -->
@@ -138,8 +138,8 @@ const onSearch = (command) => {
 	};
 	newCompConditions.items = compConditions.value.items.filter(
 		(el) =>
-			(el.value !== undefined && el.value !== null) ||
-			(el.value2 !== undefined && el.value2 !== null) ||
+			(el.value !== undefined && el.value !== null && el.value !== "") ||
+			(el.value2 !== undefined && el.value2 !== null && el.value2 !== "") ||
 			notEmptyItems.includes(el.op)
 	);
 	emit("queryNow", newCompConditions);

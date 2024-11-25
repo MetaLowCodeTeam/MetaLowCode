@@ -29,8 +29,8 @@
                 <el-form-item label="取消哪些用户" class="mb-5" v-if="labelData.type == 'unShare'">
                     <div class="w-100">
                         <el-radio-group v-model="formData.userType">
-                            <el-radio :label="1">全部用户</el-radio>
-                            <el-radio :label="2">指定用户</el-radio>
+                            <el-radio :value="1">全部用户</el-radio>
+                            <el-radio :value="2">指定用户</el-radio>
                         </el-radio-group>
                         <mlSelectUser
                             v-if="formData.userType == 2"
