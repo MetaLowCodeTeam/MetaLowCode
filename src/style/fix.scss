@@ -312,7 +312,9 @@ body .tox-tinymce-aux {
 			}
 		}
 	}
-
+    .el-dialog__body {
+        padding: 10px 20px;
+    }
 	.el-dialog__footer {
 		padding: 0;
 		border-top: 1px solid rgba(0, 0, 0, 0.1);
