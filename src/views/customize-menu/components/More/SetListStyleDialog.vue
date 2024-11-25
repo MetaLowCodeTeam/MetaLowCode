@@ -254,7 +254,7 @@ const onSave = async () => {
 	max-height: 500px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	padding: 0 10px;
+	padding: 20px;
 	.from-title {
 		font-weight: bold;
 		font-size: 20px;

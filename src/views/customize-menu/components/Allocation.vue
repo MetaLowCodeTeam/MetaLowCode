@@ -267,6 +267,7 @@ defineExpose({
     text-align: center;
     padding: 0 60px;
     .del-title {
+        line-height: 30px;
         font-weight: bold;
         .del-icon {
             font-size: 24px;

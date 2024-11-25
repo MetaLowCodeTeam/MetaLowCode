@@ -177,7 +177,7 @@
                     <div
                         class="pl-20 item"
                         @click="setListStyleDialogIsShow = true"
-                        v-if="!isReferenceComp && !isMainDetailField && !isListCalendar"
+                        v-if="!isListCalendar"
                     >
                         其他列表设置
                     </div>
