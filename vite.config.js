@@ -70,9 +70,8 @@ export default ({
     let esbuild = {}
 
     return {
-        // publicDir: '/web/', // index.html文件所在位置
-        base: '/', // index.html文件所在位置
-        // root: './', // js导入的资源路径，src
+        base: '/', // 公共基础路径
+        // root: './', // index.html文件所在位置
         resolve: {
             alias,
         },
