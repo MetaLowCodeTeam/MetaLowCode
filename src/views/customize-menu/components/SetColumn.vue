@@ -125,7 +125,7 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="对齐(PC)" class="mb-5">
-                        <el-row :gutter="10">
+                        <el-row :gutter="10" class="w-100">
                             <el-col :span="12">
                                 <div class="small-label">表头对齐</div>
                                 <el-select 
@@ -155,7 +155,7 @@
                         </el-row>
                     </el-form-item>
                     <el-form-item label="对齐(Mobile)" class="mb-3">
-                        <el-row :gutter="10">
+                        <el-row :gutter="10" class="w-100">
                             <el-col :span="12">
                                 <div class="small-label">表头对齐</div>
                                 <el-select 
