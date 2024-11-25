@@ -151,6 +151,7 @@ const refreshAdvancedQuery = () => {
 	compConditions.value.items.forEach((el) => {
 		el.value = "";
 		el.value2 = "";
+        el.value3 = null;
 	});
 	emit("queryNow", newCompConditions);
 };
