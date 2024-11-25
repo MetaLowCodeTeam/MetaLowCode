@@ -1,7 +1,7 @@
 <template>
     <!--  -->
     <div class="ml-list-advanced-query">
-        <el-select ref="selectRefs" v-model="defaultValue" @focus="showAdvfilter = false">
+        <el-select ref="selectRefs" style="width: 210px;" v-model="defaultValue" @focus="showAdvfilter = false">
             <template #empty>
                 <div class="select-content">
                     <div
@@ -439,7 +439,8 @@ const handleCommand = (e) => {
     font-size: 13px;
     line-height: 34px;
     color: #504e4e;
-    width: 210px;
+    min-width: 210px;
+    text-align: left;
     .item {
         padding: 0 10px;
 
