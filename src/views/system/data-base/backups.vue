@@ -35,13 +35,7 @@ let sortFields = ref([
     },
 ]);
 // 过滤条件
-let filterItems = ref([
-    {
-        fieldName: "createdOn",
-        op: "LK",
-        value: "",
-    },
-]);
+let filterItems = ref([]);
 let tableColumn = ref([
     {
         prop: "createdOn",
