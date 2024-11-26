@@ -966,13 +966,17 @@ export default {
 </style>
 <style lang="scss">
 .field-setting-dialog {
+    padding: 0;
 	.el-dialog__header {
 		margin: 0;
 		background-color: var(--el-color-primary) !important;
-
+        padding: 10px 20px;
 		.el-dialog__title {
 			color: #fff;
 		}
+        .el-dialog__headerbtn:focus .el-dialog__close, .el-dialog__headerbtn:hover .el-dialog__close {
+            color: #fff;
+        }
 	}
 }
 </style>
