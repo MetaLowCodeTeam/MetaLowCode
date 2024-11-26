@@ -352,10 +352,8 @@ const onSubmit = async () => {
 
 	let res;
 	// 插件存在，且flowType == 2 走复杂
-	if (
-		publicSetting.value.pluginIdList.includes("metaWorkFlow") &&
-		flowType == 2
-	) {
+	if ( flowType == 2) 
+    {
 		res = await $API.approval.detail.startComplexFlowApproval({
 			processDefId: wfProcDefId,
 			recordId: myApproval.value.recordId,

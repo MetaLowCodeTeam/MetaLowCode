@@ -216,8 +216,9 @@ let selectRefs = ref("");
 
 // 自动模拟options赋值
 let autoCurrentLabel = () => {
+ 
     nextTick(() => {
-        selectRefs.value.selected.forEach((item) => {
+        selectRefs.value.states.selected.forEach((item) => {
             item.currentLabel = item.value.name;
         });
     });
