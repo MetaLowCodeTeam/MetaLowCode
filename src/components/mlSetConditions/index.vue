@@ -897,12 +897,11 @@ export default {
         // 初始化已有字段
         initConditionList() {
             let conditionList = [];
-            this.fieldList.forEach((el) => {
-                this.conditionConf.items.forEach((subEl) => {
-                    el.showReferenceDialogFlag = false;
-                    
-                    if (el.fieldName === subEl.fieldName) {
-                        let newItem = Object.assign({ ...el }, subEl);
+            this.conditionConf.items.forEach((el) => {
+                this.fieldList.forEach((subEl) => {
+                    subEl.showReferenceDialogFlag = false;
+                    if (subEl.fieldName === el.fieldName) {
+                        let newItem = Object.assign({ ...subEl }, el);
 						this.getOpCom(newItem);
                         // 兼容老数据 如果是引用类型 且 label 为空 且 value2 有值
                         if(newItem.type == "Reference" && !newItem.refLabel && newItem.value2){
