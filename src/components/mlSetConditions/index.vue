@@ -802,6 +802,23 @@ export default {
             formatEntityName: "",
             defaultTimeLE:"",
             defaultTimeGE:"",
+            notEmptyItems: [
+                "NL",
+                "NT",
+                "SFU",
+                "SFB",
+                "SFD",
+                "SFT",
+                "YTA",
+                "TDA",
+                "TTA",
+                "CUW",
+                "CUM",
+                "CUQ",
+                "CUY",
+                "REFD",
+                "REFU",
+            ]
         };
     },
     watch: {
@@ -1013,10 +1030,13 @@ export default {
             this.errorEquation = !res;
         },
         // 确认
-        async confirm() {
+        async confirm(noVerification) {
             let { items, equation, type } = this.conditionConf;
-            if (!this.checkConditionList()) {
-                return;
+            // 如果需要进行条件校验
+            if(!noVerification) {
+                if(!this.checkConditionList()) {
+                    return;
+                }
             }
             if (type === 3 && equation) {
                 await this.checkEquation();
@@ -1045,6 +1065,10 @@ export default {
                     }
                 }
             })
+            // 如果不需要进行条件校验
+            if(noVerification) {
+                tempItems = tempItems.filter(el => (el.value !== undefined && el.value !== null && el.value !== "") || (el.value2 !== undefined && el.value2 !== null && el.value2 !== "") || this.notEmptyItems.includes(el.op))
+            }
             this.$emit("confirm", { equation, items: tempItems });
         },
         // 取消

@@ -351,8 +351,6 @@ const editAdv = (op) => {
 
 // 编辑条件调用
 const editConditionsConfirm = (e) => {
-    // console.log(e);
-    // console.log(editAdvDailog);
     saveDialog = { ...editAdvDailog };
     saveDialog.isShow = false;
     saveDialog.filter = { ...editAdvDailog.config };
@@ -391,11 +389,6 @@ const deleteConfig = (op, inx) => {
 
 // 高级查询确认
 const conditionConfirm = (e) => {
-    if (e.items < 1) {
-        // $M
-        $ElMessage.warning("请至少添加 1 个条件");
-        return;
-    }
     saveDialog.filter = { ...e };
     // console.log(executeAction, cutAction.value, "cutAction.value");
 
@@ -412,7 +405,7 @@ const conditionConfirm = (e) => {
 // 立即查询
 const queryNow = () => {
     cutAction.value = "queryNow";
-    mlSetConditionsRefs.value.confirm();
+    mlSetConditionsRefs.value.confirm(true);
 };
 // 重置
 const refresh = () => {

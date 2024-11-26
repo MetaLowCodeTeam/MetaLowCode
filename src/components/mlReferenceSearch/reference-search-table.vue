@@ -183,6 +183,23 @@ export default {
             referenceEntityNameFieldName: "",
 			// 表格多选数据
 			multipleSelection: [],
+            notEmptyItems:[
+                "NL",
+                "NT",
+                "SFU",
+                "SFB",
+                "SFD",
+                "SFT",
+                "YTA",
+                "TDA",
+                "TTA",
+                "CUW",
+                "CUM",
+                "CUQ",
+                "CUY",
+                "REFD",
+                "REFU",
+            ],
 		};
 	},
 
@@ -196,9 +213,9 @@ export default {
 		 */
 		// 执行搜索
 		onSearch(target) {
-			if (!this.$refs.mlSetConditionsRef.checkConditionList()) {
-				return;
-			}
+			// if (!this.$refs.mlSetConditionsRef.checkConditionList()) {
+			// 	return;
+			// }
 			this.conditionConf.equation = target;
 			this.loadTableTable();
 		},
@@ -246,7 +263,7 @@ export default {
 		},
 
 		loadTableTable(type) {
-			let paramStr, res;
+			let paramStr;
 			// 如果是外部表单
 			if (this.gDsv?.isExternalForm) {
 				paramStr = this.$route.query.externalId;
@@ -262,6 +279,8 @@ export default {
 				);
 			} else {
 				paramStr = this.entity;
+                let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
+                tempConditionConf.items = tempConditionConf.items.filter(el => (el.value !== undefined && el.value !== null && el.value !== "") || (el.value2 !== undefined && el.value2 !== null && el.value2 !== "") || this.notEmptyItems.includes(el.op))
 				this.refFieldQueryApi(
 					refFieldQuery2(
 						paramStr,
@@ -270,7 +289,7 @@ export default {
 						this.page.limit,
 						this.extraFilter,
 						this.filterConditions || null,
-						type == "isReset" ? null : this.conditionConf
+						type == "isReset" ? null : tempConditionConf
 					)
 				);
 			}
