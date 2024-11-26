@@ -11,10 +11,10 @@ const DEFAULT_CONFIG = {
 	//内核版本号
 	CORE_VER: "1.0.0",
 
-	//接口地址
-	API_URL: import.meta.env.VITE_NODE_ENV === 'development' && import.meta.env.VITE_APP_PROXY === 'true' ? "/api" : import.meta.env.VITE_API_SERVER,
-	SERVER_API_URL: '',
-	FILE_SERVER_URL: 'http://localhost:8080',
+	// 接口地址--废弃
+	// API_URL: import.meta.env.VITE_NODE_ENV === 'development' && import.meta.env.VITE_APP_PROXY === 'true' ? "/api" : import.meta.env.VITE_API_SERVER,
+	// SERVER_API_URL: '',
+	// FILE_SERVER_URL: 'http://localhost:8080',
 
 	//请求超时
 	//TIMEOUT: 10000,
