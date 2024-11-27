@@ -907,7 +907,7 @@ export default {
                         if(newItem.type == "Reference" && !newItem.refLabel && newItem.value2){
                             newItem.refLabel = newItem.value2;
                         }
-                        if(newItem.op == "REF"){
+                        if(newItem.op == "REF" && newItem.value2){
                             newItem.value = newItem.value2;
                             newItem.value2 = "";
                         }

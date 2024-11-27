@@ -86,6 +86,9 @@
 import { ref, watchEffect } from "vue";
 import layoutConfig from "@/api/layoutConfig";
 import { ElMessage } from "element-plus";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityInfoByName } = useCommonStore();
+
 const props = defineProps({
 	// 实体名称
 	entityName: { type: String, default: "" },
@@ -136,7 +139,26 @@ const onSearch = (command) => {
 		equation: command,
 		items: [],
 	};
-	newCompConditions.items = compConditions.value.items.filter(
+    let tempItems = JSON.parse(JSON.stringify(compConditions.value.items));
+    tempItems.forEach(el => {
+        if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
+            el.value = el.value.replace(/\s/g, '');
+        }
+        // 如果是多引用类型 且不是 为空不为空
+        if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
+            let idFieldName = queryEntityInfoByName(props.entityName).idFieldName;
+            // 如果是本人、本部门
+            if(el.op == "REFD" || el.op == "REFU"){
+                el.value = idFieldName;
+            }
+            // 如果是包含
+            if(el.op == "REF"){
+                el.value2 = el.value;
+                el.value = idFieldName;
+            }
+        }
+    })
+	newCompConditions.items = tempItems.filter(
 		(el) =>
 			(el.value !== undefined && el.value !== null && el.value !== "") ||
 			(el.value2 !== undefined && el.value2 !== null && el.value2 !== "") ||
@@ -178,7 +200,6 @@ const openDialog = () => {
 };
 // 弹框条件确认
 const conditionsConfirm = async () => {
-	//
 	let param = {
 		config: JSON.stringify({
 			isDefaultQueryPanel: false,
@@ -208,7 +229,7 @@ const conditionsConfirm = async () => {
 };
 
 watchEffect(() => {
-	compConditions.value = props.topSearchConfig.filter;
+	compConditions.value = JSON.parse(JSON.stringify(props.topSearchConfig.filter));
 	forbidUserModifyField.value = props.topSearchConfig.forbidUserModifyField;
 	hideQueryMatchType.value = props.topSearchConfig.hideQueryMatchType;
 });

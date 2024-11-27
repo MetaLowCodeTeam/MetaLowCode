@@ -33,7 +33,7 @@ export default {
 	close(tag) {
 		const route = tag || router.currentRoute.value
         removeViewTags(route);
-		removeIframeList(route)
+		// removeIframeList(route)
 		removeKeepLive(route.name)
 		const tagList = getViewTags();
 		const latestView = tagList.slice(-1)[0]

@@ -974,6 +974,12 @@ const getLayoutList = async () => {
                 calculateHeight.value = "calc(100% - 144px)"
             }
         };
+        // 如果存在快速搜索字段
+        if (res.data.SEARCH) {
+            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
+            quickQueryConf.entityCode = res.data.SEARCH.entityCode;
+            quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
+        }
         // treeGroup.value = ? ;
 
         // 如果存在默认配置，用默认配置
@@ -993,12 +999,6 @@ const getLayoutList = async () => {
             let hasFixed = tableColumn.value.filter(el => el.fixed == 'left');
             checkedColumnFixed.value = hasFixed.length > 0 ? true : false;
             refreshData();
-        }
-        // 如果存在快速搜索字段
-        if (res.data.SEARCH) {
-            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
-            quickQueryConf.entityCode = res.data.SEARCH.entityCode;
-            quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
         }
     }
 };
