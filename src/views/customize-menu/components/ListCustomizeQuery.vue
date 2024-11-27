@@ -149,8 +149,9 @@ const refreshAdvancedQuery = () => {
 	let newCompConditions = JSON.parse(JSON.stringify(compConditions.value));
 	newCompConditions.items = [];
 	compConditions.value.items.forEach((el) => {
-		el.value = "";
-		el.value2 = "";
+        el.refLabel = null;
+		el.value = null;
+		el.value2 = null;
         el.value3 = null;
 	});
 	emit("queryNow", newCompConditions);

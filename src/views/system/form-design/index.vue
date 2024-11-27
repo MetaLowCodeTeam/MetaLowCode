@@ -250,6 +250,7 @@ export default {
         this.entityLabel = this.$route.query.entityLabel;
         this.designerConfig.componentLib = !!window.advancedDevMode;
         this.designerConfig.eventCollapse = !!window.advancedDevMode;
+        this.saveAsBtnShow = !!window.advancedDevMode;
     },
     mounted() {
         this.loadDesign();
@@ -257,7 +258,7 @@ export default {
             window.advancedDevMode = !window.advancedDevMode;
             this.designerConfig.componentLib = !!window.advancedDevMode;
             this.designerConfig.eventCollapse = !!window.advancedDevMode;
-            this.saveAsBtnShow = !this.saveAsBtnShow;
+            this.saveAsBtnShow = !!window.advancedDevMode;
         });
     },
     methods: {
