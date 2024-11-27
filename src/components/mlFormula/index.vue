@@ -4,7 +4,7 @@
         <!-- 脚本类型 -->
         <div class="script-type-box mb-10" v-if="!isPreview">
             <span>脚本类型</span>
-            <el-select v-model="currentScriptType" placeholder="请选择脚本类型">
+            <el-select style="width: 240px" v-model="currentScriptType" placeholder="请选择脚本类型">
                 <el-option label="AviatorScript" value="aviator"></el-option>
                 <el-option label="Java" value="liteFlowJava"></el-option>
             </el-select>

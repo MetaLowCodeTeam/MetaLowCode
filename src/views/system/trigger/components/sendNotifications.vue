@@ -61,7 +61,7 @@
                 <el-checkbox
                     v-for="(item,inx) of typeList"
                     :key="inx"
-                    :label="item.value"
+                    :value="item.value"
                     :disabled="trigger.actionContent.userType == 2 && (item.value == 2 || item.value == 16)"
                 >
                     {{ item.label }}

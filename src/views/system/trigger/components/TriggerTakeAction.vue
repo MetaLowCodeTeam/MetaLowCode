@@ -15,7 +15,7 @@
                                 v-for="(item,inx) of actionList"
                                 :key="inx"
                             >
-                                <el-checkbox :label="item.code" :disabled="trigger.disabledActive?.includes(item.code)">
+                                <el-checkbox :value="item.code" :disabled="trigger.disabledActive?.includes(item.code)">
                                     {{ item.label }}
                                     <el-icon  
                                         class="item-tip" 

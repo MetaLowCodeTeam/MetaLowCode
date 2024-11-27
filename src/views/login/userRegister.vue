@@ -37,9 +37,9 @@
 			</el-form-item>
 			<el-form-item label="开通类别" prop="open">
 				<el-checkbox-group v-model="form.open">
-					<el-checkbox label="1">云存储API</el-checkbox>
-					<el-checkbox label="2">云检索API</el-checkbox>
-					<el-checkbox label="3">Javescript API</el-checkbox>
+					<el-checkbox value="1">云存储API</el-checkbox>
+					<el-checkbox value="2">云检索API</el-checkbox>
+					<el-checkbox value="3">Javescript API</el-checkbox>
 				</el-checkbox-group>
 			</el-form-item>
 		</el-form>
