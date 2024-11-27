@@ -4,7 +4,7 @@
         <el-input v-model="myCustomData.test"></el-input>
     </div>
     <div>
-        <el-button>自定义组件2</el-button>
+        <el-button @click="handleClick">自定义组件2</el-button>
     </div>
     <div style="height:600px;background: green">我是自定义组件</div>
 </template>
@@ -13,6 +13,8 @@
 import { ref, watch, watchEffect } from "vue";
 const props = defineProps({
 	customData: { Type: Object, default: () => {} },
+    formData: { Type: Object, default: () => {} },
+    lf: { Type: Object, default: () => {} },
 });
 const emits = defineEmits(["updateData"]);
 
@@ -34,5 +36,9 @@ watch(
 		deep: true,
 	}
 );
+
+const handleClick = () => {
+    console.log(props.lf, '自定义组件2')
+}
 </script>
 <style lang="scss" scoped></style>

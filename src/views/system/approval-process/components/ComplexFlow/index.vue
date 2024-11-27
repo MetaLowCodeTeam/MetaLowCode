@@ -66,6 +66,7 @@
                 <ServiceTask
                     v-if="drawerData.type == 'bpmn:serviceTask'"
                     :formData="drawerData.formData"
+                    :lf="MetaFlowDesignerRef"
                     @setNodeData="setNodeData"
                 />
                 <!-- 中间事件节点 -->

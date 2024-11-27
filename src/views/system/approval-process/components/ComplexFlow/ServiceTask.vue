@@ -25,6 +25,8 @@
 		v-if="myFormData.selectComp"
 		:is="myFormData.selectComp"
 		:customData="myFormData.customData"
+        :formData="myFormData"
+        :lf="lf"
         @updateData="updateCustomData"
 	></component>
 </template>
@@ -37,6 +39,7 @@ import { customServiceTaskCmpMapping } from "./customServiceTaskCmp";
 
 const props = defineProps({
 	formData: { Type: Object, default: () => {} },
+    lf: { Type: Object, default: () => {} },
 });
 const emits = defineEmits(["setNodeData"]);
 
