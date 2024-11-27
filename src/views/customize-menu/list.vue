@@ -1064,7 +1064,7 @@ const refreshData = () => {
         sortFields.value = [...defaultSortFields.value];
     }
     // 如果有高级查询
-    if (advFilter.value != "all") {
+    if (advFilter.value != "all" && typeof advFilter.value == 'string') {
         let filterAdvancedFilter = advancedFilter.value.filter(
             (el) => el.layoutConfigId == advFilter.value
         );
