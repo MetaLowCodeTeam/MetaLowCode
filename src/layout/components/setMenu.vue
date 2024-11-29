@@ -446,6 +446,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 import { VueDraggableNext } from "vue-draggable-next";
 import { Select, Finished } from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
 
 // 弹框是否显示
 let isShow = ref(false);
@@ -830,22 +831,27 @@ const getMenuInx = (array, guid) => {
 
 // 删除菜单
 const delMenu = (menu, inx, subInx) => {
-	// 父级菜单删除
-	if (!menu.parentGuid) {
-		menuData.list.splice(inx, 1);
-	}
-	// 子级菜单删除
-	else {
-		menuData.list[inx].children.splice(subInx, 1);
-	}
-	// 如果删除的是当前选中
-	if (
-		cutMenu.value &&
-		cutMenu.value.guid &&
-		menu.guid == cutMenu.value.guid
-	) {
-		cutMenu.value = null;
-	}
+    ElMessageBox.confirm('是否确认删除？', "提示：").then(() => {
+        // 父级菜单删除
+        if (!menu.parentGuid) {
+            menuData.list.splice(inx, 1);
+        }
+        // 子级菜单删除
+        else {
+            menuData.list[inx].children.splice(subInx, 1);
+        }
+        // 如果删除的是当前选中
+        if (
+            cutMenu.value &&
+            cutMenu.value.guid &&
+            menu.guid == cutMenu.value.guid
+        ) {
+            cutMenu.value = null;
+        }
+    }).catch(() => {
+        return;
+    })
+	
 };
 
 /**
@@ -896,7 +902,6 @@ const layoutSave = async () => {
 			el.entityName = "parentMenu";
 		}
 	});
-
 	menuData.config = JSON.stringify(newMenuList);
 	let param = {};
 	// 检测数据有没变化
@@ -920,66 +925,49 @@ const layoutSave = async () => {
 	let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
 	if (res) {
 		router.go(0);
-		// 如果默认选中导航就是当前修改导航 并且 如果数据有变化
-		// if (
-		// 	chosenNavigationId.value &&
-		// 	chosenNavigationId.value == menuData.layoutConfigId &&
-		// 	$TOOL.checkIsEdit(sourceData.config, menuData.config)
-		// ) {
-		// 	router.go(0);
-		// } else {
-		// 	getNavigationApi();
-		// 	isShow.value = false;
-		// }
 	}
 	loading.value = false;
 };
 
 // 格式化菜单数据
 const formatMenuList = () => {
-	let saveMenu = [];
-	// 循环菜单
-	menuData.list.forEach((el) => {
-		// 必须存在关联或者外部链接才是菜单
-		if (
-			el.formId ||
+    let saveMenu = [];
+    // 循环菜单
+    menuData.list.forEach((el) => {
+        // 必须存在关联或者外部链接才是菜单
+        if (
+            el.formId ||
             el.chartId ||
-			el.entityCode ||
-			el.outLink ||
-			(el.children && el.children.length > 0)
-		) {
-			let isMenu = { ...el };
-			// 如果存在子节点
-			if (el.children && el.children.length > 0) {
-				isMenu.children = [];
-				el.children.forEach((subEl) => {
-					// 子节点也必须存在关联或者外部链接才是菜单
-					if (subEl.entityCode || subEl.outLink || subEl.chartId) {
-						isMenu.children.push(subEl);
-					}
-				});
-			}
-			saveMenu.push(isMenu);
-		}
-	});
-	saveMenu.forEach((el, inx) => {
-		if (
-			el.entityCode == "parentMenu" &&
-			(!el.children || el.children.length < 1)
-		) {
-			saveMenu.splice(inx, 1);
-		}
-		if (
-            !el.formId &&
-			!el.chartId &&
-			!el.entityCode &&
-			!el.outLink &&
-			el.children.length < 1
-		) {
-			saveMenu.splice(inx, 1);
-		}
-	});
-	return saveMenu;
+            el.entityCode ||
+            el.outLink ||
+            (el.children && el.children.length > 0)
+        ) {
+            let isMenu = { ...el };
+            // 如果存在子节点
+            if (el.children && el.children.length > 0) {
+                isMenu.children = [];
+                el.children.forEach((subEl) => {
+                    // 子节点也必须存在关联或者外部链接才是菜单
+                    if (
+                        subEl.formId ||
+                        subEl.chartId ||
+                        subEl.entityCode ||
+                        subEl.outLink ||
+                        (subEl.children && subEl.children.length > 0)
+                    ) {
+                        isMenu.children.push(subEl);
+                    }
+                });
+            }
+            saveMenu.push(isMenu);
+        }
+    });
+    saveMenu.forEach((el, inx) => {
+        if(el.entityCode == "parentMenu" && (!el.children || el.children.length < 1) ){
+            saveMenu.splice(inx,1);
+        }
+    })
+    return saveMenu;
 };
 // 禁止在移动端显示
 let disabledMobileShow = ref(false);
