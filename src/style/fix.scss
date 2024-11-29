@@ -201,6 +201,7 @@
 	font-size: 12px;
 }
 
+
 .aminui-side-split li.active {
 	background-color: var(--el-color-primary);
 }
@@ -430,7 +431,9 @@ body .tox-tinymce-aux {
 	border-color: #f56c6c !important;
 	background: #fafafa !important;
 }
-
+.el-select {
+    min-width: 240px;
+}
 .el-select__popper {
 	z-index: 6001 !important;
 }
