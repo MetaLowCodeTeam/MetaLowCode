@@ -214,6 +214,7 @@ const props = defineProps({
 	// 查询接口
 	queryUrl: { type: String, default: "" },
 	equation: { type: String, default: "OR" },
+    advFilter: { type: Object, default: () => {} },
 });
 let loading = ref(false);
 
@@ -268,7 +269,14 @@ const sortChange = (column) => {
 // 获取表格数据
 async function getTableList() {
 	loading.value = true;
-	let { mainEntity, fieldsList, fieldName, filterItems, equation } = props;
+	let { 
+        mainEntity, 
+        fieldsList, 
+        fieldName, 
+        filterItems, 
+        equation, 
+        advFilter 
+    } = props;
 	let param = {
 		mainEntity,
 		fieldsList,
@@ -279,17 +287,21 @@ async function getTableList() {
 			items: [],
 		},
 		sortFields: listColumnSort.value,
+        advFilter,
 	};
 	param.filter.items = filterItems.map((el) => {
 		el.value = el.value ? el.value : keyword.value;
 		return el;
 	});
 	if (keyword.value) {
-		param.filter.items.unshift({
-			fieldName,
-			op: "LK",
-			value: keyword.value,
-		});
+        let newFieldName = fieldName.split(",");
+        newFieldName.forEach(el => {
+            param.filter.items.unshift({
+                fieldName: el,
+                op: "LK",
+                value: keyword.value,
+            });
+        });
 	}
 	let res;
 	if (props.queryUrl) {
@@ -318,7 +330,8 @@ async function getTableList() {
 				param.filter,
 				param.pageSize,
 				param.pageNo,
-				param.sortFields
+				param.sortFields,
+                param.advFilter
 			);
 		}
 	}

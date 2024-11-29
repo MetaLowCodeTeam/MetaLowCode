@@ -84,9 +84,9 @@
                 :mainEntity="entity"
                 :fieldsList="fieldsList"
                 :sortFields="sortFields"
-                fieldName="userName"
+                fieldName="userName,loginName,mobilePhone"
                 :tableColumn="tableColumn"
-                :filterItems="filterItems"
+                :advFilter="advFilter"
                 @highlightClick="highlightClick"
                 @changeSwitch="changeSwitch"
             >
@@ -250,7 +250,7 @@ export default {
                 },
             ],
             // 过滤条件
-            filterItems: [],
+            advFilter: {},
             // 表格列
             tableColumn: [
                 {
@@ -368,7 +368,7 @@ export default {
         // 重置
         resetting() {
             this.node = {};
-            this.filterItems = [];
+            this.advFilter = null;
             this.$nextTick(() => {
                 this.$refs.mlSingleListRef.keyword = "";
                 this.onRefresh();
@@ -377,13 +377,16 @@ export default {
         // 节点点击
         nodeClick(node) {
             this.node = node;
-            this.filterItems = [
-                {
-                    fieldName: "departmentId",
-                    op: "EQ",
-                    value: node.id,
-                },
-            ];
+            this.advFilter = {
+                equation: "OR",
+                items: [
+                    {
+                        fieldName: "departmentId",
+                        op: "EQ",
+                        value: node.id,
+                    },
+                ],
+            };
             this.$nextTick(() => {
                 this.onRefresh();
             });

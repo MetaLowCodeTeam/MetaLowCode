@@ -52,6 +52,11 @@ export default [
                 type: "switch",
             },
             {
+                label: "备份命令地址",
+                key: "databaseDumpPath",
+                type: "input",
+            },
+            {
                 label: "备份周期",
                 key: "backupCycle",
                 required: true,

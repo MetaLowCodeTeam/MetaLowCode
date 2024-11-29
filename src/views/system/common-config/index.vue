@@ -22,7 +22,7 @@
                                     <span v-else>{{ confData[item.key] }}</span>
                                 </div>
                                 <!-- 输入框 -->
-                                <div v-else-if="item.type == 'input' || item.type == 'passwordInput'">
+                                <div v-else-if="(item.type == 'input' || item.type == 'passwordInput')">
                                     <el-input
                                         :class="{'is-error':item.isError}"
                                         @focus="item.isError = false"
@@ -70,7 +70,8 @@
                                     >
                                         <el-switch v-model="confData[item.key]" disabled />
                                     </el-tooltip>
-                                    <el-switch v-else @change="openStatusChange(item)" v-model="confData[item.key]" />
+                                    <el-switch v-else-if="item.key == 'autoBackup'" :beforeChange="openAutoBackup" v-model="confData[item.key]" />
+                                    <el-switch v-else v-model="confData[item.key]" />
                                     <span class="info-text ml-10" v-if="item.subLabel">{{ item.subLabel }}</span>
                                 </div>
                                 <!-- 颜色选择器 -->
@@ -305,6 +306,9 @@ const initData = async () => {
         }
         return el;
     });
+    if(publicSetting.value.dataBaseType == "mysql"){
+        confList.value[0].confs.splice(8,1);
+    }
     loading.value = true;
     let res = await getSettingInfo();
     if (res) {
@@ -417,6 +421,10 @@ const initData = async () => {
         confData.mobileTableStyleType = confData.mobileTableStyleType || 'list';
         // 初始化工作台展示样式
         confData.mobileStagingStyleType = confData.mobileStagingStyleType || 'pane';
+        // 初始化数据备份
+        if(publicSetting.value.dataBaseType != "mysql" && !confData.databaseDumpPath){
+            confData.autoBackup = false;
+        }
     }
     loading.value = false;
 };
@@ -816,14 +824,16 @@ const getHeavyTaskApi2 = async () => {
 
 // 
 
-// 启用服务
-const openStatusChange = (item) => {
-
-    // return false
-    // // 如果是开启钉钉
-    // if(item.key == 'dingTalkOpen'){
-        
-    // }
+// 数据自动备份
+const openAutoBackup = () => {
+    return new Promise((resolve) => {
+        if( publicSetting.value.dataBaseType != "mysql" && !confData.databaseDumpPath){
+            confList.value[0].confs[8].isError = true
+            ElMessage.error("请填写备份命令地址")
+            return resolve(false)
+        }
+        return resolve(true)
+    })
 }
 
 // 页签显示
