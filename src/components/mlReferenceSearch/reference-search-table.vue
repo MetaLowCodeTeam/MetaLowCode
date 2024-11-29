@@ -441,7 +441,8 @@ export default {
         // 新建
         onAdd() {
             this.$refs.editRefs?.openDialog({
-                entityName: this.referenceEntityName
+                entityName: this.referenceEntityName,
+                dialogConf: { showFullScreen: true },
             })
         },
         // 查询实体Code
