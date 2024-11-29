@@ -215,6 +215,7 @@
                     class="m-2"
                     placeholder="(可选)"
                     clearable
+                    style="width: 240px"
                 >
                     <el-option
                         v-for="item in getCallbackFieldOptions()"
