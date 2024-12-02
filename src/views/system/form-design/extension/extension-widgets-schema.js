@@ -37,7 +37,6 @@ export const listSubFormSchema = {
         paginationSize: 20,
         // 列表高度 - 默认294 空状态的高度
         listSubFormHeight: 294,
-
     },
 };
 
@@ -69,7 +68,9 @@ export const checkTagSchema = {
 		labelKey: 'label',
 		valueKey: 'value',
 		optionValueType: '',
-        showCheckbox: false, // 是否显示勾选框
+        showCheckbox: false, // 是否显示为勾选框
+        showBorder: false, // 是否显示边框
+        showButton: false, // 是否显示为按钮
 		optionItems: [
 			{label: 'check 1', value: 1},
 			{label: 'check 2', value: 2},

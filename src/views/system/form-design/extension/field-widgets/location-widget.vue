@@ -513,7 +513,7 @@ export default {
 
 <style lang="scss">
 .small-padding-dialog .el-dialog__body {
-	padding: 0 10px 10px 10px !important;
+	padding: 10px !important;
 }
 
 .readonly-mode-field {

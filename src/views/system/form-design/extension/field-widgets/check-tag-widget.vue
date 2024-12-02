@@ -11,13 +11,29 @@
 		:sub-form-col-index="subFormColIndex"
 		:sub-form-row-id="subFormRowId"
 	>
-        <template v-if="field.options.showCheckbox && !isReadMode">
+        <template v-if="field.options.showButton && !isReadMode">
+            <el-checkbox-group 
+                v-model="checkboxGroup"
+                @change="onCheckboxGroupChange"
+            >
+                <el-checkbox-button 
+                    v-for="(item,inx) of options"
+                    :key="inx"
+                    :value="item.label"
+                >
+                    {{ item.label }}
+                </el-checkbox-button>
+            </el-checkbox-group>
+        </template>
+
+        <template v-else-if="field.options.showCheckbox && !isReadMode">
             <el-checkbox 
                 v-for="(item,inx) of options"
                 :Key="inx"
                 v-model="item.checked" 
                 :label="item.label" 
                 :disabled="field.options.disabled"
+                :border="field.options.showBorder"
                 @change="onCheckboxChange"
             />
         </template>
@@ -95,6 +111,7 @@ export default {
 			fieldModel: null,
 			rules: [],
             options: [],
+            checkboxGroup: [],
 		};
 	},
 	computed: {
@@ -127,8 +144,12 @@ export default {
 
 	methods: {
         initOptionsChecked(){
+            this.checkboxGroup = [];
             this.options = this.field.options.optionItems.map(el => {
                 let newValue = el.label || el.value;
+                if(this.fieldModel && this.fieldModel.split(",").includes(newValue)) {
+                    this.checkboxGroup.push(newValue);
+                }
                 return {
                     value: newValue,
                     label: newValue,
@@ -247,6 +268,11 @@ export default {
                 }
             });
             this.fieldModel = selected.join(",");
+            this.handleChangeEvent(this.fieldModel);
+        },
+        // 多选组件切换
+        onCheckboxGroupChange(){
+            this.fieldModel = this.checkboxGroup.join(",");
             this.handleChangeEvent(this.fieldModel);
         }
 	},

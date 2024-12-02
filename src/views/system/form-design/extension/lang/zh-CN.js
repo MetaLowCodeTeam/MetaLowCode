@@ -47,6 +47,10 @@ export default {
             treeDataDialogConfirm: "确认",
 			// 地图定位组件
 			positionSelectable: '允许用户自选位置',
+
+            showBorder: "显示为边框",
+            borderInfo: "勾选框启用后，边框才可生效",
+            showButton: "显示为按钮",
         },
 
     }
