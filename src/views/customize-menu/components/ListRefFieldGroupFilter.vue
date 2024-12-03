@@ -37,6 +37,9 @@ const nodeCheckChange = (list) => {
 };
 
 const nodeClick = (node) => {
+    if(props.treeGroupConf.isMultiple){
+        return
+    }
     if(node){
         ElMessage.success('已过滤数据')
         formatTreeData([node])
