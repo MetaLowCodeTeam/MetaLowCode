@@ -3,7 +3,7 @@
         ref="mlEntityMenuAndListRef"
         entityName="ReportConfig"
         activeId="reportConfigId"
-        fieldsList="reportName,entityCode,isDisabled,modifiedOn,modifiedBy,createdOn,pdfWatermark"
+        fieldsList="reportName,entityCode,isDisabled,modifiedOn,modifiedBy,createdOn,pdfWatermark,filterJson,shareTo"
         @goDetail="goDetail"
         :checkCodes="['reportName']"
         :codeErrMsg="['请输入模板名称']"
@@ -65,7 +65,7 @@ let tableColumn = ref([
         prop: "modifiedOn",
         label: "修改时间",
         align: "center",
-        width: 100,
+        width: 160,
         fromNow: true,
     },
 ]);

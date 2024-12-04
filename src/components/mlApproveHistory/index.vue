@@ -249,6 +249,7 @@ const getTaskDetailsById = async () => {
     })
     if(res) {
         approveHistory.value = formatResData(res.data.approvalStepsList);
+        isComplexWorkFlow.value = res.data.flowType == 2;
     }
     loading.value = false;
 }

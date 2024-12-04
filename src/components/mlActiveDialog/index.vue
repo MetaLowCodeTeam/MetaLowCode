@@ -12,6 +12,7 @@
                     :placeholder="dialogForm.fromEntityLabel"
                     style="width: 80%;"
                     filterable
+                    @change="entityCodeChange"
                 >
                     <el-option
                         :label="op.label"
@@ -63,6 +64,19 @@
                     v-model="dialogForm.form[item.code]"
                     style="width: 80%;"
                 ></el-input>
+            </el-form-item>
+            <!-- 使用条件 -->
+            <el-form-item 
+                label="使用条件"
+                v-if="dialogForm.saveEntity == 'ReportConfig'"
+            >
+                <SetConditionsDialog 
+                    title="附加过滤条件"
+                    :conditionConf="dialogForm.form.filterJson"
+                    :entityName="queryEntityNameByCode(dialogForm.form.entityCode)"
+                    :beforeOpenDialog="beforeOpenConditionsDialog"
+                    @confirm="conditionConfirm"
+                />
             </el-form-item>
             <el-form-item label="绑定用户" v-if="dialogForm.saveEntity == 'ExternalForm'">
                 <mlSelectUser
@@ -126,11 +140,18 @@
                     水印设置
                 </span>
             </el-form-item>
-            <el-form-item>
-                <el-button @click="saveProcess" type="primary">保存</el-button>
-                <el-button @click="isShow = false">取消</el-button>
-            </el-form-item>
         </el-form>
+        <template #footer>
+            <div 
+                class="fl pl-20" 
+                style="font-size: 14px;text-align: left;"
+                v-if="dialogForm.saveEntity == 'ReportConfig'"
+            >
+                <mlShareTo v-model="dialogForm.form.shareTo" />
+            </div>
+            <el-button @click="saveProcess" type="primary" :loading="loading">保存</el-button>
+            <el-button @click="isShow = false" :loading="loading">取消</el-button>
+        </template>
     </ml-dialog>
     <SetWatermark ref="SetWatermarkRefs" @confirm="confirmSetWatermark"/>
 </template>
@@ -142,10 +163,14 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 // 水印设置组件
 import SetWatermark from './components/setWatermark.vue';
+// 条件弹框
+import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 import { getTagItems } from "@/api/system-manager";
+import mlShareTo from "@/components/mlShareTo/index.vue";
 const { unSystemEntityList, processEntityList, publicSetting } = storeToRefs(
     useCommonStore()
 );
+const { queryEntityNameByCode } = useCommonStore();
 const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 let props = defineProps({
@@ -219,6 +244,12 @@ const openDialog = (data) => {
     if(saveEntity == 'ReportConfig' && form.pdfWatermark) {
         form.pdfWatermark = JSON.parse(form.pdfWatermark)
     }
+    if(!form.shareTo) {
+        form.shareTo = "ALL";
+    }
+    if(form.filterJson) {
+        form.filterJson = JSON.parse(form.filterJson);
+    }
     isShow.value = true;
 };
 
@@ -231,7 +262,16 @@ const saveProcess = async () => {
         checkCodes, 
         codeErrMsg,
     } = dialogForm.value;
-    let { entityCode, isDisabled, actionType, flowType, pdfWatermark, configTag } = form;
+    let { 
+        entityCode, 
+        isDisabled, 
+        actionType, 
+        flowType, 
+        pdfWatermark, 
+        configTag,
+        filterJson,
+        shareTo
+    } = form;
     if (type == "add" && saveEntity == "ExternalForm" && !entityCode) {
         message.error("请选择源实体");
         return;
@@ -257,7 +297,9 @@ const saveProcess = async () => {
         entityCode,
         isDisabled: isDisabled ? isDisabled : false,
         pdfWatermark: JSON.stringify(pdfWatermark),
-        configTag: configTag || null
+        configTag: configTag || null,
+        filterJson: JSON.stringify(filterJson),
+        shareTo
     };
     checkCodes.forEach((el) => {
         params[el] = form[el];
@@ -323,6 +365,35 @@ const flowTypeChange = async () => {
 
 }
 
+/***
+ *  ****************************************** 过滤条件相关 beg
+ */
+
+// 切换实体
+const entityCodeChange = () => {
+    dialogForm.value.form.filterJson = {
+        equation: 'OR',
+        items: [],
+    };
+}
+
+// 打开弹框前
+const beforeOpenConditionsDialog = () => {
+    if(!dialogForm.value.form.entityCode) {
+        message.error('请选择应用实体');
+        return false;
+    }
+    return true;
+}
+
+// 确认条件
+const conditionConfirm = (v) => {
+    dialogForm.value.form.filterJson = v;
+}
+
+/***
+ *  ****************************************** 过滤条件相关 end
+ */
 defineExpose({
     openDialog,
     dialogForm,
@@ -336,3 +407,4 @@ defineExpose({
     }
 }
 </style>
+

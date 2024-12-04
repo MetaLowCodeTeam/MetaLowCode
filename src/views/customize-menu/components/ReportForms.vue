@@ -19,12 +19,16 @@
 					:key="inx"
 				>
 					{{ item.reportName }}
-					<span class="down-icon excel" @click="downReport(item)" v-if="defaultShow == 'ALL'">
-						<SvgIcon icon-name="export-excel" />
-					</span>
-                    <span class="down-icon pdf" @click="downPdf(item)" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
-						<SvgIcon icon-name="export-pdf" />
-					</span>
+                    <el-tooltip content="Excel" placement="bottom">
+                        <span class="down-icon excel" @click="downReport(item)" v-if="defaultShow == 'ALL'">
+                            <SvgIcon icon-name="export-excel" style="width: 23px;height: 23px;" />
+                        </span>
+                    </el-tooltip>
+                    <el-tooltip content="PDF" placement="bottom">
+                        <span class="down-icon pdf" @click="downPdf(item)" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+                            <SvgIcon icon-name="export-pdf" style="width: 22px;height: 22px;"/>
+                        </span>
+                    </el-tooltip>
 				</div>
 			</el-scrollbar>
 		</div>
@@ -67,6 +71,7 @@ const getReportConfigList = async () => {
 	loading.value = true;
 	let res = await http.get("/plugins/mannerReport/getReportConfigList", {
 		entityCode: entityCode.value,
+        recordId: detailId.value,
 	});
 	if (res) {
 		reportList.value = res.data || [];
@@ -146,13 +151,12 @@ defineExpose({
 	padding-right: 60px;
 	.down-icon {
 		position: absolute;
-		font-size: 16px;
+		font-size: 18px;
 		cursor: pointer;
         &.excel {
-            right: 32px;
+            right: 34px;
         }
         &.pdf {
-            top: 1px;
             right: 8px;
         }
 		&:hover {
