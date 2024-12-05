@@ -463,6 +463,12 @@ body .tox-tinymce-aux {
 	}
 }
 
+.el-input.no-border {
+    .el-input__wrapper {
+        box-shadow: none !important;
+    }
+}
+
 .fields-popover {
 	padding: 0 !important;
 	.popover-div {

@@ -6,6 +6,9 @@
         <el-aside width="280px">
             <div class="fields-list">
                 <div class="fields-list-header">实体列表</div>
+                <div class="fields-list-search">
+                    <el-input v-model="searchValue" class="no-border" placeholder="输入关键词进行搜索..." clearable/>
+                </div>
                 <div class="fields-list-box">
                     <el-scrollbar>
                         <div
@@ -19,7 +22,7 @@
                         >全部实体</div>
                         <div
                             class="fields-list-item text-ellipsis"
-                            v-for="(field,inx) of entityList"
+                            v-for="(field,inx) of entityList.filter(el => allEntityLabel[el.entityCode].indexOf(searchValue) > -1)"
                             :key="inx"
                             :class="{'is-active':field.entityCode == defaultCode}"
                             @click="fieldCheck(field)"
@@ -260,6 +263,8 @@ let tableSort = ref([
         type: "DESC",
     },
 ]);
+
+let searchValue = ref("");
 
 onMounted(() => {
     // console.log(defaultCode.value,'defaultCode.value')
@@ -544,10 +549,16 @@ defineExpose({
         border-bottom: 1px dashed #eeeeee;
         padding-left: 20px;
     }
+    .fields-list-search {
+        padding: 5px 10px;
+        height: 42px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #eeeeee;
+    }
     .fields-list-box {
-        height: calc(100% - 80px);
+        height: calc(100% - 97px);
         overflow-y: auto;
-        padding: 10px 20px;
+        // padding: 10px 20px;
         font-size: 14px;
         .fields-list-item {
             height: 36px;

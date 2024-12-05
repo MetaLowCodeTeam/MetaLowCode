@@ -970,7 +970,10 @@ export default {
 	.el-dialog__header {
 		margin: 0;
 		background-color: var(--el-color-primary) !important;
-        padding: 10px 20px;
+        padding: 0px 20px;
+        height: 60px;
+        line-height: 66px;
+        box-sizing: border-box;
 		.el-dialog__title {
 			color: #fff;
 		}

@@ -265,13 +265,14 @@ let sendToFields = ref([]);
 let formFields = ref([]);
 const getCutEntityFields = async () => {
     contentLoading.value = true;
-    let res = await queryEntityFields(trigger.value.entityCode, true, true, true);
+    let res = await queryEntityFields(trigger.value.entityCode, true, true, true, true);
     if (res) {
         cutEntityFields.value = res.data;
         sendToFields.value = res.data.filter((el) => el.fieldType == "Text");
         let formReferenceName = ["User", "Department", "Role", "Team"];
         formFields.value = res.data.filter((el) => {
-            return el.fieldType == "Reference" && formReferenceName.includes(el.referenceName)
+            return el.fieldType == "Reference" && formReferenceName.includes(el.referenceName) ||
+                el.fieldType == "ReferenceList" && formReferenceName.includes(el.referenceName)
         });
         let querySendStateRes = await $API.trigger.detail.querySendState();
         if(querySendStateRes){

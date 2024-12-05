@@ -178,7 +178,7 @@ let approvalList = ref([]);
 let approvalDialog = reactive({
 	isShow: false,
 	loading: false,
-	approvalConfig: {},
+	approvalConfig: "",
 });
 
 // 打开弹框

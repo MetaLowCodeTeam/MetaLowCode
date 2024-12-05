@@ -188,30 +188,55 @@
                 </el-form-item>
             </el-form>
         </el-main>
-
-        <el-dialog
-            ref="selectMainEntityDlg"
-            title="选择主实体"
-            v-model="showMainEntityDialogFlag"
-            :append-to-body="true"
-            class="no-padding"
-            width="560px"
-        >
+    </el-container>
+    <ml-dialog
+        title="选择主实体"
+        v-model="showMainEntityDialogFlag"
+        width="560px"
+        append-to-body
+        body-no-padding
+    >
+        <div style="height: 500px;">
+            <div class="main-entity-search-box">
+                <el-input 
+                    v-model="mainEntitySearchValue" 
+                    placeholder="输入关键词进行搜索..." 
+                    clearable
+                    class="input-with-select"
+                >
+                    <template #prepend>
+                        <el-select 
+                            v-model="searchTag" 
+                            style="width: 100px"
+                        >
+                            <el-option label="全部标签" value="全部标签" />
+                            <el-option label="未分组" value="未分组" />
+                            <el-option 
+                                v-for="(op,inx) of myEntityProps.useTag" 
+                                :key="inx" 
+                                :label="op.name" 
+                                :value="op.name" 
+                            />
+                        </el-select>
+                    </template>
+                </el-input>
+            </div>
             <SimpleTable
                 :show-pagination="false"
                 :show-check-box="false"
                 :table-size="'small'"
                 :columns="columns"
                 :show-operation-column="true"
-                :data="tableData"
+                :data="formatTableData()"
                 :max-height="420"
             >
                 <template #table_operation="{scope}">
                     <el-button class icon="el-icon-check" @click="selectMainEntity(scope.row)">选择</el-button>
                 </template>
             </SimpleTable>
-        </el-dialog>
-    </el-container>
+        </div>
+        
+    </ml-dialog>
 </template>
 
 <script setup>
@@ -250,6 +275,7 @@ let copyEntiytSelectedType = ref([0]);
 
 onMounted(() => {
     myEntityProps.value = props.entityProps;
+    console.log(myEntityProps.value,'myEntityProps.value')
 });
 
 let rules = ref({
@@ -278,16 +304,22 @@ let rules = ref({
 let showMainEntityDialogFlag = ref(false);
 let mainEntityName = ref("");
 let columns = ref([
-    { prop: "name", label: "实体名称", width: "150", align: "center" },
+    { prop: "name", label: "实体名称", align: "center" },
     {
         prop: "label",
         label: "显示名称",
-        width: "200",
+        align: "center",
+    },
+    {
+        prop: "tags",
+        label: "标签",
         align: "center",
     },
 ]);
 
 let tableData = ref([]);
+let searchTag = ref('全部标签');
+let mainEntitySearchValue = ref("");
 
 const onToggleDetailEntityFlag = (val) => {
     if (!!val) {
@@ -301,13 +333,28 @@ const showEntityListDialog = () => {
     if (!myEntityProps.value.detailEntityFlag) {
         return;
     }
-
     if (!!props.filterEntityMethod) {
         props.filterEntityMethod(tableData.value, () => {
             showMainEntityDialogFlag.value = true;
         });
     }
 };
+
+const formatTableData = () => {
+    let newData;
+    if(searchTag.value == '全部标签'){
+        newData = JSON.parse(JSON.stringify(tableData.value));
+    }else if(searchTag.value == '未分组'){
+        newData = tableData.value.filter(el => el.tags.length == 0);
+    }else{
+        newData = tableData.value.filter(el => el.tags.indexOf(searchTag.value) != -1);
+    }
+    return newData.filter(
+        el => 
+            el.name.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1 || 
+            el.label.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1 
+    )
+}
 
 const selectMainEntity = (row) => {
     if (!!row) {
@@ -417,6 +464,14 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+.main-entity-search-box {
+    padding: 0px 15px;
+    padding-top: 15px;
+    box-sizing: border-box;
+    :deep(.input-with-select .el-input-group__prepend) {
+        background-color: var(--el-fill-color-blank);
+    }
+}
 .button-new-tag {
     height: 30px;
     float: left;

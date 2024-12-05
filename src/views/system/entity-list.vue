@@ -4,13 +4,33 @@
         <el-header class="entity-action-section">
             实体列表
             <div style="float: right">
-                <mlSearchInput
-                    v-model="keyword"
-                    placeholder="查询"
-                    @confirm="filterEntityList"
-                    @onInput="filterEntityList"
-                    style="margin-right: 10px;"
-                />
+                <div class="entity-search-wrapper">
+                    <el-input
+                        v-model="keyword"
+                        style="max-width: 600px"
+                        placeholder="输入关键词搜索..."
+                        class="input-with-select"
+                        clearable
+                        @input="filterEntityList"
+                    >
+                        <template #prepend>
+                            <el-select 
+                                v-model="searchTag" 
+                                style="width: 100px"
+                                @change="filterEntityList"
+                            >
+                                <el-option label="全部标签" value="全部标签" />
+                                <el-option label="未分组" value="未分组" />
+                                <el-option 
+                                    v-for="(op,inx) of allTags" 
+                                    :key="inx" 
+                                    :label="op" 
+                                    :value="op" 
+                                />
+                            </el-select>
+                        </template>
+                    </el-input>
+                </div>
                 <el-button type="primary" @click="createNewEntity('create')">
                     <i class="el-icon-plus"></i>&nbsp;新建实体
                 </el-button>
@@ -18,7 +38,7 @@
         </el-header>
         <el-main class="card-container" v-loading="loading">
             <el-collapse v-model="activeNames" class="collapse-entity">
-                <el-collapse-item name="未分组">
+                <el-collapse-item name="未分组" v-if="(searchTag == '未分组' || searchTag == '全部标签') && notGroup.length > 0">
                     <template #title>
                         <div class="collapse-title">
                             <span class="collapse-icon">
@@ -39,82 +59,82 @@
                     >
                         <template #header>
                             <div>
-								<span>{{ entityItem.label }}</span>
+                                <span>{{ entityItem.label }}</span>
                             </div>
                         </template>
-						<div class="entity-flag-wrapper">
-							<span v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
-										<i title="系统实体">系</i>
-									</span>
-							<span v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
-										<i title="主实体">主</i>
-									</span>
-							<span v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
-										<i title="明细实体">从</i>
-									</span>
-							<span v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
-										<i title="内部实体">内</i>
-									</span>
-						</div>
+                        <div class="entity-flag-wrapper">
+                            <span v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
+                                        <i title="系统实体">系</i>
+                                    </span>
+                            <span v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
+                                        <i title="主实体">主</i>
+                                    </span>
+                            <span v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
+                                        <i title="明细实体">从</i>
+                                    </span>
+                            <span v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
+                                        <i title="内部实体">内</i>
+                                    </span>
+                        </div>
                         <div>{{ entityItem.name }}</div>
-						<div class="entity-menu-icon">
-							<el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
-								<el-icon title="显示菜单"><Tools /></el-icon>
-								<template #dropdown>
-									<!-- 明细实体 -->
-									<template v-if="!entityItem.detailEntityFlag">
-										<el-dropdown-menu>
-											<el-dropdown-item v-if="checkRole('r6001')" command="c10">
-												<el-icon><Memo /></el-icon>字段管理
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6003')" command="c20">
-												<el-icon><Postcard /></el-icon>表单设计
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6008') && !entityItem.systemEntityFlag"
-															  command="c30">
-												<el-icon><ScaleToOriginal /></el-icon>列表设计
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6016') && !entityItem.systemEntityFlag"
-															  command="c40" divided>
-												<el-icon><Share /></el-icon>流程设计
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6015') && !entityItem.systemEntityFlag"
-															  command="c50">
-												<el-icon><Link /></el-icon>触发器设计
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r45-2') && !entityItem.systemEntityFlag"
-															  command="c60">
-												<el-icon><Files /></el-icon>报表设计
-											</el-dropdown-item>
-											<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
-												<el-icon><CopyDocument /></el-icon>复制实体
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
-															  command="c80">
-												<el-icon><Delete /></el-icon>删除实体
-											</el-dropdown-item>
-										</el-dropdown-menu>
-									</template>
-									<template v-else>
-										<el-dropdown-menu>
-											<el-dropdown-item v-if="checkRole('r6001')" command="c10">
-												<el-icon><Memo /></el-icon>字段管理
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6003')" command="c20">
-												<el-icon><Postcard /></el-icon>表单设计
-											</el-dropdown-item>
-											<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
-												<el-icon><CopyDocument /></el-icon>复制实体
-											</el-dropdown-item>
-											<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
-															  command="c80">
-												<el-icon><Delete /></el-icon>删除实体
-											</el-dropdown-item>
-										</el-dropdown-menu>
-									</template>
-								</template>
-							</el-dropdown>
-						</div>
+                        <div class="entity-menu-icon">
+                            <el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
+                                <el-icon title="显示菜单"><Tools /></el-icon>
+                                <template #dropdown>
+                                    <!-- 明细实体 -->
+                                    <template v-if="!entityItem.detailEntityFlag">
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item v-if="checkRole('r6001')" command="c10">
+                                                <el-icon><Memo /></el-icon>字段管理
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6003')" command="c20">
+                                                <el-icon><Postcard /></el-icon>表单设计
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6008') && !entityItem.systemEntityFlag"
+                                                            command="c30">
+                                                <el-icon><ScaleToOriginal /></el-icon>列表设计
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6016') && !entityItem.systemEntityFlag"
+                                                            command="c40" divided>
+                                                <el-icon><Share /></el-icon>流程设计
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6015') && !entityItem.systemEntityFlag"
+                                                            command="c50">
+                                                <el-icon><Link /></el-icon>触发器设计
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r45-2') && !entityItem.systemEntityFlag"
+                                                            command="c60">
+                                                <el-icon><Files /></el-icon>报表设计
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+                                                <el-icon><CopyDocument /></el-icon>复制实体
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+                                                            command="c80">
+                                                <el-icon><Delete /></el-icon>删除实体
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                    <template v-else>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item v-if="checkRole('r6001')" command="c10">
+                                                <el-icon><Memo /></el-icon>字段管理
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6003')" command="c20">
+                                                <el-icon><Postcard /></el-icon>表单设计
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+                                                <el-icon><CopyDocument /></el-icon>复制实体
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+                                                            command="c80">
+                                                <el-icon><Delete /></el-icon>删除实体
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </template>
+                            </el-dropdown>
+                        </div>
                     </el-card>
                 </el-collapse-item>
                 <template v-for="(op,name,inx) of entityGroup" :key="inx">
@@ -142,78 +162,79 @@
                                     <span>{{ entityItem.label }}</span>
                                 </div>
                             </template>
-							<div class="entity-flag-wrapper">
-								<span v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
-										<i title="系统实体">系</i>
-									</span>
-								<span v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
-										<i title="主实体">主</i>
-									</span>
-								<span v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
-										<i title="明细实体">从</i>
-									</span>
-								<span v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
-										<i title="内部实体">内</i>
-									</span>
-							</div>
+                            <div class="entity-flag-wrapper">
+                                <span v-if="!!entityItem.systemEntityFlag" class="system-flag system-entity">
+                                        <i title="系统实体">系</i>
+                                    </span>
+                                <span v-if="!entityItem.detailEntityFlag" class="entity-flag main-entity">
+                                        <i title="主实体">主</i>
+                                    </span>
+                                <span v-if="!!entityItem.detailEntityFlag" class="entity-flag detail-entity">
+                                        <i title="明细实体">从</i>
+                                    </span>
+                                <span v-if="!!entityItem.internalEntityFlag" class="entity-flag detail-entity">
+                                        <i title="内部实体">内</i>
+                                    </span>
+                            </div>
                             <div>{{ entityItem.name }}</div>
-							<div class="entity-menu-icon">
-								<el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
-									<el-icon title="显示菜单"><Tools /></el-icon>
-									<template #dropdown>
-										<!-- 明细实体 -->
-										<template v-if="!entityItem.detailEntityFlag">
-											<el-dropdown-menu>
-												<el-dropdown-item v-if="checkRole('r6001')" command="c10">
-													<el-icon><Memo /></el-icon>字段管理
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6003')" command="c20">
-													<el-icon><Postcard /></el-icon>表单设计
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6008')" command="c30">
-													<el-icon><ScaleToOriginal /></el-icon>列表设计
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6016')" command="c40" divided>
-													<el-icon><Share /></el-icon>流程设计
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6015')" command="c50">
-													<el-icon><Link /></el-icon>触发器设计
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r45-2')" command="c60">
-													<el-icon><Files /></el-icon>报表设计
-												</el-dropdown-item>
-												<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
-													<el-icon><CopyDocument /></el-icon>复制实体
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
-																  command="c80">
-													<el-icon><Delete /></el-icon>删除实体
-												</el-dropdown-item>
-											</el-dropdown-menu>
-										</template>
-										<template v-else>
-											<el-dropdown-menu>
-												<el-dropdown-item v-if="checkRole('r6001')" command="c10">
-													<el-icon><Memo /></el-icon>字段管理
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6003')" command="c20">
-													<el-icon><Postcard /></el-icon>表单设计
-												</el-dropdown-item>
-												<el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
-													<el-icon><CopyDocument /></el-icon>复制实体
-												</el-dropdown-item>
-												<el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
-																  command="c80">
-													<el-icon><Delete /></el-icon>删除实体
-												</el-dropdown-item>
-											</el-dropdown-menu>
-										</template>
-									</template>
-								</el-dropdown>
-							</div>
+                            <div class="entity-menu-icon">
+                                <el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
+                                    <el-icon title="显示菜单"><Tools /></el-icon>
+                                    <template #dropdown>
+                                        <!-- 明细实体 -->
+                                        <template v-if="!entityItem.detailEntityFlag">
+                                            <el-dropdown-menu>
+                                                <el-dropdown-item v-if="checkRole('r6001')" command="c10">
+                                                    <el-icon><Memo /></el-icon>字段管理
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6003')" command="c20">
+                                                    <el-icon><Postcard /></el-icon>表单设计
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6008')" command="c30">
+                                                    <el-icon><ScaleToOriginal /></el-icon>列表设计
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6016')" command="c40" divided>
+                                                    <el-icon><Share /></el-icon>流程设计
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6015')" command="c50">
+                                                    <el-icon><Link /></el-icon>触发器设计
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r45-2')" command="c60">
+                                                    <el-icon><Files /></el-icon>报表设计
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+                                                    <el-icon><CopyDocument /></el-icon>复制实体
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+                                                                command="c80">
+                                                    <el-icon><Delete /></el-icon>删除实体
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </template>
+                                        <template v-else>
+                                            <el-dropdown-menu>
+                                                <el-dropdown-item v-if="checkRole('r6001')" command="c10">
+                                                    <el-icon><Memo /></el-icon>字段管理
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6003')" command="c20">
+                                                    <el-icon><Postcard /></el-icon>表单设计
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="!entityItem.systemEntityFlag" command="c70" divided>
+                                                    <el-icon><CopyDocument /></el-icon>复制实体
+                                                </el-dropdown-item>
+                                                <el-dropdown-item v-if="checkRole('r6002') && !entityItem.systemEntityFlag"
+                                                                command="c80">
+                                                    <el-icon><Delete /></el-icon>删除实体
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </template>
+                                    </template>
+                                </el-dropdown>
+                            </div>
                         </el-card>
                     </el-collapse-item>
                 </template>
+                <el-empty v-if="showEmpty" description="暂无数据" />
             </el-collapse>
             <el-dialog
                 :title="newEntityProps.activeType == 2 ? '复制实体' :'新建实体'"
@@ -232,7 +253,7 @@
                         :filter-entity-method="filterMainEntity"
                     />
                 </div>
-                   
+                
                 <template #footer>
                     <div class="dialog-footer">
                         <el-button
@@ -248,82 +269,6 @@
                     </div>
                 </template>
             </el-dialog>
-
-            <div
-                id="contextMenu"
-                v-show="contextMenuVisible"
-                class="context-menu"
-                @mouseenter="clearHideMenuTimer"
-                @mouseleave="setHideMenuTimer"
-            >
-                <!-- 明细实体 -->
-                <template v-if="selectedEntityObj.detailEntityFlag">
-                    <div
-                        v-if="checkRole('r6001')"
-                        class="context-menu__item"
-                        @click="gotoEntityManager()"
-                    >字段管理</div>
-                    <div
-                        v-if="checkRole('r6003')"
-                        class="context-menu__item"
-                        @click="gotoFormLayout()"
-                    >表单设计</div>
-                    <div
-                        class="context-menu__item"
-                        @click="createNewEntity('copy')"
-                        v-if="!selectedEntityObj.systemEntityFlag"
-                    >复制实体</div>
-                    <div
-                        v-if="checkRole('r6002')"
-                        class="context-menu__item"
-                        @click="deleteSelectedEntity()"
-                    >删除实体</div>
-                </template>
-                <template v-else>
-                    <div
-                        v-if="checkRole('r6001')"
-                        class="context-menu__item"
-                        @click="gotoEntityManager()"
-                    >字段管理</div>
-                    <div
-                        v-if="checkRole('r6003')"
-                        class="context-menu__item"
-                        @click="gotoFormLayout()"
-                    >表单设计</div>
-                    <div
-                        v-if="checkRole('r6008')"
-                        class="context-menu__item"
-                        @click="gotoListView()"
-                    >列表设计</div>
-                    <div class="context-menu-divider"></div>
-                    <div
-                        v-if="checkRole('r6016')"
-                        class="context-menu__item"
-                        @click="gotoRoute('process-list', true,)"
-                    >流程设计</div>
-                    <div
-                        v-if="checkRole('r6015')"
-                        class="context-menu__item"
-                        @click="gotoRoute('trigger-list', false)"
-                    >触发器设计</div>
-                    <div
-                        v-if="checkRole('r45-2')"
-                        class="context-menu__item"
-                        @click="gotoRoute('templates-list', true)"
-                    >报表设计</div>
-                    <div class="context-menu-divider"></div>
-                    <div
-                        class="context-menu__item"
-                        @click="createNewEntity('copy')"
-                        v-if="!selectedEntityObj.systemEntityFlag"
-                    >复制实体</div>
-                    <div
-                        v-if="checkRole('r6002') && !selectedEntityObj.systemEntityFlag"
-                        class="context-menu__item"
-                        @click="deleteSelectedEntity()"
-                    >删除实体</div>
-                </template>
-            </div>
         </el-main>
     </el-container>
 </template>
@@ -352,7 +297,12 @@ const { refreshCache } = useCommonStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
 const $TOOL = inject("$TOOL");
+
+
 let keyword = ref("");
+let searchTag = ref("全部标签");
+
+
 let loading = ref(false);
 let entityItems = ref("");
 let showNewEntityDialogFlag = ref(false);
@@ -424,6 +374,8 @@ const getAllTags = () => {
     });
 };
 
+let showEmpty = ref(false);
+
 const filterEntityList = () => {
     let filterEntitys = entityItems.value.filter((entityItem) => {
         return (
@@ -447,6 +399,7 @@ const filterEntityList = () => {
     } else {
         availableEntityList.value = [...filterEntitys];
     }
+    
     for (const key in entityGroup.value) {
         if (entityGroup.value.hasOwnProperty.call(entityGroup.value, key)) {
             entityGroup.value[key] = [];
@@ -457,12 +410,25 @@ const filterEntityList = () => {
         el.newTags = el.tags ? el.tags.split(",") : [];
         if (el.newTags.length > 0) {
             el.newTags.forEach((subEl) => {
-                entityGroup.value[subEl].push(el);
+                if(searchTag.value == '全部标签'){
+                    entityGroup.value[subEl].push(el);
+                }else {
+                    if(searchTag.value != '未分组' && subEl == searchTag.value){
+                        entityGroup.value[searchTag.value].push(el);
+                    }
+                }
             });
         } else {
             notGroup.value.push(el);
         }
     });
+    if(searchTag.value == '全部标签'){
+        showEmpty.value = availableEntityList.value.length == 0;
+    }else if(searchTag.value == '未分组'){
+        showEmpty.value = notGroup.value.length == 0;
+    }else {
+        showEmpty.value = entityGroup.value[searchTag.value].length == 0;
+    }
 };
 
 let EPEditor = ref("");
@@ -738,7 +704,7 @@ const filterMainEntity = (filterList, callBack) => {
         if (entity.systemEntityFlag || entity.internalEntityFlag) {
             //
         } else if (entity.detailEntityFlag === false) {
-            filterList.push({ name: entity.name, label: entity.label });
+            filterList.push({ name: entity.name, label: entity.label, tags: entity.tags });
         }
     });
 
@@ -834,6 +800,7 @@ const handleCommand = (command, entityItem) => {
 .el-main.card-container {
     background: #ffffff;
 }
+
 
 .el-main.card-container:after {
     content: "";
@@ -1012,9 +979,13 @@ const handleCommand = (command, entityItem) => {
 	.el-dialog__header {
 		margin: 0;
 		background-color: var(--el-color-primary) !important;
-        padding: 10px 20px;
+        padding: 0px 20px;
+        height: 60px;
+        line-height: 66px;
+        box-sizing: border-box;
 		.el-dialog__title {
 			color: #fff;
+            font-size: 20px;
 		}
         .el-dialog__headerbtn:focus .el-dialog__close, .el-dialog__headerbtn:hover .el-dialog__close {
             color: #fff;
@@ -1025,4 +996,34 @@ const handleCommand = (command, entityItem) => {
         padding: 10px 20px;
     }
 }
+.entity-search-wrapper {
+    display: inline-block;
+    width: 360px;
+    margin-right: 10px;
+    .input-with-select .el-input-group__prepend {
+        background-color: var(--el-fill-color-blank);
+    }
+}
+// .entity-anchor-section {
+//     box-sizing: border-box;
+//     padding-left: 5px;
+//     .search-input-wrapper {
+//         border-bottom: 1px solid #e4e7ed;
+//         box-sizing: border-box;
+//     }
+//     .entity-anchor-item {
+//         padding: 4px 0;
+//         color: #909399;
+//         cursor: pointer;
+//         padding-left: 10px;
+//         box-sizing: border-box;
+//         &:hover {
+//             background-color: #f5f7fa;
+//         }
+//         &.is-active {
+//             color: var(--el-color-primary);
+//         }
+//     }
+// }
+
 </style>
