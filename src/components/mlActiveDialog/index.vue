@@ -167,6 +167,7 @@ import SetWatermark from './components/setWatermark.vue';
 import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 import { getTagItems } from "@/api/system-manager";
 import mlShareTo from "@/components/mlShareTo/index.vue";
+const $API = inject("$API");
 const { unSystemEntityList, processEntityList, publicSetting } = storeToRefs(
     useCommonStore()
 );
@@ -316,7 +317,12 @@ const saveProcess = async () => {
         params.bindUsers = form.bindUsers[0].id;
     }
     loading.value = true;
-    let res = await saveRecord(saveEntity, form[saveIdCode] || "", params);
+    let res;
+    if(saveEntity == 'TriggerConfig') {
+        res = await $API.trigger.detail.triggerSave(form[saveIdCode] || "", params);
+    }else{
+        res = await saveRecord(saveEntity, form[saveIdCode] || "", params);
+    }
     if (res) {
         if (type === "add") {
             let emitValue = {};
