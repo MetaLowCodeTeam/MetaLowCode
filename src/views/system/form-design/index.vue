@@ -410,6 +410,10 @@ export default {
             }
 
             if (fldObj.type === "Picture" || fldObj.type === "File") {
+				fieldSchema.options.limit = fldObj.maxFileCount * 1 || 3
+				fieldSchema.options.fileMaxSize = fldObj.fileMaxSize * 1 || 5
+				fieldSchema.options.uploadTip = fldObj.uploadHint || ''
+
                 if (cloudStorageFlag) {
                     //设置withCredentials
                     fieldSchema.options.withCredentials = false;
