@@ -93,19 +93,19 @@ const getNavigationById = async () => {
     }
     loading.value = false;
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转导航
 const goNav = (subItem) => {
     let { type, outLink, openType, entityName, guid } = subItem;
     // 是实体列表页面
     if (type == 1) {
-        Router.push("/web/" + entityName + "/list");
+        Router.push(appPath + entityName + "/list");
     }
     // 是外部地址
     else if (type == 2) {
         // 内嵌
         if (openType) {
-            Router.push("/web/custom-page/iframe/" + guid);
+            Router.push(appPath + "custom-page/iframe/" + guid);
         }
         // 新窗口跳转
         else {
@@ -114,11 +114,11 @@ const goNav = (subItem) => {
     }
     // 自定义
     else if (type == 3) {
-        Router.push("/web/custom-page/" + outLink);
+        Router.push(appPath + "custom-page/" + outLink);
     }
     // 内置页面
     else if (type == 4) {
-        Router.push("/web/custom-page/" + outLink);
+        Router.push(appPath + "custom-page/" + outLink);
     }
     let findInx = getItemInx(subItem);
     // 如果item在最近使用列表里，把它删除

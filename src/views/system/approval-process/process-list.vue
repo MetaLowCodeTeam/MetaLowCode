@@ -163,11 +163,11 @@ const saveProcess = async (row) => {
 const addClick = () => {
     mlEntityMenuAndListRef.value.editApproval("add");
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: "/web/process-detail",
+        path: appPath + "process-detail",
         query: {
             approvalConfigId: row.approvalConfigId,
             entityCode: row.entityCode,

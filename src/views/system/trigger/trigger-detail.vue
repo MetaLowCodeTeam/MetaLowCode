@@ -156,13 +156,11 @@ let notTitleDialog = reactive({
     // 1 保存
     type: 1,
 });
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 返回列表
 const goTriggerList = () => {
     notTitleDialog.isShow = false
-    router.push({
-        path: "/web/trigger-list",
-    });
+    router.push(appPath + "trigger-list");
 };
 
 // 保存调用

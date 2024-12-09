@@ -376,10 +376,10 @@ const onSubmit = async () => {
 	}
 	approvalDialog.loading = false;
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 配置流程
 const goApprovalList = () => {
-	Route.push("/web/process-list");
+	Route.push(appPath + "process-list");
 };
 
 

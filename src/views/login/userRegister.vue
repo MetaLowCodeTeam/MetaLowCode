@@ -157,8 +157,9 @@
 				})
 			},
 			goLogin(){
+                const appPath = import.meta.env.VITE_APP_PATH;
 				this.$router.push({
-					path: '/web/login'
+					path: appPath + "login"
 				})
 			}
 		}

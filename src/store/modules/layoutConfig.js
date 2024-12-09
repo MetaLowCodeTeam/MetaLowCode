@@ -3,27 +3,28 @@ import { ref } from 'vue'
 import tool from '@/utils/tool';
 import layoutConfigApi from '@/api/layoutConfig.js';
 import http from "@/utils/request";
+const appPath = import.meta.env.VITE_APP_PATH;
 const floamtRoute = (el, isTopNav) => {
     let newRoute = {};
     if (el.type == 1) {
-        newRoute.path = "/web/" + el.entityName + "/list" + (isTopNav ? '/' + el.guid : '');
+        newRoute.path = appPath + el.entityName + "/list" + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "customize-menu/list";
     } else if (el.type == 2) {
         newRoute.path = el.guid;
         // 需要内嵌
         if (el.openType == 1) {
-            newRoute.path = "/web/custom-page/iframe" + '/' + el.guid + (isTopNav ? '/' + 'topNav' : '');
+            newRoute.path = appPath + "custom-page/iframe" + '/' + el.guid + (isTopNav ? '/' + 'topNav' : '');
             newRoute.component = "custom-page/iframe";
         }
     } else if (el.type == 5) {
-        newRoute.path = "/web/custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
+        newRoute.path = appPath + "custom-page/dashboard/" + el.chartId + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "custom-page/dashboard";
     } else if (el.type == 6) {
-        newRoute.path = "/web/custom-page/vForm/" + (isTopNav ? 'top/' : '') + el.guid;
+        newRoute.path = appPath + "custom-page/vForm/" + (isTopNav ? 'top/' : '') + el.guid;
         newRoute.component = "custom-page/ListVFormCmp/index";
     } else {
         // 自定义页面目录
-        newRoute.path = "/web/custom-page/";
+        newRoute.path = appPath + "custom-page/";
         // 自定义路由拼接
         newRoute.path += getCustomPageComponent(el.outLink);
         // 如果是自定义列表需要拼接参数
@@ -343,7 +344,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 }
             }
             if (el.type == 2 && el.openType == 1) {
-                el.path = "/web/custom-page/iframe/" + el.guid;
+                el.path = appPath + "custom-page/iframe/" + el.guid;
                 el.component = "custom-page/iframe";
                 el.type = 1;
             }

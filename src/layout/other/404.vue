@@ -14,6 +14,7 @@
 </template>
 
 <script>
+    const appPath = import.meta.env.VITE_APP_PATH;
 	export default {
 		methods: {
 			gohome(){
@@ -23,7 +24,7 @@
 				this.$router.go(-1);
 			},
 			gologin(){
-				this.$router.push("/web/login");
+				this.$router.push(appPath + "login");
 			}
 		}
 	}

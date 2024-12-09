@@ -63,10 +63,10 @@ const { menuIsCollapse } = storeToRefs(useGlobalStore());
 
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 导航点击
 const navClick = async (item) => {
-    router.push("/web/dashboard");
+    router.push(appPath + "dashboard");
     let res = await $API.layoutConfig.saveUserLayoutCache(
         "NAV",
         item.layoutConfigId

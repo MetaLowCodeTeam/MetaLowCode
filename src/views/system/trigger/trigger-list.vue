@@ -137,11 +137,11 @@ const changeSwitch = (row) => {
 const saveProcess = async () => {
     mlEntityMenuAndListRef.value.getEntityList();
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: "/web/trigger-detail",
+        path: appPath + "trigger-detail",
         query: {
             triggerConfigId: row.triggerConfigId,
         },

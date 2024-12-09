@@ -1,50 +1,51 @@
 import config from "@/config"
+const appPath = import.meta.env.VITE_APP_PATH;
 //系统路由
 const routes = [
     {
         name: "layout",
         path: "/",
         component: () => import(/* webpackChunkName: "layout" */ '@/layout/index.vue'),
-        redirect: config.DASHBOARD_URL || '/web/dashboard',
+        redirect: config.DASHBOARD_URL || appPath + "dashboard",
         children: []
     },
     {
-        path: "/web/login",
+        path: appPath + "login",
         component: () => import(/* webpackChunkName: "login" */ '@/views/login/index.vue'),
         meta: {
             title: "登录"
         }
     },
     {
-        path: "/web/user_register",
+        path: appPath + "user_register",
         component: () => import(/* webpackChunkName: "userRegister" */ '@/views/login/userRegister.vue'),
         meta: {
             title: "注册"
         }
     },
     {
-        path: "/web/reset_password",
+        path: appPath + "reset_password",
         component: () => import(/* webpackChunkName: "resetPassword" */ '@/views/login/resetPassword.vue'),
         meta: {
             title: "重置密码"
         }
     },
     {
-        path: "/web/luckysheet",
+        path: appPath + "luckysheet",
         component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/luckysheet.vue'),
         meta: {
             title: "表单模板设计"
         }
     },
     {
-        path: "/web/dashboard-design",
+        path: appPath + "dashboard-design",
         component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/dashboard-design/index.vue'),
         meta: {
             title: "图表设计"
         }
     },
     {
-        path: "/web/Printer",
+        path: appPath + "Printer",
         component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/customize-menu/components/Printer.vue'),
         meta: {
             title: "打印"
@@ -52,7 +53,7 @@ const routes = [
     },
     // 填写表单
     {
-        path: "/web/inReport",
+        path: appPath + "inReport",
         component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/in-report.vue'),
         name: "InReport",
         meta: {
@@ -61,7 +62,7 @@ const routes = [
     },
     // 消息中心
     // {
-    //     path: '/web/notification',
+    //     path: appPath + "notification",
     //     name: 'Notification',
     //     meta: { title: '消息中心', icon: 'el-icon-chat-dot-round' },
     //     // component: 'system/notification/index',
@@ -70,7 +71,7 @@ const routes = [
     // 账号信息
     // {
     //     "name": "userCenter",
-    //     "path": "/web/usercenter",
+    //     "path": appPath + "usercenter",
     //     "meta": {
     //         "title": "帐号信息",
     //         "icon": "el-icon-user",

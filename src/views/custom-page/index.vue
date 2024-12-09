@@ -24,22 +24,6 @@ let isShow = ref(false);
 
 onMounted(() => {
     cutParm.value = router.currentRoute.value.params.prarm;
-
-    // createApp({
-    //     AsyncComp: defineAsyncComponent(() => {
-    //         import("@/views/custom-page/test.vue");
-    //     }),
-    // });
-    // isShow.value = true;
-    // console.log(cutParm.value,'cutParm.value');
-    // console.log(router,'router')
-    // if (cutParm.value) {
-    //     router.addRoute("CustomPage",{
-    //         path: "/web/" + cutParm.value,
-    //         component:()=> import("@/views/custom-page/test.vue")
-    //     });
-    //     router.push("/web/" + cutParm.value)
-    // }
 });
 </script>
 <style lang='scss' scoped>

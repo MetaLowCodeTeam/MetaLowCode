@@ -465,11 +465,11 @@ const dataExportFn = () => {
     }
     dataExportRefs.value.openDialog(props.dataExportData);
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 数据导入
 const dataUploadFn = () => {
     router.push({
-        path: "/web/data-upload2",
+        path: appPath + "data-upload2",
     });
 };
 
@@ -530,16 +530,12 @@ const defaultFilterChange = () => {
  */
 const openPrinter = () => {
     let newUrl = router.resolve(
-        "/web/Printer?entityId=" +
+        appPath + "Printer?entityId=" +
             props.detailId +
             "&nameFieldName=" +
             props.layoutConfig.nameFieldName
     );
     window.open(newUrl.href);
-    // router.push({
-    //     path: "/web/Printer?entityId=" + props.detailId,
-    //     target: "_blank",
-    // });
 };
 
 /**

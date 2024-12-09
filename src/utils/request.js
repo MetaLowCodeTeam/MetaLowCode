@@ -42,7 +42,7 @@ axios.interceptors.request.use(
 
 //FIX 多个API同时401时疯狂弹窗BUG
 let MessageBox_401_show = false
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // HTTP response 拦截器
 axios.interceptors.response.use(
     (response) => {
@@ -50,7 +50,7 @@ axios.interceptors.response.use(
             return response
         }
         if (response.data?.code === 403) {
-            router.replace({ path: '/web/login' });
+            router.replace({ path: appPath + "login" });
             return response
         } else {
             ElMessage.error(response.data?.error)
@@ -82,7 +82,7 @@ axios.interceptors.response.use(
                             done()
                         }
                     }).then(() => {
-                        router.replace({ path: '/web/login' });
+                        router.replace({ path: appPath + "login" });
                     }).catch(() => { })
                 }
             } else {

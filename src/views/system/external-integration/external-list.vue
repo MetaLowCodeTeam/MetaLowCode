@@ -189,11 +189,11 @@ const base64ToBlob = (base64) => {
     }
     return new Blob([u8arr], { type: mime });
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: "/web/trigger-detail",
+        path: appPath + "trigger-detail",
         query: {
             triggerConfigId: row.triggerConfigId,
         },

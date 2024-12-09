@@ -54,6 +54,7 @@ import tool from "@/utils/tool";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
+const appPath = import.meta.env.VITE_APP_PATH;
 export default {
     components: {
         scPasswordStrength,
@@ -110,9 +111,7 @@ export default {
                             }
                         )
                             .then(() => {
-                                this.$router.replace({
-                                    path: "/web/login",
-                                });
+                                this.$router.replace(appPath + "login");
                             })
                             .catch(() => {});
                     }

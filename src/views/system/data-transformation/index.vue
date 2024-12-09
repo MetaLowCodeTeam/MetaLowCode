@@ -171,10 +171,10 @@ const changeSwitch = (row) => {
 	mlSingleListRef.value.loading = true;
 	EditRefs.value?.doSave(row[idFieldName], saveData, "设置成功");
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
-	Router.push("/web/data-transformation/" + row[idFieldName]);
+	Router.push(appPath + "data-transformation/" + row[idFieldName]);
 };
 
 // 删除行

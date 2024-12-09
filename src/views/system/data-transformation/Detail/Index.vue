@@ -274,13 +274,11 @@ const onSave = async () => {
 
 // 保存回调弹框
 let notTitleDialogShow = ref(false);
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 返回列表
 const goDataTransformation = () => {
 	notTitleDialogShow.value = false;
-	Router.push({
-		path: "/web/data-transformation",
-	});
+	Router.push(appPath + "data-transformation");
 };
 </script>
 <style lang="scss" scoped>

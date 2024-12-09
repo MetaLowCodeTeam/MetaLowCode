@@ -58,7 +58,7 @@ export default ({
     let esbuild = {}
 
     return {
-        base: '/', // 公共基础路径
+        base: env.VITE_BASE_PATH, // 公共基础路径
 		// root: './', // index.html文件所在位置
         resolve: {
             alias,

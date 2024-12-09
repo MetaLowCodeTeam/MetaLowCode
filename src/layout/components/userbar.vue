@@ -165,11 +165,11 @@ let msgLoading = ref(false);
 
 // 顶部导航设置弹框
 let setTopMenuDialogIsShow = ref(false);
-
+const appPath = import.meta.env.VITE_APP_PATH;
 onMounted(() => {
     var userInfo = $TOOL.data.get("USER_INFO");
     if (!userInfo) {
-        router.push({ path: "/web/login" });
+        router.push({ path: appPath + "login" });
         return;
     }
     userName.value = userInfo.userName;
@@ -180,10 +180,10 @@ onMounted(() => {
 //个人信息
 const handleUser = (command) => {
     if (command == "uc") {
-        router.push({ path: "/web/usercenter" });
+        router.push({ path: appPath + "usercenter" });
     }
     if (command == "cmd") {
-        router.push({ path: "/web/cmd" });
+        router.push({ path: appPath + "cmd" });
     }
     if (command == "clearCache") {
         ElMessageBox.confirm(
@@ -196,7 +196,7 @@ const handleUser = (command) => {
             .then(async () => {
                 let res = await http.post("/user/logout");
                 if (res) {
-                    router.replace({ path: "/web/login" });
+                    router.replace({ path: appPath + "login" });
                     const loading = ElLoading.service({
                         lock: true,
                         text: "Loading",
@@ -205,7 +205,7 @@ const handleUser = (command) => {
                     $TOOL.data.clear();
                     $TOOL.cookie.remove("userInfo");
 
-                    router.replace({ path: "/web/login" });
+                    router.replace({ path: appPath + "login" });
                     setTimeout(() => {
                         loading.close();
                         location.reload();
@@ -225,7 +225,7 @@ const handleUser = (command) => {
             .then(async () => {
                 let res = await http.post("/user/logout");
                 if (res) {
-                    router.replace({ path: "/web/login" });
+                    router.replace({ path: appPath + "login" });
                 }
             })
             .catch(() => {
@@ -290,7 +290,7 @@ const msgClick = (item, inx) => {
         }
     } else if (item.type == 10) {
         if (currentRoute.value.name != "CenterHandle") {
-            router.push("/web/center-handle");
+            router.push(appPath + "center-handle");
         }
         msg.value = false;
         // approveDialogIsShow.value = true;
@@ -300,7 +300,7 @@ const msgClick = (item, inx) => {
     } else {
         
         if (currentRoute.value.name != "CenterCc") {
-            router.push("/web/center-cc");
+            router.push(appPath + "center-cc");
         }
         msg.value = false;
     }
@@ -326,7 +326,7 @@ const markAllRead = () => {
 function goNotification() {
     let { currentRoute } = router;
     if (currentRoute.value.name != "Notification") {
-        router.push("/web/notification");
+        router.push(appPath + "notification");
     }
     msg.value = false;
 }

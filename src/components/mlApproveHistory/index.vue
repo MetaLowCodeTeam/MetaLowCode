@@ -325,12 +325,12 @@ function formatResData(data) {
     });
     return newData;
 }
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 配置流程
 const goApprovalList = (activity) => {
     isShow.value = false;
     Route.push({
-        path: "/web/custom-page/approval-detail",
+        path: appPath + "custom-page/approval-detail",
         query: {
             approvalConfigId: activity.recordId,
             entityCode: queryEntityCodeById(props.entityId),

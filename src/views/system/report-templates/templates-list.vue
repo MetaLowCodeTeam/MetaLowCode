@@ -115,11 +115,11 @@ const actionBtn = (data) => {
 const saveProcess = async () => {
     mlEntityMenuAndListRef.value.getEntityList();
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     const to = router.resolve({
-        path: "/web/luckysheet",
+        path: appPath + "luckysheet",
         query: {
             reportConfigId: row.reportConfigId,
         },

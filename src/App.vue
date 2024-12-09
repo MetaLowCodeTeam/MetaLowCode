@@ -59,14 +59,14 @@ let locale = computed(() => {
     // return $TOOL.data.get("APP_LANG");
     return ""
 });
-
+const appPath = import.meta.env.VITE_APP_PATH;
 onBeforeMount(() => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
     // 获取公开系统配置
     queryPublicSetting();
-    if(location.pathname == '/web/inReport'){
+    if(location.pathname == appPath + 'inReport'){
         isShowBody.value = true;
         return
     }
@@ -111,7 +111,7 @@ const initApi = async () => {
             isShowBody.value = true;
         } else {
             isShowBody.value = true;
-            router.push({ path: "/web/login" });
+            router.push({ path: appPath + "login" });
         }
     }
 };

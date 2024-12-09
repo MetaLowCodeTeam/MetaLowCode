@@ -1,9 +1,10 @@
+
 const DEFAULT_CONFIG = {
 	//标题
 	APP_NAME: import.meta.env.VITE_APP_TITLE,
 
 	//首页地址
-	DASHBOARD_URL: "/web/dashboard",
+	DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "dashboard",
 
 	//版本号
 	APP_VER: "1.0.0",

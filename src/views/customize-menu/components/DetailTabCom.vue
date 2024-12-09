@@ -306,10 +306,10 @@ const initData = async () => {
         loading.value = false;
     }
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 const goPath = () => {
     setRouterParams({
-        path: "/web/" + entityName.value + "/list",
+        path: appPath + entityName.value + "/list",
         filter: {
             equation: "AND",
             items: [
@@ -324,7 +324,7 @@ const goPath = () => {
     });
     nextTick(()=>{
         router.push({
-            path: "/web/" + entityName.value + "/list",
+            path: appPath + entityName.value + "/list",
         });
     })
     

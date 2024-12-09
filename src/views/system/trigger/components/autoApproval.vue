@@ -106,12 +106,10 @@ const getApprovalList = async () => {
     } 
     contentLoading.value = false;
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转到审批流程列表
 const goProcess = () => {
-    router.push({
-        path: "/web/process-list",
-    });
+    router.push(appPath + "process-list");
 };
 
 /**

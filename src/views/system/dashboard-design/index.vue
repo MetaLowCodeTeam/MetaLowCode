@@ -65,11 +65,12 @@ let designerConfig = ref({
 let dbDesignerRef = ref();
 // 是否移动端
 let isMobile = ref(false);
+const appPath = import.meta.env.VITE_APP_PATH;
 onMounted(async () => {
     chartId.value = router.currentRoute.value.query.chartId;
     let type = router.currentRoute.value.query.type;
     if (!chartId.value) {
-        router.push("/web/dashboard-list");
+        router.push(appPath + "dashboard-list");
         return;
     }
     if (type == "mobile") {

@@ -228,10 +228,10 @@ const changeDefault = async (row) => {
     mlSingleListRef.value.loading = false;
 };
 
-
+const appPath = import.meta.env.VITE_APP_PATH;
 const handleCommand = (command, row) => {
     let routerData = {
-        path: "/web/dashboard-design",
+        path: appPath + "dashboard-design",
         query: {
             chartId: row.chartId,
             type: command,

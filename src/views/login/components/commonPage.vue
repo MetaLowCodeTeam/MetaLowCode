@@ -9,7 +9,7 @@
                 <div class="common-header-title">{{title}}</div>
             </div>
             <div class="common-header-right">
-                <router-link to="/web/login">返回登录</router-link>
+                <router-link :to="appPath + 'login'">返回登录</router-link>
             </div>
         </el-header>
         <el-main>
@@ -30,6 +30,7 @@ const { publicSetting } = storeToRefs(useCommonStore());
 const props = defineProps({
     title: { type: String, default: "" },
 });
+const appPath = import.meta.env.VITE_APP_PATH;
 </script>
 
 <style>

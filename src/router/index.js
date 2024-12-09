@@ -31,7 +31,7 @@ const routes_404 = {
 }
 let routes_404_r = () => { }
 
-
+const appPath = import.meta.env.VITE_APP_PATH;
 //判断是否已加载过动态/静态路由
 var isGetRouter = false;
 
@@ -41,7 +41,7 @@ router.beforeEach(async (to, from, next) => {
     NProgress.start()
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
-    if (to.path === "/web/login") {
+    if (to.path === appPath + "login") {
         //删除路由(替换当前layout路由)
         router.addRoute(routes[0])
         //删除路由(404)
@@ -52,7 +52,7 @@ router.beforeEach(async (to, from, next) => {
     }
     if (to.path == '/') {
         next({
-            path: '/web/dashboard'
+            path: appPath + "dashboard"
         });
         return false;
     }
@@ -80,7 +80,7 @@ router.beforeEach(async (to, from, next) => {
         await getNavigationApi(() => {
             isGetRouter = false;
             next({
-                path: '/web/login'
+                path: appPath + "login"
             });
         })
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {

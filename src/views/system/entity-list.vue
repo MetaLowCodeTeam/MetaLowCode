@@ -430,7 +430,7 @@ const filterEntityList = () => {
         showEmpty.value = entityGroup.value[searchTag.value].length == 0;
     }
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 let EPEditor = ref("");
 // 新建实体
 const createNewEntity = (target) => {
@@ -597,8 +597,7 @@ const gotoListView = () => {
         ElMessage.info("明细实体不允许设计列表");
         return;
     }
-
-    router.push("/web/" + selectedEntityObj.value.name + "/list");
+    router.push(appPath + selectedEntityObj.value.name + "/list");
 };
 
 const gotoRoute = (routePage, disableDetailEntity) => {
@@ -614,9 +613,8 @@ const gotoRoute = (routePage, disableDetailEntity) => {
         ElMessage.info("明细实体不允许此操作");
         return;
     }
-
     router.push(
-        "/web/" +
+        appPath +
             routePage +
             "?entityCode=" +
             selectedEntityObj.value.entityCode

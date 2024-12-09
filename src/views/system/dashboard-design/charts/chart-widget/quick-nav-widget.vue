@@ -98,7 +98,7 @@ const initOption = () => {
 const setSelected = () => {
     props.designer?.setSelected(props.field);
 };
-
+const appPath = import.meta.env.VITE_APP_PATH;
 const navClick = async (item) => {
     // 如果存在设计表示是在设计页面，无法点击
     if (props.designer) {
@@ -107,7 +107,7 @@ const navClick = async (item) => {
 
     // 内部实体
     if (item.type == 1) {
-        let path = "/web/" + item.entityName + "/list";
+        let path = appPath + item.entityName + "/list";
         jumpLink(1, item.openType == 1 ? 1 : 2, path);
     }
     // 外部链接
@@ -121,7 +121,7 @@ const navClick = async (item) => {
             jumpLink(
                 2,
                 item.openType == 1 ? 1 : 2,
-                "/web/custom-page/" + item.outLink
+                appPath + "custom-page/" + item.outLink
             )  
         }else {
             let res = await layoutConfigApi.saveUserLayoutCache("NAV", item.navigationId);
@@ -129,7 +129,7 @@ const navClick = async (item) => {
                 location.reload();
                 $TOOL.data.set("QuickNavigation", {
                     type: item.openType == 1 ? 1 : 2,
-                    url: "/web/custom-page/" + item.outLink
+                    url: appPath + "custom-page/" + item.outLink
                 });
             }
         }

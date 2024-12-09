@@ -129,12 +129,12 @@ let entityId = ref("");
 
 // 审批名称
 let approvalName = ref("");
-
+const appPath = import.meta.env.VITE_APP_PATH;
 // 消息点击
 const activeRow = (item) => {
     // 审批
     if (item.type == 10) {
-        router.push("/web/center-handle");
+        router.push(appPath + "center-handle");
         // approveDialogIsShow.value = true;
         // approvalTaskId.value = item.relatedRecord.id;
         // entityId.value = item.relatedRecord.id;
@@ -142,7 +142,7 @@ const activeRow = (item) => {
     }
     // 审批抄送
     else if (item.type == 11) {
-        router.push("/web/center-cc");
+        router.push(appPath + "center-cc");
     }
     // 实体列表详情
     else {

@@ -551,8 +551,9 @@ export default {
 
         // 进入表单设计
         goFormDesign(){
+            const appPath = import.meta.env.VITE_APP_PATH;
             this.$router.push({
-                path:"/web/form-design",
+                path:appPath + "form-design",
                 query:{
                     entity: this.entityProps.name,
                     entityLabel: this.entityProps.label
