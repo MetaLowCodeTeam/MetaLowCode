@@ -9,6 +9,7 @@
                 @edgeClick="openDrawer"
                 @nodeDelete="nodeDelete"
                 @edgeDelete="nodeDelete"
+                @nodeResize="nodeResize"
                 :graphData="graphData"
                 @onSave="onSave"
                 @clearData="clearData"
@@ -131,7 +132,7 @@ onMounted(() => {
 
 // 该实体所有表单
 let entityFromList = ref([]);
-const loadComplexFlow = async () => {
+const loadComplexFlow = async () => { 
     loading.value = true;
     let res = await getComplexFlow(approvalConfigId.value);
     if (res && res.code == 200) {
@@ -267,6 +268,21 @@ const nodeDelete = () => {
     drawer.value = false;
     drawerData.value = {};
 };
+
+// 节点大小改变
+const nodeResize = ({ newNodeSize }) => {
+    if(newNodeSize.type == "bpmn:subProcess") {
+        let nodeId = newNodeSize.id;
+        let node = MetaFlowDesignerRef.value.lf.getNodeModelById(nodeId);
+        let properties = node.getProperties();
+        properties = Object.assign(properties, {
+            mlWidth: newNodeSize?.width,
+            mlHeight: newNodeSize?.height,
+        })
+        node.setProperties(properties);
+    }
+}
+
 // 节点点击
 const openDrawer = (data) => {
     // 如果是网关、结束节点。不做任何处理
@@ -391,7 +407,6 @@ const onSave = async () => {
             }
         }
     }
-    console.log(edges,'edges')
     // 遍历线
     for (let index = 0; index < edges.length; index++) {
         const el = edges[index];
@@ -410,17 +425,20 @@ const onSave = async () => {
             }
         }
     }
-
     // 开始保存
     let flowJson = {};
     let formatEdges = MetaFlowDesignerRef.value.getJsonData().edges;
     let formatNodes = MetaFlowDesignerRef.value.getJsonData().nodes;
+    
     formatEdges.forEach((el) => {
         flowJson[el.id] = el.properties.flowJson;
     });
     formatNodes.forEach((el) => {
         if (!EliminateNode.includes(el.type)) {
             flowJson[el.id] = el.properties.flowJson;
+        }
+        if(el.type == "bpmn:subProcess") {
+            flowJson[el.id] = JSON.stringify(el.properties.nodeSize);
         }
     });
     let logicFlowXml = MetaFlowDesignerRef.value.getXmlData() || '';
@@ -432,6 +450,7 @@ const onSave = async () => {
             logicFlowXml,
             flowJson,
         },
+        // sourceFlowData: 
     };
     // console.log(param,'param')
     // return
