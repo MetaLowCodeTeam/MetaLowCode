@@ -50,7 +50,7 @@ let nameError = ref(false);
 const openDialog = (data) => {
 	formData.value = Object.assign({}, data);
 	isShow.value = true;
-	title.value = "版本" + (formData.value.versioningId ? "编辑" : "新建");
+	title.value = "版本" + (formData.value.versionHistoryId ? "编辑" : "新建");
 };
 
 defineExpose({
@@ -64,7 +64,7 @@ const handleSubmit = async () => {
 		return;
 	}
     loading.value = true;
-    let res = await saveRecord(formData.value.versioningId, {
+    let res = await saveRecord(formData.value.versionHistoryId, {
         versionName: formData.value.versionName,
         remarks: formData.value.remarks,
     });

@@ -244,7 +244,7 @@ const routes = [
                                 path: appPath + 'system-manager',
                                 name: 'SystemManager',
                                 component: 'system/data-dict/system-manager',
-                                meta: { title: '系统项管理', icon: 'el-icon-guide', role: 'r6019' }
+                                meta: { title: '系统常量管理', icon: 'el-icon-guide', role: 'r6019' }
                             },
                         ]
                     },
@@ -381,7 +381,7 @@ const routes = [
                         path: appPath + 'versioning',
                         name: 'Versioning',
                         meta: { title: '版本管理', icon: 'el-icon-Tickets', role: 'r6018' },
-                        component: 'system/versioning/index',
+                        component: 'system/versionHistory/index',
                     },
                     // 数据转化
                     {

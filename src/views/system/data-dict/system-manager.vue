@@ -1,17 +1,18 @@
 <template>
     <!--  -->
     <TreeOperateList
-        title="系统项管理"
-        :getTreeFn="getSystemItemTree"
-        :getMainFn="getSystemItems"
-        :saveFn="saveTagItems"
+        title="系统常量管理"
+        :getTreeFn="getSystemConstantTree"
+        :getMainFn="getSystemConstants"
+        :saveFn="saveSystemConstants"
+        :deleteFn="systemConstantCanBeDeleted"
         pageType="system"
     />
 </template>
 
 <script setup>
 import TreeOperateList from "./components/TreeOperateList.vue";
-import { getSystemItemTree, getSystemItems, saveTagItems } from "@/api/system-manager";
+import { getSystemConstantTree, getSystemConstants, saveSystemConstants, systemConstantCanBeDeleted } from "@/api/system-manager";
 </script>
 <style lang='scss' scoped>
 </style>

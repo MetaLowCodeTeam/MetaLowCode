@@ -225,12 +225,22 @@ export function getTagItems(entity, field) {
     return http.get('systemManager/getTagItems', { entity, field })
 }
 
-export function getSystemItemTree() {
-    return http.get('systemManager/getSystemItemTree')
+export function getSystemConstantTree() {
+    return http.get('systemManager/getSystemConstantTree')
 }
 
-export function getSystemItems(systemName) {
-    return http.get('systemManager/getSystemItems', { systemName })
+export function getSystemConstants(systemName) {
+    return http.get('systemManager/getSystemConstants', { systemName })
+}
+
+export function saveSystemConstants(systemName, systemConstants) {
+    return http.post('systemManager/saveSystemConstants', systemConstants, {
+        params: { systemName }
+    })
+}
+
+export function systemConstantCanBeDeleted(systemName, systemValue) {
+    return http.get('systemManager/systemConstantCanBeDeleted', { systemName, systemValue })
 }
 
 export function queryEntityListByReferenceField(entityName, fieldName) {

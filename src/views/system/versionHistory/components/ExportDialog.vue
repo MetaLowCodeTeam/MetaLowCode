@@ -89,7 +89,7 @@ const appServe = import.meta.env.VITE_APP_BASE_API;
 
 const handleExport = async () => {
     let { beginVersion, endVersion } = formData.value;
-    let url = `${appServe}/versioning/exportDevelopSql?beginVersion=${beginVersion}&endVersion=${endVersion}`;
+    let url = `${appServe}/versionHistory/exportDevelopSql?beginVersion=${beginVersion}&endVersion=${endVersion}`;
     window.open(url, "_blank");
 };
 </script>

@@ -95,17 +95,24 @@
 			</el-main>
 		</el-container>
 	</el-container>
+    <operateSystemDialog 
+        ref="operateSystemDialogRef" 
+        :saveFn="saveFn"
+        @refresh="getMainList"
+    />
 </template>
 
 <script setup>
 import { inject, nextTick, onMounted, reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import http from "@/utils/request";
+import operateSystemDialog from "./operateSystemDialog.vue";
 const props = defineProps({
 	title: { type: String, default: "" },
 	getTreeFn: { type: Function },
 	getMainFn: { type: Function },
 	saveFn: { type: Function },
+    deleteFn: { type: Function },
     pageType: { type: String, default: "" },
 });
 const $ElMessage = inject("$ElMessage");
@@ -133,7 +140,6 @@ const getTreeList = async () => {
 	treeLoading.value = true;
 	mainLoading.value = true;
 	let res = await props.getTreeFn();
-    console.log(res,'res')
 	if (res) {
         treeList.value = [];
         if(props.pageType == 'system') {
@@ -163,7 +169,6 @@ const formatSystemTree = (data) => {
     // 遍历data对象
     let num = 0;
     for(let key in data) {
-        console.log(data[key],'data[key]')
         let obj = {
             label: key,
             name: key,
@@ -228,7 +233,6 @@ const handleTreeNodeClick = (node) => {
 
 // 获取主体数据
 const getMainList = async () => {
-    console.log(cutNode.value,'cutNode.value')
 	mainLoading.value = true;
 	let res;
     if(props.pageType == 'system') {
@@ -244,9 +248,19 @@ const getMainList = async () => {
 	}
 	mainLoading.value = false;
 };
-
+let operateSystemDialogRef = ref(null);
 // 新增、插入、编辑
 const operateItem = (inx, targe, item) => {
+    if(props.pageType == 'system') {
+        operateSystemDialogRef.value.openDialog({ 
+            systemName: cutNode.value.name,
+            inx, 
+            targe, 
+            item, 
+            mainList: JSON.parse(JSON.stringify(mainList.value))
+        });
+        return
+    }
 	let infoText = "";
 	let inputValue = null;
 	if (targe == "edit") {
@@ -270,7 +284,6 @@ const operateItem = (inx, targe, item) => {
 						value: getOptionMaxValue(),
 						saved: false,
 					};
-					console.log(newItem.label, "label");
 					//  判断选项是否存在
 					for (
 						let index = 0;
@@ -342,6 +355,16 @@ const moveItem = (inx, target) => {
 const delItem = (inx, item) => {
 	ElMessageBox.confirm("确定删除该选项?", "提示")
 		.then(async () => {
+            if(props.pageType == 'system') {
+                let res = await props.deleteFn(cutNode.value.name, item.name);
+                if(res && res.data) {
+                    mainList.value.splice(inx, 1);
+                    onSave("删除成功");
+                }else {
+                    $ElMessage.warning("该系统常量无法删除。");
+                }
+                return
+            }
 			if (!item.saved) {
 				mainList.value.splice(inx, 1);
 				$ElMessage.success("删除成功");
@@ -381,11 +404,16 @@ const onSave = async (msg) => {
 		});
 	}
 	mainLoading.value = true;
-	let res = await props.saveFn(
-		cutNode.value.parentName,
-		cutNode.value.name,
-		mainList.value
-	);
+    let res;
+    if(props.pageType == 'system') {
+        res = await props.saveFn(cutNode.value.name, mainList.value);
+    }else {
+        res = await props.saveFn(
+            cutNode.value.parentName,
+            cutNode.value.name,
+            mainList.value
+        );
+    }
 	if (res) {
 		$ElMessage.success(msg || "保存成功");
 		getMainList();

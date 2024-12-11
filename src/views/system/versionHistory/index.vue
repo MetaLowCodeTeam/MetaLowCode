@@ -2,7 +2,7 @@
 	<!--  -->
 	<mlSingleList
 		:title="'版本管理（当前系统版本号：' + publicSetting.developSqlVersion + '）'"
-		mainEntity="Versioning"
+		mainEntity="VersionHistory"
 		fieldsList="versionName,version,createdOn,remarks"
 		:sortFields="sortFields"
 		fieldName="versionName"

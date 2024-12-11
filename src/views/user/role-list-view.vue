@@ -205,7 +205,7 @@
                         </div>
                     </el-tab-pane>
 
-                    <el-tab-pane label="功能权限">
+                    <el-tab-pane label="系统权限">
                         <el-row>
                             <hr style="border: 0;border-top: 1px dotted #cccccc" />
                         </el-row>
@@ -228,6 +228,9 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="功能权限">
+
                     </el-tab-pane>
                 </el-tabs>
             </el-form>
