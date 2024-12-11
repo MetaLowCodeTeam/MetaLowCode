@@ -26,6 +26,10 @@ const props = defineProps({
     skipMaxSize : {
         type: Boolean,
         default: false
+    },
+    customUpload: {
+        type: Boolean,
+        default: false
     }
 });
 const emits = defineEmits(["on-success"]);
@@ -73,7 +77,10 @@ const uploadFile = async (data) => {
             return false;
         }
     }
-    
+    if(props.customUpload) {
+        emits("on-custom-upload", data.file);
+        return
+    }
     let formData = new FormData();
    
     loading.value = true;

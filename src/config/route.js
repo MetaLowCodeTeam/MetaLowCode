@@ -239,6 +239,13 @@ const routes = [
                                 component: 'system/data-dict/tag-manager',
                                 meta: { title: '多选项管理', icon: 'el-icon-guide', role: 'r6006' }
                             },
+
+                            {
+                                path: appPath + 'system-manager',
+                                name: 'SystemManager',
+                                component: 'system/data-dict/system-manager',
+                                meta: { title: '系统项管理', icon: 'el-icon-guide', role: 'r6019' }
+                            },
                         ]
                     },
 
@@ -369,6 +376,13 @@ const routes = [
                         meta: { title: '数据库备份', icon: 'el-icon-Collection', role: 'r6014' },
                         component: 'system/data-base/backups',
                     },
+                    // 版本管理
+                    {
+                        path: appPath + 'versioning',
+                        name: 'Versioning',
+                        meta: { title: '版本管理', icon: 'el-icon-Tickets', role: 'r6018' },
+                        component: 'system/versioning/index',
+                    },
                     // 数据转化
                     {
 						path: appPath + 'data-transformation',
@@ -434,7 +448,6 @@ const routes = [
                         meta: { title: '回收站', icon: 'el-icon-delete', role: 'r6000' },
                         component: 'system/recycle-bin/index',
                     },
-
                 ]
             },
 

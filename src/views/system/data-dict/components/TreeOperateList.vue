@@ -106,6 +106,7 @@ const props = defineProps({
 	getTreeFn: { type: Function },
 	getMainFn: { type: Function },
 	saveFn: { type: Function },
+    pageType: { type: String, default: "" },
 });
 const $ElMessage = inject("$ElMessage");
 // 搜索参数
@@ -132,8 +133,15 @@ const getTreeList = async () => {
 	treeLoading.value = true;
 	mainLoading.value = true;
 	let res = await props.getTreeFn();
+    console.log(res,'res')
 	if (res) {
-		treeList.value = formatTree(res.data || []);
+        treeList.value = [];
+        if(props.pageType == 'system') {
+            treeList.value = formatSystemTree(res.data);
+        }
+        else {
+            treeList.value = formatTree(res.data || []);
+        }
 		if (treeList.value.length > 0) {
 			cutNode.value = treeList.value[0].children[0];
 			nextTick(() => {
@@ -148,6 +156,33 @@ const getTreeList = async () => {
 	}
 	treeLoading.value = false;
 };
+
+// 格式化系统项tree
+const formatSystemTree = (data) => {
+    let formatArr = [];
+    // 遍历data对象
+    let num = 0;
+    for(let key in data) {
+        console.log(data[key],'data[key]')
+        let obj = {
+            label: key,
+            name: key,
+            $inx: `${num + 1}`,
+            children: data[key].map((el,inx) => {
+                return {
+                    label: el.label,
+                    name: el.value,
+                    $inx: `${num + 1}-${inx + 1}`,
+                }
+            }),
+        }
+        formatArr.push(obj);
+        num++;
+    }
+    return formatArr;
+}
+
+
 // 格式化Tree数据
 const formatTree = (data) => {
 	let formatArr = [];
@@ -193,11 +228,17 @@ const handleTreeNodeClick = (node) => {
 
 // 获取主体数据
 const getMainList = async () => {
+    console.log(cutNode.value,'cutNode.value')
 	mainLoading.value = true;
-	let res = await props.getMainFn(
-		cutNode.value.parentName,
-		cutNode.value.name
-	);
+	let res;
+    if(props.pageType == 'system') {
+        res = await props.getMainFn(cutNode.value.name);
+    }else {
+        res = await props.getMainFn(
+            cutNode.value.parentName,
+            cutNode.value.name
+        );
+    }
 	if (res) {
 		mainList.value = res.data || [];
 	}

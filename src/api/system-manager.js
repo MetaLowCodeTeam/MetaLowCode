@@ -225,6 +225,14 @@ export function getTagItems(entity, field) {
     return http.get('systemManager/getTagItems', { entity, field })
 }
 
+export function getSystemItemTree() {
+    return http.get('systemManager/getSystemItemTree')
+}
+
+export function getSystemItems(systemName) {
+    return http.get('systemManager/getSystemItems', { systemName })
+}
+
 export function queryEntityListByReferenceField(entityName, fieldName) {
     return http.get('/systemManager/queryEntityListByReferenceField', { entityName, fieldName })
 }
