@@ -229,8 +229,29 @@
                             </el-col>
                         </el-row>
                     </el-tab-pane>
-                    <el-tab-pane label="功能权限">
-
+                    <el-tab-pane label="功能权限" v-if="formModel.customRightList && formModel.customRightList.length > 0">
+                        <el-row>
+                            <hr style="border: 0;border-top: 1px dotted #cccccc" />
+                        </el-row>
+                        <el-row :gutter="12" class="function-right-row">
+                            <el-col
+                                :span="12"
+                                v-for="(funcItem,funcInx) of formModel.customRightList"
+                                :key="funcInx"
+                            >
+                                <el-form-item :title="funcItem.value">
+                                    <template #label>
+                                        {{ funcItem.label }}
+                                    </template>
+                                    <el-radio-group
+                                        v-model="formModel.rightValueMap[funcItem.value]"
+                                    >
+                                        <el-radio :value="true">是</el-radio>
+                                        <el-radio :value="false">否</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-tab-pane>
                 </el-tabs>
             </el-form>
@@ -349,6 +370,7 @@ const editRole = (row) => {
                 formModel.value.disabled = resData.disabled;
                 formModel.value.description = resData.description;
                 formModel.value.rightValueMap = resData.rightValueMap;
+                formModel.value.customRightList = resData.customRightList;
                 rightEntityList.value = copyNew(resData.rightEntityList);
                 queryEntity();
             }
