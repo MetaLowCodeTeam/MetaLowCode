@@ -64,7 +64,7 @@
 			right: 10px;
 			top: 4px;
 			line-height: 32px;
-			z-index: 9999;
+			z-index: 99;
 			cursor: pointer;
 		}
 	}
