@@ -94,8 +94,11 @@ const initVformCom = async () => {
     background: #FFF;
     min-height: 100%;
     .printer-content {
-        width: 52%;
-        margin: 0 auto;
+        width: 100%;
+        // margin: 0 auto;
+        // border: 1px solid #d5d5d5;
+        box-sizing: border-box;
+        // padding: 10px 20px;
         .title {
             font-size: 16px;
             font-weight: bold;
