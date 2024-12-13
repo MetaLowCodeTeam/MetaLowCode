@@ -128,9 +128,12 @@ let userFields = ref([]);
 let loadUserFieldsLoading = ref(false);
 const getUserFields = async () => {
     loadUserFieldsLoading.value = false;
-    let res = await queryEntityFields(trigger.value.entityCode, false, true, true);
+    let res = await queryEntityFields(trigger.value.entityCode, true, true, true, true);
     if (res) {
-        userFields.value = res.data.filter(el => el.fieldType == "Reference" && el.referenceName == "User");
+        let formReferenceName = ["User", "Department", "Role", "Team"];
+        userFields.value = res.data.filter(el => el.fieldType == "Reference" && formReferenceName.includes(el.referenceName) ||
+            el.fieldType == "ReferenceList" && formReferenceName.includes(el.referenceName)
+        );
     }
     loadUserFieldsLoading.value = false;
 }

@@ -61,6 +61,7 @@
                         v-model="useFieldSync"
                         placeholder="选择字段"
                         :disabled="fieldState !== 1"
+                        filterable
                     >
                         <el-option
                             v-for="item in fieldsSync"

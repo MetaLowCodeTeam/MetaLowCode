@@ -495,6 +495,7 @@ const filterUseCustomEntity = [
     "approvalHandle",
     "approvalSubmit",
     "capprovalCc",
+    "approvalApproved",
 ];
 
 // 实体分组
@@ -566,6 +567,11 @@ const getGroupEntityList = (target) => {
 					name: "capprovalCc",
 					entityCode: "capprovalCc",
 				},
+                {
+                    label: "审批过的",
+                    name: "approvalApproved",
+                    entityCode: "approvalApproved",
+                },
 			],
 		});
 	}
@@ -736,6 +742,7 @@ const systemEntityName = ref([
 	"approvalHandle",
 	"approvalSubmit",
 	"capprovalCc",
+    "approvalApproved",
 ]);
 const systemEntityPath = reactive({
 	Department: "entity-user",
@@ -744,6 +751,7 @@ const systemEntityPath = reactive({
 	approvalHandle: "approval-handle",
 	approvalSubmit: "approval-submit",
 	capprovalCc: "approval-cc",
+    approvalApproved: "approval-approved"
 });
 
 // 确认菜单
