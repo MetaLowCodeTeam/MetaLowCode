@@ -96,7 +96,7 @@ const getNavigationById = async () => {
 const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转导航
 const goNav = (subItem) => {
-    let { type, outLink, openType, entityName, guid } = subItem;
+    let { type, outLink, openType, entityName, guid, redirectCarrySessionId } = subItem;
     // 是实体列表页面
     if (type == 1) {
         Router.push(appPath + entityName + "/list");
@@ -109,7 +109,11 @@ const goNav = (subItem) => {
         }
         // 新窗口跳转
         else {
-            window.open(outLink);
+            let newUrl = outLink;
+            if(redirectCarrySessionId) {
+                newUrl = import.meta.env.VITE_APP_BASE_API + "/open/redirectCarrySessionId?url=" + encodeURIComponent(outLink)
+            }
+            window.open(newUrl);
         }
     }
     // 自定义

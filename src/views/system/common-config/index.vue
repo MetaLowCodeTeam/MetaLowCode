@@ -306,9 +306,6 @@ const initData = async () => {
         }
         return el;
     });
-    if(publicSetting.value.dataBaseType == "mysql"){
-        confList.value[0].confs.splice(8,1);
-    }
     loading.value = true;
     let res = await getSettingInfo();
     if (res) {
@@ -422,7 +419,7 @@ const initData = async () => {
         // 初始化工作台展示样式
         confData.mobileStagingStyleType = confData.mobileStagingStyleType || 'pane';
         // 初始化数据备份
-        if(publicSetting.value.dataBaseType != "mysql" && !confData.databaseDumpPath){
+        if(!confData.databaseDumpPath){
             confData.autoBackup = false;
         }
     }
@@ -827,7 +824,7 @@ const getHeavyTaskApi2 = async () => {
 // 数据自动备份
 const openAutoBackup = () => {
     return new Promise((resolve) => {
-        if( publicSetting.value.dataBaseType != "mysql" && !confData.databaseDumpPath){
+        if(!confData.databaseDumpPath){
             confList.value[0].confs[8].isError = true
             ElMessage.error("请填写备份命令地址")
             return resolve(false)

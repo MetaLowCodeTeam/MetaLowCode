@@ -325,6 +325,12 @@
 							<el-radio :value="0">新窗口打开</el-radio>
 							<el-radio :value="1">嵌入式</el-radio>
 						</el-radio-group>
+                        <div>
+                            <el-checkbox 
+                                v-model="cutMenu.redirectCarrySessionId"
+                                label="添加sessionId重定向"
+                            />
+                        </div>
 					</div>
 					<div
 						class="mt-5"
@@ -655,6 +661,8 @@ let defaultMenu = reactive({
     pcShow: true,
     // 是否在Mobile显示
     mobileShow: true,
+    // 添加sessionId重定向
+    redirectCarrySessionId: false,
 });
 
 const getGuid = () => {
@@ -781,7 +789,7 @@ const confirmMenu = () => {
 		return;
     }
 	// 如果是系统内置
-	if (systemEntityName.value.includes(cutMenu.value.entityName)) {
+	if (systemEntityName.value.includes(cutMenu.value.entityName) && cutMenu.value.type != 2) {
 		cutMenu.value.type = 4;
 		cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
 	}
@@ -823,7 +831,6 @@ const confirmMenu = () => {
 			}
 		}
 	}
-	// console.log(menuData,'menuData')
 	cutMenu.value = null;
 };
 // 获取数据索引
