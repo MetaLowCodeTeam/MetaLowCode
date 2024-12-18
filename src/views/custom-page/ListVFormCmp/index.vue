@@ -102,6 +102,12 @@ const createAndSubmit = (row) => {
 
 </script>
 <style lang="scss" scoped>
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 .form-main {
 	height: 100%;
 	box-sizing: border-box;

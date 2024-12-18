@@ -612,6 +612,12 @@ const saveComplexFlow = async (dealWithType) => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 .detail-header {
     // padding-bottom: 20px;
     // box-sizing: border-box;

@@ -707,6 +707,11 @@ defineExpose({
 	margin-bottom: 5px !important;
 }
 
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px;
+    }
+}
 .detail-header {
 	border-bottom: 2px solid #f1f2f3;
 	// padding-bottom: 20px;
