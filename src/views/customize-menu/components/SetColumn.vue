@@ -93,13 +93,17 @@
             v-if="editColumnDialogIsShow"
             appendToBody
             title="列设置"
-            width="460"
+            width="500"
             top="25vh"
         >
-            <div>
+            <el-scrollbar height="500px">
                 <el-form label-width="100px">
                     <el-form-item label="别名" class="mb-10">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
+                    </el-form-item>
+                    <el-form-item label="列隐藏" class="mb-10">
+                        <el-checkbox v-model="editColumnDialogData.pcHide" label="PC端隐藏" />
+                        <el-checkbox v-model="editColumnDialogData.mobileHide" label="移动端隐藏" class="ml-5" />
                     </el-form-item>
                     <el-form-item label="开启排序" class="mb-5">
                         <el-checkbox v-model="editColumnDialogData.sortable" />
@@ -271,7 +275,7 @@
                         </el-tab-pane>
                     </el-tabs>
                 </el-form>
-            </div>
+            </el-scrollbar>
             <template #footer>
                 <div class="footer-div">
                     <el-button @click="editColumnDialogIsShow = false">取消</el-button>
@@ -396,6 +400,9 @@ let editColumnDialogData = reactive({
     mobileShow: true,
     // 是否开启排序
     sortable: true,
+    // 是否隐藏
+    pcHide: false,
+    mobileHide: false,
 });
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
@@ -506,45 +513,68 @@ const isShowItemTag = (column) => {
         headerAlign,
         mobileHeaderAlign,
         sortable,
-        fontColor
+        fontColor,
+        pcHide,
+        mobileHide
     } = column;
     if(columnAliasName) {
+        console.log('edit-type-1')
         return true;
     }
     if(columnSort) {
+        console.log('edit-type-2')
         return true;
     }
     if(columnWidth > 0) {
+        console.log('edit-type-3')
         return true;
     }
     if(dataStatistics) {
+        console.log('edit-type-4')
         return true;
     }
     if(renderType === 'customizeRender' && !!columnRender) {
+        console.log('edit-type-5')
         return true;
     }
     if(align && align !== 'left') {
+        console.log('edit-type-6')
         return true;
     }
     if(mobileAlign && mobileAlign !== 'left') {
+        console.log('edit-type-7')
         return true;
     }
     if(headerAlign && headerAlign !== 'left') {
+        console.log('edit-type-8')
         return true;
     }
     if(mobileHeaderAlign && mobileHeaderAlign !== 'left') {
+        console.log('edit-type-9')
         return true;
     }
     if(fixed) {
+        console.log('edit-type-10')
         return true;
     }
     if(mobileShow !== undefined && !mobileShow) {
+        console.log('edit-type-11')
         return true;
     }
     if(sortable !== undefined && !sortable) {
+        console.log('edit-type-12')
         return true;
     }
     if(fontColor){
+        console.log('edit-type-13')
+        return true;
+    }
+    if(pcHide){
+        console.log('edit-type-14')
+        return true;
+    }
+    if(mobileHide){
+        console.log('edit-type-15')
         return true;
     }
     // // 合并条件判断

@@ -319,30 +319,32 @@
                             />
                         </template>
                     </el-table-column>
-                    <el-table-column
-                        v-for="(column,columnInx) of tableColumn"
-                        :key="columnInx"
-                        :prop="column.fieldName"
-                        :width="setColumnWidth(column)"
-                        :sortable="column.sortable == undefined ? true : column.sortable"
-                        show-overflow-tooltip
-                        :fixed="column.fixed"
-                        :align="column.align"
-                        :header-align="column.headerAlign"
-                    >
-                        <template #header>
-                            <span v-html="column.columnAliasName ? column.columnAliasName.replace(/\\n/g, '<br>') : column.fieldLabel"></span>
-                        </template>
-                        <template #default="scope">
-                            <FormatRow
-                                :row="scope.row"
-                                :column="column"
-                                :nameFieldName="nameFieldName"
-                                :nameFieldClick="nameFieldClick"
-                                @openDetailDialog="openDetailDialog"
-                            />
-                        </template>
-                    </el-table-column>
+                    <template v-for="(column,columnInx) of tableColumn" :key="columnInx">
+                        <el-table-column
+                            v-if="!column.pcHide"
+                            :prop="column.fieldName"
+                            :width="setColumnWidth(column)"
+                            :sortable="column.sortable == undefined ? true : column.sortable"
+                            show-overflow-tooltip
+                            :fixed="column.fixed"
+                            :align="column.align"
+                            :header-align="column.headerAlign"
+                        >
+                            <template #header>
+                                <span v-html="column.columnAliasName ? column.columnAliasName.replace(/\\n/g, '<br>') : column.fieldLabel"></span>
+                            </template>
+                            <template #default="scope">
+                                <FormatRow
+                                    :row="scope.row"
+                                    :column="column"
+                                    :nameFieldName="nameFieldName"
+                                    :nameFieldClick="nameFieldClick"
+                                    @openDetailDialog="openDetailDialog"
+                                />
+                            </template>
+                        </el-table-column>
+                    </template>
+                   
                     <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
                     <el-table-column
                         v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
