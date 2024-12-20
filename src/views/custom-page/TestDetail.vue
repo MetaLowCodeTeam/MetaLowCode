@@ -48,6 +48,15 @@ let detailConf = ref({
     // 提交审批后
     afterSubmitApproval: () => {
         console.log('afterSubmitApproval')
+    },
+    // 撤销审批前
+    beforeRevokeApproval: () => {
+        console.log('beforeRevokeApproval')
+        return false
+    },
+    // 撤销审批后
+    afterRevokeApproval: () => {
+        console.log('afterRevokeApproval')
     }
 });
 

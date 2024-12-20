@@ -267,6 +267,8 @@ const detailParamConf = ref({
     showRevisionHistory: true,
     beforeSubmitApproval: () => true,
     afterSubmitApproval: () => true,
+    beforeRevokeApproval: () => true,
+    afterRevokeApproval: () => true,
 })
 
 // 插槽内容
