@@ -101,7 +101,6 @@
             <el-form-item
                 v-if="
                     publicSetting?.pluginIdList.includes('metaWorkFlow') && 
-                    dialogForm.title == '添加审批流程' &&
                     dialogForm.form.flowType == 2
                 "
                 label="流程标签"
