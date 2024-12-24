@@ -250,6 +250,9 @@ const openDialog = (data) => {
     if(form.filterJson) {
         form.filterJson = JSON.parse(form.filterJson);
     }
+    if(data.saveEntity == 'ApprovalConfig' && data.type == 'edit') {
+        flowTypeChange();
+    }
     isShow.value = true;
 };
 
