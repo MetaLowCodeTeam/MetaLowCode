@@ -44,7 +44,7 @@
         class="text-ellipsos" 
         v-else-if="column.type == 'ReferenceList'"
     >
-        {{  formatReferenceList(row[column.fieldName])  }}
+        {{  formatReferenceList(row[column.prop])  }}
     </div>
 	<div
 		class="text-ellipsis"
