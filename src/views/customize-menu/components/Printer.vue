@@ -41,7 +41,11 @@ onMounted(async () => {
 
 let vFormRef = ref();
 let fromBoxRef = ref();
-let globalDsv = ref({});
+let globalDsv = ref({
+    uploadServer: import.meta.env.VITE_APP_BASE_API,
+    baseApi: import.meta.env.VITE_APP_BASE_API,
+    SERVER_API: import.meta.env.VITE_APP_BASE_API,
+});
 // 加载vform表单
 const initVformCom = async () => {
     loading.value = true;

@@ -375,6 +375,7 @@ const tabChange = (tab) => {
 // 刷新
 const refresh = () => {
 	cutTab.value = "detail";
+    haveLayoutJson.value = false;
 	getLayoutList();
 };
 

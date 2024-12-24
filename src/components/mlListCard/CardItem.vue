@@ -184,7 +184,9 @@ watch(
 );
 
 let globalDsv = ref({
-	uploadServer: import.meta.env.VITE_APP_BASE_API,
+    uploadServer: import.meta.env.VITE_APP_BASE_API,
+    baseApi: import.meta.env.VITE_APP_BASE_API,
+    SERVER_API: import.meta.env.VITE_APP_BASE_API,
 });
 let myOptionData = ref({});
 
