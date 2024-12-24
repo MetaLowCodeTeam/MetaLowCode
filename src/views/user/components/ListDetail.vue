@@ -32,22 +32,7 @@
                     >重置密码</el-button>
                 </el-col>
                 <el-col :span="24">
-                    <el-dropdown trigger="click">
-                        <el-button>
-                            更多
-                            <el-icon style="transform: rotate(90deg);">
-                                <ElIconMoreFilled />
-                            </el-icon>
-                        </el-button>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item :disabled="!checkRole(4)">
-                                    <span @click="delCick(row[idFieldName])" v-if="checkRole(4)">删除</span>
-                                    <span v-else>删除</span>
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <el-button icon="Delete" @click="delClick(row[idFieldName])" :disabled="!checkRole(4)">删除</el-button>
                 </el-col>
             </el-row>
         </template>
@@ -131,7 +116,7 @@ const changeMembers = () => {
 };
 
 // 删除
-const delCick = (id) => {
+const delClick = (id) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",

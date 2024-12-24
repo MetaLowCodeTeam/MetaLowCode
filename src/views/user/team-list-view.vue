@@ -9,6 +9,7 @@
         :tableColumn="tableColumn"
         :filterItems="filterItems"
         @highlightClick="highlightClick"
+        @changeSwitch="changeSwitch"
     >
         <template #addButton>
             <el-button type="primary" @click="addClick" :disabled="!$TOOL.checkRole('r24-3')">
@@ -63,7 +64,7 @@ import { $fromNow } from "@/utils/util";
 import { ElMessageBox, ElMessage } from "element-plus";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import ListDetail from "./components/ListDetail.vue";
-import { delTeam } from "@/api/team";
+import { delTeam, saveTeam } from "@/api/team";
 const $TOOL = inject("$TOOL");
 // 默认排序
 let sortFields = ref([
@@ -94,6 +95,14 @@ let tableColumn = ref([
         formatter: (row) => {
             return row.createdBy?.name;
         },
+    },
+    {
+        prop: "disabled",
+        label: "启用",
+        align: "center",
+        customSlot: "switch",
+        isNegation: true,
+        width: 80,
     },
 ]);
 
@@ -141,6 +150,19 @@ let mlListDetailsRefs = ref();
 // 高亮字段点击
 const highlightClick = (row) => {
     mlListDetailsRefs.value.openDetailDialog(row.teamId, row.teamName);
+};
+
+// 切换启用状态
+const changeSwitch = async (row) => {
+    // 是否启用
+    // async changeSwitch(row) {
+    //         let res = await saveUser("User", row.userId, { ...row });
+    //         this.onRefresh();
+    //     },
+    mlSingleListRef.value.loading = true;
+    await saveTeam("Team", row.teamId, { ...row });
+    onRefresh();
+    // 
 };
 
 // 当前页签
