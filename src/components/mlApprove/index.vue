@@ -204,6 +204,7 @@ import mlApproveBar from "@/components/mlApproveBar/index.vue";
 import vueEsign from "vue-esign";
 import { ElMessage } from "element-plus";
 const { allEntityName } = storeToRefs(useCommonStore());
+const { queryEntityNameById } = useCommonStore();
 const props = defineProps({
     modelValue: null,
     taskId: { type: String, default: "" },
@@ -283,6 +284,7 @@ let globalDsv = ref({
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;
     globalDsv.value.useFormId = formLayoutId;
+    globalDsv.value.formEntity = queryEntityNameById(props.entityId);
     let res = await getFormLayout(
         allEntityName.value[approvalTask.value.entityCode],
         formLayoutId,
