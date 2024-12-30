@@ -20,6 +20,10 @@ export default {
     getFieldListOfFilter: async (data) => {
         return await http.get("/systemManager/getFieldListOfFilter", data);
     },
+    // 多引用字段设置查询参数接口
+    getFieldListByRefField: async (data) => {
+        return await http.get("/systemManager/getFieldListByRefField", data);
+    },
     // 审批流程获取实体接口
     getFieldListOfEntity: async (data) => {
         return await http.get("/systemManager/getFieldListOfEntity", data);

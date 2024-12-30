@@ -15,7 +15,7 @@
 			<el-input
 				ref="fieldEditor"
 				v-model="displayValue"
-				v-show="!isReadMode"
+				v-show="!isReadMode && !field.options.openSearchInPlace"
 				:disabled="field.options.disabled"
 				readonly
 				:size="field.options.size"
@@ -44,8 +44,16 @@
 							<component :is="field.options.buttonIcon" />
 						</el-icon>
 					</el-button>
-				</template>
+				</template>    
 			</el-input>
+			<ReferenceSearchRemote 
+                v-if="!isReadMode && field.options.openSearchInPlace" 
+                :entity="entity"
+				:refField="field.options.name"
+                :searchFields="field.options.searchFields"
+                :fieldModel="fieldModel"
+                @onSelectedRemote="onSelectedRemote"
+            />
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"
 					>{{ contentForReadMode }}
@@ -108,6 +116,8 @@
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
+import ReferenceSearchRemote from "@/components/mlReferenceSearch/reference-search-remote.vue";
+
 import Detail from "@/views/customize-menu/detail.vue";
 import { queryById } from "@/api/crud";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
@@ -146,6 +156,7 @@ export default {
 		ReferenceSearchTable,
         ReferenceSearchTree,
 		Detail,
+		ReferenceSearchRemote,
 	},
 	data() {
 		return {
@@ -583,6 +594,9 @@ export default {
 				this.$refs.detailRef.openDialog(refId);
 			}
 		},
+        onSelectedRemote({record, selectedRow}) {
+            this.setReferRecord(record, selectedRow);
+        }
 	},
 };
 </script>
