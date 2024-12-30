@@ -102,7 +102,7 @@ const loadNode = async (node, resolve) => {
         dataShowTree,
         contentsField,
         dataIcon,
-        contentsParentField,
+        dataParentField,
     } = props.treeConfig;
     // 如果不是目录 并且 没有勾选树状展示数据
     if(!node.data.isParent && !dataShowTree){
@@ -114,6 +114,7 @@ const loadNode = async (node, resolve) => {
     };
     // 如果是目录
     if(node.data.isParent){
+        filter.equation = "OR";
         filter.items = [
             {
                 fieldName: contentsField,
@@ -121,12 +122,20 @@ const loadNode = async (node, resolve) => {
                 op: "EQ",
             }
         ];
+        if(dataShowTree) {
+            filter.equation = "AND";
+            filter.items.push({
+                fieldName: dataParentField,
+                value: "",
+                op: "NL",
+            })
+        }
     }
     // 如果是树状展示数据
     else {
         filter.items = [
             {
-                fieldName: contentsParentField,
+                fieldName: dataParentField,
                 value: node.data.id,
                 op: "EQ",
             }
