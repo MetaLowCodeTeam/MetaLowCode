@@ -121,12 +121,16 @@ let checkTabsFilter = ref({});
 const mainDetailRefs = ref(null);
 
 const refreshData = () => {
-    console.log(myEntity,'myEntity')
     initData(myEntity, true);
 }
 
 // 初始化数据
 const initData = async (paramEntity, isRefresh = false) => {
+    if(currentTab.comp !== 'detail') {
+        currentTab.comp = 'detail';
+        currentTab.name = 'detail-1';
+        currentTab.inx = 0;
+    }
     myEntity = Object.assign(myEntity, paramEntity);
     currentDetailType.value = paramEntity.recordId == 'add' ? 'add' : 'edit';
     if(isRefresh){
@@ -161,8 +165,9 @@ const initData = async (paramEntity, isRefresh = false) => {
 		tabsConf.value.tab = res.data.TAB ? { ...res.data.TAB } : {};
 		tabsConf.value.entityCode = myEntity.entityCode;
 		tabsConf.value.entityName = myEntity.name;
+
         nextTick(() => {
-            mainDetailRefs.value.initFormData(myEntity);
+            mainDetailRefs.value?.initFormData(myEntity);
             loading.value = false;
         });
 	}else {
