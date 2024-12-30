@@ -34,6 +34,12 @@ export const customListEntry = [
         // 日历视图用的：FullCalendar，对移动端适配不友好，不建议开放
         isMobileSupported: false,
     },
+    {
+        label: "自定义列表左树右表模板",
+        value: "ListViewCmp/TreeDetailView/Index",
+        // 是否支持移动端   自定义模板，不支持移动端
+        isMobileSupported: false,
+    },
 ];
 
 

@@ -101,7 +101,6 @@ const createAndSubmit = (row) => {
         approvalConfigId: row.approvalConfigId,
     };
     editRefs.value.openDialog(tempV);
-
 }
 
 </script>
