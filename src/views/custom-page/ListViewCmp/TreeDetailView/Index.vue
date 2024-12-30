@@ -85,7 +85,6 @@ const getLayoutConfig = async () => {
 			let { config } = res.data.CUSTOM_TEMPLATE;
 			treeConfig.value = JSON.parse(config);
 		}
-		console.log(treeConfig.value, "treeConfig.value");
 		if (
 			treeConfig.value.contentsField &&
 			treeConfig.value.contentsParentField
@@ -97,7 +96,6 @@ const getLayoutConfig = async () => {
 			if (treeRes) {
 				treeData.value = treeRes.data || [];
 				setTreeContentsIcon(treeData.value);
-				// console.log(treeData.value, "treeData.value");
 			}
 		}
 	}
@@ -182,6 +180,7 @@ const handleSearch = (value) => {
 const HeaderViewRef = ref();
 const handleClearSearch = () => {
     treeSearchValue.value = "";
+    getLayoutConfig();
     HeaderViewRef.value?.handleClearSearch();
 }
 

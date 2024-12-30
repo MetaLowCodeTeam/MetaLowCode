@@ -184,15 +184,15 @@ let reloadTree = ref(true);
 const handleRefresh = () => {
     reloadTree.value = false;
     emit('clearSearch')
-    nextTick(() => {
-        reloadTree.value = true;
-    })
 };
 
 watch(() => props.treeSearchValue, (newVal) => {
     treeRef.value?.filter(newVal);
 })
 
+watch(() => props.treeData, (newVal) => {
+    reloadTree.value = true;
+}, { deep: true })
 
 // 过滤树
 const filterNode = (value, data) => {
