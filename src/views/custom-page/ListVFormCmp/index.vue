@@ -42,7 +42,11 @@ let entityName = ref();
 
 // 表单数据
 let optionData = ref({});
-let globalDsv = ref({});
+let globalDsv = ref({
+    uploadServer: import.meta.env.VITE_APP_BASE_API,
+    baseApi: import.meta.env.VITE_APP_BASE_API,
+    SERVER_API: import.meta.env.VITE_APP_BASE_API,
+});
 let haveLayoutJson = ref(false);
 let notData = ref(false);
 let loading = ref(false);
@@ -97,11 +101,16 @@ const createAndSubmit = (row) => {
         approvalConfigId: row.approvalConfigId,
     };
     editRefs.value.openDialog(tempV);
-
 }
 
 </script>
 <style lang="scss" scoped>
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 .form-main {
 	height: 100%;
 	box-sizing: border-box;

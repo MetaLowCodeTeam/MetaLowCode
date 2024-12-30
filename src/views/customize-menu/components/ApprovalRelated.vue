@@ -276,6 +276,9 @@ const confirmApproval = () => {
 
 // 撤销
 const revokeApproval = () => {
+    if(!props.detailParamConf.beforeRevokeApproval()){
+        return
+    }
 	ElMessageBox.confirm("是否确认撤销?", "提示：", {
 		confirmButtonText: "确认",
 		cancelButtonText: "取消",

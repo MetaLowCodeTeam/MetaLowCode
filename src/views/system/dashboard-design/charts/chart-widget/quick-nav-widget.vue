@@ -161,7 +161,7 @@ const jumpLink = (func, target, url) => {
     else {
         // 如果是当前页面
         if (target == 1) {
-            window.location(url);
+            window.location.href = url;
         }
         // 如果是新页面打开
         else {

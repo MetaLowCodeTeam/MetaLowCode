@@ -213,6 +213,5 @@ const formatFieldsTab = () => {
 		}
 	});
 	entityTabs.value = tabList;
-	console.log(entityTabs.value, "entityTabs.value");
 };
 </script>

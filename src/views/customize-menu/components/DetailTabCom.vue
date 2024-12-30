@@ -70,7 +70,7 @@
                     </el-button>
                 </div>
             </div>
-            <div class="min-table mt-20" v-if="defaultShowType == 'table'">
+            <div class="min-table mt-10" v-if="defaultShowType == 'table'">
                 <el-table
                     ref="elTables"
                     :data="tableData"

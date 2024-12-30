@@ -64,8 +64,9 @@
                     :formList="entityFromList"
                     @setNodeData="setNodeData"
                 />
-                <ServiceTask
-                    v-if="drawerData.type == 'bpmn:serviceTask'"
+                <!-- 服务任务 -->
+                <service-task
+                    v-if="drawerData.type == 'bpmn:serviceTask' || drawerData.type == 'bpmn:receiveTask'"
                     :formData="drawerData.formData"
                     :lf="MetaFlowDesignerRef"
                     @setNodeData="setNodeData"
@@ -73,6 +74,12 @@
                 <!-- 中间事件节点 -->
                 <CenterEventNode 
                     v-if="drawerData.type == 'bpmn:intermediateCatchEvent'"
+                    :formData="drawerData.formData"
+                    @setNodeData="setNodeData"
+                />
+                <!-- 边界事件 -->
+                <boundary-event
+                    v-if="drawerData.type == 'bpmn:boundaryEvent'"
                     :formData="drawerData.formData"
                     @setNodeData="setNodeData"
                 />
@@ -95,6 +102,8 @@ import UserTask from "./UserTask.vue";
 import ServiceTask from "./ServiceTask.vue";
 // 中间事件节点
 import CenterEventNode from './centerEventNode/index.vue';
+// 边界事件
+import BoundaryEvent from './boundaryEvent/Index.vue';
 
 // 公用方法
 import { checkConditionList } from "@/utils/util";
@@ -107,6 +116,18 @@ import { saveComplexFlow, getComplexFlow } from "@/api/approval";
 import { getFormLayoutList } from "@/api/system-manager";
 
 import { useRouter } from "vue-router";
+
+// 节点默认配置
+import { 
+    // 节点默认数据
+    NodeDefaultData,
+    // 排除的节点
+    EliminateNode,
+    // 节点触发事件
+    NodeTypeFn,
+    // 默认节点颜色
+    DefaultNodeColor
+} from "./nodeDefaultConfig";
 
 const $TOOL = inject("$TOOL");
 
@@ -161,108 +182,6 @@ let drawerData = ref({});
 // 模态框
 let drawer = ref(false);
 
-// 各节点默认数据
-let nodeDefaultData = reactive({
-    "bpmn:serviceTask": {
-        taskType: 1,
-        classPath: "",
-        customData: {}
-    },
-    "bpmn:startEvent": {
-        type: 0,
-        // 谁可以发起此审批
-        nodeRoleType: 1,
-        // 指定用户
-        nodeRoleList: [],
-        // 发起条件
-        filter: {
-            equation: "",
-            items: [],
-        },
-    },
-    "bpmn:sequenceFlow": {
-        // 发起条件
-        filter: {
-            equation: "",
-            items: [],
-        },
-    },
-    "bpmn:userTask": {
-        // 审批类型(1.人工审批 2.自动驳回 3. 发起子流程)
-        approvalType: 1,
-        // 由审批（3.指定审批人  4. 指定部门负责人 5. 发起人部门负责人 6.数据所属部门负责人 7. 实体字段）
-        nodeRoleType: 3,
-        // 指定用户集合（由审批 3、4）
-        nodeRoleList: [],
-        // 部门层级(由审批 5、6)
-        deptLevel: 0,
-        // 字段名称(由审批 7)
-        fieldName: "",
-        // 同时允许自选
-        userSelectFlag: false,
-        // 允许审批人转审
-        transferApproval: false,
-        // 允许审批人加签
-        addSignaturesApproval: false,
-        // 驳回设置  类型 （1.驳回至未提交 2.驳回至上一步审核 3.驳回至任意步骤）
-        rejectType: 1,
-        // 审批人为空时（1.自动通过 2.指定审批人）
-        emptyUserType: 1,
-        //  审批人空时，指定用户
-        specificRole: [],
-        // 审批方式（1.会签 2.或签 3.部分或签）
-        approvalMethodType: 1,
-        // 审批方式->部分会签人数
-        signUserNum: 1,
-        // 审批结果抄送给谁
-        ccToUserList: [],
-        // 可修改字段
-        modifiableFields: [],
-        // 前置脚本
-        createScript: "",
-        // 后置脚本
-        completeScript: "",
-        // 数据转化ID
-        transformId: null,
-        // 审批配置ID
-        approvalConfigId: null,
-        // 是否阻断流程
-        isBlocked: false,
-        // 选择触发器
-        triggerConfigIdList: [],
-        // 指定表单
-        formLayoutId: null,
-    },
-    "bpmn:intermediateCatchEvent": {
-        // 信号名称
-        signalName: "SignalName_",
-    },
-});
-
-// 节点触发事件
-const NodeTypeFn = {
-    "bpmn:startEvent": "getNodeModelById",
-    "bpmn:sequenceFlow": "getEdgeModelById",
-    "bpmn:userTask": "getNodeModelById",
-    "bpmn:serviceTask": "getNodeModelById",
-    "bpmn:intermediateCatchEvent": "getNodeModelById",
-    "bpmn:subProcess": "getNodeModelById",
-};
-
-// 排除的节点
-const EliminateNode = [
-    "bpmn:parallelGateway",
-    "bpmn:endEvent",
-    "bpmn:exclusiveGateway",
-    "bpmn:inclusiveGateway",
-    "bpmn:subProcess"
-];
-
-// 默认节点颜色
-const DefaultNodeColor = {
-    "bpmn:intermediateCatchEvent": "#707070"
-}
-
 // 节点删除
 const nodeDelete = () => {
     drawer.value = false;
@@ -296,12 +215,22 @@ const openDrawer = (data) => {
     if (data.properties?.flowJson) {
         drawerData.value.formData = getProperties(data.properties.flowJson);
     } else {
-        drawerData.value.formData = cloneDeep(nodeDefaultData[data.type]);
-        if(data.type == "bpmn:intermediateCatchEvent" && drawerData.value.formData.signalName == "SignalName_"){
-            drawerData.value.formData.signalName += $TOOL.generateRandomString(6);
-        }
+        drawerData.value.formData = initNodeFlowJson(data);
     }
+    setNodeBorderColor(data.type, data.id, DefaultNodeColor[data.type] || "#337ecc");
 };
+
+const initNodeFlowJson = (data) => {
+    let newData = cloneDeep(NodeDefaultData[data.type]);
+    if(data.type == "bpmn:intermediateCatchEvent" && newData.signalName == "SignalName_"){
+        newData.signalName += $TOOL.generateRandomString(6);
+    }
+    if(data.type == "bpmn:boundaryEvent") {
+        let sourceProperties = MetaFlowDesignerRef.value.lf.getNodeModelById(data.id).getProperties();
+        newData.boundaryType = sourceProperties.customType;
+    }
+    return newData;
+}
 
 // 开始节点
 let StartEventRef = ref("");
@@ -347,6 +276,7 @@ const confirmTitle = () => {
     drawerIsEditTitle.value = false;
 };
 
+
 // 保存
 const onSave = async () => {
     if (!$TOOL.checkRole("r6016")) {
@@ -364,8 +294,9 @@ const onSave = async () => {
         const el = newNodes[index];
         let properties;
         if (!el.properties.flowJson) {
-            setProperties(el.type, el.id, nodeDefaultData[el.type]);
-            properties = { ...nodeDefaultData[el.type] };
+            let newData = initNodeFlowJson(el);
+            setProperties(el.type, el.id, newData);
+            properties = newData;
         } else {
             properties = getProperties(el.properties.flowJson);
         }
@@ -406,14 +337,50 @@ const onSave = async () => {
                 return;
             }
         }
+        // 如果是边界事件
+        if(el.type == "bpmn:boundaryEvent") {
+            let { 
+                boundaryType,
+                timedType,
+                timeCycleType,
+                timeDuration,
+                timeDate,
+                timeCycle,
+            } = properties;
+            let timedBoundary = ['nonTimed','timed'];
+            // 时间类型
+            if(timedBoundary.includes(boundaryType) && timedType == 1 && !timeDate) {
+                ElMessage.error("边界事件：请选择时间条件");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+            // 持续类型
+            if(timedBoundary.includes(boundaryType) && timedType == 2 && !timeDuration) {
+                ElMessage.error("边界事件：请输入Flowable Duration表达式");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+            // 循环类型-cron 表达式
+            if(timedBoundary.includes(boundaryType) && timedType == 3 && timeCycleType == 1 && !timeCycle) {
+                ElMessage.error("边界事件：请输入cron表达式");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+            // 循环类型-Flowable Duration表达式
+            if(timedBoundary.includes(boundaryType) && timedType == 3 && timeCycleType == 2 && !timeDuration) {
+                ElMessage.error("边界事件：请输入Flowable Duration表达式");
+                setNodeBorderColor(el.type, el.id, "red");
+                return;
+            }
+        }
     }
     // 遍历线
     for (let index = 0; index < edges.length; index++) {
         const el = edges[index];
         let properties;
         if (!el.properties.flowJson) {
-            setProperties(el.type, el.id, nodeDefaultData[el.type]);
-            properties = { ...nodeDefaultData[el.type] };
+            setProperties(el.type, el.id, NodeDefaultData[el.type]);
+            properties = { ...NodeDefaultData[el.type] };
         } else {
             properties = getProperties(el.properties.flowJson);
         }
@@ -535,7 +502,7 @@ const cloneDeep = (data) => {
     position: relative;
     z-index: 1;
     .drawer-header {
-        border-bottom: 1px solid #dcdfe6;
+        // border-bottom: 1px solid #dcdfe6;
         padding: 0 20px;
         height: 46px;
         line-height: 46px;
@@ -553,7 +520,7 @@ const cloneDeep = (data) => {
             &:hover {
                 color: #333;
             }
-        }
+        }         
         .close-icon {
             position: absolute;
             right: 15px;
@@ -564,10 +531,20 @@ const cloneDeep = (data) => {
     }
     .drawer-body {
         box-sizing: border-box;
-        padding: 20px 15px;
         height: calc(100% - 48px);
         overflow-x: hidden;
         overflow-y: auto;
+        .border-container {
+            border-top: 1px solid #dcdfe6;
+            padding: 10px 15px;
+        }
+        :deep(.el-collapse-item__header){
+            padding: 0 15px;
+        }
+        :deep(.el-collapse-item__content){
+            padding: 0 15px;
+            padding-bottom: 15px;
+        }
     }
 }
 </style>

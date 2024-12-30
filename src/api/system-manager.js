@@ -79,6 +79,12 @@ export function updateEntityNameField(entity, nameField) {
     })
 }
 
+export function updateDisplayOrderField(entityName, fieldName) {
+    return http.post('systemManager/updateDisplayOrderField', {}, {
+        params: { entityName, fieldName }
+    })
+}
+
 export function addField(field, entity) {
     return http.post('systemManager/addField', field, {
         params: { entity }

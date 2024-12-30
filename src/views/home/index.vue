@@ -195,4 +195,10 @@ const initFormConfig = async (chartId) => {
 		}
 	}
 }
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 </style>

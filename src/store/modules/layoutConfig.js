@@ -169,6 +169,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.isOpeneds = el.isOpeneds;
             initMenu.meta.icon = el.useIcon || 'set-up';
             initMenu.meta.iconColor = el.iconColor || "";
+            initMenu.meta.redirectCarrySessionId = el.redirectCarrySessionId;
             // let checkCode = el.detailEntityFlag ? el.mainEntityCode : el.entityCode;
             // initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' +checkCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
             initMenu.meta.hidden = checkAuth(el);
@@ -187,6 +188,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                             icon: subEl.useIcon || 'set-up',
                             iconColor: subEl.iconColor || '',
                             outLink: subEl.outLink,
+                            redirectCarrySessionId: subEl.redirectCarrySessionId
                         },
                     }
                     // 如果是实体列表 且 使用了自定义列表模板

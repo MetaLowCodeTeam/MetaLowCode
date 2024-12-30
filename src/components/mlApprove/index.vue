@@ -72,6 +72,7 @@
                                     v-if="approvalTask.transferApproval || approvalTask.addSignaturesApproval"
                                 >
                                     <span class="el-dropdown-link" style="position: relative;top: -1px">
+                                        更多
                                         <el-icon class="el-icon--right">
                                             <ElIconMoreFilled />
                                         </el-icon>
@@ -99,6 +100,7 @@
                                     type="primary" 
                                     @click="beforeConfirmApprove" 
                                     style="min-width: 60px !important;"
+                                    icon="Finished"
                                 >
                                     {{ customButtonText.confirmButtonText }}
                                 </el-button>
@@ -107,6 +109,7 @@
                                     @click="beforeReject" 
                                     style="min-width: 60px !important;"
                                     v-if="!approvalTask.prohibitRejection"
+                                    icon="RefreshLeft"
                                 >
                                     {{ customButtonText.rejectButtonText }}
                                 </el-button>
@@ -201,6 +204,7 @@ import mlApproveBar from "@/components/mlApproveBar/index.vue";
 import vueEsign from "vue-esign";
 import { ElMessage } from "element-plus";
 const { allEntityName } = storeToRefs(useCommonStore());
+const { queryEntityNameById } = useCommonStore();
 const props = defineProps({
     modelValue: null,
     taskId: { type: String, default: "" },
@@ -280,6 +284,7 @@ let globalDsv = ref({
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;
     globalDsv.value.useFormId = formLayoutId;
+    globalDsv.value.formEntity = queryEntityNameById(props.entityId);
     let res = await getFormLayout(
         allEntityName.value[approvalTask.value.entityCode],
         formLayoutId,
@@ -609,6 +614,12 @@ const saveComplexFlow = async (dealWithType) => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 .detail-header {
     // padding-bottom: 20px;
     // box-sizing: border-box;
@@ -641,19 +652,20 @@ const saveComplexFlow = async (dealWithType) => {
     text-align: right;
     .el-dropdown-link {
         display: inline-block;
-        width: 30px;
+        width: 62px;
         background: #e3e3e3;
         height: 33px;
         line-height: 33px;
         border-radius: 4px;
         margin-right: 10px;
+        padding-left: 10px;
         text-align: center;
         margin-top: 1px;
         cursor: pointer;
         .el-icon--right {
             transform: rotate(90deg);
             position: relative;
-            left: -2px;
+            left: -8px;
             top: 2px;
         }
     }

@@ -12,7 +12,7 @@
         <el-menu-item v-else-if="!hasChildren(navMenu)" :index="navMenu.path" :class="{'isActive': activePath == navMenu.path}">
             <a
                 v-if="navMenu.meta&&navMenu.meta.type=='link'"
-                :href="navMenu.meta.outLink"
+                :href="formatOutLink(navMenu.meta)"
                 :target="navMenu.meta.outLink.indexOf('/') == 0 ?'' : '_blank'"
                 @click.stop="()=>{}"
             ></a>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { formatOutLink } from "@/utils/util";
 export default {
     name: "NavMenu",
     props: ["navMenus"],
@@ -77,6 +78,9 @@ export default {
                 path: navMenu.path,
                 query: navMenu.meta.query,
             });
+        },
+        formatOutLink(meta) {
+            return formatOutLink(meta);
         },
     },
 };

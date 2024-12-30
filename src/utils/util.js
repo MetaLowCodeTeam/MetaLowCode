@@ -507,3 +507,13 @@ export const formatFileSize = (bytes) => {
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
 }
+
+// 格式化 sessionId重定向
+export const formatOutLink = (meta) => {
+    let { outLink, redirectCarrySessionId } = meta;
+    if(redirectCarrySessionId) {
+        return import.meta.env.VITE_APP_BASE_API + "/open/redirectCarrySessionId?url=" + encodeURIComponent(outLink)
+    }else {
+        return outLink
+    }
+}

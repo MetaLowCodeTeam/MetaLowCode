@@ -92,4 +92,10 @@ const loadFormData = async () => {
 :deep(.el-form-item) {
 	margin-bottom: 0;
 }
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 </style>

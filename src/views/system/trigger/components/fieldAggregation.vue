@@ -382,10 +382,10 @@ const getUptadeMode = () => {
                 label: "最小值",
                 value: "min",
             },
-            {
-                label: "计算公式",
-                value: "forCompile",
-            },
+            // {
+            //     label: "计算公式",
+            //     value: "forCompile",
+            // },
         ];
     }
     else if (dateType.value.includes(toFixedForFieldType.value)) {
@@ -419,10 +419,10 @@ const getUptadeMode = () => {
                 label: "去重拼接",
                 value: "concatSet",
             },
-            {
-                label: "计算公式",
-                value: "forCompile",
-            },
+            // {
+            //     label: "计算公式",
+            //     value: "forCompile",
+            // },
         ];
     }
 };

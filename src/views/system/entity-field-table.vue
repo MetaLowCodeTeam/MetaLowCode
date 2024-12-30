@@ -42,6 +42,20 @@
 									</template>
 								</el-input>
 							</el-form-item>
+                            <el-form-item label="排序字段：" v-if="entityProps.detailEntityFlag">
+								<el-input link type="primary" v-model="entityProps.displayOrderFieldLabel" :readonly="true">
+									<template #suffix>
+										<el-button
+                                            link
+                                            type="primary"
+                                            icon="el-icon-edit"
+                                            title="修改排序字段"
+                                            @click="modifyEntityOrderField">
+                                        </el-button>
+									</template>
+								</el-input>
+							</el-form-item>
+                            <!-- this.entityProps -->
 							<el-form-item label="允许设计表单：">
 								<el-switch v-model="entityProps.layoutable" style="float: right" disabled></el-switch>
 							</el-form-item>
@@ -210,7 +224,7 @@
 			</el-footer>
 
 			<el-dialog
-                title="修改名称字段"
+                :title="fieldDialogFlagType == 1 ? '修改名称字段' : '修改排序字段'"
                 v-model="showNameFieldDialogFlag"
                 v-if="showNameFieldDialogFlag"
 				:append-to-body="true"
@@ -220,7 +234,8 @@
             >
 				<div class="name-field-hint">
                     <i class="el-icon-bell"></i>
-                    提示：只有文本(Text)类型字段可设置为名称字段。
+                    <span v-if="fieldDialogFlagType == 1">提示：只有文本(Text)类型字段可设置为名称字段。</span>
+                    <span v-else>提示：只有数值(Decimal)类型字段可设置为排序字段。</span>
 				</div>
 				<SimpleTable
                     :show-pagination="false"
@@ -240,7 +255,10 @@
                         >
                             选择
 						</el-button>
-						<el-button v-else :disabled="true">当前名称字段</el-button>
+						<el-button v-else :disabled="true">
+                            <span v-if="fieldDialogFlagType == 1">当前名称字段</span>
+                            <span v-else>当前排序字段</span>
+                        </el-button>
 					</template>
 				</SimpleTable>
 			</el-dialog>
@@ -375,6 +393,7 @@ import {
     updateEntityLabel,
     getTextFieldList,
 	updateEntityNameField,
+    updateDisplayOrderField,
     fieldCanBeDeleted,
     deleteField,
     fieldCanBeEdited,
@@ -493,6 +512,8 @@ export default {
 			curFWEditor: '',
 			curEditorType: '',
 			showNameFieldDialogFlag: false,
+            // 1 修改名称 2 修改排序
+            fieldDialogFlagType: 1,
 			showNewFieldDialogFlag: false,
 			showEditFieldDialogFlag: false,
 			showEntityPropsDialogFlag: false,
@@ -788,15 +809,43 @@ export default {
             let res = await getTextFieldList(this.entityProps.name);
             if(res && res.code == 200){
                 this.nameFieldData = res.data
+                this.fieldDialogFlagType = 1;
 				this.showNameFieldDialogFlag = true
             }
 		},
 
+        modifyEntityOrderField() {
+            // console.log(this.tableData,'this.tableData')
+            let decimalField = this.tableData.filter(el => el.type == 'Decimal');
+            let orderField = decimalField.map((el) => {
+                return {
+                    name: el.name,
+                    label: el.label,
+                    nameFieldFlag: this.entityProps.displayOrderField == el.name,
+                }
+            })
+            this.nameFieldData = orderField;
+            this.fieldDialogFlagType = 2;
+            this.showNameFieldDialogFlag = true
+        },
+
 		async selectNameField(row) {
-            let res = await updateEntityNameField(this.entityProps.name, row.name);
+            let res
+            if(this.fieldDialogFlagType == 1){
+                res = await updateEntityNameField(this.entityProps.name, row.name);
+            }
+            else {
+                res = await updateDisplayOrderField(this.entityProps.name, row.name);
+            }
             if(res && res.code == 200){
                 this.$message({message: '修改成功', type: 'success'})
-				this.entityProps.nameField = row.label
+                if(this.fieldDialogFlagType == 1){
+                    this.entityProps.nameField = row.label
+                }
+                else {
+                    this.entityProps.displayOrderFieldLabel = row.label
+                    this.entityProps.displayOrderField = row.name
+                }
 				this.showNameFieldDialogFlag = false
 				this.initTableData()
             }

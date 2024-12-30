@@ -132,6 +132,10 @@ export const referenceSchema = {
         treeCascadeFieldName: "",
         // 树数据源(实体名称)
         treeDataEntityName: "",
+        // 开启在位输入搜索
+        openSearchInPlace: false,
+        // 搜索字段
+        searchFields: [],
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

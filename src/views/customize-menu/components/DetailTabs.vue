@@ -29,20 +29,15 @@ const props = defineProps({
     cutTabIndex: { type: [String,Number], default: 0 },
     checkTabsFilter: { type: Object, default: () => {} },
     tabsConf: { type: Object, default: () => {} },
+    // 默认第一个tab label
+    defaultFirstTabLabel: { type: String, default: "" },
 });
 const emits = defineEmits(["update:modelValue", "tabChange","confirm"]);
 const $TOOL = inject("$TOOL");
 let detailDialog = ref({});
 let tabs = ref();
 
-// watch(
-//     () => props.modelValue,
-//     () => {
-//         detailDialog.value = tabs.value[0].entityName;
-//         initTabs();
-//     },
-//     { deep: true }
-// );
+
 watch(
     () => props.cutTab,
     () => {
@@ -52,21 +47,17 @@ watch(
 );
 let activeName = ref("");
 let myCheckTabsFilter = ref({});
-// onMounted(() => {
-//     detailDialog.value = props.modelValue;
-//     initTabs();
-// });
 
 
 // 初始化tab
 const initTabs = () => {
     tabs.value = [
         {
-            entityLabel: "详情",
+            entityLabel: props.defaultFirstTabLabel || "详情",
             entityName: "detail",
         },
     ];
-    let config = detailDialog.value.tab.config;
+    let config = detailDialog.value.tab?.config;
     if (config) {
         config = JSON.parse(config);
         config.forEach((el,inx) => {
@@ -75,7 +66,7 @@ const initTabs = () => {
             }
         });
     }
-    activeName.value = tabs.value[0].entityName + '-0';
+    activeName.value = tabs.value[props.cutTabIndex].entityName + '-0';
 };
 
 
@@ -100,6 +91,8 @@ const confirm = (e) => {
     emits("update:modelValue", detailDialog.value);
     emits('confirm')
 };
+
+
 </script>
 <style lang='scss' scoped>
 .detail-tabs {
@@ -121,10 +114,5 @@ const confirm = (e) => {
             color: var(--el-color-primary);
         }
     }
-    // &:hover {
-    //     .setting-tabs {
-    //         display: block;
-    //     }
-    // }
 }
 </style>

@@ -267,6 +267,8 @@ const detailParamConf = ref({
     showRevisionHistory: true,
     beforeSubmitApproval: () => true,
     afterSubmitApproval: () => true,
+    beforeRevokeApproval: () => true,
+    afterRevokeApproval: () => true,
 })
 
 // 插槽内容
@@ -373,6 +375,8 @@ const tabChange = (tab) => {
 // 刷新
 const refresh = () => {
 	cutTab.value = "detail";
+    cutTabIndex.value = 0;
+    haveLayoutJson.value = false;
 	getLayoutList();
 };
 
@@ -707,6 +711,11 @@ defineExpose({
 	margin-bottom: 5px !important;
 }
 
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px;
+    }
+}
 .detail-header {
 	border-bottom: 2px solid #f1f2f3;
 	// padding-bottom: 20px;

@@ -1,4 +1,10 @@
 <style lang="scss" scoped>
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 .list-card-item {
 	width: 100%;
 	background: #fff;
@@ -178,7 +184,9 @@ watch(
 );
 
 let globalDsv = ref({
-	uploadServer: import.meta.env.VITE_APP_BASE_API,
+    uploadServer: import.meta.env.VITE_APP_BASE_API,
+    baseApi: import.meta.env.VITE_APP_BASE_API,
+    SERVER_API: import.meta.env.VITE_APP_BASE_API,
 });
 let myOptionData = ref({});
 

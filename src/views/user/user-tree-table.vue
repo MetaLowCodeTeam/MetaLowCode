@@ -376,17 +376,29 @@ export default {
         },
         // 节点点击
         nodeClick(node) {
-            this.node = node;
-            this.advFilter = {
-                equation: "OR",
-                items: [
-                    {
-                        fieldName: "departmentId",
-                        op: "EQ",
-                        value: node.id,
-                    },
-                ],
-            };
+            // 检查当前节点是否已经被选中
+            if (this.node && this.node.id === node.id) {
+                // 如果已选中，则取消选中
+                this.node = {};
+                this.advFilter = null;
+                // 清除树形控件的当前高亮状态
+                this.$refs.tree.setCurrentKey(null);
+            } else {
+                // 否则，更新选中节点和过滤条件
+                this.node = node;
+                this.advFilter = {
+                    equation: "OR",
+                    items: [
+                        {
+                            fieldName: "departmentId",
+                            op: "EQ",
+                            value: node.id,
+                        },
+                    ],
+                };
+                // 设置当前节点为高亮状态
+                this.$refs.tree.setCurrentKey(node.id);
+            }
             this.$nextTick(() => {
                 this.onRefresh();
             });
@@ -603,6 +615,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+:deep(.render-form) {
+    .el-row {
+        padding: 0 8px 0 8px !important;
+    }
+}
+
 .generate-pwd {
     cursor: pointer;
 }
