@@ -25,9 +25,14 @@
 			/>
 		</div>
 		<div class="btn-box fr">
-			<el-button type="primary" @click="handleAdd">新建</el-button>
-			<el-button type="warning" @click="openSettingDialog">
+			<el-button type="primary" icon="Plus" @click="handleAdd">新建</el-button>
+			<el-button type="primary" plain @click="openSettingDialog">
                 设置
+				<span class="icon-t1">
+					<el-icon style="transform: rotate(90deg);">
+						<ElIconMoreFilled />
+					</el-icon>
+				</span>
             </el-button>
 		</div>
 	</div>

@@ -36,7 +36,7 @@
 				/>
 			</div>
 			<div class="main-detail-footer">
-				<el-button type="primary" @click="handleSave">保存</el-button>
+				<el-button type="primary" icon="Select" @click="handleSave">保存</el-button>
 				<!-- <el-button type="danger">删除</el-button> -->
 			</div>
 		</div>
@@ -119,7 +119,7 @@ const initFormData = async (entity) => {
                         vFormRef.value.reloadOptionData();
                         loading.value = false;
                         emit('initFinish');
-                    }); 
+                    });
                 }
 			});
 		} else {
@@ -129,7 +129,7 @@ const initFormData = async (entity) => {
 	} else {
         emit('initFinish');
 	}
-    
+
 };
 
 const handleSave = () => {
