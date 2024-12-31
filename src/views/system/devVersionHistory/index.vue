@@ -2,12 +2,13 @@
 	<!--  -->
 	<mlSingleList
 		:title="'版本管理（当前系统版本号：' + publicSetting.developSqlVersion + '）'"
-		mainEntity="VersionHistory"
+		mainEntity="DevVersionHistory"
 		fieldsList="versionName,version,createdOn,remarks"
 		:sortFields="sortFields"
 		fieldName="versionName"
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
+        queryUrl="/devVersionHistory/listQuery"
 	>
 		<template #addButton>
 			<el-button type="primary" @click="openEditDialog">
@@ -46,7 +47,7 @@
 			</el-table-column>
 		</template>
 	</mlSingleList>
-	<EditDialog ref="editDialogRef" @refresh="refresh" />
+	<EditDialog ref="editDialogRef" @refresh="refresh"/>
     <ExportDialog ref="exportDialogRef"/>
     <ImportDialog ref="importDialogRef"/>
 </template>

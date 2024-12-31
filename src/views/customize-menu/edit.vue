@@ -100,6 +100,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 自定义保存接口
+    queryUrl: {
+		type: String,
+		default: "",
+	},
 });
 
 const emits = defineEmits(['saveFinishCallBack']);
@@ -411,7 +416,12 @@ const confirm = async (target) => {
                 })
                 loading.value = true;
                 let saveRes;
-                if(isReferenceComp.value){
+                if (props.queryUrl) {
+                    saveRes = await http.post(props.queryUrl, formData, {
+                        params: { entity: row.entityName, id: row.detailId },
+                    });
+                }
+                else if(isReferenceComp.value){
                     let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
                     delete referenceCompFormData.value.referenceCompName
                     delete referenceCompFormData.value.referenceCompEntity

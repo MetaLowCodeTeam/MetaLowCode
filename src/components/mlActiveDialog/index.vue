@@ -160,6 +160,7 @@ import { ref, inject } from "vue";
 import { saveRecord } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import http from "@/utils/request";
 // 水印设置组件
 import SetWatermark from './components/setWatermark.vue';
 // 条件弹框
@@ -175,6 +176,7 @@ const emit = defineEmits(["update:modelValue", "saveProcess"]);
 const message = inject("$ElMessage");
 let props = defineProps({
     isProcess: { type: Boolean, default: false },
+    queryUrl: { type: String, default: "" },
 });
 
 // 弹框是否显示
@@ -320,7 +322,19 @@ const saveProcess = async () => {
     }
     loading.value = true;
     let res;
-    if(saveEntity == 'TriggerConfig') {
+    if(props.queryUrl) {
+        res = await http.post(
+            props.queryUrl, 
+            params, 
+            {
+                params: { 
+                    entity: saveEntity, 
+                    recordId: form[saveIdCode] || ""
+                },
+            }
+        )
+    }
+    else if(saveEntity == 'TriggerConfig') {
         res = await $API.trigger.detail.triggerSave(form[saveIdCode] || "", params);
     }else{
         res = await saveRecord(saveEntity, form[saveIdCode] || "", params);

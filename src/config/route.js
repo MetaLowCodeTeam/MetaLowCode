@@ -342,10 +342,10 @@ const routes = [
 					{
 						path: appPath + 'external-list',
 						name: 'ExternalList',
-                        meta: { title: '外部表单', icon: 'el-icon-list', role: 'r57-1' },
+                        meta: { title: '外部表单', icon: 'el-icon-list', role: 'r6020' },
 						component: 'system/external-integration/external-list',
 					},
-                    // 外部表单列表
+                    // API密钥
 					{
 						path: appPath + 'meta-api',
 						name: 'MetaApi',
@@ -378,17 +378,17 @@ const routes = [
                     },
                     // 版本管理
                     {
-                        path: appPath + 'versioning',
-                        name: 'Versioning',
+                        path: appPath + 'devVersionHistory',
+                        name: 'DevVersionHistory',
                         meta: { title: '版本管理', icon: 'el-icon-Tickets', role: 'r6018' },
-                        component: 'system/versionHistory/index',
+                        component: 'system/devVersionHistory/index',
                     },
                     // 数据转化
                     {
 						path: appPath + 'data-transformation',
 						name: 'DataTransformation',
 						component: 'system/data-transformation/index',
-						meta: { title: '数据转化', icon: 'el-icon-Cpu', role: 'r58-1' },
+						meta: { title: '数据转化', icon: 'el-icon-Cpu', role: 'r6021' },
 					},
                     // 数据转化-详情
                     {

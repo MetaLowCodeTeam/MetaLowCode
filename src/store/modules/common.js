@@ -109,6 +109,9 @@ const useCommonStore = defineStore('commonStore', () => {
         // publicSetting.value.pluginIdList = data.pluginIdList;
         // publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
     }
+    const setPublicSettingByKey = (key, value) => {
+        publicSetting.value[key] = value;
+    }
     // 传入实体名称拿主实体或者明细实体CODE
     const queryEntityCodeByEntityName = (name) => {
         let entity = allEntityList.value.filter(el => el.name == name);
@@ -181,6 +184,7 @@ const useCommonStore = defineStore('commonStore', () => {
         queryEntityCodeByName,
         publicSetting,
         setPublicSetting,
+        setPublicSettingByKey,
         setUserInfo,
         queryNameByObj,
         checkModifiableEntity,

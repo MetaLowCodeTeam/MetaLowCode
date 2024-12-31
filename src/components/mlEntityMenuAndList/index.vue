@@ -218,6 +218,8 @@ const props = defineProps({
     checkRole: { type: String, default: "" },
     // 查询接口
     queryUrl: { type: String, default: "" },
+    // 删除接口
+    delUrl: { type: String, default: "" },
     // 添加过滤list
     filterItems: { type: Array, default: () => [] },
     // 默认过滤字段
@@ -498,13 +500,17 @@ const deleteProcess = (row) => {
         type: "warning",
     })
         .then(async () => {
+            loading.value = true;
             let res;
-            if(props.entityName == 'TriggerConfig'){
+            if(props.delUrl) {
+                res = await http.get(props.delUrl, {
+                    recordId: row[props.activeId],
+                });
+            }else if(props.entityName == 'TriggerConfig'){
                 res = await trigger.detail.triggerDelete(row[props.activeId]);
             }else {
                 res = await deleteRecord(row[props.activeId]);
             }
-            loading.value = true;
             if (res) {
                 message.success("删除成功");
                 getEntityList();

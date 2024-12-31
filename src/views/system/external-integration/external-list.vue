@@ -11,14 +11,14 @@
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
-        checkRole="r57"
         :actionColumnWidth="320"
+        queryUrl="/externalForm/listQuery"
+        delUrl="/externalForm/deleteRecord"
     >
         <template #addButton>
             <el-button
                 type="primary"
                 @click="actionBtn({target:'add'})"
-                :disabled="!$TOOL.checkRole('r57-2')"
             >
                 <el-icon size="14">
                     <ElIconPlus />
@@ -31,7 +31,7 @@
             <el-button link type="primary" @click="downErCode(scope.scope)">下载二维码</el-button>
         </template>
     </mlEntityMenuAndList>
-    <mlActiveDialog ref="mlActiveDialogRefs" @saveProcess="saveProcess"></mlActiveDialog>
+    <mlActiveDialog ref="mlActiveDialogRefs" @saveProcess="saveProcess" queryUrl="/externalForm/saveRecord"></mlActiveDialog>
 </template>
 
 <script setup>

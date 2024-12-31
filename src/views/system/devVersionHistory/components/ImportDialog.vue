@@ -50,7 +50,10 @@
 
 <script setup>
 import { ref } from "vue";
-import { upgradeDevelopSql } from "@/api/versioning";
+import { upgradeDevelopSql } from "@/api/devVersionHistory";
+import { ElMessage, ElMessageBox } from "element-plus";
+import useCommonStore from "@/store/modules/common";
+const { setPublicSettingByKey } = useCommonStore();
 const emit = defineEmits(["refresh"]);
 let isShow = ref(false);
 let title = ref("");
@@ -71,6 +74,7 @@ const onCustomUpload = (data) => {
 };
 
 const handleImport = async () => {
+    
 	if (!fromData.value.file) {
 		ElMessage.error("请先上传文件");
 		return;
@@ -82,7 +86,19 @@ const handleImport = async () => {
 		headers: { "Content-Type": "multipart/form-data" },
 	});
     if(res) {
-        ElMessage.success("导入成功");
+        setPublicSettingByKey("developSqlVersion", res.data);
+        ElMessageBox.confirm('导入成功！', '提示', {
+            confirmButtonText: '确认并刷新',
+            showCancelButton: false,
+            showClose: false,
+            closeOnClickModal: false,
+            closeOnPressEscape: false,
+            type: 'success',
+        }).then(async () => {
+            window.location.reload();
+        }).catch(() => {
+            // 取消
+        })
         isShow.value = false;
     }
     loading.value = false;

@@ -50,6 +50,9 @@
 					>
 						<div class="op-item-text yichu" :title="item.label">
 							{{ item.label }}
+                            <span v-if="props.pageType == 'system'">
+                                ({{ item.value }})
+                            </span>
 						</div>
 						<div class="op-icon-box">
 							<span

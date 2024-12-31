@@ -92,6 +92,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { saveRecord, queryById } from "@/api/crud";
+import http from "@/utils/request";
 const Router = useRouter();
 
 import useCommonStore from "@/store/modules/common";
@@ -162,7 +163,9 @@ const queryTransformById = async () => {
 	loading.value = true;
 	loadingText.value = "数据加载中...";
 	isFinish.value = false;
-	let res = await queryById(recordId.value);
+	let res = await http.get('/transform/queryById', {
+        entityId: recordId.value,
+    })
 	if (res) {
 		row.value = res.data || {};
 		// 格式化源实体
@@ -173,7 +176,8 @@ const queryTransformById = async () => {
 				sourceEntity.value.code,
 				true,
 				true,
-				true
+				true,
+                true
 			);
 			if (sourceRes) {
 				sourceEntity.value.fields = sourceRes.data;
@@ -182,7 +186,8 @@ const queryTransformById = async () => {
 				sourceEntity2.value.code,
 				false,
 				false,
-				true
+				true,
+                true
 			);
 			if (sourceRes2) {
 				sourceEntity2.value.fields = sourceRes2.data;
@@ -196,7 +201,8 @@ const queryTransformById = async () => {
 				targetEntity.value.code,
 				false,
 				false,
-				true
+				true,
+                true
 			);
 			if (targetRes) {
 				targetEntity.value.fields = targetRes.data;
@@ -205,7 +211,8 @@ const queryTransformById = async () => {
 				targetEntity2.value.code,
 				true,
 				true,
-				true
+				true,
+                true
 			);
 			if (targetRes2) {
 				targetEntity2.value.fields = targetRes2.data;
@@ -257,15 +264,19 @@ const onSave = async () => {
 	}
 	loading.value = true;
 	loadingText.value = "数据保存中...";
-	let res = await saveRecord(
-        'Transform', 
-        recordId.value,
+	let res = await http.post(
+        'transform/saveRecord', 
         {
-			fieldMapping: JSON.stringify(fieldMapping.value),
-			backfill: JSON.stringify(backfill.value),
-			isPreview: false,
-		},
-    )
+            fieldMapping: JSON.stringify(fieldMapping.value),
+            backfill: JSON.stringify(backfill.value),
+            isPreview: false,
+        }, 
+        {
+            params: {
+                recordId: recordId.value,
+                entity: 'Transform',
+            },
+        });
 	if (res) {
 		notTitleDialogShow.value = true;
 	}

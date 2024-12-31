@@ -180,7 +180,13 @@ const submitForm = (formEl) => {
 // 执行保存
 const doSave = async (recordId, data, msg) => {
 	dialogConf.value.loading = true;
-	let res = await saveRecord('Transform', recordId, data)
+	let res = await http.post('transform/saveRecord', data, {
+        params: {
+            entity: 'Transform',
+            recordId: recordId,
+        },
+    })
+    // saveRecord('Transform', recordId, data)
 	if (res) {
 		ElMessage.success(msg || "保存成功");
 		emits("saveFinish");

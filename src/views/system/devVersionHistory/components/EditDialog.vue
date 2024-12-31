@@ -5,7 +5,7 @@
 		width="550"
 		:show-close="!loading"
 	>
-		<el-form label-width="80px" v-loading="loading">
+		<el-form label-width="80px" v-loading="loading" @submit.prevent>
 			<el-form-item label="版本名称" class="is-required">
 				<el-input
 					placeholder="请输入版本名称"
@@ -38,7 +38,7 @@
 <script setup>
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
-import { saveRecord } from "@/api/versioning";
+import { saveRecord } from "@/api/devVersionHistory";
 const emit = defineEmits(["refresh"]);
 let isShow = ref(false);
 let title = ref("");
@@ -50,7 +50,7 @@ let nameError = ref(false);
 const openDialog = (data) => {
 	formData.value = Object.assign({}, data);
 	isShow.value = true;
-	title.value = "版本" + (formData.value.versionHistoryId ? "编辑" : "新建");
+	title.value = "版本" + (formData.value.devVersionHistoryId ? "编辑" : "新建");
 };
 
 defineExpose({
@@ -64,7 +64,7 @@ const handleSubmit = async () => {
 		return;
 	}
     loading.value = true;
-    let res = await saveRecord(formData.value.versionHistoryId, {
+    let res = await saveRecord(formData.value.devVersionHistoryId, {
         versionName: formData.value.versionName,
         remarks: formData.value.remarks,
     });

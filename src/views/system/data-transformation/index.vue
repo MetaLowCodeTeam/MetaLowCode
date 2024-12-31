@@ -11,6 +11,8 @@
 			:filterItems="tableConf.filterItems"
 			@changeSwitch="changeSwitch"
 			@highlightClick="goDetail"
+            queryUrl="/transform/listQuery"
+            delUrl="/transform/deleteRecord"
 		>
 			<template #addButton>
 				<el-button
@@ -65,7 +67,7 @@
 			</template>
 		</mlSingleList>
 	</el-container>
-	<Edit ref="EditRefs" @saveFinish="updateData" />
+	<Edit ref="EditRefs" @saveFinish="updateData"/>
 </template>
 
 <script setup>
@@ -75,6 +77,7 @@ import useCommonStore from "@/store/modules/common";
 const { queryEntityLabelByName } = useCommonStore();
 import { deleteRecord } from "@/api/crud";
 import { ElMessage, ElMessageBox } from "element-plus";
+import http from "@/utils/request";
 /**
  * 组件
  */
@@ -181,7 +184,9 @@ const goDetail = (row) => {
 const deleteRow = (row) => {
 	ElMessageBox.confirm("是否删除该数据转换?", "删除确认")
 	    .then(async () => {
-            let res = await deleteRecord(row.transformId);
+            let res = await http.get("transform/deleteRecord", {
+                recordId: row.transformId,
+            });
             if(res){
                 ElMessage.success("删除成功");
 	            updateData()
@@ -199,3 +204,4 @@ const updateData = () => {
 </script>
 
 <style lang="scss" scoped></style>
+       
