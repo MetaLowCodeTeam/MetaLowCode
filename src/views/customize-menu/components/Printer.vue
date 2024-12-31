@@ -3,8 +3,12 @@
     <div class="printer">
         <div class="printer-content" v-loading="loading">
             <div style="font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 20px;">{{ printerTitle }}</div>
-            <div class="v-from-box">
-                <v-form-render v-if="haveLayoutJson" :option-data="optionData" :global-dsv="globalDsv" ref="vFormRef" />
+            <div class="v-form-box">
+                <v-form-render v-if="haveLayoutJson"
+							   :option-data="optionData"
+							   :global-dsv="globalDsv"
+							   :responsiveLayoutDisabled="true"
+							   ref="vFormRef" />
             </div>
         </div>
     </div>

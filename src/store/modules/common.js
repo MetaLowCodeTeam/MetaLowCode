@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.7.1 20241231" 
+        webVer: "1.7.2 20241231"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -28,7 +28,7 @@ const useCommonStore = defineStore('commonStore', () => {
             }
             resolve();
         });
-    
+
     }
     const refreshCache = (list) => {
         unSystemEntityList.value = [];
