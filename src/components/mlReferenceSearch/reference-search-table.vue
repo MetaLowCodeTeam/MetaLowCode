@@ -7,7 +7,7 @@
 		>
 			<div
 				class="work-flow-conditions w-100"
-				v-if="referenceEntityName && showQueryPanel"
+				v-if="referenceEntityName && showQueryPanel && !gDsv?.isExternalForm"
 			>
 				<mlSetConditions
 					ref="mlSetConditionsRef"
