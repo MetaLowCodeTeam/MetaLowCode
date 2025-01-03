@@ -198,33 +198,15 @@ const routes = [
                 meta: { title: '数据建模', icon: 'el-icon-SuitcaseLine' },
                 children: [
                     {
-                        path: appPath + 'field-manager',
-                        name: 'FieldManager',
-                        component: 'system/entity-field-table',
-                        props: true,
-                        hidden: true,
-                        meta: { title: '字段管理', icon: '', activeRoute: '/system/metadata/entity-list', hidden: true },
-                    },
-
-                    {
-                        path: appPath + 'form-design',
-                        name: 'FormDesign',
-                        component: 'system/form-design/index',
-                        hidden: true,
-                        props: true,
-                        meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
-                    },
-
-                    {
                         path: appPath + 'metadata',
                         name: 'Metadata',
-                        meta: { group: true, title: '元数据管理', icon: "el-icon-coin", role: 'r6001' },
+                        meta: { group: true, title: '元数据管理', icon: "el-icon-coin" },
                         children: [
                             {
                                 path: appPath + 'entity-list',
                                 name: 'EntityList',
                                 component: 'system/entity-list',
-                                meta: { title: '实体管理', icon: 'el-icon-coin' }
+                                meta: { title: '实体管理', icon: 'el-icon-coin', role: 'r6001' }
                             },
 
                         ]
@@ -409,7 +391,22 @@ const routes = [
 
                 ]
             },
-
+            // 字段管理
+            {
+                path: appPath + 'field-manager',
+                name: 'FieldManager',
+                component: 'system/entity-field-table',
+                props: true,
+                meta: { title: '字段管理', icon: '', activeRoute: '/system/metadata/entity-list', hidden: true },
+            },
+            // 可视化表单设计
+            {
+                path: appPath + 'form-design',
+                name: 'FormDesign',
+                component: 'system/form-design/index',
+                props: true,
+                meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
+            },
             // 审批流程详情
             {
                 path: appPath + "process-detail",
