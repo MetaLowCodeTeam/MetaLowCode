@@ -209,27 +209,32 @@
                         <el-row>
                             <hr style="border: 0;border-top: 1px dotted #cccccc" />
                         </el-row>
-                        <el-row :gutter="12" class="function-right-row">
-                            <el-col
-                                :span="12"
-                                v-for="(funcItem,funcInx) of funcRight"
-                                :key="funcInx"
-                            >
-                                <el-form-item :title="funcItem.value">
-                                    <template #label>
-                                        {{ funcItem.label }}
-                                    </template>
-                                    <el-radio-group
-                                        v-model="formModel.rightValueMap[funcItem.value]"
-                                    >
-                                        <el-radio :value="true">是</el-radio>
-                                        <el-radio :value="false">否</el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
+                        <div class="function-right-row-box">
+                            <el-row :gutter="12" class="function-right-row">
+                                <el-col :span="24" v-for="(op,opInx) of funcRight" :key="opInx">
+                                    <el-divider content-position="left" v-if="!op.hideDivider">
+                                    {{ op.label }}
+                                </el-divider>
+                                <el-row :gutter="12" class="function-right-row">
+                                    <el-col :span="12" v-for="(funcItem,funcInx) of op.children" :key="funcInx">
+                                        <el-form-item :title="funcItem.value">
+                                            <template #label>
+                                                {{ funcItem.label }}
+                                            </template>
+                                            <el-radio-group
+                                                v-model="formModel.rightValueMap[funcItem.value]"
+                                            >
+                                                <el-radio :value="true">是</el-radio>
+                                                <el-radio :value="false">否</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
                             </el-col>
-                        </el-row>
+                            </el-row>
+                        </div>
                     </el-tab-pane>
-                    <el-tab-pane label="功能权限" v-if="formModel.customRightList && formModel.customRightList.length > 0">
+                    <el-tab-pane label="自定义权限" v-if="formModel.customRightList && formModel.customRightList.length > 0">
                         <el-row>
                             <hr style="border: 0;border-top: 1px dotted #cccccc" />
                         </el-row>
@@ -474,64 +479,133 @@ let formRules = shallowRef({
 // 功能权限
 let funcRight = shallowRef([
     {
-        label: "开发应用",
-        value: "r6017",
+        label: "开发中心",
+        hideDivider: true,
+        children: [
+            {
+                label: "开发中心",
+                value: "r6017",
+            },
+            {
+                label: "系统配置",
+                value: "r6022",
+            },
+            {
+                label: "菜单导航配置",
+                value: "r6007",
+            },
+        ]
     },
     {
-        label: "实体管理",
-        value: "r6001",
+        label: "组织架构",
+        children: [
+            {
+                label: "部门管理",
+                value: "r6001",
+            },
+        ]
     },
     {
-        label: "删除实体",
-        value: "r6002",
+        label: "数据建模",
+        children: [
+            {
+                label: "实体管理",
+                value: "r6001",
+            },
+            {
+                label: "设计表单布局",
+                value: "r6003",
+            },
+            {
+                label: "列表页面设计",
+                value: "r6008",
+            },
+            {
+                label: "删除实体",
+                value: "r6002",
+            },
+            {
+                label: "单选项管理",
+                value: "r6005",
+            },
+            {
+                label: "多选项管理",
+                value: "r6006",
+            },
+            {
+                label: "系统常量管理",
+                value: "r6019",
+            },
+        ]
     },
     {
-        label: "设计表单布局",
-        value: "r6003",
+        label: "流程管理",
+        children: [
+            {
+                label: "审批流程",
+                value: "r6016",
+            },
+            {
+                label: "审批撤销",
+                value: "r6013",
+            },
+        ]
     },
     {
-        label: "单选项管理",
-        value: "r6005",
+        label: "触发器管理",
+        children: [
+            {
+                label: "触发器日志",
+                value: "r6015",
+            },
+        ]
     },
     {
-        label: "多选项管理",
-        value: "r6006",
+        label: "外部集成",
+        children: [
+            {
+                label: "外部表单",
+                value: "r6020",
+            },
+        ]
     },
     {
-        label: "配置导航",
-        value: "r6007",
+        label: "数据管理",
+        children: [
+            {
+                label: "数据导入",
+                value: "r6011",
+            },
+            {
+                label: "数据库备份",
+                value: "r6023",
+            },
+            {
+                label: "开发版本管理",
+                value: "r6018",
+            },
+            {
+                label: "数据转化",
+                value: "r6021",
+            },
+        ]
     },
     {
-        label: "列表页面设计",
-        value: "r6008",
-    },
-    {
-        label: "回收站管理",
-        value: "r6009",
-    },
-    {
-        label: "修改历史查询",
-        value: "r6010",
-    },
-    {
-        label: "数据导入",
-        value: "r6011",
-    },
-    {
-        label: "审批撤销",
-        value: "r6013",
-    },
-    {
-        label: "登录日志查看",
-        value: "r6014",
-    },
-    {
-        label: "触发器执行日志",
-        value: "r6015",
-    },
-    {
-        label: "流程配置管理",
-        value: "r6016",
+        label: "辅助设置",
+        children: [
+            {
+                label: "变更历史",
+                value: "r6010",
+            },
+            {
+                label: "登录日志",
+                value: "r6014",
+            },
+            {
+                label: "回收站",
+                value: "r6009",
+            },
+        ]
     },
 ]);
 
@@ -753,8 +827,14 @@ const elFormErrorScrollIntoView = () => {
 }
 
 .entity-right-setting-body {
-    height: 400px;
+    height: 380px;
     padding: 10px 0;
     padding-top: 5px;
+}
+
+.function-right-row-box {
+    max-height: 418px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 </style>

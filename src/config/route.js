@@ -120,6 +120,15 @@ const routes = [
                 },
                 component: 'customize-menu/list',
             },
+            // 新窗口新建
+            {
+                path: appPath + ":entityName/create-entity",
+                name: "NewWindowCreateEntity",
+                "meta": {
+                    hidden: true,
+                },
+                component: 'customize-menu/NewWindowCreateEntity',
+            },
             // 可查看的审批流程详情
             {
                 path: appPath + "custom-page/approval-detail",
@@ -373,14 +382,14 @@ const routes = [
                     {
                         path: appPath + 'database-backups',
                         name: 'DatabaseBackups',
-                        meta: { title: '数据库备份', icon: 'el-icon-Collection', role: 'r6014' },
+                        meta: { title: '数据库备份', icon: 'el-icon-Collection', role: 'r6023' },
                         component: 'system/data-base/backups',
                     },
                     // 版本管理
                     {
                         path: appPath + 'devVersionHistory',
                         name: 'DevVersionHistory',
-                        meta: { title: '版本管理', icon: 'el-icon-Tickets', role: 'r6018' },
+                        meta: { title: '开发版本管理', icon: 'el-icon-Tickets', role: 'r6018' },
                         component: 'system/devVersionHistory/index',
                     },
                     // 数据转化
