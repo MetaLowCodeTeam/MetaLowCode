@@ -15,7 +15,7 @@
         }"
         :top="isFullScreen ? '0' : top"
         v-if="isShow"
-        :draggable="isFullScreen ? false : draggable"
+        :draggable="isFullScreen ? false : true"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>

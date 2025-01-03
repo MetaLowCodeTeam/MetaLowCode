@@ -284,11 +284,20 @@
 						"
 						class="mt-10"
 					>
-						<el-input
-							v-model="cutMenu.customCode"
-							placeholder="权限Code"
-							clearable
-						></el-input>
+                        <el-select
+                            v-model="cutMenu.customCode"
+                            placeholder="权限Code"
+                            clearable
+                            filterable
+                            allow-create
+                        >
+                            <el-option
+                                v-for="item in customRightList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
 					</div>
 					<div class="mt-10">
 						<el-input
@@ -434,7 +443,8 @@ import { useRouter } from "vue-router";
 import mlShareTo from "@/components/mlShareTo/index.vue";
 import { getDataList } from "@/api/crud";
 import { customListEntry } from "@/views/custom-page/customListEntry";
-import { getFormLayoutList } from "@/api/system-manager";
+import { getFormLayoutList, getSystemConstants } from "@/api/system-manager";
+
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
@@ -875,19 +885,34 @@ const delMenu = (menu, inx, subInx) => {
 // 源数据
 let sourceData = reactive({});
 
+// 自定义权限
+let customRightList = ref([]);
 // 获取数据
 const getMenuFn = () => {
 	menuData = Object.assign(menuData, props.menuInfo);
 	sourceData = Object.assign({}, props.menuInfo);
 	menuData.list = menuData.config ? JSON.parse(menuData.config) : [];
-	// 获取仪表盘数据
-	getChartList();
+	// // 获取仪表盘数据
+	// getChartList();
+    // // 获取自定义权限
+    // getCustomRightList();
+    loading.value = true;
+    Promise.all([getCustomRightList(), getChartList()]).then(() => {
+        loading.value = false;
+    })
 };
+
+const getCustomRightList = async () => {
+    let res = await getSystemConstants('customRight');
+    if(res && res.data) {
+        customRightList.value = res.data;
+    }
+}
 
 let chartList = ref([]);
 // 获取仪表盘数据
 let getChartList = async () => {
-	loading.value = true;
+	
 	let filter = {
 		equation: "AND",
 		items: [{ fieldName: "chartData", op: "NT", value: "" }],
@@ -896,7 +921,7 @@ let getChartList = async () => {
 	if (res && res.data) {
 		chartList.value = res.data.dataList || [];
 	}
-	loading.value = false;
+	// loading.value = false;
 };
 
 // 导航保存
