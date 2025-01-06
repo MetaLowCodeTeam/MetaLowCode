@@ -38,6 +38,7 @@ var isGetRouter = false;
 router.beforeEach(async (to, from, next) => {
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
+    const { queryEntityLabelByName } = useCommonStore();
     NProgress.start()
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
@@ -62,7 +63,7 @@ router.beforeEach(async (to, from, next) => {
     }
     let routerEntityname = to.params?.entityname;
     if (routerEntityname && !to.meta.title) {
-        const { queryEntityLabelByName } = useCommonStore();
+        
         to.meta.title = queryEntityLabelByName(routerEntityname)
     }
     if (to.name == "inIframe") {
@@ -100,7 +101,11 @@ router.beforeEach(async (to, from, next) => {
         }
         isGetRouter = true;
     }
-
+    // console.log(to,'to')
+    // 如果是新窗口创建实体
+    if(to.name == "NewWindowCreateEntity") {
+        to.meta.title = "新建" + queryEntityLabelByName(to.params.entityName)
+    }
     beforeEach(to, from)
     next();
 });

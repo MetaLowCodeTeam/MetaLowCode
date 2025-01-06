@@ -22,7 +22,7 @@
                         >全部实体</div>
                         <div
                             class="fields-list-item text-ellipsis"
-                            v-for="(field,inx) of entityList.filter(el => allEntityLabel[el.entityCode].indexOf(searchValue) > -1)"
+                            v-for="(field,inx) of entityList.filter(el => allEntityLabel[el.entityCode]?.indexOf(searchValue) > -1)"
                             :key="inx"
                             :class="{'is-active':field.entityCode == defaultCode}"
                             @click="fieldCheck(field)"

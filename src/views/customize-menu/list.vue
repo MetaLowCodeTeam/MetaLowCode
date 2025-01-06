@@ -1070,7 +1070,10 @@ const refreshData = () => {
         let filterAdvancedFilter = advancedFilter.value.filter(
             (el) => el.layoutConfigId == advFilter.value
         );
-        let config = JSON.parse(filterAdvancedFilter[0].config);
+        let config = {};
+        if(filterAdvancedFilter[0] && filterAdvancedFilter[0].config) {
+            config = JSON.parse(filterAdvancedFilter[0].config);
+        }
         comQueriesList.value = { ...config };
     }
     getTableList();
@@ -1179,6 +1182,19 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
             !!formId && (tempV.formId = formId)
             !!dialogConf && (tempV.paramDialogConf = dialogConf)
             editRefs.value.openDialog(tempV);
+        });
+        return
+    }
+    if(rowStyleConf.value?.actionConf?.newTabOpenNew){
+        // 新窗口创建实体
+        router.push({
+            name: "NewWindowCreateEntity",
+            params: {
+                entityName: targetEntity || entityName.value,
+            },
+            query: {
+                entity: targetEntity || entityName.value,
+            }
         });
         return
     }
@@ -1516,6 +1532,12 @@ const changeColumnShow = (type) => {
     if(isMounted.value){
         isMounted.value = false;
     }else {
+        let refreshTableList = localStorage.getItem("NewWindowCreateEntity");
+        if(refreshTableList && refreshTableList == entityName.value){
+            localStorage.removeItem("NewWindowCreateEntity");
+            getTableList();
+            return
+        }
         loadRouterParams(true)
     }
 })
@@ -1606,6 +1628,8 @@ const checkRouterAutoOpen = () => {
         return
     }
 }
+
+
 
 /**
  * 导出方法

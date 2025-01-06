@@ -4,7 +4,10 @@
 		<div v-loading="loading" class="set-list-style">
 			<div class="from-title">新建编辑弹框属性</div>
 			<div class="from-item mb-30">
-				<el-checkbox v-model="styleConf.actionConf.showFullScreen">
+				<el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
+					新页签打开新建
+				</el-checkbox>
+                <el-checkbox v-model="styleConf.actionConf.showFullScreen">
 					显示全屏按钮
 				</el-checkbox>
 				<el-checkbox v-model="styleConf.actionConf.autoFullScreen">
