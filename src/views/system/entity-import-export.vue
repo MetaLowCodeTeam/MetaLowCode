@@ -43,6 +43,7 @@
 						/>
 						<el-checkbox-group
 							v-model="dialogConfig.checkExportEntityValue"
+                            class="w-100"
 						>
 							<el-row :gutter="20">
 								<el-col
@@ -61,6 +62,7 @@
 					<el-form-item label="导出模块">
 						<el-checkbox-group
 							v-model="dialogConfig.checkModuleList"
+                            class="w-100"
 						>
 							<el-row :gutter="20">
 								<el-col
