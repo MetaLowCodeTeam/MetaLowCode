@@ -34,6 +34,20 @@
                 <el-button type="primary" @click="createNewEntity('create')">
                     <i class="el-icon-plus"></i>&nbsp;新建实体
                 </el-button>
+                <el-popover trigger="click">
+                    <div class="table-setting-item-box">
+                        <div class="pl-5 item" @click="openImportExportDialog('import')">导入实体</div>
+                        <div class="pl-5 item" @click="openImportExportDialog('export')">导出实体</div>
+                    </div>
+                    <template #reference>
+                        <el-button type="primary" plain>
+                            更多
+                            <el-icon style="transform: rotate(90deg);">
+                                <ElIconMoreFilled />
+                            </el-icon>
+                        </el-button>
+                    </template>
+                </el-popover>
             </div>
         </el-header>
         <el-main class="card-container" v-loading="loading">
@@ -271,6 +285,7 @@
             </el-dialog>
         </el-main>
     </el-container>
+    <EntityImportExport ref="entityImportExportRef" :entityList="entityItems"/>
 </template>
 
 <script setup>
@@ -292,6 +307,7 @@ import { inject, h, onMounted, ref, nextTick } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import { textIsSystemKeyword } from "@/utils/keyword-check";
+import EntityImportExport from "./entity-import-export.vue";
 import http from "@/utils/request";
 const { refreshCache } = useCommonStore();
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -304,7 +320,7 @@ let searchTag = ref("全部标签");
 
 
 let loading = ref(false);
-let entityItems = ref("");
+let entityItems = ref([]);
 let showNewEntityDialogFlag = ref(false);
 let newEntityProps = ref({
     name: "",
@@ -777,6 +793,12 @@ const handleCommand = (command, entityItem) => {
 	}
 };
 
+// 导入导出实体
+const entityImportExportRef = ref(null);
+const openImportExportDialog = (type) => {
+    entityImportExportRef.value.openDialog(type);
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -1024,4 +1046,18 @@ const handleCommand = (command, entityItem) => {
 //     }
 // }
 
+.table-setting-item-box { 
+    .item {
+        height: 26px;
+        line-height: 26px;
+        cursor: pointer;
+        position: relative;
+        &:hover {
+            background: #dedede;
+            .action-icon {
+                display: block;
+            }
+        }
+    }
+}
 </style>

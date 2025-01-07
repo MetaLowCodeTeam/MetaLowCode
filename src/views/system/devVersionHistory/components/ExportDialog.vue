@@ -195,18 +195,18 @@ const handleExport = async () => {
 		exportTypeList,
 	});
 	if (res && res.data && res.data.bytes) {
-		// // 创建一个 Blob 对象，并设置文件类型
+		// 创建一个 Blob 对象，并设置文件类型
 		const blob = new Blob([res.data.bytes], {
 			type: "application/octet-stream",
 		});
-		// // 创建一个链接并指向 Blob 对象
+		// 创建一个链接并指向 Blob 对象
 		const downloadUrl = URL.createObjectURL(blob);
-		// // 创建一个临时的 a 标签并模拟点击进行下载
+		// 创建一个临时的 a 标签并模拟点击进行下载
 		const a = document.createElement("a");
 		a.href = downloadUrl;
 		a.download = res.data.filename; // 设置下载文件的名称
 		a.click();
-		// // 清理创建的 URL 对象
+		// 清理创建的 URL 对象
 		URL.revokeObjectURL(downloadUrl);
 		isShow.value = false;
 	}

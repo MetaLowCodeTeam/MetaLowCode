@@ -279,3 +279,9 @@ export function getFileUrlPrefix() {
 export function postBackupDB() {
     return http.post('/systemManager/backupDB')
 }
+
+
+export function exportEntityData(entityList) {
+    return http.post('/systemManager/exportEntityData', entityList)
+}
+
