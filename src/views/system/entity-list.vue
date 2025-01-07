@@ -36,8 +36,22 @@
                 </el-button>
                 <el-popover trigger="click">
                     <div class="table-setting-item-box">
-                        <div class="pl-5 item" @click="openImportExportDialog('import')">导入实体</div>
-                        <div class="pl-5 item" @click="openImportExportDialog('export')">导出实体</div>
+                        <div class="pl-10 item" @click="openImportExportDialog('export')">
+                            <span class="icon-top-1">
+                                <el-icon>
+                                    <ElIconDownload />
+                                </el-icon>
+                            </span>
+                            导出实体
+                        </div>
+                        <div class="pl-10 item" @click="openImportExportDialog('import')">
+                            <span class="icon-top-1">
+                                <el-icon>
+                                    <ElIconUpload />
+                                </el-icon>
+                            </span>
+                            导入实体
+                        </div>
                     </div>
                     <template #reference>
                         <el-button type="primary" plain>

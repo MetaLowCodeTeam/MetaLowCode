@@ -285,3 +285,8 @@ export function exportEntityData(entityList) {
     return http.post('/systemManager/exportEntityData', entityList)
 }
 
+
+
+export function importEntityData(file, config = {}) {
+    return http.post('/systemManager/importEntityData', file, config)
+}
