@@ -26,7 +26,10 @@
 						</el-button>
 					</template>
 				</ml-upload>
-				<span class="file-name-span" v-if="dialogConfig.originalFilename">
+				<span
+					class="file-name-span"
+					v-if="dialogConfig.originalFilename"
+				>
 					{{ dialogConfig.originalFilename }}
 				</span>
 			</div>
@@ -41,28 +44,37 @@
 							clearable
 							class="mb-5"
 						/>
-						<el-checkbox-group
-							v-model="dialogConfig.checkExportEntityValue"
-                            class="w-100"
+						<div
+							class="w-100"
+							style="
+								max-height: 400px;
+								overflow-y: auto;
+								overflow-x: hidden;
+							"
 						>
-							<el-row :gutter="20">
-								<el-col
-									:span="6"
-									v-for="item in exportEntityList"
-									:key="item.id"
-								>
-									<el-checkbox
-										:label="item.label"
-										:value="item.name"
-									/>
-								</el-col>
-							</el-row>
-						</el-checkbox-group>
+							<el-checkbox-group
+								v-model="dialogConfig.checkExportEntityValue"
+								class="w-100"
+							>
+								<el-row :gutter="20">
+									<el-col
+										:span="6"
+										v-for="item in exportEntityList"
+										:key="item.id"
+									>
+										<el-checkbox
+											:label="item.label"
+											:value="item.name"
+										/>
+									</el-col>
+								</el-row>
+							</el-checkbox-group>
+						</div>
 					</el-form-item>
 					<el-form-item label="导出模块">
 						<el-checkbox-group
 							v-model="dialogConfig.checkModuleList"
-                            class="w-100"
+							class="w-100"
 						>
 							<el-row :gutter="20">
 								<el-col
@@ -98,6 +110,17 @@
 			</el-button>
 		</template>
 	</ml-dialog>
+	<ml-dialog v-model="errMsgDialog.isShow" title="导入错误" width="600px">
+		<el-table 
+            :data="errMsgDialog.msgList" 
+            style="width: 100%" 
+            :show-header="false"
+            max-height="400"
+            class="err-msg-table"
+        >
+			<el-table-column prop="msg" label="错误信息" />
+		</el-table>
+	</ml-dialog>
 </template>
 <script setup>
 import { ref, reactive } from "vue";
@@ -122,10 +145,10 @@ let dialogConfig = reactive({
 	checkExportEntityValue: [],
 	// 导出模块
 	checkModuleList: ["entityFiled"],
-    // 导入文件名称 
-    originalFilename: "",
-    // 导入文件
-    file: null,
+	// 导入文件名称
+	originalFilename: "",
+	// 导入文件
+	file: null,
 });
 
 // 导出模块
@@ -162,12 +185,12 @@ const openDialog = (type) => {
 	dialogConfig.isShow = true;
 	// 如果是导出
 	if (type == "export") {
-        dialogConfig.checkExportEntityValue = [];
+		dialogConfig.checkExportEntityValue = [];
 		initExportEntityList();
-	}else {
-        dialogConfig.file = null;
-        dialogConfig.originalFilename = "";
-    }
+	} else {
+		dialogConfig.file = null;
+		dialogConfig.originalFilename = "";
+	}
 };
 // 初始化导出实体列表
 const initExportEntityList = () => {
@@ -193,57 +216,74 @@ const handleSave = () => {
 	// console.log(dialogConfig.checkboxValue);
 	if (dialogConfig.type == "export") {
 		handleExport();
-	}else {
+	} else {
 		handleImport();
 	}
 };
 
+// 导入错误msg
+let errMsgDialog = reactive({
+	isShow: false,
+	msgList: [],
+});
+
 // 导入
 const handleImport = async () => {
-    if (!dialogConfig.file) {
+	if (!dialogConfig.file) {
 		ElMessage.error("请先上传文件");
 		return;
 	}
 	let formData = new FormData();
 	formData.append("file", dialogConfig.file);
-    dialogConfig.loading = true;
+	dialogConfig.loading = true;
 	let res = await importEntityData(formData, {
 		headers: { "Content-Type": "multipart/form-data" },
 	});
-    if(res) {
-        if(res.data) {
-            let msg = "<div style='width: 360px;max-height: 400px;overflow-y: auto;'>" + res.data.join("<br>") + "</div>";
-            ElMessageBox.confirm(msg, '导入失败', {
-                confirmButtonText: '确认',
-                showCancelButton: false,
-                showClose: false,
-                closeOnClickModal: false,
-                closeOnPressEscape: false,
-                dangerouslyUseHTMLString: true,
-                type: 'error',
-            }).then(async () => {
-            }).catch(() => {
-                // 取消
-            })
-        }else {
-            ElMessageBox.confirm('导入成功！', '提示', {
-                confirmButtonText: '确认并刷新',
-                showCancelButton: false,
-                showClose: false,
-                closeOnClickModal: false,
-                closeOnPressEscape: false,
-                type: 'success',
-            }).then(async () => {
-                window.location.reload();
-            }).catch(() => {
-                // 取消
-            })
-        }
-        dialogConfig.isShow = false;
-        
-    }
-    dialogConfig.loading = false;
-}
+	if (res) {
+		if (res.data) {
+			errMsgDialog.msgList = res.data.map((el) => {
+				return {
+					msg: el,
+				};
+			});
+			errMsgDialog.isShow = true;
+			// let msg =
+			// 	"<div style='width: 360px;max-height: 400px;overflow-y: auto;'>" +
+			// 	res.data.join("<br>") +
+			// 	"</div>";
+			// ElMessageBox.confirm(msg, "导入失败", {
+			// 	confirmButtonText: "确认",
+			// 	showCancelButton: false,
+			// 	showClose: false,
+			// 	closeOnClickModal: false,
+			// 	closeOnPressEscape: false,
+			// 	dangerouslyUseHTMLString: true,
+			// 	type: "error",
+			// })
+			// 	.then(async () => {})
+			// 	.catch(() => {
+			// 		// 取消
+			// 	});
+		} else {
+			ElMessageBox.confirm("导入成功！", "提示", {
+				confirmButtonText: "确认并刷新",
+				showCancelButton: false,
+				showClose: false,
+				closeOnClickModal: false,
+				closeOnPressEscape: false,
+				type: "success",
+			})
+				.then(async () => {
+					window.location.reload();
+				})
+				.catch(() => {
+					// 取消
+				});
+		}
+		dialogConfig.isShow = false;
+	}
+	dialogConfig.loading = false;
+};
 
 // 导出
 const handleExport = async () => {
@@ -320,5 +360,13 @@ defineExpose({
 	font-weight: bold;
 	text-decoration: underline;
 	margin-left: 15px;
+}
+.err-msg-table {
+    margin-top: -10px;
+    :deep(.el-table__row) {
+        .cell {
+            font-size: 14px;
+        }
+    }
 }
 </style>
