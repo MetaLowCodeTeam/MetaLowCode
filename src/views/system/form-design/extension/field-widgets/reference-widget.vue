@@ -53,6 +53,7 @@
                 :searchFields="field.options.searchFields"
                 :fieldModel="fieldModel"
                 @onSelectedRemote="onSelectedRemote"
+                @onAppendButtonClick="onAppendButtonClick"
             />
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"

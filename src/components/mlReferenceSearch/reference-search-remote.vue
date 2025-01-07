@@ -1,22 +1,55 @@
+<style lang="scss" scoped>
+.remote-box {
+    // position: relative;
+    // height: 33px;
+    display: flex;
+}
+.remote-select {
+    flex: 1;
+    :deep(.el-select__wrapper) {
+        border-radius: 4px 0 0 4px;
+    }
+}
+.remote-icon-box {
+    height: 32px;
+	width: 46px;
+	text-align: center;
+	border-radius: 0 4px 4px 0;
+	border: 1px solid #e4e7ed;
+    border-left: none;
+    box-sizing: border-box;
+    background: #F5F7FA;
+    color: #909399;
+    cursor: pointer;
+}
+</style>
 <template>
-	<el-select
-		v-model="value"
-		:multiple="multiple"
-		filterable
-		remote
-		reserve-keyword
-		:placeholder="placeholder"
-		:remote-method="remoteMethod"
-		:loading="loading"
-		@change="handleChange"
-	>
-		<el-option
-			v-for="item in options"
-			:key="item.id"
-			:label="item.name"
-			:value="item.id"
-		/>
-	</el-select>
+	<div class="remote-box w-100">
+		<el-select
+			v-model="value"
+			:multiple="multiple"
+			filterable
+			remote
+			reserve-keyword
+			:placeholder="placeholder"
+			:remote-method="remoteMethod"
+			:loading="loading"
+			@change="handleChange"
+			class="remote-select"
+		>
+			<el-option
+				v-for="item in options"
+				:key="item.id"
+				:label="item.name"
+				:value="item.id"
+			/>
+		</el-select>
+		<div class="remote-icon-box" @click="onAppendButtonClick">
+            <el-icon class="icon-top-1">
+                <Search />
+            </el-icon>
+        </div>
+	</div>
 </template>
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
@@ -48,7 +81,7 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(["onSelectedRemote"]);
+const emit = defineEmits(["onSelectedRemote", "onAppendButtonClick"]);
 let value = ref(null);
 let loading = ref(false);
 let options = ref([]);
@@ -89,7 +122,7 @@ const remoteMethod = async (query: string) => {
 				return {
 					id: el[res.data.idFieldName],
 					name: el[res.data.nameFieldName],
-                    row: el,
+					row: el,
 				};
 			});
 		}
@@ -99,24 +132,25 @@ const remoteMethod = async (query: string) => {
 	}
 };
 
-
 const handleChange = () => {
-    let row = options.value.find((el) => el.id === value.value);
+	let row = options.value.find((el) => el.id === value.value);
 	emit("onSelectedRemote", {
-        record: {
-            id: row.id,
-            label: row.name,
-        },
-        selectedRow: row.row,
-    },);
+		record: {
+			id: row.id,
+			label: row.name,
+		},
+		selectedRow: row.row,
+	});
 };
 
-
-
-
 watchEffect(() => {
-    value.value = props.fieldModel ? props.fieldModel.name : '';
-})
+	value.value = props.fieldModel ? props.fieldModel.name : "";
+});
+
+const onAppendButtonClick = () => {
+    // console.log('onAppendButtonClick')
+    emit('onAppendButtonClick')
+}
 
 // watch(
 // 	() => props.fieldModel,
