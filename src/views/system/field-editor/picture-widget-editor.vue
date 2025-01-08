@@ -14,28 +14,42 @@
 						</template>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="上传图片数量上限(张数)">
-					<el-input-number v-model="fieldProps.fieldViewModel.maxFileCount"
-									 :min="1" :max="20" style="width: 100%"></el-input-number>
-				</el-form-item>
-				<el-form-item label="单张图片大小上限(单位MB)">
-					<el-input-number v-model="fieldProps.fieldViewModel.fileMaxSize"
-									 :min="1" :max="100" style="width: 100%"></el-input-number>
-				</el-form-item>
-				<el-form-item label="上传图片类型(多选)" prop="fieldViewModel.uploadFileTypes">
-					<el-select multiple filterable :popper-append-to-body="false"
-							   v-model="fieldProps.fieldViewModel.uploadFileTypes" style="width: 100%">
-						<el-option
-							v-for="(ft, ftIdx) in fileTypes"
-							:key="ftIdx"
-							:label="ft.label"
-							:value="ft.value">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="上传说明提示">
-					<el-input v-model="fieldProps.fieldViewModel.uploadHint"></el-input>
-				</el-form-item>
+                <el-collapse accordion class="mb-10">
+                    <el-collapse-item name="1">
+                        <template #title>
+                            <span class="field-editor-collapse-title">默认值设置</span>
+                            <el-tooltip content="该默认值设置后需在表单设计里重新拖拽，才可生效" placement="top">
+                                <span class="ml-5">
+                                    <el-icon class="icon-top-2">
+                                        <info-filled />
+                                    </el-icon>
+                                </span>
+                            </el-tooltip>
+                        </template>
+                        <el-form-item label="上传图片数量上限(张数)">
+                            <el-input-number v-model="fieldProps.fieldViewModel.maxFileCount"
+                                            :min="1" :max="20" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="单张图片大小上限(单位MB)">
+                            <el-input-number v-model="fieldProps.fieldViewModel.fileMaxSize"
+                                            :min="1" :max="100" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="上传图片类型(多选)" prop="fieldViewModel.uploadFileTypes">
+                            <el-select multiple filterable :popper-append-to-body="false"
+                                    v-model="fieldProps.fieldViewModel.uploadFileTypes" style="width: 100%">
+                                <el-option
+                                    v-for="(ft, ftIdx) in fileTypes"
+                                    :key="ftIdx"
+                                    :label="ft.label"
+                                    :value="ft.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="上传说明提示">
+                            <el-input v-model="fieldProps.fieldViewModel.uploadHint"></el-input>
+                        </el-form-item>
+                    </el-collapse-item>
+                </el-collapse>
 <!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
 <!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
 <!--							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">-->
@@ -114,7 +128,7 @@ export default {
 				'fieldViewModel': {
 					'maxFileCount': 1,
 					'fileMaxSize': 5,
-					'uploadFileTypes': [],
+					'uploadFileTypes': ['jpeg', 'png', 'gif'],
 					'uploadHint': '',
 					'validators': [],
 				},
