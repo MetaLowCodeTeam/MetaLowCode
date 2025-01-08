@@ -51,6 +51,7 @@ export default {
             showBorder: "显示为边框",
             borderInfo: "勾选框启用后，边框才可生效",
             showButton: "显示为按钮",
+            showSelect: "显示为选择框",
         },
 
     }

@@ -71,6 +71,7 @@ export const checkTagSchema = {
         showCheckbox: false, // 是否显示为勾选框
         showBorder: false, // 是否显示边框
         showButton: false, // 是否显示为按钮
+        showSelect: false, // 是否显示为选择框
 		optionItems: [
 			{label: 'check 1', value: 1},
 			{label: 'check 2', value: 2},

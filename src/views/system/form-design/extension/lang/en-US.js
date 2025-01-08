@@ -51,6 +51,7 @@ export default {
             showBorder: "Show as border",
             borderInfo: "Check box enabled, border can be effective",
             showButton: "Show as button",
+            showSelect: "Show as select",
         },
 
     }
