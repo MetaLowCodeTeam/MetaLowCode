@@ -25,7 +25,21 @@
                 </el-checkbox-button>
             </el-checkbox-group>
         </template>
-
+        <template v-else-if="field.options.showSelect && !isReadMode">
+            <el-select 
+                v-model="selectValue" 
+                :disabled="field.options.disabled" 
+                multiple
+                @change="onSelectChange"
+            >
+                <el-option 
+                    v-for="(item,inx) of options" 
+                    :key="inx" 
+                    :label="item.label" 
+                    :value="item.label"
+                />
+            </el-select>
+        </template>
         <template v-else-if="field.options.showCheckbox && !isReadMode">
             <el-checkbox 
                 v-for="(item,inx) of options"
@@ -112,6 +126,7 @@ export default {
 			rules: [],
             options: [],
             checkboxGroup: [],
+            selectValue: []
 		};
 	},
 	computed: {
@@ -145,10 +160,12 @@ export default {
 	methods: {
         initOptionsChecked(){
             this.checkboxGroup = [];
+            this.selectValue = [];
             this.options = this.field.options.optionItems.map(el => {
                 let newValue = el.label || el.value;
                 if(this.fieldModel && this.fieldModel.split(",").includes(newValue)) {
                     this.checkboxGroup.push(newValue);
+                    this.selectValue.push(newValue);
                 }
                 return {
                     value: newValue,
@@ -273,6 +290,11 @@ export default {
         // 多选组件切换
         onCheckboxGroupChange(){
             this.fieldModel = this.checkboxGroup.join(",");
+            this.handleChangeEvent(this.fieldModel);
+        },
+        // 下拉组件切换
+        onSelectChange(){
+            this.fieldModel = this.selectValue.join(",");
             this.handleChangeEvent(this.fieldModel);
         }
 	},

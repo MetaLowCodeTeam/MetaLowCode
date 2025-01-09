@@ -14,18 +14,32 @@
 						</template>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="最小内容长度">
-					<el-input-number v-model="fieldProps.fieldViewModel.minLength"
-									 :min="0" :max="190" style="width: 100%"></el-input-number>
-				</el-form-item>
-				<el-form-item label="最大内容长度">
-					<el-input-number v-model="fieldProps.fieldViewModel.maxLength"
-									 :min="0" :max="100000" style="width: 100%"></el-input-number>
-				</el-form-item>
-				<el-form-item label="输入框显示行数">
-					<el-input-number v-model="fieldProps.fieldViewModel.rows"
-									 :min="1" :max="100" style="width: 100%"></el-input-number>
-				</el-form-item>
+                <el-collapse accordion class="mb-10">
+                    <el-collapse-item name="1">
+                        <template #title>
+                            <span class="field-editor-collapse-title">默认值设置</span>
+                            <el-tooltip content="该默认值设置后需在表单设计里重新拖拽，才可生效" placement="top">
+                                <span class="ml-5">
+                                    <el-icon class="icon-top-2">
+                                        <info-filled />
+                                    </el-icon>
+                                </span>
+                            </el-tooltip>
+                        </template>
+                        <el-form-item label="最小内容长度">
+                            <el-input-number v-model="fieldProps.fieldViewModel.minLength"
+                                            :min="0" :max="190" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="最大内容长度">
+                            <el-input-number v-model="fieldProps.fieldViewModel.maxLength"
+                                            :min="0" :max="100000" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="输入框显示行数">
+                            <el-input-number v-model="fieldProps.fieldViewModel.rows"
+                                            :min="1" :max="100" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                    </el-collapse-item>
+                </el-collapse>
 				<el-form-item label="字段值是否唯一/不可重复">
 					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
 						<el-radio :value="true">是</el-radio>

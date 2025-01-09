@@ -14,18 +14,32 @@
 						</template>
 					</el-input>
 				</el-form-item>
-				<el-form-item label="小数精度位数（不超过6位）">
-					<el-input-number v-model="fieldProps.fieldViewModel.precision"
-									 :min="0" :max="6" style="width: 100%"></el-input-number>
-				</el-form-item>
-				<el-form-item label="最小值">
-					<el-input v-model.number="fieldProps.fieldViewModel.minValue"
-							  type="number" style="width: 100%"></el-input>
-				</el-form-item>
-				<el-form-item label="最大值">
-					<el-input v-model.number="fieldProps.fieldViewModel.maxValue"
-							  type="number" style="width: 100%"></el-input>
-				</el-form-item>
+				<el-collapse accordion class="mb-10">
+                    <el-collapse-item name="1">
+                        <template #title>
+                            <span class="field-editor-collapse-title">默认值设置</span>
+                            <el-tooltip content="该默认值设置后需在表单设计里重新拖拽，才可生效" placement="top">
+                                <span class="ml-5">
+                                    <el-icon class="icon-top-2">
+                                        <info-filled />
+                                    </el-icon>
+                                </span>
+                            </el-tooltip>
+                        </template>
+                        <el-form-item label="小数精度位数（不超过6位）">
+                            <el-input-number v-model="fieldProps.fieldViewModel.precision"
+                                            :min="0" :max="6" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="最小值">
+                            <el-input v-model.number="fieldProps.fieldViewModel.minValue"
+                                    type="number" style="width: 100%"></el-input>
+                        </el-form-item>
+                        <el-form-item label="最大值">
+                            <el-input v-model.number="fieldProps.fieldViewModel.maxValue"
+                                    type="number" style="width: 100%"></el-input>
+                        </el-form-item>
+                    </el-collapse-item>
+                </el-collapse>
 				<el-form-item label="是否在列表中默认显示">
 					<el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
 						<el-radio :value="true">是</el-radio>

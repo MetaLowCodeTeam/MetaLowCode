@@ -7,7 +7,7 @@
         :label="i18nt('extension.setting.showBorder')" 
         label-width="120px"
     >
-		<el-switch v-model="optionModel.showBorder"/>
+		<el-switch v-model="optionModel.showBorder" :disabled="!optionModel.showCheckbox"/>
         <el-tooltip :content="i18nt('extension.setting.borderInfo')" placement="top">
             <el-icon class="ml-5" :size="16" color="#999">
                 <QuestionFilled />
@@ -19,6 +19,12 @@
         label-width="120px"
     >
         <el-switch v-model="optionModel.showButton" @change="onButtonChange"/>
+    </el-form-item>
+    <el-form-item
+        :label="i18nt('extension.setting.showSelect')"
+        label-width="120px"
+    >
+        <el-switch v-model="optionModel.showSelect" @change="onSelectChange"/>
     </el-form-item>
 </template>
 
@@ -44,11 +50,21 @@ export default {
                 this.optionModel.showBorder = false;
             }else {
                 this.optionModel.showButton = false;
+                this.optionModel.showSelect = false;
             }
         },
         onButtonChange() {
             if(this.optionModel.showButton) {
                 this.optionModel.showCheckbox = false;
+                this.optionModel.showSelect = false;
+                this.optionModel.showBorder = false;
+            }
+        },
+        onSelectChange() {
+            if(this.optionModel.showSelect) {
+                this.optionModel.showCheckbox = false;
+                this.optionModel.showButton = false;
+                this.optionModel.showBorder = false;
             }
         }
     },

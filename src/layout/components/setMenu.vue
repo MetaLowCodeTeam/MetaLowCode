@@ -210,9 +210,13 @@
 						></el-select>
 					</div>
 					<div v-if="cutMenu.type == 3">
+                        <el-radio-group v-model="cutMenu.customPageType" class="mb-10">
+                            <el-radio :value="1">自定义页面</el-radio>
+                            <el-radio :value="2">路由</el-radio>
+                        </el-radio-group>
 						<el-input
 							v-model="cutMenu.outLink"
-							placeholder="输入自定义页面名称，例：page"
+							:placeholder="cutMenu.customPageType == 1 ? '输入自定义页面名称，例：page' : '输入路由地址，例：/web/custom-page/'"
 							clearable
 						></el-input>
 					</div>
@@ -612,6 +616,9 @@ const nodeClick = (node) => {
     if(cutMenu.value.type == 6) {
         formEntityCodeChange(cutMenu.value.formEntityCode,'init');
     }
+    if(!cutMenu.value.customPageType) {
+        cutMenu.value.customPageType = 1;
+    }
 };
 
 let isShowIconDialog = ref(false);
@@ -673,6 +680,8 @@ let defaultMenu = reactive({
     mobileShow: true,
     // 添加sessionId重定向
     redirectCarrySessionId: false,
+    // 自定义页面 类型  1 自定义页面  2 路由
+    customPageType: 1,
 });
 
 const getGuid = () => {

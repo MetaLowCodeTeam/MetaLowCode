@@ -3,12 +3,16 @@ import { ref } from 'vue'
 import tool from '@/utils/tool';
 import layoutConfigApi from '@/api/layoutConfig.js';
 import http from "@/utils/request";
+import router from '@/router';
 const appPath = import.meta.env.VITE_APP_PATH;
 const floamtRoute = (el, isTopNav) => {
     let newRoute = {};
     if (el.type == 1) {
         newRoute.path = appPath + el.entityName + "/list" + (isTopNav ? '/' + el.guid : '');
         newRoute.component = "customize-menu/list";
+        // http://localhost:8022/web/Xinceshi/create-entity?entity=Xinceshi
+        // newRoute.path = appPath + el.entityName + "/create-entity?entity=" + el.entityName + (isTopNav ? '/' + el.guid : '');
+        // newRoute.component = "customize-menu/NewWindowCreateEntity";
     } else if (el.type == 2) {
         newRoute.path = el.guid;
         // 需要内嵌
@@ -23,15 +27,21 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = appPath + "custom-page/vForm/" + (isTopNav ? 'top/' : '') + el.guid;
         newRoute.component = "custom-page/ListVFormCmp/index";
     } else {
-        // 自定义页面目录
-        newRoute.path = appPath + "custom-page/";
-        // 自定义路由拼接
-        newRoute.path += getCustomPageComponent(el.outLink);
-        // 如果是自定义列表需要拼接参数
-        newRoute.path += el.useCustom ? setPathQuery(el.outLink) : "";
-        // 如果是顶部导航需要拼接guid作为唯一值
-        newRoute.path += isTopNav ? '/' + el.guid : '';
-        newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
+        if(el.customPageType == 2){
+            // 路由
+            newRoute.path = el.outLink;
+        }else {
+           // 自定义页面目录
+           newRoute.path = appPath + "custom-page/";
+           // 自定义路由拼接
+           newRoute.path += getCustomPageComponent(el.outLink);
+           // 如果是自定义列表需要拼接参数
+           newRoute.path += el.useCustom ? setPathQuery(el.outLink) : "";
+           // 如果是顶部导航需要拼接guid作为唯一值
+           newRoute.path += isTopNav ? '/' + el.guid : '';
+           newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
+        }
+        
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
     return newRoute
