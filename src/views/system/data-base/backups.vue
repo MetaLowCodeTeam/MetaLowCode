@@ -7,7 +7,6 @@
         :sortFields="sortFields"
         fieldName="database"
         :tableColumn="tableColumn"
-        :filterItems="filterItems"
         ref="mlSingleListRef"
         queryUrl="/systemManager/backup/log"
     >
@@ -34,8 +33,6 @@ let sortFields = ref([
         type: "DESC",
     },
 ]);
-// 过滤条件
-let filterItems = ref([]);
 let tableColumn = ref([
     {
         prop: "createdOn",

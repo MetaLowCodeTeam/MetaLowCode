@@ -8,7 +8,6 @@
 			:sortFields="tableConf.sortFields"
 			fieldName="transformName"
 			:tableColumn="tableConf.tableColumn"
-			:filterItems="tableConf.filterItems"
 			@changeSwitch="changeSwitch"
 			@highlightClick="goDetail"
             queryUrl="/transform/listQuery"
@@ -107,8 +106,6 @@ let tableConf = ref({
 			type: "DESC",
 		},
 	],
-	// 过滤条件
-	filterItems: [],
 	tableColumn: [
 		{
 			prop: "transformName",

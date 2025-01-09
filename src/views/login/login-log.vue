@@ -5,11 +5,10 @@
         mainEntity="TriggerLog"
         fieldsList="loginUser,ip,browserName,createdOn,logoutType,logoutTime,logout"
         :sortFields="sortFields"
-        fieldName="loginUser.userName"
+        fieldName="loginUser.userName,ip,browserName"
         :tableColumn="tableColumn"
         queryUrl="/user/userLoginLog"
         @highlightClick="highlightClick"
-        :filterItems="filterItems"
     ></mlSingleList>
     <Detail ref="detailRefs" />
 </template>
@@ -23,19 +22,6 @@ let sortFields = ref([
     {
         fieldName: "createdOn",
         type: "DESC",
-    },
-]);
-// 过滤条件
-let filterItems = ref([
-    {
-        fieldName: "ip",
-        op: "LK",
-        value:"",
-    },
-    {
-        fieldName: "browserName",
-        op: "LK",
-        value:"",
     },
 ]);
 let tableColumn = ref([

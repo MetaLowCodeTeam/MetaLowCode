@@ -293,7 +293,7 @@ async function getTableList() {
 		el.value = el.value ? el.value : keyword.value;
 		return el;
 	});
-	if (keyword.value) {
+	if (keyword.value && fieldName) {
         let newFieldName = fieldName.split(",");
         newFieldName.forEach(el => {
             param.filter.items.unshift({

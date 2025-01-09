@@ -7,7 +7,6 @@
         :sortFields="sortFields"
         fieldName="chartName"
         :tableColumn="tableColumn"
-        :filterItems="filterItems"
     >
         <template #addButton>
             <el-button type="primary" @click="addClick">
@@ -117,8 +116,6 @@ let sortFields = ref([
         type: "DESC",
     },
 ]);
-// 过滤条件
-let filterItems = ref([]);
 let tableColumn = ref([
     {
         prop: "chartName",

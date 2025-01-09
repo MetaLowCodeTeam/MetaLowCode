@@ -7,7 +7,6 @@
         :sortFields="sortFields"
         fieldName="appid"
         :tableColumn="tableColumn"
-        :filterItems="filterItems"
         @changeSwitch="changeSwitch"
     >
         <template #addButton>
@@ -77,8 +76,6 @@ let sortFields = ref([
         type: "DESC",
     },
 ]);
-// 过滤条件
-let filterItems = ref([]);
 let tableColumn = ref([
     {
         prop: "appId",

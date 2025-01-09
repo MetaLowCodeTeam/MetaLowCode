@@ -7,7 +7,6 @@
         :sortFields="sortFields"
         fieldName="teamName"
         :tableColumn="tableColumn"
-        :filterItems="filterItems"
         @highlightClick="highlightClick"
         @changeSwitch="changeSwitch"
     >
@@ -73,8 +72,6 @@ let sortFields = ref([
         type: "DESC",
     },
 ]);
-// 过滤条件
-let filterItems = ref([]);
 let tableColumn = ref([
     {
         prop: "teamName",

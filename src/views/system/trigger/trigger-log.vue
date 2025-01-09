@@ -5,11 +5,10 @@
         mainEntity="TriggerLog"
         fieldsList="actionType,triggerReason,recordId,executeFlag,triggerConfigId,createdOn,errorLog"
         :sortFields="sortFields"
-        fieldName="triggerConfigId.name"
+        fieldName="triggerConfigId.name,triggerReason"
         :tableColumn="tableColumn"
         queryUrl="/plugins/metaTrigger/trigger/log"
         @highlightClick="highlightClick"
-        :filterItems="filterItems"
     ></mlSingleList>
     <Detail ref="detailRefs" />
     <!-- 异常执行弹框 -->
@@ -29,14 +28,7 @@ let sortFields = ref([
         type: "DESC",
     },
 ]);
-// 过滤条件
-let filterItems = ref([
-    {
-        fieldName: "triggerReason",
-        op: "LK",
-        value: "",
-    },
-]);
+
 let tableColumn = ref([
     {
         prop: "triggerConfigId",
