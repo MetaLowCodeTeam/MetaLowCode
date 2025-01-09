@@ -10,7 +10,7 @@
 				<el-form-item label="字段名称" prop="name">
 					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1">
 						<template v-if="fieldState === 1" #append>
-							<el-button @click="generateFieldName">刷新生成</el-button>
+							<el-button @click="generateFieldName" style="color: #606266;">刷新生成</el-button>
 						</template>
 					</el-input>
 				</el-form-item>
@@ -47,13 +47,13 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="是否允许空值">
-					<el-radio-group v-model="fieldProps.nullable" style="float: right">
+					<el-radio-group v-model="fieldProps.nullable" style="float: right" @change="handleNullableChange">
 						<el-radio :value="true">是</el-radio>
 						<el-radio :value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="新建记录时允许修改字段">
-					<el-radio-group v-model="fieldProps.creatable" style="float: right">
+					<el-radio-group v-model="fieldProps.creatable" style="float: right" :disabled="!fieldProps.nullable">
 						<el-radio :value="true">是</el-radio>
 						<el-radio :value="false">否</el-radio>
 					</el-radio-group>
@@ -128,6 +128,11 @@ export default {
 		cancelSave() {
 			this.$emit('cancelSave')
 		},
+        handleNullableChange(){
+            if(!this.fieldProps.nullable){
+                this.fieldProps.creatable = true;
+            }
+        },
 	}
 }
 </script>

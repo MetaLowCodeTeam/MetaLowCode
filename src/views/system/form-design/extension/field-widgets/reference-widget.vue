@@ -337,7 +337,9 @@ export default {
             } else {
                 this.filterConditions = null;
             }
-
+            if(this.gDsv["filterConditions"]){
+                this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv["filterConditions"]);
+            }
 			this.showReferenceDialogFlag = true;
 		},
 

@@ -25,7 +25,7 @@
                         placeholder="英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线"
                     >
                         <template #append>
-                            <el-button @click="generateEntityName">刷新生成</el-button>
+                            <el-button @click="generateEntityName" style="color: #606266;">刷新生成</el-button>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -37,7 +37,7 @@
                         placeholder="系统自动生成"
                     ></el-input>
                 </el-form-item>
-                <el-form-item label="是否允许设计表单">
+                <!-- <el-form-item label="是否允许设计表单">
                     <el-switch
                         style="display: block; float: right"
                         v-model="myEntityProps.layoutable"
@@ -56,7 +56,7 @@
                         @change="changeAuthorization"
                         :disabled="myEntityProps.activeType == 2"
                     ></el-switch>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="是否开启记录级权限">
                     <el-switch
                         style="display: block; float: right"
@@ -294,10 +294,10 @@ let rules = ref({
         {
             pattern:
                 /^[A-Za-z\d\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d]+[_-]*[A-Za-z\d\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d]/,
-            message: "以中文、英文字母、数字开头，中间可输入下划线或横杠",
+            message: "名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠",
             trigger: "blur",
         },
-        { min: 2, max: 30, message: "文字长度应在2-30之间", trigger: "blur" },
+        { min: 2, max: 30, message: "名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠", trigger: "blur" },
     ],
 });
 

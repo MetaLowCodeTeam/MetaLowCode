@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="pageLoading" style="height:100%">
+    <div class="form-design-box-div" v-loading="pageLoading">
         <v-form-designer
             ref="vfDesigner"
             :designer-config="designerConfig"
@@ -827,5 +827,11 @@ export default {
 
 .vf-preview-dialog {
     width: 53.7%;
+}
+
+.form-design-box-div {
+    min-width: 1400px;
+    height: 100%;
+    overflow: auto;
 }
 </style>

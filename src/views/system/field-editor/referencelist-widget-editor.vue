@@ -16,7 +16,7 @@
                 <el-form-item label="字段名称" prop="name">
                     <el-input v-model="fieldProps.name" :disabled="fieldState !== 1">
                         <template v-if="fieldState === 1" #append>
-                            <el-button @click="generateFieldName">刷新生成</el-button>
+                            <el-button @click="generateFieldName" style="color: #606266;">刷新生成</el-button>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -28,6 +28,7 @@
                     :label="'引用实体' + (refIdx + 1)"
                     v-for="(refEntity, refIdx) in referenceList"
                     :key="refIdx"
+                    class="is-required"
                 >
                     <el-input v-model="refEntity.refEntityAndFields" readonly>
                         <template #append>
@@ -72,13 +73,13 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否允许空值">
-                    <el-radio-group v-model="fieldProps.nullable" style="float: right">
+                    <el-radio-group v-model="fieldProps.nullable" style="float: right" @change="handleNullableChange">
                         <el-radio :value="true">是</el-radio>
                         <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="新建记录时允许修改字段">
-                    <el-radio-group v-model="fieldProps.creatable" style="float: right">
+                    <el-radio-group v-model="fieldProps.creatable" style="float: right" :disabled="!fieldProps.nullable">
                         <el-radio :value="true">是</el-radio>
                         <el-radio :value="false">否</el-radio>
                     </el-radio-group>
@@ -250,13 +251,13 @@ export default {
                     {
                         pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
                         message:
-                            "请以中文、英文字母、数字开头，中间可输入下划线或横杠",
+                            "名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠",
                         trigger: "blur",
                     },
                     {
                         min: 2,
                         max: 30,
-                        message: "文字长度应在2-30之间",
+                        message: "名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠",
                         trigger: "blur",
                     },
                 ],
@@ -552,6 +553,11 @@ export default {
 
         generateFieldName() {
             this.fieldProps.name = getSimplePinYin(this.fieldProps.label);
+        },
+        handleNullableChange(){
+            if(!this.fieldProps.nullable){
+                this.fieldProps.creatable = true;
+            }
         },
     },
 };

@@ -20,10 +20,10 @@ export const fieldEditorMixin = {
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
 					{
 						pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
-						message: '请以中文、英文字母、数字开头，中间可输入下划线或横杠',
+						message: '名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠',
 						trigger: 'blur'
 					},
-					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
+					{min: 2, max: 30, message: '名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠', trigger: 'blur'},
 				],
 			},
 		}
@@ -55,6 +55,11 @@ export const fieldEditorMixin = {
 		},
 
 		validateField() {
+            if(this.fieldProps.fieldViewModel.minLength >= this.fieldProps.fieldViewModel.maxLength){
+                this.$message.error('最小长度必须小于最大长度！')
+                return false;
+            }
+
 			if (this.fieldProps.fieldViewModel.minValue >= this.fieldProps.fieldViewModel.maxValue) {
 				this.$message.error('最小值必须小于最大值！')
 				return false;
@@ -84,6 +89,11 @@ export const fieldEditorMixin = {
 		cancelSave() {
 			this.$emit('cancelSave')
 		},
+        handleNullableChange(){
+            if(!this.fieldProps.nullable){
+                this.fieldProps.creatable = true;
+            }
+        },
 
 		async loadFieldProps() {
 			if (this.fieldState !== FieldState.EDIT) {

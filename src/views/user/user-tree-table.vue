@@ -539,14 +539,24 @@ export default {
                     this.showDepartmentFormDialogFlag = true;
                     this.departmentDsv["formEntity"] = "Department";
                     this.departmentDsv["formStatus"] = "edit";
+                    this.departmentDsv["filterConditions"] = {
+                        equal: "OR",
+                        items: [
+                            {
+                                fieldName: "departmentId",
+                                op: "NBTD",
+                                value: node.data.id,
+                            },
+                        ],
+                    };
                     this.$nextTick(() => {
                         this.$refs.departmentFormRef.setFormJson(res.data.layoutJson);
                         this.$nextTick(() => {
-                            const parentDpt =
-                                this.$refs.departmentFormRef.getWidgetRef(
-                                    "parentDepartmentId"
-                                );
-                            !!parentDpt && parentDpt.setDisabled(true);
+                            // const parentDpt =
+                            //     this.$refs.departmentFormRef.getWidgetRef(
+                            //         "parentDepartmentId"
+                            //     );
+                            // !!parentDpt && parentDpt.setDisabled(true);
                             if (
                                 node.data.id ===
                                 "0000022-00000000000000000000000000000001"
