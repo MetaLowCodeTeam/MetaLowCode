@@ -86,7 +86,12 @@ export default {
             tipDisplayed: false,
         };
     },
-    props: {},
+    props: {
+        isDesign: {
+            type: Boolean,
+            default: false,
+        },
+    },
     watch: {
         $route(e) {
             this.addViewTags(e);
@@ -164,6 +169,10 @@ export default {
         },
         //增加tag
         addViewTags(route) {
+            console.log(route,'route')
+            if(this.isDesign && route.name == "dashboard"){
+                return;
+            }
             if (route.name && !route.meta.fullpage) {
                 pushViewTags(route);
                 pushKeepLive(route.name);

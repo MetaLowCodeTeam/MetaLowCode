@@ -358,6 +358,7 @@ let en_US = {
         "30200": "Chart Design",
         "30300": "Print",
         "30400": "Fill in the form",
+        "30500": "Design App",
 
         "40000": "Routing error, please try refreshing the page",
     },
@@ -936,6 +937,42 @@ let en_US = {
         "1002": "Installed",
         "1003": "Design Application",
         "1004": "Export",
+        "1005": "New App",
+        "1006": "Install App",
+        "1007": "Export App",
+        "1008": "Edit App",
+        "1009": "Start Install",
+        "1010": "Start Export",
+
+        "1100": "App Name",
+        "1101": "Unique Abbreviation",
+        "1101-1": "App unique abbreviation is used as the prefix of the app, preventing entity names from being repeated due to different customer imports. It can only be English and the first letter must be uppercase",
+        "1102": "Entity Start Code",
+        "1102-1": "Entity start code is used to distinguish each different app, and the app code cannot be repeated.",
+        "1103": "Entity Quantity Limit",
+        "1103-1": "The maximum range of application entities is 3000, and the code will increase from 3000 after the number is set",
+        "1104": "App Introduction",
+        "1105": "Install Password",
+        "1106": "App Package",
+
+        "1200": "Please enter the application name",
+        "1201": "Please enter the application unique abbreviation",
+        "1202": "Please enter the entity start code",
+        "1203": "Please enter the entity quantity limit",
+        "1204": "Please enter the English uppercase letter start pure English abbreviation",
+        "1205": "Please upload the application package",
+
+        "1300": "Are you sure you want to delete this application?",\
+        
+        "1400": "Entity Management",
+        "1401": "Single Option Management",
+        "1402": "Multiple Option Management",
+        "1403": "Approval Process Management",
+        "1404": "Trigger Management",
+        "1405": "Dashboard Management",
+        "1406": "Report Design Management",
+        "1407": "External Form Management",
+        "1408": "Menu Navigation",
     },
     // dataModeling
     dataModeling: {

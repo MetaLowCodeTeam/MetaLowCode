@@ -45,26 +45,26 @@
 			padding: 20px 10px 10px 10px;
 			margin-bottom: 10px;
 			position: relative;
-            &:hover {
-                border-color: var(--el-color-primary);
-            }
-            .app-manager-item-export {
-                position: absolute;
-                top: 0;
-                right: 0;
-                color: #303030;
-                border: 1px solid #e6e6e6;
-                border-top: none;
-                border-right: none;
-                padding: 2px 10px;
-                font-size: 12px;
-                border-radius: 0px 0px 0px 4px;
-                cursor: pointer;
-                &:hover {
-                    color: #fff;
-                    background: var(--el-color-primary);
-                }
-            }
+			&:hover {
+				border-color: var(--el-color-primary);
+			}
+			.app-manager-item-export {
+				position: absolute;
+				top: 0;
+				right: 0;
+				color: #303030;
+				border: 1px solid #e6e6e6;
+				border-top: none;
+				border-right: none;
+				padding: 2px 10px;
+				font-size: 12px;
+				border-radius: 0px 0px 0px 4px;
+				cursor: pointer;
+				&:hover {
+					color: #fff;
+					background: var(--el-color-primary);
+				}
+			}
 			.app-manager-item-title {
 				margin-bottom: 10px;
 				.app-manager-item-title-text {
@@ -75,7 +75,7 @@
 					font-weight: bold;
 				}
 			}
-			.app-manager-item-desc {
+			.app-manager-item-introduction {
 				font-size: 13px;
 				min-height: 36px;
 				color: #999;
@@ -106,6 +106,12 @@
 					v-model="keyword"
 					:placeholder="$t('operation.5000')"
 				/>
+                <el-button type="primary" icon="Plus" @click="handleAddApp">
+                    新建应用
+                </el-button>
+                <el-button type="primary" icon="Plus" @click="handleInstallApp">
+                    安装应用
+                </el-button>
 			</div>
 		</el-header>
 		<el-main class="app-manager-main">
@@ -128,10 +134,14 @@
 						:key="index"
 					>
 						<div class="app-manager-item">
-                            <!-- 导出小标签 -->
-                            <span class="app-manager-item-export" v-if="activeTab === 'developing'">
-                                {{ $t("appManager.1004") }}
-                            </span>
+							<!-- 导出小标签 -->
+							<span
+								class="app-manager-item-export"
+								v-if="activeTab === 'developing'"
+								@click="handleExportApp(item)"
+							>
+								{{ $t("appManager.1004") }}
+							</span>
 							<div class="app-manager-item-title">
 								<div
 									class="app-manager-item-title-text yichu"
@@ -141,16 +151,17 @@
 								</div>
 							</div>
 							<div
-								class="app-manager-item-desc"
-								:title="item.desc"
+								class="app-manager-item-introduction"
+								:title="item.introduction"
 							>
-								{{ item.desc }}
+								{{ item.introduction }}
 							</div>
 							<div class="app-manager-item-btns">
 								<el-button
 									plain
 									size="small"
 									v-if="activeTab === 'developing'"
+                                    @click="handleDesignApp(item)"
 								>
 									{{ $t("appManager.1003") }}
 								</el-button>
@@ -158,12 +169,13 @@
 									plain
 									size="small"
 									v-if="activeTab === 'developing'"
+                                    @click="handleEditApp(item)"
 								>
 									{{ $t("operation.3001") }}
 								</el-button>
-								<el-button plain size="small">
+								<el-button plain size="small" @click="handleDeleteApp(item)">
 									{{ $t("operation.4000") }}
-                                </el-button>
+								</el-button>
 							</div>
 						</div>
 					</el-col>
@@ -171,10 +183,18 @@
 			</div>
 		</el-main>
 	</el-container>
+    <ListDialog ref="listDialogRef"/>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
 import { t } from "@/locales";
+import { ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
+import useViewTagsStore from "@/store/modules/viewTags";
+import ListDialog from "./components/ListDialog.vue";
+
+const router = useRouter();
+const { clearViewTags } = useViewTagsStore();
 
 // 当前选中的tab
 let activeTab = ref("developing");
@@ -205,6 +225,9 @@ let loading = ref(false);
 // 列表
 let tabList = ref([]);
 
+// 搜索关键字
+let keyword = ref("");
+
 // 获取列表
 const getTabList = () => {
 	loading.value = true;
@@ -212,70 +235,70 @@ const getTabList = () => {
 		tabList.value = [
 			{
 				name: "应用管理名称应用管理名称应用管理名称应用管理名称",
-				desc: "应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述",
+				introduction: "应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称2",
-				desc: "应用管理描述2",
+				introduction: "应用管理描述2",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称3",
-				desc: "应用管理描述3",
+				introduction: "应用管理描述3",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称4",
-				desc: "应用管理描述4",
+				introduction: "应用管理描述4",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称5",
-				desc: "应用管理描述5",
+				introduction: "应用管理描述5",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称6",
-				desc: "应用管理描述6",
+				introduction: "应用管理描述6",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称7",
-				desc: "应用管理描述7",
+				introduction: "应用管理描述7",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称8",
-				desc: "应用管理描述8",
+				introduction: "应用管理描述8",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称9",
-				desc: "应用管理描述9",
+				introduction: "应用管理描述9",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
 			},
 			{
 				name: "应用管理名称10",
-				desc: "应用管理描述10",
+				introduction: "应用管理描述10",
 				version: "1.0.0",
 				createdTime: "2024-01-01 10:00:00",
 				createdUser: "admin",
@@ -283,5 +306,50 @@ const getTabList = () => {
 		];
 		loading.value = false;
 	}, 500);
+};
+
+let listDialogRef = ref(null);
+
+// 新建应用
+const handleAddApp = () => {
+    listDialogRef.value.openDialog('add', null);
+};
+// 编辑应用
+const handleEditApp = (item) => {
+    listDialogRef.value.openDialog('edit', item);
+};
+// 安装应用
+const handleInstallApp = () => {
+    listDialogRef.value.openDialog('install', null);
+};
+// 导出应用
+const handleExportApp = (item) => {
+    listDialogRef.value.openDialog('export', item);
+};
+// 删除应用
+const handleDeleteApp = (item) => {
+    ElMessageBox.confirm(t("appManager.1300"), t("operation.9000"), {
+        confirmButtonText: t("operation.6001"),
+        cancelButtonText: t("operation.7000"),
+        type: "warning",
+    }).then(() => {
+        console.log("删除");
+    }).catch(() => {});
+};
+
+// 设计应用
+const handleDesignApp = (item) => {
+    const appPath = import.meta.env.VITE_APP_PATH;
+    // clearViewTags();
+    // 跳转到设计应用页面
+    // router.push({
+    //     name: "DesignApp",
+    //     query: {
+    //         id: item.id,
+    //     },
+    // });
+    // 新窗口打开设计应用页面
+    window.open(`${window.location.origin}${appPath}designApp`, '_blank');
+
 };
 </script>

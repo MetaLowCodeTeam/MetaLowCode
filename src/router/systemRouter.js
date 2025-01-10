@@ -1,5 +1,6 @@
 import config from "@/config"
 const appPath = import.meta.env.VITE_APP_PATH;
+import { t } from "@/locales";
 //系统路由
 const routes = [
     {
@@ -59,6 +60,91 @@ const routes = [
         meta: {
             title: "填写表单"
         }
+    },
+    // 设计应用
+    {
+        path: appPath + "designApp",
+        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/DesignApp.vue'),
+        name: "DesignApp",
+        redirect: { name: "DesignEntity" },
+        meta: {
+            title: t("route.30500")
+        },
+        children: [
+            {
+                path: "designEntity",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignEntity",
+                meta: {
+                    title: t("appManager.1400"),
+                    affix: true
+                }
+            },
+            {
+                path: "designSingleOption",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignSingleOption",
+                meta: {
+                    title: t("appManager.1401")
+                }
+            },
+            {
+                path: "designMultipleOption",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignMultipleOption",
+                meta: {
+                    title: t("appManager.1402")
+                }
+            },
+            {
+                path: "designApprovalProcess",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignApprovalProcess",
+                meta: {
+                    title: t("appManager.1403")
+                }
+            },
+            {
+                path: "designTrigger",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignTrigger",
+                meta: {
+                    title: t("appManager.1404")
+                }
+            },
+            {
+                path: "designDashboard",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignDashboard",
+                meta: {
+                    title: t("appManager.1405")
+                }
+            },
+            {
+                path: "designReportDesign",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignReportDesign",
+                meta: {
+                    title: t("appManager.1406")
+                }
+            },
+            {
+                path: "designExternalForm",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignExternalForm",
+                meta: {
+                    title: t("appManager.1407")
+                }
+            },
+            {
+                path: "designMenuNavigation",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignMenuNavigation",
+                meta: {
+                    title: t("appManager.1408")
+                }
+            }
+        ]
     },
     // 消息中心
     // {

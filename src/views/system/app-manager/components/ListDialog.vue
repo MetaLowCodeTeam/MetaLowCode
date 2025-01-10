@@ -1,0 +1,342 @@
+<style scoped lang="scss">
+.app-manager-dialog-label {
+	display: flex;
+	width: 100%;
+	.app-manager-dialog-input {
+		flex: 1;
+	}
+	.app-manger-zw {
+		// width: 20px;
+	}
+}
+:deep(.el-form-item) {
+	align-items: initial !important;
+}
+.ml-upload {
+	display: inline-block;
+}
+</style>
+<template>
+	<ml-dialog
+		v-model="dialogVisible"
+		:title="fromData.title"
+		width="700px"
+		:show-close="!loading"
+	>
+		<!-- 新建编辑 -->
+		<div
+			v-if="fromData.type === 'add' || fromData.type === 'edit'"
+			v-loading="loading"
+		>
+			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
+				<el-form-item
+					:label="$t('appManager.1100')"
+					class="is-required"
+				>
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.name"
+							class="app-manager-dialog-input"
+							:class="{ 'is-error': errorInfo.nameError }"
+							@focus="errorInfo.nameError = false"
+						/>
+						<span class="app-manger-zw"></span>
+					</div>
+				</el-form-item>
+				<el-form-item
+					:label="$t('appManager.1101')"
+					class="is-required"
+				>
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.uniqueAbbreviation"
+							class="app-manager-dialog-input"
+							:disabled="fromData.type === 'edit'"
+							:class="{
+								'is-error': errorInfo.uniqueAbbreviationError,
+							}"
+							@focus="errorInfo.uniqueAbbreviationError = false"
+						/>
+						<el-tooltip placement="top">
+							<template #content>
+								<div style="width: 200px">
+									{{ t("appManager.1101-1") }}
+								</div>
+							</template>
+							<span class="ml-5">
+								<el-icon><WarningFilled /></el-icon>
+							</span>
+						</el-tooltip>
+					</div>
+				</el-form-item>
+				<el-form-item
+					:label="$t('appManager.1102')"
+					class="is-required"
+				>
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.entityStartCode"
+							class="app-manager-dialog-input"
+							:class="{
+								'is-error': errorInfo.entityStartCodeError,
+							}"
+							@focus="errorInfo.entityStartCodeError = false"
+						/>
+						<el-tooltip placement="top">
+							<template #content>
+								<div style="width: 200px">
+									{{ t("appManager.1102-1") }}
+								</div>
+							</template>
+							<span class="ml-5">
+								<el-icon><WarningFilled /></el-icon>
+							</span>
+						</el-tooltip>
+					</div>
+				</el-form-item>
+				<el-form-item
+					:label="$t('appManager.1103')"
+					class="is-required"
+				>
+					<div class="app-manager-dialog-label">
+						<el-input-number
+							v-model="fromData.entityQuantityLimit"
+							:min="30"
+							:max="3000"
+							class="w-100"
+							:class="{
+								'is-error': errorInfo.entityQuantityLimitError,
+							}"
+							@focus="errorInfo.entityQuantityLimitError = false"
+						/>
+						<el-tooltip placement="top">
+							<template #content>
+								<div style="width: 200px">
+									{{ t("appManager.1103-1") }}
+								</div>
+							</template>
+							<span class="ml-5">
+								<el-icon><WarningFilled /></el-icon>
+							</span>
+						</el-tooltip>
+					</div>
+				</el-form-item>
+				<el-form-item :label="$t('appManager.1104')" class="mb-0">
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.introduction"
+							class="app-manager-dialog-input"
+							type="textarea"
+							:rows="3"
+						/>
+						<span class="app-manger-zw"></span>
+					</div>
+				</el-form-item>
+			</el-form>
+		</div>
+		<!-- 安装 -->
+		<div v-if="fromData.type === 'install'" v-loading="loading">
+			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
+				<el-form-item :label="$t('appManager.1106')">
+					<ml-upload
+						accept=".sql"
+						customUpload
+						@on-custom-upload="onCustomUpload"
+						class="ml-upload"
+					>
+						<template #trigger>
+							<el-button>
+								<el-icon>
+									<ElIconUpload />
+								</el-icon>
+								上传文件
+							</el-button>
+						</template>
+					</ml-upload>
+					<span
+						class="file-name-span"
+						v-if="fromData.originalFilename"
+					>
+						{{ fromData.originalFilename }}
+					</span>
+				</el-form-item>
+				<el-form-item :label="$t('appManager.1105')" class="mb-0">
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.installPassword"
+							class="app-manager-dialog-input"
+							clearable
+						/>
+					</div>
+					<div class="info-text mt-5">
+						仅支持标准版以上的版本进行应用导入，接收企业需进行授权激活。
+					</div>
+				</el-form-item>
+			</el-form>
+		</div>
+		<!-- 导出 -->
+		<div v-if="fromData.type === 'export'" v-loading="loading">
+			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
+				<el-form-item
+					:label="$t('appManager.1100')"
+					class="is-required"
+				>
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.name"
+							class="app-manager-dialog-input"
+							disabled
+						/>
+					</div>
+				</el-form-item>
+				<el-form-item :label="$t('appManager.1104')">
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.introduction"
+							class="app-manager-dialog-input"
+							type="textarea"
+							:rows="3"
+							disabled
+						/>
+					</div>
+				</el-form-item>
+				<el-form-item :label="$t('appManager.1105')" class="mb-0">
+					<div class="app-manager-dialog-label">
+						<el-input
+							v-model="fromData.installPassword"
+							class="app-manager-dialog-input"
+							clearable
+						/>
+					</div>
+				</el-form-item>
+			</el-form>
+		</div>
+		<template #footer>
+			<el-button @click="dialogVisible = false" :loading="loading">
+				{{ $t("operation.7000") }}
+			</el-button>
+			<el-button
+				type="primary"
+				@click="handleSubmit"
+				v-if="fromData.type === 'add' || fromData.type === 'edit'"
+				:loading="loading"
+			>
+				{{ $t("operation.6000") }}
+			</el-button>
+			<el-button
+				type="primary"
+				@click="handleSubmit"
+				v-if="fromData.type === 'install'"
+				:loading="loading"
+			>
+				{{ $t("appManager.1009") }}
+			</el-button>
+			<el-button
+				type="primary"
+				@click="handleSubmit"
+				v-if="fromData.type === 'export'"
+				:loading="loading"
+			>
+				{{ $t("appManager.1010") }}
+			</el-button>
+		</template>
+	</ml-dialog>
+</template>
+<script setup>
+import { ref } from "vue";
+import { t } from "@/locales";
+import { ElMessage } from "element-plus";
+
+// 语言
+let language = ref(localStorage.getItem("Language") || "zh-CN");
+
+const DialogType = {
+	add: t("appManager.1005"),
+	edit: t("appManager.1008"),
+	install: t("appManager.1006"),
+	export: t("appManager.1007"),
+};
+
+let fromData = ref({});
+
+let loading = ref(false);
+let dialogVisible = ref(false);
+
+const openDialog = (type, data) => {
+	dialogVisible.value = true;
+	if (type === "edit" || type === "export") {
+		fromData.value = data;
+	} else {
+		fromData.value = {
+			entityQuantityLimit: 300,
+		};
+	}
+	fromData.value.type = type;
+	fromData.value.title = DialogType[type];
+};
+
+// 上传文件
+const onCustomUpload = (file) => {
+	console.log(file);
+};
+
+// 错误信息
+let errorInfo = ref({
+	nameError: false,
+	uniqueAbbreviationError: false,
+	entityStartCodeError: false,
+	entityQuantityLimitError: false,
+});
+
+// 提交
+const handleSubmit = () => {
+	let {
+		type,
+		name,
+		uniqueAbbreviation,
+		entityStartCode,
+		entityQuantityLimit,
+		originalFilename,
+	} = fromData.value;
+	if (type === "add" || type === "edit") {
+		if (!name) {
+			errorInfo.value.nameError = true;
+			ElMessage.error(t("appManager.1200"));
+			return;
+		}
+		if (!uniqueAbbreviation) {
+			errorInfo.value.uniqueAbbreviationError = true;
+			ElMessage.error(t("appManager.1201"));
+			return;
+		}
+        // 只能是英文，且首字母大写
+		let reg = /^[A-Z][a-zA-Z]*$/;
+		if (!reg.test(uniqueAbbreviation)) {
+			errorInfo.value.uniqueAbbreviationError = true;
+			ElMessage.error(t("appManager.1204"));
+			return;
+		}
+		if (!entityStartCode) {
+			errorInfo.value.entityStartCodeError = true;
+			ElMessage.error(t("appManager.1202"));
+			return;
+		}
+		if (entityQuantityLimit < 30 || entityQuantityLimit > 3000) {
+			errorInfo.value.entityQuantityLimitError = true;
+			ElMessage.error(t("appManager.1203"));
+			return;
+		}
+	}
+    if(type === "install"){
+        if(!originalFilename){
+            ElMessage.error(t("appManager.1205"));
+            return;
+        }
+    }
+	console.log(fromData.value);
+};
+
+defineExpose({
+	openDialog,
+});
+</script>

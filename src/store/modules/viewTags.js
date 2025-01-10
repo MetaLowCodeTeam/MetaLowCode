@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 const useViewTagsStore = defineStore('viewTagsStore', () => {
     let viewTags = ref([])
-
+    
     const pushViewTags = (route) => {
         let backPathIndex = viewTags.value.findIndex(item => item.fullPath == router.options.history.state.back)
         let target = viewTags.value.find((item) => item.fullPath === route.fullPath)
