@@ -73,7 +73,8 @@ const { viewTags } = storeToRefs(viewTagsStore);
 const { pushViewTags,removeViewTags } = viewTagsStore;
 const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
 const { removeIframeList,refreshIframe } = iframeStore;
-
+import systemRouter from '@/router/systemRouter';
+const appPath = import.meta.env.VITE_APP_PATH;
 export default {
     name: "tags",
     data() {
@@ -137,9 +138,26 @@ export default {
             menu,
             (node) => node.path == this.$CONFIG.DASHBOARD_URL
         );
-        if (dashboardRoute) {
+        
+        if (dashboardRoute && !this.isDesign) {
             dashboardRoute.fullPath = dashboardRoute.path;
             this.addViewTags(dashboardRoute);
+            this.addViewTags(this.$route);
+        }
+        if(this.isDesign){
+            this.addViewTags({
+                "fullPath": appPath + "designApp/designEntity",
+                "path": appPath + "designApp/designEntity",
+                "query": {},
+                "hash": "",
+                "name": "DesignEntity",
+                "params": {},
+                "meta": {
+                    "title": "实体管理",
+                    "affix": true
+                },
+                "href": appPath + "designApp/designEntity"
+            });
             this.addViewTags(this.$route);
         }
     },
@@ -169,10 +187,6 @@ export default {
         },
         //增加tag
         addViewTags(route) {
-            console.log(route,'route')
-            if(this.isDesign && route.name == "dashboard"){
-                return;
-            }
             if (route.name && !route.meta.fullpage) {
                 pushViewTags(route);
                 pushKeepLive(route.name);
@@ -238,7 +252,6 @@ export default {
                     query: nowTag.query,
                 });
             }
-            refreshIframe(nowTag);
             setTimeout(() => {
                 removeKeepLive(nowTag.name);
                 setRouteShow(false);

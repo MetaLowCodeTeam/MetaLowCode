@@ -104,6 +104,14 @@ const routes = [
                     title: t("appManager.1403")
                 }
             },
+            // 审批流程详情
+            {
+                path: appPath + "design-process-detail",
+                name: 'DesignProcessDetail',
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                hidden: true,
+                meta: { title: t('route.20403'), hidden: true }
+            },
             {
                 path: "designTrigger",
                 component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
