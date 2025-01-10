@@ -929,6 +929,14 @@ let en_US = {
             "1102": "Created User",
         },
     },
+    // appManager
+    appManager: {
+        "1000": "App Management",
+        "1001": "Developing",
+        "1002": "Installed",
+        "1003": "Design Application",
+        "1004": "Export",
+    },
     // dataModeling
     dataModeling: {
         entityList: {

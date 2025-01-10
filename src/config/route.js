@@ -29,7 +29,7 @@
 // ]
 
 
-import { t } from "@/locales/lang"
+import { t } from "@/locales"
 
 const appPath = import.meta.env.VITE_APP_PATH;
 
@@ -196,7 +196,7 @@ const routes = [
                 path: appPath + 'app-manager',
                 name: 'AppManager',
                 component: 'system/app-manager/index',
-                meta: { title: t('router.20904'), icon: 'el-icon-Platform', role: 'r6000' }
+                meta: { title: t('route.20904'), icon: 'el-icon-Platform', role: 'r6000' }
             },
             {
                 path: '',
