@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, inject } from "vue";
+import { onMounted, ref, inject, nextTick } from "vue";
 import setMen from "./setMenu.vue";
 import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
@@ -66,7 +66,8 @@ const $TOOL = inject("$TOOL");
 const appPath = import.meta.env.VITE_APP_PATH;
 // 导航点击
 const navClick = async (item) => {
-    router.push(appPath + "dashboard");
+    // router.push(appPath + "dashboard");
+    location.href = appPath + "dashboard";
     let res = await $API.layoutConfig.saveUserLayoutCache(
         "NAV",
         item.layoutConfigId
