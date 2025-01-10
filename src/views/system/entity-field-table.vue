@@ -660,7 +660,7 @@ export default {
                 this.filteredData = copyNew(this.tableData)
                 this.searchText = '';
                 // 查找是否有审批字段
-                let findApprovalStatus = this.tableData.filter(el => el.physicalName == 'approvalStatus');
+                let findApprovalStatus = this.tableData.filter(el => el.name == 'approvalStatus');
                 this.openApprovalField = findApprovalStatus.length > 0;
             }
             this.mainLoading = false;
