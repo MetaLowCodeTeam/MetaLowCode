@@ -351,6 +351,7 @@ let en_US = {
         "20901": "Revision History",
         "20902": "Login Log",
         "20903": "Recycle Bin",
+        "20904": "App Manager",
 
         "30000": "Login",
         "30100": "Form Template Design",
