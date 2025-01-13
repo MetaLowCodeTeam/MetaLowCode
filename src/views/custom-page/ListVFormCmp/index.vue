@@ -77,11 +77,9 @@ const loadForm = async () => {
 			haveLayoutJson.value = true;
 			optionData.value = res.data.optionData || {};
 			nextTick(() => {
-				globalDsv.value.formStatus = "read";
 				vFormRef.value.setFormJson(res.data.layoutJson);
 				nextTick(() => {
 					vFormRef.value.reloadOptionData();
-					vFormRef.value.setReadMode();
 				});
 			});
 		} else {
