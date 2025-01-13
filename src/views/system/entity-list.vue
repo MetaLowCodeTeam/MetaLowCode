@@ -184,6 +184,7 @@
                             :key="entityIdx"
                             @mouseenter="onEnterEntity(entityItem, entityIdx)"
                             @mouseleave="onLeaveEntity"
+                            @click="onEntityClick(entityItem, entityIdx)"
                         >
                             <template #header>
                                 <div>
@@ -323,11 +324,18 @@ import { useRouter } from "vue-router";
 import { textIsSystemKeyword } from "@/utils/keyword-check";
 import EntityImportExport from "./entity-import-export.vue";
 import http from "@/utils/request";
+
 const { refreshCache } = useCommonStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
 const $TOOL = inject("$TOOL");
 
+const props = defineProps({
+    isDesign: {
+        type: Boolean,
+        default: false
+    }
+})
 
 let keyword = ref("");
 let searchTag = ref("全部标签");
@@ -581,6 +589,9 @@ const getRightMap = async () => {
 };
 
 const onEnterEntity = (entityItem, entityIdx) => {
+    if(props.isDesign) {
+        return;
+    }
     hoverEntityIdx.value = entityIdx;
 	entityItem.showMenuFlag = true;
 };
@@ -811,6 +822,20 @@ const handleCommand = (command, entityItem) => {
 const entityImportExportRef = ref(null);
 const openImportExportDialog = (type) => {
     entityImportExportRef.value.openDialog(type);
+}
+
+// 点击实体
+const onEntityClick = (entityItem, entityIdx) => {
+    if(props.isDesign) {    
+        const routePath = router.resolve({
+            name: "AppDesignEntity",
+            query: {
+                entity: entityItem.name,
+                entityLabel: entityItem.label,
+            }
+        }).href;
+        window.open(routePath, '_blank'); // 在新标签页中打开
+    }
 }
 
 </script>

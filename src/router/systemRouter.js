@@ -96,6 +96,7 @@ const routes = [
                     title: t("appManager.1402")
                 }
             },
+            // 审批流程
             {
                 path: "designApprovalProcess",
                 component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
@@ -112,12 +113,24 @@ const routes = [
                 hidden: true,
                 meta: { title: t('route.20403'), hidden: true }
             },
+            // 触发器
             {
                 path: "designTrigger",
                 component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignTrigger",
                 meta: {
                     title: t("appManager.1404")
+                }
+            },
+            // 触发器详情
+            {
+                path: appPath + "design-trigger-detail",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignTriggerDetail",
+                hidden: true,
+                meta: {
+                    title: t("route.20503"),
+                    hidden: true
                 }
             },
             {
@@ -153,6 +166,15 @@ const routes = [
                 }
             }
         ]
+    },
+    // 设计实体
+    {
+        path: appPath + "app-design-entity",
+        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/DesignEntity.vue'),
+        name: "AppDesignEntity",
+        meta: {
+            title: t("appManager.1011")
+        }
     },
     // 消息中心
     // {

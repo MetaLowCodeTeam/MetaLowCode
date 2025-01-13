@@ -178,6 +178,7 @@ const goDetail = (row) => {
             approvalConfigId: row.approvalConfigId,
             entityCode: row.entityCode,
             flowType: row.flowType || 1,
+            meteAppendTitle: row.flowName,
         },
     });
 };

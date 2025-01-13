@@ -107,10 +107,10 @@
 					:placeholder="$t('operation.5000')"
 				/>
                 <el-button type="primary" icon="Plus" @click="handleAddApp">
-                    新建应用
+                    {{ $t("appManager.1005") }}
                 </el-button>
                 <el-button type="primary" icon="Plus" @click="handleInstallApp">
-                    安装应用
+                    {{ $t("appManager.1006") }}
                 </el-button>
 			</div>
 		</el-header>

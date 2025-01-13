@@ -32,6 +32,12 @@
 <script setup>
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
+const props = defineProps({
+    isDesign: {
+        type: Boolean,
+        default: false
+    }
+})
 const $TOOL = inject("$TOOL");
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
@@ -141,9 +147,10 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: appPath + "trigger-detail",
+        path: props.isDesign ? appPath + "design-trigger-detail" : appPath + "trigger-detail",
         query: {
             triggerConfigId: row.triggerConfigId,
+            meteAppendTitle: row.name,
         },
     });
 };

@@ -41,6 +41,7 @@
 						:key="item.value"
 						:label="item.label"
 						:value="item.value"
+						:disabled="item.disabled"
 					></el-option>
 				</el-select>
 			</div>
@@ -112,8 +113,18 @@ const selectList = ref([
 		value: "DesignApprovalProcess",
 	},
 	{
+		label: t("appManager.1403-1"),
+		value: "DesignProcessDetail",
+		disabled: true,
+	},
+	{
 		label: t("appManager.1404"),
 		value: "DesignTrigger",
+	},
+	{
+		label: t("appManager.1404-1"),
+		value: "DesignTriggerDetail",
+		disabled: true,
 	},
 	{
 		label: t("appManager.1405"),
@@ -134,12 +145,15 @@ const selectList = ref([
 ]);
 
 onMounted(() => {
-    selectValue.value = router.currentRoute.value.name;
-})
+	selectValue.value = router.currentRoute.value.name;
+});
 
-watch(() => router.currentRoute.value, (newVal, oldVal) => {
-    selectValue.value = newVal.name;
-})
+watch(
+	() => router.currentRoute.value,
+	(newVal, oldVal) => {
+		selectValue.value = newVal.name;
+	}
+);
 
 const handleSelectChange = (value) => {
 	router.push({

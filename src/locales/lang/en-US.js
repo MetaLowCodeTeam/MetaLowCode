@@ -943,6 +943,7 @@ let en_US = {
         "1008": "Edit App",
         "1009": "Start Install",
         "1010": "Start Export",
+        "1011": "Design Entity",
 
         "1100": "App Name",
         "1101": "Unique Abbreviation",
@@ -968,11 +969,14 @@ let en_US = {
         "1401": "Single Option Management",
         "1402": "Multiple Option Management",
         "1403": "Approval Process Management",
+        "1403-1": "Approval Process Management Detail",
         "1404": "Trigger Management",
+        "1404-1": "Trigger Management Detail",
         "1405": "Dashboard Management",
         "1406": "Report Design Management",
         "1407": "External Form Management",
         "1408": "Menu Navigation",
+
     },
     // dataModeling
     dataModeling: {

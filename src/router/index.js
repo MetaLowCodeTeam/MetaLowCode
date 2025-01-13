@@ -106,6 +106,9 @@ router.beforeEach(async (to, from, next) => {
     if(to.name == "NewWindowCreateEntity") {
         to.meta.title = "新建" + queryEntityLabelByName(to.params.entityName)
     }
+    if(to.query.meteAppendTitle) {
+        to.meta.title = to.meta.title + " - " + to.query.meteAppendTitle
+    }
     beforeEach(to, from)
     next();
 });
