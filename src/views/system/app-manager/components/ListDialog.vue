@@ -74,13 +74,15 @@
 					class="is-required"
 				>
 					<div class="app-manager-dialog-label">
-						<el-input
+						<el-input-number
 							v-model="fromData.startingCode"
 							class="app-manager-dialog-input"
 							:class="{
 								'is-error': errorInfo.startingCodeError,
 							}"
 							@focus="errorInfo.startingCodeError = false"
+                            :min="1"
+                            :max="9999999999"
 						/>
 						<el-tooltip placement="top">
 							<template #content>
@@ -270,10 +272,11 @@ let dialogVisible = ref(false);
 const openDialog = (type, data) => {
 	dialogVisible.value = true;
 	if (type === "edit" || type === "export") {
-		fromData.value = data;
+		fromData.value = JSON.parse(JSON.stringify(data));
 	} else {
 		fromData.value = {
 			entityNumber: 300,
+            startingCode: 1000,
 		};
 	}
 	fromData.value.type = type;
@@ -322,7 +325,7 @@ const handleSubmit = async () => {
 			ElMessage.error(t("appManager.1204"));
 			return;
 		}
-		if (!startingCode) {
+		if (startingCode < 1 || startingCode > 9999999999) {
 			errorInfo.value.startingCodeError = true;
 			ElMessage.error(t("appManager.1202"));
 			return;

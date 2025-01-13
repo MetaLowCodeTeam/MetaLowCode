@@ -33,7 +33,7 @@
 		},
 		methods: {
 			getBreadcrumb(){
-				let matched = this.$route.meta.breadcrumb;
+				let matched = this.$route.meta.breadcrumb || this.$route.matched;
 				this.breadList = matched;
 			}
 		}

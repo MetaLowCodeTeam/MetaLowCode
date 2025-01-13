@@ -1,5 +1,6 @@
 <template>
     <EntityManager v-if="currentRoute.name == 'DesignEntity'" is-design></EntityManager>
+    <DesignEntity v-if="currentRoute.name == 'AppDesignEntity'"></DesignEntity>
     <OptionManager v-if="currentRoute.name == 'DesignSingleOption'"></OptionManager>
     <TagManager v-if="currentRoute.name == 'DesignMultipleOption'"></TagManager>
     <ApprovalFlowManager v-if="currentRoute.name == 'DesignApprovalProcess'" is-design></ApprovalFlowManager>
@@ -16,6 +17,8 @@ import { watch, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 // 实体管理
 import EntityManager from "@/views/system/entity-list.vue";
+// 设计实体
+import DesignEntity from "@/views/system/app-manager/components/DesignEntity.vue";
 // 单选项管理
 import OptionManager from "@/views/system/data-dict/option-manager.vue";
 // 多选项管理
@@ -34,6 +37,7 @@ import DashboardManager from "@/views/system/dashboard-design/chart.vue";
 import TemplatesList from "@/views/system/report-templates/templates-list.vue";
 // 外部表单管理
 import ExternalFormManager from "@/views/system/external-integration/external-list.vue";
+
 
 
 const router = useRouter();

@@ -68,7 +68,8 @@ const routes = [
         name: "DesignApp",
         redirect: { name: "DesignEntity" },
         meta: {
-            title: t("route.30500")
+            title: t("route.30500"),
+            icon: 'el-icon-Platform',
         },
         children: [
             {
@@ -164,18 +165,19 @@ const routes = [
                 meta: {
                     title: t("appManager.1408")
                 }
-            }
+            },
+            // 设计实体
+            {
+                path:"appDesignEntity",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "AppDesignEntity",
+                meta: {
+                    title: t("appManager.1011")
+                }
+            },
         ]
     },
-    // 设计实体
-    {
-        path: appPath + "app-design-entity",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/DesignEntity.vue'),
-        name: "AppDesignEntity",
-        meta: {
-            title: t("appManager.1011")
-        }
-    },
+    
     // 消息中心
     // {
     //     path: appPath + "notification",

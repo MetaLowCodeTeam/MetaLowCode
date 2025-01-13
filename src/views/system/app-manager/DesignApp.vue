@@ -3,47 +3,74 @@
 	width: 100%;
 	height: 100%;
 	.design-app-header {
-		display: flex;
+		box-sizing: border-box;
 		border-bottom: 1px solid #e6e6e6;
 		background-color: #fff;
 		:deep(.adminui-tags) {
 			border-bottom: none;
 		}
-		.design-app-header-left {
-			width: calc(100% - 240px);
-		}
-		.design-app-header-right {
+		// .design-app-header-right {
+		// 	position: relative;
+		// 	top: 1px;
+		// 	padding-right: 10px;
+		// }
+		.design-app-header-bar {
+			// display: flex;
 			position: relative;
-			top: 1px;
-			padding-right: 10px;
+			:deep(.adminui-topbar) {
+				box-shadow: none;
+				border-bottom: 1px solid #e6e6e6;
+			}
+			.design-app-header-right {
+				position: absolute;
+				right: 20px;
+				top: 10px;
+                box-sizing: border-box;
+                padding-top: 5px;
+                .el-dropdown-link {
+                    cursor: pointer;
+                    .el-icon--right {
+                        position: relative;
+                        top: 2px;
+                    }
+                }
+			}
 		}
 	}
 	.design-app-body {
-		height: calc(100% - 36px);
+		height: calc(100% - 88px);
 	}
 }
 </style>
 <template>
 	<div class="design-app">
 		<div class="design-app-header">
-			<div class="design-app-header-left">
-				<Tags isDesign></Tags>
+			<div class="design-app-header-bar">
+				<Topbar />
+				<div class="design-app-header-right">
+					<el-dropdown>
+						<span class="el-dropdown-link">
+							更多功能
+							<el-icon class="el-icon--right">
+								<arrow-down />
+							</el-icon>
+						</span>
+						<template #dropdown>
+							<el-dropdown-menu>
+								<el-dropdown-item
+									v-for="item in selectList"
+									:key="item.value"
+									@click="handleSelectChange(item.value)"
+								>
+									{{ item.label }}
+								</el-dropdown-item>
+							</el-dropdown-menu>
+						</template>
+					</el-dropdown>
+				</div>
 			</div>
-			<div class="design-app-header-right" style="width: 240px">
-				<el-select
-					v-model="selectValue"
-					:placeholder="t('appManager.1400')"
-					@change="handleSelectChange"
-					style="width: 240px"
-				>
-					<el-option
-						v-for="item in selectList"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-						:disabled="item.disabled"
-					></el-option>
-				</el-select>
+			<div class="design-app-header-tab">
+				<Tags isDesign></Tags>
 			</div>
 		</div>
 		<div class="design-app-body">
@@ -68,10 +95,9 @@ import useKeepAliveStore from "@/store/modules/keepAlive";
 import { storeToRefs } from "pinia";
 const { keepLiveRoute, routeShow } = storeToRefs(useKeepAliveStore());
 import Tags from "@/layout/components/tags.vue";
+import Topbar from "@/layout/components/topbar.vue";
 
 const router = useRouter();
-
-let selectValue = ref("DesignEntity");
 
 const wrapperMap = new Map();
 
@@ -113,18 +139,8 @@ const selectList = ref([
 		value: "DesignApprovalProcess",
 	},
 	{
-		label: t("appManager.1403-1"),
-		value: "DesignProcessDetail",
-		disabled: true,
-	},
-	{
 		label: t("appManager.1404"),
 		value: "DesignTrigger",
-	},
-	{
-		label: t("appManager.1404-1"),
-		value: "DesignTriggerDetail",
-		disabled: true,
 	},
 	{
 		label: t("appManager.1405"),
@@ -143,17 +159,6 @@ const selectList = ref([
 		value: "DesignMenuNavigation",
 	},
 ]);
-
-onMounted(() => {
-	selectValue.value = router.currentRoute.value.name;
-});
-
-watch(
-	() => router.currentRoute.value,
-	(newVal, oldVal) => {
-		selectValue.value = newVal.name;
-	}
-);
 
 const handleSelectChange = (value) => {
 	router.push({

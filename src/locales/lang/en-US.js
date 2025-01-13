@@ -963,15 +963,13 @@ let en_US = {
         "1204": "Please enter the English uppercase letter start pure English abbreviation",
         "1205": "Please upload the application package",
 
-        "1300": "Are you sure you want to delete this application?",\
+        "1300": "Are you sure you want to delete this application?",
         
         "1400": "Entity Management",
         "1401": "Single Option Management",
         "1402": "Multiple Option Management",
         "1403": "Approval Process Management",
-        "1403-1": "Approval Process Management Detail",
         "1404": "Trigger Management",
-        "1404-1": "Trigger Management Detail",
         "1405": "Dashboard Management",
         "1406": "Report Design Management",
         "1407": "External Form Management",

@@ -827,14 +827,21 @@ const openImportExportDialog = (type) => {
 // 点击实体
 const onEntityClick = (entityItem, entityIdx) => {
     if(props.isDesign) {    
-        const routePath = router.resolve({
+        router.push({
             name: "AppDesignEntity",
             query: {
                 entity: entityItem.name,
                 entityLabel: entityItem.label,
             }
-        }).href;
-        window.open(routePath, '_blank'); // 在新标签页中打开
+        });
+        // const routePath = router.resolve({
+        //     name: "AppDesignEntity",
+        //     query: {
+        //         entity: entityItem.name,
+        //         entityLabel: entityItem.label,
+        //     }
+        // }).href;
+        // window.open(routePath, '_blank'); // 在新标签页中打开
     }
 }
 

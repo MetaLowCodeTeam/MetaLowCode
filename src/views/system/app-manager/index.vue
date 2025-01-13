@@ -128,7 +128,7 @@
 				</span>
 			</div>
 			<div class="app-manager-list">
-				<el-row :gutter="20">
+				<el-row :gutter="20" v-if="!isShowEmpty">
 					<el-col
 						:span="6"
 						v-for="(item, index) in tabList"
@@ -146,16 +146,16 @@
 							<div class="app-manager-item-title">
 								<div
 									class="app-manager-item-title-text yichu"
-									:title="item.name"
+									:title="item.appName"
 								>
-									{{ item.name }}
+									{{ item.appName }}
 								</div>
 							</div>
 							<div
 								class="app-manager-item-introduction"
-								:title="item.introduction"
+								:title="item.remarks"
 							>
-								{{ item.introduction }}
+								{{ item.remarks }}
 							</div>
 							<div class="app-manager-item-btns">
 								<el-button
@@ -181,6 +181,9 @@
 						</div>
 					</el-col>
 				</el-row>
+                <div class="app-manager-empty" v-else>
+                    <el-empty/>
+                </div>
 			</div>
 		</el-main>
 	</el-container>
@@ -189,15 +192,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { t } from "@/locales";
-import { ElMessageBox } from "element-plus";
-import { useRouter } from "vue-router";
-import useViewTagsStore from "@/store/modules/viewTags";
+import { ElMessageBox, ElMessage } from "element-plus";
 import ListDialog from "./components/ListDialog.vue";
 // API
-import { listQuery } from "@/api/appManager";
+import { listQuery, deleteRecord } from "@/api/appManager";
 
-const router = useRouter();
-const { clearViewTags } = useViewTagsStore();
 
 // 当前选中的tab
 let activeTab = ref("developing");
@@ -230,20 +229,28 @@ let tabList = ref([]);
 
 // 搜索关键字
 let keyword = ref("");
+// 是否显示空
+let isShowEmpty = ref(false);
 
 // 获取列表
 const getTabList = async () => {
 	loading.value = true;
+    isShowEmpty.value = false;
 	let res = await listQuery(
         'AppManagement',
         "appName,abbrName,startingCode,entityNumber,installPassword,remarks",
         {
-            equal: "OR",
+            equation: "AND",
             items: [
                 {
                     fieldName: "appName",
                     op: "LK",
                     value: keyword.value
+                },
+                {
+                    fieldName: "isInstalled",
+                    op: "EQ",
+                    value: activeTab.value === "installed" ? 1 : 0
                 }
             ]
         },
@@ -251,8 +258,12 @@ const getTabList = async () => {
         1,
         []
     );
-    console.log(res);
-    // tabList.value = res.data.data;
+    if(res) {
+        tabList.value = res.data.dataList;
+    }
+    if(tabList.value.length === 0) {
+        isShowEmpty.value = true;
+    }
     loading.value = false;
 };
 
@@ -280,22 +291,20 @@ const handleDeleteApp = (item) => {
         confirmButtonText: t("operation.6001"),
         cancelButtonText: t("operation.7000"),
         type: "warning",
-    }).then(() => {
-        console.log("删除");
+    }).then(async () => {
+        loading.value = true;
+        let res = await deleteRecord(item.appManagementId);
+        if(res) {
+            ElMessage.success(t("operation.4102"));
+            getTabList();
+        }
+        loading.value = false;
     }).catch(() => {});
 };
 
 // 设计应用
 const handleDesignApp = (item) => {
     const appPath = import.meta.env.VITE_APP_PATH;
-    // clearViewTags();
-    // 跳转到设计应用页面
-    // router.push({
-    //     name: "DesignApp",
-    //     query: {
-    //         id: item.id,
-    //     },
-    // });
     // 新窗口打开设计应用页面
     window.open(`${window.location.origin}${appPath}designApp`, '_blank');
 

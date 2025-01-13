@@ -20,3 +20,9 @@ export function saveRecord(recordId, formModel) {
         params: { recordId },
     })
 }
+
+export function deleteRecord(recordId) {
+    return http.post('/app/deleteRecord', {}, {
+        params: { recordId },
+    })
+}
