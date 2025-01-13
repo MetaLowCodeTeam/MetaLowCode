@@ -265,6 +265,9 @@ export default {
 		},
 
 		onAppendButtonClick() {
+            if (this.designState) {
+                return
+            } 
 			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
 				let customFn = new Function(
 					this.field.options.onAppendButtonClick
