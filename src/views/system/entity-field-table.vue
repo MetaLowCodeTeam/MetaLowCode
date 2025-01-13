@@ -56,12 +56,12 @@
 								</el-input>
 							</el-form-item>
                             <!-- this.entityProps -->
-							<el-form-item label="允许设计表单：">
+							<!-- <el-form-item label="允许设计表单：">
 								<el-switch v-model="entityProps.layoutable" style="float: right" disabled></el-switch>
 							</el-form-item>
 							<el-form-item label="允许设计列表：">
 								<el-switch v-model="entityProps.listable" style="float: right" disabled></el-switch>
-							</el-form-item>
+							</el-form-item> -->
 							<el-form-item label="开启记录级权限：">
 								<el-switch v-model="entityProps.authorizable" style="float: right" disabled></el-switch>
 							</el-form-item>
