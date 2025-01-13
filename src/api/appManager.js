@@ -14,3 +14,9 @@ export function listQuery(entity, fields, filter, pageSize, pageNo, sortFields) 
         sortFields,
     })
 }
+
+export function saveRecord(recordId, formModel) {
+    return http.post('/app/saveRecord', formModel, {
+        params: { recordId },
+    })
+}

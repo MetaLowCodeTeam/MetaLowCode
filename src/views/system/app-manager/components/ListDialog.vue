@@ -35,10 +35,10 @@
 				>
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.name"
+							v-model="fromData.appName"
 							class="app-manager-dialog-input"
-							:class="{ 'is-error': errorInfo.nameError }"
-							@focus="errorInfo.nameError = false"
+							:class="{ 'is-error': errorInfo.appNameError }"
+							@focus="errorInfo.appNameError = false"
 						/>
 						<span class="app-manger-zw"></span>
 					</div>
@@ -49,13 +49,13 @@
 				>
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.uniqueAbbreviation"
+							v-model="fromData.abbrName"
 							class="app-manager-dialog-input"
 							:disabled="fromData.type === 'edit'"
 							:class="{
-								'is-error': errorInfo.uniqueAbbreviationError,
+								'is-error': errorInfo.abbrNameError,
 							}"
-							@focus="errorInfo.uniqueAbbreviationError = false"
+							@focus="errorInfo.abbrNameError = false"
 						/>
 						<el-tooltip placement="top">
 							<template #content>
@@ -75,12 +75,12 @@
 				>
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.entityStartCode"
+							v-model="fromData.startingCode"
 							class="app-manager-dialog-input"
 							:class="{
-								'is-error': errorInfo.entityStartCodeError,
+								'is-error': errorInfo.startingCodeError,
 							}"
-							@focus="errorInfo.entityStartCodeError = false"
+							@focus="errorInfo.startingCodeError = false"
 						/>
 						<el-tooltip placement="top">
 							<template #content>
@@ -100,14 +100,14 @@
 				>
 					<div class="app-manager-dialog-label">
 						<el-input-number
-							v-model="fromData.entityQuantityLimit"
+							v-model="fromData.entityNumber"
 							:min="30"
 							:max="3000"
 							class="w-100"
 							:class="{
-								'is-error': errorInfo.entityQuantityLimitError,
+								'is-error': errorInfo.entityNumberError,
 							}"
-							@focus="errorInfo.entityQuantityLimitError = false"
+							@focus="errorInfo.entityNumberError = false"
 						/>
 						<el-tooltip placement="top">
 							<template #content>
@@ -124,7 +124,7 @@
 				<el-form-item :label="$t('appManager.1104')" class="mb-0">
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.introduction"
+							v-model="fromData.remarks"
 							class="app-manager-dialog-input"
 							type="textarea"
 							:rows="3"
@@ -183,7 +183,7 @@
 				>
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.name"
+							v-model="fromData.appName"
 							class="app-manager-dialog-input"
 							disabled
 						/>
@@ -192,7 +192,7 @@
 				<el-form-item :label="$t('appManager.1104')">
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.introduction"
+							v-model="fromData.remarks"
 							class="app-manager-dialog-input"
 							type="textarea"
 							:rows="3"
@@ -246,9 +246,14 @@
 import { ref } from "vue";
 import { t } from "@/locales";
 import { ElMessage } from "element-plus";
+// API
+import { saveRecord } from "@/api/appManager";
 
 // 语言
 let language = ref(localStorage.getItem("Language") || "zh-CN");
+
+// 事件
+const emit = defineEmits(["refresh"]);
 
 const DialogType = {
 	add: t("appManager.1005"),
@@ -268,7 +273,7 @@ const openDialog = (type, data) => {
 		fromData.value = data;
 	} else {
 		fromData.value = {
-			entityQuantityLimit: 300,
+			entityNumber: 300,
 		};
 	}
 	fromData.value.type = type;
@@ -283,49 +288,63 @@ const onCustomUpload = (file) => {
 // 错误信息
 let errorInfo = ref({
 	nameError: false,
-	uniqueAbbreviationError: false,
-	entityStartCodeError: false,
-	entityQuantityLimitError: false,
+	abbrNameError: false,
+	startingCodeError: false,
+	entityNumberError: false,
 });
 
 // 提交
-const handleSubmit = () => {
+const handleSubmit = async () => {
 	let {
 		type,
-		name,
-		uniqueAbbreviation,
-		entityStartCode,
-		entityQuantityLimit,
+		appName,
+		abbrName,
+		startingCode,
+		entityNumber,
 		originalFilename,
+        remarks
 	} = fromData.value;
 	if (type === "add" || type === "edit") {
-		if (!name) {
-			errorInfo.value.nameError = true;
+		if (!appName) {
+			errorInfo.value.appNameError = true;
 			ElMessage.error(t("appManager.1200"));
 			return;
 		}
-		if (!uniqueAbbreviation) {
-			errorInfo.value.uniqueAbbreviationError = true;
+		if (!abbrName) {
+			errorInfo.value.abbrNameError = true;
 			ElMessage.error(t("appManager.1201"));
 			return;
 		}
         // 只能是英文，且首字母大写
 		let reg = /^[A-Z][a-zA-Z]*$/;
-		if (!reg.test(uniqueAbbreviation)) {
-			errorInfo.value.uniqueAbbreviationError = true;
+		if (!reg.test(abbrName)) {
+			errorInfo.value.abbrNameError = true;
 			ElMessage.error(t("appManager.1204"));
 			return;
 		}
-		if (!entityStartCode) {
-			errorInfo.value.entityStartCodeError = true;
+		if (!startingCode) {
+			errorInfo.value.startingCodeError = true;
 			ElMessage.error(t("appManager.1202"));
 			return;
 		}
-		if (entityQuantityLimit < 30 || entityQuantityLimit > 3000) {
-			errorInfo.value.entityQuantityLimitError = true;
+		if (entityNumber < 30 || entityNumber > 3000) {
+			errorInfo.value.entityNumberError = true;
 			ElMessage.error(t("appManager.1203"));
 			return;
 		}
+        let res = await saveRecord(fromData.value.appManagementId, {
+            appName,
+            abbrName,
+            startingCode,
+            entityNumber,
+            remarks,
+        });
+        if(res) {
+            ElMessage.success(t("operation.6100"));
+            dialogVisible.value = false;
+            emit("refresh");
+        }
+        loading.value = false;
 	}
     if(type === "install"){
         if(!originalFilename){

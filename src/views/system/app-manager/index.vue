@@ -105,6 +105,7 @@
 					style="margin-right: 10px"
 					v-model="keyword"
 					:placeholder="$t('operation.5000')"
+					@confirm="getTabList"
 				/>
                 <el-button type="primary" icon="Plus" @click="handleAddApp">
                     {{ $t("appManager.1005") }}
@@ -183,7 +184,7 @@
 			</div>
 		</el-main>
 	</el-container>
-    <ListDialog ref="listDialogRef"/>
+    <ListDialog ref="listDialogRef" @refresh="getTabList"/>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
@@ -192,6 +193,8 @@ import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import useViewTagsStore from "@/store/modules/viewTags";
 import ListDialog from "./components/ListDialog.vue";
+// API
+import { listQuery } from "@/api/appManager";
 
 const router = useRouter();
 const { clearViewTags } = useViewTagsStore();
@@ -229,83 +232,28 @@ let tabList = ref([]);
 let keyword = ref("");
 
 // 获取列表
-const getTabList = () => {
+const getTabList = async () => {
 	loading.value = true;
-	setTimeout(() => {
-		tabList.value = [
-			{
-				name: "应用管理名称应用管理名称应用管理名称应用管理名称",
-				introduction: "应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述应用管理描述",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称2",
-				introduction: "应用管理描述2",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称3",
-				introduction: "应用管理描述3",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称4",
-				introduction: "应用管理描述4",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称5",
-				introduction: "应用管理描述5",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称6",
-				introduction: "应用管理描述6",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称7",
-				introduction: "应用管理描述7",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称8",
-				introduction: "应用管理描述8",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称9",
-				introduction: "应用管理描述9",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-			{
-				name: "应用管理名称10",
-				introduction: "应用管理描述10",
-				version: "1.0.0",
-				createdTime: "2024-01-01 10:00:00",
-				createdUser: "admin",
-			},
-		];
-		loading.value = false;
-	}, 500);
+	let res = await listQuery(
+        'AppManagement',
+        "appName,abbrName,startingCode,entityNumber,installPassword,remarks",
+        {
+            equal: "OR",
+            items: [
+                {
+                    fieldName: "appName",
+                    op: "LK",
+                    value: keyword.value
+                }
+            ]
+        },
+        10,
+        1,
+        []
+    );
+    console.log(res);
+    // tabList.value = res.data.data;
+    loading.value = false;
 };
 
 let listDialogRef = ref(null);
