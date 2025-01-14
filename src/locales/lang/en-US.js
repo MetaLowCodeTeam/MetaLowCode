@@ -987,6 +987,10 @@ let en_US = {
         "1502": "Created User",
         "1503": "Modified Time",
         "1504": "Modified User",
+
+        "1600": "Data Model",
+        "1601": "Form Design",
+        "1602": "List Design",
     },
     // dataModeling
     dataModeling: {

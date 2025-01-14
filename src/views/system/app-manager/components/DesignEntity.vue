@@ -52,7 +52,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
+import { t } from "@/locales";
 // 组件
 import EntityFieldTable from "@/views/system/entity-field-table.vue";
 import FormDesign from "@/views/system/form-design/index.vue";
@@ -68,9 +68,9 @@ let entityInfo = ref({});
 let currentTab = ref("EntityDataModel");
 // tab信息
 const tabList = ref([
-	{ label: "数据模型", value: "EntityDataModel" },
-	{ label: "表单设计", value: "EntityFormDesign" },
-	{ label: "列表设计", value: "EntityListDesign" },
+	{ label: t("appManager.1600"), value: "EntityDataModel" },
+	{ label: t("appManager.1601"), value: "EntityFormDesign" },
+	{ label: t("appManager.1602"), value: "EntityListDesign" },
 ]);
 
 onMounted(() => {
