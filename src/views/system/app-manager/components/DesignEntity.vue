@@ -10,20 +10,22 @@
         display: inline-block;
         box-sizing: border-box;
         padding: 0 10px;
-        line-height: 45px;
+        line-height: 50px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
         &.active {
-            color: #409eff;
+            color: var(--el-color-primary);
         }
     }
+}
+.entity-main {
+    padding: 0;
 }
 </style>
 <template>
 	<el-container>
 		<el-header class="entity-header">
-			<!-- <h1 class="entity-title">{{ $t("appManager.1011") }} - {{ entityInfo.entityLabel }}</h1> -->
 			<div class="entity-tabs">
 				<span
 					class="entity-tab"
@@ -36,12 +38,24 @@
 				</span>
 			</div>
 		</el-header>
+		<el-main class="entity-main">
+			<EntityFieldTable v-if="currentTab == 'EntityDataModel'" isDesign/>
+			<FormDesign v-else-if="currentTab == 'EntityFormDesign'" />
+			<EntityList v-else isDesign/>
+		</el-main>
 	</el-container>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
+// 组件
+import EntityFieldTable from "@/views/system/entity-field-table.vue";
+import FormDesign from "@/views/system/form-design/index.vue";
+import EntityList from "@/views/customize-menu/list.vue";
+
 const router = useRouter();
+
 
 // 实体信息
 let entityInfo = ref({});
@@ -51,6 +65,7 @@ let currentTab = ref("EntityDataModel");
 const tabList = ref([
 	{ label: "数据模型", value: "EntityDataModel" },
 	{ label: "表单设计", value: "EntityFormDesign" },
+	{ label: "列表设计", value: "EntityListDesign" },
 ]);
 
 onMounted(() => {
@@ -60,7 +75,7 @@ onMounted(() => {
 });
 
 const handleTabClick = (tab) => {
-	// currentTab.value = tab.value;
+	currentTab.value = tab.value;
 };
 
 

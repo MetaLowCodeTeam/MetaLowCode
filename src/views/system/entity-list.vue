@@ -372,6 +372,9 @@ let allTags = ref([]);
 let notGroup = ref([]);
 let entityGroup = ref({});
 let activeNames = ref(["未分组"]);
+
+let abbrName = ref("");
+
 onMounted(() => {
     initEntity();
 });
@@ -381,6 +384,9 @@ const checkRole = (rightStr) => {
 };
 
 const initEntity = () => {
+    if(props.isDesign) {
+        abbrName.value = router.currentRoute.value.query.abbrName;
+    }
     loading.value = true;
     Promise.all([getEntityList(), getAllTags()]).then(() => {
         loading.value = false;
@@ -390,7 +396,7 @@ const initEntity = () => {
 
 const getEntityList = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await getEntitySet();
+        let res = await getEntitySet(abbrName.value);
         if (res && res.data) {
             entityItems.value = res.data;
             refreshCache(res.data || []);
@@ -489,6 +495,9 @@ const createNewEntity = (target) => {
             checked: false,
         };
     });
+    if(props.isDesign) {
+        newEntityProps.value.appAbbr = abbrName.value;
+    }
     showNewEntityDialogFlag.value = true;
     // 如果是复制实体
     if (target == "copy") {
@@ -835,7 +844,6 @@ const onEntityClick = (entityItem, entityIdx) => {
                 entityLabel: entityItem.label,
                 appName: router.currentRoute.value.query.appName,
                 abbrName: router.currentRoute.value.query.abbrName,
-                meteAppendTitle: entityItem.label
             }
         });
     }

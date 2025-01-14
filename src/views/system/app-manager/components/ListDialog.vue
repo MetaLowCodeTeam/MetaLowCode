@@ -377,7 +377,7 @@ const handleSubmit = async () => {
 				password: installPassword,
 			},
 		});
-		if (res) {
+		if (res && res.code == 200) {
 			ElMessageBox.confirm(t('appManager.1301'), t('operation.9000'), {
 				confirmButtonText: t('operation.6105'),
 				showCancelButton: false,
