@@ -18,6 +18,12 @@
 
 <script>
 	export default {
+        props: {
+            isDesign: {
+                type: Boolean,
+                default: false
+            }
+        },
 		data() {
 			return {
 				breadList: []
@@ -33,8 +39,17 @@
 		},
 		methods: {
 			getBreadcrumb(){
-				let matched = this.$route.meta.breadcrumb || this.$route.matched;
+				let matched = this.$route.meta.breadcrumb;
+                if(this.isDesign) {
+                    matched = this.$route.matched;
+                    matched.forEach(item => {
+                        if(item.name == 'DesignApp') {
+                            item.meta.title = "开发应用(" + localStorage.getItem('DesignApp') + ")";
+                        }
+                    })
+                }
 				this.breadList = matched;
+            
 			}
 		}
 	}

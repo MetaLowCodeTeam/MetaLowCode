@@ -10,6 +10,7 @@
     <DashboardManager v-if="currentRoute.name == 'DesignDashboard'"></DashboardManager>
     <TemplatesList v-if="currentRoute.name == 'DesignReportDesign'"></TemplatesList>
     <ExternalFormManager v-if="currentRoute.name == 'DesignExternalForm'"></ExternalFormManager>
+    <DesignMenu v-if="currentRoute.name == 'DesignMenuNavigation'"></DesignMenu>
 </template>
 
 <script setup>
@@ -37,6 +38,8 @@ import DashboardManager from "@/views/system/dashboard-design/chart.vue";
 import TemplatesList from "@/views/system/report-templates/templates-list.vue";
 // 外部表单管理
 import ExternalFormManager from "@/views/system/external-integration/external-list.vue";
+// 菜单管理
+import DesignMenu from "@/views/system/app-manager/components/DesignMenu.vue";
 
 
 

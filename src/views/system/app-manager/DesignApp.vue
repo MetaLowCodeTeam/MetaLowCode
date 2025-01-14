@@ -9,13 +9,7 @@
 		:deep(.adminui-tags) {
 			border-bottom: none;
 		}
-		// .design-app-header-right {
-		// 	position: relative;
-		// 	top: 1px;
-		// 	padding-right: 10px;
-		// }
 		.design-app-header-bar {
-			// display: flex;
 			position: relative;
 			:deep(.adminui-topbar) {
 				box-shadow: none;
@@ -24,7 +18,7 @@
 			.design-app-header-right {
 				position: absolute;
 				right: 20px;
-				top: 10px;
+				top: 5px;
                 box-sizing: border-box;
                 padding-top: 5px;
                 .el-dropdown-link {
@@ -46,15 +40,15 @@
 	<div class="design-app">
 		<div class="design-app-header">
 			<div class="design-app-header-bar">
-				<Topbar />
+				<Topbar isDesign/>
 				<div class="design-app-header-right">
 					<el-dropdown>
-						<span class="el-dropdown-link">
-							更多功能
+						<el-button type="primary">
+							{{ $t("appManager.1013") }}
 							<el-icon class="el-icon--right">
 								<arrow-down />
 							</el-icon>
-						</span>
+						</el-button>
 						<template #dropdown>
 							<el-dropdown-menu>
 								<el-dropdown-item

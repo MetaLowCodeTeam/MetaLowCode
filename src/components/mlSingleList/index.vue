@@ -215,6 +215,8 @@ const props = defineProps({
 	queryUrl: { type: String, default: "" },
 	equation: { type: String, default: "OR" },
     advFilter: { type: Object, default: () => {} },
+    // 固定过滤
+    fixedFilter: { type: Object, default: () => [] },
 });
 let loading = ref(false);
 
@@ -275,7 +277,8 @@ async function getTableList() {
         fieldName, 
         filterItems, 
         equation, 
-        advFilter 
+        advFilter,
+        fixedFilter
     } = props;
 	let param = {
 		mainEntity,
@@ -293,6 +296,9 @@ async function getTableList() {
 		el.value = el.value ? el.value : keyword.value;
 		return el;
 	});
+    if(fixedFilter) {
+        param.filter.items = param.filter.items.concat(fixedFilter);
+    }
 	if (keyword.value && fieldName) {
         let newFieldName = fieldName.split(",");
         newFieldName.forEach(el => {
@@ -335,7 +341,6 @@ async function getTableList() {
 			);
 		}
 	}
-
 	if (res && res.data) {
 		tableList.value = res.data?.dataList || [];
 		page.total = res.data.pagination.total;

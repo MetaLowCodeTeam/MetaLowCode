@@ -461,13 +461,15 @@ const props = defineProps({
 	modelValue: null,
 	// 菜单信息
 	menuInfo: { type: Object, default: () => {} },
+    // 是否开发应用设计
+    isDesign: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 
 import { VueDraggableNext } from "vue-draggable-next";
 import { Select, Finished } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
-
+import { t } from "@/locales";
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);
@@ -973,6 +975,12 @@ const layoutSave = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
 	if (res) {
+        if(props.isDesign) {
+            loading.value = false;
+            isShow.value = false;
+            $ElMessage.success("保存成功");
+            return;
+        }
 		router.go(0);
 	}
 	loading.value = false;

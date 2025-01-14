@@ -26,3 +26,15 @@ export function deleteRecord(recordId) {
         params: { recordId },
     })
 }
+
+// 导出
+export function exportApp(appAbbrName, password) {
+    return http.post('/app/exportApp', {}, {
+        params: { appAbbrName, password },
+    })
+}
+
+// 安装
+export function installApp(file, config = {}) {
+    return http.post('/app/installApp', file, config)
+}

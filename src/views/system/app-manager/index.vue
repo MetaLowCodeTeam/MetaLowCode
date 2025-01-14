@@ -3,14 +3,13 @@
 	height: 100%;
 }
 .props-action-section {
-	.section-title {
-		font-size: 16px;
-	}
-}
-.app-manager-main {
-	padding: 0;
-	background: #fff;
-	.app-manager-tabs {
+	// .section-title {
+	// 	font-size: 16px;
+	// }
+    padding-left: 0px;
+    padding-right: 20px;
+    .app-manager-tabs {
+        margin-top: 25px;
 		height: 32px;
 		line-height: 32px;
 		.app-manager-tab {
@@ -19,7 +18,7 @@
 			padding: 0 20px;
 			font-size: 14px;
 			border: 1px solid #e6e6e6;
-			border-top: none;
+			border-bottom: none;
 			&:first-child {
 				border-left: none;
 				border-right: none;
@@ -30,8 +29,13 @@
 			}
 		}
 	}
+}
+.app-manager-main {
+	padding: 0;
+	background: #fff;
+	
 	.app-manager-list {
-		max-height: calc(100% - 32px);
+		max-height: 100%;
 		overflow: auto;
 		overflow-x: hidden;
 		padding: 10px;
@@ -99,7 +103,18 @@
 		:element-loading-text="$t('loading.1000')"
 	>
 		<el-header class="props-action-section">
-			<span class="section-title">{{ $t("appManager.1000") }}</span>
+			<!-- <span class="section-title">{{ $t("appManager.1000") }}</span> -->
+            <div class="app-manager-tabs">
+				<span
+					class="app-manager-tab"
+					v-for="tab in tabs"
+					:key="tab.value"
+					@click="handleTabClick(tab)"
+					:class="{ active: activeTab === tab.value }"
+				>
+					{{ tab.label }}
+				</span>
+			</div>
 			<div class="section-fr fr">
 				<ml-search-input
 					style="margin-right: 10px"
@@ -116,17 +131,6 @@
 			</div>
 		</el-header>
 		<el-main class="app-manager-main">
-			<div class="app-manager-tabs">
-				<span
-					class="app-manager-tab"
-					v-for="tab in tabs"
-					:key="tab.value"
-					@click="handleTabClick(tab)"
-					:class="{ active: activeTab === tab.value }"
-				>
-					{{ tab.label }}
-				</span>
-			</div>
 			<div class="app-manager-list">
 				<el-row :gutter="20" v-if="!isShowEmpty">
 					<el-col
@@ -307,6 +311,8 @@ const handleDesignApp = (item) => {
     const appPath = import.meta.env.VITE_APP_PATH;
     // 新窗口打开设计应用页面
     window.open(`${window.location.origin}${appPath}designApp`, '_blank');
+    // 设置本地缓存
+    localStorage.setItem('DesignApp', item.appName);
 
 };
 </script>

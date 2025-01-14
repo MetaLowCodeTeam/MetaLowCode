@@ -68,7 +68,6 @@ let en_US = {
         "4101": "Delete Confirm",
         "4102": "Delete Success",
         "4103": "Cancel Delete",
-        "4104": "Submit Success",
 
         "5000": "Query",
         "5001": "Refresh",
@@ -89,6 +88,8 @@ let en_US = {
         "6101": "Save Failed",
         "6102": "Set Success",
         "6103": "Save and Refresh",
+        "6104": "Submit Success",
+        "6105": "Install Success",
 
         "7000": "Cancel",
         "7001": "Close",
@@ -944,6 +945,8 @@ let en_US = {
         "1009": "Start Install",
         "1010": "Start Export",
         "1011": "Design Entity",
+        "1012": "Develop App",
+        "1013": "More Func",
 
         "1100": "App Name",
         "1101": "Unique Abbreviation",
@@ -954,6 +957,8 @@ let en_US = {
         "1103-1": "The maximum range of application entities is 3000, and the code will increase from 3000 after the number is set",
         "1104": "App Introduction",
         "1105": "Install Password",
+        "1105-1": "You can set a unique password for this application, fill in as needed",
+        "1105-2": "If the application has a unique password, please fill in",
         "1106": "App Package",
 
         "1200": "Please enter the application name",
@@ -964,6 +969,8 @@ let en_US = {
         "1205": "Please upload the application package",
 
         "1300": "Are you sure you want to delete this application?",
+        "1301": "Install Success",
+        "1302": "Only support standard version and above for application import, the receiving enterprise needs to be authorized and activated.",
         
         "1400": "Entity Management",
         "1401": "Single Option Management",
@@ -975,6 +982,11 @@ let en_US = {
         "1407": "External Form Management",
         "1408": "Menu Navigation",
 
+        "1500": "Menu Name",
+        "1501": "Created Time",
+        "1502": "Created User",
+        "1503": "Modified Time",
+        "1504": "Modified User",
     },
     // dataModeling
     dataModeling: {

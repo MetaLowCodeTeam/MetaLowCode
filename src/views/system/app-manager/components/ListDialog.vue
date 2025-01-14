@@ -15,6 +15,13 @@
 .ml-upload {
 	display: inline-block;
 }
+.file-name-span {
+	position: relative;
+	top: -1px;
+	font-weight: bold;
+	text-decoration: underline;
+	margin-left: 15px;
+}
 </style>
 <template>
 	<ml-dialog
@@ -81,8 +88,8 @@
 								'is-error': errorInfo.startingCodeError,
 							}"
 							@focus="errorInfo.startingCodeError = false"
-                            :min="1"
-                            :max="9999999999"
+							:min="1"
+							:max="9999999999"
 						/>
 						<el-tooltip placement="top">
 							<template #content>
@@ -141,10 +148,11 @@
 			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
 				<el-form-item :label="$t('appManager.1106')">
 					<ml-upload
-						accept=".sql"
+						accept=".zip"
 						customUpload
 						@on-custom-upload="onCustomUpload"
 						class="ml-upload"
+                        :maxSize="500"
 					>
 						<template #trigger>
 							<el-button>
@@ -168,10 +176,11 @@
 							v-model="fromData.installPassword"
 							class="app-manager-dialog-input"
 							clearable
+                            :placeholder="$t('appManager.1105-2')"
 						/>
 					</div>
 					<div class="info-text mt-5">
-						仅支持标准版以上的版本进行应用导入，接收企业需进行授权激活。
+						{{ $t("appManager.1302") }}
 					</div>
 				</el-form-item>
 			</el-form>
@@ -208,6 +217,7 @@
 							v-model="fromData.installPassword"
 							class="app-manager-dialog-input"
 							clearable
+                            :placeholder="$t('appManager.1105-1')"
 						/>
 					</div>
 				</el-form-item>
@@ -247,9 +257,10 @@
 <script setup>
 import { ref } from "vue";
 import { t } from "@/locales";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 // API
-import { saveRecord } from "@/api/appManager";
+import { saveRecord, exportApp, installApp } from "@/api/appManager";
+import { downloadBase64 } from "@/utils/util";
 
 // 语言
 let language = ref(localStorage.getItem("Language") || "zh-CN");
@@ -276,7 +287,7 @@ const openDialog = (type, data) => {
 	} else {
 		fromData.value = {
 			entityNumber: 300,
-            startingCode: 1000,
+			startingCode: 1000,
 		};
 	}
 	fromData.value.type = type;
@@ -285,7 +296,8 @@ const openDialog = (type, data) => {
 
 // 上传文件
 const onCustomUpload = (file) => {
-	console.log(file);
+	fromData.value.originalFilename = file.name;
+	fromData.value.originalFile = file;
 };
 
 // 错误信息
@@ -305,7 +317,9 @@ const handleSubmit = async () => {
 		startingCode,
 		entityNumber,
 		originalFilename,
-        remarks
+		originalFile,
+		remarks,
+		installPassword,
 	} = fromData.value;
 	if (type === "add" || type === "edit") {
 		if (!appName) {
@@ -318,7 +332,7 @@ const handleSubmit = async () => {
 			ElMessage.error(t("appManager.1201"));
 			return;
 		}
-        // 只能是英文，且首字母大写
+		// 只能是英文，且首字母大写
 		let reg = /^[A-Z][a-zA-Z]*$/;
 		if (!reg.test(abbrName)) {
 			errorInfo.value.abbrNameError = true;
@@ -335,26 +349,62 @@ const handleSubmit = async () => {
 			ElMessage.error(t("appManager.1203"));
 			return;
 		}
-        let res = await saveRecord(fromData.value.appManagementId, {
-            appName,
-            abbrName,
-            startingCode,
-            entityNumber,
-            remarks,
-        });
-        if(res) {
-            ElMessage.success(t("operation.6100"));
-            dialogVisible.value = false;
-            emit("refresh");
-        }
-        loading.value = false;
+		let res = await saveRecord(fromData.value.appManagementId, {
+			appName,
+			abbrName,
+			startingCode,
+			entityNumber,
+			remarks,
+		});
+		if (res) {
+			ElMessage.success(t("operation.6100"));
+			dialogVisible.value = false;
+			emit("refresh");
+		}
+		loading.value = false;
 	}
-    if(type === "install"){
-        if(!originalFilename){
-            ElMessage.error(t("appManager.1205"));
-            return;
-        }
-    }
+	if (type === "install") {
+		if (!originalFilename) {
+			ElMessage.error(t("appManager.1205"));
+			return;
+		}
+		let paramsFormData = new FormData();
+		paramsFormData.append("file", originalFile);
+		loading.value = true;
+		let res = await installApp(paramsFormData, {
+			headers: { "Content-Type": "multipart/form-data" },
+			params: {
+				password: installPassword,
+			},
+		});
+		if (res) {
+			ElMessageBox.confirm(t('appManager.1301'), t('operation.9000'), {
+				confirmButtonText: t('operation.6105'),
+				showCancelButton: false,
+				showClose: false,
+				closeOnClickModal: false,
+				closeOnPressEscape: false,
+				type: "success",
+			})
+				.then(async () => {
+					window.location.reload();
+				})
+				.catch(() => {
+					// 取消
+				});
+			dialogVisible.value = false;
+		}
+		loading.value = false;
+	}
+	if (type === "export") {
+		loading.value = true;
+		let res = await exportApp(abbrName, installPassword);
+		if (res) {
+			downloadBase64(res.data, appName + ".zip");
+			dialogVisible.value = false;
+		}
+		loading.value = false;
+	}
 	console.log(fromData.value);
 };
 
