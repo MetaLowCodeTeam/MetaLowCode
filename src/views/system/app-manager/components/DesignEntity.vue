@@ -1,30 +1,30 @@
 <style lang="scss" scoped>
 .entity-header {
-    position: relative;
-    height: 40px;
+	position: relative;
+	height: 40px;
 }
 .entity-tabs {
-    margin: 0 auto;
-    .entity-tab {
-        height: 40px;
-        display: inline-block;
-        box-sizing: border-box;
-        padding: 0 10px;
-        line-height: 50px;
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: bold;
-        &.active {
-            color: var(--el-color-primary);
-        }
-    }
+	margin: 0 auto;
+	.entity-tab {
+		height: 40px;
+		display: inline-block;
+		box-sizing: border-box;
+		padding: 0 10px;
+		line-height: 50px;
+		cursor: pointer;
+		font-size: 15px;
+		font-weight: bold;
+		&.active {
+			color: var(--el-color-primary);
+		}
+	}
 }
 .entity-main {
-    padding: 0;
+	padding: 0;
 }
 </style>
 <template>
-	<el-container>
+	<el-container v-loading="loading">
 		<el-header class="entity-header">
 			<div class="entity-tabs">
 				<span
@@ -39,9 +39,13 @@
 			</div>
 		</el-header>
 		<el-main class="entity-main">
-			<EntityFieldTable v-if="currentTab == 'EntityDataModel'" isDesign/>
-			<FormDesign v-else-if="currentTab == 'EntityFormDesign'" />
-			<EntityList v-else isDesign/>
+			<EntityFieldTable v-if="currentTab == 'EntityDataModel'" isDesign />
+			<form-design
+				v-else-if="currentTab == 'EntityFormDesign'"
+				isDesign
+				@initComplete="initComplete"
+			></form-design>
+			<EntityList v-else isDesign />
 		</el-main>
 	</el-container>
 </template>
@@ -56,6 +60,7 @@ import EntityList from "@/views/customize-menu/list.vue";
 
 const router = useRouter();
 
+let loading = ref(false);
 
 // 实体信息
 let entityInfo = ref({});
@@ -76,10 +81,15 @@ onMounted(() => {
 
 const handleTabClick = (tab) => {
 	currentTab.value = tab.value;
+	if (tab.value == "EntityFormDesign") {
+		loading.value = true;
+	}
 };
 
-
-const handleSave = () => {
-	console.log('保存');
+const initComplete = () => {
+	loading.value = false;
 };
+defineExpose({
+	initComplete,
+});
 </script>
