@@ -202,37 +202,14 @@
                 </div>
             </div>
             </div>
-            <!-- 如果是默认列显示，但是默认列没有值 -->
-            <div v-if="defaultColumnShow == 'ALL' && tableColumn.length < 1" class="not-column-div">
-                <!-- 判断自定义列是否有值 -->
-                <div v-if="layoutConfig.SELF.FILTER && layoutConfig.SELF.FILTER?.length > 0 ">
-                    默认列显示未配置,
-                    <span class="lh-span-a" @click="changeColumnShow('SELF')">使用自定义列显示</span>
-                </div>
-                <div v-else>
-                    默认列显示未配置，
-                    <span class="lh-span-a" @click="editColumn('SELF')">配置自定义列显示</span>
-                </div>
-            </div>
-            <!-- 如果是自定义列显示，但是默认列没有值 -->
-            <div
-                v-else-if="defaultColumnShow == 'SELF' && tableColumn.length < 1"
-                class="not-column-div"
-            >
-                <!-- 判断默认列是否有值 -->
-                <div v-if="layoutConfig.ALL.FILTER && layoutConfig.ALL.FILTER?.length > 0 ">
-                    自定义列显示未配置,
-                    <span class="lh-span-a" @click="editColumn('SELF')">前去配置</span>
-                    或
-                    <span
-                        class="lh-span-a"
-                        @click="changeColumnShow('ALL')"
-                    >使用默认配置</span>
-                </div>
-                <div v-else>
-                    自定义列显示未配置,
-                    <span class="lh-span-a" @click="editColumn('SELF')">前去配置</span>
-                </div>
+            <div v-if="tableColumn.length < 1">
+                <ListColumnSet 
+                    :layoutConfig="layoutConfig"
+                    :defaultColumnShow="defaultColumnShow"
+                    :tableColumn="tableColumn"
+                    @changeColumnShow="changeColumnShow"
+                    @editColumn="editColumn"
+                />
             </div>
             <div
                 v-else
@@ -483,6 +460,8 @@ import ListBatchUpdate from "./components/ListBatchUpdate.vue";
 import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 // 自定义查询面板
 import ListCustomizeQuery from './components/ListCustomizeQuery.vue'
+// 列表列设置
+import ListColumnSet from './components/ListColumnSet.vue'
 
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
@@ -1894,16 +1873,7 @@ div {
     }
 }
 
-.not-column-div {
-    font-size: 24px;
-    text-align: center;
-    color: #999;
-    margin-top: 100px;
-    .lh-span-a {
-        cursor: pointer;
-        color: var(--el-color-primary);
-    }
-}
+
 .el-table {
     font-size: 13px !important;
 }
