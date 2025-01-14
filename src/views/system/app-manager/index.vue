@@ -310,9 +310,6 @@ const handleDeleteApp = (item) => {
 const handleDesignApp = (item) => {
     const appPath = import.meta.env.VITE_APP_PATH;
     // 新窗口打开设计应用页面
-    window.open(`${window.location.origin}${appPath}designApp`, '_blank');
-    // 设置本地缓存
-    localStorage.setItem('DesignApp', item.appName);
-
+    window.open(`${window.location.origin}${appPath}designApp?appName=${item.appName}&abbrName=${item.abbrName}`, '_blank');
 };
 </script>

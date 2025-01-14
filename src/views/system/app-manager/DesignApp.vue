@@ -157,6 +157,10 @@ const selectList = ref([
 const handleSelectChange = (value) => {
 	router.push({
 		name: value,
+		query: {
+			appName: router.currentRoute.value.query.appName,
+            abbrName: router.currentRoute.value.query.abbrName,
+		},
 	});
 };
 </script>

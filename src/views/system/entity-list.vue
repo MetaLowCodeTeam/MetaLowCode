@@ -84,6 +84,7 @@
                         :key="entityIdx"
                         @mouseenter="onEnterEntity(entityItem, entityIdx)"
                         @mouseleave="onLeaveEntity"
+                        @click="onEntityClick(entityItem, entityIdx)"
                     >
                         <template #header>
                             <div>
@@ -832,16 +833,11 @@ const onEntityClick = (entityItem, entityIdx) => {
             query: {
                 entity: entityItem.name,
                 entityLabel: entityItem.label,
+                appName: router.currentRoute.value.query.appName,
+                abbrName: router.currentRoute.value.query.abbrName,
+                meteAppendTitle: entityItem.label
             }
         });
-        // const routePath = router.resolve({
-        //     name: "AppDesignEntity",
-        //     query: {
-        //         entity: entityItem.name,
-        //         entityLabel: entityItem.label,
-        //     }
-        // }).href;
-        // window.open(routePath, '_blank'); // 在新标签页中打开
     }
 }
 

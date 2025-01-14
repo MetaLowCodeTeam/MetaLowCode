@@ -44,7 +44,7 @@
                     matched = this.$route.matched;
                     matched.forEach(item => {
                         if(item.name == 'DesignApp') {
-                            item.meta.title = "开发应用(" + localStorage.getItem('DesignApp') + ")";
+                            item.meta.title = "开发应用(" + this.$route.query.appName + ")";
                         }
                     })
                 }
