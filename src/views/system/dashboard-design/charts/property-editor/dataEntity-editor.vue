@@ -20,6 +20,8 @@
 <script setup>
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 // const { allEntityList } = storeToRefs(useCommonStore());
 const { queryAllEntityList } = useCommonStore();
 import { ref, watch, onMounted } from "vue";
@@ -50,7 +52,7 @@ let currentEntityList = ref("");
 // 初始化图表样式
 const initChartStyle = () => {
     myOption.value = { ...props.optionModel };
-    currentEntityList.value = queryAllEntityList();
+    currentEntityList.value = queryAllEntityList(false, router.currentRoute.value.query.appAbbr);
     currentEntityList.value.unshift({
         label: "审批任务",
         name: "ApprovalTask",

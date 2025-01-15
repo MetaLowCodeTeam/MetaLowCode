@@ -293,7 +293,7 @@ const getGroupEntityList = () => {
 
 // 格式化实体
 const getEntityList = () => {
-    return unSystemEntityList.value.filter((el) => !el.detailEntityFlag);
+    return unSystemEntityList.value.filter((el) => !el.detailEntityFlag && el.appAbbr == Router.currentRoute.value.query.appAbbr);
 };
 
 // 选择实体触发

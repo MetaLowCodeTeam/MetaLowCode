@@ -14,6 +14,7 @@
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <el-button type="primary" @click="actionBtn({target:'add'})">
@@ -33,6 +34,15 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
+
+let appAbbr = router.currentRoute.value.query.appAbbr;
+let fixedFilter = ref([
+    {
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    }
+]);
 
 let tableColumn = ref([
     {

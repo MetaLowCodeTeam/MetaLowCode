@@ -14,6 +14,7 @@
         queryUrl="/externalForm/listQuery"
         delUrl="/externalForm/deleteRecord"
         fieldName="externalFormName"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <el-button
@@ -45,7 +46,14 @@ const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
-
+let appAbbr = router.currentRoute.value.query.appAbbr;
+let fixedFilter = ref([
+    {
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    }
+]);
 let tableColumn = ref([
     {
         prop: "externalFormName",

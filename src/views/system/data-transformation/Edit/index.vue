@@ -98,7 +98,7 @@ const emits = defineEmits(["saveFinish"]);
 
 // 获取实体
 const getEntityList = () => {
-	return unSystemEntityList.value.filter((el) => !el.detailEntityFlag);
+	return unSystemEntityList.value.filter((el) => !el.detailEntityFlag && !el.appAbbr);
 };
 // 弹框配置
 let dialogConf = ref({

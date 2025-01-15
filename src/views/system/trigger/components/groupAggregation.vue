@@ -254,6 +254,8 @@
 import { queryEntityFields } from "@/api/crud";
 import { ref, onMounted, inject, reactive, render } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 import useCommonStore from "@/store/modules/common";
@@ -268,7 +270,11 @@ let contentLoading = ref(false);
 let trigger = ref({
     actionContent: {},
 });
+
+let myUnSystemEntityList = ref([]);
+
 onMounted(() => {
+    myUnSystemEntityList.value = unSystemEntityList.value.filter(el => el.appAbbr == router.currentRoute.value.query.appAbbr);
     trigger.value = props.modelValue;
     trigger.value.entityName = allEntityName.value[trigger.value.entityCode];
     // 初始化 聚合数据条件
@@ -331,10 +337,10 @@ const getActionContentData = async () => {
 
             // 设置选中
             trigger.value.defaultTargetEntity =
-                unSystemEntityList.value[defaultInx];
+            myUnSystemEntityList.value[defaultInx];
 
             // 获取选中实体的所有字段
-            getTagEntityFields(unSystemEntityList.value[defaultInx].entityCode);
+            getTagEntityFields(myUnSystemEntityList.value[defaultInx].entityCode);
         }
     });
 };
@@ -347,8 +353,8 @@ const getTagEntitys = () => {
         // );
         // if (res && res.data) {
         tagEntitys.value = [];
-        if (unSystemEntityList.value && unSystemEntityList.value.length > 0) {
-            tagEntitys.value = unSystemEntityList.value.map((el, inx) => {
+        if (myUnSystemEntityList.value && myUnSystemEntityList.value.length > 0) {
+            tagEntitys.value = myUnSystemEntityList.value.map((el, inx) => {
                 el.entityInx = inx;
                 return el;
             });

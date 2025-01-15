@@ -330,13 +330,6 @@ const getApprovalList = async () => {
     if(fixedFilter) {
         param.filter.items = param.filter.items.concat(fixedFilter);
     }
-    if(router.currentRoute.value.query.appAbbr) {
-        param.filter.items.push({
-            fieldName: "appAbbr",
-            op: "EQ",
-            value: router.currentRoute.value.query.appAbbr,
-        });
-    }
     if (keyword.value && fieldName) {
         let newFieldName = fieldName.split(",");
         newFieldName.forEach(el => {

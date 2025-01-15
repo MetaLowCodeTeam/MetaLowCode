@@ -147,7 +147,7 @@ const activeRow = (item) => {
     // 实体列表详情
     else {
         let filterEntity = unSystemEntityList.value.filter(
-            (el) => el.name == item.entityName
+            (el) => el.name == item.entityName && !el.appAbbr
         );
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");

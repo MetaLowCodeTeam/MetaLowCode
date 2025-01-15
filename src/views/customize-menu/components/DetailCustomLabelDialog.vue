@@ -52,6 +52,8 @@
 import { ref } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const { queryAllEntityList } = useCommonStore();
 const emit = defineEmits(["confirm"]);
 
@@ -64,8 +66,7 @@ let filterEasySql = ref("");
 let selectEntityError = ref(false);
 const openDialog = () => {
 	isShow.value = true;
-	// console.log(queryAllEntityList(),'sss')
-	entityList.value = queryAllEntityList().map((el) => {
+	entityList.value = queryAllEntityList(true, router.currentRoute.value.query.appAbbr).map((el) => {
 		return {
 			entityCode: el.entityCode,
 			entityName: el.name,

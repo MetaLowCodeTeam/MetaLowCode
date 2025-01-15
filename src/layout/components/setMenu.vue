@@ -505,7 +505,7 @@ let parentMenu = ref("父级菜单");
 
 // 格式化实体
 const getEntityList = () => {
-	return unSystemEntityList.value;
+	return unSystemEntityList.value.filter(el => !el.appAbbr);
 };
 
 // 自定列表模板过滤实体，这些实体不需要展示自定义列表模板

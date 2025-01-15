@@ -12,6 +12,7 @@
         queryUrl="/approval/configList"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <!-- <el-dropdown
@@ -47,7 +48,7 @@
 </template>
 
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const props = defineProps({
     isDesign: {
@@ -57,6 +58,18 @@ const props = defineProps({
 })
 const router = useRouter();
 const $TOOL = inject("$TOOL");
+
+let fixedFilter = ref([]);
+onMounted(() => {
+    let appAbbr = router.currentRoute.value.query.appAbbr;
+    let filter = {
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    };
+    fixedFilter.value = [filter];
+})
+
 let mlEntityMenuAndListRef = ref("");
 
 

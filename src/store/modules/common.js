@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue'
 import { getEntitySet } from '@/api/system-manager'
 import tool from '@/utils/tool';
+
 const useCommonStore = defineStore('commonStore', () => {
     // 所有源实体
     let allEntityList = ref([]);
@@ -84,9 +85,11 @@ const useCommonStore = defineStore('commonStore', () => {
         return allEntityCode[name];
     }
     // 获取所有实体
-    const queryAllEntityList = (internalEntityFlag = false) => {
-         // showAll为true时返回所有实体，否则只返回internalEntityFlag为false的实体
-         return internalEntityFlag ? allEntityList.value : allEntityList.value.filter(el => !el.internalEntityFlag);
+    const queryAllEntityList = (internalEntityFlag = false, appAbbr = "") => {
+        // internalEntityFlag = 内部实体
+        // internalEntityFlag为true时返回所有实体，否则只返回internalEntityFlag为false的实体
+        let list = internalEntityFlag ? allEntityList.value : allEntityList.value.filter(el => !el.internalEntityFlag);
+        return list.filter(el => el.appAbbr == appAbbr);
     }
     const setPublicSetting = (data) => {
         publicSetting.value.APP_NAME = data.appName;

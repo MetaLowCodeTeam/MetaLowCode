@@ -12,6 +12,7 @@
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
         checkRole="r48"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <el-button
@@ -30,7 +31,7 @@
 </template>
 
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const props = defineProps({
     isDesign: {
@@ -41,8 +42,16 @@ const props = defineProps({
 
 const $TOOL = inject("$TOOL");
 const router = useRouter();
-
-
+let fixedFilter = ref([]);
+onMounted(() => {
+    let appAbbr = router.currentRoute.value.query.appAbbr;
+    let filter = {
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    };
+    fixedFilter.value = [filter];
+})
 
 let mlEntityMenuAndListRef = ref("");
 let tableColumn = ref([
@@ -148,6 +157,8 @@ const goDetail = (row) => {
         query: {
             triggerConfigId: row.triggerConfigId,
             meteAppendTitle: row.name,
+            appName: router.currentRoute.value.query.appName,
+            appAbbr: router.currentRoute.value.query.appAbbr,
         },
     });
 };
