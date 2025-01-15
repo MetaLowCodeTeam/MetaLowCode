@@ -7,13 +7,13 @@
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
         :actionColumnWidth="320"
         queryUrl="/externalForm/listQuery"
         delUrl="/externalForm/deleteRecord"
+        fieldName="externalFormName"
     >
         <template #addButton>
             <el-button
@@ -45,13 +45,7 @@ const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
-    {
-        fieldName: "externalFormName",
-        op: "LK",
-        value: "",
-    },
-]);
+
 let tableColumn = ref([
     {
         prop: "externalFormName",

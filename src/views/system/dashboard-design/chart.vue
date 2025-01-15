@@ -99,7 +99,7 @@
 </template>
    
 <script setup>
-import { ref, inject, reactive } from "vue";
+import { ref, inject, reactive, onMounted } from "vue";
 import { $fromNow } from "@/utils/util";
 import { saveRecord, deleteRecord } from "@/api/crud";
 import { updateDefault } from "@/api/chart.js";
@@ -201,6 +201,7 @@ const onConfirm = async () => {
         entity: "Chart",
         formModel: { chartName: dialogConf.chartName },
         id: dialogConf.chartId,
+        appAbbr: router.currentRoute.value.query.appAbbr,
     };
     // 新建
     if (!dialogConf.chartId) {

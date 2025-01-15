@@ -7,7 +7,7 @@
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
+        fieldName="flowName"
         @actionBtn="actionBtn"
         queryUrl="/approval/configList"
         @changeSwitch="changeSwitch"
@@ -58,13 +58,8 @@ const props = defineProps({
 const router = useRouter();
 const $TOOL = inject("$TOOL");
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
-    {
-        fieldName: "flowName",
-        op: "LK",
-        value: "",
-    },
-]);
+
+
 let tableColumn = ref([
     {
         prop: "flowName",

@@ -242,7 +242,7 @@ const getTabList = async () => {
     isShowEmpty.value = false;
 	let res = await listQuery(
         'AppManagement',
-        "appName,abbrName,startingCode,entityNumber,installPassword,remarks",
+        "appName,appAbbr,startingCode,entityNumber,installPassword,remarks",
         {
             equation: "AND",
             items: [
@@ -310,6 +310,6 @@ const handleDeleteApp = (item) => {
 const handleDesignApp = (item) => {
     const appPath = import.meta.env.VITE_APP_PATH;
     // 新窗口打开设计应用页面
-    window.open(`${window.location.origin}${appPath}designApp?appName=${item.appName}&abbrName=${item.abbrName}`, '_blank');
+    window.open(`${window.location.origin}${appPath}designApp?appName=${item.appName}&appAbbr=${item.appAbbr}`, '_blank');
 };
 </script>

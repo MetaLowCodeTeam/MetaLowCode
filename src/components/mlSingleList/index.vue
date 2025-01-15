@@ -192,8 +192,10 @@
 import { onMounted, ref, reactive, inject } from "vue";
 import http from "@/utils/request";
 import { getDataList } from "@/api/crud";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const emits = defineEmits(["highlightClick", "changeSwitch"]);
+
 
 const $API = inject("$API");
 const props = defineProps({
@@ -207,8 +209,6 @@ const props = defineProps({
 	sortFields: { type: Object, default: () => {} },
 	// 默认过滤字段
 	fieldName: { type: String, default: "" },
-	// 添加过滤list
-	filterItems: { type: Array, default: () => [] },
 	// 表格列
 	tableColumn: { type: Array, default: () => [] },
 	// 查询接口
@@ -275,7 +275,6 @@ async function getTableList() {
         mainEntity, 
         fieldsList, 
         fieldName, 
-        filterItems, 
         equation, 
         advFilter,
         fixedFilter
@@ -292,12 +291,15 @@ async function getTableList() {
 		sortFields: listColumnSort.value,
         advFilter,
 	};
-	param.filter.items = filterItems.map((el) => {
-		el.value = el.value ? el.value : keyword.value;
-		return el;
-	});
     if(fixedFilter) {
         param.filter.items = param.filter.items.concat(fixedFilter);
+    }
+    if(router.currentRoute.value.query.appAbbr) {
+        param.filter.items.push({
+            fieldName: "appAbbr",
+            op: "EQ",
+            value: router.currentRoute.value.query.appAbbr,
+        });
     }
 	if (keyword.value && fieldName) {
         let newFieldName = fieldName.split(",");

@@ -56,13 +56,13 @@
 				>
 					<div class="app-manager-dialog-label">
 						<el-input
-							v-model="fromData.abbrName"
+							v-model="fromData.appAbbr"
 							class="app-manager-dialog-input"
 							:disabled="fromData.type === 'edit'"
 							:class="{
-								'is-error': errorInfo.abbrNameError,
+								'is-error': errorInfo.appAbbrError,
 							}"
-							@focus="errorInfo.abbrNameError = false"
+							@focus="errorInfo.appAbbrError = false"
 						/>
 						<el-tooltip placement="top">
 							<template #content>
@@ -303,7 +303,7 @@ const onCustomUpload = (file) => {
 // 错误信息
 let errorInfo = ref({
 	nameError: false,
-	abbrNameError: false,
+	appAbbrError: false,
 	startingCodeError: false,
 	entityNumberError: false,
 });
@@ -313,7 +313,7 @@ const handleSubmit = async () => {
 	let {
 		type,
 		appName,
-		abbrName,
+		appAbbr,
 		startingCode,
 		entityNumber,
 		originalFilename,
@@ -327,15 +327,15 @@ const handleSubmit = async () => {
 			ElMessage.error(t("appManager.1200"));
 			return;
 		}
-		if (!abbrName) {
-			errorInfo.value.abbrNameError = true;
+		if (!appAbbr) {
+			errorInfo.value.appAbbrError = true;
 			ElMessage.error(t("appManager.1201"));
 			return;
 		}
 		// 只能是英文，且首字母大写
 		let reg = /^[A-Z][a-zA-Z]*$/;
-		if (!reg.test(abbrName)) {
-			errorInfo.value.abbrNameError = true;
+		if (!reg.test(appAbbr)) {
+			errorInfo.value.appAbbrError = true;
 			ElMessage.error(t("appManager.1204"));
 			return;
 		}
@@ -351,7 +351,7 @@ const handleSubmit = async () => {
 		}
 		let res = await saveRecord(fromData.value.appManagementId, {
 			appName,
-			abbrName,
+			appAbbr,
 			startingCode,
 			entityNumber,
 			remarks,
@@ -398,7 +398,7 @@ const handleSubmit = async () => {
 	}
 	if (type === "export") {
 		loading.value = true;
-		let res = await exportApp(abbrName, installPassword);
+		let res = await exportApp(appAbbr, installPassword);
 		if (res) {
 			downloadBase64(res.data, appName + ".zip");
 			dialogVisible.value = false;

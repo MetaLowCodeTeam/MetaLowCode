@@ -159,7 +159,7 @@ const handleSelectChange = (value) => {
 		name: value,
 		query: {
 			appName: router.currentRoute.value.query.appName,
-            abbrName: router.currentRoute.value.query.abbrName,
+            appAbbr: router.currentRoute.value.query.appAbbr,
 		},
 	});
 };

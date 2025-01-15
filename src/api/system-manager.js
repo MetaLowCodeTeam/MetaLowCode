@@ -33,8 +33,8 @@ export function hasDetailEntity(entity) {
 
 
 
-export function getAllTagsOfEntity() {
-    return http.get('systemManager/getAllTagsOfEntity')
+export function getAllTagsOfEntity(appAbbr) {
+    return http.get('systemManager/getAllTagsOfEntity', { appAbbr })
 }
 
 export function createEntity(entity, maineEntityName) {
@@ -209,8 +209,8 @@ export function previewLayout(entity) {
     return http.get('formLayout/previewLayout', { entity })
 }
 
-export function getOptionFields() {
-    return http.get('systemManager/getOptionFields')
+export function getOptionFields(appAbbr) {
+    return http.get('systemManager/getOptionFields', { appAbbr })
 }
 
 export function getOptionItems(entity, field) {
@@ -223,8 +223,8 @@ export function saveOptionItems(entity, field, optionItems) {
     })
 }
 
-export function getTagFields(entity) {
-    return http.get('systemManager/getTagFields')
+export function getTagFields(appAbbr) {
+    return http.get('systemManager/getTagFields', { appAbbr })
 }
 
 export function getTagItems(entity, field) {

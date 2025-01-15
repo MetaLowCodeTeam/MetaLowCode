@@ -28,9 +28,9 @@ export function deleteRecord(recordId) {
 }
 
 // 导出
-export function exportApp(appAbbrName, password) {
+export function exportApp(appAbbr, password) {
     return http.post('/app/exportApp', {}, {
-        params: { appAbbrName, password },
+        params: { appAbbr, password },
     })
 }
 

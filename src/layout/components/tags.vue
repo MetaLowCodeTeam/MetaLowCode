@@ -145,10 +145,14 @@ export default {
             this.addViewTags(this.$route);
         }
         if(this.isDesign){
+            let { appAbbr, appName } = this.$route.query;
             this.addViewTags({
-                "fullPath": appPath + "designApp/designEntity",
-                "path": appPath + "designApp/designEntity",
-                "query": {},
+                "fullPath": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr,
+                "path": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr,
+                "query": {
+                    appName,
+                    appAbbr
+                },
                 "hash": "",
                 "name": "DesignEntity",
                 "params": {},
@@ -156,7 +160,7 @@ export default {
                     "title": "实体管理",
                     "affix": true
                 },
-                "href": appPath + "designApp/designEntity"
+                "href": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr
             });
             this.addViewTags(this.$route);
         }

@@ -10,7 +10,7 @@
         :tableColumn="tableColumn"
         :showFormItem="[{'label':'名称','code':'reportName','type':'1'}]"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
+        fieldName="reportName"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
@@ -33,13 +33,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
-    {
-        fieldName: "reportName",
-        op: "LK",
-        value: "",
-    },
-]);
+
 let tableColumn = ref([
     {
         prop: "reportName",

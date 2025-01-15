@@ -7,7 +7,7 @@
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
+        fieldName="name"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
@@ -38,16 +38,13 @@ const props = defineProps({
         default: false
     }
 })
+
 const $TOOL = inject("$TOOL");
 const router = useRouter();
+
+
+
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
-    {
-        fieldName: "name",
-        op: "LK",
-        value: "",
-    },
-]);
 let tableColumn = ref([
     {
         prop: "name",
