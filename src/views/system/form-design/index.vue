@@ -215,6 +215,7 @@ export default {
             },
             globalDsv: {
                 uploadServer: import.meta.env.VITE_APP_BASE_API,
+				baseApi: import.meta.env.VITE_APP_BASE_API,
                 SERVER_API: import.meta.env.VITE_APP_BASE_API,
             },
             fieldListData: {},
@@ -431,9 +432,18 @@ export default {
 
 			/* 处理文本、长文本字段 */
 			if (fldObj.type === "Text" || fldObj.type === "TextArea") {
+				fieldSchema.options.minLength = !fldObj.minLength
+					? fieldSchema.options.minLength
+					: fldObj.minLength * 1;
 				fieldSchema.options.maxLength = !fldObj.maxLength
 					? fieldSchema.options.maxLength
 					: fldObj.maxLength * 1;
+
+				if (fldObj.type === "TextArea") {
+					fieldSchema.options.rows = !fldObj.rows
+						? fieldSchema.options.rows
+						: fldObj.rows * 1;
+				}
 			}
 
             /* 处理精度小数字段 */
