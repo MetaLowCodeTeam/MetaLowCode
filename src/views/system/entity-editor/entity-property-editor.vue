@@ -25,7 +25,7 @@
                         placeholder="英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线"
                     >
                         <template #append>
-                            <el-button @click="generateEntityName" style="color: #606266;">刷新生成</el-button>
+                            <el-button @click="generateEntityName" style="color: var(--el-color-primary)">刷新生成</el-button>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -198,24 +198,24 @@
     >
         <div style="height: 500px;">
             <div class="main-entity-search-box">
-                <el-input 
-                    v-model="mainEntitySearchValue" 
-                    placeholder="输入关键词进行搜索..." 
+                <el-input
+                    v-model="mainEntitySearchValue"
+                    placeholder="输入关键词进行搜索..."
                     clearable
                     class="input-with-select"
                 >
                     <template #prepend>
-                        <el-select 
-                            v-model="searchTag" 
+                        <el-select
+                            v-model="searchTag"
                             style="width: 100px"
                         >
                             <el-option label="全部标签" value="全部标签" />
                             <el-option label="未分组" value="未分组" />
-                            <el-option 
-                                v-for="(op,inx) of myEntityProps.useTag" 
-                                :key="inx" 
-                                :label="op.name" 
-                                :value="op.name" 
+                            <el-option
+                                v-for="(op,inx) of myEntityProps.useTag"
+                                :key="inx"
+                                :label="op.name"
+                                :value="op.name"
                             />
                         </el-select>
                     </template>
@@ -235,7 +235,7 @@
                 </template>
             </SimpleTable>
         </div>
-        
+
     </ml-dialog>
 </template>
 
@@ -350,9 +350,9 @@ const formatTableData = () => {
         newData = tableData.value.filter(el => el.tags.indexOf(searchTag.value) != -1);
     }
     return newData.filter(
-        el => 
-            el.name.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1 || 
-            el.label.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1 
+        el =>
+            el.name.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1 ||
+            el.label.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1
     )
 }
 

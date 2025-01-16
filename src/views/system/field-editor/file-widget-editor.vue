@@ -10,7 +10,7 @@
 				<el-form-item label="字段名称" prop="name">
 					<el-input v-model="fieldProps.name" :disabled="fieldState !== 1">
 						<template v-if="fieldState === 1" #append>
-							<el-button @click="generateFieldName" style="color: #606266;">刷新生成</el-button>
+							<el-button @click="generateFieldName" style="color: var(--el-color-primary)">刷新生成</el-button>
 						</template>
 					</el-input>
 				</el-form-item>
@@ -50,7 +50,7 @@
 <!--						</el-option>-->
 <!--					</el-select>-->
 <!--				</el-form-item>-->
-				
+
 				<!--
 				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">
 					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"
