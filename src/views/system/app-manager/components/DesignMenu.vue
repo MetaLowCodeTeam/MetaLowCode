@@ -20,12 +20,12 @@
 				<el-icon size="14">
 					<ElIconPlus />
 				</el-icon>
-				<span class="ml-5">添加</span>
+				<span class="ml-5">{{ $t('operation.2001') }}</span>
 			</el-button>
 		</template>
 		<template #activeRow>
 			<el-table-column
-				label="操作"
+				:label="$t('operation.1000')"
 				:align="'center'"
 				width="160"
 				fixed="right"
@@ -37,7 +37,7 @@
 						@click="editClick(scope.row)"
 						icon="el-icon-Edit"
 					>
-						编辑
+						{{ $t('operation.3001') }}
 					</el-button>
 					<el-button
 						type="primary"
@@ -45,7 +45,7 @@
 						@click="delClick(scope.row)"
 						icon="el-icon-Delete"
 					>
-						删除
+						{{ $t('operation.4000') }}
 					</el-button>
 				</template>
 			</el-table-column>
@@ -56,12 +56,15 @@
 		v-if="setMenDialog"
 		:menuInfo="menuInfo"
 		isDesign
+        @saveSuccess="saveSuccess"
 	/>
 </template>
 <script setup>
 import { ref } from "vue";
 import { t } from "@/locales";
 import { ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
+
 // API
 import layoutConfig from "@/api/layoutConfig";
 // 组件
@@ -74,6 +77,7 @@ const { navigationList, chosenNavigationId } = storeToRefs(
 	useLayoutConfigStore()
 );
 const { setNavigationList } = useLayoutConfigStore();
+const router = useRouter();
 
 // 表列
 let tableColumn = ref([
@@ -111,6 +115,11 @@ const fixedFilter = [
 		fieldName: "applyType",
 		op: "EQ",
 		value: "NAV",
+	},
+    {
+		fieldName: "appAbbr",
+		op: "EQ",
+		value: router.currentRoute.value.query.appAbbr,
 	},
 ];
 
@@ -156,5 +165,10 @@ const delClick = (row) => {
 			}
 		})
 		.catch(() => {});
+};
+
+// 保存成功
+const saveSuccess = () => {
+	mlSingleListRef.value.getTableList();
 };
 </script>

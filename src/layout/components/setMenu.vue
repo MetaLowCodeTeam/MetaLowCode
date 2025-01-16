@@ -464,7 +464,7 @@ const props = defineProps({
     // 是否开发应用设计
     isDesign: { type: Boolean, default: false },
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "saveSuccess"]);
 
 import { VueDraggableNext } from "vue-draggable-next";
 import { Select, Finished } from "@element-plus/icons-vue";
@@ -505,7 +505,7 @@ let parentMenu = ref("父级菜单");
 
 // 格式化实体
 const getEntityList = () => {
-	return unSystemEntityList.value.filter(el => !el.appAbbr);
+	return props.isDesign ? unSystemEntityList.value.filter(el => el.appAbbr == router.currentRoute.value.query.appAbbr) : unSystemEntityList.value.filter(el => !el.appAbbr);
 };
 
 // 自定列表模板过滤实体，这些实体不需要展示自定义列表模板
@@ -972,6 +972,9 @@ const layoutSave = async () => {
 		isShow.value = false;
 		return;
 	}
+    if(props.isDesign) {
+        param.appAbbr = router.currentRoute.value.query.appAbbr;
+    }
 	loading.value = true;
 	let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
 	if (res) {
@@ -979,6 +982,7 @@ const layoutSave = async () => {
             loading.value = false;
             isShow.value = false;
             $ElMessage.success("保存成功");
+            emit("saveSuccess");
             return;
         }
 		router.go(0);

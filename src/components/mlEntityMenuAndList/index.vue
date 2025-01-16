@@ -425,7 +425,10 @@ const fieldCheck = (item) => {
     defaultCode.value = item.entityCode;
     page.no = 1;
     if (router.currentRoute.value.query.entityCode) {
-        window.history.replaceState({}, "", `${window.location.pathname}`);
+        let url = new URL(window.location.href);
+        let params = url.searchParams;
+        params.delete('entityCode'); // 删除 entityCode 参数
+        window.history.replaceState({}, "", `${url.pathname}${url.search}`);
     }
     getApprovalList();
 };
