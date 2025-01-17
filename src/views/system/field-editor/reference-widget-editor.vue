@@ -524,7 +524,8 @@ export default {
         },
 
         async loadEntityList() {
-            let res = await filterEntitySet(this.queryText);
+            let appAbbr = this.$route.query.appAbbr;
+            let res = await filterEntitySet(this.queryText, appAbbr);
             if (res && res.code == 200) {
 				this.tableData.length = 0
                 let entityItems = res.data;

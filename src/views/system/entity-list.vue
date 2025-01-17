@@ -325,9 +325,6 @@ const createNewEntity = (target) => {
             checked: false,
         };
     });
-    if(props.isDesign) {
-        newEntityProps.value.appAbbr = appAbbr.value;
-    }
     showNewEntityDialogFlag.value = true;
     // 如果是复制实体
     if (target == "copy") {
@@ -397,11 +394,16 @@ const saveNewEntity = () => {
         newEntityProps.value.tags = tags.join(",");
 
         delete newEntityProps.value.useTag;
+        let paramsEntityProps = JSON.parse(JSON.stringify(newEntityProps.value));
+        if(props.isDesign){
+            paramsEntityProps.appAbbr = appAbbr.value;
+            paramsEntityProps.name = appAbbr.value + "_" + paramsEntityProps.name;
+        }
         let res;
         // 是复制
         if (newEntityProps.value.activeType == 2) {
             let params = {
-                sourceEntity: newEntityProps.value,
+                sourceEntity: paramsEntityProps,
                 mainEntityName,
                 operations: eval(
                     EPEditor.value.copyEntiytSelectedType.join("+")
@@ -409,7 +411,7 @@ const saveNewEntity = () => {
             };
             res = await copyEntity(params);
         } else {
-            res = await createEntity(newEntityProps.value, mainEntityName);
+            res = await createEntity(paramsEntityProps, mainEntityName);
         }
         if (res && res.code == 200) {
             ElMessage.success("保存成功");

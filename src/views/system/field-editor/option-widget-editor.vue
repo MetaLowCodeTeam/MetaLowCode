@@ -210,8 +210,9 @@ export default {
     },
     methods: {
         async initApi(){
+            let appAbbr = this.$route.query.appAbbr;
             // 取所有可同步的字段
-            let res = await getOptionFields();
+            let res = await getOptionFields(appAbbr);
             this.fieldsSync = [];
             if(res){
                 let fields = res.data || [];

@@ -456,7 +456,8 @@ export default {
 
         async showEntityListDialog() {
             this.tableData.length = 0;
-            let res = await getEntitySet();
+            let appAbbr = this.$route.query.appAbbr || 'NOT_APP';
+            let res = await getEntitySet(appAbbr);
             if (res && res.code == 200) {
                 let entityItems = res.data;
                 if (!!entityItems) {

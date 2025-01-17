@@ -7,8 +7,8 @@ export function getEntitySet(appAbbr) {
     return http.get('systemManager/getEntitySet', { appAbbr })
 }
 
-export function filterEntitySet(keyword) {
-    return http.get('systemManager/filterEntitySet', { keyword })
+export function filterEntitySet(keyword, appAbbr) {
+    return http.get('systemManager/filterEntitySet', { keyword, appAbbr })
 }
 
 export function getFieldSet(entity) {

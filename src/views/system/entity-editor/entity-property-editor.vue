@@ -24,6 +24,7 @@
                         minlength="2"
                         placeholder="英文大写字母开头，不可包含中文、空格，中间可输入字母、下划线"
                     >
+                        <template #prepend v-if="appAbbr">{{ appAbbr }}_</template>
                         <template #append>
                             <el-button @click="generateEntityName" style="color: var(--el-color-primary)">刷新生成</el-button>
                         </template>
@@ -243,6 +244,8 @@
 import { getSimplePinYin, upperFirstLetter } from "@/utils/util";
 import { ElMessage } from "element-plus";
 import { watch, ref, onMounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
     entityProps: { type: Object, default: () => {} },
     showTitle: { type: Boolean, default: false },
@@ -273,9 +276,11 @@ let copyTypes = ref([
 ]);
 let copyEntiytSelectedType = ref([0]);
 
+let appAbbr = ref("");
+
 onMounted(() => {
     myEntityProps.value = props.entityProps;
-    console.log(myEntityProps.value,'myEntityProps.value')
+    appAbbr.value = router.currentRoute.value.query.appAbbr;
 });
 
 let rules = ref({
