@@ -167,7 +167,7 @@ const appPath = import.meta.env.VITE_APP_PATH;
 const goTriggerList = () => {
     notTitleDialog.isShow = false
     if(props.isDesign) {
-        router.push(appPath + "designApp/designTrigger");
+        router.go(-1);
     }else {
         router.push(appPath + "trigger-list");
     }
