@@ -135,7 +135,7 @@
 					<div class="app-manager-dialog-label">
 						<el-input-number
 							v-model="fromData.entityNumber"
-							:min="300"
+							:min="1"
 							:max="3000"
 							class="w-100"
 							:class="{
@@ -399,7 +399,7 @@ const handleSubmit = async () => {
 			return;
 		}
 		// 只能是英文，且首字母大写
-		let reg = /^[A-Z][a-zA-Z]*$/;
+		let reg = /^[A-Z][a-zA-Z0-9]*$/;
 		if (!reg.test(appAbbr)) {
 			errorInfo.value.appAbbrError = true;
 			ElMessage.error(t("appManager.1204"));
@@ -410,7 +410,7 @@ const handleSubmit = async () => {
 			ElMessage.error(t("appManager.1202"));
 			return;
 		}
-		if (entityNumber < 30 || entityNumber > 3000) {
+		if (entityNumber < 1 || entityNumber > 3000) {
 			errorInfo.value.entityNumberError = true;
 			ElMessage.error(t("appManager.1203"));
 			return;

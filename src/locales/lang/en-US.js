@@ -950,7 +950,7 @@ let en_US = {
 
         "1100": "App Name",
         "1101": "Unique Abbreviation",
-        "1101-1": "App unique abbreviation is used as the prefix of the app, preventing entity names from being repeated due to different customer imports. It can only be English and the first letter must be uppercase",
+        "1101-1": "Application unique abbreviation is used as the prefix of the application to prevent entity names from being repeated when different applications are imported. It can only be English + numbers, and the first letter must be uppercase",
         "1102": "Entity Start Code",
         "1102-1": "Entity start code is used to distinguish each different app, and the app code cannot be repeated.",
         "1103": "Entity Quantity Limit",
