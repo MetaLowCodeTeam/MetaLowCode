@@ -971,6 +971,10 @@ let en_US = {
         "1300": "Are you sure you want to delete this application?",
         "1301": "Install Success",
         "1302": "Only support standard version and above for application import, the receiving enterprise needs to be authorized and activated.",
+        "1303": "Installing the application involves modifying system tables and some scripts, which may cause data anomalies during installation. Please back up the entire database first and then perform the installation operation.",
+        "1304": "continue to install",
+        "1305": "Install Failed",
+        "1306": "No description",
         
         "1400": "Entity Management",
         "1401": "Single Option Management",

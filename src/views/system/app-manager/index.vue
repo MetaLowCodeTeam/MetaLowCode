@@ -46,15 +46,12 @@
 			border: 1px solid #e6e6e6;
 			border-radius: 4px;
 			box-sizing: border-box;
-			padding: 20px 10px 10px 10px;
+			// padding: 20px 10px 10px 10px;
 			margin-bottom: 10px;
 			position: relative;
-			&:hover {
-				border-color: var(--el-color-primary);
-			}
 			.app-manager-item-export {
 				position: absolute;
-				top: 0;
+				top: 6px;
 				right: 0;
 				color: #303030;
 				border: 1px solid #e6e6e6;
@@ -70,7 +67,14 @@
 				}
 			}
 			.app-manager-item-title {
-				margin-bottom: 10px;
+                // background: red;
+                border-top: 6px solid #E4E7ED;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                background: #F7F7F7;
+                border-bottom: 1px solid #E4E7ED;
+				// margin-bottom: 10px;
+
 				.app-manager-item-title-text {
 					width: 60%;
 					margin: 0 auto;
@@ -79,19 +83,29 @@
 					font-weight: bold;
 				}
 			}
-			.app-manager-item-introduction {
-				font-size: 13px;
-				min-height: 36px;
-				color: #999;
-				// CSS超出两行显示...
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2;
-				overflow: hidden;
-				margin-bottom: 10px;
-			}
+            .app-manager-item-content {
+                padding: 10px;
+                .app-manager-item-introduction {
+                    text-align: center;
+                    font-size: 13px;
+                    min-height: 36px;
+                    color: #999;
+                    // CSS超出两行显示...
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 2;
+                    overflow: hidden;
+                }
+            }
 			.app-manager-item-btns {
 				text-align: right;
+                padding: 0 10px;
+			}
+            &:hover {
+				border-color: var(--el-color-primary);
+                .app-manager-item-title { 
+                    border-top-color: var(--el-color-primary);
+                }
 			}
 		}
 	}
@@ -103,7 +117,6 @@
 		:element-loading-text="$t('loading.1000')"
 	>
 		<el-header class="props-action-section">
-			<!-- <span class="section-title">{{ $t("appManager.1000") }}</span> -->
             <div class="app-manager-tabs">
 				<span
 					class="app-manager-tab"
@@ -134,7 +147,7 @@
 			<div class="app-manager-list">
 				<el-row :gutter="20" v-if="!isShowEmpty">
 					<el-col
-						:span="6"
+						:span="4"
 						v-for="(item, index) in tabList"
 						:key="index"
 					>
@@ -155,12 +168,14 @@
 									{{ item.appName }}
 								</div>
 							</div>
-							<div
-								class="app-manager-item-introduction"
-								:title="item.remarks"
-							>
-								{{ item.remarks }}
-							</div>
+                            <div class="app-manager-item-content">
+                                <div
+                                    class="app-manager-item-introduction"
+                                    :title="item.remarks"
+                                >
+                                    {{ item.remarks || $t("appManager.1306") }}
+                                </div>
+                            </div>
 							<div class="app-manager-item-btns">
 								<el-button
 									plain
@@ -283,7 +298,13 @@ const handleEditApp = (item) => {
 };
 // 安装应用
 const handleInstallApp = () => {
-    listDialogRef.value.openDialog('install', null);
+    ElMessageBox.confirm(t("appManager.1303"), t("operation.9000"), {
+        confirmButtonText: t("appManager.1304"),
+        cancelButtonText: t("operation.7000"),
+        type: 'warning',
+    }).then(() => {
+        listDialogRef.value.openDialog('install', null);
+    }).catch(()=>{});
 };
 // 导出应用
 const handleExportApp = (item) => {

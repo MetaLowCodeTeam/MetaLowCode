@@ -46,6 +46,7 @@
 							class="app-manager-dialog-input"
 							:class="{ 'is-error': errorInfo.appNameError }"
 							@focus="errorInfo.appNameError = false"
+                            @change="handleAppNameChange"
 						/>
 						<span class="app-manger-zw"></span>
 					</div>
@@ -84,11 +85,12 @@
 						<el-input-number
 							v-model="fromData.startingCode"
 							class="app-manager-dialog-input"
+                            :disabled="fromData.type === 'edit'"
 							:class="{
 								'is-error': errorInfo.startingCodeError,
 							}"
 							@focus="errorInfo.startingCodeError = false"
-							:min="1"
+							:min="100000"
 							:max="9999999999"
 						/>
 						<el-tooltip placement="top">
@@ -110,7 +112,7 @@
 					<div class="app-manager-dialog-label">
 						<el-input-number
 							v-model="fromData.entityNumber"
-							:min="30"
+							:min="300"
 							:max="3000"
 							class="w-100"
 							:class="{
@@ -253,11 +255,23 @@
 			</el-button>
 		</template>
 	</ml-dialog>
-</template>
+    <ml-dialog v-model="errMsgDialog.isShow" :title="$t('appManager.1305')" width="600px">
+		<el-table 
+            :data="errMsgDialog.msgList" 
+            style="width: 100%" 
+            :show-header="false"
+            max-height="400"
+            class="err-msg-table"
+        >
+			<el-table-column prop="msg" label="" />
+		</el-table>
+	</ml-dialog>
+</template> 
 <script setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { t } from "@/locales";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { getSimplePinYin, upperFirstLetter } from "@/utils/util";
 // API
 import { saveRecord, exportApp, installApp } from "@/api/appManager";
 import { downloadBase64 } from "@/utils/util";
@@ -287,7 +301,7 @@ const openDialog = (type, data) => {
 	} else {
 		fromData.value = {
 			entityNumber: 300,
-			startingCode: 1000,
+			startingCode: 100000,
 		};
 	}
 	fromData.value.type = type;
@@ -306,6 +320,12 @@ let errorInfo = ref({
 	appAbbrError: false,
 	startingCodeError: false,
 	entityNumberError: false,
+});
+
+// 导入错误msg
+let errMsgDialog = reactive({
+	isShow: false,
+	msgList: [],
 });
 
 // 提交
@@ -339,7 +359,7 @@ const handleSubmit = async () => {
 			ElMessage.error(t("appManager.1204"));
 			return;
 		}
-		if (startingCode < 1 || startingCode > 9999999999) {
+		if (startingCode < 100000 || startingCode > 9999999999) {
 			errorInfo.value.startingCodeError = true;
 			ElMessage.error(t("appManager.1202"));
 			return;
@@ -378,21 +398,31 @@ const handleSubmit = async () => {
 			},
 		});
 		if (res && res.code == 200) {
-			ElMessageBox.confirm(t('appManager.1301'), t('operation.9000'), {
-				confirmButtonText: t('operation.6105'),
-				showCancelButton: false,
-				showClose: false,
-				closeOnClickModal: false,
-				closeOnPressEscape: false,
-				type: "success",
-			})
-				.then(async () => {
-					window.location.reload();
-				})
-				.catch(() => {
-					// 取消
-				});
-			dialogVisible.value = false;
+            if(res.data) {
+                errMsgDialog.msgList = res.data.map((el) => {
+                    return {
+                        msg: el,
+                    };
+                });
+                errMsgDialog.isShow = true;
+                dialogVisible.value = false;
+            }else {
+                ElMessageBox.confirm(t('appManager.1301'), t('operation.9000'), {
+                    confirmButtonText: t('operation.6105'),
+                    showCancelButton: false,
+                    showClose: false,
+                    closeOnClickModal: false,
+                    closeOnPressEscape: false,
+                    type: "success",
+                })
+                    .then(async () => {
+                        window.location.reload();
+                    })
+                    .catch(() => {
+                        // 取消
+                    });
+                dialogVisible.value = false;
+            }
 		}
 		loading.value = false;
 	}
@@ -406,6 +436,17 @@ const handleSubmit = async () => {
 		loading.value = false;
 	}
 	console.log(fromData.value);
+};
+
+const handleAppNameChange = (val) => {
+    if (!val) {
+        return;
+    }
+
+    if (!fromData.value.appAbbr) {
+        const pyName = getSimplePinYin(val);
+        fromData.value.appAbbr = upperFirstLetter(pyName);
+    }
 };
 
 defineExpose({
