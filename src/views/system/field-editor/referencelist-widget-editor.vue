@@ -456,10 +456,10 @@ export default {
 
         async showEntityListDialog() {
             this.tableData.length = 0;
-            let appAbbr = this.$route.query.appAbbr || 'NOT_APP';
-            let res = await getEntitySet(appAbbr);
+            let appAbbr = this.$route.query.appAbbr;
+            let res = await getEntitySet();
             if (res && res.code == 200) {
-                let entityItems = res.data;
+                let entityItems = res.data.filter(el => el.systemEntityFlag || el.appAbbr === appAbbr);
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
                         if (entity.detailEntityFlag === false) {

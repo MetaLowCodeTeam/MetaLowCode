@@ -42,13 +42,14 @@
 		box-sizing: border-box;
 		.app-manager-item {
 			width: 100%;
-			height: 135px;
+			height: 145px;
 			border: 1px solid #e6e6e6;
 			border-radius: 4px;
 			box-sizing: border-box;
 			// padding: 20px 10px 10px 10px;
 			margin-bottom: 10px;
 			position: relative;
+
 			.app-manager-item-export {
 				position: absolute;
 				top: 6px;
@@ -135,10 +136,10 @@
 					:placeholder="$t('operation.5000')"
 					@confirm="getTabList"
 				/>
-                <el-button type="primary" icon="Plus" @click="handleAddApp">
+                <el-button type="primary" icon="Plus" @click="handleAddApp" v-if="activeTab === 'developing'">
                     {{ $t("appManager.1005") }}
                 </el-button>
-                <el-button type="primary" icon="Plus" @click="handleInstallApp">
+                <el-button type="primary" icon="Plus" @click="handleInstallApp" v-if="activeTab === 'installed'">
                     {{ $t("appManager.1006") }}
                 </el-button>
 			</div>
@@ -152,6 +153,9 @@
 						:key="index"
 					>
 						<div class="app-manager-item">
+                            <!-- <div class="app-manager-item-header">
+                               123
+                            </div> -->
 							<!-- 导出小标签 -->
 							<span
 								class="app-manager-item-export"
@@ -257,7 +261,7 @@ const getTabList = async () => {
     isShowEmpty.value = false;
 	let res = await listQuery(
         'AppManagement',
-        "appName,appAbbr,startingCode,entityNumber,installPassword,remarks",
+        "appName,appAbbr,startingCode,entityNumber,installPassword,remarks,iconConfig",
         {
             equation: "AND",
             items: [
@@ -290,7 +294,7 @@ let listDialogRef = ref(null);
 
 // 新建应用
 const handleAddApp = () => {
-    listDialogRef.value.openDialog('add', null);
+    listDialogRef.value.openDialog('add', tabList.value);
 };
 // 编辑应用
 const handleEditApp = (item) => {

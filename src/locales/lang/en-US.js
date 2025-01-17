@@ -960,6 +960,7 @@ let en_US = {
         "1105-1": "You can set a unique password for this application, fill in as needed",
         "1105-2": "If the application has a unique password, please fill in",
         "1106": "App Package",
+        "1107": "App Icon",
 
         "1200": "Please enter the application name",
         "1201": "Please enter the application unique abbreviation",
@@ -975,6 +976,7 @@ let en_US = {
         "1304": "continue to install",
         "1305": "Install Failed",
         "1306": "No description",
+        "1307": "Upload File",
         
         "1400": "Entity Management",
         "1401": "Single Option Management",

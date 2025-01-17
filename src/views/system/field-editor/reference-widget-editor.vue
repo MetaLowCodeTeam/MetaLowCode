@@ -525,10 +525,10 @@ export default {
 
         async loadEntityList() {
             let appAbbr = this.$route.query.appAbbr;
-            let res = await filterEntitySet(this.queryText, appAbbr);
+            let res = await filterEntitySet(this.queryText);
             if (res && res.code == 200) {
 				this.tableData.length = 0
-                let entityItems = res.data;
+                let entityItems = res.data.filter(el => el.systemEntityFlag || el.appAbbr === appAbbr);
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
                         if (this.refDetailEntityFlag === entity.detailEntityFlag) {

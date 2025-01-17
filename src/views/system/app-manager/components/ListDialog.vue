@@ -5,9 +5,6 @@
 	.app-manager-dialog-input {
 		flex: 1;
 	}
-	.app-manger-zw {
-		// width: 20px;
-	}
 }
 :deep(.el-form-item) {
 	align-items: initial !important;
@@ -21,6 +18,16 @@
 	font-weight: bold;
 	text-decoration: underline;
 	margin-left: 15px;
+}
+.select-icon-span {
+    display: inline-block;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #E4E7ED;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 24px;
 }
 </style>
 <template>
@@ -51,6 +58,22 @@
 						<span class="app-manger-zw"></span>
 					</div>
 				</el-form-item>
+                <el-form-item :label="$t('appManager.1107')">
+                    <div class="app-manager-dialog-label">
+                        <span
+                            class="select-icon-span"
+                            title="选择图标"
+                            @click="openSelectIconDialog"
+                        >
+                            <el-icon class="icon-top-2" v-if="!fromData?.iconConfig?.useIcon">
+                                <SetUp />
+                            </el-icon>
+                            <el-icon class="icon-top-2" v-else :color="fromData?.iconConfig?.iconColor">
+                                <component :is="fromData?.iconConfig?.useIcon" />
+                            </el-icon>
+                        </span>
+                    </div>
+                </el-form-item>
 				<el-form-item
 					:label="$t('appManager.1101')"
 					class="is-required"
@@ -161,7 +184,7 @@
 								<el-icon>
 									<ElIconUpload />
 								</el-icon>
-								上传文件
+								{{ $t("appManager.1307") }}
 							</el-button>
 						</template>
 					</ml-upload>
@@ -266,12 +289,14 @@
 			<el-table-column prop="msg" label="" />
 		</el-table>
 	</ml-dialog>
+    <mlSelectIcon v-model="isShowIconDialog" :useIcon="cutMenuIcon" @confirmIcon="selectIcon" />
 </template> 
 <script setup>
 import { ref, reactive } from "vue";
 import { t } from "@/locales";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getSimplePinYin, upperFirstLetter } from "@/utils/util";
+import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 // API
 import { saveRecord, exportApp, installApp } from "@/api/appManager";
 import { downloadBase64 } from "@/utils/util";
@@ -299,13 +324,33 @@ const openDialog = (type, data) => {
 	if (type === "edit" || type === "export") {
 		fromData.value = JSON.parse(JSON.stringify(data));
 	} else {
-		fromData.value = {
-			entityNumber: 300,
-			startingCode: 100000,
-		};
+        // 没有数据，则默认设置
+        if(data.length < 1) {
+            fromData.value = {
+                entityNumber: 1000,
+                startingCode: 100000,
+            };
+        }else {
+            // 找到 数据里 startingCode 最大的那条数据
+            let maxStartingCodeItem = data.reduce((maxItem, item) => {
+                return maxItem.startingCode > item.startingCode ? maxItem : item;
+            }, data[0]);
+            fromData.value = {
+                entityNumber: 1000,
+                startingCode: maxStartingCodeItem.startingCode + maxStartingCodeItem.entityNumber,
+            };
+        }
 	}
 	fromData.value.type = type;
 	fromData.value.title = DialogType[type];
+    if(!fromData.value.iconConfig) {
+        fromData.value.iconConfig = {
+            useIcon: "",
+            iconColor: "",
+        };
+    }else {
+        fromData.value.iconConfig = JSON.parse(fromData.value.iconConfig);
+    }
 };
 
 // 上传文件
@@ -340,6 +385,7 @@ const handleSubmit = async () => {
 		originalFile,
 		remarks,
 		installPassword,
+        iconConfig,
 	} = fromData.value;
 	if (type === "add" || type === "edit") {
 		if (!appName) {
@@ -375,6 +421,7 @@ const handleSubmit = async () => {
 			startingCode,
 			entityNumber,
 			remarks,
+            iconConfig: JSON.stringify(iconConfig),
 		});
 		if (res) {
 			ElMessage.success(t("operation.6100"));
@@ -447,6 +494,26 @@ const handleAppNameChange = (val) => {
         const pyName = getSimplePinYin(val);
         fromData.value.appAbbr = upperFirstLetter(pyName);
     }
+};
+
+let isShowIconDialog = ref(false);
+// 当前菜单ICON
+let cutMenuIcon = ref({});
+
+// 打开选择图标弹框
+const openSelectIconDialog = () => {
+    isShowIconDialog.value = true;
+    cutMenuIcon.value = {
+        name: fromData.value.iconConfig?.useIcon,
+        color: fromData.value.iconConfig?.iconColor || "",
+    };
+};
+
+// 选择图标
+const selectIcon = ({ name, color }) => {
+    fromData.value.iconConfig.useIcon = name;
+    fromData.value.iconConfig.iconColor = color;
+    isShowIconDialog.value = false;
 };
 
 defineExpose({
