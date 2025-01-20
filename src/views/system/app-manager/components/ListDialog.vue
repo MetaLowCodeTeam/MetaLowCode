@@ -348,8 +348,6 @@ const openDialog = (type, data) => {
             useIcon: "",
             iconColor: "",
         };
-    }else {
-        fromData.value.iconConfig = JSON.parse(fromData.value.iconConfig);
     }
 };
 

@@ -6,10 +6,10 @@
 	// .section-title {
 	// 	font-size: 16px;
 	// }
-    padding-left: 0px;
-    padding-right: 20px;
-    .app-manager-tabs {
-        margin-top: 25px;
+	padding-left: 0px;
+	padding-right: 20px;
+	.app-manager-tabs {
+		margin-top: 25px;
 		height: 32px;
 		line-height: 32px;
 		.app-manager-tab {
@@ -33,7 +33,7 @@
 .app-manager-main {
 	padding: 0;
 	background: #fff;
-	
+
 	.app-manager-list {
 		max-height: 100%;
 		overflow: auto;
@@ -42,71 +42,64 @@
 		box-sizing: border-box;
 		.app-manager-item {
 			width: 100%;
-			height: 145px;
+			height: 150px;
 			border: 1px solid #e6e6e6;
 			border-radius: 4px;
 			box-sizing: border-box;
-			// padding: 20px 10px 10px 10px;
+			padding: 10px;
+            padding-top: 15px;
+            padding-right: 2px;
 			margin-bottom: 10px;
-			position: relative;
-
-			.app-manager-item-export {
-				position: absolute;
-				top: 6px;
-				right: 0;
-				color: #303030;
-				border: 1px solid #e6e6e6;
-				border-top: none;
-				border-right: none;
-				padding: 2px 10px;
-				font-size: 12px;
-				border-radius: 0px 0px 0px 4px;
-				cursor: pointer;
-				&:hover {
-					color: #fff;
+            position: relative;
+            .app-manager-item-export-tag {
+                position: absolute;
+                top: 14px;
+                right: 10px;
+                cursor: pointer;
+            }
+			.app-manager-item-header {
+				display: flex;
+				align-items: center;
+				.app-manager-item-header-icon {
+					width: 40px;
+					height: 40px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
 					background: var(--el-color-primary);
+					border-radius: 6px;
+					margin-right: 10px;
+					color: #fff;
 				}
-			}
-			.app-manager-item-title {
-                // background: red;
-                border-top: 6px solid #E4E7ED;
-                padding-top: 10px;
-                padding-bottom: 10px;
-                background: #F7F7F7;
-                border-bottom: 1px solid #E4E7ED;
-				// margin-bottom: 10px;
-
-				.app-manager-item-title-text {
-					width: 60%;
-					margin: 0 auto;
-					text-align: center;
+				.app-manager-item-header-text {
 					font-size: 16px;
 					font-weight: bold;
+					width: calc(100% - 80px);
 				}
 			}
-            .app-manager-item-content {
-                padding: 10px;
-                .app-manager-item-introduction {
-                    text-align: center;
-                    font-size: 13px;
-                    min-height: 36px;
-                    color: #999;
-                    // CSS超出两行显示...
-                    display: -webkit-box;
-                    -webkit-box-orient: vertical;
-                    -webkit-line-clamp: 2;
-                    overflow: hidden;
-                }
-            }
-			.app-manager-item-btns {
-				text-align: right;
-                padding: 0 10px;
+			.app-manager-item-description {
+				display: flex;
+				align-items: center;
+				height: 36px;
+				margin: 10px 0;
+                box-sizing: border-box;
+                padding-right: 4px;
+				.app-manager-item-description-text {
+					font-size: 13px;
+					color: #999;
+					// CSS超出两行显示...
+					display: -webkit-box;
+					-webkit-box-orient: vertical;
+					-webkit-line-clamp: 2;
+					overflow: hidden;
+				}
 			}
-            &:hover {
+			&:hover {
 				border-color: var(--el-color-primary);
-                .app-manager-item-title { 
-                    border-top-color: var(--el-color-primary);
-                }
+				.app-manager-item-export-tag {
+					display: block;
+                    color: var(--el-color-primary);
+				}
 			}
 		}
 	}
@@ -118,7 +111,7 @@
 		:element-loading-text="$t('loading.1000')"
 	>
 		<el-header class="props-action-section">
-            <div class="app-manager-tabs">
+			<div class="app-manager-tabs">
 				<span
 					class="app-manager-tab"
 					v-for="tab in tabs"
@@ -136,12 +129,22 @@
 					:placeholder="$t('operation.5000')"
 					@confirm="getTabList"
 				/>
-                <el-button type="primary" icon="Plus" @click="handleAddApp" v-if="activeTab === 'developing'">
-                    {{ $t("appManager.1005") }}
-                </el-button>
-                <el-button type="primary" icon="Plus" @click="handleInstallApp" v-if="activeTab === 'installed'">
-                    {{ $t("appManager.1006") }}
-                </el-button>
+				<el-button
+					type="primary"
+					icon="Plus"
+					@click="handleAddApp"
+					v-if="activeTab === 'developing'"
+				>
+					{{ $t("appManager.1005") }}
+				</el-button>
+				<el-button
+					type="primary"
+					icon="Plus"
+					@click="handleInstallApp"
+					v-if="activeTab === 'installed'"
+				>
+					{{ $t("appManager.1006") }}
+				</el-button>
 			</div>
 		</el-header>
 		<el-main class="app-manager-main">
@@ -153,64 +156,108 @@
 						:key="index"
 					>
 						<div class="app-manager-item">
-                            <!-- <div class="app-manager-item-header">
-                               123
-                            </div> -->
-							<!-- 导出小标签 -->
-							<span
-								class="app-manager-item-export"
-								v-if="activeTab === 'developing'"
-								@click="handleExportApp(item)"
-							>
-								{{ $t("appManager.1004") }}
-							</span>
-							<div class="app-manager-item-title">
+                            <!-- 导出小标签 -->
+                            <span 
+                                class="app-manager-item-export-tag" 
+                                @click="handleExportApp(item)"
+                                :title="$t('appManager.1007')"
+                            >
+                                <el-icon size="16">
+                                    <TopRight />
+                                </el-icon>
+                            </span>
+							<!-- 头部 -->
+							<div class="app-manager-item-header">
 								<div
-									class="app-manager-item-title-text yichu"
-									:title="item.appName"
+									class="app-manager-item-header-icon"
+									v-if="item.iconConfig?.useIcon"
+									:style="{
+										background: item.iconConfig?.iconColor,
+									}"
 								>
-									{{ item.appName }}
+									<el-icon :size="24">
+										<component
+											:is="item.iconConfig?.useIcon"
+										/>
+									</el-icon>
+								</div>
+								<div
+									class="app-manager-item-header-icon"
+									v-else
+								>
+									<el-icon :size="24">
+										<SetUp />
+									</el-icon>
+								</div>
+
+								<div class="app-manager-item-header-text">
+									<div
+										class="app-manager-item-header-text-name yichu"
+										:title="item.appName"
+									>
+										{{ item.appName }}
+									</div>
 								</div>
 							</div>
-                            <div class="app-manager-item-content">
-                                <div
-                                    class="app-manager-item-introduction"
-                                    :title="item.remarks"
-                                >
-                                    {{ item.remarks || $t("appManager.1306") }}
-                                </div>
-                            </div>
+							<!-- 描述 -->
+							<div
+								class="app-manager-item-description"
+								:title="item.remarks"
+							>
+								<div class="app-manager-item-description-text">
+									{{ item.remarks || $t("appManager.1306") }}
+								</div>
+							</div>
+							<!-- 操作按钮 -->
 							<div class="app-manager-item-btns">
 								<el-button
-									plain
+									type="primary"
 									size="small"
+                                    plain
 									v-if="activeTab === 'developing'"
-                                    @click="handleDesignApp(item)"
+									@click="handleDesignApp(item)"
 								>
 									{{ $t("appManager.1003") }}
 								</el-button>
-								<el-button
-									plain
-									size="small"
-									v-if="activeTab === 'developing'"
-                                    @click="handleEditApp(item)"
-								>
-									{{ $t("operation.3001") }}
-								</el-button>
-								<el-button plain size="small" @click="handleDeleteApp(item)">
-									{{ $t("operation.4000") }}
-								</el-button>
+								<el-dropdown 
+                                    class="fr" 
+                                    trigger="click"
+                                    @command="handleMoreFunc(item, $event)"
+                                >
+									<el-button size="small" text>
+										<el-icon size="18">
+											<MoreFilled />
+										</el-icon>
+									</el-button>
+									<template #dropdown>
+										<el-dropdown-menu>
+											<el-dropdown-item
+												v-if="
+													activeTab === 'developing'
+												"
+												command="edit"
+											>
+												{{ $t("appManager.1014") }}
+											</el-dropdown-item>
+											<el-dropdown-item
+												command="delete"
+											>
+												{{ $t("appManager.1015") }}
+											</el-dropdown-item>
+										</el-dropdown-menu>
+									</template>
+								</el-dropdown>
 							</div>
 						</div>
 					</el-col>
 				</el-row>
-                <div class="app-manager-empty" v-else>
-                    <el-empty/>
-                </div>
+				<div class="app-manager-empty" v-else>
+					<el-empty />
+				</div>
 			</div>
 		</el-main>
 	</el-container>
-    <ListDialog ref="listDialogRef" @refresh="getTabList"/>
+	<ListDialog ref="listDialogRef" @refresh="getTabList" />
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
@@ -219,7 +266,6 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import ListDialog from "./components/ListDialog.vue";
 // API
 import { listQuery, deleteRecord } from "@/api/appManager";
-
 
 // 当前选中的tab
 let activeTab = ref("developing");
@@ -258,83 +304,103 @@ let isShowEmpty = ref(false);
 // 获取列表
 const getTabList = async () => {
 	loading.value = true;
-    isShowEmpty.value = false;
+	isShowEmpty.value = false;
 	let res = await listQuery(
-        'AppManagement',
-        "appName,appAbbr,startingCode,entityNumber,installPassword,remarks,iconConfig",
-        {
-            equation: "AND",
-            items: [
-                {
-                    fieldName: "appName",
-                    op: "LK",
-                    value: keyword.value
-                },
-                {
-                    fieldName: "isInstalled",
-                    op: "EQ",
-                    value: activeTab.value === "installed" ? 1 : 0
-                }
-            ]
-        },
-        10,
-        1,
-        []
-    );
-    if(res) {
-        tabList.value = res.data.dataList;
-    }
-    if(tabList.value.length === 0) {
-        isShowEmpty.value = true;
-    }
-    loading.value = false;
+		"AppManagement",
+		"appName,appAbbr,startingCode,entityNumber,installPassword,remarks,iconConfig",
+		{
+			equation: "AND",
+			items: [
+				{
+					fieldName: "appName",
+					op: "LK",
+					value: keyword.value,
+				},
+				{
+					fieldName: "isInstalled",
+					op: "EQ",
+					value: activeTab.value === "installed" ? 1 : 0,
+				},
+			],
+		},
+		10,
+		1,
+		[]
+	);
+	if (res) {
+		tabList.value = res.data.dataList.map((el) => {
+			if (el.iconConfig) {
+				el.iconConfig = JSON.parse(el.iconConfig);
+			}
+			return el;
+		});
+	}
+	if (tabList.value.length === 0) {
+		isShowEmpty.value = true;
+	}
+	loading.value = false;
 };
 
 let listDialogRef = ref(null);
 
 // 新建应用
 const handleAddApp = () => {
-    listDialogRef.value.openDialog('add', tabList.value);
+	listDialogRef.value.openDialog("add", tabList.value);
 };
-// 编辑应用
-const handleEditApp = (item) => {
-    listDialogRef.value.openDialog('edit', item);
+
+// 更多功能
+const handleMoreFunc = (item, command) => {
+    // 编辑
+    if (command === "edit") {
+        listDialogRef.value.openDialog("edit", item);
+    } 
+    // 删除
+    else if (command === "delete") {
+        handleDeleteApp(item);
+    }
 };
 // 安装应用
 const handleInstallApp = () => {
-    ElMessageBox.confirm(t("appManager.1303"), t("operation.9000"), {
-        confirmButtonText: t("appManager.1304"),
-        cancelButtonText: t("operation.7000"),
-        type: 'warning',
-    }).then(() => {
-        listDialogRef.value.openDialog('install', null);
-    }).catch(()=>{});
+	ElMessageBox.confirm(t("appManager.1303"), t("operation.9000"), {
+		confirmButtonText: t("appManager.1304"),
+		cancelButtonText: t("operation.7000"),
+		type: "warning",
+	})
+		.then(() => {
+			listDialogRef.value.openDialog("install", null);
+		})
+		.catch(() => {});
 };
 // 导出应用
 const handleExportApp = (item) => {
-    listDialogRef.value.openDialog('export', item);
+	listDialogRef.value.openDialog("export", item);
 };
 // 删除应用
 const handleDeleteApp = (item) => {
-    ElMessageBox.confirm(t("appManager.1300"), t("operation.9000"), {
-        confirmButtonText: t("operation.6001"),
-        cancelButtonText: t("operation.7000"),
-        type: "warning",
-    }).then(async () => {
-        loading.value = true;
-        let res = await deleteRecord(item.appManagementId);
-        if(res) {
-            ElMessage.success(t("operation.4102"));
-            getTabList();
-        }
-        loading.value = false;
-    }).catch(() => {});
+	ElMessageBox.confirm(t("appManager.1300"), t("operation.9000"), {
+		confirmButtonText: t("operation.6001"),
+		cancelButtonText: t("operation.7000"),
+		type: "warning",
+	})
+		.then(async () => {
+			loading.value = true;
+			let res = await deleteRecord(item.appManagementId);
+			if (res) {
+				ElMessage.success(t("operation.4102"));
+				getTabList();
+			}
+			loading.value = false;
+		})
+		.catch(() => {});
 };
 
 // 设计应用
 const handleDesignApp = (item) => {
-    const appPath = import.meta.env.VITE_APP_PATH;
-    // 新窗口打开设计应用页面
-    window.open(`${window.location.origin}${appPath}designApp?appName=${item.appName}&appAbbr=${item.appAbbr}`, '_blank');
+	const appPath = import.meta.env.VITE_APP_PATH;
+	// 新窗口打开设计应用页面
+	window.open(
+		`${window.location.origin}${appPath}designApp?appName=${item.appName}&appAbbr=${item.appAbbr}`,
+		"_blank"
+	);
 };
 </script>

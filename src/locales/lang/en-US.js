@@ -947,6 +947,8 @@ let en_US = {
         "1011": "Design Entity",
         "1012": "Develop App",
         "1013": "More Func",
+        "1014": "Edit App",
+        "1015": "Delete App",
 
         "1100": "App Name",
         "1101": "Unique Abbreviation",
@@ -966,7 +968,7 @@ let en_US = {
         "1201": "Please enter the application unique abbreviation",
         "1202": "Please enter the entity start code",
         "1203": "Please enter the entity quantity limit",
-        "1204": "Please enter the English uppercase letter start pure English abbreviation",
+        "1204": "Please enter the English uppercase letter start English + number",
         "1205": "Please upload the application package",
 
         "1300": "Are you sure you want to delete this application?",
