@@ -85,7 +85,7 @@ let entity = ref("");
 let formId = ref("");
 
 onMounted(() => {
-	entity.value = router.currentRoute.value.params.entityName;
+	entity.value = router.currentRoute.value.query.entity;
 	formId.value = router.currentRoute.value.query.formId;
 	// 加载表单
 	loadForm();

@@ -29,7 +29,7 @@ const floamtRoute = (el, isTopNav) => {
     } else {
         if(el.customPageType == 2){
             // 路由
-            newRoute.path = el.outLink;
+            newRoute.path = appPath + el.outLink;
         }else {
            // 自定义页面目录
            newRoute.path = appPath + "custom-page/";
