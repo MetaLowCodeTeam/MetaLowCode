@@ -122,7 +122,7 @@ const routes = [
             },
             // 新窗口新建
             {
-                path: appPath + "create-entity",
+                path: appPath + ":entityName/create-entity",
                 name: "NewWindowCreateEntity",
                 "meta": {
                     hidden: true,

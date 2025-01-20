@@ -104,7 +104,7 @@ router.beforeEach(async (to, from, next) => {
     // console.log(to,'to')
     // 如果是新窗口创建实体
     if(to.name == "NewWindowCreateEntity") {
-        to.meta.title = "新建" + queryEntityLabelByName(to.query.entity)
+        to.meta.title = "新建" + queryEntityLabelByName(to.params.entityName)
     }
     beforeEach(to, from)
     next();
