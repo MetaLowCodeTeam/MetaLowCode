@@ -1,6 +1,5 @@
 <template>
 	<MlOfficePreview
-		:type="query.type"
 		:src="query.url"
 		@rendered="renderedHandler"
 		@error="errorHandler"
@@ -16,6 +15,7 @@ const router = useRouter();
 let query = ref({});
 onMounted(() => {
 	query.value = router.currentRoute.value.query;
+    console.log(query.value,'query.value')
 });
 const renderedHandler = () => {
 	console.log("渲染完成");

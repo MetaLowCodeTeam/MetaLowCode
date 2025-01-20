@@ -31,7 +31,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import OfficeDocx from "./components/OfficeDocx.vue";
 import OfficeExcel from "./components/OfficeExcel.vue";
 import OfficePdf from "./components/OfficePdf.vue";
@@ -40,11 +40,6 @@ import OfficePptx from "./components/OfficePptx.vue";
 let loading = ref(false);
 
 const props = defineProps({
-	// 类型
-	type: {
-		type: String,
-		default: "",
-	},
 	// 文件地址
 	src: {
 		type: String,
@@ -57,8 +52,21 @@ const props = defineProps({
 	},
 });
 
+let type = ref("");
+
+watch(
+	() => props.src,
+	(newVal) => {
+		// 获取文件类型
+		type.value = newVal.split(".").pop();
+	}
+);
+
 onMounted(() => {
 	loading.value = true;
+    if(props.src){
+        type.value = props.src.split(".").pop();
+    }
 });
 
 const emit = defineEmits(["rendered", "error"]);

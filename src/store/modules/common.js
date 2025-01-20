@@ -18,7 +18,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.7.24 20250115"
+        webVer: "1.7.25 20250120"
     });
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
