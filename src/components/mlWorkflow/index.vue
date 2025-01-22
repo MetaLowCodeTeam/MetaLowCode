@@ -12,7 +12,7 @@
         class="sc-workflow-design"
         :class="{'is-default' : style === 'default','is-wecom': style === 'weCom'}"
     >
-        <div class="edit-zoom">
+        <div class="edit-zoom" v-if="!isHideZoom">
             <el-button size="small" style="width: 24px;" @click="editZoom('inc')">
                 <el-icon>
                     <ElIconPlus></ElIconPlus>
@@ -50,7 +50,7 @@
             </el-popover>
         </div>
         <div class="box-scale">
-            <node-wrap v-if="nodeConfig" v-model="nodeConfig"></node-wrap>
+            <node-wrap v-if="nodeConfig" v-model="nodeConfig" :isHideAddNode="isHideAddNode"></node-wrap>
             <div class="end-node">
                 <div class="end-node-circle"></div>
                 <div class="end-node-text">流程结束</div>
@@ -72,6 +72,10 @@ const { style } = storeToRefs(usePpprovalProcessStore());
 
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
+    // 是否隐藏放大缩小
+    isHideZoom: { type: Boolean, default: false },
+    // 是否隐藏添加节点
+    isHideAddNode: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref(null);
@@ -131,7 +135,14 @@ const editZoom = (target) => {
 </script>
 
 <style lang="scss">
-
+@keyframes shine {
+    0%, 100% {
+        background-position: top;
+    }
+    50% {
+        background-position: bottom;
+    }
+}
 .sc-workflow-design {
     width: 100%;
     font-size: 13px;
@@ -195,6 +206,9 @@ const editZoom = (target) => {
         border-color: rgb(202, 202, 202) transparent transparent;
         background: #f6f8f9;
     }
+    .node-wrap-box.is-highlight::before {
+        border-color: green transparent transparent;
+    }
     .node-wrap-box.start-node:before {
         content: none;
     }
@@ -253,14 +267,19 @@ const editZoom = (target) => {
         content: "";
         position: absolute;
         top: 0px;
-        left: 0px;
+        left: 2px;
         right: 0px;
         bottom: 0px;
         z-index: -1;
         margin: auto;
         width: 2px;
         height: 100%;
-        background-color: rgb(202, 202, 202);
+        background: transparent;
+        border-left: 2px solid rgb(202, 202, 202);
+    }
+    .add-node-btn-box.is-highlight::before {
+        border-left: 2px dashed green;
+        // animation: slide 2s linear infinite;
     }
     .add-node-btn {
         user-select: none;

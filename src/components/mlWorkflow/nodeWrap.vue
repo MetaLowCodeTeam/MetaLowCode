@@ -1,17 +1,17 @@
 <template>
-	<promoter v-if="nodeConfig.type==0" v-model="nodeConfig"></promoter>
+	<promoter v-if="nodeConfig.type==0" v-model="nodeConfig" :isHideAddNode="isHideAddNode"></promoter>
 
-	<approver v-if="nodeConfig.type==1" v-model="nodeConfig"></approver>
+	<approver v-if="nodeConfig.type==1" v-model="nodeConfig" :isHideAddNode="isHideAddNode"></approver>
 
-	<send v-if="nodeConfig.type==2" v-model="nodeConfig"></send>
+	<send v-if="nodeConfig.type==2" v-model="nodeConfig" :isHideAddNode="isHideAddNode"></send>
 
-	<branch v-if="nodeConfig.type==4" v-model="nodeConfig">
+	<branch v-if="nodeConfig.type==4" v-model="nodeConfig" :isHideAddNode="isHideAddNode">
 		<template v-slot="slot">
-			<node-wrap v-if="slot.node" v-model="slot.node.childNode"></node-wrap>
+			<node-wrap v-if="slot.node" v-model="slot.node.childNode" :isHideAddNode="isHideAddNode"></node-wrap>
 		</template>
 	</branch>
 
-	<node-wrap v-if="nodeConfig.childNode" v-model="nodeConfig.childNode"></node-wrap>
+	<node-wrap v-if="nodeConfig.childNode" v-model="nodeConfig.childNode" :isHideAddNode="isHideAddNode"></node-wrap>
 
 </template>
 
@@ -23,7 +23,8 @@
 
 	export default {
 		props: {
-			modelValue: { type: Object, default: () => {} }
+			modelValue: { type: Object, default: () => {} },
+            isHideAddNode: { type: Boolean, default: false },
 		},
 		components: {
 			approver,

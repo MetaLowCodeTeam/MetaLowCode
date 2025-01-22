@@ -1,6 +1,6 @@
 <template>
     <div class="node-wrap">
-        <div class="node-wrap-box" @click="show">
+        <div class="node-wrap-box" :class="{'is-highlight': nodeConfig.highlightBefore}" @click="show">
             <div class="title ccto">
                 <div v-if="style === 'weCom'" class="we-com-hr"></div>
                 <el-icon class="icon">
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <add-node v-model="nodeConfig.childNode"></add-node>
+        <add-node v-model="nodeConfig.childNode" :isHideAddNode="isHideAddNode" :isHighlight="nodeConfig.isHighlight"></add-node>
         <el-drawer
             title="抄送人设置"
             v-model="drawer"
@@ -76,6 +76,7 @@ import { storeToRefs } from "pinia";
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
+    isHideAddNode: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref({});
