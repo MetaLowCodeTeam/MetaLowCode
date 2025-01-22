@@ -42,7 +42,7 @@
 			v-if="fromData.type === 'add' || fromData.type === 'edit'"
 			v-loading="loading"
 		>
-			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
+			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'" @submit.prevent>
 				<el-form-item
 					:label="$t('appManager.1100')"
 					class="is-required"
@@ -170,7 +170,7 @@
 		</div>
 		<!-- 安装 -->
 		<div v-if="fromData.type === 'install'" v-loading="loading">
-			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
+			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'" @submit.prevent>
 				<el-form-item :label="$t('appManager.1106')">
 					<ml-upload
 						accept=".zip"
@@ -212,7 +212,7 @@
 		</div>
 		<!-- 导出 -->
 		<div v-if="fromData.type === 'export'" v-loading="loading">
-			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'">
+			<el-form :label-width="language == 'zh-CN' ? '110px' : '150px'" @submit.prevent>
 				<el-form-item
 					:label="$t('appManager.1100')"
 					class="is-required"
@@ -324,24 +324,27 @@ const openDialog = (type, data) => {
 	if (type === "edit" || type === "export") {
 		fromData.value = JSON.parse(JSON.stringify(data));
 	} else {
-        // 没有数据，则默认设置
-        if(data.length < 1) {
-            fromData.value = {
-                entityNumber: 1000,
-                startingCode: 100000,
-            };
-        }else {
-            // 找到 数据里 startingCode 最大的那条数据
-            let maxStartingCodeItem = data.reduce((maxItem, item) => {
-                return maxItem.startingCode > item.startingCode ? maxItem : item;
-            }, data[0]);
-            fromData.value = {
-                entityNumber: 1000,
-                startingCode: maxStartingCodeItem.startingCode + maxStartingCodeItem.entityNumber,
-            };
+        if(data) {
+            // 没有数据，则默认设置
+            if(data.length < 1) {
+                fromData.value = {
+                    entityNumber: 1000,
+                    startingCode: 100000,
+                };
+            }else {
+                // 找到 数据里 startingCode 最大的那条数据
+                let maxStartingCodeItem = data.reduce((maxItem, item) => {
+                    return maxItem.startingCode > item.startingCode ? maxItem : item;
+                }, data[0]);
+                fromData.value = {
+                    entityNumber: 1000,
+                    startingCode: maxStartingCodeItem.startingCode + maxStartingCodeItem.entityNumber,
+                };
+            }
         }
 	}
 	fromData.value.type = type;
+    console.log(fromData.value);
 	fromData.value.title = DialogType[type];
     if(!fromData.value.iconConfig) {
         fromData.value.iconConfig = {
