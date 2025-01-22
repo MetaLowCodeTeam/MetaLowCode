@@ -8,7 +8,7 @@ const useGlobalStore = defineStore('globalStore', () => {
     //移动端布局
     let ismobile = ref(false);
     //布局
-    let layout = ref(localStorage.getItem('LAYOUT') || config.LAYOUT);
+    let layout = ref(config.LAYOUT);
     //菜单是否折叠 toggle
     let menuIsCollapse = ref(config.MENU_IS_COLLAPSE);
     //多标签栏
@@ -21,7 +21,6 @@ const useGlobalStore = defineStore('globalStore', () => {
     }
     function SET_layout(key) {
         layout.value = key
-        localStorage.setItem('LAYOUT',key)
     }
     function SET_theme(key) {
         theme.value = key

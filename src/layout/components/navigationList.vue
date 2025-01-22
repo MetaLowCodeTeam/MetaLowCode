@@ -1,13 +1,14 @@
 <template>
     <el-popover placement="top" :width="200" :trigger="trigger" :popper-style="{'padding':0}">
         <div class="nav-list">
-            <div
-                class="nav-item text-ellipsis"
-                v-for="(item,inx) of navigationList"
-                :key="inx"
-                :class="{'is-active':chosenNavigationId == item.layoutConfigId}"
-                @click="navClick(item)"
-            >
+            <el-scrollbar max-height="300px">
+                <div
+                    class="nav-item text-ellipsis"
+                    v-for="(item,inx) of navigationList"
+                    :key="inx"
+                    :class="{'is-active':chosenNavigationId == item.layoutConfigId}"
+                    @click="navClick(item)"
+                >
                 {{ item.configName }}
                 <div class="action-icon" v-if="$TOOL.checkRole('r6007')">
                     <span class="icon-span edit-icon mr-5" @click.stop="editMenu(item)">
@@ -20,8 +21,9 @@
                             <ElIconCloseBold />
                         </el-icon>
                     </span>
+                    </div>
                 </div>
-            </div>
+            </el-scrollbar>
             <div class="add-box" v-if="$TOOL.checkRole('r6007')">
                 <el-button class="add-btn mt-5 w-100" size="small" @click="editMenu({})">
                     <el-icon class="top-1 mr-3">

@@ -1,4 +1,4 @@
-import useGlobalStore from "@/store/modules/global";
+import useCommonStore from "@/store/modules/common";
 export default [
     {
         label: "通用配置",
@@ -39,16 +39,16 @@ export default [
             },
             {
                 label: "框架布局",
-                key: "layout",
+                key: "layoutConfig",
                 type: "select",
                 options: [
                     { label: "默认", value: "header" },
                     { label: "功能坞", value: "dock" },
                 ],
-                onChange: (val) => {
-                    const { SET_layout } = useGlobalStore();
-                    SET_layout(val);
-                }
+                // onChange: (val) => {
+                //     const { setPublicSettingByKey } = useCommonStore();
+                //     setPublicSettingByKey("layoutConfig", val);
+                // }
             },
             {
                 label: "版本号",

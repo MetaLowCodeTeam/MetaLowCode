@@ -414,7 +414,7 @@ export default {
             return ismobile.value;
         },
         layoutFn() {
-			return this.getUrlParams('layout') || layout.value;
+			return this.getUrlParams('layout') || publicSetting.value.layoutConfig;
         },
         layoutTagsFn() {
             return layoutTags.value;
@@ -429,9 +429,9 @@ export default {
             let computedWidth;
             let nameLangth = this.appName?.length;
             if(nameLangth < 7){
-                computedWidth = 520;
+                computedWidth = 570;
             }else {
-                computedWidth = 560 + ((nameLangth - 6 ) * 20);
+                computedWidth = 570 + ((nameLangth - 6 ) * 20);
             }
             return "calc(100% - "+ computedWidth +"px)";
         },
@@ -441,8 +441,13 @@ export default {
         window.addEventListener("resize", this.onLayoutResize);
         var menu = this.$router.sc_getMenu();
         this.menu = this.filterUrl(menu);
+        console.log(this.menu)
         this.dockMenu = [...this.menu[0].children];
-        this.dockMenu.push(this.menu[1]);
+        this.menu.forEach((item,inx) => {
+            if(inx != 0){
+                this.dockMenu.push(item);
+            }
+        });
         this.getDefaultOpeneds();
         this.showThis();
     },

@@ -423,7 +423,9 @@ const initData = async () => {
         if(!confData.databaseDumpPath){
             confData.autoBackup = false;
         }
-        confData.layout = localStorage.getItem('LAYOUT') || 'header';
+        if(!confData.layoutConfig) {
+            confData.layoutConfig = 'header';
+        }
     }
     loading.value = false;
 };
