@@ -1,5 +1,5 @@
 <template>
-    <div class="add-node-btn-box">
+    <div class="add-node-btn-box" :class="{'is-highlight': isHighlight}">
         <div class="add-node-btn">
             <el-popover
                 placement="right-start"
@@ -7,6 +7,7 @@
                 trigger="click"
                 :hide-after="0"
                 :show-after="0"
+                v-if="!isHideAddNode"
             >
                 <template #reference>
                     <el-button type="primary" icon="el-icon-plus" circle></el-button>
@@ -42,6 +43,8 @@
 export default {
     props: {
         modelValue: { type: Object, default: () => {} },
+        isHideAddNode: { type: Boolean, default: false },
+        isHighlight: { type: Boolean, default: false },
     },
     data() {
         return {};

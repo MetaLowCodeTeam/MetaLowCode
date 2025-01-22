@@ -193,6 +193,15 @@ const routes = [
         ]
     },
     
+    // 文件预览
+    {
+        path: appPath + "filePreview",
+        component: () => import(/* webpackChunkName: "luckysheet" */ '@/components/mlOfficePreview/Examples.vue'),
+        name: "FilePreview",
+        meta: {
+            title: "文件预览"
+        }
+    },
     // 消息中心
     // {
     //     path: appPath + "notification",

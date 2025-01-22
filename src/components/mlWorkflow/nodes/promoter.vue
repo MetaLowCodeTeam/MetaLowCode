@@ -1,6 +1,6 @@
 <template>
     <div class="node-wrap">
-        <div class="node-wrap-box start-node" @click="show">
+        <div class="node-wrap-box start-node" :class="{'is-highlight': nodeConfig.highlightBefore}" @click="show">
             <div class="title promoter">
                 <div v-if="style === 'weCom'" class="we-com-hr"></div>
                 <el-icon class="icon">
@@ -12,7 +12,7 @@
                 <div class="default-div">{{ toText(nodeConfig) }}</div>
             </div>
         </div>
-        <add-node v-model="nodeConfig.childNode"></add-node>
+        <add-node v-model="nodeConfig.childNode" :isHideAddNode="isHideAddNode" :isHighlight="nodeConfig.isHighlight"></add-node>
         <el-drawer
             class="mlnode-drawer"
             title="发起人"
@@ -107,6 +107,7 @@ let cloneDeep = inject("$CloneDeep");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
+    isHideAddNode: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["update:modelValue"]);

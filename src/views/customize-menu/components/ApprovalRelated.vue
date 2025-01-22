@@ -218,13 +218,56 @@ const openHistoryDialog = async (row) => {
 		entityId: myApproval.value.recordId,
 	});
 	if (res) {
-		MlApproveHistoryRefs.value?.openDialog(
+        let nodeConfig = {};
+        if(res.data.approvalTask){
+            let { approvalTask } = res.data;
+            nodeConfig = {
+                nodeName: "发起人",
+                type: 0,
+                // 谁可以审批
+                nodeRoleType: 3,
+                isHighlight: true,
+                // 指定用户
+                nodeRoleList: [
+                    { id: 1, name: res.data.approvalStepsList ? res.data.approvalStepsList[0].stepUserName : "" }
+                ],
+                // 发起条件
+                filter: {
+                    equation: "",
+                    items: [],
+                },
+                childNode: formatAttrMore(approvalTask.attrMore ? JSON.parse(approvalTask.attrMore) : [], approvalTask.currentNode)
+            };
+        }
+        MlApproveHistoryRefs.value?.openDialog(
 			res.data.flowType,
-			res.data.approvalStepsList || []
+			res.data.approvalStepsList || [],
+            nodeConfig
 		);
 	}
 	approveHistoryLoading.value = false;
 };
+
+const formatAttrMore = (attrMore, currentNode) => {
+    let newAttrMore = {};
+    let current = newAttrMore;
+    // 遍历 attrMore，将每个元素链接到其 childNode
+    attrMore.forEach((item, index) => {
+        if (index === 0) {
+            item.isHighlight = currentNode > index;
+            item.highlightBefore = currentNode >= index;
+            newAttrMore = item;
+            current = newAttrMore;
+        } else {
+            item.isHighlight = currentNode > index;
+            item.highlightBefore = currentNode >= index;
+            current.childNode = item;
+            current = current.childNode;
+        }
+    });
+    console.log(newAttrMore,'newAttrMore')
+    return newAttrMore;
+}
 
 // 审批历史确认
 const confirm = () => {

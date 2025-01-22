@@ -39,7 +39,7 @@
                                     </el-icon>
                                 </div>
                             </div>
-                            <add-node v-model="item.childNode"></add-node>
+                            <add-node v-model="item.childNode" :isHideAddNode="isHideAddNode" :isHighlight="nodeConfig.isHighlight"></add-node>
                         </div>
                     </div>
                     <slot v-if="item.childNode" :node="item"></slot>
@@ -55,7 +55,7 @@
                     ></div>
                 </div>
             </div>
-            <add-node v-model="nodeConfig.childNode"></add-node>
+            <add-node v-model="nodeConfig.childNode" :isHideAddNode="isHideAddNode" :isHighlight="nodeConfig.isHighlight"></add-node>
         </div>
         <el-drawer
             title="条件设置"
@@ -109,6 +109,7 @@ let message = inject("$ElMessage");
 const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
+    isHideAddNode: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref({});
