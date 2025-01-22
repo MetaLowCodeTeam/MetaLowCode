@@ -503,3 +503,31 @@ body .tox-tinymce-aux {
 .new-message .el-footer {
     padding: 13px 15px;
 }
+
+.dock-header-menu {
+    .el-menu-item {
+        &:hover {
+            background-color: var(--el-color-primary-light-1) !important;
+        }
+        &:focus {
+            background-color: transparent !important;
+        }
+        &.is-active,&.isActive {
+            background-color: var(--el-color-primary-light-1) !important;
+        }
+    }
+
+}
+
+.dock-header-menu .el-menu .el-menu-item.is-active, .dock-header-menu .el-menu .el-sub-menu.is-active>.el-sub-menu__title {
+    background-color: var(--el-color-primary-light-1) !important;
+}
+
+.dock-header-menu>.el-sub-menu.is-active .el-sub-menu__title {
+    background-color: var(--el-color-primary-light-1) !important;
+    border-bottom: 0;
+}
+
+.dock-header-menu>.el-menu-item.is-active {
+    border-bottom: 0;
+}

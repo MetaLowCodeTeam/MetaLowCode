@@ -41,6 +41,7 @@
                                         v-model="confData[item.key]" 
                                         :placeholder="item.placeholder" 
                                         :style="{'width': item.selectWidth }"
+                                        @change="item.onChange"
                                     >
                                         <el-option
                                             v-for="op in item.options"
@@ -422,6 +423,7 @@ const initData = async () => {
         if(!confData.databaseDumpPath){
             confData.autoBackup = false;
         }
+        confData.layout = localStorage.getItem('LAYOUT') || 'header';
     }
     loading.value = false;
 };

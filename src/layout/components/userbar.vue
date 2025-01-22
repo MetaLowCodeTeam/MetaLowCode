@@ -1,12 +1,19 @@
 <template>
     <div class="user-bar">
-        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom" v-if="$TOOL.checkRole('r6007')">
+        <!--  -->
+        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom" v-if="$TOOL.checkRole('r6007') && !isDockLayout">
             <div class="screen panel-item hidden-sm-and-down" @click="setTopMenuDialogIsShow = true">
                 <el-icon>
                     <ElIconGrid />
                 </el-icon>
             </div>
         </el-tooltip>
+        <!-- <el-tooltip class="box-item" effect="light" content="" placement="bottom" v-if="isDockLayout"> -->
+        <div class="screen panel-item hidden-sm-and-down">
+            <navigation v-if="isDockLayout" isDockLayout/>
+        </div>
+            
+        <!-- </el-tooltip> -->
         <el-tooltip class="box-item" effect="light" content="审批中心" placement="bottom">
             <div class="approval-center panel-item">
                 <el-dropdown trigger="click" @command="handleApproval">
@@ -146,12 +153,20 @@ import { $fromNow } from "@/utils/util";
 import Detail from "@/views/customize-menu/detail.vue";
 import mlApprove from "@/components/mlApprove/index.vue";
 import setTopMenu from './setTopMenu.vue';
+import navigation from "./navigationList.vue";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 const COMMON_CONFIG = inject("COMMON_CONFIG");
+
+const props = defineProps({
+    isDockLayout: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 const router = useRouter();
 let userName = ref("");

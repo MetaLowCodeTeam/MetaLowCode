@@ -1,3 +1,4 @@
+import useGlobalStore from "@/store/modules/global";
 export default [
     {
         label: "通用配置",
@@ -35,6 +36,19 @@ export default [
                 type: "picker",
                 required: true,
                 isError: false,
+            },
+            {
+                label: "框架布局",
+                key: "layout",
+                type: "select",
+                options: [
+                    { label: "默认", value: "header" },
+                    { label: "功能坞", value: "dock" },
+                ],
+                onChange: (val) => {
+                    const { SET_layout } = useGlobalStore();
+                    SET_layout(val);
+                }
             },
             {
                 label: "版本号",

@@ -162,22 +162,31 @@
                     <span>{{ appName }}</span>
                 </div>
             </div>
-            <div class="adminui-header-right">
-                <div v-if="!ismobileFn" class="adminui-header-menu">
-                    <el-menu
-                        :default-openeds="defaultOpeneds"
-                        mode="horizontal"
-                        :default-active="active"
-                        router
-                        background-color="#222b45"
-                        text-color="#fff"
-                        active-text-color="var(--el-color-primary)"
-                    >
-                        <NavMenu :navMenus="menu"></NavMenu>
-                    </el-menu>
-                </div>
-                <Side-m v-if="ismobileFn"></Side-m>
-                <userbar></userbar>
+            <div
+                class="adminui-header-center"
+                v-if="!ismobileFn"
+                :style="{'width': getHeaderCenterWidht}"
+            >
+                <el-scrollbar>
+                    <div class="scrollbar-flex-content">
+                        <el-menu
+                            class="dock-header-menu"
+                            popper-class="dock-header-menu"
+                            :default-openeds="defaultOpeneds"
+                            mode="horizontal"
+                            :default-active="active"
+                            router
+                            background-color="var(--el-color-primary)"
+                            text-color="#fff"
+                            active-text-color="#fff"
+                        >
+                            <NavMenu :navMenus="dockMenu"></NavMenu>
+                        </el-menu>
+                    </div>
+                </el-scrollbar>
+            </div>
+            <div class="adminui-header-right">         
+                <userbar isDockLayout></userbar>
             </div>
         </header>
 
@@ -363,6 +372,8 @@ export default {
             settingDialog: false,
             menu: [],
             nextMenu: [],
+            // 功能坞菜单
+            dockMenu: [],
             pmenu: {},
             active: "",
             defaultOpeneds: [],
@@ -430,6 +441,8 @@ export default {
         window.addEventListener("resize", this.onLayoutResize);
         var menu = this.$router.sc_getMenu();
         this.menu = this.filterUrl(menu);
+        this.dockMenu = [...this.menu[0].children];
+        this.dockMenu.push(this.menu[1]);
         this.getDefaultOpeneds();
         this.showThis();
     },
