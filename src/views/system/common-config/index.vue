@@ -41,6 +41,7 @@
                                         v-model="confData[item.key]" 
                                         :placeholder="item.placeholder" 
                                         :style="{'width': item.selectWidth }"
+                                        @change="item.onChange"
                                     >
                                         <el-option
                                             v-for="op in item.options"
@@ -421,6 +422,9 @@ const initData = async () => {
         // 初始化数据备份
         if(!confData.databaseDumpPath){
             confData.autoBackup = false;
+        }
+        if(!confData.layoutConfig) {
+            confData.layoutConfig = 'header';
         }
     }
     loading.value = false;

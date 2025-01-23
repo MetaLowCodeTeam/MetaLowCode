@@ -1,3 +1,4 @@
+import useCommonStore from "@/store/modules/common";
 export default [
     {
         label: "通用配置",
@@ -35,6 +36,19 @@ export default [
                 type: "picker",
                 required: true,
                 isError: false,
+            },
+            {
+                label: "主导航菜单位置",
+                key: "layoutConfig",
+                type: "select",
+                options: [
+                    { label: "居左", value: "header" },
+                    { label: "顶部", value: "dock" },
+                ],
+                // onChange: (val) => {
+                //     const { setPublicSettingByKey } = useCommonStore();
+                //     setPublicSettingByKey("layoutConfig", val);
+                // }
             },
             {
                 label: "版本号",
