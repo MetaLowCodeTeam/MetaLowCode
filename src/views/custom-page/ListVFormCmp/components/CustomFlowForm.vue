@@ -36,6 +36,7 @@ let editConf = ref({
 	// 是否显示取消按钮
 	showCancelBtn: true,
 	showConfirmRefreshBtn: false,
+    showConfirmAndSubmitBtn: false,
 });
 let entityName = ref("");
 let approvalConfigId = ref("");
