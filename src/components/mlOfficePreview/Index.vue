@@ -82,7 +82,7 @@ const errorHandler = () => {
 
 const formatSrc = (url) => {
     // 如果url不是http开头，则加上 VITE_APP_BASE_API
-    if(!url.startsWith("http")) {
+    if(url.indexOf("http") !== 0) {
         return import.meta.env.VITE_APP_BASE_API + url;
     }
     return url;
