@@ -63,6 +63,7 @@
             >
                 保存并提交
             </el-button>
+            <slot name="afterConfirmAndSubmitBtn"></slot>
         </template>
         <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
     </ml-dialog>
