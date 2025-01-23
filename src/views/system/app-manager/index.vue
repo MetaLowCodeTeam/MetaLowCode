@@ -161,6 +161,7 @@
                                 class="app-manager-item-export-tag" 
                                 @click="handleExportApp(item)"
                                 :title="$t('appManager.1007')"
+                                v-if="activeTab === 'developing'"
                             >
                                 <el-icon size="16">
                                     <TopRight />
@@ -209,12 +210,11 @@
 								</div>
 							</div>
 							<!-- 操作按钮 -->
-							<div class="app-manager-item-btns">
+							<div class="app-manager-item-btns" v-if="activeTab === 'developing'">
 								<el-button
 									type="primary"
 									size="small"
                                     plain
-									v-if="activeTab === 'developing'"
 									@click="handleDesignApp(item)"
 								>
 									{{ $t("appManager.1003") }}
@@ -232,9 +232,6 @@
 									<template #dropdown>
 										<el-dropdown-menu>
 											<el-dropdown-item
-												v-if="
-													activeTab === 'developing'
-												"
 												command="edit"
 											>
 												{{ $t("appManager.1014") }}
