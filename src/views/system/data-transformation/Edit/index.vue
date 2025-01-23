@@ -89,9 +89,8 @@ import { reactive, ref } from "vue";
  */
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-import http from "@/utils/request";
 import { ElMessage } from "element-plus";
-import { saveRecord } from "@/api/crud";
+import { saveTransform } from "@/api/transform";
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 
 const emits = defineEmits(["saveFinish"]);
@@ -180,7 +179,7 @@ const submitForm = (formEl) => {
 // 执行保存
 const doSave = async (recordId, data, msg) => {
 	dialogConf.value.loading = true;
-	let res = await http.post('transform/saveRecord', data, {
+	let res = await saveTransform(data, {
         params: {
             entity: 'Transform',
             recordId: recordId,

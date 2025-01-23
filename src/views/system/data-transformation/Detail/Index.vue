@@ -91,8 +91,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { saveRecord, queryById } from "@/api/crud";
-import http from "@/utils/request";
+import { saveTransform, queryById } from "@/api/transform";
 const Router = useRouter();
 
 import useCommonStore from "@/store/modules/common";
@@ -163,7 +162,7 @@ const queryTransformById = async () => {
 	loading.value = true;
 	loadingText.value = "数据加载中...";
 	isFinish.value = false;
-	let res = await http.get('/transform/queryById', {
+	let res = await queryById({
         entityId: recordId.value,
     })
 	if (res) {
@@ -264,8 +263,7 @@ const onSave = async () => {
 	}
 	loading.value = true;
 	loadingText.value = "数据保存中...";
-	let res = await http.post(
-        'transform/saveRecord', 
+	let res = await saveTransform(
         {
             fieldMapping: JSON.stringify(fieldMapping.value),
             backfill: JSON.stringify(backfill.value),
