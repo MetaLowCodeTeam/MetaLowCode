@@ -145,6 +145,7 @@
             nameFieldName="userName"
             isUser
             :disableWidgets="disableWidgets"
+            :unDisableWidgets="unDisableWidgets"
         />
 
         <!-- 列表详情 -->
@@ -333,6 +334,8 @@ export default {
             memberList: [],
             // 要禁用的字段
             disableWidgets: [],
+            // 不禁用字段
+            unDisableWidgets: [],
             // 部门树节点
             node:{},
         };
@@ -407,7 +410,8 @@ export default {
         addClick() {
             let tempV = {};
             tempV.entityName = "User";
-            this.disableWidgets = ["departmentId"];
+            this.disableWidgets = [];
+            this.unDisableWidgets = ["departmentId"];
             if(this.node?.id){
                 tempV.fieldName = "departmentId";
                 tempV.fieldNameVale = this.node.id;

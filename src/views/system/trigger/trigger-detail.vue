@@ -181,6 +181,8 @@ const onSave = async (target) => {
         priority,
         actionContent,
         defaultTargetEntity,
+        createType,
+        transformId
     } = trigger;
     // 如果是更新规则
     // if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
@@ -219,8 +221,7 @@ const onSave = async (target) => {
     if (
         trigger.actionType.value == 2 ||
         trigger.actionType.value == 1 ||
-        trigger.actionType.value == 3 ||
-        trigger.actionType.value == 15
+        trigger.actionType.value == 3
     ) {
         actionContent.entityName = defaultTargetEntity.entityName || defaultTargetEntity.name;
         actionContent.fieldName = defaultTargetEntity.fieldName;
@@ -350,6 +351,11 @@ const onSave = async (target) => {
             }
             actionContent.scriptId = trigger.triggerConfigId;
         }
+    }
+    // 如果是自动创建
+    if(trigger.actionType.value == 15){
+        actionContent.createType = createType;
+        actionContent.transformId = transformId;
     }
     params.formModel.actionContent = JSON.stringify(actionContent);
     if (target == "execute") {

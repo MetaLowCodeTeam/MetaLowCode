@@ -395,8 +395,10 @@ import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getDataList } from "@/api/crud";
+import { queryByEntity } from "@/api/transform";
 // 允许修改字段组件
 import ModifiableFields from "@/components/mlApprove/ModifiableFields.vue";
+
 
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
@@ -622,35 +624,11 @@ const approvalTypeChange = async () => {
     if(myFormData.value.approvalType == 3){
         loadDTLoading.value = true;
         // 加载数据转换List
-        let dtRes = await http.post("/transform/listQuery", {
-            mainEntity: 'Transform',
-            fieldsList: 'transformName, sourceEntity, targetEntity',
-            filter: {
-                equation:"AND",
-                items: [
-                    {
-                        fieldName: "disabled",
-                        op: "EQ",
-                        value: 0,
-                    },
-                    {
-                        fieldName: "isPreview",
-                        op: "EQ",
-                        value: 0,
-                    },
-                    {
-                        fieldName: "sourceEntity",
-                        op: "EQ",
-                        value: entityName.value,
-                    }
-                ]
-            },
-            pageSize: 99999,
-            pageNo: 1,
+        let dtRes = await queryByEntity({
+            sourceEntityName: entityName.value
         });
         if(dtRes){
-            dtList.value = dtRes.data.dataList;
-
+            dtList.value = dtRes.data;
         }
         loadDTLoading.value = false;
         // 加载子流程List

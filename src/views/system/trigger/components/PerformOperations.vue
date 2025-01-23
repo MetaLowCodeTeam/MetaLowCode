@@ -110,17 +110,28 @@ const priorityChange = () => {
 let autoCreationRefs = ref();
 // 保存调用
 const onSave = () => {
-    let { actionType, actionContent } = trigger.value;
+    let { actionType, actionContent, createType, transformId, defaultTargetEntity } = trigger.value;
     // 自动创建
     if (actionType.value == 15) {
-        let { requiredFields } = autoCreationRefs.value;
-        let itemFields = actionContent.items.map((el) => el.targetField);
-        let needFields = requiredFields.map((el) => el.fieldName);
-        for (let index = 0; index < needFields.length; index++) {
-            const element = needFields[index];
-            if(!itemFields.includes(element)){
-                ElMessage.warning(requiredFields[index].fieldLabel + "为必填字段，请添加！")
+        // 数据转化
+        if(createType == 2 && !transformId){
+            ElMessage.error("请选择数据转换！")
+            return
+        }
+        if(createType == 1) {
+            if(!defaultTargetEntity) {
+                ElMessage.error("请选择目标实体！")
                 return
+            }
+            let { requiredFields } = autoCreationRefs.value;
+            let itemFields = actionContent.items.map((el) => el.targetField);
+            let needFields = requiredFields.map((el) => el.fieldName);
+            for (let index = 0; index < needFields.length; index++) {
+                const element = needFields[index];
+                if(!itemFields.includes(element)){
+                    ElMessage.error(requiredFields[index].fieldLabel + "为必填字段，请添加！")
+                    return
+                }
             }
         }
         emit("onSave");

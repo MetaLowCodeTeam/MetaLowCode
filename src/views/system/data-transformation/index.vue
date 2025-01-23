@@ -74,7 +74,7 @@ import { inject, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 const { queryEntityLabelByName } = useCommonStore();
-import { deleteRecord } from "@/api/crud";
+import { deleteRecord } from "@/api/transform";
 import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 /**
@@ -181,7 +181,7 @@ const goDetail = (row) => {
 const deleteRow = (row) => {
 	ElMessageBox.confirm("是否删除该数据转换?", "删除确认")
 	    .then(async () => {
-            let res = await http.get("transform/deleteRecord", {
+            let res = await deleteRecord({
                 recordId: row.transformId,
             });
             if(res){

@@ -98,7 +98,10 @@ const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = u
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
+    // 禁用字段
     disableWidgets: { type: Array, default: () => [] },
+    // 不禁用字段
+    unDisableWidgets: { type: Array, default: () => [] },
     nameFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
     // 新建编辑配置
@@ -369,7 +372,7 @@ const initFormLayout = async () => {
                         }
 						vFormRef.value.setFormData(param);
 						nextTick(() => {
-							if (row.fieldName) {
+							if (row.fieldName && !props.unDisableWidgets.includes(row.fieldName)) {
 								vFormRef.value.disableWidgets([row.fieldName]);
 							}
                             if(isReferenceComp.value && !row.detailEntityFlag){
@@ -394,19 +397,23 @@ const initFormLayout = async () => {
 const getFieldListOfEntityApi = async (tag) => {
     // 获取实体所有字段
     let res = await getFieldListOfEntity(row.entityName);
-    let disabledFileds = [];
+    let disabledFields = [];
     if (res && res.data) {
         // 取可编辑字段
         res.data.forEach((el) => {
             if (!el[tag]) {
-                disabledFileds.push(el.name);
+                disabledFields.push(el.name);
             }
         });
     }
     if (props.disableWidgets.length > 0) {
-        disabledFileds.push(...props.disableWidgets);
+        props.disableWidgets.forEach(el => {
+            if(!props.unDisableWidgets.includes(el)){
+                disabledFields.push(el);
+            }
+        })
     }
-    vFormRef.value.disableWidgets(disabledFileds);
+    vFormRef.value.disableWidgets(disabledFields);
 };
 
 /**
