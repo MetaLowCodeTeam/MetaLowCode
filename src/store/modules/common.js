@@ -108,6 +108,9 @@ const useCommonStore = defineStore('commonStore', () => {
         // publicSetting.value.trialVersionFlag = data.trialVersionFlag;
         // publicSetting.value.pluginIdList = data.pluginIdList;
         // publicSetting.value.mobilePhoneLogin = data.mobilePhoneLogin;
+        if(!data.layoutConfig) {
+            publicSetting.value.layoutConfig = "header";
+        }
     }
     const setPublicSettingByKey = (key, value) => {
         publicSetting.value[key] = value;

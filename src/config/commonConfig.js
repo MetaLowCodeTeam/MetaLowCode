@@ -38,12 +38,12 @@ export default [
                 isError: false,
             },
             {
-                label: "框架布局",
+                label: "主导航菜单位置",
                 key: "layoutConfig",
                 type: "select",
                 options: [
-                    { label: "默认", value: "header" },
-                    { label: "功能坞", value: "dock" },
+                    { label: "居左", value: "header" },
+                    { label: "顶部", value: "dock" },
                 ],
                 // onChange: (val) => {
                 //     const { setPublicSettingByKey } = useCommonStore();
