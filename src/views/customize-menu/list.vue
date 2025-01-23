@@ -202,7 +202,7 @@
                 </div>
             </div>
             </div>
-            <div v-if="tableColumn.length < 1">
+            <div v-if="showColumnSet">
                 <ListColumnSet 
                     :layoutConfig="layoutConfig"
                     :defaultColumnShow="defaultColumnShow"
@@ -625,6 +625,9 @@ let contentSlots = reactive({});
 // 是否显示操作列插槽
 let showActionColumnSlot = ref(false);
 
+// 是否显示列配置
+let showColumnSet = ref(false);
+
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
 // 配置项
 const listParamConf = ref({
@@ -980,6 +983,10 @@ const getLayoutList = async () => {
             let hasFixed = tableColumn.value.filter(el => el.fixed == 'left');
             checkedColumnFixed.value = hasFixed.length > 0 ? true : false;
             refreshData();
+        }
+        showColumnSet.value = false;
+        if(tableColumn.value.length < 1){
+            showColumnSet.value = true;
         }
     }
 };

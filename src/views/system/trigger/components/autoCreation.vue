@@ -1,215 +1,248 @@
 <template>
     <!-- 字段更新、聚合 -->
     <div class="action-div" v-loading="contentLoading">
-        <el-form-item label="目标实体">
-            <el-row class="w-100 mb-15" :gutter="20">
-                <el-col :span="9">
-                    <!-- {{ trigger.defaultTargetEntity }} -->
-                    <el-select
-                        v-model="trigger.defaultTargetEntity"
-                        filterable
-                        class="w-100"
-                        @change="targetEntityChange"
-                        :disabled="trigger.isOnSave"
-                        value-key="entityInx"
-                    >
-                        <el-option
-                            v-for="(op,inx) in tagEntitys"
-                            :key="inx"
-                            :label="op.label"
-                            :value="op"
-                        />
-                    </el-select>
-                </el-col>
-            </el-row>
-        </el-form-item>
-        <el-form-item>
-            <template #label>创建规则</template>
-            <div class="w-100 mb-10" v-if="trigger.actionContent?.items?.length > 0">
-                <el-row
-                    :gutter="20"
-                    class="update-rule-row w-100 mb-5"
-                    v-for="(item,inx) of trigger.actionContent.items"
-                    :key="inx"
+        <el-form-item label=" ">
+            <el-radio-group v-model="trigger.createType">
+                <el-radio 
+                    v-for="(op,inx) in createTypeList" 
+                    :key="inx" 
+                    :label="op.value" 
+                    :value="op.value"
                 >
+                    {{ op.label }}
+                </el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <template v-if="trigger.createType == 1">
+            <el-form-item label="目标实体" class="mt-10 is-required">
+                <el-row class="w-100 mb-15" :gutter="20">
                     <el-col :span="9">
-                        <span class="update-rule-span">{{ getTargetFieldLabel(item.targetField) }}</span>
-                    </el-col>
-                    <el-col :span="5">
-                        <span class="update-rule-span">{{ getUpdateModeLabel(item.updateMode) }}</span>
-                    </el-col>
-                    <el-col :span="9" class="update-rule-col-last">
-                        <div 
-                            v-if="item.updateMode == 'forCompile'"
-                            class="forCompile update-rule-span"
-                            style="width: calc(100% - 20px);cursor: pointer;"
-                            @click="openPreview(item.sourceField, item.scriptType, inx)"
+                        <!-- {{ trigger.defaultTargetEntity }} -->
+                        <el-select
+                            v-model="trigger.defaultTargetEntity"
+                            filterable
+                            class="w-100"
+                            @change="targetEntityChange"
+                            value-key="entityInx"
                         >
-                            <div class="w-100 yichu">
-                                {{ getSourceFieldLabel(item) }}
-                            </div>
-                            <span
-                                class="del-icon"
-                                @click.stop="delUpdateRule(inx)"
-                            >
-                                <el-icon>
-                                    <ElIconCloseBold />
-                                </el-icon>
-                            </span>
-                        </div>
-                        <span
-                            v-else
-                            class="update-rule-span"
-                            :class="{'toFixed':item.updateMode == 'toFixed','toNull':item.updateMode == 'toNull'}"
-                        >
-                            {{ getSourceFieldLabel(item) }}
-                            <span
-                                class="del-icon"
-                                @click="delUpdateRule(inx)"
-                            >
-                                <el-icon>
-                                    <ElIconCloseBold />
-                                </el-icon>
-                            </span>
-                        </span>
+                            <el-option
+                                v-for="(op,inx) in tagEntityList"
+                                :key="inx"
+                                :label="op.label"
+                                :value="op"
+                            />
+                        </el-select>
                     </el-col>
                 </el-row>
-            </div>
-            <el-row class="w-100 mb-10 update-rule" :gutter="20" v-loading="changeTagEntityLoading">
-                <el-col :span="9">
-                    <el-select
-                        v-model="selectTargetField"
-                        filterable
-                        class="w-100"
-                        @change="targetFieldChange"
-                        value-key="fieldLabel"
+            </el-form-item>
+            <el-form-item label="创建规则">
+                <div class="w-100 mb-10" v-if="trigger.actionContent?.items?.length > 0">
+                    <el-row
+                        :gutter="20"
+                        class="update-rule-row w-100 mb-5"
+                        v-for="(item,inx) of trigger.actionContent.items"
+                        :key="inx"
                     >
-                        <el-option
-                            v-for="(op,inx) in tagEntityFields"
-                            :key="inx"
-                            :label="op.fieldLabel + (!op.isNullable ? '[必填]' : '')"
-                            :value="op"
-                        />
-                    </el-select>
-                    <div class="w-100 info-text mt-3">目标字段</div>
-                </el-col>
-                <el-col :span="5">
-                    <el-select
-                        v-model="updateRule.updateMode"
-                        class="w-100"
-                        @change="updateModeChange"
-                    >
-                        <el-option
-                            v-for="(op,inx) in getUpdateModeList()"
-                            :key="inx"
-                            :label="op.label"
-                            :value="op.value"
-                        />
-                    </el-select>
-                    <div class="w-100 info-text mt-3">更新方式</div>
-                </el-col>
-                <el-col :span="9">
-                    <el-select
-                        v-if="updateRule.updateMode == 'forField'"
-                        v-model="updateRule.sourceField"
-                        filterable
-                        class="w-100"
-                    >
-                        <el-option
-                            v-for="(op,inx) in floatSourceFieldList()"
-                            :key="inx"
-                            :label="op.fieldLabel"
-                            :value="op.fieldName"
-                        />
-                    </el-select>
+                        <el-col :span="9">
+                            <span class="update-rule-span">{{ getTargetFieldLabel(item.targetField) }}</span>
+                        </el-col>
+                        <el-col :span="5">
+                            <span class="update-rule-span">{{ getUpdateModeLabel(item.updateMode) }}</span>
+                        </el-col>
+                        <el-col :span="9" class="update-rule-col-last">
+                            <div 
+                                v-if="item.updateMode == 'forCompile'"
+                                class="forCompile update-rule-span"
+                                style="width: calc(100% - 20px);cursor: pointer;"
+                                @click="openPreview(item.sourceField, item.scriptType, inx)"
+                            >
+                                <div class="w-100 yichu">
+                                    {{ getSourceFieldLabel(item) }}
+                                </div>
+                                <span
+                                    class="del-icon"
+                                    @click.stop="delUpdateRule(inx)"
+                                >
+                                    <el-icon>
+                                        <ElIconCloseBold />
+                                    </el-icon>
+                                </span>
+                            </div>
+                            <span
+                                v-else
+                                class="update-rule-span"
+                                :class="{'toFixed':item.updateMode == 'toFixed','toNull':item.updateMode == 'toNull'}"
+                            >
+                                {{ getSourceFieldLabel(item) }}
+                                <span
+                                    class="del-icon"
+                                    @click="delUpdateRule(inx)"
+                                >
+                                    <el-icon>
+                                        <ElIconCloseBold />
+                                    </el-icon>
+                                </span>
+                            </span>
+                        </el-col>
+                    </el-row>
+                </div>
+                <el-row class="w-100 mb-10 update-rule" :gutter="20" v-loading="changeTagEntityLoading">
+                    <el-col :span="9">
+                        <el-select
+                            v-model="selectTargetField"
+                            filterable
+                            class="w-100"
+                            @change="targetFieldChange"
+                            value-key="fieldLabel"
+                        >
+                            <el-option
+                                v-for="(op,inx) in tagEntityFields"
+                                :key="inx"
+                                :label="op.fieldLabel + (!op.isNullable ? '[必填]' : '')"
+                                :value="op"
+                            />
+                        </el-select>
+                        <div class="w-100 info-text mt-3">目标字段</div>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-select
+                            v-model="updateRule.updateMode"
+                            class="w-100"
+                            @change="updateModeChange"
+                        >
+                            <el-option
+                                v-for="(op,inx) in getUpdateModeList()"
+                                :key="inx"
+                                :label="op.label"
+                                :value="op.value"
+                            />
+                        </el-select>
+                        <div class="w-100 info-text mt-3">更新方式</div>
+                    </el-col>
+                    <el-col :span="9">
+                        <el-select
+                            v-if="updateRule.updateMode == 'forField'"
+                            v-model="updateRule.sourceField"
+                            filterable
+                            class="w-100"
+                        >
+                            <el-option
+                                v-for="(op,inx) in floatSourceFieldList()"
+                                :key="inx"
+                                :label="op.fieldLabel"
+                                :value="op.fieldName"
+                            />
+                        </el-select>
 
-                    <el-select
-                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Boolean'"
-                        v-model="updateRule.sourceField"
-                        filterable
-                        class="w-100"
-                    >
-                        <el-option label="正常" value="1" />
-                        <el-option label="禁用" value="0" />
-                    </el-select>
-                    <el-date-picker
-                        v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Date')"
-                        v-model="updateRule.sourceField"
-                        format="YYYY/MM/DD hh:mm:ss"
-                        value-format="YYYY-MM-DD hh:mm:ss a"
-                        type="datetime"
-                    />
-                    <el-input
-                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'ReferenceList' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
-                        v-model="updateRule.sourceField"
-                        placeholder="固定值"
-                    ></el-input>
-                    <el-input
-                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference' || toFixedForFieldType == 'ReferenceList'"
-                        v-model="updateRule.sourceField.label"
-                        placeholder="固定值"
-                    >
-                        <template #append>
-                            <el-button @click="showReferenceDialogFlag = true">
-                                <el-icon>
-                                    <ElIconSearch />
-                                </el-icon>
-                            </el-button>
-                        </template>
-                    </el-input>
-                    <el-select
-                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
-                        v-model="updateRule.sourceField"
-                        v-loading="optionItemLoading"
-                        filterable
-                        class="w-100"
-                    >
-                        <el-option
-                            v-for="(tOp,tInx) of optionItems"
-                            :key="tInx"
-                            :label="tOp.label"
-                            :value="tOp"
+                        <el-select
+                            v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Boolean'"
+                            v-model="updateRule.sourceField"
+                            filterable
+                            class="w-100"
+                        >
+                            <el-option label="正常" value="1" />
+                            <el-option label="禁用" value="0" />
+                        </el-select>
+                        <el-date-picker
+                            v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Date')"
+                            v-model="updateRule.sourceField"
+                            format="YYYY/MM/DD hh:mm:ss"
+                            value-format="YYYY-MM-DD hh:mm:ss a"
+                            type="datetime"
                         />
-                    </el-select>
-                    <el-select
-                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Tag'"
-                        v-model="updateRule.sourceField"
-                        v-loading="optionItemLoading"
-                        filterable
-                        class="w-100"
-                        multiple
-                    >
-                        <el-option
-                            v-for="(tOp,tInx) of optionItems"
-                            :key="tInx"
-                            :label="tOp.label"
-                            :value="tOp"
+                        <el-input
+                            v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' &&  toFixedForFieldType != 'ReferenceList' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
+                            v-model="updateRule.sourceField"
+                            placeholder="固定值"
+                        ></el-input>
+                        <el-input
+                            v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference' || toFixedForFieldType == 'ReferenceList'"
+                            v-model="updateRule.sourceField.label"
+                            placeholder="固定值"
+                        >
+                            <template #append>
+                                <el-button @click="showReferenceDialogFlag = true">
+                                    <el-icon>
+                                        <ElIconSearch />
+                                    </el-icon>
+                                </el-button>
+                            </template>
+                        </el-input>
+                        <el-select
+                            v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
+                            v-model="updateRule.sourceField"
+                            v-loading="optionItemLoading"
+                            filterable
+                            class="w-100"
+                        >
+                            <el-option
+                                v-for="(tOp,tInx) of optionItems"
+                                :key="tInx"
+                                :label="tOp.label"
+                                :value="tOp"
+                            />
+                        </el-select>
+                        <el-select
+                            v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Tag'"
+                            v-model="updateRule.sourceField"
+                            v-loading="optionItemLoading"
+                            filterable
+                            class="w-100"
+                            multiple
+                        >
+                            <el-option
+                                v-for="(tOp,tInx) of optionItems"
+                                :key="tInx"
+                                :label="tOp.label"
+                                :value="tOp"
+                            />
+                        </el-select>
+                        <el-input
+                            v-if="updateRule.updateMode == 'forCompile' && updateRule.scriptType == 'aviator'"
+                            v-model="updateRule.sourceField"
+                            placeholder="计算公式"
+                            autosize
+                            type="textarea"
+                            @click="checkMlFormula"
+                        ></el-input>
+                        <el-input 
+                            v-if="updateRule.updateMode == 'forCompile' && updateRule.scriptType == 'liteFlowJava'"
+                            v-model="updateRule.sourceField"
+                            placeholder="计算公式"
+                            @click="checkMlFormula"
                         />
-                    </el-select>
-                    <el-input
-                        v-if="updateRule.updateMode == 'forCompile' && updateRule.scriptType == 'aviator'"
-                        v-model="updateRule.sourceField"
-                        placeholder="计算公式"
-                        autosize
-                        type="textarea"
-                        @click="checkMlFormula"
-                    ></el-input>
-                    <el-input 
-                        v-if="updateRule.updateMode == 'forCompile' && updateRule.scriptType == 'liteFlowJava'"
-                        v-model="updateRule.sourceField"
-                        placeholder="计算公式"
-                        @click="checkMlFormula"
-                    />
-                    <div
-                        class="w-100 info-text mt-3"
-                        v-if="updateRule.updateMode !== 'toNull'"
-                    >{{ getSourceFieldInfo() }}</div>
-                </el-col>
-            </el-row>
-        </el-form-item>
-        <el-form-item label=" ">
-            <el-button type="primary" plain @click="addUpdateRule">+ 添加</el-button>
-        </el-form-item>
+                        <div
+                            class="w-100 info-text mt-3"
+                            v-if="updateRule.updateMode !== 'toNull'"
+                        >{{ getSourceFieldInfo() }}</div>
+                    </el-col>
+                </el-row>
+            </el-form-item>
+            <el-form-item label=" ">
+                <el-button type="primary" plain @click="addUpdateRule">+ 添加</el-button>
+            </el-form-item>
+        </template>
+        <!-- 数据转化 -->
+        <template v-if="trigger.createType == 2">
+            <el-form-item label="选择数据转换" class="mt-10 is-required">
+                <el-row class="w-100" :gutter="20">
+                    <el-col :span="9">
+                        <el-select 
+                            v-model="trigger.transformId" 
+                            style="width: 100%"
+                            filterable
+                        >
+                            <el-option
+                                v-for="item in transformList"
+                                :key="item.transformId"
+                                :label="item.transformName"
+                                :value="item.transformId"
+                            />
+                        </el-select>
+                    </el-col>
+                </el-row>
+            </el-form-item>
+        </template>
         <div v-if="mlFormulaIsShow">
             <mlFormula
                 ref="mlFormulaRef"
@@ -250,6 +283,9 @@ import { ref, onMounted, inject, reactive, nextTick } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
 import { getOptionItems, getTagItems } from "@/api/system-manager";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import { queryByEntity } from "@/api/transform";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({
@@ -259,17 +295,32 @@ const props = defineProps({
 let contentLoading = ref(false);
 // 数据源
 let trigger = ref({});
+
+// 操作类型
+let createTypeList = ref([
+    {
+        label: "关联创建",
+        value: 1,
+    },
+    {
+        label: "数据转化",
+        value: 2,
+    },
+]);
+
 onMounted(() => {
     trigger.value = props.modelValue;
     getActionContentData();
 });
+
+
 
 /**
  * *************************************** 获取操作内容数据相关 beg
  */
 
 // 目标实体（所有实体）
-let tagEntitys = ref([]);
+let tagEntityList = ref([]);
 // 目标实体所有字段
 let tagEntityFields = ref([]);
 // 获取必填的所有字段
@@ -284,20 +335,23 @@ let cutEntityFieldLabel = ref({});
 let changeTagEntityLoading = ref(false);
 // 引用实体弹框
 let showReferenceDialogFlag = ref(false);
+// 数据转化
+let transformList = ref([]);
 
 // 获取操作内容数据
 const getActionContentData = async () => {
     contentLoading.value = true;
     // 获取目标实体所有字段、当前实体所有字段
-    Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
+    Promise.all([getTagEntityList(), getCutEntityFields(), getTransformList()]).then(() => {
         contentLoading.value = false;
-        if (tagEntitys.value.length > 0) {
+        let { actionContent } = trigger.value;
+        if (tagEntityList.value.length > 0) {
             // 目标实体默认选中第1个
             let defaultInx = 0;
             // 如果是编辑过的，找到之前选中的数据
             if (trigger.value.isOnSave) {
-                let { actionContent } = trigger.value;
-                tagEntitys.value.forEach((el, elInx) => {
+                
+                tagEntityList.value.forEach((el, elInx) => {
                     if (
                         el.fieldName == actionContent.fieldName &&
                         el.entityName == actionContent.entityName
@@ -307,26 +361,40 @@ const getActionContentData = async () => {
                 });
             }
             // 设置选中
-            trigger.value.defaultTargetEntity = tagEntitys.value[defaultInx];
+            trigger.value.defaultTargetEntity = tagEntityList.value[defaultInx];
             // 获取选中实体的所有字段
-            getTagEntityFields(tagEntitys.value[defaultInx].entityCode);
+            getTagEntityFields(tagEntityList.value[defaultInx].entityCode);
         }
+        // 设置createType
+        trigger.value.createType = actionContent.createType || 1;
+        trigger.value.transformId = actionContent.transformId || null;
     });
 };
 
 // 获取实体（目标实体）
-const getTagEntitys = () => {
+const getTagEntityList = () => {
     return new Promise(async (resolve, reject) => {
         let res = await $API.trigger.detail.dataAutoCreate(
             trigger.value.entityCode
         );
         if (res) {
-            tagEntitys.value = [];
+            tagEntityList.value = [];
             res.data.forEach((el, inx) => {
                 el.entityInx = inx;
                 tagEntityFieldLabel.value[el.fieldName] = el.fieldLabel;
-                tagEntitys.value.push(el);
+                tagEntityList.value.push(el);
             });
+        }
+        resolve();
+    });
+};
+
+// 获取数据转化列表
+const getTransformList = () => {
+    return new Promise(async (resolve, reject) => {
+        let res = await queryByEntity({ sourceEntityName: queryEntityNameByCode(trigger.value.entityCode) });
+        if (res) {
+            transformList.value = res.data || [];
         }
         resolve();
     });

@@ -2,16 +2,15 @@
     <mlDialog 
         v-model="isShow" 
         :title="title" 
-        :width="isComplexWorkFlow ? '75%' : '35%'"
+        width="75%"
         :showFullScreen="isComplexWorkFlow"
         :bodyNoPadding="isComplexWorkFlow"
         @fullScreenChange="fullScreenChange"
         appendToBody
     >
         <div 
-            class="clearfix history-body" 
+            class="clearfix history-body complex-work-flow" 
             :class="{
-                'complex-work-flow': isComplexWorkFlow,
                 'full-screen':fullScreen
             }"
             v-loading="loading"
@@ -23,6 +22,11 @@
                 <div class="deviation">
                     <ApproveView :entityId="entityId"/>
                 </div>
+            </div>
+            <div class="approve-view-box" v-else>
+                <el-scrollbar max-height="600px">
+                    <mlWorkflow v-model="nodeConfig" isHideZoom isHideAddNode/>
+                </el-scrollbar>
             </div>
             <div class="timeline-div">
                 <el-timeline v-if="approveHistory.length > 0">
@@ -186,6 +190,7 @@ import ApproveView from './components/ApproveView.vue';
 // import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 import defaultEntityDetail from "@/views/customize-menu/detail.vue";
 import ChangeApproverDialog from './components/ChangeApproverDialog.vue';
+import mlWorkflow from "@/components/mlWorkflow/index.vue";
 const $TOOL = inject("$TOOL");
 const Route = useRouter();
 const props = defineProps({
@@ -296,14 +301,16 @@ function getContainHeight(item) {
     };
 }
 
+let nodeConfig = ref({});
 
-const openDialog = (flowType, approvalStepsList) => {
+const openDialog = (flowType, approvalStepsList, config) => {
     isComplexWorkFlow.value = flowType == 2;
     approveHistory.value = formatResData(approvalStepsList);
     isShow.value = true;
     nextTick(()=>{
         let dom = document.querySelectorAll('.timeline-div')[0];
         dom.scrollTop = dom.scrollHeight - dom.clientHeight;
+        nodeConfig.value = config;
     })
 }
 
