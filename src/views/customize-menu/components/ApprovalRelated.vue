@@ -40,61 +40,7 @@
 			审批历史
 		</el-button>
 	</el-row>
-	<!-- 审批弹框 -->
-	<mlDialog
-		v-model="approvalDialog.isShow"
-		title="提交审批"
-		width="460"
-	>
-		<el-form label-width="100px" v-loading="approvalDialog.loading">
-			<el-form-item label="选择审批流程">
-				<el-select
-					v-if="approvalList.length > 0"
-					v-model="approvalDialog.approvalConfig"
-					placeholder="请选择审批流程"
-					style="width: 100%;margin-bottom: 10px"
-					value-key="approvalConfigId"
-				>
-					<el-option
-						v-for="item in approvalList"
-						:key="item.approvalConfigId"
-						:label="item.flowName"
-						:value="item"
-					/>
-				</el-select>
-				<div v-else class="info-text">
-					暂无审批流程
-					<span
-						class="ml-a-span"
-						@click="goApprovalList"
-						v-if="$TOOL.checkRole('r30-1')"
-					>
-                        点击配置
-                    </span>
-				</div>
-
-                <!-- -->
-			</el-form-item>
-            <el-form-item label="自选审批人" v-if="approvalDialog.approvalConfig.userSelectFlag">
-                <mlSelectUser
-                    v-model="optionalApprovals"
-                    multiple
-                    clearable
-                />
-            </el-form-item>
-		</el-form>
-        <template #footer>
-            <el-button
-                style="width: 80px"
-                @click="approvalDialog.isShow = false"
-            >
-                取消
-            </el-button>
-            <el-button type="primary" style="width: 80px" @click="onSubmit">
-                提交
-            </el-button>
-        </template>
-	</mlDialog>
+	
 	<div v-if="approveDialogIsShow">
 		<mlApprove
 			v-model="approveDialogIsShow"
@@ -147,6 +93,7 @@
 			</el-form-item>
 		</el-form>
 	</mlDialog>
+    <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="confirmApproval"/>
 </template>
 
 <script setup>
@@ -159,6 +106,10 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 import http from "@/utils/request";
+
+// 提交审批弹框
+import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+
 const Route = useRouter();
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
@@ -172,8 +123,6 @@ const emits = defineEmits(["onSubmit", "closeDialog"]);
 let myApproval = ref({});
 
 
-// 审批流程
-let approvalList = ref([]);
 
 let approvalDialog = reactive({
 	isShow: false,
@@ -181,24 +130,13 @@ let approvalDialog = reactive({
 	approvalConfig: "",
 });
 
-// 打开弹框
-const openDialog = async (title) => {
+let SubmitApprovalDialogRefs = ref();
+// 打开提交审批弹框
+const openDialog = async () => {
     if(!props.detailParamConf.beforeSubmitApproval()){
         return
     }
-	approvalDialog.isShow = true;
-	approvalDialog.title = title;
-	approvalDialog.loading = true;
-	let res = await $API.approval.detail.getApprovalList(
-		myApproval.value.recordId
-	);
-	if (res) {
-		approvalList.value = res.data || [];
-		if (approvalList.value.length == 1) {
-			approvalDialog.approvalConfig = approvalList.value[0];
-		}
-	}
-	approvalDialog.loading = false;
+	SubmitApprovalDialogRefs.value?.openDialog(myApproval.value.recordId);
 };
 
 const closeDialog = () => {
@@ -383,45 +321,7 @@ const withdrawApproval = () => {
 }
 
 
-// 自选审批人
-let optionalApprovals = ref([]);
-// 提交接口
-const onSubmit = async () => {
-	let { approvalConfig } = approvalDialog;
-	let { flowType, approvalConfigId, wfProcDefId } = approvalConfig;
-	if (!approvalConfigId) {
-		ElMessage.warning("请选择审批流程");
-		return;
-	}
 
-	approvalDialog.loading = true;
-
-	let res;
-	// 插件存在，且flowType == 2 走复杂
-	if ( flowType == 2) 
-    {
-		res = await $API.approval.detail.startComplexFlowApproval({
-			processDefId: wfProcDefId,
-			recordId: myApproval.value.recordId,
-			approvalConfigId: approvalConfigId,
-		});
-	} else {
-		res = await $API.approval.detail.startApproval(
-			myApproval.value.recordId,
-			approvalConfigId,
-            {
-                optionalApprovals: optionalApprovals.value.map(el => el.id)
-            },
-		);
-	}
-
-	if (res) {
-		ElMessage.success("提交审批成功");
-		emits("onSubmit");
-		closeDialog();
-	}
-	approvalDialog.loading = false;
-};
 const appPath = import.meta.env.VITE_APP_PATH;
 // 配置流程
 const goApprovalList = () => {

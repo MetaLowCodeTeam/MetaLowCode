@@ -35,7 +35,7 @@
             <el-button
                 type="primary"
                 @click="confirm"
-                v-if="editParamConf.showConfirmBtn && (!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
+                v-if="editParamConf.showConfirmBtn && checkModifiableEntity(row.detailId,row.approvalStatus?.value)"
                 :loading="loading"
                 icon="Select"
             >
@@ -45,7 +45,7 @@
             <el-button
                 type="primary"
                 @click="confirmRefresh"
-                v-if="editParamConf.showConfirmRefreshBtn && (!row.detailId || (row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
+                v-if="editParamConf.showConfirmRefreshBtn && checkModifiableEntity(row.detailId,row.approvalStatus?.value)"
                 :loading="loading"
                 plain
                 icon="Refresh"
@@ -53,8 +53,20 @@
                 保存并刷新
             </el-button>
             <slot name="afterConfirmRefreshBtn"></slot>
+            <el-button
+                type="primary"
+                @click="confirmSaveAndSubmit"
+                v-if="editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
+                :loading="loading"
+                plain
+                icon="SetUp"
+            >
+                保存并提交
+            </el-button>
         </template>
+        <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
     </ml-dialog>
+    
 </template>
 
 <script setup>
@@ -77,6 +89,10 @@ import { saveTeam } from "@/api/team";
 import { saveUser, checkRight } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
+import { getApprovalConfigByEntity } from "@/api/approval";
+// 提交审批弹框
+import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+
 const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
 
 const props = defineProps({
@@ -117,6 +133,7 @@ const editParamConf = ref({
     showConfirmBtn: true,
     showCancelBtn: true,
     showConfirmRefreshBtn: true,
+    showConfirmAndSubmitBtn: true,
 })
 
 
@@ -199,6 +216,9 @@ let referenceCompFormData = ref({});
 // 指定表单ID
 let formId = ref("");
 
+// 是否显示保存并提交
+let isShowSaveAndSubmit = ref(false);
+
 const openDialog = async (v) => {
     row.dialogTitle = "Loading...";
     row.detailId = v.detailId;
@@ -232,6 +252,11 @@ const openDialog = async (v) => {
         rightType: v.detailId ? 3 : 2,
         entityName: v.detailId ? "" : v.entityName,
     };
+    isShowSaveAndSubmit.value = false;
+    let approvalConfigRes = await getApprovalConfigByEntity(row.entityName);
+    if(approvalConfigRes && approvalConfigRes.data && approvalConfigRes.data.length > 0) {
+        isShowSaveAndSubmit.value = true;
+    }
     let res = await checkRight(param.id, param.rightType, param.entityName);
     if (res.data && res.data.code == 200 && res.data.data) {
         isShow.value = true;
@@ -389,6 +414,10 @@ const getFieldListOfEntityApi = async (tag) => {
  * *********************************************************** 表单信息相关 end
  *
  */
+
+// 提交审批弹框
+let SubmitApprovalDialogRefs = ref();
+
 // 保存
 const confirm = async (target) => {
     if (!vFormRef.value) {
@@ -468,11 +497,14 @@ const confirm = async (target) => {
                     }
                     emits("saveFinishCallBack", resData);
                     
-                    if(target != 'notCloseDialog'){
+                    if(target != 'notCloseDialog' && target != 'submit'){
                         isShow.value = false;
                     }else {
                         row.detailId = resData[row.idFieldName];
                         initFormLayout()
+                        if(target == 'submit'){
+                            SubmitApprovalDialogRefs.value?.openDialog(row.detailId);
+                        }
                     }
                 }
                 loading.value = false;
@@ -491,6 +523,16 @@ const cloneDeep = (data) => {
 // 保存并刷新
 const confirmRefresh = () => {
     confirm('notCloseDialog')
+}
+
+// 保存并提交
+const confirmSaveAndSubmit = () => {
+    confirm('submit')
+}
+// 提交审批成功
+const submitApprovalSuccess = () => {
+    isShow.value = false;
+    emits("saveFinishCallBack");
 }
 
 /**

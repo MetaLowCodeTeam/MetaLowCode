@@ -148,3 +148,8 @@ export function queryTaskByInstanceId(processInstanceId) {
 export function processReset(body) {
     return http.post('/plugins/metaWorkFlow/workflow/process/reset', body)
 }
+
+
+export function getApprovalConfigByEntity(entityName) {
+    return http.get('/approval/getApprovalConfigByEntity', { entityName })
+}
