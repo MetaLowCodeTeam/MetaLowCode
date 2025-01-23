@@ -35,7 +35,7 @@
             <el-button
                 type="primary"
                 @click="confirm"
-                v-if="editParamConf.showConfirmBtn && checkModifiableEntity(row.detailId,row.approvalStatus?.value)"
+                v-if="editParamConf.showConfirmBtn && (row.detailId ? checkModifiableEntity(row.detailId,row.approvalStatus?.value) : true)"
                 :loading="loading"
                 icon="Select"
             >
@@ -45,7 +45,7 @@
             <el-button
                 type="primary"
                 @click="confirmRefresh"
-                v-if="editParamConf.showConfirmRefreshBtn && checkModifiableEntity(row.detailId,row.approvalStatus?.value)"
+                v-if="editParamConf.showConfirmRefreshBtn && (row.detailId ? checkModifiableEntity(row.detailId,row.approvalStatus?.value) : true)"
                 :loading="loading"
                 plain
                 icon="Refresh"
