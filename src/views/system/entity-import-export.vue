@@ -240,7 +240,7 @@ const handleImport = async () => {
 		headers: { "Content-Type": "multipart/form-data" },
 	});
 	if (res) {
-		if (res.data) {
+		if (res.data && res.data.length > 0) {
 			errMsgDialog.msgList = res.data.map((el) => {
 				return {
 					msg: el,
