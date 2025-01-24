@@ -10,7 +10,7 @@
 		width="600px"
 		append-to-body
 	>
-		<el-table :data="filesList" :border="true" class="file-table">
+		<el-table :data="filesList" :border="true" class="file-table" max-height="400">
 			<el-table-column prop="name" label="文件名" />
 			<el-table-column label="操作" width="160" :align="'center'">
 				<template #default="scope">
