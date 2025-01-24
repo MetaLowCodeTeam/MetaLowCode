@@ -187,6 +187,8 @@ const goDetail = (row) => {
             entityCode: row.entityCode,
             flowType: row.flowType || 1,
             meteAppendTitle: row.flowName,
+            appName:  router.currentRoute.value.query.appName,
+            appAbbr: router.currentRoute.value.query.appAbbr
         },
     });
 };
