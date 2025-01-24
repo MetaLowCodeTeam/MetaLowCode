@@ -446,7 +446,7 @@ const handleSubmit = async () => {
 			},
 		});
 		if (res && res.code == 200) {
-            if(res.data) {
+            if(res.data && res.data.length > 0) {
                 errMsgDialog.msgList = res.data.map((el) => {
                     return {
                         msg: el,
