@@ -2,26 +2,26 @@
 	<div v-loading="loading" element-loading-text="渲染中...">
 		<OfficeDocx
 			v-if="type === 'docx'"
-			:src="src"
+			:src="formatSrc(src)"
 			@rendered="renderedHandler"
 			@error="errorHandler"
 		/>
 		<OfficeExcel
 			v-else-if="type === 'xlsx'"
-			:src="src"
+			:src="formatSrc(src)"
 			:options="options"
 			@rendered="renderedHandler"
 			@error="errorHandler"
 		/>
 		<OfficePdf
 			v-else-if="type === 'pdf'"
-			:src="src"
+			:src="formatSrc(src)"
 			@rendered="renderedHandler"
 			@error="errorHandler"
 		/>
 		<OfficePptx
 			v-else-if="type === 'pptx'"
-			:src="src"
+			:src="formatSrc(src)"
 			@rendered="renderedHandler"
 			@error="errorHandler"
 		/>
@@ -79,4 +79,12 @@ const errorHandler = () => {
 	loading.value = false;
 	emit("error");
 };
+
+const formatSrc = (url) => {
+    // 如果url不是http开头，则加上 VITE_APP_BASE_API
+    if(url.indexOf("http") !== 0) {
+        return import.meta.env.VITE_APP_BASE_API + url;
+    }
+    return url;
+}
 </script>

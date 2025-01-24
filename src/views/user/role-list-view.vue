@@ -18,8 +18,17 @@
                 </el-button>
             </template>
             <template #activeRow>
-                <el-table-column label="操作" :align="'center'" width="140" fixed="right">
+                <el-table-column label="操作" :align="'center'" width="220" fixed="right">
                     <template #default="scope">
+                        <el-button
+                            size="small"
+                            type="primary"
+                            link
+                            @click="lookUserList(scope.row)"
+                            icon="view"
+                        >
+                            <span>查看用户</span>
+                        </el-button>
                         <el-button
                             size="small"
                             type="primary"
@@ -274,7 +283,9 @@
                 </div>
             </template>
         </el-dialog>
+        <UsersOfRole ref="UsersOfRoleRef" />
     </el-container>
+    
 </template>
 
 <script setup>
@@ -288,8 +299,10 @@ import {
 import { inject, nextTick, ref, shallowRef } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import mlSelectCom from "@/components/mlSelectCom/index.vue";
+import { useRouter } from "vue-router";
+import UsersOfRole from "./components/UsersOfRole.vue";
+const router = useRouter();
 const $TOOL = inject("$TOOL");
-
 let mlSingleListRef = ref();
 // 表格参数
 let tableConf = ref({
@@ -493,15 +506,15 @@ let funcRight = shallowRef([
             },
         ]
     },
-    {
-        label: "组织架构",
-        children: [
-            {
-                label: "部门管理",
-                value: "r6001",
-            },
-        ]
-    },
+    // {
+    //     label: "组织架构",
+    //     children: [
+    //         {
+    //             label: "部门管理",
+    //             value: "r6001",
+    //         },
+    //     ]
+    // },
     {
         label: "数据建模",
         children: [
@@ -759,6 +772,12 @@ const elFormErrorScrollIntoView = () => {
         block: "center",
     });
 };
+
+let UsersOfRoleRef = ref();
+// 查看用户列表
+const lookUserList = (row) => {
+    UsersOfRoleRef.value?.openDialog(row.roleId);
+}
 </script>
 
 

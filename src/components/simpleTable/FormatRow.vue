@@ -85,22 +85,7 @@
 		</template>
 	</div>
 	<div class="text-ellipsis" v-else>{{ row[column.prop] }}</div>
-
-	<mlDialog v-model="filesDialog" title="文件下载" appendToBody width="400px">
-		<el-scrollbar max-height="400px">
-			<div
-				v-for="(field, inx) of filesList"
-				:key="inx"
-				class="field-item"
-			>
-				<span
-					class="ml-a-span"
-					@click.stop="downField(field.url, field.name)"
-					>{{ field.name }}</span
-				>
-			</div>
-		</el-scrollbar>
-	</mlDialog>
+    <FileDownOrPreview ref="FileDownOrPreviewRef" />
 	<mlDialog
 		v-model="previewDialog"
 		title="点击图片预览"
@@ -123,6 +108,8 @@
 
 <script setup>
 import { ref } from "vue";
+// 文件下载和预览
+import FileDownOrPreview from "@/components/mlOfficePreview/FileDownOrPreview.vue";
 
 const props = defineProps({
 	row: { type: Object, default: () => {} },
@@ -156,12 +143,9 @@ const formatReferenceList = (list) => {
 /**
  * 多文件下载
  */
-let filesDialog = ref(false);
-let filesList = ref([]);
-
+const FileDownOrPreviewRef = ref();
 const openFilesDialog = (list) => {
-	filesDialog.value = true;
-	filesList.value = [...list];
+	FileDownOrPreviewRef.value?.openDialog(list);
 };
 
 const numberToCurrencyNo = (value) => {
