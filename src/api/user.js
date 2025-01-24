@@ -113,8 +113,8 @@ export function updateLoginUser(id, formModel) {
 }
 
 
-export function addUserRole(body) {
-    return request.post('/user/addUserRole ', body)
+export function addRolesOfUser(body) {
+    return request.post('/user/addRolesOfUser ', body)
 }
 
 

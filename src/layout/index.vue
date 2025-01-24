@@ -441,7 +441,6 @@ export default {
         window.addEventListener("resize", this.onLayoutResize);
         var menu = this.$router.sc_getMenu();
         this.menu = this.filterUrl(menu);
-        console.log(this.menu)
         this.dockMenu = [...this.menu[0].children];
         this.menu.forEach((item,inx) => {
             if(inx != 0){

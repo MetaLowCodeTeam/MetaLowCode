@@ -10,8 +10,13 @@ export function getTeamMembers(teamId) {
 }
 
 // 添加团队成员
-export function addTeamMembers(body) {
-    return http.post('/user/addTeamOrRoleUsers', body)
+export function addUsersOfTeam(body) {
+    return http.post('/user/addUsersOfTeam', body)
+}
+
+// 添加角色成员
+export function addUsersOfRole(body) {
+    return http.post('/user/addUsersOfRole', body)
 }
 
 // 删除团队成员
