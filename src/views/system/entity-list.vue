@@ -120,10 +120,10 @@
                             type="primary"
                             @click="saveNewEntity"
                             style="width: 90px"
-                            v-loading="saveLoading"
+                            :loading="saveLoading"
                         >保 存</el-button>
                         <el-button
-                            v-loading="saveLoading"
+                            :loading="saveLoading"
                             @click="showNewEntityDialogFlag = false"
                         >取 消</el-button>
                     </div>

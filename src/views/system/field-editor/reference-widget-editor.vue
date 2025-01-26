@@ -532,7 +532,7 @@ export default {
                 if(appAbbr){
                     entityItems = res.data.filter(el => el.systemEntityFlag || el.appAbbr === appAbbr);
                 }else{
-                    entityItems = res.data;
+                    entityItems = res.data.filter(el => !el.appAbbr);
                 }
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
