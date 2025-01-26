@@ -45,15 +45,17 @@ export default [
                     { label: "居左", value: "header" },
                     { label: "顶部", value: "dock" },
                 ],
-                // onChange: (val) => {
-                //     const { setPublicSettingByKey } = useCommonStore();
-                //     setPublicSettingByKey("layoutConfig", val);
-                // }
             },
             {
                 label: "版本号",
                 key: "dbVersion",
                 type: "input",
+            },
+            {
+                label: "文件在线预览地址",
+                key: "fileOnlinePreviewPath",
+                type: "input",
+                subLabel: "项目内置的在线预览仅支持.docx、.xlsx、.pdf、.pptx格式，如果需要预览其他格式文件，需要配置第三方文件预览服务地址。例： http://域名/onlinePreview"
             },
             {
                 label: "页面水印",

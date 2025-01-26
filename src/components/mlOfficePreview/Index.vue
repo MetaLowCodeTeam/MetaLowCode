@@ -36,6 +36,10 @@ import OfficeDocx from "./components/OfficeDocx.vue";
 import OfficeExcel from "./components/OfficeExcel.vue";
 import OfficePdf from "./components/OfficePdf.vue";
 import OfficePptx from "./components/OfficePptx.vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+
+const { publicSetting } = storeToRefs(useCommonStore());
 
 let loading = ref(false);
 
@@ -88,3 +92,5 @@ const formatSrc = (url) => {
     return url;
 }
 </script>
+
+

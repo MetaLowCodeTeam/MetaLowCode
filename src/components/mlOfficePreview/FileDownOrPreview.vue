@@ -57,7 +57,6 @@ let filesList = ref([]);
 const openDialog = (files) => {
 	filesList.value = JSON.parse(JSON.stringify(files));
 	isShow.value = true;
-	console.log(filesList.value);
 };
 
 const downField = (url, fileName) => {
