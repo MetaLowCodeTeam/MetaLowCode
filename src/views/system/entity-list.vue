@@ -34,7 +34,7 @@
                 <el-button type="primary" @click="createNewEntity('create')">
                     <i class="el-icon-plus"></i>&nbsp;新建实体
                 </el-button>
-                <el-popover trigger="click">
+                <el-popover trigger="click" v-if="!props.isDesign">
                     <div class="table-setting-item-box">
                         <div class="pl-10 item" @click="openImportExportDialog('export')">
                             <span class="icon-top-1">
