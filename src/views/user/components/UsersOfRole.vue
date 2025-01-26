@@ -14,7 +14,7 @@
 					prefix-icon="Search"
 					style="width: 300px"
 				/>
-				<el-button class="fr" type="primary" @click="addUser">
+				<el-button class="fr" type="primary" @click="addUser" v-if="$TOOL.checkRole('r6024')">
 					添加用户
 				</el-button>
 			</div>
@@ -25,7 +25,7 @@
 				:border="true"
 			>
 				<el-table-column prop="userName" label="用户名称" />
-				<el-table-column label="操作" width="110" :align="'center'">
+				<el-table-column label="操作" width="110" :align="'center'" v-if="$TOOL.checkRole('r6024')">
 					<template #default="scope">
 						<el-button
 							type="primary"
@@ -51,12 +51,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 // API
 import { getTeamMembers, delTeamMembers } from "@/api/team";
 // 组件
 import AddMembers from "./AddMembers.vue";
+
+const $TOOL = inject("$TOOL");
 
 let isShow = ref(false);
 let loading = ref(false);
