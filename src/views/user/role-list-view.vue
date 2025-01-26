@@ -228,6 +228,16 @@
                                         <el-form-item :title="funcItem.value">
                                             <template #label>
                                                 {{ funcItem.label }}
+                                                <el-tooltip v-if="funcItem.tip" placement="top">
+                                                    <template #content>
+                                                        <div style="width: 300px;">
+                                                            {{ funcItem.tip }}
+                                                        </div>
+                                                    </template>
+                                                    <el-icon style="margin-left: 3px;position: relative;top: 9px;cursor: pointer;">
+                                                        <ElIconQuestionFilled />
+                                                    </el-icon>
+                                                </el-tooltip>
                                             </template>
                                             <el-radio-group
                                                 v-model="formModel.rightValueMap[funcItem.value]"
@@ -506,15 +516,16 @@ let funcRight = shallowRef([
             },
         ]
     },
-    // {
-    //     label: "组织架构",
-    //     children: [
-    //         {
-    //             label: "部门管理",
-    //             value: "r6001",
-    //         },
-    //     ]
-    // },
+    {
+        label: "组织架构",
+        children: [
+            {
+                label: "角色设置用户",
+                value: "r6024",
+                tip: "开发中心-组织架构-权限角色页面，查看用户弹框中的添加、删除用户功能。"
+            },
+        ]
+    },
     {
         label: "数据建模",
         children: [
