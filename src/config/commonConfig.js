@@ -52,10 +52,10 @@ export default [
                 type: "input",
             },
             {
-                label: "文件在线预览地址",
+                label: "外置文件预览服务",
                 key: "fileOnlinePreviewPath",
                 type: "input",
-                subLabel: "项目内置的在线预览仅支持.docx、.xlsx、.pdf、.pptx格式，如果需要预览其他格式文件，需要配置第三方文件预览服务地址。例： http://域名/onlinePreview"
+                subLabel: "系统内置的文件预览仅支持.docx、.xlsx、.pdf、.pptx格式，如果需要预览其他格式文件，需要配置第三方文件预览服务地址。例： http://域名/onlinePreview"
             },
             {
                 label: "页面水印",
@@ -381,7 +381,7 @@ export default [
                     { label: "列表", value: "list" },
                     { label: "卡片", value: "card" },
                 ],
-                
+
             },
             {
                 label: "列表是否显示操作按钮",
