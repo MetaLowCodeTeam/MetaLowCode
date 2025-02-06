@@ -143,7 +143,18 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp"
+                        v-if="
+                        	listParamConf.showEditBtn && !isReferenceComp &&
+                        	$TOOL.checkRole(
+                                'r' +
+                                    queryEntityCodeByEntityName(
+                                        isReferenceComp
+                                            ? referenceEntity
+                                            : entityName
+                                    ) +
+                                    '-3'
+                            )
+						"
                     >
                         编辑
                     </el-button>
@@ -203,7 +214,7 @@
             </div>
             </div>
             <div v-if="showColumnSet">
-                <ListColumnSet 
+                <ListColumnSet
                     :layoutConfig="layoutConfig"
                     :defaultColumnShow="defaultColumnShow"
                     :tableColumn="tableColumn"
@@ -289,9 +300,9 @@
                             <el-checkbox v-else @click="selectAllChange('all')"/>
                         </template>
                         <template #default="scope">
-                            <el-checkbox 
+                            <el-checkbox
                                 :disabled="scope.row.isCustomDisabled"
-                                v-model="scope.row.isSelected" 
+                                v-model="scope.row.isSelected"
                                 @change="handleHighlightChangeTable(scope.row)"
                             />
                         </template>
@@ -321,7 +332,7 @@
                             </template>
                         </el-table-column>
                     </template>
-                   
+
                     <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
                     <el-table-column
                         v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
@@ -380,9 +391,9 @@
             style="background: #fff;"
             v-if="listParamConf.showPagination"
         />
-        <mlCustomDetail 
-            ref="detailRefs" 
-            :entityName="entityName" 
+        <mlCustomDetail
+            ref="detailRefs"
+            :entityName="entityName"
             @updateData="getTableList"
             :recordDetailFormId="listParamConf.recordDetailFormId"
         />
@@ -530,21 +541,21 @@ const props = defineProps({
         default: null,
     },
     // 自定义行事件
-    listRowClick: { 
-        type: Function, 
-        default: null 
+    listRowClick: {
+        type: Function,
+        default: null
     },
     // 自定义名称字段点击
-    nameFieldClick: { 
-        type: Function, 
-        default: null 
+    nameFieldClick: {
+        type: Function,
+        default: null
     },
     // 自定义单元格点击
-    cellClick: { 
-        type: Function, 
-        default: null 
+    cellClick: {
+        type: Function,
+        default: null
     },
-    
+
 })
 
 // 页面Loading
@@ -1124,7 +1135,7 @@ const selectAllChange = (target) => {
 
 // 表格行点击选中
 const handleHighlightChangeTable = (row, column) => {
-    
+
     if(props.listRowClick){
         props.listRowClick(row, column)
     }else {
