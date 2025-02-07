@@ -143,18 +143,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="
-                        	listParamConf.showEditBtn && !isReferenceComp &&
-                        	$TOOL.checkRole(
-                                'r' +
-                                    queryEntityCodeByEntityName(
-                                        isReferenceComp
-                                            ? referenceEntity
-                                            : entityName
-                                    ) +
-                                    '-3'
-                            )
-						"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight"
                     >
                         编辑
                     </el-button>
@@ -174,18 +163,7 @@
                         type="primary"
                         icon="Plus"
                         @click="onAdd"
-                        v-if="
-                            listParamConf.showAddBtn &&
-                            $TOOL.checkRole(
-                                'r' +
-                                    queryEntityCodeByEntityName(
-                                        isReferenceComp
-                                            ? referenceEntity
-                                            : entityName
-                                    ) +
-                                    '-2'
-                            )
-                        "
+                        v-if="listParamConf.showAddBtn && hasCreateRight"
                     >
                         新建
                     </el-button>
@@ -360,7 +338,7 @@
                                 </el-button>
                             </el-tooltip>
                             <el-button
-                                v-else
+                                v-else-if="hasEditRight"
                                 size="small"
                                 icon="el-icon-edit"
                                 link
@@ -776,6 +754,18 @@ onUnmounted(() => {
 			scrollBehavior
 		);
 });
+
+const hasCreateRight = computed(() => {
+	const entityCodeForRight = queryEntityCodeByEntityName(props.isReferenceComp ?
+		props.referenceEntity : entityName.value)
+	return $TOOL.checkRole('r' + entityCodeForRight + '-2')
+})
+
+const hasEditRight = computed(() => {
+	const entityCodeForRight = queryEntityCodeByEntityName(props.isReferenceComp ?
+		props.referenceEntity : entityName.value)
+	return $TOOL.checkRole('r' + entityCodeForRight + '-3')
+})
 
 // 配置自定义列显示
 const MoreRefs = ref();
