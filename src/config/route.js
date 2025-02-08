@@ -162,7 +162,7 @@ const routes = [
                 path: appPath + "comConf",
                 name: 'ComConf',
                 component: 'system/common-config/index',
-                meta: { title: '系统配置', icon: 'el-icon-setting', role: 'r6000' }
+                meta: { title: '系统配置', icon: 'el-icon-setting', role: 'r6022' }
             },
 
             {
