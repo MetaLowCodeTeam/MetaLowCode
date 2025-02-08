@@ -174,20 +174,20 @@ const routes = [
                         path: appPath + "user-list",
                         name: 'UserList',
                         component: 'user/user-tree-table',
-                        meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-2', entityName: "User" }
+                        meta: { title: '用户管理', icon: 'el-icon-user', role: 'r21-1', entityName: "User" }
                     },
 
                     {
                         path: appPath + "role-list",
                         name: 'RoleList',
                         component: 'user/role-list-view',
-                        meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-2', entityName: "Role" }
+                        meta: { title: '权限角色', icon: 'el-icon-key', role: 'r23-1', entityName: "Role" }
                     },
                     {
                         path: appPath + "team-list",
                         name: 'TeamList',
                         component: 'user/team-list-view',
-                        meta: { title: '团队管理', icon: 'el-icon-suitcase-line', role: 'r24-2', entityName: "Team" }
+                        meta: { title: '团队管理', icon: 'el-icon-suitcase-line', role: 'r24-1', entityName: "Team" }
                     },
                 ]
             },
