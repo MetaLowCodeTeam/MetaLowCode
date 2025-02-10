@@ -547,4 +547,7 @@ const cloneDeep = (data) => {
         }
     }
 }
+:deep(.item-imitate-open) {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAVlJREFUSEvtVVFOg0AUnFd7EHsS2w+aeArLLcCfyo9wC7yFSTEpnkTu0dbRt2U3mBSBFasf3YSEBPbNe7Mzs4IzLzkzHi6AozP+vyiNnnntM2J2K1Xbvi8TGoAp7gSY4/gMX4QD4wQldkiaDTjAqOBcgO1wBABERcETgNcskNIxo80TK/2WBZJobQP4IzCgTANZtDWq4HKFLQWhNmMA4w3fIPA6rzSQTuFZ0HQpM4kKrj93PPhQKUT4uBSlsnNFL8yVetEX5blzx4kfuMfsO0U2t9THtpbfptOCWlr9AYlKz2QIM3FBSlxQreDluT6CsQ3db7h6n+DmD0RT+8TLFmr4AxZdwjGCIXJjizGMzz3CNlAjlilyAokzvgMlcu9JG9Fm6tlcPkabSRkXbU3pjhLemlp1vtoMtRitseR7NWnh3tfTEE/5/tsZvL6Fe13AYxc/Ve8y4egsfwB9kKSGcDSb6QAAAABJRU5ErkJggg==) center center no-repeat !important;
+}
 </style>
