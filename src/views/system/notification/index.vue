@@ -146,6 +146,15 @@ const activeRow = (item) => {
     }
     // 实体列表详情
     else {
+        // 如果是仪表盘
+        if(item.entityName == 'Chart'){
+            if($TOOL.checkRole('r52-2')) {
+                router.push({name: "DashboardDesign"});
+            }else {
+                $ElMessage.error("没有权限");
+            }
+            return
+        }
         let filterEntity = unSystemEntityList.value.filter(
             (el) => el.name == item.entityName
         );

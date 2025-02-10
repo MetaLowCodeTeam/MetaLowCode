@@ -297,11 +297,20 @@ const msgClick = (item, inx) => {
     );
     let { currentRoute } = router;
     if (item.type == 30 || item.type == 20) {
-        if (filterEntity.length < 1) {
-            $ElMessage.error("该实体已删除");
-        } else {
-            msg.value = false;
-            detailRefs.value.openDialog(item.relatedRecord.id);
+        // 如果是仪表盘
+        if(item.entityName == 'Chart'){
+            if($TOOL.checkRole('r52-2')) {
+                router.push({name: "DashboardDesign"});
+            }else {
+                $ElMessage.error("没有权限");
+            }
+        }else {
+            if (filterEntity.length < 1) {
+                $ElMessage.error("该实体已删除");
+            } else {
+                msg.value = false;
+                detailRefs.value.openDialog(item.relatedRecord.id);
+            }
         }
     } else if (item.type == 10) {
         if (currentRoute.value.name != "CenterHandle") {
