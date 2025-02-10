@@ -117,7 +117,9 @@ const handleSizeChange = (size) => {
 // 刷新
 const onRefresh = (msg) => {
 	getMonitoringList(() => {
-		ElMessage.success(msg);
+        if(msg){
+            ElMessage.success(msg);
+        }
 	});
 };
 

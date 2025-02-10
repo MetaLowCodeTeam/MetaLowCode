@@ -380,8 +380,10 @@ const onSave = async () => {
                 setNodeBorderColor(el.type, el.id, "red");
                 return
             }
-            if(el.text.value.includes("<")){
-                ElMessage.error("节点名称不能包含：“<”");
+            // el.text.value 加个正则，不能包含 < > & ' "
+            let reg = /[<>&'"]/g;
+            if(reg.test(el.text.value)){
+                ElMessage.error("节点名称不能包含：“<”、“>”、“&”、“'”、“\"”");
                 setNodeBorderColor(el.type, el.id, "red");
                 return
             }
@@ -410,8 +412,10 @@ const onSave = async () => {
                 setNodeBorderColor(el.type, el.id, "red");
                 return
             }
-            if(el.text.value.includes("<")){
-                ElMessage.error("节点名称不能包含：“<”");
+            // el.text.value 加个正则，不能包含 < > & ' "
+            let reg = /[<>&'"]/g;
+            if(reg.test(el.text.value)){
+                ElMessage.error("节点名称不能包含：“<”、“>”、“&”、“'”、“\"”");
                 setNodeBorderColor(el.type, el.id, "red");
                 return
             }
