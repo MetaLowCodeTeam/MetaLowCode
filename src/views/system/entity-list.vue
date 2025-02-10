@@ -86,7 +86,7 @@
                         @mouseleave="onLeaveEntity"
                     >
                         <template #header>
-                            <div>
+                            <div class="yichu" style="box-sizing: border-box;padding: 0 10px" :title="entityItem.label">
                                 <span>{{ entityItem.label }}</span>
                             </div>
                         </template>
@@ -104,7 +104,7 @@
                                         <i title="内部实体">内</i>
                                     </span>
                         </div>
-                        <div>{{ entityItem.name }}</div>
+                        <div class="yichu" :title="entityItem.name">{{ entityItem.name }}</div>
                         <div class="entity-menu-icon">
                             <el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
                                 <el-icon title="显示菜单"><Tools /></el-icon>
@@ -186,7 +186,7 @@
                             @mouseleave="onLeaveEntity"
                         >
                             <template #header>
-                                <div>
+                                <div class="yichu" style="box-sizing: border-box;padding: 0 10px" :title="entityItem.label">
                                     <span>{{ entityItem.label }}</span>
                                 </div>
                             </template>
@@ -204,7 +204,7 @@
                                         <i title="内部实体">内</i>
                                     </span>
                             </div>
-                            <div>{{ entityItem.name }}</div>
+                            <div class="yichu" :title="entityItem.name">{{ entityItem.name }}</div>
                             <div class="entity-menu-icon">
                                 <el-dropdown v-if="entityItem.showMenuFlag" @command="(command) => handleCommand(command, entityItem)">
                                     <el-icon title="显示菜单"><Tools /></el-icon>
