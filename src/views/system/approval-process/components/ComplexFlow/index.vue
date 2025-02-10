@@ -300,6 +300,7 @@ const onSave = async () => {
         } else {
             properties = getProperties(el.properties.flowJson);
         }
+       
         // 如果是开始节点
         if (el.type == "bpmn:startEvent") {
             let { nodeRoleType, nodeRoleList } = properties;
@@ -373,6 +374,11 @@ const onSave = async () => {
                 return;
             }
         }
+        if(el.text && el.text.value && el.text.value.includes("<")) {
+            ElMessage.error("节点名称不能包含：“<”");
+            setNodeBorderColor(el.type, el.id, "red");
+            return
+        }
     }
     // 遍历线
     for (let index = 0; index < edges.length; index++) {
@@ -390,6 +396,11 @@ const onSave = async () => {
                 setNodeBorderColor(el.type, el.id, "red");
                 return;
             }
+        }
+        if(el.text && el.text.value && el.text.value.includes("<")) {
+            ElMessage.error("节点名称不能包含：“<”");
+            setNodeBorderColor(el.type, el.id, "red");
+            return
         }
     }
     // 开始保存
