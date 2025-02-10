@@ -200,7 +200,7 @@ const confirm = async () => {
 
 	selectedFields.value.forEach((el) => {
 		el.isEdit = true;
-		el.isRequired = false;
+		// el.isRequired = false;
 	});
 	if (props.isQuickQuery) {
 		if (selectedFields.value.length < 1) {
