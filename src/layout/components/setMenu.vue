@@ -438,7 +438,7 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted, inject, reactive } from "vue";
+import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import useCommonStore from "@/store/modules/common";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
@@ -973,7 +973,7 @@ const layoutSave = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.saveConfig(layoutConfigId, "NAV", param);
 	if (res) {
-		router.go(0);
+        window.location.href = "/";
 	}
 	loading.value = false;
 };
