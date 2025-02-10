@@ -374,10 +374,17 @@ const onSave = async () => {
                 return;
             }
         }
-        if(el.text && el.text.value && el.text.value.includes("<")) {
-            ElMessage.error("节点名称不能包含：“<”");
-            setNodeBorderColor(el.type, el.id, "red");
-            return
+        if(el.text && el.text.value) {
+            if(!isNaN(el.text.value)){
+                ElMessage.error("节点名称不能为纯数字");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
+            if(el.text.value.includes("<")){
+                ElMessage.error("节点名称不能包含：“<”");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
         }
     }
     // 遍历线
@@ -397,10 +404,17 @@ const onSave = async () => {
                 return;
             }
         }
-        if(el.text && el.text.value && el.text.value.includes("<")) {
-            ElMessage.error("节点名称不能包含：“<”");
-            setNodeBorderColor(el.type, el.id, "red");
-            return
+        if(el.text && el.text.value) {
+            if(!isNaN(el.text.value)){
+                ElMessage.error("节点名称不能为纯数字");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
+            if(el.text.value.includes("<")){
+                ElMessage.error("节点名称不能包含：“<”");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
         }
     }
     // 开始保存
