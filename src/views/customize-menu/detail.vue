@@ -186,6 +186,13 @@
             ref="editRefs"
             @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
+            :isUser="isUser"
+        />
+        <!-- 新建、编辑部门 -->
+        <EditDepartment 
+            ref="EditDepartmentRef"
+            @onRefresh="onConfirm"
+            :nameFieldName="nameFieldName"
         />
         <DetailRevisionHistoryDialog ref="DetailRevisionHistoryRef"/>
 	</el-drawer>
@@ -197,6 +204,7 @@ defineOptions({
 });
 
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+import EditDepartment from '@/views/user/components/EditDepartment.vue'
 
 import { 
     ref, 
@@ -546,14 +554,26 @@ const copySuccess = ({type, recordId}) => {
 
 // 打开编辑
 let editRefs = ref();
+let EditDepartmentRef = ref();
+let isUser = ref(false);
 const onEditRow = (localDsv, formId) => {
+    isUser.value = false;
     let tempV = {
         detailId: detailId.value,
         idFieldName: idFieldName.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
     !!formId && (tempV.formId = formId)
-    editEmits(tempV)
+    let cutEditEntity = queryEntityNameById(detailId.value);
+    // 如果是修改部门
+    if(cutEditEntity == 'Department'){
+        EditDepartmentRef.value?.openDialog(detailId.value);
+    }else {
+        if(cutEditEntity == 'User') {
+            isUser.value = true;
+        }
+        editEmits(tempV)
+    }
 };
 
 // 新建

@@ -37,44 +37,25 @@
                             <el-button
                                 link
                                 type="primary"
-                                @click="addDepartment(node, data)"
+                                @click.stop="addDepartment(node, data)"
                                 :disabled="!checkRole('r22-2')"
                             >添加</el-button>
                             <el-button
                                 link
                                 type="primary"
                                 :disabled="!checkRole('r22-3')"
-                                @click="editDepartment(node, data)"
+                                @click.stop="editDepartment(node, data)"
                             >编辑</el-button>
                             <el-button
                                 link
                                 type="primary"
-                                @click="deleteDepartment(node, data)"
+                                @click.stop="deleteDepartment(node, data)"
                                 :disabled="!checkRole('r22-4')"
                             >删除</el-button>
                         </span>
                     </span>
                 </template>
             </el-tree>
-
-            <el-dialog
-                :title="departmentFormTitle"
-                v-model="showDepartmentFormDialogFlag"
-                :show-close="true"
-                :destroy-on-close="true"
-                :close-on-click-modal="false"
-                v-if="showDepartmentFormDialogFlag"
-                :close-on-press-escape="false"
-                class="need-style"
-            >
-                <v-form-render :global-dsv="departmentDsv" ref="departmentFormRef"></v-form-render>
-                <template #footer>
-                    <div class="dialog-footer">
-                        <el-button type="primary" @click="saveDepartment" style="width: 90px">保 存</el-button>
-                        <el-button @click="showDepartmentFormDialogFlag = false">取 消</el-button>
-                    </div>
-                </template>
-            </el-dialog>
         </el-aside>
 
         <el-container>
@@ -156,6 +137,11 @@
             @onRefresh="onRefresh"
             :disableWidgets="disableWidgets"
         />
+        <!-- 新建、编辑部门 -->
+        <EditDepartment 
+            ref="EditDepartmentRef"
+            @onRefresh="initTreeData"
+        />
     </el-container>
 </template>
 
@@ -165,21 +151,21 @@ import {
     deleteDepartmentById,
     deleteUserById,
     getDepartmentTree,
-    saveDepartment,
     saveUser,
 } from "@/api/user";
-import { createRecord, updateRecord } from "@/api/crud";
 import FormState from "@/views/system/form-state-variables";
 import eventBus from "@/utils/event-bus";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import ListDetail from "./components/ListDetail.vue";
 import ddImg from "@/assets/imgs/dd.png";
 import wXWorkImg from "@/assets/imgs/WXWork.png";
+import EditDepartment from '@/views/user/components/EditDepartment.vue'
 export default {
     name: "UserTreeTable",
     components: {
         mlCustomEdit,
         ListDetail,
+        EditDepartment,
     },
     data() {
         return {
@@ -193,18 +179,6 @@ export default {
             labelsModel: {},
             curUserId: null,
             fieldPropsMap: {},
-
-            showDepartmentFormDialogFlag: false,
-            departmentLayout: {},
-            departmentFormState: 1,
-            departmentFormModel: {},
-            departmentLabelsModel: {},
-            curDepartmentId: null,
-            departmentFieldPropsMap: {},
-            departmentDsv: {
-                formEntity: "Department",
-                uploadServer: import.meta.env.VITE_APP_BASE_API,
-            },
             userDsv: {},
 
             tableData: [],
@@ -350,16 +324,6 @@ export default {
                 return "用户详情";
             }
         },
-
-        departmentFormTitle() {
-            if (this.departmentFormState === FormState.NEW) {
-                return "新建部门";
-            } else if (this.departmentFormState === FormState.EDIT) {
-                return "编辑部门";
-            } else {
-                return "查看部门";
-            }
-        },
     },
     mounted() {
         this.initTreeData();
@@ -497,114 +461,13 @@ export default {
             return createLayoutObj(eventBus);
         },
 
-        async addDepartment(node, data) {
-            let res = await createRecord("Department");
-            if (res) {
-                if (!!res.data && !!res.data.layoutJson) {
-                    this.curDepartmentId = null;
-                    this.departmentFormState = FormState.NEW;
-                    this.showDepartmentFormDialogFlag = true;
-                    this.departmentDsv["formEntity"] = "Department";
-                    this.departmentDsv["formStatus"] = "new";
-                    this.$nextTick(() => {
-                        this.$refs.departmentFormRef.setFormJson(res.data.layoutJson);
-                        const departmentFormData = {
-                            parentDepartmentId: {
-                                id: node.data.id,
-                                name: node.data.label,
-                            },
-                        };
-                        this.$nextTick(() => {
-                            this.$refs.departmentFormRef.setFormData(
-                                departmentFormData
-                            );
-                        });
-                    });
-                } else {
-                    this.$message({
-                        message: "加载表单布局出错",
-                        type: "error",
-                    });
-                }
-            }
+        addDepartment(node, data) {
+            this.$refs.EditDepartmentRef.openDialog("", node);
         },
 
         async editDepartment(node, data) {
-            if (node.data.id === "0000022-00000000000000000000000000000001") {
-                this.$message.info("根部门不可编辑！");
-                return;
-            }
-
-            this.curDepartmentId = node.data.id;
-            let res = await updateRecord("Department", this.curDepartmentId);
-            if (res) {
-                if (!!res.data && !!res.data.layoutJson) {
-                    this.departmentFormState = FormState.EDIT;
-                    this.showDepartmentFormDialogFlag = true;
-                    this.departmentDsv["formEntity"] = "Department";
-                    this.departmentDsv["formStatus"] = "edit";
-                    this.departmentDsv["filterConditions"] = {
-                        equal: "OR",
-                        items: [
-                            {
-                                fieldName: "departmentId",
-                                op: "NBTD",
-                                value: node.data.id,
-                            },
-                        ],
-                    };
-                    this.$nextTick(() => {
-                        this.$refs.departmentFormRef.setFormJson(res.data.layoutJson);
-                        this.$nextTick(() => {
-                            // const parentDpt =
-                            //     this.$refs.departmentFormRef.getWidgetRef(
-                            //         "parentDepartmentId"
-                            //     );
-                            // !!parentDpt && parentDpt.setDisabled(true);
-                            if (
-                                node.data.id ===
-                                "0000022-00000000000000000000000000000001"
-                            ) {
-                                !!parentDpt && parentDpt.setRequired(false);
-                            }
-                            this.$refs.departmentFormRef.setFormData(res.data.formData);
-                        });
-                    });
-                } else {
-                    this.$message({
-                        message: "加载表单布局出错",
-                        type: "error",
-                    });
-                }
-            }
+            this.$refs.EditDepartmentRef.openDialog(node.data.id, node);
         },
-
-        saveDepartment() {
-            this.$refs.departmentFormRef
-                .getFormData()
-                .then(async (formData) => {
-                    this.departmentFormModel = formData;
-                    let res = await saveDepartment(
-                        "Department",
-                        this.departmentFormState === FormState.NEW ? "" : this.curDepartmentId,
-                        this.departmentFormModel
-                    );
-                    if (res) {
-                        this.departmentFormModel = res.data.formData;
-                        this.departmentLabelsModel = res.data.labelData;
-                        this.$message({
-                            message: "保存成功",
-                            type: "success",
-                        });
-                        this.showDepartmentFormDialogFlag = false;
-                        this.initTreeData();
-                    }
-                })
-                .catch((err) => {
-                    this.$message({ message: "数据校验失败", type: "error" });
-                });
-        },
-
         deleteDepartment(node, data) {
             if (node.data.id === "0000022-00000000000000000000000000000001") {
                 this.$message.info("根部门不可删除！");
