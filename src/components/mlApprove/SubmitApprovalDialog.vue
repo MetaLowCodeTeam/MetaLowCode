@@ -63,7 +63,7 @@ const emits = defineEmits(["onSubmit"]);
 let approvalDialog = reactive({
 	isShow: false,
 	loading: false,
-	approvalConfig: {},
+	approvalConfig: "",
 });
 
 // 审批流程

@@ -413,10 +413,20 @@ const handleReset = () => {
 };
 
 // 确认签名
-const handleGenerate = async () => {
-    esignConf.value.resultImg = await esignRef.value.generate();
-    esignConf.value.show = false;
-    confirmApprove(false);
+const handleGenerate = () => {
+    esignRef.value.generate().then(res => {
+        esignConf.value.resultImg = res;
+        esignConf.value.show = false;
+        confirmApprove(false);
+    }).catch(err => {
+        if(err == 'Warning: Not Signned!') {
+            $ElMessage.error("请手写签名")
+        }
+        else {
+            console.log(err);
+            $ElMessage.error(err);
+        }
+    })
 };
 
 // 同意前触发
