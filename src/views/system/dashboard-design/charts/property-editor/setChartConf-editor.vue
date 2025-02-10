@@ -14,7 +14,7 @@
             </el-form-item>
         </template>
         <template v-else>
-            <el-form-item label="数值显示">
+            <el-form-item label="数值显示" v-if="selectedWidget.type != 'radarChart'">
                 <el-switch v-model="optionModel.setChartConf.numShow"></el-switch>
             </el-form-item>
             <el-form-item label="图例显示" >
