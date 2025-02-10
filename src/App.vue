@@ -9,7 +9,7 @@
         <div class="app-loading" v-else>
             <div class="app-loading__logo"></div>
             <div class="app-loading__loader"></div>
-            <div class="app-loading__title">Loading...</div>
+            <div class="app-loading__title">加载中...</div>
         </div>
     </el-config-provider>
     <div class="web-ver">{{ publicSetting.webVer }}</div>
