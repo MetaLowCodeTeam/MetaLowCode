@@ -14,7 +14,7 @@
 				:data="tableData"
 				:border="true"
 				style="width: 100%"
-				:max-height="320"
+				:height="320"
 				stripe
 				:show-summary="cutField?.options.setChartConf.showSummary"
 				:summary-method="getSummaries"
