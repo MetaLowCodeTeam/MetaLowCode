@@ -531,6 +531,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            showTablePagination: false,
             customClass: [],
             dsEnabled: false,
             dsName: "",
