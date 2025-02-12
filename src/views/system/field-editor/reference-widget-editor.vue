@@ -547,7 +547,7 @@ export default {
                 let entityItems = res.data;
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
-                        if (this.refDetailEntityFlag === entity.detailEntityFlag) {
+                        if (this.refDetailEntityFlag === entity.detailEntityFlag && !entity.internalEntityFlag) {
                             this.tableData.push({
                                 name: entity.name,
                                 label: entity.label,
