@@ -325,7 +325,7 @@
                                 effect="dark"
                                 :content="getEditBtnTitle(scope.row) || '此状态不可编辑'"
                                 placement="top"
-                                v-if="!checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
+                                v-if="hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
                             >
                                 <el-button
                                     size="small"

@@ -114,6 +114,7 @@
                                         @click="onEditRow"
                                         :disabled="!checkModifiableEntity(detailId, approvalStatus?.value)"
                                         :title="getEditBtnTitle()"
+                                        v-if="$TOOL.checkRole('r' + entityCode + '-3')"
                                     >
                                         <span class="mr-5">
                                             <el-icon>
@@ -712,6 +713,7 @@ let DetailRevisionHistoryRef = ref();
 const toRevisionHistory = (recordId) => {
     DetailRevisionHistoryRef.value?.openDialog(recordId);
 }
+
 
 
 // 暴露方法给父组件调用
