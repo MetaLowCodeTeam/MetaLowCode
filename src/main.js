@@ -28,7 +28,7 @@ import { registerCustomEditCmp } from '@/views/custom-page/customEditEntry.js';
 import { registerCustomListSubFormCmp } from '@/views/custom-page/ListSubFormCmp/customListSubFormEntry.js';
 import { registerCustomServiceTaskCmp } from "@/views/system/approval-process/components/ComplexFlow/customServiceTaskCmp";
 // console.log("1. 使用路由...",router)
-
+import { getSimplePinYin } from "@/utils/util";
 //初始化高德地图组件
 initAMapApiLoader({
 	key: '487d8f7268cf06102ecd3e637b0f892d',
@@ -38,6 +38,7 @@ initAMapApiLoader({
 const app = createApp(App);
 
 app.config.globalProperties.$dayjs = dayjs;
+app.config.globalProperties.$getPinYin = getSimplePinYin;
 
 app.use(VueResizeObserver);
 app.use(router);

@@ -108,6 +108,14 @@ export const fieldEditorMixin = {
 				if (!this.fieldProps.referenceSetting) {
 					this.fieldProps.referenceSetting = []
 				}
+                if(!this.fieldProps.extraAttrs){
+                    this.fieldProps.extraAttrs = {
+                        onlyUpdateByTrigger: false,
+                    }
+                }else {
+                    let { onlyUpdateByTrigger } = this.fieldProps.extraAttrs;
+                    this.fieldProps.extraAttrs.onlyUpdateByTrigger = !!onlyUpdateByTrigger;
+                }
             }
 		},
 
