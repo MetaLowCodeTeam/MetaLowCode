@@ -605,8 +605,10 @@ defineExpose({
     .el-row {
         padding: 0 8px 0 8px !important;
     }
+    .sub-form-container .el-row {
+        padding: 0 !important;
+    }
 }
-
 .main {
     max-height: 500px;
     overflow-x: hidden;
