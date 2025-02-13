@@ -344,6 +344,7 @@
                                 link
                                 type="primary"
                                 @click.stop="onEditRow(scope.row)"
+                                :disabled="scope.row.btnDisabled.edit"
                             >
                                 编辑
                             </el-button>
@@ -353,7 +354,10 @@
                                 link
                                 type="primary"
                                 @click.stop="openDetailDialog(scope.row)"
-                            >查看</el-button>
+                                :disabled="scope.row.btnDisabled.view"
+                            >
+                                查看
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -1430,8 +1434,12 @@ const getTableList = async () => {
     );
     if (res && res.data) {
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
-        tableData.value = res.data.dataList.map(el => {
-            el.isCustomDisabled = customDisabledFunc ? new Function('row', customDisabledFunc)(el) : false;
+        tableData.value = res.data.dataList.map((el, inx) => {
+            el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', customDisabledFunc)(el, inx) : false;
+            el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx) : {
+                view: false,
+                edit: false,
+            };
             el.isSelected = false;
             return el
         });
