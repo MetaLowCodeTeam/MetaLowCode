@@ -1435,8 +1435,8 @@ const getTableList = async () => {
     if (res && res.data) {
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
         tableData.value = res.data.dataList.map((el, inx) => {
-            el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', customDisabledFunc)(el, inx) : false;
-            el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx) : {
+            el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', 'target', customDisabledFunc)(el, inx, 'pc') : false;
+            el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', 'target', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx, 'pc') : {
                 view: false,
                 edit: false,
             };
