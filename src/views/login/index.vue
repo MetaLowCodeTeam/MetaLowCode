@@ -1,6 +1,6 @@
 <template>
     <div class="login_bg">
-        <div class="login_adv">
+        <div class="login_adv" :style="{ backgroundImage: `url(${pcLoginPicture})` }">
             <div class="login_adv__title">
                 <h2>{{ appTitle }}</h2>
                 <h4>{{ appSubTitle }}</h4>
@@ -129,6 +129,9 @@ export default {
         },
         mobilePhoneLogin: () => {
             return publicSetting.value.mobilePhoneLogin;
+        },
+        pcLoginPicture: () => {
+            return publicSetting.value.pcLoginPicture ? import.meta.env.VITE_APP_BASE_API + publicSetting.value.pcLoginPicture : "/img/auth_banner.jpg";
         },
     },
     created: function () {

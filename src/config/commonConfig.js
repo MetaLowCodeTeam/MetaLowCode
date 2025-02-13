@@ -19,7 +19,7 @@ export default [
             {
                 label: "LOGO",
                 key: "logo",
-                type: "uptadeLogo",
+                type: "uploadLogo",
                 required: true,
                 isError: false,
             },
@@ -113,6 +113,18 @@ export default [
                 label: "页脚",
                 key: "pageFooter",
                 type: "input",
+            },
+            {
+                label: "大图配置(PC)",
+                subLabel: "推荐尺寸：640*1080",
+                key: "pcLoginPicture",
+                type: "uploadLogo",
+            },
+            {
+                label: "大图配置(Mobile)",
+                subLabel: "推荐尺寸：750*1400",
+                key: "mobileLoginPicture",
+                type: "uploadLogo",
             },
             {
                 label: "手机号登录",

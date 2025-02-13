@@ -174,10 +174,10 @@
                                     </el-button>
                                 </div>
                                 <!-- 上传Logo -->
-                                <div v-else-if="item.type == 'uptadeLogo'" style="width: 178px;">
+                                <div class="upload-logo-div" v-else-if="item.type == 'uploadLogo'" style="width: 178px;">
                                     <ml-upload
                                         accept="image/*"
-                                        @on-success="onLogoSuccess"
+                                        @on-success="(data) => onLogoSuccess(data, item.key)"
                                         class="ml-upload"
                                         uploadUrl="/picture/upload"
                                     >
@@ -189,6 +189,13 @@
                                                 @click="item.isError = false"
                                             >
                                                 <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
+                                                <div class="remove-logo">
+                                                    <span class="remove-logo-icon" @click.stop="removeLogo(item.key)">
+                                                        <el-icon size="30">
+                                                            <ElIconDelete />
+                                                        </el-icon>
+                                                    </span>
+                                                </div>
                                             </div>
                                             <el-icon
                                                 @click="item.isError = false"
@@ -200,6 +207,7 @@
                                             </el-icon>
                                         </template>
                                     </ml-upload>
+                                    <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
                                 </div>
                             </el-descriptions-item>
                         </el-descriptions>
@@ -435,8 +443,13 @@ const initData = async () => {
  */
 
 // logo上传成功
-const onLogoSuccess = (data) => {
-    confData.logo = data.url;
+const onLogoSuccess = (data, key) => {
+    confData[key] = data.url;
+};
+
+// 删除logo
+const removeLogo = (key) => {
+    confData[key] = "";
 };
 
 // 是否禁用
@@ -607,7 +620,7 @@ const onSubmit = async () => {
 const MsgType = reactive({
     input: "请输入",
     uptade: "请上传",
-    uptadeLogo: "请上传",
+    uploadLogo: "请上传",
     radio: "请选择",
     checkbox: "请选择",
 });
@@ -875,12 +888,36 @@ const showTab = (code) => {
         border: 1px dashed var(--el-border-color);
         padding: 10px;
         transition: var(--el-transition-duration-fast);
+        border-radius: 3px;
+        .remove-logo {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            cursor: default;
+            border-radius: 3px;
+            .remove-logo-icon {
+                cursor: pointer;
+            }
+        }
         img {
             width: 100%;
             height: 100%;
         }
         &:hover {
             border-color: var(--el-color-primary);
+            img {
+                opacity: 0.5;
+            }
+            .remove-logo {
+                display: flex;
+            }
         }
         &.is-error {
             border-color: var(--el-color-error);
