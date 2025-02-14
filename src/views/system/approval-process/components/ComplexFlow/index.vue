@@ -1,7 +1,13 @@
 <template>
     <!--  -->
     <!--  -->
-    <div class="complex-flow-box" v-loading="loading">
+    <div 
+        v-if="!publicSetting.pluginIdList.includes('metaWorkFlow')"
+        class="not-plugin"
+    >
+        复杂流程监控 插件未安装！
+    </div>
+    <div class="complex-flow-box" v-loading="loading" v-else>
         <div class="complex-flow">
             <MetaFlowDesigner
                 ref="MetaFlowDesignerRef"
@@ -108,8 +114,10 @@ import BoundaryEvent from './boundaryEvent/Index.vue';
 // 公用方法
 import { checkConditionList } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
-const { queryEntityNameByCode } = useCommonStore();
 
+import { storeToRefs } from "pinia";
+const { queryEntityNameByCode } = useCommonStore();
+const { publicSetting } = storeToRefs(useCommonStore());
 
 // API
 import { saveComplexFlow, getComplexFlow } from "@/api/approval";

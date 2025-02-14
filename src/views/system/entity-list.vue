@@ -272,6 +272,7 @@
                 class="new-entity-dialog"
                 :close-on-click-modal="false"
                 :close-on-press-escape="false"
+                draggable
             >
                 <div v-loading="saveLoading">
                     <EntityPropEditor
@@ -289,11 +290,15 @@
                             @click="saveNewEntity"
                             style="width: 90px"
                             v-loading="saveLoading"
-                        >保 存</el-button>
+                        >
+                            保 存
+                        </el-button>
                         <el-button
                             v-loading="saveLoading"
                             @click="showNewEntityDialogFlag = false"
-                        >取 消</el-button>
+                        >
+                            取 消
+                        </el-button>
                     </div>
                 </template>
             </el-dialog>

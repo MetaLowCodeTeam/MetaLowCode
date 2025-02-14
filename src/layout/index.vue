@@ -394,12 +394,17 @@ export default {
                     pluginName: "mannerReport",
                     errMsg: "在线报表 插件未安装！",
                 },
+                ProcessMonitoring: {
+                    pluginName: "metaWorkFlow",
+                    errMsg: "复杂流程监控 插件未安装！",
+                },
             },
             needPlugin: [
                 "TriggerList",
                 "DashboardDesign",
                 "TemplatesList",
                 "TriggerLog",
+                "ProcessMonitoring",
             ],
         };
     },

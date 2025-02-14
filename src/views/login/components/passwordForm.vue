@@ -58,9 +58,12 @@
 
 <script>
 import useCommonStore from "@/store/modules/common";
+import useCheckStatusStore from "@/store/modules/checkStatus";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 const { getEntityList, setUserInfo } = useCommonStore();
+const { setNewMsgNum } = useCheckStatusStore();
+import http from "@/utils/request";
 export default {
     data() {
         return {
@@ -178,6 +181,7 @@ export default {
                 /**
                  * 登录成功调用
                  */
+                this.roundRobin(5000);
                 // 调用实体数据
                 getEntityList();
                 this.$router.replace({
@@ -188,6 +192,20 @@ export default {
             }
             this.codeSrc();
             this.islogin = false;
+        },
+        // 轮循获取新消息
+        roundRobin(ms) {
+            console.log('轮循获取新消息')
+            setInterval(() => {
+                this.getNewMsgNum();
+            }, ms);
+        },
+        async getNewMsgNum() {
+            console.log('获取新消息')
+            let checkStatusRes = await http.get("/crud/checkStatus");
+            if (checkStatusRes) {
+                setNewMsgNum(checkStatusRes.data?.noteCount);
+            }
         },
     },
 };

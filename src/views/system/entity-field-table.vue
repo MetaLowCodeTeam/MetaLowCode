@@ -231,6 +231,7 @@
                 :destroy-on-close="true"
                 class="name-field-dialog"
                 width="480px"
+                draggable
             >
 				<div class="name-field-hint">
                     <i class="el-icon-bell"></i>
@@ -273,6 +274,7 @@
 				:close-on-press-escape="false"
                 class="no-padding field-setting-dialog"
                 width="620px"
+                draggable
             >
 				<component
                     :is="curFWEditor"
@@ -294,6 +296,7 @@
 				:close-on-press-escape="false"
                 class="no-padding field-setting-dialog"
                 width="620px"
+                draggable
             >
 				<component
                     :is="curFWEditor"
@@ -315,6 +318,7 @@
                 :close-on-click-modal="false"
                 :close-on-press-escape="false"
 				:destroy-on-close="true"
+                draggable
             >
 				<EntityPropEditor
                     ref="EPEditor"
@@ -333,7 +337,12 @@
 		</el-container>
 
         <!-- 设置标签 -->
-        <ml-dialog v-model="addTagDialogIsShow" title="设置标签" width="400">
+        <ml-dialog 
+            v-model="addTagDialogIsShow" 
+            title="设置标签" 
+            width="400"
+            draggable
+        >
             <div v-loading="addTagDialogLoading">
                 <el-check-tag
                     v-for="(tag,inx) of allTags" :key="inx"
