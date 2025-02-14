@@ -20,7 +20,7 @@ dayjs.updateLocale('zh-cn', {
       sameElse: 'A h:mm',
     },
 });
-  
+
 dayjs.locale('zh-cn');
 // dayjs().calendar(null,{
 //     sameDay: '[今天]LT',
@@ -317,7 +317,7 @@ export const upperFirstLetter = (inStr) => {
 }
 
 /**
- * 获取汉字简拼
+ * 获取汉字拼音字母
  * @param chStr
  * @returns {string}
  */
@@ -327,12 +327,12 @@ export const getSimplePinYin = (chStr) => {
 
 
 /**
- * 
+ *
  * @param {*} showDecimalPlaces 是否开启小数位
  * @param {*} decimalPlaces 小数位是几
  * @param {*} thousandsSeparator 是否开启千分符
  * @param {*} val 值
- * @returns 
+ * @returns
  */
 export const getPreviewNum = (showDecimalPlaces, decimalPlaces, thousandsSeparator, val) => {
     let previewStr = val;
@@ -495,7 +495,7 @@ export const getModelName = () => {
         }
         modelName = newSplitName.join("-")
     }
-    return modelName; 
+    return modelName;
 }
 
 
