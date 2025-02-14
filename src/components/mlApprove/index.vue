@@ -195,6 +195,8 @@ import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
+import { globalDsvDefaultData } from "@/utils/util";
+
 
 /**
  * 组件
@@ -275,11 +277,7 @@ const vFormRef = ref();
 let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 // 初始化自定义表单
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;

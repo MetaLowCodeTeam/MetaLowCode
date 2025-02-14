@@ -517,3 +517,13 @@ export const formatOutLink = (meta) => {
         return outLink
     }
 }
+
+// 表单DSV默认配置
+export const globalDsvDefaultData = () => {
+    let data = {
+        uploadServer: import.meta.env.VITE_APP_BASE_API,
+        baseApi: import.meta.env.VITE_APP_BASE_API,
+        SERVER_API: import.meta.env.VITE_APP_BASE_API,
+    }
+    return JSON.parse(JSON.stringify(data))
+}

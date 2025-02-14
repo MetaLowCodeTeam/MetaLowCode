@@ -93,6 +93,7 @@ import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+import { globalDsvDefaultData } from "@/utils/util";
 
 const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
 
@@ -202,11 +203,7 @@ let row = reactive({
 const paramDialogConf = ref(null);
 
 
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 
 
 

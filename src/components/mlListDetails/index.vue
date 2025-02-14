@@ -62,6 +62,7 @@ import { queryById } from "@/api/crud";
 import { getFormLayout } from "@/api/system-manager";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
+import { globalDsvDefaultData } from "@/utils/util";
 const { queryEntityNameById } = useCommonStore();
 const router = useRouter();
 const props = defineProps({
@@ -130,11 +131,7 @@ const closeDialog = () => {
 let haveLayoutJson = ref(false);
 let vFormRef = ref();
 let optionData = ref({});
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 // 刷新数据
 const refresh = async () => {
     loading.value = true;

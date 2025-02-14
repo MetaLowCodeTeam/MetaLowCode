@@ -51,6 +51,7 @@
 import { ref, onMounted, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { globalDsvDefaultData } from "@/utils/util";
 const router = useRouter();
 
 
@@ -75,11 +76,7 @@ let loading = ref(false);
 let loadingText = ref("加载中...");
 
 let optionData = ref({});
-let globalDsv = ref({
-	uploadServer: import.meta.env.VITE_APP_BASE_API,
-	baseApi: import.meta.env.VITE_APP_BASE_API,
-	SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 
 let myEntity = ref({});
 

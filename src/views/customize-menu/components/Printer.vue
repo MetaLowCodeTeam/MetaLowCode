@@ -21,6 +21,7 @@ import useCommonStore from "@/store/modules/common";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import Print from "@/utils/print";
+import { globalDsvDefaultData } from "@/utils/util";
 const { queryEntityNameById,getEntityList } = useCommonStore();
 const router = useRouter();
 let entityId = ref("");
@@ -45,11 +46,7 @@ onMounted(async () => {
 
 let vFormRef = ref();
 let fromBoxRef = ref();
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 // 加载vform表单
 const initVformCom = async () => {
     loading.value = true;

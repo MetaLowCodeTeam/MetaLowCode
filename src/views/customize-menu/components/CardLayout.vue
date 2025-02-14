@@ -20,6 +20,7 @@
 import { ref, reactive, nextTick, watch } from "vue";
 import { queryById } from "@/api/crud";
 import { getRecordApprovalState } from '@/api/approval';
+import { globalDsvDefaultData } from "@/utils/util";
 const props = defineProps({
 	layoutJson: { type: String, default: "" },
 	recordId: { type: String, default: "" },
@@ -32,7 +33,7 @@ const emits = defineEmits(["loading"]);
 const vFormRef = ref();
 const optionData = ref({});
 const formData = reactive();
-const globalDsv = ref({});
+const globalDsv = ref(globalDsvDefaultData);
 
 let loading = ref(false);
 

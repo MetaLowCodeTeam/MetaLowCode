@@ -26,6 +26,7 @@ import { ElMessage } from "element-plus";
 import { nextTick, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import useCommonStore from "@/store/modules/common";
+import { globalDsvDefaultData } from "@/utils/util";
 
 /**
  * API
@@ -42,11 +43,7 @@ let entityName = ref();
 
 // 表单数据
 let optionData = ref({});
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 let haveLayoutJson = ref(false);
 let notData = ref(false);
 let loading = ref(false);

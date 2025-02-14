@@ -34,12 +34,12 @@ import { onMounted, ref, nextTick } from "vue";
 import { getExternalFormData, saveRecord } from "@/api/external";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { globalDsvDefaultData } from "@/utils/util";
 const Router = useRouter();
 
 const vFormRef = ref();
 let haveLayoutJson = ref(false);
-const globalDsv = ref({});
-globalDsv.value.uploadServer = import.meta.env.VITE_APP_BASE_API;
+const globalDsv = ref(globalDsvDefaultData);
 let optionData = ref({});
 let loading = ref(false);
 

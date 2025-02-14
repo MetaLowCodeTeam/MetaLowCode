@@ -147,6 +147,7 @@
 <script setup>
 import { nextTick, onMounted, ref, watch } from "vue";
 import useCommonStore from "@/store/modules/common";
+import { globalDsvDefaultData } from "@/utils/util";
 const { checkModifiableEntity } = useCommonStore();
 /**
  * Api
@@ -187,11 +188,7 @@ watch(
 	{ deep: true }
 );
 
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 let myOptionData = ref({});
 
 let vFormRef = ref();
