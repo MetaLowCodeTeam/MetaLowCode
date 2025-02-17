@@ -195,7 +195,12 @@ const getItemStyle = () => {
     return itemStyle;
 };
 
-
+const getData = () => {
+    return myQuickNavConf.value;
+}
+defineExpose({
+    getData
+})
 </script>
 <style lang="scss" scoped>
 .quick-nav-widget {

@@ -1,3 +1,4 @@
+<!-- 设计页面 -->
 <template>
 	<smart-widget-grid :layout="gridLayout" v-if="widget.widgetList.length <= 0"
 					   :row-height="48"
@@ -31,18 +32,44 @@
                 @on-refresh="onRefresh(item)"
 
             >
-
+                <template #toolbar v-if="item.options.topBarBtnConfig?.show">
+                    <div style="border-left: 1px solid rgba(0,0,0,.09);height: 24px;margin-right: 10px;">
+                    </div>
+                    <el-button 
+                        :type="item.options.topBarBtnConfig?.type" 
+                        :size="item.options.topBarBtnConfig?.size"
+                        :icon="item.options.topBarBtnConfig?.icon"
+                        @click.stop="onCustomBtnClick(item)"
+                        class="mr-5"
+                    >
+                        {{ item.options.topBarBtnConfig?.text }}
+                    </el-button>
+                </template>
 				<div class="container-com">
 					<template v-if="'container' === item.category">
-						<component :is="item.type + '-widget'" :widget="item" :designer="designer"
-								   :key="item.id" :parent-list="widget.widgetList"
-								   :index-of-parent-list="index" :parent-widget="widget"></component>
+						<component 
+                            :is="item.type + '-widget'" 
+                            :widget="item" 
+                            :designer="designer"
+							:key="item.id" 
+                            :parent-list="widget.widgetList"
+							:index-of-parent-list="index" 
+                            :parent-widget="widget"
+                            ref="containerRef"
+                        ></component>
 					</template>
 					<template v-else>
-						<component :is="item.type + '-widget'" :field="item" :designer="designer"
-								   :key="item.id" :parent-list="widget.widgetList"
-								   :index-of-parent-list="index" :parent-widget="widget"
-								   :design-state="true"></component>
+						<component 
+                            :is="item.type + '-widget'" 
+                            :field="item" 
+                            :designer="designer"
+                            :key="item.id" 
+                            :parent-list="widget.widgetList"
+                            :index-of-parent-list="index" 
+                            :parent-widget="widget"
+                            :design-state="true"
+                            ref="containerRef"
+                        ></component>
 					</template>
                     <span v-if="designer.selectedWidget?.id == item.id" class="del-span" @click="removeSelectedChart(index, item.id)">
                         <el-icon size="20"><ElIconDelete /></el-icon>
@@ -86,6 +113,16 @@ export default {
         onRefresh(item){
             item.options.isRefresh = !item.options.isRefresh;
         },
+        onCustomBtnClick(item){
+            if(item.options.onCustomBtnClick){
+                let customFn = new Function(
+                    "chart",
+                    "data",
+                    item.options.onCustomBtnClick
+                );
+                customFn.call(this, item, this.$refs.containerRef?.getData());
+            }
+        },
 
 		/**
 		 * 删除选中的图表组件或者区块容器
@@ -123,8 +160,8 @@ export default {
 					chartList.splice(chartIndex, 1)
 					this.designer.setSelected(nextSelected)
 
-					this.designer.formWidget.deleteWidgetRef(widgetRefName)  //删除组件ref！！！
-					this.designer.formWidget.deletedChildrenRef(childrenRefNames)  //删除容器组件的所有内嵌组件ref！！！
+					this.designer.formWidget?.deleteWidgetRef(widgetRefName)  //删除组件ref！！！
+					this.designer.formWidget?.deletedChildrenRef(childrenRefNames)  //删除容器组件的所有内嵌组件ref！！！
 					this.designer.emitHistoryChange()
 				})
 			}

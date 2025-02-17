@@ -341,6 +341,13 @@ const numberToCurrencyNo = (value) => {
 const setSelected = () => {
 	props.designer?.setSelected(props.field);
 };
+
+const getData = () => {
+    return cutCompleted.value;
+}
+defineExpose({
+    getData
+})
 </script>
 <style lang="scss" scoped>
 .bar-progress {

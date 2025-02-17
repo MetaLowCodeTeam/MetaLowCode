@@ -114,6 +114,15 @@ watchEffect(() => {
 	cutField.value = props.field;
 	initOption();
 });
+
+const getData = () => {
+    return metricsNum.value;
+}
+
+defineExpose({
+    getData
+})
+
 </script>
 <style lang="scss" scoped>
 .pivot-table-widget {

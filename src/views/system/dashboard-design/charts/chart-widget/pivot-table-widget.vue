@@ -248,6 +248,13 @@ const handleResize = () => {
 const setSelected = () => {
     props.designer?.setSelected(props.field);
 };
+
+const getData = () => {
+    return dataCfg.value;
+}
+defineExpose({
+    getData
+})
 </script>
 
 <style lang="scss" scoped>

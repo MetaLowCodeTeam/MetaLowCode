@@ -260,6 +260,13 @@ const onRowClick = (row, column, event) => {
 const setSelected = () => {
 	props.designer?.setSelected(props.field);
 };
+
+const getData = () => {
+    return tableData.value;
+}
+defineExpose({
+    getData
+})
 </script>
 
 <style lang="scss" scoped>
