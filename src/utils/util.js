@@ -4,6 +4,9 @@ import 'dayjs/locale/zh-cn';
 import calenderPlugin from 'dayjs/plugin/calendar';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { pinyin } from 'pinyin-pro'
+import JSEncrypt from 'jsencrypt';
+import http from "@/utils/request";
+
 // 注册插件
 dayjs.extend(updateLocale);
 dayjs.extend(calenderPlugin);
@@ -526,4 +529,18 @@ export const globalDsvDefaultData = () => {
         SERVER_API: import.meta.env.VITE_APP_BASE_API,
     }
     return JSON.parse(JSON.stringify(data))
+}
+
+// 加密
+export const encrypt = async (password) => {
+    const res = await http.get('/user/getPublicKey');
+    if(res && res.code == 200) {
+        const encrypt = new JSEncrypt()
+        let param = {
+            password: password,
+            loginToken: res.data.loginToken
+        }
+        encrypt.setPublicKey(res.data.publicKey)
+        return encrypt.encrypt(JSON.stringify(param))
+    };
 }

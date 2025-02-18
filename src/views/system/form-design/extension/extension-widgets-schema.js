@@ -137,6 +137,8 @@ export const referenceSchema = {
         openSearchInPlace: false,
         // 搜索字段
         searchFields: [],
+        // 子表单内禁止多选
+        disableMultipleSelectionInSubForm: false,
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

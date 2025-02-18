@@ -575,7 +575,7 @@ const getEntityFields = async () => {
     if (res && res.code == 200) {
         entityFields.value = res.data.filter(
             (el) =>
-                el.type == "Reference" &&
+                (el.type == "Reference" || el.type == "ReferenceList") &&
                 (el.referTo == "User" || el.referTo == "Department")
         );
     }

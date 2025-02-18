@@ -48,7 +48,7 @@
             <el-button
                 type="primary"
                 style="width: 100%;"
-                :loading="islogin"
+                :loading="loginLoading"
                 round
                 @click="login"
             >{{ $t('login.signIn') }}</el-button>
@@ -64,6 +64,7 @@ const { publicSetting } = storeToRefs(useCommonStore());
 const { getEntityList, setUserInfo } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 import http from "@/utils/request";
+import { encrypt } from "@/utils/util";
 export default {
     data() {
         return {
@@ -93,7 +94,7 @@ export default {
 					{ required: true, message: this.$t("login.imgError") },
 				],
             },
-            islogin: false,
+            loginLoading: false,
             imgCode: "",
         };
     },
@@ -141,16 +142,14 @@ export default {
             if (!validate) {
                 return false;
             }
-
-            // this.islogin = true;
+            this.loginLoading = true;
+            let encryptPassword = await encrypt(this.form.password);
             var data = {
                 user: this.form.user,
-                password: this.form.password,
+                password: encryptPassword,
                 imgCode: this.myPublicSetting?.verificationCodeLogin ? this.form.imgYzm : null,
             };
-
-            //eslint-disable-next-line
-            //debugger
+           
 
             //获取token
             var user = await this.$API.auth.token.post(data);
@@ -191,7 +190,7 @@ export default {
                 this.$message.success(this.$t("login.loginSuccess"));
             }
             this.codeSrc();
-            this.islogin = false;
+            this.loginLoading = false;
         },
         // 轮循获取新消息
         roundRobin(ms) {

@@ -94,8 +94,8 @@
 				@recordSelected="setReferRecord"
                 @multipleRecordSelected="multipleSetReferRecord"
 				:gDsv="gDsv"
-                :showCheckBox="subFormItemFlag"
-                :showMultipleSelectConfirm="subFormItemFlag"
+                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
+                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
