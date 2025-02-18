@@ -299,8 +299,8 @@ const msgClick = (item, inx) => {
     if (item.type == 30 || item.type == 20) {
         // 如果是仪表盘
         if(item.entityName == 'Chart'){
-            if($TOOL.checkRole('r52-2')) {
-                router.push({name: "DashboardDesign"});
+            if($TOOL.checkRole('r52-2') && $TOOL.checkRole('r6017')) {
+                router.push(appPath + 'dashboard-list');
             }else {
                 $ElMessage.error("没有权限");
             }
