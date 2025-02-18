@@ -534,14 +534,16 @@ const saveNewEntity = () => {
             ElMessage.error("实体不能使用系统保留关键字，请修改。");
             return;
         }
-
+        
         newEntityProps.value = Object.assign(
             newEntityProps.value,
             EPEditor.value.entityProps
         );
+        
         const mainEntityName = !newEntityProps.value.mainEntity
             ? "null"
             : newEntityProps.value.mainEntity;
+            
         saveLoading.value = true;
         let tags = [];
         if (newEntityProps.value.useTag) {
@@ -553,12 +555,13 @@ const saveNewEntity = () => {
         }
         newEntityProps.value.tags = tags.join(",");
 
-        delete newEntityProps.value.useTag;
+        let paramsEntityProps = JSON.parse(JSON.stringify(newEntityProps.value))
+        delete paramsEntityProps.useTag;
         let res;
         // 是复制
         if (newEntityProps.value.activeType == 2) {
             let params = {
-                sourceEntity: newEntityProps.value,
+                sourceEntity: paramsEntityProps,
                 mainEntityName,
                 operations: eval(
                     EPEditor.value.copyEntiytSelectedType.join("+")
@@ -566,7 +569,8 @@ const saveNewEntity = () => {
             };
             res = await copyEntity(params);
         } else {
-            res = await createEntity(newEntityProps.value, mainEntityName);
+            
+            res = await createEntity(paramsEntityProps, mainEntityName);
         }
         if (res && res.code == 200) {
             ElMessage.success("保存成功");
