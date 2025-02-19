@@ -1,8 +1,11 @@
 <template>
 	<!--  -->
 	<el-form-item label="过滤条件" label-width="120px" v-if="!optionModel.useTreeDataSelect">
-		<el-button class="w-100" @click="openFilterDialog">
+		<el-button class="w-100" @click="openFilterDialog" v-if="!optionModel.filterConditions.items || optionModel.filterConditions?.items?.length == 0">
 			设置过滤条件
+		</el-button>
+        <el-button class="w-100" @click="openFilterDialog" v-else>
+			已设置条件（{{ optionModel.filterConditions?.items?.length }}）
 		</el-button>
 	</el-form-item>
 	<!--  -->

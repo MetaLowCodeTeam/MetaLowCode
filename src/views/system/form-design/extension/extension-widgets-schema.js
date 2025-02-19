@@ -127,6 +127,12 @@ export const referenceSchema = {
         subFormFillBackConfig: [],
         // 过滤条件
         filterConditions: {},
+        // 排序字段
+        sortField: "",
+        // 排序字段标签
+        sortFieldLabel: "",
+        // 排序顺序
+        sortOrder: "",
         // 启用树模式
         useTreeDataSelect: false,
         // 树引用字段
