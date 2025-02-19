@@ -282,6 +282,7 @@
                     @fieldSaved="onFieldSaved"
                     @cancelSave="onCancelSaveField"
 					:showingInDialog="true"
+                    :entityProps="entityProps"
                 >
                 </component>
 			</el-dialog>
@@ -306,6 +307,7 @@
 					:showingInDialog="true"
                     :field-name="editingFieldName"
                     :field-state="2"
+                    :entityProps="entityProps"
                 >
                 </component>
 			</el-dialog>
