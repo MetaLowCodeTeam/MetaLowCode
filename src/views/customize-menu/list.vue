@@ -143,7 +143,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField"
                     >
                         编辑
                     </el-button>
@@ -338,7 +338,7 @@
                                 </el-button>
                             </el-tooltip>
                             <el-button
-                                v-else-if="hasEditRight"
+                                v-else-if="hasEditRight && !mainDetailField"
                                 size="small"
                                 icon="el-icon-edit"
                                 link
@@ -1268,13 +1268,13 @@ const openDetailDialog = (row, localDsv, formId) => {
         return;
     }
     // 是明细表编辑
-    if(mainDetailField.value){
-        let tempV = {};
-        tempV.isRead = true;
-        tempV.detailId = row[idFieldName.value];
-        editRefs.value.openDialog(tempV);
-        return
-    }
+    // if(mainDetailField.value){
+    //     let tempV = {};
+    //     tempV.isRead = true;
+    //     tempV.detailId = row[idFieldName.value];
+    //     editRefs.value.openDialog(tempV);
+    //     return
+    // }
     detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
 };
 

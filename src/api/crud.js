@@ -22,12 +22,12 @@ export function saveRefFilterPanel(entity, field, filter) {
     );
 }
 
-export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2) {
+export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort) {
 	return http.post(
 		'crud/refFieldQuery2',
 		[formFilter, formFilter2],
 		{
-			params: { entity, 'refField': field, pageNo, pageSize, extraFilter }
+			params: { entity, 'refField': field, pageNo, pageSize, extraFilter, sort }
 		}
 	);
 }

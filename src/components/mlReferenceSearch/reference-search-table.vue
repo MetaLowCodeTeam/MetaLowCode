@@ -120,6 +120,7 @@ export default {
 		entity: String,
 		refField: String,
 		extraFilter: String, // 查询条件
+        extraSort: String, // 排序
 		tableHeight: {
 			type: Number,
 			default: 480,
@@ -274,7 +275,8 @@ export default {
 						this.page.pageNo,
 						this.page.limit,
 						this.queryText,
-						this.extraFilter
+						this.extraFilter,
+						this.extraSort
 					)
 				);
 			} else {
@@ -289,7 +291,8 @@ export default {
 						this.page.limit,
 						this.extraFilter,
 						this.filterConditions || null,
-						type == "isReset" ? null : tempConditionConf
+						type == "isReset" ? null : tempConditionConf,
+						this.extraSort
 					)
 				);
 			}

@@ -93,6 +93,7 @@
 				:entity="entity"
 				:refField="curRefField"
 				:extraFilter="searchFilter"
+                :extraSort="extraSort"
                 :filterConditions="filterConditions"
 				:gDsv="gDsv"
                 showCheckBox
@@ -214,6 +215,7 @@ export default {
 			entity: null,
 			curRefField: null,
 			searchFilter: "",
+            extraSort: "",
             filterConditions:{},
 			gDsv: {},
             viewDialogConf: {
@@ -453,6 +455,14 @@ export default {
 		getFilter() {
 			return this.searchFilter;
 		},
+
+        setSort(newSort) {
+            this.extraSort = newSort;
+        },
+
+        getSort() {
+            return this.extraSort;
+        },
 
         handleViewEvent() {
             this.viewDialogConf.show = true;

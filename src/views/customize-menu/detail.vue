@@ -107,7 +107,7 @@
                                 <el-col :span="24" v-if="contentSlots.beforeEditBtn">
                                     <slot name="beforeEditBtn"></slot>
                                 </el-col>
-                                <el-col :span="24" v-if="detailParamConf.showEditBtn">
+                                <el-col :span="24" v-if="detailParamConf.showEditBtn && !checkDetailEntityFlag(entityCode)">
                                     <el-button
                                         type="primary"
                                         plain
@@ -127,7 +127,7 @@
                                 <el-col :span="24" v-if="contentSlots.beforeRevisionHistory">
                                     <slot name="beforeRevisionHistory"></slot>
                                 </el-col>
-                                <el-col :span="24" v-if="detailParamConf.showRevisionHistory">
+                                <el-col :span="24" v-if="detailParamConf.showRevisionHistory && !checkDetailEntityFlag(entityCode)">
                                     <el-button
                                         type="primary"
                                         plain
@@ -154,6 +154,7 @@
                                         :detailId="detailId"
                                         @editColumnConfirm="editColumnConfirm"
                                         :layoutConfig="myLayoutConfig"
+                                        :isMainDetailField="checkDetailEntityFlag(entityCode)"
                                         @copySuccess="copySuccess"
                                     />
                                 </el-col>
@@ -308,7 +309,7 @@ let styleConf = ref({
 });
 
 
-const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity } = useCommonStore();
+const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity, checkDetailEntityFlag } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onEdit", "onLayoutFinish"]);
 const $API = inject("$API");
 let vFormRef = ref();
@@ -342,6 +343,8 @@ let globalDsv = ref(globalDsvDefaultData());
 
 // 指定表单ID
 let formId = ref("");
+
+
 
 const openDialog = (id, localDsv, paramFormId) => {
 	detailId.value = id;

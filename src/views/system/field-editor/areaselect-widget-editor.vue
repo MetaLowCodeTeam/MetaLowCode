@@ -56,8 +56,8 @@
 				</el-form-item>
                 <el-form-item label="仅触发器可赋值" v-if="fieldProps.updatable">
 					<el-radio-group v-model="fieldProps.extraAttrs.onlyUpdateByTrigger" style="float: right">
-						<el-radio :value="true">是</el-radio>
-						<el-radio :value="false">否</el-radio>
+						<el-radio value="true">是</el-radio>
+						<el-radio value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<hr style="border: 0;margin-bottom: 15px" />
@@ -97,7 +97,7 @@ export default {
 				'creatable': true,
 				'updatable': true,
                 'extraAttrs': {
-                    'onlyUpdateByTrigger': false,
+                    'onlyUpdateByTrigger': 'false',
                 },
 				'fieldViewModel': {
 					'areaDataType': 2,

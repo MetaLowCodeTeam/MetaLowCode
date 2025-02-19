@@ -90,6 +90,7 @@
 				:entity="entity"
 				:refField="curRefField"
 				:extraFilter="searchFilter"
+                :extraSort="extraSort"
                 :filterConditions="filterConditions"
 				@recordSelected="setReferRecord"
                 @multipleRecordSelected="multipleSetReferRecord"
@@ -172,6 +173,7 @@ export default {
 			entity: null,
 			curRefField: null,
 			searchFilter: "",
+            extraSort: "",
             filterConditions:{},
 			gDsv: {},
 		};
@@ -578,6 +580,13 @@ export default {
 		getFilter() {
 			return this.searchFilter;
 		},
+        setSort(newSort) {
+            this.extraSort = newSort;
+        },
+
+        getSort() {
+            return this.extraSort;
+        },
 
 		handleRecordSelectedEvent(selectedRow) {
 			if (!!this.designState) {
