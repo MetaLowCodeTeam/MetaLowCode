@@ -11,7 +11,6 @@
                 @submit.prevent
             >
                 <el-form-item label="显示名称" prop="label">
-                    {{ entityProps.detailEntityFlag }}
                     <el-input v-model="fieldProps.label" @change="handleFieldLabelChange"></el-input>
                 </el-form-item>
                 <el-form-item label="字段名称" prop="name">
