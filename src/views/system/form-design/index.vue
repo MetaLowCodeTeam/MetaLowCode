@@ -414,6 +414,9 @@ export default {
 				fieldSchema.options.limit = fldObj.maxFileCount * 1 || 3
 				fieldSchema.options.fileMaxSize = fldObj.fileMaxSize * 1 || 5
 				fieldSchema.options.uploadTip = fldObj.uploadHint || ''
+				if (fldObj.uploadFileTypes) {
+					fieldSchema.options.fileTypes = fldObj.uploadFileTypes.split(',')
+				}
 
                 if (cloudStorageFlag) {
                     //设置withCredentials
