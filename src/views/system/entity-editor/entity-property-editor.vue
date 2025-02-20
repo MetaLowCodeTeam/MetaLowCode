@@ -325,7 +325,7 @@ const onToggleDetailEntityFlag = (val) => {
     if (!!val) {
         myEntityProps.value.authorizable = false;
         myEntityProps.value.listable = false;
-        myEntityProps.value.layoutable = false;
+        myEntityProps.value.layoutable = true;
     }
 };
 
