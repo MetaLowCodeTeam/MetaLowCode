@@ -358,6 +358,28 @@
 							label="是否使用自定义列表模板"
 						/>
 					</div>
+                    <div
+                        v-if="
+                            cutMenu.type == 1 && 
+                            cutMenu.useCustom &&
+                            !filterUseCustomEntity.includes(cutMenu.entityName)"
+						class="mt-5"
+					>
+                        <el-select
+                            v-model="cutMenu.customCode"
+                            placeholder="权限Code"
+                            clearable
+                            filterable
+                            allow-create
+                        >
+                            <el-option
+                                v-for="item in customRightList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
+					</div>
 					<div
 						class="mt-5"
 						v-if="
@@ -379,6 +401,7 @@
 							/>
 						</el-select>
 					</div>
+                    
                     <div class="mt-5">
                         <el-checkbox
 							v-model="cutMenu.pcShow"
