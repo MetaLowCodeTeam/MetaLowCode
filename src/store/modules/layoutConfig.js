@@ -287,13 +287,14 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         let isHidden = false;
         // console.log(tool.checkRole('r1023-3'),'检测是否有权限')
         // 1 如果有实体CODE
-        // 2 并且没有权限
+        // 2 并且没有权限 或者 没有自定义权限
         // 3 并且不是父菜单
-        // 4 并且类型为1 关联项 4 内置实体
+        // 4 并且类型为1 关联项 
         let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
-        if(item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 1){
+        if(item.entityCode && (!tool.checkRole('r' + checkCode + '-1') || item.customCode && !tool.checkRole(item.customCode.trim())) && item.entityCode != "parentMenu" && item.type == 1){
             isHidden = true;
         }
+        
         // 1 如果有自定义CODE
         // 2 并且没有权限
         // 3 并且不是父菜单

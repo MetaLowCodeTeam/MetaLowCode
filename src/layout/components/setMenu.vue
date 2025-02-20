@@ -345,25 +345,21 @@
                             />
                         </div>
 					</div>
-					<div
-						class="mt-5"
+                    <div
+						class="mt-10"
 						v-if="
 							cutMenu.type == 1 &&
 							(!cutMenu.children || cutMenu.children.length < 1) &&
                             !filterUseCustomEntity.includes(cutMenu.entityName)
 						"
 					>
-						<el-checkbox
-							v-model="cutMenu.useCustom"
-							label="是否使用自定义列表模板"
-						/>
+                        叠加自定义权限控制
 					</div>
                     <div
                         v-if="
                             cutMenu.type == 1 && 
-                            cutMenu.useCustom &&
                             !filterUseCustomEntity.includes(cutMenu.entityName)"
-						class="mt-5"
+						class="mt-10"
 					>
                         <el-select
                             v-model="cutMenu.customCode"
@@ -379,6 +375,19 @@
                                 :value="item.value"
                             />
                         </el-select>
+					</div>
+					<div
+						class="mt-5"
+						v-if="
+							cutMenu.type == 1 &&
+							(!cutMenu.children || cutMenu.children.length < 1) &&
+                            !filterUseCustomEntity.includes(cutMenu.entityName)
+						"
+					>
+						<el-checkbox
+							v-model="cutMenu.useCustom"
+							label="是否使用自定义列表模板"
+						/>
 					</div>
 					<div
 						class="mt-5"
