@@ -5,7 +5,6 @@
 		label-width="120px"
 		v-if="!optionModel.useTreeDataSelect"
 	>
-		<!-- <el-switch v-model="optionModel.fillBackEnabled" /> -->
 		<el-button class="w-100" @click="openSortDialog" v-if="!optionModel.sortField">
 			设置排序字段
 		</el-button>
@@ -80,6 +79,10 @@ export default {
 			fieldItems: [],
 		};
 	},
+    mounted() {
+        this.sortDialogConf.sortField = this.optionModel.sortField;
+        this.sortDialogConf.sortOrder = this.optionModel.sortOrder;
+    },
 	methods: {
         onConfirm() {
             this.sortDialogConf.isShow = false;
