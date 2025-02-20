@@ -107,14 +107,12 @@ const createAndSubmit = (row) => {
 }
 
 .form-main {
-	height: 100%;
 	box-sizing: border-box;
 	padding: 20px;
 	.form-content {
 		border-radius: 4px;
 		background: #fff;
 		padding: 20px;
-        height: calc(100% - 40px);
 	}
 }
 </style>
