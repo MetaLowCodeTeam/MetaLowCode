@@ -108,7 +108,7 @@ const openDialog = (opList) => {
 // 加载节点API
 let loadNodeLoading = ref(false);
 const loadNodeList = async () => {
-	if (!dialogConf.selectedTask.value) {
+	if (!dialogConf.selectedTask || !dialogConf.selectedTask.value) {
 		return;
 	}
 	dialogConf.selectedNode = "";
