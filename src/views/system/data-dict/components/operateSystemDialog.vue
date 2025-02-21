@@ -76,6 +76,7 @@ const openDialog = (data) => {
     formData.value = {
         label: data.item?.label,
         value: data.item?.value,
+        sourceValue: data.item?.value,
         labelError: false,
         valueError: false
     }
@@ -83,7 +84,7 @@ const openDialog = (data) => {
 
 const handleSave = async () => {
     let reg = /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/
-    let { label, value } = formData.value;
+    let { label, value, sourceValue } = formData.value;
     if(!label) {
         formData.value.labelError = true;
         ElMessage.error('常量名称不能为空');
@@ -114,18 +115,20 @@ const handleSave = async () => {
         formData.value.valueError = true;
         return;
     }
-    //  判断选项是否存在
-    for (
-        let index = 0;
-        index < mainList.length;
-        index++
-    ) {
-        const el = mainList[index];
-        if (el.value == value) {
-            ElMessage.warning(
-                "已存在常量值【" + value + "】选项"
-            );
-            return;
+    if(value != sourceValue) {
+        //  判断选项是否存在
+        for (
+            let index = 0;
+            index < mainList.length;
+            index++
+        ) {
+            const el = mainList[index];
+            if (el.value == value) {
+                ElMessage.warning(
+                    "已存在常量值【" + value + "】选项"
+                );
+                return;
+            }
         }
     }
     // 插入
@@ -139,6 +142,7 @@ const handleSave = async () => {
     // 编辑
     else {
         mainList[inx].label = newItem.label;
+        mainList[inx].value = newItem.value;
     }
     loading.value = true;
     const res = await props.saveFn(systemName, mainList);
