@@ -106,6 +106,7 @@ const onSubmit = async () => {
 			processDefId: wfProcDefId,
 			recordId: currentRecordId.value,
 			approvalConfigId: approvalConfigId,
+            addedApprovalUsers: optionalApprovals.value,
 		});
 	} else {
 		res = await $API.approval.detail.startApproval(

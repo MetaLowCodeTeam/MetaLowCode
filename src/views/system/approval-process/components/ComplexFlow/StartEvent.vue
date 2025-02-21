@@ -27,6 +27,8 @@
                 <div class="label-title mb-10 mt-20">发起条件</div>
                 <div class="ml-a-span mb-3" @click="setCondition">{{ getSetConditionText() }}</div>
                 <div class="info-text">符合条件的记录才可以使用/选择此流程</div>
+                <div class="label-title mt-20">其他设置</div>
+                <el-checkbox v-model="myFormData.userSelectFlag">自选第一步审批人</el-checkbox>
                 <div class="label-title mb-10 mt-20">同步审批状态</div>
                 <div class="mt-10" v-if="entityCode">
                     <MlAssociatedRecords

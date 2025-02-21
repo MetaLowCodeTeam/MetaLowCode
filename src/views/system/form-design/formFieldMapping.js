@@ -9,7 +9,7 @@ export const formFieldMapping = {
 	'Text': {
 		type: 'input',
 		options: {
-
+            qrCodeOnMobileEnabled: false, // 是否在移动端开启二维码扫码功能
 		}
 	},
 
