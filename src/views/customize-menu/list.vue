@@ -224,7 +224,7 @@
                     </el-tooltip>
                     <el-scrollbar>
                         <ListcommonGroupFilter
-                            ref="ListcommonGroupFilterRefs"
+                            ref="ListCommonGroupFilterRefs"
                             :entityCode="entityCode"
                             :layoutConfig="layoutConfig"
                             @nodeClick="commonGroupFilterNodeClick"
@@ -680,10 +680,10 @@ const formatReferenceEntity = () => {
 
 
 onBeforeMount(() => {
-    let routerEntityname = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
-    if (routerEntityname) {
-        entityCode.value = allEntityCode.value[routerEntityname];
-        entityName.value = routerEntityname;
+    let routerEntityName = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
+    if (routerEntityName) {
+        entityCode.value = allEntityCode.value[routerEntityName];
+        entityName.value = routerEntityName;
     } else {
         entityCode.value = router.currentRoute.value.meta.entityCode;
         entityName.value = router.currentRoute.value.meta.entityName;
@@ -1356,12 +1356,12 @@ const clearDataFilter = () => {
  * 分组查询
  */
 // 常用分组查询保存弹框
-let ListcommonGroupFilterRefs = ref("");
+let ListCommonGroupFilterRefs = ref("");
 // 列表分组树过滤组件
 let ListTreeGroupFilterRefs = ref("");
 let filterEasySql = ref("");
 const treeGroupFilter = (e) => {
-    ListcommonGroupFilterRefs.value.resetChecked();
+    ListCommonGroupFilterRefs.value.resetChecked();
     filterEasySql.value = e;
     getTableList();
 };
@@ -1377,7 +1377,7 @@ const treeSave = () => {
         $ElMessage.warning("请勾选有效的筛选");
         return;
     }
-    ListcommonGroupFilterRefs.value.openSaveDialog(filterEasySql.value);
+    ListCommonGroupFilterRefs.value.openSaveDialog(filterEasySql.value);
 };
 
 // 常用分组查询点击

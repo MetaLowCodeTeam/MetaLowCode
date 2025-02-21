@@ -318,7 +318,7 @@ const initFormLayout = async () => {
 					vFormRef.value?.setFormJson(res.data.layoutJson);
                     if (formData && formData.data) {
                         row.dialogTitle =
-                            "编辑" + formData.data[props.nameFieldName];
+                            "编辑：" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {
@@ -347,7 +347,7 @@ const initFormLayout = async () => {
             else {
                 nextTick(async () => {
                     row.dialogTitle =
-                        "新建" + queryEntityLabelByName(row.entityName);
+                        "新建：" + queryEntityLabelByName(row.entityName);
 					globalDsv.value.formStatus = 'new';
                     globalDsv.value.formEntityId = "";
                     vFormRef.value.setFormJson(res.data.layoutJson);
