@@ -96,6 +96,7 @@ export default {
             },
             loginLoading: false,
             imgCode: "",
+            timer: null,
         };
     },
     watch: {
@@ -194,18 +195,21 @@ export default {
         },
         // 轮循获取新消息
         roundRobin(ms) {
-            console.log('轮循获取新消息')
-            setInterval(() => {
+            this.timer = setInterval(() => {
                 this.getNewMsgNum();
             }, ms);
         },
         async getNewMsgNum() {
-            console.log('获取新消息')
             let checkStatusRes = await http.get("/crud/checkStatus");
-            if (checkStatusRes) {
+            if (checkStatusRes && checkStatusRes.code == 200) {
                 setNewMsgNum(checkStatusRes.data?.noteCount);
+            }else {
+                clearInterval(this.timer);
             }
         },
+    },
+    beforeDestroy() {
+        clearInterval(this.timer);
     },
 };
 </script>

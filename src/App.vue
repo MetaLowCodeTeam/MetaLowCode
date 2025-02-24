@@ -25,7 +25,8 @@ import {
     inject,
     ref,
     nextTick,
-    onMounted
+    onMounted,
+    onBeforeUnmount
 } from "vue";
 import mlCustomerService from "@/components/mlCustomerService/index.vue";
 import colorTool from "@/utils/color";
@@ -156,16 +157,23 @@ const setProperty = (theme, type, val, inx) => {
 // 获取新消息
 const getNewMsgNum = async () => {
     let checkStatusRes = await http.get("/crud/checkStatus");
-    if (checkStatusRes) {
+    if (checkStatusRes && checkStatusRes.code == 200) {
         setNewMsgNum(checkStatusRes.data?.noteCount);
+    }else {
+        clearInterval(timer.value);
     }
 };
+let timer = ref(null);
 // 轮循获取新消息
 const roundRobin = (ms) => {
-    setInterval(() => {
+    timer.value = setInterval(() => {
         getNewMsgNum();
     }, ms);
 };
+
+onBeforeUnmount(() => {
+    clearInterval(timer.value);
+});
 </script>
 
 <style lang="scss">
