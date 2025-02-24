@@ -70,10 +70,10 @@ export async function queryChartData(formModel, type) {
             latitude.push(el)
         })
     }
-
+    let dataEntity = formModel.dataEntity;
     let param = {
         chartType: ChartTypes[type],
-        entityName: allEntityName.value[formModel.dataEntity],
+        entityName: dataEntity == 33 ? "ApprovalTask" : allEntityName.value[dataEntity],
         latitude,
         longitude,
         noPrivileges: formModel?.setChartConf.useAllData,
