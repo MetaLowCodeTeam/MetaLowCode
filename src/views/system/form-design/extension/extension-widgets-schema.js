@@ -141,6 +141,10 @@ export const referenceSchema = {
         treeDataEntityName: "",
         // 开启在位输入搜索
         openSearchInPlace: false,
+        // 是否二次确认选择
+        confirmSelect: false,
+        // 确认提示内容
+        confirmSelectContent: "",
         // 搜索字段
         searchFields: [],
         // 子表单内禁止多选

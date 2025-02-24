@@ -32,7 +32,8 @@ import referenceSearchInPlaceEditor from '@/views/system/form-design/extension/p
 import referenceSortFieldEditor from '@/views/system/form-design/extension/property-editor/reference-sortField-editor.vue';
 // 子表单内禁止多选
 import referenceDisableMultipleSelectionInSubFormEditor from "@/views/system/form-design/extension/property-editor/reference-disableMultipleSelectionInSubForm-editor.vue";
-
+// 二次确认选择
+import referenceConfirmSelectEditor from "@/views/system/form-design/extension/property-editor/reference-confirmSelect-editor.vue";
 import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/list-sub-form-name-editor.vue"
 
 /**
@@ -116,7 +117,9 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerEPEditor(app, 'onAppendButtonClick', 'onAppendButtonClick-editor', onAppendButtonClickEditor)
 	PERegister.registerCPEditor(app, 'openSearchInPlace', 'reference-searchInPlace-editor', referenceSearchInPlaceEditor)
 	PERegister.registerCPEditor(app, 'disableMultipleSelectionInSubForm', 'reference-disableMultipleSelectionInSubForm-editor', referenceDisableMultipleSelectionInSubFormEditor)
-	PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
+	PERegister.registerCPEditor(app, 'confirmSelect', 'reference-confirmSelect-editor', referenceConfirmSelectEditor)
+    
+    PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
 	PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
 

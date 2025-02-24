@@ -92,8 +92,8 @@
 				:extraFilter="searchFilter"
                 :extraSort="extraSort"
                 :filterConditions="filterConditions"
-				@recordSelected="setReferRecord"
-                @multipleRecordSelected="multipleSetReferRecord"
+				@recordSelected="beforeSetReferRecord"
+                @multipleRecordSelected="beforeMultipleSetReferRecord"
 				:gDsv="gDsv"
                 :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
                 :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
@@ -107,7 +107,7 @@
             />
             <template #footer v-if="referenceDialogType == 'tree'">
                 <el-button @click="showReferenceDialogFlag = false">取消</el-button>
-                <el-button type="primary" @click="treeDialogConfirm">确认</el-button>
+                <el-button type="primary" @click="beforeTreeDialogConfirm">确认</el-button>
             </template>
 		</ml-dialog>
 	</div>
@@ -356,6 +356,18 @@ export default {
 			this.fieldModel = null;
 			this.handleChangeEvent(this.fieldModel);
 		},
+        beforeMultipleSetReferRecord(recordObj, rows) {
+            let { confirmSelect, confirmSelectContent } = this.field.options;
+            if(confirmSelect) {
+                this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
+                    type: 'warning'
+                }).then(() => {
+                    this.multipleSetReferRecord(recordObj, rows);
+                })
+            }else {
+                this.multipleSetReferRecord(recordObj, rows);
+            }
+        },
         // 多选数据回填
         multipleSetReferRecord(recordObj, rows) {
             // 通过子表名称取子表组件
@@ -470,6 +482,18 @@ export default {
             // 关闭弹框
             this.showReferenceDialogFlag = false;
         },
+        beforeSetReferRecord(recordObj, selectedRow) {
+            let { confirmSelect, confirmSelectContent } = this.field.options;
+            if(confirmSelect) {
+                this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
+                    type: 'warning'
+                }).then(() => {
+                    this.setReferRecord(recordObj, selectedRow);
+                })
+            }else {
+                this.setReferRecord(recordObj, selectedRow);
+            }
+        },
         // 单选回填
 		setReferRecord(recordObj, selectedRow) {
 			this.fieldModel = {
@@ -483,6 +507,19 @@ export default {
 			this.doFillBack(recordObj, selectedRow);
 			this.showReferenceDialogFlag = false;
 		},
+        // 二次确认选择
+        beforeTreeDialogConfirm() {
+            let { confirmSelect, confirmSelectContent } = this.field.options;
+            if(confirmSelect) {
+                this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
+                    type: 'warning'
+                }).then(() => {
+                    this.treeDialogConfirm();
+                })
+            }else {
+                this.treeDialogConfirm();
+            }
+        },
         // 树选择回填
         treeDialogConfirm() {
             let selectedNodes = this.$refs.referTree?.getSelectedNode();
