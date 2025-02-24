@@ -325,7 +325,7 @@ export const upperFirstLetter = (inStr) => {
  * @returns {string}
  */
 export const getSimplePinYin = (chStr) => {
-    return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '')
+    return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '').replaceAll('ü', 'v')
 }
 
 
