@@ -93,7 +93,7 @@ import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
-import { globalDsvDefaultData } from "@/utils/util";
+import { globalDsvDefaultData, getModelName } from "@/utils/util";
 
 const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
 
@@ -239,6 +239,7 @@ const openDialog = async (v) => {
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
     globalDsv.value.parentExposed = currentExposed.value;
+    globalDsv.value.modelName = getModelName();
     if(v.sourceRecord) {
         globalDsv.value.sourceRecord = v.sourceRecord;
     }

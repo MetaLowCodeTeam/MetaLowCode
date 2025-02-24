@@ -234,7 +234,7 @@ import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-import { globalDsvDefaultData } from "@/utils/util";
+import { globalDsvDefaultData, getModelName } from "@/utils/util";
 /**
  * 组件
  */
@@ -355,6 +355,7 @@ const openDialog = (id, localDsv, paramFormId) => {
 		return;
 	}
     globalDsv.value.parentExposed = currentExposed.value;
+    globalDsv.value.modelName = getModelName();
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }
