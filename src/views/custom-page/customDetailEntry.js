@@ -18,12 +18,15 @@
 import defaultEntityDetail from "@/views/customize-menu/detail.vue";
 // importStep_1. 引入你的自定义实体详情
 import TestDetail from './TestDetail.vue';
+// 自定义用户详情
+import UserDetail from './Organizational/UserDetail.vue';
 
 // 详情组件映射关系
 const detailCmpMapping = {
     default: defaultEntityDetail.name,
     // importStep_2. 映射你的实体详情，实体名称:组件名称
     TestDetail: TestDetail.name,
+    UserDetail: UserDetail.name,
 }
 
 // 多实体通用某一个详情组件映射
@@ -32,6 +35,7 @@ const comDetailCmpMapping = {
     // Sadasaduo: ["*"],
     // useSingleStep_1 详情组件名称:[对应的实体名称]
     TestDetail: ['DemoCompany', 'Sadasaduo'],
+    UserDetail: ['User'],
 };
 
 // 返回映射详情组件名称
@@ -58,6 +62,8 @@ export function registerCustomDetailCmp(app) {
     app.component(defaultEntityDetail.name, defaultEntityDetail);
     // importStep_3 注册你的实体详情组件  组件名称,组件
     app.component(TestDetail.name, TestDetail);
+    // 注册用户详情
+    app.component(UserDetail.name, UserDetail);
 }
 
 

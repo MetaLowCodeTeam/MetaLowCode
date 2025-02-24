@@ -130,13 +130,14 @@
         />
 
         <!-- 列表详情 -->
-        <ListDetail
+        <!-- <ListDetail
             ref="mlListDetailsRefs"
             idFieldName="userId"
             nameFieldName="userName"
             @onRefresh="onRefresh"
             :disableWidgets="disableWidgets"
-        />
+        /> -->
+        <mlCustomDetail ref="mlCustomDetailRefs" entityName="User" @updateData="onRefresh" />
         <!-- 新建、编辑部门 -->
         <EditDepartment 
             ref="EditDepartmentRef"
@@ -156,7 +157,8 @@ import {
 import FormState from "@/views/system/form-state-variables";
 import eventBus from "@/utils/event-bus";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
-import ListDetail from "./components/ListDetail.vue";
+import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
+// import ListDetail from "./components/ListDetail.vue";
 import ddImg from "@/assets/imgs/dd.png";
 import wXWorkImg from "@/assets/imgs/WXWork.png";
 import EditDepartment from '@/views/user/components/EditDepartment.vue'
@@ -164,7 +166,8 @@ export default {
     name: "UserTreeTable",
     components: {
         mlCustomEdit,
-        ListDetail,
+        // ListDetail,
+        mlCustomDetail,
         EditDepartment,
     },
     data() {
@@ -403,11 +406,12 @@ export default {
         },
         // 高亮字段点击
         highlightClick(row) {
-            this.disableWidgets = ["loginName", "loginPwd"];
-            this.$refs.mlListDetailsRefs.openDetailDialog(
-                row.userId,
-                row.userName
-            );
+            // this.disableWidgets = ["loginName", "loginPwd"];
+            // this.$refs.mlListDetailsRefs.openDetailDialog(
+            //     row.userId,
+            //     row.userName
+            // );
+            this.$refs.mlCustomDetailRefs.openDialog(row.userId);
         },
         // 是否启用
         async changeSwitch(row) {

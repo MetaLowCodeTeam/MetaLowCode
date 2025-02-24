@@ -3,9 +3,8 @@
 	<component 
         v-if="comName" 
         :is="comName" 
-        ref="DetailRef" 
-        @onConfirm="updateData" 
-        :recordDetailFormId="recordDetailFormId"
+        ref="DetailRef"
+        @updateData="updateData"
     ></component>
 </template>
 
@@ -43,10 +42,10 @@ const openDialog = (recordId, localDsv, formId) => {
     DetailRef.value?.openDialog(recordId, localDsv, formId);
 }
 
-
 const updateData = () => {
     emits('updateData')
 }
+
 
 defineExpose({
     openDialog

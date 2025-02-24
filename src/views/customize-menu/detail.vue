@@ -606,6 +606,7 @@ const editColumnConfirm = (v) => {
 		detailDialog.isShow = false;
 		emits("onConfirm");
 	} else {
+        
 		onConfirm();
 	}
 };
@@ -725,6 +726,7 @@ defineExpose({
     toEdit,
     toMoreAction,
     toRevisionHistory,
+    closeDialog,
 });
 </script>
 
