@@ -9,7 +9,11 @@
         :tableColumn="tableColumn"
     >
         <template #addButton>
-            <el-button type="primary" @click="addClick">
+            <el-button 
+                type="primary" 
+                @click="addClick" 
+                :disabled="!$TOOL.checkRole('r52-2')"
+            >
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -34,6 +38,7 @@
                             type="primary"
                             link
                             style="position: relative;top: 2px;left: -5px;"
+                            :disabled="!$TOOL.checkRole('r52-3')"
                         >
                             <span class="mr-3">
                                 <el-icon>
@@ -49,7 +54,13 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <el-button size="small" type="primary" link @click="allowOpenDialog(scope.row)">
+                    <el-button 
+                        size="small" 
+                        type="primary" 
+                        link 
+                        @click="allowOpenDialog(scope.row)"
+                        :disabled="!$TOOL.checkRole('r52-5')"
+                    >
                         <span class="mr-3">
                             <el-icon>
                                 <ElIconShare />
@@ -57,7 +68,13 @@
                         </span>
                         <span>分配</span>
                     </el-button>
-                    <el-button size="small" type="primary" link @click="editClick(scope.row)">
+                    <el-button 
+                        size="small" 
+                        type="primary" 
+                        link 
+                        @click="editClick(scope.row)"
+                        :disabled="!$TOOL.checkRole('r52-3')"
+                    >
                         <span class="mr-3">
                             <el-icon>
                                 <ElIconEdit />
@@ -65,7 +82,13 @@
                         </span>
                         <span>编辑</span>
                     </el-button>
-                    <el-button size="small" link type="primary" @click="delCick(scope.row)">
+                    <el-button 
+                        size="small" 
+                        link 
+                        type="primary" 
+                        @click="delClick(scope.row)"
+                        :disabled="!$TOOL.checkRole('r52-4')"
+                    >
                         <span class="mr-3">
                             <el-icon>
                                 <ElIconDelete />
@@ -108,6 +131,7 @@ import { useRouter } from "vue-router";
 import Allocation from "@/views/customize-menu/components/Allocation.vue";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
+const $TOOL = inject("$TOOL");
 
 // 默认排序
 let sortFields = ref([
@@ -175,7 +199,7 @@ const editClick = (row) => {
     dialogConf.title = "编辑仪表盘";
 };
 // 删除
-const delCick = (row) => {
+const delClick = (row) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",

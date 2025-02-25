@@ -27,6 +27,8 @@ import { registerCustomDetailCmp } from '@/views/custom-page/customDetailEntry.j
 import { registerCustomEditCmp } from '@/views/custom-page/customEditEntry.js';
 import { registerCustomListSubFormCmp } from '@/views/custom-page/ListSubFormCmp/customListSubFormEntry.js';
 import { registerCustomServiceTaskCmp } from "@/views/system/approval-process/components/ComplexFlow/customServiceTaskCmp";
+// 注册详情自定义组件
+import { registerDetailTabCustomComponent } from "@/views/custom-page/CustomDetailTabComponent/index.js";
 // console.log("1. 使用路由...",router)
 import { getSimplePinYin } from "@/utils/util";
 //初始化高德地图组件
@@ -54,6 +56,7 @@ registerCustomDetailCmp(app);
 registerCustomEditCmp(app);
 registerCustomListSubFormCmp(app);
 registerCustomServiceTaskCmp(app);
+registerDetailTabCustomComponent(app);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);

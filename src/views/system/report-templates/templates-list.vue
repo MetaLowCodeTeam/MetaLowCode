@@ -14,9 +14,10 @@
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
+        checkRole="r45"
     >
         <template #addButton>
-            <el-button type="primary" @click="actionBtn({target:'add'})">
+            <el-button type="primary" @click="actionBtn({target:'add'})" :disabled="!$TOOL.checkRole('r45-2')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -30,6 +31,7 @@
 <script setup>
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
+const $TOOL = inject("$TOOL");
 
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");

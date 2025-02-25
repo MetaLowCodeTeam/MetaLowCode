@@ -274,7 +274,7 @@ const routes = [
 						path: appPath + 'trigger-list',
 						name: 'TriggerList',
 						component: 'system/trigger/trigger-list',
-						meta: { title: '触发器列表', icon: 'el-icon-Cpu', role: 'r48-2' },
+						meta: { title: '触发器列表', icon: 'el-icon-Cpu', role: 'r48-1' },
 					},
 
 					{
@@ -295,13 +295,13 @@ const routes = [
 					{
 						path: appPath + 'dashboard-list',
 						name: 'DashboardDesign',
-						meta: { group: true, title: '可视化分析', icon: 'el-icon-menu', role: 'r52-2' },
+						meta: { group: true, title: '可视化分析', icon: 'el-icon-menu', role: 'r52-1' },
 						component: 'system/dashboard-design/chart',
 						children: [
 							{
 								path: appPath + 'dashboard-list',
 								name: 'DashboardDesign',
-								meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-2' },
+								meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
 								component: 'system/dashboard-design/chart',
 							}
 						]
@@ -311,13 +311,13 @@ const routes = [
 						path: appPath + 'templates-list',
 						name: 'TemplatesList',
 						component: 'system/report-templates/templates-list',
-						meta: { group: true, title: '数据打印', icon: 'el-icon-memo', role: 'r45-2' },
+						meta: { group: true, title: '数据打印', icon: 'el-icon-memo', role: 'r45-1' },
 						children: [
 							{
 								path: appPath + 'templates-list',
 								name: 'TemplatesList',
 								component: 'system/report-templates/templates-list',
-								meta: { title: '报表设计', icon: 'el-icon-memo', role: 'r45-2' }
+								meta: { title: '报表设计', icon: 'el-icon-memo', role: 'r45-1' }
 							}
 						]
 					},
@@ -340,7 +340,7 @@ const routes = [
 					{
 						path: appPath + 'meta-api',
 						name: 'MetaApi',
-                        meta: { title: 'API密钥', icon: 'el-icon-key', role: 'r51-2' },
+                        meta: { title: 'API密钥', icon: 'el-icon-key', role: 'r51-1' },
 						component: 'system/external-integration/meta-api',
 					},
 				]
