@@ -207,18 +207,17 @@ const onSave = async (target) => {
     if (trigger.actionFilter.items.length > 0 || (trigger.actionFilter.modifiedFields && trigger.actionFilter.modifiedFields.length > 0)) {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
-    // 如果是聚合规则 或者 字段更新
+    // 如果是聚合规则 或者 字段更新 或者 自动创建
     if (
         trigger.actionType.value == 2 ||
         trigger.actionType.value == 1 ||
-        trigger.actionType.value == 3
+        trigger.actionType.value == 3 ||
+        trigger.actionType.value == 15
     ) {
         actionContent.entityName = defaultTargetEntity.entityName || defaultTargetEntity.name;
         actionContent.fieldName = defaultTargetEntity.fieldName;
         actionContent.isReferenced = defaultTargetEntity.isReferenced;
     }
-
-
     // 如果是分组聚合
     if (trigger.actionType.value == 3) {
         let { groupItem } = actionContent;
