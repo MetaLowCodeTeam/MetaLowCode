@@ -69,6 +69,16 @@
                     <div v-else-if="cutTab == 'Attachment'">
                         <Attachment :entityCode="entityCode" :recordId="detailId"/>
 					</div>
+                    <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
+                        <!-- 拿最后一个-后面的字符串 -->
+                        <component 
+                            v-if="componentExists(cutTab.split('_').pop())" 
+                            :is="cutTab.split('_').pop()" 
+                            :recordId="detailId"
+                            ref="customComponentRefs"
+                        />
+                        <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />
+                    </div>
 					<!-- 非详情 -->
 					<div v-else>
 						<DetailTabCom
@@ -382,6 +392,12 @@ const tabChange = (tab) => {
 		refresh();
 	}
 };
+
+// 组件是否存在
+const componentExists = (componentName) => {
+    return Boolean(getCurrentInstance().appContext.components[componentName]);
+}
+
 // 刷新
 const refresh = () => {
 	cutTab.value = "detail";
@@ -716,6 +732,12 @@ const toRevisionHistory = (recordId) => {
     DetailRevisionHistoryRef.value?.openDialog(recordId);
 }
 
+// 刷新自定义组件
+let customComponentRefs = ref();
+const refreshCustomComponent = () => {
+    customComponentRefs.value?.refresh();
+}
+
 
 
 // 暴露方法给父组件调用
@@ -727,6 +749,7 @@ defineExpose({
     toMoreAction,
     toRevisionHistory,
     closeDialog,
+    refreshCustomComponent
 });
 </script>
 

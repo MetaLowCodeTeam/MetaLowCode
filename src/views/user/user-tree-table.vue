@@ -84,8 +84,22 @@
                     </el-button>
                 </template>
                 <template #activeRow>
-                    <el-table-column label="操作" :align="'center'" width="140" fixed="right">
+                    <el-table-column label="操作" :align="'center'" width="200" fixed="right">
                         <template #default="scope">
+                            <el-button
+                                size="small"
+                                type="primary"
+                                link
+                                @click="highlightClick(scope.row)"
+                                :disabled="!$TOOL.checkRole('r21-1')"
+                            >
+                                <span class="mr-3">
+                                    <el-icon>
+                                        <ElIconView />
+                                    </el-icon>
+                                </span>
+                                <span>查看</span>
+                            </el-button>
                             <el-button
                                 size="small"
                                 type="primary"

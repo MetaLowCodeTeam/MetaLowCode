@@ -17,7 +17,7 @@
 		<!-- 更多插槽看 第4行 API -->
 		<template #beforeEditBtn>
 			<AddMembers
-				@addMembers="updateData"
+				@addMembers="refreshCustomComponent"
 				:paramId="detailId"
 				:paramName="detailEntity == 'Team' ? '成员' : '角色'"
 				:paramType="detailEntity == 'Team' ? 'User' : 'Role'"
@@ -193,6 +193,11 @@ const delClick = (id) => {
         })
         .catch(() => {});
 };
+
+// 刷新自定义组件
+const refreshCustomComponent = () => {
+    EntityListDetailRefs.value?.refreshCustomComponent();
+}
 
 
 const updateData = () => {

@@ -104,7 +104,7 @@
         top="25vh"
         
     >
-        <div style="padding-right: 50px;">
+        <div style="padding-right: 30px;">
             <el-form label-width="120px" @submit.prevent>
                 <el-form-item label="别名">
                     <el-input v-model="editColumnDialogData.columnAliasName" />
@@ -118,7 +118,7 @@
                         placeholder="请输入过滤条件"
                     />
                 </el-form-item>
-                <el-form-item label="显示过滤条件">
+                <el-form-item label="显示过滤条件" v-if="!editColumnDialogData.isCustomComponent">
                     <el-row>
                         <el-col :span="24">
                             <div
@@ -128,6 +128,23 @@
                         </el-col>
                     </el-row>
                 </el-form-item>
+                <el-form-item label="组件名称" v-if="editColumnDialogData.isCustomComponent" class="is-required">
+                    <el-input 
+                        v-model="editColumnDialogData.componentName" 
+                        placeholder="请输入组件名称"
+                        clearable
+                    />
+                </el-form-item>
+                <el-form-item v-if="editColumnDialogData.isCustomComponent">
+					<el-checkbox
+						label="是否在PC端显示"
+						v-model="editColumnDialogData.pcShow"
+					/>
+					<el-checkbox
+						label="是否在移动端显示"
+						v-model="editColumnDialogData.mobileShow"
+					/>
+				</el-form-item>
             </el-form>
         </div>
         <template #footer>
@@ -136,6 +153,7 @@
         </template>
     </mlDialog>
     <DetailCustomLabelDialog ref="DetailCustomLabelRef" @confirm="addShowColumn"/>
+    <DetailCustomComponentDialog ref="DetailCustomComponentRef" @confirm="addShowColumn"/>
 </template>
 
 <script setup>
@@ -146,6 +164,8 @@ import { ref, inject, reactive, onMounted } from "vue";
  */
 // 自定义标签设置组件
 import DetailCustomLabelDialog from './DetailCustomLabelDialog.vue';
+// 自定义组件设置组件
+import DetailCustomComponentDialog from './DetailCustomComponentDialog.vue';
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -188,25 +208,38 @@ const formatShowColumn = () => {
         );
     }
     if(props.applyType == 'TAB') {
-        columnList.value.push({
-            entityLabel: "自定义标签",
-            entityName: "custom",
-        })
+        columnList.value.push(
+            {
+                entityLabel: "自定义标签",
+                entityName: "customLabel",
+            },
+            {
+                entityLabel: "自定义组件",
+                entityName: "customComponent",
+            }
+        )
     }
 };
 // 指定哦标签设置Ref
 let DetailCustomLabelRef = ref();
+// 自定义组件设置Ref
+let DetailCustomComponentRef = ref();
 // 添加显示列前
 const beforeAddShowColumn = (column) => {
     // 如果是添加自定义标签
-    if(column.entityName == 'custom') {
+    if(column.entityName == 'customLabel') {
         DetailCustomLabelRef.value?.openDialog()
-    }else {
+    }
+    else if(column.entityName == 'customComponent') {
+        DetailCustomComponentRef.value?.openDialog()
+    }
+    else {
         addShowColumn(column);
     }
 }
 // 添加显示列
 const addShowColumn = (column) => {
+    console.log(column);
     showColumn.value.push(column);
     for (let index = 0; index < sourceColumn.value.length; index++) {
         const el = sourceColumn.value[index];
@@ -253,6 +286,10 @@ const isShowItemTag = (column) => {
 
 // 确认列修改
 const confirmColumnEdit = () => {
+    if(editColumnDialogData.value.isCustomComponent && !editColumnDialogData.value.componentName) {
+        $ElMessage.error("请输入组件名称");
+        return;
+    }
     showColumn.value[editColumnDialogData.value.columnEditInx] = Object.assign(
         {},
         editColumnDialogData.value
@@ -263,8 +300,8 @@ const confirmColumnEdit = () => {
 // 删除显示列
 const delColumn = (column, inx) => {
     showColumn.value.splice(inx, 1);
-    // 非自定义实体
-    if(!column.isCustomLabel) {
+    // 非自定义实体 和 非自定义组件
+    if(!column.isCustomLabel && !column.isCustomComponent) {
         sourceColumn.value.push(column);
     }
     formatShowColumn();
