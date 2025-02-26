@@ -358,6 +358,11 @@ const initFormLayout = async () => {
                             id: row.fieldNameVale,
                             name: row.fieldNameLabel,
                         };
+                        if(props.isUser){
+                            row.fieldName = null;
+                            row.fieldNameLabel = null;
+                            row.fieldNameVale = null;
+                        }
                     }
                     if(isReferenceComp.value && !row.detailEntityFlag){
                         param[row.refEntityBindingField] = {
