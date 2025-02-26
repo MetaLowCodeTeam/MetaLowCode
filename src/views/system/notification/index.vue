@@ -149,7 +149,7 @@ const activeRow = (item) => {
     else {
         // 如果是仪表盘
         if(item.entityName == 'Chart'){
-            if($TOOL.checkRole('r52-2') && $TOOL.checkRole('r6017')) {
+            if($TOOL.checkRole('r52-1') && $TOOL.checkRole('r6017')) {
                 router.push(appPath + 'dashboard-list');
             }else {
                 $ElMessage.error("没有权限");
