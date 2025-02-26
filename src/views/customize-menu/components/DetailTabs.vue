@@ -70,8 +70,6 @@ const initTabs = () => {
             }
         });
     }
-    console.log(tabs.value,'tabs.value')
-
     let takInx = tabs.value[props.cutTabIndex] ? props.cutTabIndex : 0;
     activeName.value = tabs.value[takInx].entityName + '-' + takInx;
 };

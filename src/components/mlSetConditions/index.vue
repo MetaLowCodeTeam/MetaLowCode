@@ -345,7 +345,7 @@
                     <el-icon size="18" class="add-icon">
                         <ElIconCirclePlusFilled />
                     </el-icon>
-                    <span class="ml-8">添加SQL</span>
+                    <span class="ml-8">添加SQL条件</span>
                 </span>
                 <slot name="afterAddConditions"></slot>
             </div>

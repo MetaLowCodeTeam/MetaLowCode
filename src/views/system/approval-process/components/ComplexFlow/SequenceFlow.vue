@@ -10,6 +10,7 @@
                 ref="mlSetConditionsRef"
                 v-model="conditionConf"
                 :entityName="entityCode"
+                enableSql
             />
         </el-collapse-item>
     </el-collapse>

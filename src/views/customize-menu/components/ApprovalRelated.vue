@@ -133,8 +133,15 @@ let approvalDialog = reactive({
 let SubmitApprovalDialogRefs = ref();
 // 打开提交审批弹框
 const openDialog = async () => {
-    if(!props.detailParamConf.beforeSubmitApproval()){
+    let beforeSubmitApproval = props.detailParamConf.beforeSubmitApproval();
+    if(typeof beforeSubmitApproval == "boolean" && !beforeSubmitApproval){
         return
+    }
+    if(beforeSubmitApproval instanceof Promise){
+        let res = await beforeSubmitApproval;
+        if(!res){
+            return
+        }
     }
 	SubmitApprovalDialogRefs.value?.openDialog(myApproval.value.recordId);
 };
@@ -256,9 +263,16 @@ const confirmApproval = () => {
 };
 
 // 撤销
-const revokeApproval = () => {
-    if(!props.detailParamConf.beforeRevokeApproval()){
+const revokeApproval = async () => {
+    let beforeRevokeApproval = props.detailParamConf.beforeRevokeApproval();
+    if(typeof beforeRevokeApproval == "boolean" && !beforeRevokeApproval){
         return
+    }
+    if(beforeRevokeApproval instanceof Promise){
+        let res = await beforeRevokeApproval;
+        if(!res){
+            return
+        }
     }
 	ElMessageBox.confirm("是否确认撤销?", "提示：", {
 		confirmButtonText: "确认",

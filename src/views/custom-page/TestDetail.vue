@@ -41,9 +41,9 @@ let detailConf = ref({
 	// 显示更多按钮
 	showMoreBtn: true,
     // 提交审批前
-    beforeSubmitApproval: () => {
-        console.log('your code')
-        return true
+    beforeSubmitApproval: async () => {
+        console.log('测试异步');
+        return true;
     },
     // 提交审批后
     afterSubmitApproval: () => {
