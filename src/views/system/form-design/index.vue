@@ -465,6 +465,11 @@ export default {
                 fieldSchema.options.max = !fldObj.max
                     ? fieldSchema.options.max
                     : fldObj.max * 1;
+
+				// 因为初始默认值为0，如果最小值大于0，则默认值等于最小值
+				if (fieldSchema.options.min > 0) {
+					fieldSchema.options.defaultValue = fieldSchema.options.min
+				}
             }
 
             /* 处理地区选择字段 */
