@@ -134,11 +134,12 @@ const appPath = import.meta.env.VITE_APP_PATH;
 const activeRow = (item) => {
     // 审批
     if (item.type == 10) {
-        router.push(appPath + "center-handle");
+        // router.push(appPath + "center-handle");
         // approveDialogIsShow.value = true;
         // approvalTaskId.value = item.relatedRecord.id;
         // entityId.value = item.relatedRecord.id;
         // approvalName.value = item.relatedRecord.name;
+        detailRefs.value.openDialog(item.relatedRecord.id);
     }
     // 审批抄送
     else if (item.type == 11) {

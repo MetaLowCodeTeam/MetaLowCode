@@ -314,7 +314,8 @@ const msgClick = (item, inx) => {
         }
     } else if (item.type == 10) {
         if (currentRoute.value.name != "CenterHandle") {
-            router.push(appPath + "center-handle");
+            // router.push(appPath + "center-handle");
+            detailRefs.value.openDialog(item.relatedRecord.id);
         }
         msg.value = false;
         // approveDialogIsShow.value = true;
