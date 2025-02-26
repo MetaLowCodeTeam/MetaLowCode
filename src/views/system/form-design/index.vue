@@ -470,6 +470,9 @@ export default {
 				if (fieldSchema.options.min > 0) {
 					fieldSchema.options.defaultValue = fieldSchema.options.min
 				}
+				if (fieldSchema.options.max < 0) {
+					fieldSchema.options.defaultValue = fieldSchema.options.max
+				}
             }
 
             /* 处理地区选择字段 */
