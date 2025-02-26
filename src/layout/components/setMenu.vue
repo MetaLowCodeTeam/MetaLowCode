@@ -288,20 +288,29 @@
 						"
 						class="mt-10"
 					>
-                        <el-select
-                            v-model="cutMenu.customCode"
-                            placeholder="权限Code"
-                            clearable
-                            filterable
-                            allow-create
-                        >
-                            <el-option
-                                v-for="item in customRightList"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
+                        <el-row :gutter="10">
+                            <el-col :span="21">
+                                <el-select
+                                    v-model="cutMenu.customCode"
+                                    placeholder="权限Code"
+                                    clearable
+                                    filterable
+                                    allow-create
+                                >
+                                    <el-option
+                                        v-for="item in customRightList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+                                    <el-checkbox v-model="cutMenu.reversalCustomCode" label="取反" />
+                                </el-tooltip>
+                            </el-col>
+                        </el-row>
 					</div>
 					<div class="mt-10">
 						<el-input
@@ -361,20 +370,29 @@
                             !filterUseCustomEntity.includes(cutMenu.entityName)"
 						class="mt-10"
 					>
-                        <el-select
-                            v-model="cutMenu.customCode"
-                            placeholder="权限Code"
-                            clearable
-                            filterable
-                            allow-create
-                        >
-                            <el-option
-                                v-for="item in customRightList"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
+                        <el-row :gutter="10">
+                            <el-col :span="21">
+                                <el-select
+                                    v-model="cutMenu.customCode"
+                                    placeholder="权限Code"
+                                    clearable
+                                    filterable
+                                    allow-create
+                                >
+                                    <el-option
+                                        v-for="item in customRightList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+                                    <el-checkbox v-model="cutMenu.reversalCustomCode" label="取反" />
+                                </el-tooltip>
+                            </el-col>
+                        </el-row>
 					</div>
 					<div
 						class="mt-5"

@@ -263,6 +263,7 @@
                         :width="statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
                         :fixed="checkedColumnFixed"
+                        v-if="listParamConf.showTableCheckbox"
                     >
                         <template #header>
                             <el-checkbox
@@ -624,6 +625,8 @@ let showColumnSet = ref(false);
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
 // 配置项
 const listParamConf = ref({
+    // 是否显示列表复选框 注意，如果列表复选框开启，则列表的头部按钮点击事件会失效
+    showTableCheckbox: true,
     showHeader: true,
     showAdvancedQuery: true,
     showQuickQuery: true,

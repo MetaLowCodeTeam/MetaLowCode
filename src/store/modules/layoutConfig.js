@@ -285,13 +285,21 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
      // 检测是否有权限
      const checkAuth = (item) => {
         let isHidden = false;
-        // console.log(tool.checkRole('r1023-3'),'检测是否有权限')
+
+        // 自定义权限
+        let hasCustomCode = item.customCode && !tool.checkRole(item.customCode.trim());
+        // 取反权限
+        if(item.reversalCustomCode){
+            hasCustomCode = !hasCustomCode;
+        }
+
+        
         // 1 如果有实体CODE
         // 2 并且没有权限 或者 没有自定义权限
         // 3 并且不是父菜单
         // 4 并且类型为1 关联项 
         let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
-        if(item.entityCode && (!tool.checkRole('r' + checkCode + '-1') || item.customCode && !tool.checkRole(item.customCode.trim())) && item.entityCode != "parentMenu" && item.type == 1){
+        if(item.entityCode && (!tool.checkRole('r' + checkCode + '-1') || hasCustomCode) && item.entityCode != "parentMenu" && item.type == 1){
             isHidden = true;
         }
         
@@ -299,7 +307,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         // 2 并且没有权限
         // 3 并且不是父菜单
         // 4 并且类型是2、3、5  外部地址、自定义页面、仪表盘
-        if(item.customCode && !tool.checkRole(item.customCode.trim()) && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5)){
+        if(hasCustomCode && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5)){
             isHidden = true;
         }
         // 1 如果是自定义列表 
