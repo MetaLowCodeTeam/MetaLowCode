@@ -1022,9 +1022,15 @@ const refreshData = () => {
     let findSortFields = [];
     // 获取所有列数据统计
     statistics.value = [];
+    // 禁止导出列
+    dataExportData.noExportColumns = [];
     tableColumn.value.forEach((el) => {
         // 字段
         allFields.value.push(el.fieldName);
+        // 禁止导出列
+        if(el.exportable !== undefined && !el.exportable) {
+            dataExportData.noExportColumns.push(el.fieldName);
+        }
         // 排序
         if (el.columnSort) {
             findSortFields.push(el);
@@ -1343,6 +1349,8 @@ let dataExportData = reactive({
     queryParm: {},
     size: 0,
     total: 0,
+    // 禁止导出列
+    noExportColumns: [],
 });
 
 let builtInFilter = ref({});

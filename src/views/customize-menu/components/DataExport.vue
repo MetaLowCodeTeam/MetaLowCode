@@ -32,13 +32,24 @@ const openDialog = (data) => {
 };
 
 const exportFn = async () => {
-    let queryParm = { ...formData.queryParm };
+    let queryParm = JSON.parse(JSON.stringify(formData.queryParm));
     if (selection.value == 2) {
         queryParm.pageSize = formData.total;
     }
     if (selection.value == 3) {
         queryParm.pageNo = null;
         queryParm.pageSize = null;
+    }
+    if(formData.noExportColumns.length > 0) {
+        let newFieldsList = [];
+        let oldFieldsList = queryParm.fieldsList.split(',');
+        oldFieldsList.forEach(el => {
+            if(formData.noExportColumns.includes(el)) {
+                return
+            }
+            newFieldsList.push(el);
+        })
+        queryParm.fieldsList = newFieldsList.join(',');
     }
     loading.value = true;
     let res = await $API.layoutConfig.excelDataExcel(queryParm);
