@@ -183,12 +183,46 @@
             </el-form>
         </div>
     </mlDialog>
+    <!-- 选择审批任务弹框 -->
+	<mlDialog
+		v-model="approveTaskConf.isShow"
+		title="选择审批任务"
+		width="400"
+		appendToBody
+	>
+		<el-form label-width="100px">
+			<el-form-item label="选择审批任务">
+				<el-select
+					v-model="approveTaskConf.taskId"
+					placeholder="请选择审批任务"
+					class="w-100"
+				>
+					<el-option
+						v-for="item in approveTaskConf.taskList"
+						:key="item.approvalTaskId"
+						:label="item.stepName"
+						:value="item.approvalTaskId"
+					/>
+				</el-select>
+			</el-form-item>
+			<el-form-item>
+				<div class="w-100" style="text-align: right">
+					<el-button @click="approveTaskConf.isShow = false">
+                        取消
+                    </el-button>
+					<el-button type="primary" @click="confirmApproveTask">
+                        确认任务
+                    </el-button>
+				</div>
+			</el-form-item>
+		</el-form>
+	</mlDialog>
 </template>
 
 <script setup>
 import http from "@/utils/request";
 import { Avatar, CirclePlusFilled } from "@element-plus/icons-vue";
-import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
+import { watch, ref, onMounted, reactive, nextTick } from "vue";
 import { queryById, saveRecord } from "@/api/crud";
 import { getRecordApprovalState } from '@/api/approval';
 import { getRejectNodeList } from "@/api/approval";
@@ -213,9 +247,10 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     title: { type: String, default: "" },
     approvalName: { type: String, default: "" },
+    // 是否作为dialog调用
+    isDialog: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue", "canner", "confirm"]);
-const $ElMessage = inject("$ElMessage");
 let loading = ref(false);
 // 弹框是否显示
 let isShow = ref(null);
@@ -263,8 +298,10 @@ watch(
 );
 
 onMounted(() => {
-    isShow.value = props.modelValue;
-    getApprovalTaskById();
+    if(!props.isDialog) {
+        isShow.value = props.modelValue;
+        getApprovalTaskById();
+    }
 });
 
 /**
@@ -278,13 +315,16 @@ let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
 let globalDsv = ref(globalDsvDefaultData());
+
+let currentApprovalTaskId = ref(null);
+
 // 初始化自定义表单
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;
     globalDsv.value.useFormId = formLayoutId;
     globalDsv.value.formEntity = queryEntityNameById(props.entityId);
     let res = await getFormLayout(
-        allEntityName.value[approvalTask.value.entityCode],
+        allEntityName.value[approvalTask.value.entityCode] || queryEntityNameById(props.entityId),
         formLayoutId,
         true
     );
@@ -296,10 +336,10 @@ const initFormLayout = async (formLayoutId) => {
             optionData.value = res.data.optionData || {};
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
-                // 获取审批信息
-                let recordApprovalRes = await getRecordApprovalState(props.entityId);
-                if(recordApprovalRes && recordApprovalRes.data?.flowVariables){
-                    globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+                if(!props.isDialog) {
+                    await getApprovalTaskInfo();
+                }else {
+                    getApprovalTaskById();
                 }
                 let formData = await queryById(props.entityId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
@@ -359,6 +399,30 @@ const initFormLayout = async (formLayoutId) => {
  *
  */
 
+
+/**
+ * 审批任务相关
+ */
+ let approveTaskConf = ref({
+	isShow: false,
+	taskList: [],
+	taskId: null,
+});
+
+// 确认审批任务
+const confirmApproveTask = () => {
+	let { taskId } = approveTaskConf.value;
+	if (!taskId) {
+		ElMessage.error("请选择审批任务");
+		return;
+	}
+    isShow.value = true;
+    approveTaskConf.value.isShow = false;
+    currentApprovalTaskId.value = taskId;
+    initFormLayout();
+};
+
+
 // 拓展按钮点击
 function handleCommand(type) {
     otherDialog.value = true;
@@ -371,7 +435,7 @@ function handleCommand(type) {
 async function confirmApostille() {
     let { type, title } = taskOperation.value;
     if (taskOperation.value.nodeRoleList.length < 1) {
-        $ElMessage.warning("请选择要" + title + "到哪些人员");
+        ElMessage.warning("请选择要" + title + "到哪些人员");
         return;
     }
     // 是复杂工作流
@@ -382,7 +446,7 @@ async function confirmApostille() {
     otherLoading.value = true;
     let res = await http.post("/approval/taskOperation", taskOperation.value);
     if (res) {
-        $ElMessage.success(title + "成功");
+        ElMessage.success(title + "成功");
         otherDialog.value = false;
         // 如果是转审，2个弹框都要关掉
         if (type == 1) {
@@ -418,11 +482,11 @@ const handleGenerate = () => {
         confirmApprove(false);
     }).catch(err => {
         if(err == 'Warning: Not Signned!') {
-            $ElMessage.error("请手写签名")
+            ElMessage.error("请手写签名")
         }
         else {
             console.log(err);
-            $ElMessage.error(err);
+            ElMessage.error(err);
         }
     })
 };
@@ -473,7 +537,7 @@ function confirmApprove(isBacked) {
                 );
                 if (res) {
                     let msg = isBacked ? "驳回" : "审批";
-                    $ElMessage.success(msg + "成功");
+                    ElMessage.success(msg + "成功");
                     canner();
                     emit("confirm");
                 }
@@ -482,7 +546,7 @@ function confirmApprove(isBacked) {
         loading.value = false;
 
     }).catch(err => {
-        $ElMessage.error("表单校验失败，请修改后重新提交");
+        ElMessage.error("表单校验失败，请修改后重新提交");
     })
 }
 
@@ -499,7 +563,7 @@ const customButtonText = ref({
 async function getApprovalTaskById() {
     loading.value = true;
     let res = await http.get("/approval/getApprovalTaskById", {
-        approvalTaskId: props.taskId,
+        approvalTaskId: currentApprovalTaskId.value || props.taskId,
     });
     if (res) {
         approvalTask.value = res.data;
@@ -520,9 +584,38 @@ async function getApprovalTaskById() {
                 }
             }
         }
-        initFormLayout(approvalTask.value.formLayoutId);
+        if(!props.isDialog) {
+            initFormLayout(approvalTask.value.formLayoutId);
+        }
     } else {
         loading.value = false;
+    }
+}
+let approvalTaskInfo = ref(null);
+const getApprovalTaskInfo = async () => {
+    // 获取审批信息
+    let recordApprovalRes = await getRecordApprovalState(props.entityId);
+    if(recordApprovalRes){
+        approvalTaskInfo.value = recordApprovalRes.data;
+        if( recordApprovalRes.data?.flowVariables) {
+            globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+        }
+        if(props.isDialog) {
+            let { parallelTasks, approvalTaskId } = recordApprovalRes.data;
+            currentApprovalTaskId.value = approvalTaskId;
+            if(currentApprovalTaskId.value) {
+                if (parallelTasks && parallelTasks.length > 1) {
+                    approveTaskConf.value = {
+                        isShow: true,
+                        taskList: [...parallelTasks],
+                        taskId: null,
+                    };
+                }else {
+                    isShow.value = true;
+                    initFormLayout();
+                }
+            }
+        }
     }
 }
 
@@ -547,7 +640,7 @@ const openRejectDialog = async () => {
     rejectDialogShow.value = true;
     rejectDialogLoading.value = true;
     rejectNode.value = "";
-    let res = await getRejectNodeList(props.taskId);
+    let res = await getRejectNodeList(currentApprovalTaskId.value || props.taskId);
     if (res && res.code == 200) {
         rejectNodeList.value = res.data;
     }
@@ -585,7 +678,7 @@ const saveComplexFlow = async (dealWithType) => {
         otherLoading.value = true;
     }
     let param = {
-        approvalTaskId: props.taskId,
+        approvalTaskId: currentApprovalTaskId.value || props.taskId,
         dealWithType,
         wfTaskBo: {
             comment: form.value.remark,
@@ -606,7 +699,7 @@ const saveComplexFlow = async (dealWithType) => {
     );
     if (res && res.code == 200) {
         let msg = DealWithTypeLabel[dealWithType];
-        $ElMessage.success(msg + "成功");
+        ElMessage.success(msg + "成功");
         // 不是加签需要关闭弹框。
         if (dealWithType != 5) {
             canner();
@@ -619,6 +712,21 @@ const saveComplexFlow = async (dealWithType) => {
         otherLoading.value = false;
     }
 };
+
+const openDialog = () => {
+    nextTick(async () => {
+        getApprovalTaskInfo();
+        // console.log(approvalTaskInfo.value,'approvalTaskInfo.value')
+        // console.log(props.entityId,'approverRecordId')
+        // initFormLayout();
+    })
+    // console.log(props.entityId,'approverRecordId')
+}
+
+defineExpose({
+    openDialog,
+})
+
 </script>
 
 <style lang="scss" scoped>

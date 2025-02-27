@@ -403,6 +403,15 @@
         />
         <!-- 批量编辑 -->
         <ListBatchUpdate ref="ListBatchUpdateRef" @onConfirm="getTableList" />
+        <!-- 提交审批弹框 -->
+        <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
+        <!-- 执行审批 -->
+        <mlApprove 
+            ref="MlApproveRefs" 
+            isDialog
+            :entityId="approverRecordId"
+            @confirm="ApprovalSuccess"
+        />
     </div>
 </template>
 
@@ -455,7 +464,11 @@ import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 // 自定义查询面板
 import ListCustomizeQuery from './components/ListCustomizeQuery.vue'
 // 列表列设置
-import ListColumnSet from './components/ListColumnSet.vue'
+import ListColumnSet from './components/ListColumnSet.vue';
+// 提交审批弹框
+import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+// 执行审批弹框
+import mlApprove from "@/components/mlApprove/index.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
@@ -645,6 +658,10 @@ const listParamConf = ref({
     recordEditFormId: "",
     // 详情查看表单id
     recordDetailFormId: "",
+    // 提交审批后回调
+    submitApprovalSuccess: () => {},
+    // 审批后回调
+    approvalSuccess: () => {},
 })
 
 
@@ -1637,9 +1654,38 @@ const checkRouterAutoOpen = () => {
 
 
 
+
+
 /**
  * 导出方法
  */
+
+// 提交审批弹框
+let SubmitApprovalDialogRefs = ref();
+const openSubmitApprovalDialog = (recordId) => {
+    SubmitApprovalDialogRefs.value?.openDialog(recordId)
+}
+// 提交审批成功
+const submitApprovalSuccess = () => {
+    getTableList();
+    if(listParamConf.value.submitApprovalSuccess){
+        listParamConf.value.submitApprovalSuccess();
+    }
+}
+// 执行审批弹框
+let MlApproveRefs = ref();
+let approverRecordId = ref(null);
+const openApprovalDialog = (recordId) => {
+    approverRecordId.value = recordId;
+    MlApproveRefs.value?.openDialog(recordId)
+}
+// 审批成功后回调
+const ApprovalSuccess = () => {
+    getTableList();
+    if(listParamConf.value.approvalSuccess){
+        listParamConf.value.approvalSuccess();
+    }
+}
 
 // 重置表格数据
 const resetList = () => {
@@ -1794,6 +1840,8 @@ defineExpose({
     viewRow,
     getTableDataList,
     openBatchUpdateDialog,
+    openSubmitApprovalDialog,
+    openApprovalDialog,
 })
 
 </script>

@@ -69,7 +69,7 @@
 		<el-form label-width="100px">
 			<el-form-item label="选择审批任务">
 				<el-select
-					v-model="approveTaskConf.taksId"
+					v-model="approveTaskConf.taskId"
 					placeholder="请选择审批任务"
 					class="w-100"
 				>
@@ -210,7 +210,6 @@ const formatAttrMore = (attrMore, currentNode) => {
             current = current.childNode;
         }
     });
-    console.log(newAttrMore,'newAttrMore')
     return newAttrMore;
 }
 
@@ -225,17 +224,17 @@ const confirm = () => {
 let approveTaskConf = ref({
 	isShow: false,
 	taskList: [],
-	taksId: null,
+	taskId: null,
 });
 
 // 确认审批任务
 const confirmApproveTask = () => {
-	let { taksId } = approveTaskConf.value;
-	if (!taksId) {
+	let { taskId } = approveTaskConf.value;
+	if (!taskId) {
 		ElMessage.error("请选择审批任务");
 		return;
 	}
-	myApproval.value.approvalTaskId = approveTaskConf.value.taksId;
+	myApproval.value.approvalTaskId = approveTaskConf.value.taskId;
 	approveTaskConf.value.isShow = false;
 	approveDialogIsShow.value = true;
 };
@@ -249,7 +248,7 @@ const openApproveDialog = () => {
 		approveTaskConf.value = {
 			isShow: true,
 			taskList: [...parallelTasks],
-			taksId: null,
+			taskId: null,
 		};
 	} else {
 		approveDialogIsShow.value = true;
