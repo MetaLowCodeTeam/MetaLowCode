@@ -490,12 +490,11 @@ export const getModelName = () => {
     if(pathname.indexOf('/custom-page/') !== -1){
         let splitPathname = pathname.split("/");
         let newSplitName = [];
-        if(splitPathname[3]){
-            newSplitName.push(splitPathname[3])
-        }
-        if(splitPathname[4]){
-            newSplitName.push(splitPathname[4])
-        }
+        splitPathname.forEach((item,inx) => {
+            if(inx > 2){
+                newSplitName.push(item)
+            }
+        })
         modelName = newSplitName.join("-")
     }
     return modelName;
