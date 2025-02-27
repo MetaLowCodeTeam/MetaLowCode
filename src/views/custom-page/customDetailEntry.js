@@ -24,7 +24,7 @@ import UserDetail from './Organizational/UserDetail.vue';
 // 详情组件映射关系
 const detailCmpMapping = {
     default: defaultEntityDetail.name,
-    // importStep_2. 映射你的实体详情，实体名称:组件名称
+    // importStep_2. 映射你的实体详情，自定义组件名称:你引入组件的.name
     TestDetail: TestDetail.name,
     UserDetail: UserDetail.name,
 }
