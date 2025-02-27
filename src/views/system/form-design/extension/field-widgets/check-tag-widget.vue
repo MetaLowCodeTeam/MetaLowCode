@@ -53,7 +53,7 @@
         </template>
         <template v-else-if="!field.options.showCheckbox && !isReadMode">
             <template
-                v-for="(item, index) in field.options.optionItems"
+                v-for="(item, index) in options"
                 :key="index"
             >
                 <el-check-tag
@@ -161,7 +161,17 @@ export default {
         initOptionsChecked(){
             this.checkboxGroup = [];
             this.selectValue = [];
-            this.options = this.field.options.optionItems.map(el => {
+            let sourceFields = [];
+            if(this.fieldModel){
+                sourceFields = this.fieldModel.split(",").map(el => {
+                    return {
+                        label: el,
+                        value: this.getGuid()
+                    }
+                });
+            }
+            let newOption = Object.assign([], this.field.options.optionItems, sourceFields);
+            this.options = newOption.map(el => {
                 let newValue = el.label || el.value;
                 if(this.fieldModel && this.fieldModel.split(",").includes(newValue)) {
                     this.checkboxGroup.push(newValue);
@@ -172,6 +182,13 @@ export default {
                     label: newValue,
                     checked: this.fieldModel ? this.fieldModel.split(",").includes(newValue) : false
                 }
+            });
+        },
+        getGuid(){
+            return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+                var r = (Math.random() * 16) | 0,
+                    v = c == "x" ? r : (r & 0x3) | 0x8;
+                return v.toString(16);
             });
         },
 		async initOptionItems(keepSelected) {

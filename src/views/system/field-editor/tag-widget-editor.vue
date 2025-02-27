@@ -64,7 +64,25 @@
 						<el-radio value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
-                <el-card class="box-card" shadow="never">
+                <el-form-item label="开启选项数据同步" >
+                    <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
+                </el-form-item>
+                <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
+                    <el-select
+                        v-model="useFieldSync"
+                        placeholder="选择字段"
+                        :disabled="fieldState !== 1"
+                        filterable
+                    >
+                        <el-option
+                            v-for="item in fieldsSync"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-card class="box-card" shadow="never" v-else>
                     <template #header>
                         <div class="clear-fix">
                             <span>选项管理</span>
@@ -147,6 +165,7 @@ import {
     updateTagField,
     getField,
     getTagItems,
+    getTagFields,
 } from "@/api/system-manager";
 import FieldState from "@/views/system/field-state-variables";
 import { fieldEditorMixin } from "@/views/system/field-editor/field-editor-mixin";
@@ -187,14 +206,40 @@ export default {
             hoverIdx: -1,
 
             validators: [],
+            // 同步是否勾选
+            checkedSync: false,
+            // 所有可选的同步字段
+            fieldsSync: [],
+            // 选择的同步字段
+            useFieldSync: "",
         };
     },
     mounted() {
-        if (this.fieldState === FieldState.EDIT) {
-            this.getFieldProps();
-        }
+        // 初始化API
+        this.initApi();
     },
     methods: {
+        async initApi(){
+            // 取所有可同步的字段
+            let res = await getTagFields();
+            this.fieldsSync = [];
+            if(res){
+                let fields = res.data || [];
+                fields.forEach(el => {
+                    el.fieldList.forEach(subEl => {
+                        if(subEl.syncFlag !== "1"){
+                            this.fieldsSync.push({
+                                label: el.entityLabel + "." + subEl.fieldLabel,
+                                value: el.entityName + '.' + subEl.fieldName
+                            })
+                        }
+                    })
+                })
+            }
+            if (this.fieldState === FieldState.EDIT) {
+                this.getFieldProps();
+            }
+        },
         async getFieldProps() {
             let res = await getField(this.fieldName, this.entity);
             if (res && res.code == 200) {
@@ -206,6 +251,18 @@ export default {
 
         async readFieldProps(savedProps) {
             copyObj(this.fieldProps, savedProps);
+             // 如果不是新建
+             if(this.fieldState !== 1){
+                // 如果有同步数据表示勾选了同步
+                let { tagSyncModel } = this.fieldProps.fieldViewModel;
+                if(tagSyncModel){
+                    let { entityName, fieldName } = tagSyncModel;
+                    if(entityName && fieldName){
+                        this.checkedSync = true;
+                        this.useFieldSync = entityName + '.' + fieldName
+                    }
+                }
+            }
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
             }
@@ -234,6 +291,15 @@ export default {
                         tagList.push(item.label);
                     }
                 });
+                // 如果启用了同步
+                if(this.checkedSync){
+                    let fieldSync = this.useFieldSync.split('.');
+                    let tagSyncModel = {
+                        entityName: fieldSync[0],
+                        fieldName: fieldSync[1]
+                    };
+                    this.fieldProps.fieldViewModel.tagSyncModel = tagSyncModel
+                }
 
                 let saveMethod = addTagField;
                 if (this.fieldState === FieldState.EDIT) {
