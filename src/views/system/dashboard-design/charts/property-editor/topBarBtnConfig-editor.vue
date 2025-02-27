@@ -5,7 +5,7 @@
 	>
 		<el-switch v-model="optionModel.topBarBtnConfig.show"></el-switch>
 	</el-form-item>
-	<template v-if="optionModel.topBarBtnConfig.show">
+	<template v-if="optionModel.topBarBtnConfig?.show">
 		<!-- 按钮标签 -->
 		<el-form-item label="按钮标签">
 			<el-input
