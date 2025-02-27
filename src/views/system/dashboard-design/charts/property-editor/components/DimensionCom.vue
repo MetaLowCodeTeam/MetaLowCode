@@ -398,14 +398,14 @@ const confirmAlias = (tag, inx) => {
 };
 // 取消修改别名
 const cannerAlias = (inx) => {
-    fieldsPopoverRefs.value[inx].hide();
+    fieldsPopoverRefs.value[inx]?.hide();
 };
 
 // 字段汇总方式切换
 let summaryPopoverRefs = ref();
 const onCalcModeChange = (tag, target, inx) => {
-    summaryPopoverRefs.value[inx].hide();
-    sortPopoverRefs.value[inx].hide();
+    summaryPopoverRefs.value[inx]?.hide();
+    sortPopoverRefs.value[inx]?.hide();
     tag.calcMode = target;
     emits("update:modelValue", list.value);
 };
@@ -413,16 +413,16 @@ const onCalcModeChange = (tag, target, inx) => {
 // 时间格式化
 let dateModeRefs = ref();
 const onDateModeChange = (tag, target, inx) => {
-    dateModeRefs.value[inx].hide();
-    sortPopoverRefs.value[inx].hide();
+    dateModeRefs.value[inx]?.hide();
+    sortPopoverRefs.value[inx]?.hide();
     tag.dateFormat = target;
     emits("update:modelValue", list.value);
 };
 
 // 字段排序
 const onSort = (tag, target, inx) => {
-    fieldsPopoverRefs.value[inx].hide();
-    sortPopoverRefs.value[inx].hide();
+    fieldsPopoverRefs.value[inx]?.hide();
+    sortPopoverRefs.value[inx]?.hide();
     emits("update:modelValue", list.value);
     emits("onSort", { tag, target });
 };
