@@ -102,7 +102,7 @@ onBeforeMount(() => {
 const initDetailData = async () => {
     initLoading.value = true;
     let fieldNames =
-        "priority,entityCode,name,actionType,actionContent,whenNum,actionFilter,whenCron";
+        "priority,entityCode,name,actionType,actionContent,whenNum,actionFilter,whenCron,exceptionThrow";
     let detailRes = await queryById(trigger.triggerConfigId, fieldNames);
     if (detailRes) {
         trigger = Object.assign(trigger, detailRes.data);
@@ -172,7 +172,8 @@ const onSave = async (target) => {
         actionContent,
         defaultTargetEntity,
         createType,
-        transformId
+        transformId,
+        exceptionThrow
     } = trigger;
     // 如果是更新规则
     // if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
@@ -190,6 +191,7 @@ const onSave = async (target) => {
             triggerConfigId,
             priority,
             whenCron: null,
+            exceptionThrow
         },
     };
     // 如果有触发动作

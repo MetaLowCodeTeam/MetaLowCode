@@ -24,7 +24,7 @@
                     v-if="trigger.actionType?.value == 15"
                 />
             </el-form-item>
-            <el-form-item label="执行优先级">
+            <el-form-item label="执行优先级" style="margin-bottom: 5px;">
                 <el-input-number
                     v-model="trigger.priority"
                     @change="priorityChange"
@@ -33,7 +33,13 @@
                 />
                 <div class="w-100 info-text" style="line-height: 24px;">优先级高 (数字大) 的会被先执行</div>
             </el-form-item>
-            <el-form-item label=" " class="mt-30">
+            <el-form-item label="异常抛出">
+                <el-checkbox v-model="trigger.exceptionThrow" @change="exceptionThrowChange"/>
+                <div class="w-100 info-text" style="line-height: 24px;">
+                    触发器执行异常默认会被捕获，不影响客户正常操作。
+                </div>
+            </el-form-item>
+            <el-form-item label=" " class="mt-20">
                 <el-button type="primary" @click="onSave" style="width:100px;height: 36px;">保存</el-button>
                 <el-dropdown
                     trigger="click"
@@ -104,6 +110,11 @@ onMounted(() => {
 
 // 优先级
 const priorityChange = () => {
+    emit("update:modelValue", trigger.value);
+};
+
+// 异常抛出
+const exceptionThrowChange = () => {
     emit("update:modelValue", trigger.value);
 };
 
