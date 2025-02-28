@@ -52,7 +52,7 @@
 					<el-option
 						:label="op.label"
 						:value="op.name"
-						v-for="(op, inx) of getEntityList()"
+						v-for="(op, inx) of getEntityAllList()"
 						:key="inx"
 					/>
 				</el-select>
@@ -99,6 +99,12 @@ const emits = defineEmits(["saveFinish"]);
 const getEntityList = () => {
 	return unSystemEntityList.value.filter((el) => !el.detailEntityFlag);
 };
+
+// 获取所有实体
+const getEntityAllList = () => {
+	return unSystemEntityList.value;
+};
+
 // 弹框配置
 let dialogConf = ref({
 	show: false,
