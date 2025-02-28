@@ -51,6 +51,7 @@
                 :entity="entity"
 				:refField="field.options.name"
                 :searchFields="field.options.searchFields"
+                :dialogWidth="field.options.searchDialogWidth"
                 :fieldModel="fieldModel"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
