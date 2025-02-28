@@ -2,8 +2,8 @@
 	<!--  -->
 	<mlDialog title="其他列表设置" v-model="isShow" width="600px">
 		<div v-loading="loading" class="set-list-style">
-			<div class="from-title">新建编辑弹框属性</div>
-			<div class="from-item mb-30">
+			<div class="form-title">新建编辑弹框属性</div>
+			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
 					新页签打开新建
 				</el-checkbox>
@@ -14,8 +14,8 @@
 					弹框自动全屏
 				</el-checkbox>
 			</div>
-			<div class="from-title">查看侧滑栏属性</div>
-			<div class="from-item mb-30">
+			<div class="form-title">查看侧滑栏属性</div>
+			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.detailConf.showFullScreen">
 					显示全屏按钮
 				</el-checkbox>
@@ -23,8 +23,8 @@
 					弹框自动全屏
 				</el-checkbox>
 			</div>
-			<div class="from-title">批量删除设置</div>
-			<div class="from-item mb-30">
+			<div class="form-title">批量删除设置</div>
+			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.delConf.allowUsersSelect">
 					允许用户选择级联删除
 				</el-checkbox>
@@ -34,8 +34,8 @@
 					:entityCode="entityCode"
 				/>
 			</div>
-			<div class="from-title" v-if="!isListCard">复制设置</div>
-			<div class="from-item mb-30" v-if="!isListCard">
+			<div class="form-title" v-if="!isListCard">复制设置</div>
+			<div class="form-item mb-30" v-if="!isListCard">
 				<el-checkbox v-model="styleConf.copyConf.openCopy">
 					打开复制功能
 				</el-checkbox>
@@ -284,9 +284,9 @@ const onSave = async () => {
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 20px;
-	.from-title {
+	.form-title {
 		font-weight: bold;
-		font-size: 20px;
+		font-size: 18px;
 		margin-bottom: 5px;
 	}
 }
