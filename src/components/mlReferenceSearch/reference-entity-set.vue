@@ -1,0 +1,311 @@
+<style scoped lang="scss">
+.right-div {
+	border: 1px solid #eee;
+	height: 388px;
+	box-sizing: border-box;
+	line-height: 0;
+	padding: 2px;
+}
+.parent-li {
+	// height: 888px;
+	font-size: 13px;
+	color: #303030;
+	text-decoration: none;
+	background: none repeat scroll 0 0 #fff;
+
+	.paren-div {
+		height: 36px;
+		margin-bottom: 3px;
+		position: relative;
+		&:hover {
+			.action-icon {
+				display: block;
+			}
+		}
+		&.is-active {
+			background: #dedede;
+		}
+	}
+}
+.action-icon {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	display: none;
+	.icon-span {
+		cursor: pointer;
+		display: inline-block;
+		color: #a1a1a1;
+		&.add-icon {
+			position: relative;
+			top: -1px;
+		}
+		&:hover {
+			color: #666;
+		}
+	}
+}
+
+.source-field-box {
+	height: calc(388px - 43px);
+	margin-bottom: 12px;
+	overflow-x: auto;
+	margin-top: 5px;
+	padding: 0 3px;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	.field-li {
+		height: 36px;
+		line-height: 36px;
+		border: 1px solid #dedede;
+		margin-bottom: 2px;
+		color: #303030;
+		border-radius: 1px;
+		padding: 0 10px;
+		width: calc(100% - 22px);
+		.field-item {
+			width: calc(100% - 32px);
+		}
+		&:hover {
+			background: var(--el-color-primary);
+			color: #fff;
+			cursor: pointer;
+		}
+		.icon-span {
+			margin-top: 2px;
+		}
+	}
+	&:hover {
+		&::-webkit-scrollbar {
+			display: block;
+		}
+		&.need-auto {
+			.field-li {
+				width: calc(100% - 22px);
+			}
+		}
+	}
+}
+.mover,
+.submover {
+	width: 32px;
+	height: 36px;
+	line-height: 36px;
+	background: var(--el-color-primary-light-3);
+	text-align: center;
+	color: #fff;
+	.icon {
+		float: left;
+		margin-left: 6px;
+		margin-top: 8px;
+	}
+	&:hover {
+		cursor: move;
+		background: var(--el-color-primary);
+	}
+}
+.item {
+	height: 36px;
+	line-height: 36px;
+	border: 1px solid #dedede;
+	border-left: 0;
+	width: calc(100% - 32px);
+	box-sizing: border-box;
+	padding: 0 10px;
+}
+
+.ghost {
+	background: #fff !important;
+	border: 1px dashed #999;
+	.mover,
+	.item {
+		opacity: 0;
+	}
+}
+.chosenClass {
+	background: #fff;
+	// background-color: #f1f1f1;
+}
+.sortable-box {
+	height: 388px;
+	border: 1px solid #eee;
+	padding: 2px;
+	box-sizing: border-box;
+	margin-bottom: 12px;
+	overflow-x: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	&:hover {
+		&::-webkit-scrollbar {
+			display: block;
+		}
+	}
+}
+</style>
+<template>
+	<el-empty description="暂无字段可选" v-if="fieldList.length === 0" />
+	<div v-else>
+		<el-row :gutter="10">
+			<el-col :span="12">
+				<div class="sortable-box">
+					<VueDraggableNext
+						ghost-class="ghost"
+						chosen-class="chosenClass"
+						animation="300"
+						:force-fallback="false"
+						handle=".mover"
+						:list="showFieldList"
+					>
+						<div
+							class="parent-li"
+							v-for="(parent, inx) of showFieldList"
+							:key="inx"
+						>
+							<div class="paren-div">
+								<div class="mover fl">
+									<el-icon size="20" class="icon">
+										<ElIconRank />
+									</el-icon>
+								</div>
+								<div class="fl item text-ellipsis">
+									{{ parent.label }}
+								</div>
+								<div class="action-icon">
+									<span
+										class="icon-span"
+										@click.stop="delField(parent, inx)"
+									>
+										<el-icon size="16">
+											<ElIconCloseBold />
+										</el-icon>
+									</span>
+								</div>
+							</div>
+						</div>
+					</VueDraggableNext>
+				</div>
+			</el-col>
+			<el-col :span="12">
+				<div class="right-div">
+					<el-input
+						class="right-div-input"
+						v-model="searchField"
+						placeholder="筛选字段"
+						clearable
+					>
+						<template #prefix>
+							<el-icon class="el-input__icon">
+								<ElIconSearch />
+							</el-icon>
+						</template>
+					</el-input>
+					<div
+						class="source-field-box"
+						:class="{ 'need-auto': notShowField().length > 8 }"
+					>
+						<div
+							class="field-li"
+							v-for="(field, inx) of notShowField()"
+							:key="inx"
+							@click="addShowField(field)"
+						>
+							<div class="fl field-item text-ellipsis">
+								{{ field.label }}
+							</div>
+							<span class="fr icon-span">
+								<el-icon size="16">
+									<ElIconPlus />
+								</el-icon>
+							</span>
+						</div>
+					</div>
+				</div>
+			</el-col>
+		</el-row>
+	</div>
+	<!-- <div>
+        {{ fieldList }}
+    </div> -->
+</template>
+<script setup>
+import { ref, watchEffect, watch, onMounted } from "vue";
+// 引入拖拽组件
+import { VueDraggableNext } from "vue-draggable-next";
+const props = defineProps({
+	fieldList: {
+		type: Array,
+		default: () => [],
+	},
+    selectedFieldItems: {
+        type: Array,
+        default: () => [],
+    }
+});
+const emit = defineEmits(["handleSelectedFieldUpdate"]);
+let propFieldList = ref([]);
+// 源数据
+let sourceFieldList = ref([]);
+// 显示字段
+let showFieldList = ref([]);
+
+// 删除显示字段
+const delField = (field, inx) => {
+	showFieldList.value.splice(inx, 1);
+	sourceFieldList.value.push(field);
+};
+
+// 添加显示字段
+const addShowField = (field) => {
+	showFieldList.value.push(field);
+	sourceFieldList.value.splice(sourceFieldList.value.indexOf(field), 1);
+};
+
+// 筛选字段
+let searchField = ref("");
+const notShowField = () => {
+	if (!searchField) {
+		return sourceFieldList.value;
+	} else {
+		return sourceFieldList.value.filter(
+			(el) => el.label.indexOf(searchField.value) != -1
+		);
+	}
+};
+
+watch(() => props.fieldList, (newVal) => {
+    propFieldList.value = [...newVal];
+    initFieldList();
+}, { deep: true })
+
+watch(() => props.selectedFieldItems, (newVal) => {
+    showFieldList.value = [...newVal];
+    initFieldList();
+}, { deep: true })
+
+onMounted(() => {
+    showFieldList.value = [...props.selectedFieldItems];
+    propFieldList.value = [...props.fieldList];
+    initFieldList();
+})
+
+
+const initFieldList = () => {
+    let name =showFieldList.value.map(el => el.name);
+    sourceFieldList.value = propFieldList.value.filter(el => !name.includes(el.name));
+}
+
+watch(() => showFieldList.value, (newVal) => {
+    emit("handleSelectedFieldUpdate", [...newVal]);
+}, { deep: true })
+
+// const getSelectedField = () => {
+//     return showFieldList.value;
+// }
+
+// defineExpose({
+//     getSelectedField
+// })
+</script>
