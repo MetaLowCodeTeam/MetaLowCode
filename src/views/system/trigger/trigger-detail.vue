@@ -126,6 +126,7 @@ const initDetailData = async () => {
         if (trigger.actionType.value == 4) {
             // 禁用定期执行
             trigger.disabledActive = [512];
+            trigger.exceptionThrow = true;
         }
         // 如果是自动分配
         if (trigger.actionType.value == 6) {

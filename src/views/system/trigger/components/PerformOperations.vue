@@ -34,9 +34,16 @@
                 <div class="w-100 info-text" style="line-height: 24px;">优先级高 (数字大) 的会被先执行</div>
             </el-form-item>
             <el-form-item label="异常抛出">
-                <el-checkbox v-model="trigger.exceptionThrow" @change="exceptionThrowChange"/>
+                <el-checkbox 
+                    v-model="trigger.exceptionThrow" 
+                    @change="exceptionThrowChange"
+                    :disabled="trigger.actionType?.value == 4"
+                />
                 <div class="w-100 info-text" style="line-height: 24px;">
-                    触发器执行异常默认会被捕获，不影响客户正常操作。
+                    触发器执行异常默认会被捕获，不影响用户正常操作，但不会回滚数据库事务。
+                </div>
+                <div class="w-100 info-text" style="line-height: 24px;">
+                    如选择“异常抛出”，则触发器执行异常后会回滚数据库事务。
                 </div>
             </el-form-item>
             <el-form-item label=" " class="mt-20">
