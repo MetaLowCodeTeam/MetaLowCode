@@ -416,7 +416,7 @@ const getCutEntityFields = () => {
 // 获取目标实体所有字段
 const getTagEntityFields = async (entityCode) => {
     changeTagEntityLoading.value = true;
-    let res = await queryEntityFields(entityCode, false, false, true);
+    let res = await queryEntityFields(entityCode, false, false, true, true);
     if (res) {
         tagEntityFields.value = res.data;
         requiredFields.value = [];
