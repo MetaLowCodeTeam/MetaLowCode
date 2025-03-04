@@ -428,6 +428,8 @@ let entityName = ref("");
 watch(
     () => props.formData,
     (newVal,oldVal) => {
+        console.log('newVal', newVal)
+        console.log('oldVal', oldVal)
         if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
             initApi();
         }
@@ -446,13 +448,13 @@ let myFormList = ref([]);
 
 
 
-onMounted(() => {
-    entityCode.value = Router.currentRoute.value.query.entityCode;
-    if (entityCode) {
-        entityName.value = allEntityName.value[entityCode.value];
-    }
-    initApi();
-});
+// onMounted(() => {
+//     entityCode.value = Router.currentRoute.value.query.entityCode;
+//     if (entityCode) {
+//         entityName.value = allEntityName.value[entityCode.value];
+//     }
+//     initApi();
+// });
 
 // 初始化API
 const initApi = () => {
@@ -468,9 +470,7 @@ const initApi = () => {
     }
 }
 
-watchEffect(() => {
-    myFormList.value = props.formList;
-})
+
 
 /**
  * ***********************************************   由谁审批 beg
@@ -794,6 +794,14 @@ const saveCustomText = () => {
     customTextDialogConf.value.show = false;
 };
 
+watchEffect(() => {
+    myFormList.value = props.formList;
+    entityCode.value = Router.currentRoute.value.query.entityCode;
+    if (entityCode) {
+        entityName.value = allEntityName.value[entityCode.value];
+    }
+    initApi();
+})
 
 defineExpose({
     getFormData,
