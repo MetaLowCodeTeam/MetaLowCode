@@ -26,7 +26,7 @@
 							:key="inx"
 						>
 							<div
-								class="paren-idv"
+								class="paren-div"
 								@click="nodeClick(parent)"
 								:class="{
 									'is-active': cutMenu?.guid == parent.guid,
@@ -1116,7 +1116,7 @@ div {
 	text-decoration: none;
 	background: none repeat scroll 0 0 #fff;
 
-	.paren-idv {
+	.paren-div {
 		height: 36px;
 		margin-bottom: 3px;
 		position: relative;

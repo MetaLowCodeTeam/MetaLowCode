@@ -12,7 +12,7 @@
                         :list="showColumn"
                     >
                         <div class="parent-li" v-for="(parent,inx) of showColumn" :key="inx">
-                            <div class="paren-idv">
+                            <div class="paren-div">
                                 <div class="mover fl">
                                     <el-icon size="20" class="icon">
                                         <ElIconRank />
@@ -339,7 +339,7 @@ div {
     text-decoration: none;
     background: none repeat scroll 0 0 #fff;
 
-    .paren-idv {
+    .paren-div {
         height: 36px;
         margin-bottom: 3px;
         position: relative;

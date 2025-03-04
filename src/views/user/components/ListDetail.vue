@@ -179,6 +179,7 @@ let editRefs = ref();
 const editClick = (row) => {
     let tempV = {};
     tempV.detailId = row[props.idFieldName];
+    tempV.fieldName = "departmentId";
     editRefs.value.openDialog(tempV);
 };
 

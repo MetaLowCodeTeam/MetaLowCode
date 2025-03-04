@@ -235,6 +235,7 @@ const openDialog = async (v) => {
     row.idFieldName = v.idFieldName;
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
+    row.disableWidgets = v.disableWidgets;
     paramDialogConf.value = v.dialogConf;
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
@@ -412,6 +413,13 @@ const getFieldListOfEntityApi = async (tag) => {
     }
     if (props.disableWidgets.length > 0) {
         props.disableWidgets.forEach(el => {
+            if(!props.unDisableWidgets.includes(el)){
+                disabledFields.push(el);
+            }
+        })
+    }
+    if(row.disableWidgets.length > 0){
+        row.disableWidgets.forEach(el => {
             if(!props.unDisableWidgets.includes(el)){
                 disabledFields.push(el);
             }

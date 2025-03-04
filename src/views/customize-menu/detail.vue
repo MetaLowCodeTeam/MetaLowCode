@@ -589,6 +589,7 @@ const onEditRow = (localDsv, formId) => {
     }else {
         if(cutEditEntity == 'User') {
             isUser.value = true;
+            tempV.disableWidgets = ["loginName", "loginPwd"];
         }
         editEmits(tempV)
     }

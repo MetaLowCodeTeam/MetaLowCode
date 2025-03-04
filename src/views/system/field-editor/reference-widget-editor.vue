@@ -140,7 +140,23 @@
 					</el-row>
                 </el-header>
                 <el-main>
-                    <div>
+                    <el-tabs v-model="activeTabName">
+                        <el-tab-pane label="选择实体搜索列表字段" name="first">
+                            <ReferenceEntitySet 
+                                :fieldList="fieldItems"
+                                :selectedFieldItems="selectedFieldItems"
+                                @handleSelectedFieldUpdate="(val) => handleSelectedFieldUpdate('selectedFieldItems',val)"
+                            />
+                        </el-tab-pane>
+                        <el-tab-pane label="选择表单关联展示字段" name="second">
+                            <ReferenceEntitySet 
+                                :fieldList="fieldItems" 
+                                :selectedFieldItems="virtualFields"
+                                @handleSelectedFieldUpdate="(val) => handleSelectedFieldUpdate('virtualFields',val)"
+                            />
+                        </el-tab-pane>
+                    </el-tabs>
+                    <!-- <div>
                         <div style="margin-bottom: 6px">选择实体搜索列表字段：</div>
                         <el-card shadow="never">
                             <div style="font-style: italic" v-if="fieldItems.length <= 0">暂无字段可选</div>
@@ -164,7 +180,7 @@
                                 :key="selectedIdx"
                             >{{ selectedField.label }}({{ selectedField.name }})</div>
                         </el-card>
-                    </div>
+                    </div> -->
                 </el-main>
             </el-container>
             <template #footer>
@@ -240,6 +256,7 @@ import {
 } from "@/api/system-manager";
 import { copyObj, getSimplePinYin } from "@/utils/util";
 import FieldState from "@/views/system/field-state-variables";
+import ReferenceEntitySet from "@/components/mlReferenceSearch/reference-entity-set.vue";
 
 export default {
     name: "ReferenceWidgetEditor",
@@ -252,6 +269,9 @@ export default {
             default: FieldState.NEW /* 1新建字段，2编辑字段 */,
         },
         entityProps: Object,
+    },
+    components: {
+        ReferenceEntitySet,
     },
     data() {
         return {
@@ -332,6 +352,7 @@ export default {
 
             fieldItems: [],
             selectedFieldItems: [],
+            virtualFields: [],
 
             columns: [
                 {
@@ -356,6 +377,7 @@ export default {
             ],
             tableData: [],
             queryText: "",
+            activeTabName: "first",
         };
     },
     mounted() {
@@ -403,8 +425,9 @@ export default {
                     this.refEntityLabel = res.data.refEntityLabel;
                     this.refEntityFullName = res.data.refEntityFullName;
                     this.refEntityAndFields = res.data.refEntityAndFields;
-                    this.fieldItems = res.data.fieldItems;
                     this.selectedFieldItems = res.data.selectedFieldItems;
+                    this.virtualFields = res.data.virtualFields;
+                    this.fieldItems = res.data.fieldItems;
                 }
             }
             this.saveLoading = false;
@@ -453,10 +476,13 @@ export default {
         showRefEntitySettingDialog() {
             this.showRefEntityDialogFlag = true;
         },
-
+        // 更新字段
+        handleSelectedFieldUpdate(key,val) {
+            this[key] = val;
+        },
         setRefEntity() {
             if (this.selectedFieldItems.length <= 0) {
-                this.$message.info("请至少选择一个显示字段！");
+                this.$message.info("请至少选择一个实体搜索列表字段！");
                 return;
             }
 
@@ -466,14 +492,15 @@ export default {
             }
             tempStr += "]";
             this.refEntityAndFields = tempStr;
-
             this.currentRefEntity = this.refEntityName;
-            let fieldList = [];
-            this.selectedFieldItems.forEach((item) => {
-                fieldList.push(item.name);
-            });
+            let fieldList = this.selectedFieldItems.map(el => el.name);
+            let virtualFieldNames = this.virtualFields.map(el => el.name);
             this.fieldProps.referenceSetting = [
-                { entityName: this.currentRefEntity, fieldList: fieldList },
+                { 
+                    entityName: this.currentRefEntity, 
+                    fieldList: fieldList,
+                    virtualFields: virtualFieldNames
+                },
             ];
             // console.log( JSON.stringify(this.fieldProps.referenceSetting) )
 
@@ -493,7 +520,6 @@ export default {
                 this.refEntityLabel + "(" + this.refEntityName + ")";
             this.showEntityListDialogFlag = false;
 			this.refDetailEntitySelected = this.refDetailEntityFlag;
-
             this.fieldItems.length = 0;
             let res = await getFieldSet(this.refEntityName);
             if (res && res.code == 200) {
