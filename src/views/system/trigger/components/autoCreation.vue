@@ -156,7 +156,7 @@
                             placeholder="固定值"
                         ></el-input>
                         <el-input
-                            v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType == 'Reference' || toFixedForFieldType == 'ReferenceList'"
+                            v-if="updateRule.updateMode == 'toFixed' &&  (toFixedForFieldType == 'Reference' || toFixedForFieldType == 'ReferenceList')"
                             v-model="updateRule.sourceField.label"
                             placeholder="固定值"
                         >
@@ -402,7 +402,7 @@ const getTransformList = () => {
 // 当前实体所有字段
 const getCutEntityFields = () => {
     return new Promise(async (resolve, reject) => {
-        let res = await queryEntityFields(trigger.value.entityCode, true, true, true);
+        let res = await queryEntityFields(trigger.value.entityCode, true, true, true, true);
         if (res) {
             cutEntityFields.value = res.data || [];
             res.data.forEach((el) => {
@@ -538,7 +538,7 @@ const targetFieldChange = async (e) => {
     toFixedForFieldType.value = getUpdateRuleTargetFieldType(e.fieldName);
     // 如果更新方式是字段值，源字段默认选中第一个
     if (updateRule.updateMode == "forField") {
-        updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
+        updateRule.sourceField = floatSourceFieldList()[0]?.fieldName || "";
     } else {
         updateRule.sourceField = "";
     }
