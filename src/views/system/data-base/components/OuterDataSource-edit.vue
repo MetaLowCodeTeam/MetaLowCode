@@ -41,18 +41,23 @@ let editConf = ref({
     showConfirmBtn: true,
     // 是否显示取消按钮
     showCancelBtn: true,
+    showConfirmAndSubmitBtn: false,
+    showConfirmRefreshBtn: false,
 });
 
 // 打开详情
 let EntityListEditRefs = ref();
 const openDialog = (id) => {
+    // console.log(id);
 	// console.log(props.);
-	EntityListEditRefs.value?.openDialog(id);
+	EntityListEditRefs.value?.openDialog({
+        detailId: id,
+    });
 };
 
 const test = () => {
 	// console.log();
-	console.log(EntityListEditRefs.value?.getDataId())
+	// console.log(EntityListEditRefs.value?.getDataId())
     // console.log(1);
 };
 
