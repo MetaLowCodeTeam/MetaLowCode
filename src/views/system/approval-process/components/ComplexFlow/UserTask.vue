@@ -428,8 +428,6 @@ let entityName = ref("");
 watch(
     () => props.formData,
     (newVal,oldVal) => {
-        console.log('newVal', newVal)
-        console.log('oldVal', oldVal)
         if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
             initApi();
         }
@@ -797,10 +795,11 @@ const saveCustomText = () => {
 watchEffect(() => {
     myFormList.value = props.formList;
     entityCode.value = Router.currentRoute.value.query.entityCode;
-    if (entityCode) {
+    if (entityCode.value) {
         entityName.value = allEntityName.value[entityCode.value];
+        initApi();
     }
-    initApi();
+   
 })
 
 defineExpose({
