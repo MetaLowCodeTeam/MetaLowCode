@@ -144,43 +144,16 @@
                         <el-tab-pane label="选择实体搜索列表字段" name="first">
                             <ReferenceEntitySet 
                                 :fieldList="fieldItems"
-                                :selectedFieldItems="selectedFieldItems"
-                                @handleSelectedFieldUpdate="(val) => handleSelectedFieldUpdate('selectedFieldItems',val)"
+                                v-model="selectedFieldItems"
                             />
                         </el-tab-pane>
                         <el-tab-pane label="选择表单关联展示字段" name="second">
                             <ReferenceEntitySet 
                                 :fieldList="fieldItems" 
-                                :selectedFieldItems="virtualFields"
-                                @handleSelectedFieldUpdate="(val) => handleSelectedFieldUpdate('virtualFields',val)"
+                                v-model="virtualFields"
                             />
                         </el-tab-pane>
                     </el-tabs>
-                    <!-- <div>
-                        <div style="margin-bottom: 6px">选择实体搜索列表字段：</div>
-                        <el-card shadow="never">
-                            <div style="font-style: italic" v-if="fieldItems.length <= 0">暂无字段可选</div>
-                            <el-checkbox
-                                v-for="(fieldItem, idx) in fieldItems"
-                                :key="idx"
-                                :checked="isSelectedField(fieldItem)"
-                                @change="(value) => setRefEntityListField(fieldItem, value)"
-                            >{{ fieldItem.label }}({{ fieldItem.name }})</el-checkbox>
-                        </el-card>
-                    </div>
-                    <div>
-                        <div style="margin: 20px 0 6px">已选择的显示字段：</div>
-                        <el-card shadow="never">
-                            <div
-                                style="font-style: italic"
-                                v-if="selectedFieldItems.length <= 0"
-                            >未选择显示字段</div>
-                            <div
-                                v-for="(selectedField, selectedIdx) in selectedFieldItems"
-                                :key="selectedIdx"
-                            >{{ selectedField.label }}({{ selectedField.name }})</div>
-                        </el-card>
-                    </div> -->
                 </el-main>
             </el-container>
             <template #footer>
@@ -475,10 +448,6 @@ export default {
 
         showRefEntitySettingDialog() {
             this.showRefEntityDialogFlag = true;
-        },
-        // 更新字段
-        handleSelectedFieldUpdate(key,val) {
-            this[key] = val;
         },
         setRefEntity() {
             if (this.selectedFieldItems.length <= 0) {

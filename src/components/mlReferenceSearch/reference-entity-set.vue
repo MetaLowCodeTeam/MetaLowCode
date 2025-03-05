@@ -157,11 +157,11 @@
 						animation="300"
 						:force-fallback="false"
 						handle=".mover"
-						:list="showFieldList"
+						:list="modelValue"
 					>
 						<div
 							class="parent-li"
-							v-for="(parent, inx) of showFieldList"
+							v-for="(parent, inx) of modelValue"
 							:key="inx"
 						>
 							<div class="paren-div">
@@ -231,7 +231,7 @@
     </div> -->
 </template>
 <script setup>
-import { ref, watchEffect, watch, onMounted } from "vue";
+import { ref, watchEffect } from "vue";
 // 引入拖拽组件
 import { VueDraggableNext } from "vue-draggable-next";
 const props = defineProps({
@@ -239,73 +239,45 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
-    selectedFieldItems: {
+    modelValue: {
         type: Array,
         default: () => [],
     }
 });
-const emit = defineEmits(["handleSelectedFieldUpdate"]);
-let propFieldList = ref([]);
+
+const emit = defineEmits(["update:modelValue"]);
+
 // 源数据
 let sourceFieldList = ref([]);
-// 显示字段
-let showFieldList = ref([]);
 
 // 删除显示字段
 const delField = (field, inx) => {
-	showFieldList.value.splice(inx, 1);
-	sourceFieldList.value.push(field);
+    const newArray = props.modelValue.filter((_, i) => i !== inx);
+    emit("update:modelValue", newArray);
 };
 
 // 添加显示字段
 const addShowField = (field) => {
-	showFieldList.value.push(field);
-	sourceFieldList.value.splice(sourceFieldList.value.indexOf(field), 1);
+    const newArray = [...props.modelValue, field];
+    emit("update:modelValue", newArray);
 };
 
 // 筛选字段
 let searchField = ref("");
 const notShowField = () => {
+    let names = props.modelValue.map(item => item.name);
+    let filterFieldList = sourceFieldList.value.filter(item => !names.includes(item.name));
 	if (!searchField) {
-		return sourceFieldList.value;
+		return filterFieldList;
 	} else {
-		return sourceFieldList.value.filter(
+		return filterFieldList.filter(
 			(el) => el.label.indexOf(searchField.value) != -1
 		);
 	}
 };
 
-watch(() => props.fieldList, (newVal) => {
-    propFieldList.value = [...newVal];
-    initFieldList();
-}, { deep: true })
-
-watch(() => props.selectedFieldItems, (newVal) => {
-    showFieldList.value = [...newVal];
-    initFieldList();
-}, { deep: true })
-
-onMounted(() => {
-    showFieldList.value = [...props.selectedFieldItems];
-    propFieldList.value = [...props.fieldList];
-    initFieldList();
+watchEffect(() => {
+    sourceFieldList.value = props.fieldList;
 })
 
-
-const initFieldList = () => {
-    let name =showFieldList.value.map(el => el.name);
-    sourceFieldList.value = propFieldList.value.filter(el => !name.includes(el.name));
-}
-
-watch(() => showFieldList.value, (newVal) => {
-    emit("handleSelectedFieldUpdate", [...newVal]);
-}, { deep: true })
-
-// const getSelectedField = () => {
-//     return showFieldList.value;
-// }
-
-// defineExpose({
-//     getSelectedField
-// })
 </script>
