@@ -10,7 +10,7 @@
 		ref="mlSingleListRef"
 	>
 		<template #addButton>
-			<el-button type="primary" @click="openDialog(null)">新建</el-button>
+			<el-button type="primary" @click="openDialog()">新建</el-button>
 		</template>
 		<template #activeRow>
 			<el-table-column
@@ -41,9 +41,8 @@
 			</el-table-column>
 		</template>
 	</ml-single-list>
-	<OuterDataSourceEdit
-		ref="outerDataSourceEditRef"
-		@onConfirm="updateTable"
+	<OuterDataModelEdit
+		ref="outerDataModelEditRef"
 	/>
 	<!-- 详情 -->
 	<mlCustomDetail
@@ -55,7 +54,7 @@
 
 <script setup>
 import { ref } from "vue";
-import OuterDataSourceEdit from "./components/OuterDataSource-edit.vue";
+import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
 // 查看详情
 import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
 // 默认排序
@@ -86,13 +85,15 @@ let tableColumn = ref([
 	},
 ]);
 
-const outerDataSourceEditRef = ref();
-const openDialog = (recordId) => {
+const outerDataModelEditRef = ref();
+const openDialog = (row) => {
+    console.log(row, 'row')
 	let data = {
-		detailId: recordId,
+        title: row && row.outerDataModelId ? '编辑：' + row.modelName : '新建：数据模型',
+		detailId: row && row.outerDataModelId ? row.outerDataModelId : null,
 		entityName: "OuterDataModel",
 	};
-	outerDataSourceEditRef.value?.openDialog(data);
+	outerDataModelEditRef.value?.openDialog(data);
 };
 
 const detailRefs = ref();
