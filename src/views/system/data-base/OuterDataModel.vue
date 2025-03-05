@@ -1,16 +1,16 @@
 <template>
 	<!--  -->
 	<ml-single-list
-		title="外部数据源"
-		mainEntity="OuterDataSource"
-		fieldsList="dataSourceName,dataSourceType,dataSourceAccount,isDisabled,createdOn,createdBy"
+		title="数据模型"
+		mainEntity="OuterDataModel"
+		fieldsList="modelName,dataSource,isDisabled"
 		:sortFields="sortFields"
 		fieldName="dataSourceName"
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
 	>
 		<template #addButton>
-            <el-button type="primary" @click="openDialog(null)">新建</el-button>
+			<el-button type="primary" @click="openDialog(null)">新建</el-button>
 		</template>
 		<template #activeRow>
 			<el-table-column
@@ -29,7 +29,7 @@
 					>
 						编辑
 					</el-button>
-                    <el-button
+					<el-button
 						type="primary"
 						size="small"
 						link
@@ -67,19 +67,15 @@ let sortFields = ref([
 ]);
 let tableColumn = ref([
 	{
-		prop: "dataSourceName",
-		label: "数据源名称",
+		prop: "modelName",
+		label: "模型名称",
 	},
 	{
-		prop: "dataSourceType",
-		label: "数据源类型",
+		prop: "dataSource",
+		label: "数据源",
 		formatter: (row) => {
-			return row.dataSourceType?.label;
+			return row.dataSource?.name;
 		},
-	},
-	{
-		prop: "dataSourceAccount",
-		label: "数据源账号",
 	},
 	{
 		prop: "isDisabled",
@@ -88,31 +84,14 @@ let tableColumn = ref([
 			return row.isDisabled ? "是" : "否";
 		},
 	},
-
-	{
-		prop: "createdOn",
-		label: "创建时间",
-		align: "center",
-		formatter: (row) => {
-			return row.createdOn;
-		},
-	},
-	{
-		prop: "createdBy",
-		label: "创建人",
-		align: "center",
-		formatter: (row) => {
-			return row.createdBy?.name;
-		},
-	},
 ]);
 
 const outerDataSourceEditRef = ref();
 const openDialog = (recordId) => {
-    let data = {
-        detailId: recordId,
-        entityName: 'OuterDataSource',
-    }
+	let data = {
+		detailId: recordId,
+		entityName: "OuterDataModel",
+	};
 	outerDataSourceEditRef.value?.openDialog(data);
 };
 

@@ -12,11 +12,12 @@
 	<EntityListEdit
 		ref="EntityListEditRefs"
         :editConf="editConf"
+        nameFieldName="dataSourceName"
         @saveFinishCallBack="onConfirm"
 	>
 		<!-- 更多插槽看 第4行 API -->
 		<template #beforeCancelBtn>
-			<el-button @click="test()">测试</el-button>
+			<el-button type="success" @click="testLink" :loading="loading">测试链接</el-button>
 		</template>
 	</EntityListEdit>
 </template>
@@ -27,6 +28,9 @@
  */
 // 1 引入详情组件
 import EntityListEdit from "@/views/customize-menu/edit.vue";
+// API
+import { testDbConnection } from "@/api/plugins";
+import { ElMessage } from "element-plus";
 const emits = defineEmits(["onConfirm"]);
 // 2 定义该详情组件名称
 defineOptions({
@@ -47,18 +51,32 @@ let editConf = ref({
 
 // 打开详情
 let EntityListEditRefs = ref();
-const openDialog = (id) => {
+const openDialog = (data) => {
     // console.log(id);
 	// console.log(props.);
-	EntityListEditRefs.value?.openDialog({
-        detailId: id,
-    });
+	EntityListEditRefs.value?.openDialog(data);
 };
 
-const test = () => {
-	// console.log();
-	// console.log(EntityListEditRefs.value?.getDataId())
-    // console.log(1);
+let loading = ref(false);
+
+const testLink = () => {
+    let formRef = EntityListEditRefs.value?.getFormRef();
+    formRef.getFormData().then(async (res) => {
+        EntityListEditRefs.value.loading = true
+        loading.value = true
+        let params = {
+            jdbcUrl: res.dataSourceUrl,
+            username: res.dataSourceAccount,
+            password: res.dataSourcePassword,
+            type: res.dataSourceType,
+        }
+        let res2 = await testDbConnection(params);
+        if(res2 && res2.code == 200) {
+            ElMessage.success('测试成功')
+        }
+        loading.value = false
+        EntityListEditRefs.value.loading = false
+    })
 };
 
 const onConfirm = () => {
