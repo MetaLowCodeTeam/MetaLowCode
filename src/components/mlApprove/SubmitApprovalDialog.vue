@@ -1,6 +1,11 @@
 <template>
 	<!-- 审批弹框 -->
-	<ml-dialog v-model="approvalDialog.isShow" title="提交审批" width="460">
+	<ml-dialog 
+        v-model="approvalDialog.isShow" 
+        title="提交审批" 
+        width="460"
+        :show-close="!approvalDialog.loading"
+    >
 		<el-form label-width="100px" v-loading="approvalDialog.loading">
 			<el-form-item label="选择审批流程">
 				<el-select
@@ -40,10 +45,16 @@
 			<el-button
 				style="width: 80px"
 				@click="approvalDialog.isShow = false"
+                :loading="approvalDialog.loading"
 			>
 				取消
 			</el-button>
-			<el-button type="primary" style="width: 80px" @click="onSubmit">
+			<el-button 
+                type="primary" 
+                style="width: 80px" 
+                @click="onSubmit" 
+                :loading="approvalDialog.loading"
+            >
 				提交
 			</el-button>
 		</template>

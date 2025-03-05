@@ -235,7 +235,6 @@ const handleUser = (command) => {
         ElMessageBox.confirm("确认是否退出当前用户？", "提示", {
             type: "warning",
             confirmButtonText: "退出",
-            confirmButtonClass: "el-button--danger",
         })
             .then(async () => {
                 let res = await http.post("/user/logout");
