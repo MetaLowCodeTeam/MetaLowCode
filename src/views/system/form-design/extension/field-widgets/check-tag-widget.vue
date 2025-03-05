@@ -53,7 +53,7 @@
         </template>
         <template v-else-if="!field.options.showCheckbox && !isReadMode">
             <template
-                v-for="(item, index) in options"
+                v-for="(item, index) in field.options.optionItems"
                 :key="index"
             >
                 <el-check-tag
@@ -130,7 +130,6 @@ export default {
 		};
 	},
 	computed: {
-
     },
 	beforeCreate() {
 		/* 这里不能访问方法和属性！！ */
@@ -232,8 +231,7 @@ export default {
 				) {
 					this.loadOptionItemsFromDataSet(curDSName);
 				}
-
-				return;
+                return;
 			}
 
 			/* 异步更新option-data之后globalOptionData不能获取到最新值，改用provide的getOptionData()方法 */
@@ -248,6 +246,18 @@ export default {
 					this.loadOptions(newOptionItems[this.fieldKeyName]);
 				}
 			}
+            let sourceFields = this.field.options.optionItems;
+            if(this.fieldModel){
+                let labels = sourceFields.map(el => el.label);
+                let fieldModelLabels = this.fieldModel.split(",");
+                let diffLabels = fieldModelLabels.filter(el => !labels.includes(el));
+                diffLabels.forEach(el => {
+                    this.field.options.optionItems.push({
+                        label: el,
+                        value: this.getGuid()
+                    })
+                })
+            }
 		},
 
 		isChecked(item) {
