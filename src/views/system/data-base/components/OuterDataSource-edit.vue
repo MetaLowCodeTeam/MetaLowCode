@@ -12,7 +12,7 @@
 	<EntityListEdit
 		ref="EntityListEditRefs"
         :editConf="editConf"
-        @onConfirm="onConfirm"
+        @saveFinishCallBack="onConfirm"
 	>
 		<!-- 更多插槽看 第4行 API -->
 		<template #beforeCancelBtn>

@@ -1,6 +1,6 @@
 <template>
 	<!--  -->
-	<mlSingleList
+	<ml-single-list
 		title="外部数据源"
 		mainEntity="OuterDataSource"
 		fieldsList="dataSourceName,dataSourceType,dataSourceAccount,isDisabled,createdOn,createdBy"
@@ -20,8 +20,8 @@
                 </template>
             </el-table-column>
         </template>
-	</mlSingleList>
-	<OuterDataSourceEdit ref="outerDataSourceEditRef" />
+	</ml-single-list>
+	<OuterDataSourceEdit ref="outerDataSourceEditRef" @onConfirm="updateTable"/>
 </template>
 
 <script setup>
@@ -80,5 +80,11 @@ const outerDataSourceEditRef = ref();
 const openDialog = (recordId) => {
 	outerDataSourceEditRef.value?.openDialog(recordId);
 };
+
+const mlSingleListRef = ref();
+const updateTable = () => {
+    mlSingleListRef.value?.getTableList();
+}
+
 </script>
 <style lang="scss" scoped></style>
