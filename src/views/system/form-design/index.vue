@@ -222,7 +222,7 @@ export default {
             layoutId: null,
             formOptionData: {},
 
-            meteFieldsResult: null,
+            metaFieldsResult: null,
             usedFieldNames: {},
 
             curFWEditor: "",
@@ -274,9 +274,9 @@ export default {
 						if (res.data.referenceFormList) {
 							this.fieldListData.referenceFormList = res.data.referenceFormList;
 						}
-                        this.meteFieldsResult = res;
+                        this.metaFieldsResult = res;
                         const metaFields = this.buildMetaFields(
-                            this.meteFieldsResult
+                            this.metaFieldsResult
                         );
                         this.$refs.vfDesigner.setFieldListData(
                             this.fieldListData
@@ -398,6 +398,11 @@ export default {
         },
 
         adjustFieldSchema(fieldSchema, fldObj, mdResult) {
+			if (fldObj.virtualFlag === "1") {
+				fieldSchema.virtualFlag = true
+				fieldSchema.options.disabled = true
+			}
+
             // 处理图片、文件上传字段！！
             let cloudStorageFlag = false;
             let cloudStorageType = "";
@@ -542,7 +547,7 @@ export default {
 
             /* 必须延时处理，否则draggable会报错 */
             setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.meteFieldsResult);
+                const metaFields = this.buildMetaFields(this.metaFieldsResult);
                 this.$refs.vfDesigner.setMetaFields(metaFields);
             }, 800);
         },
@@ -556,7 +561,7 @@ export default {
 
             /* 必须延时处理，否则draggable会报错 */
             setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.meteFieldsResult);
+                const metaFields = this.buildMetaFields(this.metaFieldsResult);
                 this.$refs.vfDesigner.setMetaFields(metaFields);
             }, 800);
         },
@@ -564,7 +569,7 @@ export default {
         handleFJU() {
             this.handleUsedFields();
             setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.meteFieldsResult);
+                const metaFields = this.buildMetaFields(this.metaFieldsResult);
                 this.$refs.vfDesigner.setMetaFields(metaFields);
             }, 300);
         },
