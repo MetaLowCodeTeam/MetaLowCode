@@ -402,6 +402,13 @@ const routes = [
                         component: 'system/data-base/OuterDataModel',
                         meta: { title: '数据模型', icon: 'el-icon-Coin', role: 'r66-1' }
                     },
+                    // 数据模型-查看数据
+                    {
+                        path: appPath + 'data-model-query/:outerDataModelId',
+                        name: 'DataModelQuery',
+                        component: 'system/data-base/components/OuterDataModel-list',
+                        meta: { title: '', hidden: true }
+                    }
 
                 ]
             },

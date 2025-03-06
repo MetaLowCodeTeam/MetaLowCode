@@ -8,6 +8,7 @@
 		fieldName="dataSourceName"
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
+        @highlightClick="viewDataList"
 	>
 		<template #addButton>
 			<el-button type="primary" @click="openDialog()">新建</el-button>
@@ -45,6 +46,7 @@
 					>
 						删除
 					</el-button>
+
 				</template>
 			</el-table-column>
 		</template>
@@ -57,6 +59,8 @@ import { ref } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
 import { deleteRecords } from "@/api/crud";
+import { useRouter } from "vue-router";
+const router = useRouter();
 // 默认排序
 let sortFields = ref([
 	{
@@ -83,6 +87,16 @@ let tableColumn = ref([
 			return row.isDisabled ? "是" : "否";
 		},
 	},
+    {
+        prop: "outerDataModelId",
+        label: "数据列表",
+        width: 120,
+        align: "center",
+        highlight: true,
+        formatter: (row) => {
+            return "查看";
+        },
+    },
 ]);
 
 // 查看编辑
@@ -127,6 +141,19 @@ const deleteData = (id) => {
 			console.log("取消");
 		});
 };
+
+// 查看数据列表
+const viewDataList = (row) => {
+    const appPath = import.meta.env.VITE_APP_PATH;
+    // console.log(row,'row');
+    router.push({
+        path: `${appPath}data-model-query/${row.outerDataModelId}`,
+        query: {
+            routerName: row.modelName,
+        }
+    });
+
+}
 
 // 更新数据
 const mlSingleListRef = ref();

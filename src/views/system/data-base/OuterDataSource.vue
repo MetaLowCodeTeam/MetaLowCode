@@ -49,7 +49,7 @@
 	<mlCustomDetail
 		ref="detailRefs"
 		entityName="OuterDataSource"
-		@updateData="getTableList"
+		@updateData="updateTable"
 	/>
 </template>
 
