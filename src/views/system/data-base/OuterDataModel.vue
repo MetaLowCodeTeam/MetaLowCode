@@ -3,7 +3,7 @@
 	<ml-single-list
 		title="数据模型"
 		mainEntity="OuterDataModel"
-		fieldsList="modelName,dataSource,isDisabled"
+		fieldsList="modelName,dataSource,isDisabled,outerDataModelId"
 		:sortFields="sortFields"
 		fieldName="dataSourceName"
 		:tableColumn="tableColumn"
@@ -16,7 +16,7 @@
 			<el-table-column
 				label="操作"
 				:align="'center'"
-				width="130"
+				width="160"
 				fixed="right"
 			>
 				<template #default="scope">
@@ -24,7 +24,7 @@
 						type="primary"
 						size="small"
 						link
-						@click="openDialog(scope.row.outerDataSourceId)"
+						@click="openDialog(scope.row)"
 						icon="Edit"
 					>
 						编辑
@@ -33,34 +33,34 @@
 						type="primary"
 						size="small"
 						link
-						@click="openDetail(scope.row.outerDataSourceId)"
+						@click="openDialog(scope.row, 'view')"
 					>
 						查看
+					</el-button>
+					<el-button
+						type="primary"
+						size="small"
+						link
+						@click="deleteData(scope.row.outerDataModelId)"
+					>
+						删除
 					</el-button>
 				</template>
 			</el-table-column>
 		</template>
 	</ml-single-list>
-	<OuterDataModelEdit
-		ref="outerDataModelEditRef"
-	/>
-	<!-- 详情 -->
-	<mlCustomDetail
-		ref="detailRefs"
-		entityName="OuterDataSource"
-		@updateData="getTableList"
-	/>
+	<OuterDataModelEdit ref="outerDataModelEditRef" @updateData="updateTable" />
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
-// 查看详情
-import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
+import { deleteRecords } from "@/api/crud";
 // 默认排序
 let sortFields = ref([
 	{
-		fieldName: "createdOn",
+		fieldName: "modifiedOn",
 		type: "DESC",
 	},
 ]);
@@ -85,22 +85,50 @@ let tableColumn = ref([
 	},
 ]);
 
+// 查看编辑
 const outerDataModelEditRef = ref();
-const openDialog = (row) => {
-    console.log(row, 'row')
+const openDialog = (row, type) => {
+	let titlePrefix =
+		type === "view"
+			? "查看："
+			: row && row.outerDataModelId
+			? "编辑："
+			: "新建：";
 	let data = {
-        title: row && row.outerDataModelId ? '编辑：' + row.modelName : '新建：数据模型',
+		title: titlePrefix + (row ? row.modelName : "数据模型"),
 		detailId: row && row.outerDataModelId ? row.outerDataModelId : null,
 		entityName: "OuterDataModel",
+		type: type,
 	};
 	outerDataModelEditRef.value?.openDialog(data);
 };
 
-const detailRefs = ref();
-const openDetail = (recordId) => {
-	detailRefs.value?.openDialog(recordId);
+// 删除
+const deleteData = (id) => {
+	// console.log(id);
+	ElMessageBox.confirm("确定要删除吗？", "提示", {
+		confirmButtonText: "确定",
+		cancelButtonText: "取消",
+		type: "warning",
+	})
+		.then(async () => {
+			let param = {
+				recordIds: [id],
+				cascades: [],
+			};
+			mlSingleListRef.value.loading = true;
+			let res = await deleteRecords(param);
+			if (res) {
+				ElMessage.success("删除成功");
+				updateTable();
+			}
+		})
+		.catch(() => {
+			console.log("取消");
+		});
 };
 
+// 更新数据
 const mlSingleListRef = ref();
 const updateTable = () => {
 	mlSingleListRef.value?.getTableList();

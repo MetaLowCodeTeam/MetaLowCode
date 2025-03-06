@@ -314,7 +314,7 @@ body .tox-tinymce-aux {
 			}
 		}
 	}
-    .el-dialog__body {
+    .ml-dialog-body {
         padding: 20px 20px 15px 20px;
     }
 	.el-dialog__footer {
@@ -325,7 +325,7 @@ body .tox-tinymce-aux {
 		padding-right: 20px;
 	}
     &.body-no-padding {
-        .el-dialog__body {
+        .ml-dialog-body {
 			padding: 0;
 		}
     }
@@ -530,4 +530,11 @@ body .tox-tinymce-aux {
 
 .dock-header-menu>.el-menu-item.is-active {
     border-bottom: 0;
+}
+
+// 添加自定义样式以使 el-select 在错误时边框变红
+.el-select {
+    &.is-error .el-select__wrapper{
+        box-shadow: 0 0 0 1px var(--el-color-danger) inset !important;
+    }
 }

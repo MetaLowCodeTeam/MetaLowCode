@@ -61,7 +61,7 @@ import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
 // 默认排序
 let sortFields = ref([
 	{
-		fieldName: "createdOn",
+		fieldName: "modifiedOn",
 		type: "DESC",
 	},
 ]);

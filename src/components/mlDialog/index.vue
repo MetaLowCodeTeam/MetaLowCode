@@ -31,7 +31,9 @@
                 </el-icon>
             </span>
         </template>
-        <slot></slot>
+        <ml-scrollbar :height="scrollbarHeight" class="ml-dialog-body">
+            <slot></slot>
+        </ml-scrollbar>
         <template #footer v-if="isShowFooter">
             <slot name="footer"></slot>
         </template>
@@ -40,6 +42,8 @@
 
 <script setup>
 import { useSlots, watch, ref, reactive, onMounted } from "vue";
+// 滚动条
+import mlScrollbar from "@/components/mlScrollbar/index.vue";
 const props = defineProps({
     modelValue: null,
     title: { type: String, defalut: "" },
@@ -58,6 +62,12 @@ const props = defineProps({
     autoFullScreen: { type: Boolean, default: false },
     // body没有内边距
     bodyNoPadding: { type: Boolean, default: false },
+    // 滚动条高度
+    scrollbarHeight: { type: String, default: "" },
+    // 滚动条最小高度
+    scrollbarMinHeight: { type: String, default: "" },
+    // 滚动条最大高度
+    scrollbarMaxHeight: { type: String, default: "" },
 });
 const emit = defineEmits(["update:modelValue", 'fullScreenChange']);
 watch(
