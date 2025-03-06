@@ -401,6 +401,7 @@ export default {
 			if (fldObj.virtualFlag === "1") {
 				fieldSchema.virtualFlag = true
 				fieldSchema.options.disabled = true
+				fieldSchema.options.required = false
 			}
 
             // 处理图片、文件上传字段！！
