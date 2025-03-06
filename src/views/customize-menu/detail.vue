@@ -182,6 +182,7 @@
                                     :detailParamConf="detailParamConf"
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
+                                    @onRevokeIng="onRevokeIng"
                                     @closeDialog="closeDialog"
 								/>
 							</el-col>
@@ -381,6 +382,11 @@ const openDialog = (id, localDsv, paramFormId) => {
 
 const closeDialog = () => {
     detailDialog.isShow = false;
+}
+
+const onRevokeIng = () => {
+    console.log('onRevokeIng')
+    loading.value = true;
 }
 
 // 页签更换

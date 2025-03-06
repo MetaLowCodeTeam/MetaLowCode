@@ -52,6 +52,7 @@
 				:refField="field.options.name"
                 :searchFields="field.options.searchFields"
                 :dialogWidth="field.options.searchDialogWidth"
+                :disabled="field.options.disabled"
                 :fieldModel="fieldModel"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"

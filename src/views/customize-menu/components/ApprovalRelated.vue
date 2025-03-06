@@ -119,7 +119,7 @@ const props = defineProps({
 	showApprovalRelated: { type: Boolean, default: true },
 	detailParamConf: { type: Object, default: () => {} },
 });
-const emits = defineEmits(["onSubmit", "closeDialog"]);
+const emits = defineEmits(["onSubmit", "closeDialog", "onRevokeIng"]);
 let myApproval = ref({});
 
 
@@ -279,6 +279,7 @@ const revokeApproval = async () => {
 		type: "warning",
 	})
 		.then(async () => {
+            emits("onRevokeIng");
 			approvalDialog.loading = true;
 			let res = await http.post(
 				"/approval/approvalRevocation?entityId=" +
@@ -302,6 +303,7 @@ const withdrawApproval = () => {
 		type: "warning",
 	})
 		.then(async () => {
+            emits("onRevokeIng");
 			approvalDialog.loading = true;
             // 是否复杂工作流
             let isFlowVariables = !!myApproval.value.flowVariables;

@@ -35,6 +35,7 @@
 			:multiple="multiple"
 			class="remote-select"
 			@visible-change="handleVisibleChange"
+            :disabled="disabled"
 			ref="selectRef"
 		>
 			<template #empty>
@@ -114,6 +115,10 @@ const props = defineProps({
 		type: String,
 		default: "520px",
 	},
+    disabled: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const emit = defineEmits(["onSelectedRemote", "onAppendButtonClick"]);
@@ -216,6 +221,7 @@ watchEffect(() => {
 });
 
 const onAppendButtonClick = () => {
+    if(props.disabled) return;
 	emit("onAppendButtonClick");
 };
 </script>

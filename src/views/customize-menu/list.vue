@@ -258,6 +258,7 @@
                     :summary-method="getSummaries"
                     :row-style="setRowStyle"
                     class="table-box-el-table"
+                    @scroll="scrollBehavior"
                 >
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
@@ -725,11 +726,16 @@ onBeforeMount(() => {
 
 onMounted(()=>{
     // 挂载
-	TableRef.value &&
-		TableRef.value.$refs.bodyWrapper.addEventListener(
-			"mousewheel",
-			scrollBehavior
-		);
+	// TableRef.value &&
+	// 	TableRef.value.$refs.bodyWrapper.addEventListener(
+	// 		"wheel",
+	// 		scrollBehavior
+	// 	);
+	// TableRef.value &&
+	// 	TableRef.value.$refs.bodyWrapper.addEventListener(
+	// 		"DOMMouseScroll",
+	// 		scrollBehavior
+	// 	);
     isMounted.value = true;
     // 取插槽内容
     contentSlots = useSlots();
@@ -741,11 +747,16 @@ onMounted(()=>{
     })
 })
 
-
+let scrollTop = ref(0);
 // 滚动行为
 function scrollBehavior(e) {
-	// 滚动方向判定
-	const scrollDirection = e.deltaY > 0 ? "down" : "up";
+    let scrollDirection;
+    if(e.scrollTop > scrollTop.value) {
+        scrollDirection = "down";
+    }else{
+        scrollDirection = "up";
+    }
+    scrollTop.value = e.scrollTop;
 	if (scrollDirection === "down") {
 		// 获取提供实际滚动的容器
 		const dom =
