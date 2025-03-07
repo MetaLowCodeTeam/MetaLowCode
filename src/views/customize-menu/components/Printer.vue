@@ -21,7 +21,7 @@ import useCommonStore from "@/store/modules/common";
 import { getFormLayout } from "@/api/system-manager";
 import { queryById } from "@/api/crud";
 import Print from "@/utils/print";
-import { globalDsvDefaultData } from "@/utils/util";
+import { globalDsvDefaultData, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
 const { queryEntityNameById,getEntityList } = useCommonStore();
 const router = useRouter();
 let entityId = ref("");
@@ -59,15 +59,17 @@ const initVformCom = async () => {
         nextTick(async () => {
 			globalDsv.value.formStatus = 'read'
 			globalDsv.value.formEntityId = entityId.value;
-            let queryByIdRes = await queryById(entityId.value);
+            vFormRef.value.setFormJson(res.data.layoutJson);
+            let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+            let queryByIdRes = await queryById(entityId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
             if (queryByIdRes && queryByIdRes.data) {
                 globalDsv.value.recordData = queryByIdRes.data;
-                vFormRef.value.setFormJson(res.data.layoutJson);
+                
                 let resData = queryByIdRes.data || {};
                 printerTitle.value = resData[nameFieldName.value];
                 // resData.logo = resData.logo || [];
                 vFormRef.value.resetForm();
-                vFormRef.value.setFormData(resData);
+                vFormRef.value.setFormData(formatFormVirtualField(resData));
                 nextTick(() => {
                     if (JSON.stringify(optionData.value) == "{}") {
                         vFormRef.value.reloadOptionData();

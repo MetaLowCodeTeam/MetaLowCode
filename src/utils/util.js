@@ -1,4 +1,3 @@
-
 import dayjs from "dayjs";
 import 'dayjs/locale/zh-cn';
 import calenderPlugin from 'dayjs/plugin/calendar';
@@ -15,12 +14,12 @@ dayjs.extend(calenderPlugin);
 dayjs.updateLocale('zh-cn', {
     // A : 上午/下午/晚上 , dddd: 星期
     calendar: {
-      lastDay: '[昨天] A h:mm',
-      sameDay: '[今天] A h:mm',
-      nextDay: '[明天] A h:mm',
-      lastWeek: 'A h:mm [上]',
-      nextWeek: 'A h:mm [下]',
-      sameElse: 'A h:mm',
+        lastDay: '[昨天] A h:mm',
+        sameDay: '[今天] A h:mm',
+        nextDay: '[明天] A h:mm',
+        lastWeek: 'A h:mm [上]',
+        nextWeek: 'A h:mm [下]',
+        sameElse: 'A h:mm',
     },
 });
 
@@ -299,10 +298,10 @@ export const $fromNow = function (date) {
     // return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : m.format('YYYY-MM-DD')
     return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     //     sameDay: '[今天]LT',
-//     nextDay: '[明天]LT',
-//     nextWeek: '[下]ddddLT',
-//     lastDay: '[昨天]LT',
-//     lastWeek: '[上]ddddLT',
+    //     nextDay: '[明天]LT',
+    //     nextWeek: '[下]ddddLT',
+    //     lastDay: '[昨天]LT',
+    //     lastWeek: '[上]ddddLT',
     // sameElse: 'L'
 }
 
@@ -487,11 +486,11 @@ export const checkConditionList = (data) => {
 export const getModelName = () => {
     let modelName = null;
     let pathname = location.pathname;
-    if(pathname.indexOf('/custom-page/') !== -1){
+    if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
         let newSplitName = [];
-        splitPathname.forEach((item,inx) => {
-            if(inx > 2){
+        splitPathname.forEach((item, inx) => {
+            if (inx > 2) {
                 newSplitName.push(item)
             }
         })
@@ -513,9 +512,9 @@ export const formatFileSize = (bytes) => {
 // 格式化 sessionId重定向
 export const formatOutLink = (meta) => {
     let { outLink, redirectCarrySessionId } = meta;
-    if(redirectCarrySessionId) {
+    if (redirectCarrySessionId) {
         return import.meta.env.VITE_APP_BASE_API + "/open/redirectCarrySessionId?url=" + encodeURIComponent(outLink)
-    }else {
+    } else {
         return outLink
     }
 }
@@ -533,7 +532,7 @@ export const globalDsvDefaultData = () => {
 // 加密
 export const encrypt = async (password) => {
     const res = await http.get('/user/getPublicKey');
-    if(res && res.code == 200) {
+    if (res && res.code == 200) {
         const encrypt = new JSEncrypt()
         let param = {
             password: password,
@@ -542,4 +541,47 @@ export const encrypt = async (password) => {
         encrypt.setPublicKey(res.data.publicKey)
         return encrypt.encrypt(JSON.stringify(param))
     };
+}
+
+// 提取公共方法用于格式化带有点号的字段
+export const formatFormVirtualField = (data) => {
+    let newData = JSON.parse(JSON.stringify(data));
+    for (let key in newData) {
+        if (key.includes('.')) {
+            let newKey = key.replace('.', '##');
+            newData[newKey] = newData[key];
+            delete newData[key];
+        } else if (Array.isArray(newData[key])) {
+            newData[key].forEach((item) => {
+                if (typeof item === 'object') {
+                    for (let objKey in item) {
+                        if (objKey.includes('.')) {
+                            let newObjKey = objKey.replace('.', '##');
+                            item[newObjKey] = item[objKey];
+                            delete item[objKey];
+                        }
+                    }
+                }
+            });
+        }
+    }
+    return newData;
+}
+
+
+// 格式化queryById入参数
+export const formatQueryByIdParam = (formFieldSchema) => {
+    let queryDetailList = [];
+    let fieldNames = "";
+    for (let key in formFieldSchema) {
+        if (key == 'main') {
+            fieldNames = formFieldSchema[key].join(',').replace(/\#\#/g, '.');
+        } else {
+            queryDetailList.push({
+                entityName: key,
+                queryFields: formFieldSchema[key].join(',').replace(/\#\#/g, '.'),
+            })
+        }
+    }
+    return { queryDetailList, fieldNames }
 }

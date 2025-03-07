@@ -245,7 +245,7 @@ import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-import { globalDsvDefaultData, getModelName } from "@/utils/util";
+import { globalDsvDefaultData, getModelName, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
 /**
  * 组件
  */
@@ -530,16 +530,18 @@ const initData = async () => {
                     recordApproval.value = recordApprovalRes.data;
                     globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
                 }
-				let queryByIdRes = await queryById(detailId.value);
+                vFormRef.value.setFormJson(res.data.layoutJson);
+                let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+				let queryByIdRes = await queryById(detailId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
 				if (queryByIdRes && queryByIdRes.data) {
                     globalDsv.value.recordData = queryByIdRes.data;
 		            multipleSelection.value = [queryByIdRes.data];
 					detailName.value = queryByIdRes.data[nameFieldName.value];
-					vFormRef.value.setFormJson(res.data.layoutJson);
+					
                     rowResData.value = queryByIdRes.data || {};
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
 					nextTick(() => {
-						vFormRef.value.setFormData(rowResData.value);
+						vFormRef.value.setFormData(formatFormVirtualField(rowResData.value));
 						nextTick(() => {
 							vFormRef.value.reloadOptionData();
 							vFormRef.value.setReadMode();
