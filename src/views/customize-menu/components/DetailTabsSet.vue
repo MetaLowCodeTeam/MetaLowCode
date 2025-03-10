@@ -47,6 +47,7 @@
                         v-model="searchField"
                         placeholder="筛选字段"
                         clearable
+                        @input="formatShowColumn"
                     >
                         <template #prefix>
                             <el-icon class="el-input__icon">
@@ -200,7 +201,7 @@ onMounted(() => {
 })
 
 const formatShowColumn = () => {
-    if (!searchField) {
+    if (!searchField.value) {
         columnList.value = [...sourceColumn.value];
     } else {
         columnList.value = sourceColumn.value.filter(
@@ -239,7 +240,6 @@ const beforeAddShowColumn = (column) => {
 }
 // 添加显示列
 const addShowColumn = (column) => {
-    console.log(column);
     showColumn.value.push(column);
     for (let index = 0; index < sourceColumn.value.length; index++) {
         const el = sourceColumn.value[index];
