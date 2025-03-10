@@ -65,7 +65,7 @@
                             :key="inx"
                             @click="beforeAddShowColumn(column)"
                         >
-                            <div class="fl column-item text-ellipsis">{{ column.entityLabel }}</div>
+                            <div class="fl column-item text-ellipsis">{{ column.label || column.entityLabel }}</div>
                             <span class="fr icon-span">
                                 <el-icon size="16">
                                     <ElIconPlus />
@@ -331,7 +331,7 @@ const getAllColumn = async () => {
         false,
         false,
         true,
-        false,
+        props.entityCode == '21' ? true : false,
         true
     );
     if (res) {
