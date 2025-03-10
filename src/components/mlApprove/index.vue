@@ -229,7 +229,12 @@ import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
-import { globalDsvDefaultData } from "@/utils/util";
+import { 
+    globalDsvDefaultData, 
+    formatFormVirtualField, 
+    formatQueryByIdParam,
+    checkApprovalPreEvent
+ } from "@/utils/util";
 
 
 /**
@@ -341,12 +346,14 @@ const initFormLayout = async (formLayoutId) => {
                 }else {
                     getApprovalTaskById();
                 }
-                let formData = await queryById(props.entityId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
+                let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+                let formData = await queryById(props.entityId, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
+                
                 if (formData) {
                     globalDsv.value.recordData = formData.data;
                     nextTick(()=>{
-                        vFormRef.value.setFormData(formData.data);
+                        vFormRef.value.setFormData(formatFormVirtualField(formData.data));
                         nextTick(() => {
                             vFormRef.value.reloadOptionData();
                             vFormRef.value.disableForm();
@@ -425,6 +432,11 @@ const confirmApproveTask = () => {
 
 // 拓展按钮点击
 function handleCommand(type) {
+    // 转审、加签前置事件
+    let preEvent = customButtonText.value[type == 1 ? 'specialReviewButtonTextPreEvent' : 'addSignatureButtonTextPreEvent'];
+    if(!checkApprovalPreEvent(preEvent, vFormRef.value, ElMessage)) {
+        return;
+    }
     otherDialog.value = true;
     taskOperation.value.title = type == 1 ? "转审" : "加签";
     taskOperation.value.type = type;
@@ -493,6 +505,10 @@ const handleGenerate = () => {
 
 // 同意前触发
 const beforeConfirmApprove = () => {
+    // 同意前置事件
+    if(!checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage)) {
+        return;
+    }
     // 需要手写签名
     if (approvalTask.value.autograph) {
         esignConf.value.show = true;
@@ -503,6 +519,10 @@ const beforeConfirmApprove = () => {
 
 // 驳回前触发
 const beforeReject = () => {
+    // 驳回前置事件
+    if(!checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage)) {
+        return;
+    }
     let { flowType, rejectType } = approvalTask.value;
     // 如果是复杂工作流，且驳回类型是 3（驳回到任意节点）
     if (flowType == 2 && rejectType == 3) {
@@ -556,6 +576,11 @@ const customButtonText = ref({
     cancelButtonText: '取消',
     specialReviewButtonText: '转审',
     addSignatureButtonText: '加签',
+    // 前置事件
+    confirmPreEvent: '',
+    rejectPreEvent: '',
+    specialReviewPreEvent: '',
+    addSignaturePreEvent: '',
 })
 
 
@@ -581,6 +606,7 @@ async function getApprovalTaskById() {
                 if (Object.prototype.hasOwnProperty.call(newCustomButtonJson, key)) {
                     const element = newCustomButtonJson[key];
                     customButtonText.value[key] = element.custom || element.default
+                    customButtonText.value[key + 'PreEvent'] = element.script || '';
                 }
             }
         }

@@ -349,14 +349,15 @@
     <ml-dialog
         v-model="customTextDialogConf.show"
         title="审批按钮文案自定义"
-        width="520px"
+        width="620px"
         :append-to-body="true"
     >
         <el-form label-width="85px">
             <el-form-item style="margin-bottom: 0;text-align: center">
                 <el-row :gutter="10" class="w-100">
-                    <el-col :span="12">默认文案</el-col>
-                    <el-col :span="12">自定义文案</el-col>
+                    <el-col :span="10">默认文案</el-col>
+                    <el-col :span="10">自定义文案</el-col>
+                    <el-col :span="4">前置事件</el-col>
                 </el-row>
             </el-form-item>
             <el-form-item 
@@ -366,18 +367,28 @@
                 :label="item.label + '：'"
             >
                 <el-row :gutter="10" class="w-100">
-                    <el-col :span="12">
+                    <el-col :span="10">
                         <el-input 
                             v-model="customTextDialogConf.customTextSet[item.key].default"
                             disabled
                         />
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="10">
                         <el-input 
                             v-model="customTextDialogConf.customTextSet[item.key].custom"
                             clearable
                             :maxlength="4"
                         />
+                    </el-col>
+                    <el-col :span="4" class="text-center">
+                        <el-button 
+                            type="primary" 
+                            @click="openPreEventDialog(item)"
+                            link
+                            v-if="item.key != 'cancelButtonText'"
+                        >
+                            {{ customTextDialogConf.customTextSet[item.key].script ? '已设置' : '设置' }}
+                        </el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -385,6 +396,21 @@
         <template #footer>
             <el-button @click="customTextDialogConf.show = false">取消</el-button>
             <el-button type="primary" @click="saveCustomText">确认</el-button>
+        </template>
+    </ml-dialog>
+    <ml-dialog
+        v-model="preEventDialogConf.show"
+        :title="preEventDialogConf.title"
+        width="620px"
+        :append-to-body="true"
+    >
+        <div class="mb-10">
+            前置事件 <span class="ml-a-span" @click="goDoc">使用文档</span>
+        </div>
+        <mlCodeEditor v-model="preEventDialogConf.script"/>
+        <template #footer>
+            <el-button @click="preEventDialogConf.show = false">取消</el-button>
+            <el-button type="primary" @click="savePreEvent">确认</el-button>
         </template>
     </ml-dialog>
 </template>
@@ -425,6 +451,8 @@ let myFormData = ref({
 let entityCode = ref("");
 let entityName = ref("");
 
+
+
 watch(
     () => props.formData,
     (newVal,oldVal) => {
@@ -444,15 +472,18 @@ watch(
 );
 let myFormList = ref([]);
 
+watchEffect(() => {
+    myFormList.value = props.formList;
+})
 
 
-// onMounted(() => {
-//     entityCode.value = Router.currentRoute.value.query.entityCode;
-//     if (entityCode) {
-//         entityName.value = allEntityName.value[entityCode.value];
-//     }
-//     initApi();
-// });
+onMounted(() => {
+    entityCode.value = Router.currentRoute.value.query.entityCode;
+    if (entityCode) {
+        entityName.value = allEntityName.value[entityCode.value];
+        initApi();
+    }
+});
 
 // 初始化API
 const initApi = () => {
@@ -618,8 +649,9 @@ let formatDtOpList = ref([]);
 
 // 审批类型切换
 const approvalTypeChange = async () => {
+    let { approvalType } = myFormData.value;
     // 选择发起子流程才调接口
-    if(myFormData.value.approvalType == 3){
+    if(approvalType == 3){
         loadDTLoading.value = true;
         // 加载数据转换List
         let dtRes = await queryByEntity({
@@ -761,23 +793,28 @@ let customTextDialogConf = ref({
 let customButtonJson = ref({
     confirmButtonText: {
         default: '同意',
-        custom:""
+        custom:"",
+        script: '',
     },
     rejectButtonText: {
         default: '驳回',
-        custom:""
+        custom:"",
+        script: '',
     },
     cancelButtonText: {
         default: '取消',
-        custom:""
+        custom:"",
+        script: '',
     },
     specialReviewButtonText: {
         default: '转审',
-        custom:""
+        custom:"",
+        script: '',
     },
     addSignatureButtonText: {
         default: '加签',
-        custom:""
+        custom:"",
+        script: '',
     },
 })
 
@@ -791,16 +828,42 @@ const saveCustomText = () => {
     myFormData.value.customButtonJson = JSON.stringify(customButtonJson.value);
     customTextDialogConf.value.show = false;
 };
-
-watchEffect(() => {
-    myFormList.value = props.formList;
-    entityCode.value = Router.currentRoute.value.query.entityCode;
-    if (entityCode.value) {
-        entityName.value = allEntityName.value[entityCode.value];
-        initApi();
+let preEventDialogConf = ref({
+    title: '',
+    show: false,
+    key: '',
+    script: '',
+});
+// 自定义前置事件
+const openPreEventDialog = (item) => {
+    preEventDialogConf.value = {
+        title: `设置前置事件-${customTextDialogConf.value.customTextSet[item.key].default}`,
+        show: true,
+        key: item.key,
+        script: customTextDialogConf.value.customTextSet[item.key].script,
     }
+}
+// 确认前置事件
+const savePreEvent = () => {
+    let { script, key } = preEventDialogConf.value;
+    customTextDialogConf.value.customTextSet[key].script = script;
+    preEventDialogConf.value.show = false;
+}
+
+// 跳转使用文档
+const goDoc = () => {
+    window.open('https://www.yuque.com/visualdev/melecode/yh7tcbd29g87qtbc?singleDoc# 《6.4 审批节点前置事件》', '_blank');
+}
+
+// watchEffect(() => {
+    // myFormList.value = props.formList;
+    // entityCode.value = Router.currentRoute.value.query.entityCode;
+    // if (entityCode.value) {
+    //     entityName.value = allEntityName.value[entityCode.value];
+    //     initApi();
+    // }
    
-})
+// })
 
 defineExpose({
     getFormData,
@@ -838,5 +901,8 @@ defineExpose({
 <style scoped lang="scss">
 .mb-10 {
     margin-bottom: 10px !important;
+}
+.text-center {
+	text-align: center;
 }
 </style>

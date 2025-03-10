@@ -585,3 +585,15 @@ export const formatQueryByIdParam = (formFieldSchema) => {
     }
     return { queryDetailList, fieldNames }
 }
+
+
+// 检测审批相关前置事件
+export const checkApprovalPreEvent = (preEvent, vFormRef, elMessage) => {
+    // 如果没有前置事件 直接返回 通过
+    if(!preEvent){
+        return true;
+    }
+    let newFunc = new Function('data','vFormRef', 'ElMessage', preEvent)(vFormRef.getFormData(false), vFormRef, elMessage);
+    return newFunc;
+}
+
