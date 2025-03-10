@@ -204,7 +204,7 @@ const formatShowColumn = () => {
         columnList.value = [...sourceColumn.value];
     } else {
         columnList.value = sourceColumn.value.filter(
-            (el) => el.entityLabel?.indexOf(searchField.value) != -1
+            (el) => el.entityLabel?.indexOf(searchField.value) != -1 || el.label?.indexOf(searchField.value) != -1
         );
     }
     if(props.applyType == 'TAB') {
