@@ -1,29 +1,115 @@
 <template>
 	<el-container v-loading="loading" element-loading-text="加载中...">
-		<el-main> 123 </el-main>
-		<el-footer class="main-footer"> 
-            <!-- 分页 -->
-            <el-pagination
-                v-model:currentPage="pageConfig.currentPage"
-                v-model:pageSize="pageConfig.pageSize"
-                :page-sizes="pageConfig.pageSizes"
-                :total="pageConfig.total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-            />
-        </el-footer>
+		<el-main>
+			<div class="query-params">
+				<el-form
+					ref="queryParamsRef"
+					label-width="100px"
+					:model="queryFrom"
+					:rules="queryParamsRules"
+					:show-message="false"
+				>
+					<!-- 参数少于等于 4 个时的布局 -->
+					<el-row :gutter="10" v-if="isSingleRow">
+						<el-col
+							:span="6"
+							v-for="item in queryParams"
+							:key="item.name"
+						>
+							<el-form-item
+								:label="item.label"
+								style="margin-bottom: 10px"
+								:prop="item.name"
+							>
+								<el-input
+									v-model="queryFrom[item.name]"
+									:placeholder="`请输入${item.label}`"
+									clearable
+								/>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6" style="text-align: right">
+							<el-button type="primary" @click="handleQuery">
+								查询
+							</el-button>
+							<el-button @click="resetQuery">重置</el-button>
+						</el-col>
+					</el-row>
+
+					<!-- 参数多于 4 个时的布局 -->
+					<template v-else>
+						<el-row :gutter="10">
+							<el-col
+								:span="6"
+								v-for="item in queryParams"
+								:key="item.name"
+							>
+								<el-form-item
+									:label="item.label"
+									style="margin-bottom: 10px"
+									:prop="item.name"
+								>
+									<el-input
+										v-model="queryFrom[item.name]"
+										:placeholder="`请输入${item.label}`"
+										clearable
+									/>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="24" style="text-align: right">
+								<el-button type="primary" @click="handleQuery">
+									查询
+								</el-button>
+								<el-button @click="resetQuery">重置</el-button>
+							</el-col>
+						</el-row>
+					</template>
+				</el-form>
+			</div>
+			<div class="table-container">
+				<el-table :data="tableData" style="width: 100%" :border="true" max-height="500">
+					<el-table-column
+						v-for="column in tableHeader"
+						:key="column.prop"
+						:prop="column.prop"
+						:label="column.label"
+					/>
+				</el-table>
+			</div>
+		</el-main>
+		<el-footer class="main-footer">
+			<!-- 分页 -->
+			<el-pagination
+				v-model:currentPage="pageConfig.currentPage"
+				v-model:pageSize="pageConfig.pageSize"
+				:page-sizes="pageConfig.pageSizes"
+				:total="pageConfig.total"
+				layout="total, sizes, prev, pager, next, jumper"
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+			/>
+		</el-footer>
 	</el-container>
 </template>
+
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { queryModelById, getOuterDataByDataModel } from "@/api/plugins";
+import { ElMessage } from "element-plus";
 const route = useRoute();
 
 let loading = ref(false);
+
+let outerDataModelId = ref("");
 onMounted(() => {
-	// console.log(route.query.outerDataModelId,'props.outerDataModelId');
+	outerDataModelId.value = route.query.outerDataModelId;
+	if (!outerDataModelId.value) {
+		ElMessage.error("数据模型ID不存在");
+		return;
+	}
 	loadModelData();
 });
 
@@ -38,54 +124,123 @@ let pageConfig = ref({
 	pageSizes: [20, 40, 80, 100, 200, 300, 400, 500],
 	total: 0,
 });
+// 查询参数
+let queryParams = ref([]);
+let queryFrom = ref({});
+let queryParamsRules = ref({});
+
+// 动态计算是否需要换行
+const isSingleRow = computed(() => {
+	return queryParams.value.length <= 4;
+});
+
+// 新增方法：检查查询参数是否合法
+const checkQueryParams = () => {
+	for (const item of queryParams.value) {
+		if (item.isRequired && !queryFrom.value[item.name]) {
+			ElMessage.warning(`请填写必填项：${item.label}`);
+			return false;
+		}
+	}
+	return true;
+};
 
 // 加载配置数据
 const loadModelData = async () => {
 	loading.value = true;
 	let res = await queryModelById({
-		outerDataModelId: route.params.outerDataModelId,
+		outerDataModelId: outerDataModelId.value,
 	});
 	if (res) {
+		queryParams.value = [];
+		queryParamsRules.value = {};
+		queryFrom.value = {};
+		if (res.data.ModelParam) {
+			res.data.ModelParam.forEach((el) => {
+				queryParams.value.push({
+					label: el.paramLabel || el.paramName,
+					name: el.paramName,
+					type: el.paramType.value,
+				});
+				queryFrom.value[el.paramName] = el.defaultValue || "";
+				if (el.isRequired) {
+					queryParamsRules.value[el.paramName] = [
+						{
+							required: el.isRequired,
+							message: "请输入" + (el.paramLabel || el.paramName),
+							trigger: "blur",
+						},
+					];
+				}
+			});
+		}
 		tableHeader.value = res.data.ModelField.map((el) => {
 			return {
 				label: el.fieldLabel || el.fieldName,
 				prop: el.fieldName,
 			};
 		});
-        await loadListData();
+		// 检查查询参数是否合法
+		if (checkQueryParams()) {
+			await loadListData();
+		}
 	}
 	loading.value = false;
 };
 
+// 查询
+let queryParamsRef = ref();
+const handleQuery = () => {
+	queryParamsRef.value.validate((valid) => {
+		if (valid) {
+			loadListData();
+		}
+	});
+};
+
+// 重置查询
+const resetQuery = () => {
+	// 清空表单
+	queryParamsRef.value.resetFields();
+	// 清空表格数据
+	tableData.value = [];
+	// 重置分页
+	pageConfig.value.currentPage = 1;
+	pageConfig.value.pageSize = 20;
+	pageConfig.value.total = 0;
+	// 检查查询参数是否合法
+	if (checkQueryParams()) {
+		loadListData();
+	}
+};
+
 // 分页切换
 const handleSizeChange = (val) => {
-    pageConfig.value.pageSize = val;
-}
+	pageConfig.value.pageSize = val;
+};
 const handleCurrentChange = (val) => {
-    pageConfig.value.currentPage = val;
-}
+	pageConfig.value.currentPage = val;
+};
 
 // 加载列表数据
 const loadListData = async () => {
-    loading.value = true;
-    let res = await getOuterDataByDataModel(
-        {
-            outerDataModelId: route.params.outerDataModelId,
-        },
-        {
-            page: pageConfig.value.currentPage,
-            size: pageConfig.value.pageSize,
-            uname: "123",
-        }
-    );
-    if (res) {
-        tableData.value = res.data.data;
-        pageConfig.value.total = res.data.total;
-    }
-    loading.value = false;
-}
-
+	loading.value = true;
+	let res = await getOuterDataByDataModel(
+		{
+			outerDataModelId: outerDataModelId.value,
+			page: pageConfig.value.currentPage,
+			size: pageConfig.value.pageSize,
+		},
+		queryFrom.value
+	);
+	if (res) {
+		tableData.value = res.data.data || [];
+		pageConfig.value.total = res.data.total || 0;
+	}
+	loading.value = false;
+};
 </script>
+
 <style scoped lang="scss">
 .main-container {
 	height: 100%;
@@ -95,8 +250,13 @@ const loadListData = async () => {
 		background: #fff;
 	}
 }
-.main-header {
+.query-params {
 	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+	box-sizing: border-box;
+	padding: 20px;
+	margin-bottom: 20px;
 }
 .main-body {
 	background: #fff;
@@ -105,6 +265,6 @@ const loadListData = async () => {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-    height: 52px;
+	height: 52px;
 }
 </style>

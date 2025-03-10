@@ -147,8 +147,9 @@ const viewDataList = (row) => {
     const appPath = import.meta.env.VITE_APP_PATH;
     // console.log(row,'row');
     router.push({
-        path: `${appPath}data-model-query/${row.outerDataModelId}`,
+        path: `${appPath}data-model-query`,
         query: {
+            outerDataModelId: row.outerDataModelId,
             routerName: row.modelName,
         }
     });
