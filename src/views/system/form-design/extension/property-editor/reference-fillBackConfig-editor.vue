@@ -385,6 +385,7 @@ const { i18n, eventMixin, Utils } = VisualDesign.VFormSDK;
 import { refFieldQuery, queryEntityListFields } from "@/api/crud";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import { queryEntityListByReferenceField } from '@/api/system-manager';
+import { checkIsSubForm } from '@/utils/util';
 export default {
 	name: "reference-fillBackConfig-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -505,7 +506,7 @@ export default {
             // 所有子表单组件
             this.allSubFormWidgets = [];
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
                     this.allSubFormWidgets.push(el);
                     this.allSubFormFields[el.name] = [];
 					Utils.traverseFieldWidgetsOfContainer(

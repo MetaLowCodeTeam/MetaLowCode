@@ -176,6 +176,7 @@ import { getRefFieldExtras } from "@/api/system-manager";
 import conditionsConfig from "@/config/conditionsConfig";
 // 类型映射
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
+import { checkIsSubForm } from '@/utils/util';
 export default {
 	name: "reference-fillBackConfig-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -249,7 +250,7 @@ export default {
             // 所有子表单组件
             this.allSubFormWidgets = [];
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
                     this.allSubFormWidgets.push(el);
 					Utils.traverseFieldWidgetsOfContainer(
 						el.container,
@@ -477,7 +478,7 @@ export default {
 			// 当前组件所在的父容器名称
 			let targetSubForm = "";
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
 					Utils.traverseFieldWidgetsOfContainer(
 						el.container,
 						(fw) => {

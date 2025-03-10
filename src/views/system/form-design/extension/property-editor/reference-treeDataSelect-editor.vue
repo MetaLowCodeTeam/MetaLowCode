@@ -57,6 +57,7 @@
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import { queryReferToEntityFields } from "@/api/crud";
+import { checkIsSubForm } from '@/utils/util';
 const { i18n, Utils } = VisualDesign.VFormSDK;
 
 export default {
@@ -114,7 +115,7 @@ export default {
 			// 所有子表单组件
 			this.allSubFormWidgets = [];
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
 					this.allSubFormWidgets.push(el);
 					Utils.traverseFieldWidgetsOfContainer(
 						el.container,

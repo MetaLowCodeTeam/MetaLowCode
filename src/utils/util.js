@@ -597,3 +597,8 @@ export const checkApprovalPreEvent = (preEvent, vFormRef, elMessage) => {
     return newFunc;
 }
 
+// 检测是否子表单
+export const checkIsSubForm = (type) => {
+    return type == "sub-form" || type == "grid-sub-form" || type == "table-sub-form";
+}
+
