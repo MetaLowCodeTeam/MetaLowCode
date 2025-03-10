@@ -221,7 +221,7 @@
                 </el-radio-group>
             </div>
             <div class="work-flow-conditions mt-10">
-                <span class="ml-a-span" @click="openCustomTextDialog">审批按钮文案自定义</span>
+                <span class="ml-a-span" @click="openCustomTextDialog">审批按钮自定义设置</span>
             </div>
         </el-collapse-item>
         <!-- 事件设置 -->
@@ -348,7 +348,7 @@
     </el-collapse>
     <ml-dialog
         v-model="customTextDialogConf.show"
-        title="审批按钮文案自定义"
+        title="审批按钮自定义设置"
         width="620px"
         :append-to-body="true"
     >
@@ -760,7 +760,7 @@ let loadTriggerConfigList = async () => {
 }
 
 /**
- * 审批按钮文案自定义
+ * 审批按钮自定义设置
  */
 let customTextDialogConf = ref({
     show: false,
