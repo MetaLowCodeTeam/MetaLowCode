@@ -118,9 +118,10 @@ export function getEntityCodeList(entityName) {
  * 通用查询详情接口
  * @param {*} entityId 实体ID
  * @param {*} fieldNames 需要获取的字段名称
+ * @param {*} body 请求体
  */
-export function queryById(entityId, fieldNames) {
-    return http.get('/crud/queryById', { entityId, fieldNames })
+export function queryById(entityId, fieldNames, body) {
+    return http.post('/crud/queryById', body, { params: { entityId, fieldNames } })
 }
 
 

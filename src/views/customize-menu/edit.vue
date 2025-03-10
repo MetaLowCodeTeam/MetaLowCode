@@ -93,7 +93,12 @@ import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
-import { globalDsvDefaultData, getModelName } from "@/utils/util";
+import { 
+    globalDsvDefaultData, 
+    getModelName, 
+    formatFormVirtualField,
+    formatQueryByIdParam,
+} from "@/utils/util";
 
 const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
 
@@ -309,22 +314,27 @@ const initFormLayout = async () => {
                 globalDsv.value.fileDownloadPrefix =
                     res.data.formUploadParam.fileDownloadPrefix;
             }
+            
             // 是编辑
             if (row.detailId) { 
                 // 根据数据渲染出页面填入的值，填过
                 nextTick(async () => {
 					globalDsv.value.formStatus = 'edit';
 					globalDsv.value.formEntityId = row.detailId;
-					let formData = await queryById(row.detailId);
-                    
-					vFormRef.value?.setFormJson(res.data.layoutJson);
+                    vFormRef.value?.setFormJson(res.data.layoutJson);
+                    let formFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+					let formData = await queryById(
+                        row.detailId, 
+                        formFieldSchema.fieldNames, 
+                        { queryDetailList: formFieldSchema.queryDetailList }
+                    );
                     if (formData && formData.data) {
                         row.dialogTitle =
                             "编辑：" + formData.data[props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {
-							vFormRef.value.setFormData(formData.data);
+							vFormRef.value.setFormData(formatFormVirtualField(formData.data));
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
                                 if (
@@ -418,7 +428,7 @@ const getFieldListOfEntityApi = async (tag) => {
             }
         })
     }
-    if(row.disableWidgets.length > 0){
+    if(row.disableWidgets && row.disableWidgets.length > 0){
         row.disableWidgets.forEach(el => {
             if(!props.unDisableWidgets.includes(el)){
                 disabledFields.push(el);
