@@ -85,12 +85,14 @@ let loading = ref(false);
 let tabList = ref([]);
 // 当前激活tab
 let activeTabName = ref("detail");
+let outActiveTabName = ref("detail");
 // TAB切换
 const handleClick = (tab) => {
-    if (activeTabName.value == tab.props.name) {
+    // console.log(tab.props.name, 'tab')
+    if(outActiveTabName.value == tab.props.name){
         return;
     }
-    activeTabName.value = tab.props.name;
+    outActiveTabName.value = tab.props.name;
     if (activeTabName.value == "detail") {
         refresh();
     } else {
@@ -164,7 +166,6 @@ const refresh = async () => {
                 }
                 loading.value = false;
             });
-            loading.value = false;
         } else {
             detailDialog.activeTabName = activeTabName.value;
             emits("tabChange", detailDialog);
