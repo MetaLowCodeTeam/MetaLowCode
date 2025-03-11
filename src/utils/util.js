@@ -482,6 +482,9 @@ export const checkConditionList = (data) => {
     return flag;
 }
 
+// 是否区分顶部导航和左侧导航
+let isDistinguishTopNav = false;
+
 // 获取配置ModelName
 export const getModelName = () => {
     let modelName = null;

@@ -1,13 +1,14 @@
 <template>
 	<el-container v-loading="loading" element-loading-text="加载中...">
 		<el-main>
-			<div class="query-params">
+			<div class="query-params" v-if="queryParams.length > 0">
 				<el-form
 					ref="queryParamsRef"
 					label-width="100px"
 					:model="queryFrom"
 					:rules="queryParamsRules"
 					:show-message="false"
+                    @submit.prevent
 				>
 					<!-- 参数少于等于 4 个时的布局 -->
 					<el-row :gutter="10" v-if="isSingleRow">
@@ -21,14 +22,43 @@
 								style="margin-bottom: 10px"
 								:prop="item.name"
 							>
+                                <!-- 文本类型1 和 文本(模糊)5 -->
 								<el-input
 									v-model="queryFrom[item.name]"
 									:placeholder="`请输入${item.label}`"
 									clearable
+                                    v-if="item.type == 1 || item.type == 5"
 								/>
+                                <!-- 日期时间2 -->
+								<el-date-picker
+									v-model="queryFrom[item.name]"
+									type="datetime"
+									placeholder="选择日期时间"
+									clearable
+                                    v-if="item.type == 2"
+                                    class="w-100"
+								/>
+                                <!-- 日期3 -->
+								<el-date-picker
+									v-model="queryFrom[item.name]"
+									type="date"
+									placeholder="选择日期"
+									clearable
+                                    v-if="item.type == 3"
+                                    class="w-100"
+								/>
+                                <!-- 数字4 -->
+                                <el-input-number
+                                    v-model="queryFrom[item.name]"
+                                    placeholder="请输入数字"
+                                    v-if="item.type == 4"
+                                    :controls="false"
+                                    style="text-align: left;"
+                                    class="w-100 ml-number-input"
+                                />
 							</el-form-item>
 						</el-col>
-						<el-col :span="6" style="text-align: right">
+						<el-col :span="6" :offset="(3 - queryParams.length) * 6" style="text-align: right">
 							<el-button type="primary" @click="handleQuery">
 								查询
 							</el-button>
@@ -49,11 +79,40 @@
 									style="margin-bottom: 10px"
 									:prop="item.name"
 								>
-									<el-input
-										v-model="queryFrom[item.name]"
-										:placeholder="`请输入${item.label}`"
-										clearable
-									/>
+									<!-- 文本类型1 和 文本(模糊)5 -->
+                                    <el-input
+                                        v-model="queryFrom[item.name]"
+                                        :placeholder="`请输入${item.label}`"
+                                        clearable
+                                        v-if="item.type == 1 || item.type == 5"
+                                    />
+                                    <!-- 日期时间2 -->
+                                    <el-date-picker
+                                        v-model="queryFrom[item.name]"
+                                        type="datetime"
+                                        placeholder="选择日期时间"
+                                        clearable
+                                        v-if="item.type == 2"
+                                        class="w-100"
+                                    />
+                                    <!-- 日期3 -->
+                                    <el-date-picker
+                                        v-model="queryFrom[item.name]"
+                                        type="date"
+                                        placeholder="选择日期"
+                                        clearable
+                                        v-if="item.type == 3"
+                                        class="w-100"
+                                    />
+                                    <!-- 数字4 -->
+                                    <el-input-number
+                                        v-model="queryFrom[item.name]"
+                                        placeholder="请输入数字"
+                                        v-if="item.type == 4"
+                                        :controls="false"
+                                        style="text-align: left;"
+                                        class="w-100 ml-number-input"
+                                    />
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -174,6 +233,36 @@ const loadModelData = async () => {
 				}
 			});
 		}
+        // 文本
+        queryParams.value.push({
+            label: "文本",
+            name: "test1",
+            type: 1,
+        })
+        // 文本（模糊查询）
+        queryParams.value.push({
+            label: "文本模糊",
+            name: "test2",
+            type: 5,
+        })
+        // 日期时间
+        queryParams.value.push({
+            label: "日期时间",
+            name: "test3",
+            type: 2,
+        })
+        // 日期3
+        queryParams.value.push({
+            label: "日期",
+            name: "test4",
+            type: 3,
+        })
+        // 数字4
+        queryParams.value.push({
+            label: "数字",
+            name: "test5",
+            type: 4,
+        })
 		tableHeader.value = res.data.ModelField.map((el) => {
 			return {
 				label: el.fieldLabel || el.fieldName,
@@ -224,20 +313,27 @@ const handleCurrentChange = (val) => {
 
 // 加载列表数据
 const loadListData = async () => {
-	loading.value = true;
-	let res = await getOuterDataByDataModel(
-		{
-			outerDataModelId: outerDataModelId.value,
-			page: pageConfig.value.currentPage,
-			size: pageConfig.value.pageSize,
-		},
-		queryFrom.value
-	);
-	if (res) {
-		tableData.value = res.data.data || [];
-		pageConfig.value.total = res.data.total || 0;
-	}
-	loading.value = false;
+    let listParam = JSON.parse(JSON.stringify(queryFrom.value));
+    // 处理文本模糊查询
+    queryParams.value.forEach(item => {
+        if (item.type === '5' && listParam[item.name]) {
+            listParam[item.name] = `%${listParam[item.name]}%`;
+        }
+    });
+    loading.value = true;
+    let res = await getOuterDataByDataModel(
+        {
+            outerDataModelId: outerDataModelId.value,
+            page: pageConfig.value.currentPage,
+            size: pageConfig.value.pageSize,
+        },
+        listParam
+    );
+    if (res) {
+        tableData.value = res.data.dataList || [];
+        pageConfig.value.total = res.data?.pagination?.total || 0;
+    }
+    loading.value = false;
 };
 </script>
 
