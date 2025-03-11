@@ -484,7 +484,7 @@ export const checkConditionList = (data) => {
 }
 
 // 是否区分顶部导航和左侧导航 默认false 不区分
-// PS：此设置只对自定义相关列表生效，默认实体不无效，默认实体没有 modelName 这个概念，所以默认是不区分的
+// PS：此设置只对自定义相关列表生效，默认实体无效，默认实体没有 modelName 这个概念，所以默认是不区分的
 // 区分 意味着你左侧导航和顶部导航的modelName 不一样 会导致左侧导航和顶部导航的配置不一致
 // 不区分 则相反，无论你在左侧或者顶部导航修改相关配置，都会同步
 let isDistinguishTopNav = false;
