@@ -22,19 +22,21 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
-                    <mlApproveBar :approvalInfo="approvalTask" />
-                    <v-form-render
-                        v-if="haveLayoutJson"
-                        ref="vFormRef"
-                        :option-data="optionData"
-                        :form-data="formData"
-                        :global-dsv="globalDsv"
-                    />
-                    <el-empty
-                        v-else
-                        :image-size="100"
-                        :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'"
-                    />
+                    <div class="detail-container">
+                        <mlApproveBar :approvalInfo="approvalTask" />
+                        <v-form-render
+                            v-if="haveLayoutJson"
+                            ref="vFormRef"
+                            :option-data="optionData"
+                            :form-data="formData"
+                            :global-dsv="globalDsv"
+                        />
+                        <el-empty
+                            v-else
+                            :image-size="100"
+                            :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'"
+                        />
+                    </div>
                 </el-col>
                 <el-col :span="6" v-if="approvalTask.type">
                     <el-form label-position="top" label-width="100px">
@@ -757,9 +759,17 @@ defineExpose({
 
 <style lang="scss" scoped>
 :deep(.render-form) {
-    .el-row {
-        padding: 0 8px 0 8px !important;
-    }
+    // .el-row {
+    //     padding: 0 8px 0 8px !important;
+    // }
+}
+.detail-container {
+    box-sizing: border-box;
+    padding-right: 5px;
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+    overflow-x: hidden;
+    // padding: 20px;
 }
 
 .detail-header {

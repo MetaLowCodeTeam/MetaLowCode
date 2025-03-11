@@ -44,54 +44,57 @@
 		<div class="detail-main" v-loading="loading">
 			<el-row :gutter="20" v-if="!noeData">
 				<el-col :span="21">
-					<DetailTabs
-						:tabsConf="detailDialog"
-						@tabChange="tabChange"
-						:cutTabIndex="cutTabIndex"
-						@confirm="refresh"
+                    
+                    <DetailTabs
+                        :tabsConf="detailDialog"
+                        @tabChange="tabChange"
+                        :cutTabIndex="cutTabIndex"
+                        @confirm="refresh"
                         :checkTabsFilter="checkTabsFilter"
-					/>
-					<!-- 详情 -->
-					<div v-if="cutTab == 'detail'">
-						<mlApproveBar :approvalInfo="approvalStatus" />
-						<v-form-render
-							v-if="haveLayoutJson"
-							:option-data="optionData"
-							:global-dsv="globalDsv"
-							ref="vFormRef"
-						/>
-						<el-empty
-							v-else
-							:image-size="100"
-							description="未查询到相关配置数据"
-						/>
-					</div>
-                    <div v-else-if="cutTab == 'Attachment'">
-                        <Attachment :entityCode="entityCode" :recordId="detailId"/>
-					</div>
-                    <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
-                        <!-- 拿最后一个-后面的字符串 -->
-                        <component 
-                            v-if="componentExists(cutTab.split('_').pop())" 
-                            :is="cutTab.split('_').pop()" 
-                            :recordId="detailId"
-                            ref="customComponentRefs"
-                        />
-                        <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />
+                    />
+                    <div class="detail-container">
+                    <!-- 详情 -->
+                        <div v-if="cutTab == 'detail'">
+                            <mlApproveBar :approvalInfo="approvalStatus" />
+                            <v-form-render
+                                v-if="haveLayoutJson"
+                                :option-data="optionData"
+                                :global-dsv="globalDsv"
+                                ref="vFormRef"
+                            />
+                            <el-empty
+                                v-else
+                                :image-size="100"
+                                description="未查询到相关配置数据"
+                            />
+                        </div>
+                        <div v-else-if="cutTab == 'Attachment'">
+                            <Attachment :entityCode="entityCode" :recordId="detailId"/>
+                        </div>
+                        <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
+                            <!-- 拿最后一个-后面的字符串 -->
+                            <component 
+                                v-if="componentExists(cutTab.split('_').pop())" 
+                                :is="cutTab.split('_').pop()" 
+                                :recordId="detailId"
+                                ref="customComponentRefs"
+                            />
+                            <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />
+                        </div>
+                        <!-- 非详情 -->
+                        <div v-else>
+                            <DetailTabCom
+                                ref="detailTabComRefs"
+                                :cutTab="cutTabCom"
+                                :tabs="detailDialog.tab"
+                                :cutTabIndex="cutTabIndex"
+                                :entityId="detailId"
+                                :idFieldName="idFieldName"
+                                @closeDialog="closeDialog"
+                                @addRow="onAdd"
+                            />
+                        </div>
                     </div>
-					<!-- 非详情 -->
-					<div v-else>
-						<DetailTabCom
-							ref="detailTabComRefs"
-							:cutTab="cutTabCom"
-							:tabs="detailDialog.tab"
-                            :cutTabIndex="cutTabIndex"
-							:entityId="detailId"
-                            :idFieldName="idFieldName"
-                            @closeDialog="closeDialog"
-                            @addRow="onAdd"
-						/>
-					</div>
 				</el-col>
 				<el-col :span="3">
 					<div class="detail-right" style="padding-top: 40px">
@@ -531,6 +534,7 @@ const initData = async () => {
                     globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
                 }
                 vFormRef.value.setFormJson(res.data.layoutJson);
+                console.log(vFormRef.value?.buildFormFieldSchema(),'vFormRef.value?.buildFormFieldSchema()');
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
 				let queryByIdRes = await queryById(detailId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
 				if (queryByIdRes && queryByIdRes.data) {
@@ -816,6 +820,14 @@ defineExpose({
 			margin-bottom: 5px;
 		}
 	}
+}
+.detail-container {
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 10px;;
+    box-sizing: border-box;
+    padding-right: 5px;
 }
 </style>
 
