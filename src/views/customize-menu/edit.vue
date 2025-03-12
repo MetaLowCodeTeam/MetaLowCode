@@ -198,6 +198,7 @@ let row = reactive({
     fieldNameLabel: "",
     fieldNameVale: "",
     idFieldName:"",
+    nameFieldName: "",
     formEntityId:"",
     mainDetailField:"",
     isRead: false,
@@ -238,6 +239,7 @@ const openDialog = async (v) => {
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
     row.idFieldName = v.idFieldName;
+    row.nameFieldName = v.nameFieldName;
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;
@@ -330,7 +332,7 @@ const initFormLayout = async () => {
                     );
                     if (formData && formData.data) {
                         row.dialogTitle =
-                            "编辑：" + formData.data[props.nameFieldName];
+                            "编辑：" + formData.data[row.nameFieldName || row.idFieldName || props.nameFieldName];
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {
