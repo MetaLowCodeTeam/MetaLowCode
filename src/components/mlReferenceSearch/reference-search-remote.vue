@@ -55,12 +55,20 @@
 						:max-height="300"
 						@row-click="clickRow"
 					>
-						<el-table-column
-							v-for="column in tableColumns"
-							:key="column.prop"
-							:label="column.label"
-							:prop="column.prop"
-						/>
+                        <el-table-column
+                            v-for="column in tableColumns"
+                            :key="column.prop"
+                            :label="column.label"
+                            :prop="column.prop"
+                        >
+                            <template #default="scope">
+                                <FormatRow
+                                    :row="scope.row"
+                                    :column="column"
+                                    :nameFieldName="nameFieldName"
+                                />
+                            </template>
+                        </el-table-column>
 					</el-table>
 					<div class="sc-table-select__page mt-10">
 						<el-pagination
@@ -86,6 +94,7 @@
 <script setup lang="ts">
 import { ref, watchEffect, nextTick } from "vue";
 import { refFieldQuery2 } from "@/api/crud";
+import FormatRow from "@/views/customize-menu/components/FormatRow.vue";
 const props = defineProps({
 	fieldModel: {
 		type: Object,
@@ -177,8 +186,11 @@ const handleSearch = async () => {
 		filter
 	);
 	if (res) {
-		console.log(res);
 		tableColumns.value = res.data.columnList;
+        tableColumns.value.forEach(el => {
+            el.fieldName = el.prop;
+            el.fieldType = el.type
+        })
 		tableData.value = res.data.dataList;
 		total.value = res.data.pagination?.total || 0;
 		idFieldName.value = res.data.idFieldName;

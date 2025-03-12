@@ -1,6 +1,6 @@
 <template>
     <!--  -->
-    <div class="action-div" v-loading="contentLoading">
+    <div class="action-div" v-loading="contentLoading" element-loading-text="推送测试中...">
         <el-form-item class="mt-20" label="回调类型">
             <el-radio-group v-model="trigger.actionContent.callBackType" class="ml-4">
                 <el-radio value="URL">URL回调</el-radio>
@@ -119,11 +119,15 @@ const callBackTest = async () => {
         $ElMessage.warning("请输入要推送到的URL");
         return;
     }
+    contentLoading.value = true;
     // let actionContent = JSON.stringify(trigger.value.actionContent);
     let res = await $API.trigger.detail.callBackTest(
         trigger.value.actionContent
     );
-    testRes.value = res;
+    if(res) {
+        testRes.value = res;
+    }
+    contentLoading.value = false;
 };
 
 let functionListLoading = ref(false);

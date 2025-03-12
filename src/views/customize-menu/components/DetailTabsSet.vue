@@ -47,6 +47,7 @@
                         v-model="searchField"
                         placeholder="筛选字段"
                         clearable
+                        @input="formatShowColumn"
                     >
                         <template #prefix>
                             <el-icon class="el-input__icon">
@@ -65,7 +66,7 @@
                             :key="inx"
                             @click="beforeAddShowColumn(column)"
                         >
-                            <div class="fl column-item text-ellipsis">{{ column.entityLabel }}</div>
+                            <div class="fl column-item text-ellipsis">{{ column.label || column.entityLabel }}</div>
                             <span class="fr icon-span">
                                 <el-icon size="16">
                                     <ElIconPlus />
@@ -200,11 +201,11 @@ onMounted(() => {
 })
 
 const formatShowColumn = () => {
-    if (!searchField) {
+    if (!searchField.value) {
         columnList.value = [...sourceColumn.value];
     } else {
         columnList.value = sourceColumn.value.filter(
-            (el) => el.entityLabel?.indexOf(searchField.value) != -1
+            (el) => el.entityLabel?.indexOf(searchField.value) != -1 || el.label?.indexOf(searchField.value) != -1
         );
     }
     if(props.applyType == 'TAB') {
@@ -239,7 +240,6 @@ const beforeAddShowColumn = (column) => {
 }
 // 添加显示列
 const addShowColumn = (column) => {
-    console.log(column);
     showColumn.value.push(column);
     for (let index = 0; index < sourceColumn.value.length; index++) {
         const el = sourceColumn.value[index];
@@ -331,7 +331,7 @@ const getAllColumn = async () => {
         false,
         false,
         true,
-        false,
+        props.entityCode == '21' ? true : false,
         true
     );
     if (res) {

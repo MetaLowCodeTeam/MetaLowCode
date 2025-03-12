@@ -1828,6 +1828,16 @@ const viewRow = (row, localDsv, formId) => {
     openDetailDialog(row, localDsv, formId)
 }
 
+// 打开其他实体详情
+const viewToOtherEntity = (recordId, localDsv, formId) => {
+    detailRefs.value.openDialog(recordId, localDsv, formId);
+}
+
+// 新建编辑其他实体
+const editToOtherEntity = (editParam) => {
+    editRefs.value.openDialog(editParam);
+};
+
 // 获取列表数据
 const getTableDataList = () => {
     return sliceTable.value;
@@ -1853,6 +1863,8 @@ defineExpose({
     openBatchUpdateDialog,
     openSubmitApprovalDialog,
     openApprovalDialog,
+    viewToOtherEntity,
+    editToOtherEntity,
 })
 
 </script>

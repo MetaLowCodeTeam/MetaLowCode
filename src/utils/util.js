@@ -5,6 +5,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 import { pinyin } from 'pinyin-pro'
 import JSEncrypt from 'jsencrypt';
 import http from "@/utils/request";
+import router from "@/router";
 
 // 注册插件
 dayjs.extend(updateLocale);
@@ -482,7 +483,10 @@ export const checkConditionList = (data) => {
     return flag;
 }
 
-// 是否区分顶部导航和左侧导航
+// 是否区分顶部导航和左侧导航 默认false 不区分
+// PS：此设置只对自定义相关列表生效，默认实体无效，默认实体没有 modelName 这个概念，所以默认是不区分的
+// 区分 意味着你左侧导航和顶部导航的modelName 不一样 会导致左侧导航和顶部导航的配置不一致
+// 不区分 则相反，无论你在左侧或者顶部导航修改相关配置，都会同步
 let isDistinguishTopNav = false;
 
 // 获取配置ModelName
@@ -491,6 +495,10 @@ export const getModelName = () => {
     let pathname = location.pathname;
     if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
+        let checkGuid = splitPathname[splitPathname.length - 1];
+        if(hasGuid(checkGuid) && !isDistinguishTopNav) {
+            splitPathname.splice(splitPathname.length - 1, 1)
+        }
         let newSplitName = [];
         splitPathname.forEach((item, inx) => {
             if (inx > 2) {
@@ -502,6 +510,11 @@ export const getModelName = () => {
     return modelName;
 }
 
+// 判断是否是 GUID
+const hasGuid = (str) => {
+    const guidPattern = /^[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/;
+    return guidPattern.test(str);
+};
 
 
 // 格式化文件大小
@@ -598,5 +611,10 @@ export const checkApprovalPreEvent = (preEvent, vFormRef, elMessage) => {
     }
     let newFunc = new Function('data','vFormRef', 'ElMessage', preEvent)(vFormRef.getFormData(false), vFormRef, elMessage);
     return newFunc;
+}
+
+// 检测是否子表单
+export const checkIsSubForm = (type) => {
+    return type == "sub-form" || type == "grid-sub-form" || type == "table-sub-form";
 }
 
