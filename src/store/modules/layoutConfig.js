@@ -27,7 +27,6 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.path = appPath + "custom-page/vForm/" + (isTopNav ? 'top/' : '') + el.guid;
         newRoute.component = "custom-page/ListVFormCmp/index";
     } else {
-        console.log(el,'el')
         if(el.customPageType == 2){
             newRoute.path = appPath + (el.outLink.indexOf('?') == -1 ? el.outLink : el.outLink.split('?')[0]);
         }else {

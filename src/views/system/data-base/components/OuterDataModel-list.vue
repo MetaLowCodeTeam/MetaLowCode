@@ -212,7 +212,6 @@ const isSingleRow = computed(() => {
 const checkQueryParams = () => {
 	for (const item of queryParams.value) {
 		if (item.isRequired && !queryFrom.value[item.name]) {
-			ElMessage.warning(`请填写必填项：${item.label}`);
 			return false;
 		}
 	}
@@ -235,6 +234,7 @@ const loadModelData = async () => {
 					label: el.paramLabel || el.paramName,
 					name: el.paramName,
 					type: el.paramType.value,
+                    isRequired: el.isRequired,
 				});
 				queryFrom.value[el.paramName] = el.defaultValue || "";
 				if (el.isRequired) {
@@ -248,36 +248,6 @@ const loadModelData = async () => {
 				}
 			});
 		}
-		// // 文本
-		// queryParams.value.push({
-		// 	label: "文本",
-		// 	name: "test1",
-		// 	type: 1,
-		// });
-		// // 文本（模糊查询）
-		// queryParams.value.push({
-		// 	label: "文本模糊",
-		// 	name: "test2",
-		// 	type: 5,
-		// });
-		// // 日期时间
-		// queryParams.value.push({
-		// 	label: "日期时间",
-		// 	name: "test3",
-		// 	type: 2,
-		// });
-		// // 日期3
-		// queryParams.value.push({
-		// 	label: "日期",
-		// 	name: "test4",
-		// 	type: 3,
-		// });
-		// // 数字4
-		// queryParams.value.push({
-		// 	label: "数字",
-		// 	name: "test5",
-		// 	type: 4,
-		// });
 		tableHeader.value = res.data.ModelField.map((el) => {
 			return {
 				label: el.fieldLabel || el.fieldName,
