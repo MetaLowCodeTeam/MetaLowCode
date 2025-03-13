@@ -319,7 +319,7 @@ export default {
 		onAppendButtonClick() {
             if (this.designState) {
                 return
-            } 
+            }
 			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
 				let customFn = new Function(
 					this.field.options.onAppendButtonClick
@@ -397,7 +397,7 @@ export default {
 
 		handleClearEvent() {
 			this.fieldModel = [];
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
 		},
 
         // 树选择回填
@@ -407,7 +407,7 @@ export default {
                 if(selectedNodes.length < 1) {
                     this.fieldModel = [];
                     this.showReferenceDialogFlag = false;
-                    this.handleChangeEvent(this.fieldModel);
+                    this.onFieldChangeEvent(this.fieldModel);
                     return
                 }
                 this.fieldModel = selectedNodes.map(el => {
@@ -416,7 +416,7 @@ export default {
                         name: el.label
                     }
                 });
-                this.handleChangeEvent(this.fieldModel);
+                this.onFieldChangeEvent(this.fieldModel);
 				this.handleRecordSelectedEvent(selectedNodes);
             }else {
                 let fieldNames = this.$refs.referST?.getIdNameField() || {};
@@ -427,7 +427,7 @@ export default {
                         name: el[fieldNames.nameField]
                     }
                 });
-                this.handleChangeEvent(this.fieldModel);
+                this.onFieldChangeEvent(this.fieldModel);
 				this.handleRecordSelectedEvent(rows);
             }
             this.showReferenceDialogFlag = false;
@@ -493,7 +493,7 @@ export default {
         // 确认删除
         confirmDelField(){
             this.fieldModel = deepClone(this.viewDialogConf.sourceData);
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
             this.viewDialogConf.show = false;
         },
 	},

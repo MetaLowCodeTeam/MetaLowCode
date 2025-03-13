@@ -44,11 +44,11 @@
 							<component :is="field.options.buttonIcon" />
 						</el-icon>
 					</el-button>
-				</template>    
+				</template>
 			</el-input>
-			<ReferenceSearchRemote 
+			<ReferenceSearchRemote
                 ref="referRemote"
-                v-if="!isReadMode && field.options.openSearchInPlace" 
+                v-if="!isReadMode && field.options.openSearchInPlace"
                 :entity="entity"
 				:refField="field.options.name"
                 :searchFields="field.options.searchFields"
@@ -273,7 +273,7 @@ export default {
         onReferRemoteFocus() {
             if (this.designState) {
                 return
-            } 
+            }
             if(!this.checkFilterConditions()){
                 this.$refs.referRemote.setFilterConditions(null, false);
                 return
@@ -284,7 +284,7 @@ export default {
 		onAppendButtonClick() {
             if (this.designState) {
                 return
-            } 
+            }
 			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
 				let customFn = new Function(
 					this.field.options.onAppendButtonClick
@@ -375,7 +375,7 @@ export default {
         },
 		handleClearEvent() {
 			this.fieldModel = null;
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 		},
         beforeMultipleSetReferRecord(recordObj, rows) {
             let { confirmSelect, confirmSelectContent } = this.field.options;
@@ -522,7 +522,7 @@ export default {
 				name: recordObj.label,
 			};
 
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 			this.handleRecordSelectedEvent(selectedRow);
             // 回填
 			this.doFillBack(recordObj, selectedRow);
@@ -553,7 +553,7 @@ export default {
 				id: selectedNodes[0].id,
 				name: selectedNodes[0].label,
 			};
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
             this.showReferenceDialogFlag = false;
         },
 		async doFillBack(recordObj, selectedRow) {
@@ -570,7 +570,7 @@ export default {
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;
 						}
-                        
+
 						// 执行回填操作
                         let targetWidgetRef = this.getWidgetRef(el.targetField);
                         if (targetWidgetRef) {
