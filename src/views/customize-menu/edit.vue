@@ -331,8 +331,18 @@ const initFormLayout = async () => {
                         { queryDetailList: formFieldSchema.queryDetailList }
                     );
                     if (formData && formData.data) {
-                        row.dialogTitle =
-                            "编辑：" + formData.data[row.nameFieldName || row.idFieldName || props.nameFieldName];
+                        if(props.nameFieldName) {
+                            row.dialogTitle =
+                                "编辑：" + formData.data[props.nameFieldName];
+                        }else if(row.nameFieldName) {
+                            row.dialogTitle =
+                                "编辑：" + formData.data[row.nameFieldName];
+                        }else if(row.idFieldName){
+                            row.dialogTitle =
+                                "编辑：" + formData.data[row.idFieldName];
+                        }else {
+                            row.dialogTitle = "编辑"
+                        }
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {

@@ -37,9 +37,10 @@
 			@visible-change="handleVisibleChange"
             :disabled="disabled"
 			ref="selectRef"
+            @click="handleFocus"
 		>
 			<template #empty>
-				<div class="empty-box" :style="{ minWidth: dialogWidth }">
+				<div class="empty-box" :style="{ minWidth: dialogWidth }" v-if="isDropdownVisible">
 					<div class="empty-box-title mb-10">
 						<el-input
 							v-model="searchValue"
@@ -50,37 +51,39 @@
 						>
 						</el-input>
 					</div>
-					<el-table
-						:data="tableData"
-						:max-height="300"
-						@row-click="clickRow"
-					>
-                        <el-table-column
-                            v-for="column in tableColumns"
-                            :key="column.prop"
-                            :label="column.label"
-                            :prop="column.prop"
+                    <div class="empty-box-table" v-loading="loading">
+                        <el-table
+                            :data="tableData"
+                            :max-height="300"
+                            @row-click="clickRow"
                         >
-                            <template #default="scope">
-                                <FormatRow
-                                    :row="scope.row"
-                                    :column="column"
-                                    :nameFieldName="nameFieldName"
-                                />
-                            </template>
-                        </el-table-column>
-					</el-table>
-					<div class="sc-table-select__page mt-10">
-						<el-pagination
-							small
-							background
-							layout="prev, pager, next"
-							:total="total"
-							:page-size="pageSize"
-							v-model:currentPage="currentPage"
-							@current-change="handleCurrentChange"
-						></el-pagination>
-					</div>
+                            <el-table-column
+                                v-for="column in tableColumns"
+                                :key="column.prop"
+                                :label="column.label"
+                                :prop="column.prop"
+                            >
+                                <template #default="scope">
+                                    <FormatRow
+                                        :row="scope.row"
+                                        :column="column"
+                                        :nameFieldName="nameFieldName"
+                                    />
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div class="sc-table-select__page mt-10">
+                            <el-pagination
+                                small
+                                background
+                                layout="prev, pager, next"
+                                :total="total"
+                                :page-size="pageSize"
+                                v-model:currentPage="currentPage"
+                                @current-change="handleCurrentChange"
+                            ></el-pagination>
+                        </div>
+                    </div>
 				</div>
 			</template>
 		</el-select>
@@ -127,10 +130,12 @@ const props = defineProps({
     disabled: {
         type: Boolean,
         default: false,
-    }
+    },
+    // setFilter查询条件
+    extraFilter: String, // 查询条件
 });
 
-const emit = defineEmits(["onSelectedRemote", "onAppendButtonClick"]);
+const emit = defineEmits(["onSelectedRemote", "onAppendButtonClick", "onFocus"]);
 let value = ref(null);
 let loading = ref(false);
 
@@ -146,6 +151,12 @@ let pageSize = ref(10);
 let currentPage = ref(1);
 let idFieldName = ref("");
 let nameFieldName = ref("");
+
+// 是否显示下拉框
+let isDropdownVisible = ref(false);
+
+//  过滤条件
+let filterConditions = ref(null);
 
 // 分页
 const handleCurrentChange = (v) => {
@@ -181,9 +192,9 @@ const handleSearch = async () => {
 		param.refField,
 		param.pageNo,
 		param.pageSize,
-		null,
-		null,
-		filter
+        props.extraFilter,
+		filter,
+		filterConditions.value,
 	);
 	if (res) {
 		tableColumns.value = res.data.columnList;
@@ -201,20 +212,27 @@ const handleSearch = async () => {
 
 // 搜索输入框
 let searchInputRef = ref(null);
+
+
+
+// 下拉框
+const selectRef = ref(null);
+
+const handleFocus = () => {
+    // let { field } = props;
+    // isDropdownVisible.value = true;
+    emit("onFocus");
+}
+
 // 下拉框出现/隐藏时触发
 const handleVisibleChange = (e) => {
 	if (e) {
 		// handleSearch();
-		nextTick(() => {
-			searchInputRef.value.focus();
-			if (!loading.value) {
-				handleSearch();
-			}
-		});
+	
 	}
 };
 
-const selectRef = ref(null);
+
 const clickRow = (row) => {
 	selectRef.value.blur();
 	emit("onSelectedRemote", {
@@ -236,4 +254,26 @@ const onAppendButtonClick = () => {
     if(props.disabled) return;
 	emit("onAppendButtonClick");
 };
+
+const setFilterConditions = (conditions, isShow) => {
+    filterConditions.value = conditions;
+    isDropdownVisible.value = isShow;
+    if(!isShow) {
+        setTimeout(() => {
+            selectRef.value.blur();
+        }, 200)
+    }else {
+        nextTick(() => {
+			searchInputRef.value.focus();
+			if (!loading.value) {
+				handleSearch();
+			}
+		});
+    }
+}
+
+defineExpose({
+    setFilterConditions,
+})
+
 </script>

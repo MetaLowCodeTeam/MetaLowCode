@@ -4,6 +4,9 @@
         v-if="comName" 
         :is="comName" 
         ref="DetailRef"
+        :recordDetailFormId="recordDetailFormId"
+        :detailConf="detailConf"
+        :layoutConfig="layoutConfig"
         @updateData="updateData"
     ></component>
 </template>
@@ -23,6 +26,14 @@ const props = defineProps({
     recordDetailFormId: {
 		type: String,
 		default: "",
+	},
+    layoutConfig: {
+		type: Object,
+		default: () => {},
+	},
+    detailConf: {
+		type: Object,
+		default: () => {},
 	},
 });
 
