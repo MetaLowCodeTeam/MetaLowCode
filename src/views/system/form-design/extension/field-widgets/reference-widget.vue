@@ -47,6 +47,7 @@
 				</template>    
 			</el-input>
 			<ReferenceSearchRemote 
+                ref="referRemote"
                 v-if="!isReadMode && field.options.openSearchInPlace" 
                 :entity="entity"
 				:refField="field.options.name"
@@ -54,8 +55,10 @@
                 :dialogWidth="field.options.searchDialogWidth"
                 :disabled="field.options.disabled"
                 :fieldModel="fieldModel"
+                :extraFilter="searchFilter"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
+                @onFocus="onReferRemoteFocus"
             />
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"
@@ -267,7 +270,17 @@ export default {
 				}
 			}
 		},
-
+        onReferRemoteFocus() {
+            if (this.designState) {
+                return
+            } 
+            if(!this.checkFilterConditions()){
+                this.$refs.referRemote.setFilterConditions(null, false);
+                return
+            }
+            console.log(this.filterConditions,'this.filterConditions')
+            this.$refs.referRemote.setFilterConditions(this.filterConditions, true);
+        },
 		onAppendButtonClick() {
             if (this.designState) {
                 return
@@ -294,6 +307,17 @@ export default {
                 };
                 return
             }
+            if(!this.checkFilterConditions()){
+                return
+            }
+            // 如果有可视化排序配置
+            if(this.field.options?.sortField){
+                this.extraSort = `${this.field.options.sortField} ${this.field.options.sortOrder}`;
+            }
+			this.showReferenceDialogFlag = true;
+		},
+        // 检测过滤条件
+        checkFilterConditions() {
             let optionsFilterConditions = {};
             if(this.field.options?.filterConditions){
                 optionsFilterConditions = JSON.parse(JSON.stringify(this.field.options?.filterConditions));
@@ -326,7 +350,7 @@ export default {
                     }else {
                         if(!fieldValue){
                             this.$message.error("请填写：" + fieldLabel);
-                            return
+                            return false;
                         }
                         el.value = fieldValue;
                         if(typeof fieldValue == 'object'){
@@ -347,13 +371,8 @@ export default {
             if(this.gDsv["filterConditions"]){
                 this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv["filterConditions"]);
             }
-            // 如果有可视化排序配置
-            if(this.field.options?.sortField){
-                this.extraSort = `${this.field.options.sortField} ${this.field.options.sortOrder}`;
-            }
-			this.showReferenceDialogFlag = true;
-		},
-
+            return true;
+        },
 		handleClearEvent() {
 			this.fieldModel = null;
 			this.handleChangeEvent(this.fieldModel);

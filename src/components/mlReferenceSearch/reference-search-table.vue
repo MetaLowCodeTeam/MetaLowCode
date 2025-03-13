@@ -283,7 +283,7 @@ export default {
 				paramStr = this.entity;
                 let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
                 tempConditionConf.items = tempConditionConf.items.filter(el => (el.value !== undefined && el.value !== null && el.value !== "") || (el.value2 !== undefined && el.value2 !== null && el.value2 !== "") || this.notEmptyItems.includes(el.op))
-				this.refFieldQueryApi(
+                this.refFieldQueryApi(
 					refFieldQuery2(
 						paramStr,
 						this.refField,
