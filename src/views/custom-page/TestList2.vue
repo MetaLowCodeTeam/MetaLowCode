@@ -46,11 +46,34 @@ let listParamConf = ref({
 	showMoreBtn: true,
 });
 
-
 let paginationConf = ref({});
 
+
 const test = () => {
-	EntityListRefs.value?.toDetail();
+	// 参数
+	let param = {
+		// [编辑必传]你要编辑的行ID
+		detailId: "0001001-bea445e962f04773b5cbc3deed5cb1ed",
+		// ID、Name 传哪个标题就显示 编辑：(ID OR Name) 都不传则仅显示：编辑
+		idFieldName: "",
+		nameFieldName: "",
+		// [新建必传]实体名称
+		entityName: "",
+		// 自定义弹框标题 > 默认的显示 编辑：(ID OR Name)
+		customDialogTitle: "",
+		dialogConf: {
+			// 弹框是否显示全屏按钮
+			showFullScreen: false,
+			// 弹框是否自动全屏(默认全屏的意思)
+			autoFullScreen: false,
+		},
+		// ...如需更多未公开的参数
+		// 详见源码：src\views\customize-menu\edit.vue  openDialog方法
+	};
+
+	// 调用
+	EntityListRefs.value?.editToOtherEntity(param);
+	// EntityListRefs.value?.toDetail();
 };
 </script>
 <style lang="scss" scoped></style>
