@@ -473,7 +473,7 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 import mlApprove from "@/components/mlApprove/index.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
-const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
+const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
@@ -1188,7 +1188,12 @@ let myFormEntityId = ref("");
 const getDialogTitle = (row, key) => {
     let customDialogConfigFunc = rowStyleConf.value?.dialogConfig || null;
     if(customDialogConfigFunc){
-        let editTitle = new Function('row', 'entityName', customDialogConfigFunc)(row, entityName.value);
+        let entity = {
+            name: entityName.value,
+            code: entityCode.value,
+            label: queryEntityLabelByName(entityName.value),
+        }
+        let editTitle = new Function('row', 'entity', customDialogConfigFunc)(row, entity);
         return editTitle[key];
     }
     return {
