@@ -31,7 +31,7 @@ import { ref } from "vue";
 
 let detailConf = ref({
 	// 显示基础操作块
-	showBasicBlock: true,
+	showBasicBlock: false,
 	// 显示流程操作块
 	showProcessBlock: true,
 	// 显示新建相关按钮
@@ -40,6 +40,8 @@ let detailConf = ref({
 	showEditBtn: true,
 	// 显示更多按钮
 	showMoreBtn: true,
+    // 自定义弹框标题
+    customDialogTitle: "我是自定义详情",
     // 提交审批前
     beforeSubmitApproval: async () => {
         console.log('测试异步');

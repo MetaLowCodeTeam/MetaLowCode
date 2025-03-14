@@ -1,6 +1,6 @@
 <template>
     <ml-dialog
-        :title="row.dialogTitle"
+        :title="editParamConf.customDialogTitle || row.customDialogTitle || row.dialogTitle"
         v-if="isShow"
         v-model="isShow"
         width="55%"
@@ -144,6 +144,8 @@ const editParamConf = ref({
     showCancelBtn: true,
     showConfirmRefreshBtn: true,
     showConfirmAndSubmitBtn: true,
+    // 自定义弹框标题
+    customDialogTitle: "",
 })
 
 
@@ -190,6 +192,9 @@ const loadMyLayoutConfig = () => {
 };
 
 let row = reactive({
+    // 自定义弹框标题
+    customDialogTitle: "",
+    // 弹框标题
     dialogTitle:"",
     approvalStatus: {},
     detailId: "",
@@ -228,6 +233,7 @@ let isShowSaveAndSubmit = ref(false);
 
 const openDialog = async (v) => {
     row.dialogTitle = "Loading...";
+    row.customDialogTitle = v.customDialogTitle;
     row.detailId = v.detailId;
     row.formEntityId = v.formEntityId;
     row.mainDetailField = v.mainDetailField;

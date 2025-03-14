@@ -5,8 +5,8 @@
         :is="comName" 
         ref="DetailRef"
         :recordDetailFormId="recordDetailFormId"
-        :detailConf="detailConf"
         :layoutConfig="layoutConfig"
+        :customDetailDialogTitle="customDetailDialogTitle"
         @updateData="updateData"
     ></component>
 </template>
@@ -31,9 +31,9 @@ const props = defineProps({
 		type: Object,
 		default: () => {},
 	},
-    detailConf: {
-		type: Object,
-		default: () => {},
+    customDetailDialogTitle: {
+		type: String,
+		default: "",
 	},
 });
 

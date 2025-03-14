@@ -12,11 +12,11 @@
 		:sub-form-row-id="subFormRowId"
 	>
         <template v-if="field.options.showButton && !isReadMode">
-            <el-checkbox-group 
+            <el-checkbox-group
                 v-model="checkboxGroup"
                 @change="onCheckboxGroupChange"
             >
-                <el-checkbox-button 
+                <el-checkbox-button
                     v-for="(item,inx) of options"
                     :key="inx"
                     :value="item.label"
@@ -26,26 +26,26 @@
             </el-checkbox-group>
         </template>
         <template v-else-if="field.options.showSelect && !isReadMode">
-            <el-select 
-                v-model="selectValue" 
-                :disabled="field.options.disabled" 
+            <el-select
+                v-model="selectValue"
+                :disabled="field.options.disabled"
                 multiple
                 @change="onSelectChange"
             >
-                <el-option 
-                    v-for="(item,inx) of options" 
-                    :key="inx" 
-                    :label="item.label" 
+                <el-option
+                    v-for="(item,inx) of options"
+                    :key="inx"
+                    :label="item.label"
                     :value="item.label"
                 />
             </el-select>
         </template>
         <template v-else-if="field.options.showCheckbox && !isReadMode">
-            <el-checkbox 
+            <el-checkbox
                 v-for="(item,inx) of options"
                 :Key="inx"
-                v-model="item.checked" 
-                :label="item.label" 
+                v-model="item.checked"
+                :label="item.label"
                 :disabled="field.options.disabled"
                 :border="field.options.showBorder"
                 @change="onCheckboxChange"
@@ -68,7 +68,7 @@
         <template v-if="isReadMode">
             <span class="readonly-mode-field">{{ fieldModel || "--" }}</span>
         </template>
-		
+
 	</form-item-wrapper>
 </template>
 
@@ -300,9 +300,9 @@ export default {
 				}
 			}
 
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 		},
-        
+
         // 单选组件切换
         onCheckboxChange(){
             let selected = [];
@@ -312,17 +312,17 @@ export default {
                 }
             });
             this.fieldModel = selected.join(",");
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
         },
         // 多选组件切换
         onCheckboxGroupChange(){
             this.fieldModel = this.checkboxGroup.join(",");
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
         },
         // 下拉组件切换
         onSelectChange(){
             this.fieldModel = this.selectValue.join(",");
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
         }
 	},
 };

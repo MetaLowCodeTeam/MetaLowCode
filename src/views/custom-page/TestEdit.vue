@@ -41,6 +41,8 @@ let editConf = ref({
     showConfirmBtn: true,
     // 是否显示取消按钮
     showCancelBtn: true,
+    // 自定义弹框标题
+    customDialogTitle: "我是编辑标题",
 });
 
 // 打开详情
