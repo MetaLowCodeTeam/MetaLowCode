@@ -6,7 +6,7 @@
 			:rules="rules"
 			:design-state="designState"
 			:parent-widget="parentWidget"
-			:parent-list="parentList"
+			:parent-list="parentList"  
 			:index-of-parent-list="indexOfParentList"
 			:sub-form-row-index="subFormRowIndex"
 			:sub-form-col-index="subFormColIndex"

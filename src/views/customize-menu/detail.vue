@@ -12,7 +12,7 @@
 		<template #header>
 			<div class="detail-header">
 				<div class="detail-header-title">
-					{{ detailName }}
+					{{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
 					<div class="fr fr-box">
 						<span
 							class="fr-icon mr-10"
@@ -276,6 +276,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 自定义详情弹框标题
+    customDetailDialogTitle: {
+		type: String,
+		default: "",
+	},
 });
 
 
@@ -290,6 +295,7 @@ const detailParamConf = ref({
     showMoreBtn: true,
     showDelBtn: true,
     showRevisionHistory: true,
+    customDialogTitle: "",
     beforeSubmitApproval: () => true,
     afterSubmitApproval: () => true,
     beforeRevokeApproval: () => true,
@@ -298,10 +304,12 @@ const detailParamConf = ref({
 
 // 插槽内容
 let contentSlots = reactive({});
-let currentExposed = ref({});
+// 自定义弹框标题
+let customDialogTitle = ref("");
 watchEffect(() => {
     detailParamConf.value = Object.assign(detailParamConf.value, props.detailConf)
-    currentExposed.value = getCurrentInstance().exposed;
+    // 自定义弹框标题
+    customDialogTitle.value = props.customDetailDialogTitle;
 })
 
 onMounted(() => {
@@ -368,7 +376,7 @@ const openDialog = (id, localDsv, paramFormId) => {
 		ElMessage.warning("当前实体未找到");
 		return;
 	}
-    globalDsv.value.parentExposed = currentExposed.value;
+    globalDsv.value.parentExposed = getCurrentInstance()?.exposed;
     globalDsv.value.modelName = getModelName();
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);

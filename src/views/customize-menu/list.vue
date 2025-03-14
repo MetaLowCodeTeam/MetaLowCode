@@ -377,6 +377,7 @@
         />
         <mlCustomDetail
             ref="detailRefs"
+            :customDetailDialogTitle="customDetailDialogTitle"
             :entityName="entityName"
             @updateData="getTableList"
             :recordDetailFormId="listParamConf.recordDetailFormId"
@@ -1183,6 +1184,19 @@ let editRefs = ref();
 // 引用组件所关联的主表行ID
 let myFormEntityId = ref("");
 
+// 获取弹框标题
+const getDialogTitle = (row, key) => {
+    let customDialogConfigFunc = rowStyleConf.value?.dialogConfig || null;
+    if(customDialogConfigFunc){
+        let editTitle = new Function('row', 'entityName', customDialogConfigFunc)(row, entityName.value);
+        return editTitle[key];
+    }
+    return {
+        editTitle: "",
+        detailTitle: "",
+    }[key];
+}
+
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
@@ -1258,6 +1272,7 @@ const onEditRow = (row, localDsv, formId) => {
         refEntityBindingField,
     };
     tempV.detailId = row[idFieldName.value];
+    tempV.customDialogTitle = getDialogTitle(row, 'editTitle');
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
@@ -1297,7 +1312,8 @@ const rowDblclick = (row) => {
 const TableCellClick = (row, column, cell) => {
     emits('onCellClick', row, column, cell)
 }
-
+// 自定义详情弹框标题
+let customDetailDialogTitle = ref("");
 // 打开详情
 const openDetailDialog = (row, localDsv, formId) => {
     if (!row) {
@@ -1312,6 +1328,7 @@ const openDetailDialog = (row, localDsv, formId) => {
     //     editRefs.value.openDialog(tempV);
     //     return
     // }
+    customDetailDialogTitle.value = getDialogTitle(row, 'detailTitle');
     detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
 };
 
@@ -1829,7 +1846,8 @@ const viewRow = (row, localDsv, formId) => {
 }
 
 // 打开其他实体详情
-const viewToOtherEntity = (recordId, localDsv, formId) => {
+const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
+    customDialogTitle.value = customDialogTitle;
     detailRefs.value.openDialog(recordId, localDsv, formId);
 }
 

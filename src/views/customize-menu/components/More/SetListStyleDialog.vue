@@ -102,6 +102,19 @@
                     </div>
                     <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
                 </el-tab-pane>
+                <el-tab-pane label="自定义弹框设置" name="dialogConfig">
+                    <div class="mb-10 mt-10">
+                        <span>自定义渲染</span>
+                        <a
+                            class="ml-a-span"
+                            target="_blank"
+                            href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                        >
+                            使用文档
+                        </a>
+                    </div>
+                    <mlCodeEditor  v-model="styleConf.dialogConfig" />
+                </el-tab-pane>
             </el-tabs>
 		</div>
 		<template #footer>
@@ -199,6 +212,13 @@ let styleConf = ref({
     more: false
 }`
 	},
+    // 弹框设置
+    dialogConfig: `return {
+    // 编辑标题
+    editTitle: "",
+    // 查看标题
+    detailTitle: "",
+}`,
     // 卡片列表设置
     listCardConf: {
         pc: {},
