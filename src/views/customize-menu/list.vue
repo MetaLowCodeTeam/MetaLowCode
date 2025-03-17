@@ -29,6 +29,7 @@
                             link
                             :loading="queryPanelLoading"
                             @click="changeQueryPanel(false)"
+                            v-if="listParamConf.showChangeQueryPanel"
                         >
                             <el-icon size="16" class="toggle-query-icon">
                                 <Switch />
@@ -91,7 +92,7 @@
                         bg
                         :loading="queryPanelLoading"
                         @click="changeQueryPanel(true)"
-
+                        v-if="listParamConf.showChangeQueryPanel"
                     >
                         切换查询面板
                     </el-button>
@@ -643,6 +644,7 @@ const listParamConf = ref({
     // 是否显示列表复选框 注意，如果列表复选框开启，则列表的头部按钮点击事件会失效
     showTableCheckbox: true,
     showHeader: true,
+    showChangeQueryPanel: true,
     showAdvancedQuery: true,
     showQuickQuery: true,
     showOpenBtn: true,
@@ -971,6 +973,7 @@ const getLayoutList = async () => {
             entityName: entityName.value,
             entityCode: entityCode.value,
         };
+        console.log(ALL.FILTER)
 
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
