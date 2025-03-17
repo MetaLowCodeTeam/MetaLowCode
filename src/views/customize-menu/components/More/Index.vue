@@ -156,7 +156,6 @@
                     <div
                         class="pl-20 item"
                         @click="openDefaultFilterDialog"
-                        v-if="!isReferenceComp && !isMainDetailField"
                     >
                         默认查询设置
                     </div>

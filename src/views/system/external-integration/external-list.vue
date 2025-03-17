@@ -128,7 +128,7 @@ const changeSwitch = (row) => {
     tempForm.bindUsers = row.bindUsers.id;
     dialogForm.value.form = { ...tempForm };
     mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
-    mlActiveDialogRefs.value.saveProcess();
+    mlActiveDialogRefs.value.saveProcess('changeSwitch');
 };
 
 // 保存流程

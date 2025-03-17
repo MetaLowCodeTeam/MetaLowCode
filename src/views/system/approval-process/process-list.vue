@@ -110,7 +110,7 @@ const changeSwitch = (row) => {
     let tempForm = { ...row };
     dialogForm.value.form = { ...tempForm };
     mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
-    mlActiveDialogRefs.value.saveProcess();
+    mlActiveDialogRefs.value.saveProcess('changeSwitch');
 };
 
 // 编辑弹框

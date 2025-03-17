@@ -973,7 +973,6 @@ const getLayoutList = async () => {
             entityName: entityName.value,
             entityCode: entityCode.value,
         };
-        console.log(ALL.FILTER)
 
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
