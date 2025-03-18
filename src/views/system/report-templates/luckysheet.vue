@@ -11,6 +11,7 @@
             :reportName="reportName"
             :dbList="menuList"
             :sheets="sheets"
+            :showToolbarConfig="showToolbarConfig"
         />
     </div>
 </template>
@@ -39,6 +40,10 @@ let reportConfigId = ref("");
 let entityCode = ref("");
 // 菜单列表
 let menuList = ref([]);
+
+let showToolbarConfig =ref({
+    conditionalFormat: true,
+});
 
 let defaultSheets = shallowRef([
     {

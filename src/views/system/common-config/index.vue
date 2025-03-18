@@ -56,18 +56,9 @@
                                     <el-tooltip
                                         class="box-item"
                                         effect="dark"
-                                        :content="'当前：' + publicSetting.productType?.displayName + ' 不支持该功能'"
-                                        placement="top"
-                                        v-if="needAuthentication.includes(item.key) && (publicSetting.productType?.value == 1 || publicSetting.productType?.value == 2)"
-                                    >
-                                        <el-switch v-model="confData[item.key]" disabled />
-                                    </el-tooltip>
-                                    <el-tooltip
-                                        class="box-item"
-                                        effect="dark"
                                         content="需要先开启短信服务"
                                         placement="top"
-                                        v-else-if="item.key == 'mobilePhoneLogin' && !confData.smsOpen"
+                                        v-if="item.key == 'mobilePhoneLogin' && !confData.smsOpen"
                                     >
                                         <el-switch v-model="confData[item.key]" disabled />
                                     </el-tooltip>
@@ -273,7 +264,7 @@ let confData = reactive({
 let loading = ref(false);
 
 // 需要版本控制的
-let needAuthentication = ref(["dingTalkOpen","wxWorkOpen"]);
+let needAuthentication = ref([]);
 
 /**
  * *************************************** 初始化数据
