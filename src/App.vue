@@ -13,7 +13,7 @@
         </div>
     </el-config-provider>
     <div class="web-ver">{{ publicSetting.webVer }}</div>
-    <mlCustomerService v-if="publicSetting.trialVersionFlag" />
+    <mlCustomerService v-if="publicSetting.trialVersionFlag || publicSetting.productType.value == 1" />
 </template>
 
 <script setup>
