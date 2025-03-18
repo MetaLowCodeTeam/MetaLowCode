@@ -42,7 +42,7 @@ let entityCode = ref("");
 let menuList = ref([]);
 
 let showToolbarConfig =ref({
-    conditionalFormat: true,
+    conditionalFormat: false,
 });
 
 let defaultSheets = shallowRef([

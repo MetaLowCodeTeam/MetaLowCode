@@ -562,7 +562,9 @@ const onSubmit = async () => {
     }
     // 重新赋值钉钉集成开关
     confData.dingTalkSetting.openStatus = confData.dingTalkOpen;
-
+    if(!confData.wxWorkSetting){
+        confData.wxWorkSetting = {};
+    }
     // 如果企业微信集成是开启的
     if (confData.wxWorkOpen) {
         for (const key in confData.wxWorkSetting) {
@@ -572,12 +574,9 @@ const onSubmit = async () => {
         }
         confData.wxWorkSetting.nodeRole = confData.wxWorkNodeRole;
     }
-    if(!confData.wxWorkSetting){
-        confData.wxWorkSetting = {};
-    }
+    
     // 重新赋值企业微信集成开关
     confData.wxWorkSetting.openStatus = confData.wxWorkOpen;
-
     if(!confData.wechatMiniAppSetting){
         confData.wechatMiniAppSetting = {
             appId: null,
