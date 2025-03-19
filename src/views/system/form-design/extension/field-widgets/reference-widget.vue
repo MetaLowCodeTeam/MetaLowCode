@@ -100,8 +100,8 @@
 				@recordSelected="beforeSetReferRecord"
                 @multipleRecordSelected="beforeMultipleSetReferRecord"
 				:gDsv="gDsv"
-                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
-                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
+                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
