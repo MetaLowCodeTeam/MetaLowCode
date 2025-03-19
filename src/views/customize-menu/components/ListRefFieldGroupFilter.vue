@@ -33,6 +33,9 @@ watchEffect(() => {
 });
 
 const nodeCheckChange = (list) => {
+    if(!props.treeGroupConf.isMultiple){
+        return
+    }
     formatTreeData(list)
 };
 
