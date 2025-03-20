@@ -346,7 +346,7 @@ const initFormLayout = async (formLayoutId) => {
                 if(!props.isDialog) {
                     await getApprovalTaskInfo();
                 }else {
-                    getApprovalTaskById();
+                    await getApprovalTaskById();
                 }
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
