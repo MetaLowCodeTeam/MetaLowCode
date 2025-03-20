@@ -628,8 +628,11 @@ const onAdd = (e) => {
 
 
 const editEmits = (obj) => {
-    // emits('onEdit', obj)
-    editRefs.value.openDialog(obj);
+    let tempObj = JSON.parse(JSON.stringify(obj));
+    if(!tempObj.formId) {
+        tempObj.formId = formId.value || props.recordDetailFormId;
+    }
+    editRefs.value.openDialog(tempObj);
 }
 
 // DSV新建
