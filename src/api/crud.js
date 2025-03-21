@@ -172,6 +172,11 @@ export function queryEntityListableFields(entityCode) {
     return http.get('/crud/queryEntityListableFields', { entityCode})
 }
 
+// 引用组件列显示
+export function queryEntityListableFieldsByRefField(field, entity) {
+    return http.get('/crud/queryEntityListableFieldsByRefField', { field, entity})
+}
+
 /**
  * 分配
  */

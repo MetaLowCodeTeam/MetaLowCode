@@ -258,7 +258,7 @@ const openDialog = (data) => {
     isShow.value = true;
 };
 
-const saveProcess = async () => {
+const saveProcess = async (target) => {
     let { 
         type, 
         form, 
@@ -321,6 +321,11 @@ const saveProcess = async () => {
     }
     if (saveEntity == "ExternalForm" && form.bindUsers.length > 0) {
         params.bindUsers = form.bindUsers[0].id;
+    }
+    if(target == 'changeSwitch') {
+        params = {
+            isDisabled: isDisabled ? isDisabled : false,
+        }
     }
     loading.value = true;
     let res;

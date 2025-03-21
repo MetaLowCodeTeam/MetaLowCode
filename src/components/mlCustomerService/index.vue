@@ -1,8 +1,8 @@
 <template>
     <!--  -->
     <div ref="el" :style="style" style="position: fixed; user-select: none; z-index: 2002;">
-        <div class="customer-service" @click="open" title="咨询客服">
-            <SvgIcon icon-name="customer-service" size="36" title="咨询客服" />
+        <div class="customer-service" @click="open" title="咨询美乐客服">
+            <SvgIcon icon-name="customer-service" size="28" title="咨询美乐客服" />
         </div>
     </div>
 </template>
@@ -50,9 +50,9 @@ const openCustomer = () => {
 <style lang='scss' scoped>
 .customer-service {
     background: var(--el-color-primary);
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
     border-radius: 50%;
     text-align: center;
     cursor: pointer;

@@ -149,7 +149,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="选择表单关联展示字段" name="second">
                             <ReferenceEntitySet 
-                                :fieldList="fieldItems" 
+                                :fieldList="filterFieldItems(fieldItems)" 
                                 v-model="virtualFields"
                             />
                         </el-tab-pane>
@@ -227,10 +227,15 @@ import {
     getField,
     filterEntitySet,
 } from "@/api/system-manager";
+import { 
+    queryEntityListableFields,
+    queryEntityListableFieldsByRefField
+} from "@/api/crud";
 import { copyObj, getSimplePinYin } from "@/utils/util";
 import FieldState from "@/views/system/field-state-variables";
 import ReferenceEntitySet from "@/components/mlReferenceSearch/reference-entity-set.vue";
-
+import useCommonStore from "@/store/modules/common";
+const { queryEntityCodeByName } = useCommonStore();
 export default {
     name: "ReferenceWidgetEditor",
     props: {
@@ -359,6 +364,9 @@ export default {
         }
     },
     methods: {
+        filterFieldItems(fieldItems){
+            return fieldItems.filter(el => !el.fieldName.includes('.'));
+        },
         async getFieldProps() {
             this.saveLoading = true;
             let res = await getField(this.fieldName, this.entity);
@@ -391,6 +399,7 @@ export default {
             }
             this.saveLoading = true;
             let res = await getRefFieldExtras(savedProps.name, this.entity);
+            let res2 = await queryEntityListableFieldsByRefField(savedProps.name, this.entity);
             if (res && res.code == 200) {
                 if (res.data) {
                     this.currentRefEntity = res.data.currentRefEntity;
@@ -400,8 +409,15 @@ export default {
                     this.refEntityAndFields = res.data.refEntityAndFields;
                     this.selectedFieldItems = res.data.selectedFieldItems;
                     this.virtualFields = res.data.virtualFields;
-                    this.fieldItems = res.data.fieldItems;
                 }
+            }
+            if(res2 && res2.code == 200) {
+                this.fieldItems = res2.data.map(el => {
+                    el.label = el.fieldLabel;
+                    el.name = el.fieldName;
+                    el.type = el.fieldType;
+                    return el
+                });
             }
             this.saveLoading = false;
         },
@@ -490,11 +506,14 @@ export default {
             this.showEntityListDialogFlag = false;
 			this.refDetailEntitySelected = this.refDetailEntityFlag;
             this.fieldItems.length = 0;
-            let res = await getFieldSet(this.refEntityName);
+            let res = await queryEntityListableFields(queryEntityCodeByName(this.refEntityName));
             if (res && res.code == 200) {
                 let resultList = res.data;
                 if (resultList) {
                     resultList.filter((item) => {
+                        item.label = item.fieldLabel;
+                        item.name = item.fieldName;
+                        item.type = item.fieldType;
                         if (item.type !== "PrimaryKey") {
                             this.fieldItems.push(item);
                         }

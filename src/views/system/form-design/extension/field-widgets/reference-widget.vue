@@ -100,8 +100,8 @@
 				@recordSelected="beforeSetReferRecord"
                 @multipleRecordSelected="beforeMultipleSetReferRecord"
 				:gDsv="gDsv"
-                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
-                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm"
+                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
@@ -278,7 +278,6 @@ export default {
                 this.$refs.referRemote.setFilterConditions(null, false);
                 return
             }
-            console.log(this.filterConditions,'this.filterConditions')
             this.$refs.referRemote.setFilterConditions(this.filterConditions, true);
         },
 		onAppendButtonClick() {
@@ -368,8 +367,9 @@ export default {
             } else {
                 this.filterConditions = null;
             }
-            if(this.gDsv["filterConditions"]){
-                this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv["filterConditions"]);
+            let filedName = this.field.options.name;
+            if(this.gDsv[filedName]){
+                this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv[filedName].filterConditions);
             }
             return true;
         },

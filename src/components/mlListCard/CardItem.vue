@@ -1,12 +1,5 @@
 <style lang="scss" scoped>
-:deep(.render-form) {
-    .el-row {
-        padding: 0 8px 0 8px !important;
-    }
-    .sub-form-container .el-row {
-        padding: 0 !important;
-    }
-}
+
 
 
 .list-card-item {

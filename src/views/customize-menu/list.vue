@@ -29,6 +29,7 @@
                             link
                             :loading="queryPanelLoading"
                             @click="changeQueryPanel(false)"
+                            v-if="listParamConf.showChangeQueryPanel"
                         >
                             <el-icon size="16" class="toggle-query-icon">
                                 <Switch />
@@ -91,7 +92,7 @@
                         bg
                         :loading="queryPanelLoading"
                         @click="changeQueryPanel(true)"
-
+                        v-if="listParamConf.showChangeQueryPanel"
                     >
                         切换查询面板
                     </el-button>
@@ -385,7 +386,7 @@
         <mlCustomEdit
             ref="editRefs"
             :entityName="entityName"
-            :nameFieldName="nameFieldName"
+            :nameFieldName="isOtherEntity ? null : nameFieldName"
             :layoutConfig="layoutConfig"
             @saveFinishCallBack="editConfirm"
             :recordNewFormId="listParamConf.recordNewFormId"
@@ -473,7 +474,7 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 import mlApprove from "@/components/mlApprove/index.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
-const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
+const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
@@ -643,6 +644,7 @@ const listParamConf = ref({
     // 是否显示列表复选框 注意，如果列表复选框开启，则列表的头部按钮点击事件会失效
     showTableCheckbox: true,
     showHeader: true,
+    showChangeQueryPanel: true,
     showAdvancedQuery: true,
     showQuickQuery: true,
     showOpenBtn: true,
@@ -1188,7 +1190,12 @@ let myFormEntityId = ref("");
 const getDialogTitle = (row, key) => {
     let customDialogConfigFunc = rowStyleConf.value?.dialogConfig || null;
     if(customDialogConfigFunc){
-        let editTitle = new Function('row', 'entityName', customDialogConfigFunc)(row, entityName.value);
+        let entity = {
+            name: entityName.value,
+            code: entityCode.value,
+            label: queryEntityLabelByName(entityName.value),
+        }
+        let editTitle = new Function('row', 'entity', customDialogConfigFunc)(row, entity);
         return editTitle[key];
     }
     return {
@@ -1199,6 +1206,7 @@ const getDialogTitle = (row, key) => {
 
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
+    isOtherEntity.value = false;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
         if(!detailEntityFlag && !myFormEntityId.value){
@@ -1260,8 +1268,11 @@ const getEditBtnTitle = (row) => {
     }
     return str;
 };
+
+let isOtherEntity = ref(false);
 // 编辑
 const onEditRow = (row, localDsv, formId) => {
+    isOtherEntity.value = false;
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
@@ -1320,14 +1331,6 @@ const openDetailDialog = (row, localDsv, formId) => {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    // 是明细表编辑
-    // if(mainDetailField.value){
-    //     let tempV = {};
-    //     tempV.isRead = true;
-    //     tempV.detailId = row[idFieldName.value];
-    //     editRefs.value.openDialog(tempV);
-    //     return
-    // }
     customDetailDialogTitle.value = getDialogTitle(row, 'detailTitle');
     detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
 };
@@ -1632,6 +1635,7 @@ const loadRouterParams = (cbApi) => {
 const copySuccess = ({type, recordId}) => {
     getTableList();
     if(type == 1){
+        isOtherEntity.value = false;
         let { detailEntityFlag, refEntityBindingField } = props;
         let tempV = {
             detailEntityFlag,
@@ -1853,6 +1857,7 @@ const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
 
 // 新建编辑其他实体
 const editToOtherEntity = (editParam) => {
+    isOtherEntity.value = true;
     editRefs.value.openDialog(editParam);
 };
 

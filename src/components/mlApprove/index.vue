@@ -346,7 +346,7 @@ const initFormLayout = async (formLayoutId) => {
                 if(!props.isDialog) {
                     await getApprovalTaskInfo();
                 }else {
-                    getApprovalTaskById();
+                    await getApprovalTaskById();
                 }
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
@@ -758,11 +758,7 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-:deep(.render-form) {
-    // .el-row {
-    //     padding: 0 8px 0 8px !important;
-    // }
-}
+
 .detail-container {
     box-sizing: border-box;
     padding-right: 5px;

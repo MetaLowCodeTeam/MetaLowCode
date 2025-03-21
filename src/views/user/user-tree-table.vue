@@ -510,11 +510,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.render-form) {
-    .el-row {
-        padding: 0 8px 0 8px !important;
-    }
-}
+
 
 .generate-pwd {
     cursor: pointer;

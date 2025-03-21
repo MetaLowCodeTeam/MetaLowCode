@@ -64,6 +64,10 @@
 <script setup>
 import { reactive, ref, inject } from "vue";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+
+const Route = useRouter();
+const appPath = import.meta.env.VITE_APP_PATH;
 
 const $API = inject("$API");
 const props = defineProps({
@@ -135,6 +139,13 @@ const onSubmit = async () => {
 		approvalDialog.isShow = false;
 	}
 	approvalDialog.loading = false;
+};
+
+// 配置流程
+const goApprovalList = () => {
+    approvalDialog.isShow = false;
+	Route.push(appPath + "process-list");
+    emits("onSubmit");
 };
 
 

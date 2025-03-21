@@ -6,6 +6,7 @@
 	height: calc(100% - 41px);
 	box-sizing: border-box;
 	padding: 20px;
+    min-width: 1300px;
 	.list-card-header {
 		border-top: 3px solid var(--el-color-primary);
 		background: #fff;

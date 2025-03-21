@@ -161,15 +161,21 @@ export default {
             this.checkboxGroup = [];
             this.selectValue = [];
             let sourceFields = [];
+            let newOption = [...this.field.options.optionItems];
             if(this.fieldModel){
                 sourceFields = this.fieldModel.split(",").map(el => {
                     return {
                         label: el,
-                        value: this.getGuid()
+                        value: newOption.find(item => item.label === el)?.value || this.getGuid()
+                    }
+                });
+                // 遍历 sourceFields 如果  newOption 中没有 则添加
+                sourceFields.forEach(el => {
+                    if(!newOption.find(item => item.label === el.label)) {
+                        newOption.push(el);
                     }
                 });
             }
-            let newOption = Object.assign([], this.field.options.optionItems, sourceFields);
             this.options = newOption.map(el => {
                 let newValue = el.label || el.value;
                 if(this.fieldModel && this.fieldModel.split(",").includes(newValue)) {
