@@ -337,13 +337,6 @@ const withdrawApproval = () => {
 
 
 
-const appPath = import.meta.env.VITE_APP_PATH;
-// 配置流程
-const goApprovalList = () => {
-	Route.push(appPath + "process-list");
-};
-
-
 
 watchEffect(() => {
     myApproval.value = props.recordApproval;
