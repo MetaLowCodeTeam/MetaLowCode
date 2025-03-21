@@ -53,15 +53,17 @@ const openDialog = (id, node) => {
 	if (id) {
 		tempV.detailId = id;
 		tempV.localDsv = {
-			filterConditions: {
-				equal: "OR",
-				items: [
-					{
-						fieldName: "departmentId",
-						op: "NBTD",
-						value: id,
-					},
-				],
+            parentDepartmentId: { 
+                filterConditions: {
+                    equal: "OR",
+                    items: [
+                        {
+                            fieldName: "departmentId",
+                            op: "NBTD", 
+                            value: id,
+                        },
+                    ],
+				},
 			},
 		};
 	}
@@ -71,7 +73,6 @@ const openDialog = (id, node) => {
 		tempV.fieldNameLabel = node?.data?.label;
 		tempV.fieldNameVale = node?.data?.id;
 	}
-	console.log(tempV, "tempV");
 	editRefs.value?.openDialog(tempV);
 };
 
