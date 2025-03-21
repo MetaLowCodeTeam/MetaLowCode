@@ -228,6 +228,7 @@
 			entity="OuterDataModel"
 			refField="dataSource"
 			@recordSelected="recordSelected"
+            :filterConditions="filterConditions"
 		/>
 	</ml-dialog>
 </template>
@@ -440,10 +441,21 @@ function mapFieldsAndParams(dataList, existingList, key, defaultValues) {
 		}
 	});
 }
-
+// 过滤条件
+const filterConditions = ref({});
 // 打开选择数据源弹框
 let showReferenceDialogFlag = ref(false);
 const openDataSourceDialog = () => {
+    filterConditions.value = {
+        equation: "OR",
+		items: [
+            {
+                fieldName: 'isDisabled',
+                value: false,
+                op: "EQ",
+            }
+        ],
+    };
 	showReferenceDialogFlag.value = true;
 };
 // 确认选择数据源

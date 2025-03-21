@@ -350,6 +350,21 @@ const routes = [
                         meta: { title: 'API密钥', icon: 'el-icon-key', role: 'r51-1' },
 						component: 'system/external-integration/meta-api',
 					},
+                    // 外部数据源
+                    {
+                        path: appPath + 'outer-data-source',
+                        name: 'OuterDataSource',
+                        component: 'system/data-base/OuterDataSource',
+                        meta: { title: '外部数据源', icon: 'el-icon-Coin', role: 'r65-1' }
+                    },
+                    // 数据模型
+                    {
+                        path: appPath + 'outer-data-model',
+                        name: 'OuterDataModel',
+                        component: 'system/data-base/OuterDataModel',
+                        meta: { title: '数据模型', icon: 'el-icon-Coin', role: 'r66-1' }
+                    },
+                    
 				]
 			},
 
@@ -395,22 +410,6 @@ const routes = [
 						component: 'system/data-transformation/Detail/Index',
 						meta: { title: '数据转化-详情', hidden: true},
 					},
-                    // 外部数据源
-                    {
-                        path: appPath + 'outer-data-source',
-                        name: 'OuterDataSource',
-                        component: 'system/data-base/OuterDataSource',
-                        meta: { title: '外部数据源', icon: 'el-icon-Coin', role: 'r65-1' }
-                    },
-                    // 数据模型
-                    {
-                        path: appPath + 'outer-data-model',
-                        name: 'OuterDataModel',
-                        component: 'system/data-base/OuterDataModel',
-                        meta: { title: '数据模型', icon: 'el-icon-Coin', role: 'r66-1' }
-                    },
-                    
-
                 ]
             },
             // 字段管理
