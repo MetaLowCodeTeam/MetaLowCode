@@ -7,6 +7,14 @@
         size="large"
         @keyup.enter="login"
     >
+        <el-form-item prop="tenantCode" v-if="myPublicSetting?.pluginIdList.includes('metaTenant')">
+            <el-input
+                v-model="form.tenantCode"
+                prefix-icon="el-icon-menu"
+                clearable
+                placeholder="请输入租户编码"
+            ></el-input>
+        </el-form-item>
         <el-form-item prop="user">
             <el-input
                 v-model="form.user"
@@ -149,6 +157,7 @@ export default {
                 user: this.form.user,
                 password: encryptPassword,
                 imgCode: this.myPublicSetting?.verificationCodeLogin ? this.form.imgYzm : null,
+                tenantCode: this.form.tenantCode,
             };
            
 
