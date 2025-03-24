@@ -98,6 +98,8 @@
 										clearable
 										v-if="item.type == 2"
 										class="w-100"
+                                        format="YYYY-MM-DD HH:mm:ss"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
 									/>
 									<!-- 日期3 -->
 									<el-date-picker
@@ -107,6 +109,8 @@
 										clearable
 										v-if="item.type == 3"
 										class="w-100"
+                                        format="YYYY-MM-DD"
+                                        value-format="YYYY-MM-DD"
 									/>
 									<!-- 数字4 -->
 									<el-input-number
@@ -237,6 +241,9 @@ const loadModelData = async () => {
                     isRequired: el.isRequired,
 				});
 				queryFrom.value[el.paramName] = el.defaultValue || "";
+                if([2,3,4].includes(el.paramType.value)){ 
+                    queryFrom.value[el.paramName] = el.defaultValue || null;
+                }
 				if (el.isRequired) {
 					queryParamsRules.value[el.paramName] = [
 						{
@@ -301,7 +308,7 @@ const loadListData = async () => {
 	let listParam = JSON.parse(JSON.stringify(queryFrom.value));
 	// 处理文本模糊查询
 	queryParams.value.forEach((item) => {
-		if (item.type === "5" && listParam[item.name]) {
+		if (item.type == 5 && listParam[item.name]) {
 			listParam[item.name] = `%${listParam[item.name]}%`;
 		}
 	});

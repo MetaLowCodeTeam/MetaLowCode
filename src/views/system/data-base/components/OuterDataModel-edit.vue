@@ -178,7 +178,6 @@
 								<el-table
 									:data="formData.queryFields"
 									:border="true"
-									style="width: 400px"
 									max-height="300"
 								>
 									<el-table-column
