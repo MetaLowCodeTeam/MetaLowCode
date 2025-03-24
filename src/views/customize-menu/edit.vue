@@ -623,6 +623,11 @@ const editById = (id) => {
     initFormLayout();
 }
 
+// 重新加载数据
+const reload = () => {
+    initFormLayout();
+}
+
 defineExpose({
     openDialog,
     confirm,
@@ -634,6 +639,7 @@ defineExpose({
     getRecordId,
     editById,
     loading,
+    reload,
 });
 </script>
 <style lang='scss' scoped>
