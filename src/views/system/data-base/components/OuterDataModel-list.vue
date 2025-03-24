@@ -98,8 +98,8 @@
 										clearable
 										v-if="item.type == 2"
 										class="w-100"
-                                        format="YYYY-MM-DD HH:mm:ss"
-                                        value-format="YYYY-MM-DD HH:mm:ss"
+										format="YYYY-MM-DD HH:mm:ss"
+										value-format="YYYY-MM-DD HH:mm:ss"
 									/>
 									<!-- 日期3 -->
 									<el-date-picker
@@ -109,8 +109,8 @@
 										clearable
 										v-if="item.type == 3"
 										class="w-100"
-                                        format="YYYY-MM-DD"
-                                        value-format="YYYY-MM-DD"
+										format="YYYY-MM-DD"
+										value-format="YYYY-MM-DD"
 									/>
 									<!-- 数字4 -->
 									<el-input-number
@@ -138,8 +138,7 @@
 			<div
 				class="table-container"
 				:style="{
-					height:
-						queryParams.length > 0 ? '500px' : '100%',
+					height: queryParams.length > 0 ? '500px' : '100%',
 				}"
 			>
 				<el-table
@@ -238,12 +237,12 @@ const loadModelData = async () => {
 					label: el.paramLabel || el.paramName,
 					name: el.paramName,
 					type: el.paramType.value,
-                    isRequired: el.isRequired,
+					isRequired: el.isRequired,
 				});
 				queryFrom.value[el.paramName] = el.defaultValue || "";
-                if([2,3,4].includes(el.paramType.value)){ 
-                    queryFrom.value[el.paramName] = el.defaultValue || null;
-                }
+				if ([2, 3, 4].includes(el.paramType.value)) {
+					queryFrom.value[el.paramName] = el.defaultValue || null;
+				}
 				if (el.isRequired) {
 					queryParamsRules.value[el.paramName] = [
 						{
@@ -262,9 +261,7 @@ const loadModelData = async () => {
 			};
 		});
 		// 检查查询参数是否合法
-		if (checkQueryParams()) {
-			await loadListData();
-		}
+		await loadListData();
 	}
 	loading.value = false;
 };
@@ -283,28 +280,32 @@ const handleQuery = () => {
 const resetQuery = () => {
 	// 清空表单
 	queryParamsRef.value.resetFields();
-	// 清空表格数据
-	tableData.value = [];
 	// 重置分页
 	pageConfig.value.currentPage = 1;
 	pageConfig.value.pageSize = 20;
 	pageConfig.value.total = 0;
-	// 检查查询参数是否合法
-	if (checkQueryParams()) {
-		loadListData();
-	}
+	loadListData();
 };
 
 // 分页切换
 const handleSizeChange = (val) => {
 	pageConfig.value.pageSize = val;
+	loadListData();
 };
 const handleCurrentChange = (val) => {
 	pageConfig.value.currentPage = val;
+	// 检查查询参数是否合法
+	loadListData();
 };
 
 // 加载列表数据
 const loadListData = async () => {
+	// 检查查询参数是否合法
+	if (!checkQueryParams()) {
+		return;
+	}
+    // 清空表格数据
+	tableData.value = [];
 	let listParam = JSON.parse(JSON.stringify(queryFrom.value));
 	// 处理文本模糊查询
 	queryParams.value.forEach((item) => {
@@ -316,8 +317,8 @@ const loadListData = async () => {
 	let res = await getOuterDataByDataModel(
 		{
 			outerDataModelId: outerDataModelId.value,
-			page: pageConfig.value.currentPage,
-			size: pageConfig.value.pageSize,
+			pageNo: pageConfig.value.currentPage,
+			pageSize: pageConfig.value.pageSize,
 		},
 		listParam
 	);

@@ -9,6 +9,7 @@
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
         @highlightClick="viewDataList"
+        @changeSwitch="changeSwitch"
 	>
 		<template #addButton>
 			<el-button type="primary" @click="openDialog()">新建</el-button>
@@ -46,7 +47,6 @@
 					>
 						删除
 					</el-button>
-
 				</template>
 			</el-table-column>
 		</template>
@@ -60,11 +60,12 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
 import { deleteRecords } from "@/api/crud";
 import { useRouter } from "vue-router";
+import { saveRecord } from "@/api/crud";
 const router = useRouter();
 // 默认排序
 let sortFields = ref([
 	{
-		fieldName: "modifiedOn",
+		fieldName: "createdOn",
 		type: "DESC",
 	},
 ]);
@@ -82,10 +83,10 @@ let tableColumn = ref([
 	},
 	{
 		prop: "isDisabled",
-		label: "是否禁用",
-		formatter: (row) => {
-			return row.isDisabled ? "是" : "否";
-		},
+		label: "启用",
+        align: "center",
+        customSlot: "switch",
+        isNegation: true,
 	},
     {
         prop: "outerDataModelId",
@@ -94,7 +95,7 @@ let tableColumn = ref([
         align: "center",
         highlight: true,
         formatter: (row) => {
-            return "查看";
+            return "查看数据";
         },
     },
 ]);
@@ -161,5 +162,18 @@ const mlSingleListRef = ref();
 const updateTable = () => {
 	mlSingleListRef.value?.getTableList();
 };
+
+const changeSwitch = async (row) => {
+    mlSingleListRef.value.loading = true;
+    let res = await saveRecord("OuterDataModel", row.outerDataModelId, {
+        isDisabled: row.isDisabled ? true : false,
+    });
+    if(res){
+        ElMessage.success("修改成功");
+        mlSingleListRef.value.getTableList();
+    }else {
+        mlSingleListRef.value.loading = false;
+    }
+}
 </script>
 <style lang="scss" scoped></style>

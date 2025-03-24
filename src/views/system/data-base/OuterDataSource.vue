@@ -8,6 +8,7 @@
 		fieldName="dataSourceName"
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
+        @changeSwitch="changeSwitch"
 	>
 		<template #addButton>
             <el-button type="primary" @click="openDialog(null)">新建</el-button>
@@ -58,10 +59,12 @@ import { ref } from "vue";
 import OuterDataSourceEdit from "./components/OuterDataSource-edit.vue";
 // 查看详情
 import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
+import { saveRecord } from "@/api/crud";
+import { ElMessage } from "element-plus";
 // 默认排序
 let sortFields = ref([
 	{
-		fieldName: "modifiedOn",
+		fieldName: "createdOn",
 		type: "DESC",
 	},
 ]);
@@ -83,10 +86,10 @@ let tableColumn = ref([
 	},
 	{
 		prop: "isDisabled",
-		label: "是否禁用",
-		formatter: (row) => {
-			return row.isDisabled ? "是" : "否";
-		},
+		label: "启用",
+        align: "center",
+        customSlot: "switch",
+        isNegation: true,
 	},
 
 	{
@@ -125,5 +128,18 @@ const mlSingleListRef = ref();
 const updateTable = () => {
 	mlSingleListRef.value?.getTableList();
 };
+
+const changeSwitch = async (row) => {
+    mlSingleListRef.value.loading = true;
+    let res = await saveRecord("OuterDataSource", row.outerDataSourceId, {
+        isDisabled: row.isDisabled ? true : false,
+    });
+    if(res){
+        ElMessage.success("修改成功");
+        mlSingleListRef.value.getTableList();
+    }else {
+        mlSingleListRef.value.loading = false;
+    }
+}
 </script>
 <style lang="scss" scoped></style>
