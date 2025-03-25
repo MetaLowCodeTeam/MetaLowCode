@@ -3,10 +3,10 @@
 	<!--  -->
 	<mlSingleList
 		title="多租户"
-		mainEntity="BackupDatabase"
+		mainEntity="Tenant"
 		fieldsList="tenantName,isDisabled,tenantState,tenantCode"
 		:sortFields="sortFields"
-		fieldName="database"
+		fieldName="tenantName"
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
 		queryUrl="/plugins/metaTenant/tenant/listQuery"
@@ -72,7 +72,7 @@
 						type="primary"
 						link
 						icon="View"
-						@click="openTenantEdit(scope.row)"
+						@click="openTenantEdit(scope.row, 'view')"
 					>
 						查看
 					</el-button>
@@ -144,8 +144,8 @@ let tableColumn = ref([
 ]);
 
 let tenantEditRef = ref("");
-const openTenantEdit = (row) => {
-	tenantEditRef.value.openDialog(row || {});
+const openTenantEdit = (row, target) => {
+	tenantEditRef.value.openDialog(row || {}, target);
 };
 let mlSingleListRef = ref("");
 const refresh = () => {

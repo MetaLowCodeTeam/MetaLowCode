@@ -12,6 +12,7 @@
 				:model="form"
 				:rules="rules"
 				label-width="80px"
+                :disabled="isView"
 			>
 				<el-form-item label="租户名称" prop="tenantName">
 					<el-input
@@ -60,9 +61,11 @@ let rules = ref({
 	],
 });
 
-const openDialog = (row) => {
+let isView = ref(false);
+
+const openDialog = (row, target) => {
 	isShow.value = true;
-	title.value = row.tenantId ? "编辑" + row.tenantName : "新增租户";
+	title.value = row.tenantId ? (target == 'view' ? '查看' : '编辑') + row.tenantName : "新增租户";
 	if (row.tenantId) {
 		form.value = {
 			tenantName: row.tenantName,
@@ -71,6 +74,9 @@ const openDialog = (row) => {
 			tenantId: row.tenantId,
 		};
 	}
+    if(target == 'view'){
+        isView.value = true;
+    }
 };
 const formRef = ref("");
 const beforeSave = () => {
