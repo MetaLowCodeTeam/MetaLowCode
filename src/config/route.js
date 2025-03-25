@@ -196,7 +196,7 @@ const routes = [
                 path: appPath + 'app-manager',
                 name: 'AppManager',
                 component: 'system/app-manager/index',
-                meta: { title: t('route.20904'), icon: 'el-icon-Platform', role: 'r6000' }
+                meta: { title: t('route.20904'), icon: 'el-icon-Platform', role: 'r6025' }
             },
             {
                 path: '',
