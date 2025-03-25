@@ -54,6 +54,7 @@
                 @cancel="dialogIsShow = false"
                 @confirm="conditionConfirm"
                 :entityName="trigger.entityCode"
+                enableSql
             />
         </mlDialog>
     </div>

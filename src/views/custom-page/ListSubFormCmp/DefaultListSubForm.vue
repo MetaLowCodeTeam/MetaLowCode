@@ -119,6 +119,9 @@ export default {
         },
         getTableDataList(){
             return this.$refs.EntityListRefs.getTableDataList();
+        },
+        refresh(){
+            this.$refs.EntityListRefs.refreshList();
         }
 
 	},

@@ -1,7 +1,13 @@
 <template>
     <!--  -->
     <!--  -->
-    <div class="complex-flow-box" v-loading="loading">
+    <div 
+        v-if="!publicSetting.pluginIdList.includes('metaWorkFlow')"
+        class="not-plugin"
+    >
+        复杂流程监控 插件未安装！
+    </div>
+    <div class="complex-flow-box" v-loading="loading" v-else>
         <div class="complex-flow">
             <MetaFlowDesigner
                 ref="MetaFlowDesignerRef"
@@ -108,8 +114,10 @@ import BoundaryEvent from './boundaryEvent/Index.vue';
 // 公用方法
 import { checkConditionList } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
-const { queryEntityNameByCode } = useCommonStore();
 
+import { storeToRefs } from "pinia";
+const { queryEntityNameByCode } = useCommonStore();
+const { publicSetting } = storeToRefs(useCommonStore());
 
 // API
 import { saveComplexFlow, getComplexFlow } from "@/api/approval";
@@ -300,6 +308,7 @@ const onSave = async () => {
         } else {
             properties = getProperties(el.properties.flowJson);
         }
+       
         // 如果是开始节点
         if (el.type == "bpmn:startEvent") {
             let { nodeRoleType, nodeRoleList } = properties;
@@ -373,6 +382,20 @@ const onSave = async () => {
                 return;
             }
         }
+        if(el.text && el.text.value) {
+            if(!isNaN(el.text.value)){
+                ElMessage.error("节点名称不能为纯数字");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
+            // el.text.value 加个正则，不能包含 < > & ' "
+            let reg = /[<>&'"]/g;
+            if(reg.test(el.text.value)){
+                ElMessage.error("节点名称不能包含：“<”、“>”、“&”、“'”、“\"”");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
+        }
     }
     // 遍历线
     for (let index = 0; index < edges.length; index++) {
@@ -389,6 +412,20 @@ const onSave = async () => {
                 ElMessage.error("节点配置有误，请检查后重新配置");
                 setNodeBorderColor(el.type, el.id, "red");
                 return;
+            }
+        }
+        if(el.text && el.text.value) {
+            if(!isNaN(el.text.value)){
+                ElMessage.error("节点名称不能为纯数字");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
+            }
+            // el.text.value 加个正则，不能包含 < > & ' "
+            let reg = /[<>&'"]/g;
+            if(reg.test(el.text.value)){
+                ElMessage.error("节点名称不能包含：“<”、“>”、“&”、“'”、“\"”");
+                setNodeBorderColor(el.type, el.id, "red");
+                return
             }
         }
     }
@@ -546,5 +583,8 @@ const cloneDeep = (data) => {
             padding-bottom: 15px;
         }
     }
+}
+:deep(.item-imitate-open) {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAVlJREFUSEvtVVFOg0AUnFd7EHsS2w+aeArLLcCfyo9wC7yFSTEpnkTu0dbRt2U3mBSBFasf3YSEBPbNe7Mzs4IzLzkzHi6AozP+vyiNnnntM2J2K1Xbvi8TGoAp7gSY4/gMX4QD4wQldkiaDTjAqOBcgO1wBABERcETgNcskNIxo80TK/2WBZJobQP4IzCgTANZtDWq4HKFLQWhNmMA4w3fIPA6rzSQTuFZ0HQpM4kKrj93PPhQKUT4uBSlsnNFL8yVetEX5blzx4kfuMfsO0U2t9THtpbfptOCWlr9AYlKz2QIM3FBSlxQreDluT6CsQ3db7h6n+DmD0RT+8TLFmr4AxZdwjGCIXJjizGMzz3CNlAjlilyAokzvgMlcu9JG9Fm6tlcPkabSRkXbU3pjhLemlp1vtoMtRitseR7NWnh3tfTEE/5/tsZvL6Fe13AYxc/Ve8y4egsfwB9kKSGcDSb6QAAAABJRU5ErkJggg==) center center no-repeat !important;
 }
 </style>

@@ -39,6 +39,16 @@ export const ext_chart_containers = [
 
 ]
 
+// topBar按钮配置
+const topBarBtnConfig = {
+    show: false,
+    type: 'primary',
+    size: 'small',
+    icon: '',
+    text: 'Button',
+    onClick: '',
+}
+
 
 export const ext_charts_widgets = [
     // 统计数值
@@ -86,7 +96,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
-
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -136,6 +146,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -191,6 +202,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -246,6 +258,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -301,6 +314,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -347,6 +361,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -394,6 +409,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -439,6 +455,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -486,6 +503,7 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -531,6 +549,8 @@ export const ext_charts_widgets = [
             showFullscreen: false,
             showRefresh: false,
             showCollapse: false,
+            showTablePagination: false,
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",
@@ -568,6 +588,7 @@ export const ext_charts_widgets = [
                 // 边框颜色
                 borderColor:"#ddd",
             },
+            topBarBtnConfig,
             customClass: [],
             dsEnabled: false,
             dsName: "",

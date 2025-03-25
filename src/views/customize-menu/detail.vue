@@ -12,7 +12,7 @@
 		<template #header>
 			<div class="detail-header">
 				<div class="detail-header-title">
-					{{ detailName }}
+					{{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
 					<div class="fr fr-box">
 						<span
 							class="fr-icon mr-10"
@@ -44,44 +44,57 @@
 		<div class="detail-main" v-loading="loading">
 			<el-row :gutter="20" v-if="!noeData">
 				<el-col :span="21">
-					<DetailTabs
-						:tabsConf="detailDialog"
-						@tabChange="tabChange"
-						:cutTabIndex="cutTabIndex"
-						@confirm="refresh"
+                    
+                    <DetailTabs
+                        :tabsConf="detailDialog"
+                        @tabChange="tabChange"
+                        :cutTabIndex="cutTabIndex"
+                        @confirm="refresh"
                         :checkTabsFilter="checkTabsFilter"
-					/>
-					<!-- 详情 -->
-					<div v-if="cutTab == 'detail'">
-						<mlApproveBar :approvalInfo="approvalStatus" />
-						<v-form-render
-							v-if="haveLayoutJson"
-							:option-data="optionData"
-							:global-dsv="globalDsv"
-							ref="vFormRef"
-						/>
-						<el-empty
-							v-else
-							:image-size="100"
-							description="未查询到相关配置数据"
-						/>
-					</div>
-                    <div v-else-if="cutTab == 'Attachment'">
-                        <Attachment :entityCode="entityCode" :recordId="detailId"/>
-					</div>
-					<!-- 非详情 -->
-					<div v-else>
-						<DetailTabCom
-							ref="detailTabComRefs"
-							:cutTab="cutTabCom"
-							:tabs="detailDialog.tab"
-                            :cutTabIndex="cutTabIndex"
-							:entityId="detailId"
-                            :idFieldName="idFieldName"
-                            @closeDialog="closeDialog"
-                            @addRow="onAdd"
-						/>
-					</div>
+                    />
+                    <div class="detail-container">
+                    <!-- 详情 -->
+                        <div v-if="cutTab == 'detail'">
+                            <mlApproveBar :approvalInfo="approvalStatus" />
+                            <v-form-render
+                                v-if="haveLayoutJson"
+                                :option-data="optionData"
+                                :global-dsv="globalDsv"
+                                ref="vFormRef"
+                            />
+                            <el-empty
+                                v-else
+                                :image-size="100"
+                                description="未查询到相关配置数据"
+                            />
+                        </div>
+                        <div v-else-if="cutTab == 'Attachment'">
+                            <Attachment :entityCode="entityCode" :recordId="detailId"/>
+                        </div>
+                        <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
+                            <!-- 拿最后一个-后面的字符串 -->
+                            <component 
+                                v-if="componentExists(cutTab.split('_').pop())" 
+                                :is="cutTab.split('_').pop()" 
+                                :recordId="detailId"
+                                ref="customComponentRefs"
+                            />
+                            <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />
+                        </div>
+                        <!-- 非详情 -->
+                        <div v-else>
+                            <DetailTabCom
+                                ref="detailTabComRefs"
+                                :cutTab="cutTabCom"
+                                :tabs="detailDialog.tab"
+                                :cutTabIndex="cutTabIndex"
+                                :entityId="detailId"
+                                :idFieldName="idFieldName"
+                                @closeDialog="closeDialog"
+                                @addRow="onAdd"
+                            />
+                        </div>
+                    </div>
 				</el-col>
 				<el-col :span="3">
 					<div class="detail-right" style="padding-top: 40px">
@@ -107,13 +120,14 @@
                                 <el-col :span="24" v-if="contentSlots.beforeEditBtn">
                                     <slot name="beforeEditBtn"></slot>
                                 </el-col>
-                                <el-col :span="24" v-if="detailParamConf.showEditBtn">
+                                <el-col :span="24" v-if="detailParamConf.showEditBtn && !checkDetailEntityFlag(entityCode)">
                                     <el-button
                                         type="primary"
                                         plain
                                         @click="onEditRow"
                                         :disabled="!checkModifiableEntity(detailId, approvalStatus?.value)"
                                         :title="getEditBtnTitle()"
+                                        v-if="$TOOL.checkRole('r' + entityCode + '-3')"
                                     >
                                         <span class="mr-5">
                                             <el-icon>
@@ -126,7 +140,7 @@
                                 <el-col :span="24" v-if="contentSlots.beforeRevisionHistory">
                                     <slot name="beforeRevisionHistory"></slot>
                                 </el-col>
-                                <el-col :span="24" v-if="detailParamConf.showRevisionHistory">
+                                <el-col :span="24" v-if="detailParamConf.showRevisionHistory && !checkDetailEntityFlag(entityCode)">
                                     <el-button
                                         type="primary"
                                         plain
@@ -153,6 +167,7 @@
                                         :detailId="detailId"
                                         @editColumnConfirm="editColumnConfirm"
                                         :layoutConfig="myLayoutConfig"
+                                        :isMainDetailField="checkDetailEntityFlag(entityCode)"
                                         @copySuccess="copySuccess"
                                     />
                                 </el-col>
@@ -170,6 +185,7 @@
                                     :detailParamConf="detailParamConf"
 									:recordApproval="recordApproval"
 									@onSubmit="onSubmitApproval"
+                                    @onRevokeIng="onRevokeIng"
                                     @closeDialog="closeDialog"
 								/>
 							</el-col>
@@ -186,6 +202,13 @@
             ref="editRefs"
             @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
+            :isUser="isUser"
+        />
+        <!-- 新建、编辑部门 -->
+        <EditDepartment 
+            ref="EditDepartmentRef"
+            @onRefresh="onConfirm"
+            :nameFieldName="nameFieldName"
         />
         <DetailRevisionHistoryDialog ref="DetailRevisionHistoryRef"/>
 	</el-drawer>
@@ -197,6 +220,7 @@ defineOptions({
 });
 
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+import EditDepartment from '@/views/user/components/EditDepartment.vue'
 
 import { 
     ref, 
@@ -224,6 +248,7 @@ import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
+import { globalDsvDefaultData, getModelName, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
 /**
  * 组件
  */
@@ -251,6 +276,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 自定义详情弹框标题
+    customDetailDialogTitle: {
+		type: String,
+		default: "",
+	},
 });
 
 
@@ -265,6 +295,7 @@ const detailParamConf = ref({
     showMoreBtn: true,
     showDelBtn: true,
     showRevisionHistory: true,
+    customDialogTitle: "",
     beforeSubmitApproval: () => true,
     afterSubmitApproval: () => true,
     beforeRevokeApproval: () => true,
@@ -273,10 +304,12 @@ const detailParamConf = ref({
 
 // 插槽内容
 let contentSlots = reactive({});
-let currentExposed = ref({});
+// 自定义弹框标题
+let customDialogTitle = ref("");
 watchEffect(() => {
     detailParamConf.value = Object.assign(detailParamConf.value, props.detailConf)
-    currentExposed.value = getCurrentInstance().exposed;
+    // 自定义弹框标题
+    customDialogTitle.value = props.customDetailDialogTitle;
 })
 
 onMounted(() => {
@@ -298,7 +331,7 @@ let styleConf = ref({
 });
 
 
-const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity } = useCommonStore();
+const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity, checkDetailEntityFlag } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onEdit", "onLayoutFinish"]);
 const $API = inject("$API");
 let vFormRef = ref();
@@ -328,14 +361,12 @@ let cutTabIndex = ref(0);
 let cutTabCom = ref("");
 // 表单数据
 let optionData = ref({});
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 
 // 指定表单ID
 let formId = ref("");
+
+
 
 const openDialog = (id, localDsv, paramFormId) => {
 	detailId.value = id;
@@ -345,7 +376,8 @@ const openDialog = (id, localDsv, paramFormId) => {
 		ElMessage.warning("当前实体未找到");
 		return;
 	}
-    globalDsv.value.parentExposed = currentExposed.value;
+    globalDsv.value.parentExposed = getCurrentInstance()?.exposed;
+    globalDsv.value.modelName = getModelName();
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }
@@ -363,6 +395,11 @@ const closeDialog = () => {
     detailDialog.isShow = false;
 }
 
+const onRevokeIng = () => {
+    console.log('onRevokeIng')
+    loading.value = true;
+}
+
 // 页签更换
 const tabChange = (tab) => {
 	cutTab.value = tab.props.name.split("-")[0];
@@ -372,6 +409,12 @@ const tabChange = (tab) => {
 		refresh();
 	}
 };
+
+// 组件是否存在
+const componentExists = (componentName) => {
+    return Boolean(getCurrentInstance().appContext.components[componentName]);
+}
+
 // 刷新
 const refresh = () => {
 	cutTab.value = "detail";
@@ -498,16 +541,18 @@ const initData = async () => {
                     recordApproval.value = recordApprovalRes.data;
                     globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
                 }
-				let queryByIdRes = await queryById(detailId.value);
+                vFormRef.value.setFormJson(res.data.layoutJson);
+                let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+				let queryByIdRes = await queryById(detailId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
 				if (queryByIdRes && queryByIdRes.data) {
                     globalDsv.value.recordData = queryByIdRes.data;
 		            multipleSelection.value = [queryByIdRes.data];
 					detailName.value = queryByIdRes.data[nameFieldName.value];
-					vFormRef.value.setFormJson(res.data.layoutJson);
+					
                     rowResData.value = queryByIdRes.data || {};
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
 					nextTick(() => {
-						vFormRef.value.setFormData(rowResData.value);
+						vFormRef.value.setFormData(formatFormVirtualField(rowResData.value));
 						nextTick(() => {
 							vFormRef.value.reloadOptionData();
 							vFormRef.value.setReadMode();
@@ -546,14 +591,27 @@ const copySuccess = ({type, recordId}) => {
 
 // 打开编辑
 let editRefs = ref();
+let EditDepartmentRef = ref();
+let isUser = ref(false);
 const onEditRow = (localDsv, formId) => {
+    isUser.value = false;
     let tempV = {
         detailId: detailId.value,
         idFieldName: idFieldName.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
     !!formId && (tempV.formId = formId)
-    editEmits(tempV)
+    let cutEditEntity = queryEntityNameById(detailId.value);
+    // 如果是修改部门
+    if(cutEditEntity == 'Department'){
+        EditDepartmentRef.value?.openDialog(detailId.value);
+    }else {
+        if(cutEditEntity == 'User') {
+            isUser.value = true;
+            tempV.disableWidgets = ["loginName", "loginPwd"];
+        }
+        editEmits(tempV)
+    }
 };
 
 // 新建
@@ -570,8 +628,11 @@ const onAdd = (e) => {
 
 
 const editEmits = (obj) => {
-    // emits('onEdit', obj)
-    editRefs.value.openDialog(obj);
+    let tempObj = JSON.parse(JSON.stringify(obj));
+    if(!tempObj.formId) {
+        tempObj.formId = formId.value || props.recordDetailFormId;
+    }
+    editRefs.value.openDialog(tempObj);
 }
 
 // DSV新建
@@ -584,6 +645,7 @@ const editColumnConfirm = (v) => {
 		detailDialog.isShow = false;
 		emits("onConfirm");
 	} else {
+        
 		onConfirm();
 	}
 };
@@ -693,6 +755,13 @@ const toRevisionHistory = (recordId) => {
     DetailRevisionHistoryRef.value?.openDialog(recordId);
 }
 
+// 刷新自定义组件
+let customComponentRefs = ref();
+const refreshCustomComponent = () => {
+    customComponentRefs.value?.refresh();
+}
+
+
 
 // 暴露方法给父组件调用
 defineExpose({
@@ -702,6 +771,8 @@ defineExpose({
     toEdit,
     toMoreAction,
     toRevisionHistory,
+    closeDialog,
+    refreshCustomComponent
 });
 </script>
 
@@ -759,6 +830,14 @@ defineExpose({
 			margin-bottom: 5px;
 		}
 	}
+}
+.detail-container {
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 10px;;
+    box-sizing: border-box;
+    padding-right: 5px;
 }
 </style>
 

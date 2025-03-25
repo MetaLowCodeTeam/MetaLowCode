@@ -17,305 +17,318 @@
                         v-for="(item,inx) of conditionConf.items"
                         :key="inx"
                     >
-                        <!-- 字段名 -->
-                        <el-col :span="10">
-                            <div class="field-one">
-                                <span class="field-inx">{{ inx+1 }}</span>
-                                <el-icon size="18" class="remove-icon" @click="delConditions(inx)">
-                                    <ElIconRemoveFilled />
-                                </el-icon>
-                            </div>
-                            <el-select
-                                class="field-select"
-                                v-model="item.fieldName"
-                                @change="fieldChange(item)"
-                                filterable
-                                no-match-text="无匹配文本"
-                                size="default"
-                            >
-                                <el-option
-                                    v-for="op in fieldList"
-                                    :key="op.fieldName"
-                                    :label="op.label"
-                                    :value="op.fieldName"
-                                />
-                            </el-select>
-                        </el-col>
-                        <!-- 条件类型 -->
-                        <el-col :span="4">
-                            <el-select v-model="item.op" size="default" @change="getOpCom(item)">
-                                <el-option
-                                    v-for="op in getSelectOp(item)"
-                                    :key="op"
-                                    :label="op_type[op]"
-                                    :value="op"
-                                />
-                            </el-select>
-                        </el-col>
-                        <!-- 条件值 -->
-                        <el-col :span="10">
-                            <!-- 日期选择器 -->
-                            <div v-if="item.opCom =='datePicker'">
-                                <el-date-picker
-                                    size="default"
-                                    v-model="item.value"
-                                    type="date"
-                                    style="width: 100%;"
-                                    format="YYYY/MM/DD"
-                                    value-format="YYYY-MM-DD"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    clearable
-                                />
-                            </div>
-                            <!-- 日期区间 -->
-                            <div v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime'">
-                                <el-date-picker
-                                    size="default"
-                                    v-model="item.value"
-                                    type="date"
-                                    style="width: 100%;"
-                                    class="bw-start-icon mb-5"
-                                    :class="{'is-error':item.isError && !item.value}"
-                                    format="YYYY/MM/DD"
-                                    value-format="YYYY-MM-DD"
-                                    @change="bwChange(item)"
-                                    @focus="clearError(item)"
-                                    clearable
-                                />
-                                <el-date-picker
-                                    size="default"
-                                    v-model="item.value2"
-                                    type="date"
-                                    style="width: 100%;"
-                                    class="bw-end-icon"
-                                    :class="{'is-error':item.isError && !item.value2}"
-                                    format="YYYY/MM/DD"
-                                    value-format="YYYY-MM-DD"
-                                    @change="bwChange(item)"
-                                    @focus="clearError(item)"
-                                    clearable
-                                />
-                            </div>
-                            <!-- 时间区间 -->
-                            <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime'">
-                                <el-date-picker
-                                    size="default"
-                                    v-model="item.value"
-                                    type="datetime"
-                                    style="width: 100%;"
-                                    class="bw-start-icon mb-5"
-                                    :class="{'is-error':item.isError && !item.value}"
-                                    format="YYYY/MM/DD HH:mm:ss"
-                                    value-format="YYYY-MM-DD HH:mm:ss"
-                                    @change="bwChange(item)"
-                                    @focus="clearError(item)"
-                                    :default-time="defaultTimeLE"
-                                    clearable
-                                />
-                                <el-date-picker
-                                    size="default"
-                                    v-model="item.value2"
-                                    type="datetime"
-                                    style="width: 100%;"
-                                    class="bw-end-icon"
-                                    :class="{'is-error':item.isError && !item.value2}"
-                                    format="YYYY/MM/DD HH:mm:ss"
-                                    value-format="YYYY-MM-DD HH:mm:ss"
-                                    @change="bwChange(item)"
-                                    @focus="clearError(item)"
-                                    :default-time="defaultTimeGE"
-                                    clearable
-                                />
-                            </div>
-                            
-                            <!-- 数字输入框 -->
-                            <div v-else-if="item.opCom =='numberInput' && (item.type != 'DateTime' || (item.type == 'DateTime' && item.op != 'LE' && item.op != 'GE'))">
-                                <el-input-number
-                                    size="default"
-                                    v-model="item.value"
-                                    :controls="false"
-                                    class="ml-number-input w-100"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    clearable
-                                />
-                            </div>
-                            <!-- 数字输入框区间 -->
-                            <div v-else-if="item.opCom =='numberInputBw'">
-                                <el-input-number
-                                    size="default"
-                                    v-model="item.value"
-                                    :controls="false"
-                                    class="ml-number-input w-100 bw-start-icon mb-5"
-                                    :class="{'is-error':item.isError && !item.value}"
-                                    @focus="clearError(item)"
-                                    @change="bwChange(item)"
-                                    clearable
-                                />
-                                <el-input-number
-                                    size="default"
-                                    v-model="item.value2"
-                                    :controls="false"
-                                    class="ml-number-input w-100 bw-end-icon"
-                                    :class="{'is-error':item.isError && !item.value2}"
-                                    @focus="clearError(item)"
-                                    @change="bwChange(item)"
-                                    clearable
-                                />
-                            </div>
-                            <!-- 文本输入框 -->
-                            <div v-else-if="item.opCom =='textInput'">
-                                <el-input
-                                    size="default"
-                                    v-model="item.value"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    clearable
-                                />
-                            </div>
-                            <!-- 布尔类型 -->
-                            <div v-else-if="item.opCom =='booleanSelect'">
+                        <template v-if="item.op == 'SQL'">
+                            <el-col :span="24">
+                                <div class="field-one">
+                                    <span class="field-inx">{{ inx+1 }}</span>
+                                    <el-icon size="18" class="remove-icon" @click="delConditions(inx)">
+                                        <ElIconRemoveFilled />
+                                    </el-icon>
+                                </div>
+                                <el-input class="field-select" placeholder="请输入SQL" v-model="item.value" clearable/>
+                            </el-col>
+                        </template>
+                        <template v-else>
+                            <!-- 字段名 -->
+                            <el-col :span="10">
+                                <div class="field-one">
+                                    <span class="field-inx">{{ inx+1 }}</span>
+                                    <el-icon size="18" class="remove-icon" @click="delConditions(inx)">
+                                        <ElIconRemoveFilled />
+                                    </el-icon>
+                                </div>
                                 <el-select
-                                    size="default"
-                                    v-model="item.value"
-                                    class="w-100"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    placeholder=" "
-                                    clearable
-                                >
-                                    <el-option label="是" value="1" />
-                                    <el-option label="否" value="0" />
-                                </el-select>
-                            </div>
-                            <!-- 用户下拉框 -->
-                            <div v-else-if="item.opCom =='userSelect'">
-                                <el-select
-                                    size="default"
-                                    v-model="item.value"
-                                    class="w-100"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    placeholder=" "
+                                    class="field-select"
+                                    v-model="item.fieldName"
+                                    @change="fieldChange(item)"
                                     filterable
                                     no-match-text="无匹配文本"
-                                    clearable
+                                    size="default"
                                 >
                                     <el-option
-                                        v-for="(userOp,userInx) of userList"
-                                        :label="userOp.userName"
-                                        :value="userOp.userId"
-                                        :key="userInx"
+                                        v-for="op in fieldList"
+                                        :key="op.fieldName"
+                                        :label="op.label"
+                                        :value="op.fieldName"
                                     />
                                 </el-select>
-                            </div>
+                            </el-col>
+                            <!-- 条件类型 -->
+                            <el-col :span="4">
+                                <el-select v-model="item.op" size="default" @change="getOpCom(item)">
+                                    <el-option
+                                        v-for="op in getSelectOp(item)"
+                                        :key="op"
+                                        :label="op_type[op]"
+                                        :value="op"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <!-- 条件值 -->
+                            <el-col :span="10">
+                                <!-- 日期选择器 -->
+                                <div v-if="item.opCom =='datePicker'">
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value"
+                                        type="date"
+                                        style="width: 100%;"
+                                        format="YYYY/MM/DD"
+                                        value-format="YYYY-MM-DD"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        clearable
+                                    />
+                                </div>
+                                <!-- 日期区间 -->
+                                <div v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime'">
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value"
+                                        type="date"
+                                        style="width: 100%;"
+                                        class="bw-start-icon mb-5"
+                                        :class="{'is-error':item.isError && !item.value}"
+                                        format="YYYY/MM/DD"
+                                        value-format="YYYY-MM-DD"
+                                        @change="bwChange(item)"
+                                        @focus="clearError(item)"
+                                        clearable
+                                    />
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value2"
+                                        type="date"
+                                        style="width: 100%;"
+                                        class="bw-end-icon"
+                                        :class="{'is-error':item.isError && !item.value2}"
+                                        format="YYYY/MM/DD"
+                                        value-format="YYYY-MM-DD"
+                                        @change="bwChange(item)"
+                                        @focus="clearError(item)"
+                                        clearable
+                                    />
+                                </div>
+                                <!-- 时间区间 -->
+                                <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime'">
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value"
+                                        type="datetime"
+                                        style="width: 100%;"
+                                        class="bw-start-icon mb-5"
+                                        :class="{'is-error':item.isError && !item.value}"
+                                        format="YYYY/MM/DD HH:mm:ss"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
+                                        @change="bwChange(item)"
+                                        @focus="clearError(item)"
+                                        :default-time="defaultTimeLE"
+                                        clearable
+                                    />
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value2"
+                                        type="datetime"
+                                        style="width: 100%;"
+                                        class="bw-end-icon"
+                                        :class="{'is-error':item.isError && !item.value2}"
+                                        format="YYYY/MM/DD HH:mm:ss"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
+                                        @change="bwChange(item)"
+                                        @focus="clearError(item)"
+                                        :default-time="defaultTimeGE"
+                                        clearable
+                                    />
+                                </div>
+                                
+                                <!-- 数字输入框 -->
+                                <div v-else-if="item.opCom =='numberInput' && (item.type != 'DateTime' || (item.type == 'DateTime' && item.op != 'LE' && item.op != 'GE'))">
+                                    <el-input-number
+                                        size="default"
+                                        v-model="item.value"
+                                        :controls="false"
+                                        class="ml-number-input w-100"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        clearable
+                                    />
+                                </div>
+                                <!-- 数字输入框区间 -->
+                                <div v-else-if="item.opCom =='numberInputBw'">
+                                    <el-input-number
+                                        size="default"
+                                        v-model="item.value"
+                                        :controls="false"
+                                        class="ml-number-input w-100 bw-start-icon mb-5"
+                                        :class="{'is-error':item.isError && !item.value}"
+                                        @focus="clearError(item)"
+                                        @change="bwChange(item)"
+                                        clearable
+                                    />
+                                    <el-input-number
+                                        size="default"
+                                        v-model="item.value2"
+                                        :controls="false"
+                                        class="ml-number-input w-100 bw-end-icon"
+                                        :class="{'is-error':item.isError && !item.value2}"
+                                        @focus="clearError(item)"
+                                        @change="bwChange(item)"
+                                        clearable
+                                    />
+                                </div>
+                                <!-- 文本输入框 -->
+                                <div v-else-if="item.opCom =='textInput'">
+                                    <el-input
+                                        size="default"
+                                        v-model="item.value"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        clearable
+                                    />
+                                </div>
+                                <!-- 布尔类型 -->
+                                <div v-else-if="item.opCom =='booleanSelect'">
+                                    <el-select
+                                        size="default"
+                                        v-model="item.value"
+                                        class="w-100"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        placeholder=" "
+                                        clearable
+                                    >
+                                        <el-option label="是" value="1" />
+                                        <el-option label="否" value="0" />
+                                    </el-select>
+                                </div>
+                                <!-- 用户下拉框 -->
+                                <div v-else-if="item.opCom =='userSelect'">
+                                    <el-select
+                                        size="default"
+                                        v-model="item.value"
+                                        class="w-100"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        placeholder=" "
+                                        filterable
+                                        no-match-text="无匹配文本"
+                                        clearable
+                                    >
+                                        <el-option
+                                            v-for="(userOp,userInx) of userList"
+                                            :label="userOp.userName"
+                                            :value="userOp.userId"
+                                            :key="userInx"
+                                        />
+                                    </el-select>
+                                </div>
 
-                            <!-- 部门下拉框 -->
-                            <div v-else-if="item.opCom =='departmentSelect'">
-                                <el-select
-                                    size="default"
-                                    v-model="item.value"
-                                    class="w-100"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    placeholder=" "
-                                    filterable
-                                    no-match-text="无匹配文本"
-                                    clearable
-                                >
-                                    <el-option
-                                        v-for="(departmentOp,departmentInx) of departmentList"
-                                        :label="departmentOp.departmentName"
-                                        :value="departmentOp.departmentId"
-                                        :key="departmentInx"
+                                <!-- 部门下拉框 -->
+                                <div v-else-if="item.opCom =='departmentSelect'">
+                                    <el-select
+                                        size="default"
+                                        v-model="item.value"
+                                        class="w-100"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        placeholder=" "
+                                        filterable
+                                        no-match-text="无匹配文本"
+                                        clearable
+                                    >
+                                        <el-option
+                                            v-for="(departmentOp,departmentInx) of departmentList"
+                                            :label="departmentOp.departmentName"
+                                            :value="departmentOp.departmentId"
+                                            :key="departmentInx"
+                                        />
+                                    </el-select>
+                                </div>
+                                <!-- 类型为Tag 和 option的 -->
+                                <div v-else-if="item.opCom =='optionData'">
+                                    <el-select
+                                        size="default"
+                                        v-model="item.value"
+                                        class="w-100"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        placeholder=" "
+                                        clearable
+                                    >
+                                        <el-option
+                                            v-for="(userOp,userInx) of item.optionData"
+                                            :label="userOp.label || userOp.value"
+                                            :value="userOp.value + ''"
+                                            :key="userInx"
+                                        />
+                                    </el-select>
+                                </div>
+                                <div v-else-if="item.opCom =='referenceSearch'">
+                                    <el-input 
+                                        v-model="item.refLabel" 
+                                        readonly 
+                                        :class="{'is-error':item.isError}" 
+                                        @focus="clearError(item)"
+                                        size="default"
+                                    >
+                                        <template #append>
+                                            <el-button @click="openReferenceDialog(item)">
+                                                <el-icon>
+                                                    <ElIconSearch />
+                                                </el-icon>
+                                            </el-button>
+                                        </template>
+                                    </el-input>
+                                    <el-dialog
+                                        title="请选择"
+                                        class="reference-dialog"
+                                        v-model="item.showReferenceDialogFlag"
+                                        append-to-body
+                                        width="520"
+                                        v-if="formatEntityName"
+                                        size="default"
+                                    >
+                                        <ReferenceSearchTable
+                                            :entity="formatEntityName"
+                                            :refField="item.fieldName"
+                                            @recordSelected="(event)=> setReferRecord(event,item) "
+                                        />
+                                    </el-dialog>
+                                </div>
+                                <!-- DateTime类型 -->
+                                <div v-else-if="item.type == 'DateTime'">
+                                    <el-date-picker
+                                        v-model="item.value"
+                                        type="datetime"
+                                        format="YYYY/MM/DD HH:mm:ss"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
+                                        :default-time="defaultTimeLE"
+                                        v-if="item.op == 'LE'"
+                                        size="default"
                                     />
-                                </el-select>
-                            </div>
-                            <!-- 类型为Tag 和 option的 -->
-                            <div v-else-if="item.opCom =='optionData'">
-                                <el-select
-                                    size="default"
-                                    v-model="item.value"
-                                    class="w-100"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    placeholder=" "
-                                    clearable
-                                >
-                                    <el-option
-                                        v-for="(userOp,userInx) of item.optionData"
-                                        :label="userOp.label || userOp.value"
-                                        :value="userOp.value + ''"
-                                        :key="userInx"
+                                    <el-date-picker
+                                        v-model="item.value"
+                                        type="datetime"
+                                        format="YYYY/MM/DD HH:mm:ss"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
+                                        :default-time="defaultTimeGE"
+                                        v-else-if="item.op == 'GE'"
+                                        size="default"
                                     />
-                                </el-select>
-                            </div>
-                            <div v-else-if="item.opCom =='referenceSearch'">
-                                <el-input 
-                                    v-model="item.refLabel" 
-                                    readonly 
-                                    :class="{'is-error':item.isError}" 
-                                    @focus="clearError(item)"
-                                    size="default"
-                                >
-                                    <template #append>
-                                        <el-button @click="openReferenceDialog(item)">
-                                            <el-icon>
-                                                <ElIconSearch />
-                                            </el-icon>
-                                        </el-button>
-                                    </template>
-                                </el-input>
-                                <el-dialog
-                                    title="请选择"
-                                    class="reference-dialog"
-                                    v-model="item.showReferenceDialogFlag"
-                                    append-to-body
-                                    width="520"
-                                    v-if="formatEntityName"
-                                    size="default"
-                                >
-                                    <ReferenceSearchTable
-                                        :entity="formatEntityName"
-                                        :refField="item.fieldName"
-                                        @recordSelected="(event)=> setReferRecord(event,item) "
+                                    <el-date-picker
+                                        size="default"
+                                        v-model="item.value"
+                                        type="date"
+                                        style="width: 100%;"
+                                        format="YYYY/MM/DD"
+                                        value-format="YYYY-MM-DD"
+                                        :class="{'is-error':item.isError}"
+                                        @focus="clearError(item)"
+                                        v-else-if="item.op == 'DEQ'"
                                     />
-                                </el-dialog>
-                            </div>
-                            <!-- DateTime类型 -->
-                            <div v-else-if="item.type == 'DateTime'">
-                                <el-date-picker
-                                    v-model="item.value"
-                                    type="datetime"
-                                    format="YYYY/MM/DD HH:mm:ss"
-                                    value-format="YYYY-MM-DD HH:mm:ss"
-                                    :default-time="defaultTimeLE"
-                                    v-if="item.op == 'LE'"
-                                    size="default"
-                                />
-                                <el-date-picker
-                                    v-model="item.value"
-                                    type="datetime"
-                                    format="YYYY/MM/DD HH:mm:ss"
-                                    value-format="YYYY-MM-DD HH:mm:ss"
-                                    :default-time="defaultTimeGE"
-                                    v-else-if="item.op == 'GE'"
-                                    size="default"
-                                />
-                                <el-date-picker
-                                    size="default"
-                                    v-model="item.value"
-                                    type="date"
-                                    style="width: 100%;"
-                                    format="YYYY/MM/DD"
-                                    value-format="YYYY-MM-DD"
-                                    :class="{'is-error':item.isError}"
-                                    @focus="clearError(item)"
-                                    v-else-if="item.op == 'DEQ'"
-                                />
-                            </div>
-                        </el-col>
+                                </div>
+                            </el-col>
+                        </template>
                     </el-row>
                 </el-scrollbar>
                 
@@ -327,6 +340,12 @@
                         <ElIconCirclePlusFilled />
                     </el-icon>
                     <span class="ml-8">添加条件</span>
+                </span>
+                <span class="ml-a-span ml-10" v-if="enableSql" @click="addSql">
+                    <el-icon size="18" class="add-icon">
+                        <ElIconCirclePlusFilled />
+                    </el-icon>
+                    <span class="ml-8">添加SQL条件</span>
                 </span>
                 <slot name="afterAddConditions"></slot>
             </div>
@@ -761,6 +780,8 @@ export default {
         forbidUserModifyField: { type: Boolean, default: false },
         // 隐藏查询匹配类型
         hideQueryMatchType: { type: Boolean, default: false },
+        // 是否开启SQL
+        enableSql: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -898,6 +919,9 @@ export default {
         initConditionList() {
             let conditionList = [];
             this.conditionConf.items.forEach((el) => {
+                if(el.op == 'SQL'){
+                    conditionList.push(el);                         
+                }
                 this.fieldList.forEach((subEl) => {
                     subEl.showReferenceDialogFlag = false;
                     if (subEl.fieldName === el.fieldName) {
@@ -986,6 +1010,14 @@ export default {
             this.fieldChange(condition);
             this.conditionConf.items.push(condition);
         },
+        // 添加SQL
+        addSql() {
+            this.conditionConf.items.push({
+                fieldName: "sql",
+                op: "SQL",
+                value: "",
+            });
+        },
         // 删除条件
         delConditions(inx) {
             this.conditionConf.items.splice(inx, 1);
@@ -1046,7 +1078,7 @@ export default {
             }
             let tempItems = JSON.parse(JSON.stringify(items));
             tempItems.forEach(el => {
-                if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
+                if(el.op !== 'SQL' && el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
                     el.value = el.value.replace(/\s/g, '');
                 }
                 // 如果是多引用类型 且不是 为空不为空

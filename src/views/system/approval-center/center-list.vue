@@ -169,10 +169,10 @@ let tableColumn = ref([
         prop: "stepName",
         label: "审批节点",
     },
-    {
-        prop: "remark",
-        label: "最近审批备注",
-    },
+    // {
+    //     prop: "remark",
+    //     label: "最近审批备注",
+    // },
     {
         prop: "approvalStatus.label",
         label: "审批状态",
@@ -194,7 +194,7 @@ let tableColumn = ref([
     {
         prop: "approvalOn",
         label: "最近审批时间",
-        width: "120",
+        width: "180",
         align: "center",
         formatter: (row) => {
             return $fromNow(row.approvalOn);

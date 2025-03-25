@@ -68,6 +68,7 @@
 <script setup>
 import { onMounted, ref, nextTick } from "vue";
 import { ElMessage } from "element-plus";
+import { globalDsvDefaultData } from "@/utils/util";
 // 引入 控制Tabs方法
 import useTabs from "@/utils/useTabs";
 import { useRouter } from "vue-router";
@@ -93,11 +94,7 @@ onMounted(() => {
 
 // 表单相关配置
 let haveLayoutJson = ref(false);
-let globalDsv = ref({
-	uploadServer: import.meta.env.VITE_APP_BASE_API,
-	baseApi: import.meta.env.VITE_APP_BASE_API,
-	SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 let optionData = ref({});
 
 // 加载状态

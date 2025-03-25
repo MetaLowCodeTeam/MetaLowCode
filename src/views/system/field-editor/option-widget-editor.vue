@@ -53,6 +53,12 @@
                         <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="仅触发器可赋值" v-if="fieldProps.updatable">
+					<el-radio-group v-model="fieldProps.extraAttrs.onlyUpdateByTrigger" style="float: right">
+						<el-radio value="true">是</el-radio>
+						<el-radio value="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
                 <el-form-item label="开启选项数据同步" >
                     <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
                 </el-form-item>
@@ -183,6 +189,9 @@ export default {
                 nullable: false,
                 creatable: true,
                 updatable: true,
+                'extraAttrs': {
+                    'onlyUpdateByTrigger': 'false',
+                },
 				fieldViewModel: {
 					uniqueness: false,
                     optionSyncModel: {
@@ -252,7 +261,11 @@ export default {
                     }
                 }
             }
-
+            if(!this.fieldProps.extraAttrs){
+                this.fieldProps.extraAttrs = {
+                    onlyUpdateByTrigger: 'false',
+                }
+            }
             // if(this.fieldProps.fieldViewModel )
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
@@ -329,8 +342,7 @@ export default {
             this.$prompt("请输入选项名称", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                inputPattern:
-                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+                inputPattern:/^[^\s,](?:.*[^\s,])?$/,
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
@@ -360,8 +372,7 @@ export default {
             this.$prompt("请输入选项名称", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                inputPattern:
-                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+                inputPattern:/^[^\s,](?:.*[^\s,])?$/,
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
@@ -419,8 +430,7 @@ export default {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 inputValue: oldOptionLabel,
-                inputPattern:
-                    /^[A-Za-z\u4e00-\u9fa5\uff0c\u3001\uff1b\uff1a\uff08\uff09\u2014\u201c\u201d\/\d]+$/ /* 匹配由字母大小写、汉字或数字组成的字符串 */,
+                inputPattern:/^[^\s,](?:.*[^\s,])?$/,
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {

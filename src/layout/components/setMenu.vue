@@ -26,7 +26,7 @@
 							:key="inx"
 						>
 							<div
-								class="paren-idv"
+								class="paren-div"
 								@click="nodeClick(parent)"
 								:class="{
 									'is-active': cutMenu?.guid == parent.guid,
@@ -288,20 +288,29 @@
 						"
 						class="mt-10"
 					>
-                        <el-select
-                            v-model="cutMenu.customCode"
-                            placeholder="权限Code"
-                            clearable
-                            filterable
-                            allow-create
-                        >
-                            <el-option
-                                v-for="item in customRightList"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
+                        <el-row :gutter="10">
+                            <el-col :span="21">
+                                <el-select
+                                    v-model="cutMenu.customCode"
+                                    placeholder="权限Code"
+                                    clearable
+                                    filterable
+                                    allow-create
+                                >
+                                    <el-option
+                                        v-for="item in customRightList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+                                    <el-checkbox v-model="cutMenu.reversalCustomCode" label="取反" />
+                                </el-tooltip>
+                            </el-col>
+                        </el-row>
 					</div>
 					<div class="mt-10">
 						<el-input
@@ -345,6 +354,46 @@
                             />
                         </div>
 					</div>
+                    <div
+						class="mt-10"
+						v-if="
+							cutMenu.type == 1 &&
+							(!cutMenu.children || cutMenu.children.length < 1) &&
+                            !filterUseCustomEntity.includes(cutMenu.entityName)
+						"
+					>
+                        叠加自定义权限控制
+					</div>
+                    <div
+                        v-if="
+                            cutMenu.type == 1 && 
+                            !filterUseCustomEntity.includes(cutMenu.entityName)"
+						class="mt-10"
+					>
+                        <el-row :gutter="10">
+                            <el-col :span="21">
+                                <el-select
+                                    v-model="cutMenu.customCode"
+                                    placeholder="权限Code"
+                                    clearable
+                                    filterable
+                                    allow-create
+                                >
+                                    <el-option
+                                        v-for="item in customRightList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+                                    <el-checkbox v-model="cutMenu.reversalCustomCode" label="取反" />
+                                </el-tooltip>
+                            </el-col>
+                        </el-row>
+					</div>
 					<div
 						class="mt-5"
 						v-if="
@@ -379,6 +428,7 @@
 							/>
 						</el-select>
 					</div>
+                    
                     <div class="mt-5">
                         <el-checkbox
 							v-model="cutMenu.pcShow"
@@ -438,7 +488,7 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted, inject, reactive } from "vue";
+import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
 import useCommonStore from "@/store/modules/common";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
@@ -1078,7 +1128,7 @@ div {
 	text-decoration: none;
 	background: none repeat scroll 0 0 #fff;
 
-	.paren-idv {
+	.paren-div {
 		height: 36px;
 		margin-bottom: 3px;
 		position: relative;

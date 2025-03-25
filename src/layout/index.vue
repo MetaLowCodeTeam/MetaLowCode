@@ -26,7 +26,7 @@
                 v-if="!ismobileFn"
                 :style="{'width': getHeaderCenterWidht}"
             >
-                <el-scrollbar>
+                <el-scrollbar :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
                         <p
                             v-for="item in menu"
@@ -153,7 +153,7 @@
         </section>
     </template>
 
-    <!-- 功能坞布局 -->
+    <!-- 主导航菜单位置(顶部) -->
     <template v-else-if="layoutFn=='dock'">
         <header class="adminui-header">
             <div class="adminui-header-left">
@@ -167,7 +167,7 @@
                 v-if="!ismobileFn"
                 :style="{'width': getHeaderCenterWidht}"
             >
-                <el-scrollbar>
+                <el-scrollbar class="dock-header-scrollbar" :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
                         <el-menu
                             class="dock-header-menu"
@@ -374,6 +374,8 @@ export default {
             nextMenu: [],
             // 功能坞菜单
             dockMenu: [],
+            // 顶部导航过多虚拟滚动条是否始终显示
+            topMenuAlways: false,
             pmenu: {},
             active: "",
             defaultOpeneds: [],
@@ -394,12 +396,17 @@ export default {
                     pluginName: "mannerReport",
                     errMsg: "在线报表 插件未安装！",
                 },
+                ProcessMonitoring: {
+                    pluginName: "metaWorkFlow",
+                    errMsg: "复杂流程监控 插件未安装！",
+                },
             },
             needPlugin: [
                 "TriggerList",
                 "DashboardDesign",
                 "TemplatesList",
                 "TriggerLog",
+                "ProcessMonitoring",
             ],
         };
     },
@@ -414,7 +421,7 @@ export default {
             return ismobile.value;
         },
         layoutFn() {
-			return this.getUrlParams('layout') || publicSetting.value.layoutConfig;
+			return this.getUrlParams('layout') || publicSetting.value.layoutConfig || 'header';
         },
         layoutTagsFn() {
             return layoutTags.value;
@@ -615,5 +622,11 @@ $--nav-menu-text-color: rgb(48, 49, 51);
 		--el-menu-active-color: var(--el-color-primary) !important;
 		height: 100%;
 	}
+}
+
+:deep(.dock-header-scrollbar) {
+    .el-scrollbar__bar.is-vertical {
+        display: none;
+    }
 }
 </style>

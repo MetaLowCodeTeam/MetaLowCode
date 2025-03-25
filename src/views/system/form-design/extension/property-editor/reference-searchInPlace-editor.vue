@@ -54,6 +54,7 @@
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 const { i18n, eventMixin, Utils } = VisualDesign.VFormSDK;
 import common from "@/api/common";
+import { checkIsSubForm } from '@/utils/util';
 export default {
 	name: "reference-fillBackEnabled-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -92,7 +93,7 @@ export default {
             // 所有子表单组件
             this.allSubFormWidgets = [];
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
                     this.allSubFormWidgets.push(el);
 					Utils.traverseFieldWidgetsOfContainer(
 						el.container,

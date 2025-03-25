@@ -11,6 +11,7 @@
             :reportName="reportName"
             :dbList="menuList"
             :sheets="sheets"
+            :showToolbarConfig="showToolbarConfig"
         />
     </div>
 </template>
@@ -25,6 +26,7 @@ import {
     ref,
     inject,
     shallowRef,
+    onBeforeUnmount
 } from "vue";
 import { useRouter } from "vue-router";
 const $ElMessage = inject("$ElMessage");
@@ -39,6 +41,10 @@ let reportConfigId = ref("");
 let entityCode = ref("");
 // 菜单列表
 let menuList = ref([]);
+
+let showToolbarConfig =ref({
+    conditionalFormat: true,
+});
 
 let defaultSheets = shallowRef([
     {
@@ -154,7 +160,17 @@ async function onSave(event) {
     pageLoading.value = false;
     loadingText.value = "加载中...";
 }
+
+// 组件销毁时需要隐藏
+onBeforeUnmount(() => {
+    isLoad.value = false;
+});
 </script>
 
 <style lang="scss" scoped>
+</style>
+<style>
+input {
+  -webkit-appearance: textfield; /* 恢复input默认外观，不同元素有不同默认值，select元素可以用 -webkit-appearance: menulist; */
+}
 </style>

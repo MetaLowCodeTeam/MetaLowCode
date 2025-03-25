@@ -85,7 +85,7 @@
             </template>
             <div class="last-nodes" v-if="lastNodes">该分支将作为最终分支匹配其他条件</div>
             <div class="work-flow-conditions mb-20" :class="{'mt-30':lastNodes}">
-                <mlSetConditions ref="mlSetConditionsRef" v-model="conditionConf" :entityName="entityCode"/>
+                <mlSetConditions ref="mlSetConditionsRef" v-model="conditionConf" :entityName="entityCode" enableSql/>
             </div>
             <template #footer>
                 <div style="flex: auto">

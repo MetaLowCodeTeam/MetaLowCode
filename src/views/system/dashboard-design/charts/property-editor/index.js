@@ -29,6 +29,8 @@ export const registerChartLibProperties = (app, PERegister) => {
         'showHeader', 
         'showFullscreen', 
         'showRefresh', 
+        'topBarBtnConfig',
+        'showTablePagination',
         'chartStyle', 
         'axisCoordinates', 
         'setChartStyle', 

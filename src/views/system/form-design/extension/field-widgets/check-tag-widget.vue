@@ -12,11 +12,11 @@
 		:sub-form-row-id="subFormRowId"
 	>
         <template v-if="field.options.showButton && !isReadMode">
-            <el-checkbox-group 
+            <el-checkbox-group
                 v-model="checkboxGroup"
                 @change="onCheckboxGroupChange"
             >
-                <el-checkbox-button 
+                <el-checkbox-button
                     v-for="(item,inx) of options"
                     :key="inx"
                     :value="item.label"
@@ -26,26 +26,26 @@
             </el-checkbox-group>
         </template>
         <template v-else-if="field.options.showSelect && !isReadMode">
-            <el-select 
-                v-model="selectValue" 
-                :disabled="field.options.disabled" 
+            <el-select
+                v-model="selectValue"
+                :disabled="field.options.disabled"
                 multiple
                 @change="onSelectChange"
             >
-                <el-option 
-                    v-for="(item,inx) of options" 
-                    :key="inx" 
-                    :label="item.label" 
+                <el-option
+                    v-for="(item,inx) of options"
+                    :key="inx"
+                    :label="item.label"
                     :value="item.label"
                 />
             </el-select>
         </template>
         <template v-else-if="field.options.showCheckbox && !isReadMode">
-            <el-checkbox 
+            <el-checkbox
                 v-for="(item,inx) of options"
                 :Key="inx"
-                v-model="item.checked" 
-                :label="item.label" 
+                v-model="item.checked"
+                :label="item.label"
                 :disabled="field.options.disabled"
                 :border="field.options.showBorder"
                 @change="onCheckboxChange"
@@ -68,7 +68,7 @@
         <template v-if="isReadMode">
             <span class="readonly-mode-field">{{ fieldModel || "--" }}</span>
         </template>
-		
+
 	</form-item-wrapper>
 </template>
 
@@ -130,7 +130,6 @@ export default {
 		};
 	},
 	computed: {
-
     },
 	beforeCreate() {
 		/* 这里不能访问方法和属性！！ */
@@ -161,7 +160,23 @@ export default {
         initOptionsChecked(){
             this.checkboxGroup = [];
             this.selectValue = [];
-            this.options = this.field.options.optionItems.map(el => {
+            let sourceFields = [];
+            let newOption = [...this.field.options.optionItems];
+            if(this.fieldModel){
+                sourceFields = this.fieldModel.split(",").map(el => {
+                    return {
+                        label: el,
+                        value: newOption.find(item => item.label === el)?.value || this.getGuid()
+                    }
+                });
+                // 遍历 sourceFields 如果  newOption 中没有 则添加
+                sourceFields.forEach(el => {
+                    if(!newOption.find(item => item.label === el.label)) {
+                        newOption.push(el);
+                    }
+                });
+            }
+            this.options = newOption.map(el => {
                 let newValue = el.label || el.value;
                 if(this.fieldModel && this.fieldModel.split(",").includes(newValue)) {
                     this.checkboxGroup.push(newValue);
@@ -172,6 +187,13 @@ export default {
                     label: newValue,
                     checked: this.fieldModel ? this.fieldModel.split(",").includes(newValue) : false
                 }
+            });
+        },
+        getGuid(){
+            return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+                var r = (Math.random() * 16) | 0,
+                    v = c == "x" ? r : (r & 0x3) | 0x8;
+                return v.toString(16);
             });
         },
 		async initOptionItems(keepSelected) {
@@ -215,8 +237,7 @@ export default {
 				) {
 					this.loadOptionItemsFromDataSet(curDSName);
 				}
-
-				return;
+                return;
 			}
 
 			/* 异步更新option-data之后globalOptionData不能获取到最新值，改用provide的getOptionData()方法 */
@@ -231,6 +252,18 @@ export default {
 					this.loadOptions(newOptionItems[this.fieldKeyName]);
 				}
 			}
+            let sourceFields = this.field.options.optionItems;
+            if(this.fieldModel){
+                let labels = sourceFields.map(el => el.label);
+                let fieldModelLabels = this.fieldModel.split(",");
+                let diffLabels = fieldModelLabels.filter(el => !labels.includes(el));
+                diffLabels.forEach(el => {
+                    this.field.options.optionItems.push({
+                        label: el,
+                        value: this.getGuid()
+                    })
+                })
+            }
 		},
 
 		isChecked(item) {
@@ -273,9 +306,9 @@ export default {
 				}
 			}
 
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 		},
-        
+
         // 单选组件切换
         onCheckboxChange(){
             let selected = [];
@@ -285,17 +318,17 @@ export default {
                 }
             });
             this.fieldModel = selected.join(",");
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
         },
         // 多选组件切换
         onCheckboxGroupChange(){
             this.fieldModel = this.checkboxGroup.join(",");
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
         },
         // 下拉组件切换
         onSelectChange(){
             this.fieldModel = this.selectValue.join(",");
-            this.handleChangeEvent(this.fieldModel);
+            this.onFieldChangeEvent(this.fieldModel);
         }
 	},
 };

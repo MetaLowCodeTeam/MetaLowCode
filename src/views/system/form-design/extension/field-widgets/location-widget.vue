@@ -369,7 +369,7 @@ export default {
 
 		handleClearEvent() {
 			this.fieldModel = null;
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 		},
 
 		initMap(mapInstance) {
@@ -423,7 +423,7 @@ export default {
 			}
 
 			this.fieldModel = this.newPos[0] + ',' + this.newPos[1] + ',' + this.newPosName
-			this.handleChangeEvent(this.fieldModel)
+			this.onFieldChangeEvent(this.fieldModel)
 			this.showLocationDialogFlag = false;
 		},
 
@@ -496,7 +496,7 @@ export default {
 			}
 
 			this.fieldModel = this.newPos[0] + ',' + this.newPos[1] + ',' + this.newPosName
-			this.handleChangeEvent(this.fieldModel)
+			this.onFieldChangeEvent(this.fieldModel)
 			this.showLocationPickDialogFlag = false;
 		},
 

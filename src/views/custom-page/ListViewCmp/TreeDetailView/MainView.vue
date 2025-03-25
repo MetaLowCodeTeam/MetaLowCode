@@ -180,6 +180,12 @@ const tabChange = (tab) => {
 	currentTab.inx = tab.index;
 	currentTab.comp = tab.props.name.split("-")[0];
 	currentTab.name = tab.props.name;
+    if(currentTab.comp == 'detail'){
+        nextTick(() => {
+            loading.value = true;
+            mainDetailRefs.value?.initFormData(myEntity);
+        });
+    }
 };
 // 其他列表页签添加
 const onAdd = (e) => {
@@ -206,6 +212,7 @@ const baseInfoSaveFinishCallBack = (data) => {
 // 基本信息初始化成功回调
 const initFinish = () => {
     emit('initFinish');
+    loading.value = false;
 }
 
 defineExpose({

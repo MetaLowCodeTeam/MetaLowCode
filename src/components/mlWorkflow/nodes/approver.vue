@@ -137,19 +137,12 @@
                     <el-button type="primary" @click="save">保存</el-button>
                 </div>
             </template>
-            <mlSelectField
-                ref="SelectFieldDialog"
-                v-model="form.modifiableFields"
-                title="选择可修改字段"
-                :entityName="myEntityName"
-            />
         </el-drawer>
     </div>
 </template>
 
 <script setup>
 import addNode from "./addNode.vue";
-import mlSelectField from "@/components/mlSelectField/index.vue";
 import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
 import useCommonStore from "@/store/modules/common";

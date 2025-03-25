@@ -62,6 +62,7 @@ import { queryById } from "@/api/crud";
 import { getFormLayout } from "@/api/system-manager";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
+import { globalDsvDefaultData } from "@/utils/util";
 const { queryEntityNameById } = useCommonStore();
 const router = useRouter();
 const props = defineProps({
@@ -84,12 +85,14 @@ let loading = ref(false);
 let tabList = ref([]);
 // 当前激活tab
 let activeTabName = ref("detail");
+let outActiveTabName = ref("detail");
 // TAB切换
 const handleClick = (tab) => {
-    if (activeTabName.value == tab.props.name) {
+    // console.log(tab.props.name, 'tab')
+    if(outActiveTabName.value == tab.props.name){
         return;
     }
-    activeTabName.value = tab.props.name;
+    outActiveTabName.value = tab.props.name;
     if (activeTabName.value == "detail") {
         refresh();
     } else {
@@ -130,11 +133,7 @@ const closeDialog = () => {
 let haveLayoutJson = ref(false);
 let vFormRef = ref();
 let optionData = ref({});
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 // 刷新数据
 const refresh = async () => {
     loading.value = true;
@@ -167,7 +166,6 @@ const refresh = async () => {
                 }
                 loading.value = false;
             });
-            loading.value = false;
         } else {
             detailDialog.activeTabName = activeTabName.value;
             emits("tabChange", detailDialog);
@@ -188,11 +186,7 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-:deep(.render-form) {
-    .el-row {
-        padding: 0 8px 0 8px !important;
-    }
-}
+
 
 .detail-header {
     // padding-bottom: 20px;

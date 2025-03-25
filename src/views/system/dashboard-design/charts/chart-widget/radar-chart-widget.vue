@@ -142,7 +142,7 @@ const getChartData = async (options, type) => {
                 formatterStr = formatterStr.join("<br />");
                 return e.name + "<br />" + formatterStr;
             };
-        }else {
+        }else { 
             option.tooltip.formatter = ""
         }
 
@@ -157,4 +157,11 @@ const getChartData = async (options, type) => {
     }
     loading.value = false;
 };
+
+const getData = () => {
+    return option;
+}
+defineExpose({
+    getData
+})
 </script>

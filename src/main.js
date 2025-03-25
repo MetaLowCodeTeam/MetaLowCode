@@ -10,7 +10,7 @@ import App from './App.vue'
 import pinia from './store'
 import ResizeObserver from 'resize-observer-polyfill'
 import 'virtual:svg-icons-register'
-import VueSmartWidget from 'vue-smart-widget'
+import VueSmartWidget from 'ml-vue-smart-widget'
 import '@/../lib/vue-smart-widiget.css'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import '@/../lib/visual-design/designer.style.css'
@@ -27,8 +27,10 @@ import { registerCustomDetailCmp } from '@/views/custom-page/customDetailEntry.j
 import { registerCustomEditCmp } from '@/views/custom-page/customEditEntry.js';
 import { registerCustomListSubFormCmp } from '@/views/custom-page/ListSubFormCmp/customListSubFormEntry.js';
 import { registerCustomServiceTaskCmp } from "@/views/system/approval-process/components/ComplexFlow/customServiceTaskCmp";
+// 注册详情自定义组件
+import { registerDetailTabCustomComponent } from "@/views/custom-page/CustomDetailTabComponent/index.js";
 // console.log("1. 使用路由...",router)
-
+import { getSimplePinYin } from "@/utils/util";
 //初始化高德地图组件
 initAMapApiLoader({
 	key: '487d8f7268cf06102ecd3e637b0f892d',
@@ -38,6 +40,7 @@ initAMapApiLoader({
 const app = createApp(App);
 
 app.config.globalProperties.$dayjs = dayjs;
+app.config.globalProperties.$getPinYin = getSimplePinYin;
 
 app.use(VueResizeObserver);
 app.use(router);
@@ -53,6 +56,7 @@ registerCustomDetailCmp(app);
 registerCustomEditCmp(app);
 registerCustomListSubFormCmp(app);
 registerCustomServiceTaskCmp(app);
+registerDetailTabCustomComponent(app);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);

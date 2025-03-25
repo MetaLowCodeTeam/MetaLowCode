@@ -260,7 +260,7 @@ const openDialog = (data) => {
     isShow.value = true;
 };
 
-const saveProcess = async () => {
+const saveProcess = async (target) => {
     let { 
         type, 
         form, 
@@ -277,7 +277,8 @@ const saveProcess = async () => {
         pdfWatermark, 
         configTag,
         filterJson,
-        shareTo
+        shareTo,
+        exceptionThrow,
     } = form;
     if (type == "add" && saveEntity == "ExternalForm" && !entityCode) {
         message.error("请选择源实体");
@@ -303,6 +304,7 @@ const saveProcess = async () => {
     let params = {
         entityCode,
         isDisabled: isDisabled ? isDisabled : false,
+        exceptionThrow: exceptionThrow ? exceptionThrow : false,
         pdfWatermark: JSON.stringify(pdfWatermark),
         configTag: configTag || null,
         filterJson: JSON.stringify(filterJson),
@@ -322,6 +324,11 @@ const saveProcess = async () => {
     }
     if (saveEntity == "ExternalForm" && form.bindUsers.length > 0) {
         params.bindUsers = form.bindUsers[0].id;
+    }
+    if(target == 'changeSwitch') {
+        params = {
+            isDisabled: isDisabled ? isDisabled : false,
+        }
     }
     loading.value = true;
     let res;

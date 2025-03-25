@@ -120,6 +120,7 @@ export default {
 		entity: String,
 		refField: String,
 		extraFilter: String, // 查询条件
+        extraSort: String, // 排序
 		tableHeight: {
 			type: Number,
 			default: 480,
@@ -221,9 +222,12 @@ export default {
 		},
 		// 重置
 		onReset() {
+            console.log(this.conditionConf);
 			this.conditionConf.items.forEach((el) => {
 				el.value = null;
 				el.value2 = null;
+                el.referTo = null;
+                el.refLabel = null;
 			});
 			this.loadTableTable("isReset");
 		},
@@ -274,14 +278,15 @@ export default {
 						this.page.pageNo,
 						this.page.limit,
 						this.queryText,
-						this.extraFilter
+						this.extraFilter,
+						this.extraSort
 					)
 				);
 			} else {
 				paramStr = this.entity;
                 let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
                 tempConditionConf.items = tempConditionConf.items.filter(el => (el.value !== undefined && el.value !== null && el.value !== "") || (el.value2 !== undefined && el.value2 !== null && el.value2 !== "") || this.notEmptyItems.includes(el.op))
-				this.refFieldQueryApi(
+                this.refFieldQueryApi(
 					refFieldQuery2(
 						paramStr,
 						this.refField,
@@ -289,7 +294,8 @@ export default {
 						this.page.limit,
 						this.extraFilter,
 						this.filterConditions || null,
-						type == "isReset" ? null : tempConditionConf
+						type == "isReset" ? null : tempConditionConf,
+						this.extraSort
 					)
 				);
 			}

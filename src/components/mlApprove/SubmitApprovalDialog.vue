@@ -1,6 +1,11 @@
 <template>
 	<!-- 审批弹框 -->
-	<ml-dialog v-model="approvalDialog.isShow" title="提交审批" width="460">
+	<ml-dialog 
+        v-model="approvalDialog.isShow" 
+        title="提交审批" 
+        width="460"
+        :show-close="!approvalDialog.loading"
+    >
 		<el-form label-width="100px" v-loading="approvalDialog.loading">
 			<el-form-item label="选择审批流程">
 				<el-select
@@ -40,10 +45,16 @@
 			<el-button
 				style="width: 80px"
 				@click="approvalDialog.isShow = false"
+                :loading="approvalDialog.loading"
 			>
 				取消
 			</el-button>
-			<el-button type="primary" style="width: 80px" @click="onSubmit">
+			<el-button 
+                type="primary" 
+                style="width: 80px" 
+                @click="onSubmit" 
+                :loading="approvalDialog.loading"
+            >
 				提交
 			</el-button>
 		</template>
@@ -53,6 +64,10 @@
 <script setup>
 import { reactive, ref, inject } from "vue";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+
+const Route = useRouter();
+const appPath = import.meta.env.VITE_APP_PATH;
 
 const $API = inject("$API");
 const props = defineProps({
@@ -63,7 +78,7 @@ const emits = defineEmits(["onSubmit"]);
 let approvalDialog = reactive({
 	isShow: false,
 	loading: false,
-	approvalConfig: {},
+	approvalConfig: "",
 });
 
 // 审批流程
@@ -106,6 +121,7 @@ const onSubmit = async () => {
 			processDefId: wfProcDefId,
 			recordId: currentRecordId.value,
 			approvalConfigId: approvalConfigId,
+            addedApprovalUsers: optionalApprovals.value,
 		});
 	} else {
 		res = await $API.approval.detail.startApproval(
@@ -123,6 +139,13 @@ const onSubmit = async () => {
 		approvalDialog.isShow = false;
 	}
 	approvalDialog.loading = false;
+};
+
+// 配置流程
+const goApprovalList = () => {
+    approvalDialog.isShow = false;
+	Route.push(appPath + "process-list");
+    emits("onSubmit");
 };
 
 

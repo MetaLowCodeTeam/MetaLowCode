@@ -146,6 +146,7 @@ import { useRouter } from "vue-router";
 import Allocation from "@/views/customize-menu/components/Allocation.vue";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
+const $TOOL = inject("$TOOL");
 
 let appAbbr = router.currentRoute.value.query.appAbbr;
 let fixedFilter = ref([
@@ -222,7 +223,7 @@ const editClick = (row) => {
     dialogConf.title = "编辑仪表盘";
 };
 // 删除
-const delCick = (row) => {
+const delClick = (row) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",

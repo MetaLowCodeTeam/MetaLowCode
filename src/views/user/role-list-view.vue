@@ -367,6 +367,7 @@ const addNewRole = () => {
                 formModel.value.disabled = resData.disabled;
                 formModel.value.description = resData.description;
                 formModel.value.rightValueMap = resData.rightValueMap;
+                formModel.value.customRightList = resData.customRightList;
                 rightEntityList.value = copyNew(resData.rightEntityList);
                 queryEntity();
             }

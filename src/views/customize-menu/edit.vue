@@ -1,6 +1,6 @@
 <template>
     <ml-dialog
-        :title="row.dialogTitle"
+        :title="editParamConf.customDialogTitle || row.customDialogTitle || row.dialogTitle"
         v-if="isShow"
         v-model="isShow"
         width="55%"
@@ -93,6 +93,12 @@ import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+import { 
+    globalDsvDefaultData, 
+    getModelName, 
+    formatFormVirtualField,
+    formatQueryByIdParam,
+} from "@/utils/util";
 
 const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
 
@@ -138,6 +144,8 @@ const editParamConf = ref({
     showCancelBtn: true,
     showConfirmRefreshBtn: true,
     showConfirmAndSubmitBtn: true,
+    // 自定义弹框标题
+    customDialogTitle: "",
 })
 
 
@@ -184,6 +192,9 @@ const loadMyLayoutConfig = () => {
 };
 
 let row = reactive({
+    // 自定义弹框标题
+    customDialogTitle: "",
+    // 弹框标题
     dialogTitle:"",
     approvalStatus: {},
     detailId: "",
@@ -192,6 +203,7 @@ let row = reactive({
     fieldNameLabel: "",
     fieldNameVale: "",
     idFieldName:"",
+    nameFieldName: "",
     formEntityId:"",
     mainDetailField:"",
     isRead: false,
@@ -202,11 +214,7 @@ let row = reactive({
 const paramDialogConf = ref(null);
 
 
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
 
 
 
@@ -225,6 +233,7 @@ let isShowSaveAndSubmit = ref(false);
 
 const openDialog = async (v) => {
     row.dialogTitle = "Loading...";
+    row.customDialogTitle = v.customDialogTitle;
     row.detailId = v.detailId;
     row.formEntityId = v.formEntityId;
     row.mainDetailField = v.mainDetailField;
@@ -236,12 +245,15 @@ const openDialog = async (v) => {
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
     row.idFieldName = v.idFieldName;
+    row.nameFieldName = v.nameFieldName;
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
+    row.disableWidgets = v.disableWidgets;
     paramDialogConf.value = v.dialogConf;
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
     globalDsv.value.parentExposed = currentExposed.value;
+    globalDsv.value.modelName = getModelName();
     if(v.sourceRecord) {
         globalDsv.value.sourceRecord = v.sourceRecord;
     }
@@ -310,22 +322,37 @@ const initFormLayout = async () => {
                 globalDsv.value.fileDownloadPrefix =
                     res.data.formUploadParam.fileDownloadPrefix;
             }
+            
             // 是编辑
             if (row.detailId) { 
                 // 根据数据渲染出页面填入的值，填过
                 nextTick(async () => {
 					globalDsv.value.formStatus = 'edit';
 					globalDsv.value.formEntityId = row.detailId;
-					let formData = await queryById(row.detailId);
-                    
-					vFormRef.value?.setFormJson(res.data.layoutJson);
+                    vFormRef.value?.setFormJson(res.data.layoutJson);
+                    let formFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+					let formData = await queryById(
+                        row.detailId, 
+                        formFieldSchema.fieldNames, 
+                        { queryDetailList: formFieldSchema.queryDetailList }
+                    );
                     if (formData && formData.data) {
-                        row.dialogTitle =
-                            "编辑" + formData.data[props.nameFieldName];
+                        if(props.nameFieldName) {
+                            row.dialogTitle =
+                                "编辑：" + formData.data[props.nameFieldName];
+                        }else if(row.nameFieldName) {
+                            row.dialogTitle =
+                                "编辑：" + formData.data[row.nameFieldName];
+                        }else if(row.idFieldName){
+                            row.dialogTitle =
+                                "编辑：" + formData.data[row.idFieldName];
+                        }else {
+                            row.dialogTitle = "编辑"
+                        }
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {
-							vFormRef.value.setFormData(formData.data);
+							vFormRef.value.setFormData(formatFormVirtualField(formData.data));
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
                                 if (
@@ -350,7 +377,7 @@ const initFormLayout = async () => {
             else {
                 nextTick(async () => {
                     row.dialogTitle =
-                        "新建" + queryEntityLabelByName(row.entityName);
+                        "新建：" + queryEntityLabelByName(row.entityName);
 					globalDsv.value.formStatus = 'new';
                     globalDsv.value.formEntityId = "";
                     vFormRef.value.setFormJson(res.data.layoutJson);
@@ -360,6 +387,11 @@ const initFormLayout = async () => {
                             id: row.fieldNameVale,
                             name: row.fieldNameLabel,
                         };
+                        if(props.isUser){
+                            row.fieldName = null;
+                            row.fieldNameLabel = null;
+                            row.fieldNameVale = null;
+                        }
                     }
                     if(isReferenceComp.value && !row.detailEntityFlag){
                         param[row.refEntityBindingField] = {
@@ -409,6 +441,13 @@ const getFieldListOfEntityApi = async (tag) => {
     }
     if (props.disableWidgets.length > 0) {
         props.disableWidgets.forEach(el => {
+            if(!props.unDisableWidgets.includes(el)){
+                disabledFields.push(el);
+            }
+        })
+    }
+    if(row.disableWidgets && row.disableWidgets.length > 0){
+        row.disableWidgets.forEach(el => {
             if(!props.unDisableWidgets.includes(el)){
                 disabledFields.push(el);
             }
@@ -580,7 +619,14 @@ const getRecordId = () => {
 
 // 传入ID从新建弹框变成编辑弹框
 const editById = (id) => {
+    haveLayoutJson.value = false;
     row.detailId = id;
+    initFormLayout();
+}
+
+// 重新加载数据
+const reload = () => {
+    haveLayoutJson.value = false;
     initFormLayout();
 }
 
@@ -595,16 +641,12 @@ defineExpose({
     getRecordId,
     editById,
     loading,
+    reload,
 });
 </script>
 <style lang='scss' scoped>
 :deep(.el-form-item--default) {
     margin-bottom: 5px !important;
-}
-:deep(.render-form) {
-    .el-row {
-        padding: 0 8px 0 8px !important;
-    }
 }
 
 .main {

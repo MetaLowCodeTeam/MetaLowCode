@@ -75,7 +75,7 @@
                     导出PDF
                 </div>
             </template>
-            <div class="pl-20 item" @click="openReportForms()" v-if="type != 'list'">
+            <div class="pl-20 item" @click="openReportForms()" v-if="type != 'list' && !isMainDetailField">
                 <span class="icon-t1">
                     <el-icon>
                         <ElIconMemo />
@@ -156,7 +156,6 @@
                     <div
                         class="pl-20 item"
                         @click="openDefaultFilterDialog"
-                        v-if="!isReferenceComp && !isMainDetailField"
                     >
                         默认查询设置
                     </div>

@@ -14,17 +14,18 @@ import CustomFlowForm from './ListVFormCmp/components/CustomFlowForm.vue'
 
 const editCmpMapping = {
     default: defaultEntityEdit.name,
-    // 2. 映射你的实体详情，实体名称:组件名称
+    // 2. 映射你的编辑组件，自定义组件名称:你引入组件的.name
+    // 3. 注册组件在最下面 --------------------------------
     TestEdit: TestEdit.name,
     CustomFlowForm: CustomFlowForm.name
 }
 
 // 多实体通用某一个编辑组件映射
 const comEditCmpMapping = {
-    // useComStep_1 代表所有实体用这一个详情组件， 详情组件名称:["*"]   *=>匹配所有，包括初始的详情
+    // useComStep_1 代表所有实体用这一个编辑组件， 编辑组件名称:["*"]   *=>匹配所有，包括初始的详情
     // Sadasaduo: ["*"],
-    // useSingleStep_1 详情组件名称:[对应的实体名称]
-    TestEdit: ['Chacaoyanshi',],
+    // useSingleStep_1 自定义组件名称组件名称:[实体名称]  你哪个实体要用这个组件就加哪个实体的名称
+    TestEdit: ['Ceshichufaqi',],
 };
 
 
@@ -45,7 +46,7 @@ export function getEditCmpByEntityName(entityName) {
     return editCmpMapping[entityName]
 }
 
-// 注册详情组件
+// 注册编辑组件
 export function registerCustomEditCmp(app) {
     // 引入默认实体详情
     app.component(defaultEntityEdit.name, defaultEntityEdit);

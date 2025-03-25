@@ -1,8 +1,11 @@
 <template>
 	<!--  -->
 	<el-form-item label="过滤条件" label-width="120px" v-if="!optionModel.useTreeDataSelect">
-		<el-button class="w-100" @click="openFilterDialog">
+		<el-button class="w-100" @click="openFilterDialog" v-if="!optionModel.filterConditions?.items || optionModel.filterConditions?.items?.length == 0">
 			设置过滤条件
+		</el-button>
+        <el-button class="w-100" @click="openFilterDialog" v-else>
+			已设置条件（{{ optionModel.filterConditions?.items?.length }}）
 		</el-button>
 	</el-form-item>
 	<!--  -->
@@ -19,70 +22,90 @@
 					class="mb-10 ml-conditions-list"
 					:gutter="10"
 				>
-					<!-- 字段名 -->
-					<el-col :span="10">
-						<div class="field-one">
-							<span class="field-inx">{{ inx + 1 }}</span>
-							<el-icon
-								size="18"
-								class="remove-icon"
-								@click="delConditions(inx)"
-							>
-								<ElIconRemoveFilled />
-							</el-icon>
-						</div>
-						<el-select
-							class="field-select"
-							v-model="item.fieldName"
-							@change="fieldChange(item)"
-							filterable
-							no-match-text="无匹配文本"
-							size="default"
-						>
-							<el-option
-								v-for="op in refFieldList"
-								:key="op.fieldName"
-								:label="
-									op.label +
-									(op.targetType
-										? '（' + op.targetType + '）'
-										: '')
-								"
-								:value="op.fieldName"
-							/>
-						</el-select>
-					</el-col>
-					<!-- 条件类型 -->
-					<el-col :span="4">
-						<el-select v-model="item.op" size="default">
-							<el-option
-								v-for="op in getSelectOp(item)"
-								:key="op"
-								:label="op_type[op]"
-								:value="op"
-							/>
-						</el-select>
-					</el-col>
-					<!-- 条件值 -->
-					<el-col :span="10">
-						<el-select
-							class="field-select"
-							v-model="item.value"
-							filterable
-							no-match-text="无匹配文本"
-							size="default"
-							:class="{ 'is-error': item.isError }"
-							v-if="!op_no_value.includes(item.op)"
-							@focus="clearError(item)"
-						>
-							<el-option
-								v-for="op in targetFieldList"
-								:key="op.name"
-								:label="op.label + '（' + op.fieldType + '）'"
-								:value="op.name"
-								:disabled="op.fieldType != item.targetType"
-							/> </el-select
-					></el-col>
+                    <template v-if="item.op == 'SQL'">
+                        <el-col :span="24">
+                            <div class="field-one">
+                                <span class="field-inx">{{ inx+1 }}</span>
+                                <el-icon size="18" class="remove-icon" @click="delConditions(inx)">
+                                    <ElIconRemoveFilled />
+                                </el-icon>
+                            </div>
+                            <el-input 
+                                class="field-select field-input" 
+                                placeholder="请输入SQL" 
+                                v-model="item.value" 
+                                clearable
+                                size="default"
+                            />
+                        </el-col>
+                    </template>
+                    <template v-else>
+                        <!-- 字段名 -->
+                        <el-col :span="10">
+                            <div class="field-one">
+                                <span class="field-inx">{{ inx + 1 }}</span>
+                                <el-icon
+                                    size="18"
+                                    class="remove-icon"
+                                    @click="delConditions(inx)"
+                                >
+                                    <ElIconRemoveFilled />
+                                </el-icon>
+                            </div>
+                            <el-select
+                                class="field-select"
+                                v-model="item.fieldName"
+                                @change="fieldChange(item)"
+                                filterable
+                                no-match-text="无匹配文本"
+                                size="default"
+                            >
+                                <el-option
+                                    v-for="op in refFieldList"
+                                    :key="op.fieldName"
+                                    :label="
+                                        op.label +
+                                        (op.targetType
+                                            ? '（' + op.targetType + '）'
+                                            : '')
+                                    "
+                                    :value="op.fieldName"
+                                />
+                            </el-select>
+                        </el-col>
+                        <!-- 条件类型 -->
+                        <el-col :span="4">
+                            <el-select v-model="item.op" size="default">
+                                <el-option
+                                    v-for="op in getSelectOp(item)"
+                                    :key="op"
+                                    :label="op_type[op]"
+                                    :value="op"
+                                />
+                            </el-select>
+                        </el-col>
+                        <!-- 条件值 -->
+                        <el-col :span="10">
+                            <el-select
+                                class="field-select"
+                                v-model="item.value"
+                                filterable
+                                no-match-text="无匹配文本"
+                                size="default"
+                                :class="{ 'is-error': item.isError }"
+                                v-if="!op_no_value.includes(item.op)"
+                                @focus="clearError(item)"
+                            >
+                                <el-option
+                                    v-for="op in targetFieldList"
+                                    :key="op.name"
+                                    :label="op.label + '（' + op.fieldType + '）'"
+                                    :value="op.name"
+                                    :disabled="op.fieldType != item.targetType"
+                                /> 
+                            </el-select>
+                        </el-col>
+                    </template>
 				</el-row>
 			</el-scrollbar>
 			<!-- 添加条件 -->
@@ -93,6 +116,12 @@
 					</el-icon>
 					<span class="ml-8">添加条件</span>
 				</span>
+                <span class="ml-a-span ml-10" @click="addSql">
+                    <el-icon size="18" class="add-icon">
+                        <ElIconCirclePlusFilled />
+                    </el-icon>
+                    <span class="ml-8">添加SQL条件</span>
+                </span>
 			</div>
 			<div class="ml-conditions-mode mt-10">
 				<el-radio-group
@@ -147,6 +176,7 @@ import { getRefFieldExtras } from "@/api/system-manager";
 import conditionsConfig from "@/config/conditionsConfig";
 // 类型映射
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
+import { checkIsSubForm } from '@/utils/util';
 export default {
 	name: "reference-fillBackConfig-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -220,7 +250,7 @@ export default {
             // 所有子表单组件
             this.allSubFormWidgets = [];
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
                     this.allSubFormWidgets.push(el);
 					Utils.traverseFieldWidgetsOfContainer(
 						el.container,
@@ -273,7 +303,7 @@ export default {
 					entity,
 				});
 				if (fieldListRes) {
-					let list = fieldListRes.data || [];
+					let list = fieldListRes.data ? fieldListRes.data.filter(el => el.type != 'ReferenceList') : [];
 					this.refFieldList = list.map((el) => {
 						return {
 							fieldName: el.name,
@@ -344,6 +374,14 @@ export default {
 			this.conditionConf.items.push(condition);
 			this.fieldChange(condition);
 		},
+        // 添加SQL
+        addSql() {
+            this.conditionConf.items.push({
+                fieldName: "sql",
+                op: "SQL",
+                value: "",
+            });
+        },
 		// 删除条件
 		delConditions(inx) {
 			this.conditionConf.items.splice(inx, 1);
@@ -440,7 +478,7 @@ export default {
 			// 当前组件所在的父容器名称
 			let targetSubForm = "";
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
 					Utils.traverseFieldWidgetsOfContainer(
 						el.container,
 						(fw) => {
@@ -565,6 +603,9 @@ export default {
 	}
 	.field-select {
 		width: calc(100% - 25px);
+	}
+	.field-input {
+		width: calc(100% - 50px);
 	}
 	&:hover {
 		.field-inx {

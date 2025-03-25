@@ -6,7 +6,7 @@
 			:rules="rules"
 			:design-state="designState"
 			:parent-widget="parentWidget"
-			:parent-list="parentList"
+			:parent-list="parentList"  
 			:index-of-parent-list="indexOfParentList"
 			:sub-form-row-index="subFormRowIndex"
 			:sub-form-col-index="subFormColIndex"
@@ -44,16 +44,21 @@
 							<component :is="field.options.buttonIcon" />
 						</el-icon>
 					</el-button>
-				</template>    
+				</template>
 			</el-input>
-			<ReferenceSearchRemote 
-                v-if="!isReadMode && field.options.openSearchInPlace" 
+			<ReferenceSearchRemote
+                ref="referRemote"
+                v-if="!isReadMode && field.options.openSearchInPlace"
                 :entity="entity"
 				:refField="field.options.name"
                 :searchFields="field.options.searchFields"
+                :dialogWidth="field.options.searchDialogWidth"
+                :disabled="field.options.disabled"
                 :fieldModel="fieldModel"
+                :extraFilter="searchFilter"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
+                @onFocus="onReferRemoteFocus"
             />
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"
@@ -90,12 +95,13 @@
 				:entity="entity"
 				:refField="curRefField"
 				:extraFilter="searchFilter"
+                :extraSort="extraSort"
                 :filterConditions="filterConditions"
-				@recordSelected="setReferRecord"
-                @multipleRecordSelected="multipleSetReferRecord"
+				@recordSelected="beforeSetReferRecord"
+                @multipleRecordSelected="beforeMultipleSetReferRecord"
 				:gDsv="gDsv"
-                :showCheckBox="subFormItemFlag"
-                :showMultipleSelectConfirm="subFormItemFlag"
+                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
@@ -106,7 +112,7 @@
             />
             <template #footer v-if="referenceDialogType == 'tree'">
                 <el-button @click="showReferenceDialogFlag = false">取消</el-button>
-                <el-button type="primary" @click="treeDialogConfirm">确认</el-button>
+                <el-button type="primary" @click="beforeTreeDialogConfirm">确认</el-button>
             </template>
 		</ml-dialog>
 	</div>
@@ -172,6 +178,7 @@ export default {
 			entity: null,
 			curRefField: null,
 			searchFilter: "",
+            extraSort: "",
             filterConditions:{},
 			gDsv: {},
 		};
@@ -263,11 +270,20 @@ export default {
 				}
 			}
 		},
-
+        onReferRemoteFocus() {
+            if (this.designState) {
+                return
+            }
+            if(!this.checkFilterConditions()){
+                this.$refs.referRemote.setFilterConditions(null, false);
+                return
+            }
+            this.$refs.referRemote.setFilterConditions(this.filterConditions, true);
+        },
 		onAppendButtonClick() {
             if (this.designState) {
                 return
-            } 
+            }
 			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
 				let customFn = new Function(
 					this.field.options.onAppendButtonClick
@@ -290,6 +306,17 @@ export default {
                 };
                 return
             }
+            if(!this.checkFilterConditions()){
+                return
+            }
+            // 如果有可视化排序配置
+            if(this.field.options?.sortField){
+                this.extraSort = `${this.field.options.sortField} ${this.field.options.sortOrder}`;
+            }
+			this.showReferenceDialogFlag = true;
+		},
+        // 检测过滤条件
+        checkFilterConditions() {
             let optionsFilterConditions = {};
             if(this.field.options?.filterConditions){
                 optionsFilterConditions = JSON.parse(JSON.stringify(this.field.options?.filterConditions));
@@ -322,7 +349,7 @@ export default {
                     }else {
                         if(!fieldValue){
                             this.$message.error("请填写：" + fieldLabel);
-                            return
+                            return false;
                         }
                         el.value = fieldValue;
                         if(typeof fieldValue == 'object'){
@@ -340,16 +367,28 @@ export default {
             } else {
                 this.filterConditions = null;
             }
-            if(this.gDsv["filterConditions"]){
-                this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv["filterConditions"]);
+            let filedName = this.field.options.name;
+            if(this.gDsv[filedName]){
+                this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv[filedName].filterConditions);
             }
-			this.showReferenceDialogFlag = true;
-		},
-
+            return true;
+        },
 		handleClearEvent() {
 			this.fieldModel = null;
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 		},
+        beforeMultipleSetReferRecord(recordObj, rows) {
+            let { confirmSelect, confirmSelectContent } = this.field.options;
+            if(confirmSelect) {
+                this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
+                    type: 'warning'
+                }).then(() => {
+                    this.multipleSetReferRecord(recordObj, rows);
+                })
+            }else {
+                this.multipleSetReferRecord(recordObj, rows);
+            }
+        },
         // 多选数据回填
         multipleSetReferRecord(recordObj, rows) {
             // 通过子表名称取子表组件
@@ -464,6 +503,18 @@ export default {
             // 关闭弹框
             this.showReferenceDialogFlag = false;
         },
+        beforeSetReferRecord(recordObj, selectedRow) {
+            let { confirmSelect, confirmSelectContent } = this.field.options;
+            if(confirmSelect) {
+                this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
+                    type: 'warning'
+                }).then(() => {
+                    this.setReferRecord(recordObj, selectedRow);
+                })
+            }else {
+                this.setReferRecord(recordObj, selectedRow);
+            }
+        },
         // 单选回填
 		setReferRecord(recordObj, selectedRow) {
 			this.fieldModel = {
@@ -471,12 +522,25 @@ export default {
 				name: recordObj.label,
 			};
 
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
 			this.handleRecordSelectedEvent(selectedRow);
             // 回填
 			this.doFillBack(recordObj, selectedRow);
 			this.showReferenceDialogFlag = false;
 		},
+        // 二次确认选择
+        beforeTreeDialogConfirm() {
+            let { confirmSelect, confirmSelectContent } = this.field.options;
+            if(confirmSelect) {
+                this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
+                    type: 'warning'
+                }).then(() => {
+                    this.treeDialogConfirm();
+                })
+            }else {
+                this.treeDialogConfirm();
+            }
+        },
         // 树选择回填
         treeDialogConfirm() {
             let selectedNodes = this.$refs.referTree?.getSelectedNode();
@@ -489,7 +553,7 @@ export default {
 				id: selectedNodes[0].id,
 				name: selectedNodes[0].label,
 			};
-			this.handleChangeEvent(this.fieldModel);
+			this.onFieldChangeEvent(this.fieldModel);
             this.showReferenceDialogFlag = false;
         },
 		async doFillBack(recordObj, selectedRow) {
@@ -506,7 +570,7 @@ export default {
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;
 						}
-                        
+
 						// 执行回填操作
                         let targetWidgetRef = this.getWidgetRef(el.targetField);
                         if (targetWidgetRef) {
@@ -578,6 +642,13 @@ export default {
 		getFilter() {
 			return this.searchFilter;
 		},
+        setSort(newSort) {
+            this.extraSort = newSort;
+        },
+
+        getSort() {
+            return this.extraSort;
+        },
 
 		handleRecordSelectedEvent(selectedRow) {
 			if (!!this.designState) {

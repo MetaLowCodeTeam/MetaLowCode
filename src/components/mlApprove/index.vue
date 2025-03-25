@@ -22,19 +22,21 @@
         <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
-                    <mlApproveBar :approvalInfo="approvalTask" />
-                    <v-form-render
-                        v-if="haveLayoutJson"
-                        ref="vFormRef"
-                        :option-data="optionData"
-                        :form-data="formData"
-                        :global-dsv="globalDsv"
-                    />
-                    <el-empty
-                        v-else
-                        :image-size="100"
-                        :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'"
-                    />
+                    <div class="detail-container">
+                        <mlApproveBar :approvalInfo="approvalTask" />
+                        <v-form-render
+                            v-if="haveLayoutJson"
+                            ref="vFormRef"
+                            :option-data="optionData"
+                            :form-data="formData"
+                            :global-dsv="globalDsv"
+                        />
+                        <el-empty
+                            v-else
+                            :image-size="100"
+                            :description="approvalTask.type ? '未查询到相关配置数据' : '该流程已结束或者流程异常'"
+                        />
+                    </div>
                 </el-col>
                 <el-col :span="6" v-if="approvalTask.type">
                     <el-form label-position="top" label-width="100px">
@@ -183,18 +185,59 @@
             </el-form>
         </div>
     </mlDialog>
+    <!-- 选择审批任务弹框 -->
+	<mlDialog
+		v-model="approveTaskConf.isShow"
+		title="选择审批任务"
+		width="400"
+		appendToBody
+	>
+		<el-form label-width="100px">
+			<el-form-item label="选择审批任务">
+				<el-select
+					v-model="approveTaskConf.taskId"
+					placeholder="请选择审批任务"
+					class="w-100"
+				>
+					<el-option
+						v-for="item in approveTaskConf.taskList"
+						:key="item.approvalTaskId"
+						:label="item.stepName"
+						:value="item.approvalTaskId"
+					/>
+				</el-select>
+			</el-form-item>
+			<el-form-item>
+				<div class="w-100" style="text-align: right">
+					<el-button @click="approveTaskConf.isShow = false">
+                        取消
+                    </el-button>
+					<el-button type="primary" @click="confirmApproveTask">
+                        确认任务
+                    </el-button>
+				</div>
+			</el-form-item>
+		</el-form>
+	</mlDialog>
 </template>
 
 <script setup>
 import http from "@/utils/request";
 import { Avatar, CirclePlusFilled } from "@element-plus/icons-vue";
-import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
+import { watch, ref, onMounted, reactive, nextTick } from "vue";
 import { queryById, saveRecord } from "@/api/crud";
 import { getRecordApprovalState } from '@/api/approval';
 import { getRejectNodeList } from "@/api/approval";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getFormLayout } from "@/api/system-manager";
+import { 
+    globalDsvDefaultData, 
+    formatFormVirtualField, 
+    formatQueryByIdParam,
+    checkApprovalPreEvent
+ } from "@/utils/util";
+
 
 /**
  * 组件
@@ -211,9 +254,10 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     title: { type: String, default: "" },
     approvalName: { type: String, default: "" },
+    // 是否作为dialog调用
+    isDialog: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue", "canner", "confirm"]);
-const $ElMessage = inject("$ElMessage");
 let loading = ref(false);
 // 弹框是否显示
 let isShow = ref(null);
@@ -261,8 +305,10 @@ watch(
 );
 
 onMounted(() => {
-    isShow.value = props.modelValue;
-    getApprovalTaskById();
+    if(!props.isDialog) {
+        isShow.value = props.modelValue;
+        getApprovalTaskById();
+    }
 });
 
 /**
@@ -275,18 +321,17 @@ const vFormRef = ref();
 let haveLayoutJson = ref(false);
 let optionData = ref({});
 let formData = reactive({});
-let globalDsv = ref({
-    uploadServer: import.meta.env.VITE_APP_BASE_API,
-    baseApi: import.meta.env.VITE_APP_BASE_API,
-    SERVER_API: import.meta.env.VITE_APP_BASE_API,
-});
+let globalDsv = ref(globalDsvDefaultData());
+
+let currentApprovalTaskId = ref(null);
+
 // 初始化自定义表单
 const initFormLayout = async (formLayoutId) => {
     loading.value = true;
     globalDsv.value.useFormId = formLayoutId;
     globalDsv.value.formEntity = queryEntityNameById(props.entityId);
     let res = await getFormLayout(
-        allEntityName.value[approvalTask.value.entityCode],
+        allEntityName.value[approvalTask.value.entityCode] || queryEntityNameById(props.entityId),
         formLayoutId,
         true
     );
@@ -298,17 +343,19 @@ const initFormLayout = async (formLayoutId) => {
             optionData.value = res.data.optionData || {};
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
-                // 获取审批信息
-                let recordApprovalRes = await getRecordApprovalState(props.entityId);
-                if(recordApprovalRes && recordApprovalRes.data?.flowVariables){
-                    globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+                if(!props.isDialog) {
+                    await getApprovalTaskInfo();
+                }else {
+                    await getApprovalTaskById();
                 }
-                let formData = await queryById(props.entityId);
                 vFormRef.value.setFormJson(res.data.layoutJson);
+                let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+                let formData = await queryById(props.entityId, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
+                
                 if (formData) {
                     globalDsv.value.recordData = formData.data;
                     nextTick(()=>{
-                        vFormRef.value.setFormData(formData.data);
+                        vFormRef.value.setFormData(formatFormVirtualField(formData.data));
                         nextTick(() => {
                             vFormRef.value.reloadOptionData();
                             vFormRef.value.disableForm();
@@ -361,8 +408,37 @@ const initFormLayout = async (formLayoutId) => {
  *
  */
 
+
+/**
+ * 审批任务相关
+ */
+ let approveTaskConf = ref({
+	isShow: false,
+	taskList: [],
+	taskId: null,
+});
+
+// 确认审批任务
+const confirmApproveTask = () => {
+	let { taskId } = approveTaskConf.value;
+	if (!taskId) {
+		ElMessage.error("请选择审批任务");
+		return;
+	}
+    isShow.value = true;
+    approveTaskConf.value.isShow = false;
+    currentApprovalTaskId.value = taskId;
+    initFormLayout();
+};
+
+
 // 拓展按钮点击
 function handleCommand(type) {
+    // 转审、加签前置事件
+    let preEvent = customButtonText.value[type == 1 ? 'specialReviewButtonTextPreEvent' : 'addSignatureButtonTextPreEvent'];
+    if(!checkApprovalPreEvent(preEvent, vFormRef.value, ElMessage)) {
+        return;
+    }
     otherDialog.value = true;
     taskOperation.value.title = type == 1 ? "转审" : "加签";
     taskOperation.value.type = type;
@@ -373,7 +449,7 @@ function handleCommand(type) {
 async function confirmApostille() {
     let { type, title } = taskOperation.value;
     if (taskOperation.value.nodeRoleList.length < 1) {
-        $ElMessage.warning("请选择要" + title + "到哪些人员");
+        ElMessage.warning("请选择要" + title + "到哪些人员");
         return;
     }
     // 是复杂工作流
@@ -384,7 +460,7 @@ async function confirmApostille() {
     otherLoading.value = true;
     let res = await http.post("/approval/taskOperation", taskOperation.value);
     if (res) {
-        $ElMessage.success(title + "成功");
+        ElMessage.success(title + "成功");
         otherDialog.value = false;
         // 如果是转审，2个弹框都要关掉
         if (type == 1) {
@@ -413,14 +489,28 @@ const handleReset = () => {
 };
 
 // 确认签名
-const handleGenerate = async () => {
-    esignConf.value.resultImg = await esignRef.value.generate();
-    esignConf.value.show = false;
-    confirmApprove(false);
+const handleGenerate = () => {
+    esignRef.value.generate().then(res => {
+        esignConf.value.resultImg = res;
+        esignConf.value.show = false;
+        confirmApprove(false);
+    }).catch(err => {
+        if(err == 'Warning: Not Signned!') {
+            ElMessage.error("请手写签名")
+        }
+        else {
+            console.log(err);
+            ElMessage.error(err);
+        }
+    })
 };
 
 // 同意前触发
 const beforeConfirmApprove = () => {
+    // 同意前置事件
+    if(!checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage)) {
+        return;
+    }
     // 需要手写签名
     if (approvalTask.value.autograph) {
         esignConf.value.show = true;
@@ -431,6 +521,10 @@ const beforeConfirmApprove = () => {
 
 // 驳回前触发
 const beforeReject = () => {
+    // 驳回前置事件
+    if(!checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage)) {
+        return;
+    }
     let { flowType, rejectType } = approvalTask.value;
     // 如果是复杂工作流，且驳回类型是 3（驳回到任意节点）
     if (flowType == 2 && rejectType == 3) {
@@ -465,7 +559,7 @@ function confirmApprove(isBacked) {
                 );
                 if (res) {
                     let msg = isBacked ? "驳回" : "审批";
-                    $ElMessage.success(msg + "成功");
+                    ElMessage.success(msg + "成功");
                     canner();
                     emit("confirm");
                 }
@@ -474,7 +568,7 @@ function confirmApprove(isBacked) {
         loading.value = false;
 
     }).catch(err => {
-        $ElMessage.error("表单校验失败，请修改后重新提交");
+        ElMessage.error("表单校验失败，请修改后重新提交");
     })
 }
 
@@ -484,6 +578,11 @@ const customButtonText = ref({
     cancelButtonText: '取消',
     specialReviewButtonText: '转审',
     addSignatureButtonText: '加签',
+    // 前置事件
+    confirmPreEvent: '',
+    rejectPreEvent: '',
+    specialReviewPreEvent: '',
+    addSignaturePreEvent: '',
 })
 
 
@@ -491,7 +590,7 @@ const customButtonText = ref({
 async function getApprovalTaskById() {
     loading.value = true;
     let res = await http.get("/approval/getApprovalTaskById", {
-        approvalTaskId: props.taskId,
+        approvalTaskId: currentApprovalTaskId.value || props.taskId,
     });
     if (res) {
         approvalTask.value = res.data;
@@ -509,12 +608,42 @@ async function getApprovalTaskById() {
                 if (Object.prototype.hasOwnProperty.call(newCustomButtonJson, key)) {
                     const element = newCustomButtonJson[key];
                     customButtonText.value[key] = element.custom || element.default
+                    customButtonText.value[key + 'PreEvent'] = element.script || '';
                 }
             }
         }
-        initFormLayout(approvalTask.value.formLayoutId);
+        if(!props.isDialog) {
+            initFormLayout(approvalTask.value.formLayoutId);
+        }
     } else {
         loading.value = false;
+    }
+}
+let approvalTaskInfo = ref(null);
+const getApprovalTaskInfo = async () => {
+    // 获取审批信息
+    let recordApprovalRes = await getRecordApprovalState(props.entityId);
+    if(recordApprovalRes){
+        approvalTaskInfo.value = recordApprovalRes.data;
+        if( recordApprovalRes.data?.flowVariables) {
+            globalDsv.value.flowVariables = recordApprovalRes.data.flowVariables;
+        }
+        if(props.isDialog) {
+            let { parallelTasks, approvalTaskId } = recordApprovalRes.data;
+            currentApprovalTaskId.value = approvalTaskId;
+            if(currentApprovalTaskId.value) {
+                if (parallelTasks && parallelTasks.length > 1) {
+                    approveTaskConf.value = {
+                        isShow: true,
+                        taskList: [...parallelTasks],
+                        taskId: null,
+                    };
+                }else {
+                    isShow.value = true;
+                    initFormLayout();
+                }
+            }
+        }
     }
 }
 
@@ -539,7 +668,7 @@ const openRejectDialog = async () => {
     rejectDialogShow.value = true;
     rejectDialogLoading.value = true;
     rejectNode.value = "";
-    let res = await getRejectNodeList(props.taskId);
+    let res = await getRejectNodeList(currentApprovalTaskId.value || props.taskId);
     if (res && res.code == 200) {
         rejectNodeList.value = res.data;
     }
@@ -577,7 +706,7 @@ const saveComplexFlow = async (dealWithType) => {
         otherLoading.value = true;
     }
     let param = {
-        approvalTaskId: props.taskId,
+        approvalTaskId: currentApprovalTaskId.value || props.taskId,
         dealWithType,
         wfTaskBo: {
             comment: form.value.remark,
@@ -598,7 +727,7 @@ const saveComplexFlow = async (dealWithType) => {
     );
     if (res && res.code == 200) {
         let msg = DealWithTypeLabel[dealWithType];
-        $ElMessage.success(msg + "成功");
+        ElMessage.success(msg + "成功");
         // 不是加签需要关闭弹框。
         if (dealWithType != 5) {
             canner();
@@ -611,13 +740,32 @@ const saveComplexFlow = async (dealWithType) => {
         otherLoading.value = false;
     }
 };
+
+const openDialog = () => {
+    nextTick(async () => {
+        getApprovalTaskInfo();
+        // console.log(approvalTaskInfo.value,'approvalTaskInfo.value')
+        // console.log(props.entityId,'approverRecordId')
+        // initFormLayout();
+    })
+    // console.log(props.entityId,'approverRecordId')
+}
+
+defineExpose({
+    openDialog,
+})
+
 </script>
 
 <style lang="scss" scoped>
-:deep(.render-form) {
-    .el-row {
-        padding: 0 8px 0 8px !important;
-    }
+
+.detail-container {
+    box-sizing: border-box;
+    padding-right: 5px;
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+    overflow-x: hidden;
+    // padding: 20px;
 }
 
 .detail-header {

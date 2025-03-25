@@ -9,11 +9,11 @@
         <div class="app-loading" v-else>
             <div class="app-loading__logo"></div>
             <div class="app-loading__loader"></div>
-            <div class="app-loading__title">Loading...</div>
+            <div class="app-loading__title">加载中...</div>
         </div>
     </el-config-provider>
     <div class="web-ver">{{ publicSetting.webVer }}</div>
-    <mlCustomerService v-if="publicSetting.trialVersionFlag" />
+    <mlCustomerService v-if="publicSetting.trialVersionFlag || publicSetting?.productType?.value == 1" />
 </template>
 
 <script setup>
@@ -25,7 +25,8 @@ import {
     inject,
     ref,
     nextTick,
-    onMounted
+    onMounted,
+    onBeforeUnmount
 } from "vue";
 import mlCustomerService from "@/components/mlCustomerService/index.vue";
 import colorTool from "@/utils/color";
@@ -156,16 +157,23 @@ const setProperty = (theme, type, val, inx) => {
 // 获取新消息
 const getNewMsgNum = async () => {
     let checkStatusRes = await http.get("/crud/checkStatus");
-    if (checkStatusRes) {
+    if (checkStatusRes && checkStatusRes.code == 200) {
         setNewMsgNum(checkStatusRes.data?.noteCount);
+    }else {
+        clearInterval(timer.value);
     }
 };
+let timer = ref(null);
 // 轮循获取新消息
 const roundRobin = (ms) => {
-    setInterval(() => {
+    timer.value = setInterval(() => {
         getNewMsgNum();
     }, ms);
 };
+
+onBeforeUnmount(() => {
+    clearInterval(timer.value);
+});
 </script>
 
 <style lang="scss">

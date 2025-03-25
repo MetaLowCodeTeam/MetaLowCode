@@ -38,13 +38,6 @@ let detailDialog = ref({});
 let tabs = ref();
 
 
-watch(
-    () => props.cutTab,
-    () => {
-        activeName.value = tabs.value[props.cutTab].entityName + '-' + props.cutTab
-    },
-    { deep: true }
-);
 let activeName = ref("");
 let myCheckTabsFilter = ref({});
 
@@ -61,12 +54,24 @@ const initTabs = () => {
     if (config) {
         config = JSON.parse(config);
         config.forEach((el,inx) => {
-            if(myCheckTabsFilter.value[inx]){
+            if(myCheckTabsFilter.value[inx] && !el.isCustomComponent){
+                tabs.value.push(el);
+            }
+            if(el.isCustomComponent && el.pcShow){
+                let entityName = "detail_custom_component";
+                if (el.pcShow && el.mobileShow) {
+                    entityName += "_all";
+                } else {
+                    entityName += "_pc";
+                } 
+                entityName += "_" + el.componentName
+                el.entityName = entityName;
                 tabs.value.push(el);
             }
         });
     }
-    activeName.value = tabs.value[props.cutTabIndex].entityName + '-0';
+    let takInx = tabs.value[props.cutTabIndex] ? props.cutTabIndex : 0;
+    activeName.value = tabs.value[takInx].entityName + '-' + takInx;
 };
 
 

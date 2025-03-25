@@ -3,6 +3,8 @@
     <el-button
         class="mr-10"
         icon="Plus"
+        type="primary"
+        plain
         @click="openDialog"
         :disabled="isDisabled"
         v-if="!isDialog"

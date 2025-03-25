@@ -330,7 +330,7 @@ const onToggleDetailEntityFlag = (val) => {
     if (!!val) {
         myEntityProps.value.authorizable = false;
         myEntityProps.value.listable = false;
-        myEntityProps.value.layoutable = false;
+        myEntityProps.value.layoutable = true;
     }
 };
 
@@ -350,9 +350,9 @@ const formatTableData = () => {
     if(searchTag.value == '全部标签'){
         newData = JSON.parse(JSON.stringify(tableData.value));
     }else if(searchTag.value == '未分组'){
-        newData = tableData.value.filter(el => el.tags.length == 0);
+        newData = tableData.value.filter(el => !el.tags || (el.tags && el.tags.length == 0));
     }else{
-        newData = tableData.value.filter(el => el.tags.indexOf(searchTag.value) != -1);
+        newData = tableData.value.filter(el => el.tags && el.tags.indexOf(searchTag.value) != -1);
     }
     return newData.filter(
         el =>

@@ -235,7 +235,6 @@ const handleUser = (command) => {
         ElMessageBox.confirm("确认是否退出当前用户？", "提示", {
             type: "warning",
             confirmButtonText: "退出",
-            confirmButtonClass: "el-button--danger",
         })
             .then(async () => {
                 let res = await http.post("/user/logout");
@@ -297,15 +296,25 @@ const msgClick = (item, inx) => {
     );
     let { currentRoute } = router;
     if (item.type == 30 || item.type == 20) {
-        if (filterEntity.length < 1) {
-            $ElMessage.error("该实体已删除");
-        } else {
-            msg.value = false;
-            detailRefs.value.openDialog(item.relatedRecord.id);
+        // 如果是仪表盘
+        if(item.entityName == 'Chart'){
+            if($TOOL.checkRole('r52-1') && $TOOL.checkRole('r6017')) {
+                router.push(appPath + 'dashboard-list');
+            }else {
+                $ElMessage.error("没有权限");
+            }
+        }else {
+            if (filterEntity.length < 1) {
+                $ElMessage.error("该实体已删除");
+            } else {
+                msg.value = false;
+                detailRefs.value.openDialog(item.relatedRecord.id);
+            }
         }
     } else if (item.type == 10) {
         if (currentRoute.value.name != "CenterHandle") {
-            router.push(appPath + "center-handle");
+            // router.push(appPath + "center-handle");
+            detailRefs.value.openDialog(item.relatedRecord.id);
         }
         msg.value = false;
         // approveDialogIsShow.value = true;

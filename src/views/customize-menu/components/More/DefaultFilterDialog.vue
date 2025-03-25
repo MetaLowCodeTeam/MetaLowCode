@@ -8,6 +8,7 @@
                 @cancel="isShow = false"
                 @confirm="conditionConfirm"
                 :entityName="entityName"
+                enableSql
             />
         </div>
     </ml-dialog>

@@ -127,4 +127,11 @@ const getChartData = async (options, type) => {
     }
     loading.value = false;
 };
+
+const getData = () => {
+    return option;
+}
+defineExpose({
+    getData
+})
 </script>

@@ -29,6 +29,7 @@
                             link
                             :loading="queryPanelLoading"
                             @click="changeQueryPanel(false)"
+                            v-if="listParamConf.showChangeQueryPanel"
                         >
                             <el-icon size="16" class="toggle-query-icon">
                                 <Switch />
@@ -91,7 +92,7 @@
                         bg
                         :loading="queryPanelLoading"
                         @click="changeQueryPanel(true)"
-
+                        v-if="listParamConf.showChangeQueryPanel"
                     >
                         切换查询面板
                     </el-button>
@@ -143,7 +144,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField"
                     >
                         编辑
                     </el-button>
@@ -163,18 +164,7 @@
                         type="primary"
                         icon="Plus"
                         @click="onAdd"
-                        v-if="
-                            listParamConf.showAddBtn &&
-                            $TOOL.checkRole(
-                                'r' +
-                                    queryEntityCodeByEntityName(
-                                        isReferenceComp
-                                            ? referenceEntity
-                                            : entityName
-                                    ) +
-                                    '-2'
-                            )
-                        "
+                        v-if="listParamConf.showAddBtn && hasCreateRight"
                     >
                         新建
                     </el-button>
@@ -203,7 +193,7 @@
             </div>
             </div>
             <div v-if="showColumnSet">
-                <ListColumnSet 
+                <ListColumnSet
                     :layoutConfig="layoutConfig"
                     :defaultColumnShow="defaultColumnShow"
                     :tableColumn="tableColumn"
@@ -235,7 +225,7 @@
                     </el-tooltip>
                     <el-scrollbar>
                         <ListcommonGroupFilter
-                            ref="ListcommonGroupFilterRefs"
+                            ref="ListCommonGroupFilterRefs"
                             :entityCode="entityCode"
                             :layoutConfig="layoutConfig"
                             @nodeClick="commonGroupFilterNodeClick"
@@ -269,11 +259,13 @@
                     :summary-method="getSummaries"
                     :row-style="setRowStyle"
                     class="table-box-el-table"
+                    @scroll="scrollBehavior"
                 >
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
                         :fixed="checkedColumnFixed"
+                        v-if="listParamConf.showTableCheckbox"
                     >
                         <template #header>
                             <el-checkbox
@@ -289,9 +281,9 @@
                             <el-checkbox v-else @click="selectAllChange('all')"/>
                         </template>
                         <template #default="scope">
-                            <el-checkbox 
+                            <el-checkbox
                                 :disabled="scope.row.isCustomDisabled"
-                                v-model="scope.row.isSelected" 
+                                v-model="scope.row.isSelected"
                                 @change="handleHighlightChangeTable(scope.row)"
                             />
                         </template>
@@ -321,7 +313,7 @@
                             </template>
                         </el-table-column>
                     </template>
-                   
+
                     <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
                     <el-table-column
                         v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
@@ -336,7 +328,7 @@
                                 effect="dark"
                                 :content="getEditBtnTitle(scope.row) || '此状态不可编辑'"
                                 placement="top"
-                                v-if="!checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
+                                v-if="hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
                             >
                                 <el-button
                                     size="small"
@@ -349,12 +341,13 @@
                                 </el-button>
                             </el-tooltip>
                             <el-button
-                                v-else
+                                v-else-if="hasEditRight && !mainDetailField"
                                 size="small"
                                 icon="el-icon-edit"
                                 link
                                 type="primary"
                                 @click.stop="onEditRow(scope.row)"
+                                :disabled="scope.row.btnDisabled.edit"
                             >
                                 编辑
                             </el-button>
@@ -364,7 +357,10 @@
                                 link
                                 type="primary"
                                 @click.stop="openDetailDialog(scope.row)"
-                            >查看</el-button>
+                                :disabled="scope.row.btnDisabled.view"
+                            >
+                                查看
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -380,16 +376,17 @@
             style="background: #fff;"
             v-if="listParamConf.showPagination"
         />
-        <mlCustomDetail 
-            ref="detailRefs" 
-            :entityName="entityName" 
+        <mlCustomDetail
+            ref="detailRefs"
+            :customDetailDialogTitle="customDetailDialogTitle"
+            :entityName="entityName"
             @updateData="getTableList"
             :recordDetailFormId="listParamConf.recordDetailFormId"
         />
         <mlCustomEdit
             ref="editRefs"
             :entityName="entityName"
-            :nameFieldName="nameFieldName"
+            :nameFieldName="isOtherEntity ? null : nameFieldName"
             :layoutConfig="layoutConfig"
             @saveFinishCallBack="editConfirm"
             :recordNewFormId="listParamConf.recordNewFormId"
@@ -409,6 +406,15 @@
         />
         <!-- 批量编辑 -->
         <ListBatchUpdate ref="ListBatchUpdateRef" @onConfirm="getTableList" />
+        <!-- 提交审批弹框 -->
+        <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
+        <!-- 执行审批 -->
+        <mlApprove 
+            ref="MlApproveRefs" 
+            isDialog
+            :entityId="approverRecordId"
+            @confirm="ApprovalSuccess"
+        />
     </div>
 </template>
 
@@ -461,10 +467,14 @@ import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 // 自定义查询面板
 import ListCustomizeQuery from './components/ListCustomizeQuery.vue'
 // 列表列设置
-import ListColumnSet from './components/ListColumnSet.vue'
+import ListColumnSet from './components/ListColumnSet.vue';
+// 提交审批弹框
+import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+// 执行审批弹框
+import mlApprove from "@/components/mlApprove/index.vue";
 
 const { allEntityCode } = storeToRefs(useCommonStore());
-const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
+const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
@@ -530,21 +540,21 @@ const props = defineProps({
         default: null,
     },
     // 自定义行事件
-    listRowClick: { 
-        type: Function, 
-        default: null 
+    listRowClick: {
+        type: Function,
+        default: null
     },
     // 自定义名称字段点击
-    nameFieldClick: { 
-        type: Function, 
-        default: null 
+    nameFieldClick: {
+        type: Function,
+        default: null
     },
     // 自定义单元格点击
-    cellClick: { 
-        type: Function, 
-        default: null 
+    cellClick: {
+        type: Function,
+        default: null
     },
-    
+
 })
 
 // 页面Loading
@@ -631,7 +641,10 @@ let showColumnSet = ref(false);
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
 // 配置项
 const listParamConf = ref({
+    // 是否显示列表复选框 注意，如果列表复选框开启，则列表的头部按钮点击事件会失效
+    showTableCheckbox: true,
     showHeader: true,
+    showChangeQueryPanel: true,
     showAdvancedQuery: true,
     showQuickQuery: true,
     showOpenBtn: true,
@@ -649,6 +662,10 @@ const listParamConf = ref({
     recordEditFormId: "",
     // 详情查看表单id
     recordDetailFormId: "",
+    // 提交审批后回调
+    submitApprovalSuccess: () => {},
+    // 审批后回调
+    approvalSuccess: () => {},
 })
 
 
@@ -687,10 +704,10 @@ const formatReferenceEntity = () => {
 
 
 onBeforeMount(() => {
-    let routerEntityname = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
-    if (routerEntityname) {
-        entityCode.value = allEntityCode.value[routerEntityname];
-        entityName.value = routerEntityname;
+    let routerEntityName = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
+    if (routerEntityName) {
+        entityCode.value = allEntityCode.value[routerEntityName];
+        entityName.value = routerEntityName;
     } else {
         entityCode.value = router.currentRoute.value.meta.entityCode;
         entityName.value = router.currentRoute.value.meta.entityName;
@@ -712,11 +729,16 @@ onBeforeMount(() => {
 
 onMounted(()=>{
     // 挂载
-	TableRef.value &&
-		TableRef.value.$refs.bodyWrapper.addEventListener(
-			"mousewheel",
-			scrollBehavior
-		);
+	// TableRef.value &&
+	// 	TableRef.value.$refs.bodyWrapper.addEventListener(
+	// 		"wheel",
+	// 		scrollBehavior
+	// 	);
+	// TableRef.value &&
+	// 	TableRef.value.$refs.bodyWrapper.addEventListener(
+	// 		"DOMMouseScroll",
+	// 		scrollBehavior
+	// 	);
     isMounted.value = true;
     // 取插槽内容
     contentSlots = useSlots();
@@ -728,11 +750,16 @@ onMounted(()=>{
     })
 })
 
-
+let scrollTop = ref(0);
 // 滚动行为
 function scrollBehavior(e) {
-	// 滚动方向判定
-	const scrollDirection = e.deltaY > 0 ? "down" : "up";
+    let scrollDirection;
+    if(e.scrollTop > scrollTop.value) {
+        scrollDirection = "down";
+    }else{
+        scrollDirection = "up";
+    }
+    scrollTop.value = e.scrollTop;
 	if (scrollDirection === "down") {
 		// 获取提供实际滚动的容器
 		const dom =
@@ -765,6 +792,18 @@ onUnmounted(() => {
 			scrollBehavior
 		);
 });
+
+const hasCreateRight = computed(() => {
+	const entityCodeForRight = queryEntityCodeByEntityName(props.isReferenceComp ?
+		props.referenceEntity : entityName.value)
+	return $TOOL.checkRole('r' + entityCodeForRight + '-2')
+})
+
+const hasEditRight = computed(() => {
+	const entityCodeForRight = queryEntityCodeByEntityName(props.isReferenceComp ?
+		props.referenceEntity : entityName.value)
+	return $TOOL.checkRole('r' + entityCodeForRight + '-3')
+})
 
 // 配置自定义列显示
 const MoreRefs = ref();
@@ -1014,9 +1053,15 @@ const refreshData = () => {
     let findSortFields = [];
     // 获取所有列数据统计
     statistics.value = [];
+    // 禁止导出列
+    dataExportData.noExportColumns = [];
     tableColumn.value.forEach((el) => {
         // 字段
         allFields.value.push(el.fieldName);
+        // 禁止导出列
+        if(el.exportable !== undefined && !el.exportable) {
+            dataExportData.noExportColumns.push(el.fieldName);
+        }
         // 排序
         if (el.columnSort) {
             findSortFields.push(el);
@@ -1124,7 +1169,7 @@ const selectAllChange = (target) => {
 
 // 表格行点击选中
 const handleHighlightChangeTable = (row, column) => {
-    
+
     if(props.listRowClick){
         props.listRowClick(row, column)
     }else {
@@ -1141,8 +1186,27 @@ let editRefs = ref();
 // 引用组件所关联的主表行ID
 let myFormEntityId = ref("");
 
+// 获取弹框标题
+const getDialogTitle = (row, key) => {
+    let customDialogConfigFunc = rowStyleConf.value?.dialogConfig || null;
+    if(customDialogConfigFunc){
+        let entity = {
+            name: entityName.value,
+            code: entityCode.value,
+            label: queryEntityLabelByName(entityName.value),
+        }
+        let editTitle = new Function('row', 'entity', customDialogConfigFunc)(row, entity);
+        return editTitle[key];
+    }
+    return {
+        editTitle: "",
+        detailTitle: "",
+    }[key];
+}
+
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
+    isOtherEntity.value = false;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
         if(!detailEntityFlag && !myFormEntityId.value){
@@ -1204,8 +1268,11 @@ const getEditBtnTitle = (row) => {
     }
     return str;
 };
+
+let isOtherEntity = ref(false);
 // 编辑
 const onEditRow = (row, localDsv, formId) => {
+    isOtherEntity.value = false;
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
@@ -1216,6 +1283,7 @@ const onEditRow = (row, localDsv, formId) => {
         refEntityBindingField,
     };
     tempV.detailId = row[idFieldName.value];
+    tempV.customDialogTitle = getDialogTitle(row, 'editTitle');
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
@@ -1255,21 +1323,15 @@ const rowDblclick = (row) => {
 const TableCellClick = (row, column, cell) => {
     emits('onCellClick', row, column, cell)
 }
-
+// 自定义详情弹框标题
+let customDetailDialogTitle = ref("");
 // 打开详情
 const openDetailDialog = (row, localDsv, formId) => {
     if (!row) {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    // 是明细表编辑
-    if(mainDetailField.value){
-        let tempV = {};
-        tempV.isRead = true;
-        tempV.detailId = row[idFieldName.value];
-        editRefs.value.openDialog(tempV);
-        return
-    }
+    customDetailDialogTitle.value = getDialogTitle(row, 'detailTitle');
     detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
 };
 
@@ -1335,6 +1397,8 @@ let dataExportData = reactive({
     queryParm: {},
     size: 0,
     total: 0,
+    // 禁止导出列
+    noExportColumns: [],
 });
 
 let builtInFilter = ref({});
@@ -1351,12 +1415,12 @@ const clearDataFilter = () => {
  * 分组查询
  */
 // 常用分组查询保存弹框
-let ListcommonGroupFilterRefs = ref("");
+let ListCommonGroupFilterRefs = ref("");
 // 列表分组树过滤组件
 let ListTreeGroupFilterRefs = ref("");
 let filterEasySql = ref("");
 const treeGroupFilter = (e) => {
-    ListcommonGroupFilterRefs.value.resetChecked();
+    ListCommonGroupFilterRefs.value.resetChecked();
     filterEasySql.value = e;
     getTableList();
 };
@@ -1372,7 +1436,7 @@ const treeSave = () => {
         $ElMessage.warning("请勾选有效的筛选");
         return;
     }
-    ListcommonGroupFilterRefs.value.openSaveDialog(filterEasySql.value);
+    ListCommonGroupFilterRefs.value.openSaveDialog(filterEasySql.value);
 };
 
 // 常用分组查询点击
@@ -1429,8 +1493,12 @@ const getTableList = async () => {
     );
     if (res && res.data) {
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
-        tableData.value = res.data.dataList.map(el => {
-            el.isCustomDisabled = customDisabledFunc ? new Function('row', customDisabledFunc)(el) : false;
+        tableData.value = res.data.dataList.map((el, inx) => {
+            el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', 'target', customDisabledFunc)(el, inx, 'pc') : false;
+            el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', 'target', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx, 'pc') : {
+                view: false,
+                edit: false,
+            };
             el.isSelected = false;
             return el
         });
@@ -1567,6 +1635,7 @@ const loadRouterParams = (cbApi) => {
 const copySuccess = ({type, recordId}) => {
     getTableList();
     if(type == 1){
+        isOtherEntity.value = false;
         let { detailEntityFlag, refEntityBindingField } = props;
         let tempV = {
             detailEntityFlag,
@@ -1617,9 +1686,38 @@ const checkRouterAutoOpen = () => {
 
 
 
+
+
 /**
  * 导出方法
  */
+
+// 提交审批弹框
+let SubmitApprovalDialogRefs = ref();
+const openSubmitApprovalDialog = (recordId) => {
+    SubmitApprovalDialogRefs.value?.openDialog(recordId)
+}
+// 提交审批成功
+const submitApprovalSuccess = () => {
+    getTableList();
+    if(listParamConf.value.submitApprovalSuccess){
+        listParamConf.value.submitApprovalSuccess();
+    }
+}
+// 执行审批弹框
+let MlApproveRefs = ref();
+let approverRecordId = ref(null);
+const openApprovalDialog = (recordId) => {
+    approverRecordId.value = recordId;
+    MlApproveRefs.value?.openDialog(recordId)
+}
+// 审批成功后回调
+const ApprovalSuccess = () => {
+    getTableList();
+    if(listParamConf.value.approvalSuccess){
+        listParamConf.value.approvalSuccess();
+    }
+}
 
 // 重置表格数据
 const resetList = () => {
@@ -1751,6 +1849,18 @@ const viewRow = (row, localDsv, formId) => {
     openDetailDialog(row, localDsv, formId)
 }
 
+// 打开其他实体详情
+const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
+    customDialogTitle.value = customDialogTitle;
+    detailRefs.value.openDialog(recordId, localDsv, formId);
+}
+
+// 新建编辑其他实体
+const editToOtherEntity = (editParam) => {
+    isOtherEntity.value = true;
+    editRefs.value.openDialog(editParam);
+};
+
 // 获取列表数据
 const getTableDataList = () => {
     return sliceTable.value;
@@ -1774,6 +1884,10 @@ defineExpose({
     viewRow,
     getTableDataList,
     openBatchUpdateDialog,
+    openSubmitApprovalDialog,
+    openApprovalDialog,
+    viewToOtherEntity,
+    editToOtherEntity,
 })
 
 </script>

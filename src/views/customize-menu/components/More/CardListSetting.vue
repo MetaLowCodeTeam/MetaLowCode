@@ -5,7 +5,7 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 20px;
-	.from-title {
+	.form-title {
 		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 10px;
@@ -28,8 +28,8 @@
 		>
 			<el-row :gutter="20">
 				<el-col :span="24">
-					<div class="from-title">选择渲染表单（PC）</div>
-					<div class="from-item mb-20">
+					<div class="form-title">选择渲染表单（PC）</div>
+					<div class="form-item mb-20">
 						<el-select
 							v-model="cardSetting.pcFormId"
 							placeholder="请选择渲染表单"
@@ -45,8 +45,8 @@
 					</div>
 				</el-col>
 				<el-col :span="24">
-					<div class="from-title">选择渲染表单（移动端）</div>
-					<div class="from-item mb-20">
+					<div class="form-title">选择渲染表单（移动端）</div>
+					<div class="form-item mb-20">
 						<el-select
 							v-model="cardSetting.mobileFormId"
 							placeholder="请选择渲染表单"
@@ -62,14 +62,14 @@
 					</div>
 				</el-col>
 				<el-col :span="24">
-					<div class="from-title">
+					<div class="form-title">
 						一排展示几个
 						<span class="text-info">
 							<!-- （仅PC生效，移动端因尺寸问题固定展示1个） -->
 							（仅PC生效，移动端暂不支持）
 						</span>
 					</div>
-					<div class="from-item">
+					<div class="form-item">
 						<el-radio-group v-model="cardSetting.rowNum">
 							<el-radio :value="1">1</el-radio>
 							<el-radio :value="2">2</el-radio>

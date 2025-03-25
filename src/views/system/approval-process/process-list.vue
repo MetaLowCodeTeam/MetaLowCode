@@ -86,20 +86,19 @@ let tableColumn = ref([
         entityCode: true,
         sortable: true,
     },
-    {
-        prop: "runningTotal",
-        label: "运行中的流程统计",
-        align: "center",
-    },
-    {
-        prop: "runningTotal",
-        label: "结束的流程统计",
-        align: "center",
-    },
+    // {
+    //     prop: "runningTotal",
+    //     label: "运行中的流程统计",
+    //     align: "center",
+    // },
+    // {
+    //     prop: "runningTotal",
+    //     label: "结束的流程统计",
+    //     align: "center",
+    // },
     {
         prop: "flowType",
         label: "类型",
-        align: "center",
         formatter: (row) => {
             return row.flowType == 2 ? "复杂工作流" : "基础工作流";
         },
@@ -116,7 +115,7 @@ let tableColumn = ref([
         prop: "modifiedOn",
         label: "修改时间",
         align: "center",
-        width: 100,
+        width: 180,
         fromNow: true,
     },
 ]);
@@ -125,7 +124,7 @@ const changeSwitch = (row) => {
     let tempForm = { ...row };
     dialogForm.value.form = { ...tempForm };
     mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
-    mlActiveDialogRefs.value.saveProcess();
+    mlActiveDialogRefs.value.saveProcess('changeSwitch');
 };
 
 // 编辑弹框

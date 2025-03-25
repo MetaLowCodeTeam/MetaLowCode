@@ -19,7 +19,7 @@ export default [
             {
                 label: "LOGO",
                 key: "logo",
-                type: "uptadeLogo",
+                type: "uploadLogo",
                 required: true,
                 isError: false,
             },
@@ -45,15 +45,17 @@ export default [
                     { label: "居左", value: "header" },
                     { label: "顶部", value: "dock" },
                 ],
-                // onChange: (val) => {
-                //     const { setPublicSettingByKey } = useCommonStore();
-                //     setPublicSettingByKey("layoutConfig", val);
-                // }
             },
             {
                 label: "版本号",
                 key: "dbVersion",
                 type: "input",
+            },
+            {
+                label: "外置文件预览服务",
+                key: "fileOnlinePreviewPath",
+                type: "input",
+                subLabel: "系统内置的文件预览仅支持.docx、.xlsx、.pdf、.pptx格式，如果需要预览其他格式文件，需要配置第三方文件预览服务地址。例： http://域名/onlinePreview"
             },
             {
                 label: "页面水印",
@@ -111,6 +113,18 @@ export default [
                 label: "页脚",
                 key: "pageFooter",
                 type: "input",
+            },
+            {
+                label: "大图配置(PC)",
+                subLabel: "推荐尺寸：640*1080",
+                key: "pcLoginPicture",
+                type: "uploadLogo",
+            },
+            {
+                label: "大图配置(Mobile)",
+                subLabel: "推荐尺寸：750*1400",
+                key: "mobileLoginPicture",
+                type: "uploadLogo",
             },
             {
                 label: "手机号登录",
@@ -379,7 +393,7 @@ export default [
                     { label: "列表", value: "list" },
                     { label: "卡片", value: "card" },
                 ],
-                
+
             },
             {
                 label: "列表是否显示操作按钮",

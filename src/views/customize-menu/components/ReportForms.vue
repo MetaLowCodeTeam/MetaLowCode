@@ -19,12 +19,12 @@
 					:key="inx"
 				>
 					{{ item.reportName }}
-                    <el-tooltip content="Excel" placement="bottom">
+                    <el-tooltip content="Excel" placement="left">
                         <span class="down-icon excel" @click="downReport(item)" v-if="defaultShow == 'ALL'">
                             <SvgIcon icon-name="export-excel" style="width: 23px;height: 23px;" />
                         </span>
                     </el-tooltip>
-                    <el-tooltip content="PDF" placement="bottom">
+                    <el-tooltip content="PDF" placement="right">
                         <span class="down-icon pdf" @click="downPdf(item)" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
                             <SvgIcon icon-name="export-pdf" style="width: 22px;height: 22px;"/>
                         </span>

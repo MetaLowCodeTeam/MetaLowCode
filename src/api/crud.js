@@ -22,12 +22,12 @@ export function saveRefFilterPanel(entity, field, filter) {
     );
 }
 
-export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2) {
+export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort) {
 	return http.post(
 		'crud/refFieldQuery2',
 		[formFilter, formFilter2],
 		{
-			params: { entity, 'refField': field, pageNo, pageSize, extraFilter }
+			params: { entity, 'refField': field, pageNo, pageSize, extraFilter, sort }
 		}
 	);
 }
@@ -118,9 +118,10 @@ export function getEntityCodeList(entityName, appAbbr) {
  * 通用查询详情接口
  * @param {*} entityId 实体ID
  * @param {*} fieldNames 需要获取的字段名称
+ * @param {*} body 请求体
  */
-export function queryById(entityId, fieldNames) {
-    return http.get('/crud/queryById', { entityId, fieldNames })
+export function queryById(entityId, fieldNames, body) {
+    return http.post('/crud/queryById', body, { params: { entityId, fieldNames } })
 }
 
 
@@ -169,6 +170,11 @@ export function queryEntityListFields(entityCodes, queryReference, queryReserved
 // 列显示
 export function queryEntityListableFields(entityCode) {
     return http.get('/crud/queryEntityListableFields', { entityCode})
+}
+
+// 引用组件列显示
+export function queryEntityListableFieldsByRefField(field, entity) {
+    return http.get('/crud/queryEntityListableFieldsByRefField', { field, entity})
 }
 
 /**

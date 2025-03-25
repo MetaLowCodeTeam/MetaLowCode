@@ -1,9 +1,12 @@
-
 import dayjs from "dayjs";
 import 'dayjs/locale/zh-cn';
 import calenderPlugin from 'dayjs/plugin/calendar';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { pinyin } from 'pinyin-pro'
+import JSEncrypt from 'jsencrypt';
+import http from "@/utils/request";
+import router from "@/router";
+
 // 注册插件
 dayjs.extend(updateLocale);
 dayjs.extend(calenderPlugin);
@@ -12,15 +15,15 @@ dayjs.extend(calenderPlugin);
 dayjs.updateLocale('zh-cn', {
     // A : 上午/下午/晚上 , dddd: 星期
     calendar: {
-      lastDay: '[昨天] A h:mm',
-      sameDay: '[今天] A h:mm',
-      nextDay: '[明天] A h:mm',
-      lastWeek: 'A h:mm [上]',
-      nextWeek: 'A h:mm [下]',
-      sameElse: 'A h:mm',
+        lastDay: '[昨天] A h:mm',
+        sameDay: '[今天] A h:mm',
+        nextDay: '[明天] A h:mm',
+        lastWeek: 'A h:mm [上]',
+        nextWeek: 'A h:mm [下]',
+        sameElse: 'A h:mm',
     },
 });
-  
+
 dayjs.locale('zh-cn');
 // dayjs().calendar(null,{
 //     sameDay: '[今天]LT',
@@ -296,10 +299,10 @@ export const $fromNow = function (date) {
     // return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : m.format('YYYY-MM-DD')
     return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     //     sameDay: '[今天]LT',
-//     nextDay: '[明天]LT',
-//     nextWeek: '[下]ddddLT',
-//     lastDay: '[昨天]LT',
-//     lastWeek: '[上]ddddLT',
+    //     nextDay: '[明天]LT',
+    //     nextWeek: '[下]ddddLT',
+    //     lastDay: '[昨天]LT',
+    //     lastWeek: '[上]ddddLT',
     // sameElse: 'L'
 }
 
@@ -317,22 +320,22 @@ export const upperFirstLetter = (inStr) => {
 }
 
 /**
- * 获取汉字简拼
+ * 获取汉字拼音字母
  * @param chStr
  * @returns {string}
  */
 export const getSimplePinYin = (chStr) => {
-    return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '')
+    return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '').replaceAll('ü', 'v')
 }
 
 
 /**
- * 
+ *
  * @param {*} showDecimalPlaces 是否开启小数位
  * @param {*} decimalPlaces 小数位是几
  * @param {*} thousandsSeparator 是否开启千分符
  * @param {*} val 值
- * @returns 
+ * @returns
  */
 export const getPreviewNum = (showDecimalPlaces, decimalPlaces, thousandsSeparator, val) => {
     let previewStr = val;
@@ -480,24 +483,38 @@ export const checkConditionList = (data) => {
     return flag;
 }
 
+// 是否区分顶部导航和左侧导航 默认false 不区分
+// PS：此设置只对自定义相关列表生效，默认实体无效，默认实体没有 modelName 这个概念，所以默认是不区分的
+// 区分 意味着你左侧导航和顶部导航的modelName 不一样 会导致左侧导航和顶部导航的配置不一致
+// 不区分 则相反，无论你在左侧或者顶部导航修改相关配置，都会同步
+let isDistinguishTopNav = false;
+
 // 获取配置ModelName
 export const getModelName = () => {
     let modelName = null;
     let pathname = location.pathname;
-    if(pathname.indexOf('/custom-page/') !== -1){
+    if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
+        let checkGuid = splitPathname[splitPathname.length - 1];
+        if(hasGuid(checkGuid) && !isDistinguishTopNav) {
+            splitPathname.splice(splitPathname.length - 1, 1)
+        }
         let newSplitName = [];
-        if(splitPathname[3]){
-            newSplitName.push(splitPathname[3])
-        }
-        if(splitPathname[4]){
-            newSplitName.push(splitPathname[4])
-        }
+        splitPathname.forEach((item, inx) => {
+            if (inx > 2) {
+                newSplitName.push(item)
+            }
+        })
         modelName = newSplitName.join("-")
     }
-    return modelName; 
+    return modelName;
 }
 
+// 判断是否是 GUID
+const hasGuid = (str) => {
+    const guidPattern = /^[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/;
+    return guidPattern.test(str);
+};
 
 
 // 格式化文件大小
@@ -511,9 +528,9 @@ export const formatFileSize = (bytes) => {
 // 格式化 sessionId重定向
 export const formatOutLink = (meta) => {
     let { outLink, redirectCarrySessionId } = meta;
-    if(redirectCarrySessionId) {
+    if (redirectCarrySessionId) {
         return import.meta.env.VITE_APP_BASE_API + "/open/redirectCarrySessionId?url=" + encodeURIComponent(outLink)
-    }else {
+    } else {
         return outLink
     }
 }
@@ -543,3 +560,86 @@ const base64ToBlob = (base64) => {
 	}
 	return new Blob([u8arr], { type: mime });
 };
+// 表单DSV默认配置
+export const globalDsvDefaultData = () => {
+    let data = {
+        uploadServer: import.meta.env.VITE_APP_BASE_API,
+        baseApi: import.meta.env.VITE_APP_BASE_API,
+        SERVER_API: import.meta.env.VITE_APP_BASE_API,
+    }
+    return JSON.parse(JSON.stringify(data))
+}
+
+// 加密
+export const encrypt = async (password) => {
+    const res = await http.get('/user/getPublicKey');
+    if (res && res.code == 200) {
+        const encrypt = new JSEncrypt()
+        let param = {
+            password: password,
+            loginToken: res.data.loginToken
+        }
+        encrypt.setPublicKey(res.data.publicKey)
+        return encrypt.encrypt(JSON.stringify(param))
+    };
+}
+
+// 提取公共方法用于格式化带有点号的字段
+export const formatFormVirtualField = (data) => {
+    let newData = JSON.parse(JSON.stringify(data));
+    for (let key in newData) {
+        if (key.includes('.')) {
+            let newKey = key.replace('.', '##');
+            newData[newKey] = newData[key];
+            delete newData[key];
+        } else if (Array.isArray(newData[key])) {
+            newData[key].forEach((item) => {
+                if (typeof item === 'object') {
+                    for (let objKey in item) {
+                        if (objKey.includes('.')) {
+                            let newObjKey = objKey.replace('.', '##');
+                            item[newObjKey] = item[objKey];
+                            delete item[objKey];
+                        }
+                    }
+                }
+            });
+        }
+    }
+    return newData;
+}
+
+
+// 格式化queryById入参数
+export const formatQueryByIdParam = (formFieldSchema) => {
+    let queryDetailList = [];
+    let fieldNames = "";
+    for (let key in formFieldSchema) {
+        if (key == 'main') {
+            fieldNames = formFieldSchema[key].join(',').replace(/\#\#/g, '.');
+        } else {
+            queryDetailList.push({
+                entityName: key,
+                queryFields: formFieldSchema[key].join(',').replace(/\#\#/g, '.'),
+            })
+        }
+    }
+    return { queryDetailList, fieldNames }
+}
+
+
+// 检测审批相关前置事件
+export const checkApprovalPreEvent = (preEvent, vFormRef, elMessage) => {
+    // 如果没有前置事件 直接返回 通过
+    if(!preEvent){
+        return true;
+    }
+    let newFunc = new Function('data','vFormRef', 'ElMessage', preEvent)(vFormRef.getFormData(false), vFormRef, elMessage);
+    return newFunc;
+}
+
+// 检测是否子表单
+export const checkIsSubForm = (type) => {
+    return type == "sub-form" || type == "grid-sub-form" || type == "table-sub-form";
+}
+

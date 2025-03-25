@@ -19,8 +19,9 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.7.40 20250126"
+        webVer: "1.7.172 20250325"
     });
+
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
             let res = await getEntitySet();
@@ -114,6 +115,8 @@ const useCommonStore = defineStore('commonStore', () => {
         if(!data.layoutConfig) {
             publicSetting.value.layoutConfig = "header";
         }
+        // publicSetting.value.pluginIdList = [];
+        // publicSetting.value.APP_PLUGINID = [];
     }
     const setPublicSettingByKey = (key, value) => {
         publicSetting.value[key] = value;

@@ -14,7 +14,7 @@
 				:data="tableData"
 				:border="true"
 				style="width: 100%"
-				:max-height="320"
+				:height="320"
 				stripe
 				:show-summary="cutField?.options.setChartConf.showSummary"
 				:summary-method="getSummaries"
@@ -40,13 +40,24 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<div class="pagination-box" v-if="myOptions.showTablePagination">
+                <el-pagination
+                    v-model:current-page="currentPage"
+                    v-model:page-size="pageSize"
+                    :page-sizes="[20, 40, 80, 100, 200, 300, 400, 500]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                />
+            </div>
 		</div>
 		<div class="no-data" v-else>
 			请通过右侧
 			<span class="lh">显示字段设置</span> 字段栏来添加数据
 		</div>
 	</div>
-    <!-- <mlCustomDetail ref="detailRef" /> -->
+	<!-- <mlCustomDetail ref="detailRef" /> -->
 </template>
 
 <script setup>
@@ -61,14 +72,13 @@ import http from "@/utils/request";
 const { allEntityName } = storeToRefs(useCommonStore());
 const router = useRouter();
 
-
 defineOptions({
 	name: "listTable-widget",
 });
 const props = defineProps({
 	field: Object,
 	designer: Object,
-    detailRef: Object,
+	detailRef: Object,
 });
 
 let cutField = ref("");
@@ -90,6 +100,13 @@ onMounted(() => {
 	initOption();
 });
 
+let currentPage = ref(1);
+let pageSize = ref(20);
+let total = ref(0);
+
+let entity = ref("");
+let myOptions = ref({});
+
 const initOption = () => {
 	let { options } = cutField.value;
 	if (options) {
@@ -107,44 +124,62 @@ const initOption = () => {
 					});
 				}
 			});
-			getTableData(options);
+			entity.value =
+				options.dataEntity == 33
+					? "ApprovalTask"
+					: allEntityName.value[options.dataEntity];
+            myOptions.value = options;
+            currentPage.value = 1;
+			getTableData();
 		}
 	}
 };
 
-const getTableData = async (options) => {
-    let entity = options.dataEntity == 33 ? "ApprovalTask" : allEntityName.value[options.dataEntity];
+const handleSizeChange = (v) => {
+    pageSize.value = v;
+    getTableData();
+};
+
+const handleCurrentChange = (v) => {
+    currentPage.value = v;
+    getTableData();
+}
+
+const getTableData = async () => {
 	tableLoading.value = true;
 	let param = {
-		mainEntity: entity,
+		mainEntity: entity.value,
 		fieldsList: fieldsList.value.join(),
-		pageSize: options.setChartConf.pageSize,
-		pageNo: 1,
-		filter: options.setChartFilter,
+		pageSize: myOptions.value.showTablePagination
+			? pageSize.value
+			: myOptions.value.setChartConf.pageSize,
+		pageNo: currentPage.value,
+		filter: myOptions.value.setChartFilter,
 		sortFields: sortFields.value,
 	};
 	let res;
-    if(entity == "ApprovalTask"){
-        res = await http.post("/approval/listQuery", {
-            mainEntity: param.mainEntity,
-            fieldsList: param.fieldsList,
-            filter: param.filter,
-            pageSize: param.pageSize,
-            pageNo: param.pageNo,
-            sortFields: param.sortFields
-    });
-    }else {
-        res = await getDataList(
-            param.mainEntity,
-            param.fieldsList,
-            param.filter,
-            param.pageSize,
-            param.pageNo,
-            param.sortFields
-        );
-    }
+	if (entity.value == "ApprovalTask") {
+		res = await http.post("/approval/listQuery", {
+			mainEntity: param.mainEntity,
+			fieldsList: param.fieldsList,
+			filter: param.filter,
+			pageSize: param.pageSize,
+			pageNo: param.pageNo,
+			sortFields: param.sortFields,
+		});
+	} else {
+		res = await getDataList(
+			param.mainEntity,
+			param.fieldsList,
+			param.filter,
+			param.pageSize,
+			param.pageNo,
+			param.sortFields
+		);
+	}
 	if (res) {
 		let list = res.data.dataList || [];
+		total.value = res.data.pagination.total;
 		let showSumcol = cutField.value?.options.setChartConf.showSumcol;
 		// 如果需要汇总列
 		if (showSumcol) {
@@ -207,16 +242,15 @@ const getSummaries = (param) => {
 	return sums;
 };
 
-
 const onRowClick = (row, column, event) => {
-    // console.log(router,'router')
+	// console.log(router,'router')
 	if (!!cutField.value.options.onRowClick) {
 		let customFn = new Function(
 			"row",
 			"column",
 			"event",
-            "detailRef",
-            "router",
+			"detailRef",
+			"router",
 			cutField.value.options.onRowClick
 		);
 		customFn.call(this, row, column, event, props.detailRef, router);
@@ -226,6 +260,13 @@ const onRowClick = (row, column, event) => {
 const setSelected = () => {
 	props.designer?.setSelected(props.field);
 };
+
+const getData = () => {
+    return tableData.value;
+}
+defineExpose({
+    getData
+})
 </script>
 
 <style lang="scss" scoped>
@@ -243,7 +284,11 @@ const setSelected = () => {
 		color: var(--el-color-primary);
 	}
 }
-
+.pagination-box {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
 // .el-table {
 //     // 解决table组件内容滚动时页面滚动条同步滚动
 //     overflow: auto;

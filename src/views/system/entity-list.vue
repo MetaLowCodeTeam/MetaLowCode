@@ -104,6 +104,7 @@
                 class="new-entity-dialog"
                 :close-on-click-modal="false"
                 :close-on-press-escape="false"
+                draggable
             >
                 <div v-loading="saveLoading">
                     <EntityPropEditor
@@ -121,11 +122,15 @@
                             @click="saveNewEntity"
                             style="width: 90px"
                             :loading="saveLoading"
-                        >保 存</el-button>
+                        >
+                            保 存
+                        </el-button>
                         <el-button
                             :loading="saveLoading"
                             @click="showNewEntityDialogFlag = false"
-                        >取 消</el-button>
+                        >
+                            取 消
+                        </el-button>
                     </div>
                 </template>
             </el-dialog>
@@ -374,14 +379,16 @@ const saveNewEntity = () => {
             ElMessage.error("实体不能使用系统保留关键字，请修改。");
             return;
         }
-
+        
         newEntityProps.value = Object.assign(
             newEntityProps.value,
             EPEditor.value.entityProps
         );
+        
         const mainEntityName = !newEntityProps.value.mainEntity
             ? "null"
             : newEntityProps.value.mainEntity;
+            
         saveLoading.value = true;
         let tags = [];
         if (newEntityProps.value.useTag) {

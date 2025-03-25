@@ -29,7 +29,11 @@ import referenceFillBackEnabledEditor from '@/views/system/form-design/extension
 import referenceFilterConditionsEditor from '@/views/system/form-design/extension/property-editor/reference-filterConditions-editor.vue';
 import referenceTreeDataSelectEditor from '@/views/system/form-design/extension/property-editor/reference-treeDataSelect-editor.vue';
 import referenceSearchInPlaceEditor from '@/views/system/form-design/extension/property-editor/reference-searchInPlace-editor.vue';
-
+import referenceSortFieldEditor from '@/views/system/form-design/extension/property-editor/reference-sortField-editor.vue';
+// 子表单内禁止多选
+import referenceDisableMultipleSelectionInSubFormEditor from "@/views/system/form-design/extension/property-editor/reference-disableMultipleSelectionInSubForm-editor.vue";
+// 二次确认选择
+import referenceConfirmSelectEditor from "@/views/system/form-design/extension/property-editor/reference-confirmSelect-editor.vue";
 import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/list-sub-form-name-editor.vue"
 
 /**
@@ -57,6 +61,7 @@ import listSubFormShowPaginationEditor from "@/views/system/form-design/extensio
 import listSubFormPaginationSizeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/paginationSize-editor.vue";
 import listSubFormListHeightEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormHeight-editor.vue";
 
+import inputQrCodeOnMobileEnabledEditor from "@/views/system/form-design/extension/property-editor/input/qrCodeOnMobileEnabled-editor.vue";
 
 const {
     addContainerWidgetSchema,
@@ -106,11 +111,15 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
+	PERegister.registerCPEditor(app, 'sortField', 'reference-sortField-editor', referenceSortFieldEditor)
 	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
 	PERegister.registerEPEditor(app, 'onAppendButtonClick', 'onAppendButtonClick-editor', onAppendButtonClickEditor)
 	PERegister.registerCPEditor(app, 'openSearchInPlace', 'reference-searchInPlace-editor', referenceSearchInPlaceEditor)
+	PERegister.registerCPEditor(app, 'disableMultipleSelectionInSubForm', 'reference-disableMultipleSelectionInSubForm-editor', referenceDisableMultipleSelectionInSubFormEditor)
+	PERegister.registerCPEditor(app, 'confirmSelect', 'reference-confirmSelect-editor', referenceConfirmSelectEditor)
     
+    PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
 	PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
 

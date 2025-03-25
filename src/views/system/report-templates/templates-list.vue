@@ -15,9 +15,10 @@
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
         :fixedFilter="fixedFilter"
+        checkRole="r45"
     >
         <template #addButton>
-            <el-button type="primary" @click="actionBtn({target:'add'})">
+            <el-button type="primary" @click="actionBtn({target:'add'})" :disabled="!$TOOL.checkRole('r45-2')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -31,6 +32,7 @@
 <script setup>
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
+const $TOOL = inject("$TOOL");
 
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
@@ -76,10 +78,9 @@ let tableColumn = ref([
 
 const changeSwitch = (row) => {
     let tempForm = { ...row };
-    tempForm.actionType = tempForm.actionType.value;
     dialogForm.value.form = { ...tempForm };
     mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
-    mlActiveDialogRefs.value.saveProcess();
+    mlActiveDialogRefs.value.saveProcess('changeSwitch');
 };
 
 // 编辑弹框

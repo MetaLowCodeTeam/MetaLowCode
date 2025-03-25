@@ -10,7 +10,7 @@
         @changeSwitch="changeSwitch"
     >
         <template #addButton>
-            <el-button type="primary" @click="addClick">
+            <el-button type="primary" @click="addClick" :disabled="!$TOOL.checkRole('r51-2')">
                 <el-icon size="14">
                     <ElIconPlus />
                 </el-icon>
@@ -28,7 +28,13 @@
                         </span>
                         <span>编辑</span>
                     </el-button>-->
-                    <el-button size="small" link type="primary" @click="delCick(scope.row)">
+                    <el-button 
+                        size="small" 
+                        link 
+                        type="primary" 
+                        @click="delClick(scope.row)"
+                        :disabled="!$TOOL.checkRole('r51-4')"
+                    >
                         <span class="mr-3">
                             <el-icon>
                                 <ElIconDelete />
@@ -68,6 +74,7 @@ import { useRouter } from "vue-router";
 import http from "@/utils/request";
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
+const $TOOL = inject("$TOOL");
 
 // 默认排序
 let sortFields = ref([
@@ -150,7 +157,7 @@ const editClick = (row) => {
     // dialogConf.title = "编辑仪表盘";
 };
 // 删除
-const delCick = (row) => {
+const delClick = (row) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",

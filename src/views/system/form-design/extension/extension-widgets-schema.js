@@ -127,6 +127,12 @@ export const referenceSchema = {
         subFormFillBackConfig: [],
         // 过滤条件
         filterConditions: {},
+        // 排序字段
+        sortField: "",
+        // 排序字段标签
+        sortFieldLabel: "",
+        // 排序顺序
+        sortOrder: "",
         // 启用树模式
         useTreeDataSelect: false,
         // 树引用字段
@@ -135,8 +141,14 @@ export const referenceSchema = {
         treeDataEntityName: "",
         // 开启在位输入搜索
         openSearchInPlace: false,
+        // 是否二次确认选择
+        confirmSelect: false,
+        // 确认提示内容
+        confirmSelectContent: "",
         // 搜索字段
         searchFields: [],
+        // 子表单内禁止多选
+        disableMultipleSelectionInSubForm: false,
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

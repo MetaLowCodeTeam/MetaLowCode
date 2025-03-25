@@ -13,7 +13,7 @@
                         value-key="entityInx"
                     >
                         <el-option
-                            v-for="(op,inx) in tagEntitys"
+                            v-for="(op,inx) in tagEntityList"
                             :key="inx"
                             :label="op.label"
                             :value="op"
@@ -208,7 +208,7 @@
             </el-row>
         </el-form-item>
         <el-form-item label=" ">
-            <el-button type="primary" plain @click="addUpdateRule">+ 添加</el-button>
+            <el-button type="primary" plain @click="addUpdateRule" icon="check">确定</el-button>
         </el-form-item>
         <div v-if="mlFormulaIsShow">
             <mlFormula
@@ -270,7 +270,7 @@ onMounted(() => {
  */
 
 // 目标实体（所有实体）
-let tagEntitys = ref([]);
+let tagEntityList = ref([]);
 // 目标实体所有字段
 let tagEntityFields = ref([]);
 // 目标实体所有字段 key-value
@@ -290,15 +290,15 @@ const getActionContentData = async () => {
     // 字段更新、字段聚合
     if (value == 1 || value == 2) {
         // 获取目标实体所有字段、当前实体所有字段
-        Promise.all([getTagEntitys(), getCutEntityFields()]).then(() => {
+        Promise.all([getTagEntityList(), getCutEntityFields()]).then(() => {
             contentLoading.value = false;
-            if (tagEntitys.value.length > 0) {
+            if (tagEntityList.value.length > 0) {
                 // 目标实体默认选中第1个
                 let defaultInx = 0;
                 // 如果是编辑过的，找到之前选中的数据
                 if (trigger.value.isOnSave) {
                     let { actionContent } = trigger.value;
-                    tagEntitys.value.forEach((el, elInx) => {
+                    tagEntityList.value.forEach((el, elInx) => {
                         if (
                             el.fieldName == actionContent.fieldName &&
                             el.entityName == actionContent.entityName
@@ -309,22 +309,22 @@ const getActionContentData = async () => {
                 }
                 // 设置选中
                 trigger.value.defaultTargetEntity =
-                    tagEntitys.value[defaultInx];
+                    tagEntityList.value[defaultInx];
                 // 获取选中实体的所有字段
-                getTagEntityFields(tagEntitys.value[defaultInx].entityCode);
+                getTagEntityFields(tagEntityList.value[defaultInx].entityCode);
             }
         });
     }
 };
 
 // 获取实体（目标实体）
-const getTagEntitys = () => {
+const getTagEntityList = () => {
     return new Promise(async (resolve, reject) => {
         let res = await $API.trigger.detail.dataUpdateEntityList(
             trigger.value.entityCode
         );
         if (res) {
-            tagEntitys.value = res.data.map((el, inx) => {
+            tagEntityList.value = res.data.map((el, inx) => {
                 el.entityInx = inx;
                 return el;
             });

@@ -385,6 +385,7 @@ const { i18n, eventMixin, Utils } = VisualDesign.VFormSDK;
 import { refFieldQuery, queryEntityListFields } from "@/api/crud";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import { queryEntityListByReferenceField } from '@/api/system-manager';
+import { checkIsSubForm } from '@/utils/util';
 export default {
 	name: "reference-fillBackConfig-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -505,7 +506,7 @@ export default {
             // 所有子表单组件
             this.allSubFormWidgets = [];
 			allContainerWidgets.forEach((el) => {
-				if (el.type == "sub-form" || el.type == "grid-sub-form") {
+				if (checkIsSubForm(el.type)) {
                     this.allSubFormWidgets.push(el);
                     this.allSubFormFields[el.name] = [];
 					Utils.traverseFieldWidgetsOfContainer(
@@ -767,8 +768,13 @@ export default {
             widgets.fllBackItems[inx].targetOps = [];
             // 5 判断如果有没有选择 源字段
             if(fieldType){
-                widgets.fllBackItems[inx].targetOps = this.allSubFormFields[widgets.targetWidget.name].filter(el=> el.fieldType == targetType);
-          
+                let allSubFormFields = this.allSubFormFields[widgets.targetWidget.name];
+                if(fieldType == 'PrimaryKey'){
+                    widgets.fllBackItems[inx].targetOps = allSubFormFields.filter(el=> el.fieldType == 'reference');
+                }
+                else {
+                    widgets.fllBackItems[inx].targetOps = allSubFormFields.filter(el=> el.fieldType == targetType);
+                }
             }
             // 5.1 如果没有选择，直接返回全部的待回填 方便展示
             else {

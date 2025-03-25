@@ -3,9 +3,11 @@
 	<component 
         v-if="comName" 
         :is="comName" 
-        ref="DetailRef" 
-        @onConfirm="updateData" 
+        ref="DetailRef"
         :recordDetailFormId="recordDetailFormId"
+        :layoutConfig="layoutConfig"
+        :customDetailDialogTitle="customDetailDialogTitle"
+        @updateData="updateData"
     ></component>
 </template>
 
@@ -22,6 +24,14 @@ const props = defineProps({
 	},
     // 详情记录表单id
     recordDetailFormId: {
+		type: String,
+		default: "",
+	},
+    layoutConfig: {
+		type: Object,
+		default: () => {},
+	},
+    customDetailDialogTitle: {
 		type: String,
 		default: "",
 	},
@@ -43,10 +53,10 @@ const openDialog = (recordId, localDsv, formId) => {
     DetailRef.value?.openDialog(recordId, localDsv, formId);
 }
 
-
 const updateData = () => {
     emits('updateData')
 }
+
 
 defineExpose({
     openDialog

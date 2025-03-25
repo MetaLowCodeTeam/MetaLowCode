@@ -5,7 +5,7 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 20px;
-	.from-title {
+	.form-title {
 		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 10px;
@@ -31,8 +31,8 @@
 		>
 			<el-row :gutter="20">
 				<el-col :span="24">
-					<div class="from-title">选择日期维度</div>
-					<div class="from-item mb-20">
+					<div class="form-title">选择日期维度</div>
+					<div class="form-item mb-20">
 						<el-select
 							v-model="calendarListSetting.calendarField"
 							placeholder="请选择日期维度字段"

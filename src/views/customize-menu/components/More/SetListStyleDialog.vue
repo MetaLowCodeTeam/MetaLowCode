@@ -2,8 +2,8 @@
 	<!--  -->
 	<mlDialog title="其他列表设置" v-model="isShow" width="600px">
 		<div v-loading="loading" class="set-list-style">
-			<div class="from-title">新建编辑弹框属性</div>
-			<div class="from-item mb-30">
+			<div class="form-title">新建编辑弹框属性</div>
+			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
 					新页签打开新建
 				</el-checkbox>
@@ -14,8 +14,8 @@
 					弹框自动全屏
 				</el-checkbox>
 			</div>
-			<div class="from-title">查看侧滑栏属性</div>
-			<div class="from-item mb-30">
+			<div class="form-title">查看侧滑栏属性</div>
+			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.detailConf.showFullScreen">
 					显示全屏按钮
 				</el-checkbox>
@@ -23,8 +23,8 @@
 					弹框自动全屏
 				</el-checkbox>
 			</div>
-			<div class="from-title">批量删除设置</div>
-			<div class="from-item mb-30">
+			<div class="form-title">批量删除设置</div>
+			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.delConf.allowUsersSelect">
 					允许用户选择级联删除
 				</el-checkbox>
@@ -34,8 +34,8 @@
 					:entityCode="entityCode"
 				/>
 			</div>
-			<div class="from-title" v-if="!isListCard">复制设置</div>
-			<div class="from-item mb-30" v-if="!isListCard">
+			<div class="form-title" v-if="!isListCard">复制设置</div>
+			<div class="form-item mb-30" v-if="!isListCard">
 				<el-checkbox v-model="styleConf.copyConf.openCopy">
 					打开复制功能
 				</el-checkbox>
@@ -61,34 +61,61 @@
 					:entityCode="entityCode"
 				/>
 			</div>
-            <div class="from-title" v-if="!isListCard">自定义行选中禁用设置</div>
-			<div class="from-item mb-30" v-if="!isListCard">
-				<div class="mb-10 mt-10">
-					<span>自定义渲染</span>
-					<a
-						class="ml-a-span"
-						target="_blank"
-						href="https://www.yuque.com/visualdev/melecode/pep81f9rs3qkbdgf?singleDoc#"
-					>
-						使用文档
-					</a>
-				</div>
-				<mlCodeEditor style="height: 100px" v-model="styleConf.rowConf.rowDisabledRender" />
-			</div>
-			<div class="from-title" v-if="!isListCard">自定义行样式设置</div>
-			<div class="from-item" v-if="!isListCard">
-				<div class="mb-10 mt-10">
-					<span>自定义渲染</span>
-					<a
-						class="ml-a-span"
-						target="_blank"
-						href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
-					>
-						使用文档
-					</a>
-				</div>
-				<mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
-			</div>
+
+            <el-tabs v-model="activeName" v-if="!isListCard">
+                <el-tab-pane label="自定义行选中禁用设置" name="rowDisabledRender">
+                    <div class="mb-10 mt-10">
+                        <span>自定义渲染</span>
+                        <a
+                            class="ml-a-span"
+                            target="_blank"
+                            href="https://www.yuque.com/visualdev/melecode/pep81f9rs3qkbdgf?singleDoc#"
+                        >
+                            使用文档
+                        </a>
+                    </div>
+                    <mlCodeEditor style="height: 100px" v-model="styleConf.rowConf.rowDisabledRender" />
+                </el-tab-pane>
+                <el-tab-pane label="自定义行按钮禁用设置" name="rowBtnDisabled">
+                    <div class="mb-10 mt-10">
+                        <span>自定义渲染</span>
+                        <a
+                            class="ml-a-span"
+                            target="_blank"
+                            href="https://www.yuque.com/visualdev/melecode/nmmpo6z8y115bhym?singleDoc#"
+                        >
+                            使用文档
+                        </a>
+                    </div>
+                    <mlCodeEditor  v-model="styleConf.rowConf.rowBtnDisabled" />
+                </el-tab-pane>
+                <el-tab-pane label="自定义行样式设置" name="rowStyleRender">
+                    <div class="mb-10 mt-10">
+                        <span>自定义渲染</span>
+                        <a
+                            class="ml-a-span"
+                            target="_blank"
+                            href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                        >
+                            使用文档
+                        </a>
+                    </div>
+                    <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
+                </el-tab-pane>
+                <el-tab-pane label="自定义弹框设置" name="dialogConfig">
+                    <div class="mb-10 mt-10">
+                        <span>自定义渲染</span>
+                        <a
+                            class="ml-a-span"
+                            target="_blank"
+                            href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                        >
+                            使用文档
+                        </a>
+                    </div>
+                    <mlCodeEditor  v-model="styleConf.dialogConfig" />
+                </el-tab-pane>
+            </el-tabs>
 		</div>
 		<template #footer>
 			<div class="footer-div">
@@ -175,13 +202,32 @@ let styleConf = ref({
 		rowStyleRender: "",
         // 行禁用
         rowDisabledRender: "return false",
+        // 按钮禁用
+        rowBtnDisabled: `return {
+    // 查看按钮是否禁用
+    view: false,
+    // 编辑按钮是否禁用
+    edit: false,
+    // 更多操作按钮是否禁用（PC无效，PC通过禁用选中行禁用更多操作）
+    more: false
+}`
 	},
+    // 弹框设置
+    dialogConfig: `return {
+    // 编辑标题
+    editTitle: "",
+    // 查看标题
+    detailTitle: "",
+}`,
     // 卡片列表设置
     listCardConf: {
         pc: {},
         mobile: {},
     }
 });
+
+const activeName = ref("rowDisabledRender");
+
 watch(
 	() => props.modelValue,
 	() => {
@@ -258,9 +304,9 @@ const onSave = async () => {
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 20px;
-	.from-title {
+	.form-title {
 		font-weight: bold;
-		font-size: 20px;
+		font-size: 18px;
 		margin-bottom: 5px;
 	}
 }

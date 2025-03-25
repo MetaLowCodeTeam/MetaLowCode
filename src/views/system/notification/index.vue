@@ -134,11 +134,12 @@ const appPath = import.meta.env.VITE_APP_PATH;
 const activeRow = (item) => {
     // 审批
     if (item.type == 10) {
-        router.push(appPath + "center-handle");
+        // router.push(appPath + "center-handle");
         // approveDialogIsShow.value = true;
         // approvalTaskId.value = item.relatedRecord.id;
         // entityId.value = item.relatedRecord.id;
         // approvalName.value = item.relatedRecord.name;
+        detailRefs.value.openDialog(item.relatedRecord.id);
     }
     // 审批抄送
     else if (item.type == 11) {
@@ -146,6 +147,15 @@ const activeRow = (item) => {
     }
     // 实体列表详情
     else {
+        // 如果是仪表盘
+        if(item.entityName == 'Chart'){
+            if($TOOL.checkRole('r52-1') && $TOOL.checkRole('r6017')) {
+                router.push(appPath + 'dashboard-list');
+            }else {
+                $ElMessage.error("没有权限");
+            }
+            return
+        }
         let filterEntity = unSystemEntityList.value.filter(
             (el) => el.name == item.entityName && !el.appAbbr
         );

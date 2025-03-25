@@ -18,7 +18,7 @@
                         :list="showColumn"
                     >
                         <div class="parent-li" v-for="(parent,inx) of showColumn" :key="inx">
-                            <div class="paren-idv">
+                            <div class="paren-div">
                                 <div class="mover fl">
                                     <el-icon size="20" class="icon">
                                         <ElIconRank />
@@ -104,6 +104,9 @@
                     <el-form-item label="列隐藏" class="mb-10">
                         <el-checkbox v-model="editColumnDialogData.pcHide" label="PC端隐藏" />
                         <el-checkbox v-model="editColumnDialogData.mobileHide" label="移动端隐藏" class="ml-5" />
+                    </el-form-item>
+                    <el-form-item label="是否导出" class="mb-10">
+                        <el-checkbox v-model="editColumnDialogData.exportable" />
                     </el-form-item>
                     <el-form-item label="开启排序" class="mb-5">
                         <el-checkbox v-model="editColumnDialogData.sortable" />
@@ -400,6 +403,8 @@ let editColumnDialogData = reactive({
     mobileShow: true,
     // 是否开启排序
     sortable: true,
+    // 是否导出
+    exportable: true,
     // 是否隐藏
     pcHide: false,
     mobileHide: false,
@@ -479,6 +484,9 @@ const editColumn = (column, inx) => {
     if(editObj.sortable == undefined) {
         editObj.sortable = true;
     }
+    if(editObj.exportable == undefined) {
+        editObj.exportable = true;
+    }
     editColumnDialogData = Object.assign(editColumnDialogData, editObj);
 };
 
@@ -513,6 +521,7 @@ const isShowItemTag = (column) => {
         headerAlign,
         mobileHeaderAlign,
         sortable,
+        exportable,
         fontColor,
         pcHide,
         mobileHide
@@ -563,6 +572,10 @@ const isShowItemTag = (column) => {
     }
     if(sortable !== undefined && !sortable) {
         console.log('edit-type-12')
+        return true;
+    }
+    if(exportable !== undefined && !exportable) {
+        console.log('edit-type-16')
         return true;
     }
     if(fontColor){
@@ -726,7 +739,7 @@ div {
     text-decoration: none;
     background: none repeat scroll 0 0 #fff;
 
-    .paren-idv {
+    .paren-div {
         height: 36px;
         margin-bottom: 3px;
         position: relative;

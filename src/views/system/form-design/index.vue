@@ -144,7 +144,7 @@ import {
     deleteFormLayout,
     updateNameFormLayout,
 } from "@/api/system-manager";
-import { deepClone, overwriteObj } from "@/utils/util";
+import { deepClone, overwriteObj, mlShortcutkeys } from "@/utils/util";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import BooleanWE from "@/views/system/field-editor/boolean-widget-editor.vue";
 import IntegerWE from "@/views/system/field-editor/integer-widget-editor.vue";
@@ -167,7 +167,6 @@ import ReferenceWE from "@/views/system/field-editor/reference-widget-editor.vue
 import AnyReferenceWE from "@/views/system/field-editor/anyreference-widget-editor.vue";
 import ReferenceListWE from "@/views/system/field-editor/referencelist-widget-editor.vue";
 import MlShareTo from "@/components/mlShareTo/index.vue";
-import { mlShortcutkeys } from "@/utils/util";
 export default {
     name: "form-design",
     components: {
@@ -228,7 +227,7 @@ export default {
             layoutId: null,
             formOptionData: {},
 
-            meteFieldsResult: null,
+            metaFieldsResult: null,
             usedFieldNames: {},
 
             curFWEditor: "",
@@ -253,6 +252,7 @@ export default {
         };
     },
     created() {
+        window.advancedDevMode = true;
         this.entity = this.$route.query.entity;
         this.entityLabel = this.$route.query.entityLabel;
         this.designerConfig.componentLib = !!window.advancedDevMode;
@@ -281,9 +281,9 @@ export default {
 						if (res.data.referenceFormList) {
 							this.fieldListData.referenceFormList = res.data.referenceFormList;
 						}
-                        this.meteFieldsResult = res;
+                        this.metaFieldsResult = res;
                         const metaFields = this.buildMetaFields(
-                            this.meteFieldsResult
+                            this.metaFieldsResult
                         );
                         this.$refs.vfDesigner.setFieldListData(
                             this.fieldListData
@@ -413,6 +413,12 @@ export default {
         },
 
         adjustFieldSchema(fieldSchema, fldObj, mdResult) {
+			if (fldObj.virtualFlag === "1") {
+				fieldSchema.virtualFlag = true
+				fieldSchema.options.disabled = true
+				fieldSchema.options.required = false
+			}
+
             // 处理图片、文件上传字段！！
             let cloudStorageFlag = false;
             let cloudStorageType = "";
@@ -429,6 +435,9 @@ export default {
 				fieldSchema.options.limit = fldObj.maxFileCount * 1 || 3
 				fieldSchema.options.fileMaxSize = fldObj.fileMaxSize * 1 || 5
 				fieldSchema.options.uploadTip = fldObj.uploadHint || ''
+				if (fldObj.uploadFileTypes) {
+					fieldSchema.options.fileTypes = fldObj.uploadFileTypes.split(',')
+				}
 
                 if (cloudStorageFlag) {
                     //设置withCredentials
@@ -477,6 +486,14 @@ export default {
                 fieldSchema.options.max = !fldObj.max
                     ? fieldSchema.options.max
                     : fldObj.max * 1;
+
+				// 因为初始默认值为0，如果最小值大于0，则默认值等于最小值
+				if (fieldSchema.options.min > 0) {
+					fieldSchema.options.defaultValue = fieldSchema.options.min
+				}
+				if (fieldSchema.options.max < 0) {
+					fieldSchema.options.defaultValue = fieldSchema.options.max
+				}
             }
 
             /* 处理地区选择字段 */
@@ -546,7 +563,7 @@ export default {
 
             /* 必须延时处理，否则draggable会报错 */
             setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.meteFieldsResult);
+                const metaFields = this.buildMetaFields(this.metaFieldsResult);
                 this.$refs.vfDesigner.setMetaFields(metaFields);
             }, 800);
         },
@@ -560,7 +577,7 @@ export default {
 
             /* 必须延时处理，否则draggable会报错 */
             setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.meteFieldsResult);
+                const metaFields = this.buildMetaFields(this.metaFieldsResult);
                 this.$refs.vfDesigner.setMetaFields(metaFields);
             }, 800);
         },
@@ -568,7 +585,7 @@ export default {
         handleFJU() {
             this.handleUsedFields();
             setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.meteFieldsResult);
+                const metaFields = this.buildMetaFields(this.metaFieldsResult);
                 this.$refs.vfDesigner.setMetaFields(metaFields);
             }, 300);
         },

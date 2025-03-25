@@ -108,7 +108,7 @@ onBeforeMount(() => {
 const initDetailData = async () => {
     initLoading.value = true;
     let fieldNames =
-        "priority,entityCode,name,actionType,actionContent,whenNum,actionFilter,whenCron";
+        "priority,entityCode,name,actionType,actionContent,whenNum,actionFilter,whenCron,exceptionThrow";
     let detailRes = await queryById(trigger.triggerConfigId, fieldNames);
     if (detailRes) {
         trigger = Object.assign(trigger, detailRes.data);
@@ -132,6 +132,7 @@ const initDetailData = async () => {
         if (trigger.actionType.value == 4) {
             // 禁用定期执行
             trigger.disabledActive = [512];
+            trigger.exceptionThrow = true;
         }
         // 如果是自动分配
         if (trigger.actionType.value == 6) {
@@ -182,7 +183,8 @@ const onSave = async (target) => {
         actionContent,
         defaultTargetEntity,
         createType,
-        transformId
+        transformId,
+        exceptionThrow
     } = trigger;
     // 如果是更新规则
     // if (trigger.actionType.value == 1 && actionContent.items.length < 1) {
@@ -200,6 +202,7 @@ const onSave = async (target) => {
             triggerConfigId,
             priority,
             whenCron: null,
+            exceptionThrow
         },
     };
     // 如果有触发动作
@@ -217,18 +220,17 @@ const onSave = async (target) => {
     if (trigger.actionFilter.items.length > 0 || (trigger.actionFilter.modifiedFields && trigger.actionFilter.modifiedFields.length > 0)) {
         params.formModel.actionFilter = JSON.stringify(trigger.actionFilter);
     }
-    // 如果是聚合规则 或者 字段更新
+    // 如果是聚合规则 或者 字段更新 或者 自动创建
     if (
         trigger.actionType.value == 2 ||
         trigger.actionType.value == 1 ||
-        trigger.actionType.value == 3
+        trigger.actionType.value == 3 ||
+        trigger.actionType.value == 15
     ) {
         actionContent.entityName = defaultTargetEntity.entityName || defaultTargetEntity.name;
         actionContent.fieldName = defaultTargetEntity.fieldName;
         actionContent.isReferenced = defaultTargetEntity.isReferenced;
     }
-
-
     // 如果是分组聚合
     if (trigger.actionType.value == 3) {
         let { groupItem } = actionContent;

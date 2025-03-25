@@ -69,7 +69,7 @@
 		<el-form label-width="100px">
 			<el-form-item label="选择审批任务">
 				<el-select
-					v-model="approveTaskConf.taksId"
+					v-model="approveTaskConf.taskId"
 					placeholder="请选择审批任务"
 					class="w-100"
 				>
@@ -119,7 +119,7 @@ const props = defineProps({
 	showApprovalRelated: { type: Boolean, default: true },
 	detailParamConf: { type: Object, default: () => {} },
 });
-const emits = defineEmits(["onSubmit", "closeDialog"]);
+const emits = defineEmits(["onSubmit", "closeDialog", "onRevokeIng"]);
 let myApproval = ref({});
 
 
@@ -133,8 +133,15 @@ let approvalDialog = reactive({
 let SubmitApprovalDialogRefs = ref();
 // 打开提交审批弹框
 const openDialog = async () => {
-    if(!props.detailParamConf.beforeSubmitApproval()){
+    let beforeSubmitApproval = props.detailParamConf.beforeSubmitApproval();
+    if(typeof beforeSubmitApproval == "boolean" && !beforeSubmitApproval){
         return
+    }
+    if(beforeSubmitApproval instanceof Promise){
+        let res = await beforeSubmitApproval;
+        if(!res){
+            return
+        }
     }
 	SubmitApprovalDialogRefs.value?.openDialog(myApproval.value.recordId);
 };
@@ -203,7 +210,6 @@ const formatAttrMore = (attrMore, currentNode) => {
             current = current.childNode;
         }
     });
-    console.log(newAttrMore,'newAttrMore')
     return newAttrMore;
 }
 
@@ -218,17 +224,17 @@ const confirm = () => {
 let approveTaskConf = ref({
 	isShow: false,
 	taskList: [],
-	taksId: null,
+	taskId: null,
 });
 
 // 确认审批任务
 const confirmApproveTask = () => {
-	let { taksId } = approveTaskConf.value;
-	if (!taksId) {
+	let { taskId } = approveTaskConf.value;
+	if (!taskId) {
 		ElMessage.error("请选择审批任务");
 		return;
 	}
-	myApproval.value.approvalTaskId = approveTaskConf.value.taksId;
+	myApproval.value.approvalTaskId = approveTaskConf.value.taskId;
 	approveTaskConf.value.isShow = false;
 	approveDialogIsShow.value = true;
 };
@@ -242,7 +248,7 @@ const openApproveDialog = () => {
 		approveTaskConf.value = {
 			isShow: true,
 			taskList: [...parallelTasks],
-			taksId: null,
+			taskId: null,
 		};
 	} else {
 		approveDialogIsShow.value = true;
@@ -256,9 +262,16 @@ const confirmApproval = () => {
 };
 
 // 撤销
-const revokeApproval = () => {
-    if(!props.detailParamConf.beforeRevokeApproval()){
+const revokeApproval = async () => {
+    let beforeRevokeApproval = props.detailParamConf.beforeRevokeApproval();
+    if(typeof beforeRevokeApproval == "boolean" && !beforeRevokeApproval){
         return
+    }
+    if(beforeRevokeApproval instanceof Promise){
+        let res = await beforeRevokeApproval;
+        if(!res){
+            return
+        }
     }
 	ElMessageBox.confirm("是否确认撤销?", "提示：", {
 		confirmButtonText: "确认",
@@ -266,6 +279,7 @@ const revokeApproval = () => {
 		type: "warning",
 	})
 		.then(async () => {
+            emits("onRevokeIng");
 			approvalDialog.loading = true;
 			let res = await http.post(
 				"/approval/approvalRevocation?entityId=" +
@@ -289,6 +303,7 @@ const withdrawApproval = () => {
 		type: "warning",
 	})
 		.then(async () => {
+            emits("onRevokeIng");
 			approvalDialog.loading = true;
             // 是否复杂工作流
             let isFlowVariables = !!myApproval.value.flowVariables;
@@ -320,13 +335,6 @@ const withdrawApproval = () => {
 		.catch(() => {});
 }
 
-
-
-const appPath = import.meta.env.VITE_APP_PATH;
-// 配置流程
-const goApprovalList = () => {
-	Route.push(appPath + "process-list");
-};
 
 
 

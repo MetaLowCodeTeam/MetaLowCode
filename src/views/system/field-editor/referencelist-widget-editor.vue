@@ -90,6 +90,12 @@
                         <el-radio :value="false">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="仅触发器可赋值" v-if="fieldProps.updatable">
+					<el-radio-group v-model="fieldProps.extraAttrs.onlyUpdateByTrigger" style="float: right">
+						<el-radio value="true">是</el-radio>
+						<el-radio value="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
                     <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
@@ -214,6 +220,9 @@ export default {
                 nullable: false,
                 creatable: true,
                 updatable: true,
+                'extraAttrs': {
+                    'onlyUpdateByTrigger': 'false',
+                },
                 fieldViewModel: {
                     searchDialogWidth: 520,
                     validators: [],
@@ -327,6 +336,11 @@ export default {
                 this.fieldProps["fieldViewModel"] = {
                     searchDialogWidth: 520,
                 };
+            }
+            if(!this.fieldProps.extraAttrs){
+                this.fieldProps.extraAttrs = {
+                    onlyUpdateByTrigger: 'false',
+                }
             }
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
@@ -467,7 +481,7 @@ export default {
                 }
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
-                        if (entity.detailEntityFlag === false) {
+                        if (!entity.detailEntityFlag && !entity.internalEntityFlag) {
                             this.tableData.push({
                                 name: entity.name,
                                 label: entity.label,

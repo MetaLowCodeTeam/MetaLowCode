@@ -142,7 +142,7 @@ const changeSwitch = (row) => {
     tempForm.actionType = tempForm.actionType.value;
     dialogForm.value.form = { ...tempForm };
     mlActiveDialogRefs.value.dialogForm = { ...dialogForm.value };
-    mlActiveDialogRefs.value.saveProcess();
+    mlActiveDialogRefs.value.saveProcess('changeSwitch');
 };
 
 // 保存流程
