@@ -74,8 +74,10 @@ export default {
         },
         getTableDataList(){
             return this.$refs.listSubForm.getTableDataList();
+        },
+        refresh(){
+            this.$refs.listSubForm.refresh();
         }
-
 	},
 };
 </script>
