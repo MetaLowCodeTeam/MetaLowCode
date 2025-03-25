@@ -200,6 +200,12 @@ export default {
             type: String,
         },
     },
+    props: {
+        isDesign: {
+            type: Boolean,
+            default: false,
+        },
+    },
     data() {
         return {
             designerConfig: {
@@ -262,6 +268,7 @@ export default {
             this.saveAsBtnShow = !!window.advancedDevMode;
         });
     },
+    emits: ['initComplete'],
     methods: {
         loadFieldListData() {
             getMDFieldList(this.entity)
@@ -282,10 +289,18 @@ export default {
                             this.fieldListData
                         );
                         this.$refs.vfDesigner.setMetaFields(metaFields);
+                        // 发射事件
+                        if(this.isDesign){
+                            this.$emit("initComplete")
+                        }
                     }
                 })
                 .catch((res) => {
                     this.$message({ message: res.message, type: "error" });
+                    // 发射事件
+                    if(this.isDesign){
+                        this.$emit("initComplete")
+                    }
                 });
         },
 

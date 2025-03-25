@@ -470,9 +470,15 @@ export default {
 
         async showEntityListDialog() {
             this.tableData.length = 0;
+            let appAbbr = this.$route.query.appAbbr;
             let res = await getEntitySet();
             if (res && res.code == 200) {
-                let entityItems = res.data;
+                let entityItems;
+                if(appAbbr){
+                    entityItems = res.data.filter(el => el.systemEntityFlag || el.appAbbr === appAbbr);
+                }else{
+                    entityItems = res.data.filter(el => !el.appAbbr);
+                }
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
                         if (!entity.detailEntityFlag && !entity.internalEntityFlag) {

@@ -113,19 +113,21 @@ const emits = defineEmits(["update:modelValue", "fileSuccess"]);
 let fromData = ref({});
 let loading = ref(false);
 let entityCode = ref();
+let myUnSystemEntityList = ref([]);
 onMounted(() => {
     fromData.value = props.modelValue;
+    myUnSystemEntityList.value = unSystemEntityList.value.filter(el => !el.appAbbr);
     // 初始化选中第一个实体
-    if (unSystemEntityList.value.length > 0) {
-        fromData.value.mainEntity = unSystemEntityList.value[0].name;
-        entityCode.value = unSystemEntityList.value[0].entityCode;
+    if (myUnSystemEntityList.value.length > 0) {
+        fromData.value.mainEntity = myUnSystemEntityList.value[0].name;
+        entityCode.value = myUnSystemEntityList.value[0].entityCode;
         getEntityFields();
     }
 });
 
 const changeEntity = () => {
     fromData.value.repeatFields = [];
-    let filterEntity = unSystemEntityList.value.filter(
+    let filterEntity = myUnSystemEntityList.value.filter(
         (el) => el.name == fromData.value.mainEntity
     );
     entityCode.value = filterEntity[0].entityCode;

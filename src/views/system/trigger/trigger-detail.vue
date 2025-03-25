@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="initLoading">
+    <div v-loading="initLoading" style="height: 100%;">
         <el-container>
             <el-header>
                 <div class="trigger-header">
@@ -8,7 +8,7 @@
                     <span class="trigger-name">{{ trigger.name }}</span>
                 </div>
             </el-header>
-            <el-container class="trigger-main-container">
+            <el-main class="trigger-main-container">
                 <div class="trigger-main">
                     <el-timeline>
                         <el-timeline-item type="primary" hollow>
@@ -53,7 +53,7 @@
                         </div>
                     </ml-dialog>
                 </div>
-            </el-container>
+            </el-main>
         </el-container>
     </div>
 </template>
@@ -70,6 +70,12 @@ import PerformOperations from "./components/PerformOperations.vue";
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const router = useRouter();
+const props = defineProps({
+    isDesign: {
+        type: Boolean,
+        default: false
+    }
+})
 // 初始化loading
 let initLoading = ref(false);
 // 触发器数据
@@ -161,7 +167,11 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 返回列表
 const goTriggerList = () => {
     notTitleDialog.isShow = false
-    router.push(appPath + "trigger-list");
+    if(props.isDesign) {
+        router.go(-1);
+    }else {
+        router.push(appPath + "trigger-list");
+    }
 };
 
 // 保存调用
@@ -411,10 +421,15 @@ const actionExecute = (params) => {
     }
 }
 .trigger-main-container {
+    height: 100%;
+    box-sizing: border-box;
     padding: 20px;
+    // overflow: hidden;
+    // overflow-y: auto;
 }
 .trigger-main {
     width: 100%;
+    box-sizing: border-box;
     border-radius: 4px;
     padding: 40px 20px;
     background: #fff;

@@ -8,7 +8,6 @@
             :sortFields="tableConf.sortFields"
             fieldName="roleName"
             :tableColumn="tableConf.tableColumn"
-            :filterItems="tableConf.filterItems"
         >
             <template #addButton>
                 <el-button type="primary" @click="addNewRole" :disabled="!$TOOL.checkRole('r23-2')">
@@ -328,8 +327,6 @@ let tableConf = ref({
             type: "DESC",
         },
     ],
-    // 过滤条件
-    filterItems: [],
     tableColumn: [
         {
             prop: "roleName",

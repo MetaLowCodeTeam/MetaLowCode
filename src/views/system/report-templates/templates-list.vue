@@ -10,10 +10,11 @@
         :tableColumn="tableColumn"
         :showFormItem="[{'label':'名称','code':'reportName','type':'1'}]"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
+        fieldName="reportName"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
+        :fixedFilter="fixedFilter"
         checkRole="r45"
     >
         <template #addButton>
@@ -35,13 +36,16 @@ const $TOOL = inject("$TOOL");
 
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
+
+let appAbbr = router.currentRoute.value.query.appAbbr;
+let fixedFilter = ref([
     {
-        fieldName: "reportName",
-        op: "LK",
-        value: "",
-    },
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    }
 ]);
+
 let tableColumn = ref([
     {
         prop: "reportName",
