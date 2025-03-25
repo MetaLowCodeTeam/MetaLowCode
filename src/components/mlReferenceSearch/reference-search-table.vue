@@ -222,9 +222,12 @@ export default {
 		},
 		// 重置
 		onReset() {
+            console.log(this.conditionConf);
 			this.conditionConf.items.forEach((el) => {
 				el.value = null;
 				el.value2 = null;
+                el.referTo = null;
+                el.refLabel = null;
 			});
 			this.loadTableTable("isReset");
 		},
