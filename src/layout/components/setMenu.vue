@@ -216,7 +216,7 @@
                         </el-radio-group>
 						<el-input
 							v-model="cutMenu.outLink"
-							:placeholder="cutMenu.customPageType == 1 ? '输入自定义页面名称，例：page' : '输入路由地址，例：/web/custom-page/'"
+							:placeholder="cutMenu.customPageType == 1 ? '输入自定义页面名称，例：page' : '输入路由地址，例：DemoContact/list'"
 							clearable
 						></el-input>
 					</div>
