@@ -619,12 +619,14 @@ const getRecordId = () => {
 
 // 传入ID从新建弹框变成编辑弹框
 const editById = (id) => {
+    haveLayoutJson.value = false;
     row.detailId = id;
     initFormLayout();
 }
 
 // 重新加载数据
 const reload = () => {
+    haveLayoutJson.value = false;
     initFormLayout();
 }
 
