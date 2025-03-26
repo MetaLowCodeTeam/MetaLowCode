@@ -129,6 +129,7 @@ export default {
             this.form.user = userInfo.loginName;
             this.form.password = userInfo.password;
             this.form.autologin = userInfo.autologin;
+            this.form.tenantCode = userInfo.tenantCode;
         }
     },
     computed: {
@@ -175,6 +176,7 @@ export default {
                     let userInfo = this.$TOOL.data.get('USER_INFO');
                     userInfo.password = this.form.password;
                     userInfo.autologin = this.form.autologin;
+                    userInfo.tenantCode = this.form.tenantCode;
                     this.$TOOL.cookie.set(
                         "userInfo",
                         JSON.stringify(userInfo),
