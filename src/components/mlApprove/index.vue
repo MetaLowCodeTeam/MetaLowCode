@@ -327,6 +327,7 @@ let currentApprovalTaskId = ref(null);
 
 // 初始化自定义表单
 const initFormLayout = async (formLayoutId) => {
+    haveLayoutJson.value = false;
     loading.value = true;
     globalDsv.value.useFormId = formLayoutId;
     globalDsv.value.formEntity = queryEntityNameById(props.entityId);
