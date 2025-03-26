@@ -381,7 +381,8 @@
             :customDetailDialogTitle="customDetailDialogTitle"
             :entityName="entityName"
             @updateData="getTableList"
-            :recordDetailFormId="listParamConf.recordDetailFormId"
+            :recordDetailFormId="listParamConf.recordDetailFormId || rowStyleConf?.formConf?.pcDetailFormId"
+            :recordEditFormId="listParamConf.recordEditFormId || rowStyleConf?.formConf?.pcEditFormId"
         />
         <mlCustomEdit
             ref="editRefs"
@@ -389,8 +390,8 @@
             :nameFieldName="isOtherEntity ? null : nameFieldName"
             :layoutConfig="layoutConfig"
             @saveFinishCallBack="editConfirm"
-            :recordNewFormId="listParamConf.recordNewFormId"
-            :recordEditFormId="listParamConf.recordEditFormId"
+            :recordNewFormId="listParamConf.recordNewFormId || rowStyleConf?.formConf?.pcAddFormId"
+            :recordEditFormId="listParamConf.recordEditFormId || rowStyleConf?.formConf?.pcEditFormId"
         />
         <!-- 快速搜索字段 -->
         <mlSelectField
