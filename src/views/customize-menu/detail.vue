@@ -276,6 +276,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 编辑记录表单id
+    recordEditFormId: {
+		type: String,
+		default: "",
+	},
     // 自定义详情弹框标题
     customDetailDialogTitle: {
 		type: String,
@@ -600,7 +605,7 @@ const onEditRow = (localDsv, formId) => {
         idFieldName: idFieldName.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
-    !!formId && (tempV.formId = formId)
+    tempV.formId = formId || props.recordEditFormId
     let cutEditEntity = queryEntityNameById(detailId.value);
     // 如果是修改部门
     if(cutEditEntity == 'Department'){

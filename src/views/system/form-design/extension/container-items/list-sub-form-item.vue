@@ -92,7 +92,7 @@ export default {
 }
 </style>
 <style>
-.el-dialog--center .mldialog .el-dialog__footer {
+.el-dialog--center .ml-dialog .el-dialog__footer {
 	text-align: right;
 }
 </style>
