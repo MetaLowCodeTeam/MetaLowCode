@@ -69,8 +69,9 @@ import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
-const { getEntityList, setUserInfo } = useCommonStore();
+const { getEntityList, setUserInfo, setPublicSetting } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
+import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import { encrypt } from "@/utils/util";
 export default {
@@ -195,6 +196,7 @@ export default {
                 this.roundRobin(5000);
                 // 调用实体数据
                 getEntityList();
+                this.queryPublicSetting();
                 this.$router.replace({
                     path: "/",
                 });
@@ -218,6 +220,15 @@ export default {
                 clearInterval(this.timer);
             }
         },
+        // 获取公开系统配置
+        async queryPublicSetting()  {
+            let res = await getPublicSetting();
+            if (res) {
+                let resData = res.data || {};
+                setPublicSetting(resData);
+            }
+        },
+
     },
     beforeDestroy() {
         clearInterval(this.timer);

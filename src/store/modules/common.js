@@ -93,6 +93,8 @@ const useCommonStore = defineStore('commonStore', () => {
         return list.filter(el => el.appAbbr == appAbbr);
     }
     const setPublicSetting = (data) => {
+        // 初始化清空多租户ID，避免缓存
+        publicSetting.value.tenantId = "";
         publicSetting.value.APP_NAME = data.appName;
         publicSetting.value.APP_VER = data.dbVersion;
         publicSetting.value.APP_LOGO = data.logo;
@@ -115,8 +117,6 @@ const useCommonStore = defineStore('commonStore', () => {
         if(!data.layoutConfig) {
             publicSetting.value.layoutConfig = "header";
         }
-        // publicSetting.value.pluginIdList = [];
-        // publicSetting.value.APP_PLUGINID = [];
     }
     const setPublicSettingByKey = (key, value) => {
         publicSetting.value[key] = value;

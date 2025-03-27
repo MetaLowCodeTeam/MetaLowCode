@@ -298,11 +298,28 @@ let wxFields = ref([
     "wxMiniAppappSecret",
 ]);
 
+// 多租户隐藏
+let tenantHide = ref(["loginPage", "mobileStyleConfig", "authLicense"]);
+// 多租户可配置的字段
+let commonConfKeys = ref(["appName", "logo", "homeURL", "themeColor"]);
 
 const initData = async () => {
+    let { appMode, pluginIdList, tenantId } = publicSetting.value;
     confList.value = commonConfig.map((el) => {
-        if (el.code == "authLicense" && publicSetting.value.appMode == "prod") {
+        if (el.code == "authLicense" && appMode == "prod") {
             el.isHide = true;
+        }
+        if(pluginIdList.includes('metaTenant') && tenantId && tenantHide.value.includes(el.code)){
+            el.isHide = true;
+        }
+        if(pluginIdList.includes('metaTenant') && tenantId && el.code == "common"){
+            let newConfs = [];
+            el.confs.forEach(item => {
+                if(commonConfKeys.value.includes(item.key)){
+                    newConfs.push(item);
+                }
+            })
+            el.confs = newConfs;
         }
         return el;
     });

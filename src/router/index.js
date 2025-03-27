@@ -85,6 +85,9 @@ router.beforeEach(async (to, from, next) => {
             });
         })
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
+            if(node.name == "Tenant" && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+                return false
+            }
             return true
         })
         userMenu[0].children.push(...getUseMenuList())
@@ -137,7 +140,11 @@ router.onError((error, to) => {
 //入侵追加自定义方法、对象
 router.sc_getMenu = () => {
     const { getUseMenuList, getTopNavMenuList } = useLayoutConfigStore();
+    const { publicSetting } = storeToRefs(useCommonStore());
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
+        if(node.name == "Tenant" && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+            return false
+        }
         return true
     })
     userMenu[0].children.push(...getUseMenuList())
