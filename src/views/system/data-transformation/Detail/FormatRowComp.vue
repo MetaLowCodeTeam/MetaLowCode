@@ -68,8 +68,8 @@
 			style="width: 100%"
 			:disabled="type == 2 || !curtItem.targetField"
 		>
-			<el-option label="正常" value="1" />
-			<el-option label="禁用" value="0" />
+			<el-option label="是" value="1" />
+			<el-option label="否" value="0" />
 		</el-select>
 		<!-- 固定值-时间 -->
 		<el-date-picker
