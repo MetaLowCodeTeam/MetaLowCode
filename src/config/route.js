@@ -191,6 +191,13 @@ const routes = [
                     },
                 ]
             },
+            // 多租户
+            {
+                path: appPath + 'tenant',
+                name: 'Tenant',
+                meta: { title: '多租户', icon: 'el-icon-Reading', role: 'r52-1' },
+                component: 'system/analysis-setting/Tenant',
+            },
             // 应用管理
             {
                 path: appPath + 'app-manager',
@@ -310,12 +317,6 @@ const routes = [
 								meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
 								component: 'system/dashboard-design/chart',
 							},
-							{
-								path: appPath + 'tenant',
-								name: 'Tenant',
-								meta: { title: '多租户', icon: 'el-icon-menu', role: 'r52-1' },
-								component: 'system/analysis-setting/Tenant',
-							}
 						]
 					},
 					// 报表设计
