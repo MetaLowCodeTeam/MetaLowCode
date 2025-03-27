@@ -37,7 +37,7 @@
 					class="w-100"
 					:autosize="{ minRows: 2, maxRows: 4 }"
 					type="textarea"
-					placeholder="请输入过滤条件，如：关联id = '{主实体id字段}'"
+					placeholder="请输入过滤条件，如：关联id = {主实体id字段}"
 				/>
 			</div>
 		</div>
