@@ -337,13 +337,13 @@ const initFormLayout = async () => {
                         { queryDetailList: formFieldSchema.queryDetailList }
                     );
                     if (formData && formData.data) {
-                        if(props.nameFieldName) {
+                        if(props.nameFieldName && formData.data[props.nameFieldName]) {
                             row.dialogTitle =
                                 "编辑：" + formData.data[props.nameFieldName];
-                        }else if(row.nameFieldName) {
+                        }else if(row.nameFieldName && formData.data[row.nameFieldName]) {
                             row.dialogTitle =
                                 "编辑：" + formData.data[row.nameFieldName];
-                        }else if(row.idFieldName){
+                        }else if(row.idFieldName && formData.data[row.idFieldName]) {
                             row.dialogTitle =
                                 "编辑：" + formData.data[row.idFieldName];
                         }else {
