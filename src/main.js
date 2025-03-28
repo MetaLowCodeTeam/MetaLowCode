@@ -21,6 +21,8 @@ import {loadChartsExtension} from "@/views/system/dashboard-design/charts/charts
 import VueResizeObserver from "vue-resize-observer";
 import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
 import '@vuemap/vue-amap/dist/style.css'
+// park-icon 样式
+import '@icon-park/vue-next/styles/index.css';
 import dayjs from "dayjs";
 
 import { registerCustomDetailCmp } from '@/views/custom-page/customDetailEntry.js';
