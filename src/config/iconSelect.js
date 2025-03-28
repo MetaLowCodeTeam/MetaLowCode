@@ -9,7 +9,6 @@ const ParkIconKeys = Object.keys(ParkIcons).filter(key => {
 // 使用 map 方法给每个键添加前缀
 .map(key => `park-${key}`);
 
-console.log(ParkIconKeys,'ParkIconKeys')
 
 //图标选择器配置
 export default {
