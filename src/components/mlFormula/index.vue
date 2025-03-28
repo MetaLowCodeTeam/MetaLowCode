@@ -6,7 +6,7 @@
             <span>脚本类型</span>
             <el-select style="width: 240px" v-model="currentScriptType" placeholder="请选择脚本类型">
                 <el-option label="AviatorScript" value="aviator"></el-option>
-                <el-option label="Java" value="liteFlowJava"></el-option>
+                <el-option label="Java" value="liteFlowJava" v-if="!publicSetting.tenantId"></el-option>
             </el-select>
             <span 
                 class="help"
@@ -176,6 +176,9 @@
 import { onMounted, ref, watch, unref, reactive, inject } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
 import LiteFlowJava from "./LiteFlowJava.vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const buttonRef = ref();

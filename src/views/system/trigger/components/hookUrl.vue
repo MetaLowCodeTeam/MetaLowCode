@@ -4,7 +4,7 @@
         <el-form-item class="mt-20" label="回调类型">
             <el-radio-group v-model="trigger.actionContent.callBackType" class="ml-4">
                 <el-radio value="URL">URL回调</el-radio>
-                <el-radio value="liteFlowJavaScript">脚本回调</el-radio>
+                <el-radio value="liteFlowJavaScript" v-if="!publicSetting.tenantId">脚本回调</el-radio>
                 <el-radio value="FUNCTION">函数回调</el-radio>
             </el-radio-group>
         </el-form-item>
@@ -90,6 +90,10 @@
 import http from "@/utils/request";
 import { onMounted, ref, inject } from "vue";
 import LiteFlowJava from "@/components/mlFormula/LiteFlowJava.vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
+
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
 const props = defineProps({

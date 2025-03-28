@@ -195,7 +195,7 @@ const routes = [
             {
                 path: appPath + 'tenant',
                 name: 'Tenant',
-                meta: { title: '多租户', icon: 'el-icon-Reading', role: 'r52-1' },
+                meta: { title: '多租户', icon: 'park-NetworkTree', role: 'r52-1' },
                 component: 'system/analysis-setting/Tenant',
             },
             // 应用管理
