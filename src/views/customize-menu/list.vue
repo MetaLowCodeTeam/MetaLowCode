@@ -293,7 +293,7 @@
                             v-if="!column.pcHide"
                             :prop="column.fieldName"
                             :width="setColumnWidth(column)"
-                            :sortable="column.sortable == undefined ? true : column.sortable"
+                            :sortable="column.sortable == undefined ? 'custom' : column.sortable ? 'custom' : false"
                             show-overflow-tooltip
                             :fixed="column.fixed"
                             :align="column.align"

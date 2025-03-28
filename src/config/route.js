@@ -49,7 +49,7 @@ const routes = [
                 "path": appPath + "dashboard",
                 "meta": {
                     "title": "仪表盘",
-                    "icon": "el-icon-menu",
+                    "icon": "park-Dashboard",
                     "affix": true
                 },
                 "component": "home/index"

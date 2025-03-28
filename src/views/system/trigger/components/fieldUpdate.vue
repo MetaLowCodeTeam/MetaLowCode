@@ -129,8 +129,8 @@
                         filterable
                         class="w-100"
                     >
-                        <el-option label="正常" value="1" />
-                        <el-option label="禁用" value="0" />
+                        <el-option label="是" value="1" />
+                        <el-option label="否" value="0" />
                     </el-select>
                     <el-date-picker
                         v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'DateTime' || toFixedForFieldType == 'Date')"
@@ -827,10 +827,10 @@ const getUpdateModeLabel = (value) => {
 const getSourceFieldLabel = (item) => {
     if (item.updateMode !== "forField") {
         if (item.sourceField == 1 && toFixedForFieldType.value == "Boolean") {
-            return "正常";
+            return "是";
         }
         if (item.sourceField == 0 && toFixedForFieldType.value == "Boolean") {
-            return "禁用";
+            return "否";
         }
         if (item.sourceField && item.sourceField.label) {
             return item.sourceField.label;

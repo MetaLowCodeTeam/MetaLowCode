@@ -29,9 +29,14 @@
                                     :class="{'is-active': selectedIcon.name == icon}"
                                 >
                                     <span :data-icon="icon"></span>
-                                    <el-icon>
-                                        <component :is="icon" />
+                                    <el-icon v-if="item.value == 'default'">
+                                        <component :is="icon" class="el-icon"/>
                                     </el-icon>
+                                    <component 
+                                        v-else 
+                                        :is="icon" 
+                                        class="park-icon"
+                                    />
                                     <span class="icon-name">{{ getIconName(icon) }}</span>
                                 </li>
                             </ul>
@@ -107,15 +112,22 @@ onMounted(() => {
 
 const search = (text) => {
     if (text) {
+        // 将搜索文本转换为大写
+        const upperText = text.toUpperCase(); 
         const filterData = JSON.parse(JSON.stringify(config.icons));
         filterData.forEach((t) => {
-            t.icons = t.icons.filter((n) => n.includes(text));
+            t.icons = t.icons.filter((n) => {
+                // 将图标名称也转换为大写后进行比较
+                return n.toUpperCase().includes(upperText); 
+            });
         });
         iconData.value = filterData;
     } else {
         iconData.value = JSON.parse(JSON.stringify(config.icons));
     }
 };
+
+
 
 const getIconName = (name) => {
     let tempSplit = name.split("-");
@@ -130,6 +142,8 @@ const selectIcon = (icon) => {
 const confirmIcon = () => {
     emit("confirmIcon", selectedIcon.value);
 };
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -182,7 +196,9 @@ const confirmIcon = () => {
     background: var(--el-color-primary-light-5);
 }
 .ml-icon-select__list li:hover i,
-.ml-icon-select__list li.is-active i {
+.ml-icon-select__list li:hover .park-icon,
+.ml-icon-select__list li.is-active i,
+.ml-icon-select__list li.is-active .park-icon {
     color: var(--el-color-primary);
 }
 
@@ -191,5 +207,13 @@ const confirmIcon = () => {
     text-align: right;
     padding-right: 45px;
     padding-left: 20px;
+}
+.park-icon {
+    font-size: 22px;
+    color: #6d7882;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-top: 18px;
 }
 </style>

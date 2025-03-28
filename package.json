@@ -22,6 +22,7 @@
 		"@fullcalendar/list": "^6.1.15",
 		"@fullcalendar/timegrid": "^6.1.15",
 		"@fullcalendar/vue3": "^6.1.15",
+		"@icon-park/vue-next": "^1.4.2",
 		"@tinymce/tinymce-vue": "5.0.0",
 		"@vitejs/plugin-legacy": "^4.1.1",
 		"@vitejs/plugin-vue": "^4.2.3",

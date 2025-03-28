@@ -39,6 +39,9 @@ import mlUpload from "./components/mlUpload/index.vue";
 import mlWaterMark from './components/mlWaterMark/index.vue';
 import { ElMessage } from 'element-plus'
 
+// 集成ParkIcons图标
+import * as ParkIcons from '@icon-park/vue-next';
+
 export default {
 	install(app) {
 		//挂载全局对象
@@ -94,6 +97,12 @@ export default {
 		for(let icon in scIcons){
 			app.component(`ScIcon${icon}`, scIcons[icon])
 		}
+
+        // 定义一个图标前缀，例如 'park-'
+        const iconPrefix = 'park-';
+        Object.keys(ParkIcons).forEach((iconName) => {
+            app.component(`${iconPrefix}${iconName}`, ParkIcons[iconName]);
+        });
 
 		//关闭async-validator全局控制台警告
 		window.ASYNC_VALIDATOR_NO_WARNING = 1
