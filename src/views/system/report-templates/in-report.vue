@@ -44,6 +44,7 @@ let optionData = ref({});
 let loading = ref(false);
 
 let externalId = ref("");
+let tenantId = ref(null);
 
 let externalData = ref({});
 
@@ -56,6 +57,7 @@ let approvalStatus = ref();
 
 onMounted(() => {
     externalId.value = Router.currentRoute.value.query.externalId;
+    tenantId.value = Router.currentRoute.value.query.tenantId;
     if (externalId.value) {
         initExternalData();
     }
@@ -65,7 +67,7 @@ onMounted(() => {
 const initExternalData = async () => {
     loading.value = true;
 
-    let res = await getExternalFormData(externalId.value);
+    let res = await getExternalFormData(externalId.value, tenantId.value);
     if (res && res.code == 200) {
         if (res.data.isDisabled) {
             loading.value = false;
@@ -76,6 +78,7 @@ const initExternalData = async () => {
         let { layoutData } = res.data;
         globalDsv.value.formEntity = layoutData.entityCode;
         globalDsv.value.isExternalForm = true;
+        globalDsv.value.tenantId = tenantId.value;
         if (layoutData) {
             haveLayoutJson.value = true;
             optionData.value = layoutData.optionData || {};
@@ -133,7 +136,7 @@ const confirm = async () => {
         .then(async (formData) => {
             if (formData) {
                 loading.value = true;
-                let saveRes = await saveRecord(externalId.value, formData);
+                let saveRes = await saveRecord(externalId.value, tenantId.value, formData);
                 if (
                     saveRes &&
                     (saveRes.data?.code == 200 || saveRes.code == 200)

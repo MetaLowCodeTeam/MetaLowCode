@@ -279,7 +279,8 @@ export default {
 						this.page.limit,
 						this.queryText,
 						this.extraFilter,
-						this.extraSort
+						this.extraSort,
+                        this.gDsv.tenantId,
 					)
 				);
 			} else {

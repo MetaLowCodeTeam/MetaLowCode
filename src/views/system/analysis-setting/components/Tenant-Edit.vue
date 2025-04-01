@@ -66,6 +66,12 @@ let isView = ref(false);
 const openDialog = (row, target) => {
 	isShow.value = true;
 	title.value = row.tenantId ? (target == 'view' ? '查看' : '编辑') + row.tenantName : "新增租户";
+    isView.value = false;
+    form.value = {
+        tenantName: "",
+        tenantCode: "",
+        isDisabled: false,
+    };
 	if (row.tenantId) {
 		form.value = {
 			tenantName: row.tenantName,

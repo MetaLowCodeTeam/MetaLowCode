@@ -12,6 +12,9 @@ import { beforeEach, afterEach } from './scrollBehavior';
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 
 
+// 如果是租户需要隐藏菜单
+const tenantIdHideMenu = ['Tenant', 'DatabaseBackups'];
+
 
 let modules = import.meta.glob('../views/**/*.vue')
 const empty = () => () => import('../layout/other/empty.vue');
@@ -85,7 +88,7 @@ router.beforeEach(async (to, from, next) => {
             });
         })
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
-            if(node.name == "Tenant" && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+            if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
                 return false
             }
             return true
@@ -142,7 +145,7 @@ router.sc_getMenu = () => {
     const { getUseMenuList, getTopNavMenuList } = useLayoutConfigStore();
     const { publicSetting } = storeToRefs(useCommonStore());
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
-        if(node.name == "Tenant" && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+        if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
             return false
         }
         return true

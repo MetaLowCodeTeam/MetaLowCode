@@ -167,6 +167,9 @@ const downErCode = async (row) => {
     }
     homeURL += "web/inReport?externalId=";
     homeURL += row.externalFormId;
+    if(publicSetting.value.tenantId){
+        homeURL += "&tenantId=" + publicSetting.value.tenantId;
+    }
     let res = await http.post("/picture/getQR", {url:homeURL});
     if (res && res.data) {
         let blob = base64ToBlob(res.data.qrData);

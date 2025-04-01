@@ -263,11 +263,14 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import ListDialog from "./components/ListDialog.vue";
 // API
 import { listQuery, deleteRecord } from "@/api/appManager";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 
 // 当前选中的tab
-let activeTab = ref("developing");
+let activeTab = ref(publicSetting.value.tenantId ? "installed" : "developing");
 // 所有tab
-const tabs = [
+let tabs = ref([
 	{
 		label: t("appManager.1001"),
 		value: "developing",
@@ -276,9 +279,17 @@ const tabs = [
 		label: t("appManager.1002"),
 		value: "installed",
 	},
-];
+]);
 
 onMounted(() => {
+    if(publicSetting.value.tenantId){
+        tabs.value = [
+            {
+                label: t("appManager.1002"),
+                value: "installed",
+            }
+        ];
+    }
 	getTabList();
 });
 

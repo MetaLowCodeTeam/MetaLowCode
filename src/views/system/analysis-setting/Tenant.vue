@@ -133,14 +133,6 @@ let tableColumn = ref([
 		isNegation: true,
 		width: 80,
 	},
-	// {
-	// 	prop: "tenantState",
-	// 	label: "租户状态",
-	// 	align: "center",
-	// 	formatter: (row) => {
-	// 		return row.tenantState.value == 2 ? `<span style="color: red;">{{ row.tenantState?.label }}</span>` : row.tenantState?.label;
-	// 	},
-	// },
 ]);
 
 let tenantEditRef = ref("");

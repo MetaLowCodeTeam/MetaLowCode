@@ -306,6 +306,7 @@ let commonConfKeys = ref(["appName", "logo", "homeURL", "themeColor"]);
 const initData = async () => {
     let { appMode, pluginIdList, tenantId } = publicSetting.value;
     confList.value = commonConfig.map((el) => {
+        el.isHide = false;
         if (el.code == "authLicense" && appMode == "prod") {
             el.isHide = true;
         }
