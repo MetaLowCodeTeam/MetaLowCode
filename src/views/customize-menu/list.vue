@@ -1977,6 +1977,9 @@ div {
                 }
                 // overflow:auto;
             }
+            :deep(.el-popper) {
+                max-width: 300px;
+            }
 
             // :deep(.el-table__row){
             //     td {

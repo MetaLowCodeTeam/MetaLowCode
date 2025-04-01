@@ -249,6 +249,8 @@ const openDialog = async (v) => {
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;
+    // 表单默认赋值
+    row.defaultFormData = v.defaultFormData;
     paramDialogConf.value = v.dialogConf;
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
@@ -352,7 +354,11 @@ const initFormLayout = async () => {
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {
-							vFormRef.value.setFormData(formatFormVirtualField(formData.data));
+                            let setFormData = formatFormVirtualField(formData.data);
+                            if(row.defaultFormData) {
+                                setFormData = Object.assign(setFormData, row.defaultFormData);
+                            }
+							vFormRef.value.setFormData(setFormData);
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
                                 if (
@@ -402,6 +408,9 @@ const initFormLayout = async () => {
 					nextTick(() => {
                         if(globalDsv.value.backfillFormData) {
                             param = Object.assign(param, globalDsv.value.backfillFormData);
+                        }
+                        if(row.defaultFormData) {
+                            param = Object.assign(param, row.defaultFormData);
                         }
 						vFormRef.value.setFormData(param);
 						nextTick(() => {
