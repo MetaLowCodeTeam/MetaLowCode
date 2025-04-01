@@ -1494,15 +1494,33 @@ const getTableList = async () => {
     );
     if (res && res.data) {
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
-        tableData.value = res.data.dataList.map((el, inx) => {
-            el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', 'target', customDisabledFunc)(el, inx, 'pc') : false;
-            el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', 'target', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx, 'pc') : {
-                view: false,
-                edit: false,
-            };
-            el.isSelected = false;
-            return el
-        });
+        try {
+            tableData.value = res.data.dataList.map((el, inx) => {
+                try {
+                    el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', 'target', customDisabledFunc)(el, inx, 'pc') : false;
+                } catch (error) {
+                    console.error('执行 customDisabledFunc 时出错:', error);
+                    el.isCustomDisabled = false;
+                }
+                try {
+                    el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', 'target', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx, 'pc') : {
+                        view: false,
+                        edit: false,
+                    };
+                } catch (error) {
+                    console.error('执行 rowStyleConf.value.rowConf.rowBtnDisabled 时出错:', error);
+                    el.btnDisabled = {
+                        view: false,
+                        edit: false,
+                    };
+                }
+                el.isSelected = false;
+                return el;
+            });
+        } catch (error) {
+            console.error('处理表格数据时出错:', error);
+            tableData.value = [];
+        }
         page.total = res.data.pagination.total;
         dataExportData.size = res.data.dataList.length;
         dataExportData.total = res.data.pagination.total;
