@@ -249,6 +249,7 @@ const openDialog = async (v) => {
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;
+    row.data = v.data;
     // 表单默认赋值
     row.defaultFormData = v.defaultFormData;
     paramDialogConf.value = v.dialogConf;
