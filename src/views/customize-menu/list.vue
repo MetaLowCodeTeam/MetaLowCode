@@ -1288,6 +1288,7 @@ const onEditRow = (row, localDsv, formId) => {
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
+    tempV.data = row;
     !!localDsv && (tempV.localDsv = localDsv)
     !!formId && (tempV.formId = formId)
     editRefs.value.openDialog(tempV);
