@@ -7,7 +7,7 @@
         size="large"
         @keyup.enter="login"
     >
-        <el-form-item prop="tenantCode" v-if="myPublicSetting?.pluginIdList.includes('metaTenant')">
+        <el-form-item prop="tenantCode" v-if="myPublicSetting && myPublicSetting.pluginIdList && myPublicSetting.pluginIdList.includes('metaTenant')">
             <el-input
                 v-model="form.tenantCode"
                 prefix-icon="el-icon-menu"
