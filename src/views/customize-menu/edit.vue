@@ -100,7 +100,7 @@ import {
     formatQueryByIdParam,
 } from "@/utils/util";
 
-const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
+const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity, queryEntityInfoByName } = useCommonStore();
 
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -244,7 +244,7 @@ const openDialog = async (v) => {
     row.isRead = v.isRead;
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
-    row.idFieldName = v.idFieldName;
+    row.idFieldName = getEntityIdFieldName(v);
     row.nameFieldName = v.nameFieldName;
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
@@ -300,7 +300,7 @@ let haveLayoutJson = ref(false);
 const initFormLayout = async () => {
     loading.value = true;
     globalDsv.value.formEntity = row.entityName;
-    globalDsv.value.formEntityIdFieldName = row.idFieldName;
+    globalDsv.value.formEntityIdFieldName = getEntityIdFieldName(row);
     globalDsv.value.setRowRecordId = setRowRecordId;
     let { recordNewFormId, recordEditFormId } = props;
     // 表单ID使用： 复写方法ID > 传入ID
@@ -638,6 +638,10 @@ const editById = (id) => {
 const reload = () => {
     haveLayoutJson.value = false;
     initFormLayout();
+}
+
+const getEntityIdFieldName = (row) => {
+    return queryEntityInfoByName(row.entityName).idFieldName;
 }
 
 defineExpose({
