@@ -77,6 +77,7 @@
 		<div
 			class="select-row"
 			:class="{ 'not-show': row.isVfEdit, show: row.isVfSelected }"
+            v-if="!isView"
 		>
 			<span
 				class="ml-a-span"
@@ -169,6 +170,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 查看状态  没有鼠标移入显示
+    isView: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 let curtFormLayout = ref({});
