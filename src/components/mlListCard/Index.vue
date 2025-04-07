@@ -526,9 +526,11 @@ let page = reactive({
 });
 const pageChange = (no) => {
 	page.no = no;
+    getTableList();
 };
 const handleSizeChange = (size) => {
 	page.size = size;
+    getTableList();
 };
 /**
  * 分页 ---------------- end
