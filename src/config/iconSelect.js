@@ -1,7 +1,20 @@
+import * as ParkIcons from '@icon-park/vue-next';
+// 定义要过滤掉的元素数组
+const elementsToFilter = ['DEFAULT_ICON_CONFIGS', 'IconProvider'];
+
+// 获取所有图标键并过滤掉指定元素
+const ParkIconKeys = Object.keys(ParkIcons).filter(key => {
+    return !elementsToFilter.includes(key);
+})
+// 使用 map 方法给每个键添加前缀
+.map(key => `park-${key}`);
+
+
 //图标选择器配置
 export default {
 	icons: [{
 			name: '默认',
+            value: 'default',
 			icons: [
 				"el-icon-add-location",
 				"el-icon-aim",
@@ -287,6 +300,11 @@ export default {
 				"el-icon-zoom-in",
 				"el-icon-zoom-out"
 			]
-		}
+		},
+        {
+            name: "parkIcon",
+            value: 'parkIcon',
+            icons: ParkIconKeys
+        },
 	]
 }

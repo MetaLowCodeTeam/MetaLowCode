@@ -100,7 +100,7 @@ import {
     formatQueryByIdParam,
 } from "@/utils/util";
 
-const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity } = useCommonStore();
+const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity, queryEntityInfoByName } = useCommonStore();
 
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -244,11 +244,14 @@ const openDialog = async (v) => {
     row.isRead = v.isRead;
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
-    row.idFieldName = v.idFieldName;
+    row.idFieldName = getEntityIdFieldName(v);
     row.nameFieldName = v.nameFieldName;
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;
+    row.data = v.data;
+    // 表单默认赋值
+    row.defaultFormData = v.defaultFormData;
     paramDialogConf.value = v.dialogConf;
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
@@ -297,7 +300,7 @@ let haveLayoutJson = ref(false);
 const initFormLayout = async () => {
     loading.value = true;
     globalDsv.value.formEntity = row.entityName;
-    globalDsv.value.formEntityIdFieldName = row.idFieldName;
+    globalDsv.value.formEntityIdFieldName = getEntityIdFieldName(row);
     globalDsv.value.setRowRecordId = setRowRecordId;
     let { recordNewFormId, recordEditFormId } = props;
     // 表单ID使用： 复写方法ID > 传入ID
@@ -337,13 +340,13 @@ const initFormLayout = async () => {
                         { queryDetailList: formFieldSchema.queryDetailList }
                     );
                     if (formData && formData.data) {
-                        if(props.nameFieldName) {
+                        if(props.nameFieldName && formData.data[props.nameFieldName]) {
                             row.dialogTitle =
                                 "编辑：" + formData.data[props.nameFieldName];
-                        }else if(row.nameFieldName) {
+                        }else if(row.nameFieldName && formData.data[row.nameFieldName]) {
                             row.dialogTitle =
                                 "编辑：" + formData.data[row.nameFieldName];
-                        }else if(row.idFieldName){
+                        }else if(row.idFieldName && formData.data[row.idFieldName]) {
                             row.dialogTitle =
                                 "编辑：" + formData.data[row.idFieldName];
                         }else {
@@ -352,7 +355,11 @@ const initFormLayout = async () => {
                         row.approvalStatus = formData.data.approvalStatus || {};
                         globalDsv.value.recordData = formData.data;
                         nextTick(() => {
-							vFormRef.value.setFormData(formatFormVirtualField(formData.data));
+                            let setFormData = formatFormVirtualField(formData.data);
+                            if(row.defaultFormData) {
+                                setFormData = Object.assign(setFormData, row.defaultFormData);
+                            }
+							vFormRef.value.setFormData(setFormData);
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
                                 if (
@@ -402,6 +409,9 @@ const initFormLayout = async () => {
 					nextTick(() => {
                         if(globalDsv.value.backfillFormData) {
                             param = Object.assign(param, globalDsv.value.backfillFormData);
+                        }
+                        if(row.defaultFormData) {
+                            param = Object.assign(param, row.defaultFormData);
                         }
 						vFormRef.value.setFormData(param);
 						nextTick(() => {
@@ -619,8 +629,19 @@ const getRecordId = () => {
 
 // 传入ID从新建弹框变成编辑弹框
 const editById = (id) => {
+    haveLayoutJson.value = false;
     row.detailId = id;
     initFormLayout();
+}
+
+// 重新加载数据
+const reload = () => {
+    haveLayoutJson.value = false;
+    initFormLayout();
+}
+
+const getEntityIdFieldName = (row) => {
+    return queryEntityInfoByName(row.entityName).idFieldName;
 }
 
 defineExpose({
@@ -634,6 +655,7 @@ defineExpose({
     getRecordId,
     editById,
     loading,
+    reload,
 });
 </script>
 <style lang='scss' scoped>

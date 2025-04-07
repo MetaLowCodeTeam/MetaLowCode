@@ -1,6 +1,6 @@
 <template>
 	<!--  -->
-	<mlDialog title="其他列表设置" v-model="isShow" width="600px">
+	<ml-dialog title="其他列表设置" v-model="isShow" width="600px" scrollbarHeight="500px" noBodyPadding>
 		<div v-loading="loading" class="set-list-style">
 			<div class="form-title">新建编辑弹框属性</div>
 			<div class="form-item mb-30">
@@ -13,9 +13,21 @@
 				<el-checkbox v-model="styleConf.actionConf.autoFullScreen">
 					弹框自动全屏
 				</el-checkbox>
+                <!-- <el-form label-width="120px" label-position="top">
+                    <el-form-item label="指定新建编辑表单(PC)" class="mb-5">
+                        <el-select v-model="styleConf.actionConf.pcFormId">
+                            <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="指定新建编辑表单(Mobile)" class="mb-5">
+                        <el-select v-model="styleConf.actionConf.mobileFormId">
+                            <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                        </el-select>
+                    </el-form-item>
+                </el-form> -->
 			</div>
 			<div class="form-title">查看侧滑栏属性</div>
-			<div class="form-item mb-30">
+			<div class="form-item mb-20">
 				<el-checkbox v-model="styleConf.detailConf.showFullScreen">
 					显示全屏按钮
 				</el-checkbox>
@@ -23,6 +35,51 @@
 					弹框自动全屏
 				</el-checkbox>
 			</div>
+            <div class="form-title">指定表单</div>
+            <el-tabs v-model="formActiveName" v-if="!isListCard" class="mb-20">
+                <el-tab-pane label="指定新建表单" name="addFormId">
+                    <el-form label-width="120px" label-position="top">
+                        <el-form-item label="指定新建表单(PC)" class="mb-5">
+                            <el-select v-model="styleConf.formConf.pcAddFormId">
+                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="指定新建(Mobile)" class="mb-5">
+                            <el-select v-model="styleConf.formConf.mobileAddFormId">
+                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                            </el-select>
+                        </el-form-item>
+                    </el-form> 
+                </el-tab-pane>
+                <el-tab-pane label="指定编辑表单" name="editFormId">
+                    <el-form label-width="120px" label-position="top">
+                        <el-form-item label="指定编辑表单(PC)" class="mb-5">
+                            <el-select v-model="styleConf.formConf.pcEditFormId">
+                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="指定编辑表单(Mobile)" class="mb-5">
+                            <el-select v-model="styleConf.formConf.mobileEditFormId">
+                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                            </el-select>
+                        </el-form-item>
+                    </el-form> 
+                </el-tab-pane>
+                <el-tab-pane label="指定查看详情表单" name="detailFormId">
+                    <el-form label-width="120px" label-position="top">
+                        <el-form-item label="指定查看详情表单(PC)" class="mb-5">
+                            <el-select v-model="styleConf.formConf.pcDetailFormId">
+                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="指定查看详情表单(Mobile)" class="mb-5">
+                            <el-select v-model="styleConf.formConf.mobileDetailFormId">
+                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                            </el-select>
+                        </el-form-item>
+                    </el-form> 
+                </el-tab-pane>
+            </el-tabs>
 			<div class="form-title">批量删除设置</div>
 			<div class="form-item mb-30">
 				<el-checkbox v-model="styleConf.delConf.allowUsersSelect">
@@ -127,7 +184,7 @@
 				</el-button>
 			</div>
 		</template>
-	</mlDialog>
+	</ml-dialog>
 </template>
 
 <script setup>
@@ -143,6 +200,9 @@ import layoutConfig from "@/api/layoutConfig";
 import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
+import { getFormLayoutList } from "@/api/system-manager";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
 const props = defineProps({
 	modelValue: null,
 	entityCode: { type: Number },
@@ -178,6 +238,21 @@ let styleConf = ref({
 		// 弹框自动全屏
 		autoFullScreen: false,
 	},
+    // 指定表单属性
+    formConf: {
+        // 指定新建表单(PC)
+        pcAddFormId: "",
+        // 指定新建表单(Mobile)
+        mobileAddFormId: "",
+        // 指定查看详情表单(PC)
+        pcDetailFormId: "",
+        // 指定查看详情表单(Mobile)
+        mobileDetailFormId: "",
+        // 指定编辑表单(PC)
+        pcEditFormId: "",
+        // 指定编辑表单(Mobile)
+        mobileEditFormId: "",
+    },
 	// 批量删除设置
 	delConf: {
 		// 允许用户选择级联删除
@@ -227,6 +302,7 @@ let styleConf = ref({
 });
 
 const activeName = ref("rowDisabledRender");
+const formActiveName = ref("addFormId");
 
 watch(
 	() => props.modelValue,
@@ -260,6 +336,9 @@ onMounted(() => {
 	initStyleConf();
 });
 
+let formList = ref([]);
+
+
 // 初始化样式配置
 const initStyleConf = () => {
 	// 弹框不显示不调用
@@ -275,7 +354,30 @@ const initStyleConf = () => {
 		);
 		layoutConfigId.value = STYLE.layoutConfigId;
 	}
+    initFormList();
 };
+
+const initFormList = async () => {
+    loading.value = true;
+    let res = await getFormLayoutList(queryEntityNameByCode(props.entityCode));
+    if(res) {
+        formList.value = res.data;
+        if(formList.value && formList.value.length > 0) {
+            const firstFormLayoutId = formList.value[0].formLayoutId;
+            // 使用对象解构赋值的方式简化代码，减少重复设置
+            const { formConf } = styleConf.value;
+            Object.assign(formConf, {
+                pcAddFormId: formConf.pcAddFormId || firstFormLayoutId,
+                mobileAddFormId: formConf.mobileAddFormId || firstFormLayoutId,
+                pcEditFormId: formConf.pcEditFormId || firstFormLayoutId,
+                mobileEditFormId: formConf.mobileEditFormId || firstFormLayoutId,
+                pcDetailFormId: formConf.pcDetailFormId || firstFormLayoutId,
+                mobileDetailFormId: formConf.mobileDetailFormId || firstFormLayoutId
+            });
+        }
+    }
+    loading.value = false;
+}
 
 const onSave = async () => {
 	let param = {
@@ -299,11 +401,11 @@ const onSave = async () => {
 </script>
 <style lang="scss" scoped>
 .set-list-style {
-	line-height: 1;
-	max-height: 500px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	padding: 20px;
+	// line-height: 1;
+	// max-height: 500px;
+	// overflow-y: auto;
+	// overflow-x: hidden;
+	// padding: 20px;
 	.form-title {
 		font-weight: bold;
 		font-size: 18px;

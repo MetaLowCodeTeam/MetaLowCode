@@ -99,12 +99,13 @@ let showReferenceDialogFlag = ref(false);
 
 // 提交审批弹框
 const openSubmitApprovalDialog = (row) => {
-	// console.log(row.fuzagongzuoliuId,'row')
-	EntityListRefs.value?.openSubmitApprovalDialog(row.ceshiliebiaoshenpiId);
+	// 下面这行代码需要你传入你自己的实体ID
+	// EntityListRefs.value?.openSubmitApprovalDialog(row.ceshiliebiaoshenpiId);
 };
 // 执行审批弹框
 const openApprovalDialog = (row) => {
-	EntityListRefs.value?.openApprovalDialog(row.ceshiliebiaoshenpiId);
+    // 下面这行代码需要你传入你自己的实体ID
+	// EntityListRefs.value?.openApprovalDialog(row.ceshiliebiaoshenpiId);
 };
 
 let ReferenceSearchTableRefs = ref();

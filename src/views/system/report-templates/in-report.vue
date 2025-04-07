@@ -39,7 +39,7 @@ const Router = useRouter();
 
 const vFormRef = ref();
 let haveLayoutJson = ref(false);
-const globalDsv = ref(globalDsvDefaultData);
+const globalDsv = ref(globalDsvDefaultData());
 let optionData = ref({});
 let loading = ref(false);
 

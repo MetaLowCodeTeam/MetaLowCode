@@ -2,7 +2,7 @@
     <!--  -->
     <div ref="el" :style="style" style="position: fixed; user-select: none; z-index: 2002;">
         <div class="customer-service" @click="open" title="咨询美乐客服">
-            <SvgIcon icon-name="customer-service" size="28" title="咨询美乐客服" />
+            <div class="icon-img" title="咨询美乐客服"></div>
         </div>
     </div>
 </template>
@@ -49,12 +49,23 @@ const openCustomer = () => {
 </script>
 <style lang='scss' scoped>
 .customer-service {
-    background: var(--el-color-primary);
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
+    border: 1px solid var(--el-color-primary);
+    // background: var(--el-color-primary);
+    background: #F4F4F5;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    .icon-img {
+        width: 24px;
+        height: 24px;
+        // display: block;
+        background: url("@/assets/imgs/logo.png") no-repeat center center;
+        background-size: 100% 100%;
+    }
 }
 </style>
+

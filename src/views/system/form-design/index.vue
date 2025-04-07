@@ -144,7 +144,7 @@ import {
     deleteFormLayout,
     updateNameFormLayout,
 } from "@/api/system-manager";
-import { deepClone, overwriteObj } from "@/utils/util";
+import { deepClone, overwriteObj, mlShortcutkeys } from "@/utils/util";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import BooleanWE from "@/views/system/field-editor/boolean-widget-editor.vue";
 import IntegerWE from "@/views/system/field-editor/integer-widget-editor.vue";
@@ -167,7 +167,6 @@ import ReferenceWE from "@/views/system/field-editor/reference-widget-editor.vue
 import AnyReferenceWE from "@/views/system/field-editor/anyreference-widget-editor.vue";
 import ReferenceListWE from "@/views/system/field-editor/referencelist-widget-editor.vue";
 import MlShareTo from "@/components/mlShareTo/index.vue";
-import { mlShortcutkeys } from "@/utils/util";
 export default {
     name: "form-design",
     components: {
@@ -247,6 +246,7 @@ export default {
         };
     },
     created() {
+        window.advancedDevMode = true;
         this.entity = this.$route.query.entity;
         this.entityLabel = this.$route.query.entityLabel;
         this.designerConfig.componentLib = !!window.advancedDevMode;
