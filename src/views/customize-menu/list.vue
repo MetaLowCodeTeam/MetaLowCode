@@ -1712,6 +1712,7 @@ const checkRouterAutoOpen = () => {
  * 导出方法
  */
 
+
 // 提交审批弹框
 let SubmitApprovalDialogRefs = ref();
 const openSubmitApprovalDialog = (recordId) => {
@@ -1908,6 +1909,7 @@ defineExpose({
     openApprovalDialog,
     viewToOtherEntity,
     editToOtherEntity,
+    openBatchPrinting,
 })
 
 </script>
