@@ -450,7 +450,7 @@ const openDataSourceDialog = () => {
 		items: [
             {
                 fieldName: 'isDisabled',
-                value: false,
+                value: 0,
                 op: "EQ",
             }
         ],
