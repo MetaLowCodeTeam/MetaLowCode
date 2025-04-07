@@ -204,6 +204,7 @@ const initData = () => {
 	}
 	globalDsv.value.formStatus = "read";
 	globalDsv.value.formEntityId = props.row[props.idFieldName];
+    console.log(curtFormLayout.value,'curtFormLayout.value');
 	nextTick(() => {
 		vFormRef.value?.setFormJson(layoutJson);
 		nextTick(() => {

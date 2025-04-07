@@ -677,7 +677,8 @@ const appPath = import.meta.env.VITE_APP_PATH;
 const onBatchPrinting = () => {
     let batchPrintingConfig = $TOOL.data.get("BatchPrintingConfig") || {};
     batchPrintingConfig[entity.value.name] = {
-        queryParm: tableParam,
+        queryParm: dataExportData.queryParm,
+        listCardConf: listCardConf.value,
     };
     $TOOL.data.set('BatchPrintingConfig', batchPrintingConfig);
     let url = Router.resolve({

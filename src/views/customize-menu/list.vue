@@ -1909,7 +1909,6 @@ defineExpose({
     openApprovalDialog,
     viewToOtherEntity,
     editToOtherEntity,
-    openBatchPrinting,
 })
 
 </script>
