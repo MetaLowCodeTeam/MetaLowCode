@@ -1,27 +1,40 @@
 <!-- 批量打印 -->
 <template>
-	<div class="batch-printing-container" v-loading="loading" element-loading-text="加载中...">
-		<el-row :gutter="20">
-			<el-col
-				:span="24 / rowNum"
-				v-for="(row, inx) of tableData"
-				:key="inx"
-			>
-				<MlCardItem
-					:row="row"
-					:form-layout="formLayout"
-					:nameFieldName="entityInfo.nameFieldName"
-					:idFieldName="entityInfo.idFieldName"
-					:entity="entityInfo"
-				/>
-			</el-col>
-		</el-row>
+	<div
+		class="batch-printing-container"
+		v-loading="loading"
+		element-loading-text="加载中..."
+	>
+		<el-container>
+			<el-header>
+				<el-button type="primary" @click="handlePrint">打印</el-button>
+			</el-header>
+			<el-main class="batch-printing-main">
+				<el-row :gutter="20">
+					<el-col
+						:span="24 / rowNum"
+						v-for="(row, inx) of tableData"
+						:key="inx"
+					>
+						<MlCardItem
+							:row="row"
+							:form-layout="formLayout"
+							:nameFieldName="entityInfo.nameFieldName"
+							:idFieldName="entityInfo.idFieldName"
+							:entity="entityInfo"
+						/>
+					</el-col>
+				</el-row>
+			</el-main>
+			<el-footer> 底部 </el-footer>
+		</el-container>
 	</div>
 </template>
 
 <script setup>
 import { onMounted, inject, ref } from "vue";
 import { useRouter } from "vue-router";
+
 // API
 import { getDataList } from "@/api/crud";
 // 公共方法
@@ -29,6 +42,8 @@ import useCommonStore from "@/store/modules/common";
 const { queryEntityInfoByName } = useCommonStore();
 // 卡片列表组件
 import MlCardItem from "@/components/mlListCard/CardItem.vue";
+// 滚动条
+import MlScrollbar from "@/components/mlScrollbar/index.vue";
 
 const Router = useRouter();
 const $TOOL = inject("$TOOL");
@@ -85,8 +100,12 @@ const loadTableData = async () => {
 
 <style lang="scss" scoped>
 .batch-printing-container {
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	// padding: 20px;
+	// box-sizing: border-box;
+	.batch-printing-main {
+		height: calc(100% - 120px);
+	}
 }
 </style>
