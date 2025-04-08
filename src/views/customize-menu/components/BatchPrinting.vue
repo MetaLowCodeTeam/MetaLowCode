@@ -104,7 +104,7 @@ let rowNum = ref(4);
 let rowNumList = ref([1, 2, 3, 4, 6]);
 // 第几行插入分页符
 let rowPageNum = ref(2);
-let rowPageNumList = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+let rowPageNumList = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
 
 let formLayout = ref({});
 
