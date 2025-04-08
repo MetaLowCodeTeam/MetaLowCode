@@ -28,8 +28,7 @@ const floamtRoute = (el, isTopNav) => {
         newRoute.component = "custom-page/ListVFormCmp/index";
     } else {
         if(el.customPageType == 2){
-            // 路由
-            newRoute.path = appPath + el.outLink;
+            newRoute.path = appPath + (el.outLink.indexOf('?') == -1 ? el.outLink : el.outLink.split('?')[0]);
         }else {
            // 自定义页面目录
            newRoute.path = appPath + "custom-page/";
@@ -226,6 +225,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     if (subEl.type == 3) {
                         subRoute.meta.type = 3
                         subRoute.meta.query = getCustomPageQuery(subEl.outLink);
+                        if(el.customPageType == 2){
+                            subRoute.meta.query.routerName = el.name
+                        }
                     }
                     // 如果是审批中心页面直接跳过权限判断
                     let approvalCenter = [
@@ -254,6 +256,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if (el.type == 3) {
                 initMenu.meta.type = 3
                 initMenu.meta.query = getCustomPageQuery(el.outLink);
+                if(el.customPageType == 2){
+                    initMenu.meta.query.routerName = el.name
+                }
             }
             if (el.type == 5) {
                 initMenu.meta.type = 3;
@@ -274,6 +279,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if(initMenu.children) {
                 initMenu.meta.hidden = initMenu.children.every((item) => item.meta.hidden);
             }
+            console.log(initMenu,'initMenu')
             routers.push(initMenu);
         });
         return routers

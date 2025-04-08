@@ -14,6 +14,7 @@
 		"@antv/s2-vue": "^1.5.0",
 		"@codemirror/lang-java": "^6.0.1",
 		"@codemirror/lang-javascript": "^6.2.2",
+		"@codemirror/lang-sql": "^6.8.0",
 		"@codemirror/theme-one-dark": "^6.1.2",
 		"@element-plus/icons-vue": "2.0.10",
 		"@fullcalendar/core": "^6.1.15",
