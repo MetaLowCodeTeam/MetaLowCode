@@ -26,13 +26,18 @@
 		</div>
 		<div class="no-data" v-else>
 			请通过右侧
-			<span class="lh">维度指标设置</span> 维度、指标栏来添加数据
+			<span class="lh">维度指标设置</span> 维度、指标栏来添加数据 或 设置<span class="lh"> 数据源 </span>添加数据
 		</div>
 	</div>
 </template>
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, inject } from "vue";
 import { queryChartData } from "@/api/chart";
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
+
+
 defineOptions({
 	name: "statistic-widget",
 });
@@ -50,6 +55,15 @@ let numericUnits = ref("");
 let metricsNum = ref("");
 const initOption = async () => {
 	let { options, type } = cutField.value;
+    let { dsEnabled, dsName, dataSetName } = options;
+    if(dsEnabled && dsName) {
+        let res = await getDataSourceData(options, getFormConfig());
+        if(res) {
+            metricsNum.value = dataSetName ? res[dataSetName] : res;
+        }
+        isNoData.value = false;
+        return;
+    }
 	if (options) {
 		let { metrics } = options.setDimensional;
 		if (metrics.length < 1) {
