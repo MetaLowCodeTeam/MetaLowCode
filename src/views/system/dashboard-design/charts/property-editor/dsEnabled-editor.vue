@@ -36,7 +36,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 defineOptions({
-	name: "dataEntity-editor",
+	name: "dsEnabled-editor",
 });
 
 const props = defineProps({

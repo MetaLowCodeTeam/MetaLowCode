@@ -1,5 +1,5 @@
 <template>
-    <el-form-item label="图表数据实体">
+    <el-form-item label="图表数据实体" v-if="!optionModel.dsEnabled">
         <el-select
             v-model="optionModel.dataEntity"
             filterable

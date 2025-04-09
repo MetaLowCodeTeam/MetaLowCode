@@ -1,5 +1,5 @@
 <template>
-    <el-form-item :label="chartType == 'listTable' ? '显示字段' : '维度指标设置'">
+    <el-form-item :label="chartType == 'listTable' ? '显示字段' : '维度指标设置'" v-if="!optionModel.dsEnabled">
         <el-button @click="openDrawer">点击设置</el-button>
     </el-form-item>
     <el-drawer v-model="drawer" title="维度指标设置" size="460">

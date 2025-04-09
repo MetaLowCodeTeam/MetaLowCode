@@ -98,8 +98,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -148,8 +152,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -204,8 +212,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -260,8 +272,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -316,8 +332,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -363,8 +383,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -411,8 +435,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 4,
@@ -457,8 +485,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 6,
@@ -505,8 +537,12 @@ export const ext_charts_widgets = [
             showCollapse: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 12,
@@ -552,8 +588,12 @@ export const ext_charts_widgets = [
             showTablePagination: false,
             topBarBtnConfig,
             customClass: [],
+            // 是否使用数据源
             dsEnabled: false,
+            // 数据源名称
             dsName: "",
+            // 数据集名称
+            dataSetName: "",
             x: 0,
             y: 0,
             w: 12,
@@ -590,8 +630,8 @@ export const ext_charts_widgets = [
             },
             topBarBtnConfig,
             customClass: [],
-            dsEnabled: false,
-            dsName: "",
+            // dsEnabled: false,
+            // dsName: "",
             x: 0,
             y: 0,
             w: 12,

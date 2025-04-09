@@ -23,6 +23,7 @@ export const registerChartLibProperties = (app, PERegister) => {
 
     // 组件排序
     let comOrder = [
+        'dsEnabled',
         'dataEntity', 
         'setDimensional', 
         'setChartFilter', 
@@ -53,6 +54,7 @@ export const registerChartLibProperties = (app, PERegister) => {
         }
     }
     newCom.forEach(el => {
+        console.log(el, 'el.cname')
         PERegister.registerCPEditor(app, el.alias, el.cname, el.default)
     })
 }

@@ -1,5 +1,5 @@
 <template>
-    <el-form-item label="过滤条件">
+    <el-form-item label="过滤条件" v-if="!optionModel.dsEnabled">
         <el-button @click="setCondition">{{ setConditionText }}</el-button>
         <!-- <div class="ml-a-span" @click="setCondition" v-else></div> -->
     </el-form-item>
