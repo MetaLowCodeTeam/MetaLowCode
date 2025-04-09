@@ -1,7 +1,6 @@
 <template>
 	<el-form-item label="开启数据源">
 		<el-switch v-model="optionModel.dsEnabled" />
-        <span class="ml-a-span ml-10" @click="showFormat">格式说明</span>
 	</el-form-item>
 	<el-form-item label="选择数据源" v-if="optionModel.dsEnabled">
 		<el-select
