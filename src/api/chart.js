@@ -5,11 +5,7 @@
 import http from "@/utils/request"
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-import VisualDesign from "@/../lib/visual-design/render.umd.js";
-const { Utils } = VisualDesign.VFormRenderSDK;
-import { ElMessage } from "element-plus";
-import { inject } from "vue";
-const getFormConfig = inject('getFormConfig');
+
 const ChartTypes = {
     // 统计数值
     'statistic': 'number',
@@ -60,21 +56,6 @@ const formatItem = (list, target) => {
 
 // 图表数据获取接口
 export async function queryChartData(formModel, type) {
-    if(formModel.dsEnabled && formModel.dataSetName){
-        let dataSource = Utils.getDSByName(
-			getFormConfig(),
-			formModel.dataSetName
-		);
-
-        return Utils.runDataSourceRequest(
-			dataSource,
-			{ SERVER_API: import.meta.env.VITE_APP_BASE_API },
-			null,
-			false,
-			ElMessage
-		)
-    }
-
     const { allEntityName } = storeToRefs(useCommonStore());
     // getEntityList().then(() => {
     let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
