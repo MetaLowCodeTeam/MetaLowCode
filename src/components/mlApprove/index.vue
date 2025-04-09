@@ -538,6 +538,10 @@ const beforeReject = () => {
 
 // 同意审批
 function confirmApprove(isBacked) {
+    if(!vFormRef.value){
+        ElMessage.error("没有找到表单");
+        return
+    }
     vFormRef.value.getFormData().then(async (formData) => {
         loading.value = true;
         let saveRes = await saveRecord(
