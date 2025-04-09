@@ -279,7 +279,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if(initMenu.children) {
                 initMenu.meta.hidden = initMenu.children.every((item) => item.meta.hidden);
             }
-            console.log(initMenu,'initMenu')
             routers.push(initMenu);
         });
         return routers
