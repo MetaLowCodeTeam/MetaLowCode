@@ -5,6 +5,8 @@ import {
 	ext_charts_widgets as EC_WS
 } from "./charts-schema.js";
 
+import dsEnabledEditor from "./property-editor/dsEnabled-editor.vue"; // 数据源
+
 import onRowClickEditor from "./property-editor/onRowClick-editor.vue";
 
 import DashboardContainerWidget from "./dashboard-container/dashboard-container-widget.vue";
@@ -30,6 +32,7 @@ export const loadChartsExtension = function (app) {
 	registerChartLibProperties(app, PERegister)
 
     PERegister.registerEPEditor(app, 'listTable-onRowClick', 'listTable-onRowClick-editor', onRowClickEditor)
+    PERegister.registerCPEditor(app, 'dsEnabled', 'dsEnabled-editor', dsEnabledEditor)
 
 	EC_CONS.forEach(con => {
 		addChartContainerSchema(con)
