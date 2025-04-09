@@ -634,7 +634,7 @@ const onAdd = (e) => {
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
 	tempV.sourceRecord = multipleSelection.value[0];
-    editEmits(tempV)
+    editRefs.value.openDialog(tempV);
 };
 
 
