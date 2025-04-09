@@ -1,179 +1,209 @@
 <template>
 	<!--  -->
-	<ml-dialog title="其他列表设置" v-model="isShow" width="600px" scrollbarHeight="500px" noBodyPadding>
-		<div v-loading="loading" class="set-list-style">
-			<div class="form-title">新建编辑弹框属性</div>
-			<div class="form-item mb-30">
-				<el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
-					新页签打开新建
-				</el-checkbox>
-                <el-checkbox v-model="styleConf.actionConf.showFullScreen">
-					显示全屏按钮
-				</el-checkbox>
-				<el-checkbox v-model="styleConf.actionConf.autoFullScreen">
-					弹框自动全屏
-				</el-checkbox>
-                <!-- <el-form label-width="120px" label-position="top">
-                    <el-form-item label="指定新建编辑表单(PC)" class="mb-5">
-                        <el-select v-model="styleConf.actionConf.pcFormId">
-                            <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="指定新建编辑表单(Mobile)" class="mb-5">
-                        <el-select v-model="styleConf.actionConf.mobileFormId">
-                            <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                        </el-select>
-                    </el-form-item>
-                </el-form> -->
-			</div>
-			<div class="form-title">查看侧滑栏属性</div>
-			<div class="form-item mb-20">
-				<el-checkbox v-model="styleConf.detailConf.showFullScreen">
-					显示全屏按钮
-				</el-checkbox>
-				<el-checkbox v-model="styleConf.detailConf.autoFullScreen">
-					弹框自动全屏
-				</el-checkbox>
-			</div>
-            <div class="form-title">指定表单</div>
-            <el-tabs v-model="formActiveName" v-if="!isListCard" class="mb-20">
-                <el-tab-pane label="指定新建表单" name="addFormId">
-                    <el-form label-width="120px" label-position="top">
-                        <el-form-item label="指定新建表单(PC)" class="mb-5">
-                            <el-select v-model="styleConf.formConf.pcAddFormId">
-                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="指定新建(Mobile)" class="mb-5">
-                            <el-select v-model="styleConf.formConf.mobileAddFormId">
-                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                            </el-select>
-                        </el-form-item>
-                    </el-form> 
-                </el-tab-pane>
-                <el-tab-pane label="指定编辑表单" name="editFormId">
-                    <el-form label-width="120px" label-position="top">
-                        <el-form-item label="指定编辑表单(PC)" class="mb-5">
-                            <el-select v-model="styleConf.formConf.pcEditFormId">
-                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="指定编辑表单(Mobile)" class="mb-5">
-                            <el-select v-model="styleConf.formConf.mobileEditFormId">
-                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                            </el-select>
-                        </el-form-item>
-                    </el-form> 
-                </el-tab-pane>
-                <el-tab-pane label="指定查看详情表单" name="detailFormId">
-                    <el-form label-width="120px" label-position="top">
-                        <el-form-item label="指定查看详情表单(PC)" class="mb-5">
-                            <el-select v-model="styleConf.formConf.pcDetailFormId">
-                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="指定查看详情表单(Mobile)" class="mb-5">
-                            <el-select v-model="styleConf.formConf.mobileDetailFormId">
-                                <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
-                            </el-select>
-                        </el-form-item>
-                    </el-form> 
-                </el-tab-pane>
-            </el-tabs>
-			<div class="form-title">批量删除设置</div>
-			<div class="form-item mb-30">
-				<el-checkbox v-model="styleConf.delConf.allowUsersSelect">
-					允许用户选择级联删除
-				</el-checkbox>
-				<div class="info-text mt-5 mb-2">默认级联删除</div>
-				<MlAssociatedRecords
-					v-model="styleConf.delConf.associatedRecords"
-					:entityCode="entityCode"
-				/>
-			</div>
-			<div class="form-title" v-if="!isListCard">复制设置</div>
-			<div class="form-item mb-30" v-if="!isListCard">
-				<el-checkbox v-model="styleConf.copyConf.openCopy">
-					打开复制功能
-				</el-checkbox>
-				<el-checkbox v-model="styleConf.copyConf.skipDuplicationCheck">
-					是否跳过唯一性检查
-					<el-tooltip
-						class="box-item"
-						effect="dark"
-						content="当前实体有字段设置为不可重复时，开启该功能后，数据依然可以复制成功。请视业务情况决定是否开启。"
-						placement="top-start"
-					>
-						<span style="position: relative; top: 2px">
-							<el-icon><QuestionFilled /></el-icon>
-						</span>
-					</el-tooltip>
-				</el-checkbox>
-				<!-- <el-checkbox v-model="styleConf.copyConf.allowUsersSelect">
-					允许用户选择级联复制
-				</el-checkbox> -->
-				<div class="info-text mt-5 mb-2">默认级联复制</div>
-				<MlAssociatedRecords
-					v-model="styleConf.copyConf.cascades"
-					:entityCode="entityCode"
-				/>
-			</div>
+	<ml-dialog title="其他列表设置" v-model="isShow" width="850px" scrollbarHeight="500px" noBodyPadding>
+        <div v-loading="loading" class="set-list-style">
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <div class="form-title">新建编辑弹框属性</div>
+                    <div class="form-item mb-30">
+                        <el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
+                            新页签打开新建
+                        </el-checkbox>
+                        <el-checkbox v-model="styleConf.actionConf.showFullScreen">
+                            显示全屏按钮
+                        </el-checkbox>
+                        <el-checkbox v-model="styleConf.actionConf.autoFullScreen">
+                            弹框自动全屏
+                        </el-checkbox>
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="form-title">查看侧滑栏属性</div>
+                    <div class="form-item mb-20">
+                        <el-checkbox v-model="styleConf.detailConf.showFullScreen">
+                            显示全屏按钮
+                        </el-checkbox>
+                        <el-checkbox v-model="styleConf.detailConf.autoFullScreen">
+                            弹框自动全屏
+                        </el-checkbox>
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="form-title">批量删除设置</div>
+                    <div class="form-item mb-30">
+                        <el-checkbox v-model="styleConf.delConf.allowUsersSelect">
+                            允许用户选择级联删除
+                        </el-checkbox>
+                        <div class="info-text mt-5 mb-2">默认级联删除</div>
+                        <MlAssociatedRecords
+                            v-model="styleConf.delConf.associatedRecords"
+                            :entityCode="entityCode"
+                        />
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="form-title" v-if="!isListCard">复制设置</div>
+                    <div class="form-item mb-30" v-if="!isListCard">
+                        <el-checkbox v-model="styleConf.copyConf.openCopy">
+                            打开复制功能
+                        </el-checkbox>
+                        <el-checkbox v-model="styleConf.copyConf.skipDuplicationCheck">
+                            是否跳过唯一性检查
+                            <el-tooltip
+                                class="box-item"
+                                effect="dark"
+                                content="当前实体有字段设置为不可重复时，开启该功能后，数据依然可以复制成功。请视业务情况决定是否开启。"
+                                placement="top-start"
+                            >
+                                <span style="position: relative; top: 2px">
+                                    <el-icon><QuestionFilled /></el-icon>
+                                </span>
+                            </el-tooltip>
+                        </el-checkbox>
+                        <!-- <el-checkbox v-model="styleConf.copyConf.allowUsersSelect">
+                            允许用户选择级联复制
+                        </el-checkbox> -->
+                        <div class="info-text mt-5 mb-2">默认级联复制</div>
+                        <MlAssociatedRecords
+                            v-model="styleConf.copyConf.cascades"
+                            :entityCode="entityCode"
+                        />
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="form-title">顶部区域隐藏</div>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHide">
+                        隐藏整块&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideSwitchQuery">
+                        隐藏切换查询面板
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideAdvancedQuery">
+                        隐藏高级查询
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideQuickSearch">
+                        隐藏快速搜索
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideOpen">
+                        隐藏打开按钮
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideEdit">
+                        隐藏编辑按钮
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideNew">
+                        隐藏新建按钮
+                    </el-checkbox>
+                    <el-checkbox v-model="styleConf.toolbarConf.isHideMore">
+                        隐藏更多操作按钮(隐藏后无法进入该面板)
+                    </el-checkbox>
+                </el-col>
+                <el-col :span="12">
+                    <div class="form-title">指定表单</div>
+                    <el-tabs v-model="formActiveName" v-if="!isListCard" class="mb-20">
+                        <el-tab-pane label="指定新建表单" name="addFormId">
+                            <el-form label-width="120px" label-position="top">
+                                <el-form-item label="指定新建表单(PC)" class="mb-5">
+                                    <el-select v-model="styleConf.formConf.pcAddFormId">
+                                        <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="指定新建(Mobile)" class="mb-5">
+                                    <el-select v-model="styleConf.formConf.mobileAddFormId">
+                                        <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                                    </el-select>
+                                </el-form-item>
+                            </el-form> 
+                        </el-tab-pane>
+                        <el-tab-pane label="指定编辑表单" name="editFormId">
+                            <el-form label-width="120px" label-position="top">
+                                <el-form-item label="指定编辑表单(PC)" class="mb-5">
+                                    <el-select v-model="styleConf.formConf.pcEditFormId">
+                                        <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="指定编辑表单(Mobile)" class="mb-5">
+                                    <el-select v-model="styleConf.formConf.mobileEditFormId">
+                                        <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>         
+                        </el-tab-pane>
+                        <el-tab-pane label="指定查看详情表单" name="detailFormId">
+                            <el-form label-width="120px" label-position="top">
+                                <el-form-item label="指定查看详情表单(PC)" class="mb-5">
+                                    <el-select v-model="styleConf.formConf.pcDetailFormId">
+                                        <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="指定查看详情表单(Mobile)" class="mb-5">
+                                    <el-select v-model="styleConf.formConf.mobileDetailFormId">
+                                        <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
+                                    </el-select>
+                                </el-form-item>
+                            </el-form> 
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+                <el-col :span="24">
+                    <div class="form-title">自定义渲染</div>
+                    <el-tabs v-model="activeName" v-if="!isListCard">
+                        <el-tab-pane label="自定义行选中禁用设置" name="rowDisabledRender">
+                            <div class="mb-10 mt-10">
+                                <span>自定义渲染</span>
+                                <a
+                                    class="ml-a-span"
+                                    target="_blank"
+                                    href="https://www.yuque.com/visualdev/melecode/pep81f9rs3qkbdgf?singleDoc#"
+                                >
+                                    使用文档
+                                </a>
+                            </div>
+                            <mlCodeEditor style="height: 100px" v-model="styleConf.rowConf.rowDisabledRender" />
+                        </el-tab-pane>
+                        <el-tab-pane label="自定义行按钮禁用设置" name="rowBtnDisabled">
+                            <div class="mb-10 mt-10">
+                                <span>自定义渲染</span>
+                                <a
+                                    class="ml-a-span"
+                                    target="_blank"
+                                    href="https://www.yuque.com/visualdev/melecode/nmmpo6z8y115bhym?singleDoc#"
+                                >
+                                    使用文档
+                                </a>
+                            </div>
+                            <mlCodeEditor  v-model="styleConf.rowConf.rowBtnDisabled" />
+                        </el-tab-pane>
+                        <el-tab-pane label="自定义行样式设置" name="rowStyleRender">
+                            <div class="mb-10 mt-10">
+                                <span>自定义渲染</span>
+                                <a
+                                    class="ml-a-span"
+                                    target="_blank"
+                                    href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                                >
+                                    使用文档
+                                </a>
+                            </div>
+                            <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
+                        </el-tab-pane>
+                        <el-tab-pane label="自定义弹框设置" name="dialogConfig">
+                            <div class="mb-10 mt-10">
+                                <span>自定义渲染</span>
+                                <a
+                                    class="ml-a-span"
+                                    target="_blank"
+                                    href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                                >
+                                    使用文档
+                                </a>
+                            </div>
+                            <mlCodeEditor  v-model="styleConf.dialogConfig" />
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+            </el-row>
 
-            <el-tabs v-model="activeName" v-if="!isListCard">
-                <el-tab-pane label="自定义行选中禁用设置" name="rowDisabledRender">
-                    <div class="mb-10 mt-10">
-                        <span>自定义渲染</span>
-                        <a
-                            class="ml-a-span"
-                            target="_blank"
-                            href="https://www.yuque.com/visualdev/melecode/pep81f9rs3qkbdgf?singleDoc#"
-                        >
-                            使用文档
-                        </a>
-                    </div>
-                    <mlCodeEditor style="height: 100px" v-model="styleConf.rowConf.rowDisabledRender" />
-                </el-tab-pane>
-                <el-tab-pane label="自定义行按钮禁用设置" name="rowBtnDisabled">
-                    <div class="mb-10 mt-10">
-                        <span>自定义渲染</span>
-                        <a
-                            class="ml-a-span"
-                            target="_blank"
-                            href="https://www.yuque.com/visualdev/melecode/nmmpo6z8y115bhym?singleDoc#"
-                        >
-                            使用文档
-                        </a>
-                    </div>
-                    <mlCodeEditor  v-model="styleConf.rowConf.rowBtnDisabled" />
-                </el-tab-pane>
-                <el-tab-pane label="自定义行样式设置" name="rowStyleRender">
-                    <div class="mb-10 mt-10">
-                        <span>自定义渲染</span>
-                        <a
-                            class="ml-a-span"
-                            target="_blank"
-                            href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
-                        >
-                            使用文档
-                        </a>
-                    </div>
-                    <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
-                </el-tab-pane>
-                <el-tab-pane label="自定义弹框设置" name="dialogConfig">
-                    <div class="mb-10 mt-10">
-                        <span>自定义渲染</span>
-                        <a
-                            class="ml-a-span"
-                            target="_blank"
-                            href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
-                        >
-                            使用文档
-                        </a>
-                    </div>
-                    <mlCodeEditor  v-model="styleConf.dialogConfig" />
-                </el-tab-pane>
-            </el-tabs>
-		</div>
+        </div>
 		<template #footer>
 			<div class="footer-div">
 				<el-button @click="isShow = false" :loading="loading">
@@ -238,6 +268,25 @@ let styleConf = ref({
 		// 弹框自动全屏
 		autoFullScreen: false,
 	},
+    // 顶部设置
+    toolbarConf: {
+        // 顶部影藏
+        isHide: false,
+        // 切换查询按钮隐藏
+        isHideSwitchQuery: false,
+        // 高级查询隐藏
+        isHideAdvancedQuery: false,
+        // 快速搜索隐藏
+        isHideQuickSearch: false,
+        // 打开隐藏
+        isHideOpen: false,
+        // 编辑隐藏
+        isHideEdit: false,
+        // 新建隐藏
+        isHideNew: false,
+        // 更多操作隐藏
+        isHideMore: false,
+    },
     // 指定表单属性
     formConf: {
         // 指定新建表单(PC)

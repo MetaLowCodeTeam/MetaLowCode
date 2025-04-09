@@ -3,7 +3,7 @@
         <div class="table-box">
             <div
                 class="table-search-box"
-                v-if="listParamConf.showHeader"
+                v-if="listParamConf.showHeader && !toolbarConf.isHide"
             >
             <ListCustomizeQuery
                 :entityName="entityName"
@@ -29,7 +29,7 @@
                             link
                             :loading="queryPanelLoading"
                             @click="changeQueryPanel(false)"
-                            v-if="listParamConf.showChangeQueryPanel"
+                            v-if="listParamConf.showChangeQueryPanel && !toolbarConf.isHideSwitchQuery"
                         >
                             <el-icon size="16" class="toggle-query-icon">
                                 <Switch />
@@ -37,7 +37,7 @@
                         </el-button>
                     </el-tooltip>
                     <mlListAdvancedQuery
-                        v-if="entityCode && listParamConf.showAdvancedQuery"
+                        v-if="entityCode && listParamConf.showAdvancedQuery && !toolbarConf.isHideAdvancedQuery"
                         v-model="advFilter"
                         :entityName="entityName"
                         :entityCode="entityCode"
@@ -50,7 +50,7 @@
                         class="mr-15"
                     />
                     <slot name="beforeQuickQuery"></slot>
-                    <div class="quick-query" v-if="listParamConf.showQuickQuery">
+                    <div class="quick-query" v-if="listParamConf.showQuickQuery && !toolbarConf.isHideQuickSearch">
                         <el-input
                             v-model="quickQuery"
                             class="w-50 m-2"
@@ -92,7 +92,7 @@
                         bg
                         :loading="queryPanelLoading"
                         @click="changeQueryPanel(true)"
-                        v-if="listParamConf.showChangeQueryPanel"
+                        v-if="listParamConf.showChangeQueryPanel && !toolbarConf.isHideSwitchQuery"
                     >
                         切换查询面板
                     </el-button>
@@ -135,7 +135,7 @@
                         icon="Notification"
                         :disabled="multipleSelection.length != 1"
                         @click="openDetailDialog(multipleSelection[0])"
-                        v-if="listParamConf.showOpenBtn && !mainDetailField"
+                        v-if="listParamConf.showOpenBtn && !mainDetailField && !toolbarConf.isHideOpen"
                     >
                         打开
                     </el-button>
@@ -144,7 +144,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField && !toolbarConf.isHideEdit"
                     >
                         编辑
                     </el-button>
@@ -164,7 +164,7 @@
                         type="primary"
                         icon="Plus"
                         @click="onAdd"
-                        v-if="listParamConf.showAddBtn && hasCreateRight"
+                        v-if="listParamConf.showAddBtn && hasCreateRight && !toolbarConf.isHideNew"
                     >
                         新建
                     </el-button>
@@ -187,6 +187,7 @@
                         :referenceEntity="referenceEntity"
                         :modelName="modelName"
                         @copySuccess="copySuccess"
+                        v-if="!toolbarConf.isHideMore"
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
@@ -669,6 +670,25 @@ const listParamConf = ref({
     approvalSuccess: () => {},
 })
 
+// 顶部区域隐藏
+const toolbarConf = ref({
+    // 顶部影藏
+    isHide: false,
+    // 切换查询按钮隐藏
+    isHideSwitchQuery: false,
+    // 高级查询隐藏
+    isHideAdvancedQuery: false,
+    // 快速搜索隐藏
+    isHideQuickSearch: false,
+    // 打开隐藏
+    isHideOpen: false,
+    // 编辑隐藏
+    isHideEdit: false,
+    // 新建隐藏
+    isHideNew: false,
+    // 更多操作隐藏
+    isHideMore: false,
+});
 
 
 watch(
@@ -980,6 +1000,10 @@ const getLayoutList = async () => {
             rowStyleConf.value = JSON.parse(res.data.STYLE.config);
             if(rowStyleConf.value.rowConf && rowStyleConf.value.rowConf.rowStyleRender){
                 renderRowStyle.value = rowStyleConf.value.rowConf.rowStyleRender;
+            }
+            // 如果存在顶部区域隐藏
+            if(rowStyleConf.value.toolbarConf){
+                toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
         }
         // 树状分组筛选
