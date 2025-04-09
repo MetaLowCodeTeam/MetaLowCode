@@ -428,6 +428,11 @@ const initData = async () => {
         confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
         // 初始化企业微信 应用首页地址
         confData.wxWorkHomeDir = confData.homeURL + "/wxWork/userLogin";
+        // 如果存在租户ID
+        if(tenantId){
+            confData.homeDir += "/" + tenantId;
+            confData.wxWorkHomeDir += "/" + tenantId;
+        }
         // 备份周期
         confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
