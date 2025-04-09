@@ -54,7 +54,6 @@ export const registerChartLibProperties = (app, PERegister) => {
         }
     }
     newCom.forEach(el => {
-        console.log(el, 'el.cname')
         PERegister.registerCPEditor(app, el.alias, el.cname, el.default)
     })
 }

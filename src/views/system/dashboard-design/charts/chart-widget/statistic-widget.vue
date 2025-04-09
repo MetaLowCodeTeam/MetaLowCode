@@ -107,7 +107,6 @@ const numberToCurrencyNo = (value) => {
 
 const setSelected = () => {
 	props.designer?.setSelected(props.field);
-    // initOption();
 };
 
 watchEffect(() => {
