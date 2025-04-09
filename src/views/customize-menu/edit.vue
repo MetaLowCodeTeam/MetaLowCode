@@ -557,7 +557,7 @@ const confirm = async (target) => {
                     if(target != 'notCloseDialog' && target != 'submit'){
                         isShow.value = false;
                     }else {
-                        row.detailId = resData[row.idFieldName];
+                        row.detailId = resData[getEntityIdFieldName(row)];
                         initFormLayout()
                         if(target == 'submit'){
                             SubmitApprovalDialogRefs.value?.openDialog(row.detailId);
