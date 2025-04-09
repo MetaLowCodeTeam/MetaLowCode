@@ -317,9 +317,15 @@ watchEffect(() => {
     customDialogTitle.value = props.customDetailDialogTitle;
 })
 
+
+let currentExposed = ref({});
+
+
+
 onMounted(() => {
     // 取插槽内容
     contentSlots = useSlots();
+    currentExposed.value = getCurrentInstance().exposed;
 })
 
 // 整体配置信息
@@ -381,7 +387,8 @@ const openDialog = (id, localDsv, paramFormId) => {
 		ElMessage.warning("当前实体未找到");
 		return;
 	}
-    globalDsv.value.parentExposed = getCurrentInstance()?.exposed;
+    // 设置父级暴露
+    globalDsv.value.parentExposed = currentExposed.value;
     globalDsv.value.modelName = getModelName();
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
@@ -627,7 +634,7 @@ const onAdd = (e) => {
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
 	tempV.sourceRecord = multipleSelection.value[0];
-    editEmits(tempV)
+    editRefs.value.openDialog(tempV);
 };
 
 
