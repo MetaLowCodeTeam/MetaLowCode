@@ -44,6 +44,8 @@ export default {
         REFD: "包含本部门",
         REFU: "包含本人",
         BTD: "属于",
+        REFNL: "为空",
+        REFNT: "不为空",
     },
     // 所有字段
     Tag: ["LK", "NLK"],
@@ -60,10 +62,10 @@ export default {
         User: ["EQ", "NEQ", "NL", "NT", "SFU"],
     },
     ReferenceList: {
-        All: ["REF", "NL", "NT" ],
+        All: ["REF", "REFNL", "REFNT" ],
         referenceFilters: ["Department", "User"],
-        Department: ["REF","NL", "NT", "REFD"],
-        User: ["REF", "NL", "NT", "REFU"],
+        Department: ["REF","REFNL", "REFNT", "REFD"],
+        User: ["REF", "REFNL", "REFNT", "REFU"],
     },
     Date: ["EQ", "GT", "LT", "BW", "NL", "NT", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],
     DateTime: ["DEQ", "GE",  "LE", "BW", "NL","NT", "BFD", "BFM", "BFY", "AFD", "AFM", "AFY", "RED", "REM", "REY", "FUD", "FUM", "FUY", "YTA", "TDA", "TTA", "CUW", "CUM", "CUQ", "CUY"],

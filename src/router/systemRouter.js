@@ -52,13 +52,22 @@ const routes = [
             title: "打印"
         }
     },
+    // 批量打印
+    {
+        path: appPath + "BatchPrinting",
+        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/customize-menu/components/BatchPrinting.vue'),
+        meta: {
+            title: "批量打印",
+            icon: "el-icon-printer"
+        }
+    },
     // 填写表单
     {
         path: appPath + "inReport",
         component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/in-report.vue'),
         name: "InReport",
         meta: {
-            title: "填写表单"
+            title: "填写表单",
         }
     },
     // 设计应用

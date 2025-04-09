@@ -62,7 +62,7 @@
                     取消共享
                 </div>
                 <div 
-                    class="pl-20 item mb-15" 
+                    class="pl-20 item" 
                     @click="openReportForms('PDF')" 
                     v-if="type == 'list'"
                     :class="{'div-disabled':multipleSelection.length < 1}"
@@ -73,6 +73,18 @@
                         </el-icon>
                     </span>
                     导出PDF
+                </div>
+                <div 
+                    class="pl-20 item mb-15" 
+                    @click="onBatchPrinting()" 
+                    v-if="isListCard"
+                >
+                    <span class="icon-t1">
+                        <el-icon>
+                            <ElIconPrinter />
+                        </el-icon>
+                    </span>
+                    批量打印
                 </div>
             </template>
             <div class="pl-20 item" @click="openReportForms()" v-if="type != 'list' && !isMainDetailField">
@@ -311,7 +323,8 @@ const emits = defineEmits([
     "editColumnConfirm",
     "defaultFilterChange",
     "treeGroupFilterConfirm",
-    "copySuccess"
+    "copySuccess",
+    "onBatchPrinting"
 ]);
 const props = defineProps({
     defaultColumnShow: { type: String, default: "" },
@@ -446,6 +459,11 @@ const openReportForms = (target) => {
         defaultShow: target == 'PDF' ? 'PDF' : 'ALL',
         multipleSelection: props.multipleSelection.map(el => el[props.layoutConfig.idFieldName])
     });
+};
+
+// 批量打印
+const onBatchPrinting = () => {
+    emits("onBatchPrinting");
 };
 
 /*

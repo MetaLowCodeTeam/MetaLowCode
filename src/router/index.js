@@ -66,10 +66,12 @@ router.beforeEach(async (to, from, next) => {
     }
     let routerEntityname = to.params?.entityname;
     if (routerEntityname && !to.meta.title) {
-        
         to.meta.title = queryEntityLabelByName(routerEntityname)
     }
     if (to.name == "inIframe") {
+        to.meta.title = to.query.routerName
+    }
+    if(!to.meta.title && to.query.routerName) {
         to.meta.title = to.query.routerName
     }
     //整页路由处理

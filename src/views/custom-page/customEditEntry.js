@@ -23,7 +23,7 @@ const editCmpMapping = {
 // 多实体通用某一个编辑组件映射
 const comEditCmpMapping = {
     // useComStep_1 代表所有实体用这一个编辑组件， 编辑组件名称:["*"]   *=>匹配所有，包括初始的详情
-    // Sadasaduo: ["*"],
+    Sadasaduo: ["*"],
     // useSingleStep_1 自定义组件名称组件名称:[实体名称]  你哪个实体要用这个组件就加哪个实体的名称
     TestEdit: ['Ceshichufaqi',],
 };

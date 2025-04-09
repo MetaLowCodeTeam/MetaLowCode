@@ -1081,8 +1081,8 @@ export default {
                 if(el.op !== 'SQL' && el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
                     el.value = el.value.replace(/\s/g, '');
                 }
-                // 如果是多引用类型 且不是 为空不为空
-                if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
+                // 如果是多引用类型
+                if(el.type == 'ReferenceList'){
                     const { queryEntityInfoByName } = useCommonStore();
                     let idFieldName = this.formatEntityName == "ApprovalTask" ? "approvalTaskId" : queryEntityInfoByName(this.formatEntityName).idFieldName;
                     // 如果是本人、本部门
@@ -1090,8 +1090,8 @@ export default {
                         el.value = idFieldName;
                     }
                     // 如果是包含
-                    if(el.op == "REF"){
-                        el.value2 = el.value;
+                    if(el.op == "REF" || el.op == "REFNL" || el.op == "REFNT"){
+                        el.value2 = el.op == "REF" ? el.value : "";
                         el.value = idFieldName;
                     }
                 }

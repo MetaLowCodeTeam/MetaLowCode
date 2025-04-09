@@ -18,6 +18,8 @@ import { ref, computed, watchEffect } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { java } from "@codemirror/lang-java";
+// 引入SQL语言
+import { sql } from "@codemirror/lang-sql";
 import { oneDark } from "@codemirror/theme-one-dark";
 
 const props = defineProps({
@@ -48,10 +50,22 @@ const extensions = ref([javascript(), oneDark]);
 
 watchEffect(() => {
 	contentValue.value = props.modelValue;
+    const languageExtensions = {
+        'javascript': javascript(),
+        'java': java(),
+        'sql': sql()
+        // 未来可以在这里添加更多语言
+    };
+    const defaultExtension = javascript();
 	if (props.theme == "oneDark") {
-		extensions.value = [props.mode == "java" ? java() : javascript(), oneDark];
+		extensions.value = [
+            languageExtensions[props.mode] || defaultExtension,
+            oneDark
+        ];
 	} else {
-		extensions.value = [props.mode == "java" ? java() : javascript()];
+		extensions.value = [
+            languageExtensions[props.mode] || defaultExtension,
+        ];
 	}
 });
 

@@ -158,6 +158,7 @@
 						@treeGroupFilterConfirm="loadLayoutConf"
 						:modelName="modelName"
 						isListCard
+                        @onBatchPrinting="onBatchPrinting"
 					/>
 				</div>
 			</div>
@@ -525,9 +526,11 @@ let page = reactive({
 });
 const pageChange = (no) => {
 	page.no = no;
+    getTableList();
 };
 const handleSizeChange = (size) => {
 	page.size = size;
+    getTableList();
 };
 /**
  * 分页 ---------------- end
@@ -629,6 +632,7 @@ const getTableList = async () => {
 	formatTableApi();
 	pageLoading.value = true;
 	showEmpty.value = false;
+
 	let res = await getDataList(
 		tableParam.mainEntity,
 		tableParam.fieldsList,
@@ -668,6 +672,25 @@ const loadFormLayout = async () => {
 	if (res) {
 		listCardConf.value.formLayout = res.data;
 	}
+};
+
+const appPath = import.meta.env.VITE_APP_PATH;
+// 批量打印
+const onBatchPrinting = () => {
+    let batchPrintingConfig = $TOOL.data.get("BatchPrintingConfig") || {};
+    batchPrintingConfig[entity.value.name] = {
+        queryParm: dataExportData.queryParm,
+        listCardConf: listCardConf.value,
+    };
+    $TOOL.data.set('BatchPrintingConfig', batchPrintingConfig);
+    let url = Router.resolve({
+        path: appPath + "BatchPrinting",
+        query: {
+            entity: entity.value.name,
+            fromId: listCardConf.value.pcFormId,
+        }
+    });
+    window.open(url.href, '_blank');
 };
 
 /**
