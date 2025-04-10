@@ -10,8 +10,11 @@
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, inject } from "vue";
 import { queryChartData } from "@/api/chart";
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -61,8 +64,20 @@ let option = reactive({
     ],
 });
 
-const initOption = () => {
+const initOption = async () => {
     let { options, type } = cutField.value;
+    let { dsEnabled, dsName, dataSetName } = options;
+    if(dsEnabled && dsName) {
+        loading.value = true;
+        let res = await getDataSourceData(options, getFormConfig()); 
+        if(res) {
+            let resData = dataSetName ? res[dataSetName] : res;
+            formatData(options, resData)
+        }
+        loading.value = false;
+        option.isNoData = false;
+        return;
+    }
     if (options) {
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
@@ -79,7 +94,17 @@ const initOption = () => {
 const getChartData = async (options, type) => {
     loading.value = true;
     let res = await queryChartData(options, type);
-    let { chartStyle, setChartConf, axisCoordinates } = cutField.value.options;
+    if (res && res.data) {
+        formatData(options, res.data);
+        isShowEmpty.value = false;
+    } else {
+        isShowEmpty.value = true;
+    }
+    loading.value = false;
+};
+
+const formatData = (options, data) => {
+    let { chartStyle, setChartConf, axisCoordinates } = options;
     // 如果设置了Y轴最大值
     if (axisCoordinates.max > 0) {
         option.yAxis.min = axisCoordinates.min;
@@ -95,24 +120,18 @@ const getChartData = async (options, type) => {
         bottom: 5,
     };
     option.grid.bottom = setChartConf.chartShow ? "50px" : "10px";
-    if (res && res.data) {
-        option.xAxis.data = [...res.data.xAxis];
-        option.series = res.data.series.map((el) => {
-            el.type = "line";
-            el.smooth = chartStyle == 2;
-            // 数值是否展示
-            el.label = {
-                show: setChartConf.numShow,
-                position: "top",
-            };
-            return el;
-        });
-        isShowEmpty.value = false;
-    } else {
-        isShowEmpty.value = true;
-    }
-    loading.value = false;
-};
+    option.xAxis.data = [...data.xAxis];
+    option.series = data.series.map((el) => {
+        el.type = "line";
+        el.smooth = chartStyle == 2;
+        // 数值是否展示
+        el.label = {
+            show: setChartConf.numShow,
+            position: "top",
+        };
+        return el;
+    });
+}
 
 const getData = () => {
     return option;
