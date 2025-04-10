@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect, nextTick } from "vue";
 import { getEditCmpByEntityName } from "@/views/custom-page/customEditEntry.js";
 
 // SimpleTable
@@ -58,15 +58,21 @@ watchEffect(() => {
 let comName = ref("");
 
 onMounted(() => {
-	comName.value = getEditCmpByEntityName(props.entityName);
-	if (!comName.value) {
-		comName.value = "default-edit";
-	}
+	// comName.value = getEditCmpByEntityName(props.entityName);
+	// if (!comName.value) {
+	// 	comName.value = "default-edit";
+	// }
 });
 
 let EditRef = ref();
 const openDialog = (e) => {
-	EditRef.value?.openDialog(e);
+    comName.value = getEditCmpByEntityName(e.entityName);
+	if (!comName.value) {
+		comName.value = "default-edit";
+	}
+	nextTick(() => {
+		EditRef.value?.openDialog(e);
+	})
 };
 
 const onConfirm = () => {
