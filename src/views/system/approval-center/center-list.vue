@@ -9,7 +9,7 @@
         ref="mlSingleListRef"
         @goDetail="highlightClick"
         fieldName="approvalConfigId.flowName"
-        :queryUrl="'/approval/listQuery'"
+        :queryUrl="'/approval/queryApprovalTask'"
         :approvalTaskType="pageType[type].value"
     >
         <template #activeRow>
@@ -74,62 +74,6 @@ const props = defineProps({
 });
 let pageType = reactive({});
 let mlSingleListRef = ref("");
-onBeforeMount(() => {
-    const USER_INFO = $TOOL.data.get("USER_INFO");
-    pageType = {
-        handle: {
-            title: "待我处理",
-            value: 1,
-            fixedFilter: [
-                {
-                    fieldName: "approver",
-                    op: "REF",
-                    value: "approvalTaskId",
-                    value2: USER_INFO.userId,
-                },
-            ],
-        },
-        submit: {
-            title: "我提交的",
-            value: 2,
-            fixedFilter: [
-                {
-                    fieldName: "createdBy",
-                    op: "EQ",
-                    value: USER_INFO.userId,
-                },
-                {
-                    fieldName: "wfProcInsId",
-                    op: "DISTINCT",
-                    value: "ApprovalTask",
-                },
-            ],
-        },
-        cc: {
-            title: "抄送我的",
-            value: 3,
-            fixedFilter: [
-                {
-                    fieldName: "ccTo",
-                    op: "REF",
-                    value: "approvalTaskId",
-                    value2: USER_INFO.userId,
-                },
-            ],
-        },
-        approved: {
-            title: "审批过的",
-            value: 4,
-            fixedFilter: [
-                {
-                    fieldName: "approvalTaskId",
-                    op: "APPROVED",
-                    value: null
-                },
-            ],
-        },
-    };
-});
 
 // 审核弹框是否显示
 let approveDialogIsShow = ref(false);
@@ -201,6 +145,70 @@ let tableColumn = ref([
         },
     },
 ]);
+
+
+onBeforeMount(() => {
+    const USER_INFO = $TOOL.data.get("USER_INFO");
+    pageType = {
+        handle: {
+            title: "待我处理",
+            value: 1,
+            filterItems: [
+                {
+                    fieldName: "approver",
+                    op: "REF",
+                    value: "approvalTaskId",
+                    value2: USER_INFO.userId,
+                },
+            ],
+        },
+        submit: {
+            title: "我提交的",
+            value: 2,
+            filterItems: [
+                {
+                    fieldName: "createdBy",
+                    op: "EQ",
+                    value: USER_INFO.userId,
+                },
+                {
+                    fieldName: "wfProcInsId",
+                    op: "DISTINCT",
+                    value: "ApprovalTask",
+                },
+            ],
+        },
+        cc: {
+            title: "抄送我的",
+            value: 3,
+            filterItems: [
+                {
+                    fieldName: "ccTo",
+                    op: "REF",
+                    value: "approvalTaskId",
+                    value2: USER_INFO.userId,
+                },
+            ],
+        },
+        approved: {
+            title: "审批过的",
+            value: 4,
+            filterItems: [
+                {
+                    fieldName: "approvalTaskId",
+                    op: "APPROVED",
+                    value: null
+                },
+            ],
+        },
+    };
+
+    // 如果是我提交的
+    if(props.type == 'submit') {
+        // 删除审批节点
+        tableColumn.value = tableColumn.value.filter(item => item.prop != 'stepName');
+    }
+});
 
 // 审批
 function approveRow(row) {

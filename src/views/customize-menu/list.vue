@@ -3,7 +3,7 @@
         <div class="table-box">
             <div
                 class="table-search-box"
-                v-if="listParamConf.showHeader && !toolbarConf.isHide"
+                v-if="listParamConf.showHeader && toolbarConf.showHeader"
             >
             <ListCustomizeQuery
                 :entityName="entityName"
@@ -29,7 +29,7 @@
                             link
                             :loading="queryPanelLoading"
                             @click="changeQueryPanel(false)"
-                            v-if="listParamConf.showChangeQueryPanel && !toolbarConf.isHideSwitchQuery"
+                            v-if="listParamConf.showChangeQueryPanel && toolbarConf.showChangeQueryPanel"
                         >
                             <el-icon size="16" class="toggle-query-icon">
                                 <Switch />
@@ -37,7 +37,7 @@
                         </el-button>
                     </el-tooltip>
                     <mlListAdvancedQuery
-                        v-if="entityCode && listParamConf.showAdvancedQuery && !toolbarConf.isHideAdvancedQuery"
+                        v-if="entityCode && listParamConf.showAdvancedQuery && toolbarConf.showAdvancedQuery"
                         v-model="advFilter"
                         :entityName="entityName"
                         :entityCode="entityCode"
@@ -50,7 +50,7 @@
                         class="mr-15"
                     />
                     <slot name="beforeQuickQuery"></slot>
-                    <div class="quick-query" v-if="listParamConf.showQuickQuery && !toolbarConf.isHideQuickSearch">
+                    <div class="quick-query" v-if="listParamConf.showQuickQuery && toolbarConf.showQuickQuery">
                         <el-input
                             v-model="quickQuery"
                             class="w-50 m-2"
@@ -92,7 +92,7 @@
                         bg
                         :loading="queryPanelLoading"
                         @click="changeQueryPanel(true)"
-                        v-if="listParamConf.showChangeQueryPanel && !toolbarConf.isHideSwitchQuery"
+                        v-if="listParamConf.showChangeQueryPanel && toolbarConf.showChangeQueryPanel"
                     >
                         切换查询面板
                     </el-button>
@@ -135,7 +135,7 @@
                         icon="Notification"
                         :disabled="multipleSelection.length != 1"
                         @click="openDetailDialog(multipleSelection[0])"
-                        v-if="listParamConf.showOpenBtn && !mainDetailField && !toolbarConf.isHideOpen"
+                        v-if="listParamConf.showOpenBtn && !mainDetailField && toolbarConf.showOpenBtn"
                     >
                         打开
                     </el-button>
@@ -144,7 +144,7 @@
                         icon="Edit"
                         :disabled="multipleSelection.length != 1"
                         @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField && !toolbarConf.isHideEdit"
+                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField && toolbarConf.showEditBtn"
                     >
                         编辑
                     </el-button>
@@ -164,7 +164,7 @@
                         type="primary"
                         icon="Plus"
                         @click="onAdd"
-                        v-if="listParamConf.showAddBtn && hasCreateRight && !toolbarConf.isHideNew"
+                        v-if="listParamConf.showAddBtn && hasCreateRight && toolbarConf.showAddBtn"
                     >
                         新建
                     </el-button>
@@ -187,7 +187,7 @@
                         :referenceEntity="referenceEntity"
                         :modelName="modelName"
                         @copySuccess="copySuccess"
-                        v-if="!toolbarConf.isHideMore"
+                        v-if="toolbarConf.showMoreBtn"
                     />
                     <slot name="afterMoreBtn"></slot>
                 </div>
@@ -673,21 +673,21 @@ const listParamConf = ref({
 // 顶部区域隐藏
 const toolbarConf = ref({
     // 顶部影藏
-    isHide: false,
+    showHeader: true,
     // 切换查询按钮隐藏
-    isHideSwitchQuery: false,
+    showChangeQueryPanel: true,
     // 高级查询隐藏
-    isHideAdvancedQuery: false,
+    showAdvancedQuery: true,
     // 快速搜索隐藏
-    isHideQuickSearch: false,
+    showQuickQuery: true,
     // 打开隐藏
-    isHideOpen: false,
+    showOpenBtn: true,
     // 编辑隐藏
-    isHideEdit: false,
+    showEditBtn: true,
     // 新建隐藏
-    isHideNew: false,
+    showAddBtn: true,
     // 更多操作隐藏
-    isHideMore: false,
+    showMoreBtn: true,
 });
 
 
@@ -1894,9 +1894,10 @@ const viewRow = (row, localDsv, formId) => {
     openDetailDialog(row, localDsv, formId)
 }
 
+
 // 打开其他实体详情
 const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
-    customDialogTitle.value = customDialogTitle;
+    customDetailDialogTitle.value = customDialogTitle;
     detailRefs.value.openDialog(recordId, localDsv, formId);
 }
 
