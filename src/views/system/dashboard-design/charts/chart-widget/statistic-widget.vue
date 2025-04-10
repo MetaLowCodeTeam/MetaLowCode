@@ -57,11 +57,13 @@ const initOption = async () => {
 	let { options, type } = cutField.value;
     let { dsEnabled, dsName, dataSetName } = options;
     if(dsEnabled && dsName) {
+        loading.value = true;
         let res = await getDataSourceData(options, getFormConfig());
         if(res) {
             metricsNum.value = dataSetName ? res[dataSetName] : res;
         }
         isNoData.value = false;
+        loading.value = false;
         return;
     }
 	if (options) {

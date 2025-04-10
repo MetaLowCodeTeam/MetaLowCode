@@ -26,8 +26,11 @@
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, inject } from "vue";
 import { queryChartData } from "@/api/chart";
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
 const props = defineProps({
 	field: Object,
 	designer: Object,
@@ -216,12 +219,23 @@ let cutCompleted = ref();
 // 数字量级
 let numericUnits = ref("");
 let metricsConf = ref({});
-const initOption = () => {
+const initOption = async () => {
 	let { options, type } = cutField.value;
+    let { dsEnabled, dsName, dataSetName } = options;
+    if(dsEnabled && dsName) {
+        loading.value = true;
+        let res = await getDataSourceData(options, getFormConfig());
+        if(res) {
+            let resData = dataSetName ? res[dataSetName] : res;
+            formatData(options, resData.value, resData.targetValue);
+        }
+        loading.value = false;
+        myOption.value.isNoData = false;
+        return;
+    }
 	if (options) {
 		let { setDimensional } = options;
 		let { metrics } = setDimensional;
-		//
 		if (metrics.length < 1) {
 			myOption.value.isNoData = true;
 			return;
@@ -239,57 +253,60 @@ const getChartData = async (options, type) => {
 	loading.value = true;
 	let res = await queryChartData(options, type);
 	if (res && res.data) {
-		let { chartStyle, setDimensional, setChartConf } = options;
-		let { targetValue, metrics } = setDimensional;
-		myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
-		let maxNum = targetValue || 1;
-		let cutNum = res.data.data;
-		cutCompleted.value = cutNum;
-		let point = Math.round((cutNum / maxNum) * 100);
-		percentage.value = point > 100 ? 100 : point;
-		metePercentage.value = point;
-		progressText.value = setChartConf.numShow ? metrics[0].alias : null;
-		// 图例是否显示
-		myOption.value.legend.show = setChartConf.chartShow;
-
-		if (chartStyle == 1) {
-			myOption.value.title.text = `${point}%`;
-			myOption.value.series[0].data[0].value = cutNum;
-			myOption.value.series[0].data[0].name =
-				metrics[0].alias +
-				"：" +
-				getPreviewNum(cutNum) +
-				(numericUnits.value ? numericUnits.value : "");
-			myOption.value.series[0].data[1].value = maxNum - cutNum;
-			myOption.value.series[0].data[1].name =
-				"剩余：" +
-				getPreviewNum(maxNum - cutNum) +
-				(numericUnits.value ? numericUnits.value : "");
-			myOption.value.series[0].data[0].label.show = setChartConf.numShow;
-			myOption.value.series[0].data[1].label.show = setChartConf.numShow;
-		} else {
-			myOption.value.series[0].data = [
-				point / 100,
-				point / 100,
-				point / 100,
-			];
-			myOption.value.series[0].label.formatter = point + "%";
-			myOption.value.title.text =
-				metrics[0].alias +
-				"（已完成：" +
-				getPreviewNum(cutCompleted.value) +
-				(numericUnits.value ? numericUnits.value : "") +
-				"） ";
-			myOption.value.title.show = setChartConf.numShow;
-			myOption.value.series[0].label.show = setChartConf.numShow;
-		}
+        formatData(options, res.data.data)
 		isShowEmpty.value = false;
 	} else {
 		isShowEmpty.value = true;
-		200;
 	}
 	loading.value = false;
 };
+
+// 格式化数据
+const formatData = (options, cutNum, maxValue) => {
+    let { chartStyle, setDimensional, setChartConf } = options;
+    let { targetValue, metrics } = setDimensional;
+    myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
+    let maxNum = maxValue || targetValue || 1;
+    cutCompleted.value = cutNum;
+    let point = Math.round((cutNum / maxNum) * 100);
+    percentage.value = point > 100 ? 100 : point;
+    metePercentage.value = point;
+    progressText.value = setChartConf.numShow ? metrics[0].alias : null;
+    // 图例是否显示
+    myOption.value.legend.show = setChartConf.chartShow;
+
+    if (chartStyle == 1) {
+        myOption.value.title.text = `${point}%`;
+        myOption.value.series[0].data[0].value = cutNum;
+        myOption.value.series[0].data[0].name =
+            metrics[0].alias +
+            "：" +
+            getPreviewNum(cutNum) +
+            (numericUnits.value ? numericUnits.value : "");
+        myOption.value.series[0].data[1].value = maxNum - cutNum;
+        myOption.value.series[0].data[1].name =
+            "剩余：" +
+            getPreviewNum(maxNum - cutNum) +
+            (numericUnits.value ? numericUnits.value : "");
+        myOption.value.series[0].data[0].label.show = setChartConf.numShow;
+        myOption.value.series[0].data[1].label.show = setChartConf.numShow;
+    } else {
+        myOption.value.series[0].data = [
+            point / 100,
+            point / 100,
+            point / 100,
+        ];
+        myOption.value.series[0].label.formatter = point + "%";
+        myOption.value.title.text =
+            metrics[0].alias +
+            "（已完成：" +
+            getPreviewNum(cutCompleted.value) +
+            (numericUnits.value ? numericUnits.value : "") +
+            "） ";
+        myOption.value.title.show = setChartConf.numShow;
+        myOption.value.series[0].label.show = setChartConf.numShow;
+    }
+}
 
 // 格式化进度条显示文字
 const formatText = () => {
