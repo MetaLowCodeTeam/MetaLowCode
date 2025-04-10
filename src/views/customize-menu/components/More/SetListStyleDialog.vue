@@ -72,28 +72,52 @@
                 </el-col>
                 <el-col :span="12">
                     <div class="form-title">顶部区域隐藏</div>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHide">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showHeader"
+                        @change="handleCheckboxChange('showHeader', $event)"
+                    >
                         隐藏整块&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideSwitchQuery">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showChangeQueryPanel"
+                        @change="handleCheckboxChange('showChangeQueryPanel', $event)"
+                    >
                         隐藏切换查询面板
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideAdvancedQuery">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showAdvancedQuery"
+                        @change="handleCheckboxChange('showAdvancedQuery', $event)"
+                    >
                         隐藏高级查询
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideQuickSearch">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showQuickQuery"
+                        @change="handleCheckboxChange('showQuickQuery', $event)"
+                    >
                         隐藏快速搜索
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideOpen">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showOpenBtn"
+                        @change="handleCheckboxChange('showOpenBtn', $event)"
+                    >
                         隐藏打开按钮
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideEdit">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showEditBtn"
+                        @change="handleCheckboxChange('showEditBtn', $event)"
+                    >
                         隐藏编辑按钮
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideNew">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showAddBtn"
+                        @change="handleCheckboxChange('showAddBtn', $event)"
+                    >
                         隐藏新建按钮
                     </el-checkbox>
-                    <el-checkbox v-model="styleConf.toolbarConf.isHideMore">
+                    <el-checkbox 
+                        :checked="!styleConf.toolbarConf.showMoreBtn"
+                        @change="handleCheckboxChange('showMoreBtn', $event)"
+                    >
                         隐藏更多操作按钮(隐藏后无法进入该面板)
                     </el-checkbox>
                 </el-col>
@@ -218,7 +242,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, ref } from "vue";
+import { onMounted, watch, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 /**
  * API
@@ -271,21 +295,21 @@ let styleConf = ref({
     // 顶部设置
     toolbarConf: {
         // 顶部影藏
-        isHide: false,
+        showHeader: true,
         // 切换查询按钮隐藏
-        isHideSwitchQuery: false,
+        showChangeQueryPanel: true,
         // 高级查询隐藏
-        isHideAdvancedQuery: false,
+        showAdvancedQuery: true,
         // 快速搜索隐藏
-        isHideQuickSearch: false,
+        showQuickQuery: true,
         // 打开隐藏
-        isHideOpen: false,
+        showOpenBtn: true,
         // 编辑隐藏
-        isHideEdit: false,
+        showEditBtn: true,
         // 新建隐藏
-        isHideNew: false,
+        showAddBtn: true,
         // 更多操作隐藏
-        isHideMore: false,
+        showMoreBtn: true,
     },
     // 指定表单属性
     formConf: {
@@ -401,6 +425,7 @@ const initStyleConf = () => {
 			styleConf.value,
 			JSON.parse(STYLE.config)
 		);
+        console.log(styleConf.value, 'styleConf.value');
 		layoutConfigId.value = STYLE.layoutConfigId;
 	}
     initFormList();
@@ -447,6 +472,13 @@ const onSave = async () => {
 	}
 	loading.value = false;
 };
+
+
+// 处理checkbox的change事件
+const handleCheckboxChange = (key, event) => {
+    styleConf.value.toolbarConf[key] = !event;
+}
+
 </script>
 <style lang="scss" scoped>
 .set-list-style {
