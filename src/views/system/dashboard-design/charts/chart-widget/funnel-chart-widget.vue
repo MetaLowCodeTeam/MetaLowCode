@@ -98,7 +98,6 @@ const initOption = async () => {
                 loading.value = false;
                 return;
             }
-            console.log(resData,'resData')
             formatData(options, resData)
         }
         loading.value = false;
@@ -131,7 +130,6 @@ const getChartData = async (options, type) => {
     dataList.value = [];
     let res = await queryChartData(options, type);
     if (res && res.data) {
-        console.log(res.data,'res.data')
         formatData(options, res.data);
         loading.value = false;
     } else {
