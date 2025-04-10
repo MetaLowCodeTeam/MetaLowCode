@@ -347,7 +347,12 @@ const getApprovalList = async () => {
         });
     }
     let res;
-
+    let params = {};
+    if(props.entityName == 'ApprovalTask') {
+        params = {
+            type: props.approvalTaskType,
+        }
+    }
     if (props.queryUrl) {
         res = await http.post(props.queryUrl, {
             mainEntity: param.mainEntity,
@@ -356,7 +361,7 @@ const getApprovalList = async () => {
             pageSize: param.pageSize,
             pageNo: param.pageNo,
             sortFields: param.sortFields,
-        });
+        }, {params});
     } else {
         res = await getDataList(
             param.mainEntity,
