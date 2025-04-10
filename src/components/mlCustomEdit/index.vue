@@ -18,7 +18,8 @@
 <script setup>
 import { onMounted, ref, watchEffect, nextTick } from "vue";
 import { getEditCmpByEntityName } from "@/views/custom-page/customEditEntry.js";
-
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameById } = useCommonStore();
 // SimpleTable
 const props = defineProps({
 	entityName: {
@@ -66,7 +67,11 @@ onMounted(() => {
 
 let EditRef = ref();
 const openDialog = (e) => {
-    comName.value = getEditCmpByEntityName(e.entityName);
+    let entityName = e.entityName;
+    if(!entityName) { 
+        entityName = queryEntityNameById(e.detailId);
+    }
+    comName.value = getEditCmpByEntityName(entityName);
 	if (!comName.value) {
 		comName.value = "default-edit";
 	}
