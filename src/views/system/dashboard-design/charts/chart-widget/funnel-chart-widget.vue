@@ -10,9 +10,12 @@
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, inject } from "vue";
 import { queryChartData } from "@/api/chart";
 import { getPreviewNum } from "@/utils/util";
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -82,8 +85,26 @@ onMounted(() => {
     initOption();
 });
 
-const initOption = () => {
+const initOption = async () => {
     let { options, type } = cutField.value;
+    let { dsEnabled, dsName, dataSetName } = options;
+    if(dsEnabled && dsName) {
+        loading.value = true;
+        let res = await getDataSourceData(options, getFormConfig()); 
+        if(res) {
+            let resData = dataSetName ? res[dataSetName] : res;
+            if(!resData.length) {
+                option.isNoData = true;
+                loading.value = false;
+                return;
+            }
+            console.log(resData,'resData')
+            formatData(options, resData)
+        }
+        loading.value = false;
+        option.isNoData = false;
+        return;
+    }
     if (options) {
         let { metrics } = options.setDimensional;
         if (metrics.length < 1) {
@@ -110,20 +131,30 @@ const getChartData = async (options, type) => {
     dataList.value = [];
     let res = await queryChartData(options, type);
     if (res && res.data) {
-        let { setChartConf } = cutField.value.options;
-        // 图例是否显示
-        option.legend = {
-            show: setChartConf.chartShow,
-            bottom: 5,
-        };
-        option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
-        option.series[0].data = res.data;
-        dataList.value = res.data || [];
-        if (dataList.value.length > 0) {
-            option.tooltip.formatter = (e) => {
-                let other = e.data.other;
-                let formatterStr = [];
-                for (const key in other) {
+        console.log(res.data,'res.data')
+        formatData(options, res.data);
+        loading.value = false;
+    } else {
+        loading.value = false;
+    }
+};
+
+const formatData = (options, data) => {
+    let { setChartConf } = options;
+    // 图例是否显示
+    option.legend = {
+        show: setChartConf.chartShow,
+        bottom: 5,
+    };
+    option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
+    option.series[0].data = data;
+    dataList.value = data || [];
+    if (dataList.value.length > 0) {
+        option.tooltip.formatter = (e) => {
+            let other = e.data.other;
+            let formatterStr = [];
+            for (const key in other) {
+                if(units.value[key]) {
                     if (Object.hasOwnProperty.call(other, key)) {
                         const element = other[key];
                         let {
@@ -134,24 +165,23 @@ const getChartData = async (options, type) => {
                         } = units.value[key];
                         formatterStr.push(key + "：" + getPreviewNum(showDecimalPlaces,decimalPlaces,thousandsSeparator,element) + numericUnits);
                     }
+                }else {
+                    formatterStr.push(key + "：" + other[key]);
                 }
-                formatterStr = formatterStr.join("<br />");
-                return e.name + "<br />" + formatterStr;
-            };
-        }
-
-        option.series[0].label = {
-            show: setChartConf.numShow,
-            formatter: function (param) {
-                return param.value;
-            },
-            position: "inside",
+            }
+            formatterStr = formatterStr.join("<br />");
+            return e.name + "<br />" + formatterStr;
         };
-        loading.value = false;
-    } else {
-        loading.value = false;
     }
-};
+
+    option.series[0].label = {
+        show: setChartConf.numShow,
+        formatter: function (param) {
+            return param.value;
+        },
+        position: "inside",
+    };
+}
 
 const getData = () => {
     return option;
