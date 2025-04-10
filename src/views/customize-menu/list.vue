@@ -1894,9 +1894,10 @@ const viewRow = (row, localDsv, formId) => {
     openDetailDialog(row, localDsv, formId)
 }
 
+
 // 打开其他实体详情
 const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
-    customDialogTitle.value = customDialogTitle;
+    customDetailDialogTitle.value = customDialogTitle;
     detailRefs.value.openDialog(recordId, localDsv, formId);
 }
 
