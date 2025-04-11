@@ -18,7 +18,7 @@
         <template v-else>
             <div class="no-data">
                 请通过右侧
-                <span class="lh">维度指标设置</span> 维度、指标栏来添加数据
+                <span class="lh">维度指标设置</span> 维度、指标栏来添加数据 或 设置<span class="lh"> 数据源 </span>添加数据
             </div>
         </template>
     </div>

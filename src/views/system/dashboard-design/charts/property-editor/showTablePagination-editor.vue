@@ -1,5 +1,5 @@
 <template>
-	<el-form-item label="显示分页">
+	<el-form-item label="显示分页" v-if="!optionModel.dsEnabled">
 		<el-switch v-model="optionModel.showTablePagination"></el-switch>
 	</el-form-item>
 </template>

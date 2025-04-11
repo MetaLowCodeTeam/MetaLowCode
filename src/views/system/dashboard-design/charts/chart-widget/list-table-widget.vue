@@ -54,14 +54,14 @@
 		</div>
 		<div class="no-data" v-else>
 			请通过右侧
-			<span class="lh">显示字段设置</span> 字段栏来添加数据
+			<span class="lh">显示字段设置</span> 字段栏来添加数据 或 设置<span class="lh"> 数据源 </span>添加数据
 		</div>
 	</div>
 	<!-- <mlCustomDetail ref="detailRef" /> -->
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, inject } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getDataList } from "@/api/crud";
@@ -71,6 +71,9 @@ import { useRouter } from "vue-router";
 import http from "@/utils/request";
 const { allEntityName } = storeToRefs(useCommonStore());
 const router = useRouter();
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
 
 defineOptions({
 	name: "listTable-widget",
@@ -107,9 +110,24 @@ let total = ref(0);
 let entity = ref("");
 let myOptions = ref({});
 
-const initOption = () => {
+const initOption = async () => {
 	let { options } = cutField.value;
 	if (options) {
+        let { dsEnabled, dsName, dataSetName } = options;
+        if(dsEnabled && dsName) {
+            tableLoading.value = true;
+            let res = await getDataSourceData(options, getFormConfig()); 
+            if(res) {
+                let resData = dataSetName ? res[dataSetName] : res;
+                tableColumn.value = resData.columnList.map(el => {
+                    el.fieldName = el.prop;
+                    return el
+                });
+                formatData(resData.dataList);
+            }
+            tableLoading.value = false;
+            return;
+        }
 		let { showFields } = options.setDimensional;
 		tableColumn.value = [...showFields];
 		if (tableColumn.value.length > 0) {
@@ -180,33 +198,7 @@ const getTableData = async () => {
 	if (res) {
 		let list = res.data.dataList || [];
 		total.value = res.data.pagination.total;
-		let showSumcol = cutField.value?.options.setChartConf.showSumcol;
-		// 如果需要汇总列
-		if (showSumcol) {
-			list.forEach((rowEl) => {
-				const values = tableColumn.value.map((item) =>
-					Number(rowEl[item.fieldName])
-				);
-				// console.log(values,'values')
-				if (!values.every((value) => Number.isNaN(value))) {
-					rowEl.sumcol = `${values.reduce((prev, curr) => {
-						const value = Number(curr);
-						if (!Number.isNaN(value)) {
-							return prev + curr;
-						} else {
-							return prev;
-						}
-					}, 0)}`;
-				} else {
-					rowEl.sumcol = "N/A";
-				}
-			});
-			tableColumn.value[tableColumn.value.length] = {
-				alias: "汇总",
-				fieldName: "sumcol",
-			};
-		}
-		tableData.value = [...list];
+		formatData(list);
 	}
 	tableLoading.value = false;
 	// setTimeout(() => {
@@ -214,6 +206,37 @@ const getTableData = async () => {
 	//     tableLoading.value = false;
 	// }, 500);
 };
+
+const formatData = (datList) => {
+    let showSumcol = cutField.value?.options.setChartConf.showSumcol;
+    // 如果需要汇总列
+    if (showSumcol) {
+        datList.forEach((rowEl) => {
+            const values = tableColumn.value.map((item) =>
+                Number(rowEl[item.fieldName] || rowEl[item.prop])
+            );
+            // console.log(values,'values')
+            if (!values.every((value) => Number.isNaN(value))) {
+                rowEl.sumcol = `${values.reduce((prev, curr) => {
+                    const value = Number(curr);
+                    if (!Number.isNaN(value)) {
+                        return prev + curr;
+                    } else {
+                        return prev;
+                    }
+                }, 0)}`;
+            } else {
+                rowEl.sumcol = "N/A";
+            }
+        });
+        tableColumn.value[tableColumn.value.length] = {
+            alias: "汇总",
+            fieldName: "sumcol",
+            prop: "sumcol",
+        };
+    }
+    tableData.value = [...datList];
+}
 
 // 汇总行
 const getSummaries = (param) => {
