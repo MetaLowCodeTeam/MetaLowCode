@@ -10,9 +10,13 @@
 
 <script setup>
 import myEcharts from "@/components/scEcharts/chart-widget.vue";
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, inject } from "vue";
 import { queryChartData } from "@/api/chart";
 import { getPreviewNum } from "@/utils/util";
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
+
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -73,8 +77,20 @@ let option = reactive({
     ],
 });
 let units = ref({});
-const initOption = () => {
+const initOption = async () => {
     let { options, type } = cutField.value;
+    let { dsEnabled, dsName, dataSetName } = options;
+    if(dsEnabled && dsName) {
+        loading.value = true;
+        let res = await getDataSourceData(options, getFormConfig()); 
+        if(res) {
+            let resData = dataSetName ? res[dataSetName] : res;
+            formatData(options, resData)
+        }
+        loading.value = false;
+        option.isNoData = false;
+        return;
+    }
     if (options) {
         let { dimension, metrics } = options.setDimensional;
         if (dimension.length < 1 || metrics.length < 1) {
@@ -99,64 +115,68 @@ const getChartData = async (options, type) => {
     loading.value = true;
     let res = await queryChartData(options, type);
     if (res && res.data) {
-        let { setChartConf } = cutField.value.options;
-        // 图例是否显示
-        option.legend = {
-            show: setChartConf.chartShow,
-            bottom: 5,
-        };
-        option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
-        option.series[0] = {
-            type: "radar",
-            data: res.data.series.map((el) => {
-                return {
-                    value: el.data,
-                    name: el.name,
-                };
-            }),
-        };
-        let xAxis = res.data.xAxis;
-        let { dimension, metrics } = options.setDimensional;
-        if (metrics.length > 1 && dimension.length == 1) {
-            option.tooltip.formatter = (e) => {
-                let {
-                    showDecimalPlaces,
-                    decimalPlaces,
-                    thousandsSeparator,
-                    numericUnits,
-                } = units.value[e.name];
-                let formatterStr = [];
-                e.data.value.forEach((el, inx) => {
-                    formatterStr.push(
-                        xAxis[inx] +
-                            "：" +
-                            getPreviewNum(
-                                showDecimalPlaces,
-                                decimalPlaces,
-                                thousandsSeparator,
-                                el
-                            ) +
-                            numericUnits
-                    );
-                });
-                formatterStr = formatterStr.join("<br />");
-                return e.name + "<br />" + formatterStr;
-            };
-        }else { 
-            option.tooltip.formatter = ""
-        }
-
-        option.radar.indicator = res.data.xAxis.map((el) => {
-            return {
-                name: el,
-            };
-        });
+        formatData(options, res.data)
         isShowEmpty.value = false;
     } else {
         isShowEmpty.value = true;
     }
     loading.value = false;
 };
+
+const formatData = (options, resData) => {
+    let { setChartConf } = options;
+    // 图例是否显示
+    option.legend = {
+        show: setChartConf.chartShow,
+        bottom: 5,
+    };
+    option.grid.bottom = setChartConf.chartShow ? "60px" : "10px";
+    option.series[0] = {
+        type: "radar",
+        data: resData.series.map((el) => {
+            return {
+                value: el.data,
+                name: el.name,
+            };
+        }),
+    };
+    let xAxis = resData.xAxis;
+    let { dimension, metrics } = options.setDimensional;
+    if (metrics.length > 1 && dimension.length == 1) {
+        option.tooltip.formatter = (e) => {
+            let {
+                showDecimalPlaces,
+                decimalPlaces,
+                thousandsSeparator,
+                numericUnits,
+            } = units.value[e.name];
+            let formatterStr = [];
+            e.data.value.forEach((el, inx) => {
+                formatterStr.push(
+                    xAxis[inx] +
+                        "：" +
+                        getPreviewNum(
+                            showDecimalPlaces,
+                            decimalPlaces,
+                            thousandsSeparator,
+                            el
+                        ) +
+                        numericUnits
+                );
+            });
+            formatterStr = formatterStr.join("<br />");
+            return e.name + "<br />" + formatterStr;
+        };
+    }else { 
+        option.tooltip.formatter = ""
+    }
+
+    option.radar.indicator = resData.xAxis.map((el) => {
+        return {
+            name: el,
+        };
+    });
+}
 
 const getData = () => {
     return option;
