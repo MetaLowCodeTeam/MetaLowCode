@@ -26,9 +26,12 @@
 
 <script setup>
 import { SheetComponent } from "@antv/s2-vue";
-import { onMounted, reactive, shallowRef, ref, watch } from "vue";
+import { onMounted, reactive, shallowRef, ref, watch, inject } from "vue";
 import "@antv/s2-vue/dist/style.min.css";
 import { queryChartData } from "@/api/chart";
+import useChartSourceData from "@/hooks/ChartSourceData";
+const { getDataSourceData } = useChartSourceData();
+const getFormConfig = inject('getFormConfig');
 const adaptive = {
     width: true,
     height: true,
@@ -128,7 +131,7 @@ onMounted(() => {
     initOption();
 });
 
-const initOption = () => {
+const initOption = async () => {
     let { options } = cutField.value;
     if (options) {
         // 汇总行
@@ -138,6 +141,24 @@ const initOption = () => {
         tableOptions.value.totals.row.showGrandTotals = showSummary;
         tableOptions.value.totals.col.showGrandTotals = showSumcol;
         s2.value?.instance.setOptions(tableOptions.value);
+        let { dsEnabled, dsName, dataSetName } = options;
+        if(dsEnabled && dsName) {
+            loading.value = true;
+            let res = await getDataSourceData(options, getFormConfig()); 
+            if(res) {
+                let resData = dataSetName ? res[dataSetName] : res;
+                // 元数据
+                dataCfg.value.meta = resData.meta;
+                // 字段
+                dataCfg.value.fields = resData.fields;
+                // 数据
+                dataCfg.value.data = resData.data;
+                handleResize();
+            }
+            loading.value = false;
+            isNoData.value = false;
+            return;
+        }
         let { dimensionRow, dimensionCol, metrics } = options.setDimensional;
         // 没有维度行或者指标=没有数据
         if (dimensionRow.length < 1 || metrics.length < 1) {
