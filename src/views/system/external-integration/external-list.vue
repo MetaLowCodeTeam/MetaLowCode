@@ -7,13 +7,14 @@
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
         :actionColumnWidth="320"
         queryUrl="/externalForm/listQuery"
         delUrl="/externalForm/deleteRecord"
+        fieldName="externalFormName"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <el-button
@@ -45,12 +46,13 @@ const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const router = useRouter();
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
+let appAbbr = router.currentRoute.value.query.appAbbr;
+let fixedFilter = ref([
     {
-        fieldName: "externalFormName",
-        op: "LK",
-        value: "",
-    },
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    }
 ]);
 let tableColumn = ref([
     {
@@ -165,6 +167,9 @@ const downErCode = async (row) => {
     }
     homeURL += "web/inReport?externalId=";
     homeURL += row.externalFormId;
+    if(publicSetting.value.tenantId){
+        homeURL += "&tenantId=" + publicSetting.value.tenantId;
+    }
     let res = await http.post("/picture/getQR", {url:homeURL});
     if (res && res.data) {
         let blob = base64ToBlob(res.data.qrData);

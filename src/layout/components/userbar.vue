@@ -285,7 +285,7 @@ let approvalName = ref("");
 // 消息点击
 const msgClick = (item, inx) => {
     let filterEntity = unSystemEntityList.value.filter(
-        (el) => el.name == item.entityName
+        (el) => el.name == item.entityName && !el.appAbbr
     );
     let { currentRoute } = router;
     if (item.type == 30 || item.type == 20) {

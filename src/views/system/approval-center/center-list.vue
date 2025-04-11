@@ -5,7 +5,7 @@
         fieldsList="approvalTaskId,approvalConfigId,entityId,approvalOn,remark,approvalStatus,approvalConfigId.flowName,approvalUser,stepName,approvalConfigId.entityCode"
         defaultSortField="modifiedOn"
         :tableColumn="tableColumn"
-        :filterItems="pageType[type].filterItems"
+        :fixedFilter="pageType[type].fixedFilter"
         ref="mlSingleListRef"
         @goDetail="highlightClick"
         fieldName="approvalConfigId.flowName"
@@ -74,7 +74,6 @@ const props = defineProps({
 });
 let pageType = reactive({});
 let mlSingleListRef = ref("");
-
 
 // 审核弹框是否显示
 let approveDialogIsShow = ref(false);

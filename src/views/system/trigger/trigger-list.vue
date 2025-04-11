@@ -7,11 +7,12 @@
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
+        fieldName="name"
         @actionBtn="actionBtn"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
         checkRole="r48"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <el-button
@@ -30,18 +31,29 @@
 </template>
 
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+const props = defineProps({
+    isDesign: {
+        type: Boolean,
+        default: false
+    }
+})
+
 const $TOOL = inject("$TOOL");
 const router = useRouter();
+let fixedFilter = ref([]);
+onMounted(() => {
+    let appAbbr = router.currentRoute.value.query.appAbbr;
+    let filter = {
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    };
+    fixedFilter.value = [filter];
+})
+
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
-    {
-        fieldName: "name",
-        op: "LK",
-        value: "",
-    },
-]);
 let tableColumn = ref([
     {
         prop: "name",
@@ -141,9 +153,12 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: appPath + "trigger-detail",
+        path: props.isDesign ? appPath + "design-trigger-detail" : appPath + "trigger-detail",
         query: {
             triggerConfigId: row.triggerConfigId,
+            meteAppendTitle: row.name,
+            appName: router.currentRoute.value.query.appName,
+            appAbbr: router.currentRoute.value.query.appAbbr,
         },
     });
 };

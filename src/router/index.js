@@ -12,6 +12,9 @@ import { beforeEach, afterEach } from './scrollBehavior';
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 
 
+// 如果是租户需要隐藏菜单
+const tenantIdHideMenu = ['Tenant', 'DatabaseBackups'];
+
 
 let modules = import.meta.glob('../views/**/*.vue')
 const empty = () => () => import('../layout/other/empty.vue');
@@ -87,6 +90,9 @@ router.beforeEach(async (to, from, next) => {
             });
         })
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
+            if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+                return false
+            }
             return true
         })
         userMenu[0].children.push(...getUseMenuList())
@@ -107,6 +113,12 @@ router.beforeEach(async (to, from, next) => {
     // 如果是新窗口创建实体
     if(to.name == "NewWindowCreateEntity") {
         to.meta.title = "新建" + queryEntityLabelByName(to.params.entityName)
+    }
+    if(to.query.meteAppendTitle && to.name != "AppDesignEntity") {
+        to.meta.title = to.meta.title + " - " + to.query.meteAppendTitle
+    }
+    if(to.name == "AppDesignEntity") {
+        to.meta.title =  to.meta.title + " - " + to.query.entityLabel
     }
     beforeEach(to, from)
     next();
@@ -133,7 +145,11 @@ router.onError((error, to) => {
 //入侵追加自定义方法、对象
 router.sc_getMenu = () => {
     const { getUseMenuList, getTopNavMenuList } = useLayoutConfigStore();
+    const { publicSetting } = storeToRefs(useCommonStore());
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
+        if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+            return false
+        }
         return true
     })
     userMenu[0].children.push(...getUseMenuList())

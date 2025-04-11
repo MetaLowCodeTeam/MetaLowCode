@@ -535,6 +535,31 @@ export const formatOutLink = (meta) => {
     }
 }
 
+
+
+export const downloadBase64 = async (base64, fileName) => {
+	let blob = base64ToBlob(base64);
+	let downloadElement = document.createElement("a");
+	let href = window.URL.createObjectURL(blob);
+	downloadElement.href = href;
+	downloadElement.download = fileName;
+	document.body.appendChild(downloadElement);
+	downloadElement.click();
+    // 清理创建的 URL 对象
+	URL.revokeObjectURL(href);
+};
+
+const base64ToBlob = (base64) => {
+	let baseContent = base64;
+	let mime = baseContent.match(/:(.*?);/); //获取分割后的base64前缀中的类型
+	let bstr = window.atob(baseContent);
+	let n = bstr.length;
+	let u8arr = new Uint8Array(n);
+	while (n--) {
+		u8arr[n] = bstr.charCodeAt(n);
+	}
+	return new Blob([u8arr], { type: mime });
+};
 // 表单DSV默认配置
 export const globalDsvDefaultData = () => {
     let data = {

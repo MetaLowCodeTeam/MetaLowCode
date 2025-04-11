@@ -207,6 +207,9 @@
 }
 .adminui-tags li:hover {
 	background-color: var(--el-color-primary-light-5);
+    & > a {
+        color: #fff !important;
+    }
 }
 .adminui-tags li.active {
 	background-color: var(--el-color-primary) !important;

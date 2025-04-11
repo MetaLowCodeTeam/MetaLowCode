@@ -107,6 +107,7 @@
 
 <script setup>
 import { inject, nextTick, onMounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 import operateSystemDialog from "./operateSystemDialog.vue";
@@ -118,6 +119,7 @@ const props = defineProps({
     deleteFn: { type: Function },
     pageType: { type: String, default: "" },
 });
+const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 // 搜索参数
 let keyword = ref("");
@@ -142,7 +144,8 @@ onMounted(() => {
 const getTreeList = async () => {
 	treeLoading.value = true;
 	mainLoading.value = true;
-	let res = await props.getTreeFn();
+    let { appAbbr } = router.currentRoute.value.query;  
+	let res = await props.getTreeFn(appAbbr);
 	if (res) {
         treeList.value = [];
         if(props.pageType == 'system') {

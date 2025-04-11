@@ -7,11 +7,12 @@
         @goDetail="goDetail"
         :tableColumn="tableColumn"
         defaultSortField="createdOn"
-        :filterItems="filterItems"
+        fieldName="flowName"
         @actionBtn="actionBtn"
         queryUrl="/approval/configList"
         @changeSwitch="changeSwitch"
         @openAddDialog="openAddDialog"
+        :fixedFilter="fixedFilter"
     >
         <template #addButton>
             <!-- <el-dropdown
@@ -47,18 +48,31 @@
 </template>
 
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+const props = defineProps({
+    isDesign: {
+        type: Boolean,
+        default: false
+    }
+})
 const router = useRouter();
 const $TOOL = inject("$TOOL");
+
+let fixedFilter = ref([]);
+onMounted(() => {
+    let appAbbr = router.currentRoute.value.query.appAbbr;
+    let filter = {
+        fieldName: "appAbbr",
+        op: appAbbr ? "EQ" : "NL",
+        value: appAbbr,
+    };
+    fixedFilter.value = [filter];
+})
+
 let mlEntityMenuAndListRef = ref("");
-let filterItems = ref([
-    {
-        fieldName: "flowName",
-        op: "LK",
-        value: "",
-    },
-]);
+
+
 let tableColumn = ref([
     {
         prop: "flowName",
@@ -166,11 +180,14 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: appPath + "process-detail",
+        path: props.isDesign ? appPath + "design-process-detail" : appPath + "process-detail",
         query: {
             approvalConfigId: row.approvalConfigId,
             entityCode: row.entityCode,
             flowType: row.flowType || 1,
+            meteAppendTitle: row.flowName,
+            appName:  router.currentRoute.value.query.appName,
+            appAbbr: router.currentRoute.value.query.appAbbr
         },
     });
 };

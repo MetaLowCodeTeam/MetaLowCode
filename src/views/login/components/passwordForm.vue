@@ -7,6 +7,14 @@
         size="large"
         @keyup.enter="login"
     >
+        <el-form-item prop="tenantCode" v-if="myPublicSetting && myPublicSetting.pluginIdList && myPublicSetting.pluginIdList.includes('metaTenant')">
+            <el-input
+                v-model="form.tenantCode"
+                prefix-icon="el-icon-menu"
+                clearable
+                placeholder="请输入租户编码"
+            ></el-input>
+        </el-form-item>
         <el-form-item prop="user">
             <el-input
                 v-model="form.user"
@@ -61,8 +69,9 @@ import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
-const { getEntityList, setUserInfo } = useCommonStore();
+const { getEntityList, setUserInfo, setPublicSetting } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
+import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import { encrypt } from "@/utils/util";
 export default {
@@ -121,6 +130,7 @@ export default {
             this.form.user = userInfo.loginName;
             this.form.password = userInfo.password;
             this.form.autologin = userInfo.autologin;
+            this.form.tenantCode = userInfo.tenantCode;
         }
     },
     computed: {
@@ -149,6 +159,7 @@ export default {
                 user: this.form.user,
                 password: encryptPassword,
                 imgCode: this.myPublicSetting?.verificationCodeLogin ? this.form.imgYzm : null,
+                tenantCode: this.form.tenantCode,
             };
            
 
@@ -166,6 +177,7 @@ export default {
                     let userInfo = this.$TOOL.data.get('USER_INFO');
                     userInfo.password = this.form.password;
                     userInfo.autologin = this.form.autologin;
+                    userInfo.tenantCode = this.form.tenantCode;
                     this.$TOOL.cookie.set(
                         "userInfo",
                         JSON.stringify(userInfo),
@@ -184,6 +196,7 @@ export default {
                 this.roundRobin(5000);
                 // 调用实体数据
                 getEntityList();
+                this.queryPublicSetting();
                 this.$router.replace({
                     path: "/",
                 });
@@ -207,6 +220,15 @@ export default {
                 clearInterval(this.timer);
             }
         },
+        // 获取公开系统配置
+        async queryPublicSetting()  {
+            let res = await getPublicSetting();
+            if (res) {
+                let resData = res.data || {};
+                setPublicSetting(resData);
+            }
+        },
+
     },
     beforeDestroy() {
         clearInterval(this.timer);

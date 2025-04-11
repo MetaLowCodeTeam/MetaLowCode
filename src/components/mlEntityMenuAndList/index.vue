@@ -220,13 +220,13 @@ const props = defineProps({
     queryUrl: { type: String, default: "" },
     // 删除接口
     delUrl: { type: String, default: "" },
-    // 添加过滤list
-    filterItems: { type: Array, default: () => [] },
     // 默认过滤字段
     fieldName: { type: String, default: "entityCode" },
     approvalTaskType: { type: Number, default: 1 },
     // 操作列宽度
     actionColumnWidth: { type: Number, default: 170 },
+    // 固定过滤
+    fixedFilter: { type: Object, default: () => [] },
 });
 const emit = defineEmits([
     "goDetail",
@@ -268,7 +268,10 @@ let tableSort = ref([
 
 let searchValue = ref("");
 
+let appAbbr = ref("");
+
 onMounted(() => {
+    appAbbr.value = router.currentRoute.value.query.appAbbr;
     // console.log(defaultCode.value,'defaultCode.value')
     // defaultCode.value = ""
     getEntityList();
@@ -292,7 +295,7 @@ const getEntityList = async () => {
             props.approvalTaskType
         );
     } else {
-        res = await getEntityCodeList(props.entityName);
+        res = await getEntityCodeList(props.entityName, appAbbr.value);
     }
 
     if (res) {
@@ -312,7 +315,7 @@ const getEntityList = async () => {
 // 获取右侧流程列表
 const getApprovalList = async () => {
     loading.value = true;
-    let { filterItems, fieldName } = props;
+    let { fieldName, fixedFilter } = props;
     let param = {
         mainEntity: props.entityName,
         fieldsList: props.fieldsList,
@@ -324,21 +327,19 @@ const getApprovalList = async () => {
         },
         sortFields: tableSort.value,
     };
-    if(props.entityName != 'ApprovalTask') {
-        param.filter.items = filterItems.map((el) => {
-            el.value = keyword.value ? keyword.value : "" ;
-            return el;
-        });
-    }else {
-        param.filter.items = JSON.parse(JSON.stringify(filterItems));
-        if(keyword.value) {
-            param.filter.items.push({
-                fieldName,
+    if(fixedFilter) {
+        param.filter.items = param.filter.items.concat(fixedFilter);
+    }
+    if (keyword.value && fieldName) {
+        let newFieldName = fieldName.split(",");
+        newFieldName.forEach(el => {
+            param.filter.items.unshift({
+                fieldName: el,
                 op: "LK",
                 value: keyword.value,
             });
-        }
-    }
+        });
+	}
     if (defaultCode.value != "all") {
         param.filter.items.push({
             fieldName: props.entityName == 'ApprovalTask' ? 'approvalConfigId.entityCode' : 'entityCode',
@@ -430,7 +431,10 @@ const fieldCheck = (item) => {
     defaultCode.value = item.entityCode;
     page.no = 1;
     if (router.currentRoute.value.query.entityCode) {
-        window.history.replaceState({}, "", `${window.location.pathname}`);
+        let url = new URL(window.location.href);
+        let params = url.searchParams;
+        params.delete('entityCode'); // 删除 entityCode 参数
+        window.history.replaceState({}, "", `${url.pathname}${url.search}`);
     }
     getApprovalList();
 };

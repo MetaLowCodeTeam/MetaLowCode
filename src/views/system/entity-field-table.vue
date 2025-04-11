@@ -175,7 +175,7 @@
 						</template>
 					</el-input>
 				</div>
-                <el-button class="ml-10" type="primary" @click="goFormDesign" v-if="!entityProps.detailEntityFlag">表单设计</el-button>
+                <el-button class="ml-10" type="primary" @click="goFormDesign" v-if="!entityProps.detailEntityFlag && !isDesign">表单设计</el-button>
 			</el-header>
 
 			<el-main ref="tableContainer">
@@ -471,6 +471,12 @@ export default {
 		AnyReferenceWE,
 		ReferenceListWE,
 	},
+    props: {
+        isDesign: {
+            type: Boolean,
+            default: false
+        }
+    },
 	data() {
 		return {
 			columns: [

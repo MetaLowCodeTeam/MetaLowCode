@@ -8,7 +8,6 @@
             :sortFields="tableConf.sortFields"
             fieldName="roleName"
             :tableColumn="tableConf.tableColumn"
-            :filterItems="tableConf.filterItems"
         >
             <template #addButton>
                 <el-button type="primary" @click="addNewRole" :disabled="!$TOOL.checkRole('r23-2')">
@@ -328,8 +327,6 @@ let tableConf = ref({
             type: "DESC",
         },
     ],
-    // 过滤条件
-    filterItems: [],
     tableColumn: [
         {
             prop: "roleName",
@@ -536,6 +533,10 @@ let funcRight = shallowRef([
             {
                 label: "实体管理",
                 value: "r6001",
+            },
+            {
+                label: "应用管理",
+                value: "r6025",
             },
             {
                 label: "设计表单布局",

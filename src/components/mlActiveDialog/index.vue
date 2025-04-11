@@ -17,7 +17,7 @@
                     <el-option
                         :label="op.label"
                         :value="op.entityCode"
-                        v-for="(op,inx) of isProcess ? processEntityList : unSystemEntityList"
+                        v-for="(op,inx) of filterEntityList(isProcess ? processEntityList : unSystemEntityList)"
                         :key="inx"
                     />
                 </el-select>
@@ -32,7 +32,7 @@
                     style="width: 80%;"
                     filterable
                 >
-                    <template v-for="(op,inx) of unSystemEntityList" :key="inx">
+                    <template v-for="(op,inx) of filterEntityList(unSystemEntityList)" :key="inx">
                         <el-option :label="op.label" :value="op.entityCode" v-if="!op.detailEntityFlag"/>
                     </template>
                 </el-select>
@@ -167,6 +167,8 @@ import SetWatermark from './components/setWatermark.vue';
 import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 import { getTagItems } from "@/api/system-manager";
 import mlShareTo from "@/components/mlShareTo/index.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const $API = inject("$API");
 const { unSystemEntityList, processEntityList, publicSetting } = storeToRefs(
     useCommonStore()
@@ -306,7 +308,8 @@ const saveProcess = async (target) => {
         pdfWatermark: JSON.stringify(pdfWatermark),
         configTag: configTag || null,
         filterJson: JSON.stringify(filterJson),
-        shareTo
+        shareTo,
+        appAbbr: router.currentRoute.value.query.appAbbr,
     };
     checkCodes.forEach((el) => {
         params[el] = form[el];
@@ -420,6 +423,14 @@ const conditionConfirm = (v) => {
     dialogForm.value.form.filterJson = v;
 }
 
+// 获取实体列表
+const filterEntityList = (list) => {
+    let appAbbr = router.currentRoute.value.query.appAbbr;
+    if(appAbbr) {
+        return list.filter(el => el.appAbbr == appAbbr);
+    }
+    return list;
+}
 /***
  *  ****************************************** 过滤条件相关 end
  */

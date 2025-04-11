@@ -29,7 +29,7 @@
 // ]
 
 
-
+import { t } from "@/locales"
 
 const appPath = import.meta.env.VITE_APP_PATH;
 
@@ -198,7 +198,20 @@ const routes = [
                     },
                 ]
             },
-
+            // 多租户
+            {
+                path: appPath + 'tenant',
+                name: 'Tenant',
+                meta: { title: '多租户', icon: 'park-NetworkTree', role: 'r52-1' },
+                component: 'system/analysis-setting/Tenant',
+            },
+            // 应用管理
+            {
+                path: appPath + 'app-manager',
+                name: 'AppManager',
+                component: 'system/app-manager/index',
+                meta: { title: t('route.20904'), icon: 'el-icon-Platform', role: 'r6025' }
+            },
             {
                 path: '',
                 name: 'BasicSetting',
@@ -310,7 +323,7 @@ const routes = [
 								name: 'DashboardDesign',
 								meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
 								component: 'system/dashboard-design/chart',
-							}
+							},
 						]
 					},
 					// 报表设计

@@ -6,7 +6,7 @@
         :sortFields="sortFields"
         fieldName="message"
         :tableColumn="tableColumn"
-        :filterItems="filterItems"
+        :fixedFilter="fixedFilter"
         queryUrl="/note/listQuery"
         equation="AND"
         ref="mlSingleListRefs"
@@ -60,7 +60,7 @@ let sortFields = ref([
     },
 ]);
 // 过滤条件
-let filterItems = ref([
+let fixedFilter = ref([
     {
         fieldName: "toUser",
         op: "EQ",
@@ -157,7 +157,7 @@ const activeRow = (item) => {
             return
         }
         let filterEntity = unSystemEntityList.value.filter(
-            (el) => el.name == item.entityName
+            (el) => el.name == item.entityName && !el.appAbbr
         );
         if (filterEntity.length < 1) {
             $ElMessage.error("该实体已删除");

@@ -73,7 +73,8 @@ const { viewTags } = storeToRefs(viewTagsStore);
 const { pushViewTags,removeViewTags } = viewTagsStore;
 const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
 const { removeIframeList,refreshIframe } = iframeStore;
-
+import systemRouter from '@/router/systemRouter';
+const appPath = import.meta.env.VITE_APP_PATH;
 export default {
     name: "tags",
     data() {
@@ -86,7 +87,12 @@ export default {
             tipDisplayed: false,
         };
     },
-    props: {},
+    props: {
+        isDesign: {
+            type: Boolean,
+            default: false,
+        },
+    },
     watch: {
         $route(e) {
             this.addViewTags(e);
@@ -132,9 +138,30 @@ export default {
             menu,
             (node) => node.path == this.$CONFIG.DASHBOARD_URL
         );
-        if (dashboardRoute) {
+        
+        if (dashboardRoute && !this.isDesign) {
             dashboardRoute.fullPath = dashboardRoute.path;
             this.addViewTags(dashboardRoute);
+            this.addViewTags(this.$route);
+        }
+        if(this.isDesign){
+            let { appAbbr, appName } = this.$route.query;
+            this.addViewTags({
+                "fullPath": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr,
+                "path": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr,
+                "query": {
+                    appName,
+                    appAbbr
+                },
+                "hash": "",
+                "name": "DesignEntity",
+                "params": {},
+                "meta": {
+                    "title": "实体管理",
+                    "affix": true
+                },
+                "href": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr
+            });
             this.addViewTags(this.$route);
         }
     },
@@ -229,7 +256,6 @@ export default {
                     query: nowTag.query,
                 });
             }
-            refreshIframe(nowTag);
             setTimeout(() => {
                 removeKeepLive(nowTag.name);
                 setRouteShow(false);

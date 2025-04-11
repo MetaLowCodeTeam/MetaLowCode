@@ -110,8 +110,8 @@ export function initDataList(entity) {
  * 通用获取实体列表接口（实体+列表页面的实体列表）
  * @param {*} entityName 实体名称
  */
-export function getEntityCodeList(entityName) {
-    return http.get('/crud/getEntityCodeList', { entityName })
+export function getEntityCodeList(entityName, appAbbr) {
+    return http.get('/crud/getEntityCodeList', { entityName, appAbbr })
 }
 
 /**
