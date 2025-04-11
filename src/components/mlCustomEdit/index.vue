@@ -9,8 +9,6 @@
         :isTeam="isTeam"
         :isUser="isUser"
         :disableWidgets="disableWidgets"
-        :recordNewFormId="recordNewFormId"
-        :recordEditFormId="recordEditFormId"
         @onConfirm="onConfirm"
 	></component>
 </template>
@@ -27,16 +25,6 @@ const props = defineProps({
 		default: "default-edit",
 	},
 	nameFieldName: {
-		type: String,
-		default: "",
-	},
-    // 新增记录表单id
-    recordNewFormId: {
-		type: String,
-		default: "",
-	},
-    // 编辑记录表单id
-    recordEditFormId: {
 		type: String,
 		default: "",
 	},

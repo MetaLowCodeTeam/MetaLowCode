@@ -116,16 +116,6 @@ const props = defineProps({
         type: Object,
         default: () => {}
     },
-    // 新增记录表单id
-    recordNewFormId: {
-		type: String,
-		default: "",
-	},
-    // 编辑记录表单id
-    recordEditFormId: {
-		type: String,
-		default: "",
-	},
     // 自定义保存接口
     queryUrl: {
 		type: String,
@@ -302,9 +292,7 @@ const initFormLayout = async () => {
     globalDsv.value.formEntity = row.entityName;
     globalDsv.value.formEntityIdFieldName = getEntityIdFieldName(row);
     globalDsv.value.setRowRecordId = setRowRecordId;
-    let { recordNewFormId, recordEditFormId } = props;
-    // 表单ID使用： 复写方法ID > 传入ID
-    let useFormId = formId.value || (row.detailId ? recordEditFormId : recordNewFormId);
+    let useFormId = formId.value;
     globalDsv.value.useFormId = useFormId;
     let res = await getFormLayout(row.entityName, useFormId);
     if (res) {
