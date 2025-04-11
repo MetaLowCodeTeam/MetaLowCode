@@ -19,7 +19,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.7.210 20250411"
+        webVer: "1.7.211 20250411"
     });
 
     const getEntityList = () => {
@@ -90,7 +90,7 @@ const useCommonStore = defineStore('commonStore', () => {
         // internalEntityFlag = 内部实体
         // internalEntityFlag为true时返回所有实体，否则只返回internalEntityFlag为false的实体
         let list = internalEntityFlag ? allEntityList.value : allEntityList.value.filter(el => !el.internalEntityFlag);
-        return list.filter(el => el.appAbbr == appAbbr);
+        return list.filter(el => appAbbr ? el.appAbbr == appAbbr : !appAbbr);
     }
     const setPublicSetting = (data) => {
         // 初始化清空多租户ID，避免缓存
