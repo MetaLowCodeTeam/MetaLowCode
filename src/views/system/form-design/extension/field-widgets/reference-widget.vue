@@ -6,7 +6,7 @@
 			:rules="rules"
 			:design-state="designState"
 			:parent-widget="parentWidget"
-			:parent-list="parentList"  
+			:parent-list="parentList"
 			:index-of-parent-list="indexOfParentList"
 			:sub-form-row-index="subFormRowIndex"
 			:sub-form-col-index="subFormColIndex"
@@ -284,12 +284,20 @@ export default {
             if (this.designState) {
                 return
             }
+
 			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
 				let customFn = new Function(
 					this.field.options.onAppendButtonClick
 				);
 				customFn.call(this);
 				return
+			}
+
+			if (this.field.options.onBeforeDialogOpen) {  //引用弹窗打开前置事件
+				let customFn = new Function(
+					this.field.options.onBeforeDialogOpen
+				);
+				customFn.call(this);
 			}
 
             // 默认树

@@ -391,8 +391,6 @@
             :nameFieldName="isOtherEntity ? null : nameFieldName"
             :layoutConfig="layoutConfig"
             @saveFinishCallBack="editConfirm"
-            :recordNewFormId="listParamConf.recordNewFormId || rowStyleConf?.formConf?.pcAddFormId"
-            :recordEditFormId="listParamConf.recordEditFormId || rowStyleConf?.formConf?.pcEditFormId"
         />
         <!-- 快速搜索字段 -->
         <mlSelectField
@@ -1278,7 +1276,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";
     !!localDsv && (tempV.localDsv = localDsv)
-    !!formId && (tempV.formId = formId)
+    tempV.formId = formId || listParamConf.value.recordNewFormId || rowStyleConf.value?.formConf?.pcAddFormId;
     !!dialogConf && (tempV.paramDialogConf = dialogConf)
     editRefs.value.openDialog(tempV);
 };
@@ -1314,7 +1312,8 @@ const onEditRow = (row, localDsv, formId) => {
     tempV.mainDetailField = mainDetailField.value;
     tempV.data = row;
     !!localDsv && (tempV.localDsv = localDsv)
-    !!formId && (tempV.formId = formId)
+    // !!formId && (tempV.formId = formId)
+    tempV.formId = formId || listParamConf.value.recordEditFormId || rowStyleConf.value?.formConf?.pcEditFormId;
     editRefs.value.openDialog(tempV);
 };
 

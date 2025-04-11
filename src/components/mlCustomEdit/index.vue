@@ -9,8 +9,6 @@
         :isTeam="isTeam"
         :isUser="isUser"
         :disableWidgets="disableWidgets"
-        :recordNewFormId="recordNewFormId"
-        :recordEditFormId="recordEditFormId"
         @onConfirm="onConfirm"
 	></component>
 </template>
@@ -18,7 +16,8 @@
 <script setup>
 import { onMounted, ref, watchEffect, nextTick } from "vue";
 import { getEditCmpByEntityName } from "@/views/custom-page/customEditEntry.js";
-
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameById } = useCommonStore();
 // SimpleTable
 const props = defineProps({
 	entityName: {
@@ -26,16 +25,6 @@ const props = defineProps({
 		default: "default-edit",
 	},
 	nameFieldName: {
-		type: String,
-		default: "",
-	},
-    // 新增记录表单id
-    recordNewFormId: {
-		type: String,
-		default: "",
-	},
-    // 编辑记录表单id
-    recordEditFormId: {
 		type: String,
 		default: "",
 	},
@@ -66,7 +55,11 @@ onMounted(() => {
 
 let EditRef = ref();
 const openDialog = (e) => {
-    comName.value = getEditCmpByEntityName(e.entityName);
+    let entityName = e.entityName;
+    if(!entityName) { 
+        entityName = queryEntityNameById(e.detailId);
+    }
+    comName.value = getEditCmpByEntityName(entityName);
 	if (!comName.value) {
 		comName.value = "default-edit";
 	}
