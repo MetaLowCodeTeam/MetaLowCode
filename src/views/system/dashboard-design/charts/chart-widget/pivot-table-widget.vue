@@ -132,9 +132,9 @@ const initOption = () => {
     let { options } = cutField.value;
     if (options) {
         // 汇总行
-        let showSummary = cutField.value?.options.setChartConf.showSummary;
+        let showSummary = options.setChartConf.showSummary;
         // 汇总列
-        let showSumcol = cutField.value?.options.setChartConf.showSumcol;
+        let showSumcol = options.setChartConf.showSumcol;
         tableOptions.value.totals.row.showGrandTotals = showSummary;
         tableOptions.value.totals.col.showGrandTotals = showSumcol;
         s2.value?.instance.setOptions(tableOptions.value);
@@ -144,22 +144,6 @@ const initOption = () => {
             isNoData.value = true;
             return;
         }
-        // // 元字段格式化名字
-        // dataCfg.value.meta = [];
-
-        // // 维度行设置
-        // dataCfg.value.fields.rows = [];
-        // setPivotTableConf(dimensionRow, "rows");
-
-        // // 指标设置
-        // dataCfg.value.fields.values = [];
-        // setPivotTableConf(metrics, "values");
-        // // 维度列设置
-        // if (dimensionCol.length > 0) {
-        //     dataCfg.value.fields.columns = [];
-        //     setPivotTableConf(dimensionCol, "columns");
-        // }
-
         // 获取表格数据
         getTableData();
         isNoData.value = false;
