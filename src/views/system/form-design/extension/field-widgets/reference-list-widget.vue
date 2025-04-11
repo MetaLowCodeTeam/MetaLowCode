@@ -328,6 +328,13 @@ export default {
 				return
 			}
 
+			if (this.field.options.onBeforeDialogOpen) {  //引用弹窗打开前置事件
+				let customFn = new Function(
+					this.field.options.onBeforeDialogOpen
+				);
+				customFn.call(this);
+			}
+
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;

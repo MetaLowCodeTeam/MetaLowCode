@@ -55,10 +55,20 @@ let btnDisabled = ref(false);
 // 审批状态
 let approvalStatus = ref();
 
+// 默认值
+let defaultFormData = ref({});
+
 onMounted(() => {
-    externalId.value = Router.currentRoute.value.query.externalId;
-    tenantId.value = Router.currentRoute.value.query.tenantId;
+    let routeQuery = Router.currentRoute.value.query;
+    externalId.value = routeQuery.externalId;
+    tenantId.value = routeQuery.tenantId;
     if (externalId.value) {
+        for (const key in routeQuery) {
+            if (Object.prototype.hasOwnProperty.call(routeQuery, key)) {
+                const element = routeQuery[key];
+                defaultFormData.value[key] = element;
+            }
+        }
         initExternalData();
     }
 });
@@ -113,8 +123,9 @@ const initExternalData = async () => {
                         if (pageStatus.value == 2) {
                             vFormRef.value.disableForm();
                         }
-                        // vFormRef.value.setReadMode();
                     });
+                }else {
+                    vFormRef.value.setFormData(defaultFormData.value);
                 }
 
                 nextTick(() => {
