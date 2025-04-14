@@ -4,7 +4,7 @@
 	<mlSingleList
 		title="多租户"
 		mainEntity="Tenant"
-		fieldsList="tenantName,isDisabled,tenantState,tenantCode"
+		fieldsList="tenantName,isDisabled,tenantState,tenantCode,initializeTemplate"
 		:sortFields="sortFields"
 		fieldName="tenantName"
 		:tableColumn="tableColumn"
@@ -12,6 +12,11 @@
 		queryUrl="/plugins/metaTenant/tenant/listQuery"
 		@changeSwitch="changeSwitch"
 	>
+        <template #beforeSearch>
+            <el-button class="mr-10" type="primary" @click="openTenantTemplate">
+                租户模板
+            </el-button>
+        </template>
 		<template #addButton>
 			<el-button type="primary" @click="openTenantEdit(false)">
 				<el-icon size="14">
@@ -99,11 +104,14 @@
 		</template>
 	</mlSingleList>
 	<TenantEdit ref="tenantEditRef" @refresh="refresh" />
+    <TenantTemplate ref="tenantTemplateRef" />
 </template>
 <script setup>
 import { ref } from "vue";
 import TenantEdit from "./components/Tenant-Edit.vue";
 import { deleteTenantRecord, initializationDatabase } from "@/api/plugins";
+// 租户模板
+import TenantTemplate from "./components/Tenant-Template.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 // 默认排序
 let sortFields = ref([
@@ -139,6 +147,11 @@ let tenantEditRef = ref("");
 const openTenantEdit = (row, target) => {
 	tenantEditRef.value.openDialog(row || {}, target);
 };
+// 打开租户模板
+let tenantTemplateRef = ref("");
+const openTenantTemplate = () => {
+    tenantTemplateRef.value.openTenantTemplate();
+}
 let mlSingleListRef = ref("");
 const refresh = () => {
 	mlSingleListRef.value.getTableList();

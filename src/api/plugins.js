@@ -6,7 +6,7 @@ export function saveTenantRecord(entity, recordId, formModel) {
         params: { entity, recordId },
     })
 }
-    
+
 // 删除租户
 export function deleteTenantRecord(recordId) {
     return http.post('/plugins/metaTenant/tenant/deleteRecord', null, {
@@ -42,3 +42,20 @@ export function getOuterDataByDataModel(params, body) {
     return http.post('/plugins/metaDataWarehouse/outerData/getOuterDataByDataModel', body, { params });
 }
 
+
+// 租户模板列表
+export function getTenantTemplateList(body) {
+    return http.post('/plugins/metaTenant/tenantTemplate/listQuery', body);
+}
+
+// 租户模板保存
+export function tenantTemplateSaveRecord(formData, params) {
+    return http.post('/plugins/metaTenant/tenantTemplate/saveRecord', formData, { params });
+}
+
+// 删除租户模板
+export function tenantTemplateDeleteRecord(recordId) {
+    return http.post('/plugins/metaTenant/tenantTemplate/deleteRecord', null, {
+        params: { recordId }
+    })
+}

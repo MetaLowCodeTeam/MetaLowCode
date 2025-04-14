@@ -99,7 +99,7 @@ import {
     formatFormVirtualField,
     formatQueryByIdParam,
 } from "@/utils/util";
-
+import http from "@/utils/request"
 const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity, queryEntityInfoByName } = useCommonStore();
 
 const props = defineProps({

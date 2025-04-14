@@ -7,6 +7,7 @@
 		<el-header class="props-action-section">
 			<span class="section-title">{{ title }}</span>
 			<div class="section-fr fr">
+                <slot name="beforeSearch"></slot>
 				<mlSearchInput
 					style="margin-right: 10px"
 					v-model="keyword"
