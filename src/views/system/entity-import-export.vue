@@ -62,10 +62,12 @@
 										v-for="item in exportEntityList"
 										:key="item.id"
 									>
-										<el-checkbox
-											:label="item.label"
-											:value="item.name"
-										/>
+                                        <div class="yichu" :title="item.label">
+                                            <el-checkbox
+                                                :label="item.label"
+                                                :value="item.name"
+                                            />
+                                        </div>
 									</el-col>
 								</el-row>
 							</el-checkbox-group>
@@ -367,6 +369,17 @@ defineExpose({
         .cell {
             font-size: 14px;
         }
+    }
+}
+.yichu {
+    :deep(.el-checkbox) {
+        width: 100%;
+    }
+    :deep(.el-checkbox__label){
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%; /* 根据实际需求调整宽度，这里设置为占满父元素宽度，也可以设置固定像素值，如 100px */
     }
 }
 </style>
