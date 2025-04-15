@@ -3,6 +3,7 @@
     <v-form-designer
         ref="dbDesignerRef"
         :designer-config="designerConfig"
+		:banned-widgets="bannedWidgets"
         class="visual-design"
         v-loading="loading"
     >
@@ -62,6 +63,7 @@ let designerConfig = ref({
     toolbarMaxWidth: 300,
     chartLib: true,
 });
+let bannedWidgets = ref(['section']);
 let dbDesignerRef = ref();
 // 是否移动端
 let isMobile = ref(false);
@@ -84,6 +86,14 @@ onMounted(async () => {
 	mlShortcutkeys(() => {
 		window.advancedDevMode = !window.advancedDevMode;
 		designerConfig.value.componentLib = !!window.advancedDevMode;
+
+		if (window.advancedDevMode) {
+			bannedWidgets.value.length = 0
+			dbDesignerRef.value.refreshWidgetPanel()
+		} else {
+			bannedWidgets.value = ['section']
+			dbDesignerRef.value.refreshWidgetPanel()
+		}
 	});
 });
 
