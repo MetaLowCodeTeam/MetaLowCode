@@ -153,7 +153,7 @@ onBeforeMount(() => {
         handle: {
             title: "待我处理",
             value: 1,
-            filterItems: [
+            fixedFilter: [
                 {
                     fieldName: "approver",
                     op: "REF",
@@ -165,7 +165,7 @@ onBeforeMount(() => {
         submit: {
             title: "我提交的",
             value: 2,
-            filterItems: [
+            fixedFilter: [
                 {
                     fieldName: "createdBy",
                     op: "EQ",
@@ -181,7 +181,7 @@ onBeforeMount(() => {
         cc: {
             title: "抄送我的",
             value: 3,
-            filterItems: [
+            fixedFilter: [
                 {
                     fieldName: "ccTo",
                     op: "REF",
@@ -193,7 +193,7 @@ onBeforeMount(() => {
         approved: {
             title: "审批过的",
             value: 4,
-            filterItems: [
+            fixedFilter: [
                 {
                     fieldName: "approvalTaskId",
                     op: "APPROVED",
