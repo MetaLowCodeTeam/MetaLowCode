@@ -23,6 +23,7 @@ import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
 import '@vuemap/vue-amap/dist/style.css'
 // park-icon 样式
 import '@icon-park/vue-next/styles/index.css';
+import eventBus from "@/utils/event-bus";
 import dayjs from "dayjs";
 
 import { registerCustomDetailCmp } from '@/views/custom-page/customDetailEntry.js';
@@ -43,6 +44,7 @@ const app = createApp(App);
 
 app.config.globalProperties.$dayjs = dayjs;
 app.config.globalProperties.$getPinYin = getSimplePinYin;
+app.config.globalProperties.$eventBus = eventBus;
 
 app.use(VueResizeObserver);
 app.use(router);
