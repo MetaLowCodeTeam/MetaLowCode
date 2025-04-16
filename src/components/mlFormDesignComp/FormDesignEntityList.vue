@@ -1,6 +1,4 @@
 <template>
-	<!--  -->
-	
 	<MlCustomSubFormList
 		v-if="entityCode"
         :formEntityId="formEntityId"

@@ -94,7 +94,7 @@
 						size="small"
 						link
 						type="primary"
-						@click="delCick(scope.row)"
+						@click="delClick(scope.row)"
 					>
 						<span class="mr-3">
 							<el-icon>

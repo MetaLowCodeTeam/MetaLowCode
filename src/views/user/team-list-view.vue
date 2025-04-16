@@ -33,7 +33,7 @@
                         size="small"
                         link
                         type="primary"
-                        @click="delCick(scope.row)"
+                        @click="delClick(scope.row)"
                         :disabled="!$TOOL.checkRole('r24-4')"
                     >
                         <span class="mr-3">
@@ -119,7 +119,7 @@ const editClick = (row) => {
 
 let mlSingleListRef = ref();
 // 删除
-const delCick = (row) => {
+const delClick = (row) => {
     ElMessageBox.confirm("是否确认删除?", "提示：", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
