@@ -7,6 +7,10 @@ export function useRefreshDashboard(props, initOption) {
             return;
         }
         let hasField = [];
+        if(!field) {
+            initOption();
+            return;
+        }
         if(typeof field === 'string') {
             hasField.push(field);
         }else {
