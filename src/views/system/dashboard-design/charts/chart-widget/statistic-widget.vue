@@ -36,7 +36,7 @@ import { queryChartData } from "@/api/chart";
 import useChartSourceData from "@/hooks/ChartSourceData";
 const { getDataSourceData } = useChartSourceData();
 const getFormConfig = inject('getFormConfig');
-
+import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
 
 defineOptions({
 	name: "statistic-widget",
@@ -129,6 +129,9 @@ watchEffect(() => {
 	cutField.value = props.field;
 	initOption();
 });
+
+// 监听mitt事件触发
+useRefreshDashboard(props, initOption);
 
 const getData = () => {
     return metricsNum.value;

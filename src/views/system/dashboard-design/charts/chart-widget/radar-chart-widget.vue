@@ -16,7 +16,7 @@ import { getPreviewNum } from "@/utils/util";
 import useChartSourceData from "@/hooks/ChartSourceData";
 const { getDataSourceData } = useChartSourceData();
 const getFormConfig = inject('getFormConfig');
-
+import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
 const props = defineProps({
     field: Object,
     designer: Object,
@@ -177,6 +177,9 @@ const formatData = (options, resData) => {
         };
     });
 }
+
+// 监听mitt事件触发
+useRefreshDashboard(props, initOption);
 
 const getData = () => {
     return option;

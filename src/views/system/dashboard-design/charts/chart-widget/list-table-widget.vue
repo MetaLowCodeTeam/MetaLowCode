@@ -74,7 +74,7 @@ const router = useRouter();
 import useChartSourceData from "@/hooks/ChartSourceData";
 const { getDataSourceData } = useChartSourceData();
 const getFormConfig = inject('getFormConfig');
-
+import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
 defineOptions({
 	name: "listTable-widget",
 });
@@ -283,6 +283,9 @@ const onRowClick = (row, column, event) => {
 const setSelected = () => {
 	props.designer?.setSelected(props.field);
 };
+
+useRefreshDashboard(props, initOption);
+
 
 const getData = () => {
     return tableData.value;

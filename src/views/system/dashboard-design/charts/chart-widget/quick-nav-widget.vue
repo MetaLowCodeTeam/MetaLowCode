@@ -48,6 +48,7 @@ import { ElMessage } from "element-plus";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 import layoutConfigApi from "@/api/layoutConfig.js";
+import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
 const $TOOL = inject("$TOOL");
 defineOptions({
     name: "quickNav-widget",
@@ -194,6 +195,10 @@ const getItemStyle = () => {
     }
     return itemStyle;
 };
+
+// 监听mitt事件触发
+useRefreshDashboard(props, initOption);
+
 
 const getData = () => {
     return myQuickNavConf.value;
