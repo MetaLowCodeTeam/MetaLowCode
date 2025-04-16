@@ -39,12 +39,7 @@
                         <li>有合并单元格的数据请处理过后再上传，否则可能出现表头识别有误</li>
                         <li>系统默认仅识别第一个 SHEET，且会将首行识别为表头</li>
                         <li>
-                            主实体与明细实体请分别导入，更多帮助请
-                            <a
-                                class="ml-a-span"
-                                href="https://melecode.com/docs/mlbook/user/user04.html#%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5"
-                                target="_blank"
-                            >参考文档</a>
+                            主实体与明细实体请分别导入
                         </li>
                     </ul>
                 </div>
