@@ -1,8 +1,26 @@
 <template>
     <div class="user-bar">
+        <el-tooltip class="box-item" effect="light" placement="bottom">
+            <template #content>
+                <div class="collect-box">
+                    {{ collectMenuList }}
+                </div>
+            </template>
+            <div 
+                class="screen panel-item hidden-sm-and-down"
+            >
+                <el-icon>
+                    <Collection />
+                </el-icon>
+            </div>
+        </el-tooltip>
         <!--  -->
-        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom" v-if="$TOOL.checkRole('r6007') && !isDockLayout">
-            <div class="screen panel-item hidden-sm-and-down" @click="setTopMenuDialogIsShow = true">
+        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom">
+            <div 
+                class="screen panel-item hidden-sm-and-down" 
+                @click="setTopMenuDialogIsShow = true"
+                v-if="$TOOL.checkRole('r6007') && !isDockLayout"
+            >
                 <el-icon>
                     <ElIconGrid />
                 </el-icon>
@@ -141,6 +159,7 @@ import { useRouter } from "vue-router";
 import { ElMessageBox, ElLoading } from "element-plus";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import useCommonStore from "@/store/modules/common";
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 import http from "@/utils/request";
 import { $fromNow } from "@/utils/util";
@@ -150,6 +169,8 @@ import setTopMenu from './setTopMenu.vue';
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
+const { getCollectMenuList } = useLayoutConfigStore();
+const { collectMenuList } = storeToRefs(useLayoutConfigStore());
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 const COMMON_CONFIG = inject("COMMON_CONFIG");
@@ -174,6 +195,8 @@ let msgLoading = ref(false);
 // 顶部导航设置弹框
 let setTopMenuDialogIsShow = ref(false);
 const appPath = import.meta.env.VITE_APP_PATH;
+
+
 onMounted(() => {
     var userInfo = $TOOL.data.get("USER_INFO");
     if (!userInfo) {
@@ -184,6 +207,8 @@ onMounted(() => {
     userId.value = userInfo.userId;
     userNameF.value = userName.value.substring(0, 1);
 });
+
+
 
 //个人信息
 const handleUser = (command) => {

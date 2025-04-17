@@ -94,6 +94,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 使用的菜单
     let useMenuList = ref([]);
 
+    // 收藏菜单
+    let collectMenuList = ref([]);
 
 
     // 获取LayoutApi
@@ -383,6 +385,26 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     const getTopNavMenuList = () => {
         return [...topNavMenuList.value]
     }
+    // 添加收藏菜单
+    const addCollectMenu = (menu) => {
+        collectMenuList.value.push(menu);
+    }
+    // 删除收藏菜单
+    const deleteCollectMenu = (menu) => {
+        collectMenuList.value.forEach((el,inx) => {
+            if(el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath){
+                collectMenuList.value.splice(inx,1);
+            }
+        })
+    }
+    // 获取收藏菜单
+    const getCollectMenuList = () => {
+        return [...collectMenuList.value]
+    }
+    // 检测是否收藏菜单
+    const checkCollectMenu = (menu) => {
+        return collectMenuList.value.some(el => el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath);
+    }
     return {
         getNavigationApi,
         navigationList,
@@ -397,6 +419,16 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         getTopNavigation,
         getTopNavMenuList,
         topDefaultUnfold,
+        // 收藏菜单
+        collectMenuList,
+        // 添加收藏菜单
+        addCollectMenu,
+        // 删除收藏菜单
+        deleteCollectMenu,
+        // 获取收藏菜单
+        getCollectMenuList,
+        // 检测是否收藏
+        checkCollectMenu,
     }
 })
 
