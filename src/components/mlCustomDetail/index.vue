@@ -4,9 +4,6 @@
         v-if="comName" 
         :is="comName" 
         ref="DetailRef"
-        :recordDetailFormId="recordDetailFormId"
-        :layoutConfig="layoutConfig"
-        :customDetailDialogTitle="customDetailDialogTitle"
         @updateData="updateData"
     ></component>
 </template>
@@ -22,19 +19,19 @@ const props = defineProps({
 		type: String,
 		default: "default-detail",
 	},
-    // 详情记录表单id
-    recordDetailFormId: {
-		type: String,
-		default: "",
-	},
-    layoutConfig: {
-		type: Object,
-		default: () => {},
-	},
-    customDetailDialogTitle: {
-		type: String,
-		default: "",
-	},
+    // // 详情记录表单id
+    // recordDetailFormId: {
+	// 	type: String,
+	// 	default: "",
+	// },
+    // layoutConfig: {
+	// 	type: Object,
+	// 	default: () => {},
+	// },
+    // customDetailDialogTitle: {
+	// 	type: String,
+	// 	default: "",
+	// },
 });
 
 const emits = defineEmits(['updateData'])
