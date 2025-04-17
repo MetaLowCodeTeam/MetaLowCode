@@ -259,7 +259,7 @@ export default [
                         ElMessage.error('SMTP端口：请输入0-65535的数字');
                         return false;
                     }
-                    if (port <= 0 || port > 65535) {
+                    if (confData[item.key] <= 0 || confData[item.key] > 65535) {
                         item.isError = true;
                         ElMessage.error('SMTP端口：请输入0-65535的数字');
                         return false;
