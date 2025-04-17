@@ -422,6 +422,8 @@ const initData = async () => {
         // 格式化邮箱
         confData.emailOpen = emailSetting?.openStatus;
         confData.sendType = emailSetting?.sendType || 0;
+        confData.smtpUseSSL = emailSetting?.smtpUseSSL || false;
+        confData.smtpUseSTARTTLS = emailSetting?.smtpUseSTARTTLS || false;
         for (const key in emailSetting) {
             if (Object.hasOwnProperty.call(emailSetting, key)) {
                 const element = emailSetting[key];
