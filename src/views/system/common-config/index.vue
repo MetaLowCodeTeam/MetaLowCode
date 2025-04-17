@@ -26,17 +26,19 @@
                                     <div 
                                         v-else-if="(item.type == 'input' || item.type == 'passwordInput')"
                                     >
-                                        <el-input
-                                            :class="{'is-error':item.isError}"
-                                            @focus="item.isError = false"
-                                            v-model="confData[item.key]"
-                                            clearable
-                                            :disabled="isDisabled(card,item) || item.disabled"
-                                            :placeholder="'请输入' + item.label"
-                                            :type="item.type == 'input' ? 'text' : 'password'"
-                                            :show-password="item.type == 'passwordInput'"
-                                            :maxlength="item.maxLength"
-                                        ></el-input>
+                                        <form @submit.prevent>
+                                            <el-input
+                                                :class="{'is-error':item.isError}"
+                                                @focus="item.isError = false"
+                                                v-model="confData[item.key]"
+                                                clearable
+                                                :disabled="isDisabled(card,item) || item.disabled"
+                                                :placeholder="'请输入' + item.label"
+                                                :type="item.type == 'input' ? 'text' : 'password'"
+                                                :show-password="item.type == 'passwordInput'"
+                                                :maxlength="item.maxLength"
+                                            ></el-input>
+                                        </form>
                                         <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
                                     </div>
                                     <!-- 选择框 -->
@@ -677,10 +679,13 @@ const onSubmit = async () => {
     loading.value = true;;
     let res = await updateSysSetting(confData);
     if (res) {
-        ElMessage.success("保存成功");
-        nextTick(() => {
+        ElMessage.success("保存成功，即将自动刷新页面");
+        setTimeout(() => {
             location.reload();
-        });
+        }, 1000);
+        // nextTick(() => {
+        //     location.reload();
+        // });
     } 
     loading.value = false;
 };
