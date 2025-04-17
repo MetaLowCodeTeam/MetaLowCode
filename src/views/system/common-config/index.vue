@@ -422,14 +422,14 @@ const initData = async () => {
         // 格式化邮箱
         confData.emailOpen = emailSetting?.openStatus;
         confData.sendType = emailSetting?.sendType || 0;
-        confData.smtpUseSSL = emailSetting?.smtpUseSSL || false;
-        confData.smtpUseSTARTTLS = emailSetting?.smtpUseSTARTTLS || false;
         for (const key in emailSetting) {
             if (Object.hasOwnProperty.call(emailSetting, key)) {
                 const element = emailSetting[key];
                 confData[key] = element;
             }
         }
+        confData.smtpUseSSL = emailSetting?.smtpUseSSL || false;
+        confData.smtpUseSTARTTLS = emailSetting?.smtpUseSTARTTLS || false;
 
         // 格式化云存储
         confData.cloudStorageOpen = cloudStorageSetting?.openStatus;
@@ -504,7 +504,6 @@ const initData = async () => {
         if(!confData.layoutConfig) {
             confData.layoutConfig = 'header';
         }
-        console.log(confData,'-1--------')
     }
     loading.value = false;
 };
