@@ -29,7 +29,6 @@
                             </el-col>
                         </template>
                         <template v-else>
-                            {{ item.opCom }}
                             <!-- 字段名 -->
                             <el-col :span="10">
                                 <div class="field-one">
