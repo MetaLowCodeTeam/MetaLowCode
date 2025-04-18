@@ -773,7 +773,10 @@ const refreshCustomComponent = () => {
     customComponentRefs.value?.refresh();
 }
 
-
+// 获取表单实例
+const getFormRef = () => {
+    return vFormRef?.value
+}
 
 // 暴露方法给父组件调用
 defineExpose({
@@ -784,7 +787,8 @@ defineExpose({
     toMoreAction,
     toRevisionHistory,
     closeDialog,
-    refreshCustomComponent
+    refreshCustomComponent,
+    getFormRef
 });
 </script>
 

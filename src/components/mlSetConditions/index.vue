@@ -201,49 +201,6 @@
                                         <el-option label="否" value="0" />
                                     </el-select>
                                 </div>
-                                <!-- 用户下拉框 -->
-                                <div v-else-if="item.opCom =='userSelect'">
-                                    <el-select
-                                        size="default"
-                                        v-model="item.value"
-                                        class="w-100"
-                                        :class="{'is-error':item.isError}"
-                                        @focus="clearError(item)"
-                                        placeholder=" "
-                                        filterable
-                                        no-match-text="无匹配文本"
-                                        clearable
-                                    >
-                                        <el-option
-                                            v-for="(userOp,userInx) of userList"
-                                            :label="userOp.userName"
-                                            :value="userOp.userId"
-                                            :key="userInx"
-                                        />
-                                    </el-select>
-                                </div>
-
-                                <!-- 部门下拉框 -->
-                                <div v-else-if="item.opCom =='departmentSelect'">
-                                    <el-select
-                                        size="default"
-                                        v-model="item.value"
-                                        class="w-100"
-                                        :class="{'is-error':item.isError}"
-                                        @focus="clearError(item)"
-                                        placeholder=" "
-                                        filterable
-                                        no-match-text="无匹配文本"
-                                        clearable
-                                    >
-                                        <el-option
-                                            v-for="(departmentOp,departmentInx) of departmentList"
-                                            :label="departmentOp.departmentName"
-                                            :value="departmentOp.departmentId"
-                                            :key="departmentInx"
-                                        />
-                                    </el-select>
-                                </div>
                                 <!-- 类型为Tag 和 option的 -->
                                 <div v-else-if="item.opCom =='optionData'">
                                     <el-select
@@ -621,49 +578,6 @@
                                         <el-option label="否" value="0" />
                                     </el-select>
                                 </div>
-                                <!-- 用户下拉框 -->
-                                <div v-else-if="item.opCom =='userSelect'">
-                                    <el-select
-                                        size="default"
-                                        v-model="item.value"
-                                        class="w-100"
-                                        :class="{'is-error':item.isError}"
-                                        @focus="clearError(item)"
-                                        placeholder=" "
-                                        filterable
-                                        no-match-text="无匹配文本"
-                                        clearable
-                                    >
-                                        <el-option
-                                            v-for="(userOp,userInx) of userList"
-                                            :label="userOp.userName"
-                                            :value="userOp.userId"
-                                            :key="userInx"
-                                        />
-                                    </el-select>
-                                </div>
-
-                                <!-- 部门下拉框 -->
-                                <div v-else-if="item.opCom =='departmentSelect'">
-                                    <el-select
-                                        size="default"
-                                        v-model="item.value"
-                                        class="w-100"
-                                        :class="{'is-error':item.isError}"
-                                        @focus="clearError(item)"
-                                        placeholder=" "
-                                        filterable
-                                        no-match-text="无匹配文本"
-                                        clearable
-                                    >
-                                        <el-option
-                                            v-for="(departmentOp,departmentInx) of departmentList"
-                                            :label="departmentOp.departmentName"
-                                            :value="departmentOp.departmentId"
-                                            :key="departmentInx"
-                                        />
-                                    </el-select>
-                                </div>
                                 <!-- 类型为Tag 和 option的 -->
                                 <div v-else-if="item.opCom =='optionData'">
                                     <el-select
@@ -814,10 +728,6 @@ export default {
             maxConditionsLength: 99,
             // 无效高级表达式
             errorEquation: false,
-            // 所有用户
-            userList: [],
-            // 所有部门
-            departmentList: [],
             conditionsConfig: {},
             // 格式化的实体名称
             formatEntityName: "",
@@ -884,10 +794,6 @@ export default {
                 entity,
             };
             let res = await this.$API.common.getFieldListOfFilter(param);
-            let resUser = await this.$API.common.getUser(param);
-            let resDepartment = await this.$API.common.getDepartment(param);
-            this.userList = resUser ? resUser.data || [] : [];
-            this.departmentList = resDepartment ? resDepartment.data || [] : [];
             if (res) {
                 let list = res.data || [];
                 this.fieldList = list.map((el) => {
