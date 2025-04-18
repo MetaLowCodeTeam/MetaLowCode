@@ -18,6 +18,12 @@
 			<el-button @click="test()">在打开按钮前</el-button>
 		</template>
 	</EntityList>
+	<el-dialog v-model="dialogVisible">
+		<div>
+			<mlSelectUser v-model="list" multiple clearable :filter="filter" />
+		</div>
+        <div><el-button @click="save()">测试</el-button></div>
+	</el-dialog>
 </template>
 
 <script setup>
@@ -46,10 +52,38 @@ let listParamConf = ref({
 	showMoreBtn: true,
 });
 
+let dialogVisible = ref(false);
+let list = ref([
+    {
+        name: "张三",
+        id: "0000021-1a7fc78f071e400fb780629fc137e22111"
+    },
+]);
+
 let paginationConf = ref({});
 
+let filter = ref({
+    User: {
+        filter: null,
+        filterEasySql: 'userName like "%006%"',
+    },
+    Role: {
+        filter: null,
+        filterEasySql: 'roleName like "%Role%"',
+    },
+    Department: {
+        filter: null,
+        filterEasySql: 'departmentName like "%g%"',
+    },
+    Team: {
+        filter: null,
+        filterEasySql: 'teamName like "%1%"',
+    },
+})
 
 const test = () => {
+    dialogVisible.value = true;
+    return
 	// 参数
 	let param = {
 		// [编辑必传]你要编辑的行ID
@@ -75,5 +109,9 @@ const test = () => {
 	EntityListRefs.value?.editToOtherEntity(param);
 	// EntityListRefs.value?.toDetail();
 };
+
+const save = () => {
+    console.log(list.value,'list')
+}
 </script>
 <style lang="scss" scoped></style>

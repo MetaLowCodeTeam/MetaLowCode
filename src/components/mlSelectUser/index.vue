@@ -110,7 +110,27 @@ const props = defineProps({
     collapseTagsTooltip: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     type: { type: String, default: "all" },
+    // 过滤条件
+    filter: { 
+        type: Object, 
+            default: {
+            User: {
+                // 过滤对象，同listQuery fitler
+                filter: null,
+                // 过滤SQL， 同listQuery fitlerSql
+                filterEasySql: null,
+                // 过滤示例
+                // filterEasySql: 'userName like "%006%"',
+            },
+            Role: {},
+            Department: {},
+            Team: {},
+        } 
+    }
 });
+
+
+
 const emit = defineEmits(["change", "update:modelValue"]);
 // 加载状态
 let loading = ref(false);
@@ -198,7 +218,7 @@ let getData = async () => {
         : [];
     tabData.value = [];
     // 获取当前tab接口
-    let res = await api.common["get" + cutTabCode.value](param);
+    let res = await api.common["get" + cutTabCode.value](param, props.filter[cutTabCode.value]);
     if (res) {
         tabData.value = res.data.map((el) => {
             el.isActive = false;

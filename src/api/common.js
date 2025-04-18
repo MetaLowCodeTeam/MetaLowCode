@@ -1,20 +1,20 @@
 import http from "@/utils/request"
 export default {
     // 获取角色信息
-    getRole: async (data) => {
-        return await http.get("/role/listRole", data);
+    getRole: async (params, bodyData = {}) => {
+        return await http.post("/role/listRole", bodyData, { params });
     },
     // 获取用户信息
-    getUser: async (data) => {
-        return await http.get("/user/listUser", data);
+    getUser: async (params, bodyData = {}) => {
+        return await http.post("/user/listUser", bodyData, { params });
     },
     // 获取部门信息
-    getDepartment: async (data) => {
-        return await http.get("/department/listDepartment", data);
+    getDepartment: async (params, bodyData = {}) => {
+        return await http.post("/department/listDepartment", bodyData, { params });
     },
     // 获取团队信息
-    getTeam: async (data) => {
-        return await http.get("/team/listTeam", data);
+    getTeam: async (params, bodyData = {}) => {
+        return await http.post("/team/listTeam", bodyData, { params });
     },
     // 查询条件专用获取字段接口
     getFieldListOfFilter: async (data) => {

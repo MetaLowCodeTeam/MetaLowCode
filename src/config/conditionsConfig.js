@@ -1,4 +1,3 @@
-import { forIn } from "lodash";
 
 export default {
     // 所有类型
@@ -31,12 +30,12 @@ export default {
         FUM: "未来..月",
         FUY: "未来..年",
         SFU: "本人",
-        SFB: "本部门",
+        SFB: "本部门",   
         SFD: "本部门及子部门",
         SFT: "所在团队",
         YTA: "昨天",
         TDA: "今天",
-        TTA: "明天",
+        TTA: "明天", 
         CUW: "本周",
         CUM: "本月",
         CUQ: "本季度",
@@ -109,18 +108,6 @@ export default {
         booleanSelect: {
             type: ["Boolean"],
             op: ["EQ"],
-        },
-        // 用户下拉框
-        userSelect: {
-            type: ["Reference", "ReferenceList"],
-            referTo: ["User"],
-            op: ["LK", "NLK"],
-        },
-        // 部门下拉框
-        departmentSelect: {
-            type: ["Reference", "ReferenceList"],
-            referTo: ["Department"],
-            op: ["LK", "NLK"],
         },
         // option下拉框
         optionData: {
