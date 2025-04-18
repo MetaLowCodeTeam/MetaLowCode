@@ -17,7 +17,7 @@
         </ul>
     </div>
 
-    <transition name="el-zoom-in-top">
+    <transition name="el-zoom-in-top" v-loading="collectLoading">
         <ul
             v-if="contextMenuVisible"
             :style="{left:left+'px',top:top+'px'}"
@@ -91,9 +91,8 @@ const { removeIframeList,refreshIframe } = iframeStore;
 const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
 // 收藏菜单 、 删除收藏菜单 、 获取收藏菜单
 const { 
-    addCollectMenu,
-    deleteCollectMenu,
-    checkCollectMenu
+    checkCollectMenu,
+    setCollectMenuList
 } = useLayoutConfigStore();
 const appPath = import.meta.env.VITE_APP_PATH;
 export default {
@@ -110,6 +109,10 @@ export default {
             currentNavigationId: chosenNavigationId.value,
             // 检测是否收藏
             isCollect: false,
+            // 收藏ID
+            collectRecordId: null,
+            // 收藏loading
+            collectLoading: false,
         };
     },
     props: {
@@ -206,15 +209,32 @@ export default {
             return formateMenu;
         },
         // 收藏
-        collectTag() {
+        async collectTag() {
             if(this.isCollect){
-                deleteCollectMenu(this.formateMenu())
-                this.$message.success('已取消收藏')
+                this.collectLoading = true;
+                let res = await this.$API.layoutConfig.deleteFavoritesConfig(this.collectRecordId);
+                if(res && res.code == 200) {
+                    this.$message.success('已取消收藏')
+                    setCollectMenuList(res.data)
+                    this.contextMenuVisible = false;
+                }
+                this.collectLoading = false;
             }else {
-                addCollectMenu(this.formateMenu())
-                this.$message.success('收藏成功')
+                this.collectLoading = true;
+                let res = await this.$API.layoutConfig.saveFavoritesConfig(
+                    null,
+                    "FAVORITES",
+                    {
+                        config: JSON.stringify(this.formateMenu()),
+                    },
+                );
+                if(res && res.code == 200) {
+                    this.$message.success('收藏成功')
+                    setCollectMenuList(res.data)
+                    this.contextMenuVisible = false;
+                }
+                this.collectLoading = false;
             }
-            this.isCollect = !this.isCollect;
         },
         //查找树
         treeFind(tree, func) {
@@ -274,8 +294,10 @@ export default {
         openContextMenu(e, tag) {
             this.contextMenuItem = tag;
             this.contextMenuVisible = true;
+            // 获取收藏ID
+            this.collectRecordId = checkCollectMenu(this.formateMenu());
             // 检测是否收藏
-            this.isCollect = checkCollectMenu(this.formateMenu());
+            this.isCollect = this.collectRecordId ? true : false;
             this.left = e.clientX + 1;
             this.top = e.clientY + 1;
 

@@ -169,11 +169,10 @@ import setTopMenu from './setTopMenu.vue';
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
-const { getCollectMenuList } = useLayoutConfigStore();
+const { setCollectMenuList } = useLayoutConfigStore();
 const { collectMenuList } = storeToRefs(useLayoutConfigStore());
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
-const COMMON_CONFIG = inject("COMMON_CONFIG");
 
 const props = defineProps({
     isDockLayout: {

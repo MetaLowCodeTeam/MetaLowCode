@@ -36,6 +36,16 @@ export default {
     // 获取导航数据
     getNavigationById: async (layoutConfigId) => {
         return await http.get("/layout/getNavigationById", { layoutConfigId });
+    },
+    // 添加收藏
+    saveFavoritesConfig: async (recordId, applyType, formModel) => {
+        return http.post('/layout/saveFavoritesConfig', formModel, {
+            params: { recordId, applyType },
+        })
+    },
+    // 删除收藏
+    deleteFavoritesConfig: async (recordId) => {
+        return http.post('/layout/deleteFavoritesConfig', {}, { params: { recordId } })
     }
 }
 

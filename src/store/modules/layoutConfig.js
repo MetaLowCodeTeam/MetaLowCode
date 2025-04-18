@@ -111,6 +111,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             setChosenNavigationId(navRes.data.chosenNavigationId);
             setTopNavigation(navRes.data.topNavigation || {})
             setDefaultMenuList();
+            setCollectMenuList(navRes.data.favorites || [])
         }
     }
 
@@ -385,26 +386,22 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     const getTopNavMenuList = () => {
         return [...topNavMenuList.value]
     }
-    // 添加收藏菜单
-    const addCollectMenu = (menu) => {
-        collectMenuList.value.push(menu);
-    }
-    // 删除收藏菜单
-    const deleteCollectMenu = (menu) => {
-        collectMenuList.value.forEach((el,inx) => {
-            if(el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath){
-                collectMenuList.value.splice(inx,1);
+    // 设置收藏菜单
+    const setCollectMenuList = (list = []) => {
+        collectMenuList.value = [];
+        list.forEach(el => {
+            if(el.config) {
+                let item = JSON.parse(el.config);
+                item.recordId = el.layoutConfigId;
+                collectMenuList.value.push(item)
             }
         })
     }
-    // 获取收藏菜单
-    const getCollectMenuList = () => {
-        return [...collectMenuList.value]
-    }
     // 检测是否收藏菜单
     const checkCollectMenu = (menu) => {
-        return collectMenuList.value.some(el => el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath);
-    }
+        const foundMenu = collectMenuList.value.find(el => el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath);
+        return foundMenu ? foundMenu.recordId : null;
+    } 
     return {
         getNavigationApi,
         navigationList,
@@ -421,12 +418,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         topDefaultUnfold,
         // 收藏菜单
         collectMenuList,
-        // 添加收藏菜单
-        addCollectMenu,
-        // 删除收藏菜单
-        deleteCollectMenu,
-        // 获取收藏菜单
-        getCollectMenuList,
+        // 设置收藏菜单
+        setCollectMenuList,
         // 检测是否收藏
         checkCollectMenu,
     }
