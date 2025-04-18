@@ -778,6 +778,10 @@ const getFormRef = () => {
     return vFormRef?.value
 }
 
+const getGlobalDsv = () => {
+    return globalDsv.value
+}
+
 // 暴露方法给父组件调用
 defineExpose({
 	openDialog,
@@ -788,7 +792,8 @@ defineExpose({
     toRevisionHistory,
     closeDialog,
     refreshCustomComponent,
-    getFormRef
+    getFormRef,
+    getGlobalDsv
 });
 </script>
 
