@@ -2,17 +2,17 @@
     <!-- 列表详情 -->
     <mlListDetails ref="mlListDetailsRefs" @tabChange="tabChange">
         <template #tab>
-            <TabMemberList
+            <!-- <TabMemberList
                 v-model="memberList"
                 @delMembers="changeMembers"
                 :id="detailId"
                 :isRole="detailEntity == 'User'"
                 :isDisabled="!checkRole(4)"
-            />
+            /> -->
         </template>
         <template #operate="{row}">
             <el-row class="action-group">
-                <el-col :span="24">
+                <el-col :span="24" v-if="!isJobPosition">
                     <AddMembers
                         @addMembers="changeMembers"
                         :paramId="detailId"
@@ -75,6 +75,7 @@ const props = defineProps({
     idFieldName: { type: String, default: "" },
     nameFieldName: { type: String, default: "" },
     disableWidgets: { type: Array, default: () => [] },
+    isJobPosition: { type: Boolean, default: false },
 });
 const emits = defineEmits(["onRefresh"]);
 // 详情组件

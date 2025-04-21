@@ -31,23 +31,6 @@ export default [
                 isError: false,
             },
             {
-                label: "pc首页地址",
-                subLabel: "请确保配置的首页地址所有用户都可以直接访问，示例：dashboard （/web/是通过配置读取，无需增加）",
-                key: "pcIndexURL",
-                type: "input",
-            },
-            {
-                label: "mobile首页地址",
-                subLabel: "请确保配置的首页地址所有用户都可以直接访问，示例：staging （/mobile/是通过配置读取，无需增加）",
-                key: "mobileIndexURL",
-                type: "input",
-            },
-            {
-                label: "是否开启岗位模块",
-                key: "openJobPosition",
-                type: "checkbox",
-            },
-            {
                 label: "主色调",
                 key: "themeColor",
                 type: "picker",
@@ -67,6 +50,11 @@ export default [
                 label: "版本号",
                 key: "dbVersion",
                 type: "input",
+            },
+            {
+                label: "是否开启岗位模块",
+                key: "openJobPosition",
+                type: "switch",
             },
             {
                 label: "外置文件预览服务",
@@ -379,6 +367,7 @@ export default [
                 key: "homeDir",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "回调域名",
@@ -386,6 +375,7 @@ export default [
                 key: "homeURL",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "用户默认角色",
@@ -435,6 +425,7 @@ export default [
                 key: "wxWorkHomeDir",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "回调域名",
@@ -442,6 +433,7 @@ export default [
                 key: "homeURL",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "用户默认角色",

@@ -20,24 +20,26 @@
                                         <span
                                             v-if="item.keyFrom"
                                         >{{ confData[item.keyFrom] ? confData[item.keyFrom][item.key] : '--'}}</span>
-                                        <span v-else>{{ confData[item.key] }}</span>v
+                                        <span v-else>{{ confData[item.key] }}</span>
                                     </div>
                                     <!-- 输入框 -->
                                     <div 
                                         v-else-if="(item.type == 'input' || item.type == 'passwordInput')"
                                     >
                                         <form @submit.prevent>
-                                            <el-input
-                                                :class="{'is-error':item.isError}"
-                                                @focus="item.isError = false"
-                                                v-model="confData[item.key]"
-                                                clearable
-                                                :disabled="isDisabled(card,item) || item.disabled"
-                                                :placeholder="'请输入' + item.label"
-                                                :type="item.type == 'input' ? 'text' : 'password'"
-                                                :show-password="item.type == 'passwordInput'"
-                                                :maxlength="item.maxLength"
-                                            ></el-input>
+                                            <div @click="item.needCopy ? copyValue(item) : ''">
+                                                <el-input
+                                                    :class="{'is-error':item.isError}"
+                                                    @focus="item.isError = false"
+                                                    v-model="confData[item.key]"
+                                                    clearable
+                                                    :disabled="isDisabled(card,item) || item.disabled"
+                                                    :placeholder="'请输入' + item.label"
+                                                    :type="item.type == 'input' ? 'text' : 'password'"
+                                                    :show-password="item.type == 'passwordInput'"
+                                                    :maxlength="item.maxLength"
+                                                ></el-input>
+                                            </div>
                                         </form>
                                         <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
                                     </div>
@@ -491,6 +493,9 @@ const initData = async () => {
             confData.homeDir += "/" + tenantId;
             confData.wxWorkHomeDir += "/" + tenantId;
         }
+        // 正则替换首页地址//
+        confData.homeDir = confData.homeDir.replace(/\/\//g, '/');
+        confData.wxWorkHomeDir = confData.wxWorkHomeDir.replace(/\/\//g, '/');
         // 备份周期
         confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
@@ -947,6 +952,24 @@ const openAutoBackup = () => {
         return resolve(true)
     })
 }
+
+// 复制值
+const copyValue = (item) => {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(confData[item.key]);
+        ElMessage.success("复制成功");
+    } else if (document.execCommand) {
+        const textarea = document.createElement('textarea');
+        textarea.value = confData[item.key];
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        ElMessage.success("复制成功");
+    } else {
+        ElMessage.warning("您的浏览器不支持自动复制功能，请手动连续双击全选复制。");
+    }
+};
 
 // 页签显示
 const showTab = (code) => {

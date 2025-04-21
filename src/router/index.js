@@ -54,12 +54,6 @@ router.beforeEach(async (to, from, next) => {
         next();
         return false;
     }
-    if (to.path == '/') {
-        next({
-            path: appPath + "dashboard"
-        });
-        return false;
-    }
     if (routes.findIndex(r => r.path === to.path) >= 0) {
         next();
         return false;

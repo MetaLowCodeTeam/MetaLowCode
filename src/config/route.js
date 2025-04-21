@@ -196,6 +196,12 @@ const routes = [
                         component: 'user/team-list-view',
                         meta: { title: '团队管理', icon: 'el-icon-suitcase-line', role: 'r24-1', entityName: "Team" }
                     },
+                    {
+                        path: appPath + "job-position-list",
+                        name: 'JobPositionList',
+                        component: 'user/job-position-list-view',
+                        meta: { title: '岗位管理', icon: 'el-icon-suitcase-line', role: 'r90-1', entityName: "JobPosition" }
+                    },
                 ]
             },
             // 多租户
