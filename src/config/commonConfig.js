@@ -31,6 +31,23 @@ export default [
                 isError: false,
             },
             {
+                label: "pc首页地址",
+                subLabel: "请确保配置的首页地址所有用户都可以直接访问，示例：dashboard （/web/是通过配置读取，无需增加）",
+                key: "pcIndexURL",
+                type: "input",
+            },
+            {
+                label: "mobile首页地址",
+                subLabel: "请确保配置的首页地址所有用户都可以直接访问，示例：staging （/mobile/是通过配置读取，无需增加）",
+                key: "mobileIndexURL",
+                type: "input",
+            },
+            {
+                label: "是否开启岗位模块",
+                key: "openJobPosition",
+                type: "checkbox",
+            },
+            {
                 label: "主色调",
                 key: "themeColor",
                 type: "picker",

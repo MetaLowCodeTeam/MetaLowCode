@@ -20,8 +20,8 @@
                         </el-tooltip>
                     </div>
                     <template v-if="collectMenuList.length > 0">
-                        <div v-for="(item,inx) in collectMenuList" :key="inx">
-                            <div class="collect-item" @click="goCollectMenu(item)" :class="{'is-active': currenFullPath == item.fullPath}">
+                        <div v-for="(item,inx) in collectMenuList" :key="inx" @click="goCollectMenu(item)">
+                            <div class="collect-item" :class="{'is-active': currenFullPath == item.fullPath}">
                                 {{ item.alias || item.title }}
                                 <div class="collect-item-icon fr">
                                     <span class="edit-span" @click.stop="editCollectMenu(item)">
