@@ -1,11 +1,45 @@
 <template>
     <div class="user-bar">
-        <el-tooltip class="box-item" effect="light" placement="bottom">
+        <el-tooltip 
+            class="box-item" 
+            effect="light" 
+            placement="bottom"
+        >
+            <!-- :visible="collectMenuTooltipVisible" -->
             <template #content>
                 <div class="collect-box">
-                    {{ collectMenuList }}
+                    <div class="collect-title">
+                        收藏菜单
+                        <el-tooltip placement="right">
+                            <template #content>
+                                跨导航跳转会刷新
+                            </template>
+                            <el-icon class="icon-top-1">
+                                <WarningFilled />
+                            </el-icon>
+                        </el-tooltip>
+                    </div>
+                    <template v-if="collectMenuList.length > 0">
+                        <div v-for="(item,inx) in collectMenuList" :key="inx">
+                            <div class="collect-item" @click="goCollectMenu(item)" :class="{'is-active': currenFullPath == item.fullPath}">
+                                {{ item.alias || item.title }}
+                                <div class="collect-item-icon fr">
+                                    <span class="edit-span" @click.stop="editCollectMenu(item)">
+                                        <el-icon><EditPen /></el-icon>
+                                    </span>
+                                    <span class="close-span" @click.stop="deleteCollectMenu(item)">
+                                        <el-icon><Close /></el-icon>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <div v-else class="collect-item">
+                        暂无收藏
+                    </div>
                 </div>
             </template>
+            <!-- @click="collectMenuTooltipVisible = !collectMenuTooltipVisible" -->
             <div 
                 class="screen panel-item hidden-sm-and-down"
             >
@@ -152,11 +186,11 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, ref, watch } from "vue";
 import search from "./search.vue";
 import tasks from "./tasks.vue";
 import { useRouter } from "vue-router";
-import { ElMessageBox, ElLoading } from "element-plus";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import useCommonStore from "@/store/modules/common";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
@@ -170,9 +204,10 @@ const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { setNewMsgNum } = useCheckStatusStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { setCollectMenuList } = useLayoutConfigStore();
-const { collectMenuList } = storeToRefs(useLayoutConfigStore());
+const { collectMenuList, chosenNavigationId } = storeToRefs(useLayoutConfigStore());
 const $TOOL = inject("$TOOL");
-const $ElMessage = inject("$ElMessage");
+const $API = inject("$API");
+
 
 const props = defineProps({
     isDockLayout: {
@@ -182,6 +217,13 @@ const props = defineProps({
 });
 
 const router = useRouter();
+
+// 当前路由
+const currenFullPath = ref("");
+watch(router.currentRoute, (newVal, oldVal) => {
+    currenFullPath.value = newVal.fullPath;
+})
+
 let userName = ref("");
 let userId = ref("");
 let userNameF = ref("");
@@ -205,6 +247,7 @@ onMounted(() => {
     userName.value = userInfo.userName;
     userId.value = userInfo.userId;
     userNameF.value = userName.value.substring(0, 1);
+    currenFullPath.value = router.currentRoute.value.fullPath;
 });
 
 
@@ -318,11 +361,11 @@ const msgClick = (item, inx) => {
             if($TOOL.checkRole('r52-1') && $TOOL.checkRole('r6017')) {
                 router.push(appPath + 'dashboard-list');
             }else {
-                $ElMessage.error("没有权限");
+                ElMessage.error("没有权限");
             }
         }else {
             if (filterEntity.length < 1) {
-                $ElMessage.error("该实体已删除");
+                ElMessage.error("该实体已删除");
             } else {
                 msg.value = false;
                 detailRefs.value.openDialog(item.relatedRecord.id);
@@ -383,6 +426,97 @@ const tasksFn = () => {
 /**
  * 
  */
+
+// let collectMenuTooltipVisible = ref(false);
+
+// 修改收藏菜单别名
+const editCollectMenu = (item) => {
+    ElMessageBox.prompt('请输入菜单名', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        beforeClose: async (action, instance, done) => {
+            if(action === 'confirm'){
+                instance.confirmButtonLoading = true;
+                let formData = { ...item };
+                formData.alias = instance.inputValue;
+                let res = await $API.layoutConfig.saveFavoritesConfig(
+                    item.recordId,
+                    "FAVORITES",
+                    {
+                        config: JSON.stringify(formData),
+                    },
+                );
+                if(res && res.code == 200) {
+                    setCollectMenuList(res.data);
+                    instance.confirmButtonLoading = false;
+                    ElMessage.success('修改成功');
+                    done();
+                }else {
+                    instance.confirmButtonLoading = false;
+                    ElMessage.error('修改失败');
+                }
+            }else {
+                // 如果存在loading状态不允许关闭
+                if(instance.confirmButtonLoading){
+                    return
+                }
+                done();
+            }
+        }
+    })
+    .then(() => {})
+    .catch(() => {})
+};
+
+
+// 删除收藏菜单
+const deleteCollectMenu = (item) => {
+    ElMessageBox.confirm('确定要删除吗？', '提示', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: async (action, instance, done) => {
+            if (action === 'confirm') {
+                instance.confirmButtonLoading = true;
+                let res = await $API.layoutConfig.deleteFavoritesConfig(item.recordId);
+                if(res && res.code == 200) {
+                    setCollectMenuList(res.data);
+                    instance.confirmButtonLoading = false;
+                    ElMessage.success('删除成功');
+                    done();
+                }else {
+                    instance.confirmButtonLoading = false;
+                    ElMessage.error('删除失败');
+                }
+            }else {
+                // 如果存在loading状态不允许关闭
+                if(instance.confirmButtonLoading){
+                    return
+                }
+                done();
+            }
+        }
+    })
+    .then(() => {})
+    .catch(() => {})
+};
+
+// 菜单跳转
+const goCollectMenu = async (item) => {
+    // 是同一个导航，直接跳转
+    if(item.navigationId == chosenNavigationId.value){
+        router.push(item.fullPath);
+    }else {
+        let res = await $API.layoutConfig.saveUserLayoutCache(
+            "NAV",
+            item.navigationId
+        );
+        if (res) {
+            window.location.href = "/";
+            localStorage.setItem('forcefullyJump', item.fullPath);
+        }
+    }
+};
 
 </script>
 
@@ -477,4 +611,66 @@ const tasksFn = () => {
         align-items: center;
     }
 }
+
+.collect-box {
+    font-size: 14px;
+    .collect-title{
+        font-weight: bold;
+        margin: 5px 0;
+        position: relative;
+        .collect-close {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            &:hover {
+                background-color: #999;
+                color: #fff;
+            }
+        }
+    }
+    div:not(:first-child) {
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+        &:hover {
+            background-color: #F0F2F5;
+            cursor: pointer;
+        }
+    }
+    div:last-child {
+        border-bottom: none;
+    }
+    .collect-item {
+        box-sizing: border-box;
+        padding: 0 10px;
+        min-width: 180px;
+        &.is-active {
+            color: var(--el-color-primary);
+        }
+        .collect-item-icon {
+            color: #303030;
+            display: flex;
+            .edit-span,
+            .close-span {
+                display: flex;
+                cursor: pointer;
+                box-sizing: border-box;
+                width: 24px;
+                height: 24px;
+                justify-content: center;
+                align-items: center;
+                border-radius: 4px;
+                position: relative;
+                top: -1px;
+                &:hover {
+                    background-color: #999;
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
+
 </style>
