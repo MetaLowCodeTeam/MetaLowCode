@@ -21,6 +21,12 @@
 	background: #f5f7fa;
 	color: #909399;
 	cursor: pointer;
+    &.small {
+        height: 24px;
+    }
+    &.large {
+        height: 40px;
+    }
 }
 .empty-box {
 	padding: 10px;
@@ -87,7 +93,7 @@
 				</div>
 			</template>
 		</el-select>
-		<div class="remote-icon-box" @click="onAppendButtonClick">
+		<div class="remote-icon-box" :class="[size]" @click="onAppendButtonClick">
 			<el-icon class="icon-top-1">
 				<Search />
 			</el-icon>
@@ -130,6 +136,10 @@ const props = defineProps({
     disabled: {
         type: Boolean,
         default: false,
+    },
+    size: {
+        type: String,
+        default: "default",
     },
     // setFilter查询条件
     extraFilter: String, // 查询条件

@@ -56,6 +56,7 @@
                 :disabled="field.options.disabled"
                 :fieldModel="fieldModel"
                 :extraFilter="searchFilter"
+                :size="field.options.size"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
                 @onFocus="onReferRemoteFocus"
