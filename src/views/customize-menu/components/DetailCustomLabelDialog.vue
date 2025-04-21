@@ -75,6 +75,7 @@ const openDialog = () => {
 			isCustomLabel: true,
 		};
 	});
+    filterEasySql.value = "";
 };
 
 const confirm = () => {

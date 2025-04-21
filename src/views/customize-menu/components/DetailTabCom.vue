@@ -263,14 +263,12 @@ const initData = async () => {
     tableData.value = [];
     tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
     defaultShowType.value = "table";
-    let filterTabs = tabs.value.filter((el,inx) => {
-        return el.entityName + '-' + props.cutTabIndex == props.cutTab;
-    });
-    if (filterTabs[0]) {
-        entityCode.value = filterTabs[0].entityCode;
-        entityName.value = filterTabs[0].entityName;
-        fieldName.value = filterTabs[0].fieldName;
-        curtTab.value = filterTabs[0];
+    let filterTabs = tabs.value[props.cutTabIndex - 1];
+    if (filterTabs) {
+        entityCode.value = filterTabs.entityCode;
+        entityName.value = filterTabs.entityName;
+        fieldName.value = filterTabs.fieldName;
+        curtTab.value = filterTabs;
     }
     loading.value = true;
     let res = await $API.layoutConfig.getLayoutList(entityName.value);
