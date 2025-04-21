@@ -11,6 +11,7 @@ export default {
         const params = {
             row: this.row,
             column: this.column,
+            isMobile: false,
         }
         return this.renderFn(h, params)
     }
