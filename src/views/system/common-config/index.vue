@@ -542,45 +542,37 @@ const onSubmit = async () => {
     if (!checkOnSave()) {
         return;
     }
-    // 如果短信是开启的
-    if (confData.smsOpen) {
-        for (const key in confData.smsSetting) {
-            if (Object.hasOwnProperty.call(confData.smsSetting, key)) {
-                confData.smsSetting[key] = confData["sms" + key];
-            }
+    // 赋值短信对象
+    for (const key in confData.smsSetting) {
+        if (Object.hasOwnProperty.call(confData.smsSetting, key)) {
+            confData.smsSetting[key] = confData["sms" + key];
         }
     }
     // 重新赋值短信开关
     confData.smsSetting.openStatus = confData.smsOpen;
 
-    // 如果邮箱是开启的
-    if (confData.emailOpen) {
-        for (const key in confData.emailSetting) {
-            if (Object.hasOwnProperty.call(confData.emailSetting, key)) {
-                confData.emailSetting[key] = confData[key];
-            }
+    // 赋值邮箱对象
+    for (const key in confData.emailSetting) {
+        if (Object.hasOwnProperty.call(confData.emailSetting, key)) {
+            confData.emailSetting[key] = confData[key];
         }
     }
     // 重新赋值邮箱开关
     confData.emailSetting.openStatus = confData.emailOpen;
 
-    // 如果云存储是开启的
-    if (confData.cloudStorageOpen) {
-        for (const key in confData.cloudStorageSetting) {
-            if (Object.hasOwnProperty.call(confData.cloudStorageSetting, key)) {
-                confData.cloudStorageSetting[key] = confData[key];
-            }
+    // 赋值云存储对象
+    for (const key in confData.cloudStorageSetting) {
+        if (Object.hasOwnProperty.call(confData.cloudStorageSetting, key)) {
+            confData.cloudStorageSetting[key] = confData[key];
         }
     }
     // 重新赋值云存储开关
     confData.cloudStorageSetting.openStatus = confData.cloudStorageOpen;
 
-    // 如果钉钉是开启的
-    if (confData.dingTalkOpen) {
-        for (const key in confData.dingTalkSetting) {
-            if (Object.hasOwnProperty.call(confData.dingTalkSetting, key)) {
-                confData.dingTalkSetting[key] = confData[key];
-            }
+    // 赋值钉钉对象
+    for (const key in confData.dingTalkSetting) {
+        if (Object.hasOwnProperty.call(confData.dingTalkSetting, key)) {
+            confData.dingTalkSetting[key] = confData[key];
         }
     }
     // 重新赋值钉钉集成开关
@@ -588,15 +580,14 @@ const onSubmit = async () => {
     if(!confData.wxWorkSetting){
         confData.wxWorkSetting = {};
     }
-    // 如果企业微信集成是开启的
-    if (confData.wxWorkOpen) {
-        for (const key in confData.wxWorkSetting) {
-            if (Object.hasOwnProperty.call(confData.wxWorkSetting, key)) {
-                confData.wxWorkSetting[key] = confData[key];
-            }
+    // 赋值企业微信对象
+    for (const key in confData.wxWorkSetting) {
+        if (Object.hasOwnProperty.call(confData.wxWorkSetting, key)) {
+            confData.wxWorkSetting[key] = confData[key];
         }
-        confData.wxWorkSetting.nodeRole = confData.wxWorkNodeRole;
     }
+    // 赋值企业微信角色
+    confData.wxWorkSetting.nodeRole = confData.wxWorkNodeRole;
     
     // 重新赋值企业微信集成开关
     confData.wxWorkSetting.openStatus = confData.wxWorkOpen;
@@ -607,12 +598,10 @@ const onSubmit = async () => {
         };
     }
 
-    // 如果微信集成-小程序登录
-    if (confData.wxMiniAppOpen) {
-        for (const key in confData.wechatMiniAppSetting) {
-            if (Object.hasOwnProperty.call(confData.wechatMiniAppSetting, key)) {
-                confData.wechatMiniAppSetting[key] = confData["wxMiniApp" + key];
-            }
+    // 赋值微信对象
+    for (const key in confData.wechatMiniAppSetting) {
+        if (Object.hasOwnProperty.call(confData.wechatMiniAppSetting, key)) {
+            confData.wechatMiniAppSetting[key] = confData["wxMiniApp" + key];
         }
     }
     // 重新赋值短信开关
