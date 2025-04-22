@@ -62,7 +62,7 @@
                     </div>
 
                 </template>
-                <span class="top-more-nav">
+                <span class="top-more-nav" v-if="menu.length > 4">
                     <el-icon size="20"><Menu /></el-icon>
                 </span>
             </el-tooltip>
