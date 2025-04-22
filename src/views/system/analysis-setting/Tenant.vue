@@ -12,11 +12,11 @@
 		queryUrl="/plugins/metaTenant/tenant/listQuery"
 		@changeSwitch="changeSwitch"
 	>
-        <template #beforeSearch>
-            <el-button class="mr-10" type="primary" @click="openTenantTemplate">
-                租户模板
-            </el-button>
-        </template>
+		<template #beforeSearch>
+			<el-button class="mr-10" type="primary" @click="openTenantTemplate">
+				租户模板
+			</el-button>
+		</template>
 		<template #addButton>
 			<el-button type="primary" @click="openTenantEdit(false)">
 				<el-icon size="14">
@@ -62,16 +62,6 @@
 				width="200"
 			>
 				<template #default="scope">
-					<!-- <el-button
-						type="primary"
-						size="small"
-						link
-                        icon="Coin"
-						v-if="scope.row.tenantState.value == 3"
-                        @click="initDatabase(scope.row)"
-					>
-						初始化数据库
-					</el-button> -->
 					<el-button
 						size="small"
 						type="primary"
@@ -90,21 +80,42 @@
 					>
 						编辑
 					</el-button>
-					<el-button
-						size="small"
-						type="primary"
-						link
-						icon="Delete"
-						@click="deleteTenant(scope.row)"
-					>
-						删除
-					</el-button>
+					<el-dropdown trigger="click" @command="handleCommand($event, scope.row)">
+						<el-button 
+                            size="small" 
+                            type="primary" 
+                            link 
+                            class="more-btn"
+                        >
+							更多
+                            <el-icon class="more-icon">
+                                <ArrowDownBold />
+                            </el-icon>
+						</el-button>
+						<template #dropdown>
+							<el-dropdown-menu>
+								<el-dropdown-item command="delete">
+                                    <el-icon>
+                                        <Delete />
+                                    </el-icon>
+                                    删除
+                                </el-dropdown-item>
+								<el-dropdown-item command="copy" v-if="scope.row.tenantState.value == 2 && !scope.row.isDisabled">
+                                    <el-icon>
+                                        <CopyDocument />
+                                    </el-icon>
+                                    复制专属链接
+                                </el-dropdown-item>        
+							</el-dropdown-menu>
+						</template>
+					</el-dropdown>
 				</template>
 			</el-table-column>
 		</template>
 	</mlSingleList>
 	<TenantEdit ref="tenantEditRef" @refresh="refresh" />
-    <TenantTemplate ref="tenantTemplateRef" />
+	<TenantTemplate ref="tenantTemplateRef" />
+    <TenantCopy ref="tenantCopyRef" />
 </template>
 <script setup>
 import { ref } from "vue";
@@ -112,6 +123,8 @@ import TenantEdit from "./components/Tenant-Edit.vue";
 import { deleteTenantRecord, initializationDatabase } from "@/api/plugins";
 // 租户模板
 import TenantTemplate from "./components/Tenant-Template.vue";
+// 复制租户专属链接
+import TenantCopy from "./components/Tenant-Copy.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 // 默认排序
 let sortFields = ref([
@@ -150,8 +163,8 @@ const openTenantEdit = (row, target) => {
 // 打开租户模板
 let tenantTemplateRef = ref("");
 const openTenantTemplate = () => {
-    tenantTemplateRef.value.openTenantTemplate();
-}
+	tenantTemplateRef.value.openTenantTemplate();
+};
 let mlSingleListRef = ref("");
 const refresh = () => {
 	mlSingleListRef.value.getTableList();
@@ -203,4 +216,36 @@ const initDatabase = async (row) => {
 		})
 		.catch(() => {});
 };
+
+let tenantCopyRef = ref("");
+const copyTenant = (row) => {
+    tenantCopyRef.value.openDialog(row);
+    // let appPath = import.meta.env.VITE_APP_PATH;
+    // let url = appPath + 'login?tenantCode=' + row.tenantCode + '&tenantId=' + row.tenantId;
+    // copyText(location.origin + url);
+}
+
+// 更多
+const handleCommand = (command, row) => {
+    switch(command) {
+        case "delete":
+            deleteTenant(row);
+            break;
+        case "copy":
+            copyTenant(row);
+            break;
+    }
+};
 </script>
+<style scoped lang="scss">
+
+.more-icon {
+	margin-left: 3px;
+	position: relative;
+	top: -1px;
+}
+.more-btn {
+    position: relative;
+    top: 3px;
+}
+</style>

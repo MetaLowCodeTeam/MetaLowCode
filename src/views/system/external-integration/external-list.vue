@@ -42,6 +42,7 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 import http from "@/utils/request";
+import { copyText } from "@/utils/util";
 const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const router = useRouter();
@@ -145,19 +146,7 @@ const copyRow = (row) => {
     }
     homeURL += "web/inReport?externalId=";
     homeURL += row.externalFormId;
-    const textarea = document.createElement("textarea");
-    textarea.readOnly = "readonly";
-    textarea.style.position = "absolute";
-    textarea.style.left = "-9999px";
-    textarea.value = homeURL;
-    document.body.appendChild(textarea);
-    textarea.select();
-    textarea.setSelectionRange(0, textarea.value.length);
-    const result = document.execCommand("Copy");
-    if (result) {
-        ElMessage.success("复制成功");
-    }
-    document.body.removeChild(textarea);
+    copyText(homeURL);
 };
 
 const downErCode = async (row) => {
