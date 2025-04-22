@@ -621,10 +621,10 @@ const onSubmit = async () => {
     loading.value = true;;
     let res = await updateSysSetting(confData);
     if (res) {
-        ElMessage.success("保存成功");
-        nextTick(() => {
+        ElMessage.success("保存成功，即将为您自动刷新页面");
+        setTimeout(() => {
             location.reload();
-        });
+        }, 1000);
     } 
     loading.value = false;
 };
