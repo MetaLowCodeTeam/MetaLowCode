@@ -5,6 +5,7 @@ export default {
     props: {
         row: Object,
         column: Object,
+        listExposed: Object,
         renderFn: Function
     },
     render() {
@@ -12,6 +13,7 @@ export default {
             row: this.row,
             column: this.column,
             isMobile: false,
+            listExposed: this.listExposed,
         }
         return this.renderFn(h, params)
     }
