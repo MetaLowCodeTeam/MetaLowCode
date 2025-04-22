@@ -24,6 +24,7 @@
 *     3.2 实体详情样式
 *     3.3 高级搜索样式
 *  4. 弹框样式（ml-dialog）
+*  5. 仪表盘样式
 */
 
 
@@ -426,3 +427,17 @@ $--dialog-footer-bg-color: #fff;
 * 
 */
 
+/**
+* 
+*  仪表盘样式  -------------------- begin --------------------
+* 
+*/
+
+// 仪表盘背景颜色
+$--dashboard-bg-color: #fff;
+
+.adminui-main {
+    .dashboard {
+        background: #{$--dashboard-bg-color};
+    }
+}
