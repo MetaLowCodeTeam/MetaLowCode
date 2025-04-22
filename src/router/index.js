@@ -8,7 +8,7 @@ import { storeToRefs } from "pinia";
 import systemRouter from './systemRouter';
 import userRoutes from '@/config/route';
 import { beforeEach, afterEach } from './scrollBehavior';
-
+import config from "@/config"
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 
 
@@ -56,7 +56,7 @@ router.beforeEach(async (to, from, next) => {
     }
     if (to.path == '/') {
         next({
-            path: appPath + "dashboard"
+            path: appPath + config.DASHBOARD_URL
         });
         return false;
     }
@@ -77,18 +77,21 @@ router.beforeEach(async (to, from, next) => {
     //整页路由处理
     if (to.meta.fullpage) {
         to.matched = [to.matched[to.matched.length - 1]]
-
     }
-
     //加载动态/静态路由
     if (!isGetRouter) {
         const { getUseMenuList, getNavigationApi, getTopNavMenuList } = useLayoutConfigStore();
+        let isReturn = false;
         await getNavigationApi(() => {
             isGetRouter = false;
+            isReturn = true;
             next({
                 path: appPath + "login"
             });
         })
+        if(isReturn) {
+            return;
+        }
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
             if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
                 return false
@@ -109,7 +112,7 @@ router.beforeEach(async (to, from, next) => {
         }
         isGetRouter = true;
     }
-    // console.log(to,'to')
+    
     // 如果是新窗口创建实体
     if(to.name == "NewWindowCreateEntity") {
         to.meta.title = "新建" + queryEntityLabelByName(to.params.entityName)
@@ -120,7 +123,6 @@ router.beforeEach(async (to, from, next) => {
     if(to.name == "AppDesignEntity") {
         to.meta.title =  to.meta.title + " - " + to.query.entityLabel
     }
-    beforeEach(to, from)
     next();
 });
 

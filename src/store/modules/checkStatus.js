@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue'
 // import useCheckStatusStore from "@/store/modules/checkStatus";
-// const { changeStyle } = useCheckStatusStore();
+// const { setNewMsgNum } = useCheckStatusStore();
 // import { storeToRefs } from 'pinia';
 // const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const useCheckStatusStore = defineStore('checkStatusStore', () => {

@@ -5,7 +5,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 import { pinyin } from 'pinyin-pro'
 import JSEncrypt from 'jsencrypt';
 import http from "@/utils/request";
-import router from "@/router";
+import { ElMessage } from 'element-plus';
 
 // 注册插件
 dayjs.extend(updateLocale);
@@ -643,3 +643,21 @@ export const checkIsSubForm = (type) => {
     return type == "sub-form" || type == "grid-sub-form" || type == "table-sub-form";
 }
 
+// 复制文本
+export const copyText = (text, errorMsg = "复制失败，请重试刷新页面") => {
+    let textarea = document.createElement("textarea");
+    textarea.readOnly = "readonly";
+    textarea.style.position = "absolute";
+    textarea.style.left = "-9999px";
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
+    const result = document.execCommand("Copy");
+    if (result) {
+        ElMessage.success("复制成功");
+    }else {
+        ElMessage.error(errorMsg);
+    }
+    document.body.removeChild(textarea);
+}

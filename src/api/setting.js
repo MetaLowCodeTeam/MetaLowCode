@@ -17,8 +17,8 @@ export function updateSysSetting(body) {
 
 
 
-export function getPublicSetting() {
-    return http.get('/setting/queryPublicSetting')
+export function getPublicSetting(tenantId) {
+    return http.get('/setting/queryPublicSetting', { tenantId })
 }
 
 

@@ -7,7 +7,10 @@
         size="large"
         @keyup.enter="login"
     >
-        <el-form-item prop="tenantCode" v-if="myPublicSetting && myPublicSetting.pluginIdList && myPublicSetting.pluginIdList.includes('metaTenant')">
+        <el-form-item 
+            prop="tenantCode" 
+            v-if="myPublicSetting && myPublicSetting.pluginIdList && myPublicSetting.pluginIdList.includes('metaTenant') && !routerTenantCode"
+        >
             <el-input
                 v-model="form.tenantCode"
                 prefix-icon="el-icon-menu"
@@ -83,6 +86,7 @@ export default {
                 password: "",
                 autologin: false,
                 imgYzm: "",
+                tenantCode: "",
             },
             rules: {
                 user: [
@@ -106,6 +110,7 @@ export default {
             loginLoading: false,
             imgCode: "",
             timer: null,
+            routerTenantCode: "",
         };
     },
     watch: {
@@ -131,6 +136,10 @@ export default {
             this.form.password = userInfo.password;
             this.form.autologin = userInfo.autologin;
             this.form.tenantCode = userInfo.tenantCode;
+        }
+        this.routerTenantCode = this.$route.query.tenantCode;
+        if(this.routerTenantCode) {
+            this.form.tenantCode = this.routerTenantCode;
         }
     },
     computed: {

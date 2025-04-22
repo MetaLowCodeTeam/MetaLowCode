@@ -61,12 +61,12 @@ let locale = computed(() => {
     return ""
 });
 const appPath = import.meta.env.VITE_APP_PATH;
-onBeforeMount(() => {
+onBeforeMount(async () => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
     // 获取公开系统配置
-    queryPublicSetting();
+    await queryPublicSetting();
     if(location.pathname == appPath + 'inReport'){
         isShowBody.value = true;
         return
@@ -74,7 +74,7 @@ onBeforeMount(() => {
     if(!$TOOL.data.get("APP_LANG")) {
         $TOOL.data.set("APP_LANG",'zh-cn')
     }
-    initApi();
+    await initApi();
     const quickNavigation = $TOOL.data.get("QuickNavigation");
     if(quickNavigation){
         $TOOL.data.remove("QuickNavigation");
@@ -98,6 +98,7 @@ const jumpLink = (type, url) => {
 
 const initApi = async () => {
     $TOOL.cookie.set("TOKEN", getQueryString("loginToken"));
+    
     let res = await getLoginUser(getQueryString("loginToken"));
     if (res && res.data) {
         if (res.data.data) {
@@ -112,7 +113,17 @@ const initApi = async () => {
             isShowBody.value = true;
         } else {
             isShowBody.value = true;
-            router.push({ path: appPath + "login" });
+            let query = {};
+            if(getQueryString("tenantCode")) {
+                query.tenantCode = getQueryString("tenantCode");
+            }
+            if(getQueryString("tenantId")) {
+                query.tenantId = getQueryString("tenantId");
+            }
+            router.push({ 
+                path: appPath + "login",
+                query
+            });
         }
     }
 };
@@ -128,7 +139,7 @@ function getQueryString(name) {
 
 // 获取公开系统配置
 const queryPublicSetting = async () => {
-    let res = await getPublicSetting();
+    let res = await getPublicSetting(getQueryString("tenantId"));
     if (res) {
         let resData = res.data || {};
         resData.themeColor = res.data.themeColor || "#409EFF";
