@@ -79,9 +79,9 @@ export function updateEntityNameField(entity, nameField) {
     })
 }
 
-export function updateDisplayOrderField(entityName, fieldName) {
+export function updateDisplayOrderField(entityName, fieldName, autoDisplayOrder, displayOrderIsAsc) {
     return http.post('systemManager/updateDisplayOrderField', {}, {
-        params: { entityName, fieldName }
+        params: { entityName, fieldName, autoDisplayOrder, displayOrderIsAsc }
     })
 }
 

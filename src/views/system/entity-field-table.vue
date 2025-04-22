@@ -223,21 +223,47 @@
 				</div>
 			</el-footer>
 
-			<el-dialog
+			<ml-dialog
                 :title="fieldDialogFlagType == 1 ? '修改名称字段' : '修改排序字段'"
                 v-model="showNameFieldDialogFlag"
                 v-if="showNameFieldDialogFlag"
 				:append-to-body="true"
                 :destroy-on-close="true"
                 class="name-field-dialog"
-                width="480px"
+                width="486px"
                 draggable
             >
 				<div class="name-field-hint">
                     <i class="el-icon-bell"></i>
                     <span v-if="fieldDialogFlagType == 1">提示：只有文本(Text)类型字段可设置为名称字段。</span>
-                    <span v-else>提示：只有数值(Decimal)类型字段可设置为排序字段。</span>
+                    <span v-else>提示：只有数值({{ allowOrderField.join('、') }})类型字段可设置为排序字段。</span>
 				</div>
+                <div v-if="fieldDialogFlagType == 2">
+                    <el-form label-position="left" :label-width="'100px'" size="small">
+                        <el-form-item label="自动排序：">
+                            <el-switch v-model="entityProps.detailEntityAutoDisplayOrder" :disabled="entityProps.displayOrderFieldType !== 'Decimal'"></el-switch>
+                            <el-tooltip placement="top">
+                                <template #content>
+                                    <div>
+                                        只有排序字段为数值(Decimal)时，自动排序才有能开启<br>
+                                        开启字段排序后，排序字段会自动赋值保证数据按添加顺序排列
+                                    </div>
+                                </template>
+                                <el-icon size="16" class="ml-10" style="cursor: default">
+                                    <Warning />
+                                </el-icon>
+                            </el-tooltip>
+                        </el-form-item>
+                        <el-form-item label="排序顺序：" v-if="!entityProps.detailEntityAutoDisplayOrder">
+                            <el-select 
+                                v-model="entityProps.detailEntityDisplayOrderIsAsc"
+                            >
+                                <el-option label="升序" :value="true"></el-option>
+                                <el-option label="降序" :value="false"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </div>
 				<SimpleTable
                     :show-pagination="false"
                     :show-check-box="false"
@@ -246,13 +272,14 @@
 					:columns="nameFieldColumns"
                     :data="nameFieldData"
                     :max-height="420"
+                    :table-width="'100%'"
                 >
 					<template #table_operation="{scope}">
 						<el-button
                             v-if="!scope.row.nameFieldFlag"
                             class=""
                             icon="el-icon-check"
-							@click="selectNameField(scope.row)"
+							@click="fieldDialogFlagType == 1 ? selectNameField(scope.row) : selectOrderField(scope.row)"
                         >
                             选择
 						</el-button>
@@ -262,7 +289,11 @@
                         </el-button>
 					</template>
 				</SimpleTable>
-			</el-dialog>
+                <template #footer v-if="fieldDialogFlagType == 2">
+                    <el-button @click="showNameFieldDialogFlag = false">取 消</el-button>
+                    <el-button type="primary" @click="selectNameField(currentOrderField)">保 存</el-button>
+                </template>
+			</ml-dialog>
 
 			<el-dialog
                 :title="'新建字段 / ' + curEditorType"
@@ -566,6 +597,10 @@ export default {
             tagValue:"",
             // 开启审批字段
             openApprovalField: false,
+            // 允许排序的字段类型
+            allowOrderField: ['Integer', 'Decimal', 'Money', 'Text', 'Date', 'DateTime'],
+            // 当前排序字段
+            currentOrderField: null,
 		}
 	},
 	created() {
@@ -606,12 +641,13 @@ export default {
                 this.entityProps = res.data
                 this.entityProps.tags = res.data.tags ? res.data.tags.split(",") : [];
                 this.getAllTags();
+                
             }
             this.propsLoading = false;
 		},
 
-		initPageData() {
-			this.initEntityProps()
+		async initPageData() {
+			await this.initEntityProps()
 			this.initTableData()
 		},
         // 获取所有tag
@@ -679,6 +715,10 @@ export default {
                 // 查找是否有审批字段
                 let findApprovalStatus = this.tableData.filter(el => el.name == 'approvalStatus');
                 this.openApprovalField = findApprovalStatus.length > 0;
+                this.entityProps.displayOrderFieldType = this.tableData.find(el => el.name == this.entityProps.displayOrderField)?.type;
+                if(this.entityProps.displayOrderFieldType !== 'Decimal') {
+                    this.entityProps.detailEntityAutoDisplayOrder = false;
+                }
             }
             this.mainLoading = false;
 		},
@@ -832,27 +872,46 @@ export default {
 		},
 
         modifyEntityOrderField() {
-            // console.log(this.tableData,'this.tableData')
-            let decimalField = this.tableData.filter(el => el.type == 'Decimal');
+            let decimalField = this.tableData.filter(el => this.allowOrderField.includes(el.type));
+            this.currentOrderField = null;
             let orderField = decimalField.map((el) => {
+                if(this.entityProps.displayOrderField == el.name){
+                    this.currentOrderField = el;
+                }
                 return {
                     name: el.name,
                     label: el.label,
                     nameFieldFlag: this.entityProps.displayOrderField == el.name,
+                    type: el.type,
                 }
             })
             this.nameFieldData = orderField;
             this.fieldDialogFlagType = 2;
             this.showNameFieldDialogFlag = true
         },
-
+        // 选择排序字段
+        selectOrderField(row){
+            this.nameFieldData.forEach(el=>{
+                el.nameFieldFlag = false;
+                if(el.name == row.name){
+                    el.nameFieldFlag = true;
+                }
+            })
+            this.currentOrderField = row;
+            this.entityProps.displayOrderFieldType = row.type;
+        },
 		async selectNameField(row) {
             let res
             if(this.fieldDialogFlagType == 1){
                 res = await updateEntityNameField(this.entityProps.name, row.name);
             }
             else {
-                res = await updateDisplayOrderField(this.entityProps.name, row.name);
+                res = await updateDisplayOrderField(
+                    this.entityProps.name, 
+                    row.name,
+                    this.entityProps.detailEntityAutoDisplayOrder,
+                    this.entityProps.detailEntityDisplayOrderIsAsc
+                );
             }
             if(res && res.code == 200){
                 this.$message({message: '修改成功', type: 'success'})
@@ -863,8 +922,8 @@ export default {
                     this.entityProps.displayOrderFieldLabel = row.label
                     this.entityProps.displayOrderField = row.name
                 }
-				this.showNameFieldDialogFlag = false
-				this.initTableData()
+                this.showNameFieldDialogFlag = false
+                this.initTableData()
             }
 		},
 
