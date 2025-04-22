@@ -126,8 +126,6 @@ const delMenu = (item, inx) => {
 };
 </script>
 <style lang='scss' scoped>
-$--nav-menu-bg-color: #ffffff;
-$--nav-menu-text-color: rgb(48, 49, 51);
 .nav-list {
     padding: 10px 0;
     .top-1 {
@@ -173,8 +171,5 @@ $--nav-menu-text-color: rgb(48, 49, 51);
     }
 }
 
-.adminui-side-bottom {
-	background-color: #{$--nav-menu-bg-color};
-	color: #{$--nav-menu-text-color};
-}
+
 </style>

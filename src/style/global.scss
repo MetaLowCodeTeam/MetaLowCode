@@ -2,5 +2,427 @@
 // var(--el-color-primary-light-5): #a0cfff;
 // var(--el-color-primary)
 
-// $--nav-menu-bg-color: #ffffff;
-// $--nav-menu-text-color: rgb(48, 49, 51);
+// 全局灰色，特殊日期用
+// html {
+//     filter: grayscale(100%);
+//     -webkit-filter: grayscale(100%);
+//     -moz-filter: grayscale(100%);
+//     -ms-filter: grayscale(100%);
+//     -o-filter: grayscale(100%);
+//     filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='grayscale'><feColorMatrix type='matrix' values='0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0'/></filter></svg>#grayscale");
+//     filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);
+// }
+
+
+/*
+* 
+*  全局样式导航
+*  1. 菜单样式
+*  2. 顶部面包屑样式
+*  3. 实体列表相关样式
+*     3.1 更多按钮容器样式
+*     3.2 实体详情样式
+*     3.3 高级搜索样式
+*  4. 弹框样式（ml-dialog）
+*/
+
+
+/**
+* 
+*  菜单样式  -------------------- begin --------------------
+* 
+*/
+
+// 菜单样式变量
+$--nav-menu-bg-color: #fff;
+$--nav-menu-text-color: rgb(48, 49, 51);
+
+// 左侧菜单
+.adminui-side-top {
+	background-color: #{$--nav-menu-bg-color};
+	h2 {
+		color: #{$--nav-menu-text-color};
+	}
+}
+
+.nav-menu-scrollbar {
+	:deep(.el-scrollbar__view) {
+		height: 100% !important;
+	}
+	.main-nav-menu {
+		--el-menu-bg-color: #{$--nav-menu-bg-color};
+		--el-menu-text-color: #{$--nav-menu-text-color};
+		--el-menu-active-color: var(--el-color-primary) !important;
+		height: 100%;
+	}
+}
+
+.adminui-side-bottom {
+	background-color: #{$--nav-menu-bg-color};
+	color: #{$--nav-menu-text-color};
+}
+
+/**
+* 
+*  菜单样式  -------------------- end --------------------
+* 
+*/
+
+
+
+/**
+* 
+*  顶部面包屑样式  -------------------- begin --------------------
+* 
+*/
+// 顶部导航背景颜色
+$--topBar-bg-color: #fff;
+// 顶部导航文字颜色
+$--topBar-text-color: #606266;
+
+.adminui-topbar {
+	height: 50px;
+	border-bottom: 1px solid #ebeef5;
+	background: #{$--topBar-bg-color};
+	box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+	display: flex;
+	justify-content: space-between;
+    .left-panel {
+        display: flex;
+        align-items: center;
+        .el-breadcrumb__inner,
+        .el-breadcrumb__separator {
+            color: #{$--topBar-text-color};
+        }
+    }
+    .right-panel {
+        display: flex;
+        align-items: center;
+    }
+}
+
+// tag部分
+
+// tag背景颜色
+$--tag-bg-color: #fff;
+// tag边框颜色
+$--tag-border-color: #e6e6e6;
+// tag文字颜色
+$--tag-text-color: #999;
+
+.adminui-tags {
+	height: 35px;
+	background: #{$--tag-bg-color};
+	border-bottom: 1px solid #{$--tag-border-color};
+    ul {
+        display: flex;
+        overflow: hidden;
+        list-style: none;
+        li {
+            cursor: pointer;
+            float: left;
+            height: 34px;
+            line-height: 34px;
+            position: relative;
+            flex-shrink: 0;
+            &::after {
+                content: " ";
+                width: 1px;
+                height: 100%;
+                position: absolute;
+                right: 0px;
+                background-image: linear-gradient(#{$--tag-bg-color}, #{$--tag-border-color});
+            }
+            a {
+                display: inline-block;
+                padding: 0 10px;
+                width: 100%;
+                height: 100%;
+                color: #{$--tag-text-color};
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+            }
+            i {
+                margin-left: 10px;
+                border-radius: 3px;
+                width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                &:hover {
+                    background: rgba(0, 0, 0, 0.2);
+                    color: #fff;
+                }
+            }
+            &:hover {
+                background-color: var(--el-color-primary-light-5);
+                & > a {
+                    color: #fff;
+                }
+            }
+            &.active {
+                background: var(--el-color-primary);
+                & > a {
+                    color: #fff;
+                }
+            }
+            &.sortable-ghost {
+                opacity: 0;
+            }
+           
+        }
+    }
+}
+
+
+
+
+
+/**
+* 
+*  顶部面包屑样式  -------------------- end --------------------
+* 
+*/
+
+
+/**
+* 
+*  实体列表相关样式  -------------------- begin --------------------
+* 
+*/
+
+// 实体列表容器背景颜色
+$--table-bg-color: #f6f8f9;
+// 实体列表容器顶部搜索容器背景颜色
+$--table-search-box-bg-color: #fff;
+// 实体列表容器顶部分页块背景颜色
+$--table-footer-bg-color: #fff;
+
+// 实体列表容器
+.adminui-main {
+	overflow: auto;
+	flex: 1;
+	background: #{$--table-bg-color};
+	// 实体列表顶部搜索容器
+	.table-search-box {
+		background: #{$--table-search-box-bg-color};
+	}
+	// 实体列表顶部分页块
+	.table-footer {
+		background: #{$--table-footer-bg-color};
+	}
+}
+
+/* 
+* 
+*  更多按钮容器样式  -------------------- 3.1 --------------------
+* 
+*/
+
+// 更多按钮容器背景颜色
+$--table-setting-item-box-bg-color: #fff;
+// 更多按钮文本色
+$--table-setting-item-text-color: #606266;
+// 更多按钮悬浮色
+$--table-setting-item-hover-color: #dedede;
+
+.table-setting-item-box {
+    padding: 10px 0;
+    background: #{$--table-setting-item-box-bg-color};
+    color: #{$--table-setting-item-text-color};
+    .hr {
+        border-top: 1px solid #e3e3e3;
+        margin: 10px 0;
+    }
+    .item {
+        height: 26px;
+        line-height: 26px;
+        cursor: pointer;
+        position: relative;
+        &.is-active {
+            color: var(--el-color-primary);
+        }
+        .action-icon {
+            position: absolute;
+            right: 10px;
+            top: 4px;
+            display: none;
+            .icon-span {
+                cursor: pointer;
+                display: inline-block;
+                color: #{$--table-setting-item-text-color};
+                &:hover {
+                    color: #666;
+                }
+                &.edit-icon {
+                    position: relative;
+                    top: -2px;
+                }
+            }
+        }
+        &:hover {
+            background: #{$--table-setting-item-hover-color};
+            .action-icon {
+                display: block;
+            }
+        }
+        &.div-disabled {
+            background: #{$--table-setting-item-box-bg-color};
+            cursor: default;
+        }
+    }
+}
+
+/* 
+*  实体列表详情  -------------------- 3.2 --------------------
+* 
+*/
+// 实体列表详情背景颜色
+$--table-detail-bg-color: #fff;
+// 实体列表详情头部背景颜色
+$--table-detail-header-bg-color: #fff;
+// 实体列表详情主体背景颜色
+$--table-detail-body-bg-color: #fff;
+
+
+.ml-drawer {
+	* {
+		box-sizing: border-box;
+	}
+	.el-drawer__header {
+		padding: 0;
+		margin-bottom: 0;
+	}
+    background: #{$--table-detail-bg-color};
+    .el-drawer__header {
+        background: #{$--table-detail-header-bg-color};
+    }
+    .el-drawer__body {
+        background: #{$--table-detail-body-bg-color};
+    }
+}
+
+/* 
+*  高级搜索样式  -------------------- 3.3 --------------------
+* 
+*/
+// 高级搜索背景颜色
+$--advfilter-bg-color: #fff;
+
+.dropdown-menu-advfilter {
+    background: #{$--advfilter-bg-color};
+}
+
+
+
+/**
+* 
+*  实体列表相关样式  -------------------- end --------------------
+* 
+*/
+
+
+/**
+* 
+*  弹框样式  -------------------- begin --------------------
+* 
+*/
+
+// 弹框头部背景颜色
+$--dialog-header-bg-color: var(--el-color-primary);
+// 弹框Body背景颜色
+$--dialog-body-bg-color: #fff;
+// 弹框底部背景颜色
+$--dialog-footer-bg-color: #fff;
+
+.ml-dialog {
+    padding: 0;
+	.el-dialog__header {
+		padding: 0;
+		margin: 0;
+		background-color: #{$--dialog-header-bg-color};
+		height: 60px;
+		line-height: 60px;
+		box-sizing: border-box;
+		padding: 0 20px;
+		box-sizing: border-box;
+        text-align: left;
+		.my-title {
+			font-size: 20px;
+			color: #fff;
+		}
+		.close-icon {
+			position: relative;
+			top: 6px;
+			cursor: pointer;
+			color: #fff;
+			&:hover {
+				color: #fafafa;
+			}
+		}
+		.full-screen-icon {
+			position: relative;
+			top: 6px;
+			margin-right: 10px;
+			cursor: pointer;
+			color: #fff;
+			&:hover {
+				color: #fafafa;
+			}
+		}
+	}
+    .ml-dialog-body {
+        padding: 20px 20px 15px 20px;
+        background: #{$--dialog-body-bg-color};
+    }
+	.el-dialog__footer {
+		padding: 0;
+		border-top: 1px solid rgba(0, 0, 0, 0.1);
+		height: 51px;
+		line-height: 50px;
+		padding-right: 20px;
+        background: #{$--dialog-footer-bg-color};
+	}
+    &.body-no-padding {
+        .ml-dialog-body {
+			padding: 0;
+		}
+    }
+	&.not-header {
+		.el-dialog__header {
+			height: 0;
+		}
+		.el-dialog__body {
+			padding-top: 50px;
+		}
+	}
+	&.isFullScreen {
+		height: 100vh;
+		margin-bottom: 0;
+        .el-dialog__body {
+            height: calc(100% - 60px);
+        }
+        &.has-footer {
+            .el-dialog__body {
+                height: calc(100% - 120px);
+            }
+        }
+		.el-dialog__body {
+			.fullScreen-man {
+				max-height: 100%;
+			}
+		}
+	}
+	div {
+		box-sizing: border-box;
+	}
+}
+
+/**
+* 
+*  弹框样式  -------------------- end --------------------
+* 
+*/
+

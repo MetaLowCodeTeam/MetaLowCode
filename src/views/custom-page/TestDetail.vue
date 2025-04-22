@@ -31,7 +31,7 @@ import { ref } from "vue";
 
 let detailConf = ref({
 	// 显示基础操作块
-	showBasicBlock: false,
+	showBasicBlock: true,
 	// 显示流程操作块
 	showProcessBlock: true,
 	// 显示新建相关按钮
@@ -70,9 +70,15 @@ const openDialog = (id) => {
 };
 
 const test = () => {
+    EntityListDetailRefs.value?.refreshTableList();
     // console.log();
-    EntityListDetailRefs.value?.toMoreAction('del')
-    
+    // EntityListDetailRefs.value?.toMoreAction('del')
+    // let VFormRef = 
+    // console.log(VFormRef,'VFormRef')
+    // let testObj = {
+    //     mingcheng: '测试2222222',
+    // };
+    // VFormRef.setFormData(testObj);
     
 }
 

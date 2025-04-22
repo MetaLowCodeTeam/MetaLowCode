@@ -501,7 +501,6 @@ const handleCommand = (e) => {
     position: absolute;
     top: 47px;
     left: 0;
-    background: #fff;
     z-index: 1999;
     // border: 1px solid rgba(0,0,0,.125);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);

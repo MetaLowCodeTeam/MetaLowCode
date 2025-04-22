@@ -34,7 +34,7 @@ const comDetailCmpMapping = {
     // useComStep_1 代表所有实体用这一个详情组件， 详情组件名称:["*"]   *=>匹配所有，包括初始的详情
     // Sadasaduo: ["*"],
     // useSingleStep_1 详情组件名称:[对应的实体名称]
-    TestDetail: ['DemoCompany', 'Sadasaduo'],
+    TestDetail: ['DemoCompany', 'Shiti0303'],
     UserDetail: ['User'],
 };
 

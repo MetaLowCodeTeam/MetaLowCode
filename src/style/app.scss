@@ -293,22 +293,7 @@ textarea {
 	flex-direction: column !important;
 }
 
-.adminui-topbar {
-	height: 50px;
-	border-bottom: 1px solid #ebeef5;
-	background: #fff;
-	box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-	display: flex;
-	justify-content: space-between;
-}
-.adminui-topbar .left-panel {
-	display: flex;
-	align-items: center;
-}
-.adminui-topbar .right-panel {
-	display: flex;
-	align-items: center;
-}
+
 
 .right-panel-search {
 	display: flex;
@@ -318,70 +303,6 @@ textarea {
 	margin-left: 10px;
 }
 
-.adminui-tags {
-	height: 35px;
-	background: #fff;
-	border-bottom: 1px solid #e6e6e6;
-}
-.adminui-tags ul {
-	display: flex;
-	overflow: hidden;
-}
-.adminui-tags li {
-	cursor: pointer;
-	display: inline-block;
-	float: left;
-	height: 34px;
-	line-height: 34px;
-	position: relative;
-	flex-shrink: 0;
-}
-.adminui-tags li::after {
-	content: " ";
-	width: 1px;
-	height: 100%;
-	position: absolute;
-	right: 0px;
-	background-image: linear-gradient(#fff, #e6e6e6);
-}
-.adminui-tags li a {
-	display: inline-block;
-	padding: 0 10px;
-	width: 100%;
-	height: 100%;
-	color: #999;
-	text-decoration: none;
-	display: flex;
-	align-items: center;
-}
-.adminui-tags li i {
-	margin-left: 10px;
-	border-radius: 3px;
-	width: 18px;
-	height: 18px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.adminui-tags li i:hover {
-	background: rgba(0, 0, 0, 0.2);
-	color: #fff;
-}
-.adminui-tags li.active {
-	background: #409eff;
-}
-.adminui-tags li.active a {
-	color: #fff;
-}
-.adminui-tags li.sortable-ghost {
-	opacity: 0;
-}
-
-.adminui-main {
-	overflow: auto;
-	background-color: #f6f8f9;
-	flex: 1;
-}
 
 /*页面最大化*/
 .aminui.main-maximize {

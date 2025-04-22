@@ -375,7 +375,6 @@
             :pageSizes="page.pageSizes"
             @pageChange="pageChange"
             @handleSizeChange="handleSizeChange"
-            style="background: #fff;"
             v-if="listParamConf.showPagination"
         />
         <mlCustomDetail
@@ -1960,7 +1959,6 @@ div {
         // padding: 20px 0;
         .table-search-box {
             border-top: 3px solid var(--el-color-primary);
-            background: #fff;
             min-height: 60px;
             line-height: 32px;
             padding: 14px 20px;

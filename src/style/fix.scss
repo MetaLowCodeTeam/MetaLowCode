@@ -205,15 +205,7 @@
 .aminui-side-split li.active {
 	background-color: var(--el-color-primary);
 }
-.adminui-tags li:hover {
-	background-color: var(--el-color-primary-light-5);
-    & > a {
-        color: #fff !important;
-    }
-}
-.adminui-tags li.active {
-	background-color: var(--el-color-primary) !important;
-}
+
 .contextmenu li:hover {
 	background-color: var(--el-color-primary-light-5) !important;
 	color: var(--el-color-primary-light-2) !important;
@@ -278,87 +270,6 @@ body .tox-tinymce-aux {
 			position: relative;
 			top: -1px;
 		}
-	}
-}
-
-.ml-dialog {
-    padding: 0;
-	.el-dialog__header {
-		padding: 0;
-		margin: 0;
-		background-color: var(--el-color-primary);
-		height: 60px;
-		line-height: 60px;
-		box-sizing: border-box;
-		padding: 0 20px;
-		box-sizing: border-box;
-        text-align: left;
-		.my-title {
-			font-size: 20px;
-			color: #fff;
-		}
-		.close-icon {
-			position: relative;
-			top: 6px;
-			cursor: pointer;
-			color: #fff;
-			&:hover {
-				color: #fafafa;
-			}
-		}
-		.full-screen-icon {
-			position: relative;
-			top: 6px;
-			margin-right: 10px;
-			cursor: pointer;
-			color: #fff;
-			&:hover {
-				color: #fafafa;
-			}
-		}
-	}
-    .ml-dialog-body {
-        padding: 20px 20px 15px 20px;
-    }
-	.el-dialog__footer {
-		padding: 0;
-		border-top: 1px solid rgba(0, 0, 0, 0.1);
-		height: 51px;
-		line-height: 50px;
-		padding-right: 20px;
-	}
-    &.body-no-padding {
-        .ml-dialog-body {
-			padding: 0;
-		}
-    }
-	&.not-header {
-		.el-dialog__header {
-			height: 0;
-		}
-		.el-dialog__body {
-			padding-top: 50px;
-		}
-	}
-	&.isFullScreen {
-		height: 100vh;
-		margin-bottom: 0;
-        .el-dialog__body {
-            height: calc(100% - 60px);
-        }
-        &.has-footer {
-            .el-dialog__body {
-                height: calc(100% - 120px);
-            }
-        }
-		.el-dialog__body {
-			.fullScreen-man {
-				max-height: 100%;
-			}
-		}
-	}
-	div {
-		box-sizing: border-box;
 	}
 }
 
@@ -450,15 +361,7 @@ body .tox-tinymce-aux {
 	z-index: 3001 !important;
 }
 
-.ml-drawer {
-	* {
-		box-sizing: border-box;
-	}
-	.el-drawer__header {
-		padding: 0;
-		margin-bottom: 0;
-	}
-}
+
 
 .ml-el-select-input {
 	.el-input-group__prepend {

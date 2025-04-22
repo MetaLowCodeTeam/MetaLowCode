@@ -576,8 +576,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-$--nav-menu-bg-color: #ffffff;
-$--nav-menu-text-color: rgb(48, 49, 51);
 // .adminui-header-center {
 //     width: calc(100% - 560px);
 // }
@@ -604,25 +602,6 @@ $--nav-menu-text-color: rgb(48, 49, 51);
     }
 }
 
-.adminui-side-top {
-	background-color: #{$--nav-menu-bg-color};
-	h2 {
-		color: #{$--nav-menu-text-color};
-	}
-}
-
-.nav-menu-scrollbar {
-	:deep(.el-scrollbar__view) {
-		height: 100% !important;
-	}
-
-	.main-nav-menu {
-		--el-menu-bg-color: #{$--nav-menu-bg-color};
-		--el-menu-text-color: #{$--nav-menu-text-color};
-		--el-menu-active-color: var(--el-color-primary) !important;
-		height: 100%;
-	}
-}
 
 :deep(.dock-header-scrollbar) {
     .el-scrollbar__bar.is-vertical {
