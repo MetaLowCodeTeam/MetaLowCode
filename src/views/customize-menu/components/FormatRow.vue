@@ -5,6 +5,7 @@
             :row="row" 
             :column="column" 
             :renderFn="getColumnRender(column)" 
+            :listExposed="listExposed"
         />
     </div>
     <!-- 默认 -->
@@ -124,6 +125,7 @@ const props = defineProps({
     column: { type: Object, default: () => {} },
     nameFieldName: { type: String, default: "" },
     nameFieldClick: { type: Function, default: null },
+    listExposed: { type: Object, default: () => {} },
 });
 const emits = defineEmits(["openDetailDialog"]);
 

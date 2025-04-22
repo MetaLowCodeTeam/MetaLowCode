@@ -305,6 +305,7 @@
                             </template>
                             <template #default="scope">
                                 <FormatRow
+                                    :listExposed="currentExposed"
                                     :row="scope.row"
                                     :column="column"
                                     :nameFieldName="nameFieldName"
@@ -434,7 +435,8 @@ import {
     useSlots,
     computed,
     watch,
-    nextTick
+    nextTick,
+    getCurrentInstance,
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
@@ -746,6 +748,8 @@ onBeforeMount(() => {
     getLayoutList();
 });
 
+let currentExposed = ref({});
+
 onMounted(()=>{
     // 挂载
 	// TableRef.value &&
@@ -767,6 +771,7 @@ onMounted(()=>{
     nextTick(() => {
         checkRouterAutoOpen();
     })
+    currentExposed.value = getCurrentInstance().exposed;
 })
 
 let scrollTop = ref(0);
