@@ -4,7 +4,7 @@ const DEFAULT_CONFIG = {
 	APP_NAME: import.meta.env.VITE_APP_TITLE,
 
 	//首页地址
-	DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "comConf",
+	DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "dashboard",
 
 	//请求超时
 	//TIMEOUT: 10000,

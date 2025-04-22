@@ -64,7 +64,7 @@ import { $fromNow } from "@/utils/util";
 import { ElMessageBox, ElMessage } from "element-plus";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import ListDetail from "./components/ListDetail.vue";
-import { delTeam, saveTeam } from "@/api/team";
+import { deleteRecord } from "@/api/crud";
 const $TOOL = inject("$TOOL");
 // 默认排序
 let sortFields = ref([
@@ -106,13 +106,13 @@ let tableColumn = ref([
 let editRefs = ref();
 const addClick = () => {
     let tempV = {};
-    tempV.entityName = "Team";
+    tempV.entityName = "JobPosition";
     editRefs.value.openDialog(tempV);
 };
 // 编辑
 const editClick = (row) => {
     let tempV = {};
-    tempV.detailId = row.teamId;
+    tempV.detailId = row.jobPositionId;
     editRefs.value.openDialog(tempV);
 };
 
@@ -125,7 +125,7 @@ const delClick = (row) => {
         type: "warning",
     })
         .then(async () => {
-            let res = await delTeam(row.teamId);
+            let res = await deleteRecord(row.jobPositionId);
             mlSingleListRef.value.loading = true;
             if (res) {
                 ElMessage.success("删除成功");
@@ -146,19 +146,6 @@ let mlListDetailsRefs = ref();
 // 高亮字段点击
 const highlightClick = (row) => {
     mlListDetailsRefs.value.openDetailDialog(row.jobPositionId, row.jobTitle);
-};
-
-// 切换启用状态
-const changeSwitch = async (row) => {
-    // 是否启用
-    // async changeSwitch(row) {
-    //         let res = await saveUser("User", row.userId, { ...row });
-    //         this.onRefresh();
-    //     },
-    mlSingleListRef.value.loading = true;
-    await saveTeam("Team", row.teamId, { ...row });
-    onRefresh();
-    // 
 };
 
 // 当前页签

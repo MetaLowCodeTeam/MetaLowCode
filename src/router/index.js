@@ -87,6 +87,9 @@ router.beforeEach(async (to, from, next) => {
             if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
                 return false
             }
+            if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
+                return false
+            }
             return true
         })
         userMenu[0].children.push(...getUseMenuList())
@@ -151,6 +154,9 @@ router.sc_getMenu = () => {
     const { publicSetting } = storeToRefs(useCommonStore());
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
         if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+            return false
+        }
+        if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
             return false
         }
         return true

@@ -95,9 +95,11 @@
 
 <script setup>
 import { ref, watch, onMounted, inject, nextTick, reactive } from "vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const api = inject("$API");
 const cloneDeep = inject("$CloneDeep");
-const message = inject("$ElMessage");
 const props = defineProps({
     modelValue: null,
     cardWidth: { type: String, default: "100%" },
@@ -125,6 +127,7 @@ const props = defineProps({
             Role: {},
             Department: {},
             Team: {},
+            JobPosition: {},
         } 
     }
 });
@@ -139,7 +142,7 @@ let defaultValue = ref([]);
 // 搜索值
 let keyword = ref("");
 // 页签
-let tabConfing = ref([
+let tabConfig = ref([
     {
         label: "用户",
         name: "User",
@@ -180,6 +183,14 @@ watch(
 );
 
 onMounted(() => {
+    if(publicSetting.value.openJobPosition){
+        tabConfig.value.push({
+            label: "岗位",
+            name: "JobPosition",
+            itemId: "jobPositionId",
+            itemName: "jobTitle",
+        });
+    }
     initData();
 });
 
@@ -188,11 +199,11 @@ const initData = () => {
     defaultValue.value = props.modelValue;
     autoCurrentLabel();
     if (props.type === "all") {
-        tabList.value = cloneDeep(tabConfing.value);
+        tabList.value = cloneDeep(tabConfig.value);
     } else {
         let types = props.type.split();
         tabList.value = [];
-        tabConfing.value.forEach((el) => {
+        tabConfig.value.forEach((el) => {
             types.forEach((subEl) => {
                 if (el.name == subEl) {
                     tabList.value.push(el);

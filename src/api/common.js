@@ -16,6 +16,10 @@ export default {
     getTeam: async (params, bodyData = {}) => {
         return await http.post("/team/listTeam", bodyData, { params });
     },
+    // 获取岗位信息
+    getJobPosition: async (params, bodyData = {}) => {
+        return await http.post("/job/listJobPosition", bodyData, { params });
+    },
     // 查询条件专用获取字段接口
     getFieldListOfFilter: async (data) => {
         return await http.get("/systemManager/getFieldListOfFilter", data);
