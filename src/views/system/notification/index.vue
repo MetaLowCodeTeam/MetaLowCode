@@ -35,7 +35,7 @@
 </template>
    
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { $fromNow } from "@/utils/util";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -130,6 +130,14 @@ let entityId = ref("");
 // 审批名称
 let approvalName = ref("");
 const appPath = import.meta.env.VITE_APP_PATH;
+
+onMounted(() => {
+    let routerRecordId = router.currentRoute.value.query.recordId;
+    if(routerRecordId){
+        detailRefs.value.openDialog(routerRecordId);
+    }
+})
+
 // 消息点击
 const activeRow = (item) => {
     // 审批
