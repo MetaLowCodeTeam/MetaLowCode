@@ -782,6 +782,11 @@ const getGlobalDsv = () => {
     return globalDsv.value
 }
 
+// 刷新列表
+const refreshTableList = () => {
+    emits('onConfirm');
+}
+
 // 暴露方法给父组件调用
 defineExpose({
 	openDialog,
@@ -793,7 +798,8 @@ defineExpose({
     closeDialog,
     refreshCustomComponent,
     getFormRef,
-    getGlobalDsv
+    getGlobalDsv,
+    refreshTableList,
 });
 </script>
 

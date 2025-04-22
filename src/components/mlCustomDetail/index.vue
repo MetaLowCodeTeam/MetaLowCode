@@ -4,7 +4,7 @@
         v-if="comName" 
         :is="comName" 
         ref="DetailRef"
-        @updateData="updateData"
+        @onConfirm="updateData"
     ></component>
 </template>
 
