@@ -363,6 +363,7 @@ $--table-detail-body-bg-color: #fff;
 
 
 .ml-drawer {
+    background: #{$--table-detail-bg-color};
 	* {
 		box-sizing: border-box;
 	}
@@ -370,7 +371,6 @@ $--table-detail-body-bg-color: #fff;
 		padding: 0;
 		margin-bottom: 0;
 	}
-    background: #{$--table-detail-bg-color};
     .el-drawer__header {
         background: #{$--table-detail-header-bg-color};
     }
