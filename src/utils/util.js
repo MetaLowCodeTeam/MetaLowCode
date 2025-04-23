@@ -566,6 +566,27 @@ export const globalDsvDefaultData = () => {
         uploadServer: import.meta.env.VITE_APP_BASE_API,
         baseApi: import.meta.env.VITE_APP_BASE_API,
         SERVER_API: import.meta.env.VITE_APP_BASE_API,
+
+		/* 根据ID值回填表单字段 */
+		findByIdThenFill: (idFieldWidget, idValue, fieldMapping) => {
+			if (!idFieldWidget.getValue() || !idFieldWidget.getValue().id) {
+				return
+			}
+
+			let recordId = idFieldWidget.getValue().id
+			let queryUrl = import.meta.env.VITE_APP_BASE_API + '/crud/queryById?entityId=' + recordId
+			http.post(queryUrl).then(res => {
+				const foundRecord = res.data.data
+				Object.keys(fieldMapping).forEach(fieldKey => {
+					if (foundRecord.hasOwnProperty(fieldKey)) {
+						const targetWidgetRef = idFieldWidget.getWidgetRef(fieldMapping[fieldKey])
+						if (targetWidgetRef) {
+							targetWidgetRef.setValue(foundRecord[fieldKey])
+						}
+					}
+				})
+			})
+		},
     }
     return JSON.parse(JSON.stringify(data))
 }
