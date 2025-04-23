@@ -1267,6 +1267,9 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
         // 新窗口创建实体
         router.push({
             name: "NewWindowCreateEntity",
+            params: {
+                entityName: targetEntity || entityName.value,
+            },
             query: {
                 entity: targetEntity || entityName.value,
                 type: "new",
