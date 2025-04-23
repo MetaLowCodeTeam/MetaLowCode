@@ -1,5 +1,11 @@
 <template>
-    <el-popover placement="top" :width="200" :trigger="trigger" :popper-style="{'padding':0}">
+    <el-popover 
+        placement="top" 
+        :width="200" 
+        :trigger="trigger" 
+        :popper-style="{'padding':0}"
+        popper-class="nav-popover-box"
+    >
         <div class="nav-list">
             <el-scrollbar max-height="300px">
                 <div

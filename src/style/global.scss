@@ -63,6 +63,20 @@ $--nav-menu-text-color: rgb(48, 49, 51);
 	color: #{$--nav-menu-text-color};
 }
 
+.nav-popover-box {
+    background-color: #{$--nav-menu-bg-color};
+    color: #{$--nav-menu-text-color};
+    &.is-light, &.is-light>.el-popper__arrow:before{
+        background-color: #{$--nav-menu-bg-color};
+        color: #{$--nav-menu-text-color};
+    }
+    .add-box {
+        .el-button {
+            background-color: #{$--nav-menu-bg-color};
+            color: #{$--nav-menu-text-color};
+        }
+    }
+}
 /**
 * 
 *  菜单样式  -------------------- end --------------------
@@ -198,8 +212,23 @@ $--tag-text-color: #999;
 $--table-bg-color: #f6f8f9;
 // 实体列表容器顶部搜索容器背景颜色
 $--table-search-box-bg-color: #fff;
-// 实体列表容器顶部分页块背景颜色
+// 实体列表容器底部分页块背景颜色
 $--table-footer-bg-color: #fff;
+// 实体列表分页块文本颜色
+$--table-footer-text-color: var(--el-text-color-regular);
+
+// 实体列表表格Th背景颜色
+$--table-header-bg-color: var(--el-table-header-bg-color);;
+// 实体列表表格Th文字颜色
+$--table-header-text-color: var(--el-table-header-text-color);
+// 实体列表表格Td背景颜色
+$--table-td-bg-color: var(--el-table-bg-color);
+// 实体列表表格Td文字颜色
+$--table-td-text-color: var(--el-table-text-color);
+// 实体列表表格Tr背景颜色
+$--table-tr-bg-color: var(--el-table-tr-bg-color);
+// 实体列表表格斑马纹背景颜色
+$--table-striped-bg-color: var(--el-fill-color-lighter);
 
 // 实体列表容器
 .adminui-main {
@@ -210,9 +239,54 @@ $--table-footer-bg-color: #fff;
 	.table-search-box {
 		background: #{$--table-search-box-bg-color};
 	}
-	// 实体列表顶部分页块
+    .table-div {
+        .el-table {
+            th.el-table__cell {
+                background: #{$--table-header-bg-color};
+                color: #{$--table-header-text-color};
+            }
+            td.el-table__cell {
+                background: #{$--table-td-bg-color};
+                color: #{$--table-td-text-color};
+            }
+            tr {
+                background: #{$--table-tr-bg-color};
+                &.el-table__row--striped {
+                    background: #{$--table-striped-bg-color};
+                }
+            }
+        }
+        
+    }
+	// 实体列表分页块
 	.table-footer {
 		background: #{$--table-footer-bg-color};
+        
+       
+        .el-pagination {
+            .el-pagination__sizes, 
+            .el-pagination__total,
+            .el-pagination__jump,
+            .el-input__inner,
+            .el-select__placeholder,
+            .el-select__caret
+            {
+                color: #{$--table-footer-text-color};
+            }
+            .el-select__wrapper,
+            .el-input__wrapper
+            {
+                background: #{$--table-footer-bg-color};
+                --el-border-color: #{$--table-footer-bg-color};
+            }
+            button {
+                background: #{$--table-footer-bg-color};
+                color: #{$--table-footer-text-color};
+            }
+            .el-pager li {
+                background: #{$--table-footer-bg-color};
+            }
+        }
 	}
 }
 
@@ -435,9 +509,14 @@ $--dialog-footer-bg-color: #fff;
 
 // 仪表盘背景颜色
 $--dashboard-bg-color: #fff;
+// 每个容器背景颜色
+$--dashboard-container-bg-color: #fff;
 
 .adminui-main {
     .dashboard {
         background: #{$--dashboard-bg-color};
+        .widget-body__content {
+            background: #{$--dashboard-container-bg-color};
+        }
     }
 }
