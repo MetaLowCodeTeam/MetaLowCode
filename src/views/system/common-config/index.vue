@@ -494,8 +494,8 @@ const initData = async () => {
             confData.wxWorkHomeDir += "/" + tenantId;
         }
         // 正则替换首页地址//
-        confData.homeDir = confData.homeDir.replace(/\/\//g, '/');
-        confData.wxWorkHomeDir = confData.wxWorkHomeDir.replace(/\/\//g, '/');
+        confData.homeDir = confData.homeDir.replace(/(?<!https?:)\/\/+/g, '/');
+        confData.wxWorkHomeDir = confData.wxWorkHomeDir.replace(/(?<!https?:)\/\/+/g, '/');
         // 备份周期
         confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
