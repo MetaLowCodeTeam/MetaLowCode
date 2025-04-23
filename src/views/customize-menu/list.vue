@@ -1272,6 +1272,8 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
             },
             query: {
                 entity: targetEntity || entityName.value,
+                type: "new",
+                formId: formId || listParamConf.value.recordNewFormId || rowStyleConf.value?.formConf?.pcAddFormId,
             }
         });
         return
