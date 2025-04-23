@@ -314,6 +314,7 @@ export default {
 							label: el.label,
 							targetType: formFieldMapping[el.type]?.type,
                             subFormName: "",
+                            referTo: el.referTo,
 						};
 					});
 					// 初始化回填已有字段
