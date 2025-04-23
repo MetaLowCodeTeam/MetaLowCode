@@ -70,7 +70,7 @@
             <div
                 class="adminui-header-center"
                 v-if="!ismobileFn"
-                :style="{'width': getHeaderCenterWidht}"
+                :style="{'width': getHeaderCenterWidth}"
             >
                 <el-scrollbar :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
@@ -211,7 +211,7 @@
             <div
                 class="adminui-header-center"
                 v-if="!ismobileFn"
-                :style="{'width': getHeaderCenterWidht}"
+                :style="{'width': getHeaderCenterWidth}"
             >
                 <el-scrollbar class="dock-header-scrollbar" :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
@@ -478,13 +478,13 @@ export default {
         appName: () => {
             return publicSetting.value.APP_NAME;
         },
-        getHeaderCenterWidht(){
+        getHeaderCenterWidth(){
             let computedWidth;
             let nameLangth = this.appName?.length;
             if(nameLangth < 7){
-                computedWidth = 600;
+                computedWidth = 620;
             }else {
-                computedWidth = 600 + ((nameLangth - 6 ) * 20);
+                computedWidth = 620 + ((nameLangth - 6 ) * 20);
             }
             return "calc(100% - "+ computedWidth +"px)";
         },
