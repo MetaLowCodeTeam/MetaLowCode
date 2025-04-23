@@ -118,7 +118,7 @@ router.beforeEach(async (to, from, next) => {
     
     // 如果是新窗口创建实体
     if(to.name == "NewWindowCreateEntity") {
-        to.meta.title = "新建" + queryEntityLabelByName(to.params.entityName)
+        to.meta.title = "新建" + queryEntityLabelByName(to.query.entity)
     }
     if(to.query.meteAppendTitle && to.name != "AppDesignEntity") {
         to.meta.title = to.meta.title + " - " + to.query.meteAppendTitle
