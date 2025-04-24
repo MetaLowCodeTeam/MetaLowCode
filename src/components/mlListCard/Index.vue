@@ -73,94 +73,168 @@
 	>
 		<div class="list-card-main">
 			<div class="list-card-header">
-				<!-- 高级查询 -->
-				<mlListAdvancedQuery
-					v-if="entity.code"
-					v-model="layoutConf.FILTER"
-					:entityName="entity.name"
-					:entityCode="entity.code"
-					@queryNow="queryNow"
-					@refresh="refreshAdvancedQuery"
-					@onAddAdv="loadLayoutConf"
-					@changeAdvFilter="changeAdvFilter"
-					:filter="layoutConf.FILTER"
-					:modelName="modelName"
-					class="mr-15"
-				/>
-				<!-- 快速查询 -->
-				<div class="quick-query">
-					<el-input
-						v-model="quickQueryKeyWord"
-						class="w-50 m-2"
-						:placeholder="quickQueryConf.placeholder"
-						@keyup.enter="quickQuery()"
-						clearable
-						@clear="clearQuickQuery()"
-					>
-						<template #append>
-							<el-button @click="quickQuery()">
-								<el-icon>
-									<ElIconSearch />
-								</el-icon>
-							</el-button>
-						</template>
-					</el-input>
-					<span
-						class="quick-edit"
-						@click="openSelectFieldDialog"
-						v-if="$TOOL.checkRole('r6008')"
-					>
-						<el-icon size="18">
-							<ElIconEditPen />
-						</el-icon>
-					</span>
-				</div>
-				<!-- 操作按钮 -->
-				<div class="fr table-setting">
-					<el-button
-						icon="Notification"
-						:disabled="multipleSelection.length != 1"
-						@click="viewRow(multipleSelection[0])"
-					>
-						打开
-					</el-button>
-					<el-button
-						icon="Edit"
-						:disabled="multipleSelection.length != 1"
-						@click="editRow(multipleSelection[0])"
-					>
-						编辑
-					</el-button>
-					<el-button
-						icon="Edit"
-						:disabled="multipleSelection.length < 1"
-						v-if="batchUpdateConf.length > 0"
-						@click="openBatchUpdateDialog"
-					>
-						批量编辑
-					</el-button>
-					<el-button type="primary" icon="Plus" @click="createRow()">
-						新建
-					</el-button>
-					<More
-						ref="MoreRefs"
-						:listParamConf="{
-							showMoreBtn: true,
-							showDelBtn: true,
-						}"
-						:layoutConfig="layoutConf"
-						:tableColumn="tableColumn"
-						:entityCode="entity.code"
-						:multipleSelection="multipleSelection"
-						:dataExportData="dataExportData"
-						@editColumnConfirm="loadLayoutConf"
-						@defaultFilterChange="loadLayoutConf"
-						@treeGroupFilterConfirm="loadLayoutConf"
-						:modelName="modelName"
-						isListCard
-                        @onBatchPrinting="onBatchPrinting"
-					/>
-				</div>
+                <ListCustomizeQuery
+                    :entityName="entity.name"
+                    :entityCode="entity.code"
+                    :modelName="modelName"
+                    :topSearchConfig="topSearchConfig"
+                    @queryNow="queryNow"
+                    @uploadItems="topPanelUploadItems"
+                    ref="ListCustomizeQueryRef"
+                    v-if="!topSearchConfig.isDefaultQueryPanel"
+                />
+                <div class="clearfix">
+                    <template v-if="topSearchConfig.isDefaultQueryPanel">
+                        <slot name="beforeAdvancedQuery"></slot>
+                        <el-tooltip
+                            effect="dark"
+                            content="切换查询面板"
+                            placement="top"
+                        >
+                            <el-button
+                                class="mr-10"
+                                type="primary"
+                                link
+                                :loading="queryPanelLoading"
+                                @click="changeQueryPanel(false)"
+                            >
+                                <el-icon size="16" class="toggle-query-icon">
+                                    <Switch />
+                                </el-icon>
+                            </el-button>
+                        </el-tooltip>
+                        <mlListAdvancedQuery
+                            v-if="entity.code"
+                            v-model="layoutConf.FILTER"
+                            :entityName="entity.name"
+                            :entityCode="entity.code"
+                            @queryNow="queryNow"
+                            @refresh="refreshAdvancedQuery"
+                            @onAddAdv="loadLayoutConf"
+                            @changeAdvFilter="changeAdvFilter"
+                            :filter="layoutConf.FILTER"
+                            :modelName="modelName"
+                            class="mr-15"
+                        />
+                        <div class="quick-query">
+                            <el-input
+                                v-model="quickQueryKeyWord"
+                                class="w-50 m-2"
+                                :placeholder="quickQueryConf.placeholder"
+                                @keyup.enter="quickQuery()"
+                                clearable
+                                @clear="clearQuickQuery()"
+                            >
+                                <template #append>
+                                    <el-button @click="quickQuery()">
+                                        <el-icon>
+                                            <ElIconSearch />
+                                        </el-icon>
+                                    </el-button>
+                                </template>
+                            </el-input>
+                            <span
+                                class="quick-edit"
+                                @click="openSelectFieldDialog"
+                                v-if="$TOOL.checkRole('r6008')"
+                            >
+                                <el-icon size="18">
+                                    <ElIconEditPen />
+                                </el-icon>
+                            </span>
+                        </div>
+                    </template>
+                    <template v-if="!topSearchConfig.isDefaultQueryPanel">
+                        <el-button
+                            icon="Switch"
+                            type="primary"
+                            text
+                            bg
+                            :loading="queryPanelLoading"
+                            @click="changeQueryPanel(true)"
+                        >
+                            切换查询面板
+                        </el-button>
+                        <el-button
+                            icon="Setting"
+                            @click="setCustomizeQueryPanel"
+                            text
+                            bg
+                            :loading="queryPanelLoading"
+                            v-if="$TOOL.checkRole('r6008')"
+                        >
+                            设计查询面板
+                        </el-button>
+                        <el-tooltip
+                            effect="dark"
+                            content="展开收起"
+                            placement="top"
+                            v-if="topSearchConfig.filter?.items?.length > 3"
+                        >
+                            <el-button
+                                class="mr-10"
+                                type="primary"
+                                text
+                                bg
+                                :loading="queryPanelLoading"
+                                @click="changeTopQueryPanelExpand"
+                            >
+                                <el-icon size="16" class="toggle-query-icon" v-if="!topQueryPanelExpand">
+                                    <ArrowDown />
+                                </el-icon>
+                                <el-icon size="16" class="toggle-query-icon" v-else>
+                                    <ArrowUp />
+                                </el-icon>
+                            </el-button>
+                        </el-tooltip>
+                    </template>
+                    <!-- 操作按钮 -->
+                    <div class="fr table-setting">
+                        <el-button
+                            icon="Notification"
+                            :disabled="multipleSelection.length != 1"
+                            @click="viewRow(multipleSelection[0])"
+                        >
+                            打开
+                        </el-button>
+                        <el-button
+                            icon="Edit"
+                            :disabled="multipleSelection.length != 1"
+                            @click="editRow(multipleSelection[0])"
+                        >
+                            编辑
+                        </el-button>
+                        <el-button
+                            icon="Edit"
+                            :disabled="multipleSelection.length < 1"
+                            v-if="batchUpdateConf.length > 0"
+                            @click="openBatchUpdateDialog"
+                        >
+                            批量编辑
+                        </el-button>
+                        <el-button type="primary" icon="Plus" @click="createRow()">
+                            新建
+                        </el-button>
+                        <More
+                            ref="MoreRefs"
+                            :listParamConf="{
+                                showMoreBtn: true,
+                                showDelBtn: true,
+                            }"
+                            :layoutConfig="layoutConf"
+                            :tableColumn="tableColumn"
+                            :entityCode="entity.code"
+                            :multipleSelection="multipleSelection"
+                            :dataExportData="dataExportData"
+                            @editColumnConfirm="loadLayoutConf"
+                            @defaultFilterChange="loadLayoutConf"
+                            @treeGroupFilterConfirm="loadLayoutConf"
+                            :modelName="modelName"
+                            isListCard
+                            @onBatchPrinting="onBatchPrinting"
+                        />
+                    </div>
+                </div>
 			</div>
 			<div class="list-card-content" v-if="isSetPcFormId">
 				<el-empty
@@ -269,8 +343,10 @@ import mlCustomEdit from "@/components/mlCustomEdit/index.vue";
 import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 // 快速查询设置
 import mlSelectField from "@/components/mlSelectField/index.vue";
-
+// 自定义查询面板
+import ListCustomizeQuery from '@/views/customize-menu/components/ListCustomizeQuery.vue'
 const $TOOL = inject("$TOOL");
+const $API = inject("$API");
 
 // 实体
 let entity = ref({});
@@ -292,6 +368,8 @@ let listCardConf = ref({
 	pcFormId: "",
 	formLayout: {},
 });
+
+
 
 /**
  * 列表参数 ---------------- begin
@@ -539,6 +617,91 @@ const handleSizeChange = (size) => {
 /**
  * 列表API ---------------- begin
  */
+
+// 顶部查询面板配置
+let topSearchConfig = ref({
+    isDefaultQueryPanel: true,
+    forbidUserModifyField: false,
+    hideQueryMatchType: false,
+    filter: {
+        equation: "AND",
+	    items: [],
+    },
+});
+let queryPanelLoading = ref(false);
+
+let calculateHeight = ref("");
+
+// 切换查询面板
+const changeQueryPanel = async (target) => {
+    if(!$TOOL.checkRole('r6008')){
+        topSearchConfig.value.isDefaultQueryPanel = target;
+        if(target) {
+            calculateHeight.value = "";
+        }else {
+            calculateHeight.value = "calc(100% - 144px)"
+        }
+        return
+    }
+    let param = {
+		config: JSON.stringify({
+            isDefaultQueryPanel: target,
+            filter: topSearchConfig.value.filter,
+            forbidUserModifyField: topSearchConfig.value.forbidUserModifyField,
+            hideQueryMatchType: topSearchConfig.value.hideQueryMatchType,
+        }),
+		entityCode: entity.value.code,
+	};
+    queryPanelLoading.value = true;
+	let res = await $API.layoutConfig.saveConfig(
+		topSearchConfig.value.layoutConfigId,
+		"TOP_SEARCH",
+		param,
+		modelName.value
+	);
+    if(res){
+        if(!topSearchConfig.value.layoutConfigId) {
+            topSearchConfig.value.layoutConfigId = res.data.formData.layoutConfigId
+        }
+        topSearchConfig.value.isDefaultQueryPanel = target;
+        if(target) {
+            calculateHeight.value = "";
+        }else {
+            calculateHeight.value = "calc(100% - 144px)"
+        }
+    }
+    topQueryPanelExpand.value = false;
+	queryPanelLoading.value = false;
+}
+// 更新查询面板
+const topPanelUploadItems = (e) => {
+    topSearchConfig.value = { ...topSearchConfig.value, ...e };
+}
+
+// 设计自定义查询面板
+let ListCustomizeQueryRef = ref();
+const setCustomizeQueryPanel = () => {
+    ListCustomizeQueryRef.value?.openDialog();
+}
+
+// 展开收起查询面板
+let topQueryPanelExpand = ref(false);
+const changeTopQueryPanelExpand = () => {
+    topQueryPanelExpand.value = !topQueryPanelExpand.value;
+    let length = topSearchConfig.value.filter.items?.length;
+    if(topQueryPanelExpand.value) {
+        let sourceHeight = 106;
+        let formatHeight = Math.ceil(length / 3) * 38;
+        calculateHeight.value = "calc(100% - "+( sourceHeight + formatHeight) +"px)";
+        ListCustomizeQueryRef.value?.changeCustomizeQueryHeight(formatHeight);
+    }else {
+        calculateHeight.value = "calc(100% - 144px)";
+        ListCustomizeQueryRef.value?.changeCustomizeQueryHeight(38);
+    }
+}
+
+
+
 // 是否设置了PC表单
 let isSetPcFormId = ref(false);
 
@@ -570,6 +733,14 @@ const loadLayoutConf = async () => {
 		if (BATCH_UPDATE) {
 			batchUpdateConf.value = JSON.parse(BATCH_UPDATE.config);
 		}
+        // 顶部搜索
+        if(res.data.TOP_SEARCH) {
+            topSearchConfig.value = JSON.parse(res.data.TOP_SEARCH.config);
+            topSearchConfig.value.layoutConfigId = res.data.TOP_SEARCH.layoutConfigId;
+            if(!topSearchConfig.value.isDefaultQueryPanel) {
+                calculateHeight.value = "calc(100% - 144px)"
+            }
+        };
         // CARD配置
         if(CARD) {
             listCardConf.value = Object.assign(listCardConf.value, JSON.parse(CARD.config));

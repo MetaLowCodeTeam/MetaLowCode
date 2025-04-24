@@ -9,6 +9,7 @@
 		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 10px;
+        line-height: 32px;
 	}
 }
 .text-info {
@@ -105,6 +106,9 @@ import layoutConfig from "@/api/layoutConfig";
 
 import useCommonStore from "@/store/modules/common";
 const { queryEntityNameByCode } = useCommonStore();
+
+// 自定义查询面板
+import ListCustomizeQuery from '@/views/customize-menu/components/ListCustomizeQuery.vue'
 
 const props = defineProps({
 	modelValue: null,

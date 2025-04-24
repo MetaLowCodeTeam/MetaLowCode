@@ -10,6 +10,7 @@
 		font-size: 18px;
 		margin-bottom: 10px;
 		text-align: left;
+        line-height: 32px;
 	}
 }
 .text-info {
