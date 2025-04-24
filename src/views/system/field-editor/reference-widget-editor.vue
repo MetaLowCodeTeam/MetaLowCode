@@ -365,7 +365,10 @@ export default {
     },
     methods: {
         filterFieldItems(fieldItems){
-            return fieldItems.filter(el => !el.fieldName.includes('.'));
+            return fieldItems.filter(el => {
+                const dotCount = (el.fieldName.match(/\./g) || []).length;
+                return dotCount <= 1; // 允许 0 或 1 个点，过滤掉 2 个及以上
+            });
         },
         async getFieldProps() {
             this.saveLoading = true;
