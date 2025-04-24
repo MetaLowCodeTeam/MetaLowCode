@@ -296,6 +296,8 @@
 		ref="detailRefs"
 		:entityName="entity.name"
 		@updateData="getTableList"
+        :recordDetailFormId="rowStyleConf?.formConf?.pcDetailFormId"
+        :recordEditFormId="rowStyleConf?.formConf?.pcEditFormId"
 	/>
 	<!-- 快速搜索字段 -->
 	<mlSelectField
@@ -561,7 +563,7 @@ const formatEditData = (row) => {
 		entityName: entity.value.name,
 		idFieldName: layoutConf.value.idFieldName,
 		nameFieldName: layoutConf.value.nameFieldName,
-		formId: listCardConf.value.pcFormId,
+		formId: row ? rowStyleConf.value?.formConf?.pcEditFormId : rowStyleConf.value?.formConf?.pcAddFormId,
 	};
 	if (row) {
 		param.detailId = row[layoutConf.value.idFieldName];
@@ -700,6 +702,7 @@ const changeTopQueryPanelExpand = () => {
     }
 }
 
+const rowStyleConf = ref({});
 
 
 // 是否设置了PC表单
@@ -741,6 +744,10 @@ const loadLayoutConf = async () => {
                 calculateHeight.value = "calc(100% - 144px)"
             }
         };
+        // 自定义行样式
+        if(res.data.STYLE && res.data.STYLE.config){
+            rowStyleConf.value = JSON.parse(res.data.STYLE.config);
+        }
         // CARD配置
         if(CARD) {
             listCardConf.value = Object.assign(listCardConf.value, JSON.parse(CARD.config));
