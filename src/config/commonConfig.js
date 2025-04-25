@@ -141,6 +141,12 @@ export default [
                 key: "verificationCodeLogin",
                 type: "switch",
             },
+            {
+                label: "单点登录",
+                subLabel: "开启单点登录后单个账号无法多地登录",
+                key: "singleLoginSwitch",
+                type: "switch",
+            },
         ],
     },
     {

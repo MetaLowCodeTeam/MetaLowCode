@@ -76,7 +76,7 @@
                                         </el-checkbox>
                                     </div>
                                     <!-- 开关 -->
-                                    <div v-else-if="item.type == 'switch'">
+                                    <div v-else-if="item.type == 'switch'" class="switch-box">
                                         <el-tooltip
                                             class="box-item"
                                             effect="dark"
@@ -1051,5 +1051,9 @@ const showTab = (code) => {
 }
 :deep(.el-descriptions__label) {
     width: 220px;
+}
+.switch-box {
+    display: flex;
+    align-items: center;
 }
 </style>
