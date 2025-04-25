@@ -5,7 +5,7 @@
             <el-form label-width="100px">
                 <el-form-item label="编辑字段">
                     <el-select
-                        v-model="uptadeField"
+                        v-model="updateField"
                         class="m-2"
                         placeholder="选择字段"
                         style="width: 100%"
@@ -23,14 +23,14 @@
                 </el-form-item>
                 <el-form-item label="更新值">
                     <!-- 文本输入框 -->
-                    <div v-if="uptadeCom =='textInput'" class="w-100">
-                        <el-input v-model="uptadeValue" clearable />
+                    <div v-if="updateCom =='textInput'" class="w-100">
+                        <el-input v-model="updateValue" clearable />
                     </div>
                     <!-- 日期选择器 -->
-                    <div v-else-if="uptadeCom =='datePicker'" class="w-100">
+                    <div v-else-if="updateCom =='datePicker'" class="w-100">
                         <el-date-picker
                             clearable
-                            v-model="uptadeValue"
+                            v-model="updateValue"
                             type="date"
                             style="width: 100%;"
                             format="YYYY/MM/DD"
@@ -38,43 +38,43 @@
                         />
                     </div>
                     <!-- 数字输入框 -->
-                    <div v-else-if="uptadeCom =='numberInput'" class="w-100">
+                    <div v-else-if="updateCom =='numberInput'" class="w-100">
                         <el-input-number
-                            v-model="uptadeValue"
+                            v-model="updateValue"
                             :controls="false"
                             class="ml-number-input w-100"
                         />
                     </div>
                     <!-- 布尔类型 -->
-                    <div v-else-if="uptadeCom =='booleanSelect'" class="w-100">
-                        <el-select v-model="uptadeValue" class="w-100" placeholder=" ">
+                    <div v-else-if="updateCom =='booleanSelect'" class="w-100">
+                        <el-select v-model="updateValue" class="w-100" placeholder=" ">
                             <el-option label="是" value="1" />
                             <el-option label="否" value="0" />
                         </el-select>
                     </div>
                     <!-- 用户选择框 -->
-                    <div v-else-if="uptadeCom =='userSelect'" class="w-100">
+                    <div v-else-if="updateCom =='userSelect'" class="w-100">
                         <mlSelectUser
-                            v-model="uptadeReference"
+                            v-model="updateReference"
                             clearable
                             type="User"
                             style="width: 100%;"
                         />
                     </div>
                     <!-- 部门选择框 -->
-                    <div v-else-if="uptadeCom =='departmentSelect'" class="w-100">
+                    <div v-else-if="updateCom =='departmentSelect'" class="w-100">
                         <mlSelectUser
-                            v-model="uptadeReference"
+                            v-model="updateReference"
                             clearable
                             type="Department"
                             style="width: 100%;"
                         />
                     </div>
                     <!-- 类型为Tag 和 option的 -->
-                    <div v-else-if="uptadeCom =='optionData'" class="w-100">
-                        <el-select v-model="uptadeValue" class="w-100" placeholder=" ">
+                    <div v-else-if="updateCom =='optionData'" class="w-100">
+                        <el-select v-model="updateValue" class="w-100" placeholder=" ">
                             <el-option
-                                v-for="(userOp,userInx) of uptadeField.optionData"
+                                v-for="(userOp,userInx) of updateField.optionData"
                                 :label="userOp.label || userOp.value"
                                 :value="userOp.value"
                                 :key="userInx"
@@ -82,8 +82,8 @@
                         </el-select>
                     </div>
                     <!-- 类型为Reference非部门、用户的选择框 -->
-                    <div v-else-if="uptadeCom =='referenceSearch'" class="w-100">
-                        <el-input v-model="uptadeValue" readonly>
+                    <div v-else-if="updateCom =='referenceSearch'" class="w-100">
+                        <el-input v-model="updateValue" readonly>
                             <template #append>
                                 <el-button @click="showReferenceDialogFlag = true">
                                     <el-icon>
@@ -92,28 +92,53 @@
                                 </el-button>
                             </template>
                         </el-input>
-                        <el-dialog
+                        <ml-dialog
                             title="请选择"
                             class="reference-dialog"
                             v-model="showReferenceDialogFlag"
                             append-to-body
-                            width="520"
-                            v-if="entityName"
+                            width="600px"
+                            v-if="entityName && updateFieldType == 'Reference'"
                         >
                             <ReferenceSearchTable
                                 :entity="entityName"
-                                :refField="uptadeField.fieldName"
+                                :refField="updateField.fieldName"
                                 @recordSelected="setReferRecord"
                             />
-                        </el-dialog>
+                            <!-- <template #footer v-if="updateFieldType == 'ReferenceList'">
+                                <el-button @click="isShow = false">取消</el-button>
+                                <el-button type="primary" @click="confirmUpdate">确认</el-button>
+                            </template>
+                             -->
+                        </ml-dialog>
+                        <ml-dialog
+                            title="请选择"
+                            class="reference-dialog"
+                            v-model="showReferenceDialogFlag"
+                            append-to-body
+                            width="600px"
+                            v-if="entityName && updateFieldType == 'ReferenceList'"
+                        >
+                            <ReferenceSearchTable
+                                :entity="entityName"
+                                :refField="updateField.fieldName"
+                                showCheckBox
+                                ref="referST"
+                                :defaultSelected="updateReference"
+                            />
+                            <template #footer v-if="updateFieldType == 'ReferenceList'">
+                                <el-button @click="showReferenceDialogFlag = false">取消</el-button>
+                                <el-button type="primary" @click="confirmReferenceList">确认</el-button>
+                            </template>
+                        </ml-dialog>
                     </div>
                 </el-form-item>
             </el-form>
-            <div class="w-100" style="text-align: right;">
-                <el-button @click="isShow = false">取消</el-button>
-                <el-button type="primary" @click="confirmUptade">确认</el-button>
-            </div>
         </div>
+        <template #footer>
+            <el-button @click="isShow = false">取消</el-button>
+            <el-button type="primary" @click="confirmUpdate">确认</el-button>
+        </template>
     </ml-dialog>
 </template>
 
@@ -146,13 +171,15 @@ let entityName = ref("");
  * 更新值字段的组件
  */
 // 欲编辑的字段
-let uptadeField = ref({});
+let updateField = ref({});
 // 欲更新的值
-let uptadeValue = ref("");
+let updateValue = ref("");
 // 引用字段的key组合
-let uptadeReference = ref([]);
+let updateReference = ref([]);
 // 欲更新的值
-let uptadeCom = ref("textInput");
+let updateCom = ref("textInput");
+// 欲更新字段的类型
+let updateFieldType = ref("");
 
 // 打开弹框
 const openDialog = (fields, selectRows, entity, idField) => {
@@ -161,9 +188,10 @@ const openDialog = (fields, selectRows, entity, idField) => {
     rows.value = selectRows;
     entityName.value = entity;
     idFieldName.value = idField;
-    uptadeField.value = {};
-    uptadeValue.value = "";
-    uptadeCom.value = "textInput";
+    updateField.value = {};
+    updateValue.value = "";
+    updateCom.value = "textInput";
+    updateFieldType.value = "";
 };
 
 // 组件合集
@@ -185,32 +213,52 @@ const comList = {
  */
 let showReferenceDialogFlag = ref(false);
 
+// 单引用
 const setReferRecord = (event) => {
     console.log(event, "event");
-    uptadeReference.value = [event];
-    uptadeValue.value = event.label;
+    updateReference.value = [event];
+    updateValue.value = event.label;
     showReferenceDialogFlag.value = false;
 };
 
+// 多引用
+let referST = ref("");
+const confirmReferenceList = () => {
+    let fieldNames = referST.value?.getIdNameField() || {};
+    let rows = referST.value?.getMultipleSelection() || [];
+    let labels = [];
+    updateReference.value = rows.map(el => {
+        labels.push(el[fieldNames.nameField]);
+        return {
+            id: el[fieldNames.idField],
+            name: el[fieldNames.nameField]
+        }
+    });
+    updateValue.value = labels.join(",");
+    showReferenceDialogFlag.value = false;
+    // console.log(updateReference.value, "updateReference.value");
+}
+
 // 获取字段对应的组件
 const getFieldTypeCom = () => {
-    let { fieldType, referenceName } = uptadeField.value;
-    uptadeValue.value = null;
-    uptadeReference.value = [];
+    let { fieldType, referenceName } = updateField.value;
+    updateValue.value = null;
+    updateReference.value = [];
     // 如果是引用字段
-    if (fieldType == "Reference") {
+    if (fieldType == "Reference" || fieldType == "ReferenceList") {
         // 用户下拉框
         if (referenceName == "User") {
-            uptadeCom.value = "userSelect";
+            updateCom.value = "userSelect";
         }
         // 部门下拉框
         else if (referenceName == "Department") {
-            uptadeCom.value = "departmentSelect";
+            updateCom.value = "departmentSelect";
         }
         // 引用类型搜索组件
         else {
-            uptadeCom.value = "referenceSearch";
+            updateCom.value = "referenceSearch";
         }
+        updateFieldType.value = fieldType;
     }
     // 非引用字段
     else {
@@ -218,7 +266,7 @@ const getFieldTypeCom = () => {
             if (Object.hasOwnProperty.call(comList, key)) {
                 const element = comList[key];
                 if (element.includes(fieldType)) {
-                    uptadeCom.value = key;
+                    updateCom.value = key;
                     return;
                 }
             }
@@ -226,18 +274,27 @@ const getFieldTypeCom = () => {
     }
 };
 
+
+
 // 确认更新
-const confirmUptade = async () => {
-    let { fieldType } = uptadeField.value;
+const confirmUpdate = async () => {
+    let { fieldType } = updateField.value;
     let param = {
         entityName: entityName.value,
         recordIdList: rows.value.map((el) => el[idFieldName.value]),
         dataMap: {},
     };
-    param.dataMap[uptadeField.value.fieldName] =
-        fieldType == "Reference"
-            ? uptadeReference.value[0].id
-            : uptadeValue.value;
+    param.dataMap[updateField.value.fieldName] = "";
+
+    if (fieldType == "Reference") {
+        param.dataMap[updateField.value.fieldName] = updateReference.value[0].id;
+    }
+    else if (fieldType == "ReferenceList") {
+        param.dataMap[updateField.value.fieldName] = updateReference.value;
+    }
+    else {
+        param.dataMap[updateField.value.fieldName] = updateValue.value;
+    }
     loading.value = true;
     let res = await updateRecordList(param);
     if (res && res.code == 200) {

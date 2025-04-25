@@ -479,6 +479,9 @@ export default {
 	max-height: 600px;
 	overflow-x: hidden;
 	overflow-y: auto;
+    :deep(.el-pagination) {
+        justify-content: center;
+    }
 }
 
 .footer-box {
