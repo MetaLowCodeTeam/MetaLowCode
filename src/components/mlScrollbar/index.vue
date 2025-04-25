@@ -4,6 +4,7 @@
 		:height="height"
 		:min-height="minHeight"
 		:max-height="maxHeight"
+        class="ml-scrollbar"
 	>
 		<div class="content">
 			<slot />
@@ -29,7 +30,10 @@ const props = defineProps({
 </script>
 
 <style scoped lang="scss">
-:deep(.is-horizontal) {
-	display: none !important;
+.ml-scrollbar{
+    & > :deep(.is-horizontal) {
+        display: none !important;
+    }
 }
+
 </style>
