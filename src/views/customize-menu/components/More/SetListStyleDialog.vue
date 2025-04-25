@@ -28,7 +28,7 @@
                         </el-checkbox>
                     </div>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">批量删除设置</div>
                     <div class="form-item mb-30">
                         <el-checkbox v-model="styleConf.delConf.allowUsersSelect">
@@ -41,9 +41,9 @@
                         />
                     </div>
                 </el-col>
-                <el-col :span="12">
-                    <div class="form-title" v-if="!isListCard">复制设置</div>
-                    <div class="form-item mb-30" v-if="!isListCard">
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
+                    <div class="form-title">复制设置</div>
+                    <div class="form-item mb-30">
                         <el-checkbox v-model="styleConf.copyConf.openCopy">
                             打开复制功能
                         </el-checkbox>
@@ -70,7 +70,7 @@
                         />
                     </div>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">顶部区域隐藏</div>
                     <el-checkbox 
                         :checked="!styleConf.toolbarConf.showHeader"
@@ -123,7 +123,7 @@
                 </el-col>
                 <el-col :span="12">
                     <div class="form-title">指定表单</div>
-                    <el-tabs v-model="formActiveName" v-if="!isListCard" class="mb-20">
+                    <el-tabs v-model="formActiveName" class="mb-20">
                         <el-tab-pane label="指定新建表单" name="addFormId">
                             <el-form label-width="120px" label-position="top">
                                 <el-form-item label="指定新建表单(PC)" class="mb-5">
@@ -168,9 +168,9 @@
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
-                <el-col :span="24">
+                <el-col :span="24" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">自定义渲染</div>
-                    <el-tabs v-model="activeName" v-if="!isListCard">
+                    <el-tabs v-model="activeName">
                         <el-tab-pane label="自定义行选中禁用设置" name="rowDisabledRender">
                             <div class="mb-10 mt-10">
                                 <span>自定义渲染</span>
@@ -268,6 +268,11 @@ const props = defineProps({
 	},
     // 是否卡片列表
     isListCard: {
+        type: Boolean,
+        default: false,
+    },
+    // 是否日历列表
+    isListCalendar: {
         type: Boolean,
         default: false,
     }
@@ -482,15 +487,23 @@ const handleCheckboxChange = (key, event) => {
 </script>
 <style lang="scss" scoped>
 .set-list-style {
+    // display: flex;
+    text-align: left;
+    // flex-direction: column;
+    // justify-content: space-between;
 	// line-height: 1;
 	// max-height: 500px;
 	// overflow-y: auto;
 	// overflow-x: hidden;
 	// padding: 20px;
+    line-height: 32px;
 	.form-title {
 		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 5px;
 	}
+    .form-item {
+        // line-height: 32px;
+    }
 }
 </style>

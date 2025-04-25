@@ -34,6 +34,7 @@ import { registerCustomServiceTaskCmp } from "@/views/system/approval-process/co
 import { registerDetailTabCustomComponent } from "@/views/custom-page/CustomDetailTabComponent/index.js";
 // console.log("1. 使用路由...",router)
 import { getSimplePinYin } from "@/utils/util";
+
 //初始化高德地图组件
 initAMapApiLoader({
 	key: '487d8f7268cf06102ecd3e637b0f892d',

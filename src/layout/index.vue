@@ -21,10 +21,56 @@
                     </li>
                 </ul> -->
             </div>
+            <el-tooltip effect="light" placement="bottom-start">
+                <template #content>
+                    <div class="top-more-nav-content">
+                        <el-row :gutter="10">
+                            <el-col :span="6" v-for="(item,inx) in menu" :key="inx">
+                                <div 
+                                    class="top-more-nav-content-item yichu" 
+                                    :title="item.meta.title"
+                                    @click="showMenu(item)"
+                                    :class="pmenu.path == item.path ? 'active' : '' "
+                                >
+                                    <el-icon :style="{'color':item.meta.iconColor}" class="menu-icon mr-2">
+                                        <component :is="item.meta.icon || 'el-icon-menu'" />
+                                    </el-icon>
+                                    {{ item.meta.title }}
+                                </div>
+                            </el-col>
+                        </el-row>
+                        <!-- <div 
+                            class="top-more-nav-content-item" 
+                            v-for="(item,inx) in menu" :key="inx"
+                        >
+                            <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
+                                <component :is="item.meta.icon || 'el-icon-menu'" />
+                            </el-icon>
+                            {{ item.meta.title }}
+                        </div> -->
+                        <!-- <p
+                            v-for="item in menu"
+                            :key="item"
+                            :class="pmenu.path==item.path ? 'active' : '' "
+                            @click="showMenu(item)"
+                        >
+                            <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
+                                <component :is="item.meta.icon || 'el-icon-menu'" />
+                            </el-icon>
+                            {{ item.meta.title }}
+                        </p> -->
+                    </div>
+
+                </template>
+                <span class="top-more-nav" v-if="menu.length > 4">
+                    <el-icon size="20"><Menu /></el-icon>
+                </span>
+            </el-tooltip>
+            
             <div
                 class="adminui-header-center"
                 v-if="!ismobileFn"
-                :style="{'width': getHeaderCenterWidht}"
+                :style="{'width': getHeaderCenterWidth}"
             >
                 <el-scrollbar :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
@@ -165,7 +211,7 @@
             <div
                 class="adminui-header-center"
                 v-if="!ismobileFn"
-                :style="{'width': getHeaderCenterWidht}"
+                :style="{'width': getHeaderCenterWidth}"
             >
                 <el-scrollbar class="dock-header-scrollbar" :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
@@ -185,7 +231,7 @@
                     </div>
                 </el-scrollbar>
             </div>
-            <div class="adminui-header-right">         
+            <div class="adminui-header-right" style="min-width: 280px;">         
                 <userbar isDockLayout></userbar>
             </div>
         </header>
@@ -432,13 +478,13 @@ export default {
         appName: () => {
             return publicSetting.value.APP_NAME;
         },
-        getHeaderCenterWidht(){
+        getHeaderCenterWidth(){
             let computedWidth;
             let nameLangth = this.appName?.length;
             if(nameLangth < 7){
-                computedWidth = 570;
+                computedWidth = 620;
             }else {
-                computedWidth = 570 + ((nameLangth - 6 ) * 20);
+                computedWidth = 620 + ((nameLangth - 6 ) * 20);
             }
             return "calc(100% - "+ computedWidth +"px)";
         },
@@ -454,6 +500,11 @@ export default {
                 this.dockMenu.push(item);
             }
         });
+        this.menu.forEach((el,inx) => {
+            if(el.children && el.children.length < 1){
+                this.menu.splice(inx, 1);
+            }
+        })
         this.getDefaultOpeneds();
         this.showThis();
     },
@@ -608,4 +659,47 @@ export default {
         display: none;
     }
 }
+.top-more-nav {
+    display: flex;
+    width: 30px;
+    height: 57px;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    &:hover {
+        color: #fff;
+    }
+}
+.top-more-nav-content {
+    width: 600px;
+    font-size: 14px;
+    font-weight: normal;
+    .top-more-nav-content-item {
+        line-height: 30px;
+        box-sizing: border-box;
+        padding: 0 10px;
+        cursor: pointer;
+        border-radius: 4px;
+        &.active {
+            background-color: #f0f2f5;
+        }
+        &:hover {
+            background-color: #f0f2f5;
+            
+        }
+        .menu-icon {
+            position: relative;
+            top: 2px;
+        }
+        
+    }
+    // display: flex;
+    // .top-more-nav-content-item {
+    //     // width: 100px;
+    //     // text-align: center;
+    // }
+}
 </style>
+
+

@@ -229,6 +229,8 @@
 		ref="detailRefs"
 		:entityName="entity.name"
 		@updateData="getTableList"
+        :recordDetailFormId="rowStyleConf?.formConf?.pcDetailFormId"
+        :recordEditFormId="rowStyleConf?.formConf?.pcEditFormId"
 	/>
 	<!-- 快速搜索字段 -->
 	<mlSelectField
@@ -519,6 +521,7 @@ const formatEditData = (row) => {
 		entityName: entity.value.name,
 		idFieldName: layoutConf.value.idFieldName,
 		nameFieldName: layoutConf.value.nameFieldName,
+        formId: row ? rowStyleConf.value?.formConf?.pcEditFormId : rowStyleConf.value?.formConf?.pcAddFormId,
 	};
 	if (row) {
 		param.detailId = row[layoutConf.value.idFieldName];
@@ -538,6 +541,9 @@ const formatEditData = (row) => {
 /**
  * 列表API ---------------- begin
  */
+
+const rowStyleConf = ref({});
+
 // 是否设置了PC表单
 let isSetCalendarField = ref(false);
 
@@ -566,6 +572,10 @@ const loadLayoutConf = async () => {
 				JSON.parse(CALENDAR.config)
 			);
 		}
+        // 自定义行样式
+        if(res.data.STYLE && res.data.STYLE.config){
+            rowStyleConf.value = JSON.parse(res.data.STYLE.config);
+        }
 		quickQueryConf.entityCode = entity.value.code;
 		// 如果存在快速搜索字段
 		if (SEARCH) {

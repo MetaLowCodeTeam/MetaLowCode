@@ -96,6 +96,9 @@ router.beforeEach(async (to, from, next) => {
             if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
                 return false
             }
+            if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
+                return false
+            }
             return true
         })
         userMenu[0].children.push(...getUseMenuList())
@@ -122,6 +125,15 @@ router.beforeEach(async (to, from, next) => {
     }
     if(to.name == "AppDesignEntity") {
         to.meta.title =  to.meta.title + " - " + to.query.entityLabel
+    }
+    // 如果是跨导航的 强行跳转 
+    let forcefullyJump = localStorage.getItem('forcefullyJump');
+    if(forcefullyJump) {
+        next({
+            path: forcefullyJump
+        });
+        localStorage.removeItem('forcefullyJump');
+        return
     }
     next();
 });
@@ -150,6 +162,9 @@ router.sc_getMenu = () => {
     const { publicSetting } = storeToRefs(useCommonStore());
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
         if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
+            return false
+        }
+        if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
             return false
         }
         return true

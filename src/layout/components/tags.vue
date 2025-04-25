@@ -17,7 +17,7 @@
         </ul>
     </div>
 
-    <transition name="el-zoom-in-top">
+    <transition name="el-zoom-in-top" v-loading="collectLoading">
         <ul
             v-if="contextMenuVisible"
             :style="{left:left+'px',top:top+'px'}"
@@ -28,6 +28,18 @@
                 <el-icon>
                     <el-icon-refresh />
                 </el-icon>刷新
+            </li>
+            <li @click="collectTag()" v-if="isCollect">
+                <el-icon>
+                    <StarFilled />
+                </el-icon>
+                取消收藏
+            </li>
+            <li @click="collectTag()" v-else>
+                <el-icon>
+                    <Star />
+                </el-icon>
+                收藏
             </li>
             <hr />
             <li @click="closeTabs()" :class="contextMenuItem.meta.affix?'disabled':''">
@@ -65,15 +77,23 @@ import Sortable from "sortablejs";
 import useViewTagsStore from "@/store/modules/viewTags";
 import useKeepAliveStore from "@/store/modules/keepAlive";
 import useIframeStore from "@/store/modules/iframe";
+import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 const viewTagsStore = useViewTagsStore();
 const keepAliveStore = useKeepAliveStore();
 const iframeStore = useIframeStore();
+
 const { viewTags } = storeToRefs(viewTagsStore);
 const { pushViewTags,removeViewTags } = viewTagsStore;
 const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
 const { removeIframeList,refreshIframe } = iframeStore;
-import systemRouter from '@/router/systemRouter';
+// 当前菜单导航
+const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
+// 收藏菜单 、 删除收藏菜单 、 获取收藏菜单
+const { 
+    checkCollectMenu,
+    setCollectMenuList
+} = useLayoutConfigStore();
 const appPath = import.meta.env.VITE_APP_PATH;
 export default {
     name: "tags",
@@ -85,6 +105,14 @@ export default {
             top: 0,
             tagList: viewTags.value,
             tipDisplayed: false,
+            // 当前菜单导航
+            currentNavigationId: chosenNavigationId.value,
+            // 检测是否收藏
+            isCollect: false,
+            // 收藏ID
+            collectRecordId: null,
+            // 收藏loading
+            collectLoading: false,
         };
     },
     props: {
@@ -170,6 +198,44 @@ export default {
         this.scrollInit();
     },
     methods: {
+        // 收藏格式化菜单
+        formateMenu() {
+            let formateMenu = {
+                navigationId: this.currentNavigationId,
+                title: this.contextMenuItem.meta.title,
+                fullPath: this.contextMenuItem.fullPath,
+                alias: this.contextMenuItem.meta.title,
+            }
+            return formateMenu;
+        },
+        // 收藏
+        async collectTag() {
+            if(this.isCollect){
+                this.collectLoading = true;
+                let res = await this.$API.layoutConfig.deleteFavoritesConfig(this.collectRecordId);
+                if(res && res.code == 200) {
+                    this.$message.success('已取消收藏')
+                    setCollectMenuList(res.data)
+                    this.contextMenuVisible = false;
+                }
+                this.collectLoading = false;
+            }else {
+                this.collectLoading = true;
+                let res = await this.$API.layoutConfig.saveFavoritesConfig(
+                    null,
+                    "FAVORITES",
+                    {
+                        config: JSON.stringify(this.formateMenu()),
+                    },
+                );
+                if(res && res.code == 200) {
+                    this.$message.success('收藏成功')
+                    setCollectMenuList(res.data)
+                    this.contextMenuVisible = false;
+                }
+                this.collectLoading = false;
+            }
+        },
         //查找树
         treeFind(tree, func) {
             for (const data of tree) {
@@ -228,6 +294,10 @@ export default {
         openContextMenu(e, tag) {
             this.contextMenuItem = tag;
             this.contextMenuVisible = true;
+            // 获取收藏ID
+            this.collectRecordId = checkCollectMenu(this.formateMenu());
+            // 检测是否收藏
+            this.isCollect = this.collectRecordId ? true : false;
             this.left = e.clientX + 1;
             this.top = e.clientY + 1;
 

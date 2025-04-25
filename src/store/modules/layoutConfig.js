@@ -94,6 +94,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 使用的菜单
     let useMenuList = ref([]);
 
+    // 收藏菜单
+    let collectMenuList = ref([]);
 
 
     // 获取LayoutApi
@@ -109,6 +111,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             setChosenNavigationId(navRes.data.chosenNavigationId);
             setTopNavigation(navRes.data.topNavigation || {})
             setDefaultMenuList();
+            setCollectMenuList(navRes.data.favorites || [])
         }
     }
 
@@ -383,6 +386,22 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     const getTopNavMenuList = () => {
         return [...topNavMenuList.value]
     }
+    // 设置收藏菜单
+    const setCollectMenuList = (list = []) => {
+        collectMenuList.value = [];
+        list.forEach(el => {
+            if(el.config) {
+                let item = JSON.parse(el.config);
+                item.recordId = el.layoutConfigId;
+                collectMenuList.value.push(item)
+            }
+        })
+    }
+    // 检测是否收藏菜单
+    const checkCollectMenu = (menu) => {
+        const foundMenu = collectMenuList.value.find(el => el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath);
+        return foundMenu ? foundMenu.recordId : null;
+    } 
     return {
         getNavigationApi,
         navigationList,
@@ -397,6 +416,12 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         getTopNavigation,
         getTopNavMenuList,
         topDefaultUnfold,
+        // 收藏菜单
+        collectMenuList,
+        // 设置收藏菜单
+        setCollectMenuList,
+        // 检测是否收藏
+        checkCollectMenu,
     }
 })
 

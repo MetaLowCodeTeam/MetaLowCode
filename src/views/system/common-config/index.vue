@@ -5,110 +5,146 @@
                 <template v-for="(card,cardInx) of confList" :key="cardInx">
                     <el-tab-pane :name="card.code" :label="card.label" v-if="!card.isHide">
                         <el-descriptions :border="true" :column="1">
-                            <el-descriptions-item v-for="(item,inx) of card.confs" :key="inx">
-                                <template #label>
-                                    <div class="config-label">
-                                        <div>
-                                            <span class="is-required" v-if="item.required">*</span>
-                                            {{ item.label }}
+                            <template v-for="(item,inx) of card.confs" :key="inx">
+                                <el-descriptions-item v-if="item.show ? item.show(confData) : true">
+                                    <template #label>
+                                        <div class="config-label">
+                                            <div>
+                                                <span class="is-required" v-if="item.required">*</span>
+                                                {{ item.label }}
+                                            </div>
                                         </div>
+                                    </template>
+                                    <!-- 文本框 -->
+                                    <div v-if="item.type == 'text'">
+                                        <span
+                                            v-if="item.keyFrom"
+                                        >{{ confData[item.keyFrom] ? confData[item.keyFrom][item.key] : '--'}}</span>
+                                        <span v-else>{{ confData[item.key] }}</span>
                                     </div>
-                                </template>
-                                <!-- 文本框 -->
-                                <div v-if="item.type == 'text'">
-                                    <span
-                                        v-if="item.keyFrom"
-                                    >{{ confData[item.keyFrom] ? confData[item.keyFrom][item.key] : '--'}}</span>
-                                    <span v-else>{{ confData[item.key] }}</span>
-                                </div>
-                                <!-- 输入框 -->
-                                <div v-else-if="(item.type == 'input' || item.type == 'passwordInput')">
-                                    <el-input
-                                        :class="{'is-error':item.isError}"
-                                        @focus="item.isError = false"
-                                        v-model="confData[item.key]"
-                                        clearable
-                                        :disabled="isDisabled(card,item) || item.disabled"
-                                        :placeholder="'请输入' + item.label"
-                                        :type="item.type == 'input' ? 'text' : 'password'"
-                                        :show-password="item.type == 'passwordInput'"
-                                    ></el-input>
-                                    <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
-                                </div>
-                                <!-- 选择框 -->
-                                <div v-else-if="item.type == 'select'">
-                                    <el-select 
-                                        v-model="confData[item.key]" 
-                                        :placeholder="item.placeholder" 
-                                        :style="{'width': item.selectWidth }"
-                                        @change="item.onChange"
+                                    <!-- 输入框 -->
+                                    <div 
+                                        v-else-if="(item.type == 'input' || item.type == 'passwordInput')"
                                     >
-                                        <el-option
-                                            v-for="op in item.options"
-                                            :key="op.value"
-                                            :label="op.label"
-                                            :value="op.value"
+                                        <form @submit.prevent>
+                                            <div @click="item.needCopy ? copyValue(item) : ''">
+                                                <el-input
+                                                    :class="{'is-error':item.isError}"
+                                                    @focus="item.isError = false"
+                                                    v-model="confData[item.key]"
+                                                    clearable
+                                                    :disabled="isDisabled(card,item) || item.disabled"
+                                                    :placeholder="'请输入' + item.label"
+                                                    :type="item.type == 'input' ? 'text' : 'password'"
+                                                    :show-password="item.type == 'passwordInput'"
+                                                    :maxlength="item.maxLength"
+                                                ></el-input>
+                                            </div>
+                                        </form>
+                                        <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
+                                    </div>
+                                    <!-- 选择框 -->
+                                    <div v-else-if="item.type == 'select'">
+                                        <el-select 
+                                            v-model="confData[item.key]" 
+                                            :placeholder="item.placeholder" 
+                                            :style="{'width': item.selectWidth }"
+                                            @change="item.onChange"
+                                        >
+                                            <el-option
+                                                v-for="op in item.options"
+                                                :key="op.value"
+                                                :label="op.label"
+                                                :value="op.value"
+                                            />
+                                        </el-select>
+                                    </div>
+                                    <!-- 单选框 -->
+                                    <div v-else-if="item.type == 'radio'">
+                                        <el-radio-group v-model="confData[item.key]" :disabled="isDisabled(card,item)">
+                                            <el-radio v-for="op in item.options" :key="op.value" :label="op.value" :value="op.value">{{ op.label }}</el-radio>
+                                        </el-radio-group>
+                                    </div>
+                                    <!-- 复选框 -->
+                                    <div v-else-if="item.type == 'checkbox'">
+                                        <el-checkbox 
+                                            v-model="confData[item.key]" 
+                                            :disabled="isDisabled(card,item)"
+                                            @change="item.onChange ? item.onChange(confData) : ''"
+                                        >
+                                            {{ item.checkBoxLabel || item.label }}
+                                        </el-checkbox>
+                                    </div>
+                                    <!-- 开关 -->
+                                    <div v-else-if="item.type == 'switch'">
+                                        <el-tooltip
+                                            class="box-item"
+                                            effect="dark"
+                                            content="需要先开启短信服务"
+                                            placement="top"
+                                            v-if="item.key == 'mobilePhoneLogin' && !confData.smsOpen"
+                                        >
+                                            <el-switch v-model="confData[item.key]" disabled />
+                                        </el-tooltip>
+                                        <el-switch v-else-if="item.key == 'autoBackup'" :beforeChange="openAutoBackup" v-model="confData[item.key]" />
+                                        <el-switch v-else v-model="confData[item.key]" />
+                                        <span class="info-text ml-10" v-if="item.subLabel">{{ item.subLabel }}</span>
+                                    </div>
+                                    <!-- 颜色选择器 -->
+                                    <div v-else-if="item.type == 'picker'">
+                                        <el-color-picker v-model="confData[item.key]" />
+                                    </div>
+                                    <!-- 钉钉集成用户选择框 -->
+                                    <div v-else-if="item.type == 'mlSelectUser' && item.key == 'nodeRole'">
+                                        <mlSelectUser
+                                            type="Role"
+                                            v-model="confData.nodeRole"
+                                            clearable
+                                            :disabled="!confData.dingTalkOpen"
                                         />
-                                    </el-select>
-                                </div>
-                                <!-- 开关 -->
-                                <div v-else-if="item.type == 'switch'">
-                                    <el-tooltip
-                                        class="box-item"
-                                        effect="dark"
-                                        content="需要先开启短信服务"
-                                        placement="top"
-                                        v-if="item.key == 'mobilePhoneLogin' && !confData.smsOpen"
-                                    >
-                                        <el-switch v-model="confData[item.key]" disabled />
-                                    </el-tooltip>
-                                    <el-switch v-else-if="item.key == 'autoBackup'" :beforeChange="openAutoBackup" v-model="confData[item.key]" />
-                                    <el-switch v-else v-model="confData[item.key]" />
-                                    <span class="info-text ml-10" v-if="item.subLabel">{{ item.subLabel }}</span>
-                                </div>
-                                <!-- 颜色选择器 -->
-                                <div v-else-if="item.type == 'picker'">
-                                    <el-color-picker v-model="confData[item.key]" />
-                                </div>
-                                <!-- 钉钉集成用户选择框 -->
-                                <div v-else-if="item.type == 'mlSelectUser' && item.key == 'nodeRole'">
-                                    <mlSelectUser
-                                        type="Role"
-                                        v-model="confData.nodeRole"
-                                        clearable
-                                        :disabled="!confData.dingTalkOpen"
-                                    />
-                                </div>
-                                 <!-- 企业微信集成用户选择框 -->
-                                 <div v-else-if="item.type == 'mlSelectUser' && item.key == 'wxWorkNodeRole'">
-                                    <mlSelectUser
-                                        type="Role"
-                                        v-model="confData.wxWorkNodeRole"
-                                        clearable
-                                        :disabled="!confData.wxWorkOpen"
-                                    />
-                                </div>
-                                <!-- 数字类型输入框 -->
-                                <div v-else-if="item.type == 'numInput'">
-                                    <el-input-number
-                                        v-model="confData[item.key]"
-                                        :min="1"
-                                        :max="99999"
-                                        :disabled="!confData.autoBackup"
-                                    />
-                                    <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>
-                                </div>
-                                <!-- 立即同步 -->
-                                <div v-else-if="item.type == 'autoSync'">
-                                    <el-tooltip
-                                        popper-class="conmon-tooltip"
-                                        effect="dark"
-                                        :content="errorMessage || 'error'"
-                                        placement="top"
-                                        v-if="errorMessage"
-                                        style="width: 300px;"
-                                    >
+                                    </div>
+                                    <!-- 企业微信集成用户选择框 -->
+                                    <div v-else-if="item.type == 'mlSelectUser' && item.key == 'wxWorkNodeRole'">
+                                        <mlSelectUser
+                                            type="Role"
+                                            v-model="confData.wxWorkNodeRole"
+                                            clearable
+                                            :disabled="!confData.wxWorkOpen"
+                                        />
+                                    </div>
+                                    <!-- 数字类型输入框 -->
+                                    <div v-else-if="item.type == 'numInput'">
+                                        <el-input-number
+                                            v-model="confData[item.key]"
+                                            :min="1"
+                                            :max="99999"
+                                            :disabled="!confData.autoBackup"
+                                        />
+                                        <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>
+                                    </div>
+                                    <!-- 立即同步 -->
+                                    <div v-else-if="item.type == 'autoSync'">
+                                        <el-tooltip
+                                            popper-class="conmon-tooltip"
+                                            effect="dark"
+                                            :content="errorMessage || 'error'"
+                                            placement="top"
+                                            v-if="errorMessage"
+                                            style="width: 300px;"
+                                        >
+                                            <el-button
+                                                :loading="autoSyncLoading"
+                                                :disabled="isDisabled(card,item)"
+                                                @click="autoSync"
+                                            >
+                                                <el-icon v-if="!autoSyncLoading">
+                                                    <ElIconRefresh />
+                                                </el-icon>
+                                                <span class="ml-2">同步失败</span>
+                                            </el-button>
+                                        </el-tooltip>
                                         <el-button
+                                            v-else
                                             :loading="autoSyncLoading"
                                             :disabled="isDisabled(card,item)"
                                             @click="autoSync"
@@ -116,32 +152,32 @@
                                             <el-icon v-if="!autoSyncLoading">
                                                 <ElIconRefresh />
                                             </el-icon>
-                                            <span class="ml-2">同步失败</span>
+                                            <span class="ml-2">立即同步</span>
                                         </el-button>
-                                    </el-tooltip>
-                                    <el-button
-                                        v-else
-                                        :loading="autoSyncLoading"
-                                        :disabled="isDisabled(card,item)"
-                                        @click="autoSync"
-                                    >
-                                        <el-icon v-if="!autoSyncLoading">
-                                            <ElIconRefresh />
-                                        </el-icon>
-                                        <span class="ml-2">立即同步</span>
-                                    </el-button>
-                                </div>
-                                <!-- 立即同步 -->
-                                <div v-else-if="item.type == 'autoSync2'">
-                                    <el-tooltip
-                                        popper-class="conmon-tooltip"
-                                        effect="dark"
-                                        :content="errorMessage2 || 'error'"
-                                        placement="top"
-                                        v-if="errorMessage2"
-                                        style="width: 300px;"
-                                    >
+                                    </div>
+                                    <!-- 立即同步 -->
+                                    <div v-else-if="item.type == 'autoSync2'">
+                                        <el-tooltip
+                                            popper-class="conmon-tooltip"
+                                            effect="dark"
+                                            :content="errorMessage2 || 'error'"
+                                            placement="top"
+                                            v-if="errorMessage2"
+                                            style="width: 300px;"
+                                        >
+                                            <el-button
+                                                :loading="autoSyncLoading2"
+                                                :disabled="isDisabled(card,item)"
+                                                @click="autoSync2"
+                                            >
+                                                <el-icon v-if="!autoSyncLoading2">
+                                                    <ElIconRefresh />
+                                                </el-icon>
+                                                <span class="ml-2">同步失败</span>
+                                            </el-button>
+                                        </el-tooltip>
                                         <el-button
+                                            v-else
                                             :loading="autoSyncLoading2"
                                             :disabled="isDisabled(card,item)"
                                             @click="autoSync2"
@@ -149,58 +185,48 @@
                                             <el-icon v-if="!autoSyncLoading2">
                                                 <ElIconRefresh />
                                             </el-icon>
-                                            <span class="ml-2">同步失败</span>
+                                            <span class="ml-2">立即同步</span>
                                         </el-button>
-                                    </el-tooltip>
-                                    <el-button
-                                        v-else
-                                        :loading="autoSyncLoading2"
-                                        :disabled="isDisabled(card,item)"
-                                        @click="autoSync2"
-                                    >
-                                        <el-icon v-if="!autoSyncLoading2">
-                                            <ElIconRefresh />
-                                        </el-icon>
-                                        <span class="ml-2">立即同步</span>
-                                    </el-button>
-                                </div>
-                                <!-- 上传Logo -->
-                                <div class="upload-logo-div" v-else-if="item.type == 'uploadLogo'" style="width: 178px;">
-                                    <ml-upload
-                                        accept="image/*"
-                                        @on-success="(data) => onLogoSuccess(data, item.key)"
-                                        class="ml-upload"
-                                        uploadUrl="/picture/upload"
-                                    >
-                                        <template #trigger>
-                                            <div
-                                                class="avatar-box"
-                                                :class="{'is-error':item.isError}"
-                                                v-if="confData[item.key]"
-                                                @click="item.isError = false"
-                                            >
-                                                <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
-                                                <div class="remove-logo">
-                                                    <span class="remove-logo-icon" @click.stop="removeLogo(item.key)">
-                                                        <el-icon size="30">
-                                                            <ElIconDelete />
-                                                        </el-icon>
-                                                    </span>
+                                    </div>
+                                    <!-- 上传Logo -->
+                                    <div class="upload-logo-div" v-else-if="item.type == 'uploadLogo'" style="width: 178px;">
+                                        <ml-upload
+                                            accept="image/*"
+                                            @on-success="(data) => onLogoSuccess(data, item.key)"
+                                            class="ml-upload"
+                                            uploadUrl="/picture/upload"
+                                        >
+                                            <template #trigger>
+                                                <div
+                                                    class="avatar-box"
+                                                    :class="{'is-error':item.isError}"
+                                                    v-if="confData[item.key]"
+                                                    @click="item.isError = false"
+                                                >
+                                                    <mlLogo class="avatar" :logoUrl="getLogoUrl(item)"></mlLogo>
+                                                    <div class="remove-logo">
+                                                        <span class="remove-logo-icon" @click.stop="removeLogo(item.key)">
+                                                            <el-icon size="30">
+                                                                <ElIconDelete />
+                                                            </el-icon>
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <el-icon
-                                                @click="item.isError = false"
-                                                v-else
-                                                class="avatar-uploader-icon"
-                                                :class="{'is-error':item.isError}"
-                                            >
-                                                <ElIconPlus />
-                                            </el-icon>
-                                        </template>
-                                    </ml-upload>
-                                    <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
-                                </div>
-                            </el-descriptions-item>
+                                                <el-icon
+                                                    @click="item.isError = false"
+                                                    v-else
+                                                    class="avatar-uploader-icon"
+                                                    :class="{'is-error':item.isError}"
+                                                >
+                                                    <ElIconPlus />
+                                                </el-icon>
+                                            </template>
+                                        </ml-upload>
+                                        <div class="info-text" v-if="item.subLabel">{{ item.subLabel }}</div>
+                                    </div>
+                                </el-descriptions-item>
+                            </template>
+                            
                         </el-descriptions>
                     </el-tab-pane>
                 </template>
@@ -273,7 +299,38 @@ let needAuthentication = ref([]);
 // 短信字段
 let smsFields = ref(["smsappId", "smsappKey", "smssignature"]);
 // 邮箱字段
-let emailFields = ref(["appId", "appKey", "from", "fromName", "cc"]);
+let emailFields = ref([
+    "appId", 
+    "appKey", 
+    "from", 
+    "fromName", 
+    "cc", 
+    "sendType",
+    "smtpHost",
+    "smtpPort",
+    "smtpUseSSL",
+    "smtpUseSTARTTLS",
+    "smtpUsername",
+    "smtpPassword",
+]);
+
+// 邮箱SUBMAIL校验字段
+let emailSubmailFields = ref([
+    "appId", 
+    "appKey", 
+    "from", 
+    "fromName", 
+    "cc", 
+]);
+// 邮箱SMTP校验字段
+let emailSmtpFields = ref([
+    "smtpHost",
+    "smtpPort",
+    "smtpUseSSL",
+    "smtpUseSTARTTLS",
+    "smtpUsername",
+    "smtpPassword",
+]);
 // 云存储字段
 let cloudStorageFields = ref(["accessKey", "secretKey", "bucket", "host"]);
 // 钉钉字段
@@ -368,12 +425,15 @@ const initData = async () => {
         }
         // 格式化邮箱
         confData.emailOpen = emailSetting?.openStatus;
+        confData.sendType = emailSetting?.sendType || 0;
         for (const key in emailSetting) {
             if (Object.hasOwnProperty.call(emailSetting, key)) {
                 const element = emailSetting[key];
                 confData[key] = element;
             }
         }
+        confData.smtpUseSSL = emailSetting?.smtpUseSSL || false;
+        confData.smtpUseSTARTTLS = emailSetting?.smtpUseSTARTTLS || false;
 
         // 格式化云存储
         confData.cloudStorageOpen = cloudStorageSetting?.openStatus;
@@ -433,6 +493,9 @@ const initData = async () => {
             confData.homeDir += "/" + tenantId;
             confData.wxWorkHomeDir += "/" + tenantId;
         }
+        // 正则替换首页地址//
+        confData.homeDir = confData.homeDir.replace(/(?<!https?:)\/\/+/g, '/');
+        confData.wxWorkHomeDir = confData.wxWorkHomeDir.replace(/(?<!https?:)\/\/+/g, '/');
         // 备份周期
         confData.backupCycle = confData.backupCycle * 1 || 1;
         // 初始化备份保留时间
@@ -610,10 +673,13 @@ const onSubmit = async () => {
     loading.value = true;;
     let res = await updateSysSetting(confData);
     if (res) {
-        ElMessage.success("保存成功，即将为您自动刷新页面");
+        ElMessage.success("保存成功，即将自动刷新页面");
         setTimeout(() => {
             location.reload();
         }, 1000);
+        // nextTick(() => {
+        //     location.reload();
+        // });
     } 
     loading.value = false;
 };
@@ -644,7 +710,7 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning("请输入有效域名");
+                ElMessage.error("请输入有效域名");
                 return false;
             }
             let otherRequiredFields = ["appName", "appTitle"];
@@ -655,7 +721,7 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
             }
             // 如果字段是必填的，且该字段没有值 并且该字段属于短信 并且短息是开启的
@@ -667,20 +733,44 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
             }
             // 如果字段是必填的，且该字段没有值 并且该字段属于邮箱 并且邮箱是开启的
-            if (
+            // 如果是 邮箱SUBMAIL校验字段
+            if(
                 subEl.required &&
                 !confData[subEl.key] &&
-                emailFields.value.includes(subEl.key) &&
+                emailSubmailFields.value.includes(subEl.key) && 
+                confData.sendType === 0 &&
                 confData.emailOpen
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
+            }
+            // 如果是 邮箱SMTP校验字段
+            if(
+                subEl.required &&
+                !confData[subEl.key] &&
+                emailSmtpFields.value.includes(subEl.key) && 
+                confData.sendType === 1 &&
+                confData.emailOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果是 邮箱的 rules 字段
+            if(
+                subEl.rules &&
+                confData.sendType === 1
+            ) {
+                if(!subEl.rules(confData, subEl, ElMessage)){
+                    return false;
+                }
             }
             // 如果字段是必填的，且该字段没有值 并且该字段属于七牛云 并且七牛云是开启的
             if (
@@ -691,7 +781,7 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
             }
             // 如果字段是必填的，且该字段没有值 并且该字段属于钉钉集成
@@ -703,7 +793,7 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
             }
             // 如果字段是必填的，且该字段没有值 并且该字段属于企业微信集成
@@ -715,7 +805,7 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
             }
             // 如果字段是必填的，且该字段没有值 并且该字段属于微信集成
@@ -727,7 +817,7 @@ const checkOnSave = () => {
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
-                ElMessage.warning(MsgType[subEl.type] + subEl.label);
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
                 return false;
             }
         }
@@ -851,6 +941,24 @@ const openAutoBackup = () => {
         return resolve(true)
     })
 }
+
+// 复制值
+const copyValue = (item) => {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(confData[item.key]);
+        ElMessage.success("复制成功");
+    } else if (document.execCommand) {
+        const textarea = document.createElement('textarea');
+        textarea.value = confData[item.key];
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        ElMessage.success("复制成功");
+    } else {
+        ElMessage.warning("您的浏览器不支持自动复制功能，请手动连续双击全选复制。");
+    }
+};
 
 // 页签显示
 const showTab = (code) => {

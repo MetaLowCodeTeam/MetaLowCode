@@ -188,7 +188,6 @@
                     <div
                         class="pl-20 item"
                         @click="setListStyleDialogIsShow = true"
-                        v-if="!isListCalendar"
                     >
                         其他列表设置
                     </div>
@@ -265,6 +264,7 @@
         :layoutConfig="myLayoutConf"
         @confirm="allocationSuccess"
         :isListCard="isListCard"
+        :isListCalendar="isListCalendar"
         :modelName="modelName"
     />
     <!-- 卡片列表设置 -->

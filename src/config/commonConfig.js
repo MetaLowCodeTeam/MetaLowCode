@@ -52,6 +52,11 @@ export default [
                 type: "input",
             },
             {
+                label: "是否开启岗位模块",
+                key: "openJobPosition",
+                type: "switch",
+            },
+            {
                 label: "外置文件预览服务",
                 key: "fileOnlinePreviewPath",
                 type: "input",
@@ -174,11 +179,21 @@ export default [
                 type: "switch",
             },
             {
+                label: "服务器类型",
+                key: "sendType",
+                type: "radio",
+                options: [
+                    { label: "SUBMAIL", value: 0 },
+                    { label: "SMTP", value: 1 },
+                ],
+            },
+            {
                 label: "APPID",
                 key: "appId",
                 type: "input",
                 required: true,
                 isError: false,
+                show: (confData) => confData.sendType === 0
             },
             {
                 label: "APPKEY",
@@ -186,6 +201,7 @@ export default [
                 type: "passwordInput",
                 required: true,
                 isError: false,
+                show: (confData) => confData.sendType === 0
             },
             {
                 label: "发件人地址",
@@ -193,6 +209,7 @@ export default [
                 type: "input",
                 required: true,
                 isError: false,
+                show: (confData) => confData.sendType === 0
             },
             {
                 label: "发件人名称",
@@ -200,11 +217,83 @@ export default [
                 type: "input",
                 required: true,
                 isError: false,
+                show: (confData) => confData.sendType === 0
             },
             {
                 label: "抄送地址",
                 key: "cc",
                 type: "input",
+                show: (confData) => confData.sendType === 0
+            },
+            {
+                label: "邮箱发送账号",
+                key: "smtpUsername",
+                type: "input",
+                required: true,
+                isError: false,
+                show: (confData) => confData.sendType === 1
+            },
+            {
+                label: "发送账号密码",
+                key: "smtpPassword",
+                type: "passwordInput",
+                required: true,
+                isError: false,
+                show: (confData) => confData.sendType === 1
+            },
+            {
+                label: "SMTP服务器",
+                key: "smtpHost",
+                type: "input",
+                required: true,
+                isError: false,
+                show: (confData) => confData.sendType === 1
+            },
+            {
+                label: "SMTP端口",
+                key: "smtpPort",
+                type: "input",
+                required: true,
+                isError: false,
+                show: (confData) => confData.sendType === 1,
+                maxLength: 5,
+                rules: (confData, item, ElMessage) => {
+                    let reg = /^[0-9]*$/;
+                    if(!reg.test(confData.smtpPort)) {
+                        item.isError = true;
+                        ElMessage.error('SMTP端口：请输入0-65535的数字');
+                        return false;
+                    }
+                    if (confData[item.key] <= 0 || confData[item.key] > 65535) {
+                        item.isError = true;
+                        ElMessage.error('SMTP端口：请输入0-65535的数字');
+                        return false;
+                    }
+                    return true;
+                }
+            },
+            {
+                label: "SSL",
+                key: "smtpUseSSL",
+                type: "checkbox",
+                show: (confData) => confData.sendType === 1,
+                onChange: (confData) => {
+                    if(confData.smtpUseSSL) {
+                        confData.smtpUseSTARTTLS = false;
+                    }
+                }
+            },
+            {
+                label: "STARTTLS加密传输",
+                checkBoxLabel: "如果服务器支持，就使用STARTTLS加密传输",
+                key: "smtpUseSTARTTLS",
+                type: "checkbox",
+                show: (confData) => confData.sendType === 1,
+                onChange: (confData) => {
+                    if(confData.smtpUseSTARTTLS) {
+                        confData.smtpUseSSL = false;
+                    }
+                }
             },
             {
                 label: "启用云存储 (七牛云)",
@@ -278,6 +367,7 @@ export default [
                 key: "homeDir",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "回调域名",
@@ -285,6 +375,7 @@ export default [
                 key: "homeURL",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "用户默认角色",
@@ -334,6 +425,7 @@ export default [
                 key: "wxWorkHomeDir",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "回调域名",
@@ -341,6 +433,7 @@ export default [
                 key: "homeURL",
                 type: "input",
                 disabled: true,
+                needCopy: true,
             },
             {
                 label: "用户默认角色",

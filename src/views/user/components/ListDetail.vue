@@ -12,7 +12,7 @@
         </template>
         <template #operate="{row}">
             <el-row class="action-group">
-                <el-col :span="24">
+                <el-col :span="24" v-if="!isJobPosition">
                     <AddMembers
                         @addMembers="changeMembers"
                         :paramId="detailId"
@@ -75,6 +75,7 @@ const props = defineProps({
     idFieldName: { type: String, default: "" },
     nameFieldName: { type: String, default: "" },
     disableWidgets: { type: Array, default: () => [] },
+    isJobPosition: { type: Boolean, default: false }
 });
 const emits = defineEmits(["onRefresh"]);
 // 详情组件
@@ -85,19 +86,25 @@ const { queryEntityNameById } = useCommonStore();
 let detailId = ref("");
 // 详情实体
 let detailEntity = ref("");
+
 // 打开详情
 const openDetailDialog = (id, title) => {
     detailEntity.value = queryEntityNameById(id);
     detailId.value = id;
+    let tabs = [
+        {
+            label: detailEntity.value == "Team" ? "成员列表" : "角色列表",
+            name: "memberList",
+        },
+    ];
+    if(props.isJobPosition){
+        tabs = [];
+    }
+
     mlListDetailsRefs.value.openDialog({
         title: title,
         id: id,
-        tabs: [
-            {
-                label: detailEntity.value == "Team" ? "成员列表" : "角色列表",
-                name: "memberList",
-            },
-        ],
+        tabs,
     });
 };
 
