@@ -799,6 +799,7 @@ defineExpose({
     refreshCustomComponent,
     getFormRef,
     getGlobalDsv,
+    refresh,
     refreshTableList,
 });
 </script>

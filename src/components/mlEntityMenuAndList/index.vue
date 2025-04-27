@@ -184,6 +184,7 @@
                     :total="page.total"
                     @pageChange="pageChange"
                     @handleSizeChange="handleSizeChange"
+                    style="background: #f7f7f7;"
                 />
             </el-main>
         </el-container>

@@ -228,7 +228,7 @@ const initOption = async () => {
         let res = await getDataSourceData(options, getFormConfig());
         if(res) {
             let resData = dataSetName ? res[dataSetName] : res;
-            formatData(options, resData.value, resData.targetValue);
+            formatData(options, resData.value, resData.targetValue, resData.label);
         }
         loading.value = false;
         myOption.value.isNoData = false;
@@ -263,7 +263,7 @@ const getChartData = async (options, type) => {
 };
 
 // 格式化数据
-const formatData = (options, cutNum, maxValue) => {
+const formatData = (options, cutNum, maxValue, alias) => {
     let { chartStyle, setDimensional, setChartConf } = options;
     let { targetValue, metrics } = setDimensional;
     myOption.value = chartStyle == 1 ? donutChartOption : wavesChart;
@@ -272,7 +272,8 @@ const formatData = (options, cutNum, maxValue) => {
     let point = Math.round((cutNum / maxNum) * 100);
     percentage.value = point > 100 ? 100 : point;
     metePercentage.value = point;
-    progressText.value = setChartConf.numShow ? metrics[0].alias : null;
+    let currentAlias = alias || (metrics && metrics.length > 0 ? metrics[0].alias : null);
+    progressText.value = currentAlias;
     // 图例是否显示
     myOption.value.legend.show = setChartConf.chartShow;
 
@@ -280,7 +281,7 @@ const formatData = (options, cutNum, maxValue) => {
         myOption.value.title.text = `${point}%`;
         myOption.value.series[0].data[0].value = cutNum;
         myOption.value.series[0].data[0].name =
-            metrics[0].alias +
+            currentAlias +
             "：" +
             getPreviewNum(cutNum) +
             (numericUnits.value ? numericUnits.value : "");
@@ -291,7 +292,7 @@ const formatData = (options, cutNum, maxValue) => {
             (numericUnits.value ? numericUnits.value : "");
         myOption.value.series[0].data[0].label.show = setChartConf.numShow;
         myOption.value.series[0].data[1].label.show = setChartConf.numShow;
-    } else {
+    } else { 
         myOption.value.series[0].data = [
             point / 100,
             point / 100,
@@ -299,7 +300,7 @@ const formatData = (options, cutNum, maxValue) => {
         ];
         myOption.value.series[0].label.formatter = point + "%";
         myOption.value.title.text =
-            metrics[0].alias +
+            currentAlias +
             "（已完成：" +
             getPreviewNum(cutCompleted.value) +
             (numericUnits.value ? numericUnits.value : "") +
