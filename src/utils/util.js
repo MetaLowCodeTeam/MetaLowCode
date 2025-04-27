@@ -566,6 +566,7 @@ export const globalDsvDefaultData = () => {
         uploadServer: import.meta.env.VITE_APP_BASE_API,
         baseApi: import.meta.env.VITE_APP_BASE_API,
         SERVER_API: import.meta.env.VITE_APP_BASE_API,
+        APP_PATH: import.meta.env.VITE_APP_PATH,
 
 		/* 根据ID值回填表单字段 */
 		findByIdThenFill: (idFieldWidget, idValue, fieldMapping) => {
