@@ -67,6 +67,7 @@
 		</mlSingleList>
 	</el-container>
 	<Edit ref="EditRefs" @saveFinish="updateData"/>
+    <Detail ref="DetailRefs" />
 </template>
 
 <script setup>
@@ -76,7 +77,7 @@ import useCommonStore from "@/store/modules/common";
 const { queryEntityLabelByName } = useCommonStore();
 import { deleteRecord } from "@/api/transform";
 import { ElMessage, ElMessageBox } from "element-plus";
-import http from "@/utils/request";
+import Detail from "./Detail/Index.vue";
 /**
  * 组件
  */
@@ -171,10 +172,11 @@ const changeSwitch = (row) => {
 	mlSingleListRef.value.loading = true;
 	EditRefs.value?.doSave(row[idFieldName], saveData, "设置成功");
 };
-const appPath = import.meta.env.VITE_APP_PATH;
+
+const DetailRefs = shallowRef();
 // 跳转详情
 const goDetail = (row) => {
-	Router.push(appPath + "data-transformation/" + row[idFieldName]);
+	DetailRefs.value?.openDetailDialog(row[idFieldName]);
 };
 
 // 删除行

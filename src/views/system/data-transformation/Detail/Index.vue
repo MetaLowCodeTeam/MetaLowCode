@@ -1,91 +1,109 @@
 <template>
 	<!--  -->
-	<div
-		class="data-transformation-detail"
-		v-loading="loading"
-		:element-loading-text="loadingText"
+	<el-drawer
+		size="45%"
+		class="ml-drawer"
+		v-model="detailDialog.isShow"
+		direction="rtl"
+		:show-close="false"
+		:append-to-body="true"
+		:modal-append-to-body="false"
+		footer-class="drawer-footer"
 	>
-		<div class="d-t-header">
-			<span class="transformation-title">数据转化</span> /
-			<span class="transformation-name">{{ row.transformName }}</span>
-		</div>
-		<div class="d-t-main">
-			<div class="d-t-m">
-				<el-scrollbar height="100%">
-					<el-form label-width="100px">
-						<el-form-item class="info-form-item">
-							<el-row :gutter="10" class="info-form-row">
-								<el-col :span="9">
-									{{ targetEntity.label }}
-								</el-col>
-								<el-col :span="9" :offset="4">
-									{{ sourceEntity.label }}
-								</el-col>
-							</el-row>
-						</el-form-item>
-						<el-form-item label="转化字段映射">
-							<MappingComp
-								v-if="isFinish"
-								v-model="fieldMapping"
-								:sourceEntity="sourceEntity"
-								:targetEntity="targetEntity"
-								title="转化字段映射"
-                                :isError="fieldMappingError"
-                                @clearError="fieldMappingError = false"
-							/>
-						</el-form-item>
-						<el-form-item
-							class="info-form-item"
-							style="margin-top: 100px"
-						>
-							<el-row :gutter="10" class="info-form-row">
-								<el-col :span="9">
-									{{ sourceEntity.label }}
-								</el-col>
-								<el-col :span="9" :offset="4">
-									{{ targetEntity.label }}
-								</el-col>
-							</el-row>
-						</el-form-item>
-						<el-form-item label="回填字段映射">
-							<MappingComp
-								v-if="isFinish"
-								v-model="backfill"
-								:sourceEntity="targetEntity2"
-								:targetEntity="sourceEntity2"
-								title="回填字段映射"
-							/>
-						</el-form-item>
-						<el-form-item style="margin-top: 100px">
-							<el-button
-								type="primary"
-								style="width: 100px"
-								@click="onSave"
+		<div
+			class="data-transformation-detail"
+			v-loading="loading"
+			:element-loading-text="loadingText"
+		>
+			<div class="d-t-header">
+				<span class="transformation-title">数据转化</span> /
+				<span class="transformation-name">{{ row.transformName }}</span>
+			</div>
+			<div class="d-t-main">
+				<div class="d-t-m">
+					<el-scrollbar height="100%">
+						<el-form label-width="100px">
+							<el-form-item class="info-form-item">
+								<el-row :gutter="10" class="info-form-row">
+									<el-col :span="9">
+										{{ targetEntity.label }}
+									</el-col>
+									<el-col :span="9" :offset="4">
+										{{ sourceEntity.label }}
+									</el-col>
+								</el-row>
+							</el-form-item>
+							<el-form-item label="转化字段映射">
+								<MappingComp
+									v-if="isFinish"
+									v-model="fieldMapping"
+									:sourceEntity="sourceEntity"
+									:targetEntity="targetEntity"
+									title="转化字段映射"
+									:isError="fieldMappingError"
+									@clearError="fieldMappingError = false"
+								/>
+							</el-form-item>
+							<el-form-item
+								class="info-form-item"
+								style="margin-top: 100px"
 							>
-								保存
-							</el-button>
-						</el-form-item>
-					</el-form>
-				</el-scrollbar>
+								<el-row :gutter="10" class="info-form-row">
+									<el-col :span="9">
+										{{ sourceEntity.label }}
+									</el-col>
+									<el-col :span="9" :offset="4">
+										{{ targetEntity.label }}
+									</el-col>
+								</el-row>
+							</el-form-item>
+							<el-form-item label="回填字段映射">
+								<MappingComp
+									v-if="isFinish"
+									v-model="backfill"
+									:sourceEntity="targetEntity2"
+									:targetEntity="sourceEntity2"
+									title="回填字段映射"
+								/>
+							</el-form-item>
+						</el-form>
+					</el-scrollbar>
+				</div>
 			</div>
 		</div>
-	</div>
-	<ml-dialog v-model="notTitleDialogShow" width="500" not-header top="30vh">
-		<div class="save-success">
-			<div>
-				<el-icon class="save-icon" size="50">
-					<ElIconWarning />
-				</el-icon>
+		<ml-dialog
+			v-model="notTitleDialogShow"
+			width="500"
+			not-header
+			top="30vh"
+		>
+			<div class="save-success">
+				<div>
+					<el-icon class="save-icon" size="50">
+						<ElIconWarning />
+					</el-icon>
+				</div>
+				<div class="mt-5 save-info">保存成功</div>
+				<div class="mt-20">
+					<el-button @click="goDataTransformation">
+						回列表
+					</el-button>
+					<el-button
+						type="primary"
+						@click="notTitleDialogShow = false"
+					>
+						继续编辑
+					</el-button>
+				</div>
 			</div>
-			<div class="mt-5 save-info">保存成功</div>
-			<div class="mt-20">
-				<el-button @click="goDataTransformation">返回列表</el-button>
-				<el-button type="primary" @click="notTitleDialogShow = false">
-					继续编辑
-				</el-button>
-			</div>
-		</div>
-	</ml-dialog>
+		</ml-dialog>
+		<template #footer>
+			<el-button @click="detailDialog.isShow = false">取消</el-button>
+			<el-button type="primary" @click="onSave">
+				保存
+			</el-button>
+		</template>
+	</el-drawer>
 </template>
 
 <script setup>
@@ -114,12 +132,24 @@ let loading = ref(false);
 let loadingText = ref("数据加载中...");
 let isFinish = ref(false);
 
-onMounted(() => {
-	recordId.value = Router.currentRoute.value.params?.recordId;
+// onMounted(() => {
+// 	recordId.value = Router.currentRoute.value.params?.recordId;
+// 	if (recordId.value) {
+// 		queryTransformById();
+// 	}
+// });
+
+let detailDialog = ref({
+	isShow: false,
+});
+
+const openDetailDialog = (id) => {
+	detailDialog.value.isShow = true;
+	recordId.value = id;
 	if (recordId.value) {
 		queryTransformById();
 	}
-});
+};
 
 // 行数据
 let row = ref({});
@@ -163,8 +193,8 @@ const queryTransformById = async () => {
 	loadingText.value = "数据加载中...";
 	isFinish.value = false;
 	let res = await queryById({
-        entityId: recordId.value,
-    })
+		entityId: recordId.value,
+	});
 	if (res) {
 		row.value = res.data || {};
 		// 格式化源实体
@@ -176,7 +206,7 @@ const queryTransformById = async () => {
 				true,
 				true,
 				true,
-                true
+				true
 			);
 			if (sourceRes) {
 				sourceEntity.value.fields = sourceRes.data;
@@ -186,7 +216,7 @@ const queryTransformById = async () => {
 				false,
 				false,
 				true,
-                true
+				true
 			);
 			if (sourceRes2) {
 				sourceEntity2.value.fields = sourceRes2.data;
@@ -201,7 +231,7 @@ const queryTransformById = async () => {
 				false,
 				false,
 				true,
-                true
+				true
 			);
 			if (targetRes) {
 				targetEntity.value.fields = targetRes.data;
@@ -211,7 +241,7 @@ const queryTransformById = async () => {
 				true,
 				true,
 				true,
-                true
+				true
 			);
 			if (targetRes2) {
 				targetEntity2.value.fields = targetRes2.data;
@@ -252,29 +282,34 @@ const onSave = async () => {
 	);
 	// 取转化字段映射已添加的目标字段
 	let findFieldMappingFields = fieldMapping.value.map((el) => el.targetField);
-    // 查必填字段是否存在
+	// 查必填字段是否存在
 	for (let index = 0; index < findTargetFields.length; index++) {
 		const element = findTargetFields[index];
 		if (!findFieldMappingFields.includes(element.fieldName)) {
-			ElMessage.error("转化字段映射目标字段：【" + element.fieldLabel + "】为必填字段。");
-            fieldMappingError.value = true;
+			ElMessage.error(
+				"转化字段映射目标字段：【" +
+					element.fieldLabel +
+					"】为必填字段。"
+			);
+			fieldMappingError.value = true;
 			return;
 		}
 	}
 	loading.value = true;
 	loadingText.value = "数据保存中...";
 	let res = await saveTransform(
-        {
-            fieldMapping: JSON.stringify(fieldMapping.value),
-            backfill: JSON.stringify(backfill.value),
-            isPreview: false,
-        }, 
-        {
-            params: {
-                recordId: recordId.value,
-                entity: 'Transform',
-            },
-        });
+		{
+			fieldMapping: JSON.stringify(fieldMapping.value),
+			backfill: JSON.stringify(backfill.value),
+			isPreview: false,
+		},
+		{
+			params: {
+				recordId: recordId.value,
+				entity: "Transform",
+			},
+		}
+	);
 	if (res) {
 		notTitleDialogShow.value = true;
 	}
@@ -287,8 +322,12 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 返回列表
 const goDataTransformation = () => {
 	notTitleDialogShow.value = false;
-	Router.push(appPath + "data-transformation");
+	detailDialog.value.isShow = false;
 };
+
+defineExpose({
+	openDetailDialog,
+});
 </script>
 <style lang="scss" scoped>
 .data-transformation-detail {
@@ -319,7 +358,7 @@ const goDataTransformation = () => {
 	}
 	.d-t-m {
 		height: 100%;
-		padding: 20px 20px 0 100px;
+		padding: 20px 20px 0 20px;
 		box-sizing: border-box;
 		background: #fff;
 		border-radius: 4px;
@@ -351,5 +390,11 @@ const goDataTransformation = () => {
 		font-weight: bold;
 		color: #404040;
 	}
+}
+</style>
+<style lang="scss">
+.drawer-footer {
+	border-top: 1px solid #e4e7ed;
+	padding: 10px 20px;
 }
 </style>

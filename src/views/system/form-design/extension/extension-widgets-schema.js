@@ -40,6 +40,46 @@ export const listSubFormSchema = {
     },
 };
 
+// 容器组件-签名
+export const signWidgetSchema = {
+	type: 'sign',
+	icon: 'sign-widget',
+    formItemFlag: true,
+    options: {
+        name: '',
+		keyNameEnabled: false,
+		keyName: '',  //数据键值名称
+		label: '签名',
+		labelAlign: '',
+		columnWidth: '200px',
+		labelWidth: null,
+		labelHidden: false,
+		labelWrap: false,  //标签超长换行
+		disabled: false,
+		hidden: false,
+		required: false,
+		requiredHint: '',
+		validation: '',
+		validationHint: '',
+        // 签名配置
+        signConfig: {
+            // 签名宽度
+            signWidth: '100%',
+            // 签名高度
+            signHeight: '60px',
+        },
+		//-------------------
+		customClass: '',  //自定义css类名
+		labelIconClass: null,
+		labelIconPosition: 'rear',
+		labelTooltip: null,
+		//-------------------
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+		onValidate: '',
+    },
+};
 
 /**
  * 字段组件

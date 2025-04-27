@@ -702,7 +702,6 @@ export default {
                     forceFillBack: el.forceFillBack,
                 })
             })
-            console.log(subFormFillBackConfig,'subFormFillBackConfig')
             this.optionModel.subFormFillBackConfig = Object.assign([], subFormFillBackConfig);
             this.fillBackDialogConf.isShow = false;
         },

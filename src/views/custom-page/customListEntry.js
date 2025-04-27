@@ -7,6 +7,10 @@
 
 export const customListEntry = [
     {
+        label: "自定义列表空模板",
+        value: "Demo/DemoList",
+    },
+    {
         // 模板名称
         label: "自定义审批实体模板",
         // 对应的模板组件， 该组件指向  views\custom-page\TestList.vue

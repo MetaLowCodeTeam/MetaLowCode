@@ -17,15 +17,16 @@
 			display: inline-block;
 			padding: 0 20px;
 			font-size: 14px;
-			border: 1px solid #e6e6e6;
-			border-bottom: none;
+			// border: 1px solid #e6e6e6;
+			// border-bottom: none;
 			&:first-child {
 				border-left: none;
 				border-right: none;
 			}
 			&.active {
-				background: var(--el-color-primary);
-				color: #fff;
+				// background: var(--el-color-primary);
+				color: var(--el-color-primary);
+                border-bottom: 2px solid var(--el-color-primary);
 			}
 		}
 	}

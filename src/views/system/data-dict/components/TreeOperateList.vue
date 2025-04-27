@@ -289,6 +289,10 @@ const operateItem = (inx, targe, item) => {
 						value: getOptionMaxValue(),
 						saved: false,
 					};
+                    if(newItem.label.indexOf('/') !== -1){
+                        $ElMessage.warning("选项名称不能包含【/】");
+                        return;
+                    }
 					//  判断选项是否存在
 					for (
 						let index = 0;

@@ -353,6 +353,10 @@ export default {
                             value: newOptionValue,
                             saved: false,
                         };
+                        if(newOption.label.indexOf('/') !== -1){
+                            this.$message.warning("选项名称不能包含【/】");
+                            return;
+                        }
                         this.optionItems.push(newOption);
                         this.$nextTick(() => {
                             console.log("Updated!");
@@ -383,6 +387,10 @@ export default {
                             value: newOptionValue,
                             saved: false,
                         };
+                        if(newOption.label.indexOf('/') !== -1){
+                            this.$message.warning("选项名称不能包含【/】");
+                            return;
+                        }
                         this.optionItems.splice(optionIdx + 1, 0, newOption);
                         this.$nextTick(() => {
                             console.log("Updated!");
@@ -434,6 +442,10 @@ export default {
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
+                    if(value.indexOf('/') !== -1){
+                        this.$message.warning("选项名称不能包含'/'");
+                        return;
+                    }
                     if (this.validateOption(value, optionIdx)) {
                         this.optionItems[optionIdx].label = value;
                         this.$nextTick(() => {

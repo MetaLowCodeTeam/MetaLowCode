@@ -6,6 +6,7 @@ export default {
             'reference': 'Reference',
             'reference-list': 'Reference List',
             'location': 'Location',
+            'sign': 'Sign',
         },
 
         setting: {

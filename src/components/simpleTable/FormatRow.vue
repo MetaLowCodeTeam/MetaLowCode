@@ -51,14 +51,21 @@
 		v-else-if="column.type == 'Picture'"
 		:title="'图片：' + row[column.prop]?.length"
 	>
-		<img
-			class="row-img"
-			:src="formatUrl(img.url)"
-			alt
-			v-for="(img, inx) of row[column.prop]"
-			:key="inx"
-			@click.stop="previewImg(img.url, img.name)"
-		/>
+        <div v-if="row[column.prop] && row[column.prop].length > 0">
+            <el-image
+                class="row-img"
+                :src="formatUrl(img.url)"
+                :zoom-rate="1.2"
+                :max-scale="7"
+                :min-scale="0.2"
+                :preview-src-list="row[column.prop].map(item => formatUrl(item.url))"
+                :initial-index="inx"
+                preview-teleported
+                fit="cover"
+                v-for="(img,inx) of row[column.prop]"
+                :key="inx"
+            />
+        </div>
 	</div>
 
 	<div
@@ -84,26 +91,23 @@
 			>
 		</template>
 	</div>
-	<div class="text-ellipsis" v-else>{{ row[column.prop] }}</div>
+	<div class="text-ellipsis" v-else>
+        <span v-if="row[column.prop] && typeof row[column.prop] == 'string' &&  row[column.prop].startsWith('data:image/png;base64,')">
+            <el-image
+                class="row-img"
+                :src="row[column.fieldName]"
+                :zoom-rate="1.2"
+                :max-scale="7"
+                :min-scale="0.2"
+                :preview-src-list="[row[column.fieldName]]"
+                :initial-index="4"
+                preview-teleported
+                fit="cover"
+            />
+        </span>
+        <span v-else>{{ row[column.prop] }}</span>
+    </div>
     <FileDownOrPreview ref="FileDownOrPreviewRef" />
-	<mlDialog
-		v-model="previewDialog"
-		title="点击图片预览"
-		appendToBody
-		width="400px"
-	>
-		<div class="preview-box">
-			<el-image
-				:src="formatUrl(previewUrl)"
-				:zoom-rate="1.2"
-				:max-scale="7"
-				:min-scale="0.2"
-				:preview-src-list="[formatUrl(previewUrl)]"
-				:initial-index="4"
-				fit="cover"
-			/>
-		</div>
-	</mlDialog>
 </template>
 
 <script setup>
@@ -168,15 +172,7 @@ const numberToCurrencyNo = (value) => {
 	return intPartFormat + floatPart;
 };
 
-/**
- * 图片预览
- */
-let previewUrl = ref("");
-let previewDialog = ref(false);
-const previewImg = (url) => {
-	previewUrl.value = url;
-	previewDialog.value = true;
-};
+
 </script>
 <style lang="scss" scoped>
 .row-img {

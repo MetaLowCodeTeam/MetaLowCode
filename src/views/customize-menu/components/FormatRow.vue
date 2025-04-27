@@ -52,14 +52,20 @@
             v-else-if="column.fieldType == 'Picture'"
             :title="'图片：' + row[column.fieldName]?.length"
         >
-            <img
-                class="row-img"
-                :src="formatUrl(img.url)"
-                alt
-                v-for="(img,inx) of row[column.fieldName]"
-                :key="inx"
-                @click.stop="previewImg(img.url,img.name)"
-            />
+            <div v-if="row[column.fieldName] && row[column.fieldName].length > 0">
+                <el-image
+                    class="row-img"
+                    :src="formatUrl(img.url)"
+                    :zoom-rate="1.2"
+                    :max-scale="7"
+                    :min-scale="0.2"
+                    :preview-src-list="row[column.fieldName].map(item => formatUrl(item.url))"
+                    :initial-index="inx"
+                    preview-teleported
+                    v-for="(img,inx) of row[column.fieldName]"
+                    :key="inx"
+                />
+            </div>
         </div>
 
         <div
@@ -95,23 +101,24 @@
         >
             {{  formatReferenceList(row[column.fieldName])  }}
         </div>
-        <div class="text-ellipsis" v-else>{{ row[column.fieldName] }}</div>
+        <div class="text-ellipsis" v-else>
+            <span v-if="row[column.fieldName] && typeof row[column.fieldName] == 'string' && row[column.fieldName].startsWith('data:image/png;base64,')">
+                <el-image
+                    class="row-img"
+                    :src="row[column.fieldName]"
+                    :zoom-rate="1.2"
+                    :max-scale="7"
+                    :min-scale="0.2"
+                    :preview-src-list="[row[column.fieldName]]"
+                    preview-teleported
+                    fit="scale-down"
+                />
+            </span>
+            <span v-else>{{ row[column.fieldName] }}</span>
+        </div>
     </div>
 
     <FileDownOrPreview ref="FileDownOrPreviewRef" />
-    <mlDialog v-model="previewDialog" title="点击图片预览" appendToBody width="400px">
-        <div class="preview-box">
-            <el-image
-                :src="formatUrl(previewUrl)"
-                :zoom-rate="1.2"
-                :max-scale="7"
-                :min-scale="0.2"
-                :preview-src-list="[formatUrl(previewUrl)]"
-                :initial-index="4"
-                fit="cover"
-            />
-        </div>
-    </mlDialog>
 </template>
 
 <script setup>
@@ -184,15 +191,6 @@ const numberToCurrencyNo = (value) => {
     return intPartFormat + floatPart;
 };
 
-/**
- * 图片预览
- */
-let previewUrl = ref("");
-let previewDialog = ref(false);
-const previewImg = (url) => {
-    previewUrl.value = url;
-    previewDialog.value = true;
-};
 
 // 自定义渲染
 const getColumnRender = (column)=> {

@@ -6,6 +6,7 @@ export default {
             'reference': '引用',
             'reference-list': '多对多引用',
             'location': '定位',
+            'sign': '签名',
         },
 
         setting: {

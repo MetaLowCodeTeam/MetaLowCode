@@ -343,6 +343,10 @@ export default {
                             value: value,
                             saved: false,
                         };
+                        if(newTag.label.indexOf('/') !== -1){
+                            this.$message.warning("选项名称不能包含【/】");
+                            return;
+                        }
                         this.tagItems.push(newTag);
                         this.$nextTick(() => {
                             console.log("Updated!");
@@ -370,6 +374,10 @@ export default {
                             value: value,
                             saved: false,
                         };
+                        if(newTag.label.indexOf('/') !== -1){
+                            this.$message.warning("选项名称不能包含【/】");
+                            return;
+                        }
                         this.tagItems.splice(tagIdx + 1, 0, newTag);
                         this.$nextTick(() => {
                             console.log("Updated!");
@@ -418,6 +426,10 @@ export default {
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
+                    if(value.indexOf('/') !== -1){
+                        this.$message.warning("选项名称不能包含'/'");
+                        return;
+                    }
                     if (this.validateTag(value, oldTagLabel)) {
                         this.tagItems[tagIdx].label = value;
                         this.$nextTick(() => {
