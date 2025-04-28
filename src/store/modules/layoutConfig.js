@@ -229,7 +229,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     }
                     if (subEl.type == 3) {
                         subRoute.meta.type = 3
-                        subRoute.meta.query = getCustomPageQuery(subEl.outLink);
+                        subRoute.meta.query = getCustomPageQuery(subEl.outLink) || {};
                         if(el.customPageType == 2){
                             subRoute.meta.query.routerName = el.name
                         }
@@ -260,7 +260,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             }
             if (el.type == 3) {
                 initMenu.meta.type = 3
-                initMenu.meta.query = getCustomPageQuery(el.outLink);
+                initMenu.meta.query = getCustomPageQuery(el.outLink) || {};
                 if(el.customPageType == 2){
                     initMenu.meta.query.routerName = el.name
                 }
