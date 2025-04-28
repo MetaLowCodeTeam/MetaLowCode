@@ -194,7 +194,7 @@
                                             accept="image/*"
                                             @on-success="(data) => onLogoSuccess(data, item.key)"
                                             class="ml-upload"
-                                            uploadUrl="/picture/upload"
+                                            uploadUrl="/picture/upload?publicPicture=true"
                                         >
                                             <template #trigger>
                                                 <div
