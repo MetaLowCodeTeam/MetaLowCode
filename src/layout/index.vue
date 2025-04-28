@@ -500,11 +500,7 @@ export default {
                 this.dockMenu.push(item);
             }
         });
-        this.menu.forEach((el,inx) => {
-            if(el.children && el.children.length < 1){
-                this.menu.splice(inx, 1);
-            }
-        })
+        this.menu = this.menu.filter(el => !(el.children?.length < 1));
         this.getDefaultOpeneds();
         this.showThis();
     },
