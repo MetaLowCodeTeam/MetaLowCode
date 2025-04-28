@@ -14,7 +14,8 @@ import useLayoutConfigStore from "@/store/modules/layoutConfig";
 
 // 如果是租户需要隐藏菜单
 const tenantIdHideMenu = ['Tenant', 'DatabaseBackups'];
-
+// 如果是外部数据源隐藏
+const OuterDataSourceHideMenu = ['OuterDataSource', 'OuterDataModel'];
 
 let modules = import.meta.glob('../views/**/*.vue')
 const empty = () => () => import('../layout/other/empty.vue');
@@ -99,6 +100,9 @@ router.beforeEach(async (to, from, next) => {
             if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
                 return false
             }
+            if(OuterDataSourceHideMenu.includes(node.name) && !publicSetting.value.pluginIdList.includes('metaDataWarehouse')) {
+                return false
+            }
             return true
         })
         userMenu[0].children.push(...getUseMenuList())
@@ -165,6 +169,9 @@ router.sc_getMenu = () => {
             return false
         }
         if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
+            return false
+        }
+        if(OuterDataSourceHideMenu.includes(node.name) && !publicSetting.value.pluginIdList.includes('metaDataWarehouse')) {
             return false
         }
         return true
