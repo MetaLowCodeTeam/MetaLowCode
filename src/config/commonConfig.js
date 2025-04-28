@@ -142,8 +142,8 @@ export default [
                 type: "switch",
             },
             {
-                label: "单点登录",
-                subLabel: "开启单点登录后单个账号无法多地登录",
+                label: "禁止账号多开",
+                subLabel: "禁止账号多开后同一账号不能多地同时登录使用。",
                 key: "singleLoginSwitch",
                 type: "switch",
             },
