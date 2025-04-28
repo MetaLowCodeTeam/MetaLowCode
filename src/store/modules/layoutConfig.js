@@ -97,6 +97,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 收藏菜单
     let collectMenuList = ref([]);
 
+    // 是否隐藏工作台
+    let isHideWorkbench = ref(false);
 
     // 获取LayoutApi
     const getNavigationApi = async (errorCb) => {
@@ -339,6 +341,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     const setTopNavigation = (data) => {
         // let 
         let formatConfig = data.config ? JSON.parse(data.config) : {};
+        isHideWorkbench.value = formatConfig.isHideWorkbench;
         let navList = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];
         topNavigation.value = { ...data };
         // 如果没有顶部导航配置权限
@@ -416,6 +419,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         getTopNavigation,
         getTopNavMenuList,
         topDefaultUnfold,
+        isHideWorkbench,
         // 收藏菜单
         collectMenuList,
         // 设置收藏菜单

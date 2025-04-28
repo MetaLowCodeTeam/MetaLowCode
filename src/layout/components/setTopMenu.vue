@@ -122,6 +122,9 @@
         </div>
         <template #footer>
             <div class="footer-div">
+                <div class="share-to fl">
+					<el-checkbox v-model="isHideWorkbench">隐藏工作台</el-checkbox>
+				</div>
                 <el-button @click="isShow = false" :loading="loading">取消</el-button>
                 <el-button type="primary" @click="layoutSave" :loading="loading">保存</el-button>
             </div>
@@ -153,6 +156,8 @@ const $TOOL = inject("$TOOL");
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);
+// 是否隐藏工作台
+let isHideWorkbench = ref(false);
 watch(
     () => props.modelValue,
     () => {
@@ -338,6 +343,10 @@ const getMenuFn = () => {
     menuData = Object.assign(menuData, getTopNavigation());
     sourceData = Object.assign({}, getTopNavigation());
     menuData.list = JSON.parse(JSON.stringify(menuData.navList));
+    if(sourceData.config){
+        let formatConfig = JSON.parse(sourceData.config);
+        isHideWorkbench.value = formatConfig.isHideWorkbench;
+    }
     cutMenu.value = null;
 };
 
@@ -346,6 +355,7 @@ const layoutSave = async () => {
     let { layoutConfigId, list } = menuData;
     let newConfig = {
         navList: list.filter((el) => el.layoutConfigId || el.type == 2),
+        isHideWorkbench: isHideWorkbench.value
     };
     menuData.config = JSON.stringify(newConfig);
     let param = {};
@@ -522,6 +532,7 @@ div {
     font-size: 13px;
     padding-left: 20px;
     text-align: left;
+    color: #303030;
 }
 
 .select-icon-span {

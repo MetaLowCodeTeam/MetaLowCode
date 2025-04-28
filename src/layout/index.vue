@@ -388,7 +388,7 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 const { publicSetting } = storeToRefs(useCommonStore());
-const { topDefaultUnfold } = storeToRefs(useLayoutConfigStore());
+const { topDefaultUnfold, isHideWorkbench } = storeToRefs(useLayoutConfigStore());
 //
 import navigation from "./components/navigationList.vue";
 
@@ -500,7 +500,10 @@ export default {
                 this.dockMenu.push(item);
             }
         });
+        console.log(isHideWorkbench.value,'isHideWorkbench---')
         this.menu = this.menu.filter(el => !(el.children?.length < 1));
+        this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == '/web/home'));
+        // this.menu.shift();
         this.getDefaultOpeneds();
         this.showThis();
     },
