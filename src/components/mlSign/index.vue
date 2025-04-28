@@ -1,7 +1,7 @@
 <template>
 	<ml-dialog v-model="signConf.show" :title="title" width="845" appendToBody>
         <div class="sign-tool-bar">
-            <el-form :model="signConf" label-width="90px" inline :disabled="!!signConf.resultImg">
+            <el-form label-width="90px" inline :disabled="!!signConf.resultImg">
                 <el-form-item label="画布背景色">
                     <el-color-picker v-model="signConf.bgColor" />
                 </el-form-item>
@@ -74,7 +74,7 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["onGenerate"]);
 
 const signRef = ref(null);
 const signConf = ref({
