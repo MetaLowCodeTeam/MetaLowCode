@@ -500,7 +500,6 @@ export default {
                 this.dockMenu.push(item);
             }
         });
-        console.log(isHideWorkbench.value,'isHideWorkbench---')
         this.menu = this.menu.filter(el => !(el.children?.length < 1));
         this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == '/web/home'));
         // this.menu.shift();

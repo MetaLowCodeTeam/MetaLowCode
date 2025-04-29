@@ -142,6 +142,11 @@ export default [
                 type: "switch",
             },
             {
+                label: "会话指纹验证",
+                key: "sessionFingerprintCheck",
+                type: "switch",
+            },
+            {
                 label: "禁止账号多开",
                 subLabel: "禁止账号多开后同一账号不能多地同时登录使用。",
                 key: "singleLoginSwitch",
