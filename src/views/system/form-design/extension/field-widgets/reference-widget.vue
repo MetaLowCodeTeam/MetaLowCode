@@ -56,7 +56,7 @@
                 :disabled="field.options.disabled"
                 :fieldModel="fieldModel"
                 :extraFilter="searchFilter"
-                :size="field.options.size"
+                :size="field.options.size || globalConfig.size"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
                 @onFocus="onReferRemoteFocus"
@@ -161,6 +161,7 @@ export default {
 			default: "",
 		},
 	},
+    inject: ['getFormConfig'],
 	components: {
 		FormItemWrapper,
 		ReferenceSearchTable,
@@ -184,6 +185,7 @@ export default {
             extraSort: "",
             filterConditions:{},
 			gDsv: {},
+            globalConfig: {},
 		};
 	},
 	computed: {
@@ -239,7 +241,8 @@ export default {
 
 	mounted() {
 		this.handleOnMounted();
-		this.setDefaultValue()
+		this.setDefaultValue();
+        this.globalConfig = this.getFormConfig();
 	},
 
 	beforeUnmount() {
