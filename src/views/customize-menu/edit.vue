@@ -87,7 +87,7 @@ import {
 import { getFormLayout, getFieldListOfEntity } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 import { saveTeam } from "@/api/team";
-import { saveUser, checkRight } from "@/api/user";
+import { saveUser, checkRight, saveDepartment } from "@/api/user";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
@@ -516,13 +516,20 @@ const confirm = async (target) => {
                             row.detailId,
                             formData
                         );
-                    } else if (props.isUser) {
+                    } else if (props.isUser || row.entityName == 'User') {
                         saveRes = await saveUser(
                             row.entityName,
                             row.detailId,
                             formData
                         );
-                    } else {
+                    } else if(row.entityName == 'Department') {
+                        saveRes = await saveDepartment(
+                            row.entityName,
+                            row.detailId,
+                            formData
+                        );
+                    }
+                    else {
                         saveRes = await saveRecord(
                             row.entityName,
                             row.detailId,

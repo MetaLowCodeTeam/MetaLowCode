@@ -38,7 +38,7 @@ let editConf = ref({
 	showConfirmRefreshBtn: false,
 });
 
-let curDepartmentId = ref();
+let curDepartmentId = ref(null);
 
 const openDialog = (id, node) => {
 	if (id === "0000022-00000000000000000000000000000001") {
