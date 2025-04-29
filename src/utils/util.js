@@ -683,3 +683,26 @@ export const copyText = (text, errorMsg = "复制失败，请重试刷新页面"
     }
     document.body.removeChild(textarea);
 }
+
+
+// 格式化过滤条件转base64
+export const formatFilterToBase64 = (filter) => {
+    let newFilter = JSON.parse(JSON.stringify(filter));
+    if(newFilter && newFilter.items && newFilter.items.length > 0) {
+        newFilter.items.forEach(item => {
+            if(item.op == 'SQL') {
+                item.value = unicodeToBase64(item.value);
+            }
+        })
+    }
+    return newFilter
+}
+
+// 字符串转base64
+export const unicodeToBase64 = (str) => {
+    return btoa(
+        encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+            return String.fromCharCode('0x' + p1);
+        })
+    );
+}

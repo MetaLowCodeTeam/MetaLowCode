@@ -1,4 +1,8 @@
-import { getModelName } from "@/utils/util";
+import { 
+    getModelName,
+    formatFilterToBase64,
+    unicodeToBase64
+} from "@/utils/util";
 
 import http, { request } from '@/utils/request'
 
@@ -86,18 +90,18 @@ export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
-        filter, 
+        filter: formatFilterToBase64(filter), 
         pageSize, 
         pageNo, 
         sortFields, 
-        advFilter, 
+        advFilter: formatFilterToBase64(advFilter), 
         quickFilter, 
-        builtInFilter, 
+        builtInFilter: formatFilterToBase64(builtInFilter), 
         statistics, 
-        filterEasySql, 
-        defaultFilter, 
+        filterEasySql: unicodeToBase64(filterEasySql), 
+        defaultFilter: formatFilterToBase64(defaultFilter), 
         modelName: modelName || getModelName(),
-        otherFilters
+        otherFilters: otherFilters.map(item => formatFilterToBase64(item))
     })
 }
 
