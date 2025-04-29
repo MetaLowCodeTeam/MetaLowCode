@@ -87,6 +87,7 @@
 			:close-on-click-modal="false"
 			:close-on-press-escape="false"
 			:append-to-body="true"
+            scrollbarMaxHeight="600px"
 		>
 			<ReferenceSearchTable
 				ref="referST"

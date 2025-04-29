@@ -181,6 +181,15 @@ export default {
                 });
             })
 		},
+        // 单选表格切换
+        toggleSingleRowSelection(row, selected, idField) {
+            let dom = this.data.filter((item) => {
+                return item[idField] == row[idField];
+            });
+            if(dom[0]) {
+                this.$refs.multipleTable.toggleRowSelection(dom[0], selected);
+            }
+        },
 	},
 };
 </script>

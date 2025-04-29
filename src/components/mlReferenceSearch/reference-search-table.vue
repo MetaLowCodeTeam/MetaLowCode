@@ -66,6 +66,20 @@
 				</mlSetConditions>
 			</div>
 			<div class="main-table mt-10">
+                <div class="show-selected-data" v-if="selectedData.length > 0">
+                    <span class="mb-5">已选：</span>
+                    <el-tag 
+                        type="primary"
+                        size="small" 
+                        v-for="item in selectedData" 
+                        :key="item.id"
+                        class="item-tag"
+                        closable
+                        @close="handleClose(item)"
+                    >
+                        {{ item[nameField] }}
+                    </el-tag>
+                </div>
 				<SimpleTable
 					ref="SimpleTableRef"
 					:columns="columns"
@@ -85,12 +99,15 @@
 					@selects="selects"
 				>
 					<template #table_operation="{ scope }">
-						<el-button @click="selectRecord(scope.row)" size="default">
+						<el-button @click="selectRecord(scope.row)" size="default" v-if="!scope.row.isSelected">
 							<el-icon>
 								<Check />
 							</el-icon>
 							选择
 						</el-button>
+                        <el-button size="default" v-else disabled>
+                            已选择
+                        </el-button>
 					</template>
 				</SimpleTable>
 			</div>
@@ -111,6 +128,7 @@ import { refFieldQuery2, saveRefFilterPanel } from "@/api/crud";
 import { externalRefFieldQuery } from "@/api/external";
 import useCommonStore from "@/store/modules/common";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+import { TireSwing } from "@icon-park/vue-next";
 //
 export default {
     components:{
@@ -148,7 +166,7 @@ export default {
 		},
 		// 默认多选数据
 		defaultSelected: {
-			type: Array,
+			type: [Array, Object],
 			default: () => [],
 		},
 	},
@@ -222,7 +240,6 @@ export default {
 		},
 		// 重置
 		onReset() {
-            console.log(this.conditionConf);
 			this.conditionConf.items.forEach((el) => {
 				el.value = null;
 				el.value2 = null;
@@ -314,6 +331,15 @@ export default {
 				});
 				this.columns = columnList;
 				this.tableData = res.data.dataList;
+                // 如果是单选，则回填默认选中数据
+                if(!this.showCheckBox){
+                    this.tableData.forEach(el => {
+                        el.isSelected = false;
+                        if(el[this.idField] == this.defaultSelected?.id){
+                            el.isSelected = true;
+                        }
+                    })
+                }
 				if (
 					this.defaultSelected &&
 					this.defaultSelected.length > 0 &&
@@ -344,6 +370,12 @@ export default {
 			}
 			this.loading = false;
 		},
+        // 关闭已选数据
+        handleClose(item) {
+            this.selectedData = this.selectedData.filter(el => el[this.idField] !== item[this.idField]);
+            this.$refs.SimpleTableRef?.toggleSingleRowSelection(item, false, this.idField);
+
+        },
 		// 多选回填
 		multipleSelectRecord() {
 			if (this.multipleSelection.length < 1) {
@@ -476,9 +508,9 @@ export default {
 }
 
 .reference-search-table {
-	max-height: 600px;
-	overflow-x: hidden;
-	overflow-y: auto;
+	// max-height: 600px;
+	// overflow-x: hidden;
+	// overflow-y: auto;
     :deep(.el-pagination) {
         justify-content: center;
     }
@@ -490,6 +522,18 @@ export default {
 	padding: 0 20px;
 	box-sizing: border-box;
 	text-align: right;
+}
+
+.show-selected-data {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    .item-tag {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
 }
 </style>
 
@@ -514,4 +558,5 @@ export default {
 	padding-bottom: 4px !important;
 	border-bottom: 1px solid #eee;
 }
+
 </style>

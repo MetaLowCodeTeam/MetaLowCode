@@ -90,6 +90,7 @@
 			:close-on-click-modal="false"
 			:close-on-press-escape="false"
 			:append-to-body="true"
+            scrollbarMaxHeight="600px"
 		>
 			<ReferenceSearchTable
 				ref="referST"
@@ -103,6 +104,7 @@
 				:gDsv="gDsv"
                 :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+                :defaultSelected="fieldModel"
                 v-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree

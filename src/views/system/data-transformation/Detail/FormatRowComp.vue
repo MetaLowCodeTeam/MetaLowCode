@@ -169,12 +169,14 @@
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 		:append-to-body="true"
+        scrollbarMaxHeight="600px"
 	>
 		<ReferenceSearchTable
 			ref="referST"
 			:entity="targetEntity.name"
 			:refField="curtItem.targetField"
 			@recordSelected="setReferRecord"
+            :defaultSelected="curtItem.sourceField"
 		></ReferenceSearchTable>
 	</el-dialog>
 	<div v-if="mlFormulaIsShow">

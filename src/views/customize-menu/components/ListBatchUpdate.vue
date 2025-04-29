@@ -104,12 +104,8 @@
                                 :entity="entityName"
                                 :refField="updateField.fieldName"
                                 @recordSelected="setReferRecord"
+                                :defaultSelected="updateReference[0]"
                             />
-                            <!-- <template #footer v-if="updateFieldType == 'ReferenceList'">
-                                <el-button @click="isShow = false">取消</el-button>
-                                <el-button type="primary" @click="confirmUpdate">确认</el-button>
-                            </template>
-                             -->
                         </ml-dialog>
                         <ml-dialog
                             title="请选择"
@@ -118,6 +114,7 @@
                             append-to-body
                             width="600px"
                             v-if="entityName && updateFieldType == 'ReferenceList'"
+                            scrollbarMaxHeight="600px"
                         >
                             <ReferenceSearchTable
                                 :entity="entityName"

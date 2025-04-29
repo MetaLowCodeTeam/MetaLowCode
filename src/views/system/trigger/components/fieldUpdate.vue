@@ -233,12 +233,15 @@
             :close-on-click-modal="false"
             :close-on-press-escape="false"
             :append-to-body="true"
+            :defaultSelected="updateRule.sourceField"
+            scrollbarMaxHeight="600px"
         >
             <ReferenceSearchTable
                 ref="referST"
                 :entity="trigger.defaultTargetEntity.entityName"
                 :refField="updateRule.targetField"
                 @recordSelected="setReferRecord"
+                :defaultSelected="updateRule.sourceField"
             ></ReferenceSearchTable>
         </el-dialog>
     </div>

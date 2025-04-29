@@ -222,12 +222,14 @@
 		draggable
 		appendToBody
 		v-model="showReferenceDialogFlag"
+        scrollbarMaxHeight="600px"
 	>
 		<ReferenceSearchTable
 			entity="OuterDataModel"
 			refField="dataSource"
 			@recordSelected="recordSelected"
             :filterConditions="filterConditions"
+            :defaultSelected="{id: formData.dataSource, name: formData.dataSourceLabel}"
 		/>
 	</ml-dialog>
 </template>

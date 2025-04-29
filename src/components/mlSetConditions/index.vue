@@ -246,8 +246,10 @@
                                         size="default"
                                     >
                                         <ReferenceSearchTable
+                                            v-if="item.showReferenceDialogFlag"
                                             :entity="formatEntityName"
                                             :refField="item.fieldName"
+                                            :defaultSelected="{id: item.value, name: item.refLabel}"
                                             @recordSelected="(event)=> setReferRecord(event,item) "
                                         />
                                     </el-dialog>
@@ -621,8 +623,10 @@
                                         v-if="formatEntityName"
                                     >
                                         <ReferenceSearchTable
+                                            v-if="item.showReferenceDialogFlag"
                                             :entity="formatEntityName"
                                             :refField="item.fieldName"
+                                            :defaultSelected="{id: item.value, name: item.refLabel}"
                                             @recordSelected="(event)=> setReferRecord(event,item) "
                                         />
                                     </el-dialog>
