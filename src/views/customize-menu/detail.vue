@@ -44,55 +44,56 @@
 		<div class="detail-main" v-loading="loading">
 			<el-row :gutter="20" v-if="!noeData">
 				<el-col :span="21">
-                    
-                    <DetailTabs
-                        :tabsConf="detailDialog"
-                        @tabChange="tabChange"
-                        :cutTabIndex="cutTabIndex"
-                        @confirm="refresh"
-                        :checkTabsFilter="checkTabsFilter"
-                    />
-                    <div class="detail-container">
-                    <!-- 详情 -->
-                        <div v-if="cutTab == 'detail'">
-                            <mlApproveBar :approvalInfo="approvalStatus" />
-                            <v-form-render
-                                v-if="haveLayoutJson"
-                                :option-data="optionData"
-                                :global-dsv="globalDsv"
-                                ref="vFormRef"
-                            />
-                            <el-empty
-                                v-else
-                                :image-size="100"
-                                description="未查询到相关配置数据"
-                            />
-                        </div>
-                        <div v-else-if="cutTab == 'Attachment'">
-                            <Attachment :entityCode="entityCode" :recordId="detailId"/>
-                        </div>
-                        <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
-                            <!-- 拿最后一个-后面的字符串 -->
-                            <component 
-                                v-if="componentExists(cutTab.split('_').pop())" 
-                                :is="cutTab.split('_').pop()" 
-                                :recordId="detailId"
-                                ref="customComponentRefs"
-                            />
-                            <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />
-                        </div>
-                        <!-- 非详情 -->
-                        <div v-else>
-                            <DetailTabCom
-                                ref="detailTabComRefs"
-                                :cutTab="cutTabCom"
-                                :tabs="detailDialog.tab"
-                                :cutTabIndex="cutTabIndex"
-                                :entityId="detailId"
-                                :idFieldName="idFieldName"
-                                @closeDialog="closeDialog"
-                                @addRow="onAdd"
-                            />
+                    <div class="detail-left-box" :class="{'left-tabs': publicSetting.detailTabsPosition == 'left'}">
+                        <DetailTabs
+                            :tabsConf="detailDialog"
+                            @tabChange="tabChange"
+                            :cutTabIndex="cutTabIndex"
+                            @confirm="refresh"
+                            :checkTabsFilter="checkTabsFilter"
+                        />
+                        <div class="detail-container">
+                        <!-- 详情 -->
+                            <div v-if="cutTab == 'detail'">
+                                <mlApproveBar :approvalInfo="approvalStatus" />
+                                <v-form-render
+                                    v-if="haveLayoutJson"
+                                    :option-data="optionData"
+                                    :global-dsv="globalDsv"
+                                    ref="vFormRef"
+                                />
+                                <el-empty
+                                    v-else
+                                    :image-size="100"
+                                    description="未查询到相关配置数据"
+                                />
+                            </div>
+                            <div v-else-if="cutTab == 'Attachment'">
+                                <Attachment :entityCode="entityCode" :recordId="detailId"/>
+                            </div>
+                            <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
+                                <!-- 拿最后一个-后面的字符串 -->
+                                <component 
+                                    v-if="componentExists(cutTab.split('_').pop())" 
+                                    :is="cutTab.split('_').pop()" 
+                                    :recordId="detailId"
+                                    ref="customComponentRefs"
+                                />
+                                <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />
+                            </div>
+                            <!-- 非详情 -->
+                            <div v-else>
+                                <DetailTabCom
+                                    ref="detailTabComRefs"
+                                    :cutTab="cutTabCom"
+                                    :tabs="detailDialog.tab"
+                                    :cutTabIndex="cutTabIndex"
+                                    :entityId="detailId"
+                                    :idFieldName="idFieldName"
+                                    @closeDialog="closeDialog"
+                                    @addRow="onAdd"
+                                />
+                            </div>
                         </div>
                     </div>
 				</el-col>
@@ -262,7 +263,8 @@ import Attachment from "./components/Attachment/Index.vue";
  */
 import { getRecordApprovalState } from '@/api/approval';
 import { checkTables } from "@/api/layoutConfig";
-
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const props = defineProps({
 	layoutConfig: { type: Object, default: () => {} },
@@ -866,6 +868,20 @@ defineExpose({
     padding-bottom: 10px;;
     box-sizing: border-box;
     padding-right: 5px;
+}
+.detail-left-box.left-tabs {
+    display: flex;
+    .detail-container {
+        width: 100%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    :deep(.el-tabs) {
+        height: calc(100vh - 90px);
+    }
+    :deep(.setting-tabs) {
+        left: -10px;
+    }
 }
 </style>
 

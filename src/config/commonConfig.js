@@ -47,6 +47,15 @@ export default [
                 ],
             },
             {
+                label: "详情页签位置",
+                key: "detailTabsPosition",
+                type: "select",
+                options: [
+                    { label: "顶部", value: "top" },
+                    { label: "居左", value: "left" },
+                ],
+            },
+            {
                 label: "版本号",
                 key: "dbVersion",
                 type: "input",

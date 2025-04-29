@@ -1,12 +1,13 @@
 <template>
     <div class="detail-tabs">
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" :tab-position="publicSetting.detailTabsPosition || 'top'">
             <el-tab-pane
                 v-for="(tab,tabInx) of tabs"
                 :key="tabInx"
                 :label="tab.columnAliasName || tab.entityLabel"
                 :name="tab.entityName + '-' + tabInx"
-            ></el-tab-pane>
+            >
+            </el-tab-pane>
         </el-tabs>
         <span class="setting-tabs" @click="openDialog" v-if="$TOOL.checkRole('r6008')">
             <el-icon>
@@ -24,6 +25,9 @@
 
 <script setup>
 import { inject, onMounted, ref, watch, watchEffect } from "vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
     cutTabIndex: { type: [String,Number], default: 0 },
