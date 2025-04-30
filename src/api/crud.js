@@ -98,10 +98,10 @@ export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields
         quickFilter, 
         builtInFilter: formatFilterToBase64(builtInFilter), 
         statistics, 
-        filterEasySql: unicodeToBase64(filterEasySql), 
+        filterEasySql: filterEasySql ? unicodeToBase64(filterEasySql) : null, 
         defaultFilter: formatFilterToBase64(defaultFilter), 
         modelName: modelName || getModelName(),
-        otherFilters: otherFilters.map(item => formatFilterToBase64(item))
+        otherFilters: otherFilters ? otherFilters.map(item => formatFilterToBase64(item)) : null
     })
 }
 

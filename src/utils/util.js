@@ -687,6 +687,9 @@ export const copyText = (text, errorMsg = "复制失败，请重试刷新页面"
 
 // 格式化过滤条件转base64
 export const formatFilterToBase64 = (filter) => {
+    if(!filter) {
+        return filter;
+    }
     let newFilter = JSON.parse(JSON.stringify(filter));
     if(newFilter && newFilter.items && newFilter.items.length > 0) {
         newFilter.items.forEach(item => {
