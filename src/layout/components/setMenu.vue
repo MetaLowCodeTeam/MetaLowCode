@@ -747,7 +747,7 @@ const getGuid = () => {
 let cutMenu = ref(null);
 
 // 关联项切换
-const associationChange = (entityCode, target) => {
+const associationChange = (entityCode, target, isInit) => {
 	let linkEntity;
 	for (let index = 0; index < getGroupEntityList().length; index++) {
 		const element = getGroupEntityList()[index];
@@ -759,7 +759,11 @@ const associationChange = (entityCode, target) => {
 			}
 		}
 	}
-	cutMenu.value.name = linkEntity.label;
+    // 如果是初始化，并且是自定义表单
+    let shouldSkip = isInit && target === 6;
+    if (!shouldSkip) {
+        cutMenu.value.name = linkEntity.label;
+    }
 	// 非自定义表单
 	if (target != 6) {
 		cutMenu.value.entityCode = linkEntity.entityCode;
@@ -779,7 +783,7 @@ let formLoading = ref(false);
 
 // 自定义表单实体切换
 const formEntityCodeChange = async (entityCode, target) => {
-	associationChange(entityCode, 6);
+	associationChange(entityCode, 6, target);
     // 不是初始化清空表单ID
     if(target != 'init') {
         cutMenu.value.formId = "";
