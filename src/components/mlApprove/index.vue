@@ -334,6 +334,7 @@ const initFormLayout = async (formLayoutId) => {
     let res = await getFormLayout(
         allEntityName.value[approvalTask.value.entityCode] || queryEntityNameById(props.entityId),
         formLayoutId,
+        formLayoutId ? true : false
     );
     if (res) {
         if (res.data?.layoutJson) {
