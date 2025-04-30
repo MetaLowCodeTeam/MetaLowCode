@@ -510,7 +510,7 @@ defineExpose({
         }
     }
     &.full-screen {
-        height: 100%;
+        height: calc(100vh - 60px);
     }
     .approve-view-box {
         width: calc(100% - 400px);

@@ -19,7 +19,6 @@
 			v-else
 			v-loading="loading"
 			element-loading-text="字段加载中..."
-			style="margin-top: -20px"
 			class="ml-tabs"
 		>
 			<el-tab-pane label="主表字段" name="mainFormFields">
