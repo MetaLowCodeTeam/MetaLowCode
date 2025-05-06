@@ -11,6 +11,7 @@
         fieldName="approvalConfigId.flowName"
         :queryUrl="'/approval/queryApprovalTask'"
         :approvalTaskType="pageType[type].value"
+        :filterEquation="pageType[type].filterEquation"
     >
         <template #activeRow>
             <el-table-column
@@ -153,6 +154,7 @@ onBeforeMount(() => {
         handle: {
             title: "待我处理",
             value: 1,
+            filterEquation: "AND",
             fixedFilter: [
                 {
                     fieldName: "approver",
@@ -165,6 +167,7 @@ onBeforeMount(() => {
         submit: {
             title: "我提交的",
             value: 2,
+            filterEquation: "AND",
             fixedFilter: [
                 {
                     fieldName: "createdBy",
@@ -181,6 +184,7 @@ onBeforeMount(() => {
         cc: {
             title: "抄送我的",
             value: 3,
+            filterEquation: "AND",
             fixedFilter: [
                 {
                     fieldName: "ccTo",
@@ -193,6 +197,7 @@ onBeforeMount(() => {
         approved: {
             title: "审批过的",
             value: 4,
+            filterEquation: "AND",
             fixedFilter: [
                 {
                     fieldName: "approvalTaskId",

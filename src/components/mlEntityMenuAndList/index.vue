@@ -228,6 +228,8 @@ const props = defineProps({
     actionColumnWidth: { type: Number, default: 170 },
     // 固定过滤
     fixedFilter: { type: Object, default: () => [] },
+    // 过滤条件
+    filterEquation: { type: String, default: "AND" },
 });
 const emit = defineEmits([
     "goDetail",
@@ -316,14 +318,14 @@ const getEntityList = async () => {
 // 获取右侧流程列表
 const getApprovalList = async () => {
     loading.value = true;
-    let { fieldName, fixedFilter } = props;
+    let { fieldName, fixedFilter, filterEquation } = props;
     let param = {
         mainEntity: props.entityName,
         fieldsList: props.fieldsList,
         pageSize: page.size,
         pageNo: page.no,
         filter: {
-            equation: "AND",
+            equation: filterEquation,
             items: [],
         },
         sortFields: tableSort.value,
