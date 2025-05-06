@@ -50,7 +50,12 @@ axios.interceptors.response.use(
             return response
         }
         if (response.data?.code === 403) {
-            router.replace({ path: appPath + "login" });
+            let query = {};
+            let tenantInfo = tool.data.get('TenantInfo');
+            if(tenantInfo.tenantCode) {
+                query = {...tenantInfo}
+            }
+            router.replace({ path: appPath + "login", query});
             return response
         } else {
             ElMessage.error(response.data?.error)

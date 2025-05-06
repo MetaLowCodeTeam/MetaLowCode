@@ -299,7 +299,12 @@ const handleUser = (command) => {
             .then(async () => {
                 let res = await http.post("/user/logout");
                 if (res) {
-                    router.replace({ path: appPath + "login" });
+                    let query = {};
+                    let tenantInfo = $TOOL.data.get('TenantInfo');
+                    if(tenantInfo.tenantCode) {
+                        query = {...tenantInfo}
+                    }
+                    router.replace({ path: appPath + "login", query});
                 }
             })
             .catch(() => {

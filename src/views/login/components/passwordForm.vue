@@ -141,6 +141,10 @@ export default {
         if(this.routerTenantCode) {
             this.form.tenantCode = this.routerTenantCode;
         }
+        this.$TOOL.data.set("TenantInfo", {
+            tenantCode: this.routerTenantCode,
+            tenantId: this.$route.query.tenantId
+        })
     },
     computed: {
         myPublicSetting() {
