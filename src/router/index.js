@@ -94,7 +94,7 @@ router.beforeEach(async (to, from, next) => {
             return;
         }
         let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
-            if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || publicSetting.value.pluginIdList.includes('metaTenant'))) {
+            if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
                 return false
             }
             if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
@@ -165,7 +165,7 @@ router.sc_getMenu = () => {
     const { getUseMenuList, getTopNavMenuList } = useLayoutConfigStore();
     const { publicSetting } = storeToRefs(useCommonStore());
     let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
-        if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || publicSetting.value.pluginIdList.includes('metaTenant'))) {
+        if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
             return false
         }
         if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {

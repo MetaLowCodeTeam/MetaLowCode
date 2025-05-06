@@ -77,6 +77,7 @@ axios.interceptors.response.use(
                         closeOnClickModal: false,
                         center: true,
                         confirmButtonText: '重新登录',
+                        cancelButtonText: "取消",
                         beforeClose: (action, instance, done) => {
                             MessageBox_401_show = false
                             done()
