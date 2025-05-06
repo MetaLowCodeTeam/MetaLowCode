@@ -41,10 +41,10 @@
 			</div>
 		</template>
 
-		<div class="detail-main" v-loading="loading">
+		<div class="detail-main" v-loading="loading" :class="{'left-tabs': publicSetting.detailTabsPosition == 'left'}">
 			<el-row :gutter="20" v-if="!noeData">
 				<el-col :span="21">
-                    <div class="detail-left-box" :class="{'left-tabs': publicSetting.detailTabsPosition == 'left'}">
+                    <div class="detail-left-box">
                         <DetailTabs
                             :tabsConf="detailDialog"
                             @tabChange="tabChange"
@@ -869,18 +869,26 @@ defineExpose({
     box-sizing: border-box;
     padding-right: 5px;
 }
-.detail-left-box.left-tabs {
-    display: flex;
-    .detail-container {
-        width: 100%;
-        padding-top: 20px;
-        padding-bottom: 20px;
+.detail-main.left-tabs {
+    .detail-left-box {
+        display: flex;
+        .detail-container {
+            width: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        :deep(.el-tabs) {
+            height: calc(100vh - 90px);
+            .el-tabs__nav-wrap {
+                padding-right: 0;
+            }
+        }
+        :deep(.setting-tabs) {
+            left: -10px;
+        }
     }
-    :deep(.el-tabs) {
-        height: calc(100vh - 90px);
-    }
-    :deep(.setting-tabs) {
-        left: -10px;
+    .detail-right {
+        padding-top: 10px!important;
     }
 }
 </style>
