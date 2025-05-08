@@ -34,7 +34,7 @@
                 <el-button type="primary" @click="createNewEntity('create')">
                     <i class="el-icon-plus"></i>&nbsp;新建实体
                 </el-button>
-                <el-popover trigger="click" v-if="!props.isDesign">
+                <el-popover trigger="click" v-if="!props.isAppManagement">
                     <div class="table-setting-item-box">
                         <div class="pl-10 item" @click="openImportExportDialog('export')">
                             <span class="icon-top-1">
@@ -77,7 +77,7 @@
                             未分组
                         </div>
                     </template>
-                    <EntityListCard :entityList="notGroup" :isDesign="isDesign" @handleCommand="handleCommand"/>
+                    <EntityListCard :entityList="notGroup" :isAppManagement="isAppManagement" @handleCommand="handleCommand"/>
                 </el-collapse-item>
                 <template v-for="(op,name,inx) of entityGroup" :key="inx">
                     <el-collapse-item :name="name" v-if="op.length > 0">
@@ -91,7 +91,7 @@
                                 {{name}}
                             </div>
                         </template>
-                        <EntityListCard :entityList="op" :isDesign="isDesign" @handleCommand="handleCommand"/>
+                        <EntityListCard :entityList="op" :isAppManagement="isAppManagement" @handleCommand="handleCommand"/>
                     </el-collapse-item>
                 </template>
                 <el-empty v-if="showEmpty" description="暂无数据" />
@@ -167,7 +167,7 @@ const router = useRouter();
 const $TOOL = inject("$TOOL");
 
 const props = defineProps({
-    isDesign: {
+    isAppManagement: {
         type: Boolean,
         default: false
     }
@@ -219,7 +219,7 @@ const checkRole = (rightStr) => {
 };
 
 const initEntity = () => {
-    if(props.isDesign) {
+    if(props.isAppManagement) {
         appAbbr.value = router.currentRoute.value.query.appAbbr;
     }
     loading.value = true;
@@ -402,7 +402,7 @@ const saveNewEntity = () => {
 
         delete newEntityProps.value.useTag;
         let paramsEntityProps = JSON.parse(JSON.stringify(newEntityProps.value));
-        if(props.isDesign){
+        if(props.isAppManagement){
             paramsEntityProps.appAbbr = appAbbr.value;
             paramsEntityProps.name = appAbbr.value + "_" + paramsEntityProps.name;
         }
@@ -497,7 +497,7 @@ const gotoRoute = (routePage, disableDetailEntity) => {
             entityCode: selectedEntityObj.value.entityCode,
         }
     };
-    if(props.isDesign) {
+    if(props.isAppManagement) {
         routerObj.query.appName = router.currentRoute.value.query.appName;
         routerObj.query.appAbbr = router.currentRoute.value.query.appAbbr;
         routerObj.query.meteAppendTitle = selectedEntityObj.value.label;
@@ -649,11 +649,11 @@ const handleCommand = (command, entityItem) => {
 	} else if (command === 'c30') {
 		gotoListView();
 	} else if (command === 'c40') {
-		gotoRoute(props.isDesign ? 'designApp/designApprovalProcess' : 'process-list', true);
+		gotoRoute(props.isAppManagement ? 'designApp/designApprovalProcess' : 'process-list', true);
 	} else if (command === 'c50') {
-		gotoRoute(props.isDesign ? 'designApp/designTrigger' : 'trigger-list', false);
+		gotoRoute(props.isAppManagement ? 'designApp/designTrigger' : 'trigger-list', false);
 	} else if (command === 'c60') {
-		gotoRoute(props.isDesign ? 'designApp/designReportDesign' : 'templates-list', true);
+		gotoRoute(props.isAppManagement ? 'designApp/designReportDesign' : 'templates-list', true);
 	} else if (command === 'c70') {
 		createNewEntity('copy');
 	} else if (command === 'c80') {

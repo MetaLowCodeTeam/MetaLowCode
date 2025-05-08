@@ -51,7 +51,7 @@
 import { inject, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const props = defineProps({
-    isDesign: {
+    isAppManagement: {
         type: Boolean,
         default: false
     }
@@ -180,7 +180,7 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: props.isDesign ? appPath + "design-process-detail" : appPath + "process-detail",
+        path: props.isAppManagement ? appPath + "design-process-detail" : appPath + "process-detail",
         query: {
             approvalConfigId: row.approvalConfigId,
             entityCode: row.entityCode,

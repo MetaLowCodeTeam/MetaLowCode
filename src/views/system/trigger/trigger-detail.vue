@@ -71,7 +71,7 @@ const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 const router = useRouter();
 const props = defineProps({
-    isDesign: {
+    isAppManagement: {
         type: Boolean,
         default: false
     }
@@ -167,7 +167,7 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 返回列表
 const goTriggerList = () => {
     notTitleDialog.isShow = false
-    if(props.isDesign) {
+    if(props.isAppManagement) {
         router.go(-1);
     }else {
         router.push(appPath + "trigger-list");

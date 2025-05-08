@@ -19,7 +19,7 @@
 <script>
 	export default {
         props: {
-            isDesign: {
+            isAppManagement: {
                 type: Boolean,
                 default: false
             }
@@ -40,7 +40,7 @@
 		methods: {
 			getBreadcrumb(){
 				let matched = this.$route.meta.breadcrumb;
-                if(this.isDesign) {
+                if(this.isAppManagement) {
                     matched = this.$route.matched;
                     matched.forEach(item => {
                         if(item.name == 'DesignApp') {

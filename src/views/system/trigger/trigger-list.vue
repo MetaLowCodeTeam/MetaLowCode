@@ -34,7 +34,7 @@
 import { inject, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const props = defineProps({
-    isDesign: {
+    isAppManagement: {
         type: Boolean,
         default: false
     }
@@ -153,7 +153,7 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // 跳转详情
 const goDetail = (row) => {
     router.push({
-        path: props.isDesign ? appPath + "design-trigger-detail" : appPath + "trigger-detail",
+        path: props.isAppManagement ? appPath + "design-trigger-detail" : appPath + "trigger-detail",
         query: {
             triggerConfigId: row.triggerConfigId,
             meteAppendTitle: row.name,

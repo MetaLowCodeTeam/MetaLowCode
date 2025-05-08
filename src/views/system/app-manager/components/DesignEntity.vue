@@ -39,13 +39,13 @@
 			</div>
 		</el-header>
 		<el-main class="entity-main">
-			<EntityFieldTable v-if="currentTab == 'EntityDataModel'" isDesign />
+			<EntityFieldTable v-if="currentTab == 'EntityDataModel'" isAppManagement />
 			<form-design
 				v-else-if="currentTab == 'EntityFormDesign'"
-				isDesign
+				isAppManagement
 				@initComplete="initComplete"
 			></form-design>
-			<EntityList v-else isDesign />
+			<EntityList v-else isAppManagement />
 		</el-main>
 	</el-container>
 </template>

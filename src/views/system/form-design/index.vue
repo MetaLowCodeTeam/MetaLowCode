@@ -201,7 +201,7 @@ export default {
         },
     },
     props: {
-        isDesign: {
+        isAppManagement: {
             type: Boolean,
             default: false,
         },
@@ -290,7 +290,7 @@ export default {
                         );
                         this.$refs.vfDesigner.setMetaFields(metaFields);
                         // 发射事件
-                        if(this.isDesign){
+                        if(this.isAppManagement){
                             this.$emit("initComplete")
                         }
                     }
@@ -298,7 +298,7 @@ export default {
                 .catch((res) => {
                     this.$message({ message: res.message, type: "error" });
                     // 发射事件
-                    if(this.isDesign){
+                    if(this.isAppManagement){
                         this.$emit("initComplete")
                     }
                 });

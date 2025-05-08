@@ -40,7 +40,7 @@
 	<div class="design-app">
 		<div class="design-app-header">
 			<div class="design-app-header-bar">
-				<Topbar isDesign/>
+				<Topbar isAppManagement/>
 				<div class="design-app-header-right">
 					<el-dropdown>
 						<el-button type="primary">
@@ -64,7 +64,7 @@
 				</div>
 			</div>
 			<div class="design-app-header-tab">
-				<Tags isDesign></Tags>
+				<Tags isAppManagement></Tags>
 			</div>
 		</div>
 		<div class="design-app-body">

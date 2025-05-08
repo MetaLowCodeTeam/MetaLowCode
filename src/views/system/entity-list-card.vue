@@ -160,7 +160,7 @@
 				<el-icon title="显示菜单"><Tools /></el-icon>
 				<template #dropdown>
 					<!-- 明细实体 -->
-					<template v-if="!entityItem.detailEntityFlag && !isDesign">
+					<template v-if="!entityItem.detailEntityFlag && !isAppManagement">
 						<el-dropdown-menu>
 							<el-dropdown-item
 								v-if="$TOOL.checkRole('r6001')"
@@ -230,7 +230,7 @@
 						</el-dropdown-menu>
 					</template>
 					<template
-						v-else-if="entityItem.detailEntityFlag && !isDesign"
+						v-else-if="entityItem.detailEntityFlag && !isAppManagement"
 					>
 						<el-dropdown-menu>
 							<el-dropdown-item
@@ -330,7 +330,7 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
-	isDesign: {
+	isAppManagement: {
 		type: Boolean,
 		default: false,
 	},
@@ -350,7 +350,7 @@ const onLeaveEntity = () => {
 
 // 点击实体
 const onEntityClick = (entityItem) => {
-	if (props.isDesign) {
+	if (props.isAppManagement) {
 		router.push({
 			name: "AppDesignEntity",
 			query: {

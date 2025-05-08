@@ -116,7 +116,7 @@ export default {
         };
     },
     props: {
-        isDesign: {
+        isAppManagement: {
             type: Boolean,
             default: false,
         },
@@ -167,12 +167,12 @@ export default {
             (node) => node.path == this.$CONFIG.DASHBOARD_URL
         );
         
-        if (dashboardRoute && !this.isDesign) {
+        if (dashboardRoute && !this.isAppManagement) {
             dashboardRoute.fullPath = dashboardRoute.path;
             this.addViewTags(dashboardRoute);
             this.addViewTags(this.$route);
         }
-        if(this.isDesign){
+        if(this.isAppManagement){
             let { appAbbr, appName } = this.$route.query;
             this.addViewTags({
                 "fullPath": appPath + "designApp/designEntity?appName=" + encodeURIComponent(appName) + "&appAbbr=" + appAbbr,

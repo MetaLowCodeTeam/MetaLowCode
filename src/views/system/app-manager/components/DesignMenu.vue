@@ -55,7 +55,7 @@
 		v-model="setMenDialog"
 		v-if="setMenDialog"
 		:menuInfo="menuInfo"
-		isDesign
+		isAppManagement
         @saveSuccess="saveSuccess"
 	/>
 </template>

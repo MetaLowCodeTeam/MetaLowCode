@@ -1,12 +1,12 @@
 <template>
-    <EntityManager v-if="currentRoute.name == 'DesignEntity'" is-design></EntityManager>
+    <EntityManager v-if="currentRoute.name == 'DesignEntity'" isAppManagement></EntityManager>
     <DesignEntity v-if="currentRoute.name == 'AppDesignEntity'"></DesignEntity>
     <OptionManager v-if="currentRoute.name == 'DesignSingleOption'"></OptionManager>
     <TagManager v-if="currentRoute.name == 'DesignMultipleOption'"></TagManager>
-    <ApprovalFlowManager v-if="currentRoute.name == 'DesignApprovalProcess'" is-design></ApprovalFlowManager>
+    <ApprovalFlowManager v-if="currentRoute.name == 'DesignApprovalProcess'" isAppManagement></ApprovalFlowManager>
     <ApprovalProcessDetail v-if="currentRoute.name == 'DesignProcessDetail'"></ApprovalProcessDetail>
-    <TriggerManager v-if="currentRoute.name == 'DesignTrigger'" is-design></TriggerManager>
-    <TriggerDetail v-if="currentRoute.name == 'DesignTriggerDetail'" is-design></TriggerDetail>
+    <TriggerManager v-if="currentRoute.name == 'DesignTrigger'" isAppManagement></TriggerManager>
+    <TriggerDetail v-if="currentRoute.name == 'DesignTriggerDetail'" isAppManagement></TriggerDetail>
     <DashboardManager v-if="currentRoute.name == 'DesignDashboard'"></DashboardManager>
     <TemplatesList v-if="currentRoute.name == 'DesignReportDesign'"></TemplatesList>
     <ExternalFormManager v-if="currentRoute.name == 'DesignExternalForm'"></ExternalFormManager>
