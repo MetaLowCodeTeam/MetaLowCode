@@ -4,7 +4,7 @@
 	<mlSingleList
 		title="多租户"
 		mainEntity="Tenant"
-		fieldsList="tenantName,isDisabled,tenantState,tenantCode,initializeTemplate"
+		fieldsList="tenantName,isDisabled,tenantState,tenantCode,initializeTemplate,appManagementSwitch"
 		:sortFields="sortFields"
 		fieldName="tenantName"
 		:tableColumn="tableColumn"

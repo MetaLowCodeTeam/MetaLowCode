@@ -45,12 +45,18 @@
 					</el-select>
 					<el-input v-else v-model="tenantTemplateName" disabled />
 				</el-form-item>
-				<el-form-item label="启用" prop="isDisabled">
+				<el-form-item label="启用">
 					<el-switch
 						v-model="form.isDisabled"
 						:active-value="false"
 						:inactive-value="true"
 					/>
+				</el-form-item>
+                <el-form-item label="应用管理">
+					<el-switch
+						v-model="form.appManagementSwitch"
+					/>
+                    <span class="ml-5 info-text icon-top-1">允许租户开发应用</span>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -73,6 +79,7 @@ let form = ref({
 	tenantCode: "",
 	isDisabled: false,
 	initializeTemplate: {},
+    appManagementSwitch: false,
 });
 let rules = ref({
 	tenantName: [
@@ -114,6 +121,7 @@ const openDialog = (row, target) => {
 		tenantCode: "",
 		isDisabled: false,
 		initializeTemplate: "",
+        appManagementSwitch: false,
 	};
 	// 如果是编辑
 	if (row.tenantId) {
@@ -122,6 +130,7 @@ const openDialog = (row, target) => {
 			tenantCode: row.tenantCode,
 			isDisabled: row.isDisabled,
 			tenantId: row.tenantId,
+            appManagementSwitch: row.appManagementSwitch,
 		};
 		tenantTemplateName.value = row.initializeTemplate?.name || "未使用模板";
 	}

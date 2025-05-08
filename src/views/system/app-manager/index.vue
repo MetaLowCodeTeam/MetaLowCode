@@ -268,8 +268,10 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 
-// 当前选中的tab
-let activeTab = ref(publicSetting.value.tenantId ? "installed" : "developing");
+const tenantInfo = ref(publicSetting.value.tenantInfo || {});
+
+// 当前选中的tab 如果是租户，并且没有开启应用开发，则显示已安装应用
+let activeTab = ref(tenantInfo.value.tenantId && !tenantInfo.value.appManagementSwitch ? "installed" : "developing");
 // 所有tab
 let tabs = ref([
 	{
@@ -283,7 +285,8 @@ let tabs = ref([
 ]);
 
 onMounted(() => {
-    if(publicSetting.value.tenantId){
+    // 如果是租户，并且没有开启应用开发，则只显示已安装应用 不显示开发中应用
+    if(tenantInfo.value.tenantId && !tenantInfo.value.appManagementSwitch){
         tabs.value = [
             {
                 label: t("appManager.1002"),

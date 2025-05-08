@@ -51,7 +51,7 @@ axios.interceptors.response.use(
         }
         if (response.data?.code === 403) {
             let query = {};
-            let tenantInfo = tool.data.get('TenantInfo');
+            let tenantInfo = tool.data.get('TenantInfo') || {};
             if(tenantInfo.tenantCode) {
                 query = {...tenantInfo}
             }

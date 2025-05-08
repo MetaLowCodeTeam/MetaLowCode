@@ -60,7 +60,6 @@
                 </el-form-item> -->
                 <el-form-item label="是否开启记录级权限">
                     <el-switch
-                        style="display: block; float: right"
                         v-model="myEntityProps.authorizable"
                         active-text="是"
                         inactive-text="否"
@@ -90,7 +89,6 @@
                         </el-tooltip>
                     </template>
                     <el-switch
-                        style="display: block; float: right"
                         v-model="myEntityProps.detailEntityFlag"
                         active-text="是"
                         inactive-text="否"

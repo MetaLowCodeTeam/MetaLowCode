@@ -93,18 +93,7 @@ router.beforeEach(async (to, from, next) => {
         if(isReturn) {
             return;
         }
-        let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
-            if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
-                return false
-            }
-            if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
-                return false
-            }
-            if(OuterDataSourceHideMenu.includes(node.name) && !publicSetting.value.pluginIdList.includes('metaDataWarehouse')) {
-                return false
-            }
-            return true
-        })
+        let userMenu = filterUserMenu(userRoutes, publicSetting);
         userMenu[0].children.push(...getUseMenuList())
         userMenu.splice(1, 0, ...getTopNavMenuList())
         let menu = [...userMenu]
@@ -164,18 +153,7 @@ router.onError((error, to) => {
 router.sc_getMenu = () => {
     const { getUseMenuList, getTopNavMenuList } = useLayoutConfigStore();
     const { publicSetting } = storeToRefs(useCommonStore());
-    let userMenu = treeFilter(routerCheckRole(userRoutes), node => {
-        if(tenantIdHideMenu.includes(node.name) && (publicSetting.value.tenantId || !publicSetting.value.pluginIdList.includes('metaTenant'))) {
-            return false
-        }
-        if(node.name == "JobPositionList" && !publicSetting.value.openJobPosition) {
-            return false
-        }
-        if(OuterDataSourceHideMenu.includes(node.name) && !publicSetting.value.pluginIdList.includes('metaDataWarehouse')) {
-            return false
-        }
-        return true
-    })
+    let userMenu = filterUserMenu(userRoutes, publicSetting);
     userMenu[0].children.push(...getUseMenuList())
     userMenu.splice(1, 0, ...getTopNavMenuList())
     // userMenu.push(...apiMenu)
@@ -183,6 +161,26 @@ router.sc_getMenu = () => {
     return menu
 }
 
+
+// 格式化菜单显示
+function filterUserMenu(userRoutes, publicSetting) {
+    let { tenantInfo, pluginIdList, openJobPosition } = publicSetting.value;
+    return treeFilter(routerCheckRole(userRoutes), node => {
+        // 如果是租户，并且有足环ID或者没有租户插件 不显示该菜单
+        if(tenantIdHideMenu.includes(node.name) && (tenantInfo && tenantInfo.tenantId || !pluginIdList.includes('metaTenant'))) {
+            return false
+        }
+        // 如果是岗位管理，并且没有开启岗位管理，不显示该菜单
+        if(node.name == "JobPositionList" && !openJobPosition) {
+            return false
+        }
+        // 如果是外部数据源，并且没有外部数据源插件，不显示该菜单
+        if(OuterDataSourceHideMenu.includes(node.name) && !pluginIdList.includes('metaDataWarehouse')) {
+            return false
+        }
+        return true
+    })
+}
 
 
 

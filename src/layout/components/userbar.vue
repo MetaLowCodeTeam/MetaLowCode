@@ -300,7 +300,7 @@ const handleUser = (command) => {
                 let res = await http.post("/user/logout");
                 if (res) {
                     let query = {};
-                    let tenantInfo = $TOOL.data.get('TenantInfo');
+                    let tenantInfo = $TOOL.data.get('TenantInfo') || {};
                     if(tenantInfo.tenantCode) {
                         query = {...tenantInfo}
                     }
