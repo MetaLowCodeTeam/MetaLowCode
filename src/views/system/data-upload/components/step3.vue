@@ -13,10 +13,10 @@
                     <span v-if="taskData.interrupted">导入被中止。已成功导入 {{ taskData.completed }} 条记录</span>
                 </div>
                 <div
-                    class="fl title-right"
-                >已耗时 {{ forMatTime(taskData.elapsedTime) }} · 速度{{ getSpeed(taskData.completed,taskData.elapsedTime) }}条/秒
+                    class="fl title-right" 
+                >已耗时 {{ formatTime(taskData.elapsedTime) }} · 速度{{ getSpeed(taskData.completed,taskData.elapsedTime) }}条/秒
                     <span v-if="!taskData.finish && !taskData.interrupted">
-                        · 预计剩余时间 {{ remainder(taskData) }}
+                        · 预计剩余时间 {{ getRemainingTime(taskData) }}  
                     </span>
                 </div>
             </div>
@@ -127,43 +127,45 @@ const getTaskState = async () => {
         }, 1000);
     }
 };
-
-// 获取速度
+// 获取处理速度（条/秒），保留2位小数
 const getSpeed = (num, ms) => {
-    if (ms <= 0) return 0;  // 避免除以0或负数
-    const seconds = ms / 1000;  // 毫秒转秒
-    return (num / seconds).toFixed(2);  // 计算TPS并保留2位小数
+    if (ms <= 0 || num <= 0) return 0;  // 避免除以0或负数
+    const seconds = ms / 1000;
+    return parseFloat((num / seconds).toFixed(2));  // 显式转换为数字类型
 };
 
-// 获取剩余时间
-const remainder = () => {
-    let { total, completed, elapsedTime, interrupted } = taskData;
-    // 未完成数
-    let unfinishedNum = total - completed;
-    let remainderNum = unfinishedNum * getSpeed(completed, elapsedTime) * 1000;
-    if (interrupted) {
-        return "00:00:00";
-    }
-    return forMatTime(remainderNum);
+// 格式化时间为 HH:MM:SS
+const formatTime = (ms) => {
+    if (ms < 1000) return "00:00:01";  // 至少显示1秒
+    
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${zeroFill(hours)}:${zeroFill(minutes)}:${zeroFill(seconds)}`;
 };
 
-// 格式化时间
-const forMatTime = (ms) => {
-    if (ms < 1000) {
-        return "00:00:00";
-    }
-    let h = zeroFill(Math.floor(ms / (1000 * 60 * 60)) % 24);
-    let m = zeroFill(Math.floor(ms / (1000 * 60)) % 60);
-    let s = zeroFill(Math.floor(ms / 1000) % 60);
-    return h + ":" + m + ":" + s;
-};
-// 补0
+// 数字补零（私有工具函数）
 const zeroFill = (num) => {
-    if (num < 10) {
-        return "0" + num;
-    } else {
-        return num;
+    return num < 10 ? `0${num}` : `${num}`;
+};
+
+// 获取剩余时间（主函数）
+const getRemainingTime = (taskData) => {
+    const { total, completed, elapsedTime, interrupted } = taskData;
+    
+    // 边界条件处理
+    if (interrupted || completed >= total || elapsedTime <= 0) {
+        return "00:00:00";
     }
+
+    // 计算剩余时间（数学修正版）
+    const remainingItems = total - completed;
+    const speed = getSpeed(completed, elapsedTime);  // 条/秒
+    const remainingMs = (remainingItems / speed) * 1000;  // 正确公式
+
+    return formatTime(remainingMs);
 };
 
 // 中断
