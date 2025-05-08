@@ -25,7 +25,7 @@
 			/>
 		</div>
 		<div class="btn-box fr">
-			<el-button type="primary" icon="Plus" @click="handleAdd">新建</el-button>
+			<el-button type="primary" icon="Plus" @click="handleAdd" v-if="$TOOL.checkRole('r' + entityCode + '-2')" >新建</el-button>
 			<el-button type="primary" plain @click="openSettingDialog">
                 设置
 				<span class="icon-t1">
@@ -39,10 +39,18 @@
 	<ListSettingDialog ref="listSettingDialog" @save-success="saveSuccess" />
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import ListSettingDialog from "./ListSettingDialog.vue";
 
+const $TOOL = inject("$TOOL");
 const emit = defineEmits(["onAdd", "save-success", "onSearch"]);
+
+const props = defineProps({
+    entityCode: {
+        type: String,
+        required: true
+    }
+});
 
 let searchValue = ref("");
 
@@ -66,6 +74,8 @@ const handleSearch = () => {
 const handleClearSearch = () => {
     searchValue.value = "";
 }
+
+
 
 defineExpose({
     handleClearSearch
