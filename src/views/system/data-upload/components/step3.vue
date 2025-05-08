@@ -14,7 +14,11 @@
                 </div>
                 <div
                     class="fl title-right"
-                >耗时 {{ forMatTime(taskData.elapsedTime) }} · 速度{{ getSpeed(taskData.completed,taskData.elapsedTime) }}条/秒 · 剩余时间 {{ remainder(taskData) }}</div>
+                >已耗时 {{ forMatTime(taskData.elapsedTime) }} · 速度{{ getSpeed(taskData.completed,taskData.elapsedTime) }}条/秒
+                    <span v-if="!taskData.finish && !taskData.interrupted">
+                        · 预计剩余时间 {{ remainder(taskData) }}
+                    </span>
+                </div>
             </div>
             <div class="import-progress">
                 <div class="import-progress-bar" :style="{'width':(taskData.progress * 100) + '%'}"></div>
@@ -126,11 +130,9 @@ const getTaskState = async () => {
 
 // 获取速度
 const getSpeed = (num, ms) => {
-    let s = Math.floor(ms / 1000) % 60;
-    if (s > 0) {
-        return (num / s).toFixed(2);
-    }
-    return 0;
+    if (ms <= 0) return 0;  // 避免除以0或负数
+    const seconds = ms / 1000;  // 毫秒转秒
+    return (num / seconds).toFixed(2);  // 计算TPS并保留2位小数
 };
 
 // 获取剩余时间
