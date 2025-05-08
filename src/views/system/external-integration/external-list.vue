@@ -118,7 +118,6 @@ const actionBtn = (data) => {
     } else {
         dialogForm.value.title = "编辑外部表单";
         dialogForm.value.type = "edit";
-        console.log(row, "row");
         let tempForm = { ...row };
         tempForm.bindUsers = [row.bindUsers];
         dialogForm.value.form = { ...tempForm };

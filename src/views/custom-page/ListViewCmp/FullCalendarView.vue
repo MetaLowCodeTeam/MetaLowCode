@@ -355,7 +355,6 @@ const fullCalendarHandleClick = (params) => {
 const fullCalendarHandleDrop = async (params, currentStart) => {
     pageLoading.value = true;
     let fieldType = listCalendarConf.value.fieldType;
-    console.log(currentStart,'currentStart')
     let newDate = fieldType === 'Date' ? currentStart.split(' ')[0] : currentStart;
     let res = await saveRecord(entity.value.name, params[layoutConf.value.idFieldName], {
         [listCalendarConf.value.calendarField]: newDate

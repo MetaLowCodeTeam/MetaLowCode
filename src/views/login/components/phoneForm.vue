@@ -153,7 +153,6 @@ export default {
 			// return
 			if (user && user.data && user.data.code == 200) {
 				let userData = user.data.data;
-                console.log(user.data.id,'user.data.id')
 				setUserInfo(userData);
 				this.$TOOL.cookie.remove("userInfo");
 				sessionStorage.setItem("userId", userData.userId); // 保存用户Id到本地会话

@@ -410,7 +410,6 @@ const closeDialog = () => {
 }
 
 const onRevokeIng = () => {
-    console.log('onRevokeIng')
     loading.value = true;
 }
 

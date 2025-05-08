@@ -344,7 +344,6 @@ const openDialog = (type, data) => {
         }
 	}
 	fromData.value.type = type;
-    console.log(fromData.value);
 	fromData.value.title = DialogType[type];
     if(!fromData.value.iconConfig) {
         fromData.value.iconConfig = {
@@ -483,7 +482,6 @@ const handleSubmit = async () => {
 		}
 		loading.value = false;
 	}
-	console.log(fromData.value);
 };
 
 const handleAppNameChange = (val) => {

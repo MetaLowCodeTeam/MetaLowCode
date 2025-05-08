@@ -293,7 +293,6 @@ const changeSwitch = async (row) => {
 		"/metaApiConfig/saveRecord?id=" + tempForm.metaApiId,
 		tempForm
 	);
-	console.log(res, "res");
 	if (res) {
 		ElMessage.success("切换成功");
 	}

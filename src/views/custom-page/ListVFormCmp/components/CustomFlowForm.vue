@@ -71,7 +71,6 @@ const onSubmit = () => {
 				approvalConfigId.value,
 				formData
 			);
-            console.log(saveRes,'saveRes')
 			if (saveRes && (saveRes.data?.code == 200 || saveRes.code == 200)) {
 				ElMessage.success("提交成功");
 				EntityListEditRefs.value?.cancel();

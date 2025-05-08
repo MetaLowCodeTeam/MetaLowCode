@@ -34,9 +34,9 @@
                 <el-button type="primary" @click="createNewEntity('create')">
                     <i class="el-icon-plus"></i>&nbsp;新建实体
                 </el-button>
-                <el-popover trigger="click" v-if="!props.isAppManagement">
+                <el-popover trigger="click">
                     <div class="table-setting-item-box">
-                        <div class="pl-10 item" @click="openImportExportDialog('export')">
+                        <div class="item" @click="openImportExportDialog('export')" v-if="!props.isAppManagement">
                             <span class="icon-top-1">
                                 <el-icon>
                                     <ElIconDownload />
@@ -44,13 +44,21 @@
                             </span>
                             导出实体
                         </div>
-                        <div class="pl-10 item" @click="openImportExportDialog('import')">
+                        <div class="item" @click="openImportExportDialog('import')" v-if="!props.isAppManagement">
                             <span class="icon-top-1">
                                 <el-icon>
                                     <ElIconUpload />
                                 </el-icon>
                             </span>
                             导入实体
+                        </div>
+                        <div class="item" @click="openCopyEntityDialog" v-if="props.isAppManagement">
+                            <span class="icon-top-1">
+                                <el-icon>   
+                                    <CopyDocument />
+                                </el-icon>
+                            </span> 
+                            从实体中复制
                         </div>
                     </div>
                     <template #reference>
@@ -137,6 +145,11 @@
         </el-main>
     </el-container>
     <EntityImportExport ref="entityImportExportRef" :entityList="entityItems"/>
+    <EntitySelected 
+        ref="entitySelectedRef"
+        @selectEntity="selectCopyEntity"
+        title="选择实体复制"
+    />
 </template>
 
 <script setup>
@@ -159,6 +172,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import { textIsSystemKeyword } from "@/utils/keyword-check";
 import EntityImportExport from "./entity-import-export.vue";
+import EntitySelected from "./entity-selected.vue";
 import http from "@/utils/request";
 
 const { refreshCache } = useCommonStore();
@@ -655,6 +669,10 @@ const handleCommand = (command, entityItem) => {
 	} else if (command === 'c60') {
 		gotoRoute(props.isAppManagement ? 'designApp/designReportDesign' : 'templates-list', true);
 	} else if (command === 'c70') {
+        // 如果复制的实体存在标签，且不在所有标签数组中，就push进去
+        if(entityItem.tags &&!allTags.value.includes(entityItem.tags)){
+            allTags.value.push(entityItem.tags);
+        }
 		createNewEntity('copy');
 	} else if (command === 'c80') {
 		deleteSelectedEntity();
@@ -667,6 +685,18 @@ const openImportExportDialog = (type) => {
     entityImportExportRef.value.openDialog(type);
 }
 
+// 选择实体组件
+const entitySelectedRef = ref();
+
+// 打开复制实体弹窗
+const openCopyEntityDialog = () => {
+    entitySelectedRef.value.openDialog("NOT_APP");
+}
+// 选择复制实体
+const selectCopyEntity = (row) => {
+    row.appAbbr = appAbbr.value;
+    handleCommand('c70',row);
+}
 
 </script>
 

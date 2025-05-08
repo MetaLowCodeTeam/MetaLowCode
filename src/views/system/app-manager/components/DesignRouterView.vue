@@ -59,7 +59,6 @@ watch(() => router.currentRoute.value, (newVal, oldVal) => {
 });
 
 const initRouter = () => {
-    console.log(currentRoute.value,'路由信息');
 }
 
 </script>

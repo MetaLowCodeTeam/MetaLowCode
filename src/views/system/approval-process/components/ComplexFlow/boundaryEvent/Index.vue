@@ -20,7 +20,6 @@ let activeNames = ref(["1"]);
 
 const initFormData = () => {
 	myFormData.value = props.formData;
-	console.log(myFormData.value, "myFormData.value");
 };
 
 // onMounted(() => {

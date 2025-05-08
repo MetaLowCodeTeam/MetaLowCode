@@ -349,7 +349,6 @@ export default {
             let res = await getRefFieldExtras(savedProps.name, this.entity);
             if (res && res.code == 200) {
                 if (res.data) {
-                    console.log(res.data,'res.data')
                     this.refEntityName = res.data.refEntityName;
                     this.refEntityLabel = res.data.refEntityLabel;
                     this.refEntityFullName = res.data.refEntityFullName;

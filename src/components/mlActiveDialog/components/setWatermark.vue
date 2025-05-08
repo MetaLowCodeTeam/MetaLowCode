@@ -100,7 +100,6 @@ const confirm = () => {
 		valueError.value = true;
 		return;
 	}
-    console.log(watermarkConf.value,'watermarkConf.value')
 	emits("confirm", watermarkConf.value);
 	show.value = false;
 };

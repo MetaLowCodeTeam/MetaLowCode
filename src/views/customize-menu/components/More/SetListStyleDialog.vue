@@ -430,7 +430,6 @@ const initStyleConf = () => {
 			styleConf.value,
 			JSON.parse(STYLE.config)
 		);
-        console.log(styleConf.value, 'styleConf.value');
 		layoutConfigId.value = STYLE.layoutConfigId;
 	}
     initFormList();

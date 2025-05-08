@@ -230,7 +230,6 @@ const openIconDialog = (type) => {
 // 确认选择图标
 const selectIcon = (icon) => {
 	settingDialog.value.config[cutIconType.value] = icon;
-	console.log(settingDialog.value.config[cutIconType.value], "icon");
 	isShowIconDialog.value = false;
 };
 

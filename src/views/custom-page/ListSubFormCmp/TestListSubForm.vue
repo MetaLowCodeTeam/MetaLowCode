@@ -123,7 +123,7 @@ export default {
         },
         // 获取表单组件
         getFormRef() {
-            console.log(this.formRef);
+            // console.log(this.formRef);
         },
         getTableDataList(){
             return this.$refs.EntityListRefs.getTableDataList();

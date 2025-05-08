@@ -182,7 +182,6 @@ export default {
 	},
 	methods: {
 		saveField() {
-			console.log(this.fieldProps.fieldViewModel)
 			this.doSave('Picture')
 		},
 

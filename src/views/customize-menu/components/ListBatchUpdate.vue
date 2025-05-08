@@ -212,7 +212,6 @@ let showReferenceDialogFlag = ref(false);
 
 // 单引用
 const setReferRecord = (event) => {
-    console.log(event, "event");
     updateReference.value = [event];
     updateValue.value = event.label;
     showReferenceDialogFlag.value = false;

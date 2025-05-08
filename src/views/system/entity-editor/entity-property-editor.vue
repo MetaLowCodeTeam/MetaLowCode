@@ -188,54 +188,10 @@
             </el-form>
         </el-main>
     </el-container>
-    <ml-dialog
-        title="选择主实体"
-        v-model="showMainEntityDialogFlag"
-        width="560px"
-        append-to-body
-        body-no-padding
-    >
-        <div style="height: 500px;">
-            <div class="main-entity-search-box">
-                <el-input
-                    v-model="mainEntitySearchValue"
-                    placeholder="输入关键词进行搜索..."
-                    clearable
-                    class="input-with-select"
-                >
-                    <template #prepend>
-                        <el-select
-                            v-model="searchTag"
-                            style="width: 100px"
-                        >
-                            <el-option label="全部标签" value="全部标签" />
-                            <el-option label="未分组" value="未分组" />
-                            <el-option
-                                v-for="(op,inx) of myEntityProps.useTag"
-                                :key="inx"
-                                :label="op.name"
-                                :value="op.name"
-                            />
-                        </el-select>
-                    </template>
-                </el-input>
-            </div>
-            <SimpleTable
-                :show-pagination="false"
-                :show-check-box="false"
-                :table-size="'small'"
-                :columns="columns"
-                :show-operation-column="true"
-                :data="formatTableData()"
-                :max-height="420"
-            >
-                <template #table_operation="{scope}">
-                    <el-button class icon="el-icon-check" @click="selectMainEntity(scope.row)">选择</el-button>
-                </template>
-            </SimpleTable>
-        </div>
-
-    </ml-dialog>
+    <EntitySelected 
+        ref="entitySelectedRef" 
+        @selectEntity="selectMainEntity"
+    />
 </template>
 
 <script setup>
@@ -243,6 +199,7 @@ import { getSimplePinYin, upperFirstLetter } from "@/utils/util";
 import { ElMessage } from "element-plus";
 import { watch, ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
+import EntitySelected from "../entity-selected.vue";
 const router = useRouter();
 const props = defineProps({
     entityProps: { type: Object, default: () => {} },
@@ -304,25 +261,10 @@ let rules = ref({
     ],
 });
 
-let showMainEntityDialogFlag = ref(false);
 let mainEntityName = ref("");
-let columns = ref([
-    { prop: "name", label: "实体名称", align: "center" },
-    {
-        prop: "label",
-        label: "显示名称",
-        align: "center",
-    },
-    {
-        prop: "tags",
-        label: "标签",
-        align: "center",
-    },
-]);
+
 
 let tableData = ref([]);
-let searchTag = ref('全部标签');
-let mainEntitySearchValue = ref("");
 
 const onToggleDetailEntityFlag = (val) => {
     if (!!val) {
@@ -332,38 +274,23 @@ const onToggleDetailEntityFlag = (val) => {
     }
 };
 
+const entitySelectedRef = ref();
 const showEntityListDialog = () => {
     if (!myEntityProps.value.detailEntityFlag) {
         return;
     }
     if (!!props.filterEntityMethod) {
         props.filterEntityMethod(tableData.value, () => {
-            showMainEntityDialogFlag.value = true;
+            entitySelectedRef.value.openDialog('List',tableData.value);
         });
     }
 };
 
-const formatTableData = () => {
-    let newData;
-    if(searchTag.value == '全部标签'){
-        newData = JSON.parse(JSON.stringify(tableData.value));
-    }else if(searchTag.value == '未分组'){
-        newData = tableData.value.filter(el => !el.tags || (el.tags && el.tags.length == 0));
-    }else{
-        newData = tableData.value.filter(el => el.tags && el.tags.indexOf(searchTag.value) != -1);
-    }
-    return newData.filter(
-        el =>
-            el.name.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1 ||
-            el.label.toLowerCase().indexOf(mainEntitySearchValue.value.toLowerCase()) > -1
-    )
-}
 
 const selectMainEntity = (row) => {
     if (!!row) {
         myEntityProps.value.mainEntity = row.name;
         mainEntityName.value = row.label + "(" + row.name + ")";
-        showMainEntityDialogFlag.value = false;
     }
 };
 
