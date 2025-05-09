@@ -30,6 +30,10 @@
                 }
 			}
 		}
+
+		.design-app-header-tab {
+			margin-left: 12px;
+		}
 	}
 	.design-app-body {
 		height: calc(100% - 88px);
@@ -43,7 +47,7 @@
 				<Topbar isAppManagement/>
 				<div class="design-app-header-right">
 					<el-dropdown>
-						<el-button type="primary">
+						<el-button type="primary" plain>
 							{{ $t("appManager.1013") }}
 							<el-icon class="el-icon--right">
 								<arrow-down />
