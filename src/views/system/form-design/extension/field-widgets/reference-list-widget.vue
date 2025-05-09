@@ -333,7 +333,9 @@ export default {
 				let customFn = new Function(
 					this.field.options.onBeforeDialogOpen
 				);
-				customFn.call(this);
+				if (customFn.call(this) === false) {
+					return;
+				}
 			}
 
             // 默认树
