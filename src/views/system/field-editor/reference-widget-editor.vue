@@ -413,7 +413,7 @@ export default {
                     this.refEntityLabel = res.data.refEntityLabel;
                     this.refEntityFullName = res.data.refEntityFullName;
                     this.refEntityAndFields = res.data.refEntityAndFields;
-                    this.fieldStyleMap = res.data.fieldStyleMap;
+                    this.fieldStyleMap = res.data.fieldStyleMap || {};
                     this.selectedFieldItems = res.data.selectedFieldItems.map(el => {
                         el.aliasName = this.fieldStyleMap[el.name]?.aliasName || "";
                         return el;
