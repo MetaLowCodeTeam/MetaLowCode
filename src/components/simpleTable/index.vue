@@ -5,7 +5,7 @@
 				ref="multipleTable"
 				:data="data"
 				:max-height="maxHeight"
-                :height="height"
+                :height="maxHeight ? null : height"
 				border
 				stripe
 				tooltip-effect="light"

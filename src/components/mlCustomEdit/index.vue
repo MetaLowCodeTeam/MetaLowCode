@@ -18,7 +18,6 @@ import { onMounted, ref, watchEffect, nextTick } from "vue";
 import { getEditCmpByEntityName } from "@/views/custom-page/customEditEntry.js";
 import useCommonStore from "@/store/modules/common";
 const { queryEntityNameById } = useCommonStore();
-// SimpleTable
 const props = defineProps({
 	entityName: {
 		type: String,
