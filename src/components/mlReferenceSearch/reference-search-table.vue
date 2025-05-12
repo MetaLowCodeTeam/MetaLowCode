@@ -325,7 +325,7 @@ export default {
 			if (res) {
 				this.idField = res.data.idFieldName;
 				this.nameField = res.data.nameFieldName;
-                let fieldStyleMap = res.data.fieldStyleMap;
+                let fieldStyleMap = res.data.fieldStyleMap || {};
 				let columnList = res.data.columnList;
 				columnList.forEach((cl) => {
                     cl.label = fieldStyleMap[cl.prop]?.aliasName || cl.label;
