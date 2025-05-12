@@ -104,7 +104,7 @@
             width="560px"
         >
             <el-container>
-                <el-header style="height: 100%">
+                <el-header style="height: 100%;padding: 10px 0">
 					<el-row style="width: 100%">
                         <!--
 						<el-col :span="24">
@@ -139,8 +139,8 @@
 						<!-- -->
 					</el-row>
                 </el-header>
-                <el-main>
-                    <el-tabs v-model="activeTabName">
+                <el-main style="padding: 0">
+                    <el-tabs v-model="activeTabName" v-loading="fieldLoading" element-loading-text="加载中...">
                         <el-tab-pane label="选择实体搜索列表字段" name="first">
                             <ReferenceEntitySet 
                                 :fieldList="fieldItems"
@@ -356,6 +356,10 @@ export default {
             tableData: [],
             queryText: "",
             activeTabName: "first",
+            // 字段样式
+            fieldStyleMap: {},
+            // 字段加载中
+            fieldLoading: false,
         };
     },
     mounted() {
@@ -402,7 +406,6 @@ export default {
             }
             this.saveLoading = true;
             let res = await getRefFieldExtras(savedProps.name, this.entity);
-            let res2 = await queryEntityListableFieldsByRefField(savedProps.name, this.entity);
             if (res && res.code == 200) {
                 if (res.data) {
                     this.currentRefEntity = res.data.currentRefEntity;
@@ -410,18 +413,16 @@ export default {
                     this.refEntityLabel = res.data.refEntityLabel;
                     this.refEntityFullName = res.data.refEntityFullName;
                     this.refEntityAndFields = res.data.refEntityAndFields;
-                    this.selectedFieldItems = res.data.selectedFieldItems;
-                    this.virtualFields = res.data.virtualFields;
+                    this.fieldStyleMap = res.data.fieldStyleMap;
+                    this.selectedFieldItems = res.data.selectedFieldItems.map(el => {
+                        el.aliasName = this.fieldStyleMap[el.name]?.aliasName || "";
+                        return el;
+                    });
+                    
+                    this.virtualFields = res.data.virtualFields; 
                 }
             }
-            if(res2 && res2.code == 200) {
-                this.fieldItems = res2.data.map(el => {
-                    el.label = el.fieldLabel;
-                    el.name = el.fieldName;
-                    el.type = el.fieldType;
-                    return el
-                });
-            }
+            this.loadFieldItemList(savedProps.name, this.entity);
             this.saveLoading = false;
         },
 
@@ -438,7 +439,6 @@ export default {
                 }
 
                 this.fieldProps.type = "Reference";
-                //console.log( JSON.stringify(this.fieldProps) )
                 let saveMethod = addRefField;
                 if (this.fieldState === FieldState.EDIT) {
                     saveMethod = updateRefField;
@@ -481,17 +481,23 @@ export default {
             tempStr += "]";
             this.refEntityAndFields = tempStr;
             this.currentRefEntity = this.refEntityName;
-            let fieldList = this.selectedFieldItems.map(el => el.name);
+            let fieldList = this.selectedFieldItems.map(el => {
+                if(el.aliasName) {
+                    this.fieldStyleMap[el.name] = {
+                        aliasName: el.aliasName
+                    }
+                }
+                return el.name;
+            });
             let virtualFieldNames = this.virtualFields.map(el => el.name);
             this.fieldProps.referenceSetting = [
                 { 
                     entityName: this.currentRefEntity, 
                     fieldList: fieldList,
-                    virtualFields: virtualFieldNames
+                    virtualFields: virtualFieldNames,
+                    fieldStyleMap: this.fieldStyleMap,
                 },
-            ];
-            // console.log( JSON.stringify(this.fieldProps.referenceSetting) )
-
+            ];       
             this.showRefEntityDialogFlag = false;
         },
 
@@ -508,21 +514,26 @@ export default {
                 this.refEntityLabel + "(" + this.refEntityName + ")";
             this.showEntityListDialogFlag = false;
 			this.refDetailEntitySelected = this.refDetailEntityFlag;
-            this.fieldItems.length = 0;
-            let res = await queryEntityListableFields(queryEntityCodeByName(this.refEntityName));
-            if (res && res.code == 200) {
-                let resultList = res.data;
-                if (resultList) {
-                    resultList.filter((item) => {
-                        item.label = item.fieldLabel;
-                        item.name = item.fieldName;
-                        item.type = item.fieldType;
-                        if (item.type !== "PrimaryKey") {
-                            this.fieldItems.push(item);
-                        }
-                    });
-                }
+            this.loadFieldItemList();
+        },
+
+        async loadFieldItemList(savedPropsName, entity) {
+            this.fieldLoading = true;
+            let res;
+            if(savedPropsName && entity){
+                res = await queryEntityListableFieldsByRefField(savedPropsName, entity);
+            }else{
+                res = await queryEntityListableFields(queryEntityCodeByName(this.refEntityName));
             }
+            if (res && res.code == 200) {
+                this.fieldItems = res.data.map(el => {
+                    el.label = el.fieldLabel;
+                    el.name = el.fieldName;
+                    el.type = el.fieldType;
+                    return el;
+                });
+            }
+            this.fieldLoading = false;
         },
 
         setRefEntityListField(fieldItem, value) {

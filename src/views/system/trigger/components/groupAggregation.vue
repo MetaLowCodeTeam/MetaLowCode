@@ -274,7 +274,11 @@ let trigger = ref({
 let myUnSystemEntityList = ref([]);
 
 onMounted(() => {
-    myUnSystemEntityList.value = unSystemEntityList.value.filter(el => el.appAbbr == router.currentRoute.value.query.appAbbr);
+    if(router.currentRoute.value.query.appAbbr) {
+        myUnSystemEntityList.value = unSystemEntityList.value.filter(el => el.appAbbr == router.currentRoute.value.query.appAbbr);
+    }else {
+        myUnSystemEntityList.value = unSystemEntityList.value.filter(el => !el.appAbbr);
+    }
     trigger.value = props.modelValue;
     trigger.value.entityName = allEntityName.value[trigger.value.entityCode];
     // 初始化 聚合数据条件

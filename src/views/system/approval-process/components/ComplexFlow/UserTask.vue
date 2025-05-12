@@ -22,7 +22,7 @@
             <!-- 由谁审批 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="label-title mb-3">由谁审批</div>
-                <div class="mt-10">
+                <div class="mt-10 flex-box">
                     <el-select
                         v-model="myFormData.nodeRoleType"
                         placeholder="选择由谁审批"
@@ -78,12 +78,14 @@
                         </el-select>
                         <!-- 7 实体字段 -->
                         <el-select
-                            v-model="myFormData.fieldName"
+                            v-model="myFormData.fieldNames"
                             v-loading="entityFieldsLoading"
                             clearable
                             value-key="name"
                             placeholder="请选择字段"
+                            multiple
                             v-if="myFormData.nodeRoleType == 7"
+                            @change="fieldNamesChange"
                         >
                             <el-option
                                 v-for="(field,fieldInx) in entityFields"
@@ -447,6 +449,7 @@ let myFormData = ref({
     modifiableFields:[],
     isBlocked: false,
     triggerConfigIdList:[],
+    fieldNames: [],
 });
 let entityCode = ref("");
 let entityName = ref("");
@@ -497,8 +500,15 @@ const initApi = () => {
     if(myFormData.value.customButtonJson) {
         customButtonJson.value = JSON.parse(myFormData.value.customButtonJson);
     }
+    if(myFormData.value.fieldName) {
+        myFormData.value.fieldNames = myFormData.value.fieldName.split(',');
+    }
 }
 
+// 字段选择
+const fieldNamesChange = (val) => {
+    myFormData.value.fieldName = val.join(',');
+}
 
 
 /**
@@ -904,5 +914,8 @@ defineExpose({
 }
 .text-center {
 	text-align: center;
+}
+.flex-box {
+    display: flex;
 }
 </style>

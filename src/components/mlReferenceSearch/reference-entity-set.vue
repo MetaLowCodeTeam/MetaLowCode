@@ -25,6 +25,16 @@
 		&.is-active {
 			background: #dedede;
 		}
+        .item.tag {
+            &::before {
+                content: "*";
+                color: #fdd455;
+                font-size: 16px;
+                position: relative;
+                top: 2px;
+                left: -2px;
+            }
+        }
 	}
 }
 .action-icon {
@@ -170,10 +180,21 @@
 										<ElIconRank />
 									</el-icon>
 								</div>
-								<div class="fl item text-ellipsis">
+								<div 
+                                    class="fl item text-ellipsis"
+                                    :class="{'tag':isShowItemTag(parent)}"
+                                >
 									{{ parent.label }}
 								</div>
 								<div class="action-icon">
+                                    <span
+										class="icon-span mr-5"
+										@click.stop="editField(parent, inx)"
+									>
+										<el-icon size="16">
+											<ElIconEditPen />
+										</el-icon>
+									</span>
 									<span
 										class="icon-span"
 										@click.stop="delField(parent, inx)"
@@ -226,9 +247,27 @@
 			</el-col>
 		</el-row>
 	</div>
-	<!-- <div>
-        {{ fieldList }}
-    </div> -->
+	<ml-dialog
+		title="编辑字段"
+		v-model="editFieldDialogConfig.isShow"
+        width="500"
+	>
+		<el-form label-width="80px">
+            <el-form-item label="当前字段">
+                <el-input 
+                    :value="editFieldDialogConfig.field.label + '（' + editFieldDialogConfig.field.name + '）'" 
+                    disabled 
+                />
+            </el-form-item>
+            <el-form-item label="别名">
+                <el-input v-model="editFieldDialogConfig.field.aliasName" clearable/>
+            </el-form-item>
+        </el-form>
+		<template #footer>
+			<el-button @click="editFieldDialogConfig.isShow = false">取消</el-button>
+			<el-button type="primary" @click="saveEditField">确认</el-button>
+		</template>
+	</ml-dialog>
 </template>
 <script setup>
 import { ref, watchEffect } from "vue";
@@ -260,6 +299,32 @@ const delField = (field, inx) => {
 const addShowField = (field) => {
     const newArray = [...props.modelValue, field];
     emit("update:modelValue", newArray);
+};
+
+let editFieldDialogConfig = ref({
+    isShow: false,
+    field: {},
+    inx: 0
+});
+
+// 编辑字段
+const editField = (field, inx) => {
+    editFieldDialogConfig.value.isShow = true;
+    editFieldDialogConfig.value.field = JSON.parse(JSON.stringify(field));
+    editFieldDialogConfig.value.inx = inx;
+};
+
+// 保存编辑字段
+const saveEditField = () => {
+    let newArray = props.modelValue;
+    newArray[editFieldDialogConfig.value.inx] = editFieldDialogConfig.value.field;
+    emit("update:modelValue", newArray);
+    editFieldDialogConfig.value.isShow = false;
+};
+
+// 是否显示标签
+const isShowItemTag = (field) => {
+    return field.aliasName && field.aliasName.length > 0;  
 };
 
 // 筛选字段

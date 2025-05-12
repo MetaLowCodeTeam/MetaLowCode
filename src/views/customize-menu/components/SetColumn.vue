@@ -98,6 +98,9 @@
         >
             <el-scrollbar height="500px">
                 <el-form label-width="100px">
+                    <el-form-item label="当前字段" class="mb-10">
+                        <el-input :value="editColumnDialogData.fieldLabel + '（' + editColumnDialogData.fieldName + '）'" disabled />
+                    </el-form-item>
                     <el-form-item label="别名" class="mb-10">
                         <el-input v-model="editColumnDialogData.columnAliasName" />
                     </el-form-item>
@@ -117,7 +120,7 @@
                             :class="{'is-active': editColumnDialogData.columnSort != ''}"
                             @click="changeColumnSort"
                         >
-                            {{ editColumnDialogData.columnSort == 'ASC' ? '升序' : '降序' }}
+                            {{ editColumnDialogData.columnSort == 'ASC' ? '升序' : editColumnDialogData.columnSort == 'DESC' ? '降序' : '暂无' }}
                             <el-icon class="sort-icon">
                                 <ElIconTop v-if="editColumnDialogData.columnSort == 'ASC'" />
                                 <ElIconBottom v-else />
