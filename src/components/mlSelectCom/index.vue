@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, useSlots,reactive  } from "vue";
+import { onMounted, ref, watch, useSlots,reactive, watchEffect  } from "vue";
 const props = defineProps({
     modelValue: null,
     options: { type: Array, default: () => [] },
@@ -60,16 +60,14 @@ const tooltipRef = ref(null);
 // 嵌入内容
 let contentSlots = reactive({});
 let isShowSlots = ref(false);
-watch(
-    () => props.modelValue,
-    () => {
-        selectValue.value = props.modelValue;
-    },
-    { deep: true }
-);
+// watch(
+//     () => props.modelValue,
+//     () => {
+//         selectValue.value = props.modelValue;
+//     },
+//     { deep: true }
+// );
 onMounted(() => {
-    selectValue.value = props.modelValue;
-    myOptions.value = props.options;
     contentSlots = useSlots();
     if (contentSlots.default) {
         isShowSlots.value = true;
@@ -96,6 +94,11 @@ const selectedItem = (op) => {
     }
     tooltipRef.value.hide();
 };
+watchEffect(() => {
+    selectValue.value = props.modelValue;
+    myOptions.value = props.options;
+   
+})
 </script>
 <style lang='scss' scoped>
 .ml-select {
