@@ -462,7 +462,7 @@ export default {
                         // 第一条选中数据回填
                         this.doFillBack(this.fieldModel, selectedRow);
 						this.syncUpdateFormModel(this.fieldModel);
-                        this.handleRecordSelectedEvent(selectedRow);
+                        this.handleRecordSelectedEvent(selectedRow, rows);
                     } else {
                         let temp = {};
                         temp[this.fieldKeyName] = {
@@ -490,7 +490,7 @@ export default {
                         name: rows[0][recordObj.label],
                     };
 					this.syncUpdateFormModel(this.fieldModel);
-                    this.handleRecordSelectedEvent(rows[0]);
+                    this.handleRecordSelectedEvent(rows[0], rows);
                     // 第一条选中数据回填
                     this.doFillBack(this.fieldModel, rows[0]);
                 }
@@ -539,7 +539,7 @@ export default {
 			};
 
 			this.onFieldChangeEvent(this.fieldModel);
-			this.handleRecordSelectedEvent(selectedRow);
+			this.handleRecordSelectedEvent(selectedRow, [selectedRow]);
             // 回填
 			this.doFillBack(recordObj, selectedRow);
 			this.showReferenceDialogFlag = false;
@@ -666,7 +666,7 @@ export default {
             return this.extraSort;
         },
 
-		handleRecordSelectedEvent(selectedRow) {
+		handleRecordSelectedEvent(selectedRow, allSelectedRows) {
 			if (!!this.designState) {
 				//设计状态不触发事件
 				return;
@@ -675,9 +675,10 @@ export default {
 			if (!!this.field.options.onRecordSelected) {
 				let customFn = new Function(
 					"selectedRow",
+                    "allSelectedRows",
 					this.field.options.onRecordSelected
 				);
-				customFn.call(this, selectedRow);
+				customFn.call(this, selectedRow, allSelectedRows);
 			}
 		},
 

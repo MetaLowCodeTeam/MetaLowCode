@@ -427,7 +427,7 @@ export default {
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
-				this.handleRecordSelectedEvent(selectedNodes);
+				this.handleRecordSelectedEvent(selectedNodes, selectedNodes);
             }else {
                 let fieldNames = this.$refs.referST?.getIdNameField() || {};
                 let rows = this.$refs.referST?.getMultipleSelection() || [];
@@ -438,12 +438,12 @@ export default {
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
-				this.handleRecordSelectedEvent(rows);
+				this.handleRecordSelectedEvent(rows, rows);
             }
             this.showReferenceDialogFlag = false;
         },
 
-		handleRecordSelectedEvent(selectedRow) {
+		handleRecordSelectedEvent(selectedRow, allSelectedRows) {
 			if (!!this.designState) {
 				//设计状态不触发事件
 				return;
@@ -452,9 +452,10 @@ export default {
 			if (!!this.field.options.onRecordSelected) {
 				let customFn = new Function(
 					"selectedRow",
-					this.field.options.onRecordSelected
+					"allSelectedRows",
+					this.field.options.onRecordSelected,
 				);
-				customFn.call(this, selectedRow);
+				customFn.call(this, selectedRow, allSelectedRows);
 			}
 		},
 

@@ -25,7 +25,7 @@ export default {
 	},
 	data() {
 		return {
-			eventParams: ['selectedRow'],
+			eventParams: ['selectedRow', 'allSelectedRows'],
 		}
 	}
 }
