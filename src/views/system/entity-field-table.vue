@@ -125,37 +125,12 @@
 		<el-container v-loading="mainLoading">
 			<el-header class="list-search-panel">
 				<div class="search-panel-left">
-					<el-dropdown @command="handleNewFieldCommand" size="small">
-						<el-button type="primary">
-							新建字段<el-icon><ArrowDown /></el-icon>
-						</el-button>
-						<template #dropdown>
-							<el-dropdown-menu>
-								<el-dropdown-item command="BooleanWE">布尔 / Boolean</el-dropdown-item>
-								<el-dropdown-item command="IntegerWE">整数 / Integer</el-dropdown-item>
-								<el-dropdown-item command="DecimalWE">精度小数 / Decimal</el-dropdown-item>
-								<el-dropdown-item command="MoneyWE">金额 / Money</el-dropdown-item>
-								<el-dropdown-item command="TextWE" divided>文本 / Text</el-dropdown-item>
-								<el-dropdown-item command="TextAreaWE">长文本 / TextArea</el-dropdown-item>
-								<el-dropdown-item command="OptionWE" divided>单选项 / Option</el-dropdown-item>
-								<el-dropdown-item command="TagWE">多选项 / Tag</el-dropdown-item>
-								<el-dropdown-item command="AreaSelectWE">地区选择 / AreaSelect</el-dropdown-item>
-								<el-dropdown-item command="DateWE" divided>日期 / Date</el-dropdown-item>
-								<el-dropdown-item command="DateTimeWE">日期时间 / DateTime</el-dropdown-item>
-								<el-dropdown-item command="PictureWE" divided>图片 / Picture</el-dropdown-item>
-								<el-dropdown-item command="FileWE">文件 / File</el-dropdown-item>
-								<el-dropdown-item command="LocationWE">定位 / Location</el-dropdown-item>
-								<el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference
-								</el-dropdown-item>
-                                <el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
-								<!--
-								<el-dropdown-item command="AnyReferenceWE">一对多引用 / AnyReference</el-dropdown-item>
-								<el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
-
-								-->
-							</el-dropdown-menu>
-						</template>
-					</el-dropdown>
+					<AddField 
+                        @onFieldSaved="onFieldSaved" 
+                        :entity="entity" 
+                        :entityProps="entityProps"
+                        ref="addFieldRef"
+                    />
 				</div>
 				<div style="flex: 1"></div>
 				<div class="search-panel-right">
@@ -294,55 +269,6 @@
                     <el-button type="primary" @click="selectNameField(currentOrderField)">保 存</el-button>
                 </template>
 			</ml-dialog>
-
-			<el-dialog
-                :title="'新建字段 / ' + curEditorType"
-                v-model="showNewFieldDialogFlag"
-				v-if="showNewFieldDialogFlag"
-				:show-close="true"
-                :destroy-on-close="true"
-                :close-on-click-modal="false"
-				:close-on-press-escape="false"
-                class="no-padding field-setting-dialog"
-                width="620px"
-                draggable
-            >
-				<component
-                    :is="curFWEditor"
-                    :entity="entity"
-                    @fieldSaved="onFieldSaved"
-                    @cancelSave="onCancelSaveField"
-					:showingInDialog="true"
-                    :entityProps="entityProps"
-                >
-                </component>
-			</el-dialog>
-
-			<el-dialog
-                :title="'编辑字段 / ' + curEditorType"
-                v-model="showEditFieldDialogFlag"
-				v-if="showEditFieldDialogFlag"
-				:show-close="false"
-                :destroy-on-close="true"
-                :close-on-click-modal="false"
-				:close-on-press-escape="false"
-                class="no-padding field-setting-dialog"
-                width="620px"
-                draggable
-            >
-				<component
-                    :is="curFWEditor"
-                    :entity="entity"
-                    @fieldSaved="onFieldSaved"
-                    @cancelSave="onCancelSaveField"
-					:showingInDialog="true"
-                    :field-name="editingFieldName"
-                    :field-state="2"
-                    :entityProps="entityProps"
-                >
-                </component>
-			</el-dialog>
-
 			<el-dialog
                 title="编辑实体属性"
                 v-model="showEntityPropsDialogFlag"
@@ -445,35 +371,10 @@ import {
 import { createApprovalSystemFields } from "@/api/approval";
 import {formatBooleanColumn, isEmptyStr, copyNew} from '@/utils/util'
 import EntityPropEditor from "@/views/system/entity-editor/entity-property-editor.vue";
-import {ElMessage} from "element-plus";
-import BooleanWE from '@/views/system/field-editor/boolean-widget-editor.vue';
-import IntegerWE from '@/views/system/field-editor/integer-widget-editor.vue';
-import DecimalWE from '@/views/system/field-editor/decimal-widget-editor.vue';
-import PercentWE from '@/views/system/field-editor/percent-widget-editor.vue';
-import MoneyWE from '@/views/system/field-editor/money-widget-editor.vue';
-//
-import TextWE from '@/views/system/field-editor/text-widget-editor.vue';
-import EmailWE from '@/views/system/field-editor/email-widget-editor.vue';
-import UrlWE from '@/views/system/field-editor/url-widget-editor.vue';
-import TextAreaWE from '@/views/system/field-editor/textarea-widget-editor.vue';
-import PasswordWE from '@/views/system/field-editor/password-widget-editor.vue';
-//
-import OptionWE from '@/views/system/field-editor/option-widget-editor.vue';
-import TagWE from '@/views/system/field-editor/tag-widget-editor.vue';
-import AreaSelectWE from '@/views/system/field-editor/areaselect-widget-editor.vue';
-//
-import DateWE from '@/views/system/field-editor/date-widget-editor.vue';
-import DateTimeWE from '@/views/system/field-editor/datetime-widget-editor.vue';
-//
-import PictureWE from '@/views/system/field-editor/picture-widget-editor.vue';
-import FileWE from '@/views/system/field-editor/file-widget-editor.vue';
-import LocationWE from '@/views/system/field-editor/location-widget-editor.vue';
-//
-import ReferenceWE from '@/views/system/field-editor/reference-widget-editor.vue';
-import AnyReferenceWE from '@/views/system/field-editor/anyreference-widget-editor.vue';
-import ReferenceListWE from '@/views/system/field-editor/referencelist-widget-editor.vue';
 import {h} from 'vue';
 import useCommonStore from "@/store/modules/common";
+// 新增字段
+import AddField from "@/components/mlFormDesignComp/AddField.vue";
 const { getEntityList } = useCommonStore();
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -481,26 +382,7 @@ export default {
 	name: "EntityFieldTable",
 	components: {
 		EntityPropEditor,
-		BooleanWE,
-		IntegerWE,
-		DecimalWE,
-		MoneyWE,
-		TextWE,
-		EmailWE,
-		UrlWE,
-		TextAreaWE,
-		PasswordWE,
-		OptionWE,
-		TagWE,
-		AreaSelectWE,
-		DateWE,
-		DateTimeWE,
-		PictureWE,
-		FileWE,
-		LocationWE,
-		ReferenceWE,
-		AnyReferenceWE,
-		ReferenceListWE,
+		AddField,
 	},
     props: {
         isAppManagement: {
@@ -556,17 +438,10 @@ export default {
 			filteredData: [],
 			searchText: '',
 			tableHeight: 100,
-
-			curFWEditor: '',
-			curEditorType: '',
 			showNameFieldDialogFlag: false,
             // 1 修改名称 2 修改排序
             fieldDialogFlagType: 1,
-			showNewFieldDialogFlag: false,
-			showEditFieldDialogFlag: false,
 			showEntityPropsDialogFlag: false,
-			editingFieldName: null,
-
 			nameFieldColumns: [
 				{prop: 'name', label: '字段名称', width: '148', align: 'left', fixed: true},
 				{prop: 'label', label: '显示名称', width: '148', align: 'center'},
@@ -723,12 +598,6 @@ export default {
             this.mainLoading = false;
 		},
 
-		handleNewFieldCommand(command) {
-			this.curFWEditor = command
-			this.curEditorType = command.replace(/WE$/, '')
-			this.showNewFieldDialogFlag = true
-		},
-
 		async editTableData(row) {
 			if (!!row.type) {
 				let res = await fieldCanBeEdited(row.name, this.entity)
@@ -737,10 +606,7 @@ export default {
 						this.$message.info('提示：系统字段/保留字段不能编辑！')
 						return
 					}
-                    this.curEditorType = row.type
-					this.curFWEditor = row.type + 'WE'
-					this.editingFieldName = row.name
-					this.showEditFieldDialogFlag = true
+                    this.$refs.addFieldRef.handleNewFieldCommand(row.type + 'WE', row.name)
                 }
 			}
 		},
@@ -800,14 +666,7 @@ export default {
 		},
 
 		onFieldSaved() {
-			this.showNewFieldDialogFlag = false
-			this.showEditFieldDialogFlag = false
 			this.initTableData()
-		},
-
-		onCancelSaveField() {
-			this.showNewFieldDialogFlag = false
-			this.showEditFieldDialogFlag = false
 		},
 
 		async filterMainEntity(filterList, callBack) {

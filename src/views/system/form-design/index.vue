@@ -12,37 +12,13 @@
         >
             <!-- 配置工具按钮 -->
             <template #customToolButtons>
-                <el-dropdown
-                    class="ml-button-dropdown"
-                    @command="handleNewFieldCommand"
-                    size="small"
-                >
+                <AddField @onFieldSaved="onFieldSaved" :entity="entity">
                     <el-button link type="primary">
                         <el-icon>
                             <MagicStick />
                         </el-icon>新建字段
                     </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item command="BooleanWE">布尔 / Boolean</el-dropdown-item>
-                            <el-dropdown-item command="IntegerWE">整数 / Integer</el-dropdown-item>
-                            <el-dropdown-item command="DecimalWE">精度小数 / Decimal</el-dropdown-item>
-                            <el-dropdown-item command="MoneyWE">金额 / Money</el-dropdown-item>
-                            <el-dropdown-item command="TextWE" divided>文本 / Text</el-dropdown-item>
-                            <el-dropdown-item command="TextAreaWE">长文本 / TextArea</el-dropdown-item>
-                            <el-dropdown-item command="OptionWE" divided>单选项 / Option</el-dropdown-item>
-                            <el-dropdown-item command="TagWE">多选项 / Tag</el-dropdown-item>
-                            <el-dropdown-item command="AreaSelectWE">地区选择 / AreaSelect</el-dropdown-item>
-                            <el-dropdown-item command="DateWE" divided>日期 / Date</el-dropdown-item>
-                            <el-dropdown-item command="DateTimeWE">日期时间 / DateTime</el-dropdown-item>
-                            <el-dropdown-item command="PictureWE" divided>图片 / Picture</el-dropdown-item>
-                            <el-dropdown-item command="FileWE">文件 / File</el-dropdown-item>
-                            <el-dropdown-item command="LocationWE">定位 / Location</el-dropdown-item>
-                            <el-dropdown-item command="ReferenceWE" divided>一对一引用 / Reference</el-dropdown-item>
-                            <el-dropdown-item command="ReferenceListWE">多对多引用 / ReferenceList</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                </AddField>
                 <el-button type="primary" link @click="saveDesign">
                     <el-icon>
                         <Finished />
@@ -56,26 +32,6 @@
             </template>
         </v-form-designer>
     </div>
-
-    <el-dialog
-        :title="'新建字段 / ' + curEditorType"
-        v-model="showNewFieldDialogFlag"
-        v-if="showNewFieldDialogFlag"
-        :show-close="true"
-        :destroy-on-close="true"
-        :close-on-click-modal="false"
-        :close-on-press-escape="false"
-        class="no-padding"
-        width="620px"
-    >
-        <component
-            :is="curFWEditor"
-            :entity="entity"
-            @fieldSaved="onFieldSaved"
-            @cancelSave="onCancelSaveField"
-            :showingInDialog="true"
-        ></component>
-    </el-dialog>
     <!-- 选择表单弹框 -->
     <ml-dialog
         title="选择表单"
@@ -146,50 +102,12 @@ import {
 } from "@/api/system-manager";
 import { deepClone, overwriteObj, mlShortcutkeys } from "@/utils/util";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
-import BooleanWE from "@/views/system/field-editor/boolean-widget-editor.vue";
-import IntegerWE from "@/views/system/field-editor/integer-widget-editor.vue";
-import DecimalWE from "@/views/system/field-editor/decimal-widget-editor.vue";
-import MoneyWE from "@/views/system/field-editor/money-widget-editor.vue";
-import TextWE from "@/views/system/field-editor/text-widget-editor.vue";
-import EmailWE from "@/views/system/field-editor/email-widget-editor.vue";
-import UrlWE from "@/views/system/field-editor/url-widget-editor.vue";
-import TextAreaWE from "@/views/system/field-editor/textarea-widget-editor.vue";
-import PasswordWE from "@/views/system/field-editor/password-widget-editor.vue";
-import OptionWE from "@/views/system/field-editor/option-widget-editor.vue";
-import TagWE from "@/views/system/field-editor/tag-widget-editor.vue";
-import AreaSelectWE from "@/views/system/field-editor/areaselect-widget-editor.vue";
-import DateWE from "@/views/system/field-editor/date-widget-editor.vue";
-import DateTimeWE from "@/views/system/field-editor/datetime-widget-editor.vue";
-import PictureWE from "@/views/system/field-editor/picture-widget-editor.vue";
-import FileWE from "@/views/system/field-editor/file-widget-editor.vue";
-import LocationWE from "@/views/system/field-editor/location-widget-editor.vue";
-import ReferenceWE from "@/views/system/field-editor/reference-widget-editor.vue";
-import AnyReferenceWE from "@/views/system/field-editor/anyreference-widget-editor.vue";
-import ReferenceListWE from "@/views/system/field-editor/referencelist-widget-editor.vue";
 import MlShareTo from "@/components/mlShareTo/index.vue";
+import AddField from "@/components/mlFormDesignComp/AddField.vue";
 export default {
     name: "form-design",
     components: {
-        BooleanWE,
-        IntegerWE,
-        DecimalWE,
-        MoneyWE,
-        TextWE,
-        EmailWE,
-        UrlWE,
-        TextAreaWE,
-        PasswordWE,
-        OptionWE,
-        TagWE,
-        AreaSelectWE,
-        DateWE,
-        DateTimeWE,
-        PictureWE,
-        FileWE,
-		LocationWE,
-        ReferenceWE,
-        AnyReferenceWE,
-        ReferenceListWE,
+        AddField,
         MlShareTo,
     },
     prop: {
@@ -230,9 +148,6 @@ export default {
             metaFieldsResult: null,
             usedFieldNames: {},
 
-            curFWEditor: "",
-            curEditorType: "",
-            showNewFieldDialogFlag: false,
             pageLoading: false,
             /**
              * 多表单设计 2024-02-22
@@ -331,7 +246,6 @@ export default {
                         if (this.usedFieldNames.hasOwnProperty(fld.name)) {
                             return; //跳过本次循环
                         }
-
                         const fieldNewProps = deepClone(
                             formFieldMapping[fld.type]
                         );
@@ -779,24 +693,13 @@ export default {
             }
         },
 
-        handleNewFieldCommand(command) {
-            // TODO: 此处应该判断是否具备实体字段创建权限！！
-
-            this.curFWEditor = command;
-            this.curEditorType = command.replace(/WE$/, "");
-            this.showNewFieldDialogFlag = true;
-        },
 
         onFieldSaved() {
-            this.showNewFieldDialogFlag = false;
             setTimeout(() => {
                 this.loadFieldListData(); //重新加载元数据字段
             }, 300);
         },
 
-        onCancelSaveField() {
-            this.showNewFieldDialogFlag = false;
-        },
     },
 };
 </script>

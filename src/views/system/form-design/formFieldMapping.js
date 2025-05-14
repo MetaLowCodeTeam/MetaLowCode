@@ -42,6 +42,13 @@ export const formFieldMapping = {
 		}
 	},
 
+    'OuterReference': {
+		type: 'outer-reference',
+		options: {
+
+		}
+	},
+
 	'Integer': {
 		type: 'number',
 		options: {

@@ -303,3 +303,50 @@ export const locationSchema = {
 		onValidate: '',
 	}
 }
+
+
+
+export const outerReferenceSchema = {
+	type: 'outer-reference',  //引用字段组件
+	alias: '',  //组件别名，可以自定义
+	icon: 'reference-field',    
+	formItemFlag: true,
+	options: {
+		name: '',
+		keyNameEnabled: false,
+		keyName: '',  //数据键值名称
+		label: '',
+		labelAlign: '',
+		placeholder: '',
+		columnWidth: '200px',
+		size: '',
+		labelWidth: null,
+		labelHidden: false,
+		labelWrap: false,  //标签超长换行
+		disabled: false,
+		hidden: false,
+		required: false,
+		requiredHint: '',
+		validation: '',
+		validationHint: '',
+		searchDialogWidth: '520px',  //搜索弹窗宽度
+		useCurrentUser: false,  //默认值使用当前登录用户
+		useCurrentDepartment: false,  //默认值使用当前登录用户所属部门
+		//-------------------
+		customClass: '',  //自定义css类名
+		labelIconClass: null,
+		labelIconPosition: 'rear',
+		labelTooltip: null,
+		prefixIcon: '',
+		suffixIcon: '',
+		buttonIcon: 'Search',
+
+		//-------------------
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+		onValidate: '',
+		onAppendButtonClick: '',  //后置按钮点击事件
+		onBeforeDialogOpen: '',  //引用弹窗打开前置事件
+	}
+}

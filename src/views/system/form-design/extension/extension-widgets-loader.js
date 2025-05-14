@@ -10,6 +10,8 @@ import {
     signWidgetSchema,
     // 列表子表单
     listSubFormSchema,
+    // 外部引用
+    outerReferenceSchema,
 } from "@/views/system/form-design/extension/extension-widgets-schema";
 import newTestEditor from './property-editor/newTest-editor.vue'
 import CheckTagOptionItemsEditor
@@ -151,6 +153,7 @@ export const loadExtensionWidgets = (app) => {
     
 	addAdvancedFieldSchema(referenceSchema)
 	addAdvancedFieldSchema(referenceListSchema)
+    addAdvancedFieldSchema(outerReferenceSchema)
 	addAdvancedFieldSchema(locationSchema)
     // 添加到容器组件库
     addContainerWidgetSchema(listSubFormSchema)
