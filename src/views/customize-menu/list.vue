@@ -1917,6 +1917,27 @@ const getTableDataList = () => {
     return sliceTable.value;
 }
 
+// 下载文件
+const downFile = (url, fileName) => {
+    window.open(import.meta.env.VITE_APP_BASE_API + url + "?fileName=" + fileName);
+}
+
+// 预览文件
+const previewFile = (src) => {
+    const previewType = ["docx", "xlsx", "pdf", "pptx"];
+    if(previewType.includes(src.split(".").pop())) {
+        let url = router.resolve({
+            name: "FilePreview",
+            query: {
+                url: src,
+            },
+        });
+        window.open(url.href);
+    }else {
+        ElMessage.warning("仅支持：docx、xlsx、pdf、pptx文件预览");
+    }
+}
+
 
 defineExpose({
     resetList,
@@ -1939,6 +1960,8 @@ defineExpose({
     openApprovalDialog,
     viewToOtherEntity,
     editToOtherEntity,
+    downFile,
+    previewFile,
 })
 
 </script>
