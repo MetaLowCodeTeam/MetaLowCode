@@ -102,7 +102,7 @@
             {{  formatReferenceList(row[column.fieldName])  }}
         </div>
         <div v-else-if="column.fieldType == 'OuterReference'">
-            {{ row[column.fieldName].name }}
+            {{ row[column.fieldName]?.name }}
         </div>
         <div class="text-ellipsis" v-else>
             <span v-if="row[column.fieldName] && typeof row[column.fieldName] == 'string' && row[column.fieldName].startsWith('data:image/png;base64,')">
