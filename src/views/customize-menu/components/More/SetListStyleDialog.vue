@@ -71,55 +71,26 @@
                     </div>
                 </el-col>
                 <el-col :span="12" v-if="!isListCard && !isListCalendar">
-                    <div class="form-title">顶部区域隐藏</div>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showHeader"
-                        @change="handleCheckboxChange('showHeader', $event)"
-                    >
-                        隐藏整块&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showChangeQueryPanel"
-                        @change="handleCheckboxChange('showChangeQueryPanel', $event)"
-                    >
-                        隐藏切换查询面板
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showAdvancedQuery"
-                        @change="handleCheckboxChange('showAdvancedQuery', $event)"
-                    >
-                        隐藏高级查询
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showQuickQuery"
-                        @change="handleCheckboxChange('showQuickQuery', $event)"
-                    >
-                        隐藏快速搜索
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showOpenBtn"
-                        @change="handleCheckboxChange('showOpenBtn', $event)"
-                    >
-                        隐藏打开按钮
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showEditBtn"
-                        @change="handleCheckboxChange('showEditBtn', $event)"
-                    >
-                        隐藏编辑按钮
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showAddBtn"
-                        @change="handleCheckboxChange('showAddBtn', $event)"
-                    >
-                        隐藏新建按钮
-                    </el-checkbox>
-                    <el-checkbox 
-                        :checked="!styleConf.toolbarConf.showMoreBtn"
-                        @change="handleCheckboxChange('showMoreBtn', $event)"
-                    >
-                        隐藏更多操作按钮(隐藏后无法进入该面板)
-                    </el-checkbox>
+                    <div class="form-title">
+                        顶部区域隐藏
+                        <el-tooltip content="可在列表界面按快捷键 ALT+SHIFT+M+L 显示所有">
+                            <el-icon class="icon-top-2"><QuestionFilled /></el-icon>
+                        </el-tooltip>
+                    </div>
+                    <el-row>
+                        <el-col 
+                            v-for="(item,inx) in topHiddenConfig" 
+                            :span="item.colspan || 12" 
+                            :key="inx"
+                        >
+                            <el-checkbox 
+                                :checked="!styleConf.toolbarConf[item.value]"
+                                @change="handleCheckboxChange(item.value, $event)"
+                            >
+                                {{ item.label }}
+                            </el-checkbox>
+                        </el-col>
+                    </el-row>
                 </el-col>
                 <el-col :span="12">
                     <div class="form-title">指定表单</div>
@@ -282,6 +253,41 @@ let isShow = ref(false);
 let loading = ref(false);
 let myLayoutConf = ref({});
 let layoutConfigId = ref("");
+const topHiddenConfig = ref([
+    {
+        label: "隐藏整块",
+        value: "showHeader",
+    },
+    {
+        label: "隐藏切换查询面板",
+        value: "showChangeQueryPanel",
+    },
+    {
+        label: "隐藏高级查询",
+        value: "showAdvancedQuery",
+    },
+    {
+        label: "隐藏快速搜索",
+        value: "showQuickQuery",
+    },
+    {
+        label: "隐藏打开按钮",
+        value: "showOpenBtn",
+    },
+    {
+        label: "隐藏编辑按钮",
+        value: "showEditBtn",
+    },
+    {
+        label: "隐藏新建按钮",
+        value: "showAddBtn",
+    },
+    {
+        label: "隐藏更多操作按钮(隐藏后无法进入该面板)",
+        value: "showMoreBtn",
+        colspan: 24,
+    },
+])
 let styleConf = ref({
 	// 新建编辑弹框属性
 	actionConf: {

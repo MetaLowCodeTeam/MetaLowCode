@@ -473,7 +473,7 @@ import ListColumnSet from './components/ListColumnSet.vue';
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
-
+import { mlShortcutkeys } from "@/utils/util";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
@@ -771,6 +771,12 @@ onMounted(()=>{
         checkRouterAutoOpen();
     })
     currentExposed.value = getCurrentInstance().exposed;
+    mlShortcutkeys(()=>{
+        for(let key in toolbarConf.value){
+            toolbarConf.value[key] = true;
+        }
+    })
+    
 })
 
 let scrollTop = ref(0);
