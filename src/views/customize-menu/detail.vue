@@ -16,7 +16,7 @@
                         {{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
                     </span>
 					<div class="fr fr-box">
-                        <span v-if="styleConf.detailConf.enablePagination" class="enable-pagination-span">
+                        <span v-if="styleConf.detailConf.enablePagination || styleConf.detailConf.enablePagination == undefined" class="enable-pagination-span">
                             <el-button 
                                 size="small" 
                                 type="primary" 

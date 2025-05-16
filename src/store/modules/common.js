@@ -19,7 +19,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.6 20250516"
+        webVer: "1.8.6 20250517"
     });
 
     const getEntityList = () => {

@@ -305,6 +305,8 @@ let styleConf = ref({
 		showFullScreen: false,
 		// 弹框自动全屏
 		autoFullScreen: false,
+        // 启用上下条切换
+        enablePagination: true,
 	},
     // 顶部设置
     toolbarConf: {
