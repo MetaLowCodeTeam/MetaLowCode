@@ -892,7 +892,7 @@ defineExpose({
         .title-span {
             float: left;
             line-height: 26px;
-            max-width: 300px;
+            max-width: 600px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
