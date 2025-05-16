@@ -384,6 +384,7 @@
             @updateData="getTableList"
             :recordDetailFormId="listParamConf.recordDetailFormId || rowStyleConf?.formConf?.pcDetailFormId"
             :recordEditFormId="listParamConf.recordEditFormId || rowStyleConf?.formConf?.pcEditFormId"
+            :recordIds="recordIds"
         />
         <mlCustomEdit
             ref="editRefs"
@@ -1482,7 +1483,7 @@ const commonGroupFilterNodeClick = (e) => {
     filterEasySql.value = e;
     getTableList();
 };
-
+let recordIds = ref([]);
 let sliceTable = ref([]);
 const getTableList = async () => {
     pageLoading.value = true;
@@ -1529,6 +1530,7 @@ const getTableList = async () => {
         param.otherFilters
     );
     if (res && res.data) {
+        recordIds.value = res.data.dataList.map(item => item[idFieldName.value]);
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
         try {
             tableData.value = res.data.dataList.map((el, inx) => {

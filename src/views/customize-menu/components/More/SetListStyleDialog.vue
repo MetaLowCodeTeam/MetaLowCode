@@ -26,6 +26,9 @@
                         <el-checkbox v-model="styleConf.detailConf.autoFullScreen">
                             弹框自动全屏
                         </el-checkbox>
+                        <el-checkbox v-model="styleConf.detailConf.enablePagination">
+                            启用上下条切换
+                        </el-checkbox>
                     </div>
                 </el-col>
                 <el-col :span="12" v-if="!isListCard && !isListCalendar">

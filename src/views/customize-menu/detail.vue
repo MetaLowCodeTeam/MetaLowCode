@@ -14,6 +14,28 @@
 				<div class="detail-header-title">
 					{{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
 					<div class="fr fr-box">
+                        <span v-if="styleConf.detailConf.enablePagination" class="enable-pagination-span">
+                            <el-button 
+                                size="small" 
+                                type="primary" 
+                                @click="onPrev"
+                                :disabled="!prevRecordId"
+                                :loading="loading"
+                                icon="Upload"
+                            >
+                                上一条
+                            </el-button>
+                            <el-button 
+                                size="small" 
+                                type="primary" 
+                                @click="onNext"
+                                :disabled="!nextRecordId"
+                                :loading="loading"
+                                icon="Download"
+                            >
+                                下一条
+                            </el-button>
+                        </span>
 						<span
 							class="fr-icon mr-10"
 							@click="onFullScreen"
@@ -23,7 +45,7 @@
 								<ElIconFullScreen />
 							</el-icon>
 						</span>
-						<span class="fr-icon mr-10" @click="refresh">
+						<span class="fr-icon mr-10" @click="loading ? null : refresh">
 							<el-icon>
 								<ElIconRefresh />
 							</el-icon>
@@ -288,6 +310,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 记录id集
+    recordIds: {
+		type: Array,
+		default: () => [],
+	},
 });
 
 
@@ -379,10 +406,24 @@ let globalDsv = ref(globalDsvDefaultData());
 // 指定表单ID
 let formId = ref("");
 
+let prevRecordId = ref(null);
+let nextRecordId = ref(null);
 
+// 上一条
+const onPrev = () => {
+    openDialog(prevRecordId.value, globalDsv.value, formId.value);
+}
+// 下一条
+const onNext = () => {
+    openDialog(nextRecordId.value, globalDsv.value, formId.value);
+}
 
 const openDialog = (id, localDsv, paramFormId) => {
-	detailId.value = id;
+    let { recordIds } = props;
+    let curInx = recordIds.indexOf(id);
+    prevRecordId.value = recordIds[curInx - 1] || null;
+    nextRecordId.value = recordIds[curInx + 1] || null;
+    detailId.value = id;
 	entityCode.value = queryEntityCodeById(id);
 	entityName.value = queryEntityNameById(id);
 	if (!entityName.value) {
@@ -398,12 +439,13 @@ const openDialog = (id, localDsv, paramFormId) => {
     if(paramFormId) {
         formId.value = paramFormId;
     }
+    
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
 	// 加载数据
 	refresh();
-};
+}
 
 const closeDialog = () => {
     detailDialog.isShow = false;
@@ -889,6 +931,11 @@ defineExpose({
     .detail-right {
         padding-top: 10px!important;
     }
+}
+.enable-pagination-span {
+    position: relative;
+    top: -3px;
+    margin-right: 10px;
 }
 </style>
 
