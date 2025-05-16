@@ -329,9 +329,6 @@ export const outerReferenceSchema = {
 		requiredHint: '',
 		validation: '',
 		validationHint: '',
-		searchDialogWidth: '520px',  //搜索弹窗宽度
-		useCurrentUser: false,  //默认值使用当前登录用户
-		useCurrentDepartment: false,  //默认值使用当前登录用户所属部门
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
@@ -347,6 +344,5 @@ export const outerReferenceSchema = {
 		onChange: '',
 		onValidate: '',
 		onAppendButtonClick: '',  //后置按钮点击事件
-		onBeforeDialogOpen: '',  //引用弹窗打开前置事件
 	}
 }

@@ -100,34 +100,15 @@ export default {
 			fieldModel: null,
 			displayValue: "",
 			rules: [],
-            // 引用组件弹框类型，table与tree
-            referenceDialogType: 'table',
-			showReferenceDialogFlag: false,
-            treeDialogConf: {},
 			entity: null,
-			curRefField: null,
-			searchFilter: "",
-            extraSort: "",
-            filterConditions:{},
 			gDsv: {},
             globalConfig: {},
 		};
 	},
 	computed: {
-		inputType() {
-			if (this.field.options.type === "number") {
-				return "text"; //当input的type设置为number时，如果输入非数字字符，则v-model拿到的值为空字符串，无法实现输入校验！故屏蔽之！！
-			}
-
-			return this.field.options.type;
-		},
 
 		contentForReadMode() {
 			return this.fieldModel ? this.fieldModel.name : "--";
-		},
-
-		dialogWidth() {
-			return this.field.options.searchDialogWidth || "520px";
 		},
 	},
 	watch: {
@@ -187,35 +168,11 @@ export default {
 				customFn.call(this);
 				return
 			}
-
-			if (this.field.options.onBeforeDialogOpen) {  //引用弹窗打开前置事件
-				let customFn = new Function(
-					this.field.options.onBeforeDialogOpen
-				);
-				if (customFn.call(this) === false) {
-					return;
-				}
-			}
-
 		},
 		handleClearEvent() {
 			this.fieldModel = null;
 			this.onFieldChangeEvent(this.fieldModel);
 		},
-		setFilter(newFilter) {
-			this.searchFilter = newFilter;
-		},
-
-		getFilter() {
-			return this.searchFilter;
-		},
-        setSort(newSort) {
-            this.extraSort = newSort;
-        },
-
-        getSort() {
-            return this.extraSort;
-        },
 
         
 	},

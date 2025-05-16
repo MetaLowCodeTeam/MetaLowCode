@@ -52,6 +52,7 @@ export default {
     Url: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     TextArea: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Text: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
+    OuterReference: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Location: ["LK", "NLK", "NL", "NT"],
     AreaSelect: ["LK", "NLK", "NL", "NT"],
     Reference: {
@@ -81,7 +82,7 @@ export default {
     comList: {
         // 文本输入框
         textInput: {
-            type: ["Email", "Url", "TextArea", "Text", "Location", "AreaSelect"],
+            type: ["Email", "Url", "TextArea", "Text", "Location", "AreaSelect", "OuterReference"],
             op: ["LK", "NLK", "EQ", "NEQ"],
         },
         // 日期选择器
@@ -123,6 +124,7 @@ export default {
     },
     getShowCom: function (item) {
         let { type, op, referTo } = item;
+        console.log(type, op, referTo)
         for (const key in this.comList) {
             if (Object.hasOwnProperty.call(this.comList, key)) {
                 const element = this.comList[key];
