@@ -10,11 +10,11 @@
 
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
-const { i18n, eventMixin, Utils } = VisualDesign.VFormSDK;
+const { i18n, eventMixin } = VisualDesign.VFormSDK;
 
 export default {
-	name: "reference-fillBackEnabled-editor",
-	mixins: [i18n, eventMixin, Utils],
+	name: "sign-signConfig-editor",
+	mixins: [i18n, eventMixin],
 	props: {
 		designer: Object,
 		selectedWidget: Object,

@@ -41,7 +41,7 @@ import referenceDisableMultipleSelectionInSubFormEditor from "@/views/system/for
 import referenceConfirmSelectEditor from "@/views/system/form-design/extension/property-editor/reference-confirmSelect-editor.vue";
 import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/list-sub-form-name-editor.vue"
 // 签名配置
-import signConfigEditor from '@/views/system/form-design/extension/property-editor/sign/sign-singConfig-editor.vue';
+import signConfigEditor from '@/views/system/form-design/extension/property-editor/sign/sign-signConfig-editor.vue';
 
 /**
  * 容器组件
@@ -128,7 +128,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'disableMultipleSelectionInSubForm', 'reference-disableMultipleSelectionInSubForm-editor', referenceDisableMultipleSelectionInSubFormEditor)
 	PERegister.registerCPEditor(app, 'confirmSelect', 'reference-confirmSelect-editor', referenceConfirmSelectEditor)
     // 注册签名配置
-    PERegister.registerCPEditor(app, 'signConfig', 'sign-singConfig-editor', signConfigEditor)
+    PERegister.registerCPEditor(app, 'signConfig', 'sign-signConfig-editor', signConfigEditor)
 
     PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
@@ -137,7 +137,7 @@ export const loadExtensionWidgets = (app) => {
 	// 注册容器组件属性编辑器
 	PERegister.registerCPEditor(app, 'listSubFormWidget', 'listSubForm-widget', listSubFormWidget)
 	PERegister.registerCPEditor(app, 'listSubFormItem', 'listSubForm-item', listSubFormItem)
- 
+
 	//注册扩展字段组件
 	registerFieldWidgets(app)
 
@@ -148,7 +148,7 @@ export const loadExtensionWidgets = (app) => {
 	//添加到设计器组件库
 	addBasicFieldSchema(checkTagSchema)
     addBasicFieldSchema(signWidgetSchema)
-    
+
 	addAdvancedFieldSchema(referenceSchema)
 	addAdvancedFieldSchema(referenceListSchema)
 	addAdvancedFieldSchema(locationSchema)
