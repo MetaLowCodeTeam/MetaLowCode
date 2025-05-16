@@ -12,7 +12,9 @@
 		<template #header>
 			<div class="detail-header">
 				<div class="detail-header-title">
-					{{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
+					<span class="title-span" :title="detailParamConf.customDialogTitle || customDialogTitle || detailName">
+                        {{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
+                    </span>
 					<div class="fr fr-box">
                         <span v-if="styleConf.detailConf.enablePagination" class="enable-pagination-span">
                             <el-button 
@@ -21,7 +23,8 @@
                                 @click="onPrev"
                                 :disabled="!prevRecordId"
                                 :loading="loading"
-                                icon="Upload"
+                                icon="ArrowLeft"
+                                plain
                             >
                                 上一条
                             </el-button>
@@ -31,9 +34,12 @@
                                 @click="onNext"
                                 :disabled="!nextRecordId"
                                 :loading="loading"
-                                icon="Download"
+                                plain
                             >
                                 下一条
+                                <el-icon class="ml-3">
+                                    <ElIconArrowRight />
+                                </el-icon>
                             </el-button>
                         </span>
 						<span
@@ -869,6 +875,8 @@ defineExpose({
 		// height: 60px;
 		.fr-icon {
 			cursor: pointer;
+            position: relative;
+            top: 3px;
 			&:hover {
 				color: var(--el-color-primary);
 			}
@@ -880,6 +888,19 @@ defineExpose({
 		padding-left: 5px;
 		border-left: 5px solid;
 		border-left-color: var(--el-color-primary);
+        height: 26px;
+        .title-span {
+            float: left;
+            line-height: 26px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .enable-pagination-span {
+            position: relative;
+            margin-right: 10px;
+        }
 	}
 }
 .detail-main {
@@ -932,11 +953,7 @@ defineExpose({
         padding-top: 10px!important;
     }
 }
-.enable-pagination-span {
-    position: relative;
-    top: -3px;
-    margin-right: 10px;
-}
+
 </style>
 
 <style lang="scss">
