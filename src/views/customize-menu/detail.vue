@@ -12,8 +12,36 @@
 		<template #header>
 			<div class="detail-header">
 				<div class="detail-header-title">
-					{{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
+					<span class="title-span" :title="detailParamConf.customDialogTitle || customDialogTitle || detailName">
+                        {{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
+                    </span>
 					<div class="fr fr-box">
+                        <span v-if="styleConf.detailConf.enablePagination || styleConf.detailConf.enablePagination == undefined" class="enable-pagination-span">
+                            <el-button 
+                                size="small" 
+                                type="primary" 
+                                @click="onPrev"
+                                :disabled="!prevRecordId"
+                                :loading="loading"
+                                icon="ArrowLeft"
+                                plain
+                            >
+                                上一条
+                            </el-button>
+                            <el-button 
+                                size="small" 
+                                type="primary" 
+                                @click="onNext"
+                                :disabled="!nextRecordId"
+                                :loading="loading"
+                                plain
+                            >
+                                下一条
+                                <el-icon class="ml-3">
+                                    <ElIconArrowRight />
+                                </el-icon>
+                            </el-button>
+                        </span>
 						<span
 							class="fr-icon mr-10"
 							@click="onFullScreen"
@@ -23,7 +51,7 @@
 								<ElIconFullScreen />
 							</el-icon>
 						</span>
-						<span class="fr-icon mr-10" @click="refresh">
+						<span class="fr-icon mr-10" @click="loading ? null : refresh">
 							<el-icon>
 								<ElIconRefresh />
 							</el-icon>
@@ -288,6 +316,11 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    // 记录id集
+    recordIds: {
+		type: Array,
+		default: () => [],
+	},
 });
 
 
@@ -379,10 +412,24 @@ let globalDsv = ref(globalDsvDefaultData());
 // 指定表单ID
 let formId = ref("");
 
+let prevRecordId = ref(null);
+let nextRecordId = ref(null);
 
+// 上一条
+const onPrev = () => {
+    openDialog(prevRecordId.value, globalDsv.value, formId.value);
+}
+// 下一条
+const onNext = () => {
+    openDialog(nextRecordId.value, globalDsv.value, formId.value);
+}
 
 const openDialog = (id, localDsv, paramFormId) => {
-	detailId.value = id;
+    let { recordIds } = props;
+    let curInx = recordIds.indexOf(id);
+    prevRecordId.value = recordIds[curInx - 1] || null;
+    nextRecordId.value = recordIds[curInx + 1] || null;
+    detailId.value = id;
 	entityCode.value = queryEntityCodeById(id);
 	entityName.value = queryEntityNameById(id);
 	if (!entityName.value) {
@@ -398,12 +445,13 @@ const openDialog = (id, localDsv, paramFormId) => {
     if(paramFormId) {
         formId.value = paramFormId;
     }
+    
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
 	// 加载数据
 	refresh();
-};
+}
 
 const closeDialog = () => {
     detailDialog.isShow = false;
@@ -827,6 +875,8 @@ defineExpose({
 		// height: 60px;
 		.fr-icon {
 			cursor: pointer;
+            position: relative;
+            top: 3px;
 			&:hover {
 				color: var(--el-color-primary);
 			}
@@ -838,6 +888,19 @@ defineExpose({
 		padding-left: 5px;
 		border-left: 5px solid;
 		border-left-color: var(--el-color-primary);
+        height: 26px;
+        .title-span {
+            float: left;
+            line-height: 26px;
+            max-width: 600px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .enable-pagination-span {
+            position: relative;
+            margin-right: 10px;
+        }
 	}
 }
 .detail-main {
@@ -890,6 +953,7 @@ defineExpose({
         padding-top: 10px!important;
     }
 }
+
 </style>
 
 <style lang="scss">

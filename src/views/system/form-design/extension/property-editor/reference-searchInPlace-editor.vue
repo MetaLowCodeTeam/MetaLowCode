@@ -25,7 +25,7 @@
 		>
 			<el-row :gutter="20">
 				<el-col
-					:span="6"
+					:span="8"
 					v-for="(item, index) in fieldList"
 					:key="index"
 				>
@@ -136,7 +136,7 @@ export default {
 			let param = {
 				entity: paramEntity,
 				refField: this.optionModel.name,
-				queryReference: false,
+				queryReference: true,
 			};
 			let res = await common.getFieldListByRefField(param);
 			if (res) {

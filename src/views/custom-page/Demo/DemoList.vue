@@ -27,5 +27,7 @@ let EntityListRefs = shallowRef();
 
 let listParamConf = ref({});
 
+let paginationConf = ref({});
+
 </script>
 <style lang="scss" scoped></style>
