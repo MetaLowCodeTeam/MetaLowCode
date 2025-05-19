@@ -18,7 +18,12 @@
                                         <ElIconRank />
                                     </el-icon>
                                 </div>
-                                <div class="fl item text-ellipsis">{{ parent.label }}</div>
+                                <div 
+                                    class="fl item text-ellipsis"
+                                    :title="parent.label"
+                                >
+                                    {{ parent.label }}
+                                </div>
                                 <div class="action-icon">
                                     <span class="icon-span" @click.stop="delColumn(parent,inx)">
                                         <el-icon size="16">
@@ -53,7 +58,12 @@
                             :key="inx"
                             @click="addShowColumn(column)"
                         >
-                            <div class="fl column-item text-ellipsis">{{ column.label }}</div>
+                            <div 
+                                class="fl column-item text-ellipsis"
+                                :title="column.label"
+                            >
+                                {{ column.label }}
+                            </div>
                             <span class="fr icon-span">
                                 <el-icon size="16">
                                     <ElIconPlus />

@@ -183,6 +183,7 @@
 								<div 
                                     class="fl item text-ellipsis"
                                     :class="{'tag':isShowItemTag(parent)}"
+                                    :title="parent.label"
                                 >
 									{{ parent.label }}
 								</div>
@@ -233,7 +234,10 @@
 							:key="inx"
 							@click="addShowField(field)"
 						>
-							<div class="fl field-item text-ellipsis">
+							<div 
+                                class="fl field-item text-ellipsis"
+                                :title="field.label"
+                            >
 								{{ field.label }}
 							</div>
 							<span class="fr icon-span">

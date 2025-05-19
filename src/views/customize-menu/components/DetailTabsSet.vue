@@ -21,7 +21,10 @@
                                 <div
                                     class="fl item text-ellipsis"
                                     :class="{'tag':isShowItemTag(parent)}"
-                                >{{ parent.entityLabel }}</div>
+                                    :title="parent.entityLabel"
+                                >
+                                    {{ parent.entityLabel }}
+                                </div>
                                 <div class="action-icon">
                                     <span
                                         class="icon-span add-icon mr-5"
@@ -66,7 +69,12 @@
                             :key="inx"
                             @click="beforeAddShowColumn(column)"
                         >
-                            <div class="fl column-item text-ellipsis">{{ column.label || column.entityLabel }}</div>
+                            <div 
+                                class="fl column-item text-ellipsis"
+                                :title="column.label || column.entityLabel"
+                            >
+                                {{ column.label || column.entityLabel }}
+                            </div>
                             <span class="fr icon-span">
                                 <el-icon size="16">
                                     <ElIconPlus />
