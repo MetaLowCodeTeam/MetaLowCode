@@ -19,7 +19,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.9 20250519"
+        webVer: "1.8.10 20250519"
     });
 
     const getEntityList = () => {
@@ -105,7 +105,7 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value.APP_WATERMARK = data.watermark;
         publicSetting.value.APP_PLUGINID = data.pluginIdList;
         publicSetting.value.APP_COLOR = data.themeColor
-        publicSetting.value.webVer += "(" + data.version + ")";
+        publicSetting.value.commonVer = publicSetting.value.webVer + "(" + data.version + ")";
         publicSetting.value = Object.assign(publicSetting.value, data);
         publicSetting.value.approvalModifiableEntity = data.approvalModifiableEntity || "";
         // publicSetting.value.appMode = data.appMode;
