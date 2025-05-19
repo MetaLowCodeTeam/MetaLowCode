@@ -148,6 +148,7 @@
                 <el-tab-pane 
                     label="子级表单回填" 
                     name="subFormFillBack"
+                    v-if="!isInSubForm"
                 >
                     <el-row class="mb-10">
                         <el-button size="default" @click="openWidgetMappingDialog">添加明细回填映射</el-button>
@@ -445,8 +446,9 @@ export default {
             // 源实体对应的所有字段[] maps
             entityListFields: {},
             // 所有组件
-            widgetMappingList: []
-            
+            widgetMappingList: [],
+            // 是否在子表单内
+            isInSubForm: false,
 		};
 	},
 	inject: ["isSubFormChildWidget"],
@@ -533,6 +535,7 @@ export default {
 			let widgetList = [];
 			// 取选中字段
 			let selectedId = this.designer.selectedId;
+            
 			// 如果不是子表单 并且 多行子表单里没有这个选中的组件
 			if (
 				!this.isSubFormChildWidget() &&
@@ -552,6 +555,7 @@ export default {
 						});
 					}
 				});
+                this.isInSubForm = false;
 			}
 			// 如果是子表单
 			else {
@@ -572,6 +576,7 @@ export default {
 						widgetList.push(el);
 					}
 				});
+                this.isInSubForm = true;
 			}
 			this.targetColumn = [...widgetList];
 		},
