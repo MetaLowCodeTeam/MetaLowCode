@@ -79,6 +79,7 @@ import useKeepAliveStore from "@/store/modules/keepAlive";
 import useIframeStore from "@/store/modules/iframe";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
+import config from "@/config"
 const viewTagsStore = useViewTagsStore();
 const keepAliveStore = useKeepAliveStore();
 const iframeStore = useIframeStore();
@@ -168,8 +169,9 @@ export default {
         );
         
         if (dashboardRoute && !this.isAppManagement) {
-            dashboardRoute.fullPath = dashboardRoute.path;
-            this.addViewTags(dashboardRoute);
+            let formatDashboardRoute = {...dashboardRoute};
+            formatDashboardRoute.fullPath = config.DASHBOARD_URL;
+            this.addViewTags(formatDashboardRoute);
             this.addViewTags(this.$route);
         }
         if(this.isAppManagement){

@@ -454,6 +454,10 @@ export default {
                 rows.forEach((selectedRow,subInx) => {
                     // 把后面的数据已追加的方式追加进去。
                     if (subInx === 0) {
+                        let res = this.handleRecordSelectedEvent(selectedRow, rows);
+                        if(res === false){
+                            return
+                        }
                         // 赋值当前选中数据
                         this.fieldModel = {
                             id: selectedRow[recordObj.id],
@@ -462,7 +466,6 @@ export default {
                         // 第一条选中数据回填
                         this.doFillBack(this.fieldModel, selectedRow);
 						this.syncUpdateFormModel(this.fieldModel);
-                        this.handleRecordSelectedEvent(selectedRow, rows);
                     } else {
                         let temp = {};
                         temp[this.fieldKeyName] = {
@@ -484,13 +487,16 @@ export default {
             else {
                 // 如果第一条数据不存在
                 if(!sourceSubFormValues.includes(rows[0][recordObj.id])){
+                    let res = this.handleRecordSelectedEvent(rows[0], [rows[0]]);
+                    if(res === false){
+                        return
+                    }
                     // 赋值当前选中数据
                     this.fieldModel = {
                         id: rows[0][recordObj.id],
                         name: rows[0][recordObj.label],
                     };
 					this.syncUpdateFormModel(this.fieldModel);
-                    this.handleRecordSelectedEvent(rows[0], rows);
                     // 第一条选中数据回填
                     this.doFillBack(this.fieldModel, rows[0]);
                 }
@@ -533,13 +539,15 @@ export default {
         },
         // 单选回填
 		setReferRecord(recordObj, selectedRow) {
+            let res = this.handleRecordSelectedEvent(selectedRow, [selectedRow]);
+            if(res === false){
+                return
+            }
 			this.fieldModel = {
 				id: recordObj.id,
 				name: recordObj.label,
 			};
-
 			this.onFieldChangeEvent(this.fieldModel);
-			this.handleRecordSelectedEvent(selectedRow, [selectedRow]);
             // 回填
 			this.doFillBack(recordObj, selectedRow);
 			this.showReferenceDialogFlag = false;
@@ -678,7 +686,7 @@ export default {
                     "allSelectedRows",
 					this.field.options.onRecordSelected
 				);
-				customFn.call(this, selectedRow, allSelectedRows);
+				return customFn.call(this, selectedRow, allSelectedRows);
 			}
 		},
 

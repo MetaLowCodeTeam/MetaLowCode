@@ -420,6 +420,10 @@ export default {
                     this.onFieldChangeEvent(this.fieldModel);
                     return
                 }
+                let res = this.handleRecordSelectedEvent(selectedNodes, selectedNodes);
+                if(res === false){
+                    return
+                }
                 this.fieldModel = selectedNodes.map(el => {
                     return {
                         id: el.id,
@@ -427,10 +431,13 @@ export default {
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
-				this.handleRecordSelectedEvent(selectedNodes, selectedNodes);
             }else {
                 let fieldNames = this.$refs.referST?.getIdNameField() || {};
                 let rows = this.$refs.referST?.getMultipleSelection() || [];
+                let res = this.handleRecordSelectedEvent(rows, rows);
+                if(res === false){
+                    return
+                }
                 this.fieldModel = rows.map(el => {
                     return {
                         id: el[fieldNames.idField],
@@ -438,7 +445,6 @@ export default {
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
-				this.handleRecordSelectedEvent(rows, rows);
             }
             this.showReferenceDialogFlag = false;
         },
