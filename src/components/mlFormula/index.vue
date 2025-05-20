@@ -357,7 +357,7 @@ const confirm = async () => {
     if(currentScriptType.value == "liteFlowJava"){
         checkLoading.value = true;
         let res = await $API.trigger.detail.scriptValidator(javaScriptVal.value);
-        if(res.data){
+        if(res && res.data){
             if(isPreview.value){
                 isEditValue(javaScriptVal.value);
                 return
@@ -367,8 +367,6 @@ const confirm = async () => {
                 value: javaScriptVal.value,
                 scriptType: currentScriptType.value,
             });
-        }else{
-            $ElMessage.error("脚本检查失败，请检查脚本语法。")
         }
         checkLoading.value = false;
         return

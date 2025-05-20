@@ -346,8 +346,7 @@ const onSave = async (target) => {
             }
             initLoading.value = true;
             let res = await $API.trigger.detail.scriptValidator(actionContent.script);
-            if(!res.data){
-                $ElMessage.error("脚本检查失败，请检查脚本语法。")
+            if(!res || !res.data){
                 initLoading.value = false;
                 return;
             }
