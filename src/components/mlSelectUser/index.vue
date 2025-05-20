@@ -55,6 +55,14 @@
                             v-for="(tab,inx) of tabList"
                             :key="inx"
                         >
+                            <!-- <div class="tab-item-title">
+                                <div class="tab-item-check-box">
+                                    <el-checkbox v-model="tab.isChecked" @change="checkTab(tab)"></el-checkbox>
+                                </div>
+                                <div class="tab-item-title-text">
+                                    {{ tab.label }}名称
+                                </div>
+                            </div> -->
                             <div class="item-li-box">
                                 <div
                                     class="tab-item-li"
@@ -336,11 +344,31 @@ let filterMethod = (keyword) => {
         overflow-y: auto;
         overflow-x: hidden;
     }
+    .tab-item-title {
+        font-size: 14px;
+        box-sizing: border-box;
+        display: flex;
+        border-bottom: 1px solid #dcdfe6;
+        border-top: 1px solid #dcdfe6;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        background: #f5f7fa;
+        .tab-item-check-box {
+            width: 50px;
+            border-right: 1px solid #dcdfe6;
+        }
+        .tab-item-title-text {
+            flex: 1;
+            font-weight: bold;
+        }
+    }
     .tab-item-li {
         font-size: 14px;
         cursor: pointer;
         line-height: 40px;
         border-bottom: 1px solid #dcdfe6;
+        box-sizing: border-box;
         padding: 0 20px;
         &:last-child {
             border-bottom: 0;

@@ -43,7 +43,7 @@
 	<AddMembers
 		ref="AddMembersRef"
 		paramName="用户"
-		paramType="User"
+		paramType="all"
 		isDialog
 		:paramId="cutRoleId"
 		@addMembers="getUserList"
