@@ -289,6 +289,17 @@
                             />
                         </template>
                     </el-table-column>
+                    <template v-if="listConf.showRowNumber">
+                        <el-table-column
+                            label="序号"
+                            width="60"
+                            align="center"
+                        >
+                            <template #default="scope">
+                                {{ (page.no - 1) * page.size + scope.$index + 1 }}
+                            </template>
+                        </el-table-column>
+                    </template>
                     <template v-for="(column,columnInx) of tableColumn" :key="columnInx">
                         <el-table-column
                             v-if="!column.pcHide"
@@ -902,6 +913,9 @@ let queryPanelLoading = ref(false);
 
 let calculateHeight = ref("");
 
+// 列表设置
+let listConf = ref({});
+
 // 切换查询面板
 const changeQueryPanel = async (target) => {
     if(!$TOOL.checkRole('r6008')){
@@ -1013,6 +1027,10 @@ const getLayoutList = async () => {
             // 如果存在顶部区域隐藏
             if(rowStyleConf.value.toolbarConf){
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
+            }
+            // 如果存在列表设置
+            if(rowStyleConf.value.listConf){
+                listConf.value = rowStyleConf.value.listConf;
             }
         }
         // 树状分组筛选

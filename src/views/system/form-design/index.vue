@@ -37,7 +37,7 @@
         title="选择表单"
         v-model="formLayoutDialogConf.isShow"
         append-to-body
-        width="300"
+        width="330"
         draggable
         :showClose="false"
     >
@@ -50,7 +50,16 @@
             <div
                 class="form-layout-item-name yichu fl"
                 :title="item.layoutName"
-            >{{ item.layoutName }}</div>
+            >
+                <el-tooltip content="点击复制表单ID" placement="top">
+                    <span @click.stop="copyFormLayoutId(item)">
+                        <el-icon size="18" class="icon-top-4">
+                            <ElIconDocumentCopy />
+                        </el-icon>
+                    </span>
+                </el-tooltip>
+                {{ item.layoutName }}
+            </div>
             <div class="form-layout-item-icon fl">
                 <span class="form-layout-item-edit" @click.stop="editActionFormLayout(idx)">
                     <el-icon size="18">
@@ -100,7 +109,7 @@ import {
     deleteFormLayout,
     updateNameFormLayout,
 } from "@/api/system-manager";
-import { deepClone, overwriteObj, mlShortcutkeys } from "@/utils/util";
+import { deepClone, overwriteObj, mlShortcutkeys, copyText } from "@/utils/util";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import MlShareTo from "@/components/mlShareTo/index.vue";
 import AddField from "@/components/mlFormDesignComp/AddField.vue";
@@ -683,7 +692,10 @@ export default {
             }
             this.loadActionLoading(layoutName, false);
         },
-        //
+        // 复制表单ID
+        copyFormLayoutId(item) {
+            copyText(item.formLayoutId);
+        },
         // 加载操作loading
         loadActionLoading(layoutName, status) {
             if (layoutName) {
@@ -720,9 +732,8 @@ export default {
     border-bottom: 1px solid #ddd;
     margin-bottom: 10px;
     cursor: pointer;
-    &:hover {
-        // background: #ccc;
-        .form-layout-item-name {
+    .form-layout-item-name {
+        &:hover {
             color: var(--el-color-primary);
         }
     }

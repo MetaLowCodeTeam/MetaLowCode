@@ -69,11 +69,17 @@ axios.interceptors.response.use(
                     title: '请求错误',
                     message: "Status:404，正在请求不存在的服务器记录！"
                 });
+                return {}
             } else if (error.response.status == 500) {
+                if(error.response.data.message) {
+                    ElMessage.error(error.response.data.message)
+                    return {}
+                }
                 ElNotification.error({
                     title: '请求错误',
                     message: error.response.data.message || "Status:500，服务器发生错误！"
                 });
+                return {}
             } else if (error.response.status == 401) {
                 if (!MessageBox_401_show) {
                     MessageBox_401_show = true
@@ -91,11 +97,13 @@ axios.interceptors.response.use(
                         router.replace({ path: appPath + "login" });
                     }).catch(() => { })
                 }
+                return {}
             } else {
                 ElNotification.error({
                     title: '请求错误',
                     message: error.message || `Status:${error.response.status}，未知错误！`
                 });
+                return {}
             }
         } else {
             ElNotification.error({

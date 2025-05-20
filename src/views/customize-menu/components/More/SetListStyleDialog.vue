@@ -4,6 +4,14 @@
         <div v-loading="loading" class="set-list-style">
             <el-row :gutter="20">
                 <el-col :span="12">
+                    <div class="form-title">列表序号设置</div>
+                    <div class="form-item mb-30">
+                        <el-checkbox v-model="styleConf.listConf.showRowNumber">
+                            是否显示序号列
+                        </el-checkbox>
+                    </div>
+                </el-col>
+                <el-col :span="12">
                     <div class="form-title">新建编辑弹框属性</div>
                     <div class="form-item mb-30">
                         <el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
@@ -16,6 +24,29 @@
                             弹框自动全屏
                         </el-checkbox>
                     </div>
+                </el-col>
+                
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
+                    <div class="form-title">
+                        顶部区域隐藏
+                        <el-tooltip content="可在列表界面按快捷键 ALT+SHIFT+M+L 显示所有">
+                            <el-icon class="icon-top-2"><QuestionFilled /></el-icon>
+                        </el-tooltip>
+                    </div>
+                    <el-row>
+                        <el-col 
+                            v-for="(item,inx) in topHiddenConfig" 
+                            :span="item.colspan || 12" 
+                            :key="inx"    
+                        >
+                            <el-checkbox 
+                                :checked="!styleConf.toolbarConf[item.value]"
+                                @change="handleCheckboxChange(item.value, $event)"
+                            >
+                                {{ item.label }}
+                            </el-checkbox>
+                        </el-col>
+                    </el-row>
                 </el-col>
                 <el-col :span="12">
                     <div class="form-title">查看侧滑栏属性</div>
@@ -73,28 +104,7 @@
                         />
                     </div>
                 </el-col>
-                <el-col :span="12" v-if="!isListCard && !isListCalendar">
-                    <div class="form-title">
-                        顶部区域隐藏
-                        <el-tooltip content="可在列表界面按快捷键 ALT+SHIFT+M+L 显示所有">
-                            <el-icon class="icon-top-2"><QuestionFilled /></el-icon>
-                        </el-tooltip>
-                    </div>
-                    <el-row>
-                        <el-col 
-                            v-for="(item,inx) in topHiddenConfig" 
-                            :span="item.colspan || 12" 
-                            :key="inx"
-                        >
-                            <el-checkbox 
-                                :checked="!styleConf.toolbarConf[item.value]"
-                                @change="handleCheckboxChange(item.value, $event)"
-                            >
-                                {{ item.label }}
-                            </el-checkbox>
-                        </el-col>
-                    </el-row>
-                </el-col>
+                
                 <el-col :span="12">
                     <div class="form-title">指定表单</div>
                     <el-tabs v-model="formActiveName" class="mb-20">
@@ -292,6 +302,11 @@ const topHiddenConfig = ref([
     },
 ])
 let styleConf = ref({
+    // 列表设置
+    listConf: {
+        // 是否显示序号列
+        showRowNumber: false,
+    },
 	// 新建编辑弹框属性
 	actionConf: {
 		// 显示全屏按钮
