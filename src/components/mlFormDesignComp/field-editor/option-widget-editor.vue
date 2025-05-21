@@ -77,73 +77,16 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-card class="box-card" shadow="never" v-else>
-                    <template #header>
-                        <div class="clear-fix">
-                            <span>选项管理</span>
-                            <el-button
-                                style="float: right; padding: 3px 0"
-                                link
-                                type="primary"
-                                @click="addOption"
-                            >新增选项</el-button>
-                        </div>
-                    </template>
-                    <!--
-					<div class="clear-fix">(空值)</div>
-                    -->
-                    <div
-                        v-for="(optionItem, idx) in optionItems"
-                        :key="idx"
-                        class="clear-fix"
-                        @mouseenter="hoverIdx = idx"
-                        @mouseleave="hoverIdx = -1"
-                    >
-                        {{ optionItem.label }}
-                        <div class="option-item" v-show="!!optionItem.value && (hoverIdx === idx)">
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-insert"
-                                title="插入"
-                                icon="el-icon-plus"
-                                @click="insertOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-up"
-                                title="上移"
-                                icon="el-icon-top"
-                                @click="upOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-down"
-                                title="下移"
-                                icon="el-icon-bottom"
-                                @click="downOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-edit"
-                                title="编辑"
-                                icon="el-icon-edit"
-                                @click="editOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-delete"
-                                title="删除"
-                                icon="el-icon-delete"
-                                @click="deleteOption(idx)"
-                            ></el-button>
-                        </div>
-                    </div>
-                </el-card>
+                <OptionsCard 
+                    v-else
+                    :optionItems="optionItems"
+                    @addOption="addOption"
+                    @insertOption="insertOption"
+                    @upOption="upOption"
+                    @downOption="downOption"
+                    @editOption="editOption"
+                    @deleteOption="deleteOption"
+                />
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
                     <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
@@ -166,6 +109,7 @@ import { copyObj } from "@/utils/util";
 import FieldState from "@/views/system/field-state-variables";
 import {fieldEditorMixin} from "./field-editor-mixin";
 
+import OptionsCard from "./components/OptionsCard.vue";
 export default {
     name: "OptionWidgetEditor",
     props: {
@@ -178,6 +122,9 @@ export default {
         },
     },
     mixins: [fieldEditorMixin],
+    components: {
+        OptionsCard
+    },
     data() {
         return {
             fieldProps: {

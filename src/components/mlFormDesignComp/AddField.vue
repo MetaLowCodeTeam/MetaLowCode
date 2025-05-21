@@ -23,6 +23,7 @@
 		:title="(fieldState == 1 ? '新建字段 / ' : '编辑字段 / ') + currentEditorType"
 		width="620px"
 		draggable
+        append-to-body
 	>
 		<component
 			:is="currentFieldComponent"
