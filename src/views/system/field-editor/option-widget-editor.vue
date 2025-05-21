@@ -77,7 +77,17 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-card class="box-card" shadow="never" v-else>
+                <OptionsCard 
+                    v-else
+                    :optionItems="optionItems"
+                    @addOption="addOption"
+                    @insertOption="insertOption"
+                    @upOption="upOption"
+                    @downOption="downOption"
+                    @editOption="editOption"
+                    @deleteOption="deleteOption"
+                />
+                <!-- <el-card class="box-card" shadow="never" v-else>
                     <template #header>
                         <div class="clear-fix">
                             <span>选项管理</span>
@@ -89,9 +99,6 @@
                             >新增选项</el-button>
                         </div>
                     </template>
-                    <!--
-					<div class="clear-fix">(空值)</div>
-                    -->
                     <div
                         v-for="(optionItem, idx) in optionItems"
                         :key="idx"
@@ -143,7 +150,7 @@
                             ></el-button>
                         </div>
                     </div>
-                </el-card>
+                </el-card> -->
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
                     <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
@@ -166,7 +173,7 @@ import { ElMessage, ElMessageBox as MessageBox } from "element-plus";
 import { copyObj, generateId } from "@/utils/util";
 import FieldState from "@/views/system/field-state-variables";
 import { fieldEditorMixin } from "@/views/system/field-editor/field-editor-mixin";
-
+import OptionsCard from "@/views/system/field-editor/components/OptionsCard.vue";
 export default {
     name: "OptionWidgetEditor",
     props: {
@@ -179,6 +186,9 @@ export default {
         },
     },
     mixins: [fieldEditorMixin],
+    components: {
+        OptionsCard
+    },
     data() {
         return {
             fieldProps: {

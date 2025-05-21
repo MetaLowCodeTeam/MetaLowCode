@@ -82,73 +82,16 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-card class="box-card" shadow="never" v-else>
-                    <template #header>
-                        <div class="clear-fix">
-                            <span>选项管理</span>
-                            <el-button
-                                style="float: right; padding: 3px 0"
-                                link
-                                type="primary"
-                                @click="addTag"
-                            >新增选项</el-button>
-                        </div>
-                    </template>
-                    <!--
-					<div class="clear-fix">(空值)</div>
-                    -->
-                    <div
-                        v-for="(tagItem, idx) in tagItems"
-                        :key="idx"
-                        class="clear-fix"
-                        @mouseenter="hoverIdx = idx"
-                        @mouseleave="hoverIdx = -1"
-                    >
-                        {{ tagItem.label }}
-                        <div class="tag-item" v-if="!!tagItem.value && (hoverIdx === idx)">
-                            <el-button
-                                link
-                                type="primary"
-                                class="tag-item-insert"
-                                title="插入"
-                                icon="el-icon-plus"
-                                @click="insertTag(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="tag-item-up"
-                                title="上移"
-                                icon="el-icon-top"
-                                @click="upTag(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="tag-item-down"
-                                title="下移"
-                                icon="el-icon-bottom"
-                                @click="downTag(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="tag-item-edit"
-                                title="编辑"
-                                icon="el-icon-edit"
-                                @click="editTag(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="tag-item-delete"
-                                title="删除"
-                                icon="el-icon-delete"
-                                @click="deleteTag(idx)"
-                            ></el-button>
-                        </div>
-                    </div>
-                </el-card>
+                <OptionsCard 
+                    v-else
+                    :optionItems="tagItems" 
+                    @addOption="addTag" 
+                    @insertOption="insertTag" 
+                    @upOption="upTag" 
+                    @downOption="downTag" 
+                    @editOption="editTag" 
+                    @deleteOption="deleteTag"
+                />
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
                     <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
@@ -170,9 +113,12 @@ import {
 import FieldState from "@/views/system/field-state-variables";
 import { fieldEditorMixin } from "@/views/system/field-editor/field-editor-mixin";
 import { copyObj } from "@/utils/util";
-
+import OptionsCard from "@/views/system/field-editor/components/OptionsCard.vue";
 export default {
     name: "TagWidgetEditor",
+    components: {
+        OptionsCard
+    },
     props: {
         entity: String,
         fieldName: String,
