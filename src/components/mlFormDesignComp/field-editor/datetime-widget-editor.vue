@@ -1,6 +1,6 @@
 <template>
-	<el-container class="field-props-container">
-		<el-header class="field-props-header" v-if="!showingInDialog">[邮箱]字段属性设置</el-header>
+	<el-container class="field-props-container" v-loading="saveLoading">
+		<el-header class="field-props-header" v-if="!showingInDialog">[日期/时间]字段属性设置</el-header>
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
@@ -13,14 +13,6 @@
 							<el-button @click="generateFieldName" style="color: var(--el-color-primary)">刷新生成</el-button>
 						</template>
 					</el-input>
-				</el-form-item>
-				<el-form-item label="最小长度">
-					<el-input-number v-model="fieldProps.fieldViewModel.minLength"
-									 :min="0" :max="190" style="width: 100%"></el-input-number>
-				</el-form-item>
-				<el-form-item label="最大长度（不能超过190字符）">
-					<el-input-number v-model="fieldProps.fieldViewModel.maxLength"
-									 :min="0" :max="190" style="width: 100%"></el-input-number>
 				</el-form-item>
 <!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
 <!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
@@ -74,12 +66,11 @@
 </template>
 
 <script>
-import {addField} from '@/api/system-manager'
-import FieldState from "@/views/system/field-state-variables";
-import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
+import FieldState from '@/views/system/field-state-variables'
+import {fieldEditorMixin} from "./field-editor-mixin";
 
 export default {
-	name: "EmailWidgetEditor",
+	name: "DateTimeWidgetEditor",
 	props: {
 		entity: String,
 		fieldName: String,
@@ -95,8 +86,8 @@ export default {
 			fieldProps: {
 				'name': '',
 				'label': '',
-				'type': 'Email',
-				'defaultMemberOfListFlag': false,
+				'type': 'DateTime',
+				'defaultMemberOfListFlag': true,
 				'nullable': false,
 				'creatable': true,
 				'updatable': true,
@@ -104,19 +95,11 @@ export default {
                     'onlyUpdateByTrigger': 'false',
                 },
 				'fieldViewModel': {
-					'minLength': 0,
-					'maxLength': 190,
 					'validators': [],
 				},
 			},
 
-			validators: [
-				{value: 'number', label: '数字'},
-				{value: 'mobile', label: '手机号码'},
-				{value: 'noChinese', label: '禁止中文'},
-				{value: 'email', label: '电子邮箱'},
-				{value: 'url', label: 'URL网址'},
-			],
+			validators: [],
 
 		}
 	},
@@ -125,7 +108,7 @@ export default {
 	},
 	methods: {
 		saveField() {
-			this.doSave('Email')
+			this.doSave('DateTime')
 		},
 
 		cancelSave() {
@@ -136,6 +119,7 @@ export default {
                 this.fieldProps.creatable = true;
             }
         },
+
 	}
 }
 </script>

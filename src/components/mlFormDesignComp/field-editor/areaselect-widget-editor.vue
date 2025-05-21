@@ -1,6 +1,6 @@
 <template>
 	<el-container class="field-props-container" v-loading="saveLoading">
-		<el-header class="field-props-header" v-if="!showingInDialog">[定位]字段属性设置</el-header>
+		<el-header class="field-props-header" v-if="!showingInDialog">[文本]字段属性设置</el-header>
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
@@ -14,7 +14,28 @@
 						</template>
 					</el-input>
 				</el-form-item>
-
+				<!--
+				<el-form-item label="最小长度">
+					<el-input-number v-model="fieldProps.fieldViewModel.minLength"
+									 :min="0" :max="190" style="width: 100%"></el-input-number>
+				</el-form-item>
+				<el-form-item label="最大长度（建议不超过200）">
+					<el-input-number v-model="fieldProps.fieldViewModel.maxLength"
+									 :min="0" :max="500" style="width: 100%"></el-input-number>
+				</el-form-item>
+				-->
+				<el-form-item label="地区选择数据">
+					<el-radio-group v-model="fieldProps.fieldViewModel.areaDataType" style="float: right">
+						<el-radio :value="1">省份、城市</el-radio>
+						<el-radio :value="2">省份、城市、地区</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="是否在列表中默认显示">
+					<el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
+						<el-radio :value="true">是</el-radio>
+						<el-radio :value="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
 				<el-form-item label="是否允许空值">
 					<el-radio-group v-model="fieldProps.nullable" style="float: right" @change="handleNullableChange">
 						<el-radio :value="true">是</el-radio>
@@ -51,10 +72,10 @@
 
 <script>
 import FieldState from '@/views/system/field-state-variables'
-import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
+import {fieldEditorMixin} from "./field-editor-mixin";
 
 export default {
-	name: "LocationWidgetEditor",
+	name: "AreaSelectWidgetEditor",
 	props: {
 		entity: String,
 		fieldName: String,
@@ -70,15 +91,28 @@ export default {
 			fieldProps: {
 				'name': '',
 				'label': '',
-				'type': 'Location',
-				'defaultMemberOfListFlag': false,
+				'type': 'AreaSelect',
+				'defaultMemberOfListFlag': true,
 				'nullable': false,
 				'creatable': true,
 				'updatable': true,
                 'extraAttrs': {
                     'onlyUpdateByTrigger': 'false',
                 },
+				'fieldViewModel': {
+					'areaDataType': 2,
+					'validators': [],
+				},
 			},
+
+			validators: [
+				{value: 'number', label: '数字'},
+				{value: 'letterStartNumberIncluded', label: '字母开头可包含数字'},
+				{value: 'mobile', label: '手机号码'},
+				{value: 'noChinese', label: '禁止中文'},
+				{value: 'email', label: '电子邮箱'},
+				{value: 'url', label: 'URL网址'},
+			],
 
 		}
 	},
@@ -87,7 +121,7 @@ export default {
 	},
 	methods: {
 		saveField() {
-			this.doSave('Location')
+			this.doSave('AreaSelect')
 		},
 
 		cancelSave() {

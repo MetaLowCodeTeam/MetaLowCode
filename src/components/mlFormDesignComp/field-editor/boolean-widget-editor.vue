@@ -82,7 +82,7 @@
 <script>
 import {addField} from '@/api/system-manager'
 import FieldState from "@/views/system/field-state-variables";
-import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
+import {fieldEditorMixin} from "./field-editor-mixin";
 
 export default {
 	name: "BooleanWidgetEditor",

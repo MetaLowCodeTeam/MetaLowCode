@@ -41,23 +41,24 @@
 import { ref, shallowRef, markRaw, onMounted, useSlots } from "vue";
 
 // 正常导入组件
-import BooleanWE from "@/views/system/field-editor/boolean-widget-editor.vue";
-import IntegerWE from "@/views/system/field-editor/integer-widget-editor.vue";
-import DecimalWE from "@/views/system/field-editor/decimal-widget-editor.vue";
-import MoneyWE from "@/views/system/field-editor/money-widget-editor.vue";
-import TextWE from "@/views/system/field-editor/text-widget-editor.vue";
-import TextAreaWE from "@/views/system/field-editor/textarea-widget-editor.vue";
-import OptionWE from "@/views/system/field-editor/option-widget-editor.vue";
-import TagWE from "@/views/system/field-editor/tag-widget-editor.vue";
-import AreaSelectWE from "@/views/system/field-editor/areaselect-widget-editor.vue";
-import DateWE from "@/views/system/field-editor/date-widget-editor.vue";
-import DateTimeWE from "@/views/system/field-editor/datetime-widget-editor.vue";
-import PictureWE from "@/views/system/field-editor/picture-widget-editor.vue";
-import FileWE from "@/views/system/field-editor/file-widget-editor.vue";
-import LocationWE from "@/views/system/field-editor/location-widget-editor.vue";
-import ReferenceWE from "@/views/system/field-editor/reference-widget-editor.vue";
-import ReferenceListWE from "@/views/system/field-editor/referencelist-widget-editor.vue";
-import OuterReferenceWE from "@/views/system/field-editor/outerReference-widget-editor.vue";
+import BooleanWE from "./field-editor/boolean-widget-editor.vue";
+import IntegerWE from "./field-editor/integer-widget-editor.vue";
+import DecimalWE from "./field-editor/decimal-widget-editor.vue";
+import MoneyWE from "./field-editor/money-widget-editor.vue";
+import TextWE from "./field-editor/text-widget-editor.vue";
+import TextAreaWE from "./field-editor/textarea-widget-editor.vue";
+import OptionWE from "./field-editor/option-widget-editor.vue";
+import CodeOptionWE from "./field-editor/code-option-widget-editor.vue";
+import TagWE from "./field-editor/tag-widget-editor.vue";
+import AreaSelectWE from "./field-editor/areaselect-widget-editor.vue";
+import DateWE from "./field-editor/date-widget-editor.vue";
+import DateTimeWE from "./field-editor/datetime-widget-editor.vue";
+import PictureWE from "./field-editor/picture-widget-editor.vue";
+import FileWE from "./field-editor/file-widget-editor.vue";
+import LocationWE from "./field-editor/location-widget-editor.vue";
+import ReferenceWE from "./field-editor/reference-widget-editor.vue";
+import ReferenceListWE from "./field-editor/referencelist-widget-editor.vue";
+import OuterReferenceWE from "./field-editor/outerReference-widget-editor.vue";
 
 const props = defineProps({
 	entity: {
@@ -81,6 +82,7 @@ const fieldComponents = {
 	TextWE: markRaw(TextWE),
 	TextAreaWE: markRaw(TextAreaWE),
 	OptionWE: markRaw(OptionWE),
+	CodeOptionWE: markRaw(CodeOptionWE),
 	TagWE: markRaw(TagWE),
 	AreaSelectWE: markRaw(AreaSelectWE),
 	DateWE: markRaw(DateWE),
@@ -102,6 +104,7 @@ const fieldList = [
 	{ label: "文本 / Text", value: "TextWE", divided: true },
 	{ label: "长文本 / TextArea", value: "TextAreaWE" },
 	{ label: "单选项 / Option", value: "OptionWE" },
+	{ label: "编码单选项 / CodeOption", value: "CodeOptionWE" },
 	{ label: "多选项 / Tag", value: "TagWE" },
 	{ label: "地区选择 / AreaSelect", value: "AreaSelectWE" },
 	{ label: "日期 / Date", value: "DateWE", divided: true },

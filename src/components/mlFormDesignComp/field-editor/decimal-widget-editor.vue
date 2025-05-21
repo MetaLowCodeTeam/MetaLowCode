@@ -1,6 +1,6 @@
 <template>
 	<el-container class="field-props-container" v-loading="saveLoading">
-		<el-header class="field-props-header" v-if="!showingInDialog">[日期/时间]字段属性设置</el-header>
+		<el-header class="field-props-header" v-if="!showingInDialog">[精度小数]字段属性设置</el-header>
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
@@ -14,17 +14,32 @@
 						</template>
 					</el-input>
 				</el-form-item>
-<!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
-<!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
-<!--							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">-->
-<!--						<el-option-->
-<!--							v-for="(vt, vtIdx) in validators"-->
-<!--							:key="vtIdx"-->
-<!--							:label="vt.label"-->
-<!--							:value="vt.value">-->
-<!--						</el-option>-->
-<!--					</el-select>-->
-<!--				</el-form-item>-->
+				<el-collapse accordion class="mb-10">
+                    <el-collapse-item name="1">
+                        <template #title>
+                            <span class="field-editor-collapse-title">默认值设置</span>
+                            <el-tooltip content="该默认值设置后需在表单设计里重新拖拽，才可生效" placement="top">
+                                <span class="ml-5">
+                                    <el-icon class="icon-top-2">
+                                        <info-filled />
+                                    </el-icon>
+                                </span>
+                            </el-tooltip>
+                        </template>
+                        <el-form-item label="小数精度位数（不超过6位）">
+                            <el-input-number v-model="fieldProps.fieldViewModel.precision"
+                                            :min="0" :max="6" style="width: 100%"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="最小值">
+                            <el-input v-model.number="fieldProps.fieldViewModel.minValue"
+                                    type="number" style="width: 100%"></el-input>
+                        </el-form-item>
+                        <el-form-item label="最大值">
+                            <el-input v-model.number="fieldProps.fieldViewModel.maxValue"
+                                    type="number" style="width: 100%"></el-input>
+                        </el-form-item>
+                    </el-collapse-item>
+                </el-collapse>
 				<el-form-item label="是否在列表中默认显示">
 					<el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
 						<el-radio :value="true">是</el-radio>
@@ -66,11 +81,12 @@
 </template>
 
 <script>
-import FieldState from '@/views/system/field-state-variables'
-import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
+import {addField} from '@/api/system-manager'
+import FieldState from "@/views/system/field-state-variables";
+import {fieldEditorMixin} from "./field-editor-mixin";
 
 export default {
-	name: "DateTimeWidgetEditor",
+	name: "DecimalWidgetEditor",
 	props: {
 		entity: String,
 		fieldName: String,
@@ -86,7 +102,7 @@ export default {
 			fieldProps: {
 				'name': '',
 				'label': '',
-				'type': 'DateTime',
+				'type': 'Decimal',
 				'defaultMemberOfListFlag': true,
 				'nullable': false,
 				'creatable': true,
@@ -95,6 +111,9 @@ export default {
                     'onlyUpdateByTrigger': 'false',
                 },
 				'fieldViewModel': {
+					'minValue': -999999999,
+					'maxValue': 999999999,
+					'precision': 2,
 					'validators': [],
 				},
 			},
@@ -108,7 +127,11 @@ export default {
 	},
 	methods: {
 		saveField() {
-			this.doSave('DateTime')
+			if (!this.validateField()) {
+				return
+			}
+
+			this.doSave('Decimal')
 		},
 
 		cancelSave() {
@@ -119,7 +142,6 @@ export default {
                 this.fieldProps.creatable = true;
             }
         },
-
 	}
 }
 </script>

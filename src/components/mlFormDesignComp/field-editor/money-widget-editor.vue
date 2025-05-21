@@ -1,6 +1,6 @@
 <template>
 	<el-container class="field-props-container" v-loading="saveLoading">
-		<el-header class="field-props-header" v-if="!showingInDialog">[整数]字段属性设置</el-header>
+		<el-header class="field-props-header" v-if="!showingInDialog">[金额]字段属性设置</el-header>
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
@@ -14,7 +14,7 @@
 						</template>
 					</el-input>
 				</el-form-item>
-                <el-collapse accordion class="mb-10">
+				<el-collapse accordion class="mb-10">
                     <el-collapse-item name="1">
                         <template #title>
                             <span class="field-editor-collapse-title">默认值设置</span>
@@ -26,6 +26,10 @@
                                 </span>
                             </el-tooltip>
                         </template>
+                        <el-form-item label="小数精度位数（不超过6位）">
+                            <el-input-number v-model="fieldProps.fieldViewModel.precision"
+                                            :min="0" :max="6" style="width: 100%"></el-input-number>
+                        </el-form-item>
                         <el-form-item label="最小值">
                             <el-input v-model.number="fieldProps.fieldViewModel.minValue"
                                     type="number" style="width: 100%"></el-input>
@@ -36,12 +40,6 @@
                         </el-form-item>
                     </el-collapse-item>
                 </el-collapse>
-				<el-form-item label="字段值是否唯一/不可重复">
-					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
-						<el-radio :value="true">是</el-radio>
-						<el-radio :value="false">否</el-radio>
-					</el-radio-group>
-				</el-form-item>
 				<el-form-item label="是否在列表中默认显示">
 					<el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
 						<el-radio :value="true">是</el-radio>
@@ -85,10 +83,10 @@
 <script>
 import {addField} from '@/api/system-manager'
 import FieldState from "@/views/system/field-state-variables";
-import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
+import {fieldEditorMixin} from "./field-editor-mixin";
 
 export default {
-	name: "IntegerWidgetEditor",
+	name: "MoneyWidgetEditor",
 	props: {
 		entity: String,
 		fieldName: String,
@@ -104,7 +102,7 @@ export default {
 			fieldProps: {
 				'name': '',
 				'label': '',
-				'type': 'Integer',
+				'type': 'Money',
 				'defaultMemberOfListFlag': true,
 				'nullable': false,
 				'creatable': true,
@@ -115,13 +113,12 @@ export default {
 				'fieldViewModel': {
 					'minValue': -999999999,
 					'maxValue': 999999999,
-					uniqueness: false,
+					'precision': 2,
 					'validators': [],
 				},
 			},
 
 			validators: [],
-
 		}
 	},
 	mounted() {
@@ -133,7 +130,7 @@ export default {
 				return
 			}
 
-			this.doSave('Integer')
+			this.doSave('Money')
 		},
 
 		cancelSave() {

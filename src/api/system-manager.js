@@ -209,8 +209,8 @@ export function previewLayout(entity) {
     return http.get('formLayout/previewLayout', { entity })
 }
 
-export function getOptionFields(appAbbr) {
-    return http.get('systemManager/getOptionFields', { appAbbr })
+export function getOptionFields(appAbbr, fieldType) {
+    return http.get('systemManager/getOptionFields', { appAbbr, fieldType })
 }
 
 export function getOptionItems(entity, field) {

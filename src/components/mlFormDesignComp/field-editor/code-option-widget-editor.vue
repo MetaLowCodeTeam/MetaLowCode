@@ -1,6 +1,6 @@
 <template>
     <el-container class="field-props-container" v-loading="saveLoading">
-        <el-header class="field-props-header" v-if="!showingInDialog">[多选项]字段属性设置</el-header>
+        <el-header class="field-props-header" v-if="!showingInDialog">[单选项]字段属性设置</el-header>
         <el-main class="field-props-pane">
             <el-form
                 ref="editorForm"
@@ -20,17 +20,12 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
-                <!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
-                <!--							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">-->
-                <!--						<el-option-->
-                <!--							v-for="(vt, vtIdx) in validators"-->
-                <!--							:key="vtIdx"-->
-                <!--							:label="vt.label"-->
-                <!--							:value="vt.value">-->
-                <!--						</el-option>-->
-                <!--					</el-select>-->
-                <!--				</el-form-item>-->
+				<el-form-item label="字段值是否唯一/不可重复">
+					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
+						<el-radio :value="true">是</el-radio>
+						<el-radio :value="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
                 <el-form-item label="是否在列表中默认显示">
                     <el-radio-group
                         v-model="fieldProps.defaultMemberOfListFlag"
@@ -90,7 +85,7 @@
                                 style="float: right; padding: 3px 0"
                                 link
                                 type="primary"
-                                @click="addTag"
+                                @click="openEditCodeOption"
                             >新增选项</el-button>
                         </div>
                     </template>
@@ -98,53 +93,53 @@
 					<div class="clear-fix">(空值)</div>
                     -->
                     <div
-                        v-for="(tagItem, idx) in tagItems"
+                        v-for="(optionItem, idx) in optionItems"
                         :key="idx"
                         class="clear-fix"
                         @mouseenter="hoverIdx = idx"
                         @mouseleave="hoverIdx = -1"
                     >
-                        {{ tagItem.label }}
-                        <div class="tag-item" v-if="!!tagItem.value && (hoverIdx === idx)">
+                        {{ optionItem.label }}
+                        <div class="option-item" v-show="!!optionItem.value && (hoverIdx === idx)">
                             <el-button
                                 link
                                 type="primary"
-                                class="tag-item-insert"
+                                class="option-item-insert"
                                 title="插入"
                                 icon="el-icon-plus"
-                                @click="insertTag(idx)"
+                                @click="insertOption(idx)"
                             ></el-button>
                             <el-button
                                 link
                                 type="primary"
-                                class="tag-item-up"
+                                class="option-item-up"
                                 title="上移"
                                 icon="el-icon-top"
-                                @click="upTag(idx)"
+                                @click="upOption(idx)"
                             ></el-button>
                             <el-button
                                 link
                                 type="primary"
-                                class="tag-item-down"
+                                class="option-item-down"
                                 title="下移"
                                 icon="el-icon-bottom"
-                                @click="downTag(idx)"
+                                @click="downOption(idx)"
                             ></el-button>
                             <el-button
                                 link
                                 type="primary"
-                                class="tag-item-edit"
+                                class="option-item-edit"
                                 title="编辑"
                                 icon="el-icon-edit"
-                                @click="editTag(idx)"
+                                @click="editOption(idx)"
                             ></el-button>
                             <el-button
                                 link
                                 type="primary"
-                                class="tag-item-delete"
+                                class="option-item-delete"
                                 title="删除"
                                 icon="el-icon-delete"
-                                @click="deleteTag(idx)"
+                                @click="deleteOption(idx)"
                             ></el-button>
                         </div>
                     </div>
@@ -155,24 +150,27 @@
                     <el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
                 </el-form-item>
             </el-form>
+            <EditCodeOptionDialog ref="editCodeOptionDialog" @confirm="addOption"/> 
         </el-main>
     </el-container>
+    <!-- -->
 </template>
 
 <script>
 import {
-    addTagField,
-    updateTagField,
+    addOptionField,
+    updateOptionField,
     getField,
-    getTagItems,
-    getTagFields,
+    getOptionItems,
+    getOptionFields,
 } from "@/api/system-manager";
-import FieldState from "@/views/system/field-state-variables";
-import { fieldEditorMixin } from "@/views/system/field-editor/field-editor-mixin";
 import { copyObj } from "@/utils/util";
-
+import FieldState from "@/views/system/field-state-variables";
+import {fieldEditorMixin} from "./field-editor-mixin";
+// 编辑编码单选项对话框
+import EditCodeOptionDialog from "@/views/system/data-dict/components/EditCodeOptionDialog.vue";
 export default {
-    name: "TagWidgetEditor",
+    name: "OptionWidgetEditor",
     props: {
         entity: String,
         fieldName: String,
@@ -183,29 +181,35 @@ export default {
         },
     },
     mixins: [fieldEditorMixin],
+    components: {
+        EditCodeOptionDialog
+    },
     data() {
         return {
             fieldProps: {
                 name: "",
                 label: "",
-                type: "Tag",
-                defaultMemberOfListFlag: false,
+                type: "Option",
+                defaultMemberOfListFlag: true,
                 nullable: false,
                 creatable: true,
                 updatable: true,
                 'extraAttrs': {
                     'onlyUpdateByTrigger': 'false',
                 },
-                fieldViewModel: {
-                    validators: [],
-                },
+				fieldViewModel: {
+					uniqueness: false,
+                    optionSyncModel: {
+                        entityName: '',
+                        fieldName: ''
+                    }
+
+				},
             },
 
-            tagItems: [],
+            optionItems: [],
 
             hoverIdx: -1,
-
-            validators: [],
             // 同步是否勾选
             checkedSync: false,
             // 所有可选的同步字段
@@ -220,8 +224,9 @@ export default {
     },
     methods: {
         async initApi(){
+            let appAbbr = this.$route.query.appAbbr;
             // 取所有可同步的字段
-            let res = await getTagFields();
+            let res = await getOptionFields(appAbbr, 'CodeOption');
             this.fieldsSync = [];
             if(res){
                 let fields = res.data || [];
@@ -242,38 +247,37 @@ export default {
         },
         async getFieldProps() {
             let res = await getField(this.fieldName, this.entity);
-            if (res && res.code == 200) {
-                if (res.data) {
-                    this.readFieldProps(res.data);
-                }
+            if(res){
+                this.readFieldProps(res.data);
             }
         },
 
         async readFieldProps(savedProps) {
             copyObj(this.fieldProps, savedProps);
-             // 如果不是新建
-             if(this.fieldState !== 1){
+            // 如果不是新建
+            if(this.fieldState !== 1){
                 // 如果有同步数据表示勾选了同步
-                let { tagSyncModel } = this.fieldProps.fieldViewModel;
-                if(tagSyncModel){
-                    let { entityName, fieldName } = tagSyncModel;
+                let { optionSyncModel } = this.fieldProps.fieldViewModel;
+                if(optionSyncModel){
+                    let { entityName, fieldName } = optionSyncModel;
                     if(entityName && fieldName){
                         this.checkedSync = true;
                         this.useFieldSync = entityName + '.' + fieldName
                     }
                 }
             }
-            if (!!savedProps.entityCode) {
-                this.fieldProps.entityCode = savedProps.entityCode;
-            }
             if(!this.fieldProps.extraAttrs){
                 this.fieldProps.extraAttrs = {
                     onlyUpdateByTrigger: 'false',
                 }
             }
-            let res = await getTagItems(this.entity, this.fieldName);
+            // if(this.fieldProps.fieldViewModel )
+            if (!!savedProps.entityCode) {
+                this.fieldProps.entityCode = savedProps.entityCode;
+            }
+            let res = await getOptionItems(this.entity, this.fieldName);
             if (res && res.code == 200) {
-                this.tagItems = !res.data ? [] : res.data;
+                this.optionItems = !res.data ? [] : res.data;
             }
         },
 
@@ -284,31 +288,30 @@ export default {
                     return false;
                 }
 
-                this.fieldProps.type = "Tag";
-                let tagList = [];
-                this.tagItems.forEach((item) => {
-                    if (!!item.label) {
-                        tagList.push(item.label);
+                this.fieldProps.type = "Option";
+                let optionList = [];
+                this.optionItems.forEach((item) => {
+                    if (!!item.value) {
+                        optionList.push({ key: item.label, value: item.value });
                     }
                 });
                 // 如果启用了同步
                 if(this.checkedSync){
                     let fieldSync = this.useFieldSync.split('.');
-                    let tagSyncModel = {
+                    let optionSyncModel = {
                         entityName: fieldSync[0],
                         fieldName: fieldSync[1]
                     };
-                    this.fieldProps.fieldViewModel.tagSyncModel = tagSyncModel
+                    this.fieldProps.fieldViewModel.optionSyncModel = optionSyncModel
                 }
-
-                let saveMethod = addTagField;
+                let saveMethod = addOptionField;
                 if (this.fieldState === FieldState.EDIT) {
-                    saveMethod = updateTagField;
+                    saveMethod = updateOptionField;
                 }
                 let res = await saveMethod(
                     this.fieldProps,
                     this.entity,
-                    tagList
+                    optionList
                 );
                 if (res && res.code == 200) {
                     this.$message.success("保存成功");
@@ -321,15 +324,46 @@ export default {
             this.$emit("cancelSave");
         },
 
-        validateTag(tagTxt, tagIdx) {
+        validateOption(optionTxt, optionIdx) {
             let result = true;
-            this.tagItems.forEach((item, idx) => {
-                if (item.label === tagTxt && idx !== tagIdx) result = false;
+            this.optionItems.forEach((item, idx) => {
+                if (item.label === optionTxt && idx !== optionIdx)
+                    result = false;
             });
             return result;
         },
 
-        addTag() {
+        getOptionMaxValue() {
+            let maxValue = 0;
+            this.optionItems.forEach((item, idx) => {
+                if (item.value > maxValue) {
+                    maxValue = item.value;
+                }
+            });
+            return maxValue;
+        },
+
+        addOption(option) {
+            if(this.checkOptionExist(option.label, option.code)){
+                this.$message.warning("选项已存在");
+                return;
+            }
+            let newOptionValue = this.getOptionMaxValue() + 1;
+            let newOption = {
+                label: option.label,
+                value: newOptionValue,
+                code: option.code,
+                saved: false,
+            };
+            this.optionItems.push(newOption);
+            this.$refs.editCodeOptionDialog.closeDialog();
+        },
+        // 检测选项是否存在
+        checkOptionExist(label, code){
+            return this.optionItems.some(item => item.label === label || item.code === code);
+        },
+
+        insertOption(optionIdx) {
             this.$prompt("请输入选项名称", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
@@ -337,17 +371,18 @@ export default {
                 inputErrorMessage: "输入不正确",
             })
                 .then(({ value }) => {
-                    if (this.validateTag(value, -1)) {
-                        let newTag = {
+                    if (this.validateOption(value, -1)) {
+                        let newOptionValue = this.getOptionMaxValue() + 1;
+                        let newOption = {
                             label: value,
-                            value: value,
+                            value: newOptionValue,
                             saved: false,
                         };
-                        if(newTag.label.indexOf('/') !== -1){
+                        if(newOption.label.indexOf('/') !== -1){
                             this.$message.warning("选项名称不能包含【/】");
                             return;
                         }
-                        this.tagItems.push(newTag);
+                        this.optionItems.splice(optionIdx + 1, 0, newOption);
                         this.$nextTick(() => {
                             console.log("Updated!");
                         });
@@ -360,68 +395,40 @@ export default {
                 });
         },
 
-        insertTag(tagIdx) {
-            this.$prompt("请输入选项名称", "提示", {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                inputPattern:/^[^\s,](?:.*[^\s,])?$/,
-                inputErrorMessage: "输入不正确",
-            })
-                .then(({ value }) => {
-                    if (this.validateTag(value, -1)) {
-                        let newTag = {
-                            label: value,
-                            value: value,
-                            saved: false,
-                        };
-                        if(newTag.label.indexOf('/') !== -1){
-                            this.$message.warning("选项名称不能包含【/】");
-                            return;
-                        }
-                        this.tagItems.splice(tagIdx + 1, 0, newTag);
-                        this.$nextTick(() => {
-                            console.log("Updated!");
-                        });
-                    } else {
-                        this.$message.warning("选项已存在");
-                    }
-                })
-                .catch(() => {
-                    this.$message.info("已取消");
-                });
-        },
-
-        upTag(tagIdx) {
-            if (tagIdx === 0) {
+        upOption(optionIdx) {
+            if (optionIdx === 0) {
                 this.$message.info("已到最上");
                 return;
             }
 
-            let tempTag = this.tagItems[tagIdx];
-            this.tagItems[tagIdx] = this.tagItems[tagIdx - 1];
-            this.tagItems[tagIdx - 1] = tempTag;
+            let tempOption = this.optionItems[optionIdx];
+            this.optionItems[optionIdx] = this.optionItems[optionIdx - 1];
+            this.optionItems[optionIdx - 1] = tempOption;
         },
 
-        downTag(tagIdx) {
+        downOption(optionIdx) {
             console.log(
-                "length: " + this.tagItems.length + ", current idx: " + tagIdx
+                "length: " +
+                    this.optionItems.length +
+                    ", current idx: " +
+                    optionIdx
             );
-            if (tagIdx === this.tagItems.length - 1) {
+            if (optionIdx === this.optionItems.length - 1) {
                 this.$message.info("已到最下");
                 return;
             }
 
-            let tempTag = this.tagItems[tagIdx];
-            this.tagItems[tagIdx] = this.tagItems[tagIdx + 1];
-            this.tagItems[tagIdx + 1] = tempTag;
+            let tempOption = this.optionItems[optionIdx];
+            this.optionItems[optionIdx] = this.optionItems[optionIdx + 1];
+            this.optionItems[optionIdx + 1] = tempOption;
         },
 
-        editTag(tagIdx) {
-            let oldTagLabel = this.tagItems[tagIdx].label;
+        editOption(optionIdx) {
+            let oldOptionLabel = this.optionItems[optionIdx].label;
             this.$prompt("请修改选项名称", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                inputValue: oldTagLabel,
+                inputValue: oldOptionLabel,
                 inputPattern:/^[^\s,](?:.*[^\s,])?$/,
                 inputErrorMessage: "输入不正确",
             })
@@ -430,8 +437,8 @@ export default {
                         this.$message.warning("选项名称不能包含'/'");
                         return;
                     }
-                    if (this.validateTag(value, oldTagLabel)) {
-                        this.tagItems[tagIdx].label = value;
+                    if (this.validateOption(value, optionIdx)) {
+                        this.optionItems[optionIdx].label = value;
                         this.$nextTick(() => {
                             console.log("Updated!");
                         });
@@ -444,17 +451,21 @@ export default {
                 });
         },
 
-        deleteTag(tagIdx) {
-            console.log(tagIdx);
+        deleteOption(optionIdx) {
             this.$confirm("确定删除该选项?", "提示")
                 .then(() => {
-                    this.tagItems.splice(tagIdx, 1);
+                    //TODO：后台需要检查改选项是否已被实体记录所引用！！
+                    this.optionItems.splice(optionIdx, 1);
                     this.$message.info("选项已删除");
                 })
                 .catch(() => {
                     this.$message.info("取消删除");
                 });
         },
+        // 打开编辑编码单选项对话框
+        openEditCodeOption(){
+            this.$refs.editCodeOptionDialog.openDialog();
+        }
     },
 };
 </script>
@@ -470,37 +481,37 @@ export default {
         overflow: auto;
     }
 
-    .tag-item {
+    .option-item {
         float: right;
         height: 22px;
         line-height: 22px;
         position: relative;
 
-        .tag-item-insert {
+        .option-item-insert {
             position: absolute;
             top: -8px;
             left: -100px;
         }
 
-        .tag-item-up {
+        .option-item-up {
             position: absolute;
-            top: -7px;
+            top: -6px;
             left: -86px;
         }
 
-        .tag-item-down {
+        .option-item-down {
             position: absolute;
             top: -7px;
             left: -66px;
         }
 
-        .tag-item-edit {
+        .option-item-edit {
             position: absolute;
             top: -7px;
             left: -42px;
         }
 
-        .tag-item-delete {
+        .option-item-delete {
             position: absolute;
             top: -8px;
             left: -18px;

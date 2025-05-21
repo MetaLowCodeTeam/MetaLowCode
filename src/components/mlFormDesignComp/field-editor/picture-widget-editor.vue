@@ -1,6 +1,6 @@
 <template>
 	<el-container class="field-props-container" v-loading="saveLoading">
-		<el-header class="field-props-header" v-if="!showingInDialog">[金额]字段属性设置</el-header>
+		<el-header class="field-props-header" v-if="!showingInDialog">[图片]字段属性设置</el-header>
 		<el-main class="field-props-pane">
 			<el-form ref="editorForm" :model="fieldProps" :rules="rules" label-position="left"
 					 label-width="220px" @submit.prevent>
@@ -14,7 +14,7 @@
 						</template>
 					</el-input>
 				</el-form-item>
-				<el-collapse accordion class="mb-10">
+                <el-collapse accordion class="mb-10">
                     <el-collapse-item name="1">
                         <template #title>
                             <span class="field-editor-collapse-title">默认值设置</span>
@@ -26,26 +26,49 @@
                                 </span>
                             </el-tooltip>
                         </template>
-                        <el-form-item label="小数精度位数（不超过6位）">
-                            <el-input-number v-model="fieldProps.fieldViewModel.precision"
-                                            :min="0" :max="6" style="width: 100%"></el-input-number>
+                        <el-form-item label="上传图片数量上限(张数)">
+                            <el-input-number v-model="fieldProps.fieldViewModel.maxFileCount"
+                                            :min="1" :max="20" style="width: 100%"></el-input-number>
                         </el-form-item>
-                        <el-form-item label="最小值">
-                            <el-input v-model.number="fieldProps.fieldViewModel.minValue"
-                                    type="number" style="width: 100%"></el-input>
+                        <el-form-item label="单张图片大小上限(单位MB)">
+                            <el-input-number v-model="fieldProps.fieldViewModel.fileMaxSize"
+                                            :min="1" :max="100" style="width: 100%"></el-input-number>
                         </el-form-item>
-                        <el-form-item label="最大值">
-                            <el-input v-model.number="fieldProps.fieldViewModel.maxValue"
-                                    type="number" style="width: 100%"></el-input>
+                        <el-form-item label="上传图片类型(多选)" prop="fieldViewModel.uploadFileTypes">
+                            <el-select multiple filterable :popper-append-to-body="false"
+                                    v-model="fieldProps.fieldViewModel.uploadFileTypes" style="width: 100%">
+                                <el-option
+                                    v-for="(ft, ftIdx) in fileTypes"
+                                    :key="ftIdx"
+                                    :label="ft.label"
+                                    :value="ft.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="上传说明提示">
+                            <el-input v-model="fieldProps.fieldViewModel.uploadHint"></el-input>
                         </el-form-item>
                     </el-collapse-item>
                 </el-collapse>
+<!--				<el-form-item label="字段校验函数(可多选)" prop="fieldViewModel.validators">-->
+<!--					<el-select multiple allow-create filterable default-first-option :popper-append-to-body="false"-->
+<!--							   v-model="fieldProps.fieldViewModel.validators" style="width: 100%">-->
+<!--						<el-option-->
+<!--							v-for="(vt, vtIdx) in validators"-->
+<!--							:key="vtIdx"-->
+<!--							:label="vt.label"-->
+<!--							:value="vt.value">-->
+<!--						</el-option>-->
+<!--					</el-select>-->
+<!--				</el-form-item>-->
+				<!--
 				<el-form-item label="是否在列表中默认显示">
-					<el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
-						<el-radio :value="true">是</el-radio>
-						<el-radio :value="false">否</el-radio>
-					</el-radio-group>
+				  <el-radio-group v-model="fieldProps.defaultMemberOfListFlag" style="float: right">
+					<el-radio :value="true">是</el-radio>
+					<el-radio :value="false">否</el-radio>
+				  </el-radio-group>
 				</el-form-item>
+				-->
 				<el-form-item label="是否允许空值">
 					<el-radio-group v-model="fieldProps.nullable" style="float: right" @change="handleNullableChange">
 						<el-radio :value="true">是</el-radio>
@@ -81,12 +104,13 @@
 </template>
 
 <script>
-import {addField} from '@/api/system-manager'
+import {addField, getField} from '@/api/system-manager'
 import FieldState from "@/views/system/field-state-variables";
-import {fieldEditorMixin} from "@/views/system/field-editor/field-editor-mixin";
+import {fieldEditorMixin} from "./field-editor-mixin";
+import {copyObj} from "@/utils/util";
 
 export default {
-	name: "MoneyWidgetEditor",
+	name: "PictureWidgetEditor",
 	props: {
 		entity: String,
 		fieldName: String,
@@ -102,8 +126,8 @@ export default {
 			fieldProps: {
 				'name': '',
 				'label': '',
-				'type': 'Money',
-				'defaultMemberOfListFlag': true,
+				'type': 'Picture',
+				'defaultMemberOfListFlag': false,
 				'nullable': false,
 				'creatable': true,
 				'updatable': true,
@@ -111,14 +135,46 @@ export default {
                     'onlyUpdateByTrigger': 'false',
                 },
 				'fieldViewModel': {
-					'minValue': -999999999,
-					'maxValue': 999999999,
-					'precision': 2,
+					'maxFileCount': 1,
+					'fileMaxSize': 5,
+					'uploadFileTypes': ['jpeg', 'png', 'gif'],
+					'uploadHint': '',
 					'validators': [],
 				},
 			},
 
+			rules: {
+				name: [
+					{required: true, message: '请输入字段名称', trigger: 'blur'},
+					{
+						pattern: /^[a-z]+[A-Za-z\d_]*$/,
+						message: '请以小写英文字母开头，中间可输入字母或数字，禁止中文',
+						trigger: 'blur'
+					},
+					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
+				],
+				label: [
+					{required: true, message: '请输入显示名称', trigger: 'blur'},
+					{
+						pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
+						message: '名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠',
+						trigger: 'blur'
+					},
+					{min: 2, max: 30, message: '名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠', trigger: 'blur'},
+				],
+				'fieldViewModel.uploadFileTypes': [
+					{required: true, message: '请选择上传图片类型', trigger: 'blur', type: 'array'},
+				],
+			},
+
 			validators: [],
+
+			fileTypes: [
+				{value: 'jpeg', label: 'JPG'},
+				{value: 'png', label: 'PNG'},
+				{value: 'gif', label: 'GIF'},
+				//{value: 'bmp', label: 'BMP'},
+			],
 		}
 	},
 	mounted() {
@@ -126,11 +182,7 @@ export default {
 	},
 	methods: {
 		saveField() {
-			if (!this.validateField()) {
-				return
-			}
-
-			this.doSave('Money')
+			this.doSave('Picture')
 		},
 
 		cancelSave() {
