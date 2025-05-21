@@ -14,12 +14,40 @@
 					</template>
 				</el-empty>
 				<div
-					class="report-item text-ellipsis"
+					class="report-item"
 					v-for="(item, inx) of reportList"
 					:key="inx"
 				>
-					{{ item.reportName }}
-                    <el-tooltip content="Excel" placement="left">
+					<div class="report-label" :title="item.reportName">
+                        {{ item.reportName }}
+                    </div>
+                    <div class="report-more">
+                        <el-dropdown @command="(command) => handleCommand(command, item)">
+                            <span class="ml-a-span">
+                                更多 <el-icon class="icon-top-2"><ArrowDown /></el-icon>
+                            </span>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="downExcel" v-if="defaultShow == 'ALL'">
+                                        下载Excel
+                                    </el-dropdown-item>
+                                    <el-dropdown-item command="previewExcel" v-if="defaultShow == 'ALL'">
+                                        预览Excel
+                                    </el-dropdown-item>
+                                    <el-dropdown-item command="downPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+                                        下载PDF
+                                    </el-dropdown-item>
+                                    <el-dropdown-item command="previewPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+                                        预览PDF
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
+                    <!-- <span class="ml-a-span fr">
+                        123
+                    </span> -->
+                    <!-- <el-tooltip content="Excel" placement="left">
                         <span class="down-icon excel" @click="downReport(item)" v-if="defaultShow == 'ALL'">
                             <SvgIcon icon-name="export-excel" style="width: 23px;height: 23px;" />
                         </span>
@@ -28,7 +56,7 @@
                         <span class="down-icon pdf" @click="downPdf(item)" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
                             <SvgIcon icon-name="export-pdf" style="width: 22px;height: 22px;"/>
                         </span>
-                    </el-tooltip>
+                    </el-tooltip> -->
 				</div>
 			</el-scrollbar>
 		</div>
@@ -79,11 +107,51 @@ const getReportConfigList = async () => {
 	loading.value = false;
 };
 
+const handleCommand = (command, item) => {
+    switch(command){
+        case "downExcel":
+            downReport(item)
+            break;
+        case "previewExcel":
+            previewExcel(item)
+            break;
+        case "downPdf":
+            downPdf(item)
+            break;
+        case "previewPdf":
+            previewPdf(item)
+            break;
+    }
+}
+
+const previewExcel = (item) => {
+    // 如需浏览器新开窗口
+    let url = router.resolve({
+    name: "FilePreview",
+    query: {
+        url: `/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`,
+        type: 'xlsx'
+    }
+    })
+    window.open(url.href)
+}
+
+const previewPdf = (item) => {
+    // 如需浏览器新开窗口
+    let url = router.resolve({
+    name: "FilePreview",
+    query: {
+        url: `/plugins/mannerReport/exportPDF?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`,
+        type: 'pdf'
+    }
+    })
+    window.open(url.href)
+}
+
 const downReport = async (item) => {
-    
 	window.open(
-		import.meta.env.VITE_APP_BASE_API +
-			`/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
+	    import.meta.env.VITE_APP_BASE_API +
+        `/plugins/mannerReport/exportExcelTemplate?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`
 	);
 };
 
@@ -140,28 +208,46 @@ defineExpose({
 </script>
 <style lang="scss" scoped>
 .report-item {
-	font-size: 14px;
-	height: 32px;
-	line-height: 32px;
-	background: #f5f5f5;
-	padding-left: 20px;
-	position: relative;
-	margin-bottom: 5px;
-	border-radius: 4px;
-	padding-right: 60px;
-	.down-icon {
-		position: absolute;
-		font-size: 18px;
-		cursor: pointer;
-        &.excel {
-            right: 34px;
-        }
-        &.pdf {
-            right: 8px;
-        }
-		&:hover {
-			color: var(--el-color-primary);
-		}
-	}
+    height: 32px;
+    font-size: 14px;
+    display: flex;
+    background: #f5f5f5;
+    margin-bottom: 5px;
+    align-items: center;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 0 10px;
+    .report-label {
+        flex: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .report-more {
+        width: 50px;
+    }
+	// font-size: 14px;
+	// height: 32px;
+	// line-height: 32px;
+	// background: #f5f5f5;
+	// padding-left: 20px;
+	// // position: relative;
+	// margin-bottom: 5px;
+	// border-radius: 4px;
+	// padding-right: 60px;
+	// .down-icon {
+	// 	position: absolute;
+	// 	font-size: 18px;
+	// 	cursor: pointer;
+    //     &.excel {
+    //         right: 34px;
+    //     }
+    //     &.pdf {
+    //         right: 8px;
+    //     }
+	// 	&:hover {
+	// 		color: var(--el-color-primary);
+	// 	}
+	// }
 }
 </style>

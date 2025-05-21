@@ -38,7 +38,8 @@ import OfficePdf from "./components/OfficePdf.vue";
 import OfficePptx from "./components/OfficePptx.vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const { publicSetting } = storeToRefs(useCommonStore());
 
 let loading = ref(false);
@@ -62,14 +63,14 @@ watch(
 	() => props.src,
 	(newVal) => {
 		// 获取文件类型
-		type.value = newVal.split(".").pop();
+		type.value = router.currentRoute.value.query?.type || newVal.split(".").pop();
 	}
 );
 
 onMounted(() => {
 	loading.value = true;
     if(props.src){
-        type.value = props.src.split(".").pop();
+        type.value = router.currentRoute.value.query?.type || props.src.split(".").pop();
     }
 });
 
