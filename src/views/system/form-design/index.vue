@@ -563,9 +563,11 @@ export default {
             } else {
                 this.$refs.vfDesigner.clearDesigner();
             }
-
-            if (data.optionData) {
+            if (data.optionData || data.codeOptionData) {
                 this.formOptionData = data.optionData;
+                if(data.codeOptionData) {
+                    this.formOptionData = Object.assign(this.formOptionData, data.codeOptionData);
+                }
                 this.$refs.vfDesigner.setTestOptionData(data.optionData);
             }
             this.loadFieldListData();

@@ -111,6 +111,7 @@ export const formFieldMapping = {
     'CodeOption': {
 		type: 'select',
 		options: {
+            optionValueType: 'String',
 			multiple: false,
 		}
 	},
