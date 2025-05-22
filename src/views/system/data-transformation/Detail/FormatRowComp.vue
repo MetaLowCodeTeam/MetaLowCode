@@ -105,7 +105,8 @@
 				curtItem.fieldType != 'Option' &&
 				curtItem.fieldType != 'Boolean' &&
 				curtItem.fieldType != 'DateTime' &&
-				curtItem.fieldType != 'Date'
+				curtItem.fieldType != 'Date' &&
+				curtItem.fieldType != 'CodeOption'
 			"
 			v-model="curtItem.sourceField"
 			placeholder="固定值"
@@ -133,7 +134,7 @@
 		<el-select
 			v-if="
 				curtItem.updateMode == 'toFixed' &&
-				(curtItem.fieldType == 'Option' || curtItem.fieldType == 'Tag')
+				(curtItem.fieldType == 'Option' || curtItem.fieldType == 'Tag' || curtItem.fieldType == 'CodeOption')
 			"
 			v-model="curtItem.sourceField"
 			v-loading="optionItemLoading"
@@ -197,7 +198,7 @@ import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-searc
 /**
  * API
  */
-import { getOptionItems, getTagItems } from "@/api/system-manager";
+import { getOptionItems, getTagItems, getCodeOptionItems } from "@/api/system-manager";
 const props = defineProps({
 	modelValue: null,
     useFields: {
@@ -277,11 +278,13 @@ let optionItemLoading = ref(false);
 // 更新方式切换
 const updateModeChange = async (item, target) => {
 	let { fieldType, updateMode } = item;
-	if (fieldType == "Tag" || fieldType == "Option") {
+	if (fieldType == "Tag" || fieldType == "Option" || fieldType == "CodeOption") {
 		let res;
 		if (fieldType == "Tag") {
 			res = await getTagItems(props.targetEntity.name, item.targetField);
-		} else {
+		} else if (fieldType == "CodeOption") {
+            res = await getCodeOptionItems(props.targetEntity.name, item.targetField);
+        }else{
 			res = await getOptionItems(
 				props.targetEntity.name,
 				item.targetField

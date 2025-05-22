@@ -73,6 +73,9 @@ const loadForm = async () => {
 		if (res.data?.layoutJson) {
 			haveLayoutJson.value = true;
 			optionData.value = res.data.optionData || {};
+            if(res.data.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
+            }
 			nextTick(() => {
 				vFormRef.value.setFormJson(res.data.layoutJson);
 				nextTick(() => {

@@ -123,6 +123,18 @@ export function updateOptionField(field, entity, optionList) {
     })
 }
 
+export function addCodeOptionField(field, entity, codeOptionList) {
+    return http.post('systemManager/addCodeOptionField', { field, codeOptionList }, {
+        params: { entity }
+    })
+}
+
+export function updateCodeOptionField(field, entity, codeOptionList) {
+    return http.post('systemManager/updateCodeOptionField', { field, codeOptionList }, {
+        params: { entity }
+    })
+}
+
 export function addTagField(field, entity, tagList) {
     return http.post('systemManager/addTagField', { field, tagList }, {
         params: { entity }
@@ -217,8 +229,27 @@ export function getOptionItems(entity, field) {
     return http.get('systemManager/getOptionItems', { entity, field })
 }
 
+export function getCodeOptionItems(entity, field) {
+    return http.get('systemManager/getCodeOptionItems', { entity, field })
+}
+
+
+export function optionCanBeDeleted(entity, field, value) {
+    return http.get('systemManager/optionCanBeDeleted', { entity, field, value })
+}
+
+export function codeOptionCanBeDeleted(entity, field, value) {
+    return http.get('systemManager/codeOptionCanBeDeleted', { entity, field, value })
+}
+
 export function saveOptionItems(entity, field, optionItems) {
     return http.post('systemManager/saveOptionItems', optionItems, {
+        params: { entity, field }
+    })
+}
+
+export function saveCodeOptionItems(entity, field, codeOptionItems) {
+    return http.post('systemManager/saveCodeOptionItems', codeOptionItems, {
         params: { entity, field }
     })
 }

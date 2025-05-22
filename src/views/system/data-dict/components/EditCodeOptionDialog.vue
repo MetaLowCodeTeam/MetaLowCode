@@ -2,7 +2,7 @@
 	<ml-dialog :title="title" v-model="isShow" width="400px">
 		<el-form>
 			<el-form-item label="编码">
-				<el-input v-model="fromData.code" clearable />
+				<el-input v-model="fromData.value" clearable />
 			</el-form-item>
 			<el-form-item label="名称">
 				<el-input v-model="fromData.label" clearable />
@@ -38,9 +38,9 @@ const closeDialog = () => {
 };
 
 const onConfirm = () => {
-	let { code, label } = fromData.value;
+	let { value, label } = fromData.value;
 	let labelReg = /^[^\s,](?:.*[^\s,])?$/;
-	if (!code) {
+	if (!value) {
 		ElMessage.warning("编码不能为空");
 		return;
 	}

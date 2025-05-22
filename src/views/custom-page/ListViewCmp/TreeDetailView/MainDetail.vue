@@ -88,6 +88,9 @@ const initFormData = async (entity) => {
 		if (res.data.layoutJson) {
 			haveLayoutJson.value = true;
 			optionData.value = res.data.optionData || {};
+            if(res.data.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
+            }
 			let { type } = props;
 			nextTick(async () => {
 				// 编辑

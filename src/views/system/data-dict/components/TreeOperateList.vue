@@ -24,7 +24,7 @@
 				<div class="title fl">{{ cutNode.title }}</div>
 				<div class="section-fr fr">
 					<el-button
-						@click.stop="operateItem(false, 'add')"
+						@click.stop="operateItem(-1, 'add')"
 						:disabled="treeList.length < 1"
 					>
 						<span class="btn-icon-t1">
@@ -51,6 +51,9 @@
 						<div class="op-item-text yichu" :title="item.label">
 							{{ item.label }}
                             <span v-if="props.pageType == 'system'">
+                                ({{ item.value }})
+                            </span>
+                            <span v-if="props.isCodeOption">
                                 ({{ item.value }})
                             </span>
 						</div>
@@ -103,14 +106,19 @@
         :saveFn="saveFn"
         @refresh="getMainList"
     />
+    <EditCodeOptionDialog 
+        ref="editCodeOptionDialogRef" 
+        @confirm="onEditCodeOptionConfirm"
+    />
 </template>
 
 <script setup>
 import { inject, nextTick, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
-import http from "@/utils/request";
 import operateSystemDialog from "./operateSystemDialog.vue";
+import EditCodeOptionDialog from "./EditCodeOptionDialog.vue";
+import { optionCanBeDeleted, codeOptionCanBeDeleted } from "@/api/system-manager";
 const props = defineProps({
 	title: { type: String, default: "" },
 	getTreeFn: { type: Function },
@@ -118,6 +126,8 @@ const props = defineProps({
 	saveFn: { type: Function },
     deleteFn: { type: Function },
     pageType: { type: String, default: "" },
+    // 是否是编码单选项
+    isCodeOption: { type: Boolean, default: false },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
@@ -145,7 +155,7 @@ const getTreeList = async () => {
 	treeLoading.value = true;
 	mainLoading.value = true;
     let { appAbbr } = router.currentRoute.value.query;  
-	let res = await props.getTreeFn(appAbbr);
+	let res = await props.getTreeFn(appAbbr, props.isCodeOption ? 'CodeOption' : '');
 	if (res) {
         treeList.value = [];
         if(props.pageType == 'system') {
@@ -255,8 +265,19 @@ const getMainList = async () => {
 	mainLoading.value = false;
 };
 let operateSystemDialogRef = ref(null);
+let editCodeOptionDialogRef = ref(null);
+let currentEditType = ref('');
+let currentEditInx = ref(null);
 // 新增、插入、编辑
 const operateItem = (inx, targe, item) => {
+    if(props.isCodeOption) {
+        currentEditType.value = targe;
+        currentEditInx.value = inx;
+        console.log(item);
+        let data = item ? JSON.parse(JSON.stringify(item)) : null;
+        editCodeOptionDialogRef.value.openDialog(data);
+        return
+    }
     if(props.pageType == 'system') {
         operateSystemDialogRef.value.openDialog({ 
             systemName: cutNode.value.name,
@@ -345,6 +366,7 @@ const moveItem = (inx, target) => {
 	if (target == "top") {
 		if (inx == 0) {
 			$ElMessage.warning("已经在最上面了");
+            return
 		} else {
 			mainList.value[inx - 1] = mainList.value[inx];
 			mainList.value[inx] = prevItem;
@@ -352,6 +374,7 @@ const moveItem = (inx, target) => {
 	} else {
 		if (inx == mainList.value.length - 1) {
 			$ElMessage.warning("已经在最下面面了");
+            return
 		} else {
 			mainList.value[inx + 1] = mainList.value[inx];
 			mainList.value[inx] = nextItem;
@@ -381,11 +404,7 @@ const delItem = (inx, item) => {
 			}
 			//TODO：后台需要检查改选项是否已被实体记录所引用！！
 			if (props.title == "单选项管理") {
-				let res = await http.get("/systemManager/optionCanBeDeleted", {
-					entity: cutNode.value.parentName,
-					field: cutNode.value.name,
-					value: item.value,
-				});
+				let res = await optionCanBeDeleted(cutNode.value.parentName, cutNode.value.name, item.value);
 				if (res) {
 					if (res.data) {
 						mainList.value.splice(inx, 1);
@@ -394,13 +413,75 @@ const delItem = (inx, item) => {
 						$ElMessage.warning("该选项有数据正在使用，无法删除。");
 					}
 				}
-			} else {
+			} 
+            else if(props.isCodeOption) {
+                let res = await codeOptionCanBeDeleted(cutNode.value.parentName, cutNode.value.name, item.value);
+                if(res && res.data) {
+                    mainList.value.splice(inx, 1);
+                    onSave("删除成功");
+                }else {
+                    $ElMessage.warning("该选项有数据正在使用，无法删除。");
+                }
+            }
+            else {
 				mainList.value.splice(inx, 1);
 				onSave("删除成功");
 			}
 		})
 		.catch(() => {});
 };
+
+
+const onEditCodeOptionConfirm = (item) => {
+    if(currentEditType.value == 'add') {
+        // 检查是否已存在相同项（根据实际业务需求调整校验条件）
+        if(isEditCodeOption(mainList.value, item)) {
+            mainList.value.push(item);
+            onSave();
+        }
+    }
+    if(currentEditType.value == 'ins') {
+        // 检查是否已存在相同项（根据实际业务需求调整校验条件）
+        if(isEditCodeOption(mainList.value, item)) {
+            mainList.value.splice(currentEditInx.value, 0, item);
+            onSave();
+        }
+    }
+    if(currentEditType.value == 'edit') {
+        let oldItem = mainList.value[currentEditInx.value];
+        // 检查是否有其他项使用了相同的值（排除当前编辑的项）
+        let list = mainList.value.filter(el => el.value != oldItem.value);
+        if(isEditCodeOption(list, item)) {
+            mainList.value[currentEditInx.value] = {
+                ...oldItem,  // 保留原有属性
+                ...item,     // 应用新属性
+                saved: false // 标记为需要保存
+            };
+            onSave();
+        }
+    }
+    
+}
+
+const isEditCodeOption = (list, item) => {
+    const isValueConflict = list.some((existItem) => 
+       existItem.value === item.value
+    );
+    const isLabelConflict = list.some((existItem) => 
+        existItem.label === item.label
+    );
+    
+    if (isValueConflict) {
+        $ElMessage.warning('已存在相同【编码】的选项');
+        return;
+    }
+    if (isLabelConflict) {
+        $ElMessage.warning('已存在相同【名称】的选项');
+        return;
+    }
+    return true;
+}
+
 
 // 保存
 const onSave = async (msg) => {
@@ -425,10 +506,13 @@ const onSave = async (msg) => {
     }
 	if (res) {
 		$ElMessage.success(msg || "保存成功");
+        editCodeOptionDialogRef.value.closeDialog();
 		getMainList();
-	}
+	}else {
+        mainLoading.value = false;
+    }
 
-	mainLoading.value = false;
+	
 };
 
 // const getApprovalList = () => {};

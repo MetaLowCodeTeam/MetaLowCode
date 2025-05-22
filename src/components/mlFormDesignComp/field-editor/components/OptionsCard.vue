@@ -15,7 +15,12 @@
 				:key="inx"
 			>
 				<div class="label-item">
-					{{ item.label }}
+					<span>
+                        {{ item.label }}
+                    </span>
+					<span v-if="showCode">
+						[{{ item.value }}]
+					</span>
 				</div>
 				<div class="option-item">
 					<el-button
@@ -71,6 +76,10 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
+    showCode: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const emit = defineEmits(["addOption", "insertOption", "upOption", "downOption", "editOption", "deleteOption"]);

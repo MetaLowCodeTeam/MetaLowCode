@@ -249,6 +249,12 @@ const routes = [
                                 component: 'system/data-dict/option-manager',
                                 meta: { title: '单选项管理', icon: 'el-icon-open', role: 'r6005' }
                             },
+                            {
+                                path: appPath + 'code-option-manager',
+                                name: 'CodeOptionManager',
+                                component: 'system/data-dict/code-option-manager',
+                                meta: { title: '编码单选项管理', icon: 'el-icon-open', role: 'r6026' }
+                            },
 
                             {
                                 path: appPath + 'tag-manager',

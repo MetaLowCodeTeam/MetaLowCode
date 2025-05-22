@@ -480,6 +480,9 @@ const getTableList = async () => {
         if (formLayoutRes) {
             layoutJson.value = formLayoutRes.data?.layoutJson || null;
             optionData.value = formLayoutRes.data?.optionData || {};
+            if(formLayoutRes.data.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, formLayoutRes.data.codeOptionData);
+            }
         }
         loading.value = false;
     } else {

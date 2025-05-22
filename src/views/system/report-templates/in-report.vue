@@ -92,6 +92,9 @@ const initExternalData = async () => {
         if (layoutData) {
             haveLayoutJson.value = true;
             optionData.value = layoutData.optionData || {};
+            if(layoutData.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, layoutData.codeOptionData);
+            }
             if (layoutData.formUploadParam) {
                 globalDsv.value.cloudUploadToken =
                     layoutData.formUploadParam.cloudUploadToken;

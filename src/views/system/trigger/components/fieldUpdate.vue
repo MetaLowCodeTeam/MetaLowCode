@@ -140,7 +140,7 @@
                         type="datetime"
                     />
                     <el-input
-                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' && toFixedForFieldType != 'ReferenceList' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
+                        v-if="updateRule.updateMode == 'toFixed' &&  toFixedForFieldType != 'Reference' && toFixedForFieldType != 'ReferenceList' &&  toFixedForFieldType != 'Tag' &&  toFixedForFieldType != 'Option' && toFixedForFieldType != 'CodeOption' && toFixedForFieldType != 'Boolean' && toFixedForFieldType != 'DateTime' && toFixedForFieldType != 'Date'"
                         v-model="updateRule.sourceField"
                         placeholder="固定值"
                     ></el-input>
@@ -158,7 +158,7 @@
                         </template>
                     </el-input>
                     <el-select
-                        v-if="updateRule.updateMode == 'toFixed' && toFixedForFieldType == 'Option'"
+                        v-if="updateRule.updateMode == 'toFixed' && (toFixedForFieldType == 'Option' || toFixedForFieldType == 'CodeOption')"
                         v-model="updateRule.sourceField"
                         v-loading="optionItemLoading"
                         filterable
@@ -251,7 +251,7 @@
 import { queryEntityFields } from "@/api/crud";
 import { ref, onMounted, inject, reactive, nextTick } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
-import { getOptionItems, getTagItems } from "@/api/system-manager";
+import { getOptionItems, getTagItems, getCodeOptionItems } from "@/api/system-manager";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
@@ -515,7 +515,7 @@ const targetFieldChange = async (e) => {
     } else {
         updateRule.sourceField = "";
     }
-    if (e.fieldType == "Tag" || e.fieldType == "Option") {
+    if (e.fieldType == "Tag" || e.fieldType == "Option" || e.fieldType == "CodeOption") {
         optionItemLoading.value = true;
         let typeEntityName = trigger.value.defaultTargetEntity.entityName;
         let typeFieldName = e.fieldName;
@@ -524,6 +524,10 @@ const targetFieldChange = async (e) => {
             res = await getTagItems(typeEntityName, typeFieldName);
             updateRule.updateMode = "toFixed";
             updateRule.sourceField = [];
+        } else if (e.fieldType == "CodeOption") {
+            res = await getCodeOptionItems(typeEntityName, typeFieldName);
+            updateRule.updateMode = "toFixed";
+            updateRule.sourceField = {};
         } else {
             res = await getOptionItems(typeEntityName, typeFieldName);
             updateRule.updateMode = "toFixed";

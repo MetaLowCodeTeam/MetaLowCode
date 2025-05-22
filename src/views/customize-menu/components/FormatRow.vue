@@ -33,7 +33,7 @@
         >{{ row[column.fieldName] ? row[column.fieldName] + "%" : '' }}</div>
         <div
             class="text-ellipsis"
-            v-else-if="column.fieldType == 'Option'"
+            v-else-if="column.fieldType == 'Option' || column.fieldType == 'CodeOption'"
         >{{ row[column.fieldName] ? row[column.fieldName].label : '' }}</div>
         <div
             class="text-ellipsis"

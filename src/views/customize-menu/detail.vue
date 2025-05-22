@@ -592,6 +592,9 @@ const initData = async () => {
 		if (res.data?.layoutJson) {
 			haveLayoutJson.value = true;
 			optionData.value = res.data.optionData || {};
+            if(res.data.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
+            }
 			// 根据数据渲染出页面填入的值，填过
 			nextTick(async () => {
 				globalDsv.value.formStatus = 'read';

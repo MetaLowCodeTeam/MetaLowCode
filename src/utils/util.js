@@ -212,7 +212,7 @@ export function setColumnFormatter(columnObj) {
         columnObj.formatter = formatRefColumn
     } else if (columnObj.type === 'ReferenceList') {
         columnObj.formatter = formatRefListColumn
-    } else if (columnObj.type === 'Option') {
+    } else if (columnObj.type === 'Option' || columnObj.type === 'CodeOption') {
         columnObj.formatter = formatOptionColumn
     } /*else if (columnObj.type === 'Tag') {
     columnObj.formatter = formatTagColumn

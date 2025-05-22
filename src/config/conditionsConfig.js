@@ -75,6 +75,7 @@ export default {
     Percent: ["EQ", "GT", "LT", "GE", "LE", "BW", "NL", "NT"],
     Boolean: ["EQ", "NL", "NT"],
     Option: ["EQ", "NEQ", "NL", "NT"],
+    CodeOption: ["EQ", "NEQ", "NL", "NT"],
     Status: ["EQ", "NEQ", "NL", "NT"],
     /**
      * 条件值组件
@@ -92,7 +93,7 @@ export default {
         },
         // 日期区间
         datePickerBw: {
-            type: ["DateTime", "Date"],
+            type: ["DateTime", "Date"],    
             op: ["BW"],
         },
         // 数字输入框
@@ -112,7 +113,7 @@ export default {
         },
         // option下拉框
         optionData: {
-            type: ["Tag", "Option", "Status"],
+            type: ["Tag", "Option", "Status", "CodeOption"],
             op: ["EQ", "NEQ", "LK", "NLK"],
         },
         // 应用类型搜索组件

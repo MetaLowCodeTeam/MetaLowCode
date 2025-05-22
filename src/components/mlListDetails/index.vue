@@ -145,6 +145,9 @@ const refresh = async () => {
 			globalDsv.value.formEntityId = detailDialog.id;
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
+            if(res.data.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
+            }
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let formData = await queryById(detailDialog.id);

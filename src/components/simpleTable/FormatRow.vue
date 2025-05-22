@@ -25,7 +25,7 @@
 	<div class="text-ellipsis" v-else-if="column.type == 'Percent'">
 		{{ row[column.prop] ? row[column.prop] + "%" : "" }}
 	</div>
-	<div class="text-ellipsis" v-else-if="column.type == 'Option'">
+	<div class="text-ellipsis" v-else-if="column.type == 'Option' || column.type == 'CodeOption'">
 		{{ row[column.prop] ? row[column.prop].label : "" }}
 	</div>
 	<div class="text-ellipsis" v-else-if="column.type == 'Boolean'">

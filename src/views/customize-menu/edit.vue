@@ -299,6 +299,9 @@ const initFormLayout = async () => {
         if (res.data?.layoutJson) {
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
+            if(res.data.codeOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
+            }
             if (res.data.formUploadParam) {
                 globalDsv.value.cloudUploadToken =
                     res.data.formUploadParam.cloudUploadToken;

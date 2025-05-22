@@ -77,73 +77,17 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-card class="box-card" shadow="never" v-else>
-                    <template #header>
-                        <div class="clear-fix">
-                            <span>选项管理</span>
-                            <el-button
-                                style="float: right; padding: 3px 0"
-                                link
-                                type="primary"
-                                @click="openEditCodeOption"
-                            >新增选项</el-button>
-                        </div>
-                    </template>
-                    <!--
-					<div class="clear-fix">(空值)</div>
-                    -->
-                    <div
-                        v-for="(optionItem, idx) in optionItems"
-                        :key="idx"
-                        class="clear-fix"
-                        @mouseenter="hoverIdx = idx"
-                        @mouseleave="hoverIdx = -1"
-                    >
-                        {{ optionItem.label }}
-                        <div class="option-item" v-show="!!optionItem.value && (hoverIdx === idx)">
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-insert"
-                                title="插入"
-                                icon="el-icon-plus"
-                                @click="insertOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-up"
-                                title="上移"
-                                icon="el-icon-top"
-                                @click="upOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-down"
-                                title="下移"
-                                icon="el-icon-bottom"
-                                @click="downOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-edit"
-                                title="编辑"
-                                icon="el-icon-edit"
-                                @click="editOption(idx)"
-                            ></el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                class="option-item-delete"
-                                title="删除"
-                                icon="el-icon-delete"
-                                @click="deleteOption(idx)"
-                            ></el-button>
-                        </div>
-                    </div>
-                </el-card>
+                <OptionsCard 
+                    v-else
+                    :optionItems="optionItems"
+                    @addOption="openEditCodeOption"
+                    @insertOption="insertOption"
+                    @upOption="upOption"
+                    @downOption="downOption"
+                    @editOption="editOption"
+                    @deleteOption="deleteOption"
+                    showCode
+                />
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
                     <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
@@ -158,10 +102,10 @@
 
 <script>
 import {
-    addOptionField,
-    updateOptionField,
+    addCodeOptionField,
+    updateCodeOptionField,
     getField,
-    getOptionItems,
+    getCodeOptionItems,
     getOptionFields,
 } from "@/api/system-manager";
 import { copyObj } from "@/utils/util";
@@ -169,6 +113,7 @@ import FieldState from "@/views/system/field-state-variables";
 import {fieldEditorMixin} from "./field-editor-mixin";
 // 编辑编码单选项对话框
 import EditCodeOptionDialog from "@/views/system/data-dict/components/EditCodeOptionDialog.vue";
+import OptionsCard from "./components/OptionsCard.vue";
 export default {
     name: "OptionWidgetEditor",
     props: {
@@ -182,7 +127,8 @@ export default {
     },
     mixins: [fieldEditorMixin],
     components: {
-        EditCodeOptionDialog
+        EditCodeOptionDialog,
+        OptionsCard
     },
     data() {
         return {
@@ -209,13 +155,16 @@ export default {
 
             optionItems: [],
 
-            hoverIdx: -1,
             // 同步是否勾选
             checkedSync: false,
             // 所有可选的同步字段
             fieldsSync: [],
             // 选择的同步字段
             useFieldSync: "",
+            // 操作索引
+            editInx: -1,
+            // 插入索引
+            insertInx: -1,
         };
     },
     mounted() {
@@ -275,7 +224,7 @@ export default {
             if (!!savedProps.entityCode) {
                 this.fieldProps.entityCode = savedProps.entityCode;
             }
-            let res = await getOptionItems(this.entity, this.fieldName);
+            let res = await getCodeOptionItems(this.entity, this.fieldName);
             if (res && res.code == 200) {
                 this.optionItems = !res.data ? [] : res.data;
             }
@@ -288,11 +237,11 @@ export default {
                     return false;
                 }
 
-                this.fieldProps.type = "Option";
+                this.fieldProps.type = "CodeOption";
                 let optionList = [];
                 this.optionItems.forEach((item) => {
                     if (!!item.value) {
-                        optionList.push({ key: item.label, value: item.value });
+                        optionList.push({ key: item.label, value: item.value, code: item.code });
                     }
                 });
                 // 如果启用了同步
@@ -304,9 +253,9 @@ export default {
                     };
                     this.fieldProps.fieldViewModel.optionSyncModel = optionSyncModel
                 }
-                let saveMethod = addOptionField;
+                let saveMethod = addCodeOptionField;
                 if (this.fieldState === FieldState.EDIT) {
-                    saveMethod = updateOptionField;
+                    saveMethod = updateCodeOptionField;
                 }
                 let res = await saveMethod(
                     this.fieldProps,
@@ -344,55 +293,65 @@ export default {
         },
 
         addOption(option) {
-            if(this.checkOptionExist(option.label, option.code)){
-                this.$message.warning("选项已存在");
-                return;
+            // 是编辑
+            if(this.editInx > -1){
+                // 获取正在编辑的选项
+                const editingOption = this.optionItems[this.editInx];
+                
+                // 检查是否有其他选项使用了相同的label或value（排除自己）
+                const isLabelExist = this.optionItems.some((item, index) => 
+                    index !== this.editInx && item.label === option.label
+                );
+                const isValueExist = this.optionItems.some((item, index) => 
+                    index !== this.editInx && item.value === option.value
+                );
+                
+                if (isLabelExist) {
+                    this.$message.warning("选项名称已存在");
+                    return;
+                }
+                if (isValueExist) {
+                    this.$message.warning("选项值已存在");
+                    return;
+                }
+                
+                // 更新现有选项
+                this.optionItems[this.editInx] = {
+                    ...editingOption,
+                    label: option.label,
+                    value: option.value,
+                    saved: false // 标记为未保存
+                };
+                
+                this.editInx = -1; // 重置编辑索引
             }
-            let newOptionValue = this.getOptionMaxValue() + 1;
+            // 新建时校验：检查是否已存在完全相同的label或code
+            if (this.checkOptionExist(option.label, option.value)) {
+                this.$message.warning("选项名称或编码已存在");
+                return;
+            };
+            // 创建新选项
             let newOption = {
                 label: option.label,
-                value: newOptionValue,
-                code: option.code,
+                value: option.value,
                 saved: false,
             };
-            this.optionItems.push(newOption);
+            if(this.insertInx !== -1){
+                this.optionItems.splice(this.insertInx, 0, newOption);
+                this.insertInx = -1;
+            }else{
+                this.optionItems.push(newOption);
+            }
             this.$refs.editCodeOptionDialog.closeDialog();
         },
         // 检测选项是否存在
-        checkOptionExist(label, code){
-            return this.optionItems.some(item => item.label === label || item.code === code);
+        checkOptionExist(label, value){
+            return this.optionItems.some(item => item.label === label || item.value === value);
         },
-
+        // 插入选项
         insertOption(optionIdx) {
-            this.$prompt("请输入选项名称", "提示", {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                inputPattern:/^[^\s,](?:.*[^\s,])?$/,
-                inputErrorMessage: "输入不正确",
-            })
-                .then(({ value }) => {
-                    if (this.validateOption(value, -1)) {
-                        let newOptionValue = this.getOptionMaxValue() + 1;
-                        let newOption = {
-                            label: value,
-                            value: newOptionValue,
-                            saved: false,
-                        };
-                        if(newOption.label.indexOf('/') !== -1){
-                            this.$message.warning("选项名称不能包含【/】");
-                            return;
-                        }
-                        this.optionItems.splice(optionIdx + 1, 0, newOption);
-                        this.$nextTick(() => {
-                            console.log("Updated!");
-                        });
-                    } else {
-                        this.$message.warning("选项已存在");
-                    }
-                })
-                .catch(() => {
-                    this.$message.info("已取消");
-                });
+            this.insertInx = optionIdx;
+            this.openEditCodeOption();
         },
 
         upOption(optionIdx) {
@@ -424,31 +383,34 @@ export default {
         },
 
         editOption(optionIdx) {
-            let oldOptionLabel = this.optionItems[optionIdx].label;
-            this.$prompt("请修改选项名称", "提示", {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                inputValue: oldOptionLabel,
-                inputPattern:/^[^\s,](?:.*[^\s,])?$/,
-                inputErrorMessage: "输入不正确",
-            })
-                .then(({ value }) => {
-                    if(value.indexOf('/') !== -1){
-                        this.$message.warning("选项名称不能包含'/'");
-                        return;
-                    }
-                    if (this.validateOption(value, optionIdx)) {
-                        this.optionItems[optionIdx].label = value;
-                        this.$nextTick(() => {
-                            console.log("Updated!");
-                        });
-                    } else {
-                        this.$message.warning("选项已存在");
-                    }
-                })
-                .catch(() => {
-                    this.$message.info("已取消");
-                });
+            this.editInx = optionIdx;
+            let editOp = JSON.parse(JSON.stringify(this.optionItems[optionIdx]));
+            this.openEditCodeOption(editOp);
+            // let oldOptionLabel = this.optionItems[optionIdx].label;
+            // this.$prompt("请修改选项名称", "提示", {
+            //     confirmButtonText: "确定",
+            //     cancelButtonText: "取消",
+            //     inputValue: oldOptionLabel,
+            //     inputPattern:/^[^\s,](?:.*[^\s,])?$/,
+            //     inputErrorMessage: "输入不正确",
+            // })
+            //     .then(({ value }) => {
+            //         if(value.indexOf('/') !== -1){
+            //             this.$message.warning("选项名称不能包含'/'");
+            //             return;
+            //         }
+            //         if (this.validateOption(value, optionIdx)) {
+            //             this.optionItems[optionIdx].label = value;
+            //             this.$nextTick(() => {
+            //                 console.log("Updated!");
+            //             });
+            //         } else {
+            //             this.$message.warning("选项已存在");
+            //         }
+            //     })
+            //     .catch(() => {
+            //         this.$message.info("已取消");
+            //     });
         },
 
         deleteOption(optionIdx) {
@@ -463,8 +425,8 @@ export default {
                 });
         },
         // 打开编辑编码单选项对话框
-        openEditCodeOption(){
-            this.$refs.editCodeOptionDialog.openDialog();
+        openEditCodeOption(data){
+            this.$refs.editCodeOptionDialog.openDialog(data);
         }
     },
 };

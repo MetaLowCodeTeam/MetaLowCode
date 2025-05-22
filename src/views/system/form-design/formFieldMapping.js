@@ -108,6 +108,13 @@ export const formFieldMapping = {
 		}
 	},
 
+    'CodeOption': {
+		type: 'select',
+		options: {
+			multiple: false,
+		}
+	},
+
 	'MultiOption': {
 		type: 'select',
 		options: {

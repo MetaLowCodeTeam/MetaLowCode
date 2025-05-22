@@ -198,8 +198,11 @@ onMounted(() => {
 
 const initData = () => {
 	curtFormLayout.value = props.formLayout || {};
-	let { optionData, formUploadParam, layoutJson } = curtFormLayout.value;
+	let { optionData, formUploadParam, layoutJson, codeOptionData } = curtFormLayout.value;
 	myOptionData.value = optionData || {};
+    if(codeOptionData) {
+        myOptionData.value = Object.assign(myOptionData.value, codeOptionData);
+    }
 	if (formUploadParam) {
 		globalDsv.value.cloudUploadToken = formUploadParam.cloudUploadToken;
 		globalDsv.value.cloudStorage = formUploadParam.cloudStorage;
