@@ -29,7 +29,7 @@
                 <el-col :span="12" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">
                         顶部区域隐藏
-                        <el-tooltip content="可在列表界面按快捷键 ALT+SHIFT+M+L 显示所有">
+                        <el-tooltip content="可在列表界面按快捷键 SHIFT+ALT+M+L 显示所有">
                             <el-icon class="icon-top-2"><QuestionFilled /></el-icon>
                         </el-tooltip>
                     </div>
