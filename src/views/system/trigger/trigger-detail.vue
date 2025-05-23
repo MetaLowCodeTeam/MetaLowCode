@@ -225,12 +225,13 @@ const onSave = async (target) => {
         trigger.actionType.value == 2 ||
         trigger.actionType.value == 1 ||
         trigger.actionType.value == 3 ||
-        trigger.actionType.value == 15
+        (trigger.actionType.value == 15 && trigger.createType != 2)
     ) {
         actionContent.entityName = defaultTargetEntity.entityName || defaultTargetEntity.name;
         actionContent.fieldName = defaultTargetEntity.fieldName;
         actionContent.isReferenced = defaultTargetEntity.isReferenced;
     }
+
     // 如果是分组聚合
     if (trigger.actionType.value == 3) {
         let { groupItem } = actionContent;
@@ -354,7 +355,7 @@ const onSave = async (target) => {
         }
     }
     // 如果是自动创建
-    if(trigger.actionType.value == 15){
+    if(trigger.actionType.value == 15 && trigger.createType == 2){
         actionContent.createType = createType;
         actionContent.transformId = transformId;
     }

@@ -16,14 +16,19 @@
 			:model="formData"
 			ref="ruleFormRef"
 		>
-			<el-form-item label="转化名称" prop="transformName">
+			<el-form-item
+				label="转化名称"
+				prop="transformName"
+				v-if="!props.isSubTransform"
+				class="mb-15"
+			>
 				<el-input
 					v-model="formData.transformName"
 					placeholder="请输入转化名称"
 					clearable
 				></el-input>
 			</el-form-item>
-			<el-form-item label="源实体" prop="sourceEntity" class="mt-15">
+			<el-form-item label="源实体" prop="sourceEntity" class="mb-15">
 				<el-select
 					v-model="formData.sourceEntity"
 					placeholder="请选择源实体"
@@ -35,12 +40,12 @@
 					<el-option
 						:label="op.label"
 						:value="op.name"
-						v-for="(op, inx) of getEntityList()"
+						v-for="(op, inx) of getSourceEntityList()"
 						:key="inx"
 					/>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="目标实体" prop="targetEntity" class="mt-15">
+			<el-form-item label="目标实体" prop="targetEntity" class="mb-15">
 				<el-select
 					v-model="formData.targetEntity"
 					placeholder="请选择目标实体"
@@ -52,12 +57,16 @@
 					<el-option
 						:label="op.label"
 						:value="op.name"
-						v-for="(op, inx) of getEntityAllList()"
+						v-for="(op, inx) of getTargetEntityList()"
 						:key="inx"
 					/>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="启用" class="mt-15" v-if="!!dialogConf.recordId">
+			<el-form-item
+				label="启用"
+				v-if="!!dialogConf.recordId"
+                class="mb-0"
+			>
 				<el-switch
 					:active-value="false"
 					:inactive-value="true"
@@ -91,18 +100,54 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 import { saveTransform } from "@/api/transform";
+
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 
 const emits = defineEmits(["saveFinish"]);
 
+const props = defineProps({
+	// 是否添加子表转换
+	isSubTransform: {
+		type: Boolean,
+		default: false,
+	},
+});
+
+
+
+// 子表转换
+let subTransformData = reactive({
+	sourceEntity: "",
+	targetEntity: "",
+});
+
 // 获取实体
-const getEntityList = () => {
-	return unSystemEntityList.value.filter((el) => !el.detailEntityFlag && !el.appAbbr);
+const getSourceEntityList = () => {
+	if (props.isSubTransform) {
+		return unSystemEntityList.value.filter(
+			(el) =>
+				el.detailEntityFlag &&
+				!el.appAbbr &&
+				el.mainEntityName == subTransformData.sourceEntity
+		);
+	}
+	return unSystemEntityList.value.filter(
+		(el) => !el.detailEntityFlag && !el.appAbbr
+	);
 };
 
-// 获取所有实体
-const getEntityAllList = () => {
-	return unSystemEntityList.value;
+const getTargetEntityList = () => {
+	if (props.isSubTransform) {
+		return unSystemEntityList.value.filter(
+			(el) =>
+				el.detailEntityFlag &&
+				!el.appAbbr &&
+				el.mainEntityName == subTransformData.targetEntity
+		);
+	}
+	return unSystemEntityList.value.filter(
+		(el) => !el.detailEntityFlag && !el.appAbbr
+	);
 };
 
 // 弹框配置
@@ -149,33 +194,46 @@ const rules = reactive({
 		},
 	],
 });
+
 // 打开弹框
 const openDialog = (row) => {
-	// 默认ID空
+    // 默认ID空
 	dialogConf.value.recordId = "";
 	// 清空数据
 	formData = Object.assign(formData, defaultFormData);
+	if (props.isSubTransform) {
+		dialogConf.value.title = row.title;
+		dialogConf.value.show = true;
+		subTransformData.sourceEntity = row.sourceEntity;
+		subTransformData.targetEntity = row.targetEntity;
+		return;
+	}
+	
 	// 如果是编辑
 	if (!!row) {
 		// 赋值ID
 		dialogConf.value.recordId = row.transformId;
 		// 覆盖数据
-        for (const key in formData) {
-            if (Object.hasOwnProperty.call(formData, key)) {
-                formData[key] = row[key]
-            }
-        }
+		for (const key in formData) {
+			if (Object.hasOwnProperty.call(formData, key)) {
+				formData[key] = row[key];
+			}
+		}
 	}
 	dialogConf.value.title = (!!row ? "编辑" : "新建") + "数据转化";
 	dialogConf.value.show = true;
 };
-
 
 // 提交表单
 const submitForm = (formEl) => {
 	if (!formEl) return;
 	formEl.validate(async (valid) => {
 		if (valid) {
+			if (props.isSubTransform) {
+				emits("saveFinish", formData);
+                dialogConf.value.show = false;
+				return;
+			}
 			doSave(dialogConf.value.recordId, formData);
 		} else {
 			console.log("error submit!");
@@ -186,12 +244,12 @@ const submitForm = (formEl) => {
 const doSave = async (recordId, data, msg) => {
 	dialogConf.value.loading = true;
 	let res = await saveTransform(data, {
-        params: {
-            entity: 'Transform',
-            recordId: recordId,
-        },
-    })
-    // saveRecord('Transform', recordId, data)
+		params: {
+			entity: "Transform",
+			recordId: recordId,
+		},
+	});
+	// saveRecord('Transform', recordId, data)
 	if (res) {
 		ElMessage.success(msg || "保存成功");
 		emits("saveFinish");
@@ -202,13 +260,13 @@ const doSave = async (recordId, data, msg) => {
 
 defineExpose({
 	openDialog,
-    doSave,
+	doSave,
 });
 </script>
 <style lang="scss" scoped>
 .action-form {
 	.el-form-item {
-		margin-bottom: 0 !important;
+		// margin-top: 0 !important;
 	}
 }
 </style>
