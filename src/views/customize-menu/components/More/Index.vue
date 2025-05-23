@@ -174,7 +174,7 @@
                     <div
                         class="pl-20 item"
                         @click="treeGroupFilterIsShow = true"
-                        v-if="!isReferenceComp && !isMainDetailField && !isListCard && !isListCalendar"
+                        v-if="!isReferenceComp && !isListCard && !isListCalendar"
                     >
                         树状分组筛选
                     </div>
