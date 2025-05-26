@@ -317,7 +317,19 @@ const routes = [
 					},
 				]
 			},
-
+            {
+                path: "",
+                name: "ADvanced",
+                meta: {title: '高级功能', icon: 'park-DroneOne'},
+                children: [
+                    {
+                        path: appPath + 'custom-method',
+                        name: 'CustomMethod',
+                        component: 'system/advanced/CustomMethod',
+                        meta: { title: '自定义方法', icon: 'park-Api', role: 'r6027' }
+                    },
+                ]
+            },
 			{
 				path: '',
 				name: 'AnalysisSetting',

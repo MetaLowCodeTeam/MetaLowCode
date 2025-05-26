@@ -5,193 +5,193 @@
                 class="table-search-box"
                 v-if="listParamConf.showHeader && toolbarConf.showHeader"
             >
-            <ListCustomizeQuery
-                :entityName="entityName"
-                :entityCode="entityCode"
-                :modelName="modelName"
-                :topSearchConfig="topSearchConfig"
-                @queryNow="queryNow"
-                @uploadItems="topPanelUploadItems"
-                ref="ListCustomizeQueryRef"
-                v-if="!topSearchConfig.isDefaultQueryPanel"
-            />
-            <div class="clearfix">
-                <template v-if="topSearchConfig.isDefaultQueryPanel">
-                    <slot name="beforeAdvancedQuery"></slot>
-                    <el-tooltip
-                        effect="dark"
-                        content="切换查询面板"
-                        placement="top"
-                    >
+                <ListCustomizeQuery
+                    :entityName="entityName"
+                    :entityCode="entityCode"
+                    :modelName="modelName"
+                    :topSearchConfig="topSearchConfig"
+                    @queryNow="queryNow"
+                    @uploadItems="topPanelUploadItems"
+                    ref="ListCustomizeQueryRef"
+                    v-if="!topSearchConfig.isDefaultQueryPanel"
+                />
+                <div class="clearfix">
+                    <template v-if="topSearchConfig.isDefaultQueryPanel">
+                        <slot name="beforeAdvancedQuery"></slot>
+                        <el-tooltip
+                            effect="dark"
+                            content="切换查询面板"
+                            placement="top"
+                        >
+                            <el-button
+                                class="mr-10"
+                                type="primary"
+                                link
+                                :loading="queryPanelLoading"
+                                @click="changeQueryPanel(false)"
+                                v-if="listParamConf.showChangeQueryPanel && toolbarConf.showChangeQueryPanel"
+                            >
+                                <el-icon size="16" class="toggle-query-icon">
+                                    <Switch />
+                                </el-icon>
+                            </el-button>
+                        </el-tooltip>
+                        <mlListAdvancedQuery
+                            v-if="entityCode && listParamConf.showAdvancedQuery && toolbarConf.showAdvancedQuery"
+                            v-model="advFilter"
+                            :entityName="entityName"
+                            :entityCode="entityCode"
+                            @queryNow="queryNow"
+                            @refresh="refreshAdvancedQuery"
+                            @onAddAdv="getLayoutList"
+                            @changeAdvFilter="changeAdvFilter"
+                            :filter="advancedFilter"
+                            :modelName="modelName"
+                            class="mr-15"
+                        />
+                        <slot name="beforeQuickQuery"></slot>
+                        <div class="quick-query" v-if="listParamConf.showQuickQuery && toolbarConf.showQuickQuery">
+                            <el-input
+                                v-model="quickQuery"
+                                class="w-50 m-2"
+                                :placeholder="quickQueryPlaceholder"
+                                @keyup.enter="onQuickQuery()"
+                                clearable
+                                @clear="onClearQuickQuery()"
+                            >
+                                <template #append>
+                                    <el-button @click="onQuickQuery()">
+                                        <el-icon>
+                                            <ElIconSearch />
+                                        </el-icon>
+                                    </el-button>
+                                </template>
+                            </el-input>
+                            <span
+                                class="quick-edit"
+                                @click="openSelectFieldDialog"
+                                v-if="$TOOL.checkRole('r6008')"
+                            >
+                                <el-icon size="18">
+                                    <ElIconEditPen />
+                                </el-icon>
+                            </span>
+                        </div>
+                        <div class="data-filter" v-if="isDataFilter">
+                            <el-tag type="success" closable @close="clearDataFilter">
+                                当前数据已过滤
+                            </el-tag>
+                        </div>
+                        <slot name="afterQuickQuery"></slot>
+                    </template>
+                    <template v-if="!topSearchConfig.isDefaultQueryPanel">
                         <el-button
-                            class="mr-10"
-                            type="primary"
-                            link
-                            :loading="queryPanelLoading"
-                            @click="changeQueryPanel(false)"
-                            v-if="listParamConf.showChangeQueryPanel && toolbarConf.showChangeQueryPanel"
-                        >
-                            <el-icon size="16" class="toggle-query-icon">
-                                <Switch />
-                            </el-icon>
-                        </el-button>
-                    </el-tooltip>
-                    <mlListAdvancedQuery
-                        v-if="entityCode && listParamConf.showAdvancedQuery && toolbarConf.showAdvancedQuery"
-                        v-model="advFilter"
-                        :entityName="entityName"
-                        :entityCode="entityCode"
-                        @queryNow="queryNow"
-                        @refresh="refreshAdvancedQuery"
-                        @onAddAdv="getLayoutList"
-                        @changeAdvFilter="changeAdvFilter"
-                        :filter="advancedFilter"
-                        :modelName="modelName"
-                        class="mr-15"
-                    />
-                    <slot name="beforeQuickQuery"></slot>
-                    <div class="quick-query" v-if="listParamConf.showQuickQuery && toolbarConf.showQuickQuery">
-                        <el-input
-                            v-model="quickQuery"
-                            class="w-50 m-2"
-                            :placeholder="quickQueryPlaceholder"
-                            @keyup.enter="onQuickQuery()"
-                            clearable
-                            @clear="onClearQuickQuery()"
-                        >
-                            <template #append>
-                                <el-button @click="onQuickQuery()">
-                                    <el-icon>
-                                        <ElIconSearch />
-                                    </el-icon>
-                                </el-button>
-                            </template>
-                        </el-input>
-                        <span
-                            class="quick-edit"
-                            @click="openSelectFieldDialog"
-                            v-if="$TOOL.checkRole('r6008')"
-                        >
-                            <el-icon size="18">
-                                <ElIconEditPen />
-                            </el-icon>
-                        </span>
-                    </div>
-                    <div class="data-filter" v-if="isDataFilter">
-                        <el-tag type="success" closable @close="clearDataFilter">
-                            当前数据已过滤
-                        </el-tag>
-                    </div>
-                    <slot name="afterQuickQuery"></slot>
-                </template>
-                <template v-if="!topSearchConfig.isDefaultQueryPanel">
-                    <el-button
-                        icon="Switch"
-                        type="primary"
-                        text
-                        bg
-                        :loading="queryPanelLoading"
-                        @click="changeQueryPanel(true)"
-                        v-if="listParamConf.showChangeQueryPanel && toolbarConf.showChangeQueryPanel"
-                    >
-                        切换查询面板
-                    </el-button>
-                    <el-button
-                        icon="Setting"
-                        @click="setCustomizeQueryPanel"
-                        text
-                        bg
-                        :loading="queryPanelLoading"
-                        v-if="$TOOL.checkRole('r6008')"
-                    >
-                        设计查询面板
-                    </el-button>
-                    <el-tooltip
-                        effect="dark"
-                        content="展开收起"
-                        placement="top"
-                        v-if="topSearchConfig.filter?.items?.length > 3"
-                    >
-                        <el-button
-                            class="mr-10"
+                            icon="Switch"
                             type="primary"
                             text
                             bg
                             :loading="queryPanelLoading"
-                            @click="changeTopQueryPanelExpand"
+                            @click="changeQueryPanel(true)"
+                            v-if="listParamConf.showChangeQueryPanel && toolbarConf.showChangeQueryPanel"
                         >
-                            <el-icon size="16" class="toggle-query-icon" v-if="!topQueryPanelExpand">
-                                <ArrowDown />
-                            </el-icon>
-                            <el-icon size="16" class="toggle-query-icon" v-else>
-                                <ArrowUp />
-                            </el-icon>
+                            切换查询面板
                         </el-button>
-                    </el-tooltip>
-                </template>
-                <div class="fr table-setting">
-                    <slot name="beforeOpenBtn"></slot>
-                    <el-button
-                        icon="Notification"
-                        :disabled="multipleSelection.length != 1"
-                        @click="openDetailDialog(multipleSelection[0])"
-                        v-if="listParamConf.showOpenBtn && !mainDetailField && toolbarConf.showOpenBtn"
-                    >
-                        打开
-                    </el-button>
-                    <slot name="beforeEditBtn"></slot>
-                    <el-button
-                        icon="Edit"
-                        :disabled="multipleSelection.length != 1"
-                        @click="onEditRow(multipleSelection[0])"
-                        v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField && toolbarConf.showEditBtn"
-                    >
-                        编辑
-                    </el-button>
-                    <el-button
-                        icon="Edit"
-                        v-if="
-                            batchUpdateConf.length > 0 &&
-                            listParamConf.showBatchUpdateBtn
-                        "
-                        :disabled="multipleSelection.length < 1"
-                        @click="openBatchUpdateDialog"
-                    >
-                        批量编辑
-                    </el-button>
-                    <slot name="beforeAddBtn"></slot>
-                    <el-button
-                        type="primary"
-                        icon="Plus"
-                        @click="onAdd"
-                        v-if="listParamConf.showAddBtn && hasCreateRight && toolbarConf.showAddBtn"
-                    >
-                        新建
-                    </el-button>
-                    <slot name="beforeMoreBtn"></slot>
-                    <More
-                        :listParamConf="listParamConf"
-                        ref="MoreRefs"
-                        :layoutConfig="layoutConfig"
-                        :defaultColumnShow="defaultColumnShow"
-                        :tableColumn="tableColumn"
-                        :multipleSelection="multipleSelection"
-                        :dataExportData="dataExportData"
-                        @changeColumnShow="changeColumnShow"
-                        @editColumnConfirm="getLayoutList"
-                        :entityCode="entityCode"
-                        @defaultFilterChange="getLayoutList"
-                        @treeGroupFilterConfirm="getLayoutList"
-                        :isReferenceComp="isReferenceComp"
-                        :isMainDetailField="!!mainDetailField"
-                        :referenceEntity="referenceEntity"
-                        :modelName="modelName"
-                        @copySuccess="copySuccess"
-                        v-if="toolbarConf.showMoreBtn"
-                    />
-                    <slot name="afterMoreBtn"></slot>
+                        <el-button
+                            icon="Setting"
+                            @click="setCustomizeQueryPanel"
+                            text
+                            bg
+                            :loading="queryPanelLoading"
+                            v-if="$TOOL.checkRole('r6008')"
+                        >
+                            设计查询面板
+                        </el-button>
+                        <el-tooltip
+                            effect="dark"
+                            content="展开收起"
+                            placement="top"
+                            v-if="topSearchConfig.filter?.items?.length > 3"
+                        >
+                            <el-button
+                                class="mr-10"
+                                type="primary"
+                                text
+                                bg
+                                :loading="queryPanelLoading"
+                                @click="changeTopQueryPanelExpand"
+                            >
+                                <el-icon size="16" class="toggle-query-icon" v-if="!topQueryPanelExpand">
+                                    <ArrowDown />
+                                </el-icon>
+                                <el-icon size="16" class="toggle-query-icon" v-else>
+                                    <ArrowUp />
+                                </el-icon>
+                            </el-button>
+                        </el-tooltip>
+                    </template>
+                    <div class="fr table-setting">
+                        <slot name="beforeOpenBtn"></slot>
+                        <el-button
+                            icon="Notification"
+                            :disabled="multipleSelection.length != 1"
+                            @click="openDetailDialog(multipleSelection[0])"
+                            v-if="listParamConf.showOpenBtn && !mainDetailField && toolbarConf.showOpenBtn"
+                        >
+                            打开
+                        </el-button>
+                        <slot name="beforeEditBtn"></slot>
+                        <el-button
+                            icon="Edit"
+                            :disabled="multipleSelection.length != 1"
+                            @click="onEditRow(multipleSelection[0])"
+                            v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField && toolbarConf.showEditBtn"
+                        >
+                            编辑
+                        </el-button>
+                        <el-button
+                            icon="Edit"
+                            v-if="
+                                batchUpdateConf.length > 0 &&
+                                listParamConf.showBatchUpdateBtn
+                            "
+                            :disabled="multipleSelection.length < 1"
+                            @click="openBatchUpdateDialog"
+                        >
+                            批量编辑
+                        </el-button>
+                        <slot name="beforeAddBtn"></slot>
+                        <el-button
+                            type="primary"
+                            icon="Plus"
+                            @click="onAdd"
+                            v-if="listParamConf.showAddBtn && hasCreateRight && toolbarConf.showAddBtn"
+                        >
+                            新建
+                        </el-button>
+                        <slot name="beforeMoreBtn"></slot>
+                        <More
+                            :listParamConf="listParamConf"
+                            ref="MoreRefs"
+                            :layoutConfig="layoutConfig"
+                            :defaultColumnShow="defaultColumnShow"
+                            :tableColumn="tableColumn"
+                            :multipleSelection="multipleSelection"
+                            :dataExportData="dataExportData"
+                            @changeColumnShow="changeColumnShow"
+                            @editColumnConfirm="getLayoutList"
+                            :entityCode="entityCode"
+                            @defaultFilterChange="getLayoutList"
+                            @treeGroupFilterConfirm="getLayoutList"
+                            :isReferenceComp="isReferenceComp"
+                            :isMainDetailField="!!mainDetailField"
+                            :referenceEntity="referenceEntity"
+                            :modelName="modelName"
+                            @copySuccess="copySuccess"
+                            v-if="toolbarConf.showMoreBtn"
+                        />
+                        <slot name="afterMoreBtn"></slot>
+                    </div>
                 </div>
-            </div>
             </div>
             <div v-if="showColumnSet">
                 <ListColumnSet
