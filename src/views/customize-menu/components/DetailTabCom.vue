@@ -271,7 +271,7 @@ const initData = async () => {
         curtTab.value = filterTabs;
     }
     loading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(entityName.value);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, 'noModelName');
     if (res) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
