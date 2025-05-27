@@ -27,6 +27,10 @@ export default {
     // 获取实体布局配置
     getLayoutList: async (entityName, newModelName) => {
         let modelName = newModelName || getModelName();
+        // 如果不需要modelName，则设置为空
+        if(newModelName == 'noModelName'){
+            modelName = "";
+        }
         return await http.get("/layout/getLayoutList", { entityName, modelName });
     },
     // 数据导出
