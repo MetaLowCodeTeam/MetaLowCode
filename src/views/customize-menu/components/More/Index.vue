@@ -205,6 +205,12 @@
                     >
                         日历视图设置
                     </div>
+                    <div
+                        class="pl-20 item"
+                        @click="openCustomButtonDialog"
+                    >
+                        自定义按钮设置
+                    </div>
                 </template>
                 
             </template>
@@ -283,6 +289,7 @@
         :entityCode="entityCode"
         @confirm="allocationSuccess"
     />
+    <CustomButtonSetting ref="customButtonRef" />
 </template>
 
 <script setup>
@@ -311,6 +318,8 @@ import CardListSetting from "./CardListSetting.vue";
 import CalendarListSetting from "./CalendarListSetting.vue";
 // 行复制
 import RowCopy from './RowCopy.vue';
+// 自定义按钮设置
+import CustomButtonSetting from './CustomButtonSetting.vue';
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -619,6 +628,19 @@ let calendarListSettingShow = ref(false);
 // 复制
 const copySuccess = (v) => {
     emits("copySuccess", v);
+}
+
+/**
+ * 自定义按钮设置
+ */
+let customButtonRef = ref(false);
+const openCustomButtonDialog = () => {
+    let param = {
+        entityName: queryEntityNameByCode(props.entityCode),
+        modelName: props.modelName,
+    }
+    customButtonRef.value.openDialog(param);
+    // customButtonDialogIsShow.value = true;
 }
 
 defineExpose({

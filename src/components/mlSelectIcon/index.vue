@@ -1,5 +1,5 @@
 <template>
-    <mlDialog title="图标选择器" append-to-body width="37%" v-model="dialogIsShow">
+    <ml-dialog title="图标选择器" append-to-body width="37%" v-model="dialogIsShow">
         <el-input v-model="keyWord" size="large" placeholder="搜索">
             <template #prefix>
                 <el-icon class="el-input__seatch">
@@ -45,15 +45,17 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
-        <div class="mt-10 footer-box">
-            <span class="fl">
+        <template #footer>
+            <span class="fl ml-10">
                 <el-color-picker v-model="selectedIcon.color" />
                 <span class="ml-5">选择颜色</span>
             </span>
-            <el-button style="width: 80px;" @click="dialogIsShow = false" size="default">取消</el-button>
+            <el-button style="width: 80px;" @click="clearIcon" size="default" plain>清空</el-button>
+            <el-button style="width: 80px;" @click="dialogIsShow = false" size="default" plain>取消</el-button>
             <el-button type="primary" style="width: 80px;" @click="confirmIcon" size="default">确认</el-button>
-        </div>
-    </mlDialog>
+            
+        </template>
+    </ml-dialog>
 </template>
 
 <script setup>
@@ -127,6 +129,11 @@ const search = (text) => {
     }
 };
 
+// 清空图标
+const clearIcon = () => {
+    selectedIcon.value.name = "";
+    selectedIcon.value.color = "";
+};
 
 
 const getIconName = (name) => {
