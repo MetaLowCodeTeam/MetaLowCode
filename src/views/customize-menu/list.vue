@@ -1007,15 +1007,9 @@ const getLayoutList = async () => {
         layoutConfig.value = {
             SELF,
             ALL,
-            TREE_GROUP: res.data.TREE_GROUP,
-            BATCH_UPDATE: res.data.BATCH_UPDATE,
-            STYLE: res.data.STYLE,
-            COM_TREE_GROUP: res.data.COM_TREE_GROUP,
-            DEFAULT_FILTER: res.data.DEFAULT_FILTER,
-            idFieldName: idFieldName.value,
-            nameFieldName: nameFieldName.value,
             entityName: entityName.value,
             entityCode: entityCode.value,
+            ...res.data
         };
 
         // 自定义行样式

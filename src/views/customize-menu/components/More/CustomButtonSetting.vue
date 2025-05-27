@@ -5,7 +5,7 @@
 			v-loading="dialogLoading"
 			element-loading-text="加载中..."
 		>
-			<el-col :span="8">
+			<el-col :span="7">
 				<div class="button-list-box">
 					<ml-scrollbar>
 						<div
@@ -36,16 +36,8 @@
 						</div>
 					</ml-scrollbar>
 				</div>
-				<el-button
-					type="primary"
-					@click="addButton"
-					class="mt-10"
-					icon="Plus"
-				>
-					添加按钮
-				</el-button>
 			</el-col>
-			<el-col :span="16">
+			<el-col :span="17">
 				<div class="info-text" v-if="!currentButton">
 					点击左侧按钮进行编辑或点击添加按钮
 				</div>
@@ -99,31 +91,6 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="12">
-							<el-form-item label="按钮类型">
-								<el-select
-									v-model="currentButton.type"
-									placeholder="请选择按钮类型"
-								>
-									<el-option
-										v-for="item in buttonTypeList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item
-								label="按钮颜色"
-								v-if="currentButton.type === 'custom'"
-							>
-								<el-color-picker
-									v-model="currentButton.color"
-								/>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
 							<el-form-item label="显示类型">
 								<el-select
 									v-model="currentButton.showType"
@@ -154,13 +121,13 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="12">
-							<el-form-item label="执行动作">
+							<el-form-item label="按钮类型">
 								<el-select
-									v-model="currentButton.action"
-									placeholder="请选择执行动作"
+									v-model="currentButton.type"
+									placeholder="请选择按钮类型"
 								>
 									<el-option
-										v-for="item in actionList"
+										v-for="item in buttonTypeList"
 										:key="item.value"
 										:label="item.label"
 										:value="item.value"
@@ -169,20 +136,124 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="12">
-							<el-form-item label="可用类型">
-								<el-select
-									v-model="currentButton.availableType"
+							<el-form-item label="按钮预览">
+								<el-button
+									:type="currentButton.type"
+									:color="
+										currentButton.type == 'custom'
+											? currentButton.color
+											: ''
+									"
 								>
-									<el-option
+									<el-icon
+										:size="16"
+										:color="currentButton.iconColor"
+										v-if="
+											currentButton.icon &&
+											currentButton.showType != 3
+										"
+										style="position: relative; top: -1px"
+									>
+										<component :is="currentButton.icon" />
+									</el-icon>
+									<span
+										v-if="currentButton.showType != 2"
+										:class="{
+											'ml-5':
+												currentButton.showType == 1 &&
+												currentButton.icon,
+										}"
+									>
+										{{ currentButton.name }}
+									</span>
+								</el-button>
+							</el-form-item>
+						</el-col>
+						<el-divider />
+						<el-col :span="12">
+							<el-form-item label="可用类型">
+								<el-radio-group
+									v-model="currentButton.availableType"
+									@change="changeAvailableType"
+								>
+									<el-radio
 										v-for="item in availableTypeList"
 										:key="item.value"
 										:label="item.label"
 										:value="item.value"
 									/>
+								</el-radio-group>
+							</el-form-item>
+						</el-col>
+						<el-divider />
+						<!-- 叠加自定义权限 -->
+						<el-col :span="24">
+							<el-form-item label="叠加自定义权限">
+								<div class="custom-right-box">
+									<el-select
+										v-model="currentButton.customCode"
+										placeholder="请选择权限"
+										clearable
+										filterable
+										allow-create
+										class="custom-right-select"
+									>
+										<el-option
+											v-for="item in customRightList"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value"
+										/>
+									</el-select>
+									<el-tooltip
+										content="取反后，用户不包含选定条件菜单才会显示。"
+										placement="top"
+									>
+										<el-checkbox
+											style="width: 60px"
+											v-model="
+												currentButton.reversalCustomCode
+											"
+											label="取反"
+										/>
+									</el-tooltip>
+								</div>
+							</el-form-item>
+						</el-col>
+						<el-divider />
+						<!-- 过滤条件 -->
+						<el-col :span="24">
+							<el-form-item label="使用条件">
+								<SetConditionsDialog
+									title="附加过滤条件"
+									:conditionConf="currentButton.filterJson"
+									:entityName="
+										queryEntityNameByCode(entityCode)
+									"
+									@confirm="conditionConfirm"
+								/>
+							</el-form-item>
+						</el-col>
+						<el-divider />
+						<el-col :span="12">
+							<el-form-item label="执行动作">
+								<el-select
+									v-model="currentButton.action"
+									placeholder="请选择执行动作"
+									@change="changeAction"
+								>
+									<el-option
+										v-for="item in actionList"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value"
+										:disabled="item.disabled"
+									/>
 								</el-select>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24">
+						<!-- 选择实体 -->
+						<el-col :span="24" v-if="currentButton.action == 1">
 							<el-form-item label="选择实体" class="has-required">
 								<el-select
 									v-model="currentButton.selectEntity"
@@ -207,7 +278,8 @@
 								</el-select>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24">
+						<!-- 选择表单 -->
+						<el-col :span="24" v-if="currentButton.action != 3">
 							<el-form-item
 								label="选择表单"
 								v-loading="entityFormListLoading"
@@ -231,62 +303,47 @@
 								</el-select>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24">
+						<!-- 选择数据转换 -->
+						<el-col :span="24" v-if="currentButton.action == 1">
 							<el-form-item label="选择转换">
 								<el-select
 									v-model="currentButton.selectDataTransform"
 									placeholder="请选择数据转换"
 								>
 									<el-option
-										v-for="item in dataTransformList"
-										:key="item.id"
-										:label="item.name"
-										:value="item.id"
+										v-for="item in dataTransformList.filter(
+											(el) =>
+												el.targetEntity ===
+												currentButton.selectEntity
+										)"
+										:key="item.transformId"
+										:label="item.transformName"
+										:value="item.transformId"
 									/>
 								</el-select>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24">
-							<el-form-item label="按钮预览">
-								<el-button
-									:type="currentButton.type"
-									:color="
-										currentButton.type == 'custom'
-											? currentButton.color
-											: ''
-									"
-								>
-									<el-icon
-										:size="16"
-										:color="currentButton.iconColor"
-										v-if="
-											currentButton.icon &&
-											currentButton.showType != 3
-										"
-										style="position: relative; top: -1px"
-									>
-										<component :is="currentButton.icon" />
-									</el-icon>
-									<span
-										v-if="currentButton.showType != 2"
-										:class="{
-											'ml-5': currentButton.showType == 1,
-										}"
-									>
-										{{ currentButton.name }}
-									</span>
-								</el-button>
+						<!-- 执行脚本 -->
+						<el-col :span="24" v-if="currentButton.action == 3">
+							<el-form-item label="执行脚本">
+								<el-input
+									v-model="currentButton.customScript"
+									type="textarea"
+									placeholder="请输入自定义脚本"
+									@click="openScriptDialog"
+                                    readonly
+								/>
 							</el-form-item>
 						</el-col>
 					</el-row>
 				</el-form>
 				<el-button
 					type="primary"
-					icon="Select"
-					v-if="currentButton"
-					@click="confirmAddButton"
+					@click="addButton"
+					class="mt-10"
+					icon="Plus"
 				>
-					确认添加
+					添加按钮
 				</el-button>
 			</el-col>
 		</el-row>
@@ -300,6 +357,20 @@
 		:useIcon="cutSettingIcon"
 		@confirmIcon="selectIcon"
 	/>
+	<ml-dialog
+		v-model="isShowScriptDialog"
+		title="执行脚本"
+		width="700"
+		append-to-body
+	>
+		<div class="script-box">
+			<mlCodeEditor v-model="customScript" funcParam="data" />
+		</div>
+		<template #footer>
+			<el-button @click="closeScriptDialog">取消</el-button>
+			<el-button type="primary" @click="saveScript">确认</el-button>
+		</template>
+	</ml-dialog>
 </template>
 <script setup>
 import { ref, nextTick } from "vue";
@@ -310,13 +381,30 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
+// 代码编辑器
+import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 // API
 // 获取所有实体表单
-import { getFormLayoutList } from "@/api/system-manager";
+import { getFormLayoutList, getSystemConstants } from "@/api/system-manager";
+import layoutConfigApi from "@/api/layoutConfig";
 // 获取数据转换
 import { queryByEntity } from "@/api/transform";
 
+const props = defineProps({
+	modelName: {
+		type: String,
+		default: "",
+	},
+	entityCode: {
+		type: [String, Number],
+		default: null,
+	},
+});
+const { queryEntityNameByCode } = useCommonStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
+
+const emit = defineEmits(["confirm"]);
 
 const isShow = ref(false);
 
@@ -328,7 +416,7 @@ const buttonTypeList = ref([
 	{ label: "警告", value: "warning" },
 	{ label: "危险", value: "danger" },
 	{ label: "信息", value: "info" },
-	{ label: "自定义", value: "custom" },
+	// { label: "自定义", value: "custom" },
 ]);
 // 显示类型
 const showTypeList = ref([
@@ -346,10 +434,10 @@ const showPositionList = ref([
 	{ label: "更多后", value: 6 },
 ]);
 // 选择动作
-const actionList = ref([
-	{ label: "新建", value: 1 },
-	{ label: "编辑", value: 2 },
-	{ label: "数据转化", value: 3 },
+let actionList = ref([
+	{ label: "新建", value: 1, disabled: false },
+	{ label: "编辑", value: 2, disabled: false },
+	{ label: "自定义", value: 3, disabled: false },
 ]);
 // 可用类型
 const availableTypeList = ref([
@@ -384,6 +472,14 @@ let defaultButtonConfig = ref({
 	selectForm: "",
 	// 选择数据转换
 	selectDataTransform: "",
+	// 自定义权限
+	customCode: "",
+	// 权限取反
+	reversalCustomCode: false,
+	// 过滤条件
+	filterJson: {},
+	// 执行脚本
+	customScript: "",
 	// guid
 	guid: "",
 });
@@ -399,6 +495,8 @@ let errorStatus = ref({
 let dialogLoading = ref(false);
 // 主体loading
 let mainLoading = ref(false);
+// 配置ID
+let layoutConfigId = ref(null);
 
 // 按钮列表
 const buttonList = ref([]);
@@ -407,40 +505,65 @@ let currentButton = ref(null);
 
 // 选择按钮
 const selectButton = (item) => {
-	currentButton.value = deepClone(item);
+	currentButton.value = item;
+	errorStatus.value = {
+		name: false,
+		selectEntity: false,
+		selectForm: false,
+	};
+	loadEntityFormList();
+};
+
+// 选择可用类型
+const changeAvailableType = () => {
+	if (currentButton.value.availableType == 2) {
+		currentButton.value.action = 3;
+		actionList.value.forEach((item) => {
+			item.disabled = item.value != 3;
+		});
+	} else {
+		actionList.value.forEach((item) => {
+			item.disabled = false;
+		});
+	}
 };
 
 let nameRef = ref(null);
 // 添加按钮
 const addButton = () => {
-	let newButton = deepClone(defaultButtonConfig.value);
-	newButton.name = "按钮" + (buttonList.value.length + 1);
-	newButton.guid = getGuid();
-	currentButton.value = newButton;
-	nextTick(() => {
-		nameRef.value.focus();
-	});
+	if (checkData()) {
+		let newButton = deepClone(defaultButtonConfig.value);
+		newButton.name = "按钮" + (buttonList.value.length + 1);
+		newButton.guid = getGuid();
+		currentButton.value = newButton;
+		buttonList.value.push(newButton);
+	}
 };
 
-// 确认添加
-const confirmAddButton = () => {
-	let { name, selectEntity, selectForm } = currentButton.value;
-	if (!name) {
-		errorStatus.value.name = true;
-		ElMessage.error("请输入按钮名称");
-		return;
+// 校验数据是否可通过
+const checkData = () => {
+	if (buttonList.value.length > 0) {
+		for (let i = 0; i < buttonList.value.length; i++) {
+			currentButton.value = buttonList.value[i];
+			let { name, selectEntity, selectForm } = buttonList.value[i];
+			if (!name) {
+				errorStatus.value.name = true;
+				ElMessage.error("请输入按钮名称");
+				return false;
+			}
+			if (!selectEntity) {
+				errorStatus.value.selectEntity = true;
+				ElMessage.error("请选择实体");
+				return false;
+			}
+			if (!selectForm && currentButton.value.action != 3) {
+				errorStatus.value.selectForm = true;
+				ElMessage.error("请选择表单");
+				return false;
+			}
+		}
 	}
-	if (!selectEntity) {
-		errorStatus.value.selectEntity = true;
-		ElMessage.error("请选择实体");
-		return;
-	}
-	if (!selectForm) {
-		errorStatus.value.selectForm = true;
-		ElMessage.error("请选择表单");
-		return;
-	}
-	console.log(currentButton.value, "currentButton.value");
+	return true;
 };
 
 // 删除按钮
@@ -454,6 +577,9 @@ const deleteButton = (item) => {
 			buttonList.value = buttonList.value.filter(
 				(el) => el.guid !== item.guid
 			);
+			if (currentButton.value.guid === item.guid) {
+				currentButton.value = null;
+			}
 		})
 		.catch(() => {});
 };
@@ -476,13 +602,24 @@ const selectIcon = (icon) => {
 	isShowIconDialog.value = false;
 };
 
+// 选择动作
+const changeAction = () => {
+	// currentButton.value.selectForm = "";
+	// currentButton.value.selectDataTransform = "";
+	// entityFormList.value = [];
+	// loadEntityFormList();
+	if (currentButton.value.action == 2) {
+		currentButton.value.selectEntity = currentEntity.value.entityName;
+		changeEntity();
+	}
+};
+
 // 选择实体
 const changeEntity = () => {
 	currentButton.value.selectForm = "";
 	currentButton.value.selectDataTransform = "";
 	entityFormList.value = [];
 	loadEntityFormList();
-	loadDataTransformList();
 };
 
 // 实体表单
@@ -490,6 +627,9 @@ const entityFormList = ref([]);
 let entityFormListLoading = ref(false);
 // 加载实体表单
 const loadEntityFormList = async () => {
+	if (!currentButton.value.selectEntity) {
+		return;
+	}
 	entityFormListLoading.value = true;
 	let res = await getFormLayoutList(currentButton.value.selectEntity);
 	if (res && res.code === 200) {
@@ -502,25 +642,64 @@ const loadEntityFormList = async () => {
 // 数据转换
 const dataTransformList = ref([]);
 
-
-
 let currentEntity = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
-    console.log(entity, "entity");
+	if (entity.customButtonId) {
+		layoutConfigId.value = entity.customButtonId;
+	}
+	if (entity.customButton) {
+		buttonList.value = [...entity.customButton];
+	}
 	currentEntity.value = entity;
 	isShow.value = true;
-    dialogLoading.value = true;
-    await loadDataTransformList();
-    dialogLoading.value = false;
+	dialogLoading.value = true;
+	await loadDataTransformList();
+	await getCustomRightList();
+	dialogLoading.value = false;
 };
 
 // 加载数据转换
 const loadDataTransformList = async () => {
-	let res = await queryByEntity(currentEntity.value.entityName);
+	let res = await queryByEntity({
+		sourceEntityName: currentEntity.value.entityName,
+	});
 	if (res && res.code === 200) {
 		dataTransformList.value = res.data || [];
 	}
+};
+
+// 获取自定义权限
+const customRightList = ref([]);
+const getCustomRightList = async () => {
+	let res = await getSystemConstants("customRight");
+	if (res && res.data) {
+		customRightList.value = res.data;
+	}
+};
+
+// 打开脚本弹窗
+const isShowScriptDialog = ref(false);
+let customScript = ref("");
+
+// 打开脚本弹框
+const openScriptDialog = () => {
+	isShowScriptDialog.value = true;
+    customScript.value = currentButton.value.customScript;
+};
+// 确认脚本
+const saveScript = () => {
+	isShowScriptDialog.value = false;
+    currentButton.value.customScript = customScript.value;
+};
+// 关闭脚本弹窗
+const closeScriptDialog = () => {
+	isShowScriptDialog.value = false;
+};
+
+// 确认条件
+const conditionConfirm = (v) => {
+	currentButton.value.filterJson = v;
 };
 
 // 关闭弹窗
@@ -529,8 +708,27 @@ const closeDialog = () => {
 };
 
 // 保存按钮
-const saveButton = () => {
-	console.log(currentButton.value);
+const saveButton = async () => {
+	if (checkData()) {
+		let param = {
+			config: JSON.stringify(buttonList.value),
+			entityCode: props.entityCode,
+			shareTo: "ALL",
+		};
+		mainLoading.value = true;
+		let res = await layoutConfigApi.saveConfig(
+			layoutConfigId.value,
+			"CUSTOM_BUTTON",
+			param,
+			props.modelName
+		);
+		if (res) {
+			ElMessage.success("保存成功");
+			emit("confirm");
+			isShow.value = false;
+		}
+		mainLoading.value = false;
+	}
 };
 
 defineExpose({
@@ -545,7 +743,7 @@ defineExpose({
 	box-sizing: border-box;
 	// padding: 5px 10px;
 	padding: 3px;
-	height: 400px;
+	height: 506px;
 	.button-list-item {
 		cursor: pointer;
 		box-sizing: border-box;
@@ -579,6 +777,9 @@ defineExpose({
 				display: block;
 			}
 		}
+		.button-list-item-name.active + .button-list-item-icon {
+			display: block;
+		}
 	}
 }
 
@@ -609,6 +810,22 @@ defineExpose({
 				}
 			}
 		}
+	}
+	:deep(.el-radio-group) {
+		display: flex;
+		flex-wrap: nowrap;
+	}
+	:deep(.el-divider) {
+		margin: 10px 0;
+		margin-top: 0;
+	}
+}
+.custom-right-box {
+	display: flex;
+	width: 100%;
+	.custom-right-select {
+		flex: 1;
+		margin-right: 10px;
 	}
 }
 </style>

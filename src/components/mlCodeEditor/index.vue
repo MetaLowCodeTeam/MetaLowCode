@@ -1,5 +1,6 @@
 <template>
 	<!--  -->
+    <div class="func-desc" v-if="funcParam">function({{ funcParam }}){</div>
 	<codemirror
 		v-model="contentValue"
 		placeholder="Code gose here..."
@@ -10,6 +11,7 @@
 		:extensions="extensions"
 		@change="change"
 	/>
+    <div class="func-desc" v-if="funcParam">}</div>
 </template>
 
 <script setup>
@@ -39,7 +41,11 @@ const props = defineProps({
     mode: {
         type: String,
         default: "javascript",
-    }
+    },
+    funcParam: {
+        type: String,
+        default: "",
+    },
 });
 
 const emits = defineEmits(["update:modelValue"]);
@@ -85,5 +91,12 @@ const _height = computed(() => {
 }
 .ml-code-editor:deep(.CodeMirror) {
 	height: 100%;
+}
+.func-desc {
+    color: #909399;
+    line-height: 32px;
+    background: #F4F4F5;
+    box-sizing: border-box;
+    padding-left: 10px;
 }
 </style>
