@@ -172,6 +172,7 @@ let detailDialog = ref({
 
 const openDetailDialog = (id) => {
 	detailDialog.value.isShow = true;
+    activeTab.value = 'transform';
 	recordId.value = id;
 	if (recordId.value) {
 		queryTransformById(recordId.value);
