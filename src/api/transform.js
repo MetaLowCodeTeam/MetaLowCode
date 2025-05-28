@@ -19,6 +19,10 @@ export function queryById(data) {
 
 // 保存数据转换
 export function saveTransform(data, config) {
-    return http.post("transform/saveRecord", data, config);
+    return http.post("transform/saveRecord", data, config); 
 }
 
+// 获取数据转换映射
+export function getTransformMap(data) {
+    return http.get("transform/getTransformMap", data);
+}

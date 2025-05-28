@@ -130,66 +130,72 @@
                         </el-tooltip>
                     </template>
                     <div class="fr table-setting">
-                        <slot name="beforeOpenBtn"></slot>
-                        <el-button
-                            icon="Notification"
-                            :disabled="multipleSelection.length != 1"
-                            @click="openDetailDialog(multipleSelection[0])"
-                            v-if="listParamConf.showOpenBtn && !mainDetailField && toolbarConf.showOpenBtn"
-                        >
-                            打开
-                        </el-button>
-                        <slot name="beforeEditBtn"></slot>
-                        <el-button
-                            icon="Edit"
-                            :disabled="multipleSelection.length != 1"
-                            @click="onEditRow(multipleSelection[0])"
-                            v-if="listParamConf.showEditBtn && !isReferenceComp && hasEditRight && !mainDetailField && toolbarConf.showEditBtn"
-                        >
-                            编辑
-                        </el-button>
-                        <el-button
-                            icon="Edit"
-                            v-if="
-                                batchUpdateConf.length > 0 &&
-                                listParamConf.showBatchUpdateBtn
-                            "
-                            :disabled="multipleSelection.length < 1"
-                            @click="openBatchUpdateDialog"
-                        >
-                            批量编辑
-                        </el-button>
-                        <slot name="beforeAddBtn"></slot>
-                        <el-button
-                            type="primary"
-                            icon="Plus"
-                            @click="onAdd"
-                            v-if="listParamConf.showAddBtn && hasCreateRight && toolbarConf.showAddBtn"
-                        >
-                            新建
-                        </el-button>
-                        <slot name="beforeMoreBtn"></slot>
-                        <More
-                            :listParamConf="listParamConf"
-                            ref="MoreRefs"
-                            :layoutConfig="layoutConfig"
-                            :defaultColumnShow="defaultColumnShow"
-                            :tableColumn="tableColumn"
-                            :multipleSelection="multipleSelection"
-                            :dataExportData="dataExportData"
-                            @changeColumnShow="changeColumnShow"
-                            @editColumnConfirm="getLayoutList"
-                            :entityCode="entityCode"
-                            @defaultFilterChange="getLayoutList"
-                            @treeGroupFilterConfirm="getLayoutList"
-                            :isReferenceComp="isReferenceComp"
-                            :isMainDetailField="!!mainDetailField"
-                            :referenceEntity="referenceEntity"
-                            :modelName="modelName"
-                            @copySuccess="copySuccess"
-                            v-if="toolbarConf.showMoreBtn"
-                        />
-                        <slot name="afterMoreBtn"></slot>
+                        <template v-for="(item, index) in mergedButtonList" :key="index">
+                            <!-- 插槽 -->
+                            <slot v-if="item.type === 'slot'" :name="item.name"></slot>
+                            
+                            <!-- 原有按钮 -->
+                            <el-button
+                                v-else-if="item.type === 'native'"
+                                v-bind="item.props"
+                                @click="item.handler"
+                                v-show="item.show !== false"
+                            >
+                                <i v-if="item.props.icon" :class="`el-icon-${item.props.icon}`"></i>
+                                {{ item.label }}
+                            </el-button>
+
+                            <!-- 更多按钮 -->
+                            <More
+                                :listParamConf="listParamConf"
+                                ref="MoreRefs"
+                                :layoutConfig="layoutConfig"
+                                :defaultColumnShow="defaultColumnShow"
+                                :tableColumn="tableColumn"
+                                :multipleSelection="multipleSelection"
+                                :dataExportData="dataExportData"
+                                @changeColumnShow="changeColumnShow"
+                                @editColumnConfirm="getLayoutList"
+                                :entityCode="entityCode"
+                                @defaultFilterChange="getLayoutList"
+                                @treeGroupFilterConfirm="getLayoutList"
+                                :isReferenceComp="isReferenceComp"
+                                :isMainDetailField="!!mainDetailField"
+                                :referenceEntity="referenceEntity"
+                                :modelName="modelName"
+                                @copySuccess="copySuccess"
+                                v-else-if="item.type === 'more' && toolbarConf.showMoreBtn"
+                            />
+                            
+                            <!-- 自定义按钮 -->
+                            <el-button
+                                v-else
+                                v-bind="item.props"
+                                @click="item.handler"
+                            >
+                                <el-icon
+                                    :size="16"
+                                    :color="item.iconColor"
+                                    v-if="
+                                        item.icon &&
+                                        item.showType != 3
+                                    "
+                                    style="position: relative; top: -1px"
+                                >
+                                    <component :is="item.icon" />
+                                </el-icon>
+                                <span
+                                    v-if="item.showType != 2"
+                                    :class="{
+                                        'ml-5':
+                                            item.showType == 1 &&
+                                            item.icon,
+                                    }"
+                                >
+                                    {{ item.label }}
+                                </span>
+                            </el-button>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -465,7 +471,7 @@ import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
 import useCommonStore from "@/store/modules/common";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 /**
  * 组件
  */
@@ -485,7 +491,9 @@ import ListColumnSet from './components/ListColumnSet.vue';
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
+import http from "@/utils/request";
 import { mlShortcutkeys } from "@/utils/util";
+import { getTransformMap } from "@/api/transform";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
@@ -846,6 +854,147 @@ const hasEditRight = computed(() => {
 	return $TOOL.checkRole('r' + entityCodeForRight + '-3')
 })
 
+// 顶部按钮渲染
+const mergedButtonList = computed(() => {
+    const nativeButtons = [
+        { type: 'slot', name: 'beforeOpenBtn' },
+        {
+            type: 'native',
+            label: '打开',
+            key: 1,
+            props: { 
+                disabled: multipleSelection.value.length !== 1,
+                icon: 'Notification',
+            },
+            handler: () => openDetailDialog(multipleSelection.value[0]),
+            show: listParamConf.value.showOpenBtn && !mainDetailField.value && toolbarConf.value.showOpenBtn
+        },
+        { type: 'slot', name: 'beforeEditBtn' },
+        { 
+          type: 'native', 
+          key: 2,
+          label: '编辑',
+          props: { icon: 'Edit', disabled: multipleSelection.value.length !== 1 },
+          handler: () => onEditRow(multipleSelection.value[0]),
+          show: listParamConf.value.showEditBtn && !props.isReferenceComp && hasEditRight.value 
+                && !mainDetailField.value && toolbarConf.value.showEditBtn
+        },
+        {
+            type: 'native',
+            label: '批量编辑',
+            key: 3,
+            props: { 
+                icon: 'Edit', 
+                disabled: multipleSelection.value.length !== 1,
+            },
+            handler: () => openBatchUpdateDialog(),
+            show: listParamConf.value.showBatchUpdateBtn && batchUpdateConf.value.length > 0
+        },
+        { type: 'slot', name: 'beforeAddBtn' },
+        {
+            type: 'native',
+            label: '新建',
+            key: 4,
+            props: { 
+                icon: 'Plus', 
+                disabled: !hasCreateRight.value,
+                type: 'primary',
+            },
+            handler: () => onAdd(),
+            show: listParamConf.value.showAddBtn && hasCreateRight.value && toolbarConf.value.showAddBtn
+        },
+        { type: 'slot', name: 'beforeMoreBtn' },
+        { type: 'more', key: 5 },
+        { type: 'slot', name: 'afterMoreBtn' },
+    ];
+    // 自定义按钮
+    customButtonList.value.forEach(el => {
+        let { showPosition, availableType, action} = el;
+        let isDisabled = false;
+        // 如果是编辑，只能勾选一条数据
+        if(action == 2){
+            isDisabled = multipleSelection.value.length != 1;
+        }
+        // 如果是执行动作
+        else if(action == 3){
+            isDisabled = availableType == 1 ? multipleSelection.value.length != 1 : multipleSelection.value.length < 1;
+        }
+        let newCustomButton = { 
+            label: el.name, 
+            icon: el.icon,
+            iconColor: el.iconColor,
+            showType: el.showType,
+            props: {
+                // 勾选一条数据 或 勾选多条数据
+                disabled: isDisabled,
+                type: el.type,
+            },
+            handler: () => customButtonHandler(el)
+        };
+        
+        // 如果是插入到最前面
+        if(showPosition == 1) {
+            nativeButtons.unshift(newCustomButton);
+        }
+        // 如果是追加到最后
+        else if (showPosition == 6) {
+            nativeButtons.push(newCustomButton);
+        }else {
+            let findIndex = nativeButtons.findIndex(btn => btn.key == showPosition);
+            nativeButtons.splice(findIndex, 0, newCustomButton);
+        }
+    })
+    return nativeButtons.filter(btn => btn.show !== false);
+})
+
+// 自定义按钮处理
+const customButtonHandler = async (el) => {
+    switch(el.action){
+        case 1:
+            onAdd(null, el.selectForm, el.selectEntity);
+            break;
+        case 2:
+            onEditRow(multipleSelection.value[0], null, el.selectForm);
+            break;
+        case 3:
+            pageLoading.value = true;
+            let recordId = multipleSelection.value[0][idFieldName.value];
+            let transformId = el.selectDataTransform;
+            let res = await getTransformMap({ recordId, transformId });
+            if(res && res.code == 200) {
+                onAdd(
+                    {
+                        backfillFormData: res.data,
+                    }, 
+                    el.selectForm, 
+                    el.selectEntity
+                );
+            }
+            pageLoading.value = false;
+            break;
+        case 4:
+            new Function(
+                'rows',
+                'exposed', 
+                el.customScript
+            )(
+                multipleSelection.value, 
+                {
+                    isMobile: false,
+                    listExposed: currentExposed.value,
+                    elementEvent: {
+                        ElMessageBox,
+                        ElLoading,
+                        ElMessage
+                    },
+                    http,
+                }
+            );
+            // customMethod();
+            break;
+    }
+}
+
 // 配置自定义列显示
 const MoreRefs = ref();
 const editColumn = (type) => {
@@ -977,6 +1126,8 @@ const changeTopQueryPanelExpand = () => {
     }
 }
 
+// 自定义按钮
+let customButtonList = ref([]);
 
 
 // 获取导航配置
@@ -1011,6 +1162,10 @@ const getLayoutList = async () => {
             entityCode: entityCode.value,
             ...res.data
         };
+        // 自定义按钮
+        if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
+            customButtonList.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
+        }
 
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
@@ -1319,7 +1474,7 @@ const getEditBtnTitle = (row) => {
 
 let isOtherEntity = ref(false);
 // 编辑
-const onEditRow = (row, localDsv, formId) => {
+const onEditRow = (row, localDsv, formId) => {    
     isOtherEntity.value = false;
     if (!row) {
         $ElMessage.warning("请先选择数据");

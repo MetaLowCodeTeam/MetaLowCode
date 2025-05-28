@@ -36,6 +36,15 @@
 						</div>
 					</ml-scrollbar>
 				</div>
+				<el-button
+					@click="addButton"
+					class="mt-3"
+					style="width: 100%"
+					type="primary"
+					plain
+				>
+					添加按钮
+				</el-button>
 			</el-col>
 			<el-col :span="17">
 				<div class="info-text" v-if="!currentButton">
@@ -170,22 +179,6 @@
 							</el-form-item>
 						</el-col>
 						<el-divider />
-						<el-col :span="12">
-							<el-form-item label="可用类型">
-								<el-radio-group
-									v-model="currentButton.availableType"
-									@change="changeAvailableType"
-								>
-									<el-radio
-										v-for="item in availableTypeList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									/>
-								</el-radio-group>
-							</el-form-item>
-						</el-col>
-						<el-divider />
 						<!-- 叠加自定义权限 -->
 						<el-col :span="24">
 							<el-form-item label="叠加自定义权限">
@@ -252,8 +245,28 @@
 								</el-select>
 							</el-form-item>
 						</el-col>
+						<el-col :span="24" v-if="currentButton.action == 3 || currentButton.action == 4">
+							<el-form-item label="可用类型">
+								<el-radio-group
+									v-model="currentButton.availableType"
+								>
+									<el-radio
+										v-for="item in availableTypeList"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value"
+                                        :disabled="currentButton.action == 3 && item.value == 2"
+									/>
+								</el-radio-group>
+                                <el-tooltip content="勾选多条数据移动端无效" placement="top">
+                                    <el-icon class="ml-5">
+                                        <ElIconQuestionFilled />
+                                    </el-icon>
+                                </el-tooltip>
+							</el-form-item>
+						</el-col>
 						<!-- 选择实体 -->
-						<el-col :span="24" v-if="currentButton.action == 1">
+						<el-col :span="24" v-if="currentButton.action == 1 || currentButton.action == 3">
 							<el-form-item label="选择实体" class="has-required">
 								<el-select
 									v-model="currentButton.selectEntity"
@@ -279,7 +292,7 @@
 							</el-form-item>
 						</el-col>
 						<!-- 选择表单 -->
-						<el-col :span="24" v-if="currentButton.action != 3">
+						<el-col :span="24" v-if="currentButton.action != 4">
 							<el-form-item
 								label="选择表单"
 								v-loading="entityFormListLoading"
@@ -304,11 +317,18 @@
 							</el-form-item>
 						</el-col>
 						<!-- 选择数据转换 -->
-						<el-col :span="24" v-if="currentButton.action == 1">
-							<el-form-item label="选择转换">
+						<el-col :span="24" v-if="currentButton.action == 3">
+							<el-form-item 
+                                label="选择转换"
+                                class="has-required"
+                            >
 								<el-select
 									v-model="currentButton.selectDataTransform"
 									placeholder="请选择数据转换"
+                                    :class="{
+										'is-error': errorStatus.selectDataTransform,
+									}"
+									@focus="errorStatus.selectDataTransform = false"
 								>
 									<el-option
 										v-for="item in dataTransformList.filter(
@@ -324,27 +344,19 @@
 							</el-form-item>
 						</el-col>
 						<!-- 执行脚本 -->
-						<el-col :span="24" v-if="currentButton.action == 3">
+						<el-col :span="24" v-if="currentButton.action == 4">
 							<el-form-item label="执行脚本">
 								<el-input
 									v-model="currentButton.customScript"
 									type="textarea"
 									placeholder="请输入自定义脚本"
 									@click="openScriptDialog"
-                                    readonly
+									readonly
 								/>
 							</el-form-item>
 						</el-col>
 					</el-row>
 				</el-form>
-				<el-button
-					type="primary"
-					@click="addButton"
-					class="mt-10"
-					icon="Plus"
-				>
-					添加按钮
-				</el-button>
 			</el-col>
 		</el-row>
 		<template #footer>
@@ -364,7 +376,10 @@
 		append-to-body
 	>
 		<div class="script-box">
-			<mlCodeEditor v-model="customScript" funcParam="data" />
+			<mlCodeEditor
+				v-model="customScript"
+				funcParam="rows,exposed"
+			/>
 		</div>
 		<template #footer>
 			<el-button @click="closeScriptDialog">取消</el-button>
@@ -435,9 +450,10 @@ const showPositionList = ref([
 ]);
 // 选择动作
 let actionList = ref([
-	{ label: "新建", value: 1, disabled: false },
-	{ label: "编辑", value: 2, disabled: false },
-	{ label: "自定义", value: 3, disabled: false },
+	{ label: "新建", value: 1 },
+    { label: "编辑", value: 2 },
+    { label: "基于选中新建", value: 3 },
+    { label: "自定义", value: 4 },
 ]);
 // 可用类型
 const availableTypeList = ref([
@@ -489,7 +505,17 @@ let errorStatus = ref({
 	name: false,
 	selectEntity: false,
 	selectForm: false,
+    selectDataTransform: false,
 });
+
+const clearErrorStatus = () => {
+	errorStatus.value = {
+		name: false,
+		selectEntity: false,
+		selectForm: false,
+		selectDataTransform: false,
+	};
+};
 
 // 整体
 let dialogLoading = ref(false);
@@ -506,26 +532,8 @@ let currentButton = ref(null);
 // 选择按钮
 const selectButton = (item) => {
 	currentButton.value = item;
-	errorStatus.value = {
-		name: false,
-		selectEntity: false,
-		selectForm: false,
-	};
+	clearErrorStatus();
 	loadEntityFormList();
-};
-
-// 选择可用类型
-const changeAvailableType = () => {
-	if (currentButton.value.availableType == 2) {
-		currentButton.value.action = 3;
-		actionList.value.forEach((item) => {
-			item.disabled = item.value != 3;
-		});
-	} else {
-		actionList.value.forEach((item) => {
-			item.disabled = false;
-		});
-	}
 };
 
 let nameRef = ref(null);
@@ -545,20 +553,25 @@ const checkData = () => {
 	if (buttonList.value.length > 0) {
 		for (let i = 0; i < buttonList.value.length; i++) {
 			currentButton.value = buttonList.value[i];
-			let { name, selectEntity, selectForm } = buttonList.value[i];
+			let { name, selectEntity, selectForm, selectDataTransform } = buttonList.value[i];
 			if (!name) {
 				errorStatus.value.name = true;
 				ElMessage.error("请输入按钮名称");
 				return false;
 			}
-			if (!selectEntity) {
+			if (!selectEntity && currentButton.value.action != 4) {
 				errorStatus.value.selectEntity = true;
 				ElMessage.error("请选择实体");
 				return false;
 			}
-			if (!selectForm && currentButton.value.action != 3) {
+			if (!selectForm && currentButton.value.action != 4) {
 				errorStatus.value.selectForm = true;
 				ElMessage.error("请选择表单");
+				return false;
+			}
+			if (!selectDataTransform && currentButton.value.action == 3) {
+				errorStatus.value.selectDataTransform = true;
+				ElMessage.error("请选择数据转换");
 				return false;
 			}
 		}
@@ -604,14 +617,14 @@ const selectIcon = (icon) => {
 
 // 选择动作
 const changeAction = () => {
-	// currentButton.value.selectForm = "";
-	// currentButton.value.selectDataTransform = "";
-	// entityFormList.value = [];
-	// loadEntityFormList();
+    clearErrorStatus();
 	if (currentButton.value.action == 2) {
 		currentButton.value.selectEntity = currentEntity.value.entityName;
 		changeEntity();
 	}
+    if(currentButton.value.action == 3){
+        currentButton.value.availableType = 1;
+    }
 };
 
 // 选择实体
@@ -645,6 +658,7 @@ const dataTransformList = ref([]);
 let currentEntity = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
+	console.log(entity, "entity");
 	if (entity.customButtonId) {
 		layoutConfigId.value = entity.customButtonId;
 	}
@@ -656,6 +670,11 @@ const openDialog = async (entity) => {
 	dialogLoading.value = true;
 	await loadDataTransformList();
 	await getCustomRightList();
+	currentButton.value = null;
+	if (buttonList.value.length > 0) {
+		currentButton.value = buttonList.value[0];
+		loadEntityFormList();
+	}
 	dialogLoading.value = false;
 };
 
@@ -685,12 +704,12 @@ let customScript = ref("");
 // 打开脚本弹框
 const openScriptDialog = () => {
 	isShowScriptDialog.value = true;
-    customScript.value = currentButton.value.customScript;
+	customScript.value = currentButton.value.customScript;
 };
 // 确认脚本
 const saveScript = () => {
 	isShowScriptDialog.value = false;
-    currentButton.value.customScript = customScript.value;
+	currentButton.value.customScript = customScript.value;
 };
 // 关闭脚本弹窗
 const closeScriptDialog = () => {
@@ -743,7 +762,7 @@ defineExpose({
 	box-sizing: border-box;
 	// padding: 5px 10px;
 	padding: 3px;
-	height: 506px;
+	height: 486px;
 	.button-list-item {
 		cursor: pointer;
 		box-sizing: border-box;

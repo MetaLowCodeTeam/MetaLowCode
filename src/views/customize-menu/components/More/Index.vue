@@ -640,7 +640,7 @@ const copySuccess = (v) => {
  */
 let customButtonRef = ref(false);
 const openCustomButtonDialog = () => {
-    let customButton = {};
+    let customButton = null;
     let customButtonId = null;
     if(myLayoutConf.value.CUSTOM_BUTTON && myLayoutConf.value.CUSTOM_BUTTON.config){
         customButton = JSON.parse(myLayoutConf.value.CUSTOM_BUTTON.config)
