@@ -181,6 +181,7 @@ const openDialog = (data, target) => {
 	} else {
 		dialogConf.value.title = "编辑自定义方法";
 		formData.value = Object.assign({}, defaultData.value, data);
+        formData.value.javaCode = formData.value.methodConfig;
 		if (target == "view") {
 			dialogConf.value.title = "查看自定义方法";
 			isView.value = true;
@@ -224,7 +225,7 @@ const confirm = () => {
 // 格式化FormData数据
 const formatFormData = (data) => {
 	let { methodType } = data;
-	if (methodType == 1) {
+	if (methodType == 1 || methodType.value == 1) {
 		data.methodConfig = data.javaCode;
 	}
 	return data;
