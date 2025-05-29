@@ -629,7 +629,14 @@ export default {
                 if(subFormFillBackConfig.length < 1){
                     return
                 }
-                let res = await queryById(recordObj.id);
+                let subFormFields = [];
+                subFormFillBackConfig.forEach(el => {
+                    subFormFields.push({
+                        entityName: el.sourceWidget.entityName,
+                        queryFields: el.fllBackItems.map(el => el.sourceField).join(',')
+                    })
+                })
+                let res = await queryById(recordObj.id, "", { queryDetailList: subFormFields });
                 if(res){
                     let resData = res.data || {};
                     subFormFillBackConfig.forEach(el => {

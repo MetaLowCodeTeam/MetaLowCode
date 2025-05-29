@@ -729,6 +729,14 @@ export default {
         // 确认映射
         confirmAddWidgetMapping() {
             let { sourceWidget, targetWidget } = this.widgetMappingDialogConf;
+            if(!sourceWidget.entityCode) {
+                this.$message.error('请选择源实体');
+                return;
+            }
+            if(!targetWidget.name) {
+                this.$message.error('请选择目标实体');
+                return;
+            }
             this.sourceEntityCodes.push(sourceWidget.entityCode)
             this.loadSourceEntityFields(
                 ()=> {
@@ -746,7 +754,7 @@ export default {
         async loadSourceEntityFields(cb){
             this.widgetMappingDialogConf.loading = true;
             this.fillBackDialogConf.loading = true;
-            let res = await queryEntityListFields(this.sourceEntityCodes, false, true, true);
+            let res = await queryEntityListFields(this.sourceEntityCodes, true, true, true);
             if(res){
                 this.entityListFields = res.data || {};
                 if(cb){
