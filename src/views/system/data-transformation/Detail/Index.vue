@@ -36,6 +36,14 @@
                         <div class="d-t-m">
                             <el-scrollbar height="100%">
                                 <el-form label-width="100px">
+                                    <el-form-item label="附加过滤条件" v-if="tab.name != 'transform'">
+                                        <SetConditionsDialog 
+                                            title="附加过滤条件"
+                                            :conditionConf="tab.filter"
+                                            :entityName="tab.detailEntityName"
+                                            @confirm="(v) => conditionConfirm(v, tab.name)"
+                                        />
+                                    </el-form-item>
                                     <el-form-item class="info-form-item">
                                         <el-row :gutter="10" class="info-form-row">
                                             <el-col :span="9">
@@ -127,7 +135,7 @@ import { ref } from "vue";
 import { saveTransform, queryById } from "@/api/transform";
 
 import useCommonStore from "@/store/modules/common";
-const { queryEntityCodeByName, queryEntityLabelByName } = useCommonStore();
+
 
 
 
@@ -142,7 +150,10 @@ import { queryEntityFields } from "@/api/crud";
 import MappingComp from "./MappingComp.vue";
 import { ElMessage } from "element-plus";
 import Edit from "../Edit/index.vue";
+// 条件弹框
+import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 
+const { queryEntityCodeByName, queryEntityLabelByName } = useCommonStore();
 
 let recordId = ref();
 
@@ -237,6 +248,7 @@ const queryTransformById = async () => {
                     targetEntityName: el.targetEntityName,
                     // 转化目标实体
                     transformTargetEntity: {},
+                    filter: el.filter,
                 };
                 tabList.value.push(newTab);
             })
@@ -355,6 +367,7 @@ const onSave = async () => {
                     targetEntityName: el.targetEntityName,
                     fieldMapping: el.fieldMapping,
                     backfill: el.backfill,
+                    filter: el.filter,
                 })
             }
         })
@@ -424,6 +437,7 @@ const addSubTransformCallback = (data) => {
         targetEntityName: data.targetEntity,
         // 转化目标实体
         transformTargetEntity: null,
+        filter: null,
     };
     tabList.value.push(newTab);
     activeTab.value = newTab.name;
@@ -484,6 +498,12 @@ const querySubTransform = async (sourceEntityName, targetEntityName, tabName) =>
     cutTab.transformTargetEntity = targetEntity.value;
     loading.value = false;
     isFinish.value = true;
+}
+
+// 附加过滤条件
+const conditionConfirm = (v, tabName) => {
+    let findTab = tabList.value.find(el => el.name === tabName);
+    findTab.filter = v;
 }
 
 // 格式化子实体数据

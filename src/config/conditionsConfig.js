@@ -125,7 +125,15 @@ export default {
     },
     getShowCom: function (item) {
         let { type, op, referTo } = item;
-        console.log(type, op, referTo)
+        if(this.comList.numberInput.type.includes(type)) {
+            if(item.value == '') {
+                item.value = 0;
+            }
+            if(item.op == 'BW' && item.value2 == '') {
+                item.value2 = 0;
+            }
+        }
+
         for (const key in this.comList) {
             if (Object.hasOwnProperty.call(this.comList, key)) {
                 const element = this.comList[key];
@@ -146,5 +154,6 @@ export default {
                 }
             }
         }
+       
     },
 }

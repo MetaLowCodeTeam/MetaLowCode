@@ -54,6 +54,8 @@ const setCondition = () => {
 	dialogIsShow.value = true;
 };
 
+
+
 // 初始化条件
 const initFilter = (filter) => {
 	let { equation } = filter;
@@ -79,6 +81,7 @@ const conditionConfirm = () => {
 	emit("confirm", myConditionConf.value);
 	dialogIsShow.value = false;
 };
+
 
 // 关闭弹框
 const close = () => {
