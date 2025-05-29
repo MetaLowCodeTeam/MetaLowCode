@@ -17,29 +17,26 @@
 				>
 					<template #afterAddConditions>
 						<div class="fr">
-							<el-dropdown
-								trigger="click"
-								@command="onSearch"
-								class="mr-10 pt-5"
+                            <el-dropdown 
+                                split-button 
+                                type="primary" 
+                                @click="onSearch('OR')"
                                 size="default"
-							>
-								<el-button type="primary" size="default">
-									查询
-									<el-icon class="el-icon--right">
-										<arrow-down />
-									</el-icon>
-								</el-button>
-								<template #dropdown>
-									<el-dropdown-menu>
-										<el-dropdown-item command="OR">
-											符合任一条件
-										</el-dropdown-item>
-										<el-dropdown-item command="AND">
-											符合全部条件
-										</el-dropdown-item>
-									</el-dropdown-menu>
-								</template>
-							</el-dropdown>
+                                class="mr-10 pt-5"
+                                @command="onSearch"
+                            >
+                                查询
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item command="OR">
+                                            符合任一条件
+                                        </el-dropdown-item>
+                                        <el-dropdown-item command="AND">
+                                            符合全部条件
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
 							<el-button type="primary" plain @click="onReset" size="default">
 								重置
 							</el-button>
