@@ -166,7 +166,7 @@
             <div class="mt-5 save-info">计算公式可能存在错误，这会导致触发器执行失败。是否继续？</div>
             <div class="mt-20">
                 <el-button @click="isError = false;">取消</el-button>
-                <el-button type="warning" @click="isConfirm">确定</el-button>
+                <el-button type="warning" @click="isConfirm(null)">确定</el-button>
             </div>
         </div>
     </ml-dialog>
@@ -417,7 +417,15 @@ const confirm = async () => {
 const isConfirm = (target) => {
     isShow.value = false;
     isError.value = false;
-    emits("confirm", target);
+    if(target) {
+        emits("confirm", target);
+    }else {
+        emits("confirm", {
+            label: currentScriptType.value == "liteFlowJava" ? javaScriptVal.value : formulaVal.value,
+            value: currentScriptType.value == "liteFlowJava" ? javaScriptVal.value : numFormulaVal.value,
+            scriptType: currentScriptType.value,
+        });
+    }
     emits("update:modelValue", isShow.value);
 };
 
