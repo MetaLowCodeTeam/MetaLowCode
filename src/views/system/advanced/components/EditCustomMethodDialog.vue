@@ -197,7 +197,7 @@ const loadMethodType = async () => {
 	let res = await getOptionItems("CustomMethod", "methodType");
 	if (res && res.code == 200) {
 		methodTypeList.value = res.data;
-		if (!formData.value.methodType) {
+		if (!formData.value.methodType && res.data.length > 0) {
 			formData.value.methodType = res.data[0].value;
 		}
         formData.value = formatFormData(formData.value);

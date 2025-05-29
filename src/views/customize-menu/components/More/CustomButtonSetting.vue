@@ -214,20 +214,6 @@
 							</el-form-item>
 						</el-col>
 						<el-divider />
-						<!-- 过滤条件 -->
-						<el-col :span="24">
-							<el-form-item label="使用条件">
-								<SetConditionsDialog
-									title="附加过滤条件"
-									:conditionConf="currentButton.filterJson"
-									:entityName="
-										queryEntityNameByCode(entityCode)
-									"
-									@confirm="conditionConfirm"
-								/>
-							</el-form-item>
-						</el-col>
-						<el-divider />
 						<el-col :span="12">
 							<el-form-item label="执行动作">
 								<el-select
@@ -245,7 +231,7 @@
 								</el-select>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24" v-if="currentButton.action == 3 || currentButton.action == 4">
+						<el-col :span="24" v-if="currentButton.action != 1">
 							<el-form-item label="可用类型">
 								<el-radio-group
 									v-model="currentButton.availableType"
@@ -264,6 +250,22 @@
                                     </el-icon>
                                 </el-tooltip>
 							</el-form-item>
+						</el-col>
+                        <!-- 过滤条件 -->
+						<el-col :span="24" v-if="currentButton.action != 1 && currentButton.availableType == 1">
+							<el-form-item label="使用条件">
+								<SetConditionsDialog
+									title="附加过滤条件"
+									:conditionConf="currentButton.filterJson"
+									:entityName="
+										queryEntityNameByCode(entityCode)
+									"
+									@confirm="conditionConfirm"
+								/>
+							</el-form-item>
+                            <el-form-item label="提示文案" v-if="currentButton.filterJson?.items?.length > 0">
+                                <el-input v-model="currentButton.errorTipText" placeholder="请输入不满足条件时的提示文案" clearable/>
+                            </el-form-item>
 						</el-col>
 						<!-- 选择实体 -->
 						<el-col :span="24" v-if="currentButton.action == 1 || currentButton.action == 3">
@@ -494,6 +496,8 @@ let defaultButtonConfig = ref({
 	reversalCustomCode: false,
 	// 过滤条件
 	filterJson: {},
+    // 不满足条件时的提示文案
+    errorTipText: "",
 	// 执行脚本
 	customScript: "",
 	// guid

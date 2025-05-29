@@ -494,6 +494,7 @@ import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
 import { mlShortcutkeys } from "@/utils/util";
 import { getTransformMap } from "@/api/transform";
+import { checkTables } from "@/api/layoutConfig";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
@@ -907,48 +908,74 @@ const mergedButtonList = computed(() => {
         { type: 'more', key: 5 },
         { type: 'slot', name: 'afterMoreBtn' },
     ];
-    // 自定义按钮
+    // 临时存储自定义按钮（按原始顺序）
+    const customButtonsToInsert = [];
+    
+    // 先收集所有自定义按钮并确定位置
     customButtonList.value.forEach(el => {
-        let { showPosition, availableType, action} = el;
+        let { showPosition, availableType, action } = el;
         let isDisabled = false;
-        // 如果是编辑，只能勾选一条数据
-        if(action == 2){
-            isDisabled = multipleSelection.value.length != 1;
-        }
-        // 如果是执行动作
-        else if(action == 3){
-            isDisabled = availableType == 1 ? multipleSelection.value.length != 1 : multipleSelection.value.length < 1;
-        }
-        let newCustomButton = { 
-            label: el.name, 
-            icon: el.icon,
-            iconColor: el.iconColor,
-            showType: el.showType,
-            props: {
-                // 勾选一条数据 或 勾选多条数据
-                disabled: isDisabled,
-                type: el.type,
-            },
-            handler: () => customButtonHandler(el)
-        };
         
-        // 如果是插入到最前面
-        if(showPosition == 1) {
-            nativeButtons.unshift(newCustomButton);
+        if (action == 2 || action == 3) {
+            isDisabled = multipleSelection.value.length != 1;
+        } else if (action == 4) {
+            isDisabled = availableType == 1 
+                ? multipleSelection.value.length != 1 
+                : multipleSelection.value.length < 1;
         }
-        // 如果是追加到最后
-        else if (showPosition == 6) {
-            nativeButtons.push(newCustomButton);
-        }else {
-            let findIndex = nativeButtons.findIndex(btn => btn.key == showPosition);
-            nativeButtons.splice(findIndex, 0, newCustomButton);
+        
+        customButtonsToInsert.push({
+            showPosition,
+            button: { 
+                label: el.name, 
+                icon: el.icon,
+                iconColor: el.iconColor,
+                showType: el.showType,
+                props: {
+                    disabled: isDisabled,
+                    type: el.type,
+                },
+                handler: () => customButtonHandler(el)
+            }
+        });
+    });
+    
+    // 按showPosition升序排序（保证1→2→3的顺序）
+    customButtonsToInsert.sort((a, b) => a.showPosition - b.showPosition);
+    
+    // 按排序后的顺序插入
+    customButtonsToInsert.forEach(({ showPosition, button }) => {
+        if (showPosition == 6) {
+            nativeButtons.push(button);
+        } else {
+            const findIndex = nativeButtons.findIndex(btn => btn.key == showPosition);
+            if (findIndex !== -1) {
+                nativeButtons.splice(findIndex, 0, button);
+            }
         }
-    })
+    });
+    
     return nativeButtons.filter(btn => btn.show !== false);
 })
 
 // 自定义按钮处理
 const customButtonHandler = async (el) => {
+    console.log(el,'-------------')
+    let recordId = multipleSelection.value[0][idFieldName.value];
+    let checkAuth = true;
+    
+    if (el.action !== 1 && el.filterJson?.items?.length > 0){
+        pageLoading.value = true;
+        let tabRes = await checkTables([el.filterJson], recordId);
+        if(tabRes){
+            checkAuth = !!tabRes.data[0];
+        }
+        pageLoading.value = false;
+    }
+    if(!checkAuth){
+        ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");
+        return;
+    }
     switch(el.action){
         case 1:
             onAdd(null, el.selectForm, el.selectEntity);
@@ -958,7 +985,7 @@ const customButtonHandler = async (el) => {
             break;
         case 3:
             pageLoading.value = true;
-            let recordId = multipleSelection.value[0][idFieldName.value];
+            
             let transformId = el.selectDataTransform;
             let res = await getTransformMap({ recordId, transformId });
             if(res && res.code == 200) {
