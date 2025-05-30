@@ -24,7 +24,7 @@
 				label="操作"
 				fixed="right"
 				:align="'center'"
-				width="120"
+				width="140"
 			>
 				<template #default="scope">
                     <el-button
@@ -43,6 +43,14 @@
 					>
 						查看
 					</el-button>
+                    <el-button
+						link
+						type="primary"
+						size="small"
+						@click="actionBtn(scope.row, 'delete')"
+					>
+						删除
+					</el-button>
 				</template>
 			</el-table-column>
 		</template>
@@ -57,12 +65,13 @@
 import { ref } from "vue";
 import EditCustomMethodDialog from "./components/EditCustomMethodDialog.vue";
 // API
-import { saveCmRecord } from "@/api/advancedApi";
+import { saveCmRecord, deleteCmRecord } from "@/api/advancedApi";
+import { ElMessageBox } from "element-plus";
 let mlSingleListRef = ref("");
 // 默认排序
 let sortFields = ref([
 	{
-		fieldName: "revisionOn",
+		fieldName: "createdOn",
 		type: "DESC",
 	},
 ]);
@@ -122,7 +131,27 @@ const editCustomMethodDialogRef = ref();
 
 // 按钮事件
 const actionBtn = (data, target) => {
-	editCustomMethodDialogRef.value.openDialog(data, target);
+    if(target == 'delete'){
+        onDeleteCmRecord(data.customMethodId);
+    }else{
+		editCustomMethodDialogRef.value.openDialog(data, target);
+    }
 };
+
+// 删除
+const onDeleteCmRecord = async (customMethodId) => {
+    ElMessageBox.confirm('确定要删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(async () => {
+        mlSingleListRef.value.loading = true;
+        let res = await deleteCmRecord(customMethodId);
+        if (res && res.code == 200) {
+            refresh();
+        }
+        mlSingleListRef.value.loading = false;
+    }).catch(() => {});
+}
 </script>
 <style></style>

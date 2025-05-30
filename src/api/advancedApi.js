@@ -8,3 +8,9 @@ import http from "@/utils/request"
 export function saveCmRecord(recordId, body) {
     return http.post('/cm/saveRecord', body, { params: { recordId } });
 }
+
+// 删除自定义方法
+export function deleteCmRecord(recordId) {
+    return http.post('/cm/deleteRecord', null, { params: { recordId } });
+}
+
