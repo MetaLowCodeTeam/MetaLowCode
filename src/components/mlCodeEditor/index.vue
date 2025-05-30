@@ -1,10 +1,6 @@
 <template>
 	<!--  -->
-<<<<<<< HEAD
-    <div class="func-desc" v-if="funcParam">function({{ funcParam }}){</div>
-=======
 	<div class="func-desc" v-if="funcParam">function({{ funcParam }}){</div>
->>>>>>> master
 	<codemirror
 		v-model="contentValue"
 		placeholder="Code gose here..."
@@ -15,11 +11,7 @@
 		:extensions="extensions"
 		@change="change"
 	/>
-<<<<<<< HEAD
-    <div class="func-desc" v-if="funcParam">}</div>
-=======
 	<div class="func-desc" v-if="funcParam">}</div>
->>>>>>> master
 </template>
 
 <script setup>
