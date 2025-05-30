@@ -958,9 +958,27 @@ const mergedButtonList = computed(() => {
     return nativeButtons.filter(btn => btn.show !== false);
 })
 
+// 当前自定义按钮后置事件
+let currentCustomButtonAfterEvent = ref(null);
+
+
 // 自定义按钮处理
 const customButtonHandler = async (el) => {
-    console.log(el,'-------------')
+    if(el.beforeEvent){
+        let beforeEvent = customButtonEvent(el.beforeEvent);
+        // 判断是否为 Promise
+        if (beforeEvent instanceof Promise) {
+            const asyncResult = await beforeEvent;
+            if(!asyncResult){
+                return;
+            }
+        }else if(!beforeEvent){
+            return;
+        }
+    }
+    if(el.afterEvent){
+        currentCustomButtonAfterEvent.value = el.afterEvent;
+    }
     let recordId = multipleSelection.value[0][idFieldName.value];
     let checkAuth = true;
     
@@ -1000,27 +1018,29 @@ const customButtonHandler = async (el) => {
             pageLoading.value = false;
             break;
         case 4:
-            new Function(
-                'rows',
-                'exposed', 
-                el.customScript
-            )(
-                multipleSelection.value, 
-                {
-                    isMobile: false,
-                    listExposed: currentExposed.value,
-                    elementEvent: {
-                        ElMessageBox,
-                        ElLoading,
-                        ElMessage
-                    },
-                    http,
-                }
-            );
-            // customMethod();
+            customButtonEvent(el.customScript);
             break;
     }
 }
+
+// 封装自定义按钮事件
+const customButtonEvent = (eventStr) => {
+    let customParam = {
+        rows: multipleSelection.value,
+        exposed: currentExposed.value,
+        elementEvent: {
+            ElMessageBox,
+            ElLoading,
+            ElMessage
+        },
+        http,
+        router,
+    };
+    let event = new Function('rows', 'exposed', eventStr)(multipleSelection.value, customParam);
+    return event;
+}
+
+
 
 // 配置自定义列显示
 const MoreRefs = ref();
@@ -1530,6 +1550,10 @@ const editConfirm = (e) => {
         emits('saveFinishCallBack', e);
     }else {
         getLayoutList();
+    }
+    if(currentCustomButtonAfterEvent.value) {
+        customButtonEvent(currentCustomButtonAfterEvent.value);
+        currentCustomButtonAfterEvent.value = null;
     }
 }
 

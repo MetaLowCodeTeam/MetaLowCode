@@ -189,7 +189,6 @@ onMounted(() => {
 
 // 加载配置信息
 const loadMyLayoutConfig = () => {
-    console.log(1)
     myLayoutConfig.value = props.layoutConfig || {};
     let { STYLE } = myLayoutConfig.value;
     if (STYLE && STYLE.config) {

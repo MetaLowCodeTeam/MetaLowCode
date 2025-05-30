@@ -27,6 +27,7 @@
 									:size="16"
 									:color="item.iconColor"
                                     class="icon-top-2"
+                                    v-if="item.icon"
 								>
 									<component :is="item.icon" />
 								</el-icon>
@@ -359,11 +360,38 @@
 									v-model="currentButton.customScript"
 									type="textarea"
 									placeholder="请输入自定义脚本"
-									@click="openScriptDialog"
+									@click="openScriptDialog('customScript')"
 									readonly
+                                    :rows="1"
 								/>
 							</el-form-item>
 						</el-col>
+                        <!-- 前置事件 -->
+                        <el-col :span="24" v-if="currentButton.action !== 4">
+                            <el-form-item label="前置事件">
+                                <el-input 
+                                    v-model="currentButton.beforeEvent" 
+                                    type="textarea"
+                                    placeholder="请输入前置事件" 
+                                    @click="openScriptDialog('beforeEvent')"
+									readonly
+                                    :rows="1"
+                                />
+                            </el-form-item>
+                        </el-col>
+                        <!-- 完成回调 -->
+                        <el-col :span="24">
+                            <el-form-item label="完成回调">
+                                <el-input 
+                                    v-model="currentButton.afterEvent" 
+                                    type="textarea"
+                                    placeholder="请输入新建、编辑完的回调" 
+                                    @click="openScriptDialog('afterEvent')"
+									readonly
+                                    :rows="1"
+                                />
+                            </el-form-item>
+                        </el-col>
 					</el-row>
 				</el-form>
 			</el-col>
@@ -462,7 +490,7 @@ let actionList = ref([
 	{ label: "新建", value: 1 },
     { label: "编辑", value: 2 },
     { label: "基于选中新建", value: 3 },
-    { label: "自定义", value: 4 },
+    // { label: "自定义", value: 4 },
 ]);
 // 可用类型
 const availableTypeList = ref([
@@ -507,6 +535,10 @@ let defaultButtonConfig = ref({
     errorTipText: "",
 	// 执行脚本
 	customScript: "",
+    // 前置事件
+    beforeEvent: "",
+    // 完成回调
+    afterEvent: "",
 	// guid
 	guid: "",
 });
@@ -711,16 +743,18 @@ const getCustomRightList = async () => {
 // 打开脚本弹窗
 const isShowScriptDialog = ref(false);
 let customScript = ref("");
+let currentKey = ref("");
 
 // 打开脚本弹框
-const openScriptDialog = () => {
+const openScriptDialog = (key) => {
 	isShowScriptDialog.value = true;
-	customScript.value = currentButton.value.customScript;
+	currentKey.value = key;
+	customScript.value = currentButton.value[key];
 };
 // 确认脚本
 const saveScript = () => {
 	isShowScriptDialog.value = false;
-	currentButton.value.customScript = customScript.value;
+	currentButton.value[currentKey.value] = customScript.value;
 };
 // 关闭脚本弹窗
 const closeScriptDialog = () => {
