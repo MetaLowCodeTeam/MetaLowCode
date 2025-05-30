@@ -1,5 +1,6 @@
 <template>
 	<!--  -->
+	<div class="func-desc" v-if="funcParam">function({{ funcParam }}){</div>
 	<codemirror
 		v-model="contentValue"
 		placeholder="Code gose here..."
@@ -10,11 +11,12 @@
 		:extensions="extensions"
 		@change="change"
 	/>
+	<div class="func-desc" v-if="funcParam">}</div>
 </template>
 
 <script setup>
 import { ref, computed, watchEffect } from "vue";
-
+import { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { java } from "@codemirror/lang-java";
@@ -36,10 +38,18 @@ const props = defineProps({
 		// ""(默认白色) or "oneDark"(深色)
 		default: "oneDark",
 	},
-    mode: {
-        type: String,
-        default: "javascript",
-    }
+	mode: {
+		type: String,
+		default: "javascript",
+	},
+	funcParam: {
+		type: String,
+		default: "",
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const emits = defineEmits(["update:modelValue"]);
@@ -50,23 +60,22 @@ const extensions = ref([javascript(), oneDark]);
 
 watchEffect(() => {
 	contentValue.value = props.modelValue;
-    const languageExtensions = {
-        'javascript': javascript(),
-        'java': java(),
-        'sql': sql()
-        // 未来可以在这里添加更多语言
-    };
-    const defaultExtension = javascript();
-	if (props.theme == "oneDark") {
-		extensions.value = [
-            languageExtensions[props.mode] || defaultExtension,
-            oneDark
-        ];
-	} else {
-		extensions.value = [
-            languageExtensions[props.mode] || defaultExtension,
-        ];
-	}
+	const languageExtensions = {
+		javascript: javascript(),
+		java: java(),
+		sql: sql(),
+		// 未来可以在这里添加更多语言
+	};
+	const defaultExtension = javascript();
+	extensions.value = [
+		languageExtensions[props.mode] || defaultExtension,
+	];
+    if(props.disabled){
+        extensions.value.push(EditorView.editable.of(false))
+    }
+    if(props.theme == "oneDark"){
+        extensions.value.push(oneDark)
+    }
 });
 
 const change = (v) => {
@@ -85,5 +94,12 @@ const _height = computed(() => {
 }
 .ml-code-editor:deep(.CodeMirror) {
 	height: 100%;
+}
+.func-desc {
+	color: #909399;
+	line-height: 32px;
+	background: #f4f4f5;
+	box-sizing: border-box;
+	padding-left: 10px;
 }
 </style>
