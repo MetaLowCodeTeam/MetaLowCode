@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="full-width">
 		<form-item-wrapper
 			:designer="designer"
 			:field="field"
@@ -52,7 +52,7 @@
 				</span>
 			</template>
 		</form-item-wrapper>
-		
+
 	</div>
 </template>
 
@@ -155,7 +155,7 @@ export default {
 	},
 
 	methods: {
-       
+
 		onAppendButtonClick() {
             if (this.designState) {
                 return
@@ -174,12 +174,16 @@ export default {
 			this.onFieldChangeEvent(this.fieldModel);
 		},
 
-        
+
 	},
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.full-width {
+	width: 100%;
+}
+</style>
 
 <style lang="scss">
 .small-padding-dialog .el-dialog__body {

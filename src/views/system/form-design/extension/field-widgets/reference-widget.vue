@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="full-width">
 		<form-item-wrapper
 			:designer="designer"
 			:field="field"
@@ -710,7 +710,11 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.full-width {
+	width: 100%;
+}
+</style>
 
 <style lang="scss">
 .small-padding-dialog .el-dialog__body {

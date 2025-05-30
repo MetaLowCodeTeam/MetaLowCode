@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="full-width">
 		<form-item-wrapper
 			:designer="designer"
 			:field="field"
@@ -507,6 +507,10 @@ export default {
 <style lang="scss" scoped>
 .vue-amap-container {
 	height: 380px;
+}
+
+.full-width {
+	width: 100%;
 }
 
 </style>
