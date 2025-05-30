@@ -31,7 +31,7 @@ import DetailTabsSet from "./DetailTabsSet.vue";
 const $TOOL = inject("$TOOL")
 const props = defineProps({
     entityName: { type: String, default: "" },
-    entityCode: { type: Number },
+    entityCode: { type: [Number, String], default: "" },
     addConf: { type: Object, default: () => {} },
     // 是否显示新建项
     checkNewRelatedFilter: {

@@ -23,6 +23,13 @@
 										currentButton.guid === item.guid,
 								}"
 							>
+								<el-icon
+									:size="16"
+									:color="item.iconColor"
+                                    class="icon-top-2"
+								>
+									<component :is="item.icon" />
+								</el-icon>
 								{{ item.name }}
 							</div>
 							<div class="button-list-item-icon">
@@ -415,7 +422,7 @@ const props = defineProps({
 	},
 	entityCode: {
 		type: [String, Number],
-		default: null,
+		default: "",
 	},
 });
 const { queryEntityNameByCode } = useCommonStore();

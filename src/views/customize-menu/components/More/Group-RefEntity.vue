@@ -48,7 +48,7 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
-	entityCode: { type: Number },
+	entityCode: { type: [Number, String], default: "" },
 	referenceField: { type: String },
 	referenceFieldParent: { type: String },
 });

@@ -49,7 +49,7 @@
 <script setup>
 import { ref, watch, onMounted, nextTick } from "vue";
 const props = defineProps({
-    entityCode: { type: Number },
+    entityCode: { type: [Number, String], default: "" },
     layoutConfig: { type: Object, default: () => {} },
 });
 /**

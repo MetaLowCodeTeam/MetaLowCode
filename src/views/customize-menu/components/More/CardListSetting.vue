@@ -118,7 +118,7 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
-	entityCode: { type: Number },
+	entityCode: { type: [Number, String], default: "" },
 });
 
 const emits = defineEmits(["update:modelValue", "confirm"]);

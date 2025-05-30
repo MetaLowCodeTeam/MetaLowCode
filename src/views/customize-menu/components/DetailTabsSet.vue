@@ -178,7 +178,10 @@ import DetailCustomComponentDialog from './DetailCustomComponentDialog.vue';
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
-    entityCode: { type: Number, default: 0 },
+    entityCode: { 
+        type: [Number, String],
+        default: ""
+    },
     entityName: { type: String, default: "" },
     applyType: { type: String, default: "TAB" },
     title: { type: String, default: "配置页签" }

@@ -347,7 +347,7 @@ const props = defineProps({
     multipleSelection: { type: Array, default: () => [] },
     dataExportData: { type: Object, default: () => {} },
     type: { type: String, default: "list" },
-    entityCode: { type: Number, default: 0 },
+    entityCode: { type: [Number, String], default: "" },
     // 当前详情ID
     detailId: { type: String, default: "" },
     // 列配置

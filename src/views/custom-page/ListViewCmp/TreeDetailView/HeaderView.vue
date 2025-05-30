@@ -47,8 +47,8 @@ const emit = defineEmits(["onAdd", "save-success", "onSearch"]);
 
 const props = defineProps({
     entityCode: {
-        type: String,
-        required: true
+        type: [String, Number],
+        default: "",
     }
 });
 

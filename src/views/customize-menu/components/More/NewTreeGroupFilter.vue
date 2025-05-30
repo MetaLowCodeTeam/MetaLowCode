@@ -101,7 +101,7 @@ import layoutConfig from "@/api/layoutConfig";
 const { queryEntityNameByCode } = useCommonStore();
 const props = defineProps({
     modelValue: null,
-    entityCode: { type: Number },
+    entityCode: { type: [Number, String], default: "" },
     layoutConfig: { type: Object, default: () => {} },
     // 实体模块名称
     modelName: {

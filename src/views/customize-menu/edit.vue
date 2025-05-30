@@ -3,7 +3,7 @@
         :title="editParamConf.customDialogTitle || row.customDialogTitle || row.dialogTitle"
         v-if="isShow"
         v-model="isShow"
-        width="55%"
+        :width="styleConf?.dialogConfig?.editWidth || '55%'"
         draggable
         :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf.showFullScreen"
         :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf.autoFullScreen"
@@ -11,7 +11,14 @@
         bodyNoPadding
         :showClose="!loading"
     >
-        <div class="main fullScreen-man" v-loading="loading">
+        <div 
+            class="main fullScreen-man" 
+            v-loading="loading"
+            :style="{
+                height: styleConf?.dialogConfig?.editHeight || '',
+                maxHeight: styleConf?.dialogConfig?.editMaxHeight,
+            }"
+        >
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
             <v-form-render
@@ -100,7 +107,13 @@ import {
     formatQueryByIdParam,
 } from "@/utils/util";
 import http from "@/utils/request"
-const { queryEntityNameById, queryEntityLabelByName, checkModifiableEntity, queryEntityInfoByName } = useCommonStore();
+const { 
+    queryEntityNameById, 
+    queryEntityLabelByName, 
+    checkModifiableEntity, 
+    queryEntityInfoByName,
+    queryEntityCodeByName,
+} = useCommonStore();
 
 const props = defineProps({
     isTeam: { type: Boolean, default: false },
@@ -155,6 +168,8 @@ let styleConf = ref({
         // 弹框自动全屏
         autoFullScreen: false,
     },
+    // 弹框配置
+    dialogConfig: {},
 });
 watch(
     () => props.layoutConfig,
@@ -174,10 +189,26 @@ onMounted(() => {
 
 // 加载配置信息
 const loadMyLayoutConfig = () => {
+    console.log(1)
     myLayoutConfig.value = props.layoutConfig || {};
     let { STYLE } = myLayoutConfig.value;
     if (STYLE && STYLE.config) {
         styleConf.value = JSON.parse(STYLE.config);
+        let { dialogConfig } = styleConf.value;
+        if(dialogConfig){
+            let recordData = globalDsv.value.recordData || null;
+            let entity = {
+                name: row.entityName,
+                code: queryEntityCodeByName(row.entityName),
+                label: queryEntityLabelByName(row.entityName),
+            }
+            // 获取弹框配置 
+            let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
+            if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
+                newDialogConfig.editMaxHeight = '500px';
+            }
+            styleConf.value.dialogConfig = newDialogConfig;
+        }
     }
 };
 
@@ -269,7 +300,7 @@ const openDialog = async (v) => {
     let res = await checkRight(param.id, param.rightType, param.entityName);
     if (res.data && res.data.code == 200 && res.data.data) {
         isShow.value = true;
-        initFormLayout();
+        await initFormLayout();
         loadMyLayoutConfig();
     } else {
         ElMessage.error(
@@ -662,7 +693,6 @@ defineExpose({
 }
 
 .main {
-    max-height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;

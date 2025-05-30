@@ -144,7 +144,10 @@ const $TOOL = inject("$TOOL");
 const props = defineProps({
     modelValue: null,
     entityName: { type: String, default: "" },
-    entityCode: { type: Number, default: "" },
+    entityCode: { 
+        type: [Number, String],
+        default: "" 
+    },
     filter: { type: Array, default: () => [] },
     // 实体模块名称
     modelName: {

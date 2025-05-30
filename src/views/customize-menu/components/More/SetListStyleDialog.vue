@@ -200,7 +200,7 @@
                                 <a
                                     class="ml-a-span"
                                     target="_blank"
-                                    href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                                    href="https://www.yuque.com/visualdev/melecode/nzgskh24oo3hbh30?singleDoc#"
                                 >
                                     使用文档
                                 </a>
@@ -243,7 +243,7 @@ import useCommonStore from "@/store/modules/common";
 const { queryEntityNameByCode } = useCommonStore();
 const props = defineProps({
 	modelValue: null,
-	entityCode: { type: Number },
+	entityCode: { type: [Number, String], default: "" },
 	layoutConfig: { type: Object, default: () => {} },
 	// 实体模块名称
 	modelName: {
