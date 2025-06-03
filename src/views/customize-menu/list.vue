@@ -486,6 +486,7 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
 import { mlShortcutkeys } from "@/utils/util";
+import http from "@/utils/request";
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
@@ -1513,6 +1514,33 @@ const getTableList = async () => {
             filterEasySql.value = `${mainDetailField.value} = '${myFormEntityId.value}'`
         }else {
             filterEasySql.value = `${refEntityBindingField} = '${myFormEntityId.value}'`
+        }
+    }
+    // 如果默认筛选条件有后置条件
+    if(defaultFilter.value.javaScriptVal){
+        let { equation, items, javaScriptVal } = JSON.parse(JSON.stringify(defaultFilter.value));
+        try {
+            let newFilter = new Function('defaultFilter', 'exposed', javaScriptVal)(
+                {
+                    equation,
+                    items,
+                },
+                {
+                    http,
+                    isMobile: false,
+                },
+            );
+            // 判断是否是 Promise
+            if (newFilter instanceof Promise) {
+                newFilter = await newFilter; // 等待异步结果
+            }
+            // 后续同步判断
+            if (newFilter?.equation && newFilter?.items) {
+                defaultFilter.value.equation = newFilter.equation;
+                defaultFilter.value.items = newFilter.items;
+            }
+        } catch (error) {
+            console.error('执行默认查询后置条件时出错:', error);
         }
     }
     let param = {

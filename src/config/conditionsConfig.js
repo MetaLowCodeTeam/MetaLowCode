@@ -125,7 +125,6 @@ export default {
     },
     getShowCom: function (item) {
         let { type, op, referTo } = item;
-        console.log(type, op, referTo)
         for (const key in this.comList) {
             if (Object.hasOwnProperty.call(this.comList, key)) {
                 const element = this.comList[key];
