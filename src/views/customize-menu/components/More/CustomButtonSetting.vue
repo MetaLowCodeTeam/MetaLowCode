@@ -26,8 +26,8 @@
 								<el-icon
 									:size="16"
 									:color="item.iconColor"
-                                    class="icon-top-2"
-                                    v-if="item.icon"
+									class="icon-top-2"
+									v-if="item.icon"
 								>
 									<component :is="item.icon" />
 								</el-icon>
@@ -249,18 +249,30 @@
 										:key="item.value"
 										:label="item.label"
 										:value="item.value"
-                                        :disabled="currentButton.action == 3 && item.value == 2"
+										:disabled="
+											currentButton.action == 3 &&
+											item.value == 2
+										"
 									/>
 								</el-radio-group>
-                                <el-tooltip content="勾选多条数据移动端无效" placement="top">
-                                    <el-icon class="ml-5">
-                                        <ElIconQuestionFilled />
-                                    </el-icon>
-                                </el-tooltip>
+								<el-tooltip
+									content="勾选多条数据移动端无效"
+									placement="top"
+								>
+									<el-icon class="ml-5">
+										<ElIconQuestionFilled />
+									</el-icon>
+								</el-tooltip>
 							</el-form-item>
 						</el-col>
-                        <!-- 过滤条件 -->
-						<el-col :span="24" v-if="currentButton.action != 1 && currentButton.availableType == 1">
+						<!-- 过滤条件 -->
+						<el-col
+							:span="24"
+							v-if="
+								currentButton.action != 1 &&
+								currentButton.availableType == 1
+							"
+						>
 							<el-form-item label="使用条件">
 								<SetConditionsDialog
 									title="附加过滤条件"
@@ -271,12 +283,27 @@
 									@confirm="conditionConfirm"
 								/>
 							</el-form-item>
-                            <el-form-item label="提示文案" v-if="currentButton.filterJson?.items?.length > 0">
-                                <el-input v-model="currentButton.errorTipText" placeholder="请输入不满足条件时的提示文案" clearable/>
-                            </el-form-item>
+							<el-form-item
+								label="提示文案"
+								v-if="
+									currentButton.filterJson?.items?.length > 0
+								"
+							>
+								<el-input
+									v-model="currentButton.errorTipText"
+									placeholder="请输入不满足条件时的提示文案"
+									clearable
+								/>
+							</el-form-item>
 						</el-col>
 						<!-- 选择实体 -->
-						<el-col :span="24" v-if="currentButton.action == 1 || currentButton.action == 3">
+						<el-col
+							:span="24"
+							v-if="
+								currentButton.action == 1 ||
+								currentButton.action == 3
+							"
+						>
 							<el-form-item label="选择实体" class="has-required">
 								<el-select
 									v-model="currentButton.selectEntity"
@@ -328,17 +355,17 @@
 						</el-col>
 						<!-- 选择数据转换 -->
 						<el-col :span="24" v-if="currentButton.action == 3">
-							<el-form-item 
-                                label="选择转换"
-                                class="has-required"
-                            >
+							<el-form-item label="选择转换" class="has-required">
 								<el-select
 									v-model="currentButton.selectDataTransform"
 									placeholder="请选择数据转换"
-                                    :class="{
-										'is-error': errorStatus.selectDataTransform,
+									:class="{
+										'is-error':
+											errorStatus.selectDataTransform,
 									}"
-									@focus="errorStatus.selectDataTransform = false"
+									@focus="
+										errorStatus.selectDataTransform = false
+									"
 								>
 									<el-option
 										v-for="item in dataTransformList.filter(
@@ -362,36 +389,36 @@
 									placeholder="请输入自定义脚本"
 									@click="openScriptDialog('customScript')"
 									readonly
-                                    :rows="1"
+									:rows="1"
 								/>
 							</el-form-item>
 						</el-col>
-                        <!-- 前置事件 -->
-                        <el-col :span="24" v-if="currentButton.action !== 4">
-                            <el-form-item label="前置事件">
-                                <el-input 
-                                    v-model="currentButton.beforeEvent" 
-                                    type="textarea"
-                                    placeholder="请输入前置事件" 
-                                    @click="openScriptDialog('beforeEvent')"
+						<!-- 前置事件 -->
+						<el-col :span="24" v-if="currentButton.action !== 4">
+							<el-form-item label="前置事件">
+								<el-input
+									v-model="currentButton.beforeEvent"
+									type="textarea"
+									placeholder="请输入前置事件"
+									@click="openScriptDialog('beforeEvent')"
 									readonly
-                                    :rows="1"
-                                />
-                            </el-form-item>
-                        </el-col>
-                        <!-- 完成回调 -->
-                        <el-col :span="24">
-                            <el-form-item label="完成回调">
-                                <el-input 
-                                    v-model="currentButton.afterEvent" 
-                                    type="textarea"
-                                    placeholder="请输入新建、编辑完的回调" 
-                                    @click="openScriptDialog('afterEvent')"
+									:rows="1"
+								/>
+							</el-form-item>
+						</el-col>
+						<!-- 完成回调 -->
+						<el-col :span="24">
+							<el-form-item label="完成回调">
+								<el-input
+									v-model="currentButton.afterEvent"
+									type="textarea"
+									placeholder="请输入新建、编辑完的回调"
+									@click="openScriptDialog('afterEvent')"
 									readonly
-                                    :rows="1"
-                                />
-                            </el-form-item>
-                        </el-col>
+									:rows="1"
+								/>
+							</el-form-item>
+						</el-col>
 					</el-row>
 				</el-form>
 			</el-col>
@@ -413,10 +440,7 @@
 		append-to-body
 	>
 		<div class="script-box">
-			<mlCodeEditor
-				v-model="customScript"
-				funcParam="rows,exposed"
-			/>
+			<mlCodeEditor v-model="customScript" funcParam="rows,exposed" />
 		</div>
 		<template #footer>
 			<el-button @click="closeScriptDialog">取消</el-button>
@@ -488,9 +512,9 @@ const showPositionList = ref([
 // 选择动作
 let actionList = ref([
 	{ label: "新建", value: 1 },
-    { label: "编辑", value: 2 },
-    { label: "基于选中新建", value: 3 },
-    // { label: "自定义", value: 4 },
+	{ label: "编辑", value: 2 },
+	{ label: "基于选中新建", value: 3 },
+	// { label: "自定义", value: 4 },
 ]);
 // 可用类型
 const availableTypeList = ref([
@@ -531,14 +555,14 @@ let defaultButtonConfig = ref({
 	reversalCustomCode: false,
 	// 过滤条件
 	filterJson: {},
-    // 不满足条件时的提示文案
-    errorTipText: "",
+	// 不满足条件时的提示文案
+	errorTipText: "",
 	// 执行脚本
 	customScript: "",
-    // 前置事件
-    beforeEvent: "",
-    // 完成回调
-    afterEvent: "",
+	// 前置事件
+	beforeEvent: "",
+	// 完成回调
+	afterEvent: "",
 	// guid
 	guid: "",
 });
@@ -548,7 +572,7 @@ let errorStatus = ref({
 	name: false,
 	selectEntity: false,
 	selectForm: false,
-    selectDataTransform: false,
+	selectDataTransform: false,
 });
 
 const clearErrorStatus = () => {
@@ -596,7 +620,8 @@ const checkData = () => {
 	if (buttonList.value.length > 0) {
 		for (let i = 0; i < buttonList.value.length; i++) {
 			currentButton.value = buttonList.value[i];
-			let { name, selectEntity, selectForm, selectDataTransform } = buttonList.value[i];
+			let { name, selectEntity, selectForm, selectDataTransform } =
+				buttonList.value[i];
 			if (!name) {
 				errorStatus.value.name = true;
 				ElMessage.error("请输入按钮名称");
@@ -660,14 +685,14 @@ const selectIcon = (icon) => {
 
 // 选择动作
 const changeAction = () => {
-    clearErrorStatus();
+	clearErrorStatus();
 	if (currentButton.value.action == 2) {
 		currentButton.value.selectEntity = currentEntity.value.entityName;
 		changeEntity();
 	}
-    if(currentButton.value.action == 3){
-        currentButton.value.availableType = 1;
-    }
+	if (currentButton.value.action == 3) {
+		currentButton.value.availableType = 1;
+	}
 };
 
 // 选择实体
