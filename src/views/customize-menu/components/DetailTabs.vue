@@ -27,6 +27,7 @@
 import { inject, onMounted, ref, watch, watchEffect } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import http from "@/utils/request";
 const { publicSetting } = storeToRefs(useCommonStore());
 import DetailTabsSet from "./DetailTabsSet.vue";
 const props = defineProps({
@@ -47,7 +48,7 @@ let myCheckTabsFilter = ref({});
 
 
 // 初始化tab
-const initTabs = () => {
+const initTabs = async () => {
     tabs.value = [
         {
             entityLabel: props.defaultFirstTabLabel || "详情",
@@ -55,9 +56,39 @@ const initTabs = () => {
         },
     ];
     let config = detailDialog.value.tab?.config;
+   
     if (config) {
         config = JSON.parse(config);
-        config.forEach((el,inx) => {
+        // 2025-06-03 新加的动态显示事件
+        let sourceConfigColumn;
+        if(config.showEventCode) {
+            let { showEventCode, column } = config;
+            let newColumn = JSON.parse(JSON.stringify(column));
+            try {
+                let tabShowEventCode = new Function('column', 'exposed', showEventCode)(
+                    newColumn,
+                    {
+                        http,
+                        isMobile: false,
+                    }
+                );
+                 // 判断是否是 Promise
+                if (tabShowEventCode instanceof Promise) {
+                    tabShowEventCode = await tabShowEventCode; // 等待异步结果
+                }
+                if(tabShowEventCode && typeof tabShowEventCode === 'object') {
+                    sourceConfigColumn = tabShowEventCode;
+                }else {
+                    sourceConfigColumn = newColumn;  
+                }
+            } catch (error) {
+                console.log(error,'error')
+                sourceConfigColumn = newColumn;
+            }
+        }else {
+            sourceConfigColumn = config;
+        }
+        sourceConfigColumn.forEach((el,inx) => {
             if(myCheckTabsFilter.value[inx] && !el.isCustomComponent){
                 tabs.value.push(el);
             }
