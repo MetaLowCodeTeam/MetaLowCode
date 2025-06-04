@@ -133,7 +133,6 @@
                         <template v-for="(item, index) in mergedButtonList" :key="index">
                             <!-- 插槽 -->
                             <slot v-if="item.type === 'slot'" :name="item.name"></slot>
-                            
                             <!-- 原有按钮 -->
                             <el-button
                                 v-else-if="item.type === 'native'"
@@ -166,9 +165,8 @@
                                 @copySuccess="copySuccess"
                                 v-else-if="item.type === 'more' && toolbarConf.showMoreBtn"
                             />
-                            
                             <!-- 自定义按钮 -->
-                            <el-button
+                            <!-- <el-button
                                 v-else
                                 v-bind="item.props"
                                 @click="item.handler"
@@ -194,7 +192,7 @@
                                 >
                                     {{ item.label }}
                                 </span>
-                            </el-button>
+                            </el-button> -->
                         </template>
                     </div>
                 </div>
@@ -855,7 +853,8 @@ const hasEditRight = computed(() => {
 	return $TOOL.checkRole('r' + entityCodeForRight + '-3')
 })
 
-// 顶部按钮渲染
+
+
 const mergedButtonList = computed(() => {
     const nativeButtons = [
         { type: 'slot', name: 'beforeOpenBtn' },
@@ -908,52 +907,52 @@ const mergedButtonList = computed(() => {
         { type: 'more', key: 5 },
         { type: 'slot', name: 'afterMoreBtn' },
     ];
-    // 临时存储自定义按钮（按原始顺序）
-    const customButtonsToInsert = [];
+    // // 临时存储自定义按钮（按原始顺序）
+    // const customButtonsToInsert = [];
     
-    // 先收集所有自定义按钮并确定位置
-    customButtonList.value.forEach(el => {
-        let { showPosition, availableType, action } = el;
-        let isDisabled = false;
+    // // 先收集所有自定义按钮并确定位置
+    // customButtonList.value.forEach(el => {
+    //     let { showPosition, availableType, action } = el;
+    //     let isDisabled = false;
         
-        if (action == 2 || action == 3) {
-            isDisabled = multipleSelection.value.length != 1;
-        } else if (action == 4) {
-            isDisabled = availableType == 1 
-                ? multipleSelection.value.length != 1 
-                : multipleSelection.value.length < 1;
-        }
+    //     if (action == 2 || action == 3) {
+    //         isDisabled = multipleSelection.value.length != 1;
+    //     } else if (action == 4) {
+    //         isDisabled = availableType == 1 
+    //             ? multipleSelection.value.length != 1 
+    //             : multipleSelection.value.length < 1;
+    //     }
         
-        customButtonsToInsert.push({
-            showPosition,
-            button: { 
-                label: el.name, 
-                icon: el.icon,
-                iconColor: el.iconColor,
-                showType: el.showType,
-                props: {
-                    disabled: isDisabled,
-                    type: el.type,
-                },
-                handler: () => customButtonHandler(el)
-            }
-        });
-    });
+    //     customButtonsToInsert.push({
+    //         showPosition,
+    //         button: { 
+    //             label: el.name, 
+    //             icon: el.icon,
+    //             iconColor: el.iconColor,
+    //             showType: el.showType,
+    //             props: {
+    //                 disabled: isDisabled,
+    //                 type: el.type,
+    //             },
+    //             handler: () => customButtonHandler(el)
+    //         }
+    //     });
+    // });
     
-    // 按showPosition升序排序（保证1→2→3的顺序）
-    customButtonsToInsert.sort((a, b) => a.showPosition - b.showPosition);
+    // // 按showPosition升序排序（保证1→2→3的顺序）
+    // customButtonsToInsert.sort((a, b) => a.showPosition - b.showPosition);
     
-    // 按排序后的顺序插入
-    customButtonsToInsert.forEach(({ showPosition, button }) => {
-        if (showPosition == 6) {
-            nativeButtons.push(button);
-        } else {
-            const findIndex = nativeButtons.findIndex(btn => btn.key == showPosition);
-            if (findIndex !== -1) {
-                nativeButtons.splice(findIndex, 0, button);
-            }
-        }
-    });
+    // // 按排序后的顺序插入
+    // customButtonsToInsert.forEach(({ showPosition, button }) => {
+    //     if (showPosition == 6) {
+    //         nativeButtons.push(button);
+    //     } else {
+    //         const findIndex = nativeButtons.findIndex(btn => btn.key == showPosition);
+    //         if (findIndex !== -1) {
+    //             nativeButtons.splice(findIndex, 0, button);
+    //         }
+    //     }
+    // });
     
     return nativeButtons.filter(btn => btn.show !== false);
 })

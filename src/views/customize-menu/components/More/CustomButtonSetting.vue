@@ -1,5 +1,5 @@
 <template>
-	<ml-dialog v-model="isShow" title="自定义按钮设置" width="700">
+	<ml-dialog v-model="isShow" title="自定义按钮设置" width="800">
 		<el-row
 			:gutter="20"
 			v-loading="dialogLoading"
@@ -8,40 +8,58 @@
 			<el-col :span="7">
 				<div class="button-list-box">
 					<ml-scrollbar>
-						<div
-							class="button-list-item"
-							v-for="item in buttonList"
-							:key="item.id"
-							@click="selectButton(item)"
+						<VueDraggableNext
+							ghost-class="ml-draggable-ghost"
+							chosen-class="chosenClass"
+							animation="300"
+							:force-fallback="false"
+							handle=".ml-draggable-mover"
+							:list="buttonList"
 						>
 							<div
-								class="button-list-item-name"
-								:title="item.name"
-								:class="{
-									active:
-										currentButton &&
-										currentButton.guid === item.guid,
-								}"
+								class="button-list-item ml-draggable-item"
+								v-for="item in buttonList"
+								:key="item.id"
+								@click="selectButton(item)"
 							>
-								<el-icon
-									:size="16"
-									:color="item.iconColor"
-									class="icon-top-2"
-									v-if="item.icon"
+								<div class="ml-draggable-mover">
+									<el-icon :size="16">
+										<ElIconRank />
+									</el-icon>
+								</div>
+								<div
+									class="button-list-item-name ml-draggable-item"
+									:title="item.name"
+									:class="{
+										active:
+											currentButton &&
+											currentButton.guid === item.guid,
+									}"
 								>
-									<component :is="item.icon" />
-								</el-icon>
-								{{ item.name }}
-							</div>
-							<div class="button-list-item-icon">
-								<el-icon
-									:size="16"
-									@click.stop="deleteButton(item)"
+									<el-icon
+										:size="16"
+										:color="item.iconColor"
+										class="icon-top-2"
+										v-if="item.icon"
+									>
+										<component :is="item.icon" />
+									</el-icon>
+									{{ item.name }}
+									<span v-if="item.isNative">(内置)</span>
+								</div>
+								<div
+									class="button-list-item-icon"
+									v-if="!item.isNative"
 								>
-									<ElIconClose />
-								</el-icon>
+									<el-icon
+										:size="16"
+										@click.stop="deleteButton(item)"
+									>
+										<ElIconClose />
+									</el-icon>
+								</div>
 							</div>
-						</div>
+						</VueDraggableNext>
 					</ml-scrollbar>
 				</div>
 				<el-button
@@ -55,378 +73,458 @@
 				</el-button>
 			</el-col>
 			<el-col :span="17">
-				<div class="info-text" v-if="!currentButton">
-					点击左侧按钮进行编辑或点击添加按钮
-				</div>
-				<el-form v-else class="main-form" v-loading="mainLoading">
-					<el-row :gutter="20">
-						<el-col :span="12">
-							<el-form-item
-								label="按钮名称"
-								prop="name"
-								class="has-required"
-							>
-								<el-input
-									v-model="currentButton.name"
-									placeholder="请输入按钮名称"
-									clearable
-									ref="nameRef"
-									:class="{
-										'is-error': errorStatus.name,
-									}"
-									@focus="errorStatus.name = false"
-								/>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item label="按钮图标">
-								<div class="icon-box">
-									<span
-										class="icon-span icon-top-3"
-										v-if="!currentButton.icon"
-										@click="openIconDialog"
+				<el-tabs v-model="currentTab" @tab-change="tabChange">
+					<el-tab-pane
+						v-for="(tab, tabInx) of tabList"
+						:key="tabInx"
+						:label="tab.label"
+						:name="tab.name"
+					>
+						<div class="info-text" v-if="!currentButton">
+							点击左侧按钮进行编辑或点击添加按钮
+						</div>
+						<el-form
+							v-else
+							class="main-form"
+							v-loading="mainLoading"
+						>
+							<el-row :gutter="20">
+								<el-col :span="12">
+									<el-form-item
+										label="按钮名称"
+										prop="name"
+										class="has-required"
 									>
-										<el-icon :size="16">
-											<ElIconClose />
-										</el-icon>
-									</span>
-									<span
-										class="icon-span icon-top-3"
-										@click="openIconDialog"
-										v-else
-									>
-										<el-icon
-											:size="16"
-											:color="currentButton.iconColor"
+										<el-input
+											v-model="currentButton.name"
+											placeholder="请输入按钮名称"
+											clearable
+											ref="nameRef"
+											:class="{
+												'is-error': errorStatus.name,
+											}"
+											@focus="errorStatus.name = false"
+										/>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="按钮图标">
+										<div class="icon-box">
+											<span
+												class="icon-span icon-top-3"
+												v-if="!currentButton.icon"
+												@click="openIconDialog"
+											>
+												<el-icon :size="16">
+													<ElIconClose />
+												</el-icon>
+											</span>
+											<span
+												class="icon-span icon-top-3"
+												@click="openIconDialog"
+												v-else
+											>
+												<el-icon
+													:size="16"
+													:color="
+														currentButton.iconColor
+													"
+												>
+													<component
+														:is="currentButton.icon"
+													/>
+												</el-icon>
+											</span>
+										</div>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="显示类型">
+										<el-select
+											v-model="currentButton.showType"
+											placeholder="请选择显示类型"
 										>
-											<component
-												:is="currentButton.icon"
+											<el-option
+												v-for="item in showTypeList"
+												:key="item.value"
+												:label="item.label"
+												:value="item.value"
 											/>
-										</el-icon>
-									</span>
-								</div>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item label="显示类型">
-								<el-select
-									v-model="currentButton.showType"
-									placeholder="请选择显示类型"
-								>
-									<el-option
-										v-for="item in showTypeList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item label="显示位置">
-								<el-select
-									v-model="currentButton.showPosition"
-									placeholder="请选择显示位置"
-								>
-									<el-option-group
-										v-for="group in showPositionList"
-										:key="group.label"
-										:label="group.label"
-									>
-										<el-option
-											v-for="item in group.options"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value"
-										/>
-									</el-option-group>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item label="按钮类型">
-								<el-select
-									v-model="currentButton.type"
-									placeholder="请选择按钮类型"
-								>
-									<el-option
-										v-for="item in buttonTypeList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item label="按钮预览">
-								<el-button
-									:type="currentButton.type"
-									:color="
-										currentButton.type == 'custom'
-											? currentButton.color
-											: ''
-									"
-								>
-									<el-icon
-										:size="16"
-										:color="currentButton.iconColor"
-										v-if="
-											currentButton.icon &&
-											currentButton.showType != 3
-										"
-										style="position: relative; top: -1px"
-									>
-										<component :is="currentButton.icon" />
-									</el-icon>
-									<span
-										v-if="currentButton.showType != 2"
-										:class="{
-											'ml-5':
-												currentButton.showType == 1 &&
-												currentButton.icon,
-										}"
-									>
-										{{ currentButton.name }}
-									</span>
-								</el-button>
-							</el-form-item>
-						</el-col>
-						<el-divider />
-						<!-- 叠加自定义权限 -->
-						<el-col :span="24">
-							<el-form-item label="叠加自定义权限">
-								<div class="custom-right-box">
-									<el-select
-										v-model="currentButton.customCode"
-										placeholder="请选择权限"
-										clearable
-										filterable
-										allow-create
-										class="custom-right-select"
-									>
-										<el-option
-											v-for="item in customRightList"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value"
-										/>
-									</el-select>
-									<el-tooltip
-										content="取反后，用户不包含选定条件菜单才会显示。"
-										placement="top"
-									>
-										<el-checkbox
-											style="width: 60px"
-											v-model="
-												currentButton.reversalCustomCode
+										</el-select>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="按钮类型">
+										<el-select
+											v-model="currentButton.type"
+											placeholder="请选择按钮类型"
+										>
+											<el-option
+												v-for="item in buttonTypeList"
+												:key="item.value"
+												:label="item.label"
+												:value="item.value"
+											/>
+										</el-select>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="按钮预览">
+										<el-button
+											:type="currentButton.type"
+											:color="
+												currentButton.type == 'custom'
+													? currentButton.color
+													: ''
 											"
-											label="取反"
+										>
+											<el-icon
+												:size="16"
+												:color="currentButton.iconColor"
+												v-if="
+													currentButton.icon &&
+													currentButton.showType != 3
+												"
+												style="
+													position: relative;
+													top: -1px;
+												"
+											>
+												<component
+													:is="currentButton.icon"
+												/>
+											</el-icon>
+											<span
+												v-if="
+													currentButton.showType != 2
+												"
+												:class="{
+													'ml-5':
+														currentButton.showType ==
+															1 &&
+														currentButton.icon,
+												}"
+											>
+												{{ currentButton.name }}
+											</span>
+										</el-button>
+									</el-form-item>
+								</el-col>
+								<el-col
+									:span="24"
+									v-if="currentButton.isNative"
+								>
+									<el-form-item label="是否显示">
+										<el-switch
+											v-model="currentButton.hide"
+											:active-value="false"
+											:inactive-value="true"
+                                            v-if="currentButton.key != 'batchEdit'"
 										/>
-									</el-tooltip>
-								</div>
-							</el-form-item>
-						</el-col>
-						<el-divider />
-						<el-col :span="12">
-							<el-form-item label="执行动作">
-								<el-select
-									v-model="currentButton.action"
-									placeholder="请选择执行动作"
-									@change="changeAction"
-								>
-									<el-option
-										v-for="item in actionList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-										:disabled="item.disabled"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="24" v-if="currentButton.action != 1">
-							<el-form-item label="可用类型">
-								<el-radio-group
-									v-model="currentButton.availableType"
-								>
-									<el-radio
-										v-for="item in availableTypeList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-										:disabled="
-											currentButton.action == 3 &&
-											item.value == 2
+                                        <div class="ml-info-text" v-else>批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制</div>
+									</el-form-item>
+								</el-col>
+								<template v-if="!currentButton.isNative">
+									<el-divider />
+									<!-- 叠加自定义权限 -->
+									<el-col :span="24">
+										<el-form-item label="叠加自定义权限">
+											<div class="custom-right-box">
+												<el-select
+													v-model="
+														currentButton.customCode
+													"
+													placeholder="请选择权限"
+													clearable
+													filterable
+													allow-create
+													class="custom-right-select"
+												>
+													<el-option
+														v-for="item in customRightList"
+														:key="item.value"
+														:label="item.label"
+														:value="item.value"
+													/>
+												</el-select>
+												<el-tooltip
+													content="取反后，用户不包含选定条件菜单才会显示。"
+													placement="top"
+												>
+													<el-checkbox
+														style="width: 60px"
+														v-model="
+															currentButton.reversalCustomCode
+														"
+														label="取反"
+													/>
+												</el-tooltip>
+											</div>
+										</el-form-item>
+									</el-col>
+									<el-divider />
+									<el-col :span="12">
+										<el-form-item label="执行动作">
+											<el-select
+												v-model="currentButton.action"
+												placeholder="请选择执行动作"
+												@change="changeAction"
+											>
+												<el-option
+													v-for="item in actionList"
+													:key="item.value"
+													:label="item.label"
+													:value="item.value"
+													:disabled="item.disabled"
+												/>
+											</el-select>
+										</el-form-item>
+									</el-col>
+									<el-col
+										:span="24"
+										v-if="currentButton.action != 1"
+									>
+										<el-form-item label="可用类型">
+											<el-radio-group
+												v-model="
+													currentButton.availableType
+												"
+											>
+												<el-radio
+													v-for="item in availableTypeList"
+													:key="item.value"
+													:label="item.label"
+													:value="item.value"
+													:disabled="
+														currentButton.action ==
+															3 && item.value == 2
+													"
+												/>
+											</el-radio-group>
+											<el-tooltip
+												content="勾选多条数据移动端无效"
+												placement="top"
+											>
+												<el-icon class="ml-5">
+													<ElIconQuestionFilled />
+												</el-icon>
+											</el-tooltip>
+										</el-form-item>
+									</el-col>
+									<!-- 过滤条件 -->
+									<el-col
+										:span="24"
+										v-if="
+											currentButton.action != 1 &&
+											currentButton.availableType == 1
 										"
-									/>
-								</el-radio-group>
-								<el-tooltip
-									content="勾选多条数据移动端无效"
-									placement="top"
-								>
-									<el-icon class="ml-5">
-										<ElIconQuestionFilled />
-									</el-icon>
-								</el-tooltip>
-							</el-form-item>
-						</el-col>
-						<!-- 过滤条件 -->
-						<el-col
-							:span="24"
-							v-if="
-								currentButton.action != 1 &&
-								currentButton.availableType == 1
-							"
-						>
-							<el-form-item label="使用条件">
-								<SetConditionsDialog
-									title="附加过滤条件"
-									:conditionConf="currentButton.filterJson"
-									:entityName="
-										queryEntityNameByCode(entityCode)
-									"
-									@confirm="conditionConfirm"
-								/>
-							</el-form-item>
-							<el-form-item
-								label="提示文案"
-								v-if="
-									currentButton.filterJson?.items?.length > 0
-								"
-							>
-								<el-input
-									v-model="currentButton.errorTipText"
-									placeholder="请输入不满足条件时的提示文案"
-									clearable
-								/>
-							</el-form-item>
-						</el-col>
-						<!-- 选择实体 -->
-						<el-col
-							:span="24"
-							v-if="
-								currentButton.action == 1 ||
-								currentButton.action == 3
-							"
-						>
-							<el-form-item label="选择实体" class="has-required">
-								<el-select
-									v-model="currentButton.selectEntity"
-									placeholder="请选择实体"
-									:class="{
-										'is-error': errorStatus.selectEntity,
-									}"
-									@focus="errorStatus.selectEntity = false"
-									@change="changeEntity"
-									filterable
-								>
-									<el-option
-										v-for="item in unSystemEntityList.filter(
-											(el) =>
-												!el.detailEntityFlag &&
-												!el.appAbbr
-										)"
-										:key="item.name"
-										:label="item.label"
-										:value="item.name"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<!-- 选择表单 -->
-						<el-col :span="24" v-if="currentButton.action != 4">
-							<el-form-item
-								label="选择表单"
-								v-loading="entityFormListLoading"
-								class="has-required"
-							>
-								<el-select
-									v-model="currentButton.selectForm"
-									placeholder="请选择表单"
-									:class="{
-										'is-error': errorStatus.selectForm,
-									}"
-									@focus="errorStatus.selectForm = false"
-									filterable
-								>
-									<el-option
-										v-for="item in entityFormList"
-										:key="item.formLayoutId"
-										:label="item.layoutName"
-										:value="item.formLayoutId"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<!-- 选择数据转换 -->
-						<el-col :span="24" v-if="currentButton.action == 3">
-							<el-form-item label="选择转换" class="has-required">
-								<el-select
-									v-model="currentButton.selectDataTransform"
-									placeholder="请选择数据转换"
-									:class="{
-										'is-error':
-											errorStatus.selectDataTransform,
-									}"
-									@focus="
-										errorStatus.selectDataTransform = false
-									"
-								>
-									<el-option
-										v-for="item in dataTransformList.filter(
-											(el) =>
-												el.targetEntity ===
-												currentButton.selectEntity
-										)"
-										:key="item.transformId"
-										:label="item.transformName"
-										:value="item.transformId"
-									/>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<!-- 执行脚本 -->
-						<el-col :span="24" v-if="currentButton.action == 4">
-							<el-form-item label="执行脚本">
-								<el-input
-									v-model="currentButton.customScript"
-									type="textarea"
-									placeholder="请输入自定义脚本"
-									@click="openScriptDialog('customScript')"
-									readonly
-									:rows="1"
-								/>
-							</el-form-item>
-						</el-col>
-						<!-- 前置事件 -->
-						<el-col :span="24" v-if="currentButton.action !== 4">
-							<el-form-item label="前置事件">
-								<el-input
-									v-model="currentButton.beforeEvent"
-									type="textarea"
-									placeholder="请输入前置事件"
-									@click="openScriptDialog('beforeEvent')"
-									readonly
-									:rows="1"
-								/>
-							</el-form-item>
-						</el-col>
-						<!-- 完成回调 -->
-						<el-col :span="24">
-							<el-form-item label="完成回调">
-								<el-input
-									v-model="currentButton.afterEvent"
-									type="textarea"
-									placeholder="请输入新建、编辑完的回调"
-									@click="openScriptDialog('afterEvent')"
-									readonly
-									:rows="1"
-								/>
-							</el-form-item>
-						</el-col>
-					</el-row>
-				</el-form>
+									>
+										<el-form-item label="使用条件">
+											<SetConditionsDialog
+												title="附加过滤条件"
+												:conditionConf="
+													currentButton.filterJson
+												"
+												:entityName="
+													queryEntityNameByCode(
+														entityCode
+													)
+												"
+												@confirm="conditionConfirm"
+											/>
+										</el-form-item>
+										<el-form-item
+											label="提示文案"
+											v-if="
+												currentButton.filterJson?.items
+													?.length > 0
+											"
+										>
+											<el-input
+												v-model="
+													currentButton.errorTipText
+												"
+												placeholder="请输入不满足条件时的提示文案"
+												clearable
+											/>
+										</el-form-item>
+									</el-col>
+									<!-- 选择实体 -->
+									<el-col
+										:span="24"
+										v-if="
+											currentButton.action == 1 ||
+											currentButton.action == 3
+										"
+									>
+										<el-form-item
+											label="选择实体"
+											class="has-required"
+										>
+											<el-select
+												v-model="
+													currentButton.selectEntity
+												"
+												placeholder="请选择实体"
+												:class="{
+													'is-error':
+														errorStatus.selectEntity,
+												}"
+												@focus="
+													errorStatus.selectEntity = false
+												"
+												@change="changeEntity"
+												filterable
+											>
+												<el-option
+													v-for="item in unSystemEntityList.filter(
+														(el) =>
+															!el.detailEntityFlag &&
+															!el.appAbbr
+													)"
+													:key="item.name"
+													:label="item.label"
+													:value="item.name"
+												/>
+											</el-select>
+										</el-form-item>
+									</el-col>
+									<!-- 选择表单 -->
+									<el-col
+										:span="24"
+										v-if="currentButton.action != 4"
+									>
+										<el-form-item
+											label="选择表单"
+											v-loading="entityFormListLoading"
+											class="has-required"
+										>
+											<el-select
+												v-model="
+													currentButton.selectForm
+												"
+												placeholder="请选择表单"
+												:class="{
+													'is-error':
+														errorStatus.selectForm,
+												}"
+												@focus="
+													errorStatus.selectForm = false
+												"
+												filterable
+											>
+												<el-option
+													v-for="item in entityFormList"
+													:key="item.formLayoutId"
+													:label="item.layoutName"
+													:value="item.formLayoutId"
+												/>
+											</el-select>
+										</el-form-item>
+									</el-col>
+									<!-- 选择数据转换 -->
+									<el-col
+										:span="24"
+										v-if="currentButton.action == 3"
+									>
+										<el-form-item
+											label="选择转换"
+											class="has-required"
+										>
+											<el-select
+												v-model="
+													currentButton.selectDataTransform
+												"
+												placeholder="请选择数据转换"
+												:class="{
+													'is-error':
+														errorStatus.selectDataTransform,
+												}"
+												@focus="
+													errorStatus.selectDataTransform = false
+												"
+											>
+												<el-option
+													v-for="item in dataTransformList.filter(
+														(el) =>
+															el.targetEntity ===
+															currentButton.selectEntity
+													)"
+													:key="item.transformId"
+													:label="item.transformName"
+													:value="item.transformId"
+												/>
+											</el-select>
+										</el-form-item>
+									</el-col>
+									<!-- 执行脚本 -->
+									<el-col
+										:span="24"
+										v-if="currentButton.action == 4"
+									>
+										<el-form-item label="执行脚本">
+											<el-input
+												v-model="
+													currentButton.customScript
+												"
+												type="textarea"
+												placeholder="请输入自定义脚本"
+												@click="
+													openScriptDialog(
+														'customScript'
+													)
+												"
+												readonly
+												:rows="1"
+											/>
+										</el-form-item>
+									</el-col>
+									<!-- 前置事件 -->
+									<el-col
+										:span="24"
+										v-if="currentButton.action !== 4"
+									>
+										<el-form-item label="前置事件">
+											<el-input
+												v-model="
+													currentButton.beforeEvent
+												"
+												type="textarea"
+												placeholder="请输入前置事件"
+												@click="
+													openScriptDialog(
+														'beforeEvent'
+													)
+												"
+												readonly
+												:rows="1"
+											/>
+										</el-form-item>
+									</el-col>
+									<!-- 完成回调 -->
+									<el-col :span="24">
+										<el-form-item label="完成回调">
+											<el-input
+												v-model="
+													currentButton.afterEvent
+												"
+												type="textarea"
+												placeholder="请输入新建、编辑完的回调"
+												@click="
+													openScriptDialog(
+														'afterEvent'
+													)
+												"
+												readonly
+												:rows="1"
+											/>
+										</el-form-item>
+									</el-col>
+								</template>
+							</el-row>
+						</el-form>
+					</el-tab-pane>
+				</el-tabs>
 			</el-col>
 		</el-row>
 		<template #footer>
@@ -472,6 +570,26 @@ import { getFormLayoutList, getSystemConstants } from "@/api/system-manager";
 import layoutConfigApi from "@/api/layoutConfig";
 // 获取数据转换
 import { queryByEntity } from "@/api/transform";
+// hook
+import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
+// 拖拽组件
+import { VueDraggableNext } from "vue-draggable-next";
+const {
+	// tab配置
+	tabList,
+	// 按钮类型
+	buttonTypeList,
+	// 显示类型
+	showTypeList,
+	// 选择动作
+	actionList,
+	// 可用类型
+	availableTypeList,
+	// 默认自定义按钮配置
+	defaultButtonConfig,
+	// 默认顶部按钮PC
+	defaultPcTopButtonList,
+} = useCustomButtonConfig();
 
 const props = defineProps({
 	modelName: {
@@ -490,101 +608,10 @@ const emit = defineEmits(["confirm"]);
 
 const isShow = ref(false);
 
-// 按钮类型
-const buttonTypeList = ref([
-	{ label: "默认", value: "default" },
-	{ label: "主要", value: "primary" },
-	{ label: "成功", value: "success" },
-	{ label: "警告", value: "warning" },
-	{ label: "危险", value: "danger" },
-	{ label: "信息", value: "info" },
-	// { label: "自定义", value: "custom" },
-]);
-// 显示类型
-const showTypeList = ref([
-	{ label: "默认", value: 1 },
-	{ label: "仅图标", value: 2 },
-	{ label: "仅文字", value: 3 },
-]);
-// 显示位置
-const showPositionList = ref([
-	{
-        label: '顶部',
-        options: [
-            { label: '打开前', value: 1 },
-            { label: '编辑前', value: 2 },
-            { label: '批量编辑前', value: 3 },
-            { label: '新建前', value: 4 },
-            { label: '更多前', value: 5 },
-            { label: '更多后', value: 6 },
-        ]
-    },
-    {
-        label: '操作列',
-        options: [
-            { label: '编辑前', value: 7 },
-            { label: '查看前', value: 8 },
-            { label: '查看后', value: 9 },
-        ]
-    }
-]);
-// 选择动作
-let actionList = ref([
-	{ label: "新建", value: 1 },
-	{ label: "编辑", value: 2 },
-	{ label: "基于选中新建", value: 3 },
-	// { label: "自定义", value: 4 },
-]);
-// 可用类型
-const availableTypeList = ref([
-	{ label: "勾选一条数据", value: 1 },
-	{ label: "勾选多条数据", value: 2 },
-]);
+const currentTab = ref("pcTop");
 
-let defaultButtonConfig = ref({
-	// 按钮名称
-	name: "",
-	// 按钮图标
-	icon: "",
-	// 按钮图标颜色
-	iconColor: "",
-	// 按钮类型 按钮类型，在设置color时，后者优先。
-	type: "default",
-	// 按钮颜色
-	color: "",
-	// 按钮尺寸
-	size: "",
-	// 按钮显示类型 1默认 2仅图标 3仅文字
-	showType: 1,
-	// 显示位置
-	showPosition: 1,
-	// 可用类型
-	availableType: 1,
-	// 执行动作
-	action: 1,
-	// 选择实体
-	selectEntity: "",
-	// 选择表单
-	selectForm: "",
-	// 选择数据转换
-	selectDataTransform: "",
-	// 自定义权限
-	customCode: "",
-	// 权限取反
-	reversalCustomCode: false,
-	// 过滤条件
-	filterJson: {},
-	// 不满足条件时的提示文案
-	errorTipText: "",
-	// 执行脚本
-	customScript: "",
-	// 前置事件
-	beforeEvent: "",
-	// 完成回调
-	afterEvent: "",
-	// guid
-	guid: "",
-});
+// 显示位置
+const showPositionList = ref([]);
 
 // 错误状态
 let errorStatus = ref({
@@ -626,7 +653,7 @@ let nameRef = ref(null);
 // 添加按钮
 const addButton = () => {
 	if (checkData()) {
-		let newButton = deepClone(defaultButtonConfig.value);
+		let newButton = deepClone(defaultButtonConfig);
 		newButton.name = "按钮" + (buttonList.value.length + 1);
 		newButton.guid = getGuid();
 		currentButton.value = newButton;
@@ -638,6 +665,9 @@ const addButton = () => {
 const checkData = () => {
 	if (buttonList.value.length > 0) {
 		for (let i = 0; i < buttonList.value.length; i++) {
+			if (buttonList.value[i].isNative) {
+				continue;
+			}
 			currentButton.value = buttonList.value[i];
 			let { name, selectEntity, selectForm, selectDataTransform } =
 				buttonList.value[i];
@@ -743,26 +773,55 @@ const loadEntityFormList = async () => {
 const dataTransformList = ref([]);
 
 let currentEntity = ref({});
+let layoutConfigData = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
 	console.log(entity, "entity");
+	// 自定义按钮配置ID
 	if (entity.customButtonId) {
 		layoutConfigId.value = entity.customButtonId;
 	}
+	// 自定义按钮配置数据
 	if (entity.customButton) {
-		buttonList.value = [...entity.customButton];
+		layoutConfigData.value = { ...entity.customButton };
+		// buttonList.value = [...entity.customButton];
 	}
+	currentTab.value = "pcTop";
 	currentEntity.value = entity;
 	isShow.value = true;
 	dialogLoading.value = true;
 	await loadDataTransformList();
 	await getCustomRightList();
-	currentButton.value = null;
-	if (buttonList.value.length > 0) {
-		currentButton.value = buttonList.value[0];
-		loadEntityFormList();
-	}
+	// currentButton.value = null;
+	// if (buttonList.value.length > 0) {
+	// 	currentButton.value = buttonList.value[0];
+	// 	loadEntityFormList();
+	// }
+	// 初始化自定义按钮配置
+	initTabButtonConfig(currentTab.value);
 	dialogLoading.value = false;
+};
+
+// 初始化自定义按钮配置
+const initTabButtonConfig = (tab) => {
+	let findTab = tabList.value.find((item) => item.name == tab);
+	if (
+		tab == "pcTop" &&
+		(!findTab.buttonList || findTab.buttonList.length == 0)
+	) {
+		findTab.buttonList = [...defaultPcTopButtonList];
+	}
+	// currentButton.value = findTab.buttonList[0];
+	buttonList.value = [...findTab.buttonList];
+};
+
+// 切换tab
+const tabChange = (tab) => {
+	// console.log(tab, "tab");
+	// let findTab = tabList.value.find((item) => item.name == tab);
+	// if (findTab) {
+	// 	findTab.buttonList.push({});
+	// }
 };
 
 // 加载数据转换
@@ -855,7 +914,7 @@ defineExpose({
 	.button-list-item {
 		cursor: pointer;
 		box-sizing: border-box;
-		padding: 0 10px;
+		// padding: 0 10px;
 		border: 1px solid #e6e6e6;
 		margin-bottom: 3px;
 		height: 32px;
@@ -863,10 +922,24 @@ defineExpose({
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		.ml-draggable-mover {
+			width: 32px;
+			height: 32px;
+			border-radius: 3px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--el-color-primary);
+			color: #fff;
+			&:hover {
+				background: var(--el-color-primary-light-3);
+			}
+		}
 
 		.button-list-item-name {
 			flex: 1;
 			margin-right: 10px;
+			margin-left: 10px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -934,6 +1007,24 @@ defineExpose({
 	.custom-right-select {
 		flex: 1;
 		margin-right: 10px;
+	}
+}
+
+/**
+* 拖拽
+*/
+
+.chosenClass {
+	background: #fff;
+	// background-color: #f1f1f1;
+}
+
+.subghost {
+	border: 1px dashed #999;
+	background: #fff !important;
+	.submover,
+	.button-list-item {
+		opacity: 0;
 	}
 }
 </style>

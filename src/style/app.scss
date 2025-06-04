@@ -355,6 +355,10 @@ textarea {
 	line-height: 1.41;
 }
 
+.ml-info-text {
+    color: #878787;
+}
+
 .w-100 {
 	width: 100% !important;
 }
@@ -460,4 +464,18 @@ $names: (
 .icon-top-4 {
     position: relative;
     top: 4px;
+}
+
+
+
+/**
+* 拖拽
+*/
+.ml-draggable-ghost {
+    background: #fff !important;
+	border: 1px dashed #999 !important;
+    .ml-draggable-mover,
+	.ml-draggable-item {
+		opacity: 0;
+	}
 }
