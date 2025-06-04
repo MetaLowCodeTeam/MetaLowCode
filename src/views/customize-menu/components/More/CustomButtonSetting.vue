@@ -128,12 +128,18 @@
 									v-model="currentButton.showPosition"
 									placeholder="请选择显示位置"
 								>
-									<el-option
-										v-for="item in showPositionList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									/>
+									<el-option-group
+										v-for="group in showPositionList"
+										:key="group.label"
+										:label="group.label"
+									>
+										<el-option
+											v-for="item in group.options"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value"
+										/>
+									</el-option-group>
 								</el-select>
 							</el-form-item>
 						</el-col>
@@ -502,12 +508,25 @@ const showTypeList = ref([
 ]);
 // 显示位置
 const showPositionList = ref([
-	{ label: "打开前", value: 1 },
-	{ label: "编辑前", value: 2 },
-	{ label: "批量编辑前", value: 3 },
-	{ label: "新建前", value: 4 },
-	{ label: "更多前", value: 5 },
-	{ label: "更多后", value: 6 },
+	{
+        label: '顶部',
+        options: [
+            { label: '打开前', value: 1 },
+            { label: '编辑前', value: 2 },
+            { label: '批量编辑前', value: 3 },
+            { label: '新建前', value: 4 },
+            { label: '更多前', value: 5 },
+            { label: '更多后', value: 6 },
+        ]
+    },
+    {
+        label: '操作列',
+        options: [
+            { label: '编辑前', value: 7 },
+            { label: '查看前', value: 8 },
+            { label: '查看后', value: 9 },
+        ]
+    }
 ]);
 // 选择动作
 let actionList = ref([

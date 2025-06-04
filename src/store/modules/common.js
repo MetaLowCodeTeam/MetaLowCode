@@ -16,6 +16,7 @@ const useCommonStore = defineStore('commonStore', () => {
     let unSystemEntityList = ref([]);
     // 审批流程实体
     let processEntityList = ref([]);
+    
 
     // 系统配置
     let publicSetting = ref({
