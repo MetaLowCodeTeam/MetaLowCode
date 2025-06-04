@@ -87,6 +87,7 @@
             </div>
         </div>
         <template #footer>
+            <span class="ml-a-span fl ml-10" @click="openTabShowEventCode">动态显示事件</span>
             <div class="footer-div">
                 <el-button @click="isShow = false" :loading="loading">取消</el-button>
                 <el-button type="primary" @click="onSave" :loading="loading">保存</el-button>
@@ -163,6 +164,12 @@
     </mlDialog>
     <DetailCustomLabelDialog ref="DetailCustomLabelRef" @confirm="addShowColumn"/>
     <DetailCustomComponentDialog ref="DetailCustomComponentRef" @confirm="addShowColumn"/>
+    <mlCodeEditorDialog 
+        ref="mlCodeEditorDialogRef" 
+        @confirm="confirmTabShowEventCode"
+        title="页签动态显示自定义事件"
+        funcParam="column, exposed"
+    />
 </template>
 
 <script setup>
@@ -175,6 +182,8 @@ import { ref, inject, reactive, onMounted } from "vue";
 import DetailCustomLabelDialog from './DetailCustomLabelDialog.vue';
 // 自定义组件设置组件
 import DetailCustomComponentDialog from './DetailCustomComponentDialog.vue';
+// 动态显示事件
+import mlCodeEditorDialog from '@/components/mlCodeEditor/CodeEditorDialog.vue';
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -203,6 +212,9 @@ let sourceColumn = ref([]);
 let searchField = ref("");
 
 let columnList = ref([]);
+
+// 动态显示事件
+let tabShowEventCode = ref("");
 
 onMounted(() => {
     document.body.ondrop = function (event) {
@@ -323,9 +335,20 @@ const openDialog = (data) => {
     layoutConfigId.value = data.layoutConfigId;
     if (data.config) {
         let config = JSON.parse(data.config);
+        // 2025-06-03 新加的动态显示事件
+        // 1 记录原列数据
+        let sourceConfigColumn = [];
+        // 2 如果有动态显示事件，则记录原列数据
+        if(config.showEventCode) {
+            tabShowEventCode.value = config.showEventCode;
+            sourceConfigColumn = config.column;
+        }else {
+            // 3 如果没有动态显示事件，则记录原列数据
+            sourceConfigColumn = config;
+        }
         showColumn.value = [];
         hasEntityName.value = [];
-        config.forEach((el) => {
+        sourceConfigColumn.forEach((el) => {
             showColumn.value.push(el);
             hasEntityName.value.push(el.entityName);
         });
@@ -358,8 +381,18 @@ const getAllColumn = async () => {
 };
 
 const onSave = async () => {
+    let saveConfig;
+    // 2025-06-03 新加的动态显示事件
+    if(tabShowEventCode.value) {
+        saveConfig = JSON.stringify({
+            showEventCode: tabShowEventCode.value,
+            column: [...showColumn.value],
+        });
+    }else {
+        saveConfig = JSON.stringify([...showColumn.value]);
+    }
     let param = {
-        config: JSON.stringify([...showColumn.value]),
+        config: saveConfig,
         entityCode: props.entityCode,
         applyType: props.applyType,
     };
@@ -425,6 +458,16 @@ const conditionConfirm = (e) => {
 /***
  *  ****************************************** 过滤条件相关 end
  */
+
+// 打开动态显示事件编辑器
+let mlCodeEditorDialogRef = ref();
+const openTabShowEventCode = () => {
+    mlCodeEditorDialogRef.value?.openCodeEditorDialog(tabShowEventCode.value);
+};
+
+const confirmTabShowEventCode = (code) => {
+    tabShowEventCode.value = code;
+};
 
 // 暴露方法给父组件调用
 defineExpose({

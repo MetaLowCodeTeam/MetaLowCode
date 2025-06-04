@@ -293,7 +293,7 @@
                 
 
             </div>
-            <div class="ml-add-conditions mt-20">
+            <div class="ml-add-conditions mt-10">
                 <span class="ml-a-span" @click="addConditions">
                     <el-icon size="18" class="add-icon">
                         <ElIconCirclePlusFilled />

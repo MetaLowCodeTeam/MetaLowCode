@@ -290,7 +290,6 @@ export default {
             if (this.designState) {
                 return
             }
-
 			if (this.field.options.onAppendButtonClick) {  //自定义引用弹窗实现
 				let customFn = new Function(
 					this.field.options.onAppendButtonClick
@@ -307,7 +306,6 @@ export default {
 					return;
 				}
 			}
-
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
@@ -466,6 +464,7 @@ export default {
                         // 第一条选中数据回填
                         this.doFillBack(this.fieldModel, selectedRow);
 						this.syncUpdateFormModel(this.fieldModel);
+                        this.onFieldChangeEvent(this.fieldModel);
                     } else {
                         let temp = {};
                         temp[this.fieldKeyName] = {
@@ -499,6 +498,7 @@ export default {
 					this.syncUpdateFormModel(this.fieldModel);
                     // 第一条选中数据回填
                     this.doFillBack(this.fieldModel, rows[0]);
+                    this.onFieldChangeEvent(this.fieldModel);
                 }
                 rows.forEach((selectedRow,subInx) => {
                     // 把后面的数据已追加的方式追加进去。
@@ -594,7 +594,6 @@ export default {
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;
 						}
-
 						// 执行回填操作
                         let targetWidgetRef = this.getWidgetRef(el.targetField);
                         if (targetWidgetRef) {

@@ -149,18 +149,22 @@ const initData = async (paramEntity, isRefresh = false) => {
 		if (res.data.TAB?.config) {
 			// 取所有页签数据
 			let tabConfig = JSON.parse(res.data.TAB.config);
-			// 拿所有页签过滤参数
-			let filterList = tabConfig.map((el) => el.filter);
-			if (tabConfig && tabConfig.length > 0) {
-				// 调用查询接口判断该页签是否显示
-				let tabRes = await checkTables(
-					filterList,
-					myEntity.recordId
-				);
-				if (tabRes) {
-					checkTabsFilter.value = tabRes.data;
-				}
+			// 2025-06-03 新加的动态显示事件
+			let sourceConfigColumn = [];
+			if(tabConfig.showEventCode) {
+				sourceConfigColumn = tabConfig.column;
+			}else {
+				sourceConfigColumn = tabConfig;
 			}
+			// 拿所有页签过滤参数
+            let filterList = sourceConfigColumn.map(el => el.filter);
+            if(filterList && filterList.length > 0){
+                // 调用查询接口判断该页签是否显示
+                let tabRes = await checkTables(filterList, detailId.value);
+                if(tabRes){
+                    checkTabsFilter.value = tabRes.data;
+                }
+            }
 		}
 		tabsConf.value.tab = res.data.TAB ? { ...res.data.TAB } : {};
 		tabsConf.value.entityCode = myEntity.entityCode;
