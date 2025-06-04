@@ -111,12 +111,12 @@
                         <el-tab-pane label="指定新建表单" name="addFormId">
                             <el-form label-width="120px" label-position="top">
                                 <el-form-item label="指定新建表单(PC)" class="mb-5">
-                                    <el-select v-model="styleConf.formConf.pcAddFormId">
+                                    <el-select v-model="styleConf.formConf.pcAddFormId" clearable>
                                         <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="指定新建(Mobile)" class="mb-5">
-                                    <el-select v-model="styleConf.formConf.mobileAddFormId">
+                                    <el-select v-model="styleConf.formConf.mobileAddFormId" clearable>
                                         <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
                                     </el-select>
                                 </el-form-item>
@@ -125,12 +125,12 @@
                         <el-tab-pane label="指定编辑表单" name="editFormId">
                             <el-form label-width="120px" label-position="top">
                                 <el-form-item label="指定编辑表单(PC)" class="mb-5">
-                                    <el-select v-model="styleConf.formConf.pcEditFormId">
+                                    <el-select v-model="styleConf.formConf.pcEditFormId" clearable>
                                         <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="指定编辑表单(Mobile)" class="mb-5">
-                                    <el-select v-model="styleConf.formConf.mobileEditFormId">
+                                    <el-select v-model="styleConf.formConf.mobileEditFormId" clearable>
                                         <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
                                     </el-select>
                                 </el-form-item>
@@ -139,12 +139,12 @@
                         <el-tab-pane label="指定查看详情表单" name="detailFormId">
                             <el-form label-width="120px" label-position="top">
                                 <el-form-item label="指定查看详情表单(PC)" class="mb-5">
-                                    <el-select v-model="styleConf.formConf.pcDetailFormId">
+                                    <el-select v-model="styleConf.formConf.pcDetailFormId" clearable>
                                         <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="指定查看详情表单(Mobile)" class="mb-5">
-                                    <el-select v-model="styleConf.formConf.mobileDetailFormId">
+                                    <el-select v-model="styleConf.formConf.mobileDetailFormId" clearable>
                                         <el-option v-for="item in formList" :key="item.value" :label="item.layoutName" :value="item.formLayoutId" />
                                     </el-select>
                                 </el-form-item>
@@ -466,19 +466,19 @@ const initFormList = async () => {
     let res = await getFormLayoutList(queryEntityNameByCode(props.entityCode));
     if(res) {
         formList.value = res.data;
-        if(formList.value && formList.value.length > 0) {
-            const firstFormLayoutId = formList.value[0].formLayoutId;
-            // 使用对象解构赋值的方式简化代码，减少重复设置
-            const { formConf } = styleConf.value;
-            Object.assign(formConf, {
-                pcAddFormId: formConf.pcAddFormId || firstFormLayoutId,
-                mobileAddFormId: formConf.mobileAddFormId || firstFormLayoutId,
-                pcEditFormId: formConf.pcEditFormId || firstFormLayoutId,
-                mobileEditFormId: formConf.mobileEditFormId || firstFormLayoutId,
-                pcDetailFormId: formConf.pcDetailFormId || firstFormLayoutId,
-                mobileDetailFormId: formConf.mobileDetailFormId || firstFormLayoutId
-            });
-        }
+        // if(formList.value && formList.value.length > 0) {
+        //     const firstFormLayoutId = formList.value[0].formLayoutId;
+        //     // 使用对象解构赋值的方式简化代码，减少重复设置
+        //     const { formConf } = styleConf.value;
+        //     Object.assign(formConf, {
+        //         pcAddFormId: formConf.pcAddFormId || firstFormLayoutId,
+        //         mobileAddFormId: formConf.mobileAddFormId || firstFormLayoutId,
+        //         pcEditFormId: formConf.pcEditFormId || firstFormLayoutId,
+        //         mobileEditFormId: formConf.mobileEditFormId || firstFormLayoutId,
+        //         pcDetailFormId: formConf.pcDetailFormId || firstFormLayoutId,
+        //         mobileDetailFormId: formConf.mobileDetailFormId || firstFormLayoutId
+        //     });
+        // }
     }
     loading.value = false;
 }
