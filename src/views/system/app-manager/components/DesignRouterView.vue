@@ -2,6 +2,7 @@
     <EntityManager v-if="currentRoute.name == 'DesignEntity'" isAppManagement></EntityManager>
     <DesignEntity v-if="currentRoute.name == 'AppDesignEntity'"></DesignEntity>
     <OptionManager v-if="currentRoute.name == 'DesignSingleOption'"></OptionManager>
+    <CodeOptionManager v-if="currentRoute.name == 'DesignCodeSingleOption'"></CodeOptionManager>
     <TagManager v-if="currentRoute.name == 'DesignMultipleOption'"></TagManager>
     <ApprovalFlowManager v-if="currentRoute.name == 'DesignApprovalProcess'" isAppManagement></ApprovalFlowManager>
     <ApprovalProcessDetail v-if="currentRoute.name == 'DesignProcessDetail'"></ApprovalProcessDetail>
@@ -22,6 +23,8 @@ import EntityManager from "@/views/system/entity-list.vue";
 import DesignEntity from "@/views/system/app-manager/components/DesignEntity.vue";
 // 单选项管理
 import OptionManager from "@/views/system/data-dict/option-manager.vue";
+// 编码单选项管理
+import CodeOptionManager from "@/views/system/data-dict/code-option-manager.vue";
 // 多选项管理
 import TagManager from "@/views/system/data-dict/tag-manager.vue";
 // 审批流程管理

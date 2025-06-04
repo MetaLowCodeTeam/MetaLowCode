@@ -989,6 +989,7 @@ let en_US = {
         "1406": "Report Design Management",
         "1407": "External Form Management",
         "1408": "Menu Navigation",
+        "1409": "Code Single Option Management",
 
         "1500": "Menu Name",
         "1501": "Created Time",

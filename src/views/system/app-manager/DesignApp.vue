@@ -128,6 +128,10 @@ const selectList = ref([
 		label: t("appManager.1401"),
 		value: "DesignSingleOption",
 	},
+    {
+		label: t("appManager.1409"),
+		value: "DesignCodeSingleOption",
+	},
 	{
 		label: t("appManager.1402"),
 		value: "DesignMultipleOption",
