@@ -101,6 +101,15 @@ const routes = [
                 }
             },
             {
+                path: "designCodeSingleOption",
+                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                name: "DesignCodeSingleOption",
+                meta: {
+                    title: t("appManager.1409"),
+                    icon: 'el-icon-open'
+                }
+            },
+            {
                 path: "designMultipleOption",
                 component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignMultipleOption",

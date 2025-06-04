@@ -54,6 +54,7 @@
 							:class="{ 'is-error': errorInfo.appNameError }"
 							@focus="errorInfo.appNameError = false"
                             @change="handleAppNameChange"
+                            maxlength="6"
 						/>
 						<span class="app-manger-zw"></span>
 					</div>
