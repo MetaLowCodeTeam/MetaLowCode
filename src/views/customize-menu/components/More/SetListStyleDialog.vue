@@ -166,7 +166,7 @@
                                     使用文档
                                 </a>
                             </div>
-                            <mlCodeEditor style="height: 100px" v-model="styleConf.rowConf.rowDisabledRender" />
+                            <mlCodeEditor v-model="styleConf.rowConf.rowDisabledRender" />
                         </el-tab-pane>
                         <el-tab-pane label="自定义行按钮禁用设置" name="rowBtnDisabled">
                             <div class="mb-10 mt-10">
