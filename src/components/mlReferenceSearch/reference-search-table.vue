@@ -339,13 +339,18 @@ export default {
                         }
                     })
                 }
+                let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
+                if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
+                    newDefaultSelected = [newDefaultSelected];
+                }
+                console.log(newDefaultSelected,'newDefaultSelected')
 				if (
-					this.defaultSelected &&
-					this.defaultSelected.length > 0 &&
+					newDefaultSelected &&
+					newDefaultSelected.length > 0 &&
 					this.selectedData &&
 					this.selectedData.length < 1
 				) {
-					this.selectedData = this.defaultSelected.map((el) => {
+					this.selectedData = newDefaultSelected.map((el) => {
 						let row = {};
 						row[this.idField] = el.id;
 						row[this.nameField] = el.name;

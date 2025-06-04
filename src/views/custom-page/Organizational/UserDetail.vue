@@ -91,7 +91,7 @@ defineOptions({
 	name: "user-detail",
 });
 
-const emits = defineEmits(["updateData"]);
+const emits = defineEmits(["onConfirm"]);
 
 let detailConf = ref({
 	// 显示流程操作块
@@ -201,7 +201,7 @@ const refreshCustomComponent = () => {
 
 
 const updateData = () => {
-	emits("updateData");
+	emits("onConfirm");
 };
 
 defineExpose({
