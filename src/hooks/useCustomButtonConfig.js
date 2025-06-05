@@ -74,6 +74,8 @@ export default function useCustomButtonConfig() {
             afterEvent: "",
             // guid
             guid: "",
+            // 子集按钮
+            subButtonList: null,
         },
     };
 
@@ -87,6 +89,8 @@ export default function useCustomButtonConfig() {
             isNative: true,
             guid: getGuid(),
             icon: "Notification",
+            showType: 1,
+            type: "default",
         },
         {
             name: "批量编辑",
@@ -96,6 +100,8 @@ export default function useCustomButtonConfig() {
             isNative: true,
             guid: getGuid(),
             icon: "ElIconEdit",
+            showType: 1,
+            type: "default",
         },
         {
             name: "编辑",
@@ -105,6 +111,8 @@ export default function useCustomButtonConfig() {
             isNative: true,
             guid: getGuid(),
             icon: "Edit",
+            showType: 1,
+            type: "default",
         },
         {
             name: "新建",
@@ -115,6 +123,7 @@ export default function useCustomButtonConfig() {
             guid: getGuid(),
             icon: "Plus",
             type: "primary",
+            showType: 1,
         },
         {
             name: "更多",
@@ -123,6 +132,7 @@ export default function useCustomButtonConfig() {
             // 是否内置按钮
             isNative: true,
             guid: getGuid(),
+            type: "default",
         },
     ];
 
@@ -132,26 +142,26 @@ export default function useCustomButtonConfig() {
             name: "pcTop",
             buttonList: [],
         },
+        // {
+        //     label: "操作列(PC)",
+        //     name: "pcColumn",
+        //     buttonList: [],
+        // },
+        // {
+        //     label: "详情(PC)",
+        //     name: "pcDetial",
+        //     buttonList: [],
+        // },
         {
-            label: "操作列(PC)",
-            name: "pcColumn",
-            buttonList: [],
-        },
-        {
-            label: "详情(PC)",
-            name: "pcDetial",
-            buttonList: [],
-        },
-        {
-            label: "列表底部(APP)",
+            label: "底部(APP)",
             name: "appList",
             buttonList: [],
         },
-        {
-            label: "详情底部(APP)",
-            name: "appDetial",
-            buttonList: [],
-        },
+        // {
+        //     label: "详情底部(APP)",
+        //     name: "appDetial",
+        //     buttonList: [],
+        // },
     ]);
 
     return {

@@ -129,7 +129,7 @@
                             </el-button>
                         </el-tooltip>
                     </template>
-                    <div class="fr table-setting">
+                    <div class="fr table-setting" v-if="!(customButtonConfig?.pcTop?.length > 0)">
                         <template v-for="(item, index) in mergedButtonList" :key="index">
                             <!-- 插槽 -->
                             <slot v-if="item.type === 'slot'" :name="item.name"></slot>
@@ -165,9 +165,14 @@
                                 @copySuccess="copySuccess"
                                 v-else-if="item.type === 'more' && toolbarConf.showMoreBtn"
                             />
-                            <!-- 自定义按钮 -->
-                            <!-- <el-button
-                                v-else
+                        </template>
+                    </div>
+                    <div class="fr table-setting" v-else>
+                        <template v-for="(item,index) of customButtonConfig.pcTop" :key="index">
+                            <!-- <el-button>
+                                {{ item.name }}
+                            </el-button> -->
+                            <el-button
                                 v-bind="item.props"
                                 @click="item.handler"
                             >
@@ -190,9 +195,9 @@
                                             item.icon,
                                     }"
                                 >
-                                    {{ item.label }}
+                                    {{ item.name }}
                                 </span>
-                            </el-button> -->
+                            </el-button>
                         </template>
                     </div>
                 </div>
@@ -1173,7 +1178,7 @@ const changeTopQueryPanelExpand = () => {
 }
 
 // 自定义按钮
-let customButtonList = ref([]);
+let customButtonConfig = ref({});
 
 
 // 获取导航配置
@@ -1209,8 +1214,17 @@ const getLayoutList = async () => {
             ...res.data
         };
         // 自定义按钮
-        if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
-            customButtonList.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
+        // if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
+        //     customButtonList.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
+        // }
+        // 自定义按钮
+        if(localStorage.getItem('tempButtonConfig')){
+            let tempButtonConfig = JSON.parse(localStorage.getItem('tempButtonConfig'));
+            if(tempButtonConfig.config){
+                customButtonConfig.value = JSON.parse(tempButtonConfig.config);
+            }
+            console.log(customButtonConfig.value,'customButtonConfig.value')
+            // customButtonList.value = JSON.parse(localStorage.getItem('tempButtonConfig')).config;
         }
 
         // 自定义行样式

@@ -45,7 +45,7 @@
 										<component :is="item.icon" />
 									</el-icon>
 									{{ item.name }}
-									<span v-if="item.isNative">(内置)</span>
+									<span v-if="item.isNative">(内)</span>
 								</div>
 								<div
 									class="button-list-item-icon"
@@ -73,7 +73,11 @@
 				</el-button>
 			</el-col>
 			<el-col :span="17">
-				<el-tabs v-model="currentTab" @tab-change="tabChange">
+				<el-tabs 
+                    v-model="currentTab" 
+                    @tab-change="tabChange"
+                    :before-leave="beforeTabChange"
+                >
 					<el-tab-pane
 						v-for="(tab, tabInx) of tabList"
 						:key="tabInx"
@@ -107,7 +111,10 @@
 										/>
 									</el-form-item>
 								</el-col>
-								<el-col :span="12">
+								<el-col
+									:span="12"
+									v-if="currentButton.key != 'more'"
+								>
 									<el-form-item label="按钮图标">
 										<div class="icon-box">
 											<span
@@ -138,7 +145,10 @@
 										</div>
 									</el-form-item>
 								</el-col>
-								<el-col :span="12">
+								<el-col
+									:span="12"
+									v-if="currentButton.key != 'more'"
+								>
 									<el-form-item label="显示类型">
 										<el-select
 											v-model="currentButton.showType"
@@ -153,7 +163,10 @@
 										</el-select>
 									</el-form-item>
 								</el-col>
-								<el-col :span="12">
+								<el-col
+									:span="12"
+									v-if="currentButton.key != 'more'"
+								>
 									<el-form-item label="按钮类型">
 										<el-select
 											v-model="currentButton.type"
@@ -168,7 +181,10 @@
 										</el-select>
 									</el-form-item>
 								</el-col>
-								<el-col :span="12">
+								<el-col
+									:span="12"
+									v-if="currentButton.key != 'more'"
+								>
 									<el-form-item label="按钮预览">
 										<el-button
 											:type="currentButton.type"
@@ -219,9 +235,13 @@
 											v-model="currentButton.hide"
 											:active-value="false"
 											:inactive-value="true"
-                                            v-if="currentButton.key != 'batchEdit'"
+											v-if="
+												currentButton.key != 'batchEdit'
+											"
 										/>
-                                        <div class="ml-info-text" v-else>批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制</div>
+										<div class="ml-info-text" v-else>
+											批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制
+										</div>
 									</el-form-item>
 								</el-col>
 								<template v-if="!currentButton.isNative">
@@ -664,7 +684,7 @@ const addButton = () => {
 // 校验数据是否可通过
 const checkData = () => {
 	if (buttonList.value.length > 0) {
-		for (let i = 0; i < buttonList.value.length; i++) {
+		for (let i = 0; i < buttonList.value.length; i++) { 
 			if (buttonList.value[i].isNative) {
 				continue;
 			}
@@ -777,6 +797,12 @@ let layoutConfigData = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
 	console.log(entity, "entity");
+    let tempButtonConfig = localStorage.getItem('tempButtonConfig');
+    if(tempButtonConfig){
+        let newConfig = JSON.parse(tempButtonConfig).config;
+        layoutConfigData.value = JSON.parse(newConfig);
+    }
+    console.log(layoutConfigData.value,'layoutConfigData.value')
 	// 自定义按钮配置ID
 	if (entity.customButtonId) {
 		layoutConfigId.value = entity.customButtonId;
@@ -805,23 +831,32 @@ const openDialog = async (entity) => {
 // 初始化自定义按钮配置
 const initTabButtonConfig = (tab) => {
 	let findTab = tabList.value.find((item) => item.name == tab);
-	if (
-		tab == "pcTop" &&
-		(!findTab.buttonList || findTab.buttonList.length == 0)
-	) {
-		findTab.buttonList = [...defaultPcTopButtonList];
+    findTab.buttonList = layoutConfigData.value[tab] || [];
+	// 获取现有按钮的所有key
+	const existingKeys = findTab.buttonList.map((btn) => btn.key);
+	if (tab === "pcTop") {
+		// 遍历默认按钮，只添加不存在的
+		defaultPcTopButtonList.forEach((defaultBtn) => {
+			if (!existingKeys.includes(defaultBtn.key)) {
+				findTab.buttonList.push(defaultBtn);
+			}
+		});
 	}
-	// currentButton.value = findTab.buttonList[0];
-	buttonList.value = [...findTab.buttonList];
+	buttonList.value = findTab.buttonList;
 };
+
+// 切换前触发
+const beforeTabChange = (tab) => {
+    if(checkData()){
+        return true;
+    }
+    return false;
+}
 
 // 切换tab
 const tabChange = (tab) => {
-	// console.log(tab, "tab");
-	// let findTab = tabList.value.find((item) => item.name == tab);
-	// if (findTab) {
-	// 	findTab.buttonList.push({});
-	// }
+    initTabButtonConfig(tab);
+    currentButton.value = null;
 };
 
 // 加载数据转换
@@ -877,23 +912,31 @@ const closeDialog = () => {
 // 保存按钮
 const saveButton = async () => {
 	if (checkData()) {
+        let paramConfig = {};
+        tabList.value.forEach(tab => {
+            paramConfig[tab.name] = tab.buttonList;
+        })
 		let param = {
-			config: JSON.stringify(buttonList.value),
+			config: JSON.stringify(paramConfig),
 			entityCode: props.entityCode,
 			shareTo: "ALL",
 		};
 		mainLoading.value = true;
-		let res = await layoutConfigApi.saveConfig(
-			layoutConfigId.value,
-			"CUSTOM_BUTTON",
-			param,
-			props.modelName
-		);
-		if (res) {
-			ElMessage.success("保存成功");
-			emit("confirm");
-			isShow.value = false;
-		}
+        localStorage.setItem('tempButtonConfig',JSON.stringify(param))
+		ElMessage.success("保存成功");
+		emit("confirm");
+        isShow.value = false;
+		// let res = await layoutConfigApi.saveConfig(
+		// 	layoutConfigId.value,
+		// 	"CUSTOM_BUTTON",
+		// 	param,
+		// 	props.modelName
+		// );
+		// if (res) {
+		// 	ElMessage.success("保存成功");
+		// 	emit("confirm");
+		// 	isShow.value = false;
+		// }
 		mainLoading.value = false;
 	}
 };
