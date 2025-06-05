@@ -10,28 +10,28 @@
             <div class="clearfix">
                 <div class="sortable-box fl">
                     <VueDraggableNext
-                        ghost-class="ghost"
-                        chosen-class="chosenClass"
+                        ghost-class="ml-draggable-ghost"
+                        chosen-class="ml-draggable-chosen"
                         animation="300"
                         :force-fallback="false"
-                        handle=".mover"
+                        handle=".ml-draggable-mover"
                         :list="showColumn"
                     >
                         <div class="parent-li" v-for="(parent,inx) of showColumn" :key="inx">
                             <div class="paren-div">
-                                <div class="mover fl">
+                                <div class="ml-draggable-mover fl">
                                     <el-icon size="20" class="icon">
                                         <ElIconRank />
                                     </el-icon>
                                 </div>
                                 <div
-                                    class="fl item text-ellipsis"
+                                    class="fl item text-ellipsis ml-draggable-item"
                                     :class="{'tag':isShowItemTag(parent)}"
                                     :title="parent.fieldLabel"
                                 >
                                     {{ parent.fieldLabel }}
                                 </div>
-                                <div class="action-icon">
+                                <div class="action-icon ml-draggable-item">
                                     <span
                                         class="icon-span add-icon mr-5"
                                         @click.stop="editColumn(parent,inx)"
@@ -754,6 +754,7 @@ div {
         height: 36px;
         margin-bottom: 3px;
         position: relative;
+        display: flex;
         .text-ellipsis.tag {
             &::before {
                 content: "*";
@@ -798,7 +799,7 @@ div {
     width: 32px;
     height: 36px;
     line-height: 36px;
-    background: var(--el-color-primary-light-3);
+    background: var(--el-color-primary);
     text-align: center;
     color: #fff;
     .icon {
@@ -808,7 +809,7 @@ div {
     }
     &:hover {
         cursor: move;
-        background: #5a95f5;
+        background: var(--el-color-primary-light-3);
     }
 }
 .item {
@@ -819,19 +820,6 @@ div {
     width: calc(100% - 32px);
     box-sizing: border-box;
     padding: 0 10px;
-}
-
-.ghost {
-    background: #fff !important;
-    border: 1px dashed #999;
-    .mover,
-    .item {
-        opacity: 0;
-    }
-}
-.chosenClass {
-    background: #fff;
-    // background-color: #f1f1f1;
 }
 
 .source-column-box {

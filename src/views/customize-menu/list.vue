@@ -173,8 +173,14 @@
                                 {{ item.name }}
                             </el-button> -->
                             <el-button
+                                :disabled="getCustomButtonDisabled(item)"
                                 v-bind="item.props"
-                                @click="item.handler"
+                                @click="customButtonClick(item)"
+                                v-if="(!item.isNative) || 
+                                    (item.isNative && 
+                                    !item.hide && 
+                                    item.key !== 'more' &&
+                                    (item.key !== 'batchEdit' || batchUpdateConf?.length > 0))"
                             >
                                 <el-icon
                                     :size="16"
@@ -195,9 +201,30 @@
                                             item.icon,
                                     }"
                                 >
-                                    {{ item.name }}
+                                    {{ item.name }}{{ item.hidden }}
                                 </span>
                             </el-button>
+                            <!-- 更多按钮 -->
+                            <More
+                                :listParamConf="listParamConf"
+                                ref="MoreRefs"
+                                :layoutConfig="layoutConfig"
+                                :defaultColumnShow="defaultColumnShow"
+                                :tableColumn="tableColumn"
+                                :multipleSelection="multipleSelection"
+                                :dataExportData="dataExportData"
+                                @changeColumnShow="changeColumnShow"
+                                @editColumnConfirm="getLayoutList"
+                                :entityCode="entityCode"
+                                @defaultFilterChange="getLayoutList"
+                                @treeGroupFilterConfirm="getLayoutList"
+                                :isReferenceComp="isReferenceComp"
+                                :isMainDetailField="!!mainDetailField"
+                                :referenceEntity="referenceEntity"
+                                :modelName="modelName"
+                                @copySuccess="copySuccess"
+                                v-else-if="item.key === 'more'"
+                            />
                         </template>
                     </div>
                 </div>
@@ -799,6 +826,13 @@ onMounted(()=>{
         for(let key in toolbarConf.value){
             toolbarConf.value[key] = true;
         }
+        if(customButtonConfig.value?.pcTop?.length > 0){
+            customButtonConfig.value.pcTop.forEach(item => {
+                if(item.key == 'more'){
+                    toolbarConf.value.hide = false;
+                }
+            })
+        }
     })
     
 })
@@ -912,138 +946,8 @@ const mergedButtonList = computed(() => {
         { type: 'more', key: 5 },
         { type: 'slot', name: 'afterMoreBtn' },
     ];
-    // // 临时存储自定义按钮（按原始顺序）
-    // const customButtonsToInsert = [];
-    
-    // // 先收集所有自定义按钮并确定位置
-    // customButtonList.value.forEach(el => {
-    //     let { showPosition, availableType, action } = el;
-    //     let isDisabled = false;
-        
-    //     if (action == 2 || action == 3) {
-    //         isDisabled = multipleSelection.value.length != 1;
-    //     } else if (action == 4) {
-    //         isDisabled = availableType == 1 
-    //             ? multipleSelection.value.length != 1 
-    //             : multipleSelection.value.length < 1;
-    //     }
-        
-    //     customButtonsToInsert.push({
-    //         showPosition,
-    //         button: { 
-    //             label: el.name, 
-    //             icon: el.icon,
-    //             iconColor: el.iconColor,
-    //             showType: el.showType,
-    //             props: {
-    //                 disabled: isDisabled,
-    //                 type: el.type,
-    //             },
-    //             handler: () => customButtonHandler(el)
-    //         }
-    //     });
-    // });
-    
-    // // 按showPosition升序排序（保证1→2→3的顺序）
-    // customButtonsToInsert.sort((a, b) => a.showPosition - b.showPosition);
-    
-    // // 按排序后的顺序插入
-    // customButtonsToInsert.forEach(({ showPosition, button }) => {
-    //     if (showPosition == 6) {
-    //         nativeButtons.push(button);
-    //     } else {
-    //         const findIndex = nativeButtons.findIndex(btn => btn.key == showPosition);
-    //         if (findIndex !== -1) {
-    //             nativeButtons.splice(findIndex, 0, button);
-    //         }
-    //     }
-    // });
-    
     return nativeButtons.filter(btn => btn.show !== false);
 })
-
-// 当前自定义按钮后置事件
-let currentCustomButtonAfterEvent = ref(null);
-
-
-// 自定义按钮处理
-const customButtonHandler = async (el) => {
-    if(el.beforeEvent){
-        let beforeEvent = customButtonEvent(el.beforeEvent);
-        // 判断是否为 Promise
-        if (beforeEvent instanceof Promise) {
-            const asyncResult = await beforeEvent;
-            if(!asyncResult){
-                return;
-            }
-        }else if(!beforeEvent){
-            return;
-        }
-    }
-    if(el.afterEvent){
-        currentCustomButtonAfterEvent.value = el.afterEvent;
-    }
-    let recordId = multipleSelection.value[0][idFieldName.value];
-    let checkAuth = true;
-    
-    if (el.action !== 1 && el.filterJson?.items?.length > 0){
-        pageLoading.value = true;
-        let tabRes = await checkTables([el.filterJson], recordId);
-        if(tabRes){
-            checkAuth = !!tabRes.data[0];
-        }
-        pageLoading.value = false;
-    }
-    if(!checkAuth){
-        ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");
-        return;
-    }
-    switch(el.action){
-        case 1:
-            onAdd(null, el.selectForm, el.selectEntity);
-            break;
-        case 2:
-            onEditRow(multipleSelection.value[0], null, el.selectForm);
-            break;
-        case 3:
-            pageLoading.value = true;
-            
-            let transformId = el.selectDataTransform;
-            let res = await getTransformMap({ recordId, transformId });
-            if(res && res.code == 200) {
-                onAdd(
-                    {
-                        backfillFormData: res.data,
-                    }, 
-                    el.selectForm, 
-                    el.selectEntity
-                );
-            }
-            pageLoading.value = false;
-            break;
-        case 4:
-            customButtonEvent(el.customScript);
-            break;
-    }
-}
-
-// 封装自定义按钮事件
-const customButtonEvent = (eventStr) => {
-    let customParam = {
-        rows: multipleSelection.value,
-        exposed: currentExposed.value,
-        elementEvent: {
-            ElMessageBox,
-            ElLoading,
-            ElMessage
-        },
-        http,
-        router,
-    };
-    let event = new Function('rows', 'exposed', eventStr)(multipleSelection.value, customParam);
-    return event;
-}
-
 
 
 // 配置自定义列显示
@@ -1179,6 +1083,137 @@ const changeTopQueryPanelExpand = () => {
 
 // 自定义按钮
 let customButtonConfig = ref({});
+// 内置按钮禁用方法
+let nativeButtonDisabled = ref({
+    open: multipleSelection.value.length !== 1,
+    batchEdit: multipleSelection.value.length !== 1,
+    new: hasCreateRight.value,
+    edit: multipleSelection.value.length !== 1,
+});
+// 获取自定义按钮禁用状态
+const getCustomButtonDisabled = (item) => {
+    if(item.isNative){
+        return nativeButtonDisabled[item.key];
+    }else {
+        let { availableType, action } = item;
+        let isDisabled = false;
+        
+        if (action == 2 || action == 3) {
+            isDisabled = multipleSelection.value.length != 1;
+        } else if (action == 4) {
+            isDisabled = availableType == 1 
+                ? multipleSelection.value.length != 1 
+                : multipleSelection.value.length < 1;
+        }
+        return isDisabled;
+    }
+}
+
+// 自定义按钮点击
+const customButtonClick = (item) => {
+    // 内置按钮点击
+    if(item.isNative){
+        switch(item.key){
+            case "open":
+                openDetailDialog(multipleSelection.value[0])
+                break;
+            case "batchEdit":
+                openBatchUpdateDialog();
+                break;
+            case "new":
+                onAdd()
+                break;
+            case "edit":
+                onEditRow(multipleSelection.value[0])
+                break;
+        }
+    }else {
+        customButtonHandler(item);
+    }
+}
+
+
+// 当前自定义按钮后置事件
+let currentCustomButtonAfterEvent = ref(null);
+
+
+// 自定义按钮处理
+const customButtonHandler = async (el) => {
+    if(el.beforeEvent){
+        let beforeEvent = customButtonEvent(el.beforeEvent);
+        // 判断是否为 Promise
+        if (beforeEvent instanceof Promise) {
+            const asyncResult = await beforeEvent;
+            if(!asyncResult){
+                return;
+            }
+        }else if(!beforeEvent){
+            return;
+        }
+    }
+    if(el.afterEvent){
+        currentCustomButtonAfterEvent.value = el.afterEvent;
+    }
+    let recordId = multipleSelection.value[0][idFieldName.value];
+    let checkAuth = true;
+    
+    if (el.action !== 1 && el.filterJson?.items?.length > 0){
+        pageLoading.value = true;
+        let tabRes = await checkTables([el.filterJson], recordId);
+        if(tabRes){
+            checkAuth = !!tabRes.data[0];
+        }
+        pageLoading.value = false;
+    }
+    if(!checkAuth){
+        ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");
+        return;
+    }
+    switch(el.action){
+        case 1:
+            onAdd(null, el.selectForm, el.selectEntity);
+            break;
+        case 2:
+            onEditRow(multipleSelection.value[0], null, el.selectForm);
+            break;
+        case 3:
+            pageLoading.value = true;
+            
+            let transformId = el.selectDataTransform;
+            let res = await getTransformMap({ recordId, transformId });
+            if(res && res.code == 200) {
+                onAdd(
+                    {
+                        backfillFormData: res.data,
+                    }, 
+                    el.selectForm, 
+                    el.selectEntity
+                );
+            }
+            pageLoading.value = false;
+            break;
+        case 4:
+            customButtonEvent(el.customScript);
+            break;
+    }
+}
+
+// 封装自定义按钮事件
+const customButtonEvent = (eventStr) => {
+    let customParam = {
+        rows: multipleSelection.value,
+        exposed: currentExposed.value,
+        elementEvent: {
+            ElMessageBox,
+            ElLoading,
+            ElMessage
+        },
+        http,
+        router,
+    };
+    let event = new Function('rows', 'exposed', eventStr)(multipleSelection.value, customParam);
+    return event;
+}
 
 
 // 获取导航配置
@@ -1214,19 +1249,10 @@ const getLayoutList = async () => {
             ...res.data
         };
         // 自定义按钮
-        // if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
-        //     customButtonList.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
-        // }
-        // 自定义按钮
-        if(localStorage.getItem('tempButtonConfig')){
-            let tempButtonConfig = JSON.parse(localStorage.getItem('tempButtonConfig'));
-            if(tempButtonConfig.config){
-                customButtonConfig.value = JSON.parse(tempButtonConfig.config);
-            }
-            console.log(customButtonConfig.value,'customButtonConfig.value')
-            // customButtonList.value = JSON.parse(localStorage.getItem('tempButtonConfig')).config;
+        if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
+            customButtonConfig.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
         }
-
+        
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
             rowStyleConf.value = JSON.parse(res.data.STYLE.config);

@@ -1197,7 +1197,7 @@ div {
 	width: 32px;
 	height: 36px;
 	line-height: 36px;
-	background: var(--el-color-primary-light-3);
+	background: var(--el-color-primary);
 	text-align: center;
 	color: #fff;
 	.icon {
@@ -1207,7 +1207,7 @@ div {
 	}
 	&:hover {
 		cursor: move;
-		background: #5a95f5;
+		background: var(--el-color-primary-light-3);
 	}
 }
 .item {

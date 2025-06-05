@@ -10,7 +10,7 @@
 					<ml-scrollbar>
 						<VueDraggableNext
 							ghost-class="ml-draggable-ghost"
-							chosen-class="chosenClass"
+							chosen-class="ml-draggable-chosen"
 							animation="300"
 							:force-fallback="false"
 							handle=".ml-draggable-mover"
@@ -922,21 +922,17 @@ const saveButton = async () => {
 			shareTo: "ALL",
 		};
 		mainLoading.value = true;
-        localStorage.setItem('tempButtonConfig',JSON.stringify(param))
-		ElMessage.success("保存成功");
-		emit("confirm");
-        isShow.value = false;
-		// let res = await layoutConfigApi.saveConfig(
-		// 	layoutConfigId.value,
-		// 	"CUSTOM_BUTTON",
-		// 	param,
-		// 	props.modelName
-		// );
-		// if (res) {
-		// 	ElMessage.success("保存成功");
-		// 	emit("confirm");
-		// 	isShow.value = false;
-		// }
+		let res = await layoutConfigApi.saveConfig(
+			layoutConfigId.value,
+			"CUSTOM_BUTTON",
+			param,
+			props.modelName
+		);
+		if (res) {
+			ElMessage.success("保存成功");
+			emit("confirm");
+			isShow.value = false;
+		}
 		mainLoading.value = false;
 	}
 };
@@ -960,24 +956,12 @@ defineExpose({
 		// padding: 0 10px;
 		border: 1px solid #e6e6e6;
 		margin-bottom: 3px;
-		height: 32px;
-		line-height: 32px;
+		height: 36px;
+		line-height: 36px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		.ml-draggable-mover {
-			width: 32px;
-			height: 32px;
-			border-radius: 3px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: var(--el-color-primary);
-			color: #fff;
-			&:hover {
-				background: var(--el-color-primary-light-3);
-			}
-		}
+		
 
 		.button-list-item-name {
 			flex: 1;
@@ -1062,12 +1046,5 @@ defineExpose({
 	// background-color: #f1f1f1;
 }
 
-.subghost {
-	border: 1px dashed #999;
-	background: #fff !important;
-	.submover,
-	.button-list-item {
-		opacity: 0;
-	}
-}
+
 </style>

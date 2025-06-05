@@ -479,3 +479,22 @@ $names: (
 		opacity: 0;
 	}
 }
+
+.ml-draggable-chosen {
+    background: #fff !important;
+}
+
+.ml-draggable-mover {
+    width: 36px;
+    height: 36px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--el-color-primary);
+    color: #fff;
+    &:hover {
+        background: var(--el-color-primary-light-3);
+        cursor: move;
+    }
+}
