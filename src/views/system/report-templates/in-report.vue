@@ -11,6 +11,7 @@
                     ref="vFormRef"
                     :global-dsv="globalDsv"
                     :option-data="optionData"
+                    :mix-mode="isMobile"
                 />
                 <el-empty v-else :image-size="100" :description="errorText" />
             </div>
@@ -26,7 +27,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, nextTick, onBeforeMount } from "vue";
 /**
  * API
  */
@@ -57,6 +58,14 @@ let approvalStatus = ref();
 
 // 默认值
 let defaultFormData = ref({});
+
+// 是否移动端
+let isMobile = ref(false);
+
+onBeforeMount(() => {
+    // 客户端才执行UA判断
+    isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+});
 
 onMounted(() => {
     let routeQuery = Router.currentRoute.value.query;
