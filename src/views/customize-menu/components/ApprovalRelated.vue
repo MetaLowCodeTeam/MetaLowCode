@@ -11,9 +11,9 @@
 		</el-button>
 	</el-row>
     <el-row v-if="$TOOL.checkRole('r6013') && myApproval.revokeApproval">
-		<el-button 
-            type="success" 
-            plain 
+		<el-button
+            type="warning"
+            plain
             @click="revokeApproval"
             :loading="approvalDialog.loading"
         >
@@ -21,10 +21,10 @@
 		</el-button>
 	</el-row>
     <el-row v-if="myApproval.withdrawApproval">
-		<el-button 
-            type="success" 
-            plain 
-            @click="withdrawApproval" 
+		<el-button
+            type="warning"
+            plain
+            @click="withdrawApproval"
             :loading="approvalDialog.loading"
         >
 			撤回审批
@@ -40,7 +40,7 @@
 			审批历史
 		</el-button>
 	</el-row>
-	
+
 	<div v-if="approveDialogIsShow">
 		<mlApprove
 			v-model="approveDialogIsShow"
@@ -310,7 +310,7 @@ const withdrawApproval = () => {
             if(isFlowVariables){
                 // 复杂工作流
                 let res = await http.post(
-                    "/plugins/metaWorkFlow/workflow/process/withdraw", 
+                    "/plugins/metaWorkFlow/workflow/process/withdraw",
                     [myApproval.value.flowVariables.processInstanceId]
                 );
                 if (res) {
