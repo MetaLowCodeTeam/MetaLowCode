@@ -78,7 +78,7 @@ let form = ref({
 	tenantName: "",
 	tenantCode: "",
 	isDisabled: false,
-	initializeTemplate: {},
+	initializeTemplate: null,
     appManagementSwitch: false,
 });
 let rules = ref({
@@ -120,7 +120,7 @@ const openDialog = (row, target) => {
 		tenantName: "",
 		tenantCode: "",
 		isDisabled: false,
-		initializeTemplate: "",
+		initializeTemplate: null,
         appManagementSwitch: false,
 	};
 	// 如果是编辑
