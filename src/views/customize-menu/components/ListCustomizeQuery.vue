@@ -67,12 +67,15 @@
 		</div>
 		<template #footer>
 			<div class="fl pl-20">
-				<el-checkbox v-model="forbidUserModifyField"
-					>禁止用户修改字段</el-checkbox
-				>
-				<el-checkbox v-model="hideQueryMatchType"
-					>隐藏查询匹配类型</el-checkbox
-				>
+				<el-checkbox v-model="forbidUserModifyField">
+                    禁止用户修改字段
+                </el-checkbox>
+				<el-checkbox v-model="hideQueryMatchType">
+                    隐藏查询匹配类型
+                </el-checkbox>
+                <el-checkbox v-model="isSaveQueryValue">
+                    是否保存查询值
+                </el-checkbox>
 			</div>
 			<el-button @click="isShow = false">取消</el-button>
 			<el-button type="primary" @click="conditionsConfirm">
@@ -192,6 +195,8 @@ let dialogConditions = ref({
 let forbidUserModifyField = ref(false);
 // 隐藏查询匹配类型
 let hideQueryMatchType = ref(false);
+// 是否保存查询值
+let isSaveQueryValue = ref(true);
 
 // 打开弹框
 const openDialog = () => {
@@ -200,12 +205,20 @@ const openDialog = () => {
 };
 // 弹框条件确认
 const conditionsConfirm = async () => {
+    let paramFilter = JSON.parse(JSON.stringify(dialogConditions.value));
+    if(!isSaveQueryValue.value){
+        paramFilter.items.forEach(el => {
+            el.value = null;
+            el.value2 = null;
+        })
+    }
 	let param = {
 		config: JSON.stringify({
 			isDefaultQueryPanel: false,
 			forbidUserModifyField: forbidUserModifyField.value,
 			hideQueryMatchType: hideQueryMatchType.value,
-			filter: dialogConditions.value,
+			isSaveQueryValue: isSaveQueryValue.value,
+			filter: paramFilter,
 		}),
 		entityCode: props.entityCode,
 	};
@@ -221,6 +234,7 @@ const conditionsConfirm = async () => {
 			forbidUserModifyField: forbidUserModifyField.value,
 			hideQueryMatchType: hideQueryMatchType.value,
 			filter: dialogConditions.value,
+			isSaveQueryValue: isSaveQueryValue.value,
 		});
 		isShow.value = false;
 		ElMessage.success("设置成功");
@@ -232,6 +246,7 @@ watchEffect(() => {
 	compConditions.value = JSON.parse(JSON.stringify(props.topSearchConfig.filter));
 	forbidUserModifyField.value = props.topSearchConfig.forbidUserModifyField;
 	hideQueryMatchType.value = props.topSearchConfig.hideQueryMatchType;
+	isSaveQueryValue.value = props.topSearchConfig.isSaveQueryValue;
 });
 
 defineExpose({
