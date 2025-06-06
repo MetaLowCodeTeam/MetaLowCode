@@ -41,7 +41,7 @@ import { ElMessage } from 'element-plus'
 
 // 集成ParkIcons图标
 import * as ParkIcons from '@icon-park/vue-next';
-
+import {Popup, Picker, PickerGroup, DatePicker, TimePicker, Cascader, Checkbox, Icon} from 'vant'
 export default {
 	install(app) {
 		//挂载全局对象
@@ -59,6 +59,15 @@ export default {
         app.provide('$ElMessage', ElMessage);
         app.provide('COMMON_CONFIG',COMMON_CONFIG);
 
+        // 注册vant组件
+        app.use(Popup);
+        app.use(Picker);
+        app.use(PickerGroup);
+        app.use(DatePicker);
+        app.use(TimePicker);
+        app.use(Cascader);
+        app.use(Checkbox);
+        app.use(Icon);
 
 		// 注册全局组件
         app.component('mlSelectUser', mlSelectUser);
