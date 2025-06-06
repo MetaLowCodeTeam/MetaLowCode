@@ -94,7 +94,7 @@ import com.yomahub.liteflow.spi.holder.ContextAwareHolder;
 import java.util.Map;
 
 /**
- * 触发器JAVA脚本示例
+ * 自定义方法JAVA脚本示例
  * 代码位置：cn.granitech.business.liteflow.cmp.CustomMethodDemo
  * CustomMethodDemo: 名称可以自行定义(不修改也行)
  * implements: 脚本类必须实现CommonScriptBody方法
