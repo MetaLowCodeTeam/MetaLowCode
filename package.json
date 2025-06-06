@@ -54,6 +54,7 @@
 		"tinymce": "6.3.2",
 		"unplugin-auto-import": "^0.16.6",
 		"unplugin-vue-components": "^0.25.2",
+		"vant": "^4.9.2",
 		"vite-plugin-compression": "^0.5.1",
 		"vue": "^3.3.0",
 		"vue-codemirror": "^6.1.1",

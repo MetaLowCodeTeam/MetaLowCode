@@ -45,7 +45,7 @@
 										<component :is="item.icon" />
 									</el-icon>
 									{{ item.name }}
-									<span v-if="item.isNative">(内)</span>
+									<span v-if="item.isNative">(内置)</span>
 								</div>
 								<div
 									class="button-list-item-icon"
