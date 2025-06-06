@@ -1154,7 +1154,7 @@ const customButtonHandler = async (el) => {
     if(el.afterEvent){
         currentCustomButtonAfterEvent.value = el.afterEvent;
     }
-    let recordId = multipleSelection.value[0][idFieldName.value];
+    let recordId = multipleSelection.value?.[0]?.[idFieldName.value];
     let checkAuth = true;
     
     if (el.action !== 1 && el.filterJson?.items?.length > 0){
@@ -1210,6 +1210,7 @@ const customButtonEvent = (eventStr) => {
         },
         http,
         router,
+        appPath: import.meta.env.VITE_APP_PATH,
     };
     let event = new Function('rows', 'exposed', eventStr)(multipleSelection.value, customParam);
     return event;

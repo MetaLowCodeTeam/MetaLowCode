@@ -814,6 +814,7 @@ const openDialog = async (entity) => {
 	}
 	currentTab.value = "pcTop";
 	currentEntity.value = entity;
+    currentButton.value = null;
 	isShow.value = true;
 	dialogLoading.value = true;
 	await loadDataTransformList();
