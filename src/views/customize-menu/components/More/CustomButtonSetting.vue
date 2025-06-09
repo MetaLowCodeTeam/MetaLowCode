@@ -49,7 +49,6 @@
 								</div>
 								<div
 									class="button-list-item-icon"
-									v-if="!item.isNative"
 								>
 									<el-icon
 										:size="16"
@@ -193,6 +192,7 @@
 													? currentButton.color
 													: ''
 											"
+                                            :link="currentTab == 'pcColumn'"
 										>
 											<el-icon
 												:size="16"
@@ -317,7 +317,7 @@
 									</el-col>
 									<el-col
 										:span="24"
-										v-if="currentButton.action != 1"
+										v-if="currentButton.action != 1 && currentTab != 'pcColumn'"
 									>
 										<el-form-item label="可用类型">
 											<el-radio-group
@@ -538,7 +538,7 @@
 										</el-form-item>
 									</el-col>
 									<!-- 完成回调 -->
-									<el-col :span="24">
+									<el-col :span="24" v-if="currentButton.action != 4">
 										<el-form-item label="完成回调">
 											<el-input
 												v-model="
@@ -564,6 +564,15 @@
 			</el-col>
 		</el-row>
 		<template #footer>
+            <div class="fl">
+                <span 
+                    v-if="currentTab == 'pcColumn'" 
+                    class="ml-10 info-text tip-text"
+                    @click="openListStyleDialog"
+                >
+                    tip：操作列宽在【更多-其他列表设计-列表设置】中修改
+                </span>
+            </div>
 			<el-button @click="closeDialog">取消</el-button>
 			<el-button type="primary" @click="saveButton">保存</el-button>
 		</template>
@@ -625,6 +634,8 @@ const {
 	defaultButtonConfig,
 	// 默认顶部按钮PC
 	defaultPcTopButtonList,
+    // 默认操作列按钮PC
+    defaultPcColumnButtonList,
 } = useCustomButtonConfig();
 
 const props = defineProps({
@@ -743,9 +754,11 @@ const deleteButton = (item) => {
 			buttonList.value = buttonList.value.filter(
 				(el) => el.guid !== item.guid
 			);
-			if (currentButton.value.guid === item.guid) {
+			if (currentButton.value?.guid === item.guid) {
 				currentButton.value = null;
 			}
+            let findTab = tabList.value.find((item) => item.name == currentTab.value);
+            findTab.buttonList = buttonList.value;
 		})
 		.catch(() => {});
 };
@@ -814,12 +827,7 @@ let layoutConfigData = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
 	console.log(entity, "entity");
-    let tempButtonConfig = localStorage.getItem('tempButtonConfig');
-    if(tempButtonConfig){
-        let newConfig = JSON.parse(tempButtonConfig).config;
-        layoutConfigData.value = JSON.parse(newConfig);
-    }
-    console.log(layoutConfigData.value,'layoutConfigData.value')
+    
 	// 自定义按钮配置ID
 	if (entity.customButtonId) {
 		layoutConfigId.value = entity.customButtonId;
@@ -827,7 +835,6 @@ const openDialog = async (entity) => {
 	// 自定义按钮配置数据
 	if (entity.customButton) {
 		layoutConfigData.value = { ...entity.customButton };
-		// buttonList.value = [...entity.customButton];
 	}
 	currentTab.value = "pcTop";
 	currentEntity.value = entity;
@@ -836,11 +843,6 @@ const openDialog = async (entity) => {
 	dialogLoading.value = true;
 	await loadDataTransformList();
 	await getCustomRightList();
-	// currentButton.value = null;
-	// if (buttonList.value.length > 0) {
-	// 	currentButton.value = buttonList.value[0];
-	// 	loadEntityFormList();
-	// }
 	// 初始化自定义按钮配置
 	initTabButtonConfig(currentTab.value);
 	dialogLoading.value = false;
@@ -860,6 +862,13 @@ const initTabButtonConfig = (tab) => {
 			}
 		});
 	}
+    if(tab == 'pcColumn'){
+        defaultPcColumnButtonList.forEach((defaultBtn) => {
+            if (!existingKeys.includes(defaultBtn.key)) {
+                findTab.buttonList.push(defaultBtn);
+            }
+        });
+    }
 	buttonList.value = findTab.buttonList;
 };
 
@@ -934,6 +943,8 @@ const saveButton = async () => {
         tabList.value.forEach(tab => {
             paramConfig[tab.name] = tab.buttonList;
         })
+        console.log(paramConfig,'paramConfig')
+        return
 		let param = {
 			config: JSON.stringify(paramConfig),
 			entityCode: props.entityCode,
@@ -1055,13 +1066,8 @@ defineExpose({
 	}
 }
 
-/**
-* 拖拽
-*/
-
-.chosenClass {
-	background: #fff;
-	// background-color: #f1f1f1;
+.tip-text {
+    font-size: 14px;
 }
 
 

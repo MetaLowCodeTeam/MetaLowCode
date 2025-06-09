@@ -168,11 +168,14 @@
                         </template>
                     </div>
                     <div class="fr table-setting" v-else>
-                        <template v-for="(item,index) of customButtonConfig.pcTop" :key="index">
+                        <template 
+                            v-for="(item,index) of customButtonConfig.pcTop" 
+                            :key="index"
+                        >
                             <el-button
                                 :disabled="getCustomButtonDisabled(item)"
-                                v-bind="item.props"
                                 @click="customButtonClick(item)"
+                                :type="item.type"
                                 v-if="(!item.isNative) || 
                                     (item.isNative && 
                                     !item.hide && 
@@ -366,9 +369,12 @@
                         label="操作"
                         fixed="right"
                         :align="'center'"
-                        width="120"
+                        :width="listConf.actionColumnWidth || 120"
                     >
-                        <template #default="scope">
+                        <template 
+                            #default="scope" 
+                            v-if="!(customButtonConfig?.pcColumn?.length > 0)"
+                        >
                             <el-tooltip
                                 class="box-item"
                                 effect="dark"
@@ -407,6 +413,20 @@
                             >
                                 查看
                             </el-button>
+                        </template>
+                        <template #default="scope" v-else>
+                            <template 
+                                v-for="(item,index) of customButtonConfig.pcColumn" :key="index"
+                            >
+                                <el-button
+                                    @click="customButtonClick(item, scope.row)"
+                                    link
+                                    :type="item.type"
+                                    v-if="!item.isNative || (item.isNative && !item.hide)"
+                                >
+                                    {{ item.name }}
+                                </el-button>
+                            </template>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -1114,12 +1134,12 @@ const getCustomButtonDisabled = (item) => {
 }
 
 // 自定义按钮点击
-const customButtonClick = (item) => {
+const customButtonClick = (item, row) => {
     // 内置按钮点击
     if(item.isNative){
         switch(item.key){
             case "open":
-                openDetailDialog(multipleSelection.value[0])
+                openDetailDialog(multipleSelection.value[0] || row)
                 break;
             case "batchEdit":
                 openBatchUpdateDialog();
@@ -1128,11 +1148,11 @@ const customButtonClick = (item) => {
                 onAdd()
                 break;
             case "edit":
-                onEditRow(multipleSelection.value[0])
+                onEditRow(multipleSelection.value[0] || row)
                 break;
         }
     }else {
-        customButtonHandler(item);
+        customButtonHandler(item, row);
     }
 }
 
@@ -1142,7 +1162,7 @@ let currentCustomButtonAfterEvent = ref(null);
 
 
 // 自定义按钮处理
-const customButtonHandler = async (el) => {
+const customButtonHandler = async (el, row) => {
     if(el.beforeEvent){
         let beforeEvent = customButtonEvent(el.beforeEvent);
         // 判断是否为 Promise
@@ -1158,7 +1178,7 @@ const customButtonHandler = async (el) => {
     if(el.afterEvent){
         currentCustomButtonAfterEvent.value = el.afterEvent;
     }
-    let recordId = multipleSelection.value?.[0]?.[idFieldName.value];
+    let recordId = row ? row[idFieldName.value] : multipleSelection.value?.[0]?.[idFieldName.value];
     let checkAuth = true;
     
     if (el.action !== 1 && el.filterJson?.items?.length > 0){
@@ -1178,7 +1198,7 @@ const customButtonHandler = async (el) => {
             onAdd(null, el.selectForm, el.selectEntity);
             break;
         case 2:
-            onEditRow(multipleSelection.value[0], null, el.selectForm);
+            onEditRow(multipleSelection.value[0] || row, null, el.selectForm);
             break;
         case 3:
             pageLoading.value = true;
@@ -1197,15 +1217,15 @@ const customButtonHandler = async (el) => {
             pageLoading.value = false;
             break;
         case 4:
-            customButtonEvent(el.customScript);
+            customButtonEvent(el.customScript, row);
             break;
     }
 }
 
 // 封装自定义按钮事件
-const customButtonEvent = (eventStr) => {
+const customButtonEvent = (eventStr, row) => {
     let customParam = {
-        rows: multipleSelection.value,
+        rows: row ? [row] : multipleSelection.value,
         exposed: currentExposed.value,
         elementEvent: {
             ElMessageBox,
@@ -1216,7 +1236,7 @@ const customButtonEvent = (eventStr) => {
         router,
         appPath: import.meta.env.VITE_APP_PATH,
     };
-    let event = new Function('rows', 'exposed', eventStr)(multipleSelection.value, customParam);
+    let event = new Function('rows', 'exposed', eventStr)(customParam.rows, customParam);
     return event;
 }
 
@@ -1256,6 +1276,7 @@ const getLayoutList = async () => {
         // 自定义按钮
         if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
             customButtonConfig.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
+            console.log(customButtonConfig.value,'customButtonConfig.value')
         }
         
         // 自定义行样式
@@ -2259,6 +2280,7 @@ defineExpose({
     editToOtherEntity,
     downFile,
     previewFile,
+    pageLoading,
 })
 
 </script>

@@ -23,7 +23,7 @@ export default function useCustomButtonConfig() {
             { label: "新建", value: 1 },
             { label: "编辑", value: 2 },
             { label: "基于选中新建", value: 3 },
-            // { label: "自定义", value: 4 },
+            { label: "自定义", value: 4 },
         ],
         // 可用类型
         availableTypeList: [
@@ -136,17 +136,43 @@ export default function useCustomButtonConfig() {
         },
     ];
 
+    // 默认操作列按钮PC
+    const defaultPcColumnButtonList = [
+        {
+            name: "编辑",
+            key: "edit",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "Edit",
+            showType: 1,
+            type: "primary",
+        },
+        {
+            name: "查看",
+            key: "open",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "",
+            showType: 1,
+            type: "primary",
+        },
+    ];
+
     const tabList = ref([
         {
             label: "顶部(PC)",
             name: "pcTop",
             buttonList: [],
         },
-        // {
-        //     label: "操作列(PC)",
-        //     name: "pcColumn",
-        //     buttonList: [],
-        // },
+        {
+            label: "操作列(PC)",
+            name: "pcColumn",
+            buttonList: [],
+        },
         // {
         //     label: "详情(PC)",
         //     name: "pcDetial",
@@ -167,6 +193,7 @@ export default function useCustomButtonConfig() {
     return {
         ...config,
         defaultPcTopButtonList,
+        defaultPcColumnButtonList,
         tabList,
     };
 }

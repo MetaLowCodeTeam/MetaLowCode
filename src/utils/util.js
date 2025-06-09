@@ -386,7 +386,6 @@ export const mlShortcutkeys = (callback) => {
 
     // 检测是否是 Mac 系统
     const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
-    console.log(isMac, 'isMac')
     const handleKeyDown = (e) => {
         const { key, keyCode, shiftKey, altKey, metaKey } = e;
 

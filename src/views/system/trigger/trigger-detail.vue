@@ -349,6 +349,7 @@ const onSave = async (target) => {
             let res = await $API.trigger.detail.scriptValidator(actionContent.script);
             if(!res || !res.data){
                 initLoading.value = false;
+                $ElMessage.error("脚本验证失败");
                 return;
             }
             actionContent.scriptId = trigger.triggerConfigId;

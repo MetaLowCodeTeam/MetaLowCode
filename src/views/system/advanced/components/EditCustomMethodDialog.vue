@@ -79,6 +79,8 @@ import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { saveCmRecord } from "@/api/advancedApi";
 // 消息
 import { ElMessage } from "element-plus";
+// 脚本验证
+import trigger from "@/api/trigger";
 
 const emit = defineEmits(["refresh"]);
 
@@ -236,6 +238,15 @@ const onSave = async (paramData) => {
 		dialogConf.value.show = false;
 		return;
 	}
+    dialogConf.value.loading = true;
+    if(paramData.methodType == 1 || paramData.methodType.value == 1){
+        let checkRes = await trigger.detail.scriptValidator(paramData.methodConfig);
+        if(!checkRes || !checkRes.data){
+            dialogConf.value.loading = false;
+            ElMessage.error("脚本验证失败");
+            return
+        }
+    }
 	dialogConf.value.loading = true;
 	let res = await saveCmRecord(paramData.customMethodId, paramData);
 	if (res && res.code == 200) {

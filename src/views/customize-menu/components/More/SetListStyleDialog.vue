@@ -4,11 +4,20 @@
         <div v-loading="loading" class="set-list-style">
             <el-row :gutter="20">
                 <el-col :span="12">
-                    <div class="form-title">列表序号设置</div>
-                    <div class="form-item mb-30">
+                    <div class="form-title">列表设置</div>
+                    <div class="form-item">
                         <el-checkbox v-model="styleConf.listConf.showRowNumber">
                             是否显示序号列
                         </el-checkbox>
+                    </div>
+                    <div class="form-item mb-30">
+                        <div class="info-text mt-5 mb-2">操作列宽度</div>
+                        <el-input-number 
+                            v-model="styleConf.listConf.actionColumnWidth" 
+                            placeholder="操作列宽度"
+                            style="width: 160px"
+                        />
+                        <span class="ml-10">px</span>
                     </div>
                 </el-col>
                 <el-col :span="12">
