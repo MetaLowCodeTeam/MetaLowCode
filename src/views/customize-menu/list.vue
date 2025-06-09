@@ -1226,7 +1226,7 @@ const customButtonHandler = async (el, row) => {
 const customButtonEvent = (eventStr, row) => {
     let customParam = {
         rows: row ? [row] : multipleSelection.value,
-        exposed: currentExposed.value,
+        listExposed: currentExposed.value,
         elementEvent: {
             ElMessageBox,
             ElLoading,

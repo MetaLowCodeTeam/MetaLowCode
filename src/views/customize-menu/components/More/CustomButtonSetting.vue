@@ -337,14 +337,6 @@
 													"
 												/>
 											</el-radio-group>
-											<el-tooltip
-												content="勾选多条数据移动端无效"
-												placement="top"
-											>
-												<el-icon class="ml-5">
-													<ElIconQuestionFilled />
-												</el-icon>
-											</el-tooltip>
 										</el-form-item>
 									</el-col>
 									<!-- 过滤条件 -->
@@ -943,8 +935,6 @@ const saveButton = async () => {
         tabList.value.forEach(tab => {
             paramConfig[tab.name] = tab.buttonList;
         })
-        console.log(paramConfig,'paramConfig')
-        return
 		let param = {
 			config: JSON.stringify(paramConfig),
 			entityCode: props.entityCode,
