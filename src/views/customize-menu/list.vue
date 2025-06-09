@@ -829,7 +829,7 @@ onMounted(()=>{
         if(customButtonConfig.value?.pcTop?.length > 0){
             customButtonConfig.value.pcTop.forEach(item => {
                 if(item.key == 'more'){
-                    toolbarConf.value.hide = false;
+                    item.hide = false;
                 }
             })
         }

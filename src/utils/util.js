@@ -386,7 +386,7 @@ export const mlShortcutkeys = (callback) => {
 
     // 检测是否是 Mac 系统
     const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
-
+    console.log(isMac, 'isMac')
     const handleKeyDown = (e) => {
         const { key, keyCode, shiftKey, altKey, metaKey } = e;
 
@@ -397,7 +397,6 @@ export const mlShortcutkeys = (callback) => {
         }
         if (key.toLowerCase() === "m") mKeyFlag = true;
         if (key.toLowerCase() === "l") lKeyFlag = true;
-
         // 检查是否满足快捷键组合
         const isShortcutPressed = shiftKeyFlag && altOrOptionKeyFlag && mKeyFlag && lKeyFlag;
         if (isShortcutPressed) {

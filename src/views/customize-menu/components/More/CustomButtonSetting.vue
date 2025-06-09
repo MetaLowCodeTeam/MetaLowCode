@@ -239,8 +239,23 @@
 												currentButton.key != 'batchEdit'
 											"
 										/>
-										<div class="ml-info-text" v-else>
+										<div class="ml-info-text" v-if="currentButton.key == 'batchEdit'">
 											批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制
+										</div>
+										<div class="ml-info-text ml-5 icon-top-2" v-if="currentButton.key == 'more'">
+											<el-tooltip placement="top">
+												<template #content>
+												    如果开启隐藏可使用快捷键临时显示。 <br />
+                                                    Windows系统快捷键： <br />
+                                                    Shift + Alt + M + L <br /> <br />
+
+                                                    Mac系统 快捷键： <br />
+                                                    Shift + Option + M + L
+												</template>
+												<el-icon size="16">
+													<ElIconQuestionFilled />
+												</el-icon>
+											</el-tooltip>
 										</div>
 									</el-form-item>
 								</el-col>
