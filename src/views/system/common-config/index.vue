@@ -247,7 +247,7 @@
 
 <script setup>
 import { ElMessage, ElMessageBox } from "element-plus";
-import { nextTick, onMounted, reactive, ref } from "vue";
+import { nextTick, onMounted, reactive, ref, onUnmounted } from "vue";
 import {
     getSettingInfo,
     updateSysSetting,
@@ -264,12 +264,21 @@ const { publicSetting } = storeToRefs(useCommonStore());
 
 import { mlShortcutkeys } from "@/utils/util";
 
-// import config from "@/config/table";
+// 快捷键
+let mlShortcutCleanup = ref(null);
+
+
 onMounted(() => {
     initData();
-    mlShortcutkeys(()=>{
+    mlShortcutCleanup.value = mlShortcutkeys(()=>{
         confList.value[4].isHide = !confList.value[4].isHide;
     })
+});
+
+onUnmounted(() => {
+    if(mlShortcutCleanup.value){
+        mlShortcutCleanup.value();
+    }
 });
 
 /**
