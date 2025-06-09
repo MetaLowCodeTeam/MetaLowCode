@@ -169,9 +169,6 @@
                     </div>
                     <div class="fr table-setting" v-else>
                         <template v-for="(item,index) of customButtonConfig.pcTop" :key="index">
-                            <!-- <el-button>
-                                {{ item.name }}
-                            </el-button> -->
                             <el-button
                                 :disabled="getCustomButtonDisabled(item)"
                                 v-bind="item.props"
@@ -201,7 +198,7 @@
                                             item.icon,
                                     }"
                                 >
-                                    {{ item.name }}{{ item.hidden }}
+                                    {{ item.name }}
                                 </span>
                             </el-button>
                             <!-- 更多按钮 -->
@@ -223,7 +220,7 @@
                                 :referenceEntity="referenceEntity"
                                 :modelName="modelName"
                                 @copySuccess="copySuccess"
-                                v-else-if="item.key === 'more'"
+                                v-else-if="item.key === 'more' && !item.hide"
                             />
                         </template>
                     </div>
@@ -823,6 +820,7 @@ onMounted(()=>{
     })
     currentExposed.value = getCurrentInstance().exposed;
     mlShortcutkeys(()=>{
+        console.log("快捷键")
         for(let key in toolbarConf.value){
             toolbarConf.value[key] = true;
         }

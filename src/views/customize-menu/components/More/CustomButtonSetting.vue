@@ -317,7 +317,8 @@
 													:value="item.value"
 													:disabled="
 														currentButton.action ==
-															3 && item.value == 2
+															3 && item.value == 2 ||
+														currentButton.action == 2
 													"
 												/>
 											</el-radio-group>
@@ -757,6 +758,7 @@ const changeAction = () => {
 	clearErrorStatus();
 	if (currentButton.value.action == 2) {
 		currentButton.value.selectEntity = currentEntity.value.entityName;
+        currentButton.value.availableType = 1;
 		changeEntity();
 	}
 	if (currentButton.value.action == 3) {
