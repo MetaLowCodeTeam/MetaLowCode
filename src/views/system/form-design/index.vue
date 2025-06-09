@@ -173,6 +173,8 @@ export default {
                 // 表单数据
                 formLayout: {},
             },
+            // 快捷键
+            mlShortcutCleanup: null,
         };
     },
     created() {
@@ -185,12 +187,17 @@ export default {
     },
     mounted() {
         this.loadDesign();
-        mlShortcutkeys(() => {
+        this.mlShortcutCleanup = mlShortcutkeys(() => {
             window.advancedDevMode = !window.advancedDevMode;
             this.designerConfig.componentLib = !!window.advancedDevMode;
             this.designerConfig.eventCollapse = !!window.advancedDevMode;
             this.saveAsBtnShow = !!window.advancedDevMode;
         });
+    },
+    beforeDestroy() {
+        if(this.mlShortcutCleanup){
+            this.mlShortcutCleanup();
+        }
     },
     emits: ['initComplete'],
     methods: {

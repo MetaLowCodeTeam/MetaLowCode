@@ -370,74 +370,64 @@ const numberToCurrencyNo = (value) => {
 
 
 
-// alt+shift+m+l 快捷键
-export const mlShortcutkeys = (cb) => {
-    let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0;
-    document.onkeydown = (e) => {
-        let keyCode = e.keyCode || e.which || e.charCode;
-        if (keyCode === 16) {
-            shiftKeyFlag = 1;
-        } else if (keyCode === 18) {
-            altKeyFlag = 1;
-        } else if (keyCode === 76 || keyCode === 108) {
-            lKeyFlag = 1;
-        } else if (keyCode === 77 || keyCode === 109) {
-            mKeyFlag = 1;
+/**
+ * 快捷键
+ * Windows系统快捷键：
+ * Shift + Alt + M + L
+ * 
+ * Mac系统 快捷键：
+ * Shift + Option + M + L
+ */
+export const mlShortcutkeys = (callback) => {
+    let shiftKeyFlag = false;
+    let altOrOptionKeyFlag = false;
+    let mKeyFlag = false;
+    let lKeyFlag = false;
+
+    // 检测是否是 Mac 系统
+    const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
+    const handleKeyDown = (e) => {
+        const { key, keyCode, shiftKey, altKey, metaKey } = e;
+
+        // 更新按键状态
+        if (key === "Shift" || keyCode === 16) shiftKeyFlag = true;
+        if (isMac ? (key === "Option" || keyCode === 18) : (key === "Alt" || keyCode === 18)) {
+            altOrOptionKeyFlag = true;
         }
-        if (shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
-            cb();
+        if (key.toLowerCase() === "m") mKeyFlag = true;
+        if (key.toLowerCase() === "l") lKeyFlag = true;
+
+        // 检查是否满足快捷键组合
+        const isShortcutPressed = shiftKeyFlag && altOrOptionKeyFlag && mKeyFlag && lKeyFlag;
+        if (isShortcutPressed) {
+            e.preventDefault(); // 阻止默认行为（如 Mac 的 Option+M 可能触发特殊字符）
+            callback();
         }
-    }
-    document.onkeyup = (e) => {
-        let keyCode = e.keyCode || e.which || e.charCode
-        if (keyCode === 16) {
-            shiftKeyFlag = 0
-        } else if (keyCode === 18) {
-            altKeyFlag = 0
-        } else if (keyCode === 76 || keyCode === 108) {
-            lKeyFlag = 0
-        } else if (keyCode === 77 || keyCode === 109) {
-            mKeyFlag = 0
+    };
+
+    const handleKeyUp = (e) => {
+        const { key, keyCode } = e;
+
+        // 重置按键状态
+        if (key === "Shift" || keyCode === 16) shiftKeyFlag = false;
+        if (isMac ? (key === "Option" || keyCode === 18) : (key === "Alt" || keyCode === 18)) {
+            altOrOptionKeyFlag = false;
         }
-    }
-    // let keyCode = e.keyCode || e.which || e.charCode;
-    // console.log(keyCode,'keyCode')
-    // let flag = false;
-    // let shiftKeyFlag = 0,
-    //     altKeyFlag = 0,
-    //     mKeyFlag = 0,
-    //     lKeyFlag = 0;
-    // // let shiftKeyFlag = 0, altKeyFlag = 0, mKeyFlag = 0, lKeyFlag = 0
-    // // document.onkeydown = (e) => {
-    // //     let keyCode = e.keyCode || e.which || e.charCode
-    // if (keyCode === 16) {
-    //     shiftKeyFlag = 1
-    // } else if (keyCode === 18) {
-    //     altKeyFlag = 1
-    // } else if (keyCode === 76 || keyCode === 108) {
-    //     lKeyFlag = 1
-    // } else if (keyCode === 77 || keyCode === 109) {
-    //     mKeyFlag = 1
-    // }
-    // console.log(shiftKeyFlag, altKeyFlag, mKeyFlag, lKeyFlag);
-    // // ML快捷键
-    // if (target == 'ml' && shiftKeyFlag && altKeyFlag && mKeyFlag && lKeyFlag) {
-    //     flag = true;
-    // }
-    // return flag
-    // document.onkeyup = (e) => {
-    //     let keyCode = e.keyCode || e.which || e.charCode
-    //     if (keyCode === 16) {
-    //         shiftKeyFlag = 0
-    //     } else if (keyCode === 18) {
-    //         altKeyFlag = 0
-    //     } else if (keyCode === 76 || keyCode === 108) {
-    //         lKeyFlag = 0
-    //     } else if (keyCode === 77 || keyCode === 109) {
-    //         mKeyFlag = 0
-    //     }
-    // }
-}
+        if (key.toLowerCase() === "m") mKeyFlag = false;
+        if (key.toLowerCase() === "l") lKeyFlag = false;
+    };
+
+    // 添加事件监听
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+
+    // 返回清理函数（用于组件卸载时移除监听）
+    return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("keyup", handleKeyUp);
+    };
+};
 /**
  * 高级筛选条件排查
  */

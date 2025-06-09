@@ -762,6 +762,9 @@ onBeforeMount(() => {
 
 let currentExposed = ref({});
 
+// 快捷键
+let mlShortcutCleanup = ref(null);
+
 onMounted(()=>{
     // 挂载
 	// TableRef.value &&
@@ -784,7 +787,7 @@ onMounted(()=>{
         checkRouterAutoOpen();
     })
     currentExposed.value = getCurrentInstance().exposed;
-    mlShortcutkeys(()=>{
+    mlShortcutCleanup.value = mlShortcutkeys(()=>{
         for(let key in toolbarConf.value){
             toolbarConf.value[key] = true;
         }
@@ -833,6 +836,10 @@ onUnmounted(() => {
 			"mousewheel",
 			scrollBehavior
 		);
+    
+    if(mlShortcutCleanup.value){
+        mlShortcutCleanup.value();
+    }
 });
 
 const hasCreateRight = computed(() => {

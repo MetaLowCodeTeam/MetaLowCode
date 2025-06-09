@@ -41,7 +41,7 @@ import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import { dashboard_container_schema } from "@/views/system/dashboard-design/charts/charts-schema";
 import {deepClone, mlShortcutkeys} from "@/utils/util";
 import { saveRecord, queryById } from "@/api/crud";
-import { onMounted, ref, onBeforeUnmount } from "vue";
+import { onMounted, ref, onBeforeUnmount, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 const router = useRouter();
@@ -68,6 +68,10 @@ let dbDesignerRef = ref();
 // 是否移动端
 let isMobile = ref(false);
 const appPath = import.meta.env.VITE_APP_PATH;
+
+// 快捷键
+let mlShortcutCleanup = ref(null);
+
 onMounted(async () => {
     chartId.value = router.currentRoute.value.query.chartId;
     let type = router.currentRoute.value.query.type;
@@ -83,7 +87,7 @@ onMounted(async () => {
     let key = isMobile.value ? "mobileChartData" : "chartData";
     initFormConfig(key);
 
-	mlShortcutkeys(() => {
+	mlShortcutCleanup.value = mlShortcutkeys(() => {
 		window.advancedDevMode = !window.advancedDevMode;
 		designerConfig.value.componentLib = !!window.advancedDevMode;
 
@@ -193,6 +197,12 @@ const saveDesign = async () => {
 
 onBeforeUnmount(() => {
     clearCanvas();
+});
+
+onUnmounted(() => {
+    if(mlShortcutCleanup.value){
+        mlShortcutCleanup.value();
+    }
 });
 </script>
 <style lang='scss' scoped>
