@@ -1,5 +1,5 @@
 <template>
-    <mlDialog :title="title" v-model="isShow" width="650px">
+    <mlDialog :title="title" v-model="isShow" width="650px" appendToBody>
         <div v-loading="loading">
             <div class="clearfix">
                 <div class="sortable-box fl">

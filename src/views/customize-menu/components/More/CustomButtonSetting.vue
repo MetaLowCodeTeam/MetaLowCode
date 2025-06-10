@@ -319,7 +319,7 @@
 									</el-col>
 									<el-col
 										:span="24"
-										v-if="currentButton.action != 1 && currentTab != 'pcColumn'"
+										v-if="currentButton.action != 1 && currentTab != 'pcColumn' && currentTab != 'pcDetial'"
 									>
 										<el-form-item label="可用类型">
 											<el-radio-group
@@ -866,13 +866,13 @@ const initTabButtonConfig = (tab) => {
             }
         });
     }
-    // if(tab == 'pcDetial'){
-    //     defaultPcDetialButtonList.forEach((defaultBtn) => {
-    //         if (!existingKeys.includes(defaultBtn.key)) {
-    //             findTab.buttonList.push(defaultBtn);
-    //         }
-    //     });
-    // }
+    if(tab == 'pcDetial'){
+        defaultPcDetialButtonList.forEach((defaultBtn) => {
+            if (!existingKeys.includes(defaultBtn.key)) {
+                findTab.buttonList.push(defaultBtn);
+            }
+        });
+    }
 	buttonList.value = findTab.buttonList;
 };
 

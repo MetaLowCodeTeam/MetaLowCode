@@ -1,5 +1,8 @@
 import { ref } from "vue";
 import { getGuid } from "@/utils/util";
+import { getTransformMap } from "@/api/transform";
+import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
+import http from "@/utils/request";
 export default function useCustomButtonConfig() {
     const config = {
         // 按钮类型
@@ -208,6 +211,7 @@ export default function useCustomButtonConfig() {
         },
     ];
 
+    // 自定义按钮页签
     const tabList = ref([
         {
             label: "顶部(PC)",
@@ -236,11 +240,97 @@ export default function useCustomButtonConfig() {
         // },
     ]);
 
+    // 当前自定义按钮后置事件
+    let currentCustomButtonAfterEvent = ref(null);
+
+    // 自定义按钮处理
+    const customButtonHandler = async (el, rows, currentExposed, ) => {
+        if (el.beforeEvent) {
+            let beforeEvent = onAdd(el.beforeEvent);
+            // 判断是否为 Promise
+            if (beforeEvent instanceof Promise) {
+                const asyncResult = await beforeEvent;
+                if (!asyncResult) {
+                    return;
+                }
+            } else if (!beforeEvent) {
+                return;
+            }
+        }
+        if (el.afterEvent) {
+            currentCustomButtonAfterEvent.value = el.afterEvent;
+        }
+        let recordId = detailId.value;
+        let checkAuth = true;
+
+        if (el.action !== 1 && el.filterJson?.items?.length > 0) {
+            pageLoading.value = true;
+            let tabRes = await checkTables([el.filterJson], recordId);
+            if (tabRes) {
+                checkAuth = !!tabRes.data[0];
+            }
+            pageLoading.value = false;
+        }
+        if (!checkAuth) {
+            ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");
+            return;
+        }
+        switch (el.action) {
+            case 1:
+                onAdd({
+                    entityName: el.selectEntity,
+                    formId: el.selectForm
+                })
+                break;
+            case 2:
+                onEditRow();
+                break;
+            case 3:
+                loading.value = true;
+                let transformId = el.selectDataTransform;
+                let res = await getTransformMap({ recordId, transformId });
+                if (res && res.code == 200) {
+                    onAdd({
+                        entityName: el.selectEntity,
+                        formId: el.selectForm,
+                        localDsv: {
+                            backfillFormData: res.data,
+                        }
+                    })
+                }
+                loading.value = false;
+                break;
+            case 4:
+                customButtonEvent(el.customScript, rows, currentExposed);
+                break;
+        }
+    }
+
+    // 封装自定义按钮事件
+    const customButtonEvent = (eventStr, rows, currentExposed) => {
+        let customParam = {
+            rows: rows,
+            listExposed: currentExposed,
+            elementEvent: {
+                ElMessageBox,
+                ElLoading,
+                ElMessage
+            },
+            http,
+            router,
+            appPath: import.meta.env.VITE_APP_PATH,
+        };
+        let event = new Function('rows', 'exposed', eventStr)(customParam.rows, customParam);
+        return event;
+    }
+
     return {
         ...config,
         defaultPcTopButtonList,
         defaultPcColumnButtonList,
         tabList,
         defaultPcDetialButtonList,
+        customButtonHandler,
+        currentCustomButtonAfterEvent,
     };
 }

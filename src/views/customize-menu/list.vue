@@ -424,7 +424,27 @@
                                     :type="item.type"
                                     v-if="!item.isNative || (item.isNative && !item.hide)"
                                 >
-                                    {{ item.name }}
+                                    <el-icon
+                                        :size="16"
+                                        :color="item.iconColor"
+                                        v-if="
+                                            item.icon &&
+                                            item.showType != 3
+                                        "
+                                        style="position: relative; top: -1px"
+                                    >
+                                        <component :is="item.icon" />
+                                    </el-icon>
+                                    <span
+                                        v-if="item.showType != 2"
+                                        :class="{
+                                            'ml-5':
+                                                item.showType == 1 &&
+                                                item.icon,
+                                        }"
+                                    >
+                                        {{ item.name }}
+                                    </span>
                                 </el-button>
                             </template>
                         </template>
@@ -1139,7 +1159,7 @@ const customButtonClick = (item, row) => {
     if(item.isNative){
         switch(item.key){
             case "open":
-                openDetailDialog(multipleSelection.value[0] || row)
+                openDetailDialog(row || multipleSelection.value[0])
                 break;
             case "batchEdit":
                 openBatchUpdateDialog();
@@ -1148,7 +1168,7 @@ const customButtonClick = (item, row) => {
                 onAdd()
                 break;
             case "edit":
-                onEditRow(multipleSelection.value[0] || row)
+                onEditRow(row || multipleSelection.value[0])
                 break;
         }
     }else {
@@ -1198,7 +1218,7 @@ const customButtonHandler = async (el, row) => {
             onAdd(null, el.selectForm, el.selectEntity);
             break;
         case 2:
-            onEditRow(multipleSelection.value[0] || row, null, el.selectForm);
+            onEditRow(row || multipleSelection.value[0], null, el.selectForm);
             break;
         case 3:
             pageLoading.value = true;

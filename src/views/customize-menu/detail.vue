@@ -127,7 +127,7 @@
 				</el-col>
 				<el-col :span="3">
 					<div class="detail-right" style="padding-top: 40px">
-                        <template v-if="detailParamConf.showBasicBlock">
+                        <template v-if="detailParamConf.showBasicBlock && !customButtonList.length">
                             <div class="group-button-label">基本操作</div>
                             <el-row
                                 class="group-el-button"
@@ -204,6 +204,69 @@
                                     <slot name="afterMoreBtn"></slot>
                                 </el-col>
                             </el-row>
+                        </template>
+                        <template v-else>
+                            <div 
+                                v-for="(item,customBtnItdenIndex) in customButtonList" 
+                                :key="customBtnItdenIndex" 
+                                class="block-el-button"
+                            >
+                                <NewRelated
+                                    v-if="item.key == 'newRelated' && !item.hide"
+                                    :entityName="entityName"
+                                    :entityCode="entityCode"
+                                    :addConf="addConf"
+                                    @confirm="newRelatedConfirm"
+                                    @add="onAdd"
+                                    :checkNewRelatedFilter="checkNewRelatedFilter"
+                                />
+                                <el-button
+                                    plain
+                                    :type="item.type"
+                                    v-if="
+                                        (!item.isNative || (item.isNative && !item.hide)) && 
+                                        item.key != 'more' &&
+                                        item.key != 'newRelated'
+                                    "
+                                    class="w-100 mb-5"
+                                    @click="customButtonClick(item)"
+                                >
+                                    <el-icon
+                                        :size="16"
+                                        :color="item.iconColor"
+                                        v-if="
+                                            item.icon &&
+                                            item.showType != 3
+                                        "
+                                        style="position: relative; top: -1px"
+                                    >
+                                        <component :is="item.icon" />
+                                    </el-icon>
+                                    <span
+                                        v-if="item.showType != 2"
+                                        :class="{
+                                            'ml-5':
+                                                item.showType == 1 &&
+                                                item.icon,
+                                        }"
+                                    >
+                                        {{ item.name }}
+                                    </span>
+                                </el-button>
+                                <More
+                                    ref="MoreRefs"
+                                    :listParamConf="detailParamConf"
+                                    type="detail"
+                                    :multipleSelection="multipleSelection"
+                                    :entityCode="entityCode"
+                                    :detailId="detailId"
+                                    @editColumnConfirm="editColumnConfirm"
+                                    :layoutConfig="myLayoutConfig"
+                                    :isMainDetailField="checkDetailEntityFlag(entityCode)"
+                                    @copySuccess="copySuccess"
+                                    v-if="item.key == 'more' && !item.hide"
+                                />
+                            </div>
                         </template>
 						<el-row class="group-el-button" v-if="detailParamConf.showProcessBlock && (contentSlots.processBlockUnshift || recordApproval || contentSlots.processBlockPush)">
                             <el-col :span="24" v-if="contentSlots.processBlockUnshift">
@@ -292,6 +355,9 @@ import Attachment from "./components/Attachment/Index.vue";
 import { getRecordApprovalState } from '@/api/approval';
 import { checkTables } from "@/api/layoutConfig";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const props = defineProps({
@@ -517,6 +583,23 @@ let checkTabsFilter = ref({});
 // 新建项过滤
 let checkNewRelatedFilter= ref({});
 
+
+// 自定义按钮
+let customButtonList = ref([]);
+
+// 自定义按钮点击
+const customButtonClick = (item) => {
+    if(item.key == 'edit'){
+        onEditRow();
+    }else if(item.key == 'history'){
+        toRevisionHistory(detailId.value);
+    }else {
+        customButtonHandler(item);
+    }
+}
+
+
+
 // 加载页签
 const getLayoutList = async () => {
 	loading.value = true;
@@ -551,6 +634,13 @@ const getLayoutList = async () => {
                 if(tabRes){
                     checkTabsFilter.value = tabRes.data;
                 }
+            }
+        }
+        // 自定义按钮
+        if(res.data.CUSTOM_BUTTON?.config){
+            let customButtonConfig = JSON.parse(res.data.CUSTOM_BUTTON.config);
+            if(customButtonConfig?.pcDetial?.length > 0){
+                customButtonList.value = customButtonConfig.pcDetial;
             }
         }
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
@@ -692,6 +782,12 @@ const onAdd = (e) => {
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
 	tempV.sourceRecord = multipleSelection.value[0];
+    if(e.formId) {
+        tempV.formId = e.formId; 
+    }
+    if(e.localDsv) {
+        tempV.localDsv = e.localDsv;
+    }
     editRefs.value.openDialog(tempV);
 };
 
@@ -727,6 +823,10 @@ const onConfirm = () => {
 	} else {
 		detailTabComRefs.value.initData();
 	}
+    if(currentCustomButtonAfterEvent.value) {
+        customButtonEvent(currentCustomButtonAfterEvent.value);
+        currentCustomButtonAfterEvent.value = null;
+    }
 	emits("onConfirm");
 };
 
@@ -924,6 +1024,15 @@ defineExpose({
 				min-width: 110px !important;
 			}
 		}
+        .block-el-button{
+            :deep(.el-button) {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            :deep(.el-dropdown) {
+                width: 100%;
+            }
+        }
 
 		.group-button-label {
 			font-size: 11px;

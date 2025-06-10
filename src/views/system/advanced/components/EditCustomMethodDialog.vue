@@ -165,7 +165,7 @@ const rules = ref({
 
 let dialogConf = ref({
 	title: "编辑自定义方法",
-	width: "700px",
+	width: "800px",
 	loading: false,
 	show: false,
 });
