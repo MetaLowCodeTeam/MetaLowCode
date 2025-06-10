@@ -355,9 +355,18 @@ import Attachment from "./components/Attachment/Index.vue";
 import { getRecordApprovalState } from '@/api/approval';
 import { checkTables } from "@/api/layoutConfig";
 import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
+// 自定义按钮
+import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
+const {
+    // 当前按钮点击处理
+    customButtonHandler,
+    // 当前按钮后置事件
+	customButtonAfterEventCb,
+} = useCustomButtonConfig();
+
+
+
 const { publicSetting } = storeToRefs(useCommonStore());
 const $TOOL = inject("$TOOL");
 const props = defineProps({
@@ -594,7 +603,16 @@ const customButtonClick = (item) => {
     }else if(item.key == 'history'){
         toRevisionHistory(detailId.value);
     }else {
-        customButtonHandler(item);
+        customButtonHandler(
+            item,
+            multipleSelection.value,
+            currentExposed.value,
+            detailId.value,
+            loading,
+            onAdd,
+            onEditRow,
+            onAdd,
+        );
     }
 }
 
@@ -823,10 +841,7 @@ const onConfirm = () => {
 	} else {
 		detailTabComRefs.value.initData();
 	}
-    if(currentCustomButtonAfterEvent.value) {
-        customButtonEvent(currentCustomButtonAfterEvent.value);
-        currentCustomButtonAfterEvent.value = null;
-    }
+    customButtonAfterEventCb()
 	emits("onConfirm");
 };
 

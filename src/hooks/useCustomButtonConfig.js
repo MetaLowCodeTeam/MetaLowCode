@@ -3,6 +3,8 @@ import { getGuid } from "@/utils/util";
 import { getTransformMap } from "@/api/transform";
 import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
+import { useRouter } from "vue-router";
+const router = useRouter();
 export default function useCustomButtonConfig() {
     const config = {
         // 按钮类型
@@ -242,11 +244,32 @@ export default function useCustomButtonConfig() {
 
     // 当前自定义按钮后置事件
     let currentCustomButtonAfterEvent = ref(null);
+    let multipleSelection = ref();
+    let refExposed = ref();
 
     // 自定义按钮处理
-    const customButtonHandler = async (el, rows, currentExposed, ) => {
+    const customButtonHandler = async (
+        // 按钮自己
+        el, 
+        // 当前数据
+        rows, 
+        // 当前组件导出的方法
+        exposed, 
+        // 当前数据Id
+        recordId, 
+        // 当前组件Loading
+        loading, 
+        // 新建回调
+        addCb, 
+        // 编辑回调
+        editCb, 
+        // 基于选中新建回调
+        recordAddCb
+    ) => {
+        multipleSelection.value = rows;
+        refExposed.value = exposed;
         if (el.beforeEvent) {
-            let beforeEvent = onAdd(el.beforeEvent);
+            let beforeEvent = customButtonEvent(el.beforeEvent);
             // 判断是否为 Promise
             if (beforeEvent instanceof Promise) {
                 const asyncResult = await beforeEvent;
@@ -260,16 +283,15 @@ export default function useCustomButtonConfig() {
         if (el.afterEvent) {
             currentCustomButtonAfterEvent.value = el.afterEvent;
         }
-        let recordId = detailId.value;
         let checkAuth = true;
 
         if (el.action !== 1 && el.filterJson?.items?.length > 0) {
-            pageLoading.value = true;
+            loading.value = true;
             let tabRes = await checkTables([el.filterJson], recordId);
             if (tabRes) {
                 checkAuth = !!tabRes.data[0];
             }
-            pageLoading.value = false;
+            loading.value = false;
         }
         if (!checkAuth) {
             ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");
@@ -277,20 +299,20 @@ export default function useCustomButtonConfig() {
         }
         switch (el.action) {
             case 1:
-                onAdd({
+                addCb({
                     entityName: el.selectEntity,
                     formId: el.selectForm
                 })
                 break;
             case 2:
-                onEditRow();
+                editCb(multipleSelection.value[0]);
                 break;
             case 3:
                 loading.value = true;
                 let transformId = el.selectDataTransform;
                 let res = await getTransformMap({ recordId, transformId });
                 if (res && res.code == 200) {
-                    onAdd({
+                    recordAddCb({
                         entityName: el.selectEntity,
                         formId: el.selectForm,
                         localDsv: {
@@ -301,16 +323,16 @@ export default function useCustomButtonConfig() {
                 loading.value = false;
                 break;
             case 4:
-                customButtonEvent(el.customScript, rows, currentExposed);
+                customButtonEvent(el.customScript);
                 break;
         }
     }
 
     // 封装自定义按钮事件
-    const customButtonEvent = (eventStr, rows, currentExposed) => {
+    const customButtonEvent = (eventStr) => {
         let customParam = {
-            rows: rows,
-            listExposed: currentExposed,
+            rows: multipleSelection.value,
+            refExposed: refExposed.value,
             elementEvent: {
                 ElMessageBox,
                 ElLoading,
@@ -323,6 +345,13 @@ export default function useCustomButtonConfig() {
         let event = new Function('rows', 'exposed', eventStr)(customParam.rows, customParam);
         return event;
     }
+    // 调用后置事件
+    const customButtonAfterEventCb = () =>  {
+        if(currentCustomButtonAfterEvent.value) {
+            customButtonEvent(currentCustomButtonAfterEvent.value);
+            currentCustomButtonAfterEvent.value = null;
+        }
+    }
 
     return {
         ...config,
@@ -331,6 +360,6 @@ export default function useCustomButtonConfig() {
         tabList,
         defaultPcDetialButtonList,
         customButtonHandler,
-        currentCustomButtonAfterEvent,
+        customButtonAfterEventCb,
     };
 }

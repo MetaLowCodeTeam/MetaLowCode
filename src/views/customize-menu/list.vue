@@ -562,6 +562,15 @@ import http from "@/utils/request";
 import { mlShortcutkeys } from "@/utils/util";
 import { getTransformMap } from "@/api/transform";
 import { checkTables } from "@/api/layoutConfig";
+// 自定义按钮
+import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
+const {
+    // 当前按钮点击处理
+    customButtonHandler,
+    // 当前按钮后置事件
+	customButtonAfterEventCb,
+} = useCustomButtonConfig();
+
 const { allEntityCode } = storeToRefs(useCommonStore());
 const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
@@ -1172,92 +1181,17 @@ const customButtonClick = (item, row) => {
                 break;
         }
     }else {
-        customButtonHandler(item, row);
+        customButtonHandler(
+            item, 
+            [row] || multipleSelection.value,
+            currentExposed.value,
+            row ? row[idFieldName.value] : multipleSelection.value?.[0]?.[idFieldName.value],
+            pageLoading,
+            onAdd,
+            ()=> onEditRow(row || multipleSelection.value[0]),
+            onAdd,
+        );
     }
-}
-
-
-// 当前自定义按钮后置事件
-let currentCustomButtonAfterEvent = ref(null);
-
-
-// 自定义按钮处理
-const customButtonHandler = async (el, row) => {
-    if(el.beforeEvent){
-        let beforeEvent = customButtonEvent(el.beforeEvent);
-        // 判断是否为 Promise
-        if (beforeEvent instanceof Promise) {
-            const asyncResult = await beforeEvent;
-            if(!asyncResult){
-                return;
-            }
-        }else if(!beforeEvent){
-            return;
-        }
-    }
-    if(el.afterEvent){
-        currentCustomButtonAfterEvent.value = el.afterEvent;
-    }
-    let recordId = row ? row[idFieldName.value] : multipleSelection.value?.[0]?.[idFieldName.value];
-    let checkAuth = true;
-    
-    if (el.action !== 1 && el.filterJson?.items?.length > 0){
-        pageLoading.value = true;
-        let tabRes = await checkTables([el.filterJson], recordId);
-        if(tabRes){
-            checkAuth = !!tabRes.data[0];
-        }
-        pageLoading.value = false;
-    }
-    if(!checkAuth){
-        ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");
-        return;
-    }
-    switch(el.action){
-        case 1:
-            onAdd(null, el.selectForm, el.selectEntity);
-            break;
-        case 2:
-            onEditRow(row || multipleSelection.value[0], null, el.selectForm);
-            break;
-        case 3:
-            pageLoading.value = true;
-            
-            let transformId = el.selectDataTransform;
-            let res = await getTransformMap({ recordId, transformId });
-            if(res && res.code == 200) {
-                onAdd(
-                    {
-                        backfillFormData: res.data,
-                    }, 
-                    el.selectForm, 
-                    el.selectEntity
-                );
-            }
-            pageLoading.value = false;
-            break;
-        case 4:
-            customButtonEvent(el.customScript, row);
-            break;
-    }
-}
-
-// 封装自定义按钮事件
-const customButtonEvent = (eventStr, row) => {
-    let customParam = {
-        rows: row ? [row] : multipleSelection.value,
-        listExposed: currentExposed.value,
-        elementEvent: {
-            ElMessageBox,
-            ElLoading,
-            ElMessage
-        },
-        http,
-        router,
-        appPath: import.meta.env.VITE_APP_PATH,
-    };
-    let event = new Function('rows', 'exposed', eventStr)(customParam.rows, customParam);
-    return event;
 }
 
 
@@ -1636,10 +1570,7 @@ const editConfirm = (e) => {
     }else {
         getLayoutList();
     }
-    if(currentCustomButtonAfterEvent.value) {
-        customButtonEvent(currentCustomButtonAfterEvent.value);
-        currentCustomButtonAfterEvent.value = null;
-    }
+    customButtonAfterEventCb();
 }
 
 // 子表单引用回调
