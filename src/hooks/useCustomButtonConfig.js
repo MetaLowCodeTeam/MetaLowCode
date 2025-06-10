@@ -162,6 +162,52 @@ export default function useCustomButtonConfig() {
         },
     ];
 
+    // 默认详情按钮pc
+    const defaultPcDetialButtonList = [
+        {
+            name: "新建相关",
+            key: "newRelated",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "Plus",
+            showType: 1,
+            type: "primary",
+        },
+        {
+            name: "编辑",
+            key: "edit",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "Edit",
+            showType: 1,
+            type: "primary",
+        },
+        {
+            name: "修改历史",
+            key: "history",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "Clock",
+            showType: 1,
+            type: "primary",
+        },
+        {
+            name: "更多",
+            key: "more",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            type: "primary",
+        },
+    ];
+
     const tabList = ref([
         {
             label: "顶部(PC)",
@@ -173,11 +219,11 @@ export default function useCustomButtonConfig() {
             name: "pcColumn",
             buttonList: [],
         },
-        // {
-        //     label: "详情(PC)",
-        //     name: "pcDetial",
-        //     buttonList: [],
-        // },
+        {
+            label: "详情(PC)",
+            name: "pcDetial",
+            buttonList: [],
+        },
         {
             label: "底部(APP)",
             name: "appList",
@@ -195,5 +241,6 @@ export default function useCustomButtonConfig() {
         defaultPcTopButtonList,
         defaultPcColumnButtonList,
         tabList,
+        defaultPcDetialButtonList,
     };
 }

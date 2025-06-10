@@ -193,6 +193,7 @@
 													: ''
 											"
                                             :link="currentTab == 'pcColumn'"
+                                            :plain="currentTab == 'pcDetial'"
 										>
 											<el-icon
 												:size="16"
@@ -628,6 +629,8 @@ const {
 	defaultPcTopButtonList,
     // 默认操作列按钮PC
     defaultPcColumnButtonList,
+    // 默认详情按钮PC
+    defaultPcDetialButtonList,
 } = useCustomButtonConfig();
 
 const props = defineProps({
@@ -818,8 +821,6 @@ let currentEntity = ref({});
 let layoutConfigData = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
-	console.log(entity, "entity");
-    
 	// 自定义按钮配置ID
 	if (entity.customButtonId) {
 		layoutConfigId.value = entity.customButtonId;
@@ -835,6 +836,9 @@ const openDialog = async (entity) => {
 	dialogLoading.value = true;
 	await loadDataTransformList();
 	await getCustomRightList();
+    tabList.value.forEach(el => {
+        el.buttonList = layoutConfigData.value[el.name] || [];
+    })
 	// 初始化自定义按钮配置
 	initTabButtonConfig(currentTab.value);
 	dialogLoading.value = false;
@@ -861,6 +865,13 @@ const initTabButtonConfig = (tab) => {
             }
         });
     }
+    // if(tab == 'pcDetial'){
+    //     defaultPcDetialButtonList.forEach((defaultBtn) => {
+    //         if (!existingKeys.includes(defaultBtn.key)) {
+    //             findTab.buttonList.push(defaultBtn);
+    //         }
+    //     });
+    // }
 	buttonList.value = findTab.buttonList;
 };
 
