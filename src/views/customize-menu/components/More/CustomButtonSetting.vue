@@ -49,6 +49,7 @@
 								</div>
 								<div
 									class="button-list-item-icon"
+                                    v-if="!item.isNative"
 								>
 									<el-icon
 										:size="16"
