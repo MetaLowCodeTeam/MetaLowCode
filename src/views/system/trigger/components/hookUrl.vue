@@ -79,9 +79,10 @@
             </div>
         </el-form-item>
         <el-form-item class="mt-15" label="回调脚本" v-if="trigger.actionContent.callBackType == 'liteFlowJavaScript'">
-            <lite-flow-java v-model="trigger.actionContent.script" style="width: 100%;"/>
+            <div style="width: 100%;">
+                <lite-flow-java v-model="trigger.actionContent.script" style="width: 100%;"/>
+            </div>
         </el-form-item>
-        <!-- <lite-flow-java v-if="trigger.actionContent.callBackType == 'liteFlowJavaScript'" label="回调脚本"> -->
 
     </div>
 </template>
