@@ -5,6 +5,7 @@ import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 import { useRouter } from "vue-router";
 const router = useRouter();
+import { checkTables } from "@/api/layoutConfig";
 export default function useCustomButtonConfig() {
     const config = {
         // 按钮类型
