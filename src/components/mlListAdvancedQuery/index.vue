@@ -393,11 +393,13 @@ const deleteConfig = (op, inx) => {
 // 高级查询确认
 const conditionConfirm = (e) => {
     saveDialog.filter = { ...e };
-    // console.log(executeAction, cutAction.value, "cutAction.value");
-
+    isShowTag.value = false;
+    if(saveDialog.filter?.items?.length > 0) {
+        isShowTag.value = true;
+    }
     if (cutAction.value == "queryNow") {
         showAdvfilter.value = false;
-        isShowTag.value = true;
+        
         emits(cutAction.value, e);
     }
     if (cutAction.value == "save") {
