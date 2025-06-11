@@ -1417,6 +1417,7 @@ const sortChange = (column) => {
 
 // 列宽改变
 const headerDragend = (newWidth, oldWidth, column) => {
+    
     if (defaultColumnShow.value == "ALL") {
         titleWidthForAll[column.property] = newWidth;
         $API.layoutConfig.saveUserLayoutCache(
@@ -1427,7 +1428,7 @@ const headerDragend = (newWidth, oldWidth, column) => {
         titleWidthForSelf[column.property] = newWidth;
         $API.layoutConfig.saveUserLayoutCache(
             "LIST:" + entityName.value + ":ALL",
-            JSON.stringify(titleWidthForAll)
+            JSON.stringify(titleWidthForSelf)
         );
     }
 };

@@ -91,6 +91,13 @@
             </div>
         </div>
         <template #footer>
+            <span 
+                class="ml-a-span fl ml-20" 
+                v-if="editColumnDialog.chosenListType != 'BATCH_UPDATE'"
+                @click="resetColumnWidth"
+            >
+                重置拖拽过的列宽
+            </span>
             <div class="footer-div">
                 <el-button @click="isShow = false" :loading="loading">取消</el-button>
                 <el-button type="primary" @click="onSave" :loading="loading">保存</el-button>
@@ -307,6 +314,8 @@ import { queryEntityListableFields } from "@/api/crud";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -709,6 +718,26 @@ const onSave = async () => {
     loading.value = false;
 };
 
+// 重置拖拽过的列宽
+const resetColumnWidth = () => {
+    let { entityCode } = props.editColumnDialog;
+    ElMessageBox.confirm("是否确认重置拖拽过的列宽?","提示：",  {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    }).then(async () => {
+        let entityName = queryEntityNameByCode(entityCode);
+        let res = await $API.layoutConfig.saveUserLayoutCache(
+            "LIST:" + entityName + ":ALL",
+            null
+        );
+        if(res && res.code == 200) {
+            $ElMessage.success("重置成功！")
+            emit("confirm");
+        }
+    })
+    .catch(() => {});
+}
 
 </script>
 <style lang='scss' scoped>
