@@ -312,6 +312,7 @@ export default function useCustomButtonConfig() {
                 loading.value = true;
                 let transformId = el.selectDataTransform;
                 let res = await getTransformMap({ recordId, transformId });
+                console.log(el,'el')
                 if (res && res.code == 200) {
                     recordAddCb({
                         entityName: el.selectEntity,

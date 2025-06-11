@@ -1188,8 +1188,12 @@ const customButtonClick = (item, row) => {
             row ? row[idFieldName.value] : multipleSelection.value?.[0]?.[idFieldName.value],
             pageLoading,
             onAdd,
-            ()=> onEditRow(row || multipleSelection.value[0]),
-            onAdd,
+            () => onEditRow(row || multipleSelection.value[0]),
+            ({entityName,formId,localDsv}) => onAdd(
+                localDsv,
+                formId,
+                entityName
+            ),
         );
     }
 }
@@ -1473,6 +1477,7 @@ const getDialogTitle = (row, key) => {
 
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
+    console.log(localDsv,'localDsv')
     isOtherEntity.value = false;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){

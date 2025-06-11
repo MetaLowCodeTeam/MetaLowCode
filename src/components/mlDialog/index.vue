@@ -63,7 +63,7 @@ const props = defineProps({
     // body没有内边距
     bodyNoPadding: { type: Boolean, default: false },
     // 滚动条高度
-    scrollbarHeight: { type: String, default: "" },
+    scrollbarHeight: { type: String, default: "500px" },
     // 滚动条最小高度
     scrollbarMinHeight: { type: String, default: "" },
     // 滚动条最大高度
