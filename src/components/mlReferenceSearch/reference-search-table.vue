@@ -300,7 +300,13 @@ export default {
 			} else {
 				paramStr = this.entity;
                 let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
-                tempConditionConf.items = tempConditionConf.items.filter(el => (el.value !== undefined && el.value !== null && el.value !== "") || (el.value2 !== undefined && el.value2 !== null && el.value2 !== "") || this.notEmptyItems.includes(el.op))
+                tempConditionConf.items = tempConditionConf.items.filter(el => {
+                    const hasValidValue = (val) => val !== undefined && val !== null && val !== "";
+                    if((el.type == 'Date' || el.type == 'DateTime') && !el.value && !el.value2){
+                        return false;
+                    }
+                    return hasValidValue(el.value) || hasValidValue(el.value2) || this.notEmptyItems.includes(el.op);
+                });
                 this.refFieldQueryApi(
 					refFieldQuery2(
 						paramStr,
