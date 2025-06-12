@@ -492,6 +492,8 @@ const confirm = async (target) => {
                     delete formData[el];
                 })
                 loading.value = true;
+                // 添加 500ms 延迟
+                await new Promise(resolve => setTimeout(resolve, 500));
                 let saveRes;
                 if (props.queryUrl) {
                     saveRes = await http.post(props.queryUrl, formData, {
