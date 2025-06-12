@@ -6,7 +6,7 @@
                 @onAdd="handleAdd" 
                 @save-success="getLayoutConfig" 
                 @onSearch="handleSearch"
-                :entityCode="entity.entityCode"
+                :entityName="entity.name"
             />
 		</el-header>
 		<el-container

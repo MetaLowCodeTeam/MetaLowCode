@@ -160,7 +160,7 @@ const initData = async (paramEntity, isRefresh = false) => {
             let filterList = sourceConfigColumn.map(el => el.filter);
             if(filterList && filterList.length > 0){
                 // 调用查询接口判断该页签是否显示
-                let tabRes = await checkTables(filterList, detailId.value);
+                let tabRes = await checkTables(filterList, myEntity.recordId);
                 if(tabRes){
                     checkTabsFilter.value = tabRes.data;
                 }

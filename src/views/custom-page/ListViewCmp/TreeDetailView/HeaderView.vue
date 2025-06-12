@@ -39,24 +39,33 @@
 	<ListSettingDialog ref="listSettingDialog" @save-success="saveSuccess" />
 </template>
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import ListSettingDialog from "./ListSettingDialog.vue";
+// 公共方法
+import useCommonStore from "@/store/modules/common";
+const { queryEntityCodeByName } = useCommonStore();
 
 const $TOOL = inject("$TOOL");
 const emit = defineEmits(["onAdd", "save-success", "onSearch"]);
 
 const props = defineProps({
-    entityCode: {
-        type: [String, Number],
-        default: "",
+    entityName: {
+        type: [String],
+        required: true
     }
 });
 
 let searchValue = ref("");
 
+let entityCode = ref("");
+
 const handleAdd = () => {
 	emit("onAdd");
 };
+
+onMounted(() => {
+    entityCode.value = queryEntityCodeByName(props.entityName);
+})
 
 const listSettingDialog = ref();
 const openSettingDialog = () => {
