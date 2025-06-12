@@ -3,8 +3,6 @@ import { getGuid } from "@/utils/util";
 import { getTransformMap } from "@/api/transform";
 import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
-import { useRouter } from "vue-router";
-const router = useRouter();
 import { checkTables } from "@/api/layoutConfig";
 export default function useCustomButtonConfig() {
     const config = {
@@ -247,7 +245,7 @@ export default function useCustomButtonConfig() {
     let currentCustomButtonAfterEvent = ref(null);
     let multipleSelection = ref();
     let refExposed = ref();
-
+    let currentRouter = ref(null);
     // 自定义按钮处理
     const customButtonHandler = async (
         // 按钮自己
@@ -265,10 +263,13 @@ export default function useCustomButtonConfig() {
         // 编辑回调
         editCb, 
         // 基于选中新建回调
-        recordAddCb
+        recordAddCb,
+        // 路由
+        router
     ) => {
         multipleSelection.value = rows;
         refExposed.value = exposed;
+        currentRouter.value = router;
         if (el.beforeEvent) {
             let beforeEvent = customButtonEvent(el.beforeEvent);
             // 判断是否为 Promise
@@ -341,7 +342,7 @@ export default function useCustomButtonConfig() {
                 ElMessage
             },
             http,
-            router,
+            router:currentRouter.value,
             appPath: import.meta.env.VITE_APP_PATH,
         };
         let event = new Function('rows', 'exposed', eventStr)(customParam.rows, customParam);

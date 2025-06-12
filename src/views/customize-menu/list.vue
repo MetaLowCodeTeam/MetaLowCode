@@ -560,8 +560,6 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
 import { mlShortcutkeys } from "@/utils/util";
-import { getTransformMap } from "@/api/transform";
-import { checkTables } from "@/api/layoutConfig";
 // 自定义按钮
 import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 const {
@@ -1194,6 +1192,7 @@ const customButtonClick = (item, row) => {
                 formId,
                 entityName
             ),
+            router,
         );
     }
 }

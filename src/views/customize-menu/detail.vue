@@ -358,6 +358,8 @@ import { storeToRefs } from "pinia";
 
 // 自定义按钮
 import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const {
     // 当前按钮点击处理
     customButtonHandler,
@@ -612,6 +614,7 @@ const customButtonClick = (item) => {
             onAdd,
             onEditRow,
             onAdd,
+            router,
         );
     }
 }
