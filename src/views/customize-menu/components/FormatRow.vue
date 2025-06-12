@@ -117,7 +117,7 @@
                     fit="scale-down"
                 />
             </span>
-            <span v-else>{{ row[column.fieldName] }}</span>
+            <span v-else>{{ row[column.fieldName] }} </span>
         </div>
     </div>
 
