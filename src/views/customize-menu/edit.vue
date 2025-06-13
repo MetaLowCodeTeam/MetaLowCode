@@ -694,6 +694,7 @@ defineExpose({
 }
 
 .main {
+    max-height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
