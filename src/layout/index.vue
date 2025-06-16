@@ -130,7 +130,7 @@
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="[...keepLiveRouteFn]">
-                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" v-if="routeShowFn"/>
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath + ($route.query.refresh || '')" v-if="routeShowFn"/>
                                 </keep-alive>
                             </router-view>
                             <iframe-view></iframe-view>
@@ -188,7 +188,7 @@
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="[...keepLiveRouteFn]">
-                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath + ($route.query.refresh || '')" />
                                 </keep-alive>
                             </router-view>
                             <iframe-view></iframe-view>
@@ -248,7 +248,7 @@
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="[...keepLiveRouteFn]">
-                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath + ($route.query.refresh || '')" />
                                 </keep-alive>
                             </router-view>
                             <iframe-view></iframe-view>
@@ -272,7 +272,7 @@
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="[...keepLiveRouteFn]">
-                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath + ($route.query.refresh || '')" />
                                 </keep-alive>
                             </router-view>
                             <iframe-view></iframe-view>
@@ -347,7 +347,7 @@
                         <template v-else>
                             <router-view v-slot="{ Component }">
                                 <keep-alive :include="[...keepLiveRouteFn]">
-                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath" />
+                                    <component :is="wrap($route.fullPath, Component)" :key="$route.fullPath + ($route.query.refresh || '')" />
                                 </keep-alive>
                             </router-view>
                             <iframe-view></iframe-view>

@@ -1190,7 +1190,11 @@ const customButtonClick = (item, row) => {
             currentExposed.value,
             row ? row[idFieldName.value] : multipleSelection.value?.[0]?.[idFieldName.value],
             pageLoading,
-            onAdd,
+            ({entityName,formId}) => onAdd(
+                null,
+                formId,
+                entityName
+            ),
             () => onEditRow(row || multipleSelection.value[0]),
             ({entityName,formId,localDsv}) => onAdd(
                 localDsv,
