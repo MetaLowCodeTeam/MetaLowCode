@@ -194,7 +194,9 @@
 													: ''
 											"
                                             :link="currentTab == 'pcColumn'"
-                                            :plain="currentTab == 'pcDetial'"
+                                            :plain="currentTab == 'pcDetial' || currentTab == 'appDetial'"
+                                            :round="currentTab == 'appDetial'"
+                                            :class="{'app-detial-button': currentTab == 'appDetial'}"
 										>
 											<el-icon
 												:size="16"
@@ -241,10 +243,13 @@
 												currentButton.key != 'batchEdit'
 											"
 										/>
+                                        <div class="ml-info-text ml-5" v-if="currentButton.hideTip">
+											{{ currentButton.hideTip }}
+										</div>
 										<div class="ml-info-text" v-if="currentButton.key == 'batchEdit'">
 											批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制
 										</div>
-										<div class="ml-info-text ml-5 icon-top-2" v-if="currentButton.key == 'more'">
+										<div class="ml-info-text ml-5 icon-top-2" v-if="currentButton.key == 'more' && currentTab == 'pcTop'">
 											<el-tooltip placement="top">
 												<template #content>
 												    如果开启隐藏可使用快捷键临时显示。 <br />
@@ -632,6 +637,8 @@ const {
     defaultPcColumnButtonList,
     // 默认详情按钮PC
     defaultPcDetialButtonList,
+    // 默认详情按钮APP
+    defaultAppDetialButtonList,
 } = useCustomButtonConfig();
 
 const props = defineProps({
@@ -873,6 +880,13 @@ const initTabButtonConfig = (tab) => {
             }
         });
     }
+    if(tab == 'appDetial'){
+        defaultAppDetialButtonList.forEach((defaultBtn) => {
+            if (!existingKeys.includes(defaultBtn.key)) {
+                findTab.buttonList.push(defaultBtn);
+            }
+        });
+    }
 	buttonList.value = findTab.buttonList;
 };
 
@@ -1072,5 +1086,10 @@ defineExpose({
     font-size: 14px;
 }
 
-
+.app-detial-button {
+    background-color: #fff;
+    &:hover {
+        color: var(--el-color-primary);
+    }
+}
 </style>

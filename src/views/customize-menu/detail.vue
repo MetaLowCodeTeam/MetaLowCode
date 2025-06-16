@@ -226,7 +226,8 @@
                                     v-if="
                                         (!item.isNative || (item.isNative && !item.hide)) && 
                                         item.key != 'more' &&
-                                        item.key != 'newRelated'
+                                        item.key != 'newRelated'&&
+                                        !(item.key === 'edit' && !$TOOL.checkRole('r' + entityCode + '-3'))
                                     "
                                     class="w-100 mb-5"
                                     @click="customButtonClick(item)"

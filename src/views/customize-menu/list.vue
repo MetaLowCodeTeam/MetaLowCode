@@ -422,7 +422,12 @@
                                     @click="customButtonClick(item, scope.row)"
                                     link
                                     :type="item.type"
-                                    v-if="!item.isNative || (item.isNative && !item.hide)"
+                                    v-if="
+                                        !item.isNative ||
+                                        (item.isNative &&
+                                            !item.hide &&
+                                            !(item.key === 'edit' && !hasEditRight))
+                                    "
                                 >
                                     <el-icon
                                         :size="16"

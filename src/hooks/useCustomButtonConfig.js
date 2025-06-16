@@ -146,6 +146,7 @@ export default function useCustomButtonConfig() {
             name: "编辑",
             key: "edit",
             hide: false,
+            hideTip: "如果本身没有编辑权限即便设置显示也会隐藏",
             // 是否内置按钮
             isNative: true,
             guid: getGuid(),
@@ -183,6 +184,7 @@ export default function useCustomButtonConfig() {
             name: "编辑",
             key: "edit",
             hide: false,
+            hideTip: "如果本身没有编辑权限即便设置显示也会隐藏",
             // 是否内置按钮
             isNative: true,
             guid: getGuid(),
@@ -211,6 +213,42 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
     ];
+
+    // 默认详情APP
+    const defaultAppDetialButtonList = [
+        {
+            name: "新建相关",
+            key: "newRelated",
+            hide: false,
+            hideTip: "如果PC没有配置过新建相关页签，则APP不显示",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "",
+            showType: 1,
+            type: "primary",
+        },
+        {
+            name: "编辑",
+            key: "edit",
+            hide: false,
+            hideTip: "如果本身没有编辑权限即便设置显示也会隐藏",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "EditPen",
+            type: "primary",
+        },
+        {
+            name: "更多",
+            key: "more",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            type: "primary",
+        },
+    ]
 
     // 自定义按钮页签
     const tabList = ref([
@@ -362,6 +400,7 @@ export default function useCustomButtonConfig() {
         defaultPcColumnButtonList,
         tabList,
         defaultPcDetialButtonList,
+        defaultAppDetialButtonList,
         customButtonHandler,
         customButtonAfterEventCb,
     };
