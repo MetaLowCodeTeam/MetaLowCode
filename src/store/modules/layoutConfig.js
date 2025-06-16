@@ -313,11 +313,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             isHidden = true;
         }
         
-        // 1 如果有自定义CODE
-        // 2 并且没有权限
-        // 3 并且不是父菜单
-        // 4 并且类型是2、3、5  外部地址、自定义页面、仪表盘
-        if(hasCustomCode && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5)){
+        // 1 如果有自定义权限
+        // 2 并且不是父菜单
+        // 3 并且类型是2、3、5、6  外部地址、自定义页面、仪表盘、自定义表单
+        if(hasCustomCode && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5 || item.type == 6)){
             isHidden = true;
         }
         // 1 如果是自定义列表 

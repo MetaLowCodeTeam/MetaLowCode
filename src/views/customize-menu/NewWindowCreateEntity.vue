@@ -58,9 +58,9 @@
 		<div class="nw-footer">
 			<el-button @click="closeTab">取消</el-button>
 			<el-button type="primary" @click="saveForm">保存</el-button>
-			<el-button type="primary" @click="saveForm('close')"
-				>保存并关闭</el-button
-			>
+			<el-button type="primary" @click="saveForm('close')">
+                保存并关闭
+            </el-button>
 		</div>
 	</div>
 </template>
@@ -77,6 +77,10 @@ import { useRouter } from "vue-router";
 import { getFormLayout } from "@/api/system-manager";
 import { saveRecord } from "@/api/crud";
 
+// 公共方法
+import useCommonStore from "@/store/modules/common";
+const { queryEntityInfoByName } = useCommonStore();
+
 const router = useRouter();
 
 // 实体名称
@@ -85,9 +89,13 @@ let entity = ref("");
 // 表单ID
 let formId = ref("");
 
+// recordId
+let recordId = ref(null);
+
 onMounted(() => {
 	entity.value = router.currentRoute.value.params.entityName;
 	formId.value = router.currentRoute.value.query.formId;
+    recordId.value = null;
 	// 加载表单
 	loadForm();
 });
@@ -159,11 +167,13 @@ const saveForm = (type) => {
 					delete formData[el];
 				});
 				loading.value = true;
-				let saveRes = await saveRecord(entity.value, "", formData);
+				let saveRes = await saveRecord(entity.value, recordId.value, formData);
 				if (
 					saveRes &&
 					(saveRes.data?.code == 200 || saveRes.code == 200)
 				) {
+                    let entityInfo = queryEntityInfoByName(entity.value);
+                    recordId.value = saveRes.data?.formData[entityInfo.idFieldName];
 					ElMessage.success("保存成功");
                     if(type == 'close'){
                         closeTab();
