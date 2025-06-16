@@ -67,7 +67,7 @@ const props = defineProps({
     // 滚动条最小高度
     scrollbarMinHeight: { type: String, default: "" },
     // 滚动条最大高度
-    scrollbarMaxHeight: { type: String, default: "500px" },
+    scrollbarMaxHeight: { type: String, default: "" },
 });
 const emit = defineEmits(["update:modelValue", 'fullScreenChange']);
 watch(
