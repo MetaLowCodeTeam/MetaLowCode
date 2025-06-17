@@ -12,8 +12,6 @@ import config from "@/config"
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 
 
-// 如果是租户需要隐藏菜单
-const tenantIdHideMenu = ['Tenant', 'DatabaseBackups'];
 // 如果是外部数据源隐藏
 const OuterDataSourceHideMenu = ['OuterDataSource', 'OuterDataModel'];
 
@@ -166,8 +164,12 @@ router.sc_getMenu = () => {
 function filterUserMenu(userRoutes, publicSetting) {
     let { tenantInfo, pluginIdList, openJobPosition } = publicSetting.value;
     return treeFilter(routerCheckRole(userRoutes), node => {
-        // 如果是租户，并且有足环ID或者没有租户插件 不显示该菜单
-        if(tenantIdHideMenu.includes(node.name) && (tenantInfo && tenantInfo.tenantId || !pluginIdList.includes('metaTenant'))) {
+        // 如果是数据备份，且有租户ID，不显示该菜单
+        if(node.name == "DatabaseBackups" && (tenantInfo && tenantInfo.tenantId)) {
+            return false
+        }
+        // 如果是多租户，有租户ID 或者 没有租户插件，不显示该菜单
+        if(node.name == "Tenant" && (tenantInfo && tenantInfo.tenantId || !pluginIdList.includes('metaTenant'))) {
             return false
         }
         // 如果是岗位管理，并且没有开启岗位管理，不显示该菜单
