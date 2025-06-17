@@ -240,7 +240,7 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "更多",
+            name: "更多操作",
             key: "more",
             hide: false,
             // 是否内置按钮
@@ -272,11 +272,11 @@ export default function useCustomButtonConfig() {
             name: "appList",
             buttonList: [],
         },
-        // {
-        //     label: "详情底部(APP)",
-        //     name: "appDetial",
-        //     buttonList: [],
-        // },
+        {
+            label: "详情底部(APP)",
+            name: "appDetial",
+            buttonList: [],
+        },
     ]);
 
     // 当前自定义按钮后置事件
@@ -309,15 +309,35 @@ export default function useCustomButtonConfig() {
         refExposed.value = exposed;
         currentRouter.value = router;
         if (el.beforeEvent) {
-            let beforeEvent = customButtonEvent(el.beforeEvent);
-            // 判断是否为 Promise
-            if (beforeEvent instanceof Promise) {
-                const asyncResult = await beforeEvent;
-                if (!asyncResult) {
+            let beforeEventResult; // 用于存储 beforeEvent 的最终结果
+            let hasError = false;   // 标志是否发生错误
+            try {
+                // 捕获 customButtonEvent 函数调用本身可能抛出的同步错误
+                const rawResult = customButtonEvent(el.beforeEvent);
+    
+                // 判断是否为 Promise
+                if (rawResult instanceof Promise) {
+                    // 等待 Promise 完成，并捕获 Promise 拒绝（rejected）的错误
+                    beforeEventResult = await rawResult;
+                } else {
+                    // 如果是同步值
+                    beforeEventResult = rawResult;
+                }
+            } catch (error) {
+                // 捕获了同步错误（如 ReferenceError）或 Promise 拒绝的错误
+                console.error("beforeEvent 函数执行或 Promise 拒绝时发生错误:", error);
+                hasError = true; // 标记发生错误
+                // 发生错误时，通常也应该中断后续操作
+                return;
+            }
+    
+            // 只有当没有发生错误时，才进行结果判断
+            if (!hasError) {
+                // 统一判断：只有当 beforeEventResult 严格等于 false 时才中断
+                if (beforeEventResult === false) {
+                    console.log("beforeEvent 返回 false，中断执行。");
                     return;
                 }
-            } else if (!beforeEvent) {
-                return;
             }
         }
         if (el.afterEvent) {
@@ -345,13 +365,12 @@ export default function useCustomButtonConfig() {
                 })
                 break;
             case 2:
-                editCb(multipleSelection.value[0]);
+                editCb(multipleSelection.value[0], el.selectForm);
                 break;
             case 3:
                 loading.value = true;
                 let transformId = el.selectDataTransform;
                 let res = await getTransformMap({ recordId, transformId });
-                console.log(el,'el')
                 if (res && res.code == 200) {
                     recordAddCb({
                         entityName: el.selectEntity,
@@ -394,6 +413,21 @@ export default function useCustomButtonConfig() {
         }
     }
 
+    // 获取自定义按钮
+    const getCustomAppButtons = (CUSTOM_BUTTON, key) => {
+        let customAppButtons = [];
+        if (CUSTOM_BUTTON && CUSTOM_BUTTON.config) {
+            try {
+                const configObj = JSON.parse(CUSTOM_BUTTON.config);
+                customAppButtons = configObj?.[key] ?? [];
+            } catch (e) {
+                console.error("解析 CUSTOM_BUTTON.config 失败:", e);
+                customAppButtons = [];
+            }
+        }
+        return customAppButtons;
+    }
+
     return {
         ...config,
         defaultPcTopButtonList,
@@ -401,6 +435,7 @@ export default function useCustomButtonConfig() {
         tabList,
         defaultPcDetialButtonList,
         defaultAppDetialButtonList,
+        getCustomAppButtons,
         customButtonHandler,
         customButtonAfterEventCb,
     };

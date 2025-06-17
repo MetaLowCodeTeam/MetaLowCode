@@ -194,9 +194,9 @@
 													: ''
 											"
                                             :link="currentTab == 'pcColumn'"
-                                            :plain="currentTab == 'pcDetial' || currentTab == 'appDetial'"
-                                            :round="currentTab == 'appDetial'"
-                                            :class="{'app-detial-button': currentTab == 'appDetial'}"
+                                            :plain="currentTab == 'pcDetial' || currentTab == 'appDetial' || currentTab == 'appList'"
+                                            :round="currentTab == 'appDetial' || currentTab == 'appList'"
+                                            :class="{'app-detial-button': currentTab == 'appDetial' || currentTab == 'appList'}"
 										>
 											<el-icon
 												:size="16"
@@ -324,7 +324,7 @@
 									</el-col>
 									<el-col
 										:span="24"
-										v-if="currentButton.action != 1 && currentTab != 'pcColumn' && currentTab != 'pcDetial'"
+										v-if="currentButton.action != 1 && currentTab != 'pcColumn' && currentTab != 'pcDetial' && currentTab != 'appDetial'"
 									>
 										<el-form-item label="可用类型">
 											<el-radio-group

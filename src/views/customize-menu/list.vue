@@ -1195,7 +1195,7 @@ const customButtonClick = (item, row) => {
                 formId,
                 entityName
             ),
-            () => onEditRow(row || multipleSelection.value[0]),
+            () => onEditRow(row || multipleSelection.value[0], null, item.selectForm),
             ({entityName,formId,localDsv}) => onAdd(
                 localDsv,
                 formId,
@@ -1242,7 +1242,6 @@ const getLayoutList = async () => {
         // 自定义按钮
         if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
             customButtonConfig.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
-            console.log(customButtonConfig.value,'customButtonConfig.value')
         }
         
         // 自定义行样式
@@ -1485,12 +1484,11 @@ const getDialogTitle = (row, key) => {
 
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
-    console.log(localDsv,'localDsv')
     isOtherEntity.value = false;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
         if(!detailEntityFlag && !myFormEntityId.value){
-            ElMessage.info("主表单未保存，不能新建关联引用记录。")
+            ElMessage.error("主表单未保存，不能新建关联引用记录。")
             return
         }
         emits('referenceCompAdd',(formData) => {

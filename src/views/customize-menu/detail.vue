@@ -366,6 +366,8 @@ const {
     customButtonHandler,
     // 当前按钮后置事件
 	customButtonAfterEventCb,
+    // 获取自定义按钮
+    getCustomAppButtons,
 } = useCustomButtonConfig();
 
 
@@ -659,12 +661,7 @@ const getLayoutList = async () => {
             }
         }
         // 自定义按钮
-        if(res.data.CUSTOM_BUTTON?.config){
-            let customButtonConfig = JSON.parse(res.data.CUSTOM_BUTTON.config);
-            if(customButtonConfig?.pcDetial?.length > 0){
-                customButtonList.value = customButtonConfig.pcDetial;
-            }
-        }
+        customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetial');
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         // 新建配置项
 		formatNewRelated(res.data.ADD);
