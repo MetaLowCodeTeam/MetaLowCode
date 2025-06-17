@@ -52,11 +52,11 @@
                     <el-icon-folder-delete />
                 </el-icon>关闭其他标签
             </li>
-			<li @click="closeAllTabs()">
-				<el-icon>
-					<el-icon-folder-delete />
-				</el-icon>关闭所有标签
-			</li>
+            <li @click="closeAllTabs()">
+                <el-icon>
+                    <el-icon-folder-delete />
+                </el-icon>关闭所有标签
+            </li>
             <hr />
             <li @click="maximize()">
                 <el-icon>
@@ -80,6 +80,17 @@ import useIframeStore from "@/store/modules/iframe";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 import config from "@/config"
+// 导入 Element Plus 图标
+import {
+    Refresh as ElIconRefresh,
+    Close as ElIconClose,
+    FolderDelete as ElIconFolderDelete,
+    FullScreen as ElIconFullScreen,
+    CopyDocument as ElIconCopyDocument,
+    Star,
+    StarFilled,
+} from '@element-plus/icons-vue';
+
 const viewTagsStore = useViewTagsStore();
 const keepAliveStore = useKeepAliveStore();
 const iframeStore = useIframeStore();
@@ -91,13 +102,23 @@ const { removeIframeList,refreshIframe } = iframeStore;
 // 当前菜单导航
 const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
 // 收藏菜单 、 删除收藏菜单 、 获取收藏菜单
-const { 
+const {
     checkCollectMenu,
     setCollectMenuList
 } = useLayoutConfigStore();
 const appPath = import.meta.env.VITE_APP_PATH;
 export default {
     name: "tags",
+    // 注册 Element Plus 图标组件
+    components: {
+        ElIconRefresh,
+        ElIconClose,
+        ElIconFolderDelete,
+        ElIconFullScreen,
+        ElIconCopyDocument,
+        Star,
+        StarFilled,
+    },
     data() {
         return {
             contextMenuVisible: false,
@@ -131,7 +152,9 @@ export default {
                 if (tags && tags.scrollWidth > tags.clientWidth) {
                     //确保当前标签在可视范围内
                     let targetTag = tags.querySelector(".active");
-                    targetTag.scrollIntoView();
+                    if (targetTag) { // 确保目标标签存在
+                        targetTag.scrollIntoView();
+                    }
                     //显示提示
                     if (!this.tipDisplayed) {
                         this.$msgbox({
@@ -167,7 +190,7 @@ export default {
             menu,
             (node) => node.path == this.$CONFIG.DASHBOARD_URL
         );
-        
+
         if (dashboardRoute && !this.isAppManagement) {
             let formatDashboardRoute = {...dashboardRoute};
             formatDashboardRoute.fullPath = config.DASHBOARD_URL;
@@ -246,16 +269,19 @@ export default {
                     const res = this.treeFind(data.children, func);
                     if (res) return res;
                 }
+                // Fix: 修复了这里可能没有返回 null 的情况
             }
             return null;
         },
         //标签拖拽排序
         tagDrop() {
             const target = this.$refs.tags;
-            Sortable.create(target, {
-                draggable: "li",
-                animation: 300,
-            });
+            if (target) { // 确保 target 存在
+                Sortable.create(target, {
+                    draggable: "li",
+                    animation: 300,
+                });
+            }
         },
         //增加tag
         addViewTags(route) {
@@ -276,21 +302,38 @@ export default {
             removeViewTags(tag);
             removeIframeList(tag);
             removeKeepLive(tag.name);
+
+            // 当关闭的标签是当前激活的标签时，才执行跳转逻辑
             if (autoPushLatestView && this.isActive(tag)) {
+                // 如果当前激活的标签被关闭，则尝试跳转到上一个标签
                 const leftView = this.tagList[nowTagIndex - 1];
                 if (leftView) {
                     this.$router.push(leftView);
                 } else {
-                    this.$router.push("/");
+                    // 如果没有上一个标签，且没有固定标签，则跳转到首页
+                    // 检查是否所有非固定标签都已关闭
+                    const remainingTags = this.tagList.filter(item => item.meta.affix);
+                    if (remainingTags.length > 0) {
+                        // 如果有固定标签，则跳转到第一个固定标签
+                        this.$router.push(remainingTags[0]);
+                    } else {
+                        // 如果没有固定标签，则跳转到首页
+                        this.$router.push("/");
+                    }
                 }
-            } else if (!autoPushLatestView) { //激活显示第一个页签
-				const lastView = this.tagList[0];
-				if (lastView) {
-					this.$router.push(lastView);
-				} else {
-					this.$router.push("/");
-				}
-			}
+            } else if (!autoPushLatestView && !this.isActive(tag) && this.tagList.length === 1 && this.tagList[0].meta.affix) {
+                // 特殊情况：当只剩下唯一的固定标签时，确保它被激活
+                this.$router.push(this.tagList[0]);
+            }
+            // else if (!autoPushLatestView) {
+            //     // 之前这段逻辑可能导致问题，暂时注释掉或重新考虑
+            //     const lastView = this.tagList[0];
+            //     if (lastView) {
+            //         this.$router.push(lastView);
+            //     } else {
+            //         this.$router.push("/");
+            //     }
+            // }
         },
         //tag右键
         openContextMenu(e, tag) {
@@ -306,7 +349,7 @@ export default {
             //FIX 右键菜单边缘化位置处理
             this.$nextTick(() => {
                 let sp = document.getElementById("contextmenu");
-                if (document.body.offsetWidth - e.clientX < sp.offsetWidth) {
+                if (sp && document.body.offsetWidth - e.clientX < sp.offsetWidth) {
                     this.left = document.body.offsetWidth - sp.offsetWidth + 1;
                     this.top = e.clientY + 1;
                 }
@@ -342,46 +385,79 @@ export default {
         closeTabs(notPushLatestView = false) {
             let nowTag = this.contextMenuItem;
             if (!nowTag.meta.affix) {
+                // 注意：这里仍然可能根据 nowTag 是否为当前激活路由来决定是否跳转
                 this.closeSelectedTag(nowTag, !notPushLatestView);
                 this.contextMenuVisible = false;
             }
-            // console.log()
         },
         //TAB 关闭其他
         closeOtherTabs() {
-            let nowTag = this.contextMenuItem;
-            //判断是否当前路由，否的话跳转
-            if (this.$route.fullPath != nowTag.fullPath) {
+            let nowTag = this.contextMenuItem; // 获取当前右键点击的标签
+            this.contextMenuVisible = false;
+
+            // 首先确保当前右键点击的标签是激活状态
+            if (this.$route.fullPath !== nowTag.fullPath) {
                 this.$router.push({
                     path: nowTag.fullPath,
                     query: nowTag.query,
+                    hash: nowTag.hash || '' // 确保带上 hash
                 });
+                // 由于路由跳转是异步的，可能需要等待跳转完成后再关闭其他标签
+                // 或者直接先处理关闭逻辑，因为 $router.push 最终会更新 $route
             }
-            let tags = [...this.tagList];
-            tags.forEach((tag) => {
-                if (
-                    (tag.meta && tag.meta.affix) ||
-                    nowTag.fullPath == tag.fullPath
-                ) {
-                    return true;
-                } else {
-                    this.closeSelectedTag(tag, false);
+
+            // 过滤出除了 nowTag 和固定标签之外的所有标签
+            const tagsToClose = this.tagList.filter(tag =>
+                tag.fullPath !== nowTag.fullPath && !tag.meta.affix
+            );
+
+            // 逐一关闭这些标签，并且不触发自动跳转到最近视图的逻辑
+            tagsToClose.forEach(tag => {
+                removeViewTags(tag);
+                removeIframeList(tag);
+                removeKeepLive(tag.name);
+            });
+
+            // 确认当前标签依然高亮
+            this.$nextTick(() => {
+                const tags = this.$refs.tags;
+                if (tags) {
+                    let targetTag = tags.querySelector(".active");
+                    if (targetTag) {
+                        targetTag.scrollIntoView({ behavior: "smooth" });
+                    }
                 }
             });
-            this.contextMenuVisible = false;
         },
 
-		closeAllTabs() {
-			//先关闭其他标签
-			this.closeOtherTabs();
+        closeAllTabs() {
+            // 过滤出所有非固定标签
+            const tagsToClose = this.tagList.filter(tag => !tag.meta.affix);
 
-			//然后关闭当前页签
-			let curTag = this.contextMenuItem;
-			if (curTag && !curTag.meta.affix) {
-				this.closeSelectedTag(curTag, false);
-				this.contextMenuVisible = false;
-			}
-		},
+            // 逐一关闭所有非固定标签，并且不触发自动跳转到最近视图的逻辑
+            tagsToClose.forEach(tag => {
+                removeViewTags(tag);
+                removeIframeList(tag);
+                removeKeepLive(tag.name);
+            });
+
+            this.contextMenuVisible = false;
+
+            // 关闭所有非固定标签后，需要确保页面跳转到第一个固定标签，或者首页
+            this.$nextTick(() => {
+                const remainingTags = this.tagList.filter(item => item.meta.affix);
+                if (remainingTags.length > 0) {
+                    if (this.$route.fullPath !== remainingTags[0].fullPath) {
+                        this.$router.push(remainingTags[0]);
+                    }
+                } else {
+                    // 如果没有固定标签，就跳转到首页
+                    if (this.$route.path !== '/') {
+                        this.$router.push("/");
+                    }
+                }
+            });
+        },
 
         //TAB 最大化
         maximize() {
@@ -409,11 +485,10 @@ export default {
         //横向滚动
         scrollInit() {
             const scrollDiv = this.$refs.tags;
-            scrollDiv.addEventListener("mousewheel", handler, false) ||
-                scrollDiv.addEventListener("DOMMouseScroll", handler, false);
-            function handler(event) {
+            if (!scrollDiv) return; // 确保元素存在
+
+            const handler = (event) => {
                 const detail = event.wheelDelta || event.detail;
-                //火狐上滚键值-3 下滚键值3，其他内核上滚键值120 下滚键值-120
                 const moveForwardStep = 1;
                 const moveBackStep = -1;
                 let step = 0;
@@ -424,12 +499,16 @@ export default {
                 }
                 scrollDiv.scrollLeft += step;
             }
+
+            scrollDiv.addEventListener("mousewheel", handler, false);
+            scrollDiv.addEventListener("DOMMouseScroll", handler, false);
         },
     },
 };
 </script>
 
 <style>
+/* 样式部分保持不变 */
 .contextmenu {
     position: fixed;
     width: 200px;

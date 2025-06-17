@@ -59,7 +59,6 @@
                 :size="field.options.size || globalConfig.size"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
-                @onFocus="onReferRemoteFocus"
             />
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"
@@ -276,16 +275,16 @@ export default {
 				}
 			}
 		},
-        onReferRemoteFocus() {
-            if (this.designState) {
-                return
-            }
-            if(!this.checkFilterConditions()){
-                this.$refs.referRemote.setFilterConditions(null, false);
-                return
-            }
-            this.$refs.referRemote.setFilterConditions(this.filterConditions, true);
-        },
+        // onReferRemoteFocus() {
+        //     if (this.designState) {
+        //         return
+        //     }
+        //     if(!this.checkFilterConditions()){
+        //         this.$refs.referRemote.setFilterConditions(null, false);
+        //         return
+        //     }
+        //     this.$refs.referRemote.setFilterConditions(this.filterConditions, true);
+        // },
 		onAppendButtonClick() {
             if (this.designState) {
                 return

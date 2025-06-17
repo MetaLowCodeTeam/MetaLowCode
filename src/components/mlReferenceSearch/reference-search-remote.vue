@@ -35,383 +35,369 @@
 }
 </style>
 <template>
-	<div class="remote-box w-100">
-		<el-select
-			v-model="value"
-			:multiple="multiple"
-			class="remote-select"
-			@visible-change="handleVisibleChange"
-			:disabled="disabled"
-			ref="selectRef"
-			@click="handleFocus"
-		>
-			<template #empty>
-				<div
-					class="empty-box"
-					:style="{ minWidth: dialogWidth }"
-					v-if="isDropdownVisible"
-				>
-					<div class="empty-box-title mb-10">
-						<el-input
-							v-model="searchValue"
-							placeholder="请输入"
-							clearable
-							@input="handleSearch"
-							ref="searchInputRef"
-							@focus="handleInputFocus"
-						>
-						</el-input>
-					</div>
-					<div class="empty-box-table" v-loading="loading">
-						<el-table
-							:data="tableData"
-							:max-height="300"
-							@row-click="clickRow"
-							ref="tableRef"
-							highlight-current-row
-						>
-							<el-table-column
-								v-for="column in tableColumns"
-								:key="column.prop"
-								:label="column.label"
-								:prop="column.prop"
-							>
-								<template #default="scope">
-									<FormatRow
-										:row="scope.row"
-										:column="column"
-										:nameFieldName="nameFieldName"
-									/>
-								</template>
-							</el-table-column>
-						</el-table>
-						<div class="sc-table-select__page mt-10">
-							<el-pagination
-								small
-								background
-								layout="prev, pager, next"
-								:total="total"
-								:page-size="pageSize"
-								v-model:currentPage="currentPage"
-								@current-change="handleCurrentChange"
-							></el-pagination>
-						</div>
-					</div>
-				</div>
-			</template>
-		</el-select>
-		<div
-			class="remote-icon-box"
-			:class="[size]"
-			@click="onAppendButtonClick"
-		>
-			<el-icon class="icon-top-1">
-				<Search />
-			</el-icon>
-		</div>
-	</div>
+    <div class="remote-box w-100">
+        <el-select
+            v-model="value"
+            :multiple="multiple"
+            class="remote-select"
+            :disabled="disabled"
+            ref="selectRef"
+            filterable
+            @input="handleSearch"
+            @visible-change="handleVisibleChange"
+            >
+            <template #empty>
+                <div
+                    class="empty-box"
+                    :style="{ minWidth: dialogWidth }"
+                >
+                    <div class="empty-box-table" v-loading="loading">
+                        <el-table
+                            :data="tableData"
+                            :max-height="300"
+                            @row-click="clickRow"
+                            ref="tableRef"
+                            highlight-current-row
+                        >
+                            <el-table-column
+                                v-for="column in tableColumns"
+                                :key="column.prop"
+                                :label="column.label"
+                                :prop="column.prop"
+                            >
+                                <template #default="scope">
+                                    <FormatRow
+                                        :row="scope.row"
+                                        :column="column"
+                                        :nameFieldName="nameFieldName"
+                                    />
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div class="sc-table-select__page mt-10">
+                            <el-pagination
+                                small
+                                background
+                                layout="prev, pager, next"
+                                :total="total"
+                                :page-size="pageSize"
+                                v-model:currentPage="currentPage"
+                                @current-change="handleCurrentChange"
+                            ></el-pagination>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </el-select>
+        <div
+            class="remote-icon-box"
+            :class="[size]"
+            @click="onAppendButtonClick"
+        >
+            <el-icon class="icon-top-1">
+                <Search />
+            </el-icon>
+        </div>
+    </div>
 </template>
 <script setup lang="ts">
 import { ref, watchEffect, nextTick, onMounted, onUnmounted } from "vue";
 import { refFieldQuery2 } from "@/api/crud";
 import FormatRow from "@/views/customize-menu/components/FormatRow.vue";
+import { Search } from '@element-plus/icons-vue';
+
 const props = defineProps({
-	fieldModel: {
-		type: Object,
-		default: null,
-	},
-	multiple: {
-		type: Boolean,
-		default: false,
-	},
-	placeholder: {
-		type: String,
-		default: "",
-	},
-	entity: {
-		type: String,
-		default: "",
-	},
-	refField: {
-		type: String,
-		default: "",
-	},
-	searchFields: {
-		type: Array,
-		default: [],
-	},
-	dialogWidth: {
-		type: String,
-		default: "520px",
-	},
-	disabled: {
-		type: Boolean,
-		default: false,
-	},
-	size: {
-		type: String,
-		default: "default",
-	},
-	// setFilter查询条件
-	extraFilter: String, // 查询条件
+    fieldModel: {
+        type: Object,
+        default: null,
+    },
+    multiple: {
+        type: Boolean,
+        default: false,
+    },
+    placeholder: {
+        type: String,
+        default: "",
+    },
+    entity: {
+        type: String,
+        default: "",
+    },
+    refField: {
+        type: String,
+        default: "",
+    },
+    searchFields: {
+        type: Array,
+        default: [],
+    },
+    dialogWidth: {
+        type: String,
+        default: "520px",
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
+    size: {
+        type: String,
+        default: "default",
+    },
+    extraFilter: String,
 });
 
 const emit = defineEmits([
-	"onSelectedRemote",
-	"onAppendButtonClick",
-	"onFocus",
+    "onSelectedRemote",
+    "onAppendButtonClick",
+    "onFocus",
 ]);
 let value = ref(null);
 let loading = ref(false);
 
-// 搜索参数
 let searchValue = ref("");
-// 表格数据
 let tableData = ref([]);
-// 表格列
 let tableColumns = ref([]);
-// 分页
 let total = ref(0);
 let pageSize = ref(10);
 let currentPage = ref(1);
 let idFieldName = ref("");
 let nameFieldName = ref("");
 
-// 是否显示下拉框
 let isDropdownVisible = ref(false);
 
-//  过滤条件
 let filterConditions = ref(null);
 
-// 分页
 const handleCurrentChange = (v) => {
-	currentPage.value = v;
-	handleSearch();
+    currentPage.value = v;
+    handleSearch(null);
 };
 
-// 搜索
-const handleSearch = async () => {
-	if (loading.value) return;
-	loading.value = true;
-	let param = {
-		entity: props.entity,
-		refField: props.refField,
-		pageNo: currentPage.value,
-		pageSize: pageSize.value,
-	};
-	let filter = null;
-	if (props.searchFields.length > 0) {
-		filter = {
-			equation: "OR",
-			items: props.searchFields.map((el) => {
-				return {
-					fieldName: el,
-					value: searchValue.value,
-					op: "LK",
-				};
-			}),
-		};
-	}
-	let res = await refFieldQuery2(
-		param.entity,
-		param.refField,
-		param.pageNo,
-		param.pageSize,
-		props.extraFilter,
-		filter,
-		filterConditions.value
-	);
-	if (res) {
-		tableColumns.value = res.data.columnList;
-		tableColumns.value.forEach((el) => {
-			el.fieldName = el.prop;
-			el.fieldType = el.type;
-		});
-		tableData.value = res.data.dataList;
-		total.value = res.data.pagination?.total || 0;
-		idFieldName.value = res.data.idFieldName;
-		nameFieldName.value = res.data.nameFieldName;
-	}
-	loading.value = false;
+const handleVisibleChange = (e) => {
+    isDropdownVisible.value = e;
+    if (e) {
+        handleSearch(null);
+        nextTick(() => {
+            getSearchInputRef()?.focus();
+            currentCursor.value = -1;
+        });
+    } else {
+        currentCursor.value = -1;
+        tableRef.value?.setCurrentRow(null);
+    }
 };
 
-// 搜索输入框
-let searchInputRef = ref(null);
+const handleSearch = async (v) => {
+    if (loading.value) return;
+    searchValue.value = v || "";
+    loading.value = true;
+    let param = {
+        entity: props.entity,
+        refField: props.refField,
+        pageNo: currentPage.value,
+        pageSize: pageSize.value,
+    };
+    let filter = null;
+    if (props.searchFields.length > 0) {
+        filter = {
+            equation: "OR",
+            items: props.searchFields.map((el) => {
+                return {
+                    fieldName: el,
+                    value: searchValue.value,
+                    op: "LK",
+                };
+            }),
+        };
+    }
+    let res = await refFieldQuery2(
+        param.entity,
+        param.refField,
+        param.pageNo,
+        param.pageSize,
+        props.extraFilter,
+        filter,
+        filterConditions.value
+    );
+    if (res) {
+        tableColumns.value = res.data.columnList;
+        tableColumns.value.forEach((el) => {
+            el.fieldName = el.prop;
+            el.fieldType = el.type;
+        });
+        tableData.value = res.data.dataList;
+        total.value = res.data.pagination?.total || 0;
+        idFieldName.value = res.data.idFieldName;
+        nameFieldName.value = res.data.nameFieldName;
+    }
+    loading.value = false;
+    if (isDropdownVisible.value && tableData.value.length > 0) {
+        if (currentCursor.value === -1 || currentCursor.value >= tableData.value.length) {
+            currentCursor.value = 0;
+        }
+        scrollToRow(currentCursor.value);
+    } else {
+        tableRef.value?.setCurrentRow(null);
+        currentCursor.value = -1;
+    }
+};
 
-// 下拉框
+let searchInputDomRef: HTMLInputElement | null = null;
+const getSearchInputRef = () => {
+    if (!searchInputDomRef && selectRef.value?.$el) {
+        searchInputDomRef = selectRef.value.$el.querySelector('.el-select__input') || selectRef.value.$el.querySelector('input');
+    }
+    return searchInputDomRef;
+};
+
 const selectRef = ref(null);
-
-// 光标位置（-1=输入框，0~N=表格行）
 const currentCursor = ref(-1);
 
-// 初始化键盘监听
-onMounted(() => {
-	window.addEventListener("keydown", handleGlobalKeyDown);
-});
+const handleKeyDown = (event) => {
+    if (!isDropdownVisible.value) {
+        // 如果下拉框不可见，且按了Enter，则打开下拉框（由el-select内部处理）
+        return;
+    }
 
-onUnmounted(() => {
-	window.removeEventListener("keydown", handleGlobalKeyDown);
-});
+    if (['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Enter', 'Escape'].includes(event.key)) {
+        event.preventDefault();
+        event.stopPropagation(); // 阻止事件冒泡到父元素，防止ElSelect默认行为干扰
+    }
 
-// 键盘事件处理
-const handleGlobalKeyDown = (event) => {
-	if (!isDropdownVisible.value) return;
-	console.log(event.key);
-	switch (event.key) {
-		case "ArrowDown":
-			handleArrowDown();
-			break;
-		case "ArrowUp":
-			handleArrowUp();
-			break;
-		case "ArrowRight":
-			handleArrowRight();
-			break;
-		case "ArrowLeft":
-			handleArrowLeft();
-			break;
-		case "Enter":
-			handleEnter();
-			break;
-	}
+    switch (event.key) {
+        case "ArrowDown":
+            handleArrowDown();
+            break;
+        case "ArrowUp":
+            handleArrowUp();
+            break;
+        case "ArrowRight":
+            handleArrowRight();
+            break;
+        case "ArrowLeft":
+            handleArrowLeft();
+            break;
+        case "Enter":
+            handleEnter();
+            break;
+        case "Escape":
+            selectRef.value.blur(); // Esc 键依然是失焦并关闭
+            break;
+    }
 };
-// 向右
+
 const handleArrowRight = () => {
-	const totalPages = Math.ceil(total.value / pageSize.value);
-	if (currentPage.value < totalPages) {
-		// 如果不是最后一页
-		currentPage.value++; // 切换到下一页
-		handleSearch().then(() => {
-			currentCursor.value = 0; // 重置光标到第一行
-			scrollToRow(currentCursor.value);
-		});
-	}
+    if (loading.value) return;
+    const totalPages = Math.ceil(total.value / pageSize.value);
+    if (currentPage.value < totalPages) {
+        currentPage.value++;
+        handleSearch(searchValue.value);
+    }
 };
 
-// 向左
 const handleArrowLeft = () => {
-	if (currentPage.value > 1) {
-		// 如果不是第一页
-		currentPage.value--; // 切换到上一页
-		handleSearch().then(() => {
-			currentCursor.value = 0; // 重置光标到第一行
-			scrollToRow(currentCursor.value);
-		});
-	}
+    if (loading.value) return;
+    if (currentPage.value > 1) {
+        currentPage.value--;
+        handleSearch(searchValue.value);
+    }
 };
 
-// 向下
 const handleArrowDown = () => {
-	if (currentCursor.value === -1) {
-		return;
-	}
-	if (currentCursor.value < tableData.value.length - 1) {
-		currentCursor.value++;
-		scrollToRow(currentCursor.value);
-	}
-	console.log(currentCursor.value, "当前光标");
+    if (loading.value || tableData.value.length === 0) return;
+    if (currentCursor.value < tableData.value.length - 1) {
+        currentCursor.value++;
+    } else {
+        currentCursor.value = 0;
+    }
+    scrollToRow(currentCursor.value);
 };
 
-// 向上
 const handleArrowUp = () => {
-	if (currentCursor.value === -1) {
-		return;
-	}
-	if (currentCursor.value > 0) {
-		currentCursor.value--;
-		scrollToRow(currentCursor.value);
-	} else {
-		searchInputRef.value.focus();
-	}
-	console.log(currentCursor.value, "当前光标");
+    if (loading.value || tableData.value.length === 0) return;
+    if (currentCursor.value > 0) {
+        currentCursor.value--;
+    } else {
+        currentCursor.value = tableData.value.length - 1;
+    }
+    scrollToRow(currentCursor.value);
 };
 
-// 回车事件
+// 回车事件：选中数据后下拉框消失，焦点仍在输入框
 const handleEnter = () => {
-	if (currentCursor.value === -1) {
-		currentCursor.value = 0;
-		searchInputRef.value.blur();
-		scrollToRow(0);
-	} else {
-		const selectedRow = tableData.value[currentCursor.value];
-		clickRow(selectedRow);
-	}
-	console.log(currentCursor.value, "当前光标");
+    if (currentCursor.value !== -1 && tableData.value[currentCursor.value]) {
+        const selectedRow = tableData.value[currentCursor.value];
+        clickRow(selectedRow); // 调用 clickRow 选中数据
+        // 在 clickRow 内部会进行 blur() 操作来关闭下拉框
+        // 紧接着在 nextTick 之后，手动将焦点设置回输入框
+        nextTick(() => {
+            getSearchInputRef()?.focus();
+        });
+    } else if (currentCursor.value === -1 && tableData.value.length > 0) {
+        // 如果光标在输入框，且有数据，默认选中第一项
+        currentCursor.value = 0;
+        clickRow(tableData.value[currentCursor.value]); // 调用 clickRow 选中数据
+        nextTick(() => {
+            getSearchInputRef()?.focus();
+        });
+    }
+    // 如果没有数据可选中，保持焦点在输入框
+    if (tableData.value.length === 0) {
+        nextTick(() => {
+            getSearchInputRef()?.focus();
+        });
+    }
 };
+
 let tableRef = ref(null);
-// 滚动到指定行
 const scrollToRow = (index: number) => {
-	nextTick(() => {
-		const tableBody = tableRef.value?.$el.querySelector(
-			".el-table__body-wrapper"
-		);
-		const targetRow =
-			tableRef.value?.$el.querySelectorAll(".el-table__row")[index];
-		if (tableBody && targetRow) {
-			targetRow.scrollIntoView({ behavior: "smooth", block: "nearest" });
-		}
-		tableRef.value?.setCurrentRow(tableData.value[index]);
-	});
+    nextTick(() => {
+        if (!tableRef.value) return;
+        const allRows = tableRef.value.$el.querySelectorAll(".el-table__row");
+        if (allRows[index]) {
+            tableRef.value.setCurrentRow(tableData.value[index]);
+            allRows[index].scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else {
+            tableRef.value?.setCurrentRow(null);
+        }
+    });
 };
 
-// 输入框聚焦
-const handleInputFocus = () => {
-	currentCursor.value = -1;
-	tableRef.value?.setCurrentRow(null);
-};
-
-const handleFocus = () => {
-	// let { field } = props;
-	// isDropdownVisible.value = true;
-	emit("onFocus");
-};
-
-// 下拉框出现/隐藏时触发
-const handleVisibleChange = (e) => {
-	if (e) {
-		// handleSearch();
-	}
-};
-
+// 恢复 clickRow 的默认行为，即调用 blur() 来关闭下拉框
 const clickRow = (row) => {
-	selectRef.value.blur();
-	emit("onSelectedRemote", {
-		record: {
-			id: row[idFieldName.value],
-			label: row[nameFieldName.value],
-		},
-		selectedRow: row,
-	});
+    selectRef.value.blur(); // 这会关闭下拉框，并使el-select失焦
+
+    emit("onSelectedRemote", {
+        record: {
+            id: row[idFieldName.value],
+            label: row[nameFieldName.value],
+        },
+        selectedRow: row,
+    });
+    // 焦点恢复逻辑放在 handleEnter 和外部需要保持焦点的场景中
 };
 
 watchEffect(() => {
-	value.value = props.fieldModel ? props.fieldModel.name : "";
+    value.value = props.fieldModel && props.fieldModel.name ? props.fieldModel.name : "";
 });
 
 const onAppendButtonClick = () => {
-	if (props.disabled) return;
-	emit("onAppendButtonClick");
+    if (props.disabled) return;
+    emit("onAppendButtonClick");
 };
 
-const setFilterConditions = (conditions, isShow) => {
-	filterConditions.value = conditions;
-	isDropdownVisible.value = isShow;
-	if (!isShow) {
-		setTimeout(() => {
-			selectRef.value.blur();
-		}, 200);
-	} else {
-		nextTick(() => {
-			searchInputRef.value.focus();
-			currentCursor.value = -1;
-			if (!loading.value) {
-				handleSearch();
-			}
-		});
-	}
-};
+onMounted(() => {
+    nextTick(() => {
+        const inputElement = getSearchInputRef();
+        if (inputElement) {
+            inputElement.addEventListener('keydown', handleKeyDown);
+        }
+    });
+});
 
-defineExpose({
-	setFilterConditions,
+onUnmounted(() => {
+    const inputElement = getSearchInputRef();
+    if (inputElement) {
+        inputElement.removeEventListener('keydown', handleKeyDown);
+    }
 });
 </script>
