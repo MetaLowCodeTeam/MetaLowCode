@@ -38,9 +38,6 @@
                 <el-col :span="12" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">
                         顶部区域隐藏
-                        <el-tooltip content="可在列表界面按快捷键 SHIFT+ALT+M+L 显示所有">
-                            <el-icon class="icon-top-2"><QuestionFilled /></el-icon>
-                        </el-tooltip>
                     </div>
                     <el-row>
                         <el-col 
@@ -54,6 +51,17 @@
                             >
                                 {{ item.label }}
                             </el-checkbox>
+                            <el-tooltip v-if="item.value === 'showMoreBtn'">
+                                <template #content>
+                                    如果开启隐藏可使用快捷键临时显示。 <br />
+                                    Windows系统快捷键： <br />
+                                    Shift + Alt + M + L <br /> <br />
+
+                                    Mac系统 快捷键： <br />
+                                    Shift + Option + M + L
+                                </template>
+                                <el-icon class="ml-5 cursor-pointer"><QuestionFilled /></el-icon>
+                            </el-tooltip>
                         </el-col>
                     </el-row>
                 </el-col>
@@ -305,7 +313,7 @@ const topHiddenConfig = ref([
         value: "showAddBtn",
     },
     {
-        label: "隐藏更多操作按钮(隐藏后无法进入该面板)",
+        label: "隐藏更多操作按钮",
         value: "showMoreBtn",
         colspan: 24,
     },
