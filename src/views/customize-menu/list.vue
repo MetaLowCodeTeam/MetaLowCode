@@ -428,6 +428,7 @@
                                             !item.hide &&
                                             !(item.key === 'edit' && !hasEditRight))
                                     "
+                                    :disabled="item.key == 'edit' && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
                                 >
                                     <el-icon
                                         :size="16"
@@ -436,7 +437,6 @@
                                             item.icon &&
                                             item.showType != 3
                                         "
-                                        style="position: relative; top: -1px"
                                     >
                                         <component :is="item.icon" />
                                     </el-icon>
