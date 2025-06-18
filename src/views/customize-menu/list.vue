@@ -1622,7 +1622,11 @@ const openDetailDialog = (row, localDsv, formId) => {
         return;
     }
     customDetailDialogTitle.value = getDialogTitle(row, 'detailTitle');
-    detailRefs.value.openDialog(row[idFieldName.value], localDsv, formId);
+    let newLocalDsv = {
+        parentListExposed:  currentExposed.value,
+        ...localDsv,
+    }
+    detailRefs.value.openDialog(row[idFieldName.value], newLocalDsv, formId);
 };
 
 // 列排序
