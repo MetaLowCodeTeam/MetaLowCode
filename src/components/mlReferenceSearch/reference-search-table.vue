@@ -349,7 +349,6 @@ export default {
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
-                console.log(newDefaultSelected,'newDefaultSelected')
 				if (
 					newDefaultSelected &&
 					newDefaultSelected.length > 0 &&

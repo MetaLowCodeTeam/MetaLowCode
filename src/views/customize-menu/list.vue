@@ -1505,6 +1505,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
             tempV.fieldNameLabel = queryNameByObj(myFormEntityId.value, formData);
             tempV.localDsv = {
                 sourceRecord: formData,
+                parentListExposed:  currentExposed.value,
                 ...localDsv,
             };
             !!formId && (tempV.formId = formId)
@@ -1532,7 +1533,10 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
     tempV.entityName = targetEntity || entityName.value;
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";
-    !!localDsv && (tempV.localDsv = localDsv)
+    tempV.localDsv = {
+        parentListExposed:  currentExposed.value,
+        ...localDsv,
+    }
     tempV.formId = formId || listParamConf.value.recordNewFormId || rowStyleConf.value?.formConf?.pcAddFormId;
     !!dialogConf && (tempV.paramDialogConf = dialogConf)
     editRefs.value.openDialog(tempV);
@@ -1568,7 +1572,10 @@ const onEditRow = (row, localDsv, formId) => {
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
     tempV.data = row;
-    !!localDsv && (tempV.localDsv = localDsv)
+    tempV.localDsv = {
+        parentListExposed:  currentExposed.value,
+        ...localDsv,
+    }
     // !!formId && (tempV.formId = formId)
     tempV.formId = formId || listParamConf.value.recordEditFormId || rowStyleConf.value?.formConf?.pcEditFormId;
     editRefs.value.openDialog(tempV);
