@@ -456,6 +456,9 @@ const getTagEntityFields = async (entityCode) => {
                 // 源字段 默认选中第一个
                 updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
+            if(selectTargetField.value){
+                targetFieldChange(selectTargetField.value)
+            }
             // 格式化规则列表
             formatActionContentItems();
         }

@@ -387,6 +387,9 @@ const getTagEntityFields = async (entityCode) => {
                 // 源字段 默认选中第一个
                 updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
+            if(selectTargetField.value){
+                targetFieldChange(selectTargetField.value)
+            }
             // 格式化规则列表
             formatActionContentItems();
         }
@@ -533,6 +536,7 @@ const targetFieldChange = async (e) => {
             updateRule.updateMode = "toFixed";
             updateRule.sourceField = {};
         }
+        
         if (res && res.data) {
             optionItems.value = res.data;
         }

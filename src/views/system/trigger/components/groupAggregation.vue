@@ -408,8 +408,12 @@ const getTagEntityFields = async (entityCode) => {
             if (updateRule.calcMode !== "forCompile") {
                 updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
             }
+            if(selectTargetField.value){
+                targetFieldChange(selectTargetField.value)
+            }
             // 格式化规则列表
             formatActionContentItems();
+            
         } else {
             selectTargetField.value = {};
             updateRule.targetField = "";
