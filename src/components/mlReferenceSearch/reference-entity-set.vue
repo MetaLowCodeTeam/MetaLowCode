@@ -266,6 +266,14 @@
             <el-form-item label="别名">
                 <el-input v-model="editFieldDialogConfig.field.aliasName" clearable/>
             </el-form-item>
+            <template v-if="moreSetting">
+                <el-form-item label="是否隐藏">
+                    <el-switch v-model="editFieldDialogConfig.field.isHide" />
+                </el-form-item>
+                <el-form-item label="列宽">
+                    <el-input-number v-model="editFieldDialogConfig.field.width" :min="0" :max="1000" />
+                </el-form-item>
+            </template>
         </el-form>
 		<template #footer>
 			<el-button @click="editFieldDialogConfig.isShow = false">取消</el-button>
@@ -285,6 +293,11 @@ const props = defineProps({
     modelValue: {
         type: Array,
         default: () => [],
+    },
+    // 是否更多设置
+    moreSetting: {
+        type: Boolean,
+        default: false,
     }
 });
 
@@ -322,6 +335,7 @@ const editField = (field, inx) => {
 const saveEditField = () => {
     let newArray = props.modelValue;
     newArray[editFieldDialogConfig.value.inx] = editFieldDialogConfig.value.field;
+    console.log(newArray, 'newArray')
     emit("update:modelValue", newArray);
     editFieldDialogConfig.value.isShow = false;
 };

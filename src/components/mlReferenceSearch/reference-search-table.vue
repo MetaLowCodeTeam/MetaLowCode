@@ -84,7 +84,6 @@
 					:pagination="page"
 					:show-check-box="showCheckBox"
 					:show-operation-column="!showCheckBox"
-					:auto-column-width="true"
 					@handleSizeChange="handleSizeChange"
 					@handleCurrentChange="handleCurrentChange"
 					table-size="default"
@@ -330,8 +329,10 @@ export default {
 				this.nameField = res.data.nameFieldName;
                 let fieldStyleMap = res.data.fieldStyleMap || {};
 				let columnList = res.data.columnList;
+                columnList = columnList.filter(cl => fieldStyleMap[cl.prop]?.isHide !== true);
 				columnList.forEach((cl) => {
                     cl.label = fieldStyleMap[cl.prop]?.aliasName || cl.label;
+                    cl.width = fieldStyleMap[cl.prop]?.width || '';
 					setColumnFormatter(cl);
 				});
 				this.columns = columnList;

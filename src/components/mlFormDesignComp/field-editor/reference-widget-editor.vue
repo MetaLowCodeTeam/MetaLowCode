@@ -145,6 +145,7 @@
                             <ReferenceEntitySet 
                                 :fieldList="fieldItems"
                                 v-model="selectedFieldItems"
+                                moreSetting
                             />
                         </el-tab-pane>
                         <el-tab-pane label="选择表单关联展示字段" name="second">
@@ -415,10 +416,12 @@ export default {
                     this.refEntityAndFields = res.data.refEntityAndFields;
                     this.fieldStyleMap = res.data.fieldStyleMap || {};
                     this.selectedFieldItems = res.data.selectedFieldItems.map(el => {
-                        el.aliasName = this.fieldStyleMap[el.name]?.aliasName || "";
-                        return el;
+                        const fieldStyle = this.fieldStyleMap[el.name];
+                        return {
+                            ...el,
+                            ...(fieldStyle || {}),
+                        };
                     });
-                    
                     this.virtualFields = res.data.virtualFields; 
                 }
             }
@@ -483,9 +486,7 @@ export default {
             this.currentRefEntity = this.refEntityName;
             let fieldList = this.selectedFieldItems.map(el => {
                 if(el.aliasName) {
-                    this.fieldStyleMap[el.name] = {
-                        aliasName: el.aliasName
-                    }
+                    this.fieldStyleMap[el.name] = {...el}
                 }
                 return el.name;
             });
