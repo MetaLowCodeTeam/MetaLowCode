@@ -27,7 +27,7 @@
                 <component :is="navMenu.meta.icon || 'el-icon-menu'" />
             </el-icon>
             <template #title>
-                <span>{{navMenu.meta.title}}</span>
+                <span>222{{navMenu.meta.title}}</span>
                 <span v-if="navMenu.meta.tag" class="menu-tag">{{navMenu.meta.tag}}</span>
             </template>
         </el-menu-item>
@@ -39,7 +39,7 @@
                 >
                     <component :is="navMenu.meta.icon || 'el-icon-menu'" />
                 </el-icon>
-                <span>{{navMenu.meta.title}}</span>
+                <span>111{{navMenu.meta.title}}</span>
                 <span v-if="navMenu.meta.tag" class="menu-tag">{{navMenu.meta.tag}}</span>
             </template>
             <NavMenu :navMenus="navMenu.children"></NavMenu>

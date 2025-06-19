@@ -460,11 +460,11 @@
                                         @click="customButtonClick(item, scope.row)"
                                         link
                                         :type="item.type"
-                                        v-if="
-                                            !item.isNative ||
-                                            (item.isNative &&
-                                                !item.hide &&
-                                                !(item.key === 'edit' && !hasEditRight))
+                                        v-if="getColumnCustomButtonShow(item, scope.row)
+                                            // (!item.isNative && item.filterJson?.items?.length == 0) ||
+                                            // (item.isNative &&
+                                            //     !item.hide &&
+                                            //     !(item.key === 'edit' && !hasEditRight))
                                         "
                                     >
                                         <el-icon
@@ -567,6 +567,7 @@ import {
 } from "vue";
 import { useRouter } from "vue-router";
 import { getDataList } from "@/api/crud";
+import { checkCustomButtonFilters } from "@/api/layoutConfig";
 import mlListAdvancedQuery from "@/components/mlListAdvancedQuery/index.vue";
 import More from "./components/More/Index.vue";
 // import Detail from "./detail.vue";
@@ -581,7 +582,7 @@ import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
 import useCommonStore from "@/store/modules/common";
-import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
+import { ElMessage } from "element-plus";
 /**
  * 组件
  */
@@ -1244,6 +1245,49 @@ const customButtonClick = (item, row) => {
     }
 }
 
+// 获取操作列自定义按钮显示
+const getColumnCustomButtonShow = (item, row) => {
+    // 如果是内置按钮 (这部分逻辑不变，因为它看起来是正确的)
+    if (item.isNative) {
+        // 如果设置了隐藏 不显示
+        if (item.hide) {
+            return false;
+        }
+        // 如果是编辑 且 没有权限 不显示
+        if (item.key === 'edit' && !hasEditRight.value) {
+            return false;
+        }
+        return true;
+    } 
+    // 处理非内置按钮
+    else { 
+        // 如果设置了过滤条件 且 设置了 不满足条件时隐藏按钮
+        if (item.filterJson?.items?.length > 0 && item.isHideBtn) {
+            let { customBtnShow } = row;
+
+            // 如果当前行的 customBtnShow 不存在，或者不是一个对象，则不显示
+            if (!customBtnShow || typeof customBtnShow !== 'object') {
+                return false;
+            }
+            // 获取所有操作列按钮
+            let { pcColumn } = customButtonConfig.value;
+            // 过滤出有查询条件的按钮
+            let btns = pcColumn.filter(el => el.filterJson?.items?.length > 0);
+            // 找到当前 item 在 pcColumn 中的索引
+            let currentItemIndex = btns.findIndex(el => el.guid === item.guid);
+            // 如果找到了索引，并且 customBtnShow 中有对应的值，则返回该值
+            // customBtnShow[currentItemIndex] 会是 0 或 1
+            if (currentItemIndex !== -1 && customBtnShow.hasOwnProperty(currentItemIndex)) {
+                return customBtnShow[currentItemIndex] === 1; // 假设 1 为显示，0 为隐藏
+            }
+            // 如果没有找到对应的索引，或者 customBtnShow 中没有该索引的值，默认不显示
+            return false;
+
+        }
+        // 如果没有 filterJson 或没有设置 isHideBtn，则默认显示非内置按钮
+        return true;
+    }
+}
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -1895,6 +1939,34 @@ const getTableList = async () => {
             });
         }
         sliceTable.value = tableData.value.slice(0, 20);
+        // 获取操作列自定义按钮
+        let { pcColumn } = customButtonConfig.value;
+        // 过滤出有过滤条件的自定义按钮
+        let filterPcColumn = []
+        pcColumn?.forEach(item => {
+            if(item.filterJson?.items?.length > 0){
+                filterPcColumn.push(item.filterJson);
+            }
+        });
+        // 如果有过滤条件的自定义按钮，则进行过滤条件检查
+        if(filterPcColumn.length > 0){
+            let filterParam = {
+                entityName: entityName.value,
+                recordIdList: sliceTable.value.map(item => item[idFieldName.value]),
+                filterList: filterPcColumn
+            };
+            let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
+            if(checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
+                let filterRes = checkCustomButtonFiltersRes.data;
+                sliceTable.value.forEach(el => {
+                    filterRes.forEach(item => {
+                        if(item.id == el[idFieldName.value]){
+                            el.customBtnShow = {...item};
+                        }
+                    })
+                })
+            }
+        }
     }
     pageLoading.value = false;
 };

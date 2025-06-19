@@ -57,3 +57,9 @@ export default {
 export function checkTables(body, recordId) {
     return http.post('/layout/checkTables', body, { params: { recordId } })
 }
+
+
+// 获取自定义按钮过滤条件
+export function checkCustomButtonFilters(body) {
+    return http.post('/layout/checkFilters', body)
+}

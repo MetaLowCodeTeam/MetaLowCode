@@ -305,7 +305,7 @@
 										</el-form-item>
 									</el-col>
 									<el-divider />
-									<el-col :span="12">
+									<el-col :span="24">
 										<el-form-item label="执行动作">
 											<el-select
 												v-model="currentButton.action"
@@ -367,6 +367,15 @@
 												"
 												@confirm="conditionConfirm"
 											/>
+                                            <el-checkbox v-if="
+												currentButton.filterJson?.items
+													?.length > 0
+											    " 
+                                                v-model="currentButton.isHideBtn" 
+                                                class="ml-30"
+                                            >
+                                                不满足条件时隐藏按钮
+                                            </el-checkbox>
 										</el-form-item>
 										<el-form-item
 											label="提示文案"
