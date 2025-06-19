@@ -286,7 +286,7 @@ const openDialog = async (v) => {
         referenceCompFormData.value = v.formData;
     }
     let param = {
-        id: v.detailId,
+        id: v.detailId || null,
         // 2新建 3更新
         rightType: v.detailId ? 3 : 2,
         entityName: v.detailId ? "" : v.entityName,
