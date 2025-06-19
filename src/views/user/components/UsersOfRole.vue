@@ -25,6 +25,7 @@
 				:border="true"
 			>
 				<el-table-column prop="userName" label="用户名称" />
+                <el-table-column prop="departmentName" label="所属部门" />
 				<el-table-column label="操作" width="110" :align="'center'" v-if="$TOOL.checkRole('r6024')">
 					<template #default="scope">
 						<el-button
@@ -86,6 +87,7 @@ const getUserList = async () => {
 
 // 格式化表格数据
 const formatTableData = (data) => {
+    console.log(data,'data')
 	if (search.value) {
 		return data.filter((item) =>
 			item.userName.toLowerCase().includes(search.value.toLowerCase())

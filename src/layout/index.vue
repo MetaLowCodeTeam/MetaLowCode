@@ -103,7 +103,7 @@
                         <h2>{{ pmenu.meta.title }}</h2>
                     </div>
                     <div class="adminui-side-scroll">
-                        <el-scrollbar class="nav-menu-scrollbar">
+                        <ml-scrollbar class="nav-menu-scrollbar">
                             <el-menu
                                 :default-openeds="defaultOpeneds"
                                 :default-active="active"
@@ -114,7 +114,7 @@
                             >
                                 <NavMenu :navMenus="nextMenu"></NavMenu>
                             </el-menu>
-                        </el-scrollbar>
+                        </ml-scrollbar>
                     </div>
                     <navigation />
                 </div>
@@ -387,6 +387,8 @@ import useGlobalStore from "@/store/modules/global";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
+// 滚动条
+import mlScrollbar from "@/components/mlScrollbar/index.vue";
 const { publicSetting } = storeToRefs(useCommonStore());
 const { topDefaultUnfold, isHideWorkbench } = storeToRefs(useLayoutConfigStore());
 //
@@ -412,6 +414,7 @@ export default {
         iframeView,
         autoExit,
         navigation,
+        mlScrollbar,
     },
     data() {
         return {
