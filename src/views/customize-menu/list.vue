@@ -418,39 +418,76 @@
                             <template 
                                 v-for="(item,index) of customButtonConfig.pcColumn" :key="index"
                             >
-                                <el-button
-                                    @click="customButtonClick(item, scope.row)"
-                                    link
-                                    :type="item.type"
-                                    v-if="
-                                        !item.isNative ||
-                                        (item.isNative &&
-                                            !item.hide &&
-                                            !(item.key === 'edit' && !hasEditRight))
-                                    "
-                                    :disabled="item.key == 'edit' && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'"
-                                >
-                                    <el-icon
-                                        :size="16"
-                                        :color="item.iconColor"
+                                <template v-if="item.key === 'edit' && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'">
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        :content="getEditBtnTitle(scope.row) || '此状态不可编辑'"
+                                        placement="top"
+                                    >
+                                        <el-button
+                                            @click="customButtonClick(item, scope.row)"
+                                            link
+                                            :type="item.type"
+                                            disabled
+                                        >
+                                            <el-icon
+                                                :size="16"
+                                                :color="item.iconColor"
+                                                v-if="
+                                                    item.icon &&
+                                                    item.showType != 3
+                                                "
+                                            >
+                                                <component :is="item.icon" />
+                                            </el-icon>
+                                            <span
+                                                v-if="item.showType != 2"
+                                                :class="{
+                                                    'ml-5':
+                                                        item.showType == 1 &&
+                                                        item.icon,
+                                                }"
+                                            >
+                                                {{ item.name }}
+                                            </span>
+                                        </el-button>
+                                    </el-tooltip>
+                                </template>
+                                <template v-else>
+                                    <el-button
+                                        @click="customButtonClick(item, scope.row)"
+                                        link
+                                        :type="item.type"
                                         v-if="
-                                            item.icon &&
-                                            item.showType != 3
+                                            !item.isNative ||
+                                            (item.isNative &&
+                                                !item.hide &&
+                                                !(item.key === 'edit' && !hasEditRight))
                                         "
                                     >
-                                        <component :is="item.icon" />
-                                    </el-icon>
-                                    <span
-                                        v-if="item.showType != 2"
-                                        :class="{
-                                            'ml-5':
-                                                item.showType == 1 &&
-                                                item.icon,
-                                        }"
-                                    >
-                                        {{ item.name }}
-                                    </span>
-                                </el-button>
+                                        <el-icon
+                                            :size="16"
+                                            :color="item.iconColor"
+                                            v-if="
+                                                item.icon &&
+                                                item.showType != 3
+                                            "
+                                        >
+                                            <component :is="item.icon" />
+                                        </el-icon>
+                                        <span
+                                            v-if="item.showType != 2"
+                                            :class="{
+                                                'ml-5':
+                                                    item.showType == 1 &&
+                                                    item.icon,
+                                            }"
+                                        >
+                                            {{ item.name }}
+                                        </span>
+                                    </el-button>
+                                </template>
                             </template>
                         </template>
                     </el-table-column>

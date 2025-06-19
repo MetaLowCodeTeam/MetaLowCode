@@ -9,12 +9,14 @@
 		v-model="dialogIsShow"
 	>
 		<mlSetConditions
+			ref="setConditionsRefs"
 			v-model="myConditionConf"
 			@cancel="dialogIsShow = false"
 			:entityName="myEntityName"
+            @confirm="conditionConfirm"
 		/>
 		<template #footer>
-			<el-button type="primary" @click="conditionConfirm">确认</el-button>
+			<el-button type="primary" @click="checkConfirm">确认</el-button>
 			<el-button @click="close">取消</el-button>
 		</template>
 	</ml-dialog>
@@ -77,10 +79,16 @@ const getSetConditionText = () => {
     return itemCount > 0 ? `已设置条件（${itemCount}）` : "点击设置";
 };
 
-const conditionConfirm = () => {
-	emit("confirm", myConditionConf.value);
-	dialogIsShow.value = false;
+const setConditionsRefs = ref();
+
+const checkConfirm = () => {
+    setConditionsRefs.value.confirm()
 };
+
+const conditionConfirm = (v) => {
+    emit("confirm", v);
+	dialogIsShow.value = false;
+}
 
 
 // 关闭弹框

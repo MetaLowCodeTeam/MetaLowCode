@@ -344,14 +344,17 @@ export default function useCustomButtonConfig() {
             currentCustomButtonAfterEvent.value = el.afterEvent;
         }
         let checkAuth = true;
-
+        // 如果不是新建，并且有过滤条件，则需要检查过滤条件
         if (el.action !== 1 && el.filterJson?.items?.length > 0) {
             loading.value = true;
             let tabRes = await checkTables([el.filterJson], recordId);
             if (tabRes) {
                 checkAuth = !!tabRes.data[0];
+                loading.value = false;
+            }else {
+                loading.value = false;
+                return
             }
-            loading.value = false;
         }
         if (!checkAuth) {
             ElMessage.error(el.errorTipText || "选择数据不符合条件，无法使用该功能。");

@@ -721,6 +721,7 @@ export default {
                 "CUY",
                 "REFD",
                 "REFU",
+                "REFNT",
             ],
             // 数组类型的字段
             numberFieldType: ["Money", "Integer", "Decimal", "Percent"],
@@ -753,6 +754,7 @@ export default {
                 "CUY",
                 "REFD",
                 "REFU",
+                "REFNT",
             ]
         };
     },
