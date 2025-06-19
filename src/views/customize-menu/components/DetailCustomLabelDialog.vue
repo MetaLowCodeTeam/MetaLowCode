@@ -8,7 +8,7 @@
 </style>
 <template>
 	<!-- 添加自定义标签 -->
-	<mlDialog v-model="isShow" title="自定义标签设置" width="500">
+	<mlDialog v-model="isShow" title="自定义标签设置" width="500" append-to-body>
 		<div class="ml-dialog-content">
 			<div class="item-box">
 				<div class="item-title">选择实体</div>
