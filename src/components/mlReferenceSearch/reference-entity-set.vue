@@ -335,14 +335,13 @@ const editField = (field, inx) => {
 const saveEditField = () => {
     let newArray = props.modelValue;
     newArray[editFieldDialogConfig.value.inx] = editFieldDialogConfig.value.field;
-    console.log(newArray, 'newArray')
     emit("update:modelValue", newArray);
     editFieldDialogConfig.value.isShow = false;
 };
 
 // 是否显示标签
 const isShowItemTag = (field) => {
-    return field.aliasName && field.aliasName.length > 0;  
+    return field.aliasName && field.aliasName.length > 0 || field.isHide || field.width;  
 };
 
 // 筛选字段

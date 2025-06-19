@@ -485,9 +485,7 @@ export default {
             this.refEntityAndFields = tempStr;
             this.currentRefEntity = this.refEntityName;
             let fieldList = this.selectedFieldItems.map(el => {
-                if(el.aliasName) {
-                    this.fieldStyleMap[el.name] = {...el}
-                }
+                this.fieldStyleMap[el.name] = {...el}
                 return el.name;
             });
             let virtualFieldNames = this.virtualFields.map(el => el.name);
