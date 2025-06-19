@@ -1,5 +1,5 @@
 <template>
-	<ml-dialog title="自定义组件设置" v-model="isShow" width="500">
+	<ml-dialog title="自定义组件设置" v-model="isShow" width="500" append-to-body>
 		<div>
 			<el-form
 				:model="formData"
