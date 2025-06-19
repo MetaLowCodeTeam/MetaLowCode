@@ -301,7 +301,7 @@
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
-                        :fixed="checkedColumnFixed"
+                        :fixed="checkedColumnFixed || listConf.showRowNumber && listConf.rowNumberPosition == 'left'"
                         v-if="listParamConf.showTableCheckbox"
                     >
                         <template #header>
@@ -330,6 +330,7 @@
                             label="序号"
                             width="60"
                             align="center"
+                            :fixed="listConf.rowNumberPosition"
                         >
                             <template #default="scope">
                                 {{ (page.no - 1) * page.size + scope.$index + 1 }}

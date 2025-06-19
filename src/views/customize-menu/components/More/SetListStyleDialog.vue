@@ -6,12 +6,21 @@
                 <el-col :span="12">
                     <div class="form-title">列表设置</div>
                     <div class="form-item">
+                        <div class="info-text mt-5 mb-2">序号列设置</div>
                         <el-checkbox v-model="styleConf.listConf.showRowNumber">
-                            是否显示序号列
+                            是否显示
                         </el-checkbox>
+                        <el-radio-group 
+                            v-model="styleConf.listConf.rowNumberPosition"
+                            v-if="styleConf.listConf.showRowNumber"
+                        >
+                            <el-radio label="不冻结列" :value="false" />
+                            <el-radio label="向左冻结列" value="left" />
+                            <el-radio label="向右冻结列" value="right" />
+                        </el-radio-group>
                     </div>
                     <div class="form-item mb-30">
-                        <div class="info-text mt-5 mb-2">操作列宽度</div>
+                        <div class="info-text mt-5 mb-2">操作列宽度（初始值：120）</div>
                         <el-input-number 
                             v-model="styleConf.listConf.actionColumnWidth" 
                             placeholder="操作列宽度"
@@ -323,6 +332,10 @@ let styleConf = ref({
     listConf: {
         // 是否显示序号列
         showRowNumber: false,
+        // 序号列位置
+        rowNumberPosition: false,
+        // 操作列宽度
+        actionColumnWidth: null,
     },
 	// 新建编辑弹框属性
 	actionConf: {
@@ -452,6 +465,7 @@ watch(
 	{ deep: true }
 );
 onMounted(() => {
+    
 	isShow.value = props.modelValue;
 	myLayoutConf.value = props.layoutConfig;
 	initStyleConf();
@@ -467,13 +481,15 @@ const initStyleConf = () => {
 		return;
 	}
 	let { STYLE } = myLayoutConf.value;
-
 	if (STYLE && STYLE.config) {
 		styleConf.value = Object.assign(
 			styleConf.value,
 			JSON.parse(STYLE.config)
 		);
 		layoutConfigId.value = STYLE.layoutConfigId;
+        // 老数据初始化默认值
+        // 初始化序号列位置
+        styleConf.value.listConf.rowNumberPosition = styleConf.value.listConf.rowNumberPosition || false;
 	}
     initFormList();
 };
