@@ -447,6 +447,7 @@
                                                         item.showType == 1 &&
                                                         item.icon,
                                                 }"
+                                                style="font-size: 12px;"
                                             >
                                                 {{ item.name }}
                                             </span>
@@ -466,7 +467,6 @@
                                         "
                                     >
                                         <el-icon
-                                            :size="16"
                                             :color="item.iconColor"
                                             v-if="
                                                 item.icon &&
@@ -482,6 +482,7 @@
                                                     item.showType == 1 &&
                                                     item.icon,
                                             }"
+                                            style="font-size: 12px;"
                                         >
                                             {{ item.name }}
                                         </span>
