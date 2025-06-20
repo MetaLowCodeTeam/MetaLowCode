@@ -175,9 +175,9 @@ const saveForm = (type) => {
                     let entityInfo = queryEntityInfoByName(entity.value);
                     recordId.value = saveRes.data?.formData[entityInfo.idFieldName];
 					ElMessage.success("保存成功");
+                    localStorage.setItem("NewWindowCreateEntity", entity.value);
                     if(type == 'close'){
                         closeTab();
-                        localStorage.setItem("NewWindowCreateEntity", entity.value);
                     }
 				}
 				loading.value = false;

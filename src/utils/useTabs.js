@@ -32,11 +32,11 @@ export default {
 	//关闭标签
 	close(tag) {
 		const route = tag || router.currentRoute.value
+        const tagList = getViewTags();
+        let tagIndex = tagList.findIndex(item => item.fullPath === route.fullPath);
         removeViewTags(route);
-		// removeIframeList(route)
 		removeKeepLive(route.name)
-		const tagList = getViewTags();
-		const latestView = tagList.slice(-1)[0]
+		const latestView = tagList[tagIndex - 1]
 		if (latestView) {
 			router.push(latestView)
 		} else {
