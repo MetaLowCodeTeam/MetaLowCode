@@ -183,7 +183,6 @@
                                     (item.key !== 'batchEdit' || batchUpdateConf?.length > 0))"
                             >
                                 <el-icon
-                                    :size="16"
                                     :color="item.iconColor"
                                     v-if="
                                         item.icon &&
@@ -433,7 +432,6 @@
                                             disabled
                                         >
                                             <el-icon
-                                                :size="16"
                                                 :color="item.iconColor"
                                                 v-if="
                                                     item.icon &&
