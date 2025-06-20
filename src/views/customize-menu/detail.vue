@@ -229,11 +229,10 @@
                                         item.key != 'newRelated'&&
                                         !(item.key === 'edit' && !$TOOL.checkRole('r' + entityCode + '-3'))
                                     "
-                                    class="w-100 mb-5"
+                                    class="mb-5"
                                     @click="customButtonClick(item)"
                                 >
                                     <el-icon
-                                        :size="16"
                                         :color="item.iconColor"
                                         v-if="
                                             item.icon &&
@@ -1042,11 +1041,11 @@ defineExpose({
 		}
         .block-el-button{
             :deep(.el-button) {
-                width: 100%;
                 margin-bottom: 5px;
+                min-width: 110px !important;
             }
             :deep(.el-dropdown) {
-                width: 100%;
+                min-width: 110px !important;
             }
         }
 
@@ -1100,7 +1099,7 @@ defineExpose({
 
 .detail-right {
     .group-el-button {
-        .el-button {
+        :deep(.el-button) {
             margin-bottom: 5px;
             min-width: 110px !important;
         }

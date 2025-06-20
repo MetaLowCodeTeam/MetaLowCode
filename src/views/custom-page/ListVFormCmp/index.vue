@@ -17,13 +17,16 @@
 	</div>
     <mlCustomEdit 
         ref="editRefs"
-        entityName="CustomFlowForm"
+    />
+    <mlCustomDetail 
+        ref="detailRefs"
+        :customDetailDialogTitle="customDetailDialogTitle"
     />
 </template>
 
 <script setup>
 import { ElMessage } from "element-plus";
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, onMounted, ref, getCurrentInstance } from "vue";
 import { useRoute } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 import { globalDsvDefaultData } from "@/utils/util";
@@ -33,6 +36,7 @@ import { globalDsvDefaultData } from "@/utils/util";
  */
 import { getFormLayout } from "@/api/system-manager";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
+import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 
 const { queryEntityNameByCode } = useCommonStore();
 const Route = useRoute();
@@ -49,6 +53,7 @@ let notData = ref(false);
 let loading = ref(false);
 
 let vFormRef = ref();
+let customDetailDialogTitle = ref('');
 
 onMounted(() => {
 	formId.value = Route.query.formId;
@@ -60,6 +65,7 @@ onMounted(() => {
 	entityName.value = queryEntityNameByCode(entityCode.value);
     globalDsv.value.SERVER_API = import.meta.env.VITE_APP_BASE_API;
     globalDsv.value.createAndSubmit = createAndSubmit;
+    globalDsv.value.exposed = getCurrentInstance().exposed;
 	loadForm();
 });
 
@@ -95,11 +101,22 @@ const loadForm = async () => {
 let editRefs = ref();
 const createAndSubmit = (row) => {
     let tempV = {
-        entityName: queryEntityNameByCode(row.entityCode),
+        entityName: entityName.value,
         approvalConfigId: row.approvalConfigId,
     };
     editRefs.value.openDialog(tempV);
 }
+
+let detailRefs = ref();
+// 打开其他实体详情
+const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
+    customDetailDialogTitle.value = customDialogTitle;
+    detailRefs.value.openDialog(recordId, localDsv, formId);
+}
+
+defineExpose({
+    viewToOtherEntity,
+})
 
 </script>
 <style lang="scss" scoped>
