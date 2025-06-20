@@ -481,6 +481,13 @@ let isDistinguishTopNav = false;
 export const getModelName = () => {
     let modelName = null;
     let pathname = location.pathname;
+    // --- 新增逻辑开始 ---
+    // 1. 优先检查 URL 中是否有 modelName 查询参数
+    const urlParams = new URLSearchParams(location.search);
+    const urlModelName = urlParams.get('modelName');
+    if (urlModelName) {
+        return urlModelName; // 如果存在，直接返回这个值
+    }
     if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
         let checkGuid = splitPathname[splitPathname.length - 1];

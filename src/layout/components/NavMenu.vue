@@ -125,7 +125,7 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 1; // 确保 A 标签在其他内容上方，可以点击
+        z-index: 10; // 确保 A 标签在其他内容上方，可以点击
     }
     // 确保图标和文字不会被 A 标签覆盖，可以调整 z-index 或者通过 padding 避开
     .el-icon,

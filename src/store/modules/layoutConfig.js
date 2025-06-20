@@ -176,6 +176,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if(el.type == 1 && el.useCustom){
                 el.type = 3;
                 el.outLink = el.useComponent + "?entity=" + el.entityName;
+                if(el.modelName){
+                    el.outLink += "&modelName=" + el.modelName;
+                }
             }
             initMenu.meta.title = el.name;
             initMenu.meta.entityCode = el.entityCode;
@@ -209,6 +212,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     if(subEl.type == 1 && subEl.useCustom){
                         subEl.type = 3;
                         subEl.outLink = subEl.useComponent + "?entity=" + subEl.entityName
+                        if(subEl.modelName){
+                            subEl.outLink += "&modelName=" + subEl.modelName;
+                        }
                     }
                     let { path, component, name } = floamtRoute(subEl, isTopNav);
                     subRoute.path = path;
