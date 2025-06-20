@@ -60,6 +60,7 @@ import LocationWE from "./field-editor/location-widget-editor.vue";
 import ReferenceWE from "./field-editor/reference-widget-editor.vue";
 import ReferenceListWE from "./field-editor/referencelist-widget-editor.vue";
 import OuterReferenceWE from "./field-editor/outerReference-widget-editor.vue";
+import PasswordWE from "./field-editor/password-widget-editor.vue";
 
 const props = defineProps({
 	entity: {
@@ -94,6 +95,7 @@ const fieldComponents = {
 	ReferenceWE: markRaw(ReferenceWE),
 	ReferenceListWE: markRaw(ReferenceListWE),
 	OuterReferenceWE: markRaw(OuterReferenceWE),
+	PasswordWE: markRaw(PasswordWE),
 };
 
 // 字段列表配置
