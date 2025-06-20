@@ -2364,6 +2364,7 @@ defineExpose({
     downFile,
     previewFile,
     pageLoading,
+    queryNow,
 })
 
 </script>
