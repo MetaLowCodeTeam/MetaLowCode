@@ -270,12 +270,12 @@ export default function useCustomButtonConfig() {
             buttonList: [],
         },
         {
-            label: "底部(APP)",
+            label: "底部(Mobile)",
             name: "appList",
             buttonList: [],
         },
         {
-            label: "详情底部(APP)",
+            label: "详情底部(Mobile)",
             name: "appDetial",
             buttonList: [],
         },

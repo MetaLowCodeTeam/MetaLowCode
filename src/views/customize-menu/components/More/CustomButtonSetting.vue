@@ -1,11 +1,24 @@
 <template>
-	<ml-dialog v-model="isShow" title="自定义按钮设置" width="800">
+	<ml-dialog v-model="isShow" title="自定义按钮设置" width="700">
+        <el-tabs 
+            v-model="currentTab" 
+            @tab-change="tabChange"
+            :before-leave="beforeTabChange"
+        >
+            <el-tab-pane
+                v-for="(tab, tabInx) of tabList"
+                :key="tabInx"
+                :label="tab.label"
+                :name="tab.name"
+            >
+            </el-tab-pane>
+        </el-tabs>
 		<el-row
 			:gutter="20"
 			v-loading="dialogLoading"
 			element-loading-text="加载中..."
 		>
-			<el-col :span="7">
+			<el-col :span="8">
 				<div class="button-list-box">
 					<ml-scrollbar>
 						<VueDraggableNext
@@ -72,503 +85,490 @@
 					添加按钮
 				</el-button>
 			</el-col>
-			<el-col :span="17">
-				<el-tabs 
-                    v-model="currentTab" 
-                    @tab-change="tabChange"
-                    :before-leave="beforeTabChange"
+			<el-col :span="16">
+                <div class="info-text" v-if="!currentButton">
+                    点击左侧按钮进行编辑或点击添加按钮
+                </div>
+                <el-form
+                    v-else
+                    class="main-form"
+                    v-loading="mainLoading"
                 >
-					<el-tab-pane
-						v-for="(tab, tabInx) of tabList"
-						:key="tabInx"
-						:label="tab.label"
-						:name="tab.name"
-					>
-						<div class="info-text" v-if="!currentButton">
-							点击左侧按钮进行编辑或点击添加按钮
-						</div>
-						<el-form
-							v-else
-							class="main-form"
-							v-loading="mainLoading"
-						>
-							<el-row :gutter="20">
-								<el-col :span="12">
-									<el-form-item
-										label="按钮名称"
-										prop="name"
-										class="has-required"
-									>
-										<el-input
-											v-model="currentButton.name"
-											placeholder="请输入按钮名称"
-											clearable
-											ref="nameRef"
-											:class="{
-												'is-error': errorStatus.name,
-											}"
-											@focus="errorStatus.name = false"
-										/>
-									</el-form-item>
-								</el-col>
-								<el-col
-									:span="12"
-									v-if="currentButton.key != 'more'"
-								>
-									<el-form-item label="按钮图标">
-										<div class="icon-box">
-											<span
-												class="icon-span icon-top-3"
-												v-if="!currentButton.icon"
-												@click="openIconDialog"
-											>
-												<el-icon :size="16">
-													<ElIconClose />
-												</el-icon>
-											</span>
-											<span
-												class="icon-span icon-top-3"
-												@click="openIconDialog"
-												v-else
-											>
-												<el-icon
-													:size="16"
-													:color="
-														currentButton.iconColor
-													"
-												>
-													<component
-														:is="currentButton.icon"
-													/>
-												</el-icon>
-											</span>
-										</div>
-									</el-form-item>
-								</el-col>
-								<el-col
-									:span="12"
-									v-if="currentButton.key != 'more'"
-								>
-									<el-form-item label="显示类型">
-										<el-select
-											v-model="currentButton.showType"
-											placeholder="请选择显示类型"
-										>
-											<el-option
-												v-for="item in showTypeList"
-												:key="item.value"
-												:label="item.label"
-												:value="item.value"
-											/>
-										</el-select>
-									</el-form-item>
-								</el-col>
-								<el-col
-									:span="12"
-									v-if="currentButton.key != 'more'"
-								>
-									<el-form-item label="按钮类型">
-										<el-select
-											v-model="currentButton.type"
-											placeholder="请选择按钮类型"
-										>
-											<el-option
-												v-for="item in buttonTypeList"
-												:key="item.value"
-												:label="item.label"
-												:value="item.value"
-											/>
-										</el-select>
-									</el-form-item>
-								</el-col>
-								<el-col
-									:span="12"
-									v-if="currentButton.key != 'more'"
-								>
-									<el-form-item label="按钮预览">
-										<el-button
-											:type="currentButton.type"
-											:color="
-												currentButton.type == 'custom'
-													? currentButton.color
-													: ''
-											"
-                                            :link="currentTab == 'pcColumn'"
-                                            :plain="currentTab == 'pcDetial' || currentTab == 'appDetial' || currentTab == 'appList'"
-                                            :round="currentTab == 'appDetial' || currentTab == 'appList'"
-                                            :class="{'app-detial-button': currentTab == 'appDetial' || currentTab == 'appList'}"
-										>
-											<el-icon
-												:size="16"
-												:color="currentButton.iconColor"
-												v-if="
-													currentButton.icon &&
-													currentButton.showType != 3
-												"
-												style="
-													position: relative;
-													top: -1px;
-												"
-											>
-												<component
-													:is="currentButton.icon"
-												/>
-											</el-icon>
-											<span
-												v-if="
-													currentButton.showType != 2
-												"
-												:class="{
-													'ml-5':
-														currentButton.showType ==
-															1 &&
-														currentButton.icon,
-												}"
-											>
-												{{ currentButton.name }}
-											</span>
-										</el-button>
-									</el-form-item>
-								</el-col>
-								<el-col
-									:span="24"
-									v-if="currentButton.isNative"
-								>
-									<el-form-item label="是否显示">
-										<el-switch
-											v-model="currentButton.hide"
-											:active-value="false"
-											:inactive-value="true"
-											v-if="
-												currentButton.key != 'batchEdit'
-											"
-										/>
-                                        <div class="ml-info-text ml-5" v-if="currentButton.hideTip">
-											{{ currentButton.hideTip }}
-										</div>
-										<div class="ml-info-text" v-if="currentButton.key == 'batchEdit'">
-											批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制
-										</div>
-										<div class="ml-info-text ml-5 icon-top-2" v-if="currentButton.key == 'more' && currentTab == 'pcTop'">
-											<el-tooltip placement="top">
-												<template #content>
-												    如果开启隐藏可使用快捷键临时显示。 <br />
-                                                    Windows系统快捷键： <br />
-                                                    Shift + Alt + M + L <br /> <br />
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item
+                                label="按钮名称"
+                                prop="name"
+                                class="has-required"
+                            >
+                                <el-input
+                                    v-model="currentButton.name"
+                                    placeholder="请输入按钮名称"
+                                    clearable
+                                    ref="nameRef"
+                                    :class="{
+                                        'is-error': errorStatus.name,
+                                    }"
+                                    @focus="errorStatus.name = false"
+                                />
+                            </el-form-item>
+                        </el-col>
+                        <el-col
+                            :span="12"
+                            v-if="currentButton.key != 'more'"
+                        >
+                            <el-form-item label="按钮图标">
+                                <div class="icon-box">
+                                    <span
+                                        class="icon-span icon-top-3"
+                                        v-if="!currentButton.icon"
+                                        @click="openIconDialog"
+                                    >
+                                        <el-icon :size="16">
+                                            <ElIconClose />
+                                        </el-icon>
+                                    </span>
+                                    <span
+                                        class="icon-span icon-top-3"
+                                        @click="openIconDialog"
+                                        v-else
+                                    >
+                                        <el-icon
+                                            :size="16"
+                                            :color="
+                                                currentButton.iconColor
+                                            "
+                                        >
+                                            <component
+                                                :is="currentButton.icon"
+                                            />
+                                        </el-icon>
+                                    </span>
+                                </div>
+                            </el-form-item>
+                        </el-col>
+                        <el-col
+                            :span="12"
+                            v-if="currentButton.key != 'more'"
+                        >
+                            <el-form-item label="显示类型">
+                                <el-select
+                                    v-model="currentButton.showType"
+                                    placeholder="请选择显示类型"
+                                >
+                                    <el-option
+                                        v-for="item in showTypeList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col
+                            :span="12"
+                            v-if="currentButton.key != 'more'"
+                        >
+                            <el-form-item label="按钮类型">
+                                <el-select
+                                    v-model="currentButton.type"
+                                    placeholder="请选择按钮类型"
+                                >
+                                    <el-option
+                                        v-for="item in buttonTypeList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col
+                            :span="12"
+                            v-if="currentButton.key != 'more'"
+                        >
+                            <el-form-item label="按钮预览">
+                                <el-button
+                                    :type="currentButton.type"
+                                    :color="
+                                        currentButton.type == 'custom'
+                                            ? currentButton.color
+                                            : ''
+                                    "
+                                    :link="currentTab == 'pcColumn'"
+                                    :plain="currentTab == 'pcDetial' || currentTab == 'appDetial' || currentTab == 'appList'"
+                                    :round="currentTab == 'appDetial' || currentTab == 'appList'"
+                                    :class="{'app-detial-button': currentTab == 'appDetial' || currentTab == 'appList'}"
+                                >
+                                    <el-icon
+                                        :size="16"
+                                        :color="currentButton.iconColor"
+                                        v-if="
+                                            currentButton.icon &&
+                                            currentButton.showType != 3
+                                        "
+                                        style="
+                                            position: relative;
+                                            top: -1px;
+                                        "
+                                    >
+                                        <component
+                                            :is="currentButton.icon"
+                                        />
+                                    </el-icon>
+                                    <span
+                                        v-if="
+                                            currentButton.showType != 2
+                                        "
+                                        :class="{
+                                            'ml-5':
+                                                currentButton.showType ==
+                                                    1 &&
+                                                currentButton.icon,
+                                        }"
+                                    >
+                                        {{ currentButton.name }}
+                                    </span>
+                                </el-button>
+                            </el-form-item>
+                        </el-col>
+                        <el-col
+                            :span="24"
+                            v-if="currentButton.isNative"
+                        >
+                            <el-form-item label="是否显示">
+                                <el-switch
+                                    v-model="currentButton.hide"
+                                    :active-value="false"
+                                    :inactive-value="true"
+                                    v-if="
+                                        currentButton.key != 'batchEdit'
+                                    "
+                                />
+                                <div class="ml-info-text ml-5" v-if="currentButton.hideTip">
+                                    {{ currentButton.hideTip }}
+                                </div>
+                                <div class="ml-info-text" v-if="currentButton.key == 'batchEdit'">
+                                    批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制
+                                </div>
+                                <div class="ml-info-text ml-5 icon-top-2" v-if="currentButton.key == 'more' && currentTab == 'pcTop'">
+                                    <el-tooltip placement="top">
+                                        <template #content>
+                                            如果开启隐藏可使用快捷键临时显示。 <br />
+                                            Windows系统快捷键： <br />
+                                            Shift + Alt + M + L <br /> <br />
 
-                                                    Mac系统 快捷键： <br />
-                                                    Shift + Option + M + L
-												</template>
-												<el-icon size="16">
-													<ElIconQuestionFilled />
-												</el-icon>
-											</el-tooltip>
-										</div>
-									</el-form-item>
-								</el-col>
-								<template v-if="!currentButton.isNative">
-									<el-divider />
-									<!-- 叠加自定义权限 -->
-									<el-col :span="24">
-										<el-form-item label="叠加自定义权限">
-											<div class="custom-right-box">
-												<el-select
-													v-model="
-														currentButton.customCode
-													"
-													placeholder="请选择权限"
-													clearable
-													filterable
-													allow-create
-													class="custom-right-select"
-												>
-													<el-option
-														v-for="item in customRightList"
-														:key="item.value"
-														:label="item.label"
-														:value="item.value"
-													/>
-												</el-select>
-												<el-tooltip
-													content="取反后，用户不包含选定条件菜单才会显示。"
-													placement="top"
-												>
-													<el-checkbox
-														style="width: 60px"
-														v-model="
-															currentButton.reversalCustomCode
-														"
-														label="取反"
-													/>
-												</el-tooltip>
-											</div>
-										</el-form-item>
-									</el-col>
-									<el-divider />
-									<el-col :span="24">
-										<el-form-item label="执行动作">
-											<el-select
-												v-model="currentButton.action"
-												placeholder="请选择执行动作"
-												@change="changeAction"
-											>
-												<el-option
-													v-for="item in actionList"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value"
-													:disabled="item.disabled"
-												/>
-											</el-select>
-										</el-form-item>
-									</el-col>
-									<el-col
-										:span="24"
-										v-if="currentButton.action != 1 && currentTab != 'pcColumn' && currentTab != 'pcDetial' && currentTab != 'appDetial'"
-									>
-										<el-form-item label="可用类型">
-											<el-radio-group
-												v-model="
-													currentButton.availableType
-												"
-											>
-												<el-radio
-													v-for="item in availableTypeList"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value"
-													:disabled="
-														currentButton.action ==
-															3 && item.value == 2 ||
-														currentButton.action == 2
-													"
-												/>
-											</el-radio-group>
-										</el-form-item>
-									</el-col>
-									<!-- 过滤条件 -->
-									<el-col
-										:span="24"
-										v-if="
-											currentButton.action != 1 &&
-											currentButton.availableType == 1
-										"
-									>
-										<el-form-item label="使用条件">
-											<SetConditionsDialog
-												title="附加过滤条件"
-												:conditionConf="
-													currentButton.filterJson
-												"
-												:entityName="
-													queryEntityNameByCode(
-														entityCode
-													)
-												"
-												@confirm="conditionConfirm"
-											/>
-                                            <el-checkbox v-if="
-												currentButton.filterJson?.items
-													?.length > 0
-											    " 
-                                                v-model="currentButton.isHideBtn" 
-                                                class="ml-30"
-                                            >
-                                                不满足条件时隐藏按钮
-                                            </el-checkbox>
-										</el-form-item>
-										<el-form-item
-											label="提示文案"
-											v-if="
-												currentButton.filterJson?.items
-													?.length > 0
-											"
-										>
-											<el-input
-												v-model="
-													currentButton.errorTipText
-												"
-												placeholder="请输入不满足条件时的提示文案"
-												clearable
-											/>
-										</el-form-item>
-									</el-col>
-									<!-- 选择实体 -->
-									<el-col
-										:span="24"
-										v-if="
-											currentButton.action == 1 ||
-											currentButton.action == 3
-										"
-									>
-										<el-form-item
-											label="选择实体"
-											class="has-required"
-										>
-											<el-select
-												v-model="
-													currentButton.selectEntity
-												"
-												placeholder="请选择实体"
-												:class="{
-													'is-error':
-														errorStatus.selectEntity,
-												}"
-												@focus="
-													errorStatus.selectEntity = false
-												"
-												@change="changeEntity"
-												filterable
-											>
-												<el-option
-													v-for="item in unSystemEntityList.filter(
-														(el) =>
-															!el.detailEntityFlag &&
-															!el.appAbbr
-													)"
-													:key="item.name"
-													:label="item.label"
-													:value="item.name"
-												/>
-											</el-select>
-										</el-form-item>
-									</el-col>
-									<!-- 选择表单 -->
-									<el-col
-										:span="24"
-										v-if="currentButton.action != 4"
-									>
-										<el-form-item
-											label="选择表单"
-											v-loading="entityFormListLoading"
-											class="has-required"
-										>
-											<el-select
-												v-model="
-													currentButton.selectForm
-												"
-												placeholder="请选择表单"
-												:class="{
-													'is-error':
-														errorStatus.selectForm,
-												}"
-												@focus="
-													errorStatus.selectForm = false
-												"
-												filterable
-											>
-												<el-option
-													v-for="item in entityFormList"
-													:key="item.formLayoutId"
-													:label="item.layoutName"
-													:value="item.formLayoutId"
-												/>
-											</el-select>
-										</el-form-item>
-									</el-col>
-									<!-- 选择数据转换 -->
-									<el-col
-										:span="24"
-										v-if="currentButton.action == 3"
-									>
-										<el-form-item
-											label="选择转换"
-											class="has-required"
-										>
-											<el-select
-												v-model="
-													currentButton.selectDataTransform
-												"
-												placeholder="请选择数据转换"
-												:class="{
-													'is-error':
-														errorStatus.selectDataTransform,
-												}"
-												@focus="
-													errorStatus.selectDataTransform = false
-												"
-											>
-												<el-option
-													v-for="item in dataTransformList.filter(
-														(el) =>
-															el.targetEntity ===
-															currentButton.selectEntity
-													)"
-													:key="item.transformId"
-													:label="item.transformName"
-													:value="item.transformId"
-												/>
-											</el-select>
-										</el-form-item>
-									</el-col>
-									<!-- 执行脚本 -->
-									<el-col
-										:span="24"
-										v-if="currentButton.action == 4"
-									>
-										<el-form-item label="执行脚本">
-											<el-input
-												v-model="
-													currentButton.customScript
-												"
-												type="textarea"
-												placeholder="请输入自定义脚本"
-												@click="
-													openScriptDialog(
-														'customScript'
-													)
-												"
-												readonly
-												:rows="1"
-											/>
-										</el-form-item>
-									</el-col>
-									<!-- 前置事件 -->
-									<el-col
-										:span="24"
-										v-if="currentButton.action !== 4"
-									>
-										<el-form-item label="前置事件">
-											<el-input
-												v-model="
-													currentButton.beforeEvent
-												"
-												type="textarea"
-												placeholder="请输入前置事件"
-												@click="
-													openScriptDialog(
-														'beforeEvent'
-													)
-												"
-												readonly
-												:rows="1"
-											/>
-										</el-form-item>
-									</el-col>
-									<!-- 完成回调 -->
-									<el-col :span="24" v-if="currentButton.action != 4">
-										<el-form-item label="完成回调">
-											<el-input
-												v-model="
-													currentButton.afterEvent
-												"
-												type="textarea"
-												placeholder="请输入新建、编辑完的回调"
-												@click="
-													openScriptDialog(
-														'afterEvent'
-													)
-												"
-												readonly
-												:rows="1"
-											/>
-										</el-form-item>
-									</el-col>
-								</template>
-							</el-row>
-						</el-form>
-					</el-tab-pane>
-				</el-tabs>
+                                            Mac系统 快捷键： <br />
+                                            Shift + Option + M + L
+                                        </template>
+                                        <el-icon size="16">
+                                            <ElIconQuestionFilled />
+                                        </el-icon>
+                                    </el-tooltip>
+                                </div>
+                            </el-form-item>
+                        </el-col>
+                        <template v-if="!currentButton.isNative">
+                            <el-divider />
+                            <!-- 叠加自定义权限 -->
+                            <el-col :span="24">
+                                <el-form-item label="叠加自定义权限">
+                                    <div class="custom-right-box">
+                                        <el-select
+                                            v-model="
+                                                currentButton.customCode
+                                            "
+                                            placeholder="请选择权限"
+                                            clearable
+                                            filterable
+                                            allow-create
+                                            class="custom-right-select"
+                                        >
+                                            <el-option
+                                                v-for="item in customRightList"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value"
+                                            />
+                                        </el-select>
+                                        <el-tooltip
+                                            content="取反后，用户不包含选定条件菜单才会显示。"
+                                            placement="top"
+                                        >
+                                            <el-checkbox
+                                                style="width: 60px"
+                                                v-model="
+                                                    currentButton.reversalCustomCode
+                                                "
+                                                label="取反"
+                                            />
+                                        </el-tooltip>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+                            <el-divider />
+                            <el-col :span="24">
+                                <el-form-item label="执行动作">
+                                    <el-select
+                                        v-model="currentButton.action"
+                                        placeholder="请选择执行动作"
+                                        @change="changeAction"
+                                    >
+                                        <el-option
+                                            v-for="item in actionList"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                            :disabled="item.disabled"
+                                        />
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col
+                                :span="24"
+                                v-if="currentButton.action != 1 && currentTab != 'pcColumn' && currentTab != 'pcDetial' && currentTab != 'appDetial'"
+                            >
+                                <el-form-item label="可用类型">
+                                    <el-radio-group
+                                        v-model="
+                                            currentButton.availableType
+                                        "
+                                    >
+                                        <el-radio
+                                            v-for="item in availableTypeList"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                            :disabled="
+                                                currentButton.action ==
+                                                    3 && item.value == 2 ||
+                                                currentButton.action == 2
+                                            "
+                                        />
+                                    </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                            <!-- 过滤条件 -->
+                            <el-col
+                                :span="24"
+                                v-if="
+                                    currentButton.action != 1 &&
+                                    currentButton.availableType == 1
+                                "
+                            >
+                                <el-form-item label="使用条件">
+                                    <SetConditionsDialog
+                                        title="附加过滤条件"
+                                        :conditionConf="
+                                            currentButton.filterJson
+                                        "
+                                        :entityName="
+                                            queryEntityNameByCode(
+                                                entityCode
+                                            )
+                                        "
+                                        @confirm="conditionConfirm"
+                                    />
+                                    <el-checkbox v-if="
+                                        currentButton.filterJson?.items
+                                            ?.length > 0
+                                        " 
+                                        v-model="currentButton.isHideBtn" 
+                                        class="ml-30"
+                                    >
+                                        不满足条件时隐藏按钮
+                                    </el-checkbox>
+                                </el-form-item>
+                                <el-form-item
+                                    label="提示文案"
+                                    v-if="
+                                        currentButton.filterJson?.items
+                                            ?.length > 0
+                                    "
+                                >
+                                    <el-input
+                                        v-model="
+                                            currentButton.errorTipText
+                                        "
+                                        placeholder="请输入不满足条件时的提示文案"
+                                        clearable
+                                    />
+                                </el-form-item>
+                            </el-col>
+                            <!-- 选择实体 -->
+                            <el-col
+                                :span="24"
+                                v-if="
+                                    currentButton.action == 1 ||
+                                    currentButton.action == 3
+                                "
+                            >
+                                <el-form-item
+                                    label="选择实体"
+                                    class="has-required"
+                                >
+                                    <el-select
+                                        v-model="
+                                            currentButton.selectEntity
+                                        "
+                                        placeholder="请选择实体"
+                                        :class="{
+                                            'is-error':
+                                                errorStatus.selectEntity,
+                                        }"
+                                        @focus="
+                                            errorStatus.selectEntity = false
+                                        "
+                                        @change="changeEntity"
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in unSystemEntityList.filter(
+                                                (el) =>
+                                                    !el.detailEntityFlag &&
+                                                    !el.appAbbr
+                                            )"
+                                            :key="item.name"
+                                            :label="item.label"
+                                            :value="item.name"
+                                        />
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <!-- 选择表单 -->
+                            <el-col
+                                :span="24"
+                                v-if="currentButton.action != 4"
+                            >
+                                <el-form-item
+                                    label="选择表单"
+                                    v-loading="entityFormListLoading"
+                                    class="has-required"
+                                >
+                                    <el-select
+                                        v-model="
+                                            currentButton.selectForm
+                                        "
+                                        placeholder="请选择表单"
+                                        :class="{
+                                            'is-error':
+                                                errorStatus.selectForm,
+                                        }"
+                                        @focus="
+                                            errorStatus.selectForm = false
+                                        "
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in entityFormList"
+                                            :key="item.formLayoutId"
+                                            :label="item.layoutName"
+                                            :value="item.formLayoutId"
+                                        />
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <!-- 选择数据转换 -->
+                            <el-col
+                                :span="24"
+                                v-if="currentButton.action == 3"
+                            >
+                                <el-form-item
+                                    label="选择转换"
+                                    class="has-required"
+                                >
+                                    <el-select
+                                        v-model="
+                                            currentButton.selectDataTransform
+                                        "
+                                        placeholder="请选择数据转换"
+                                        :class="{
+                                            'is-error':
+                                                errorStatus.selectDataTransform,
+                                        }"
+                                        @focus="
+                                            errorStatus.selectDataTransform = false
+                                        "
+                                    >
+                                        <el-option
+                                            v-for="item in dataTransformList.filter(
+                                                (el) =>
+                                                    el.targetEntity ===
+                                                    currentButton.selectEntity
+                                            )"
+                                            :key="item.transformId"
+                                            :label="item.transformName"
+                                            :value="item.transformId"
+                                        />
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <!-- 执行脚本 -->
+                            <el-col
+                                :span="24"
+                                v-if="currentButton.action == 4"
+                            >
+                                <el-form-item label="执行脚本">
+                                    <el-input
+                                        v-model="
+                                            currentButton.customScript
+                                        "
+                                        type="textarea"
+                                        placeholder="请输入自定义脚本"
+                                        @click="
+                                            openScriptDialog(
+                                                'customScript'
+                                            )
+                                        "
+                                        readonly
+                                        :rows="1"
+                                    />
+                                </el-form-item>
+                            </el-col>
+                            <!-- 前置事件 -->
+                            <el-col
+                                :span="24"
+                                v-if="currentButton.action !== 4"
+                            >
+                                <el-form-item label="前置事件">
+                                    <el-input
+                                        v-model="
+                                            currentButton.beforeEvent
+                                        "
+                                        type="textarea"
+                                        placeholder="请输入前置事件"
+                                        @click="
+                                            openScriptDialog(
+                                                'beforeEvent'
+                                            )
+                                        "
+                                        readonly
+                                        :rows="1"
+                                    />
+                                </el-form-item>
+                            </el-col>
+                            <!-- 完成回调 -->
+                            <el-col :span="24" v-if="currentButton.action != 4">
+                                <el-form-item label="完成回调">
+                                    <el-input
+                                        v-model="
+                                            currentButton.afterEvent
+                                        "
+                                        type="textarea"
+                                        placeholder="请输入新建、编辑完的回调"
+                                        @click="
+                                            openScriptDialog(
+                                                'afterEvent'
+                                            )
+                                        "
+                                        readonly
+                                        :rows="1"
+                                    />
+                                </el-form-item>
+                            </el-col>
+                        </template>
+                    </el-row>
+                </el-form>
 			</el-col>
 		</el-row>
 		<template #footer>
