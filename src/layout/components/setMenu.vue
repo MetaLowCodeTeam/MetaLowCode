@@ -394,6 +394,23 @@
                             </el-col>
                         </el-row>
 					</div>
+                    <div 
+                        class="mt-10 mb-5"
+                        v-if="cutMenu.type == 1"
+                    >
+                        布局编码 
+                        <el-tooltip placement="top">
+                            <template #content>
+                                <div style="width: 300px;">
+                                    同一个实体在菜单中使用不同布局编码，可以设置不同的布局设置（列显示，自定义按钮，自定义设置等）。
+                                </div>
+                            </template>
+                            <el-icon class="icon-top-2">
+                                <InfoFilled />
+                            </el-icon>
+                        </el-tooltip>
+                    </div>
+                    <el-input v-model="cutMenu.modelName" placeholder="请输入布局编码" clearable/>
 					<div
 						class="mt-5"
 						v-if="
@@ -427,20 +444,6 @@
 								:value="item.value"
 							/>
 						</el-select>
-                        <div class="mt-10 mb-5">
-                            布局编码 
-                            <el-tooltip placement="top">
-                                <template #content>
-                                    <div style="width: 300px;">
-                                        同一个实体在菜单中使用不同布局编码，可以设置不同的布局设置（列显示，自定义按钮，自定义设置等）。
-                                    </div>
-                                </template>
-                                <el-icon class="icon-top-2">
-                                    <InfoFilled />
-                                </el-icon>
-                            </el-tooltip>
-                        </div>
-                        <el-input v-model="cutMenu.modelName" placeholder="请输入布局编码" clearable/>
 					</div>
                     
                     <div class="mt-5">
