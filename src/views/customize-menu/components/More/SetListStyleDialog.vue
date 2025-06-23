@@ -4,34 +4,8 @@
         <div v-loading="loading" class="set-list-style">
             <el-row :gutter="20">
                 <el-col :span="12">
-                    <div class="form-title">列表设置</div>
-                    <div class="form-item">
-                        <div class="info-text mt-5 mb-2">序号列设置</div>
-                        <el-checkbox v-model="styleConf.listConf.showRowNumber">
-                            是否显示
-                        </el-checkbox>
-                        <el-radio-group 
-                            v-model="styleConf.listConf.rowNumberPosition"
-                            v-if="styleConf.listConf.showRowNumber"
-                        >
-                            <el-radio label="不冻结列" :value="false" />
-                            <el-radio label="向左冻结列" value="left" />
-                            <el-radio label="向右冻结列" value="right" />
-                        </el-radio-group>
-                    </div>
-                    <div class="form-item mb-30">
-                        <div class="info-text mt-5 mb-2">操作列宽度（初始值：120）</div>
-                        <el-input-number 
-                            v-model="styleConf.listConf.actionColumnWidth" 
-                            placeholder="操作列宽度"
-                            style="width: 160px"
-                        />
-                        <span class="ml-10">px</span>
-                    </div>
-                </el-col>
-                <el-col :span="12">
                     <div class="form-title">新建编辑弹框属性</div>
-                    <div class="form-item mb-30">
+                    <div class="form-item mb-10">
                         <el-checkbox v-model="styleConf.actionConf.newTabOpenNew">
                             新页签打开新建
                         </el-checkbox>
@@ -43,40 +17,9 @@
                         </el-checkbox>
                     </div>
                 </el-col>
-                
-                <el-col :span="12" v-if="!isListCard && !isListCalendar">
-                    <div class="form-title">
-                        顶部区域隐藏
-                    </div>
-                    <el-row>
-                        <el-col 
-                            v-for="(item,inx) in topHiddenConfig" 
-                            :span="item.colspan || 12" 
-                            :key="inx"    
-                        >
-                            <el-checkbox 
-                                :checked="!styleConf.toolbarConf[item.value]"
-                                @change="handleCheckboxChange(item.value, $event)"
-                            >
-                                {{ item.label }}
-                            </el-checkbox>
-                            <el-tooltip v-if="item.value === 'showMoreBtn'">
-                                <template #content>
-                                    如果开启隐藏可使用快捷键临时显示。 <br />
-                                    Windows系统快捷键： <br />
-                                    Shift + Alt + M + L <br /> <br />
-
-                                    Mac系统 快捷键： <br />
-                                    Shift + Option + M + L
-                                </template>
-                                <el-icon class="ml-5 cursor-pointer"><QuestionFilled /></el-icon>
-                            </el-tooltip>
-                        </el-col>
-                    </el-row>
-                </el-col>
                 <el-col :span="12">
                     <div class="form-title">查看侧滑栏属性</div>
-                    <div class="form-item mb-20">
+                    <div class="form-item mb-10">
                         <el-checkbox v-model="styleConf.detailConf.showFullScreen">
                             显示全屏按钮
                         </el-checkbox>
@@ -88,52 +31,10 @@
                         </el-checkbox>
                     </div>
                 </el-col>
-                <el-col :span="12" v-if="!isListCard && !isListCalendar">
-                    <div class="form-title">批量删除设置</div>
-                    <div class="form-item mb-30">
-                        <el-checkbox v-model="styleConf.delConf.allowUsersSelect">
-                            允许用户选择级联删除
-                        </el-checkbox>
-                        <div class="info-text mt-5 mb-2">默认级联删除</div>
-                        <MlAssociatedRecords
-                            v-model="styleConf.delConf.associatedRecords"
-                            :entityCode="entityCode"
-                        />
-                    </div>
-                </el-col>
-                <el-col :span="12" v-if="!isListCard && !isListCalendar">
-                    <div class="form-title">复制设置</div>
-                    <div class="form-item mb-30">
-                        <el-checkbox v-model="styleConf.copyConf.openCopy">
-                            打开复制功能
-                        </el-checkbox>
-                        <el-checkbox v-model="styleConf.copyConf.skipDuplicationCheck">
-                            是否跳过唯一性检查
-                            <el-tooltip
-                                class="box-item"
-                                effect="dark"
-                                content="当前实体有字段设置为不可重复时，开启该功能后，数据依然可以复制成功。请视业务情况决定是否开启。"
-                                placement="top-start"
-                            >
-                                <span style="position: relative; top: 2px">
-                                    <el-icon><QuestionFilled /></el-icon>
-                                </span>
-                            </el-tooltip>
-                        </el-checkbox>
-                        <!-- <el-checkbox v-model="styleConf.copyConf.allowUsersSelect">
-                            允许用户选择级联复制
-                        </el-checkbox> -->
-                        <div class="info-text mt-5 mb-2">默认级联复制</div>
-                        <MlAssociatedRecords
-                            v-model="styleConf.copyConf.cascades"
-                            :entityCode="entityCode"
-                        />
-                    </div>
-                </el-col>
-                
+                <el-divider style="margin: 0 0 15px 0 ;"/>
                 <el-col :span="12">
                     <div class="form-title">指定表单</div>
-                    <el-tabs v-model="formActiveName" class="mb-20">
+                    <el-tabs v-model="formActiveName" class="mb-10">
                         <el-tab-pane label="指定新建表单" name="addFormId">
                             <el-form label-width="120px" label-position="top">
                                 <el-form-item label="指定新建表单(PC)" class="mb-5">
@@ -178,11 +79,121 @@
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
+                    <div class="form-title">
+                        顶部区域隐藏
+                    </div>
+                    <el-row class="mb-20">
+                        <el-col 
+                            v-for="(item,inx) in topHiddenConfig" 
+                            :span="item.colspan || 12" 
+                            :key="inx"    
+                        >
+                            <el-checkbox 
+                                :checked="!styleConf.toolbarConf[item.value]"
+                                @change="handleCheckboxChange(item.value, $event)"
+                            >
+                                {{ item.label }}
+                            </el-checkbox>
+                            <el-tooltip v-if="item.value === 'showMoreBtn'">
+                                <template #content>
+                                    如果开启隐藏可使用快捷键临时显示。 <br />
+                                    Windows系统快捷键： <br />
+                                    Shift + Alt + M + L <br /> <br />
+
+                                    Mac系统 快捷键： <br />
+                                    Shift + Option + M + L
+                                </template>
+                                <el-icon class="ml-5 cursor-pointer"><QuestionFilled /></el-icon>
+                            </el-tooltip>
+                        </el-col>
+                    </el-row>
+                </el-col>
+                <el-divider style="margin: 0 0 15px 0 ;"/>
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
+                    <div class="form-title">批量删除设置</div>
+                    <div class="form-item mb-20">
+                        <el-checkbox v-model="styleConf.delConf.allowUsersSelect">
+                            允许用户选择级联删除
+                        </el-checkbox>
+                        <div class="info-text mt-5 mb-2">默认级联删除</div>
+                        <MlAssociatedRecords
+                            v-model="styleConf.delConf.associatedRecords"
+                            :entityCode="entityCode"
+                        />
+                    </div>
+                </el-col>
+                <el-col :span="12" v-if="!isListCard && !isListCalendar">
+                    <div class="form-title">复制设置</div>
+                    <div class="form-item mb-20">
+                        <el-checkbox v-model="styleConf.copyConf.openCopy">
+                            打开复制功能
+                        </el-checkbox>
+                        <el-checkbox v-model="styleConf.copyConf.skipDuplicationCheck">
+                            是否跳过唯一性检查
+                            <el-tooltip
+                                class="box-item"
+                                effect="dark"
+                                content="当前实体有字段设置为不可重复时，开启该功能后，数据依然可以复制成功。请视业务情况决定是否开启。"
+                                placement="top-start"
+                            >
+                                <span style="position: relative; top: 2px">
+                                    <el-icon><QuestionFilled /></el-icon>
+                                </span>
+                            </el-tooltip>
+                        </el-checkbox>
+                        <!-- <el-checkbox v-model="styleConf.copyConf.allowUsersSelect">
+                            允许用户选择级联复制
+                        </el-checkbox> -->
+                        <div class="info-text mt-5 mb-2">默认级联复制</div>
+                        <MlAssociatedRecords
+                            v-model="styleConf.copyConf.cascades"
+                            :entityCode="entityCode"
+                        />
+                    </div>
+                </el-col>
+                <el-divider style="margin: 0 0 15px 0 ;"/>
+                <el-col :span="12">
+                    <div class="form-title">列表设置</div>
+                    <div class="form-item mt-10">
+                        <div class="info-text">序号列设置</div>
+                        <el-checkbox v-model="styleConf.listConf.showRowNumber">
+                            是否显示
+                        </el-checkbox>
+                        <el-radio-group 
+                            v-model="styleConf.listConf.rowNumberPosition"
+                            v-if="styleConf.listConf.showRowNumber"
+                        >
+                            <el-radio label="不冻结列" :value="false" />
+                            <el-radio label="向左冻结列" value="left" />
+                            <el-radio label="向右冻结列" value="right" />
+                        </el-radio-group>
+                    </div>
+                    <div class="form-item">
+                        <div class="info-text">操作列宽度（初始值：120）</div>
+                        <el-input-number 
+                            v-model="styleConf.listConf.actionColumnWidth" 
+                            placeholder="操作列宽度"
+                            style="width: 160px"
+                        />
+                        <span class="ml-10">px</span>
+                    </div>
+                    <div class="form-item mb-20 mt-10">
+                        <div class="info-text">高级查询设置</div>
+                        <el-checkbox v-model="styleConf.listConf.showAdvancedQueryTab">
+                            常用查询页签显示
+                        </el-checkbox>
+                        <el-checkbox v-model="styleConf.listConf.showAdvancedQuerySelect">
+                            常用查询下拉显示
+                        </el-checkbox>
+                    </div>
+                </el-col>
+                <el-divider style="margin: 0 0 15px 0 ;"/>
                 <el-col :span="24" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">自定义渲染</div>
                     <el-tabs v-model="activeName">
                         <el-tab-pane label="自定义行选中禁用设置" name="rowDisabledRender">
-                            <div class="mb-10 mt-10">
+                            <div style="margin-top: -10px;">
                                 <span>自定义渲染</span>
                                 <a
                                     class="ml-a-span"
@@ -195,7 +206,7 @@
                             <mlCodeEditor v-model="styleConf.rowConf.rowDisabledRender" />
                         </el-tab-pane>
                         <el-tab-pane label="自定义行按钮禁用设置" name="rowBtnDisabled">
-                            <div class="mb-10 mt-10">
+                            <div style="margin-top: -10px;">
                                 <span>自定义渲染</span>
                                 <a
                                     class="ml-a-span"
@@ -208,7 +219,7 @@
                             <mlCodeEditor  v-model="styleConf.rowConf.rowBtnDisabled" />
                         </el-tab-pane>
                         <el-tab-pane label="自定义行样式设置" name="rowStyleRender">
-                            <div class="mb-10 mt-10">
+                            <div style="margin-top: -10px;">
                                 <span>自定义渲染</span>
                                 <a
                                     class="ml-a-span"
@@ -221,7 +232,7 @@
                             <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
                         </el-tab-pane>
                         <el-tab-pane label="自定义弹框设置" name="dialogConfig">
-                            <div class="mb-10 mt-10">
+                            <div style="margin-top: -10px;">
                                 <span>自定义渲染</span>
                                 <a
                                     class="ml-a-span"
@@ -236,7 +247,6 @@
                     </el-tabs>
                 </el-col>
             </el-row>
-
         </div>
 		<template #footer>
 			<div class="footer-div">
@@ -336,6 +346,9 @@ let styleConf = ref({
         rowNumberPosition: false,
         // 操作列宽度
         actionColumnWidth: null,
+        // 高级查询设置
+        showAdvancedQueryTab: false,
+        showAdvancedQuerySelect: true,
     },
 	// 新建编辑弹框属性
 	actionConf: {
@@ -490,6 +503,8 @@ const initStyleConf = () => {
         // 老数据初始化默认值
         // 初始化序号列位置
         styleConf.value.listConf.rowNumberPosition = styleConf.value.listConf.rowNumberPosition || false;
+        // 初始化高级查询常用查询下拉显示
+        styleConf.value.listConf.showAdvancedQuerySelect = styleConf.value.listConf.showAdvancedQuerySelect ?? true;
 	}
     initFormList();
 };
@@ -545,20 +560,17 @@ const handleCheckboxChange = (key, event) => {
 </script>
 <style lang="scss" scoped>
 .set-list-style {
-    // display: flex;
     text-align: left;
-    // flex-direction: column;
-    // justify-content: space-between;
-	// line-height: 1;
-	// max-height: 500px;
-	// overflow-y: auto;
-	// overflow-x: hidden;
-	// padding: 20px;
     line-height: 32px;
 	.form-title {
 		font-weight: bold;
-		font-size: 18px;
+		font-size: 16px;
 		margin-bottom: 5px;
+        color: var(--el-color-primary);
+        background: var(--el-color-primary-light-8); /* 浅蓝背景 */
+        border-left: 4px solid var(--el-color-primary); 
+        box-sizing: border-box;
+        padding-left: 10px;
 	}
     .form-item {
         // line-height: 32px;

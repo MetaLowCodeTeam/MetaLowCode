@@ -357,7 +357,7 @@ $--table-setting-item-hover-color: #dedede;
 // 实体列表详情背景颜色
 $--table-detail-bg-color: #fff;
 // 实体列表详情头部背景颜色
-$--table-detail-header-bg-color: #fff;
+$--table-detail-header-bg-color: var(--el-color-primary);
 // 实体列表详情主体背景颜色
 $--table-detail-body-bg-color: #fff;
 
@@ -426,15 +426,17 @@ $--dialog-footer-bg-color: #fff;
         text-align: left;
 		.my-title {
 			font-size: 20px;
-			color: #fff;
+			// color: var(--el-color-primary);
+            color: #fff;
 		}
 		.close-icon {
 			position: relative;
 			top: 6px;
 			cursor: pointer;
-			color: #fff;
+			// color: var(--el-color-primary);
+            color: #fff;
 			&:hover {
-				color: #fafafa;
+				color: var(--el-color-primary-dark-3);
 			}
 		}
 		.full-screen-icon {

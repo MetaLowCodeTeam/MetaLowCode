@@ -1,7 +1,13 @@
 <template>
     <!--  -->
     <div class="ml-list-advanced-query">
-        <el-select ref="selectRefs" style="width: 210px;" v-model="defaultValue" @focus="showAdvfilter = false">
+        <el-select 
+            ref="selectRefs" 
+            style="width: 210px;" 
+            v-model="defaultValue" 
+            @focus="showAdvfilter = false"
+            v-if="showSelect"
+        >
             <template #empty>
                 <div class="select-content">
                     <div
@@ -154,6 +160,11 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    // 是否显示常用查询下拉框
+    showSelect: {
+        type: Boolean,
+        default: true,
+    },
 });
 const emits = defineEmits([
     "queryNow",
@@ -266,7 +277,10 @@ const autoCurrentLabel = (key) => {
 const changeOp = (op) => {
     autoCurrentLabel(op.layoutConfigId);
     selectRefs.value.visible = false;
-    emits("changeAdvFilter", op.config ? JSON.parse(op.config) : {});
+    emits("changeAdvFilter", {
+        config: op.config ? JSON.parse(op.config) : {},
+        layoutConfigId: op.layoutConfigId || "all",
+    });
     $API.layoutConfig.saveUserLayoutCache(
         "FILTER:" + props.entityName,
         op.layoutConfigId
@@ -480,11 +494,11 @@ const handleCommand = (e) => {
     line-height: 30px;
     border: 1px solid #dcdfe6;
     vertical-align: middle;
-    border-left: 0;
     width: 30px;
     text-align: center;
     cursor: pointer;
     position: relative;
+    border-radius: 4px;
     &:hover {
         border-color: #c0c4cc;
     }

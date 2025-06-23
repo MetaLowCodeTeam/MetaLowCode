@@ -136,6 +136,7 @@
                     @close="delField(tag)"
                     :closable="!isReadMode && !field.options.disabled"
                     size="large"
+                    @click="handleTagClick(tag)"
                 >
                     {{ tag.name }}
                 </el-tag>
@@ -316,6 +317,10 @@ export default {
 				}
 			}
 		},
+        // 点击标签
+        handleTagClick(tag){
+            this.$refs.detailRef.openDialog(tag.id);
+        },
 
 		onAppendButtonClick() {
             if (this.designState) {

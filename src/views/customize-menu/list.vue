@@ -1,6 +1,14 @@
 <template>
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
+            <ListAdvancedFilterTab 
+                v-if="topSearchConfig.isDefaultQueryPanel && advancedFilter.length > 0 && listConf.showAdvancedQueryTab"
+                :advancedFilter="advancedFilter"
+                :advFilter="advFilter"
+                @changeAdvFilter="changeAdvFilter"
+                :entityName="entityName"
+                :modelName="modelName"
+            />
             <div
                 class="table-search-box"
                 v-if="listParamConf.showHeader && toolbarConf.showHeader"
@@ -48,6 +56,7 @@
                             :filter="advancedFilter"
                             :modelName="modelName"
                             class="mr-15"
+                            :showSelect="listConf.showAdvancedQuerySelect"
                         />
                         <slot name="beforeQuickQuery"></slot>
                         <div class="quick-query" v-if="listParamConf.showQuickQuery && toolbarConf.showQuickQuery">
@@ -240,7 +249,10 @@
             <div
                 v-else
                 class="table-div"
-                :class="{'showPagination':listParamConf.showPagination}"
+                :class="{
+                    'showPagination':listParamConf.showPagination,
+                    'showAdvancedQueryTab': topSearchConfig.isDefaultQueryPanel && advancedFilter.length > 0 && listConf.showAdvancedQueryTab
+                }"
                 :style="{'height':calculateHeight}"
             >
                 <!-- 分组 -->
@@ -597,6 +609,8 @@ import ListcommonGroupFilter from "./components/ListcommonGroupFilter.vue";
 import ListCustomizeQuery from './components/ListCustomizeQuery.vue'
 // 列表列设置
 import ListColumnSet from './components/ListColumnSet.vue';
+// 高级查询页签
+import ListAdvancedFilterTab from './components/ListAdvancedFilterTab.vue';
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 执行审批弹框
@@ -1288,14 +1302,18 @@ const getColumnCustomButtonShow = (item, row) => {
     }
 }
 
+
 // 获取导航配置
 const getLayoutList = async () => {
     let res = await $API.layoutConfig.getLayoutList(entityName.value, myModelName.value);
     if (res && res.data) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
-        advFilter.value = res.data.advFilter || "all";
         advancedFilter.value = res.data.FILTER;
+        // 格式化高级查询
+        advFilter.value = res.data.advFilter || (advancedFilter.value.length > 0 
+            ? advancedFilter.value[0].layoutConfigId 
+            : "all");
         mainDetailField.value = res.data.mainDetailField;
 
         filterEasySql.value = "";
@@ -1752,8 +1770,9 @@ const openSelectFieldDialog = () => {
 };
 
 // 常用查询切换
-const changeAdvFilter = (e) => {
-    comQueriesList.value = { ...e };
+const changeAdvFilter = ({config, layoutConfigId}) => {
+    advFilter.value = layoutConfigId;
+    comQueriesList.value = { ...config };
     getTableList();
 };
 
@@ -2420,6 +2439,12 @@ div {
             &.showPagination {
                 height: calc(100% - 100px);
             }
+            &.showAdvancedQueryTab {
+                height: calc(100% - 100px);
+            }
+            &.showPagination.showAdvancedQueryTab {
+                height: calc(100% - 132px);
+            }
             display: flex;
             .tree-group-box {
                 width: 300px;
@@ -2510,4 +2535,5 @@ div {
     position: relative;
     top: 2px;
 }
+
 </style>

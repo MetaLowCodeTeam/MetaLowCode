@@ -989,7 +989,7 @@ defineExpose({
     }
 }
 .detail-header {
-	border-bottom: 2px solid #f1f2f3;
+	// border-bottom: 2px solid #f1f2f3;
 	// padding-bottom: 20px;
 	// box-sizing: border-box;
 	padding: 16px;
@@ -1002,16 +1002,22 @@ defineExpose({
             position: relative;
             top: 3px;
 			&:hover {
-				color: var(--el-color-primary);
+				color: var(--el-color-primary-dark-2);
 			}
 		}
+        :deep(.el-button) {
+            &:not(.is-disabled):hover {
+                background-color: var(--el-color-primary-dark-2);
+            }
+        }
 	}
 
 	.detail-header-title {
 		font-size: 18px;
 		padding-left: 5px;
 		border-left: 5px solid;
-		border-left-color: var(--el-color-primary);
+		border-left-color: var(--el-color-primary-dark-2);
+        color: #fff;
         height: 26px;
         .title-span {
             float: left;
