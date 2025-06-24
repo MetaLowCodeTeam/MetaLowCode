@@ -584,7 +584,7 @@ const confirm = async (target) => {
                     }
                     emits("saveFinishCallBack", resData);
                     
-                    if(target != 'notCloseDialog' && target != 'submit'){
+                    if(target != 'notCloseDialog' && target != 'submit'){ 
                         isShow.value = false;
                     }else {
                         row.detailId = resData[getEntityIdFieldName(row)];

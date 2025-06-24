@@ -511,6 +511,7 @@ const openDialog = (id, localDsv, paramFormId) => {
     detailId.value = id;
 	entityCode.value = queryEntityCodeById(id);
 	entityName.value = queryEntityNameById(id);
+    formId.value = paramFormId;
 	if (!entityName.value) {
 		ElMessage.warning("当前实体未找到");
 		return;
@@ -521,10 +522,6 @@ const openDialog = (id, localDsv, paramFormId) => {
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }
-    if(paramFormId) {
-        formId.value = paramFormId;
-    }
-    
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
@@ -698,8 +695,9 @@ let noeData = ref(false);
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
-    globalDsv.value.useFormId = formId.value || props.recordDetailFormId;
-	let res = await getFormLayout(entityName.value, formId.value || props.recordDetailFormId);
+
+    globalDsv.value.useFormId = formId.value ?? props.recordDetailFormId;
+	let res = await getFormLayout(entityName.value, formId.value ?? props.recordDetailFormId);
 	haveLayoutJson.value = false;
 	noeData.value = false;
 	if (res) {
@@ -814,7 +812,7 @@ const onAdd = (e) => {
 const editEmits = (obj) => {
     let tempObj = JSON.parse(JSON.stringify(obj));
     if(!tempObj.formId) {
-        tempObj.formId = formId.value || props.recordDetailFormId;
+        tempObj.formId = formId.value || props.recordEditFormId;
     }
     editRefs.value.openDialog(tempObj);
 }

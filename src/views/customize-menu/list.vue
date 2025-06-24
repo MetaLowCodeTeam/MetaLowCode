@@ -2,7 +2,7 @@
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
             <ListAdvancedFilterTab 
-                v-if="topSearchConfig.isDefaultQueryPanel && advancedFilter.length > 0 && listConf.showAdvancedQueryTab"
+                v-if="advancedFilter.length > 0 && listConf.showAdvancedQueryTab"
                 :advancedFilter="advancedFilter"
                 :advFilter="advFilter"
                 @changeAdvFilter="changeAdvFilter"
@@ -251,7 +251,7 @@
                 class="table-div"
                 :class="{
                     'showPagination':listParamConf.showPagination,
-                    'showAdvancedQueryTab': topSearchConfig.isDefaultQueryPanel && advancedFilter.length > 0 && listConf.showAdvancedQueryTab
+                    'showAdvancedQueryTab': advancedFilter.length > 0 && listConf.showAdvancedQueryTab
                 }"
                 :style="{'height':calculateHeight}"
             >
@@ -2323,7 +2323,8 @@ const viewRow = (row, localDsv, formId) => {
 // 打开其他实体详情
 const viewToOtherEntity = (recordId, localDsv, formId, customDialogTitle) => {
     customDetailDialogTitle.value = customDialogTitle;
-    detailRefs.value.openDialog(recordId, localDsv, formId);
+    let newFormId = formId || "";
+    detailRefs.value.openDialog(recordId, localDsv, newFormId);
 }
 
 // 新建编辑其他实体
@@ -2384,6 +2385,7 @@ defineExpose({
     previewFile,
     pageLoading,
     queryNow,
+    setRouterParams,
 })
 
 </script>
