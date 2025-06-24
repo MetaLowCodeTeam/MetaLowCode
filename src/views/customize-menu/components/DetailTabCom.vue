@@ -257,6 +257,7 @@ const cardSortCommand = (e) => {
 let curtTab = ref({});
 
 
+let dufaultFilter = ref([]);
 
 // 初始化数据
 const initData = async () => {
@@ -295,6 +296,13 @@ const initData = async () => {
         } else {
             tableColumn.value = ALL.FILTER;
             defaultColumnShow.value = "ALL";
+        }
+        // 如果存在默认过滤
+        if (res.data.DEFAULT_FILTER) {
+            let { config } = res.data.DEFAULT_FILTER;
+            if(config){
+                dufaultFilter.value = JSON.parse(config);
+            }
         }
         // 如果存在列
         if (tableColumn.value.length > 0) {
@@ -431,6 +439,7 @@ const getTableList = async () => {
     if(curtTab.value.isCustomLabel) {
         const regex = new RegExp(`{${props.idFieldName}}`, 'g');
         filterEasySql = curtTab.value.filterEasySql.replace(regex,`'${props.entityId}'`);
+        filter = {...dufaultFilter.value};
     }else {
         filter = {
             equation: "AND",

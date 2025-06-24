@@ -286,7 +286,7 @@ import useCommonStore from "@/store/modules/common";
 const { queryEntityNameByCode } = useCommonStore();
 const props = defineProps({
 	modelValue: null,
-	entityCode: { type: Number },
+	entityCode: { type: [Number, String] },
 	layoutConfig: { type: Object, default: () => {} },
 	// 实体模块名称
 	modelName: {
