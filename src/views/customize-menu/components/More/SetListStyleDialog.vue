@@ -1,6 +1,11 @@
 <template>
-	<!--  -->
-	<ml-dialog title="其他列表设置" v-model="isShow" width="850px" scrollbarHeight="500px" noBodyPadding>
+	<ml-dialog 
+        title="其他列表设置" 
+        v-model="isShow" 
+        width="850px" 
+        scrollbarHeight="500px" 
+        appendToBody
+    >
         <div v-loading="loading" class="set-list-style">
             <el-row :gutter="20">
                 <el-col :span="12">
@@ -153,8 +158,10 @@
                     </div>
                 </el-col>
                 <el-divider style="margin: 0 0 15px 0 ;"/>
-                <el-col :span="12">
+                <el-col :span="24">
                     <div class="form-title">列表设置</div>
+                </el-col>
+                <el-col :span="10">
                     <div class="form-item mt-10">
                         <div class="info-text">序号列设置</div>
                         <el-checkbox v-model="styleConf.listConf.showRowNumber">
@@ -169,7 +176,7 @@
                             <el-radio label="向右冻结列" value="right" />
                         </el-radio-group>
                     </div>
-                    <div class="form-item">
+                    <div class="form-item mb-15">
                         <div class="info-text">操作列宽度（初始值：120）</div>
                         <el-input-number 
                             v-model="styleConf.listConf.actionColumnWidth" 
@@ -178,17 +185,15 @@
                         />
                         <span class="ml-10">px</span>
                     </div>
-                    <div class="form-item mb-20 mt-10">
-                        <div class="info-text">高级查询设置</div>
-                        <el-checkbox v-model="styleConf.listConf.showAdvancedQueryTab">
-                            常用查询页签显示
-                        </el-checkbox>
-                        <el-checkbox v-model="styleConf.listConf.showAdvancedQuerySelect">
-                            常用查询下拉显示
-                        </el-checkbox>
-                    </div>
                 </el-col>
-                <el-divider style="margin: 0 0 15px 0 ;"/>
+                <el-col :span="14">
+                    <SetListStyleListTab 
+                        ref="setListStyleListTabRef"
+                        :listTabs="styleConf.listConf.listTabs"
+                        :entityName="queryEntityNameByCode(entityCode)" 
+                    />
+                </el-col>
+                <el-divider style="margin: 10px 0 15px 0 ;"/>
                 <el-col :span="24" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">自定义渲染</div>
                     <el-tabs v-model="activeName">
@@ -272,6 +277,8 @@ import layoutConfig from "@/api/layoutConfig";
  * 组件
  */
 import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
+// 列表页签设置
+import SetListStyleListTab from "./SetListStyle-ListTab.vue";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { getFormLayoutList } from "@/api/system-manager";
@@ -346,9 +353,8 @@ let styleConf = ref({
         rowNumberPosition: false,
         // 操作列宽度
         actionColumnWidth: null,
-        // 高级查询设置
-        showAdvancedQueryTab: false,
-        showAdvancedQuerySelect: true,
+        // 列表页签
+        listTabs: [],
     },
 	// 新建编辑弹框属性
 	actionConf: {
@@ -478,7 +484,6 @@ watch(
 	{ deep: true }
 );
 onMounted(() => {
-    
 	isShow.value = props.modelValue;
 	myLayoutConf.value = props.layoutConfig;
 	initStyleConf();
@@ -503,8 +508,7 @@ const initStyleConf = () => {
         // 老数据初始化默认值
         // 初始化序号列位置
         styleConf.value.listConf.rowNumberPosition = styleConf.value.listConf.rowNumberPosition || false;
-        // 初始化高级查询常用查询下拉显示
-        styleConf.value.listConf.showAdvancedQuerySelect = styleConf.value.listConf.showAdvancedQuerySelect ?? true;
+        console.log(styleConf.value.listConf.listTabs,'styleConf.value.listConf.listTabs')
 	}
     initFormList();
 };
@@ -531,7 +535,12 @@ const initFormList = async () => {
     loading.value = false;
 }
 
+let setListStyleListTabRef = ref(null);
+
+// 保存
 const onSave = async () => {
+    let listTabs = setListStyleListTabRef.value?.getTableData();
+    styleConf.value.listConf.listTabs = listTabs;
 	let param = {
 		config: JSON.stringify(styleConf.value),
 		entityCode: props.entityCode,

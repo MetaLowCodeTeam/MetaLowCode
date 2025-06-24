@@ -1,13 +1,11 @@
 <template>
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
-            <ListAdvancedFilterTab 
-                v-if="advancedFilter.length > 0 && listConf.showAdvancedQueryTab"
-                :advancedFilter="advancedFilter"
-                :advFilter="advFilter"
-                @changeAdvFilter="changeAdvFilter"
-                :entityName="entityName"
-                :modelName="modelName"
+            <ListTabFilter 
+                v-if="listTabs.length > 0"
+                :listTabs="listTabs"
+                :currentTab="currentTab"
+                @changeTab="changeTab"
             />
             <div
                 class="table-search-box"
@@ -56,7 +54,6 @@
                             :filter="advancedFilter"
                             :modelName="modelName"
                             class="mr-15"
-                            :showSelect="listConf.showAdvancedQuerySelect"
                         />
                         <slot name="beforeQuickQuery"></slot>
                         <div class="quick-query" v-if="listParamConf.showQuickQuery && toolbarConf.showQuickQuery">
@@ -251,7 +248,7 @@
                 class="table-div"
                 :class="{
                     'showPagination':listParamConf.showPagination,
-                    'showAdvancedQueryTab': advancedFilter.length > 0 && listConf.showAdvancedQueryTab
+                    'showAdvancedQueryTab': listTabs.length > 0,
                 }"
                 :style="{'height':calculateHeight}"
             >
@@ -312,7 +309,7 @@
                     <el-table-column
                         :width="statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
-                        :fixed="checkedColumnFixed || listConf.showRowNumber && listConf.rowNumberPosition == 'left'"
+                        :fixed="checkedColumnFixed || rowStyleConf?.listConf?.showRowNumber && rowStyleConf?.listConf?.rowNumberPosition == 'left'"
                         v-if="listParamConf.showTableCheckbox"
                     >
                         <template #header>
@@ -336,12 +333,12 @@
                             />
                         </template>
                     </el-table-column>
-                    <template v-if="listConf.showRowNumber">
+                    <template v-if="rowStyleConf?.listConf?.showRowNumber">
                         <el-table-column
                             label="序号"
                             width="60"
                             align="center"
-                            :fixed="listConf.rowNumberPosition"
+                            :fixed="rowStyleConf?.listConf?.rowNumberPosition"
                         >
                             <template #default="scope">
                                 {{ (page.no - 1) * page.size + scope.$index + 1 }}
@@ -381,7 +378,7 @@
                         label="操作"
                         fixed="right"
                         :align="'center'"
-                        :width="listConf.actionColumnWidth || 120"
+                        :width="rowStyleConf?.listConf?.actionColumnWidth || 120"
                     >
                         <template 
                             #default="scope" 
@@ -610,7 +607,7 @@ import ListCustomizeQuery from './components/ListCustomizeQuery.vue'
 // 列表列设置
 import ListColumnSet from './components/ListColumnSet.vue';
 // 高级查询页签
-import ListAdvancedFilterTab from './components/ListAdvancedFilterTab.vue';
+import ListTabFilter from './components/ListTabFilter.vue';
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 执行审批弹框
@@ -790,6 +787,7 @@ let showActionColumnSlot = ref(false);
 
 // 是否显示列配置
 let showColumnSet = ref(false);
+
 
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
 // 配置项
@@ -1125,8 +1123,6 @@ let queryPanelLoading = ref(false);
 
 let calculateHeight = ref("");
 
-// 列表设置
-let listConf = ref({});
 
 // 切换查询面板
 const changeQueryPanel = async (target) => {
@@ -1302,6 +1298,10 @@ const getColumnCustomButtonShow = (item, row) => {
     }
 }
 
+// 列表页签
+let listTabs = ref([]);
+// 当前页签
+let currentTab = ref(null);
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -1353,9 +1353,12 @@ const getLayoutList = async () => {
             if(rowStyleConf.value.toolbarConf){
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
-            // 如果存在列表设置
+            // 列表页签
             if(rowStyleConf.value.listConf){
-                listConf.value = rowStyleConf.value.listConf;
+                listTabs.value = rowStyleConf.value.listConf.listTabs;
+                if(listTabs.value.length > 0){
+                    currentTab.value = listTabs.value[0].guid;
+                }
             }
         }
         // 树状分组筛选
@@ -1842,6 +1845,13 @@ const commonGroupFilterNodeClick = (e) => {
 };
 let recordIds = ref([]);
 let sliceTable = ref([]);
+
+// 切换页签
+const changeTab = (item) => {
+    currentTab.value = item.guid;
+    getTableList();
+}
+
 const getTableList = async () => {
     pageLoading.value = true;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
@@ -1881,6 +1891,10 @@ const getTableList = async () => {
             console.error('执行默认查询后置条件时出错:', error);
         }
     }
+    let tabFilter = {};
+    if(currentTab.value){
+        tabFilter = listTabs.value.find(item => item.guid == currentTab.value).filter;
+    }
     let param = {
         mainEntity: entityName.value,
         fieldsList: allFields.value.join(),
@@ -1894,8 +1908,8 @@ const getTableList = async () => {
         statistics: statistics.value,
         filterEasySql: filterEasySql.value,
         defaultFilter: defaultFilter.value,
-        otherFilters: otherFilters.value,
-    };
+        otherFilters: [...otherFilters.value, tabFilter],
+    }; 
     dataExportData.queryParm = { ...param };
     let res = await getDataList(
         param.mainEntity,
