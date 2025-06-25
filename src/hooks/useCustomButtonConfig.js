@@ -70,8 +70,8 @@ export default function useCustomButtonConfig() {
             filterJson: {},
             // 不满足条件时的提示文案
             errorTipText: "",
-            // 不满足条件时隐藏按钮
-            isHideBtn: true,
+            // 不满足条件时显示方式 1禁用 2隐藏
+            errorShowType: 1,
             // 执行脚本
             customScript: "",
             // 前置事件

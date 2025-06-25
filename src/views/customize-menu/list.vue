@@ -435,7 +435,7 @@
                                         placement="top"
                                     >
                                         <el-button
-                                            @click="customButtonClick(item, scope.row)"
+                                            @click.stop="customButtonClick(item, scope.row)"
                                             link
                                             :type="item.type"
                                             disabled
@@ -465,15 +465,11 @@
                                 </template>
                                 <template v-else>
                                     <el-button
-                                        @click="customButtonClick(item, scope.row)"
+                                        @click.stop="customButtonClick(item, scope.row)"
                                         link
                                         :type="item.type"
-                                        v-if="getColumnCustomButtonShow(item, scope.row)
-                                            // (!item.isNative && item.filterJson?.items?.length == 0) ||
-                                            // (item.isNative &&
-                                            //     !item.hide &&
-                                            //     !(item.key === 'edit' && !hasEditRight))
-                                        "
+                                        v-if="getColumnCustomButtonShow(item, scope.row)"
+                                        :disabled="getCustomButtonDisabled(item, scope.row)"
                                     >
                                         <el-icon
                                             :color="item.iconColor"
@@ -1195,10 +1191,35 @@ let nativeButtonDisabled = ref({
     edit: multipleSelection.value.length !== 1,
 });
 // 获取自定义按钮禁用状态
-const getCustomButtonDisabled = (item) => {
+const getCustomButtonDisabled = (item, row) => {
     if(item.isNative){
         return nativeButtonDisabled[item.key];
     }else {
+        // 如果设置了过滤条件 且 设置了 不满足条件时隐藏按钮
+        if (item.filterJson?.items?.length > 0 && item.errorShowType == 1) {
+            let { customBtnShow } = row;
+            // 如果当前行的 customBtnShow 不存在，或者不是一个对象，则不显示
+            if (!customBtnShow || typeof customBtnShow !== 'object') {
+                return true;
+            }
+            // 获取所有操作列按钮
+            let { pcColumn } = customButtonConfig.value;
+            // 过滤出有查询条件的按钮
+            let btns = pcColumn.filter(el => el.filterJson?.items?.length > 0);
+            // 找到当前 item 在 pcColumn 中的索引
+            let currentItemIndex = btns.findIndex(el => el.guid === item.guid);
+            // 如果找到了索引，并且 customBtnShow 中有对应的值，则返回该值
+            // customBtnShow[currentItemIndex] 会是 0 或 1
+            if (currentItemIndex !== -1 && customBtnShow.hasOwnProperty(currentItemIndex)) {
+                return customBtnShow[currentItemIndex] === 0 || customBtnShow[currentItemIndex] === false; 
+            }
+            // 如果没有找到对应的索引，或者 customBtnShow 中没有该索引的值
+            return false;
+        }
+        // 如果是行操作按钮，都没有的情况下不禁用
+        if(row) {
+            return false;
+        }
         let { availableType, action } = item;
         let isDisabled = false;
         
@@ -1271,9 +1292,8 @@ const getColumnCustomButtonShow = (item, row) => {
     // 处理非内置按钮
     else { 
         // 如果设置了过滤条件 且 设置了 不满足条件时隐藏按钮
-        if (item.filterJson?.items?.length > 0 && item.isHideBtn) {
+        if (item.filterJson?.items?.length > 0 && item.errorShowType == 2) {
             let { customBtnShow } = row;
-
             // 如果当前行的 customBtnShow 不存在，或者不是一个对象，则不显示
             if (!customBtnShow || typeof customBtnShow !== 'object') {
                 return false;
@@ -1287,7 +1307,7 @@ const getColumnCustomButtonShow = (item, row) => {
             // 如果找到了索引，并且 customBtnShow 中有对应的值，则返回该值
             // customBtnShow[currentItemIndex] 会是 0 或 1
             if (currentItemIndex !== -1 && customBtnShow.hasOwnProperty(currentItemIndex)) {
-                return customBtnShow[currentItemIndex] === 1; // 假设 1 为显示，0 为隐藏
+                return customBtnShow[currentItemIndex] === 1 || customBtnShow[currentItemIndex] === true; // 假设 1 为显示，0 为隐藏
             }
             // 如果没有找到对应的索引，或者 customBtnShow 中没有该索引的值，默认不显示
             return false;
@@ -1297,6 +1317,8 @@ const getColumnCustomButtonShow = (item, row) => {
         return true;
     }
 }
+
+
 
 // 列表页签
 let listTabs = ref([]);

@@ -369,15 +369,6 @@
                                         "
                                         @confirm="conditionConfirm"
                                     />
-                                    <el-checkbox v-if="
-                                        currentButton.filterJson?.items
-                                            ?.length > 0
-                                        " 
-                                        v-model="currentButton.isHideBtn" 
-                                        class="ml-30"
-                                    >
-                                        不满足条件时隐藏按钮
-                                    </el-checkbox>
                                 </el-form-item>
                                 <el-form-item
                                     label="提示文案"
@@ -393,6 +384,16 @@
                                         placeholder="请输入不满足条件时的提示文案"
                                         clearable
                                     />
+                                </el-form-item>
+                                <el-form-item label="显示方式">
+                                    <el-select 
+                                        v-model="currentButton.errorShowType" 
+                                        placeholder="请选择不满足条件时显示方式"
+                                        clearable
+                                    >
+                                        <el-option label="禁用" :value="1" />
+                                        <el-option label="隐藏" :value="2" />
+                                    </el-select>
                                 </el-form-item>
                             </el-col>
                             <!-- 选择实体 -->
