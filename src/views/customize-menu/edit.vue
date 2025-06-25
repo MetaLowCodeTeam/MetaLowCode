@@ -587,8 +587,11 @@ const confirm = async (target) => {
                     if(target != 'notCloseDialog' && target != 'submit'){ 
                         isShow.value = false;
                     }else {
-                        row.detailId = resData[getEntityIdFieldName(row)];
-                        initFormLayout()
+                        // 如果是新建，重新初始化表单。
+                        if(!row.detailId){
+                            row.detailId = resData[getEntityIdFieldName(row)];
+                            initFormLayout()
+                        }
                         if(target == 'submit'){
                             SubmitApprovalDialogRefs.value?.openDialog(row.detailId);
                         }

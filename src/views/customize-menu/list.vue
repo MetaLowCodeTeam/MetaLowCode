@@ -1234,7 +1234,7 @@ const customButtonClick = (item, row) => {
     }else {
         customButtonHandler(
             item, 
-            [row] || multipleSelection.value,
+            row ? [row] : multipleSelection.value,
             currentExposed.value,
             row ? row[idFieldName.value] : multipleSelection.value?.[0]?.[idFieldName.value],
             pageLoading,
