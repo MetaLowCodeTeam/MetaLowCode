@@ -427,7 +427,7 @@
                             <template 
                                 v-for="(item,index) of customButtonConfig.pcColumn" :key="index"
                             >
-                                <template v-if="item.key === 'edit' && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'">
+                                <template v-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'">
                                     <el-tooltip
                                         class="box-item"
                                         effect="dark"
@@ -1355,7 +1355,7 @@ const getLayoutList = async () => {
             }
             // 列表页签
             if(rowStyleConf.value.listConf){
-                listTabs.value = rowStyleConf.value.listConf.listTabs;
+                listTabs.value = rowStyleConf.value.listConf.listTabs || [];
                 if(listTabs.value.length > 0){
                     currentTab.value = listTabs.value[0].guid;
                 }
