@@ -319,6 +319,7 @@ let haveLayoutJson = ref(false);
 // 初始化自定义表单
 const initFormLayout = async () => {
     loading.value = true;
+    haveLayoutJson.value = false;
     globalDsv.value.formEntity = row.entityName;
     globalDsv.value.formEntityIdFieldName = getEntityIdFieldName(row);
     globalDsv.value.setRowRecordId = setRowRecordId;

@@ -257,7 +257,7 @@ const cardSortCommand = (e) => {
 let curtTab = ref({});
 
 
-let dufaultFilter = ref([]);
+let dufaultFilter = ref(null);
 
 // 初始化数据
 const initData = async () => {
@@ -297,6 +297,7 @@ const initData = async () => {
             tableColumn.value = ALL.FILTER;
             defaultColumnShow.value = "ALL";
         }
+        dufaultFilter.value = null;
         // 如果存在默认过滤
         if (res.data.DEFAULT_FILTER) {
             let { config } = res.data.DEFAULT_FILTER;

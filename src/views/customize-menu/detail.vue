@@ -51,7 +51,7 @@
 								<ElIconFullScreen />
 							</el-icon>
 						</span>
-						<span class="fr-icon mr-10" @click="loading ? null : refresh">
+						<span class="fr-icon mr-10" @click="loading ? null : refresh()">
 							<el-icon>
 								<ElIconRefresh />
 							</el-icon>
@@ -556,7 +556,6 @@ const componentExists = (componentName) => {
 const refresh = () => {
 	cutTab.value = "detail";
     cutTabIndex.value = 0;
-    haveLayoutJson.value = false;
 	getLayoutList();
 };
 
@@ -695,10 +694,9 @@ let noeData = ref(false);
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
-
+    haveLayoutJson.value = false;
     globalDsv.value.useFormId = formId.value ?? props.recordDetailFormId;
 	let res = await getFormLayout(entityName.value, formId.value ?? props.recordDetailFormId);
-	haveLayoutJson.value = false;
 	noeData.value = false;
 	if (res) {
 		if (res.data?.layoutJson) {
