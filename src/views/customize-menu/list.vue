@@ -149,7 +149,6 @@
                                 <i v-if="item.props.icon" :class="`el-icon-${item.props.icon}`"></i>
                                 {{ item.label }}
                             </el-button>
-
                             <!-- 更多按钮 -->
                             <More
                                 :listParamConf="listParamConf"
@@ -1055,7 +1054,7 @@ const mergedButtonList = computed(() => {
 // 配置自定义列显示
 const MoreRefs = ref();
 const editColumn = (type) => {
-    MoreRefs.value.editColumn(type);
+    MoreRefs.value[0].editColumn(type);
 };
 
 /**
@@ -2297,7 +2296,7 @@ const toDel = (row) => {
         pageType: 'list',
         list: [row],
     }
-    MoreRefs.value?.allowOpenDialog(null, dialogParam);
+    MoreRefs.value[0]?.allowOpenDialog(null, dialogParam);
 }
 
 // 查看详情
@@ -2322,27 +2321,28 @@ const toAdd = (localDsv, formId, targetEntity, dialogConf) => {
 // 更多操作
 const toMoreAction = (type) => {
     let allocationTypes = ['del', 'allocation', 'share', 'unShare'];
+    console.log(MoreRefs.value[0],'MoreRefs.value[0]')
     if(allocationTypes.includes(type)){
         if(multipleSelection.value.length < 1){
             ElMessage.warning("请先选择数据")
             return
         }
-        MoreRefs.value?.allocationFn(type);
+        MoreRefs.value[0]?.allocationFn(type);
     }else if(type == 'dataExport'){
-        MoreRefs.value?.dataExportFn(type);
+        MoreRefs.value[0]?.dataExportFn(type);
     }else if(type == 'dataUpload'){
-        MoreRefs.value?.dataUploadFn(type);
+        MoreRefs.value[0]?.dataUploadFn(type);
     }
 }
 
 // 显示列设置
 const showColumnSetting = (type) => {
-    MoreRefs.value?.editColumn(type)
+    MoreRefs.value[0]?.editColumn(type)
 }
 
 // 更多列表设置
 const listMoreSetting = (type) => {
-    MoreRefs.value?.listMoreSetting(type)
+    MoreRefs.value[0]?.listMoreSetting(type)
 }
 
 // 编辑行

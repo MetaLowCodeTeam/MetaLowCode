@@ -893,11 +893,11 @@ const toMoreAction = (type) => {
             ElMessage.warning("请先选择数据")
             return
         }
-        MoreRefs.value?.allocationFn(type);
+        MoreRefs.value[0]?.allocationFn(type);
     }else if(type == 'reportForms'){
-        MoreRefs.value?.openReportForms();
+        MoreRefs.value[0]?.openReportForms();
     }else if(type == 'printer'){
-        MoreRefs.value?.openPrinter();
+        MoreRefs.value[0]?.openPrinter();
     }
 }
 
