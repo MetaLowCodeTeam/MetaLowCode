@@ -19,7 +19,7 @@
                 </div>
             </div>
         </template>
-        <div class="detail-main" v-loading="loading">
+        <div class="detail-main mt-20" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
                     <div class="detail-container">
@@ -535,8 +535,47 @@ const beforeReject = () => {
         // 打开驳回弹框
         openRejectDialog();
     } else {
-        confirmApprove(true);
+        // 直接驳回，跳过表单数据获取
+        executeApproval(true);
     }
+};
+
+// 执行审批逻辑（提取的公共方法）
+const executeApproval = async (isBacked, formData = null) => {
+    loading.value = true;
+    // 是复杂工作流
+    if (approvalTask.value.flowType == 2) {
+        saveComplexFlow(isBacked ? 2 : 1);
+        return;
+    } else {
+        // 如果有表单数据，先保存记录
+        if (formData) {
+            let saveRes = await saveRecord(
+                allEntityName.value[approvalTask.value.entityCode],
+                props.entityId,
+                formData
+            );
+            if (!saveRes) {
+                loading.value = false;
+                return;
+            }
+        }
+        
+        form.value.entityId = props.entityId;
+        form.value.isBacked = isBacked;
+        form.value.signatureImage = esignConf.value.resultImg;
+        let res = await http.post(
+            "/approval/approvalProcess",
+            form.value
+        );
+        if (res) {
+            let msg = isBacked ? "驳回" : "审批";
+            ElMessage.success(msg + "成功");
+            canner();
+            emit("confirm");
+        }
+    }
+    loading.value = false;
 };
 
 // 同意审批
@@ -546,35 +585,8 @@ function confirmApprove(isBacked) {
         return
     }
     vFormRef.value.getFormData().then(async (formData) => {
-        loading.value = true;
-        let saveRes = await saveRecord(
-            allEntityName.value[approvalTask.value.entityCode],
-            props.entityId,
-            formData
-        );
-        if (saveRes) {
-            // 是复杂工作流
-            if (approvalTask.value.flowType == 2) {
-                saveComplexFlow(isBacked ? 2 : 1);
-                return;
-            } else {
-                form.value.entityId = props.entityId;
-                form.value.isBacked = isBacked;
-                form.value.signatureImage = esignConf.value.resultImg;
-                let res = await http.post(
-                    "/approval/approvalProcess",
-                    form.value
-                );
-                if (res) {
-                    let msg = isBacked ? "驳回" : "审批";
-                    ElMessage.success(msg + "成功");
-                    canner();
-                    emit("confirm");
-                }
-            }
-        }
-        loading.value = false;
-
+        // 调用公共审批方法
+        executeApproval(isBacked, formData);
     }).catch(err => {
         ElMessage.error("表单校验失败，请修改后重新提交");
     })
@@ -779,8 +791,10 @@ defineExpose({
 .detail-header {
     // padding-bottom: 20px;
     // box-sizing: border-box;
-    padding: 20px;
+    padding: 0 20px;
     height: 48px;
+    line-height: 48px;
+    color: #fff;
     //background: #f0f0f0;
     .fr-box {
         // height: 60px;
