@@ -207,6 +207,12 @@
                     </div>
                     <div
                         class="pl-20 item"
+                        @click="openListTabDialog"
+                    >
+                        列表页签设置
+                    </div>
+                    <div
+                        class="pl-20 item"
                         @click="openCustomButtonDialog"
                     >
                         自定义按钮设置
@@ -295,6 +301,13 @@
         :entityCode="entityCode"
         @confirm="allocationSuccess"
     />
+    <!-- 列表页签设置 -->
+    <ListTabSetting 
+        ref="listTabSettingRef" 
+        :entityName="queryEntityNameByCode(entityCode)"
+        :entityCode="entityCode"
+        @confirm="allocationSuccess"
+    />
 </template>
 
 <script setup>
@@ -325,6 +338,8 @@ import CalendarListSetting from "./CalendarListSetting.vue";
 import RowCopy from './RowCopy.vue';
 // 自定义按钮设置
 import CustomButtonSetting from './CustomButtonSetting.vue';
+// 列表页签设置
+import ListTabSetting from './ListTabSetting.vue';
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -648,11 +663,18 @@ const openCustomButtonDialog = () => {
     }
     let param = {
         entityName: queryEntityNameByCode(props.entityCode),
-        modelName: props.modelName,
         customButton,
         customButtonId,
     }
     customButtonRef.value.openDialog(param);
+}
+
+/**
+ * 列表页签设置
+ */
+let listTabSettingRef = ref(null);
+const openListTabDialog = () => {
+    listTabSettingRef.value.openDialog(myLayoutConf.value);
 }
 
 defineExpose({

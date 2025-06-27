@@ -4,7 +4,7 @@
             class="list-advanced-filter-tab-item" 
             v-for="(item, index) in listTabs" 
             :key="index"
-            :class="{'active': currentTab === item.guid}"
+            :class="{'active': currentTab === item.key}"
             @click="changeTab(item)"
         >
 			{{ item.name }}
@@ -21,8 +21,8 @@ const props = defineProps({
 		default: () => [],
 	},
     currentTab: {
-        type: String,
-        default: "",
+        type: [Number, String],
+        default: 0,
     },
 });
 

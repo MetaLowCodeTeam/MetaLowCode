@@ -505,6 +505,14 @@ export const getModelName = () => {
     return modelName;
 }
 
+// 格式化modelName
+export const formatModelName = (modelName, tabModelName) => {
+    if(tabModelName && tabModelName != 'default'){
+        return modelName + '_' + tabModelName;
+    }
+    return modelName;
+}
+
 // 判断是否是 GUID
 const hasGuid = (str) => {
     const guidPattern = /^[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/;

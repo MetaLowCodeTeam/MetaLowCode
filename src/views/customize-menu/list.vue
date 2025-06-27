@@ -14,7 +14,7 @@
                 <ListCustomizeQuery
                     :entityName="entityName"
                     :entityCode="entityCode"
-                    :modelName="modelName"
+                    :modelName="myModelName"
                     :topSearchConfig="topSearchConfig"
                     @queryNow="queryNow"
                     @uploadItems="topPanelUploadItems"
@@ -608,7 +608,7 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
-import { mlShortcutkeys } from "@/utils/util";
+import { mlShortcutkeys, formatModelName } from "@/utils/util";
 // 自定义按钮
 import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 const {
@@ -1326,15 +1326,17 @@ let currentTab = ref(null);
 
 // 获取导航配置
 const getLayoutList = async () => {
-    let res = await $API.layoutConfig.getLayoutList(entityName.value, myModelName.value);
+    // 获取格式化后的 modelName（包含页签）
+    let paramModelName = formatModelName(myModelName.value, currentTab.value);
+    
+    pageLoading.value = true;
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, paramModelName, currentTab.value ? true : false );
     if (res && res.data) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
         advancedFilter.value = res.data.FILTER;
         // 格式化高级查询
-        advFilter.value = res.data.advFilter || (advancedFilter.value.length > 0 
-            ? advancedFilter.value[0].layoutConfigId 
-            : "all");
+        advFilter.value = res.data.advFilter || "all";
         mainDetailField.value = res.data.mainDetailField;
 
         filterEasySql.value = "";
@@ -1363,7 +1365,7 @@ const getLayoutList = async () => {
         if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
             customButtonConfig.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
         }
-        
+         
         // 自定义行样式
         if(res.data.STYLE && res.data.STYLE.config){
             rowStyleConf.value = JSON.parse(res.data.STYLE.config);
@@ -1374,11 +1376,15 @@ const getLayoutList = async () => {
             if(rowStyleConf.value.toolbarConf){
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
-            // 列表页签
-            if(rowStyleConf.value.listConf){
-                listTabs.value = rowStyleConf.value.listConf.listTabs || [];
-                if(listTabs.value.length > 0){
-                    currentTab.value = listTabs.value[0].guid;
+        }
+        // 列表页签
+        if(res.data.tabFilterConfig) {
+            let tabFilterConfig = JSON.parse(res.data.tabFilterConfig.config);
+            listTabs.value = tabFilterConfig.tabFilterList || [];
+            if(listTabs.value.length > 0){
+                // 只有在 currentTab 为空时才设置为第一个页签
+                if(!currentTab.value){
+                    currentTab.value = listTabs.value[0].key;
                 }
             }
         }
@@ -1423,11 +1429,15 @@ const getLayoutList = async () => {
             let hasFixed = tableColumn.value.filter(el => el.fixed == 'left');
             checkedColumnFixed.value = hasFixed.length > 0 ? true : false;
             refreshData();
+        }else {
+            pageLoading.value = false;
         }
         showColumnSet.value = false;
         if(tableColumn.value.length < 1){
             showColumnSet.value = true;
         }
+    }else {
+        pageLoading.value = false;
     }
 };
 
@@ -1869,8 +1879,8 @@ let sliceTable = ref([]);
 
 // 切换页签
 const changeTab = (item) => {
-    currentTab.value = item.guid;
-    getTableList();
+    currentTab.value = item.key;
+    getLayoutList();
 }
 
 const getTableList = async () => {
@@ -1914,7 +1924,7 @@ const getTableList = async () => {
     }
     let tabFilter = {};
     if(currentTab.value){
-        tabFilter = listTabs.value.find(item => item.guid == currentTab.value).filter;
+        tabFilter = listTabs.value.find(item => item.key == currentTab.value).filter;
     }
     let param = {
         mainEntity: entityName.value,
@@ -1945,7 +1955,7 @@ const getTableList = async () => {
         param.statistics,
         param.filterEasySql,
         param.defaultFilter,
-        myModelName.value,
+        formatModelName(myModelName.value, currentTab.value),
         param.otherFilters
     );
     if (res && res.data) {

@@ -726,10 +726,10 @@ const initData = async () => {
                     rowResData.value = queryByIdRes.data || {};
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
 					nextTick(() => {
-						vFormRef.value.setFormData(formatFormVirtualField(rowResData.value));
+						vFormRef.value?.setFormData(formatFormVirtualField(rowResData.value));
 						nextTick(() => {
-							vFormRef.value.reloadOptionData();
-							vFormRef.value.setReadMode();
+							vFormRef.value?.reloadOptionData();
+							vFormRef.value?.setReadMode();
 							globalDsv.value.openCreateDialog = openCreateDialog;
 						});
 					});
