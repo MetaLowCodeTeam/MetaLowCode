@@ -223,7 +223,7 @@
         </div>
         <template #reference>
             <el-button type="primary" plain>
-                更多
+                更多{{ modelName }}
                 <el-icon style="transform: rotate(90deg);">
                     <ElIconMoreFilled />
                 </el-icon>
@@ -307,6 +307,8 @@
         :entityName="queryEntityNameByCode(entityCode)"
         :entityCode="entityCode"
         @confirm="allocationSuccess"
+        :tabKey="tabKey"
+        :modelName="modelName"
     />
 </template>
 
@@ -390,6 +392,16 @@ const props = defineProps({
     isListCalendar: {
         type: Boolean,
         default: false,
+    },
+    // 当前页签
+    tabKey: {
+        type: String,
+        default: "",
+    },
+    // 页签列表
+    tabFilterConfig: {
+        type: Object,
+        default: () => {},
     }
 });
 
@@ -674,7 +686,7 @@ const openCustomButtonDialog = () => {
  */
 let listTabSettingRef = ref(null);
 const openListTabDialog = () => {
-    listTabSettingRef.value.openDialog(myLayoutConf.value);
+    listTabSettingRef.value.openDialog(props.tabFilterConfig);
 }
 
 defineExpose({

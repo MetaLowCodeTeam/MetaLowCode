@@ -14,7 +14,7 @@
                 <ListCustomizeQuery
                     :entityName="entityName"
                     :entityCode="entityCode"
-                    :modelName="myModelName"
+                    :modelName="formatModelName(myModelName, currentTab)"
                     :topSearchConfig="topSearchConfig"
                     @queryNow="queryNow"
                     @uploadItems="topPanelUploadItems"
@@ -52,7 +52,7 @@
                             @onAddAdv="getLayoutList"
                             @changeAdvFilter="changeAdvFilter"
                             :filter="advancedFilter"
-                            :modelName="modelName"
+                            :modelName="formatModelName(myModelName, currentTab)"
                             class="mr-15"
                         />
                         <slot name="beforeQuickQuery"></slot>
@@ -166,7 +166,9 @@
                                 :isReferenceComp="isReferenceComp"
                                 :isMainDetailField="!!mainDetailField"
                                 :referenceEntity="referenceEntity"
-                                :modelName="modelName"
+                                :modelName="formatModelName(myModelName, currentTab)"
+                                :tabKey="currentTab"
+                                :tabFilterConfig="tabFilterConfig"
                                 @copySuccess="copySuccess"
                                 v-else-if="item.type === 'more' && toolbarConf.showMoreBtn"
                             />
@@ -225,7 +227,9 @@
                                 :isReferenceComp="isReferenceComp"
                                 :isMainDetailField="!!mainDetailField"
                                 :referenceEntity="referenceEntity"
-                                :modelName="modelName"
+                                :modelName="formatModelName(myModelName, currentTab)"
+                                :tabKey="currentTab"
+                                :tabFilterConfig="tabFilterConfig"
                                 @copySuccess="copySuccess"
                                 v-else-if="item.key === 'more' && !item.hide"
                             />
@@ -288,6 +292,7 @@
                 </div>
                 <!-- 表格 -->
                 <el-table
+                    :key="renderKey"
                     ref="TableRef"
                     :data="sliceTable"
                     :border="true"
@@ -344,7 +349,7 @@
                             </template>
                         </el-table-column>
                     </template>
-                    <template v-for="(column,columnInx) of tableColumn" :key="columnInx">
+                    <template v-for="column of tableColumn" :key="column.fieldName + '_' + renderKey">
                         <el-table-column
                             v-if="!column.pcHide"
                             :prop="column.fieldName"
@@ -533,7 +538,7 @@
             @onConfirm="getLayoutList"
             :entityName="entityName"
             :nameFieldName="nameFieldName"
-            :modelName="modelName"
+            :modelName="formatModelName(myModelName, currentTab)"
         />
         <!-- 批量编辑 -->
         <ListBatchUpdate ref="ListBatchUpdateRef" @onConfirm="getTableList" />
@@ -1323,14 +1328,18 @@ const getColumnCustomButtonShow = (item, row) => {
 let listTabs = ref([]);
 // 当前页签
 let currentTab = ref(null);
+let tabFilterConfig = ref({});
+// 强制重新渲染的key
+let renderKey = ref(0);
 
 // 获取导航配置
 const getLayoutList = async () => {
     // 获取格式化后的 modelName（包含页签）
     let paramModelName = formatModelName(myModelName.value, currentTab.value);
+    let isTabFilter = currentTab.value ? true : false;
     
     pageLoading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(entityName.value, paramModelName, currentTab.value ? true : false );
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, paramModelName, isTabFilter );
     if (res && res.data) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
@@ -1361,12 +1370,14 @@ const getLayoutList = async () => {
             entityCode: entityCode.value,
             ...res.data
         };
+        customButtonConfig.value = {};
         // 自定义按钮
         if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
             customButtonConfig.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
         }
          
         // 自定义行样式
+        rowStyleConf.value = {};
         if(res.data.STYLE && res.data.STYLE.config){
             rowStyleConf.value = JSON.parse(res.data.STYLE.config);
             if(rowStyleConf.value.rowConf && rowStyleConf.value.rowConf.rowStyleRender){
@@ -1377,25 +1388,34 @@ const getLayoutList = async () => {
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
         }
+        if(!isTabFilter){
+            listTabs.value = [];
+            tabFilterConfig.value = {};
+        }
         // 列表页签
         if(res.data.tabFilterConfig) {
-            let tabFilterConfig = JSON.parse(res.data.tabFilterConfig.config);
-            listTabs.value = tabFilterConfig.tabFilterList || [];
-            if(listTabs.value.length > 0){
+            tabFilterConfig.value = res.data.tabFilterConfig;
+            let tabConf = JSON.parse(res.data.tabFilterConfig.config);
+            if(tabConf && tabConf.tabFilterList && tabConf.tabFilterList.length > 0){
+                listTabs.value = tabConf.tabFilterList;
                 // 只有在 currentTab 为空时才设置为第一个页签
                 if(!currentTab.value){
                     currentTab.value = listTabs.value[0].key;
                 }
             }
         }
+        // 初始化批量编辑
+        batchUpdateConf.value = {};
         // 树状分组筛选
         if (res.data.TREE_GROUP) {
             treeGroupConf.value = JSON.parse(res.data.TREE_GROUP.config);
         }
+        batchUpdateConf.value = {};
         // 批量编辑
         if (res.data.BATCH_UPDATE) {
             batchUpdateConf.value = JSON.parse(res.data.BATCH_UPDATE.config);
         }
+        topSearchConfig.value = {};
         // 顶部搜索
         if(res.data.TOP_SEARCH) {
             topSearchConfig.value = JSON.parse(res.data.TOP_SEARCH.config);
@@ -1405,24 +1425,14 @@ const getLayoutList = async () => {
             }
         };
         // 如果存在快速搜索字段
-        if (res.data.SEARCH) {
-            quickQueryConf.layoutConfigId = res.data.SEARCH.layoutConfigId;
-            quickQueryConf.entityCode = res.data.SEARCH.entityCode;
-            quickQueryConf.value = JSON.parse(res.data.SEARCH.config);
-        }
-        // treeGroup.value = ? ;
-
-        // 如果存在默认配置，用默认配置
-        // if (res.data.chosenListType) {
-        //     tableColumn.value =
-        //         layoutConfig.value[res.data.chosenListType].FILTER;
-        //     defaultColumnShow.value = res.data.chosenListType;
-        // } else {
-        //     tableColumn.value = ALL.FILTER;
-        //     defaultColumnShow.value = "ALL";
-        // }
+        quickQueryConf.layoutConfigId = res.data.SEARCH?.layoutConfigId;
+        quickQueryConf.entityCode = entityCode.value;
+        quickQueryConf.value = res.data.SEARCH?.config ? JSON.parse(res.data.SEARCH.config) : [];
+        
+     
+        
         // 直接用默认的
-        tableColumn.value = ALL.FILTER;
+        tableColumn.value = [...ALL.FILTER];
         defaultColumnShow.value = "ALL";
         // 如果存在列
         if (tableColumn.value.length > 0) {
@@ -1880,6 +1890,7 @@ let sliceTable = ref([]);
 // 切换页签
 const changeTab = (item) => {
     currentTab.value = item.key;
+    renderKey.value = Date.now(); // 强制重新渲染
     getLayoutList();
 }
 
@@ -1924,7 +1935,7 @@ const getTableList = async () => {
     }
     let tabFilter = {};
     if(currentTab.value){
-        tabFilter = listTabs.value.find(item => item.key == currentTab.value).filter;
+        tabFilter = listTabs.value.find(item => item.key == currentTab.value)?.filter;
     }
     let param = {
         mainEntity: entityName.value,
@@ -2331,7 +2342,6 @@ const toAdd = (localDsv, formId, targetEntity, dialogConf) => {
 // 更多操作
 const toMoreAction = (type) => {
     let allocationTypes = ['del', 'allocation', 'share', 'unShare'];
-    console.log(MoreRefs.value[0],'MoreRefs.value[0]')
     if(allocationTypes.includes(type)){
         if(multipleSelection.value.length < 1){
             ElMessage.warning("请先选择数据")

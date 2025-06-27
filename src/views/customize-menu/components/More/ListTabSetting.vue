@@ -116,6 +116,11 @@ const props = defineProps({
 		type: [String, Number],
 		default: "",
 	},
+    // 当前页签
+    tabKey: {
+        type: String,
+        default: "",
+    }
 });
 
 const emits = defineEmits(["confirm"]);
@@ -157,7 +162,7 @@ const actionBtns = [
 // 默认页签，无法删除
 const defaultTab = ref({
 	name: "默认页签",
-	key: "",
+	key: "default",
 	filter: null,
 });
 // 自增key
@@ -228,7 +233,7 @@ const handleConfirm = () => {
 	// 新建
 	if (!key) {
 		tableData.value.push({
-			key: selfKey.value,
+			key: selfKey.value + "",
 			name,
 			filter,
 		});
@@ -257,8 +262,7 @@ let loading = ref(false);
 let layoutConfigId = ref(null);
 
 // 打开弹窗
-const openDialog = (layoutConfig) => {
-	let { tabFilterConfig } = layoutConfig;
+const openDialog = (tabFilterConfig) => {
 	layoutConfigId.value = tabFilterConfig?.layoutConfigId || null;
 	if (tabFilterConfig && tabFilterConfig.config) {
 		let config = JSON.parse(tabFilterConfig.config);
@@ -275,6 +279,11 @@ const openDialog = (layoutConfig) => {
 
 // 保存
 const handleSave = async () => {
+    let paramModelName = props.modelName;
+    if(props.modelName && props.tabKey){
+        // 如果modelName存在且页签存在，去掉_curtab后缀
+        paramModelName = props.modelName.replace(new RegExp(`_${props.tabKey}$`), '');
+    }
 	let param = {
 		config: JSON.stringify({
 			selfKey: selfKey.value,
@@ -288,7 +297,7 @@ const handleSave = async () => {
 		layoutConfigId.value,
 		"TAB_FILTER",
 		param,
-		props.modelName
+		paramModelName
 	);
 	if (res) {
 		ElMessage.success("保存成功");
