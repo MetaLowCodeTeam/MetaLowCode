@@ -193,7 +193,8 @@ const props = defineProps({
     },
     entityName: { type: String, default: "" },
     applyType: { type: String, default: "TAB" },
-    title: { type: String, default: "配置页签" }
+    title: { type: String, default: "配置页签" },
+    modelName: { type: String, default: "" },
 });
 const emit = defineEmits(["update:modelValue", "confirm"]);
 const $ElMessage = inject("$ElMessage");
@@ -401,7 +402,8 @@ const onSave = async () => {
     let res = await $API.layoutConfig.saveConfig(
         layoutConfigId.value,
         props.applyType,
-        param
+        param,
+        props.modelName
     );
     if (res) {
         $ElMessage.success("保存成功！");

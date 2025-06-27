@@ -243,7 +243,9 @@ const conditionsConfirm = async () => {
 };
 
 watchEffect(() => {
-	compConditions.value = JSON.parse(JSON.stringify(props.topSearchConfig.filter));
+    if(props.topSearchConfig.filter){
+        compConditions.value = JSON.parse(JSON.stringify(props.topSearchConfig.filter));
+    }
 	forbidUserModifyField.value = props.topSearchConfig.forbidUserModifyField;
 	hideQueryMatchType.value = props.topSearchConfig.hideQueryMatchType;
 	isSaveQueryValue.value = props.topSearchConfig.isSaveQueryValue;

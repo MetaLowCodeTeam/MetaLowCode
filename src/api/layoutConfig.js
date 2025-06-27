@@ -13,9 +13,10 @@ export default {
         return await http.get("/layout/getNavigationList");
     },
     // 切换使用导航
-    saveUserLayoutCache: async (cacheKey, cacheValue) => {
+    saveUserLayoutCache: async (cacheKey, cacheValue, newModelName) => {
+        let modelName = newModelName || getModelName();
         return http.post('/layout/saveUserLayoutCache', {}, {
-            params: { cacheKey, cacheValue },
+            params: { cacheKey, cacheValue, modelName },
         })
     },
     // 删除布局配置

@@ -208,6 +208,7 @@
                     <div
                         class="pl-20 item"
                         @click="openListTabDialog"
+                        v-if="!isListCalendar && !isListCard && !isReferenceComp"
                     >
                         列表页签设置
                     </div>
@@ -223,7 +224,7 @@
         </div>
         <template #reference>
             <el-button type="primary" plain>
-                更多{{ modelName }}
+                更多
                 <el-icon style="transform: rotate(90deg);">
                     <ElIconMoreFilled />
                 </el-icon>

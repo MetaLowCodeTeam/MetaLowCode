@@ -508,7 +508,6 @@ const initStyleConf = () => {
         // 老数据初始化默认值
         // 初始化序号列位置
         styleConf.value.listConf.rowNumberPosition = styleConf.value.listConf.rowNumberPosition || false;
-        console.log(styleConf.value.listConf.listTabs,'styleConf.value.listConf.listTabs')
 	}
     initFormList();
 };

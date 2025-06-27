@@ -1030,7 +1030,7 @@ const mergedButtonList = computed(() => {
             key: 3,
             props: { 
                 icon: 'Edit', 
-                disabled: multipleSelection.value.length !== 1,
+                disabled: multipleSelection.value.length < 1,
             },
             handler: () => openBatchUpdateDialog(),
             show: listParamConf.value.showBatchUpdateBtn && batchUpdateConf.value.length > 0
@@ -1149,7 +1149,7 @@ const changeQueryPanel = async (target) => {
 		topSearchConfig.value.layoutConfigId,
 		"TOP_SEARCH",
 		param,
-		myModelName.value
+		formatModelName(myModelName.value, currentTab.value)
 	);
     if(res){
         if(!topSearchConfig.value.layoutConfigId) {
@@ -1349,6 +1349,7 @@ const getLayoutList = async () => {
         mainDetailField.value = res.data.mainDetailField;
 
         filterEasySql.value = "";
+        defaultFilter.value = {};
         if(res.data.DEFAULT_FILTER){
             defaultFilter.value = JSON.parse(res.data.DEFAULT_FILTER.config);
         }
@@ -1378,6 +1379,17 @@ const getLayoutList = async () => {
          
         // 自定义行样式
         rowStyleConf.value = {};
+        toolbarConf.value = {
+            showHeader: true,
+            showChangeQueryPanel: true,
+            showAdvancedQuery: true,
+            showQuickQuery: true,
+            showOpenBtn: true,
+            showEditBtn: true,
+            showAddBtn: true,
+            showMoreBtn: true,
+        }
+        renderRowStyle.value = "";
         if(res.data.STYLE && res.data.STYLE.config){
             rowStyleConf.value = JSON.parse(res.data.STYLE.config);
             if(rowStyleConf.value.rowConf && rowStyleConf.value.rowConf.rowStyleRender){
@@ -1405,17 +1417,25 @@ const getLayoutList = async () => {
             }
         }
         // 初始化批量编辑
-        batchUpdateConf.value = {};
+        treeGroupConf.value = [];
         // 树状分组筛选
         if (res.data.TREE_GROUP) {
             treeGroupConf.value = JSON.parse(res.data.TREE_GROUP.config);
         }
-        batchUpdateConf.value = {};
+        batchUpdateConf.value = [];
         // 批量编辑
         if (res.data.BATCH_UPDATE) {
             batchUpdateConf.value = JSON.parse(res.data.BATCH_UPDATE.config);
         }
-        topSearchConfig.value = {};
+        topSearchConfig.value = {
+            isDefaultQueryPanel: true,
+            forbidUserModifyField: false,
+            hideQueryMatchType: false,
+            filter: {
+                equation: "AND",
+                items: [],
+            },
+        };
         // 顶部搜索
         if(res.data.TOP_SEARCH) {
             topSearchConfig.value = JSON.parse(res.data.TOP_SEARCH.config);
@@ -1768,6 +1788,7 @@ const openDetailDialog = (row, localDsv, formId) => {
     let newLocalDsv = {
         parentListExposed:  currentExposed.value,
         ...localDsv,
+        modelName: formatModelName(myModelName.value, currentTab.value)
     }
     detailRefs.value.openDialog(row[idFieldName.value], newLocalDsv, formId);
 };

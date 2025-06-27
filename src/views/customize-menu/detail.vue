@@ -79,6 +79,7 @@
                             :cutTabIndex="cutTabIndex"
                             @confirm="refresh"
                             :checkTabsFilter="checkTabsFilter"
+                            :modelName="currentListModelName"
                         />
                         <div class="detail-container">
                         <!-- 详情 -->
@@ -503,6 +504,8 @@ const onNext = () => {
     openDialog(nextRecordId.value, globalDsv.value, formId.value);
 }
 
+let currentListModelName = ref("");
+
 const openDialog = (id, localDsv, paramFormId) => {
     let { recordIds } = props;
     let curInx = recordIds.indexOf(id);
@@ -518,10 +521,10 @@ const openDialog = (id, localDsv, paramFormId) => {
 	}
     // 设置父级暴露
     globalDsv.value.parentExposed = currentExposed.value;
-    globalDsv.value.modelName = getModelName();
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }
+    console.log(currentListModelName.value,'currentListModelName.value')
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
@@ -622,7 +625,7 @@ const customButtonClick = (item) => {
 // 加载页签
 const getLayoutList = async () => {
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value);
+	let res = await $API.layoutConfig.getLayoutList(entityName.value, currentListModelName.value);
 	if (res) {
         myLayoutConfig.value = res.data;
         myLayoutConfig.value.entityCode = entityCode.value;

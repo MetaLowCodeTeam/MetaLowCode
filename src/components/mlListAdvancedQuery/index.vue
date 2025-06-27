@@ -283,7 +283,8 @@ const changeOp = (op) => {
     });
     $API.layoutConfig.saveUserLayoutCache(
         "FILTER:" + props.entityName,
-        op.layoutConfigId
+        op.layoutConfigId,
+        props.modelName
     );
 };
 

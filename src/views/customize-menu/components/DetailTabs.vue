@@ -19,6 +19,7 @@
         ref="detailTabsSetRefs"
         :entityCode="detailDialog.entityCode"
         :entityName="detailDialog.entityName"
+        :modelName="modelName"
         @confirm="confirm"
     />
 </template>
@@ -36,6 +37,7 @@ const props = defineProps({
     tabsConf: { type: Object, default: () => {} },
     // 默认第一个tab label
     defaultFirstTabLabel: { type: String, default: "" },
+    modelName: { type: String, default: "" },
 });
 const emits = defineEmits(["update:modelValue", "tabChange","confirm"]);
 const $TOOL = inject("$TOOL");
