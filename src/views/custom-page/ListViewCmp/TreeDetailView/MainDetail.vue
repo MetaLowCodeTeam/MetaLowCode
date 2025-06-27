@@ -166,7 +166,9 @@ const handleSave = () => {
 		})
 		.catch((err) => {
 			console.log(err, "err");
-			ElMessage.error("表单校验失败，请修改后重新提交");
+			if(globalDsv.value.defaultValidationMessageDisabled){
+				ElMessage.error("表单校验失败，请修改后重新提交");
+			}
 		});
 };
 
