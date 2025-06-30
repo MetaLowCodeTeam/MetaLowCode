@@ -65,6 +65,7 @@ onBeforeMount(async () => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
+    $TOOL.cookie.set("TOKEN", getQueryString("loginToken"));
     // 获取公开系统配置
     await queryPublicSetting();
     if(location.pathname == appPath + 'inReport'){
@@ -97,8 +98,6 @@ const jumpLink = (type, url) => {
 }
 
 const initApi = async () => {
-    $TOOL.cookie.set("TOKEN", getQueryString("loginToken"));
-    
     let res = await getLoginUser(getQueryString("loginToken"));
     if (res && res.data) {
         if (res.data.data) {
