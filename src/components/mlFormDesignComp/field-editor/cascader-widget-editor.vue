@@ -20,12 +20,6 @@
                         </template>
                     </el-input>
                 </el-form-item>
-				<el-form-item label="字段值是否唯一/不可重复">
-					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
-						<el-radio :value="true">是</el-radio>
-						<el-radio :value="false">否</el-radio>
-					</el-radio-group>
-				</el-form-item>
                 <el-form-item label="是否在列表中默认显示">
                     <el-radio-group
                         v-model="fieldProps.defaultMemberOfListFlag"
@@ -77,7 +71,12 @@
                         />
                     </el-select>
                 </el-form-item>
-                <OptionsCard 
+                <el-form-item label="级联选项">
+                    <div class="info-text">
+                        保存字段后前往开发中心-数据建模-数据字典里添加选项
+                    </div>
+                </el-form-item>
+                <!-- <OptionsCard 
                     v-else
                     :optionItems="optionItems"
                     @addOption="addOption"
@@ -86,7 +85,7 @@
                     @downOption="downOption"
                     @editOption="editOption"
                     @deleteOption="deleteOption"
-                />
+                /> -->
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
                     <el-button type="primary" style="width: 120px" @click="saveField">保存字段</el-button>
@@ -229,7 +228,7 @@ export default {
                     return false;
                 }
 
-                this.fieldProps.type = "Option";
+                this.fieldProps.type = "Cascader";
                 let optionList = [];
                 this.optionItems.forEach((item) => {
                     if (!!item.value) {

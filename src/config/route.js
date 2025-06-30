@@ -255,7 +255,12 @@ const routes = [
                                 component: 'system/data-dict/code-option-manager',
                                 meta: { title: '编码单选项管理', icon: 'el-icon-open', role: 'r6026' }
                             },
-
+                            {
+                                path: appPath + 'cascader-option-manager',
+                                name: 'CascaderOptionManager',
+                                component: 'system/data-dict/cascader-option-manager',
+                                meta: { title: '级联选项管理', icon: 'park-TreeList', role: 'r6028' }
+                            },
                             {
                                 path: appPath + 'tag-manager',
                                 name: 'TagManager',

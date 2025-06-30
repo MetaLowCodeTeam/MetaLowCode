@@ -37,7 +37,7 @@
 					<!-- <el-button type="primary" @click="onSave" :loading="mainLoading" :disabled="treeList.length < 1">保存</el-button> -->
 				</div>
 			</el-header>
-			<el-main class="mian-box" v-loading="mainLoading">
+			<el-main class="mian-box" v-loading="mainLoading" v-if="!isCascaderOption">
 				<el-scrollbar>
 					<el-empty
 						v-if="mainList.length == 0"
@@ -99,6 +99,9 @@
 					</div>
 				</el-scrollbar>
 			</el-main>
+            <el-main class="mian-box" v-loading="mainLoading" v-else>
+                <CascaderOptionMain />
+            </el-main>  
 		</el-container>
 	</el-container>
     <operateSystemDialog 
@@ -118,6 +121,7 @@ import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
 import operateSystemDialog from "./operateSystemDialog.vue";
 import EditCodeOptionDialog from "./EditCodeOptionDialog.vue";
+import CascaderOptionMain from "./CascaderOptionMain.vue";
 import { optionCanBeDeleted, codeOptionCanBeDeleted } from "@/api/system-manager";
 const props = defineProps({
 	title: { type: String, default: "" },
@@ -128,6 +132,8 @@ const props = defineProps({
     pageType: { type: String, default: "" },
     // 是否是编码单选项
     isCodeOption: { type: Boolean, default: false },
+    // 是否是级联选项
+    isCascaderOption: { type: Boolean, default: false },
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
