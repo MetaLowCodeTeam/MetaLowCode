@@ -186,13 +186,6 @@
                         <span class="ml-10">px</span>
                     </div>
                 </el-col>
-                <el-col :span="14">
-                    <SetListStyleListTab 
-                        ref="setListStyleListTabRef"
-                        :listTabs="styleConf.listConf.listTabs"
-                        :entityName="queryEntityNameByCode(entityCode)" 
-                    />
-                </el-col>
                 <el-divider style="margin: 10px 0 15px 0 ;"/>
                 <el-col :span="24" v-if="!isListCard && !isListCalendar">
                     <div class="form-title">自定义渲染</div>
@@ -277,8 +270,6 @@ import layoutConfig from "@/api/layoutConfig";
  * 组件
  */
 import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
-// 列表页签设置
-import SetListStyleListTab from "./SetListStyle-ListTab.vue";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { getFormLayoutList } from "@/api/system-manager";

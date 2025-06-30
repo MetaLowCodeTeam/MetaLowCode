@@ -364,6 +364,7 @@ export default {
         refreshTab() {
             this.contextMenuVisible = false;
             const nowTag = this.contextMenuItem;
+            console.log(nowTag,'nowTag')
             //判断是否当前路由，否的话跳转
             if (this.$route.fullPath !== nowTag.fullPath) {
                 this.$router.push({

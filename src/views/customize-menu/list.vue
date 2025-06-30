@@ -2,7 +2,7 @@
     <div class="customize-menu-list" v-loading="pageLoading">
         <div class="table-box">
             <ListTabFilter 
-                v-if="listTabs.length > 0"
+                v-if="listTabs.length > 0 && isEnableTab"
                 :listTabs="listTabs"
                 :currentTab="currentTab"
                 @changeTab="changeTab"
@@ -1329,6 +1329,8 @@ let listTabs = ref([]);
 // 当前页签
 let currentTab = ref(null);
 let tabFilterConfig = ref({});
+// 是否开启页签过滤
+let isEnableTab = ref(false);
 // 强制重新渲染的key
 let renderKey = ref(0);
 
@@ -1336,7 +1338,7 @@ let renderKey = ref(0);
 const getLayoutList = async () => {
     // 获取格式化后的 modelName（包含页签）
     let paramModelName = formatModelName(myModelName.value, currentTab.value);
-    let isTabFilter = currentTab.value ? true : false;
+    let isTabFilter = currentTab.value && currentTab.value !== 'default' ? true : false;
     
     pageLoading.value = true;
     let res = await $API.layoutConfig.getLayoutList(entityName.value, paramModelName, isTabFilter );
@@ -1400,14 +1402,11 @@ const getLayoutList = async () => {
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
         }
-        if(!isTabFilter){
-            listTabs.value = [];
-            tabFilterConfig.value = {};
-        }
         // 列表页签
         if(res.data.tabFilterConfig) {
             tabFilterConfig.value = res.data.tabFilterConfig;
             let tabConf = JSON.parse(res.data.tabFilterConfig.config);
+            isEnableTab.value = tabConf.isEnableTab;
             if(tabConf && tabConf.tabFilterList && tabConf.tabFilterList.length > 0){
                 listTabs.value = tabConf.tabFilterList;
                 // 只有在 currentTab 为空时才设置为第一个页签

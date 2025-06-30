@@ -2,18 +2,10 @@ import { nextTick  } from 'vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import router from '@/router'
-import store from '@/store'
+
 
 import useViewTagsStore from "@/store/modules/viewTags";
 import useKeepAliveStore from "@/store/modules/keepAlive";
-// import useIframeStore from "@/store/modules/iframe";
-// import { storeToRefs } from "pinia";
-const viewTagsStore = useViewTagsStore();
-const keepAliveStore = useKeepAliveStore();
-// const iframeStore = useIframeStore();
-const { removeViewTags, updateViewTagsTitle, getViewTags } = viewTagsStore;
-const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
-// const { removeIframeList } = iframeStore;
 
 
 export default {
@@ -31,6 +23,10 @@ export default {
 	// },
 	//关闭标签
 	close(tag) {
+        const viewTagsStore = useViewTagsStore();
+        const keepAliveStore = useKeepAliveStore();
+        const { removeViewTags, getViewTags } = viewTagsStore;
+        const { removeKeepLive } = keepAliveStore;
 		const route = tag || router.currentRoute.value
         const tagList = getViewTags();
         let tagIndex = tagList.findIndex(item => item.fullPath === route.fullPath);
@@ -43,6 +39,17 @@ export default {
 			router.push('/')
 		}
 	},
+    // 刷新标签
+    refresh(route) {
+        const keepAliveStore = useKeepAliveStore();
+        const { removeKeepLive, setRouteShow, pushKeepLive } = keepAliveStore;
+        removeKeepLive(route.name)
+        setRouteShow(false);
+        nextTick(() => {
+            pushKeepLive(route.name)
+            setRouteShow(true)
+        })
+    },
 	//关闭标签后处理
 	// closeNext(next) {
 	// 	const route = router.currentRoute.value

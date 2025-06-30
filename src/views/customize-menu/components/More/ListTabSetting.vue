@@ -102,7 +102,11 @@ import { deepClone } from "@/utils/util";
 import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import layoutConfigApi from "@/api/layoutConfig";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
+// 引入 控制Tabs方法
+import useTabs from "@/utils/useTabs";
 const props = defineProps({
 	modelName: {
 		type: String,
@@ -301,8 +305,8 @@ const handleSave = async () => {
 	);
 	if (res) {
 		ElMessage.success("保存成功");
-		emits("confirm");
 		isShow.value = false;
+        useTabs.refresh(router.currentRoute.value);
 	}
 	loading.value = false;
 };
