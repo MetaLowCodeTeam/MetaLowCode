@@ -77,6 +77,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.meta.fullpage) {
         to.matched = [to.matched[to.matched.length - 1]]
     }
+    // let userID = tool.data.get("USER_INFO")?.userId;
     //加载动态/静态路由
     if (!isGetRouter) {
         const { getUseMenuList, getNavigationApi, getTopNavMenuList } = useLayoutConfigStore();
@@ -84,9 +85,9 @@ router.beforeEach(async (to, from, next) => {
         await getNavigationApi(() => {
             isGetRouter = false;
             isReturn = true;
-            next({
-                path: appPath + "login"
-            });
+            // next({
+            //     path: appPath + "login"
+            // });
         })
         if(isReturn) {
             return;
@@ -169,7 +170,7 @@ function filterUserMenu(userRoutes, publicSetting) {
             return false
         }
         // 如果是多租户，有租户ID 或者 没有租户插件，不显示该菜单
-        if(node.name == "Tenant" && (tenantInfo && tenantInfo.tenantId || !pluginIdList.includes('metaTenant'))) {
+        if(node.name == "Tenant" && (tenantInfo && tenantInfo.tenantId || !pluginIdList || !pluginIdList.includes('metaTenant'))) {
             return false
         }
         // 如果是岗位管理，并且没有开启岗位管理，不显示该菜单
@@ -177,7 +178,7 @@ function filterUserMenu(userRoutes, publicSetting) {
             return false
         }
         // 如果是外部数据源，并且没有外部数据源插件，不显示该菜单
-        if(OuterDataSourceHideMenu.includes(node.name) && !pluginIdList.includes('metaDataWarehouse')) {
+        if(OuterDataSourceHideMenu.includes(node.name) && (!pluginIdList || !pluginIdList.includes('metaDataWarehouse'))) {
             return false
         }
         return true

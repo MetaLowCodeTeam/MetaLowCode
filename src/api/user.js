@@ -71,6 +71,14 @@ export function getLoginUser(loginToken) {
     })
 }
 
+export function tokenLogin(loginToken) {
+    return request({
+        url: 'user/tokenLogin',
+        method: 'post',
+        params: { loginToken }
+    })
+}
+
 export function getRoleData(roleId) {
     return request({
         url: 'role/getRoleData',
