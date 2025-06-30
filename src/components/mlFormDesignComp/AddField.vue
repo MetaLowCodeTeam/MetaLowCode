@@ -61,6 +61,7 @@ import ReferenceWE from "./field-editor/reference-widget-editor.vue";
 import ReferenceListWE from "./field-editor/referencelist-widget-editor.vue";
 import OuterReferenceWE from "./field-editor/outerReference-widget-editor.vue";
 import PasswordWE from "./field-editor/password-widget-editor.vue";
+import CascaderWE from "./field-editor/cascader-widget-editor.vue";
 
 const props = defineProps({
 	entity: {
@@ -96,6 +97,7 @@ const fieldComponents = {
 	ReferenceListWE: markRaw(ReferenceListWE),
 	OuterReferenceWE: markRaw(OuterReferenceWE),
 	PasswordWE: markRaw(PasswordWE),
+	CascaderWE: markRaw(CascaderWE),
 };
 
 // 字段列表配置
@@ -104,10 +106,11 @@ const fieldList = [
 	{ label: "整数 / Integer", value: "IntegerWE" },
 	{ label: "精度小数 / Decimal", value: "DecimalWE" },
 	{ label: "金额 / Money", value: "MoneyWE" },
-	{ label: "文本 / Text", value: "TextWE", divided: true },
+	{ label: "文本 / Text", value: "TextWE", divided: true }, 
 	{ label: "长文本 / TextArea", value: "TextAreaWE" },
 	{ label: "单选项 / Option", value: "OptionWE" },
 	{ label: "编码单选项 / CodeOption", value: "CodeOptionWE" },
+    { label: "级联选项 / Cascader", value: "CascaderWE" },
 	{ label: "多选项 / Tag", value: "TagWE" },
 	{ label: "地区选择 / AreaSelect", value: "AreaSelectWE" },
 	{ label: "日期 / Date", value: "DateWE", divided: true },
