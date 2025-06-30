@@ -490,6 +490,7 @@ export default {
 		},
 		// 加载第二列数据
 		loadTargetColumn() {
+            this.subFormName = null;
 			// 1 获取表单上的字段组件
 			let allFieldWidgets = Utils.getAllFieldWidgets(
 				this.designer.widgetList
