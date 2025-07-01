@@ -233,6 +233,10 @@ export function getCodeOptionItems(entity, field) {
     return http.get('systemManager/getCodeOptionItems', { entity, field })
 }
 
+export function getCascaderOptionTree(entity, field) {
+    return http.get('systemManager/getCascaderOptionTree', { entity, field })
+}
+
 
 export function optionCanBeDeleted(entity, field, value) {
     return http.get('systemManager/optionCanBeDeleted', { entity, field, value })
@@ -253,6 +257,14 @@ export function saveCodeOptionItems(entity, field, codeOptionItems) {
         params: { entity, field }
     })
 }
+
+export function saveCascaderOptionItem(entity, field, recordId, item) {
+    return http.post('systemManager/saveCascaderOptionItem', item, {
+        params: { entity, field, recordId }
+    })
+}
+
+
 
 export function getTagFields(appAbbr) {
     return http.get('systemManager/getTagFields', { appAbbr })

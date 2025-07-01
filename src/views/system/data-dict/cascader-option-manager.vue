@@ -3,8 +3,8 @@
     <TreeOperateList
         title="级联选项管理"
         :getTreeFn="getOptionFields"
-        :getMainFn="getCodeOptionItems"
-        :saveFn="saveCodeOptionItems"
+        :getMainFn="getCascaderOptionTree"
+        :saveFn="saveCascaderOptionItem"
         isCascaderOption
     />
 </template>
@@ -13,8 +13,8 @@
 import TreeOperateList from "./components/TreeOperateList.vue";
 import {
     getOptionFields,
-    getCodeOptionItems,
-    saveCodeOptionItems,
+    getCascaderOptionTree,
+    saveCascaderOptionItem,
 } from "@/api/system-manager";
 </script>
 <style lang='scss' scoped>

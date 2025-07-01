@@ -100,7 +100,13 @@
 				</el-scrollbar>
 			</el-main>
             <el-main class="mian-box" v-loading="mainLoading" v-else>
-                <CascaderOptionMain />
+                <div v-loading="mainLoading">
+                    <CascaderOptionMain 
+                        ref="cascaderOptionMainRef"
+                        :mainList="mainList"
+                        @save="onCascaderOptionSave"
+                    />
+                </div>
             </el-main>  
 		</el-container>
 	</el-container>
@@ -161,7 +167,14 @@ const getTreeList = async () => {
 	treeLoading.value = true;
 	mainLoading.value = true;
     let { appAbbr } = router.currentRoute.value.query;  
-	let res = await props.getTreeFn(appAbbr, props.isCodeOption ? 'CodeOption' : '');
+	// 根据选项类型确定参数
+	let optionType = '';
+	if (props.isCodeOption) {
+		optionType = 'CodeOption';
+	} else if (props.isCascaderOption) {
+		optionType = 'Cascader';
+	}
+	let res = await props.getTreeFn(appAbbr, optionType);
 	if (res) {
         treeList.value = [];
         if(props.pageType == 'system') {
@@ -274,16 +287,24 @@ let operateSystemDialogRef = ref(null);
 let editCodeOptionDialogRef = ref(null);
 let currentEditType = ref('');
 let currentEditInx = ref(null);
+// 级联选项主组件
+let cascaderOptionMainRef = ref(null);
 // 新增、插入、编辑
 const operateItem = (inx, targe, item) => {
     if(props.isCodeOption) {
         currentEditType.value = targe;
         currentEditInx.value = inx;
-        console.log(item);
         let data = item ? JSON.parse(JSON.stringify(item)) : null;
         editCodeOptionDialogRef.value.openDialog(data);
         return
     }
+    // 如果是级联选项
+    if(props.isCascaderOption) {
+        // 打开对话框
+        cascaderOptionMainRef.value.openDialog(null);
+        return
+    }
+    // 如果是系统项
     if(props.pageType == 'system') {
         operateSystemDialogRef.value.openDialog({ 
             systemName: cutNode.value.name,
@@ -437,6 +458,30 @@ const delItem = (inx, item) => {
 		.catch(() => {});
 };
 
+
+// 级联选项保存处理
+const onCascaderOptionSave = async (item) => {
+    // console.log(optionData,'保存')
+    // mainList.value = optionData;
+    // onSave();
+    // getMainList();
+    // console.log(cutNode.value.parentName,cutNode.value.name,'cutNode.value')
+    mainLoading.value = true;
+    let res = await props.saveFn(
+        cutNode.value.parentName,
+        cutNode.value.name,
+        item.recordId,
+        item
+    );
+    if(res && res.code == 200) {
+        $ElMessage.success('保存成功');
+        cascaderOptionMainRef.value.closeDialog();
+        getMainList();
+    } else {
+        mainLoading.value = false;
+    }
+    
+};
 
 const onEditCodeOptionConfirm = (item) => {
     if(currentEditType.value == 'add') {
