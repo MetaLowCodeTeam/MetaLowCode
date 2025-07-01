@@ -38,6 +38,7 @@ import { storeToRefs } from "pinia";
 import { getLoginUser, tokenLogin } from "@/api/user";
 import { useRouter } from "vue-router";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+import loginManager from "@/utils/loginManager";
 const { getEntityList, setPublicSetting, setUserInfo } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -65,18 +66,30 @@ onBeforeMount(async () => {
     const app_color =
         $CONFIG.COLOR || publicSetting.value.APP_COLOR || "#409EFF";
     colorPrimary(app_color);
-    // console.log("执行次数")
+    
+    // 如果有 loginToken，使用登录管理器
     if(getQueryString("loginToken")) {
-        let res = await tokenLogin(getQueryString("loginToken"));
-        if(res && res.data) {
-            const url = new URL(window.location.href);
-            // 删除 loginToken 参数
-            url.searchParams.delete("loginToken");
-            window.location.href = url.toString();
+        loginManager.startLogin();
+        
+        try {
+            let res = await tokenLogin(getQueryString("loginToken"));
+            if(res && res.data) {
+                const url = new URL(window.location.href);
+                // 删除 loginToken 参数
+                url.searchParams.delete("loginToken");
+                window.location.href = url.toString();
+                // 页面会重新加载，所以这里不需要 completeLogin
+                return
+            }
+        } catch (error) {
+            console.error('Token login failed:', error);
         }
+        
+        // 如果登录失败或没有数据，完成登录处理
+        loginManager.completeLogin();
         return
     }
-    // $TOOL.cookie.set("TOKEN", getQueryString("loginToken"));
+    
     // 获取公开系统配置
     await queryPublicSetting();
     if(location.pathname == appPath + 'inReport'){

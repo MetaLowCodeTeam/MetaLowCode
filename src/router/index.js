@@ -10,6 +10,7 @@ import userRoutes from '@/config/route';
 import { beforeEach, afterEach } from './scrollBehavior';
 import config from "@/config"
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
+import loginManager from "@/utils/loginManager";
 
 
 // 如果是外部数据源隐藏
@@ -80,6 +81,9 @@ router.beforeEach(async (to, from, next) => {
     // let userID = tool.data.get("USER_INFO")?.userId;
     //加载动态/静态路由
     if (!isGetRouter) {
+        // 等待登录处理完成
+        await loginManager.waitForLogin();
+        
         const { getUseMenuList, getNavigationApi, getTopNavMenuList } = useLayoutConfigStore();
         let isReturn = false;
         await getNavigationApi(() => {
