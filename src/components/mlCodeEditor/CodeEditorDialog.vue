@@ -4,6 +4,7 @@
 		:title="title"
 		:width="dialogWidth"
 		:height="dialogHeight"
+        append-to-body
 	>
 		<mlCodeEditor
 			v-model="currentCode"

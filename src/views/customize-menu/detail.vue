@@ -1114,6 +1114,8 @@ defineExpose({
         }
         :deep(.setting-tabs) {
             left: -10px;
+            width: 20px;
+            z-index: 2;
         }
     }
     .detail-right {
