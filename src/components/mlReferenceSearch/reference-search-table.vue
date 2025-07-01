@@ -137,7 +137,7 @@ export default {
         extraSort: String, // 排序
 		tableHeight: {
 			type: Number,
-			default: 480,
+			default: 400,
 		},
 		gDsv: Object,
 		// 过滤条件
