@@ -20,8 +20,34 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.92 20250630"
+        webVer: "1.8.95 20250701"
     });
+
+    // 添加登录状态管理
+    const isLoginProcessing = ref(false);
+    const loginPromise = ref(null);
+    
+    // 设置登录处理状态
+    const setLoginProcessing = (processing) => {
+        isLoginProcessing.value = processing;
+    };
+    
+    // 创建登录 Promise
+    const createLoginPromise = () => {
+        loginPromise.value = new Promise((resolve) => {
+            // 这里会在 App.vue 中 resolve
+            window.resolveLoginPromise = resolve;
+        });
+        return loginPromise.value;
+    };
+    
+    // 完成登录处理
+    const completeLogin = () => {
+        if (window.resolveLoginPromise) {
+            window.resolveLoginPromise();
+            window.resolveLoginPromise = null;
+        }
+    };
 
     const getEntityList = () => {
         return new Promise(async (resolve, reject) => {
@@ -202,6 +228,10 @@ const useCommonStore = defineStore('commonStore', () => {
         queryEntityCodeByEntityName,
         checkDetailEntityFlag,
         queryEntityInfoByName,
+        isLoginProcessing,
+        setLoginProcessing,
+        createLoginPromise,
+        completeLogin,
     }
 })
 

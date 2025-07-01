@@ -224,12 +224,7 @@
                                 <el-button
                                     plain
                                     :type="item.type"
-                                    v-if="
-                                        (!item.isNative || (item.isNative && !item.hide)) && 
-                                        item.key != 'more' &&
-                                        item.key != 'newRelated'&&
-                                        !(item.key === 'edit' && !$TOOL.checkRole('r' + entityCode + '-3'))
-                                    "
+                                    v-if="getDetailCustomButtonShow(item)"
                                     class="mb-5"
                                     @click="customButtonClick(item)"
                                 >
@@ -620,6 +615,40 @@ const customButtonClick = (item) => {
     }
 }
 
+// 获取自定义按钮显示
+const getDetailCustomButtonShow = (item) => {
+    // 检查自定义权限
+    let checkCustomRole = item.customCode ? $TOOL.checkRole(item.customCode) : true;
+    // 如果有自定义权限，需要检查权限条件
+    if(item.customCode) {
+        // 如果没取反：必须满足自定义权限
+        // 如果取反：必须不满足自定义权限
+        let customPermissionPass = item.reversalCustomCode ? !checkCustomRole : checkCustomRole;
+        if(!customPermissionPass) {
+            return false;
+        }
+    }
+    // 如果设置了隐藏 不显示
+    if(item.hide){
+        return false;
+    }
+    if(!item.isNative){
+        return true;
+    }
+    // 如果是更多按钮 不显示
+    if(item.key == 'more'){
+        return false;
+    }
+    // 如果是新建相关按钮 不显示
+    if(item.key == 'newRelated'){
+        return false;
+    }
+    // 如果是编辑按钮 且 没有编辑权限 不显示
+    if(item.key == 'edit' && !$TOOL.checkRole('r' + entityCode + '-3')){
+        return false;
+    }                           
+    return true;
+}
 
 
 // 加载页签

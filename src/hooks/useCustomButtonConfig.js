@@ -169,6 +169,58 @@ export default function useCustomButtonConfig() {
         },
     ];
 
+    // 默认编辑按钮PC
+    const defaultPcEditButtonList = [
+        {
+            name: "取消",
+            key: "cancel",
+            hide: false,
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "",
+            showType: 1,
+            type: "default"
+        },
+        {
+            name: "保存",
+            key: "save",
+            hide: false,
+            hideTip: "如果本身是审批状态会隐藏",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "Select",
+            showType: 1,
+            type: "primary"
+            
+        },
+        {
+            name: "保存并刷新",
+            key: "saveRefresh",
+            hide: false,
+            hideTip: "如果本身是审批状态会隐藏",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "Refresh",
+            showType: 1,
+            type: "primary"
+        },
+        {
+            name: "保存并提交",
+            key: "saveSubmit",
+            hide: false,
+            hideTip: "如果本身没有审批流程且是审批状态会隐藏",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "SetUp",
+            showType: 1,
+            type: "primary"
+        },
+    ];
+
     // 默认详情按钮pc
     const defaultPcDetialButtonList = [
         {
@@ -264,6 +316,11 @@ export default function useCustomButtonConfig() {
             name: "pcColumn",
             buttonList: [],
         },
+        // {
+        //     label: "编辑(PC)",
+        //     name: "pcEdit",
+        //     buttonList: [],
+        // },
         {
             label: "详情(PC)",
             name: "pcDetial",
@@ -440,6 +497,7 @@ export default function useCustomButtonConfig() {
         tabList,
         defaultPcDetialButtonList,
         defaultAppDetialButtonList,
+        defaultPcEditButtonList,
         getCustomAppButtons,
         customButtonHandler,
         customButtonAfterEventCb,

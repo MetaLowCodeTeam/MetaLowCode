@@ -196,7 +196,7 @@
                                             : ''
                                     "
                                     :link="currentTab == 'pcColumn'"
-                                    :plain="currentTab == 'pcDetial' || currentTab == 'appDetial' || currentTab == 'appList'"
+                                    :plain="currentTab == 'pcDetial' || currentTab == 'appDetial' || currentTab == 'appList' || (currentTab == 'pcEdit' && currentButton.key == 'saveRefresh')"
                                     :round="currentTab == 'appDetial' || currentTab == 'appList'"
                                     :class="{'app-detial-button': currentTab == 'appDetial' || currentTab == 'appList'}"
                                 >
@@ -649,6 +649,8 @@ const {
     defaultPcDetialButtonList,
     // 默认详情按钮APP
     defaultAppDetialButtonList,
+    // 默认编辑按钮PC
+    defaultPcEditButtonList,
 } = useCustomButtonConfig();
 
 const props = defineProps({
@@ -892,6 +894,13 @@ const initTabButtonConfig = (tab) => {
     }
     if(tab == 'appDetial'){
         defaultAppDetialButtonList.forEach((defaultBtn) => {
+            if (!existingKeys.includes(defaultBtn.key)) {
+                findTab.buttonList.push(defaultBtn);
+            }
+        });
+    }
+    if(tab == 'pcEdit'){
+        defaultPcEditButtonList.forEach((defaultBtn) => {
             if (!existingKeys.includes(defaultBtn.key)) {
                 findTab.buttonList.push(defaultBtn);
             }
