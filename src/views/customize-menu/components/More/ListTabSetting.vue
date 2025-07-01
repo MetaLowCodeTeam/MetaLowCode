@@ -237,7 +237,7 @@ const handleConfirm = () => {
 	// 新建
 	if (!key) {
 		tableData.value.push({
-			key: selfKey.value + "",
+			key: "tab" + selfKey.value,
 			name,
 			filter,
 		});

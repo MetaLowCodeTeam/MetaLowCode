@@ -94,6 +94,7 @@ router.beforeEach(async (to, from, next) => {
             // });
         })
         if(isReturn) {
+            next(false);
             return;
         }
         let userMenu = filterUserMenu(userRoutes, publicSetting);

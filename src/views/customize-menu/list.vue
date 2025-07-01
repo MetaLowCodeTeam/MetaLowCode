@@ -183,11 +183,7 @@
                                 :disabled="getCustomButtonDisabled(item)"
                                 @click="customButtonClick(item)"
                                 :type="item.type"
-                                v-if="(!item.isNative) || 
-                                    (item.isNative && 
-                                    !item.hide && 
-                                    item.key !== 'more' &&
-                                    (item.key !== 'batchEdit' || batchUpdateConf?.length > 0))"
+                                v-if="getTopCustomButtonShow(item)"
                             >
                                 <el-icon
                                     :color="item.iconColor"
@@ -1279,8 +1275,64 @@ const customButtonClick = (item, row) => {
     }
 }
 
+// 获取顶部自定义按钮显示
+const getTopCustomButtonShow = (item) => {
+
+    // 检查自定义权限
+    let checkCustomRole = item.customCode ? $TOOL.checkRole(item.customCode) : true;
+    // 如果有自定义权限，需要检查权限条件
+    if(item.customCode) {
+        // 如果没取反：必须满足自定义权限
+        // 如果取反：必须不满足自定义权限
+        let customPermissionPass = item.reversalCustomCode ? !checkCustomRole : checkCustomRole;
+        if(!customPermissionPass) {
+            return false;
+        }
+    }
+    // 如果设置了隐藏 不显示
+    if(item.hide){
+        return false;
+    }
+    // 如果是非内置按钮
+    if(!item.isNative){
+        return true;
+    }
+    // 如果是更多按钮 不显示
+    if(item.key == 'more'){
+        return false;
+    }
+    // 如果是批量编辑按钮 且 没有批量编辑配置 不显示
+    if(item.key == 'batchEdit' && batchUpdateConf?.length == 0){
+        return false;
+    }
+    // 如果是新建 且 没有新建权限 不显示
+    if(item.key == 'new' && !hasCreateRight.value){
+        return false;
+    }
+    // 如果是编辑 且 没有编辑权限 不显示
+    if(item.key == 'edit' && !hasEditRight.value){
+        return false;
+    }
+    // 如果是批量编辑按钮 且 没有批量编辑配置 且 没有编辑权限 不显示
+    if(item.key == 'batchEdit' && batchUpdateConf?.length == 0 && !hasEditRight.value){
+        return false;
+    }
+    return true;
+}
+
 // 获取操作列自定义按钮显示
 const getColumnCustomButtonShow = (item, row) => {
+    // 检查自定义权限
+    let checkCustomRole = item.customCode ? $TOOL.checkRole(item.customCode) : true;
+    // 如果有自定义权限，需要检查权限条件
+    if(item.customCode) {
+        // 如果没取反：必须满足自定义权限
+        // 如果取反：必须不满足自定义权限
+        let customPermissionPass = item.reversalCustomCode ? !checkCustomRole : checkCustomRole;
+        if(!customPermissionPass) {
+            return false;
+        }
+    }
     // 如果是内置按钮 (这部分逻辑不变，因为它看起来是正确的)
     if (item.isNative) {
         // 如果设置了隐藏 不显示
@@ -1338,8 +1390,7 @@ let renderKey = ref(0);
 const getLayoutList = async () => {
     // 获取格式化后的 modelName（包含页签）
     let paramModelName = formatModelName(myModelName.value, currentTab.value);
-    let isTabFilter = currentTab.value && currentTab.value !== 'default' ? true : false;
-    
+    let isTabFilter = currentTab.value ? true : false;
     pageLoading.value = true;
     let res = await $API.layoutConfig.getLayoutList(entityName.value, paramModelName, isTabFilter );
     if (res && res.data) {

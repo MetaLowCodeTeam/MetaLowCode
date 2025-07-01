@@ -316,11 +316,11 @@ export default function useCustomButtonConfig() {
             name: "pcColumn",
             buttonList: [],
         },
-        {
-            label: "编辑(PC)",
-            name: "pcEdit",
-            buttonList: [],
-        },
+        // {
+        //     label: "编辑(PC)",
+        //     name: "pcEdit",
+        //     buttonList: [],
+        // },
         {
             label: "详情(PC)",
             name: "pcDetial",
