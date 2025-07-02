@@ -31,8 +31,12 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .ml-scrollbar{
+    // overflow: hidden;
     & > :deep(.is-horizontal) {
         display: none !important;
+    }
+    .content {
+        overflow-x: hidden;
     }
 }
 
