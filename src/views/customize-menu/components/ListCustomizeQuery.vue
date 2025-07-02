@@ -31,12 +31,13 @@
 			/>
 		</div>
 		<div class="conditions-action">
-			<el-dropdown trigger="click" @command="onSearch" class="pt-1">
+			<el-dropdown trigger="hover" @command="onSearch" class="pt-1">
 				<el-button
 					type="primary"
 					icon="ArrowDown"
 					style="width: 80px; margin-right: 12px"
 					plain
+                    @click="onSearch('OR')"
 				>
 					查询
 				</el-button>
