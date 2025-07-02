@@ -45,6 +45,9 @@ let detailDialog = ref({});
 let tabs = ref();
 
 
+// 详情数据
+let detailData = ref({});
+
 let activeName = ref("");
 let myCheckTabsFilter = ref({});
 
@@ -72,6 +75,7 @@ const initTabs = async () => {
                     {
                         http,
                         isMobile: false,
+                        detailData: detailData.value,
                     }
                 );
                  // 判断是否是 Promise
@@ -134,6 +138,16 @@ const confirm = (e) => {
     emits('confirm')
 };
 
+
+
+// 设置相关数据
+const setTabsData = (data) => {
+    detailData.value = data;
+}
+
+defineExpose({
+    setTabsData,
+})
 
 </script>
 <style lang='scss' scoped>
