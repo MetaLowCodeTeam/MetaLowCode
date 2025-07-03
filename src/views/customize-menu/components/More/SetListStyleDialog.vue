@@ -235,7 +235,7 @@
                                 <a
                                     class="ml-a-span"
                                     target="_blank"
-                                    href="https://www.yuque.com/visualdev/melecode/bo0kqdmsnxmc8q2p?singleDoc#"
+                                    href="https://www.yuque.com/visualdev/melecode/nzgskh24oo3hbh30"
                                 >
                                     使用文档
                                 </a>
