@@ -40,7 +40,7 @@
         </div>
 
         <!-- 新建/编辑弹框 -->
-        <el-dialog
+        <ml-dialog
             v-model="dialogVisible"
             :title="dialogTitle"
             width="500px"
@@ -84,7 +84,7 @@
                     确定
                 </el-button>
             </template>
-        </el-dialog>
+        </ml-dialog>
     </div>
 </template>
 
@@ -122,7 +122,8 @@ const formData = reactive({
     parentValue: '',
     parentLabel: '',
     label: '',
-    value: ''
+    value: '',
+    displayOrder: 0
 });
 
 // 父节点选项
@@ -139,11 +140,11 @@ const dialogTitle = computed(() => {
 const formRules = {
     label: [
         { required: true, message: '请输入选项名称', trigger: 'blur' },
-        { min: 1, max: 50, message: '选项名称长度在 1 到 50 个字符', trigger: 'blur' }
+        { pattern: /^[^/]+$/, message: '选项名称不能包含 /', trigger: 'blur' }
     ],
     value: [
         { required: true, message: '请输入选项值', trigger: 'blur' },
-        { min: 1, max: 50, message: '选项值长度在 1 到 50 个字符', trigger: 'blur' }
+        { pattern: /^[A-Za-z0-9]+$/, message: '选项值只能包含英文字母和数字，不能包含中文', trigger: 'blur' }
     ]
 };
 
@@ -311,6 +312,13 @@ const setOptionData = (data) => {
     });
 };
 
+const closeDialog = () => {
+    dialogVisible.value = false;
+    formRef.value.resetFields();
+    currentEditNode.value = null;
+    currentKey.value = null;
+};
+
 // 定义事件
 const emit = defineEmits(['save']);
 
@@ -326,6 +334,7 @@ watch(
 defineExpose({
     openDialog,
     setOptionData,
+    closeDialog
 });
 </script>
 
