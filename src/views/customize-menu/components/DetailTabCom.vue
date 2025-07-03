@@ -262,7 +262,13 @@ let dufaultFilter = ref(null);
 // 初始化数据
 const initData = async () => {
     tableData.value = [];
-    tabs.value = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
+    let sourceTabs = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
+    // 2025-06-03 新加的动态显示事件
+    if(sourceTabs.showEventCode) {
+        tabs.value = sourceTabs.column;
+    } else {
+        tabs.value = sourceTabs;
+    }
     defaultShowType.value = "table";
     let filterTabs = tabs.value[props.cutTabIndex - 1];
     if (filterTabs) {
