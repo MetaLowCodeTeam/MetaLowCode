@@ -208,7 +208,6 @@ const loadMyLayoutConfig = () => {
             }
             styleConf.value.dialogConfig = newDialogConfig;
         }
-        console.log(styleConf.value.dialogConfig,'dialogConfig')
     }
 };
 
