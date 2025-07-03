@@ -96,7 +96,6 @@ const initTabs = async () => {
         }else {
             sourceConfigColumn = config;
         }
-        console.log(sourceConfigColumn,'sourceConfigColumn')
         sourceConfigColumn.forEach((el,inx) => {
             if(myCheckTabsFilter.value[inx] && !el.isCustomComponent){
                 tabs.value.push(el);
@@ -157,7 +156,7 @@ defineExpose({
 .detail-tabs {
     position: relative;
     :deep(.el-tabs__nav-wrap) {
-        padding-right: 40px;
+        // padding-right: 40px; 
         .el-tabs__nav-next {
             right: 20px;
         }
