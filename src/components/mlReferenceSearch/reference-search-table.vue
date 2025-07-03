@@ -388,7 +388,7 @@ export default {
         },
 		// 多选回填
 		multipleSelectRecord() {
-			if (this.multipleSelection.length < 1) {
+			if (this.selectedData.length < 1) {
 				this.$message.info("还未选择数据...");
 				return;
 			}
@@ -398,7 +398,7 @@ export default {
 					id: this.idField,
 					label: this.nameField,
 				},
-				this.multipleSelection
+				this.selectedData
 			);
 		},
 		// 点选回填
