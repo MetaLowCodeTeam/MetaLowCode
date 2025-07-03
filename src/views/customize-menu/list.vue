@@ -1302,7 +1302,7 @@ const getTopCustomButtonShow = (item) => {
         return false;
     }
     // 如果是批量编辑按钮 且 没有批量编辑配置 不显示
-    if(item.key == 'batchEdit' && batchUpdateConf?.length == 0){
+    if(item.key == 'batchEdit' && (batchUpdateConf.value?.length == 0 || !hasEditRight.value)){
         return false;
     }
     // 如果是新建 且 没有新建权限 不显示
@@ -1311,10 +1311,6 @@ const getTopCustomButtonShow = (item) => {
     }
     // 如果是编辑 且 没有编辑权限 不显示
     if(item.key == 'edit' && !hasEditRight.value){
-        return false;
-    }
-    // 如果是批量编辑按钮 且 没有批量编辑配置 且 没有编辑权限 不显示
-    if(item.key == 'batchEdit' && batchUpdateConf?.length == 0 && !hasEditRight.value){
         return false;
     }
     return true;

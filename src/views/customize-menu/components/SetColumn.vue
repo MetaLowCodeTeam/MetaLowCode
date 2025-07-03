@@ -388,8 +388,8 @@ const addShowColumn = (column) => {
 
 // 列弹框
 let editColumnDialogIsShow = ref(false);
-// 编辑列数据
-let editColumnDialogData = reactive({
+
+let defaultEditColumnDialogData = {
     columnWidth: 0,
     columnSort: "",
     columnAliasName: "",
@@ -428,7 +428,10 @@ let editColumnDialogData = reactive({
     // 是否隐藏
     pcHide: false,
     mobileHide: false,
-});
+}
+
+// 编辑列数据
+let editColumnDialogData = reactive({});
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
 const getUptadeMode = () => {
@@ -507,7 +510,7 @@ const editColumn = (column, inx) => {
     if(editObj.exportable == undefined) {
         editObj.exportable = true;
     }
-    editColumnDialogData = Object.assign(editColumnDialogData, editObj);
+    editColumnDialogData = Object.assign({}, defaultEditColumnDialogData, editObj);
 };
 
 // 列宽应用到所有列

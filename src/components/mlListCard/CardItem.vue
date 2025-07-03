@@ -269,7 +269,7 @@ const confirmOperate = () => {
 		.catch((err) => {
 			loading.value = false;
 			console.log(err, "err");
-			if(globalDsv.value.defaultValidationMessageDisabled){
+			if(!globalDsv.value.defaultValidationMessageDisabled){
 				ElMessage.error("表单校验失败，请修改后重新提交");
 			}
 		});

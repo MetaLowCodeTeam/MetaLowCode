@@ -16,22 +16,22 @@ const useCommonStore = defineStore('commonStore', () => {
     let unSystemEntityList = ref([]);
     // 审批流程实体
     let processEntityList = ref([]);
-    
+
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.95 20250701"
+        webVer: "1.8.104 20250702"
     });
 
     // 添加登录状态管理
     const isLoginProcessing = ref(false);
     const loginPromise = ref(null);
-    
+
     // 设置登录处理状态
     const setLoginProcessing = (processing) => {
         isLoginProcessing.value = processing;
     };
-    
+
     // 创建登录 Promise
     const createLoginPromise = () => {
         loginPromise.value = new Promise((resolve) => {
@@ -40,7 +40,7 @@ const useCommonStore = defineStore('commonStore', () => {
         });
         return loginPromise.value;
     };
-    
+
     // 完成登录处理
     const completeLogin = () => {
         if (window.resolveLoginPromise) {

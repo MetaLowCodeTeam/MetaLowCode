@@ -13,6 +13,12 @@
 		width: 180px;
 		text-align: right;
 	}
+    .split-query-btn {
+        margin-right: 12px;
+        :deep(.el-button) {
+            padding: 0 10px;
+        }
+    }
 }
 </style>
 <!-- 列表自定义查询 -->
@@ -31,26 +37,26 @@
 			/>
 		</div>
 		<div class="conditions-action">
-			<el-dropdown trigger="click" @command="onSearch" class="pt-1">
-				<el-button
-					type="primary"
-					icon="ArrowDown"
-					style="width: 80px; margin-right: 12px"
-					plain
-				>
-					查询
-				</el-button>
-				<template #dropdown>
-					<el-dropdown-menu>
-						<el-dropdown-item command="OR">
-							符合任一条件
-						</el-dropdown-item>
-						<el-dropdown-item command="AND">
-							符合全部条件
-						</el-dropdown-item>
-					</el-dropdown-menu>
-				</template>
-			</el-dropdown>
+            <el-dropdown 
+                split-button 
+                type="primary" 
+                @click="onSearch('OR')"
+                size="default"
+                class="split-query-btn"
+                @command="onSearch"
+            >
+                查询
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item command="OR">
+                            符合任一条件
+                        </el-dropdown-item>
+                        <el-dropdown-item command="AND">
+                            符合全部条件
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
 			<el-button @click="refreshAdvancedQuery" style="width: 74px">
 				重置
 			</el-button>

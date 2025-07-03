@@ -80,6 +80,7 @@
                             @confirm="refresh"
                             :checkTabsFilter="checkTabsFilter"
                             :modelName="currentListModelName"
+                            ref="detailTabsRefs"
                         />
                         <div class="detail-container">
                         <!-- 详情 -->
@@ -519,12 +520,17 @@ const openDialog = (id, localDsv, paramFormId) => {
     if(localDsv){
         globalDsv.value = Object.assign(globalDsv.value, localDsv);
     }
-    console.log(currentListModelName.value,'currentListModelName.value')
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
+    
 	// 加载数据
 	refresh();
+    nextTick(() => {
+        detailTabsRefs.value?.setTabsData({
+            recordId: detailId.value,
+        });
+    })
 }
 
 const closeDialog = () => {
@@ -723,6 +729,9 @@ const formatNewRelated = async (conf) => {
 let haveLayoutJson = ref(false);
 let noeData = ref(false);
 
+// 详情页签
+let detailTabsRefs = ref();
+
 // 初始化数据
 const initData = async () => {
 	loading.value = true;
@@ -754,7 +763,6 @@ const initData = async () => {
                     globalDsv.value.recordData = queryByIdRes.data;
 		            multipleSelection.value = [queryByIdRes.data];
 					detailName.value = queryByIdRes.data[nameFieldName.value];
-					
                     rowResData.value = queryByIdRes.data || {};
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
 					nextTick(() => {
@@ -1114,6 +1122,8 @@ defineExpose({
         }
         :deep(.setting-tabs) {
             left: -10px;
+            width: 20px;
+            z-index: 2;
         }
     }
     .detail-right {

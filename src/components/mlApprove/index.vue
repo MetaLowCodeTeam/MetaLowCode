@@ -588,7 +588,7 @@ function confirmApprove(isBacked) {
         // 调用公共审批方法
         executeApproval(isBacked, formData);
     }).catch(err => {
-        if(globalDsv.value.defaultValidationMessageDisabled){
+        if(!globalDsv.value.defaultValidationMessageDisabled){
             ElMessage.error("表单校验失败，请修改后重新提交");
         }
     })
