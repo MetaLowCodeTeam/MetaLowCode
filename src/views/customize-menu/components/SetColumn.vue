@@ -431,12 +431,12 @@ let defaultEditColumnDialogData = {
 }
 
 // 编辑列数据
-let editColumnDialogData = reactive({});
+let editColumnDialogData = ref({});
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
 const getUptadeMode = () => {
     // 如果是数字类型
-    if (numType.value.includes(editColumnDialogData.fieldType)) {
+    if (numType.value.includes(editColumnDialogData.value.fieldType)) {
         return [
             {
                 label: "求和",
@@ -480,12 +480,12 @@ const getUptadeMode = () => {
 };
 // 编辑列排序
 const changeColumnSort = () => {
-    if (editColumnDialogData.columnSort == "") {
-        editColumnDialogData.columnSort = "DESC";
-    } else if (editColumnDialogData.columnSort == "DESC") {
-        editColumnDialogData.columnSort = "ASC";
+    if (editColumnDialogData.value.columnSort == "") {
+        editColumnDialogData.value.columnSort = "DESC";
+    } else if (editColumnDialogData.value.columnSort == "DESC") {
+        editColumnDialogData.value.columnSort = "ASC";
     } else {
-        editColumnDialogData.columnSort = "";
+        editColumnDialogData.value.columnSort = "";
     }
 };
 
@@ -510,7 +510,7 @@ const editColumn = (column, inx) => {
     if(editObj.exportable == undefined) {
         editObj.exportable = true;
     }
-    editColumnDialogData = Object.assign({}, defaultEditColumnDialogData, editObj);
+    editColumnDialogData.value = Object.assign({}, defaultEditColumnDialogData, editObj);
 };
 
 // 列宽应用到所有列
@@ -521,7 +521,7 @@ const applyColumns = () => {
         type: "warning",
     }).then( () => {
         showColumn.value.forEach((el) => {
-            el.columnWidth = editColumnDialogData.columnWidth;
+            el.columnWidth = editColumnDialogData.value.columnWidth;
         });
         ElMessage.success("应用成功!")
     })
@@ -633,17 +633,17 @@ const isShowItemTag = (column) => {
 const confirmColumnEdit = () => {
     let oldData = Object.assign(
         {},
-        showColumn.value[editColumnDialogData.columnEditInx]
+        showColumn.value[editColumnDialogData.value.columnEditInx]
     );
     // 排序有变化，清空所有排序，只保留当前字段排序
-    if (oldData.columnSort != editColumnDialogData.columnSort) {
+    if (oldData.columnSort != editColumnDialogData.value.columnSort) {
         showColumn.value.forEach((el) => {
             el.columnSort = "";
         });
     }
-    showColumn.value[editColumnDialogData.columnEditInx] = Object.assign(
+    showColumn.value[editColumnDialogData.value.columnEditInx] = Object.assign(
         {},
-        editColumnDialogData
+        editColumnDialogData.value
     );
     editColumnDialogIsShow.value = false;
 };

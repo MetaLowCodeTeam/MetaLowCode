@@ -1,12 +1,12 @@
 <template>
     <ml-dialog
-        :title="editParamConf.customDialogTitle || row.customDialogTitle || row.dialogTitle"
+        :title="editParamConf.customDialogTitle || row.customDialogTitle || styleConf?.dialogConfig?.editTitle || row.dialogTitle"
         v-if="isShow"
         v-model="isShow"
         :width="styleConf?.dialogConfig?.editWidth || '55%'"
         draggable
-        :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf.showFullScreen"
-        :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf.autoFullScreen"
+        :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf?.showFullScreen"
+        :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf?.autoFullScreen"
         append-to-body
         bodyNoPadding
         :showClose="!loading"
@@ -208,6 +208,7 @@ const loadMyLayoutConfig = () => {
             }
             styleConf.value.dialogConfig = newDialogConfig;
         }
+        console.log(styleConf.value.dialogConfig,'dialogConfig')
     }
 };
 
@@ -298,9 +299,9 @@ const openDialog = async (v) => {
     }
     let res = await checkRight(param.id, param.rightType, param.entityName);
     if (res.data && res.data.code == 200 && res.data.data) {
+        loadMyLayoutConfig();
         isShow.value = true;
         await initFormLayout();
-        loadMyLayoutConfig();
     } else {
         ElMessage.error(
             "当前用户没有" + (v.detailId ? "编辑" : "新建") + "权限"
