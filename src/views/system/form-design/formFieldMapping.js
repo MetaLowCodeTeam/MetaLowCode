@@ -116,6 +116,13 @@ export const formFieldMapping = {
 		}
 	},
 
+    'Cascader': {
+        type: 'cascader-option',
+        options: {
+            multiple: false, // 是否多选
+        }
+    },
+
 	'MultiOption': {
 		type: 'select',
 		options: {

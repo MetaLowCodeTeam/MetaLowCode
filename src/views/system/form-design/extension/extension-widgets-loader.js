@@ -12,6 +12,8 @@ import {
     listSubFormSchema,
     // 外部引用
     outerReferenceSchema,
+    // 级联选择
+    cascaderOptionSchema,
 } from "@/views/system/form-design/extension/extension-widgets-schema";
 import newTestEditor from './property-editor/newTest-editor.vue'
 import CheckTagOptionItemsEditor
@@ -44,6 +46,8 @@ import referenceConfirmSelectEditor from "@/views/system/form-design/extension/p
 import listSubFormNameEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/list-sub-form-name-editor.vue"
 // 签名配置
 import signConfigEditor from '@/views/system/form-design/extension/property-editor/sign/sign-signConfig-editor.vue';
+// 级联选择
+import cascaderConfigEditor from '@/views/system/form-design/extension/property-editor/cascader-option/cascader-config-editor.vue';
 
 /**
  * 容器组件
@@ -131,6 +135,8 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'confirmSelect', 'reference-confirmSelect-editor', referenceConfirmSelectEditor)
     // 注册签名配置
     PERegister.registerCPEditor(app, 'signConfig', 'sign-signConfig-editor', signConfigEditor)
+    // 注册级联选择配置
+    PERegister.registerCPEditor(app, 'cascaderConfig', 'cascader-config-editor', cascaderConfigEditor)
 
     PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
@@ -155,6 +161,8 @@ export const loadExtensionWidgets = (app) => {
 	addAdvancedFieldSchema(referenceListSchema)
     addAdvancedFieldSchema(outerReferenceSchema)
 	addAdvancedFieldSchema(locationSchema)
+    // 级联选择
+    addAdvancedFieldSchema(cascaderOptionSchema)
     // 添加到容器组件库
     addContainerWidgetSchema(listSubFormSchema)
 

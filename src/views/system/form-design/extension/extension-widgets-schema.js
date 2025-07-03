@@ -346,3 +346,48 @@ export const outerReferenceSchema = {
 		onAppendButtonClick: '',  //后置按钮点击事件
 	}
 }
+
+// 级联选择组件
+export const cascaderOptionSchema = {
+	type: 'cascader-option',
+	icon: 'cascader-option',
+	formItemFlag: true,
+	options: {
+        name: '',
+		keyNameEnabled: false,
+		keyName: '',  //数据键值名称
+		label: '',
+		labelAlign: '',
+		size: '',
+		labelWidth: null,
+		labelHidden: false,
+		labelWrap: false,  //标签超长换行
+		disabled: false,
+		hidden: false,
+		dsEnabled: false, // 是否使用数据源数据
+		dsName: '', // 数据源名称
+		dataSetName: '',  //数据集名称
+        // 这个 cascaderConfig 新加的，其他都是复制原内部已经实现的
+        cascaderConfig: {  // 级联配置
+            multiple: false, // 是否多选
+            compWidth: "",   // 组件宽度
+            showAllLevels: false, // 在输入框中显示选中项最后一级的标签
+            placeholder: "请选择", // 输入框占位符
+        },
+		required: false,
+		requiredHint: '',
+		validation: '',
+		validationHint: '',
+		//-------------------
+		customClass: '',  //自定义css类名
+		labelIconClass: null,
+		labelIconPosition: 'rear',
+		labelTooltip: null,
+		//-------------------
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+		onValidate: '',
+	}
+}
+
