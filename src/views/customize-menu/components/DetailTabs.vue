@@ -64,8 +64,10 @@ const initTabs = async () => {
    
     if (config) {
         config = JSON.parse(config);
+        // console.log(config,'config')
         // 2025-06-03 新加的动态显示事件
         let sourceConfigColumn;
+        // console.log(sourceConfigColumn,'sourceConfigColumn')
         if(config.showEventCode) {
             let { showEventCode, column } = config;
             let newColumn = JSON.parse(JSON.stringify(column));
@@ -94,6 +96,7 @@ const initTabs = async () => {
         }else {
             sourceConfigColumn = config;
         }
+        console.log(sourceConfigColumn,'sourceConfigColumn')
         sourceConfigColumn.forEach((el,inx) => {
             if(myCheckTabsFilter.value[inx] && !el.isCustomComponent){
                 tabs.value.push(el);

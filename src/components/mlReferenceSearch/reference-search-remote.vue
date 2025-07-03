@@ -43,9 +43,9 @@
             :disabled="disabled"
             ref="selectRef"
             filterable
-            @input="handleSearch"
             @visible-change="handleVisibleChange"
-            >
+            :filter-method="onFilter"
+        >
             <template #empty>
                 <div
                     class="empty-box"
@@ -185,6 +185,11 @@ const handleVisibleChange = (e) => {
         tableRef.value?.setCurrentRow(null);
     }
 };
+
+const onFilter = (val) => {
+    searchValue.value = val;
+    handleSearch(val);
+}
 
 const handleSearch = async (v) => {
     if (loading.value) return;
