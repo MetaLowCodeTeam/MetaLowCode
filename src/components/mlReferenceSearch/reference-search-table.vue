@@ -101,7 +101,7 @@
 							</el-icon>
 							选择
 						</el-button>
-                        <el-button size="default" v-else disabled>
+                        <el-button size="default" type="primary" plain v-else disabled>
                             已选择
                         </el-button>
 					</template>
