@@ -12,7 +12,6 @@
                 highlight-current
                 :expand-on-click-node="false"
                 @node-click="handleNodeClick"
-                @current-change="handleCurrentChange"
             >
                 <template #default="{ node, data }">
                     <div class="tree-node">
@@ -91,6 +90,7 @@
 <script setup>
 import { ref, reactive, computed, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { deletedCascaderOptionItem } from '@/api/system-manager';
 
 const props = defineProps({
     mainList: {
@@ -110,6 +110,8 @@ const dialogVisible = ref(false);
 const optionList = ref([]);
 const currentEditNode = ref(null);
 const currentKey = ref(null); // 保存当前选中节点的key
+// 记录当前编辑节点的value
+const currentEditValue = ref(null);
 
 // 树配置
 const treeProps = {
@@ -123,13 +125,10 @@ const formData = reactive({
     parentLabel: '',
     label: '',
     value: '',
-    displayOrder: 0
+    displayOrder: 0,
+    cascaderOptionItemId: null,
 });
 
-// 父节点选项
-const parentOptions = ref([
-    { label: '根节点', value: '' }
-]);
 
 // 计算属性
 const dialogTitle = computed(() => {
@@ -153,18 +152,24 @@ const openDialog = (data) => {
     if (data) {
         // 编辑模式
         currentEditNode.value = data;
+        currentEditValue.value = data.value; // 记录当前编辑的value
         Object.assign(formData, {
             parentValue: data.parentValue || '',
             parentLabel: data.parentLabel || '根节点',
             label: data.label || '',
-            value: data.value || ''
+            value: data.value || '',
+            cascaderOptionItemId: data.cascaderOptionItemId || null,
         });
     } else {
         // 新建模式
         currentEditNode.value = null;
+        currentEditValue.value = null;
         Object.assign(formData, {
             label: '',
-            value: ''
+            value: '',
+            parentValue: currentNode.value ? currentNode.value.value : '',
+            parentLabel: currentNode.value ? currentNode.value.label : '根节点',
+            cascaderOptionItemId: null,
         });
     }
     dialogVisible.value = true;
@@ -189,12 +194,13 @@ const getAllOptions = () => {
     return allOptions;
 };
 
-// 检查重复性
-const checkDuplicate = (label, value, excludeIndex = -1) => {
+// 检查重复性，编辑时排除自己
+const checkDuplicate = (label, value) => {
     const allOptions = getAllOptions();
     for (let i = 0; i < allOptions.length; i++) {
-        if (i === excludeIndex) continue;
         const option = allOptions[i];
+        // 编辑时排除自己
+        if (currentEditValue.value && option.value === currentEditValue.value) continue;
         if (option.label === label) {
             return { isDuplicate: true, field: 'label', message: '选项名称已存在' };
         }
@@ -205,30 +211,31 @@ const checkDuplicate = (label, value, excludeIndex = -1) => {
     return { isDuplicate: false };
 };
 
-// 选中变化事件
-const handleCurrentChange = (data, node) => {
-    if (data) {
-        formData.parentValue = data.value;
-        formData.parentLabel = data.label;
-        currentKey.value = data.value;
-    } else {
-        formData.parentValue = '';
-        formData.parentLabel = '';
-        currentKey.value = null;
-    }
-};
+let currentNode = ref(null);
+
 
 // 节点点击（只做业务逻辑，不操作选中）
 const handleNodeClick = (data, node) => {
     // 可扩展业务逻辑
+    if(currentNode.value && currentNode.value.value == data.value) {
+        treeRef.value.setCurrentKey(null);
+        formData.parentValue = '';
+        formData.parentLabel = '';
+        currentNode.value = null;
+        currentKey.value = null;
+    }else {
+        formData.parentValue = data.value;
+        formData.parentLabel = data.label;
+        currentNode.value = data;
+        currentKey.value = data.value;
+    }
+
 };
 
 // 编辑选项
 const handleEdit = (data, node) => {
     openDialog({
         ...data,
-        parentValue: formData.parentValue || '',
-        parentLabel: formData.parentLabel || ''
     });
 };
 
@@ -240,21 +247,36 @@ const handleDelete = async (data, node) => {
             cancelButtonText: '取消',
             type: 'warning'
         });
-        // 从树中删除节点
-        const parent = node.parent;
-        const children = parent.data.children || parent.data;
-        const index = children.findIndex(child => child.value === data.value);
-        if (index !== -1) {
-            children.splice(index, 1);
-            ElMessage.success('删除成功');
-            // 触发保存
-            emit('save', optionList.value);
+        loading.value = true;
+        // 处理currentKey，优先上一个兄弟节点，没有则下一个，没有则父节点
+        let siblings = [];
+        let parentNode = node.parent;
+        if (parentNode && parentNode.data && Array.isArray(parentNode.data.children)) {
+            siblings = parentNode.data.children;
+        } else if (Array.isArray(optionList.value)) {
+            siblings = optionList.value;
         }
+        let idx = siblings.findIndex(child => child.value === data.value);
+        let newKey = null;
+        if (idx > 0) {
+            newKey = siblings[idx - 1].value;
+        } else if (idx === 0 && siblings.length > 1) {
+            newKey = siblings[1].value;
+        } else if (parentNode && parentNode.data && parentNode.data.value !== undefined) {
+            newKey = parentNode.data.value;
+        }
+        // 删除前先设置currentKey
+        currentKey.value = newKey;
+        let res = await deletedCascaderOptionItem(data.cascaderOptionItemId);
+        if(res && res.code == 200) {
+            ElMessage.success('删除成功');
+            emit('onDeleteSuccess', data.cascaderOptionItemId);
+        }
+        loading.value = false;
     } catch (error) {
         // 用户取消删除
     }
 };
-
 // 提交表单
 const handleSubmit = async () => {
     if (!formRef.value) return;
@@ -263,8 +285,7 @@ const handleSubmit = async () => {
         // 检查重复性
         const duplicateCheck = checkDuplicate(
             formData.label, 
-            formData.value, 
-            currentEditNode.value
+            formData.value
         );
         if (duplicateCheck.isDuplicate) {
             ElMessage.error(duplicateCheck.message);
@@ -275,7 +296,10 @@ const handleSubmit = async () => {
             value: formData.value,
             parentValue: formData.parentValue,
             parentLabel: formData.parentLabel,
+            cascaderOptionItemId: formData.cascaderOptionItemId,
         };
+        // 关键：保存当前编辑节点的key
+        currentKey.value = newOption.value; // 或 cascaderOptionItemId
         emit('save', newOption);
     } catch (error) {
         console.error('表单验证失败:', error);
@@ -284,23 +308,19 @@ const handleSubmit = async () => {
     }
 };
 
-// 递归展开到目标节点
+// 递归展开到目标节点（Element Plus 兼容写法）
 const expandToKey = (key) => {
-    const findAndExpand = (nodes, target) => {
-        for (const node of nodes) {
-            if (node.value === target) return true;
-            if (node.children && node.children.length > 0) {
-                if (findAndExpand(node.children, target)) {
-                    treeRef.value.expandNode(node, true);
-                    return true;
-                }
-            }
+    if (!treeRef.value) return;
+    const node = treeRef.value.getNode(key);
+    if (node) {
+        // 递归展开父节点
+        let parent = node.parent;
+        while (parent && parent.level > 0) {
+            parent.expanded = true;
+            parent = parent.parent;
         }
-        return false;
-    };
-    findAndExpand(optionList.value, key);
+    }
 };
-
 // 设置选项数据
 const setOptionData = (data) => {
     optionList.value = data || [];
@@ -316,11 +336,10 @@ const closeDialog = () => {
     dialogVisible.value = false;
     formRef.value.resetFields();
     currentEditNode.value = null;
-    currentKey.value = null;
 };
 
 // 定义事件
-const emit = defineEmits(['save']);
+const emit = defineEmits(['save', 'onDeleteSuccess']);
 
 watch(
   () => props.mainList,

@@ -575,7 +575,10 @@ export default {
                 if(data.codeOptionData) {
                     this.formOptionData = Object.assign(this.formOptionData, data.codeOptionData);
                 }
-                this.$refs.vfDesigner.setTestOptionData(data.optionData);
+                if(data.cascaderOptionData) {
+                    this.formOptionData = Object.assign(this.formOptionData, data.cascaderOptionData);
+                }
+                this.$refs.vfDesigner.setTestOptionData(this.formOptionData);
             }
             this.loadFieldListData();
         },

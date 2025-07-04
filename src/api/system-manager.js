@@ -264,6 +264,11 @@ export function saveCascaderOptionItem(entity, field, recordId, item) {
     })
 }
 
+export function deletedCascaderOptionItem(recordId) {
+    return http.post('systemManager/deletedCascaderOption', null, {
+        params: { recordId }
+    })
+}
 
 
 export function getTagFields(appAbbr) {

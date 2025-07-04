@@ -82,6 +82,9 @@ const loadForm = async () => {
             if(res.data.codeOptionData) {
                 optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
             }
+            if(res.data.cascaderOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.cascaderOptionData);
+            }
 			nextTick(() => {
 				vFormRef.value.setFormJson(res.data.layoutJson);
 				nextTick(() => {

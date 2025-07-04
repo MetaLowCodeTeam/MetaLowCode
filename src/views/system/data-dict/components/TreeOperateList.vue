@@ -105,6 +105,7 @@
                         ref="cascaderOptionMainRef"
                         :mainList="mainList"
                         @save="onCascaderOptionSave"
+                        @onDeleteSuccess="getMainList"
                     />
                 </div>
             </el-main>  
@@ -470,7 +471,7 @@ const onCascaderOptionSave = async (item) => {
     let res = await props.saveFn(
         cutNode.value.parentName,
         cutNode.value.name,
-        item.recordId,
+        item.cascaderOptionItemId,
         item
     );
     if(res && res.code == 200) {

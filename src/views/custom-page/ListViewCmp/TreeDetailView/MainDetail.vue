@@ -91,6 +91,9 @@ const initFormData = async (entity) => {
             if(res.data.codeOptionData) {
                 optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
             }
+            if(res.data.cascaderOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.cascaderOptionData);
+            }
 			let { type } = props;
 			nextTick(async () => {
 				// 编辑
