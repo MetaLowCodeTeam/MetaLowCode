@@ -54,12 +54,6 @@ let myCheckTabsFilter = ref({});
 
 // 初始化tab
 const initTabs = async () => {
-    tabs.value = [
-        {
-            entityLabel: props.defaultFirstTabLabel || "详情",
-            entityName: "detail",
-        },
-    ];
     let config = detailDialog.value.tab?.config;
    
     if (config) {
@@ -96,6 +90,12 @@ const initTabs = async () => {
         }else {
             sourceConfigColumn = config;
         }
+        tabs.value = [
+            {
+                entityLabel: props.defaultFirstTabLabel || "详情",
+                entityName: "detail",
+            },
+        ];
         sourceConfigColumn.forEach((el,inx) => {
             if(myCheckTabsFilter.value[inx] && !el.isCustomComponent){
                 tabs.value.push(el);
@@ -113,16 +113,64 @@ const initTabs = async () => {
             }
         });
     }
+    // 添加安全检查，确保tabs有数据
+    if (!tabs.value || tabs.value.length === 0) {
+        // 如果没有数据，设置默认值
+        tabs.value = [
+            {
+                entityLabel: props.defaultFirstTabLabel || "详情",
+                entityName: "detail",
+            },
+        ];
+    }
     let takInx = tabs.value[props.cutTabIndex] ? props.cutTabIndex : 0;
+    // 确保takInx在有效范围内
+    if (takInx >= tabs.value.length) {
+        takInx = 0;
+    }
     activeName.value = tabs.value[takInx].entityName + '-' + takInx;
 };
 
+// 防抖执行initTabs
+const debouncedInitTabs = () => {
+    if (initTabsTimer.value) {
+        clearTimeout(initTabsTimer.value);
+    }
+    initTabsTimer.value = setTimeout(() => {
+        initTabs();
+    }, 100); // 100ms防抖
+};
 
-watchEffect(() => {
-    detailDialog.value = props.tabsConf;
-    myCheckTabsFilter.value = props.checkTabsFilter || {};
-    initTabs();
-})
+// 使用更精确的watch，只在真正需要时执行
+let lastTabsConf = ref(null);
+let lastCheckTabsFilter = ref(null);
+// 防抖执行initTabs
+let initTabsTimer = ref(null);
+
+watch(
+    [() => props.tabsConf, () => props.checkTabsFilter],
+    ([newTabsConf, newCheckTabsFilter]) => {
+        // 检查是否真的发生了变化
+        const tabsConfChanged = JSON.stringify(newTabsConf) !== JSON.stringify(lastTabsConf.value);
+        const checkTabsFilterChanged = JSON.stringify(newCheckTabsFilter) !== JSON.stringify(lastCheckTabsFilter.value);
+        
+        if (tabsConfChanged || checkTabsFilterChanged) {
+            lastTabsConf.value = JSON.parse(JSON.stringify(newTabsConf));
+            lastCheckTabsFilter.value = JSON.parse(JSON.stringify(newCheckTabsFilter));
+            
+            detailDialog.value = newTabsConf;
+            myCheckTabsFilter.value = newCheckTabsFilter || {};
+            debouncedInitTabs(); // 使用防抖执行
+        }
+    },
+    { immediate: true, deep: true }
+);
+
+// watchEffect(() => {
+//     detailDialog.value = props.tabsConf;
+//     myCheckTabsFilter.value = props.checkTabsFilter || {};
+//     initTabs();
+// })
 
 // 打开显示项设置
 let detailTabsSetRefs = ref("");
