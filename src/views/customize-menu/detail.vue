@@ -672,22 +672,27 @@ const getLayoutList = async () => {
             // 权限或hide不通过直接隐藏
             if (!customPermissionPass || btn.hide) {
                 btn.hidden = true;
+                return;
             }
             // 非原生按钮直接显示
             if (!btn.isNative) {
                 btn.hidden = false;
+                return;
             }
             // 更多按钮不显示
             if (btn.key === 'more') {
                 btn.hidden = true;
+                return;
             }
             // 新建相关按钮不显示
             if (btn.key === 'newRelated') {
                 btn.hidden = true;
+                return;
             }
             // 编辑按钮且无编辑权限不显示
             if (btn.key === 'edit' && !$TOOL.checkRole('r' + entityCode.value + '-3')) {
                 btn.hidden = true;
+                return;
             }
         });
         // 只对"有权限且未被隐藏且有filterJson"的按钮调接口

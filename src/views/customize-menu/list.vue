@@ -184,6 +184,7 @@
                                 @click="customButtonClick(item)"
                                 :type="item.type"
                                 v-if="getTopCustomButtonShow(item)"
+                                class="ml-12"
                             >
                                 <el-icon
                                     :color="item.iconColor"
