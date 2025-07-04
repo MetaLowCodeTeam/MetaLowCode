@@ -50,7 +50,7 @@
         {{ row[column.prop]?.name }}
     </div>
     <div v-else-if="column.type == 'Cascader'">
-       级联占用【{{ row[column.prop] }}】
+       {{ row[column.prop] }}
     </div>
 	<div
 		class="text-ellipsis"

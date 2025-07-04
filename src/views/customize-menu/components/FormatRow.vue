@@ -51,7 +51,7 @@
             class="text-ellipsis"
             v-else-if="column.fieldType == 'Cascader'"
         >
-            级联占用【{{ row[column.fieldName] }}】
+            {{ row[column.fieldName] }}
         </div>
         <div
             class="text-ellipsis"
