@@ -225,9 +225,10 @@
                                 <el-button
                                     plain
                                     :type="item.type"
-                                    v-if="getDetailCustomButtonShow(item)"
+                                    v-if="!item.hidden"
                                     class="mb-5"
                                     @click="customButtonClick(item)"
+                                    :disabled="item.disabled"
                                 >
                                     <el-icon
                                         :color="item.iconColor"
@@ -353,7 +354,8 @@ import Attachment from "./components/Attachment/Index.vue";
 import { getRecordApprovalState } from '@/api/approval';
 import { checkTables } from "@/api/layoutConfig";
 import { storeToRefs } from "pinia";
-
+// 自定义按钮过滤
+import { checkCustomButtonFilters } from "@/api/layoutConfig";
 // 自定义按钮
 import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 import { useRouter } from "vue-router";
@@ -622,42 +624,6 @@ const customButtonClick = (item) => {
     }
 }
 
-// 获取自定义按钮显示
-const getDetailCustomButtonShow = (item) => {
-    // 检查自定义权限
-    let checkCustomRole = item.customCode ? $TOOL.checkRole(item.customCode) : true;
-    // 如果有自定义权限，需要检查权限条件
-    if(item.customCode) {
-        // 如果没取反：必须满足自定义权限
-        // 如果取反：必须不满足自定义权限
-        let customPermissionPass = item.reversalCustomCode ? !checkCustomRole : checkCustomRole;
-        if(!customPermissionPass) {
-            return false;
-        }
-    }
-    // 如果设置了隐藏 不显示
-    if(item.hide){
-        return false;
-    }
-    if(!item.isNative){
-        return true;
-    }
-    // 如果是更多按钮 不显示
-    if(item.key == 'more'){
-        return false;
-    }
-    // 如果是新建相关按钮 不显示
-    if(item.key == 'newRelated'){
-        return false;
-    }
-    // 如果是编辑按钮 且 没有编辑权限 不显示
-    if(item.key == 'edit' && !$TOOL.checkRole('r' + entityCode + '-3')){
-        return false;
-    }                           
-    return true;
-}
-
-
 // 加载页签
 const getLayoutList = async () => {
 	loading.value = true;
@@ -696,6 +662,71 @@ const getLayoutList = async () => {
         }
         // 自定义按钮
         customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetial');
+        // 先做权限和hide等所有显示逻辑过滤
+        customButtonList.value.forEach(btn => {
+            // 权限判断
+            let checkCustomRole = btn.customCode ? $TOOL.checkRole(btn.customCode) : true;
+            let customPermissionPass = btn.customCode
+                ? (btn.reversalCustomCode ? !checkCustomRole : checkCustomRole)
+                : true;
+            // 权限或hide不通过直接隐藏
+            if (!customPermissionPass || btn.hide) {
+                btn.hidden = true;
+                return;
+            }
+            // 非原生按钮直接显示
+            if (!btn.isNative) {
+                btn.hidden = false;
+                return;
+            }
+            // 更多按钮不显示
+            if (btn.key === 'more') {
+                btn.hidden = true;
+                return;
+            }
+            // 新建相关按钮不显示
+            if (btn.key === 'newRelated') {
+                btn.hidden = true;
+                return;
+            }
+            // 编辑按钮且无编辑权限不显示
+            if (btn.key === 'edit' && !$TOOL.checkRole('r' + entityCode.value + '-3')) {
+                btn.hidden = true;
+                return;
+            }
+        });
+        // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
+        let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson);
+        if (filterBtns.length > 0) {
+            let filterList = filterBtns.map(item => item.filterJson);
+            let filterParam = {
+                entityName: entityName.value,
+                recordIdList: [detailId.value],
+                filterList
+            };
+            let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
+            if (checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
+                let filterRes = checkCustomButtonFiltersRes.data[0];
+                filterBtns.forEach((btn, idx) => {
+                    const pass = filterRes[idx] == 1 || filterRes[idx] === true;
+                    if (!pass) {
+                        if (btn.errorShowType == 1) {
+                            btn.disabled = true;
+                            btn.hidden = false;
+                        } else if (btn.errorShowType == 2) {
+                            btn.hidden = true;
+                            btn.disabled = false;
+                        } else {
+                            btn.hidden = false;
+                            btn.disabled = false;
+                        }
+                    } else {
+                        btn.hidden = false;
+                        btn.disabled = false;
+                    }
+                });
+            }
+        }
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         // 新建配置项
 		formatNewRelated(res.data.ADD);

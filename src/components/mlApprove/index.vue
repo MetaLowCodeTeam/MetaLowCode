@@ -19,7 +19,7 @@
                 </div>
             </div>
         </template>
-        <div class="detail-main mt-20" v-loading="loading">
+        <div class="detail-main" v-loading="loading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
                     <div class="detail-container">
@@ -524,7 +524,7 @@ const beforeConfirmApprove = () => {
 };
 
 // 驳回前触发
-const beforeReject = () => {
+const beforeReject = async () => {
     // 驳回前置事件
     if(!checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage)) {
         return;
@@ -535,32 +535,44 @@ const beforeReject = () => {
         // 打开驳回弹框
         openRejectDialog();
     } else {
-        // 直接驳回，跳过表单数据获取
-        executeApproval(true);
+        loading.value = true;
+        await executeApproval(true);
+        loading.value = false;
     }
 };
 
+// 同意审批
+function confirmApprove(isBacked) {
+    if(!vFormRef.value){
+        ElMessage.error("没有找到表单");
+        return
+    }
+    vFormRef.value.getFormData().then(async (formData) => {
+        loading.value = true;
+        let saveRes = await saveRecord(
+            allEntityName.value[approvalTask.value.entityCode],
+            props.entityId,
+            formData
+        );
+        if (saveRes) {
+            executeApproval(isBacked);
+        }
+        loading.value = false;
+
+    }).catch(err => {
+        if(!globalDsv.value.defaultValidationMessageDisabled){
+            ElMessage.error("表单校验失败，请修改后重新提交");
+        }
+    })
+}
+
 // 执行审批逻辑（提取的公共方法）
-const executeApproval = async (isBacked, formData = null) => {
-    loading.value = true;
+const executeApproval = async (isBacked) => {
     // 是复杂工作流
     if (approvalTask.value.flowType == 2) {
         saveComplexFlow(isBacked ? 2 : 1);
         return;
     } else {
-        // 如果有表单数据，先保存记录
-        if (formData) {
-            let saveRes = await saveRecord(
-                allEntityName.value[approvalTask.value.entityCode],
-                props.entityId,
-                formData
-            );
-            if (!saveRes) {
-                loading.value = false;
-                return;
-            }
-        }
-        
         form.value.entityId = props.entityId;
         form.value.isBacked = isBacked;
         form.value.signatureImage = esignConf.value.resultImg;
@@ -575,24 +587,8 @@ const executeApproval = async (isBacked, formData = null) => {
             emit("confirm");
         }
     }
-    loading.value = false;
-};
-
-// 同意审批
-function confirmApprove(isBacked) {
-    if(!vFormRef.value){
-        ElMessage.error("没有找到表单");
-        return
-    }
-    vFormRef.value.getFormData().then(async (formData) => {
-        // 调用公共审批方法
-        executeApproval(isBacked, formData);
-    }).catch(err => {
-        if(!globalDsv.value.defaultValidationMessageDisabled){
-            ElMessage.error("表单校验失败，请修改后重新提交");
-        }
-    })
 }
+
 
 const customButtonText = ref({
     confirmButtonText: '同意',
@@ -793,10 +789,8 @@ defineExpose({
 .detail-header {
     // padding-bottom: 20px;
     // box-sizing: border-box;
-    padding: 0 20px;
+    padding: 20px;
     height: 48px;
-    line-height: 48px;
-    color: #fff;
     //background: #f0f0f0;
     .fr-box {
         // height: 60px;

@@ -385,7 +385,7 @@
                                         clearable
                                     />
                                 </el-form-item>
-                                <el-form-item label="显示方式" v-if="currentTab == 'pcColumn'">
+                                <el-form-item label="显示方式" v-if="currentTab == 'pcColumn' || currentTab == 'pcDetial' || currentTab == 'appDetial'">
                                     <el-select 
                                         v-model="currentButton.errorShowType" 
                                         placeholder="请选择不满足条件时显示方式"
