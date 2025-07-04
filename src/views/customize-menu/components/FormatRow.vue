@@ -49,6 +49,12 @@
         >{{ numberToCurrencyNo(row[column.fieldName]) }}</div>
         <div
             class="text-ellipsis"
+            v-else-if="column.fieldType == 'Cascader'"
+        >
+            级联占用【{{ row[column.fieldName] }}】
+        </div>
+        <div
+            class="text-ellipsis"
             v-else-if="column.fieldType == 'Picture'"
             :title="'图片：' + row[column.fieldName]?.length"
         >

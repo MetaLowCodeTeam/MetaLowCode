@@ -49,6 +49,9 @@
     <div v-else-if="column.type == 'OuterReference'">
         {{ row[column.prop]?.name }}
     </div>
+    <div v-else-if="column.type == 'Cascader'">
+       级联占用【{{ row[column.prop] }}】
+    </div>
 	<div
 		class="text-ellipsis"
 		v-else-if="column.type == 'Picture'"
