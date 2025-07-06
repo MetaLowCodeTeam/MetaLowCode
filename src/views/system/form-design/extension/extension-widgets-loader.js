@@ -31,6 +31,7 @@ import onBeforeDialogOpenEditor
 
 
 /* 字段属性 */
+import detailLinkDisabledEditor from '@/views/system/form-design/extension/property-editor/reference-detailLinkDisabled-editor.vue';
 import searchDialogWidthEditor from '@/views/system/form-design/extension/property-editor/reference-searchDialogWidth-editor.vue';
 import referenceUseCurrentUserEditor from '@/views/system/form-design/extension/property-editor/reference-useCurrentUser-editor.vue';
 import referenceFillBackConfigEditor from '@/views/system/form-design/extension/property-editor/reference-fillBackConfig-editor.vue';
@@ -120,6 +121,7 @@ export const loadExtensionWidgets = (app) => {
      */
 
 
+	PERegister.registerCPEditor(app, 'detailLinkDisabled', 'reference-detailLinkDisabled-editor', detailLinkDisabledEditor)
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
 	PERegister.registerCPEditor(app, 'useCurrentUser', 'reference-useCurrentUser-editor', referenceUseCurrentUserEditor)
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)

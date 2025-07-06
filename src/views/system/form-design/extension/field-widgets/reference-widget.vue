@@ -24,6 +24,7 @@
 				:placeholder="field.options.placeholder"
 				:prefix-icon="field.options.prefixIcon"
 				:suffix-icon="field.options.suffixIcon"
+				@keydown="handleKeyDown"
 			>
 				<template #suffix>
 					<el-icon
@@ -63,18 +64,20 @@
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"
 					>{{ contentForReadMode }}
-					<el-button
-						v-if="fieldModel && fieldModel.id"
-						type="primary"
-						circle
-						size="small"
-						class="small-circle-button"
-						title="打开详情弹窗"
-					>
-						<el-icon>
-							<TopRight />
-						</el-icon>
-					</el-button>
+					<template v-if="!field.options.detailLinkDisabled">
+						<el-button
+							v-if="fieldModel && fieldModel.id"
+							type="primary"
+							circle
+							size="small"
+							class="small-circle-button"
+							title="打开详情弹窗"
+						>
+							<el-icon>
+								<TopRight />
+							</el-icon>
+						</el-button>
+					</template>
 				</span>
 			</template>
 		</form-item-wrapper>
@@ -188,14 +191,6 @@ export default {
 		};
 	},
 	computed: {
-		inputType() {
-			if (this.field.options.type === "number") {
-				return "text"; //当input的type设置为number时，如果输入非数字字符，则v-model拿到的值为空字符串，无法实现输入校验！故屏蔽之！！
-			}
-
-			return this.field.options.type;
-		},
-
 		contentForReadMode() {
 			return this.fieldModel ? this.fieldModel.name : "--";
 		},
@@ -203,6 +198,7 @@ export default {
 		dialogWidth() {
 			return this.field.options.searchDialogWidth || "520px";
 		},
+
 	},
 	watch: {
 		fieldModel: {
@@ -249,6 +245,14 @@ export default {
 	},
 
 	methods: {
+		handleKeyDown(event) {
+			// // 检查按键是否是 Tab 或 Enter
+			// if (event.key !== 'Tab' && event.key !== 'Enter') {
+			// 	// 阻止其他键的默认行为
+			// 	event.preventDefault();
+			// }
+		},
+
 		setDefaultValue() {
 			if (this.isReadMode || this.getValue()) {
 				return
@@ -696,6 +700,10 @@ export default {
 		},
 
 		openRefDialog() {
+			if (!this.field.options.detailLinkDisabled) {
+				return
+			}
+
 			let refId = this.fieldModel ? this.fieldModel.id : null;
 			if (refId && this.$refs.detailRef) {
 				this.$refs.detailRef.openDialog(refId);

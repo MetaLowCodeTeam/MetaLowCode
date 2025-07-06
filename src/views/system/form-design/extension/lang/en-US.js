@@ -5,6 +5,7 @@ export default {
             'check-tag': 'CheckTag',
             'reference': 'Reference',
             'reference-list': 'Reference List',
+            'outer-reference': 'Outer Reference',
             'location': 'Location',
             'sign': 'Sign',
         },

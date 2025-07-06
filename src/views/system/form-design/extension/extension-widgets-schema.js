@@ -116,9 +116,10 @@ export const referenceSchema = {
 		requiredHint: '',
 		validation: '',
 		validationHint: '',
-		searchDialogWidth: '520px',  //搜索弹窗宽度
+		searchDialogWidth: '800px',  //搜索弹窗宽度
 		useCurrentUser: false,  //默认值使用当前登录用户
 		useCurrentDepartment: false,  //默认值使用当前登录用户所属部门
+		detailLinkDisabled: false,  //查看状态禁止显示详情跳转
         fillBackEnabled: false,
         // 表单回填
         fillBackConfig: [],
@@ -192,7 +193,7 @@ export const referenceListSchema = {
 		requiredHint: '',
 		validation: '',
 		validationHint: '',
-		searchDialogWidth: '520px',  //搜索弹窗宽度
+		searchDialogWidth: '800px',  //搜索弹窗宽度
         // 启用树模式
         useTreeDataSelect: false,
         // 树引用字段
@@ -309,7 +310,7 @@ export const signWidgetSchema = {
 export const outerReferenceSchema = {
 	type: 'outer-reference',  //引用字段组件
 	alias: '',  //组件别名，可以自定义
-	icon: 'reference-field',    
+	icon: 'reference-field',
 	formItemFlag: true,
 	options: {
 		name: '',

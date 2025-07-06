@@ -5,6 +5,7 @@ export default {
             'check-tag': '标签选择',
             'reference': '引用',
             'reference-list': '多对多引用',
+            'outer-reference': '外部引用',
             'location': '定位',
             'sign': '签名',
         },
