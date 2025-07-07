@@ -12,6 +12,7 @@
                 highlight-current
                 :expand-on-click-node="false"
                 @node-click="handleNodeClick"
+                default-expand-all
             >
                 <template #default="{ node, data }">
                     <div class="tree-node">
@@ -19,18 +20,25 @@
                         <span class="node-value">({{ data.value }})</span>
                         <div class="node-actions">
                             <el-button 
-                                type="primary" 
                                 size="small" 
-                                @click.stop="handleEdit(data, node)"
+                                @click.stop="handleEdit(null, node)"
+                                icon="Plus"
+                                link
                             >
-                                编辑
                             </el-button>
                             <el-button 
-                                type="danger" 
+                                size="small" 
+                                @click.stop="handleEdit(data, node)"
+                                icon="Edit"
+                                link
+                            >
+                            </el-button>
+                            <el-button 
                                 size="small" 
                                 @click.stop="handleDelete(data, node)"
+                                icon="Delete"
+                                link
                             >
-                                删除
                             </el-button>
                         </div>
                     </div>
@@ -148,7 +156,7 @@ const formRules = {
 };
 
 // 暴露方法给父组件
-const openDialog = (data) => {
+const openDialog = (data, node) => {
     if (data) {
         // 编辑模式
         currentEditNode.value = data;
@@ -161,14 +169,15 @@ const openDialog = (data) => {
             cascaderOptionItemId: data.cascaderOptionItemId || null,
         });
     } else {
+        console.log(node);
         // 新建模式
         currentEditNode.value = null;
         currentEditValue.value = null;
         Object.assign(formData, {
             label: '',
             value: '',
-            parentValue: currentNode.value ? currentNode.value.value : '',
-            parentLabel: currentNode.value ? currentNode.value.label : '根节点',
+            parentValue: node ? node.data.value : '',
+            parentLabel: node ? node.data.label : '根节点',
             cascaderOptionItemId: null,
         });
     }
@@ -234,10 +243,10 @@ const handleNodeClick = (data, node) => {
 
 // 编辑选项
 const handleEdit = (data, node) => {
-    openDialog({
-        ...data,
-    });
+    openDialog(data ? { ...data } : null, node);
 };
+
+
 
 // 删除选项
 const handleDelete = async (data, node) => {
