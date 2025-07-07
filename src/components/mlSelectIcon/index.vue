@@ -9,11 +9,7 @@
         </el-input>
         <div class="mt-20">
             <el-tabs>
-                <el-tab-pane v-for="item in iconData" :key="item.name" lazy>
-                    <template #label>
-                        {{item.name}}
-                        <el-tag size="small" type="info">{{item.icons.length}}</el-tag>
-                    </template>
+                <el-tab-pane v-for="item in iconData" :key="item.name" :label="item.label">
                     <div class="ml-icon-select__list">
                         <el-scrollbar>
                             <ul>
@@ -109,7 +105,12 @@ let selectedIcon = ref({
 
 onMounted(() => {
     dialogIsShow.value = props.modelValue;
-    iconData.value = JSON.parse(JSON.stringify(config.icons));
+    iconData.value = JSON.parse(JSON.stringify(config.icons)).map(
+        el => {
+            el.label = el.name + "(" + el.icons.length + ")";
+            return el;
+        }
+    );
 });
 
 const search = (text) => {

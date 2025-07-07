@@ -4,7 +4,7 @@
 	<mlSingleList
 		title="多租户"
 		mainEntity="Tenant"
-		fieldsList="tenantName,isDisabled,tenantState,tenantCode,initializeTemplate,appManagementSwitch"
+		fieldsList="tenantName,isDisabled,tenantState,tenantCode,initializeTemplate,appManagementSwitch,expiryDate"
 		:sortFields="sortFields"
 		fieldName="tenantName"
 		:tableColumn="tableColumn"
@@ -59,9 +59,18 @@
 				label="操作"
 				fixed="right"
 				:align="'center'"
-				width="200"
+				width="250"
 			>
 				<template #default="scope">
+                    <el-button
+						size="small"
+						type="primary"
+						link
+						icon="Document"
+						@click="renewTenant(scope.row)"
+					>
+						续签
+					</el-button>
 					<el-button
 						size="small"
 						type="primary"
@@ -105,7 +114,13 @@
                                         <CopyDocument />
                                     </el-icon>
                                     复制专属链接
-                                </el-dropdown-item>        
+                                </el-dropdown-item>
+                                <el-dropdown-item command="renewLog">
+                                     <el-icon>
+                                         <Document />
+                                     </el-icon>
+                                     续签记录
+                                 </el-dropdown-item> 
 							</el-dropdown-menu>
 						</template>
 					</el-dropdown>
@@ -116,6 +131,8 @@
 	<TenantEdit ref="tenantEditRef" @refresh="refresh" />
 	<TenantTemplate ref="tenantTemplateRef" />
     <TenantCopy ref="tenantCopyRef" />
+    <TenantRenewal ref="tenantRenewalRef" @refresh="refresh" />
+    <TenantRenewalLogs ref="tenantRenewalLogsRef" />
 </template>
 <script setup>
 import { ref } from "vue";
@@ -125,6 +142,10 @@ import { deleteTenantRecord, initializationDatabase } from "@/api/plugins";
 import TenantTemplate from "./components/Tenant-Template.vue";
 // 复制租户专属链接
 import TenantCopy from "./components/Tenant-Copy.vue";
+// 续签
+import TenantRenewal from "./components/Tenant-Renewal.vue";
+// 续签记录
+import TenantRenewalLogs from "./components/Tenant-Renewal-Logs.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 // 默认排序
 let sortFields = ref([
@@ -146,6 +167,14 @@ let tableColumn = ref([
 		label: "租户编码",
 		align: "center",
 	},
+    {
+        prop: "expiryDate",
+        label: "到期时间",
+        align: "center",
+        formatter: (row) => {
+            return row.expiryDate || "长期";
+        }
+    },
 	{
 		prop: "isDisabled",
 		label: "启用",
@@ -225,6 +254,13 @@ const copyTenant = (row) => {
     // copyText(location.origin + url);
 }
 
+// 续签
+let tenantRenewalRef = ref("");
+let tenantRenewalLogsRef = ref("");
+const renewTenant = (row) => {
+    tenantRenewalRef.value.openDialog(row);
+}
+
 // 更多
 const handleCommand = (command, row) => {
     switch(command) {
@@ -233,6 +269,9 @@ const handleCommand = (command, row) => {
             break;
         case "copy":
             copyTenant(row);
+            break;
+        case "renewLog":
+            tenantRenewalLogsRef.value.openDialog(row);
             break;
     }
 };

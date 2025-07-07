@@ -2,7 +2,7 @@
 	<ml-dialog
 		v-model="isShow"
 		:title="title"
-		width="500px"
+		width="520px"
 		draggable
 		:show-close="!loading"
 	>
@@ -45,6 +45,22 @@
 					</el-select>
 					<el-input v-else v-model="tenantTemplateName" disabled />
 				</el-form-item>
+                <el-form-item label="到期时间" prop="expiryDate">
+                    <el-radio-group v-model="form.expiryDateType" :disabled="dialogType !== 1">
+                        <el-radio :value="1">长期</el-radio>
+                        <el-radio :value="2">指定时间</el-radio>
+                    </el-radio-group>
+                    <el-date-picker
+                        class="ml-20"
+                        v-model="form.expiryDate"
+                        type="datetime"
+                        placeholder="请选择到期时间"
+                        :disabled-date="disabledDate"
+                        v-if="form.expiryDateType == 2"
+                        :disabled="dialogType !== 1"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                    />
+                </el-form-item>
 				<el-form-item label="启用">
 					<el-switch
 						v-model="form.isDisabled"
@@ -80,6 +96,8 @@ let form = ref({
 	isDisabled: false,
 	initializeTemplate: null,
     appManagementSwitch: false,
+    expiryDateType: 1,
+    expiryDate: null,
 });
 let rules = ref({
 	tenantName: [
@@ -116,12 +134,15 @@ const openDialog = (row, target) => {
 	isView.value = false;
 	dialogType.value = row.tenantId ? (target == "view" ? 3 : 2) : 1;
 
+	// 确保 form 对象完全初始化
 	form.value = {
 		tenantName: "",
 		tenantCode: "",
 		isDisabled: false,
 		initializeTemplate: null,
         appManagementSwitch: false,
+        expiryDateType: 1,
+        expiryDate: null,
 	};
 	// 如果是编辑
 	if (row.tenantId) {
@@ -131,6 +152,8 @@ const openDialog = (row, target) => {
 			isDisabled: row.isDisabled,
 			tenantId: row.tenantId,
             appManagementSwitch: row.appManagementSwitch,
+            expiryDateType: row.expiryDate ? 2 : 1,
+            expiryDate: row.expiryDate,
 		};
 		tenantTemplateName.value = row.initializeTemplate?.name || "未使用模板";
 	}
@@ -145,6 +168,13 @@ const formRef = ref("");
 const beforeSave = () => {
 	formRef.value.validate(async (valid) => {
 		if (valid) {
+            if(form.value.expiryDateType == 2 && !form.value.expiryDate){
+                ElMessage.error("请选择到期时间");
+                return;
+            }
+            if(form.value.expiryDateType == 1){
+                form.value.expiryDate = null;
+            }
 			onSave(form.value);
 		}
 	});
@@ -159,6 +189,11 @@ const onSave = async (data) => {
 		emits("refresh");
 	}
 	loading.value = false;
+};
+
+// 禁用今天之前的日期
+const disabledDate = (time) => {
+	return time.getTime() < Date.now() - 8.64e7; // 禁用今天之前的日期
 };
 
 // 加载租户列表模版

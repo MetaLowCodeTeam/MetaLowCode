@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import 'dayjs/locale/zh-cn';
 import calenderPlugin from 'dayjs/plugin/calendar';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { pinyin } from 'pinyin-pro'
 import JSEncrypt from 'jsencrypt';
 import http from "@/utils/request";
@@ -10,6 +11,7 @@ import { ElMessage } from 'element-plus';
 // 注册插件
 dayjs.extend(updateLocale);
 dayjs.extend(calenderPlugin);
+dayjs.extend(relativeTime);
 
 // 修改语言配置
 dayjs.updateLocale('zh-cn', {
@@ -290,14 +292,14 @@ export const $moment = function (date) {
     return dayjs(date.trim())
 }
 
-export const $fromNow = function (date) {
+export const $fromNow = function (date, isRelativeTime = false) {
     if (!date) {
         return '暂无时间'
     }
     const m = $moment(date)
     // return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : m.fromNow()
     // return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : m.format('YYYY-MM-DD')
-    return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : dayjs(date).format('YYYY-MM-DD HH:mm:ss')
+    return Math.abs(dayjs().diff(m)) < 6000 ? '刚刚' : isRelativeTime ? dayjs(date).fromNow() : dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     //     sameDay: '[今天]LT',
     //     nextDay: '[明天]LT',
     //     nextWeek: '[下]ddddLT',

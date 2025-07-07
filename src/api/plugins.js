@@ -21,6 +21,19 @@ export function initializationDatabase(recordId) {
     })
 }
 
+// 多租户续签
+export function tenantRenewal(data) {
+    return http.post("/plugins/metaTenant/tenant/tenantRenewal", data);
+}
+
+// 多租户续签记录
+export function queryTenantRenewalLogs(recordId) {
+    return http.post("/plugins/metaTenant/tenant/queryTenantRenewalLogs", null, {
+        params: { recordId }
+    });
+}
+
+
 // 外部数据源测试链接
 export function testDbConnection(body) {
     return http.get('/plugins/metaDataWarehouse/outerData/testDbConnection', body);
