@@ -46,7 +46,7 @@ const DEFAULT_CONFIG = {
 
 // 如果生产模式，就合并动态的APP_CONFIG
 // public/config.js
-if(import.meta.env.NODE_ENV === 'production'){
+if(import.meta.env.VITE_NODE_ENV === 'production'){
 	Object.assign(DEFAULT_CONFIG, APP_CONFIG)
 }
 

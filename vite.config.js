@@ -64,7 +64,7 @@ export default ({
 
     // todo 替换为原有变量
     let define = {
-        'process.env.NODE_ENV': command === 'serve' ? '"development"' : '"production"',
+        'process.env.VITE_NODE_ENV': command === 'serve' ? '"development"' : '"production"',
     }
 
     let esbuild = {}
