@@ -597,7 +597,7 @@ const executeDeleteEntity = (entity) => {
 const filterMainEntity = (filterList, callBack) => {
     filterList.length = 0; /* 清空数组，不能用filterList=[]，否则SimpleTable显示不出数据！！ */
     filterList = entityItems.value.filter((entity) => {
-        if (entity.systemEntityFlag || entity.internalEntityFlag) {
+        if (entity.internalEntityFlag) {
             //
         } else if (entity.detailEntityFlag === false) {
             filterList.push({ name: entity.name, label: entity.label, tags: entity.tags });
