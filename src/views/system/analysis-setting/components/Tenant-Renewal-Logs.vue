@@ -47,7 +47,7 @@ const getTableData = async (recordId) => {
 
 const openDialog = (row) => {
 	isShow.value = true;
-	title.value = row.tenantName + "的续签记录";
+	title.value = row.tenantName + "的续期记录";
 	getTableData(row.tenantId);
 };
 

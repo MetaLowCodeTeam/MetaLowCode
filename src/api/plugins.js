@@ -21,12 +21,12 @@ export function initializationDatabase(recordId) {
     })
 }
 
-// 多租户续签
+// 多租户续期
 export function tenantRenewal(data) {
     return http.post("/plugins/metaTenant/tenant/tenantRenewal", data);
 }
 
-// 多租户续签记录
+// 多租户续期记录
 export function queryTenantRenewalLogs(recordId) {
     return http.post("/plugins/metaTenant/tenant/queryTenantRenewalLogs", null, {
         params: { recordId }

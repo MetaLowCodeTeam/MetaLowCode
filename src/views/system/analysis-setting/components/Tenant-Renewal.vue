@@ -69,7 +69,7 @@ const disabledDate = (time) => {
 
 const openDialog = (row) => {
 	isShow.value = true;
-    dialogTitle.value = "续签" + row.tenantName;
+    dialogTitle.value = "续期" + row.tenantName;
 	form.value = {
 		expiryDateType: row.expiryDate ? 2 : 1,
 		expiryDate: row.expiryDate ? new Date(row.expiryDate) : null,
@@ -106,7 +106,7 @@ const onSave = async () => {
         remarks,
     });
     if(res && res.code == 200){
-        ElMessage.success("续签成功");
+        ElMessage.success("续期成功");
         emits("refresh");
         isShow.value = false;
     }

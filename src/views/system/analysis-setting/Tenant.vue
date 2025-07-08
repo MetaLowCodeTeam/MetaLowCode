@@ -69,7 +69,7 @@
 						icon="Document"
 						@click="renewTenant(scope.row)"
 					>
-						续签
+						续期
 					</el-button>
 					<el-button
 						size="small"
@@ -119,7 +119,7 @@
                                      <el-icon>
                                          <Document />
                                      </el-icon>
-                                     续签记录
+                                     续期记录
                                  </el-dropdown-item> 
 							</el-dropdown-menu>
 						</template>
@@ -142,9 +142,9 @@ import { deleteTenantRecord, initializationDatabase } from "@/api/plugins";
 import TenantTemplate from "./components/Tenant-Template.vue";
 // 复制租户专属链接
 import TenantCopy from "./components/Tenant-Copy.vue";
-// 续签
+// 续期
 import TenantRenewal from "./components/Tenant-Renewal.vue";
-// 续签记录
+// 续期记录
 import TenantRenewalLogs from "./components/Tenant-Renewal-Logs.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 // 默认排序
@@ -254,7 +254,7 @@ const copyTenant = (row) => {
     // copyText(location.origin + url);
 }
 
-// 续签
+// 续期
 let tenantRenewalRef = ref("");
 let tenantRenewalLogsRef = ref("");
 const renewTenant = (row) => {
