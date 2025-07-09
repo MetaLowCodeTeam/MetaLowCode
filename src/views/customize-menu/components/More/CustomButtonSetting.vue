@@ -1,5 +1,5 @@
 <template>
-	<ml-dialog v-model="isShow" title="自定义按钮设置" width="700">
+	<ml-dialog v-model="isShow" title="自定义按钮设置" width="720">
         <el-tabs 
             v-model="currentTab" 
             @tab-change="tabChange"
@@ -196,9 +196,9 @@
                                             : ''
                                     "
                                     :link="currentTab == 'pcColumn'"
-                                    :plain="currentTab == 'pcDetial' || currentTab == 'appDetial' || currentTab == 'appList' || (currentTab == 'pcEdit' && currentButton.key == 'saveRefresh')"
-                                    :round="currentTab == 'appDetial' || currentTab == 'appList'"
-                                    :class="{'app-detial-button': currentTab == 'appDetial' || currentTab == 'appList'}"
+                                    :plain="getPlain(currentButton)"
+                                    :round="isAppDetailOrList"
+                                    :class="{'app-detial-button': isAppDetailOrList}"
                                 >
                                     <el-icon
                                         :size="16"
@@ -324,10 +324,10 @@
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                            <el-col
-                                :span="24"
-                                v-if="currentButton.action != 1 && currentTab != 'pcColumn' && currentTab != 'pcDetial' && currentTab != 'appDetial'"
-                            >
+                                                    <el-col
+                            :span="24"
+                            v-if="isShowAvailableType"
+                        >
                                 <el-form-item label="可用类型">
                                     <el-radio-group
                                         v-model="
@@ -385,7 +385,10 @@
                                         clearable
                                     />
                                 </el-form-item>
-                                <el-form-item label="显示方式" v-if="currentTab == 'pcColumn' || currentTab == 'pcDetial' || currentTab == 'appDetial'">
+                                <el-form-item 
+                                    label="显示方式" 
+                                    v-if="isShowDisplayType"
+                                >
                                     <el-select 
                                         v-model="currentButton.errorShowType" 
                                         placeholder="请选择不满足条件时显示方式"
@@ -607,7 +610,7 @@
 	</ml-dialog>
 </template>
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed } from "vue";
 // 滚动条
 import mlScrollbar from "@/components/mlScrollbar/index.vue";
 import { deepClone, getGuid } from "@/utils/util";
@@ -668,6 +671,19 @@ const { unSystemEntityList } = storeToRefs(useCommonStore());
 
 const emit = defineEmits(["confirm"]);
 
+// 计算属性
+const isShowDisplayType = computed(() => {
+	return ['pcColumn', 'pcDetial', 'appDetial', 'pcEdit'].includes(currentTab.value);
+});
+
+const isShowAvailableType = computed(() => {
+	return currentButton.value?.action !== 1 && !['pcColumn', 'pcDetial', 'appDetial'].includes(currentTab.value);
+});
+
+const isAppDetailOrList = computed(() => {
+	return ['appDetial', 'appList'].includes(currentTab.value);
+});
+
 const isShow = ref(false);
 
 const currentTab = ref("pcTop");
@@ -725,36 +741,45 @@ const addButton = () => {
 
 // 校验数据是否可通过
 const checkData = () => {
-	if (buttonList.value.length > 0) {
-		for (let i = 0; i < buttonList.value.length; i++) { 
-			if (buttonList.value[i].isNative) {
-				continue;
-			}
-			currentButton.value = buttonList.value[i];
-			let { name, selectEntity, selectForm, selectDataTransform } =
-				buttonList.value[i];
-			if (!name) {
-				errorStatus.value.name = true;
-				ElMessage.error("请输入按钮名称");
-				return false;
-			}
-			if (!selectEntity && currentButton.value.action != 4) {
-				errorStatus.value.selectEntity = true;
-				ElMessage.error("请选择实体");
-				return false;
-			}
-			if (!selectForm && currentButton.value.action != 4) {
-				errorStatus.value.selectForm = true;
-				ElMessage.error("请选择表单");
-				return false;
-			}
-			if (!selectDataTransform && currentButton.value.action == 3) {
-				errorStatus.value.selectDataTransform = true;
-				ElMessage.error("请选择数据转换");
+	if (buttonList.value.length === 0) {
+		return true;
+	}
+	
+	const validationRules = [
+		{
+			condition: (button) => !button.isNative && !button.name,
+			errorField: 'name',
+			message: '请输入按钮名称'
+		},
+		{
+			condition: (button) => !button.isNative && button.action !== 4 && !button.selectEntity,
+			errorField: 'selectEntity',
+			message: '请选择实体'
+		},
+		{
+			condition: (button) => !button.isNative && button.action !== 4 && !button.selectForm,
+			errorField: 'selectForm',
+			message: '请选择表单'
+		},
+		{
+			condition: (button) => !button.isNative && button.action === 3 && !button.selectDataTransform,
+			errorField: 'selectDataTransform',
+			message: '请选择数据转换'
+		}
+	];
+	
+	for (const button of buttonList.value) {
+		currentButton.value = button;
+		
+		for (const rule of validationRules) {
+			if (rule.condition(button)) {
+				errorStatus.value[rule.errorField] = true;
+				ElMessage.error(rule.message);
 				return false;
 			}
 		}
 	}
+	
 	return true;
 };
 
@@ -864,48 +889,35 @@ const openDialog = async (entity) => {
 	dialogLoading.value = false;
 };
 
+// 标签页默认按钮配置映射
+const TAB_DEFAULT_BUTTONS = {
+	pcTop: defaultPcTopButtonList,
+	pcColumn: defaultPcColumnButtonList,
+	pcDetial: defaultPcDetialButtonList,
+	appDetial: defaultAppDetialButtonList,
+	pcEdit: defaultPcEditButtonList
+};
+
 // 初始化自定义按钮配置
 const initTabButtonConfig = (tab) => {
-	let findTab = tabList.value.find((item) => item.name == tab);
-    findTab.buttonList = layoutConfigData.value[tab] || [];
+	const findTab = tabList.value.find((item) => item.name === tab);
+	findTab.buttonList = layoutConfigData.value[tab] || [];
+	
 	// 获取现有按钮的所有key
 	const existingKeys = findTab.buttonList.map((btn) => btn.key);
-	if (tab === "pcTop") {
-		// 遍历默认按钮，只添加不存在的
-		defaultPcTopButtonList.forEach((defaultBtn) => {
+	
+	// 获取当前标签页的默认按钮列表
+	const defaultButtons = TAB_DEFAULT_BUTTONS[tab];
+	
+	// 添加不存在的默认按钮
+	if (defaultButtons) {
+		defaultButtons.forEach((defaultBtn) => {
 			if (!existingKeys.includes(defaultBtn.key)) {
 				findTab.buttonList.push(defaultBtn);
 			}
 		});
 	}
-    if(tab == 'pcColumn'){
-        defaultPcColumnButtonList.forEach((defaultBtn) => {
-            if (!existingKeys.includes(defaultBtn.key)) {
-                findTab.buttonList.push(defaultBtn);
-            }
-        });
-    }
-    if(tab == 'pcDetial'){
-        defaultPcDetialButtonList.forEach((defaultBtn) => {
-            if (!existingKeys.includes(defaultBtn.key)) {
-                findTab.buttonList.push(defaultBtn);
-            }
-        });
-    }
-    if(tab == 'appDetial'){
-        defaultAppDetialButtonList.forEach((defaultBtn) => {
-            if (!existingKeys.includes(defaultBtn.key)) {
-                findTab.buttonList.push(defaultBtn);
-            }
-        });
-    }
-    if(tab == 'pcEdit'){
-        defaultPcEditButtonList.forEach((defaultBtn) => {
-            if (!existingKeys.includes(defaultBtn.key)) {
-                findTab.buttonList.push(defaultBtn);
-            }
-        });
-    }
+	
 	buttonList.value = findTab.buttonList;
 };
 
@@ -1001,6 +1013,23 @@ const saveButton = async () => {
 	}
 };
 
+// 常量配置
+const PLAIN_TABS = ['pcDetial', 'appDetial', 'appList'];
+const PLAIN_BUTTONS = ['saveRefresh', 'saveSubmit'];
+
+const getPlain = (button) => {
+    // 检查当前标签页是否在列表中
+    if (PLAIN_TABS.includes(currentTab.value)) {
+        return true;
+    }
+    
+    // 特殊条件：pcEdit 标签页且按钮为指定类型
+    if (currentTab.value === 'pcEdit' && PLAIN_BUTTONS.includes(button.key)) {
+        return true;
+    }
+    
+    return false;
+}
 defineExpose({
 	openDialog,
 	closeDialog,

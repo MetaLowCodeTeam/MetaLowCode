@@ -193,7 +193,6 @@ export default function useCustomButtonConfig() {
             icon: "Select",
             showType: 1,
             type: "primary"
-            
         },
         {
             name: "保存并刷新",
@@ -316,13 +315,13 @@ export default function useCustomButtonConfig() {
             name: "pcColumn",
             buttonList: [],
         },
-        // {
-        //     label: "编辑(PC)",
-        //     name: "pcEdit",
-        //     buttonList: [],
-        // },
         {
-            label: "详情(PC)",
+            label: "编辑弹框(PC)",
+            name: "pcEdit",
+            buttonList: [],
+        },
+        {
+            label: "详情弹框(PC)",
             name: "pcDetial",
             buttonList: [],
         },

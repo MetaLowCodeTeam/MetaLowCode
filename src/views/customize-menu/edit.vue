@@ -29,7 +29,7 @@
             />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
-        <template #footer v-if="editParamConf.showFooter">
+        <template #footer v-if="editParamConf.showFooter && customButtonList.length == 0">
             <slot name="beforeCancelBtn"></slot>
             <el-button 
                 @click="cancel" 
@@ -72,6 +72,40 @@
             </el-button>
             <slot name="afterConfirmAndSubmitBtn"></slot>
         </template>
+        <template #footer v-else>
+            <template 
+                v-for="(item,index) of customButtonList" :key="index"
+            >
+                <el-button
+                    @click.stop="customButtonClick(item, row)"
+                    :type="item.type"
+                    :plain="item.key == 'saveRefresh' || item.key == 'saveSubmit'"
+                    :disabled="item.disabled"
+                    v-if="!item.hidden"
+                >
+                    <el-icon
+                        :color="item.iconColor"
+                        v-if="
+                            item.icon &&
+                            item.showType != 3
+                        "
+                    >
+                        <component :is="item.icon" />
+                    </el-icon>
+                    <span
+                        v-if="item.showType != 2"
+                        :class="{
+                            'ml-5':
+                                item.showType == 1 &&
+                                item.icon,
+                        }"
+                        style="font-size: 12px;"
+                    >
+                        {{ item.name }}
+                    </span>
+                </el-button>
+            </template>
+        </template>
         <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
     </ml-dialog>
     
@@ -107,6 +141,14 @@ import {
     formatQueryByIdParam,
 } from "@/utils/util";
 import http from "@/utils/request"
+// 自定义按钮过滤
+import { checkCustomButtonFilters } from "@/api/layoutConfig";
+// 自定义按钮
+import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
+import { useRouter } from "vue-router";
+const { router } = useRouter();
+const { getCustomAppButtons, customButtonHandler } = useCustomButtonConfig();
+
 const { 
     queryEntityNameById, 
     queryEntityLabelByName, 
@@ -191,10 +233,65 @@ onMounted(() => {
     currentExposed.value = getCurrentInstance().exposed;
 })
 
+// 自定义按钮
+let customButtonList = ref([]);
+// 自定义按钮点击
+const customButtonClick = (item, row) => {
+    // 如果是内置按钮
+    if(item.isNative){
+        switch(item.key){
+            case 'cancel':
+                cancel();
+                break;
+            case 'save':
+                confirm();
+                break;
+            case 'saveRefresh':
+                confirmRefresh();
+                break;
+            case 'saveSubmit':
+                confirmSaveAndSubmit();
+                break;
+        }
+    }
+    // 如果是自定义按钮
+    else{
+        // currentExposed.value[item.key](row);
+        customButtonHandler(
+            item,
+            [row],
+            currentExposed.value,
+            row.detailId,
+            loading,
+            onAdd,
+            onEditRow,
+            onAdd,
+            router,
+        )
+    }
+}
+
+// 自定义按钮-新建
+const onAdd = (e) => {
+	let tempV = {};
+    tempV.entityName = e.entityName;
+    if(e.formId) {
+        tempV.formId = e.formId; 
+    }
+    isShow.value = false;
+    openDialog(tempV);
+}
+
+// 自定义按钮-编辑
+const onEditRow = (e, selectForm) => {
+    formId.value = selectForm;
+    initFormLayout();
+}
+
 // 加载配置信息
-const loadMyLayoutConfig = () => {
+const loadMyLayoutConfig = async () => {
     myLayoutConfig.value = props.layoutConfig || {};
-    let { STYLE } = myLayoutConfig.value;
+    let { STYLE, CUSTOM_BUTTON } = myLayoutConfig.value;
     if (STYLE && STYLE.config) {
         styleConf.value = JSON.parse(STYLE.config);
         let { dialogConfig } = styleConf.value;
@@ -211,6 +308,68 @@ const loadMyLayoutConfig = () => {
                 newDialogConfig.editMaxHeight = '500px';
             }
             styleConf.value.dialogConfig = newDialogConfig;
+        }
+    }
+    customButtonList.value = getCustomAppButtons(CUSTOM_BUTTON, 'pcEdit');
+    customButtonList.value.forEach(btn => {
+        // 权限判断
+        let checkCustomRole = btn.customCode ? $TOOL.checkRole(btn.customCode) : true;
+        let customPermissionPass = btn.customCode
+            ? (btn.reversalCustomCode ? !checkCustomRole : checkCustomRole)
+            : true;
+        // 权限或hide不通过直接隐藏
+        if (!customPermissionPass || btn.hide) {
+            btn.hidden = true;
+            return;
+        }
+        // 如果是编辑需要检测是否有权限
+        if(row.detailId) {
+            // 需要校验审批权限的按钮
+            let needApprovalAuthKey = ['saveSubmit','saveRefresh', 'save'];
+            if(needApprovalAuthKey.includes(btn.key) && !checkModifiableEntity(row.detailId, row.approvalStatus?.value)){
+                btn.hidden = true;
+            }
+        }
+    })
+    // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
+    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && btn.action !== 1);
+    if (filterBtns.length > 0) {
+        // 如果是编辑 可以检测条件
+        if(row.detailId) {
+            let filterList = filterBtns.map(item => item.filterJson);
+            let filterParam = {
+                entityName: row.entityName,
+                recordIdList: [row.detailId],
+                filterList
+            };
+            let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
+            if (checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
+                let filterRes = checkCustomButtonFiltersRes.data[0];
+                filterBtns.forEach((btn, idx) => {
+                    const pass = filterRes[idx] == 1 || filterRes[idx] === true;
+                    if (!pass) {
+                        if (btn.errorShowType == 1) {
+                            btn.disabled = true;
+                            btn.hidden = false;
+                        } else if (btn.errorShowType == 2) {
+                            btn.hidden = true;
+                            btn.disabled = false;
+                        } else {
+                            btn.hidden = false;
+                            btn.disabled = false;
+                        }
+                    } else {
+                        btn.hidden = false;
+                        btn.disabled = false;
+                    }
+                });
+            }
+        }
+        // 新建 无法检测条件 直接隐藏
+        else {
+            filterBtns.forEach(btn => {
+                btn.hidden = true;
+            })
         }
     }
 };
@@ -336,7 +495,7 @@ const openDialog = async (v) => {
     }
     let res = await checkRight(param.id, param.rightType, param.entityName);
     if (res.data && res.data.code == 200 && res.data.data) {
-        loadMyLayoutConfig();
+        loadMyLayoutConfig()
         isShow.value = true;
         await initFormLayout();
     } else {
