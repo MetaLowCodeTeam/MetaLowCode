@@ -500,8 +500,8 @@ export default {
                 scrollDiv.scrollLeft += step;
             }
 
-            scrollDiv.addEventListener("mousewheel", handler, false);
-            scrollDiv.addEventListener("DOMMouseScroll", handler, false);
+            scrollDiv.addEventListener("mousewheel", handler, { passive: true });
+            scrollDiv.addEventListener("DOMMouseScroll", handler, { passive: true });
         },
     },
 };

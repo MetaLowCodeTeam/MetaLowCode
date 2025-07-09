@@ -977,7 +977,8 @@ onUnmounted(() => {
 	TableRef.value &&
 		TableRef.value.$refs.bodyWrapper.removeEventListener(
 			"mousewheel",
-			scrollBehavior
+			scrollBehavior,
+            { passive: true }
 		);
     
     if(mlShortcutCleanup.value){
