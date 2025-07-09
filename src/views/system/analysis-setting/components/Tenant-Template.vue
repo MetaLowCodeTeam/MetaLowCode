@@ -55,6 +55,7 @@
 		entityName="TenantTemplate"
 		@saveFinishCallBack="onRefresh"
 		queryUrl="/plugins/metaTenant/tenantTemplate/saveRecord"
+		queryUrlIdName="recordId"
 	/>
 </template>
 <script setup>

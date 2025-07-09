@@ -134,6 +134,10 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
+    queryUrlIdName: {
+        type: String,
+        default: "id",
+    },
 });
 
 const emits = defineEmits(['saveFinishCallBack']);
@@ -565,7 +569,7 @@ const confirm = async (target) => {
                 let saveRes;
                 if (props.queryUrl) {
                     saveRes = await http.post(props.queryUrl, formData, {
-                        params: { entity: row.entityName, id: row.detailId },
+                        params: { entity: row.entityName, [props.queryUrlIdName]: row.detailId },
                     });
                 }
                 else if(isReferenceComp.value){
