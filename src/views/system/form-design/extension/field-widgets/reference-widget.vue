@@ -700,7 +700,7 @@ export default {
 		},
 
 		openRefDialog() {
-			if (!this.field.options.detailLinkDisabled) {
+			if (this.field.options.detailLinkDisabled === true) {
 				return
 			}
 
