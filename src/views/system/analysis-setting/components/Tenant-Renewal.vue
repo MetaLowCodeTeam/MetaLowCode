@@ -117,7 +117,3 @@ defineExpose({
 	openDialog,
 });
 </script>
-
-<style scoped>
-/* Styles here */
-</style>

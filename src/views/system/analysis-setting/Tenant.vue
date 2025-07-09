@@ -277,7 +277,6 @@ const handleCommand = (command, row) => {
 };
 </script>
 <style scoped lang="scss">
-
 .more-icon {
 	margin-left: 3px;
 	position: relative;
