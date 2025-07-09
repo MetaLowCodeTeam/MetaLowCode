@@ -195,7 +195,7 @@ const loadMyLayoutConfig = () => {
         styleConf.value = JSON.parse(STYLE.config);
         let { dialogConfig } = styleConf.value;
         if(dialogConfig){
-            let recordData = globalDsv.value.recordData || null;
+            let recordData = row.data || null;
             let entity = {
                 name: row.entityName,
                 code: queryEntityCodeByName(row.entityName),
@@ -252,6 +252,40 @@ let formId = ref("");
 let isShowSaveAndSubmit = ref(false);
 
 const openDialog = async (v) => {
+    // 重置row对象，避免编辑和新建之间的数据污染
+    Object.assign(row, {
+        customDialogTitle: "",
+        dialogTitle: "",
+        approvalStatus: {},
+        detailId: "",
+        entityName: "",
+        fieldName: "",
+        fieldNameLabel: "",
+        fieldNameVale: "",
+        idFieldName: "",
+        nameFieldName: "",
+        formEntityId: "",
+        mainDetailField: "",
+        isRead: false,
+        detailEntityFlag: true,
+        refEntityBindingField: "",
+        disableWidgets: [],
+        data: {},
+        defaultFormData: {},
+    });
+    
+    // 重置其他相关状态变量
+    optionData.value = {};
+    haveLayoutJson.value = false;
+    isReferenceComp.value = false;
+    referenceCompFormData.value = {};
+    formId.value = "";
+    isShowSaveAndSubmit.value = false;
+    paramDialogConf.value = null;
+    
+    // 重置globalDsv为默认状态
+    globalDsv.value = globalDsvDefaultData();
+    
     row.dialogTitle = "Loading...";
     row.customDialogTitle = v.customDialogTitle;
     row.detailId = v.detailId;

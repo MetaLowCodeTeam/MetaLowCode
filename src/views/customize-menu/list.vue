@@ -175,6 +175,7 @@
                         </template>
                     </div>
                     <div class="fr table-setting" v-else>
+                        <!-- 顶部 -->
                         <template 
                             v-for="(item,index) of customButtonConfig.pcTop" 
                             :key="index"
@@ -465,6 +466,7 @@
                                     </el-tooltip>
                                 </template>
                                 <template v-else>
+                                    <!-- 底部 -->
                                     <el-button
                                         @click.stop="customButtonClick(item, scope.row)"
                                         link
@@ -1194,44 +1196,56 @@ let nativeButtonDisabled = ref({
 // 获取自定义按钮禁用状态
 const getCustomButtonDisabled = (item, row) => {
     if(item.isNative){
-        return nativeButtonDisabled[item.key];
-    }else {
-        // 如果设置了过滤条件 且 设置了 不满足条件时隐藏按钮
-        if (item.filterJson?.items?.length > 0 && item.errorShowType == 1) {
-            let { customBtnShow } = row;
-            // 如果当前行的 customBtnShow 不存在，或者不是一个对象，则不显示
-            if (!customBtnShow || typeof customBtnShow !== 'object') {
-                return true;
-            }
-            // 获取所有操作列按钮
-            let { pcColumn } = customButtonConfig.value;
-            // 过滤出有查询条件的按钮
-            let btns = pcColumn.filter(el => el.filterJson?.items?.length > 0);
-            // 找到当前 item 在 pcColumn 中的索引
-            let currentItemIndex = btns.findIndex(el => el.guid === item.guid);
-            // 如果找到了索引，并且 customBtnShow 中有对应的值，则返回该值
-            // customBtnShow[currentItemIndex] 会是 0 或 1
-            if (currentItemIndex !== -1 && customBtnShow.hasOwnProperty(currentItemIndex)) {
-                return customBtnShow[currentItemIndex] === 0 || customBtnShow[currentItemIndex] === false; 
-            }
-            // 如果没有找到对应的索引，或者 customBtnShow 中没有该索引的值
-            return false;
-        }
-        // 如果是行操作按钮，都没有的情况下不禁用
         if(row) {
+            if(item.key == 'edit') {
+                return row.btnDisabled.edit
+            }
+            if(item.key == 'view') {
+                return row.btnDisabled.view
+            }
             return false;
+        }else {
+            return nativeButtonDisabled[item.key];
         }
-        let { availableType, action } = item;
-        let isDisabled = false;
-        
-        if (action == 2 || action == 3) {
-            isDisabled = multipleSelection.value.length != 1;
-        } else if (action == 4) {
-            isDisabled = availableType == 1 
-                ? multipleSelection.value.length != 1 
-                : multipleSelection.value.length < 1;
+    }else {
+        // 是行操作按钮
+        if(row) {
+            // 如果设置了过滤条件 且 设置了 不满足条件时隐藏按钮
+            if (item.filterJson?.items?.length > 0 && item.errorShowType == 1) {
+                let { customBtnShow } = row;
+                // 如果当前行的 customBtnShow 不存在，或者不是一个对象，则不显示
+                if (!customBtnShow || typeof customBtnShow !== 'object') {
+                    return true;
+                }
+                // 获取所有操作列按钮
+                let { pcColumn } = customButtonConfig.value;
+                // 过滤出有查询条件的按钮
+                let btns = pcColumn.filter(el => el.filterJson?.items?.length > 0);
+                // 找到当前 item 在 pcColumn 中的索引
+                let currentItemIndex = btns.findIndex(el => el.guid === item.guid);
+                // 如果找到了索引，并且 customBtnShow 中有对应的值，则返回该值
+                // customBtnShow[currentItemIndex] 会是 0 或 1
+                if (currentItemIndex !== -1 && customBtnShow.hasOwnProperty(currentItemIndex)) {
+                    return customBtnShow[currentItemIndex] === 0 || customBtnShow[currentItemIndex] === false; 
+                }
+                // 如果没有找到对应的索引，或者 customBtnShow 中没有该索引的值
+                return false;
+            }
         }
-        return isDisabled;
+        // 是顶部按钮
+        else {
+            let { availableType, action } = item;
+            let isDisabled = false;
+            
+            if (action == 2 || action == 3) {
+                isDisabled = multipleSelection.value.length != 1;
+            } else if (action == 4) {
+                isDisabled = availableType == 1 
+                    ? multipleSelection.value.length != 1 
+                    : multipleSelection.value.length < 1;
+            }
+            return isDisabled;
+        }
     }
 }
 
@@ -1332,6 +1346,7 @@ const getColumnCustomButtonShow = (item, row) => {
     }
     // 如果是内置按钮 (这部分逻辑不变，因为它看起来是正确的)
     if (item.isNative) {
+        item.disabled = true;
         // 如果设置了隐藏 不显示
         if (item.hide) {
             return false;
@@ -1449,6 +1464,7 @@ const getLayoutList = async () => {
             if(rowStyleConf.value.toolbarConf){
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
+
         }
         // 列表页签
         if(res.data.tabFilterConfig) {
@@ -1674,23 +1690,6 @@ let editRefs = ref();
 // 引用组件所关联的主表行ID
 let myFormEntityId = ref("");
 
-// 获取弹框标题
-const getDialogTitle = (row, key) => {
-    let customDialogConfigFunc = rowStyleConf.value?.dialogConfig || null;
-    if(customDialogConfigFunc){
-        let entity = {
-            name: entityName.value,
-            code: entityCode.value,
-            label: queryEntityLabelByName(entityName.value),
-        }
-        let editTitle = new Function('row', 'entity', customDialogConfigFunc)(row, entity);
-        return editTitle[key];
-    }
-    return {
-        editTitle: "",
-        detailTitle: "",
-    }[key];
-}
 
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
@@ -1740,6 +1739,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
         return
     }
     let tempV = {};
+    tempV.customDialogTitle = null;
     tempV.entityName = targetEntity || entityName.value;
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = "";
@@ -1777,7 +1777,6 @@ const onEditRow = (row, localDsv, formId) => {
         refEntityBindingField,
     };
     tempV.detailId = row[idFieldName.value];
-    tempV.customDialogTitle = getDialogTitle(row, 'editTitle');
     tempV.idFieldName = idFieldName.value;
     tempV.formEntityId = myFormEntityId.value;
     tempV.mainDetailField = mainDetailField.value;
@@ -1831,7 +1830,6 @@ const openDetailDialog = (row, localDsv, formId) => {
         $ElMessage.warning("请先选择数据");
         return;
     }
-    customDetailDialogTitle.value = getDialogTitle(row, 'detailTitle');
     let newLocalDsv = {
         parentListExposed:  currentExposed.value,
         ...localDsv,

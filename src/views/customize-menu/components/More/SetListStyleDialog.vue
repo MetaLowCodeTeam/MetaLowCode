@@ -201,7 +201,7 @@
                                     使用文档
                                 </a>
                             </div>
-                            <mlCodeEditor v-model="styleConf.rowConf.rowDisabledRender" />
+                            <mlCodeEditor v-model="styleConf.rowConf.rowDisabledRender" funcParam="row"/>
                         </el-tab-pane>
                         <el-tab-pane label="自定义行按钮禁用设置" name="rowBtnDisabled">
                             <div style="margin-top: -10px;">
@@ -214,7 +214,7 @@
                                     使用文档
                                 </a>
                             </div>
-                            <mlCodeEditor  v-model="styleConf.rowConf.rowBtnDisabled" />
+                            <mlCodeEditor  v-model="styleConf.rowConf.rowBtnDisabled" funcParam="row, index, target"/>
                         </el-tab-pane>
                         <el-tab-pane label="自定义行样式设置" name="rowStyleRender">
                             <div style="margin-top: -10px;">
@@ -227,7 +227,7 @@
                                     使用文档
                                 </a>
                             </div>
-                            <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" />
+                            <mlCodeEditor  v-model="styleConf.rowConf.rowStyleRender" funcParam="row, rowIndex"/>
                         </el-tab-pane>
                         <el-tab-pane label="自定义弹框设置" name="dialogConfig">
                             <div style="margin-top: -10px;">
@@ -235,12 +235,12 @@
                                 <a
                                     class="ml-a-span"
                                     target="_blank"
-                                    href="https://www.yuque.com/visualdev/melecode/nzgskh24oo3hbh30"
+                                    href="https://www.yuque.com/visualdev/melecode/nzgskh24oo3hbh30?singleDoc"
                                 >
                                     使用文档
                                 </a>
                             </div>
-                            <mlCodeEditor  v-model="styleConf.dialogConfig" />
+                            <mlCodeEditor  v-model="styleConf.dialogConfig" funcParam="row, entity"/>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>

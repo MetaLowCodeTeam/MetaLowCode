@@ -12,8 +12,8 @@
 		<template #header>
 			<div class="detail-header">
 				<div class="detail-header-title">
-					<span class="title-span" :title="detailParamConf.customDialogTitle || customDialogTitle || detailName">
-                        {{ detailParamConf.customDialogTitle || customDialogTitle || detailName }}
+					<span class="title-span" :title="detailParamConf.customDialogTitle || customDialogTitle || styleConf?.dialogConfig?.detailTitle || detailName">
+                        {{ detailParamConf.customDialogTitle || customDialogTitle || styleConf?.dialogConfig?.detailTitle || detailName }}
                     </span>
 					<div class="fr fr-box">
                         <span v-if="styleConf.detailConf.enablePagination || styleConf.detailConf.enablePagination == undefined" class="enable-pagination-span">
@@ -456,7 +456,7 @@ let styleConf = ref({
 });
 
 
-const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity, checkDetailEntityFlag } = useCommonStore();
+const { queryEntityNameById, queryEntityCodeById, checkModifiableEntity, checkDetailEntityFlag, queryEntityLabelByName } = useCommonStore();
 const emits = defineEmits(["onConfirm", "onEdit", "onLayoutFinish"]);
 const $API = inject("$API");
 let vFormRef = ref();
@@ -800,6 +800,21 @@ const initData = async () => {
 					detailName.value = queryByIdRes.data[nameFieldName.value];
                     rowResData.value = queryByIdRes.data || {};
                     approvalStatus.value = queryByIdRes.data.approvalStatus;
+                    let { dialogConfig } = styleConf.value;
+                    if(dialogConfig){
+                        let recordData = queryByIdRes.data || null;
+                        let entity = {
+                            name: entityName.value,
+                            code: entityCode.value,
+                            label: queryEntityLabelByName(entityName.value),
+                        }
+                        // 获取弹框配置 
+                        let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
+                        if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
+                            newDialogConfig.editMaxHeight = '500px';
+                        }
+                        styleConf.value.dialogConfig = newDialogConfig;
+                    }
 					nextTick(() => {
 						vFormRef.value?.setFormData(formatFormVirtualField(rowResData.value));
 						nextTick(() => {
@@ -1153,6 +1168,10 @@ defineExpose({
             height: calc(100vh - 90px);
             .el-tabs__nav-wrap {
                 padding-right: 0;
+            }
+            .el-tabs__item {
+                height: 36px;
+                line-height: 36px;
             }
         }
         :deep(.setting-tabs) {
