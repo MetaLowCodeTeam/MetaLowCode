@@ -149,7 +149,7 @@
                 <el-avatar :size="30">
                     <mlAvatar :userId="userId" needTimestamp/>
                 </el-avatar>
-                <label>{{ userName }}</label>
+                <label :title="userName">{{ userName }}</label>
                 <el-icon class="el-icon--right">
                     <el-icon-arrow-down />
                 </el-icon>
@@ -554,6 +554,10 @@ const goCollectMenu = async (item) => {
     margin-left: 5px;
     font-size: 12px;
     cursor: pointer;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .msg-list li {
