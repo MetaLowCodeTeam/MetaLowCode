@@ -11,7 +11,10 @@ export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraF
         'crud/refFieldQuery',
         formFilter,
         {
-            params: { entity, 'refField': field, pageNo, pageSize, queryText, extraFilter }
+            params: { entity, 'refField': field, pageNo, pageSize, queryText },
+            headers: {
+                extraFilter
+            }
         }
     );
 }
@@ -31,7 +34,10 @@ export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, for
 		'crud/refFieldQuery2',
 		[formFilter, formFilter2],
 		{
-			params: { entity, 'refField': field, pageNo, pageSize, extraFilter, sort }
+			params: { entity, 'refField': field, pageNo, pageSize, sort },
+            headers: {
+                extraFilter
+            }
 		}
 	);
 }
