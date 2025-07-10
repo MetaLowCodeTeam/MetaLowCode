@@ -293,7 +293,16 @@ const getGroupEntityList = () => {
 
 // 格式化实体
 const getEntityList = () => {
-    return unSystemEntityList.value.filter((el) => !el.detailEntityFlag && el.appAbbr == Router.currentRoute.value.query.appAbbr);
+    const currentAppAbbr = Router.currentRoute.value.query.appAbbr;
+    return unSystemEntityList.value.filter((el) => {
+        // 如果当前路由没有appAbbr参数，则显示所有非详情实体的记录
+        if (!currentAppAbbr) {
+            return !el.detailEntityFlag;
+        }
+        // 如果当前路由有appAbbr参数，则只显示匹配的记录
+        // 处理el.appAbbr为空字符串的情况
+        return !el.detailEntityFlag && (el.appAbbr === currentAppAbbr || (!el.appAbbr && currentAppAbbr === ''));
+    });
 };
 
 // 选择实体触发
