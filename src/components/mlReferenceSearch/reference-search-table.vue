@@ -5,9 +5,48 @@
 			v-loading="loading"
 			:element-loading-text="loadingText"
 		>
+            <div
+				class="work-flow-conditions w-100"
+                v-if="isOuterReference"
+            >
+                <mlSetConditions
+                    ref="mlSetConditionsRef"
+                    v-model="conditionConf"
+                    isOuterReference
+                    notType
+                >
+					<template #afterAddConditions>
+						<div class="fr">
+                            <el-dropdown 
+                                split-button 
+                                type="primary" 
+                                @click="onSearch('OR')"
+                                size="default"
+                                class="mr-10 pt-5"
+                                @command="onSearch"
+                            >
+                                查询
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item command="OR">
+                                            符合任一条件
+                                        </el-dropdown-item>
+                                        <el-dropdown-item command="AND">
+                                            符合全部条件
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+							<el-button type="primary" plain @click="onReset" size="default">
+								重置
+							</el-button>
+						</div>
+					</template>
+				</mlSetConditions>
+            </div>
 			<div
 				class="work-flow-conditions w-100"
-				v-if="referenceEntityName && showQueryPanel && !gDsv?.isExternalForm"
+				v-if="referenceEntityName && showQueryPanel && !gDsv?.isExternalForm && !isOuterReference"
 			>
 				<mlSetConditions
 					ref="mlSetConditionsRef"
@@ -124,7 +163,7 @@ import { refFieldQuery2, saveRefFilterPanel } from "@/api/crud";
 import { externalRefFieldQuery } from "@/api/external";
 import useCommonStore from "@/store/modules/common";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
-import { TireSwing } from "@icon-park/vue-next";
+import http from "@/utils/request";
 //
 export default {
     components:{
@@ -165,10 +204,21 @@ export default {
 			type: [Array, Object],
 			default: () => [],
 		},
+        // 是否是外部引用
+        isOuterReference: {
+            type: Boolean,
+            default: false,
+        },
+        // 外部引用配置
+        outerReferenceConfig: {
+            type: Object,
+            default: () => null,
+        },
 	},
 	watch: {
 		refField: {
 			handler(newVal) {
+                console.log(1,'1')
 				this.loadTableTable();
 			},
 		},
@@ -280,6 +330,10 @@ export default {
 		},
 
 		loadTableTable(type) {
+            if(this.isOuterReference){
+                this.loadOuterReferenceTable();
+                return;
+            }
 			let paramStr;
 			// 如果是外部表单
 			if (this.gDsv?.isExternalForm) {
@@ -378,8 +432,50 @@ export default {
 				this.referenceEntityName = res.data.entityName;
                 this.referenceEntityNameFieldName = res.data.nameFieldName;
 			}
+            console.log(this.conditionConf,'conditionConf')
 			this.loading = false;
 		},
+        // 加载外部引用表格
+        async loadOuterReferenceTable(){
+            let { 
+                requestUrl, 
+                maindDataCode, 
+                sortField , 
+                pageSize,
+                uniqueField,
+                filterFields
+            } = this.outerReferenceConfig;
+            if(filterFields && filterFields.length > 0){
+                this.conditionConf.items = filterFields.map(el => {
+                    el.type = el.fieldType
+                    el.label = el.fieldLabel
+                    return el
+                })
+            }
+            console.log(this.outerReferenceConfig,'outerReferenceConfig')
+            this.page.limit = pageSize;
+            let res = await http.post(requestUrl, {
+                maindDataCode,
+                pageNo: this.page.pageNo,
+                pageSize: this.page.limit,
+                sortField,
+            });
+            if(res && res.code == 200) {
+                this.tableData = res.data.map(el => {
+                    return {
+                        ...el,
+                        isSelected: el[uniqueField] == this.defaultSelected?.name,
+                    }
+                });
+                this.columns = res.columns.map(el => {
+                    return {
+                        prop: el.name,
+                        label: el.label,
+                    }
+                });
+                this.page.total = res.data.length;
+            }
+        },
         // 关闭已选数据
         handleClose(item) {
             this.selectedData = this.selectedData.filter(el => el[this.idField] !== item[this.idField]);
@@ -403,6 +499,14 @@ export default {
 		},
 		// 点选回填
 		selectRecord(row) {
+            if(this.isOuterReference){
+                let { uniqueField } = this.outerReferenceConfig;
+                this.$emit("recordSelected", { 
+                    id: row[uniqueField],
+                    label: row[uniqueField],
+                }, row);
+                return;
+            }
 			this.$emit(
 				"recordSelected",
 				{

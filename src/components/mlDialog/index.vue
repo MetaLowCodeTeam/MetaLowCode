@@ -31,7 +31,12 @@
                 </el-icon>
             </span>
         </template>
-        <ml-scrollbar :height="scrollbarHeight" class="ml-dialog-body">
+        <ml-scrollbar 
+            class="ml-dialog-body" 
+            :height="scrollbarHeight" 
+            :min-height="scrollbarMinHeight" 
+            :max-height="scrollbarMaxHeight"
+        >
             <slot></slot>
         </ml-scrollbar>
         <template #footer v-if="isShowFooter">

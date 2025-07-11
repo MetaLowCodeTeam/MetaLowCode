@@ -52,13 +52,32 @@
 				</span>
 			</template>
 		</form-item-wrapper>
-
+        <ml-dialog
+            v-model="showReferenceDialogFlag"
+            title="请选择"
+            width="520px"
+            append-to-body
+        >
+            <ReferenceSearchTable
+				ref="referST"
+				:entity="entity"
+				:refField="curRefField"
+				:extraFilter="searchFilter"
+                :extraSort="extraSort"
+                :filterConditions="filterConditions"
+				@recordSelected="beforeSetReferRecord"
+				:gDsv="gDsv"
+                :defaultSelected="fieldModel"
+                :outerReferenceConfig="curOuterReferenceConfig"
+                isOuterReference
+			></ReferenceSearchTable>
+        </ml-dialog>
 	</div>
 </template>
 
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
-
+import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
 export default {
@@ -93,6 +112,7 @@ export default {
     inject: ['getFormConfig'],
 	components: {
 		FormItemWrapper,
+        ReferenceSearchTable,
 	},
 	data() {
 		return {
@@ -103,6 +123,18 @@ export default {
 			entity: null,
 			gDsv: {},
             globalConfig: {},
+            // 是否显示弹窗
+            showReferenceDialogFlag: false,
+            // 当前引用字段
+            curRefField: "",
+            // 排序
+            extraSort: "",
+            // 查询条件---通过this.setFilter设置
+            searchFilter: "",
+            // 过滤条件
+            filterConditions: {},
+            // 外部引用配置
+            curOuterReferenceConfig: null,
 		};
 	},
 	computed: {
@@ -116,7 +148,7 @@ export default {
 			deep: true,
 			immediate: true,
 			handler(val) {
-				this.displayValue = !!val ? val.name : "";
+				this.displayValue = val ? val.name : "";
 			},
 		},
 	},
@@ -168,13 +200,54 @@ export default {
 				customFn.call(this);
 				return
 			}
+            // 检查是否配置了弹窗设置
+            let { name, outerDialogSetting } = this.field.options;
+            this.curRefField = name;
+            if(!outerDialogSetting || !outerDialogSetting.requestUrl) {
+                this.$message.error("请先配置弹窗设置");
+                return;
+            }
+            let { sortField } = outerDialogSetting;
+            // 设置排序
+            if(sortField) {
+                this.extraSort = `${sortField.fieldName} ${sortField.type}`;
+                console.log(this.extraSort, '----排序')
+            }
+            this.curOuterReferenceConfig = outerDialogSetting;
+            this.showReferenceDialogFlag = true;
 		},
 		handleClearEvent() {
 			this.fieldModel = null;
 			this.onFieldChangeEvent(this.fieldModel);
 		},
-
-
+        // 选中回填
+        beforeSetReferRecord(record, selectedRow) {
+            console.log(record,'record')
+            this.fieldModel = {
+                code: record.id,
+                name: record.label,
+            };
+			this.onFieldChangeEvent(this.fieldModel);
+            // 回填
+			// this.doFillBack(recordObj, selectedRow);
+			this.showReferenceDialogFlag = false;
+        },
+        // 设置查询条件
+        setFilter(newFilter) {
+			this.searchFilter = newFilter;
+		},
+        // 获取查询条件
+		getFilter() {
+			return this.searchFilter;
+		},
+        // 设置排序
+        setSort(newSort) {
+            this.extraSort = newSort;
+        },
+        // 获取排序
+        getSort() {
+            return this.extraSort;
+        },
 	},
 };
 </script>

@@ -306,7 +306,7 @@ export const signWidgetSchema = {
 }
 
 
-
+// 外部引用组件
 export const outerReferenceSchema = {
 	type: 'outer-reference',  //引用字段组件
 	alias: '',  //组件别名，可以自定义
@@ -330,6 +330,8 @@ export const outerReferenceSchema = {
 		requiredHint: '',
 		validation: '',
 		validationHint: '',
+        // 外部引用弹窗设置
+        outerDialogSetting: {},
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

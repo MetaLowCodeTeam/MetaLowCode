@@ -49,7 +49,8 @@ import listSubFormNameEditor from "@/views/system/form-design/extension/property
 import signConfigEditor from '@/views/system/form-design/extension/property-editor/sign/sign-signConfig-editor.vue';
 // 级联选择
 import cascaderConfigEditor from '@/views/system/form-design/extension/property-editor/cascader-option/cascader-config-editor.vue';
-
+// 外部引用弹窗设置
+import outerDialogSettingEditor from '@/views/system/form-design/extension/property-editor/outer-reference/dialog-setting-editor.vue';
 /**
  * 容器组件
  */
@@ -139,7 +140,8 @@ export const loadExtensionWidgets = (app) => {
     PERegister.registerCPEditor(app, 'signConfig', 'sign-signConfig-editor', signConfigEditor)
     // 注册级联选择配置
     PERegister.registerCPEditor(app, 'cascaderConfig', 'cascader-config-editor', cascaderConfigEditor)
-
+    // 注册外部引用弹窗设置
+    PERegister.registerCPEditor(app, 'outerDialogSetting', 'outer-reference-dialog-setting-editor', outerDialogSettingEditor)
     PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
 	PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))
