@@ -700,6 +700,10 @@ export default {
         hideQueryMatchType: { type: Boolean, default: false },
         // 是否开启SQL
         enableSql: { type: Boolean, default: false },
+        // 是否是外部引用
+        isOuterReference: { type: Boolean, default: false },
+        // 外部引用配置
+        outerReferenceConfig: { type: Object, default: () => null },
     },
     data() {
         return {
@@ -788,6 +792,16 @@ export default {
             item.showReferenceDialogFlag = false;
         },
         async getFieldSet() {
+            if(this.isOuterReference){
+                const { filterFields } = this.outerReferenceConfig;
+                this.fieldList = filterFields.map(el => {
+                    return {
+                        fieldName: el.fieldName,
+                        label: el.fieldLabel,
+                    }
+                })
+                return
+            }
             const { queryEntityNameByCode } = useCommonStore();
             this.loading = true;
             let entity = this.entityName;

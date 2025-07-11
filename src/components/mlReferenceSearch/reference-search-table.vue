@@ -13,11 +13,12 @@
                     ref="mlSetConditionsRef"
                     v-model="conditionConf"
                     isOuterReference
+                    :outerReferenceConfig="outerReferenceConfig"
                     notType
                 >
 					<template #afterAddConditions>
 						<div class="fr">
-                            <el-dropdown 
+                            <!-- <el-dropdown 
                                 split-button 
                                 type="primary" 
                                 @click="onSearch('OR')"
@@ -36,7 +37,10 @@
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
-                            </el-dropdown>
+                            </el-dropdown> -->
+                            <el-button type="primary" @click="onSearch('OR')" size="default">
+								查询
+							</el-button>
 							<el-button type="primary" plain @click="onReset" size="default">
 								重置
 							</el-button>
@@ -432,7 +436,6 @@ export default {
 				this.referenceEntityName = res.data.entityName;
                 this.referenceEntityNameFieldName = res.data.nameFieldName;
 			}
-            console.log(this.conditionConf,'conditionConf')
 			this.loading = false;
 		},
         // 加载外部引用表格
@@ -452,13 +455,17 @@ export default {
                     return el
                 })
             }
-            console.log(this.outerReferenceConfig,'outerReferenceConfig')
             this.page.limit = pageSize;
             let res = await http.post(requestUrl, {
                 maindDataCode,
                 pageNo: this.page.pageNo,
                 pageSize: this.page.limit,
                 sortField,
+                filterMap: this.conditionConf.items.map(el => {
+                    return {
+                        [el.fieldName]: el.value,
+                    }
+                })
             });
             if(res && res.code == 200) {
                 this.tableData = res.data.map(el => {
