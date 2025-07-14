@@ -5,7 +5,7 @@
 		label-width="120px"
 		v-if="optionModel.fillBackEnabled"
 	>
-		<el-button class="w-100" 
+		<el-button class="w-100"
             @click="openFillBackDialog"
 		>
             设置回填规则
@@ -145,16 +145,16 @@
                         </div>
                     </el-form-item>
                 </el-tab-pane>
-                <el-tab-pane 
-                    label="子级表单回填" 
+                <el-tab-pane
+                    label="子级表单回填"
                     name="subFormFillBack"
                     v-if="!isInSubForm && !isOuterReference"
                 >
                     <el-row class="mb-10">
                         <el-button size="default" @click="openWidgetMappingDialog">添加明细回填映射</el-button>
                     </el-row>
-                    <el-card 
-                        shadow="never" 
+                    <el-card
+                        shadow="never"
                         v-for="(widgets,WidgetsInx) of widgetMappingList"
                         :key="WidgetsInx"
                     >
@@ -297,7 +297,7 @@
                     </el-card>
                 </el-tab-pane>
             </el-tabs>
-			
+
 		</div>
 		<template #footer>
 			<el-button
@@ -318,7 +318,7 @@
 		</template>
 	</mlDialog>
     <!-- 映射组件回填 -->
-    <mlDialog 
+    <mlDialog
         v-model="widgetMappingDialogConf.show"
         title="明细实体回填映射关系"
         width="600"
@@ -330,7 +330,7 @@
                 <template #label>
                     <span class="form-label"> 映射关系 </span>
                 </template>
-                <el-select 
+                <el-select
                     v-model="widgetMappingDialogConf.sourceWidget"
                     placeholder="请选择源明细实体"
                     style="width: 200px"
@@ -345,7 +345,7 @@
                         :value="item"
                     />
                 </el-select>
-                <el-select 
+                <el-select
                     v-model="widgetMappingDialogConf.targetWidget"
                     placeholder="请选择目标明细实体"
                     style="width: 200px"
@@ -489,7 +489,7 @@ export default {
                 // 加载第一列数据
 			    this.loadSourceColumn();
             }
-			
+
             // 加载子表单回填数据
             this.loadSubFormFillBack();
 		},
@@ -510,9 +510,9 @@ export default {
         // 加载外部引用第一列数据
         async loadOuterReferenceColumn(){
             this.fillBackDialogConf.loading = true;
-            let { requestUrl, maindDataCode, sortField , pageSize } = this.optionModel.outerDialogSetting;
+            let { requestUrl, mainDataCode, sortField , pageSize } = this.optionModel.outerDialogSetting;
             let res = await http.post(requestUrl, {
-                maindDataCode,
+                mainDataCode,
                 pageNo: 1,
                 pageSize: pageSize,
                 sortField,
@@ -574,7 +574,7 @@ export default {
 			let widgetList = [];
 			// 取选中字段
 			let selectedId = this.designer.selectedId;
-            
+
 			// 如果不是子表单 并且 多行子表单里没有这个选中的组件
 			if (
 				!this.isSubFormChildWidget() &&
@@ -662,7 +662,7 @@ export default {
                     JSON.parse(JSON.stringify(this.defaultFllBackItem))
                 );
             }
-			
+
 		},
 		// 删除回填
 		delFllBack(inx) {
@@ -674,7 +674,7 @@ export default {
 			// 把至少选了1个的给过滤出来
 			let fllBackItems = this.fillBackDialogConf.fllBackItems.filter(
 				(el) => el.sourceField || el.targetField
-			); 
+			);
 			// 如果有数据
 			if (fllBackItems.length > 0) {
 				// 遍历数据
@@ -737,10 +737,10 @@ export default {
                     },
                     targetWidget: {
                         name: el.targetWidget.name,
-                        container: { 
+                        container: {
                             options: {
                                 label: el.targetWidget?.container?.options?.label
-                            }   
+                            }
                         }
                     },
                     forceFillBack: el.forceFillBack,
@@ -946,7 +946,7 @@ export default {
 			top: 1px;
 		}
 	}
-	
+
 }
 :deep(.el-card__header){
     padding: 10px 15px;

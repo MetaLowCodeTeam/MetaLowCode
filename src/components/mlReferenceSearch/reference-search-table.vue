@@ -18,9 +18,9 @@
                 >
 					<template #afterAddConditions>
 						<div class="fr">
-                            <!-- <el-dropdown 
-                                split-button 
-                                type="primary" 
+                            <!-- <el-dropdown
+                                split-button
+                                type="primary"
                                 @click="onSearch('OR')"
                                 size="default"
                                 class="mr-10 pt-5"
@@ -60,9 +60,9 @@
 				>
 					<template #afterAddConditions>
 						<div class="fr">
-                            <el-dropdown 
-                                split-button 
-                                type="primary" 
+                            <el-dropdown
+                                split-button
+                                type="primary"
                                 @click="onSearch('OR')"
                                 size="default"
                                 class="mr-10 pt-5"
@@ -108,10 +108,10 @@
 			<div class="main-table mt-10">
                 <div class="show-selected-data" v-if="selectedData.length > 0">
                     <span class="mb-5">已选：</span>
-                    <el-tag 
+                    <el-tag
                         type="primary"
-                        size="small" 
-                        v-for="item in selectedData" 
+                        size="small"
+                        v-for="item in selectedData"
                         :key="item.id"
                         class="item-tag"
                         closable
@@ -440,10 +440,10 @@ export default {
 		},
         // 加载外部引用表格
         async loadOuterReferenceTable(){
-            let { 
-                requestUrl, 
-                maindDataCode, 
-                sortField , 
+            let {
+                requestUrl,
+                mainDataCode,
+                sortField ,
                 pageSize,
                 uniqueField,
                 filterFields
@@ -457,7 +457,7 @@ export default {
             }
             this.page.limit = pageSize;
             let res = await http.post(requestUrl, {
-                maindDataCode,
+                mainDataCode,
                 pageNo: this.page.pageNo,
                 pageSize: this.page.limit,
                 sortField,
@@ -508,7 +508,7 @@ export default {
 		selectRecord(row) {
             if(this.isOuterReference){
                 let { uniqueField } = this.outerReferenceConfig;
-                this.$emit("recordSelected", { 
+                this.$emit("recordSelected", {
                     id: row[uniqueField],
                     label: row[uniqueField],
                 }, row);

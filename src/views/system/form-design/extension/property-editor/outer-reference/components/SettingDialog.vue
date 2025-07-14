@@ -38,9 +38,9 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="主数据表名" prop="maindDataCode">
+					<el-form-item label="主数据表名" prop="mainDataCode">
 						<el-input
-							v-model="form.maindDataCode"
+							v-model="form.mainDataCode"
 							placeholder="请输入主数据表名"
 							clearable
 						/>
@@ -164,7 +164,7 @@
 
 <script setup>
 import { ref } from "vue";
-import QueryFieldDialog from "./queryFieldDialog.vue";
+import QueryFieldDialog from "./QueryFieldDialog.vue";
 
 const emit = defineEmits(["confirm"]);
 
@@ -177,7 +177,7 @@ let rules = ref({
 	requestUrl: [
 		{ required: true, message: "请输入请求路径", trigger: "blur" },
 	],
-	maindDataCode: [
+	mainDataCode: [
 		{ required: true, message: "请输入主数据表名", trigger: "blur" },
 	],
 	uniqueField: [

@@ -16,11 +16,15 @@ export default {
 		selectedWidget: Object,
 		optionModel: Object,
 	},
-
 	data() {
 		return {};
 	},
-	methods: {},
+	created() {
+		//设置属性默认值
+	},
+	methods: {
+		//
+	},
 };
 </script>
 <style lang="scss" scoped>
