@@ -1,6 +1,6 @@
 <template>
 	<el-form-item label="外部引用弹窗设置" label-width="120px">
-		<el-button @click="openOuterDialogSetting">打开设置</el-button>
+		<el-button @click="openOuterDialogSetting" class="w-100">打开设置</el-button>
 	</el-form-item>
     
     <SettingDialog ref="settingDialog" @confirm="confirmSetting" />

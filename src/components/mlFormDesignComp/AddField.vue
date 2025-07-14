@@ -130,7 +130,6 @@ let isShowDefaultSlot = ref(false);
 
 onMounted(() => {
     contentSlots.value = useSlots();
-    console.log(contentSlots.value)
     if(contentSlots.value.default){
         isShowDefaultSlot.value = true;
     }

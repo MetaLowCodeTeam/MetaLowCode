@@ -211,7 +211,6 @@ export default {
             // 设置排序
             if(sortField) {
                 this.extraSort = `${sortField.fieldName} ${sortField.type}`;
-                console.log(this.extraSort, '----排序')
             }
             this.curOuterReferenceConfig = outerDialogSetting;
             this.showReferenceDialogFlag = true;
@@ -222,15 +221,99 @@ export default {
 		},
         // 选中回填
         beforeSetReferRecord(record, selectedRow) {
-            console.log(record,'record')
             this.fieldModel = {
                 code: record.id,
                 name: record.label,
             };
 			this.onFieldChangeEvent(this.fieldModel);
             // 回填
-			// this.doFillBack(recordObj, selectedRow);
+			this.doFillBack(record, selectedRow);
 			this.showReferenceDialogFlag = false;
+        },
+        // 回填
+        async doFillBack(recordObj, selectedRow) {
+            // 判断是否启用回填
+			if (this.field.options.fillBackEnabled) {
+				let { fillBackConfig } = this.field.options;
+				fillBackConfig.forEach((el) => {
+					// 非子表单
+					if (!el.targetSubForm) {
+						let targetFieldValue = this.getWidgetRef(
+							el.targetField
+						)?.getValue();
+						// 如果目标字段有值 且 不是强制回填 不往下执行
+						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
+							return;
+						}
+						// 执行回填操作
+                        let targetWidgetRef = this.getWidgetRef(el.targetField);
+                        if (targetWidgetRef) {
+                            targetWidgetRef.setValue(
+                                selectedRow[el.sourceField]
+                            );
+                        } else {
+                            this.$message.error("目标组件不存在：" + el.targetField);
+                        }
+					} else {
+						const targetFieldName = el.targetField + '@row' + this.subFormRowId
+						let targetFieldValue = this.getWidgetRef(
+							targetFieldName
+						).getValue();
+						// 如果目标字段有值 且 不是强制回填 不往下执行
+						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
+							return;
+						}
+						// 执行回填操作
+                        let targetWidgetRef = this.getWidgetRef(targetFieldName);
+                        if (targetWidgetRef) {
+                            targetWidgetRef.setValue(
+                                selectedRow[el.sourceField]
+                            );
+                        } else {
+                            this.$message.error("目标组件不存在：" + targetFieldName);
+                        }
+					}
+				});
+                let { subFormFillBackConfig } = this.field.options;
+                // 没有回填数据
+                if(subFormFillBackConfig.length < 1){
+                    return
+                }
+                let subFormFields = [];
+                subFormFillBackConfig.forEach(el => {
+                    subFormFields.push({
+                        entityName: el.sourceWidget.entityName,
+                        queryFields: el.fllBackItems.map(el => el.sourceField).join(',')
+                    })
+                })
+                let res = await queryById(recordObj.id, "", { queryDetailList: subFormFields });
+                if(res){
+                    let resData = res.data || {};
+                    subFormFillBackConfig.forEach(el => {
+                        let subFormCom = this.getWidgetRef(el.targetWidget.name);
+                        if(el.fllBackItems){
+                            let subFormFllBackItems = [];
+                            resData[el.sourceWidget.entityName].forEach(fllBackEl => {
+                                let fllBackItem = {};
+                                el.fllBackItems.forEach(subEl => {
+                                    fllBackItem[subEl.targetField] = fllBackEl[subEl.sourceField];
+                                })
+                                subFormFllBackItems.push(fllBackItem)
+                            })
+                            // 如果是覆盖模式
+                            if(el.forceFillBack){
+                                subFormCom.setSubFormValues(subFormFllBackItems)
+                            }
+                            // 追加模式
+                            else {
+                                let subFormValues = subFormCom.getSubFormValues();
+                                subFormValues.push(...subFormFllBackItems);
+                                subFormCom.setSubFormValues(subFormValues);
+                            }
+                        }
+                    })
+                }
+			}
         },
         // 设置查询条件
         setFilter(newFilter) {

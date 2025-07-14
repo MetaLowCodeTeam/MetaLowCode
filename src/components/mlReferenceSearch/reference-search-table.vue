@@ -468,19 +468,19 @@ export default {
                 })
             });
             if(res && res.code == 200) {
-                this.tableData = res.data.map(el => {
+                this.tableData = res.data?.dataList?.map(el => {
                     return {
                         ...el,
                         isSelected: el[uniqueField] == this.defaultSelected?.name,
                     }
                 });
-                this.columns = res.columns.map(el => {
+                this.columns = res.data?.columns?.map(el => {
                     return {
                         prop: el.name,
                         label: el.label,
                     }
                 });
-                this.page.total = res.data.length;
+                this.page.total = res.data?.total || 0;
             }
         },
         // 关闭已选数据

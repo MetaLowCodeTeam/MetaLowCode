@@ -148,7 +148,7 @@
                 <el-tab-pane 
                     label="子级表单回填" 
                     name="subFormFillBack"
-                    v-if="!isInSubForm"
+                    v-if="!isInSubForm && !isOuterReference"
                 >
                     <el-row class="mb-10">
                         <el-button size="default" @click="openWidgetMappingDialog">添加明细回填映射</el-button>
@@ -387,6 +387,7 @@ import { refFieldQuery, queryEntityListFields } from "@/api/crud";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import { queryEntityListByReferenceField } from '@/api/system-manager';
 import { checkIsSubForm } from '@/utils/util';
+import http from "@/utils/request";
 export default {
 	name: "reference-fillBackConfig-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -449,12 +450,21 @@ export default {
             widgetMappingList: [],
             // 是否在子表单内
             isInSubForm: false,
+            // 是否外部引用
+            isOuterReference: false,
 		};
 	},
 	inject: ["isSubFormChildWidget"],
 	methods: {
 		// 打开回填弹框
 		openFillBackDialog() {
+            // 如果是外部引用 并且 没有设置外部引用接口参数
+            this.isOuterReference = this.selectedWidget.type == 'outer-reference';
+            console.log(this.isOuterReference,'this.isOuterReference')
+            if(this.isOuterReference && !this.selectedWidget.options.outerDialogSetting?.requestUrl){
+                this.$message.error('请先配置弹窗设置');
+                return;
+            }
 			this.fillBackDialogConf.isShow = true;
 			let optionFillBackConfig = this.optionModel.fillBackConfig || [];
 			// 加载已有数据
@@ -469,8 +479,17 @@ export default {
 			);
             // 加载第二列数据
 			this.loadTargetColumn();
-			// 加载第一列数据
-			this.loadSourceColumn();
+            // 如果是外部引用
+            if(this.isOuterReference){
+                console.log('外部引用')
+                this.loadOuterReferenceColumn();
+            }
+            // 正常
+            else {
+                // 加载第一列数据
+			    this.loadSourceColumn();
+            }
+			
             // 加载子表单回填数据
             this.loadSubFormFillBack();
 		},
@@ -488,6 +507,25 @@ export default {
 			}
 			this.fillBackDialogConf.loading = false;
 		},
+        // 加载外部引用第一列数据
+        async loadOuterReferenceColumn(){
+            this.fillBackDialogConf.loading = true;
+            let { requestUrl, maindDataCode, sortField , pageSize } = this.optionModel.outerDialogSetting;
+            let res = await http.post(requestUrl, {
+                maindDataCode,
+                pageNo: 1,
+                pageSize: pageSize,
+                sortField,
+            });
+            if(res && res.code == 200){
+                this.sourceColumn = res.data?.columns?.map(el => {
+                    el.formFieldType = formFieldMapping[el.type]?.type;
+                    el.prop = el.name;
+                    return el;
+                })
+            }
+            this.fillBackDialogConf.loading = false;
+        },
 		// 加载第二列数据
 		loadTargetColumn() {
             this.subFormName = null;

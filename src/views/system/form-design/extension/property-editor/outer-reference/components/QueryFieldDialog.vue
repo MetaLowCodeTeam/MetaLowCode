@@ -50,15 +50,19 @@ const emit = defineEmits(["confirm"]);
 // 目前支持的字段类型
 const fieldTypeList = [
 	{
-		label: "文本",
+		label: "文本(Text)",
 		value: "Text",
 	},
 	{
-		label: "数字",
+		label: "整数(Integer)",
 		value: "Integer",
 	},
 	{
-		label: "日期",
+		label: "精度小数(Decimal)",
+		value: "Decimal",
+	},
+	{
+		label: "日期(Date)",
 		value: "Date",
 	},
 ];
