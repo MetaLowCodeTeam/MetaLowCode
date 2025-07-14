@@ -230,6 +230,7 @@ const initLayoutConf = () => {
         return;
     }
     myLayoutConf.value = props.layoutConfig;
+    console.log(myLayoutConf.value,'myLayoutConf.value')
     let { TREE_GROUP } = myLayoutConf.value;
     if (TREE_GROUP) {
         layoutConfigId.value = TREE_GROUP.layoutConfigId;

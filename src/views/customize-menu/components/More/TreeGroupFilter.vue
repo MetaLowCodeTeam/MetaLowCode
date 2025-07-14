@@ -238,8 +238,8 @@ const tabsList = ref([
 ]);
 
 let layoutConfigId = ref("");
-let groupConf = ref({
-	// 分组数据
+let defaultGroupConf = ref({
+    // 分组数据
 	groupList: [
 		{
 			fieldGroup: [],
@@ -263,13 +263,16 @@ let groupConf = ref({
 	// 是否开启父子关联
 	isStrictly: true,
 });
+let groupConf = ref({});
 
 // 初始化数据
 const initLayoutConf = () => {
-	if (!props.layoutConfig) {
+	if (!props.layoutConfig || !isShow.value) {
 		return;
 	}
 	myLayoutConf.value = props.layoutConfig;
+	groupConf.value = { ...defaultGroupConf.value };
+    layoutConfigId.value = null;
 	let { TREE_GROUP } = myLayoutConf.value;
 	if (TREE_GROUP) {
 		layoutConfigId.value = TREE_GROUP.layoutConfigId;
