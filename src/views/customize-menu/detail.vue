@@ -213,8 +213,9 @@
                                 :key="customBtnItdenIndex" 
                                 class="block-el-button"
                             >
+                                <slot v-if="item.type === 'slot'" :name="item.name" :row="rowResData"></slot>
                                 <NewRelated
-                                    v-if="item.key == 'newRelated' && !item.hide"
+                                    v-else-if="item.key == 'newRelated' && !item.hide"
                                     :entityName="entityName"
                                     :entityCode="entityCode"
                                     :addConf="addConf"
@@ -225,7 +226,7 @@
                                 <el-button
                                     plain
                                     :type="item.type"
-                                    v-if="!item.hidden"
+                                    v-else-if="!item.hidden"
                                     class="mb-5"
                                     @click="customButtonClick(item)"
                                     :disabled="item.disabled"
@@ -262,7 +263,7 @@
                                     :layoutConfig="myLayoutConfig"
                                     :isMainDetailField="checkDetailEntityFlag(entityCode)"
                                     @copySuccess="copySuccess"
-                                    v-if="item.key == 'more' && !item.hide"
+                                    v-else-if="item.key == 'more' && !item.hide"
                                 />
                             </div>
                         </template>
@@ -662,6 +663,7 @@ const getLayoutList = async () => {
         }
         // 自定义按钮
         customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetial');
+        console.log(customButtonList.value,'customButtonList.value')
         // 先做权限和hide等所有显示逻辑过滤
         customButtonList.value.forEach(btn => {
             // 权限判断
@@ -727,6 +729,31 @@ const getLayoutList = async () => {
                 });
             }
         }
+        // 辅助函数：查找 key 的索引
+        const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
+        // 在 key='open' 前插入
+        let newRelatedIndex = findIndexByKey('newRelated');
+        if (newRelatedIndex !== -1) {
+            customButtonList.value.splice(newRelatedIndex, 0, { type: 'slot', name: 'beforeNewRelatedBtn' });
+        }
+        // 在 key='edit' 前插入
+        let editIndex = findIndexByKey('edit');
+        if (editIndex !== -1) {
+            customButtonList.value.splice(editIndex, 0, { type: 'slot', name: 'beforeEditBtn' });
+        }
+        // 在 key='history' 前插入
+        let historyIndex = findIndexByKey('history');
+        if (historyIndex !== -1) {
+            customButtonList.value.splice(historyIndex, 0, { type: 'slot', name: 'beforeRevisionHistory' });
+        }
+        // 在 key='more' 前插入，并在后面插入
+        let moreIndex = findIndexByKey('more');
+        if (moreIndex !== -1) {
+            customButtonList.value.splice(moreIndex, 0, { type: 'slot', name: 'beforeMoreBtn' });
+            customButtonList.value.splice(moreIndex + 2, 0, { type: 'slot', name: 'afterMoreBtn' });
+        }
+        
+        
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         // 新建配置项
 		formatNewRelated(res.data.ADD);

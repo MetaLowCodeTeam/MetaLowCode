@@ -721,6 +721,7 @@ export default {
                 "CUY",
                 "REFD",
                 "REFU",
+                "REFNL",
                 "REFNT",
             ],
             // 数组类型的字段
@@ -944,6 +945,11 @@ export default {
                         el.value !== 0 &&
                         !this.op_no_value.includes(el.op)
                     ) {
+                        flag = false;
+                        el.isError = true;
+                    }
+                    // 如果是引用 且 没有值
+                    if(el.op == "REF" && (!el.value || !el.value2)){
                         flag = false;
                         el.isError = true;
                     }
