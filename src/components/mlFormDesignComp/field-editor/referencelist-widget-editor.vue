@@ -480,7 +480,7 @@ export default {
                 }
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
-                        if (!entity.detailEntityFlag && !entity.internalEntityFlag) {
+                        if (!entity.internalEntityFlag) {
                             this.tableData.push({
                                 name: entity.name,
                                 label: entity.label,
