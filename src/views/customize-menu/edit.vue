@@ -76,12 +76,13 @@
             <template 
                 v-for="(item,index) of customButtonList" :key="index"
             >
+                <slot v-if="item.type === 'slot'" :name="item.name" :row="row"></slot>
                 <el-button
                     @click.stop="customButtonClick(item, row)"
                     :type="item.type"
                     :plain="item.key == 'saveRefresh' || item.key == 'saveSubmit'"
                     :disabled="item.disabled"
-                    v-if="!item.hidden"
+                    v-else-if="!item.hidden"
                 >
                     <el-icon
                         :color="item.iconColor"
@@ -371,6 +372,29 @@ const loadMyLayoutConfig = async () => {
                 btn.hidden = true;
             })
         }
+    }
+    // 辅助函数：查找 key 的索引
+    const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
+    // 在 key='cancel' 前插入
+    let cancelIndex = findIndexByKey('cancel');
+    if (cancelIndex !== -1) {
+        customButtonList.value.splice(cancelIndex, 0, { type: 'slot', name: 'beforeCancelBtn' });
+    }
+    // 在 key='save' 前插入
+    let saveIndex = findIndexByKey('save');
+    if (saveIndex !== -1) {
+        customButtonList.value.splice(saveIndex, 0, { type: 'slot', name: 'beforeConfirmBtn' });
+    }
+    // 在 key='saveRefresh' 前插入
+    let saveRefreshIndex = findIndexByKey('saveRefresh');
+    if (saveRefreshIndex !== -1) {
+        customButtonList.value.splice(saveRefreshIndex, 0, { type: 'slot', name: 'beforeConfirmRefreshBtn' });
+    }
+    // 在 key='saveSubmit' 前插入,并在后面插入
+    let saveSubmitIndex = findIndexByKey('saveSubmit');
+    if (saveSubmitIndex !== -1) {
+        customButtonList.value.splice(saveSubmitIndex, 0, { type: 'slot', name: 'afterConfirmRefreshBtn' });
+        customButtonList.value.splice(saveSubmitIndex + 2, 0, { type: 'slot', name: 'afterConfirmAndSubmitBtn' });
     }
 };
 

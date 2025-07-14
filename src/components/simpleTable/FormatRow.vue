@@ -50,7 +50,7 @@
         {{ row[column.prop]?.name }}
     </div>
     <div v-else-if="column.type == 'Cascader'">
-       {{ row[column.prop] }}
+       {{ row[column.prop] ? row[column.prop + '$label'] : "" }}
     </div>
 	<div
 		class="text-ellipsis"

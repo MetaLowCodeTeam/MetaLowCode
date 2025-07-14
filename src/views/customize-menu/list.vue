@@ -180,11 +180,14 @@
                             v-for="(item,index) of customButtonConfig.pcTop" 
                             :key="index"
                         >
+                            <!-- 插槽 -->
+                            <slot v-if="item.type === 'slot'" :name="item.name"></slot>
+                            <!-- 原有按钮 -->
                             <el-button
                                 :disabled="getCustomButtonDisabled(item)"
                                 @click="customButtonClick(item)"
                                 :type="item.type"
-                                v-if="getTopCustomButtonShow(item)"
+                                v-else-if="getTopCustomButtonShow(item)"
                                 class="ml-12"
                             >
                                 <el-icon
@@ -386,6 +389,7 @@
                             #default="scope" 
                             v-if="!(customButtonConfig?.pcColumn?.length > 0)"
                         >
+                            <slot name="beforeRowEditBtn" :row="scope.row"></slot>
                             <el-tooltip
                                 class="box-item"
                                 effect="dark"
@@ -414,7 +418,7 @@
                             >
                                 编辑
                             </el-button>
-
+                            <slot name="beforeRowViewBtn" :row="scope.row"></slot>
                             <el-button
                                 size="small"
                                 link
@@ -424,12 +428,14 @@
                             >
                                 查看
                             </el-button>
+                            <slot name="afterRowViewBtn" :row="scope.row"></slot>
                         </template>
                         <template #default="scope" v-else>
                             <template 
                                 v-for="(item,index) of customButtonConfig.pcColumn" :key="index"
                             >
-                                <template v-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'">
+                                <slot v-if="item.type === 'slot'" :name="item.name" :row="scope.row"></slot>
+                                <template v-else-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'">
                                     <el-tooltip
                                         class="box-item"
                                         effect="dark"
@@ -466,6 +472,7 @@
                                     </el-tooltip>
                                 </template>
                                 <template v-else>
+                                    
                                     <!-- 底部 -->
                                     <el-button
                                         @click.stop="customButtonClick(item, scope.row)"
@@ -1441,6 +1448,52 @@ const getLayoutList = async () => {
         // 自定义按钮
         if(res.data.CUSTOM_BUTTON && res.data.CUSTOM_BUTTON.config){
             customButtonConfig.value = JSON.parse(res.data.CUSTOM_BUTTON.config);
+            if(customButtonConfig.value?.pcTop?.length > 0){
+                const pcTop = customButtonConfig.value.pcTop;
+                // 辅助函数：查找 key 的索引
+                const findIndexByKey = (key) => pcTop.findIndex(item => item.key === key && item.isNative);
+
+                // 在 key='open' 前插入
+                let openIndex = findIndexByKey('open');
+                if (openIndex !== -1) {
+                    pcTop.splice(openIndex, 0, { type: 'slot', name: 'beforeOpenBtn' });
+                }
+
+                // 在 key='edit' 前插入
+                let editIndex = findIndexByKey('edit');
+                if (editIndex !== -1) {
+                    pcTop.splice(editIndex, 0, { type: 'slot', name: 'beforeEditBtn' });
+                }
+
+                // 在 key='new' 前插入
+                let newIndex = findIndexByKey('new');
+                if (newIndex !== -1) {
+                    pcTop.splice(newIndex, 0, { type: 'slot', name: 'beforeAddBtn' });
+                }
+
+                // 在 key='more' 前插入，并在后面插入
+                let moreIndex = findIndexByKey('more');
+                if (moreIndex !== -1) {
+                    pcTop.splice(moreIndex, 0, { type: 'slot', name: 'beforeMoreBtn' });
+                    pcTop.splice(moreIndex + 2, 0, { type: 'slot', name: 'afterMoreBtn' });
+                }
+            }
+            if(customButtonConfig.value?.pcColumn?.length > 0){
+                const pcColumn = customButtonConfig.value.pcColumn;
+                // 辅助函数：查找 key 的索引
+                const findIndexByKey = (key) => pcColumn.findIndex(item => item.key === key && item.isNative);
+                // 在 key='edit' 前插入
+                let editIndex = findIndexByKey('edit');
+                if (editIndex !== -1) {
+                    pcColumn.splice(editIndex, 0, { type: 'slot', name: 'beforeRowEditBtn' });
+                }
+                // 在 key='view' 前插入，并在后面插入
+                let viewIndex = findIndexByKey('view');
+                if (viewIndex !== -1) {
+                    pcColumn.splice(viewIndex, 0, { type: 'slot', name: 'beforeRowViewBtn' });
+                    pcColumn.splice(viewIndex + 2, 0, { type: 'slot', name: 'afterRowViewBtn' });
+                }
+            }
         }
          
         // 自定义行样式

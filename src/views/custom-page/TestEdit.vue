@@ -54,7 +54,7 @@ const openDialog = (id) => {
 
 const test = () => {
 	// console.log();
-	console.log(EntityListEditRefs.value?.getDataId())
+	console.log(EntityListEditRefs.value)
     // console.log(1);
 };
 

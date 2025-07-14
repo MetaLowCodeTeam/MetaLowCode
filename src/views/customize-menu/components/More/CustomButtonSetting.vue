@@ -387,7 +387,7 @@
                                 </el-form-item>
                                 <el-form-item 
                                     label="显示方式" 
-                                    v-if="isShowDisplayType"
+                                    v-if="isShowDisplayType && currentButton.filterJson?.items?.length > 0"
                                 >
                                     <el-select 
                                         v-model="currentButton.errorShowType" 

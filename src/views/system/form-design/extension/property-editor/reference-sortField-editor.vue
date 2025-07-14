@@ -80,10 +80,15 @@ export default {
 			fieldItems: [],
 		};
 	},
-    mounted() {
-        this.sortDialogConf.sortField = this.optionModel.sortField;
-        this.sortDialogConf.sortOrder = this.optionModel.sortOrder;
+    computed: {
+        sortField() {
+            return this.optionModel.sortField;
+        },
+        sortOrder() {
+            return this.optionModel.sortOrder;
+        }
     },
+    mounted() {},
 	methods: {
         onConfirm() {
             this.sortDialogConf.isShow = false;
@@ -156,6 +161,8 @@ export default {
 				this.optionModel.name,
 				paramEntity
 			);
+            this.sortDialogConf.sortField = this.sortField;
+            this.sortDialogConf.sortOrder = this.sortOrder;
 			if (refRes) {
 				this.fieldItems = refRes.data.fieldItems;
                 if(!this.optionModel.sortOrder) {
