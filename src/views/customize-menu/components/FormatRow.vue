@@ -51,7 +51,7 @@
             class="text-ellipsis"
             v-else-if="column.fieldType == 'Cascader'"
         >
-            {{ row[column.fieldName] }}
+            {{ row[column.fieldName] ? row[column.fieldName + '$label'] : "" }}
         </div>
         <div
             class="text-ellipsis"
