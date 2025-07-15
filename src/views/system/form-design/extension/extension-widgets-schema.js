@@ -332,10 +332,13 @@ export const outerReferenceSchema = {
 		validationHint: '',
         // 外部引用弹窗设置
         outerDialogSetting: {},
+        // 外部引用详情跳转地址
+        outerDetailURL: '',
         // 启用表单回填
         fillBackEnabled: false,
         // 表单回填
         fillBackConfig: [],
+        detailLinkDisabled: false,  //查看状态禁止显示详情跳转
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

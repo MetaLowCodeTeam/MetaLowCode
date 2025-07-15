@@ -10,14 +10,13 @@
         append-to-body
         bodyNoPadding
         :showClose="!loading"
+        :scrollbarHeight="styleConf?.dialogConfig?.editHeight || ''"
+        :scrollbarMaxHeight="styleConf?.dialogConfig?.editMaxHeight"
+        :scrollbarMinHeight="styleConf?.dialogConfig?.editMinHeight"
     >
         <div 
             class="main fullScreen-man" 
             v-loading="loading"
-            :style="{
-                height: styleConf?.dialogConfig?.editHeight || '',
-                maxHeight: styleConf?.dialogConfig?.editMaxHeight,
-            }"
         >
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
@@ -924,7 +923,7 @@ defineExpose({
 }
 
 .main {
-    max-height: 500px;
+    // max-height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;

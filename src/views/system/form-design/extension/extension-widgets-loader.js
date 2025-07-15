@@ -51,6 +51,8 @@ import signConfigEditor from '@/views/system/form-design/extension/property-edit
 import cascaderConfigEditor from '@/views/system/form-design/extension/property-editor/cascader-option/cascader-config-editor.vue';
 // 外部引用弹窗设置
 import outerDialogSettingEditor from '@/views/system/form-design/extension/property-editor/outer-reference/dialog-setting-editor.vue';
+// 外部引用详情跳转地址
+import outerDetailURLEditor from '@/views/system/form-design/extension/property-editor/outer-reference/outer-detail-url-editor.vue';
 /**
  * 容器组件
  */
@@ -121,8 +123,12 @@ export const loadExtensionWidgets = (app) => {
      * 容器组件-列表子表单-字段组件  end
      */
 
-
+    
+    // 注册外部引用弹窗设置
+    PERegister.registerCPEditor(app, 'outerDialogSetting', 'outer-reference-dialog-setting-editor', outerDialogSettingEditor)
 	PERegister.registerCPEditor(app, 'detailLinkDisabled', 'reference-detailLinkDisabled-editor', detailLinkDisabledEditor)
+    // 注册外部引用详情跳转地址
+    PERegister.registerCPEditor(app, 'outerDetailURL', 'outer-reference-detail-url-editor', outerDetailURLEditor)
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
 	PERegister.registerCPEditor(app, 'useCurrentUser', 'reference-useCurrentUser-editor', referenceUseCurrentUserEditor)
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
@@ -140,8 +146,7 @@ export const loadExtensionWidgets = (app) => {
     PERegister.registerCPEditor(app, 'signConfig', 'sign-signConfig-editor', signConfigEditor)
     // 注册级联选择配置
     PERegister.registerCPEditor(app, 'cascaderConfig', 'cascader-config-editor', cascaderConfigEditor)
-    // 注册外部引用弹窗设置
-    PERegister.registerCPEditor(app, 'outerDialogSetting', 'outer-reference-dialog-setting-editor', outerDialogSettingEditor)
+    
     PERegister.registerCPEditor(app, 'qrCodeOnMobileEnabled', 'input-qrCodeOnMobileEnabled-editor', inputQrCodeOnMobileEnabledEditor)
 	PERegister.registerCPEditor(app, 'positionSelectable', 'location-positionSelectable-editor',
 	PEFactory.createBooleanEditor('positionSelectable', 'extension.setting.positionSelectable'))

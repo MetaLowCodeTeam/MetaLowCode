@@ -49,6 +49,21 @@
             <template v-if="isReadMode">
 				<span class="readonly-mode-field">
                     {{ contentForReadMode }}
+                    <template v-if="!field.options.detailLinkDisabled">
+						<el-button
+							v-if="fieldModel && fieldModel.code"
+							type="primary"
+							circle
+							size="small"
+							class="small-circle-button"
+							title="打开详情弹窗"
+                            @click="openDetailDialog"
+						>
+							<el-icon>
+								<TopRight />
+							</el-icon>
+						</el-button>
+					</template>
 				</span>
 			</template>
 		</form-item-wrapper>
@@ -72,12 +87,14 @@
                 isOuterReference
 			></ReferenceSearchTable>
         </ml-dialog>
+        <ReferenceOuterDetailDialog ref="outerDetailDialog" />
 	</div>
 </template>
 
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import ReferenceOuterDetailDialog from "@/components/mlReferenceSearch/reference-outerDetail-dialog.vue";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
 export default {
@@ -113,6 +130,7 @@ export default {
 	components: {
 		FormItemWrapper,
         ReferenceSearchTable,
+        ReferenceOuterDetailDialog,
 	},
 	data() {
 		return {
@@ -330,6 +348,16 @@ export default {
         // 获取排序
         getSort() {
             return this.extraSort;
+        },
+        openDetailDialog() {
+            let { outerDetailURL } = this.field.options;
+            if(!outerDetailURL) {
+                this.$message.error("请先配置详情跳转地址");
+                return;
+            }
+            let { code } = this.fieldModel;
+            let url = outerDetailURL.replace("{code}", code);
+            this.$refs.outerDetailDialog.openDialog({ url });
         },
 	},
 };

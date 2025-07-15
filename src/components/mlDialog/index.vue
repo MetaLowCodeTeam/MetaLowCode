@@ -31,14 +31,24 @@
                 </el-icon>
             </span>
         </template>
-        <ml-scrollbar 
+        <div 
+            class="ml-dialog-body"
+            :style="{
+                height: scrollbarHeight,
+                maxHeight: scrollbarMaxHeight,
+                minHeight: scrollbarMinHeight,
+            }"
+        >
+            <slot></slot>
+        </div>
+        <!-- <ml-scrollbar 
             class="ml-dialog-body" 
             :height="scrollbarHeight" 
             :min-height="scrollbarMinHeight" 
             :max-height="scrollbarMaxHeight"
         >
             <slot></slot>
-        </ml-scrollbar>
+        </ml-scrollbar> -->
         <template #footer v-if="isShowFooter">
             <slot name="footer"></slot>
         </template>
@@ -48,7 +58,7 @@
 <script setup>
 import { useSlots, watch, ref, reactive, onMounted } from "vue";
 // 滚动条
-import mlScrollbar from "@/components/mlScrollbar/index.vue";
+// import mlScrollbar from "@/components/mlScrollbar/index.vue";
 const props = defineProps({
     modelValue: null,
     title: { type: String, defalut: "" },

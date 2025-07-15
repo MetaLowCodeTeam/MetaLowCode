@@ -451,8 +451,10 @@ $--dialog-footer-bg-color: #fff;
 		}
 	}
     .ml-dialog-body {
+        height: 100%;
         padding: 20px 20px 15px 20px;
         background: #{$--dialog-body-bg-color};
+        overflow: auto;
     }
 	.el-dialog__footer {
 		padding: 0;
@@ -488,7 +490,8 @@ $--dialog-footer-bg-color: #fff;
         }
 		.el-dialog__body {
 			.fullScreen-man {
-				max-height: 100%!important;
+                max-height: none !important;
+                height: 100% !important;
 			}
 		}
 	}
