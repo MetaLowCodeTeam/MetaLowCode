@@ -365,27 +365,42 @@ const initFormLayout = async (formLayoutId) => {
                             vFormRef.value.disableForm();
                             nextTick(() => {
                                 let modifiableFields = approvalTask.value?.modifiableFields || [];
+                                // console.log(modifiableFields,'modifiableFields');
+                                // 主表
                                 // 显示可编辑的字段
                                 let enableWidgets = [];
                                 // 显示必填字段
                                 let requiredWidgets = [];
+                                // 所有字表
+                                let subFormList = [];
                                 modifiableFields.forEach(el => {
-                                    // 主表字段
                                     if(!el.formEntity) {
                                         enableWidgets.push(el.name);
                                         if(el.isRequired) {
                                             requiredWidgets.push(el.name);
                                         }
                                     }
-                                    // 字表字段
-                                    else {
-                                        let subFormField = el.name + "@sf=" + el.formEntity;
-                                        enableWidgets.push(subFormField);
-                                        if(el.isRequired) {
-                                            requiredWidgets.push(subFormField);
-                                        }
+                                    if(el.formEntity && !subFormList.includes(el.formEntity)) {
+                                        subFormList.push(el.formEntity);
                                     }
                                 });
+                                subFormList.forEach(subForm => {
+                                    let subFormRef = vFormRef.value.getWidgetRef(subForm);
+                                    let subFormFieldList = modifiableFields.filter(item => item.formEntity == subForm);
+                                    let subFormEnableWidgets = [];
+                                    let subFormRequiredWidgets = [];
+                                    subFormFieldList.forEach(el => {
+                                        let subFormField = el.name;
+                                        subFormEnableWidgets.push(subFormField);
+                                        if(el.isRequired) {
+                                            subFormRequiredWidgets.push(subFormField);
+                                        }
+                                    });
+                                    subFormRef.setWidgetDisabledOfSubForm(subFormEnableWidgets, false);
+                                    subFormRef.setWidgetRequiredOfSubForm(subFormRequiredWidgets, true);
+                                    subFormRef.setWidgetHiddenOfSubForm(subFormEnableWidgets, false);
+                                });
+                                // console.log(vFormRef.value.getWidgets('从表'),'vFormRef.value.getWidgets()');
                                 vFormRef.value.enableWidgets(enableWidgets);
                                 vFormRef.value.setWidgetsRequired(requiredWidgets, true);
                                 // 显示可编辑的字段。即使设置了隐藏。
@@ -787,20 +802,50 @@ defineExpose({
 }
 
 .detail-header {
-    // padding-bottom: 20px;
-    // box-sizing: border-box;
-    padding: 20px;
-    height: 48px;
-    //background: #f0f0f0;
-    .fr-box {
-        // height: 60px;
-        .fr-icon {
-            cursor: pointer;
-            &:hover {
-                color: var(--el-color-primary);
+	// border-bottom: 2px solid #f1f2f3;
+	// padding-bottom: 20px;
+	// box-sizing: border-box;
+	padding: 16px;
+	height: 56px;
+	//background: #f0f0f0;
+    color: #fff;
+	.fr-box {
+		// height: 60px;
+		.fr-icon {
+			cursor: pointer;
+            position: relative;
+            top: 3px;
+			&:hover {
+				color: var(--el-color-primary-dark-2);
+			}
+		}
+        :deep(.el-button) {
+            &:not(.is-disabled):hover {
+                background-color: var(--el-color-primary-dark-2);
             }
         }
-    }
+	}
+
+	.detail-header-title {
+		font-size: 18px;
+		padding-left: 5px;
+		border-left: 5px solid;
+		border-left-color: var(--el-color-primary-dark-2);
+        color: #fff;
+        height: 26px;
+        .title-span {
+            float: left;
+            line-height: 26px;
+            max-width: 600px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .enable-pagination-span {
+            position: relative;
+            margin-right: 10px;
+        }
+	}
 }
 .detail-main {
     // padding: 20px;
