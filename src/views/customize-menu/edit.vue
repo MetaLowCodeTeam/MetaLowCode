@@ -1,18 +1,18 @@
 <template>
     <ml-dialog
-        :title="editParamConf.customDialogTitle || row.customDialogTitle || styleConf?.dialogConfig?.editTitle || row.dialogTitle"
+        :title="editParamConf.customDialogTitle || row.customDialogTitle || styleConf?.newDialogConfig?.editTitle || row.dialogTitle"
         v-if="isShow"
         v-model="isShow"
-        :width="styleConf?.dialogConfig?.editWidth || '55%'"
+        :width="styleConf?.newDialogConfig?.editWidth || '55%'"
         draggable
         :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf?.showFullScreen"
         :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf?.autoFullScreen"
         append-to-body
         bodyNoPadding
         :showClose="!loading"
-        :scrollbarHeight="styleConf?.dialogConfig?.editHeight || ''"
-        :scrollbarMaxHeight="styleConf?.dialogConfig?.editMaxHeight"
-        :scrollbarMinHeight="styleConf?.dialogConfig?.editMinHeight"
+        :scrollbarHeight="styleConf?.newDialogConfig?.editHeight || ''"
+        :scrollbarMaxHeight="styleConf?.newDialogConfig?.editMaxHeight"
+        :scrollbarMinHeight="styleConf?.newDialogConfig?.editMinHeight"
     >
         <div 
             class="main fullScreen-man" 
@@ -307,7 +307,7 @@ const loadMyLayoutConfig = async () => {
             if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
                 newDialogConfig.editMaxHeight = '500px';
             }
-            styleConf.value.dialogConfig = newDialogConfig;
+            styleConf.value.newDialogConfig = newDialogConfig;
         }
     }
     customButtonList.value = getCustomAppButtons(CUSTOM_BUTTON, 'pcEdit');

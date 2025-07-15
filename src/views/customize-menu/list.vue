@@ -526,6 +526,7 @@
             :recordDetailFormId="listParamConf.recordDetailFormId || rowStyleConf?.formConf?.pcDetailFormId"
             :recordEditFormId="listParamConf.recordEditFormId || rowStyleConf?.formConf?.pcEditFormId"
             :recordIds="recordIds"
+            :modelName="formatModelName(myModelName, currentTab)"
         />
         <mlCustomEdit
             ref="editRefs"

@@ -12,8 +12,8 @@
 		<template #header>
 			<div class="detail-header">
 				<div class="detail-header-title">
-					<span class="title-span" :title="detailParamConf.customDialogTitle || customDialogTitle || styleConf?.dialogConfig?.detailTitle || detailName">
-                        {{ detailParamConf.customDialogTitle || customDialogTitle || styleConf?.dialogConfig?.detailTitle || detailName }}
+					<span class="title-span" :title="detailParamConf.customDialogTitle || customDialogTitle || styleConf?.newDialogConfig?.detailTitle || detailName">
+                        {{ detailParamConf.customDialogTitle || customDialogTitle || styleConf?.newDialogConfig?.detailTitle || detailName }}
                     </span>
 					<div class="fr fr-box">
                         <span v-if="styleConf.detailConf.enablePagination || styleConf.detailConf.enablePagination == undefined" class="enable-pagination-span">
@@ -79,7 +79,7 @@
                             :cutTabIndex="cutTabIndex"
                             @confirm="refresh"
                             :checkTabsFilter="checkTabsFilter"
-                            :modelName="currentListModelName"
+                            :modelName="modelName"
                             ref="detailTabsRefs"
                         />
                         <div class="detail-container">
@@ -340,7 +340,7 @@ import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-import { globalDsvDefaultData, getModelName, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
+import { globalDsvDefaultData, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
 /**
  * 组件
  */
@@ -400,6 +400,11 @@ const props = defineProps({
     recordIds: {
 		type: Array,
 		default: () => [],
+	},
+    // 当前modelName
+    modelName: {    
+		type: String,
+		default: "",
 	},
 });
 
@@ -503,8 +508,6 @@ const onPrev = () => {
 const onNext = () => {
     openDialog(nextRecordId.value, globalDsv.value, formId.value);
 }
-
-let currentListModelName = ref("");
 
 const openDialog = (id, localDsv, paramFormId) => {
     let { recordIds } = props;
@@ -628,7 +631,7 @@ const customButtonClick = (item) => {
 // 加载页签
 const getLayoutList = async () => {
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value, currentListModelName.value);
+	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName);
 	if (res) {
         myLayoutConfig.value = res.data;
         myLayoutConfig.value.entityCode = entityCode.value;
@@ -840,7 +843,7 @@ const initData = async () => {
                         if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
                             newDialogConfig.editMaxHeight = '500px';
                         }
-                        styleConf.value.dialogConfig = newDialogConfig;
+                        styleConf.value.newDialogConfig = newDialogConfig;
                     }
 					nextTick(() => {
 						vFormRef.value?.setFormData(formatFormVirtualField(rowResData.value));
