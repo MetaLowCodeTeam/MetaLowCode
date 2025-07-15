@@ -372,8 +372,10 @@
                                     />
                                 </el-select>
                             </el-col>
+                            
                             <!-- 条件值 -->
                             <el-col :span="hideQueryMatchType ? 15 : 10">
+                                
                                 <!-- 日期选择器 -->
                                 <div v-if="item.opCom =='datePicker'">
                                     <el-date-picker

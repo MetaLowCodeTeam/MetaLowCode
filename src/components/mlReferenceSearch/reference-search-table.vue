@@ -452,6 +452,18 @@ export default {
                 this.conditionConf.items = filterFields.map(el => {
                     el.type = el.fieldType
                     el.label = el.fieldLabel
+                    if(!el.op) {
+                        if(el.type == 'Text') {
+                            el.op = 'LK';
+                            el.opCom = 'textInput';
+                        } else if(el.type == 'Date') {
+                            el.op = 'EQ';
+                            el.opCom = 'datePicker';
+                        } else if(el.type == 'Integer' || el.type == 'Decimal') {
+                            el.op = 'EQ';
+                            el.opCom = 'numberInput';
+                        }
+                    }
                     return el
                 })
             }
@@ -461,11 +473,15 @@ export default {
                 pageNo: this.page.pageNo,
                 pageSize: this.page.limit,
                 sortField,
-                filterMap: this.conditionConf.items.map(el => {
+                filterMap: this.conditionConf.items?.map(el => {
                     return {
-                        [el.fieldName]: el.value,
+                        fieldName: el.fieldName,
+                        fieldLabel: el.fieldLabel,
+                        value: el.value,
+                        value2: el.value2,
+                        op: el.op,
                     }
-                })
+                }),
             });
             if(res && res.code == 200) {
                 this.tableData = res.data?.dataList?.map(el => {

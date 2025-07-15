@@ -338,6 +338,8 @@ export const outerReferenceSchema = {
         fillBackEnabled: false,
         // 表单回填
         fillBackConfig: [],
+        // 搜索弹窗宽度
+        searchDialogWidth: '800px',
         detailLinkDisabled: false,  //查看状态禁止显示详情跳转
 		//-------------------
 		customClass: '',  //自定义css类名

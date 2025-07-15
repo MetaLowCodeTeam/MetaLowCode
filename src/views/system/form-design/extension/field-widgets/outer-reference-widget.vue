@@ -70,7 +70,7 @@
         <ml-dialog
             v-model="showReferenceDialogFlag"
             title="请选择"
-            width="520px"
+            :width="field.options.searchDialogWidth"
             append-to-body
         >
             <ReferenceSearchTable
