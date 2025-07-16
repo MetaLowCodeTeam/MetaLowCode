@@ -559,7 +559,7 @@ export default {
             return false;
         },
         getDefaultOpeneds() {
-            let needMenu = this.menu[0].children;
+            let needMenu = this.menu[0]?.children || [];
             needMenu.forEach((el) => {
                 if (el.meta.isOpeneds) {
                     this.defaultOpeneds.push(el.path);
