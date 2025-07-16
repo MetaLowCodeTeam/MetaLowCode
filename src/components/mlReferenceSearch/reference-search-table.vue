@@ -514,7 +514,7 @@ export default {
                         label: el.label,
                     }
                 });
-                this.page.total = res.data?.total || 0;
+                this.page.total = resData?.total || 0;
             }
         },
         // 关闭已选数据
