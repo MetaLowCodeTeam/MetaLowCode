@@ -356,6 +356,10 @@ export const outerReferenceSchema = {
 		onChange: '',
 		onValidate: '',
 		onAppendButtonClick: '',  //后置按钮点击事件
+        // 前置查询事件-用于发送查询请求的前置事件，用户可以通过JS代码修改请求数据格式。
+        onBeforeListQuery: '',  
+        // 后置查询事件-用于拦截查询接口返回的数据对象，用户可以修改数据格式，然后返回给列表渲染。
+        onAfterListQuery: '', 
 	}
 }
 

@@ -446,7 +446,9 @@ export default {
                 sortField ,
                 pageSize,
                 uniqueField,
-                filterFields
+                filterFields,
+                onBeforeListQuery,
+                onAfterListQuery,
             } = this.outerReferenceConfig;
             if(filterFields && filterFields.length > 0){
                 this.conditionConf.items = filterFields.map(el => {
@@ -468,7 +470,9 @@ export default {
                 })
             }
             this.page.limit = pageSize;
-            let res = await http.post(requestUrl, {
+            let headers = {};
+            let params = {};
+            let body = {
                 mainDataCode,
                 pageNo: this.page.pageNo,
                 pageSize: this.page.limit,
@@ -482,16 +486,30 @@ export default {
                         op: el.op,
                     }
                 }),
+            };
+            if(onBeforeListQuery) {
+                let customFn = new Function("headers", "params", "body", onBeforeListQuery);
+                customFn.call(this, headers, params, body);
+            }
+            let res = await http.post(requestUrl, body, {
+                headers,
+                params,
             });
             if(res && res.code == 200) {
-                this.tableData = res.data?.dataList?.map(el => {
+                let resData = res.data;
+                if(onAfterListQuery) {
+                    let customFn = new Function("resData", onAfterListQuery);
+                    customFn.call(this, resData);
+                }
+                this.tableData = resData?.dataList?.map(el => {
                     return {
                         ...el,
                         isSelected: el[uniqueField] == this.defaultSelected?.name,
                     }
                 });
-                this.columns = res.data?.columns?.map(el => {
+                this.columns = resData?.columns?.map(el => {
                     return {
+                        ...el,
                         prop: el.name,
                         label: el.label,
                     }

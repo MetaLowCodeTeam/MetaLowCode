@@ -219,7 +219,7 @@ export default {
 				return
 			}
             // 检查是否配置了弹窗设置
-            let { name, outerDialogSetting } = this.field.options;
+            let { name, outerDialogSetting, onBeforeListQuery, onAfterListQuery } = this.field.options;
             this.curRefField = name;
             if(!outerDialogSetting || !outerDialogSetting.requestUrl) {
                 this.$message.error("请先配置弹窗设置");
@@ -231,6 +231,8 @@ export default {
                 this.extraSort = `${sortField.fieldName} ${sortField.type}`;
             }
             this.curOuterReferenceConfig = outerDialogSetting;
+            this.curOuterReferenceConfig.onBeforeListQuery = onBeforeListQuery;
+            this.curOuterReferenceConfig.onAfterListQuery = onAfterListQuery;
             this.showReferenceDialogFlag = true;
 		},
 		handleClearEvent() {

@@ -141,7 +141,7 @@
                                 </div>
                                 <span 
                                     class="ml-a-span fr" 
-                                    v-if="!activity.subRecord?.id && activity.state === 0 && $TOOL.checkRole('r6000') && activity.approvalTaskId && activity.approvalTaskId != approveHistory[index - 1].approvalTaskId && activity.stepUserName"
+                                    v-if="!activity.subRecord?.id && activity.state === 0 && $TOOL.checkRole('r6000') && activity.stepUserName"
                                     @click="openChangeApproverDialog(activity)"
                                 >
                                     修改审批人

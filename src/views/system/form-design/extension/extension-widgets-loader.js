@@ -53,6 +53,10 @@ import cascaderConfigEditor from '@/views/system/form-design/extension/property-
 import outerDialogSettingEditor from '@/views/system/form-design/extension/property-editor/outer-reference/dialog-setting-editor.vue';
 // 外部引用详情跳转地址
 import outerDetailURLEditor from '@/views/system/form-design/extension/property-editor/outer-reference/outer-detail-url-editor.vue';
+// 外部引用前置事件
+import onBeforeListQueryEditor from '@/views/system/form-design/extension/property-editor/outer-reference/onBeforeListQuery-editor.vue';
+// 外部引用后置事件
+import onAfterListQueryEditor from '@/views/system/form-design/extension/property-editor/outer-reference/onAfterListQuery-editor.vue';
 /**
  * 容器组件
  */
@@ -136,6 +140,10 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
 	PERegister.registerCPEditor(app, 'sortField', 'reference-sortField-editor', referenceSortFieldEditor)
 	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
+    // 注册外部引用前置事件
+    PERegister.registerEPEditor(app, 'onBeforeListQuery', 'onBeforeListQuery-editor', onBeforeListQueryEditor)
+    // 注册外部引用后置事件
+    PERegister.registerEPEditor(app, 'onAfterListQuery', 'onAfterListQuery-editor', onAfterListQueryEditor)
 	PERegister.registerEPEditor(app, 'onAppendButtonClick', 'onAppendButtonClick-editor', onAppendButtonClickEditor)
 	PERegister.registerEPEditor(app, 'onBeforeDialogOpen', 'onBeforeDialogOpen-editor', onBeforeDialogOpenEditor)
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
