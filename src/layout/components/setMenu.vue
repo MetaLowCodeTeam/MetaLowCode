@@ -19,120 +19,20 @@
 						:force-fallback="false"
 						handle=".mover"
 						:list="menuData.list"
+						group="menuItems"
 					>
-						<div
-							class="parent-li"
-							v-for="(parent, inx) of menuData.list"
-							:key="inx"
-						>
-							<div
-								class="paren-div"
-								@click="nodeClick(parent)"
-								:class="{
-									'is-active': cutMenu?.guid == parent.guid,
-								}"
-							>
-								<div class="mover fl">
-									<el-icon size="20" class="icon">
-										<ElIconRank />
-									</el-icon>
-								</div>
-								<div class="fl item text-ellipsis">
-									<el-icon
-										class="icon"
-										v-if="!parent.useIcon"
-									>
-										<SetUp />
-									</el-icon>
-									<el-icon
-										class="icon"
-										v-else
-										:color="parent.iconColor"
-									>
-										<component :is="parent.useIcon" />
-									</el-icon>
-									{{ parent.name }}
-								</div>
-								<div class="action-icon">
-									<span
-										class="icon-span add-icon mr-5 is-disabled"
-										v-if="parent.type != 1"
-										title="非关联项不可添加子菜单"
-									>
-										<el-icon size="16">
-											<ElIconCloseBold />
-										</el-icon>
-									</span>
-									<span
-										class="icon-span add-icon mr-5"
-										v-else
-										@click.stop="addChildrenMenu(parent)"
-									>
-										<el-icon size="16">
-											<ElIconCloseBold />
-										</el-icon>
-									</span>
-									<span
-										class="icon-span"
-										@click.stop="delMenu(parent, inx)"
-									>
-										<el-icon size="16">
-											<ElIconCloseBold />
-										</el-icon>
-									</span>
-								</div>
-							</div>
-
-							<VueDraggableNext
-								ghost-class="subghost"
-								chosen-class="subchosenClass"
-								animation="300"
-								:force-fallback="false"
-								handle=".submover"
-								:list="parent.children"
-							>
-								<div
-									class="child-div"
-									v-for="(child, subInx) of parent.children"
-									:key="subInx"
-									@click="nodeClick(child)"
-									:class="{
-										'is-active':
-											cutMenu?.guid == child.guid,
-									}"
-								>
-									<div class="submover fl">
-										<el-icon size="20" class="icon">
-											<ElIconRank />
-										</el-icon>
-									</div>
-									<div class="fl item text-ellipsis">
-										<el-icon
-											class="icon"
-											v-if="!child.useIcon"
-										>
-											<SetUp />
-										</el-icon>
-										<el-icon class="icon" v-else>
-											<component :is="child.useIcon" />
-										</el-icon>
-										{{ child.name }}
-									</div>
-									<div class="action-icon">
-										<span
-											class="icon-span"
-											@click.stop="
-												delMenu(child, inx, subInx)
-											"
-										>
-											<el-icon size="16">
-												<ElIconCloseBold />
-											</el-icon>
-										</span>
-									</div>
-								</div>
-							</VueDraggableNext>
-						</div>
+						<MenuItem
+							v-for="(parent, inx) in menuData.list"
+							:key="parent.guid"
+							:item="parent"
+							:index="inx"
+							:depth="0"
+							:max-depth="8"
+							:selected-guid="cutMenu?.guid || ''"
+							:select-item="nodeClick"
+							:add-child="(item) => addChildrenMenu(item)"
+							:delete-item="(item, parentInx, childInx) => delMenu(item, parentInx, childInx)"
+						/>
 					</VueDraggableNext>
 				</div>
 				<div class="fl right-div" v-if="!cutMenu">
@@ -141,7 +41,13 @@
 				<div class="fl right-div" v-else>
 					<el-tabs v-model="cutMenu.type" @tab-change="useComponentChange">
 						<el-tab-pane label="关联项" :name="1"></el-tab-pane>
-						<el-tab-pane label="仪表盘" :name="5"> </el-tab-pane>
+						<el-tab-pane 
+                            label="仪表盘" 
+                            :name="5"
+                            :disabled="
+                                cutMenu.children && cutMenu.children.length > 0
+                            "
+                        > </el-tab-pane>
 						<el-tab-pane
 							label="外部地址"
 							:name="2"
@@ -397,19 +303,6 @@
 					<div
 						class="mt-5"
 						v-if="
-							cutMenu.type == 1 &&
-							(!cutMenu.children || cutMenu.children.length < 1) &&
-                            !filterUseCustomEntity.includes(cutMenu.entityName)
-						"
-					>
-						<el-checkbox
-							v-model="cutMenu.useCustom"
-							label="是否使用自定义列表模板"
-						/>
-					</div>
-					<div
-						class="mt-5"
-						v-if="
                             cutMenu.type == 1 && 
                             cutMenu.useCustom &&
                             !filterUseCustomEntity.includes(cutMenu.entityName)"
@@ -502,38 +395,42 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted, inject, reactive, nextTick } from "vue";
+import { watch, ref, onMounted, reactive, inject } from "vue";
 import useCommonStore from "@/store/modules/common";
-import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import mlShareTo from "@/components/mlShareTo/index.vue";
 import { getDataList } from "@/api/crud";
 import { customListEntry } from "@/views/custom-page/customListEntry";
 import { getFormLayoutList, getSystemConstants } from "@/api/system-manager";
+import { VueDraggableNext } from "vue-draggable-next";
+import { Select, Finished } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { t } from "@/locales";
+import { useMenuOperations } from '@/composables/useMenuOperations';
+import MenuItem from './MenuItem.vue';
 
-const router = useRouter();
-const $ElMessage = inject("$ElMessage");
+// 注入缺失的工具
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
+
+// 恢复 props 和 emits 定义
+const props = defineProps({
+  modelValue: null,
+  menuInfo: { type: Object, default: () => ({}) },
+  isAppManagement: { type: Boolean, default: false },
+});
+const emit = defineEmits(["update:modelValue", "saveSuccess"]);
+
+// 恢复 store 引用
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { queryEntityNameByCode } = useCommonStore();
 const { getNavigationApi } = useLayoutConfigStore();
 const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
-const props = defineProps({
-	modelValue: null,
-	// 菜单信息
-	menuInfo: { type: Object, default: () => {} },
-    // 是否开发应用设计
-    isAppManagement: { type: Boolean, default: false },
-});
-const emit = defineEmits(["update:modelValue", "saveSuccess"]);
+const router = useRouter();
 
-import { VueDraggableNext } from "vue-draggable-next";
-import { Select, Finished } from "@element-plus/icons-vue";
-import { ElMessageBox } from "element-plus";
-import { t } from "@/locales";
 // 弹框是否显示
 let isShow = ref(false);
 let loading = ref(false);
@@ -709,87 +606,12 @@ const openSelectIconDialog = () => {
  * ********************************************** 添加、编辑 菜单项相关  beg
  */
 
-let defaultMenu = reactive({
-	// 菜单名称
-	name: "未命名",
-	// 1 关联性  2 外部地址
-	type: 1,
-	// 关联项
-	entityCode: null,
-	// 外部地址
-	outLink: "",
-	// 0 外部打开 1 内嵌（iframe）
-	openType: 0,
-	// key
-	guid: "",
-	// 父节点
-	parentGuid: "",
-	// 是否默认展开
-	isOpeneds: false,
-	// 使用图标
-	useIcon: "",
-	// 图标颜色
-	iconColor: "",
-	// 仪表盘ID
-	chartId: "",
-	// 是否使用自定义列表模板
-	useCustom: false,
-	// 当前使用的末班
-	useComponent: "",
-	// 表单实体
-	formEntityCode: "",
-	// 表单Id
-	formId: "",
-    // 是否在PC显示
-    pcShow: true,
-    // 是否在Mobile显示
-    mobileShow: true,
-    // 添加sessionId重定向
-    redirectCarrySessionId: false,
-    // 自定义页面 类型  1 自定义页面  2 路由
-    customPageType: 1,
-});
-
-const getGuid = () => {
-	return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-		var r = (Math.random() * 16) | 0,
-			v = c == "x" ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
-};
 // 当前要操作的对象
 let cutMenu = ref(null);
 
 // 关联项切换
-const associationChange = (entityCode, target, isInit) => {
-	let linkEntity;
-	for (let index = 0; index < getGroupEntityList().length; index++) {
-		const element = getGroupEntityList()[index];
-		for (let j = 0; j < element.options.length; j++) {
-			const subEl = element.options[j];
-			if (subEl.entityCode == entityCode) {
-				linkEntity = subEl;
-				continue;
-			}
-		}
-	}
-    // 如果是初始化，并且是自定义表单
-    let shouldSkip = isInit && target === 6;
-    if (!shouldSkip) {
-        cutMenu.value.name = linkEntity.label;
-    }
-	// 非自定义表单
-	if (target != 6) {
-		cutMenu.value.entityCode = linkEntity.entityCode;
-		cutMenu.value.entityName = linkEntity.name;
-	}
-	cutMenu.value.detailEntityFlag = linkEntity.detailEntityFlag;
-	cutMenu.value.mainEntityCode = linkEntity.mainEntityCode;
-    if(cutMenu.value.type == 1 && filterUseCustomEntity.includes(cutMenu.value.entityName)) {
-        cutMenu.value.useComponent = "";
-        useComponentChange();
-    }
-};
+// 移除原 associationChange 定义，因为现在从 composable 中导入
+// const associationChange = (entityCode, target, isInit) => { ... };
 
 // 表单组件
 let formList = ref([]);
@@ -808,27 +630,6 @@ const formEntityCodeChange = async (entityCode, target) => {
 		formList.value = res.data;
 	}
 	formLoading.value = false;
-};
-
-// 添加父菜单
-const addMenu = () => {
-	defaultMenu.guid = getGuid();
-	menuData.list.push(Object.assign({}, defaultMenu));
-	cutMenu.value = Object.assign({}, defaultMenu);
-};
-// 添加子菜单
-const addChildrenMenu = (menu) => {
-	if (!menu.children) {
-		menu.children = [];
-	}
-	if (!menu.guid) {
-		menu.guid = getGuid();
-	}
-	let setMenu = Object.assign({}, defaultMenu);
-	setMenu.parentGuid = menu.guid;
-	setMenu.guid = getGuid();
-	menu.children.push(setMenu);
-	cutMenu.value = Object.assign({}, setMenu);
 };
 
 // 系统内置
@@ -851,116 +652,24 @@ const systemEntityPath = reactive({
     approvalApproved: "approval-approved"
 });
 
-// 确认菜单
-const confirmMenu = () => {
-	if (
-		cutMenu.value.type == 1 &&
-		!cutMenu.value.entityCode &&
-		(!cutMenu.value.children || cutMenu.value.children.length < 1)
-	) {
-		$ElMessage.warning("请选择关联项");
-		return;
-	}
-	if (cutMenu.value.type == 2 && !cutMenu.value.outLink) {
-		$ElMessage.warning("请输入外部地址");
-		return;
-	}
-	if (cutMenu.value.type == 3 && !cutMenu.value.outLink) {
-		$ElMessage.warning("请输入自定义页面名称");
-		return;
-	}
-    if (cutMenu.value.type == 6 && !cutMenu.value.formId) {
-		$ElMessage.warning("请选择表单");
-		return;
-	}
-    if(cutMenu.value.type == 1 && cutMenu.useCustom && !cutMenu.useComponent) {
-        $ElMessage.warning("请选择自定义列表模板");
-		return;
-    }
-	// 如果是系统内置
-	if (systemEntityName.value.includes(cutMenu.value.entityName) && cutMenu.value.type != 2) {
-		cutMenu.value.type = 4;
-		cutMenu.value.outLink = systemEntityPath[cutMenu.value.entityName];
-	}
-	// 是父级菜单
-	if (!cutMenu.value.parentGuid) {
-		let inx = getMenuInx(menuData.list, cutMenu.value.guid);
-		// 如果节点被删掉了
-		if (inx == -1) {
-			menuData.list.push(Object.assign({}, cutMenu.value));
-		} else {
-			menuData.list[inx] = Object.assign(
-				menuData.list[inx],
-				cutMenu.value
-			);
-		}
-	}
-	// 子集菜单
-	else {
-		let parentInx = getMenuInx(menuData.list, cutMenu.value.parentGuid);
-		// 如果父节点被删掉了
-		if (parentInx == -1) {
-			cutMenu.value.parentGuid = "";
-			menuData.list.push(Object.assign({}, cutMenu.value));
-		} else {
-			let inx = getMenuInx(
-				menuData.list[parentInx].children,
-				cutMenu.value.guid
-			);
-			// 如果子节点被删掉了
-			if (inx == -1) {
-				menuData.list[parentInx].children.push(
-					Object.assign({}, cutMenu.value)
-				);
-			} else {
-				menuData.list[parentInx].children[inx] = Object.assign(
-					{},
-					cutMenu.value
-				);
-			}
-		}
-	}
-	cutMenu.value = null;
-};
-// 获取数据索引
-const getMenuInx = (array, guid) => {
-	for (let index = 0; index < array.length; index++) {
-		const element = array[index];
-		if (element.guid == guid) {
-			return index;
-		}
-	}
-	return -1;
-};
+// 使用 composable，同步参数（基于用户变化，移除重复函数）
+const { 
+    addMenu, 
+    associationChange, 
+    confirmMenu, 
+    formatMenuList,
+    getGuid,
+    defaultMenu
+} = useMenuOperations(
+    menuData, 
+    cutMenu, 
+    getGroupEntityList, 
+    systemEntityName, 
+    systemEntityPath, 
+    filterUseCustomEntity, 
+    ElMessage
+);
 
-// 删除菜单
-const delMenu = (menu, inx, subInx) => {
-    ElMessageBox.confirm('是否确认删除？', "提示：").then(() => {
-        // 父级菜单删除
-        if (!menu.parentGuid) {
-            menuData.list.splice(inx, 1);
-        }
-        // 子级菜单删除
-        else {
-            menuData.list[inx].children.splice(subInx, 1);
-        }
-        // 如果删除的是当前选中
-        if (
-            cutMenu.value &&
-            cutMenu.value.guid &&
-            menu.guid == cutMenu.value.guid
-        ) {
-            cutMenu.value = null;
-        }
-    }).catch(() => {
-        return;
-    })
-	
-};
-
-/**
- * ********************************************** 添加、编辑 菜单项相关  end
- */
 // 源数据
 let sourceData = reactive({});
 
@@ -1007,12 +716,12 @@ let getChartList = async () => {
 const layoutSave = async () => {
 	let { layoutConfigId, configName } = menuData;
 	if (!configName) {
-		$ElMessage.warning("请输入菜单名称");
+		ElMessage.warning("请输入菜单名称");
 		return;
 	}
 	let newMenuList = [...formatMenuList()];
 	if (newMenuList.length < 1) {
-		$ElMessage.warning("请至少添加一个菜单项");
+		ElMessage.warning("请至少添加一个菜单项");
 		return;
 	}
 	newMenuList.forEach((el) => {
@@ -1021,6 +730,8 @@ const layoutSave = async () => {
 			el.entityName = "parentMenu";
 		}
 	});
+    // console.log(newMenuList,'newMenuList');
+    // return;
 	menuData.config = JSON.stringify(newMenuList);
 	let param = {};
 	// 检测数据有没变化
@@ -1035,7 +746,7 @@ const layoutSave = async () => {
 		param.shareTo = menuData.shareTo;
 	}
 	if (JSON.stringify(param) == "{}") {
-		$ElMessage.success("保存成功");
+		ElMessage.success("保存成功");
 		loading.value = false;
 		isShow.value = false;
 		return;
@@ -1049,7 +760,7 @@ const layoutSave = async () => {
         if(props.isAppManagement) {
             loading.value = false;
             isShow.value = false;
-            $ElMessage.success("保存成功");
+            ElMessage.success("保存成功");
             emit("saveSuccess");
             return;
         }
@@ -1058,46 +769,6 @@ const layoutSave = async () => {
 	loading.value = false;
 };
 
-// 格式化菜单数据
-const formatMenuList = () => {
-    let saveMenu = [];
-    // 循环菜单
-    menuData.list.forEach((el) => {
-        // 必须存在关联或者外部链接才是菜单
-        if (
-            el.formId ||
-            el.chartId ||
-            el.entityCode ||
-            el.outLink ||
-            (el.children && el.children.length > 0)
-        ) {
-            let isMenu = { ...el };
-            // 如果存在子节点
-            if (el.children && el.children.length > 0) {
-                isMenu.children = [];
-                el.children.forEach((subEl) => {
-                    // 子节点也必须存在关联或者外部链接才是菜单
-                    if (
-                        subEl.formId ||
-                        subEl.chartId ||
-                        subEl.entityCode ||
-                        subEl.outLink ||
-                        (subEl.children && subEl.children.length > 0)
-                    ) {
-                        isMenu.children.push(subEl);
-                    }
-                });
-            }
-            saveMenu.push(isMenu);
-        }
-    });
-    saveMenu.forEach((el, inx) => {
-        if(el.entityCode == "parentMenu" && (!el.children || el.children.length < 1) ){
-            saveMenu.splice(inx,1);
-        }
-    })
-    return saveMenu;
-};
 // 禁止在移动端显示
 let disabledMobileShow = ref(false);
 // 自定义列表模板切换
@@ -1109,6 +780,96 @@ const useComponentChange = () => {
         cutMenu.value.mobileShow = false;
     }
 }
+
+// 更新添加子菜单逻辑，添加深度限制检查
+const addChildrenMenu = (menu) => {
+  // 计算当前菜单的深度
+  const currentDepth = calculateMenuDepth(menu);
+  const maxDepth = 8;
+  
+  if (currentDepth >= maxDepth) {
+    ElMessage.warning(`最多支持${maxDepth}级菜单`);
+    return;
+  }
+  
+  if (!menu.children) menu.children = [];
+  const newChild = { ...defaultMenu, guid: getGuid(), parentGuid: menu.guid };
+  menu.children.push(newChild);
+  cutMenu.value = newChild;
+};
+
+// 辅助函数：计算菜单项的深度
+const calculateMenuDepth = (targetMenu, currentItems = menuData.list, depth = 0) => {
+  for (let item of currentItems) {
+    if (item.guid === targetMenu.guid) {
+      return depth;
+    }
+    if (item.children) {
+      const childDepth = calculateMenuDepth(targetMenu, item.children, depth + 1);
+      if (childDepth !== -1) {
+        return childDepth;
+      }
+    }
+  }
+  return -1;
+};
+
+// 更新删除逻辑（递归查找并删除）
+const delMenu = (menuToDelete, parentInx, childInx) => {
+  ElMessageBox.confirm('是否确认删除？', '提示').then(() => {
+    if (!menuToDelete.parentGuid) {
+      menuData.list.splice(parentInx, 1);
+    } else {
+      const parent = findParent(menuData.list, menuToDelete.parentGuid);
+      if (parent) parent.children.splice(childInx, 1);
+    }
+    if (cutMenu.value?.guid === menuToDelete.guid) cutMenu.value = null;
+  }).catch(() => {});
+};
+
+// 辅助函数：递归查找父级
+const findParent = (items, guid) => {
+  for (let item of items) {
+    if (item.guid === guid) return item;
+    if (item.children) {
+      const found = findParent(item.children, guid);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// 需要生成GUID的函数
+// const getGuid = () => {
+//   return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+//     var r = (Math.random() * 16) | 0,
+//       v = c == "x" ? r : (r & 0x3) | 0x8;
+//     return v.toString(16);
+//   });
+// };
+
+// defaultMenu 定义
+// const defaultMenu = reactive({
+//   name: "未命名",
+//   type: 1,
+//   entityCode: null,
+//   outLink: "",
+//   openType: 0,
+//   guid: "",
+//   parentGuid: "",
+//   isOpeneds: false,
+//   useIcon: "",
+//   iconColor: "",
+//   chartId: "",
+//   useCustom: false,
+//   useComponent: "",
+//   formEntityCode: "",
+//   formId: "",
+//   pcShow: true,
+//   mobileShow: true,
+//   redirectCarrySessionId: false,
+//   customPageType: 1,
+// });
 </script>
 
 <style lang="scss" scoped>

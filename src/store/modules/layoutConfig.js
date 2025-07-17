@@ -156,7 +156,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             }
         }
     }
-    // 格式化导航
+    // 格式化导航 - 支持8级菜单的递归处理
     const formatRouters = (config, isTopNav) => {
         let tempConfig = config;
         if (!tempConfig) {
@@ -166,13 +166,19 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             tempConfig = JSON.stringify([]);
         }
         let list = JSON.parse(tempConfig);
-        let testRoutes = [...list]
+        return processMenuItems(list, isTopNav);
+    }
+
+    // 递归处理菜单项
+    const processMenuItems = (items, isTopNav) => {
         let routers = [];
-        testRoutes.forEach((el) => {
+        
+        items.forEach((el) => {
             let initMenu = {
                 meta: {},
             };
-            // 如果是实体列表 且 使用了自定义列表模板
+            
+            // 处理自定义列表模板
             if(el.type == 1 && el.useCustom){
                 el.type = 3;
                 el.outLink = el.useComponent + "?entity=" + el.entityName;
@@ -180,6 +186,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     el.outLink += "&modelName=" + el.modelName;
                 }
             }
+            
+            // 设置基本菜单属性
             initMenu.meta.title = el.name;
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
@@ -187,112 +195,72 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.icon = el.useIcon || 'set-up';
             initMenu.meta.iconColor = el.iconColor || "";
             initMenu.meta.redirectCarrySessionId = el.redirectCarrySessionId;
-            // let checkCode = el.detailEntityFlag ? el.mainEntityCode : el.entityCode;
-            // initMenu.meta.hidden = el.entityCode && !tool.checkRole('r' +checkCode + '-1') && el.entityCode != "parentMenu" && el.type == 1;
-            initMenu.meta.hidden = checkAuth(el);
             initMenu.meta.outLink = el.outLink;
-            if (el.children && el.children.length > 0) {
-                initMenu.children = [];
-                initMenu.path = "/" + el.guid;
-
-                el.children.forEach((subEl) => {
-                    let subRoute = {
-                        meta: {
-                            title: subEl.name,
-                            type: subEl.type == 2 && subEl.openType != 1 ? "link" : "",
-                            entityCode: subEl.entityCode,
-                            entityName: subEl.entityName,
-                            icon: subEl.useIcon || 'set-up',
-                            iconColor: subEl.iconColor || '',
-                            outLink: subEl.outLink,
-                            redirectCarrySessionId: subEl.redirectCarrySessionId
-                        },
-                    }
-                    // 如果是实体列表 且 使用了自定义列表模板
-                    if(subEl.type == 1 && subEl.useCustom){
-                        subEl.type = 3;
-                        subEl.outLink = subEl.useComponent + "?entity=" + subEl.entityName
-                        if(subEl.modelName){
-                            subEl.outLink += "&modelName=" + subEl.modelName;
-                        }
-                    }
-                    let { path, component, name } = floamtRoute(subEl, isTopNav);
-                    subRoute.path = path;
-                    subRoute.component = component;
-                    subRoute.name = name;
-                    if (subEl.type == 5) {
-                        subRoute.meta.type = 3;
-                        subRoute.meta.query = {
-                            default: subEl.chartId
-                        }
-                    }
-                    if (subEl.type == 6) {
-                        subRoute.meta.type = 6;
-                        subRoute.meta.query = {
-                            formId: subEl.formId,
-                            formEntityCode: subEl.formEntityCode,
-                        }
-                    }
-                    if (subEl.type == 3) {
-                        subRoute.meta.type = 3
-                        subRoute.meta.query = getCustomPageQuery(subEl.outLink) || {};
-                        if(el.customPageType == 2){
-                            subRoute.meta.query.routerName = el.name
-                        }
-                    }
-                    // 如果是审批中心页面直接跳过权限判断
-                    let approvalCenter = [
-                        "approvalHandle",
-                        "approvalSubmit",
-                        "capprovalCc"
-                    ];
-                    if (approvalCenter.includes(subEl.entityCode)) {
-                        initMenu.children.push(subRoute);
-                        return
-                    }
-                    subRoute.meta.hidden = checkAuth(subEl);
-                    initMenu.children.push(subRoute);
-                });
+            
+            // 如果是审批中心页面直接跳过权限判断
+            let approvalCenter = [
+                "approvalHandle",
+                "approvalSubmit",
+                "capprovalCc",
+                "approvalApproved"
+            ];
+            if (approvalCenter.includes(el.entityCode)) {
+                initMenu.meta.hidden = false;
             } else {
+                initMenu.meta.hidden = checkAuth(el);
+            }
+            
+            // 如果有子菜单，递归处理
+            if (el.children && el.children.length > 0) {
+                initMenu.children = processMenuItems(el.children, isTopNav);
+                initMenu.path = "/" + el.guid;
+                
+                // 父菜单权限处理：如果所有子菜单都被隐藏，则隐藏父菜单
+                if(initMenu.children.length > 0) {
+                    initMenu.meta.hidden = initMenu.children.every((item) => item.meta.hidden);
+                } else {
+                    initMenu.meta.hidden = true;
+                }
+            } else {
+                // 叶子节点：生成实际的路由
                 initMenu.meta.type = el.type == 2 && el.openType != 1 ? "link" : "";
                 let { path, component, name } = floamtRoute(el, isTopNav);
                 initMenu.path = path;
                 initMenu.component = component;
                 initMenu.name = name;
-            }
-            // 格式化父菜单  修复父菜单下有子级，但是子级没权限父菜单还可点击
-            if (initMenu.children && initMenu.children.length < 1) {
-                initMenu.meta.hidden = true;
-            }
-            if (el.type == 3) {
-                initMenu.meta.type = 3
-                initMenu.meta.query = getCustomPageQuery(el.outLink) || {};
-                if(el.customPageType == 2){
-                    initMenu.meta.query.routerName = el.name
+                
+                // 设置特殊类型的菜单属性
+                if (el.type == 3) {
+                    initMenu.meta.type = 3;
+                    initMenu.meta.query = getCustomPageQuery(el.outLink) || {};
+                    if(el.customPageType == 2){
+                        initMenu.meta.query.routerName = el.name;
+                    }
+                }
+                if (el.type == 5) {
+                    initMenu.meta.type = 3;
+                    initMenu.meta.query = {
+                        default: el.chartId
+                    };
+                }
+                if (el.type == 6) {
+                    initMenu.meta.type = 6;
+                    initMenu.meta.query = {
+                        formId: el.formId,
+                        formEntityCode: el.formEntityCode,
+                    };
                 }
             }
-            if (el.type == 5) {
-                initMenu.meta.type = 3;
-                initMenu.meta.query = {
-                    default: el.chartId
-                }
-            }
-            if (el.type == 6) {
-                initMenu.meta.type = 6;
-                initMenu.meta.query = {
-                    formId: el.formId,
-                    formEntityCode: el.formEntityCode,
-                }
-            }
+            
+            // 处理默认展开
             if(el.isOpeneds){
                 topDefaultUnfold.value.push(initMenu.path);
             }
-            if(initMenu.children) {
-                initMenu.meta.hidden = initMenu.children.every((item) => item.meta.hidden);
-            }
+            
             routers.push(initMenu);
         });
-        return routers
+        
+        return routers;
     }
     // 获取左侧菜单
     const getUseMenuList = () => {
