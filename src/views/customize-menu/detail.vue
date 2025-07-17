@@ -631,7 +631,7 @@ const customButtonClick = (item) => {
 // 加载页签
 const getLayoutList = async () => {
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName || 'noModelName');
+	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName, false);
 	if (res) {
         myLayoutConfig.value = res.data;
         myLayoutConfig.value.entityCode = entityCode.value;

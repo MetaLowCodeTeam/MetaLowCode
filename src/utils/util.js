@@ -480,7 +480,7 @@ export const checkConditionList = (data) => {
 let isDistinguishTopNav = false;
 
 // 获取配置ModelName
-export const getModelName = () => {
+export const getModelName = (paramEntityName) => {
     let modelName = null;
     let pathname = location.pathname;
     // --- 新增逻辑开始 ---
@@ -492,6 +492,10 @@ export const getModelName = () => {
     }
     if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
+        // 如果url的实体不是当前的实体，则返回空
+        if(paramEntityName && splitPathname[splitPathname.length - 1] != paramEntityName){
+            return "";
+        }
         let checkGuid = splitPathname[splitPathname.length - 1];
         if(hasGuid(checkGuid) && !isDistinguishTopNav) {
             splitPathname.splice(splitPathname.length - 1, 1)

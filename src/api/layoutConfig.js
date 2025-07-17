@@ -27,7 +27,7 @@ export default {
     },
     // 获取实体布局配置
     getLayoutList: async (entityName, newModelName, isTabFilter) => {
-        let modelName = newModelName || getModelName();
+        let modelName = newModelName || getModelName(entityName);
         // 如果不需要modelName，则设置为空
         if(newModelName == 'noModelName'){
             modelName = "";
