@@ -268,7 +268,6 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     }
      // 检测是否有权限
      const checkAuth = (item) => {
-        console.log(item,'item')
         let isHidden = false;
 
         // 自定义权限
