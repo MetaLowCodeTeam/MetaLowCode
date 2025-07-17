@@ -53,6 +53,7 @@ import http from "@/utils/request";
 import tool from "@/utils/tool";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import { encrypt } from "@/utils/util";
 const { publicSetting } = storeToRefs(useCommonStore());
 const appPath = import.meta.env.VITE_APP_PATH;
 export default {
@@ -96,10 +97,12 @@ export default {
                         this.$message.error("必须包含数字、英文。密码长度为：6-20位")
                         return
                     }
+                    let encryptPassword = await encrypt(this.form.userPassword);
+                    let encryptNewPassword = await encrypt(this.form.newPassword);
                     let res = await http.get("/user/updatePassword", {
                         userName: tool.data.get("USER_INFO").loginName,
-                        password: this.form.userPassword,
-                        newPassword: this.form.newPassword,
+                        password: encryptPassword,
+                        newPassword: encryptNewPassword,
                     });
                     if (res) {
                         this.$alert(

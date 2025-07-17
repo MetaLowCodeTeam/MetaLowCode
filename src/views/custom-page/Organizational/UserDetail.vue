@@ -82,6 +82,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/utils/request";
 // API
 import { deleteUserById, getUserRole } from "@/api/user";
+import { encrypt } from "@/utils/util";
 
 const { queryEntityNameById } = useCommonStore();
 const $TOOL = inject("$TOOL");
@@ -154,8 +155,9 @@ const confirmResetPassword = async () => {
 		ElMessage.error("必须包含数字、英文。可有字符。密码长度为：6-20位");
 		return;
 	}
+    let encryptPassword = await encrypt(newPassword.value);
 	let res = await http.get("/user/resetPassword", {
-		password: newPassword.value,
+		password: encryptPassword,
 		userId: resetPasswordUserId.value,
 	});
 	if (res && res.code == 200) {
