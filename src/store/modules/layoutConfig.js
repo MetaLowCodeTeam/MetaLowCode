@@ -268,6 +268,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     }
      // 检测是否有权限
      const checkAuth = (item) => {
+        console.log(item,'item')
         let isHidden = false;
 
         // 自定义权限
@@ -284,6 +285,10 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         // 4 并且类型为1 关联项 
         let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
         if(item.entityCode && (!tool.checkRole('r' + checkCode + '-1') || hasCustomCode) && item.entityCode != "parentMenu" && item.type == 1){
+            isHidden = true;
+        }
+        // 如果是仪表盘
+        if(item.type == 5 && !tool.checkRole('r52-1')){
             isHidden = true;
         }
         
