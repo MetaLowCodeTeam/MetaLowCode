@@ -492,13 +492,18 @@ export const getModelName = (paramEntityName) => {
     }
     if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
-        // 如果url的实体不是当前的实体，则返回空
-        if(paramEntityName && splitPathname[splitPathname.length - 1] != paramEntityName){
-            return "";
-        }
+        
         let checkGuid = splitPathname[splitPathname.length - 1];
         if(hasGuid(checkGuid) && !isDistinguishTopNav) {
             splitPathname.splice(splitPathname.length - 1, 1)
+            // 如果url的实体不是当前的实体，则返回空
+            if(paramEntityName && splitPathname[splitPathname.length - 2] != paramEntityName){
+                return "";
+            }
+        }
+        // 如果url的实体不是当前的实体，则返回空
+        if(paramEntityName && splitPathname[splitPathname.length - 1] != paramEntityName){
+            return "";
         }
         let newSplitName = [];
         splitPathname.forEach((item, inx) => {
