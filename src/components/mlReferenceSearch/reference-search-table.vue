@@ -541,10 +541,10 @@ export default {
 		// 点选回填
 		selectRecord(row) {
             if(this.isOuterReference){
-                let { uniqueField } = this.outerReferenceConfig;
+                let { uniqueField, nameField } = this.outerReferenceConfig;
                 this.$emit("recordSelected", {
                     id: row[uniqueField],
-                    label: row[uniqueField],
+                    label: row[nameField],
                 }, row);
                 return;
             }

@@ -58,10 +58,35 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="唯一字段" prop="uniqueField">
+					<el-form-item prop="uniqueField">
+                        <template #label>
+                            <el-tooltip content="回填主数据表的唯一字段，{ code }" placement="top">
+                                <span>
+                                    唯一字段
+                                    <el-icon class="icon-top-2 cursor-pointer"><InfoFilled /></el-icon>
+                                </span>
+                            </el-tooltip>
+                        </template>
 						<el-input
 							v-model="form.uniqueField"
 							placeholder="请输入唯一字段"
+							clearable
+						/>
+					</el-form-item>
+				</el-col>
+                <el-col :span="12">
+					<el-form-item prop="nameField">
+                        <template #label>
+                            <el-tooltip content="回填主数据表的名称字段，{ name }" placement="top">
+                                <span>
+                                    名称字段
+                                    <el-icon class="icon-top-2 cursor-pointer"><InfoFilled /></el-icon>
+                                </span>
+                            </el-tooltip>
+                        </template>
+						<el-input
+							v-model="form.nameField"
+							placeholder="请输入名称字段"
 							clearable
 						/>
 					</el-form-item>
@@ -182,6 +207,9 @@ let rules = ref({
 	],
 	uniqueField: [
 		{ required: true, message: "请输入唯一字段名称", trigger: "blur" },
+	],
+    nameField: [
+		{ required: true, message: "请输入名称字段名称", trigger: "blur" },
 	],
 	pageSize: [{ required: true, message: "请输入每页条数", trigger: "blur" }],
 	sortField: {
