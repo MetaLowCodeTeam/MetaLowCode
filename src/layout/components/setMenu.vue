@@ -300,6 +300,19 @@
                             </el-col>
                         </el-row>
 					</div>
+                    <div
+						class="mt-5"
+						v-if="
+							cutMenu.type == 1 &&
+							(!cutMenu.children || cutMenu.children.length < 1) &&
+                            !filterUseCustomEntity.includes(cutMenu.entityName)
+						"
+					>
+						<el-checkbox
+							v-model="cutMenu.useCustom"
+							label="是否使用自定义列表模板"
+						/>
+					</div>
 					<div
 						class="mt-5"
 						v-if="
