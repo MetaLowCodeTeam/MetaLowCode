@@ -26,6 +26,14 @@
 				:suffix-icon="field.options.suffixIcon"
 			>
 				<template #suffix>
+                    <el-icon
+						title="查看"
+						class="el-input__icon"
+						@click="openDetailDialog"
+                        v-if="!!displayValue && !field.options.detailLinkDisabled"
+					>
+                        <TopRight />
+					</el-icon>
 					<el-icon
 						title="清除"
 						v-if="!!displayValue && !isReadMode && !field.options.disabled"
@@ -369,6 +377,26 @@ export default {
 .full-width {
 	width: 100%;
 }
+:deep(.hide-spin-button) {
+    &.is-disabled {
+        position: relative;
+        .el-input__suffix .el-input__suffix-inner{
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            background: var(--el-color-primary);
+            z-index: 1;
+            .el-input__icon {
+                margin-left: 0px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
 </style>
 
 <style lang="scss">
@@ -384,4 +412,5 @@ export default {
 		width: 16px !important;
 	}
 }
+
 </style>
