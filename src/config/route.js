@@ -127,6 +127,14 @@ const routes = [
                 },
                 component: 'customize-menu/list',
             },
+            {
+                path: appPath + "custom-home-page/:pageName?",
+                name: "CustomPageTest",
+                "meta": {
+                    hidden: true,
+                },
+                component: 'custom-page/custom-home-page/index',
+            },
             // 新窗口新建
             {
                 path: appPath + ":entityName/create-entity",
