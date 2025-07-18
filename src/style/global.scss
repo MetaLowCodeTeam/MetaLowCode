@@ -482,11 +482,15 @@ $--dialog-footer-bg-color: #fff;
 		margin-bottom: 0;
         .el-dialog__body {
             height: calc(100% - 60px);
+            
         }
         &.has-footer {
             .el-dialog__body {
                 height: calc(100% - 120px);
             }
+        }
+        .ml-dialog-body {
+            max-height: none !important;
         }
 		.el-dialog__body {
 			.fullScreen-man {

@@ -11,7 +11,7 @@
         bodyNoPadding
         :showClose="!loading"
         :scrollbarHeight="styleConf?.newDialogConfig?.editHeight || ''"
-        :scrollbarMaxHeight="styleConf?.newDialogConfig?.editMaxHeight"
+        :scrollbarMaxHeight="styleConf?.newDialogConfig?.editMaxHeight || '500px'"
         :scrollbarMinHeight="styleConf?.newDialogConfig?.editMinHeight"
     >
         <div 

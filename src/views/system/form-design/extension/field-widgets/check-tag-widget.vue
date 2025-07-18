@@ -19,7 +19,8 @@
                 <el-checkbox-button
                     v-for="(item,inx) of options"
                     :key="inx"
-                    :value="item.label"
+                    :value="item.value"
+                    :label="item.label"
                 >
                     {{ item.label }}
                 </el-checkbox-button>
@@ -36,7 +37,7 @@
                     v-for="(item,inx) of options"
                     :key="inx"
                     :label="item.label"
-                    :value="item.label"
+                    :value="item.value"
                 />
             </el-select>
         </template>
