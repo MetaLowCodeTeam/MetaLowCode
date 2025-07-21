@@ -512,6 +512,11 @@ const getGroupEntityList = (target) => {
 			entityCode: 24,
 			name: "Team",
 		},
+        {
+            label: "父级菜单",
+            entityCode: "parentMenu",
+            name: "parentMenu",
+        },
 		// {
 		//     label: "跟进",
 		//     entityCode: 54,
@@ -524,16 +529,12 @@ const getGroupEntityList = (target) => {
 		// },
 	];
 	// 如果不是父级菜单
-	if (!cutMenu.value.parentGuid) {
-		systemOptions = [
-			...systemOptions,
-			{
-				label: "父级菜单",
-				entityCode: "parentMenu",
-				name: "parentMenu",
-			},
-		];
-	}
+	// if (!cutMenu.value.parentGuid) {
+	// 	systemOptions = [
+	// 		...systemOptions,
+
+	// 	];
+	// }
 	let newEntityList = [
 		{
 			label: "自定义实体",
@@ -737,14 +738,7 @@ const layoutSave = async () => {
 		ElMessage.warning("请至少添加一个菜单项");
 		return;
 	}
-	newMenuList.forEach((el) => {
-		if (el.children && el.children.length > 0) {
-			el.entityCode = "parentMenu";
-			el.entityName = "parentMenu";
-		}
-	});
-    // console.log(newMenuList,'newMenuList');
-    // return;
+    // return
 	menuData.config = JSON.stringify(newMenuList);
 	let param = {};
 	// 检测数据有没变化

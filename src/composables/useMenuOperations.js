@@ -209,27 +209,41 @@ export function useMenuOperations(
   };
 
   const formatMenuList = () => {
-    let saveMenu = [];
-    menuData.list.forEach((el) => {
-      if (el.formId || el.chartId || el.entityCode || el.outLink || (el.children && el.children.length > 0)) {
+    const processMenu = (menuList) => {
+      let saveMenu = [];
+      
+      menuList.forEach((el) => {
+        const isValidMenu = el.formId || el.chartId || el.entityCode || el.outLink;
+        const hasChildren = el.children && el.children.length > 0;
+        
         let isMenu = { ...el };
-        if (el.children && el.children.length > 0) {
-          isMenu.children = [];
-          el.children.forEach((subEl) => {
-            if (subEl.formId || subEl.chartId || subEl.entityCode || subEl.outLink || (subEl.children && subEl.children.length > 0)) {
-              isMenu.children.push(subEl);
-            }
-          });
+        
+        if (hasChildren) {
+          // 递归处理子菜单
+          isMenu.children = processMenu(el.children);
+          
+          // 如果处理后还有子菜单，设置为父级菜单
+          if (isMenu.children.length > 0) {
+            isMenu.entityCode = "parentMenu";
+            isMenu.entityName = "parentMenu";
+            saveMenu.push(isMenu);
+          }
+          // 如果处理后没有子菜单了，但自己是有效菜单，还是要保留（但不设置为parentMenu）
+          else if (isValidMenu && el.entityCode !== "parentMenu") {
+            saveMenu.push(isMenu);
+          }
+          // 如果处理后没有子菜单，且自己原本就是parentMenu或不是有效菜单，就删除
+        } else if (isValidMenu && el.entityCode !== "parentMenu") {
+          // 没有子菜单但是有效菜单，且不是parentMenu，保留
+          saveMenu.push(isMenu);
         }
-        saveMenu.push(isMenu);
-      }
-    });
-    saveMenu.forEach((el, inx) => {
-      if (el.entityCode == 'parentMenu' && (!el.children || el.children.length < 1)) {
-        saveMenu.splice(inx, 1);
-      }
-    });
-    return saveMenu;
+        // 没有子菜单也不是有效菜单，不添加（相当于删除）
+      });
+      
+      return saveMenu;
+    };
+    
+    return processMenu(menuData.list);
   };
 
   return {
