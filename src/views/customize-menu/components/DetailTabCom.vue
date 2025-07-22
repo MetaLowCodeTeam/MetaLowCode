@@ -77,7 +77,7 @@
                     :border="true"
                     stripe
                     style="width: 100%"
-                    max-height="400px"
+                    :max-height="tableMaxHeight"
                     @sort-change="sortChange"
                     @row-dblclick="openDetailDialog"
                 >
@@ -145,7 +145,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, inject, reactive, ref, nextTick } from "vue";
+import { onMounted, watch, inject, reactive, ref, nextTick, computed } from "vue";
 import { getFormLayout } from "@/api/system-manager";
 import { getDataList } from "@/api/crud";
 import { useRouter } from "vue-router";
@@ -220,6 +220,13 @@ let idFieldName = ref("");
 let nameFieldName = ref("");
 // 当前选中TabfieldName
 let fieldName = ref("");
+
+// 计算表格最大高度
+const tableMaxHeight = computed(() => {
+    // return document.querySelector('.detail-tab-container').clientHeight - 240;
+    // console.log(document.querySelector('.detail-tab-container'))
+    return 'calc(100vh - 230px)';
+});
 
 // 卡片视图排序
 let cardSortText = ref("默认排序");
