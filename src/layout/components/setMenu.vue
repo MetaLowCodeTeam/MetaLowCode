@@ -31,7 +31,7 @@
 							:selected-guid="cutMenu?.guid || ''"
 							:select-item="nodeClick"
 							:add-child="(item) => addChildrenMenu(item)"
-							:delete-item="(item, parentInx, childInx) => delMenu(item, parentInx, childInx)"
+							:delete-item="deleteMenuByGuid"
 						/>
 					</VueDraggableNext>
 				</div>
@@ -844,6 +844,30 @@ const findParent = (items, guid) => {
     }
   }
   return null;
+};
+
+// 基于 GUID 删除菜单项
+const deleteMenuByGuid = (menuToDelete) => {
+  ElMessageBox.confirm('是否确认删除？', '提示').then(() => {
+    const removeFromArray = (items, targetGuid) => {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].guid === targetGuid) {
+          items.splice(i, 1);
+          return true;
+        }
+        if (items[i].children && removeFromArray(items[i].children, targetGuid)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    
+    removeFromArray(menuData.list, menuToDelete.guid);
+    
+    if (cutMenu.value?.guid === menuToDelete.guid) {
+      cutMenu.value = null;
+    }
+  }).catch(() => {});
 };
 
 // 需要生成GUID的函数

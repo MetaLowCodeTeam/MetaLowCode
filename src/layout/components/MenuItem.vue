@@ -30,7 +30,7 @@
             <ElIconPlus />
           </el-icon>
         </span>
-        <span class="icon-span" @click.stop="deleteItem(item, index)">
+        <span class="icon-span" @click.stop="deleteItem(item)">
           <el-icon size="16">
             <ElIconCloseBold />
           </el-icon>
