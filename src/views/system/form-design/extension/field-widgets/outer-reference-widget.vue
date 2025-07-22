@@ -380,7 +380,7 @@ export default {
 :deep(.hide-spin-button) {
     &.is-disabled {
         position: relative;
-        .el-input__suffix .el-input__suffix-inner{
+        .el-input__suffix .el-input__suffix-inner .el-input__icon{
             position: absolute;
             right: 10px;
             top: 8px;

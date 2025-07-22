@@ -27,6 +27,14 @@
 				@keydown="handleKeyDown"
 			>
 				<template #suffix>
+                    <el-icon
+						:title="'查看' + displayValue"
+						class="el-input__icon"
+						@click="openRefDialog"
+                        v-if="!!displayValue && !field.options.detailLinkDisabled"
+					>
+                        <TopRight />
+					</el-icon>
 					<el-icon
 						title="清除"
 						v-if="!!displayValue && !isReadMode && !field.options.disabled"
@@ -719,6 +727,25 @@ export default {
 <style lang="scss" scoped>
 .full-width {
 	width: 100%;
+}
+:deep(.hide-spin-button) {
+    &.is-disabled {
+        position: relative;
+        .el-input__suffix .el-input__suffix-inner .el-input__icon{
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            background: var(--el-color-primary);
+            z-index: 1;
+            .el-input__icon {
+                margin-left: 0px;
+                cursor: pointer;
+            }
+        }
+    }
 }
 </style>
 
