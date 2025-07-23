@@ -208,7 +208,7 @@
                                             item.icon,
                                     }"
                                 >
-                                    {{ item.name }}
+                                    {{ item.isNative ? item.name || item.defaultName : item.name }}
                                 </span>
                             </el-button>
                             <!-- 更多按钮 -->
@@ -466,7 +466,7 @@
                                                 }"
                                                 style="font-size: 12px;"
                                             >
-                                                {{ item.name }}
+                                                {{ item.name || item.defaultName }}
                                             </span>
                                         </el-button>
                                     </el-tooltip>
@@ -499,7 +499,7 @@
                                             }"
                                             style="font-size: 12px;"
                                         >
-                                            {{ item.name }}
+                                            {{ item.isNative ? item.name || item.defaultName : item.name }}
                                         </span>
                                     </el-button>
                                 </template>

@@ -88,7 +88,8 @@ export default function useCustomButtonConfig() {
     // 默认顶部按钮PC
     const defaultPcTopButtonList = [
         {
-            name: "打开",
+            defaultName: "打开",
+            name: "",
             key: "open",
             hide: false,
             // 是否内置按钮
@@ -99,7 +100,8 @@ export default function useCustomButtonConfig() {
             type: "default",
         },
         {
-            name: "批量编辑",
+            defaultName: "批量编辑",
+            name: "",
             key: "batchEdit",
             hide: false,
             // 是否内置按钮
@@ -110,7 +112,8 @@ export default function useCustomButtonConfig() {
             type: "default",
         },
         {
-            name: "编辑",
+            defaultName: "编辑",
+            name: "",
             key: "edit",
             hide: false,
             // 是否内置按钮
@@ -121,7 +124,8 @@ export default function useCustomButtonConfig() {
             type: "default",
         },
         {
-            name: "新建",
+            defaultName: "新建",
+            name: "",
             key: "new",
             hide: false,
             // 是否内置按钮
@@ -132,7 +136,8 @@ export default function useCustomButtonConfig() {
             showType: 1,
         },
         {
-            name: "更多",
+            defaultName: "更多",
+            name: "",
             key: "more",
             hide: false,
             // 是否内置按钮
@@ -145,7 +150,8 @@ export default function useCustomButtonConfig() {
     // 默认操作列按钮PC
     const defaultPcColumnButtonList = [
         {
-            name: "编辑",
+            defaultName: "编辑",
+            name: "",
             key: "edit",
             hide: false,
             hideTip: "如果本身没有编辑权限即便设置显示也会隐藏",
@@ -157,7 +163,8 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "查看",
+            defaultName: "查看",
+            name: "",
             key: "open",
             hide: false,
             // 是否内置按钮
@@ -172,7 +179,8 @@ export default function useCustomButtonConfig() {
     // 默认编辑按钮PC
     const defaultPcEditButtonList = [
         {
-            name: "取消",
+            defaultName: "取消",
+            name: "",
             key: "cancel",
             hide: false,
             // 是否内置按钮
@@ -183,7 +191,8 @@ export default function useCustomButtonConfig() {
             type: "default"
         },
         {
-            name: "保存",
+            defaultName: "保存",
+            name: "",
             key: "save",
             hide: false,
             hideTip: "如果本身是审批状态会隐藏",
@@ -195,7 +204,8 @@ export default function useCustomButtonConfig() {
             type: "primary"
         },
         {
-            name: "保存并刷新",
+            defaultName: "保存并刷新",
+            name: "",
             key: "saveRefresh",
             hide: false,
             hideTip: "如果本身是审批状态会隐藏",
@@ -207,7 +217,8 @@ export default function useCustomButtonConfig() {
             type: "primary"
         },
         {
-            name: "保存并提交",
+            defaultName: "保存并提交",
+            name: "",
             key: "saveSubmit",
             hide: false,
             hideTip: "如果本身没有审批流程且是审批状态会隐藏",
@@ -221,9 +232,10 @@ export default function useCustomButtonConfig() {
     ];
 
     // 默认详情按钮pc
-    const defaultPcDetialButtonList = [
+    const defaultPcDetailButtonList = [
         {
-            name: "新建相关",
+            defaultName: "新建相关",
+            name: "",
             key: "newRelated",
             hide: false,
             // 是否内置按钮
@@ -234,7 +246,8 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "编辑",
+            defaultName: "编辑",
+            name: "",
             key: "edit",
             hide: false,
             hideTip: "如果本身没有编辑权限即便设置显示也会隐藏",
@@ -246,7 +259,8 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "修改历史",
+            defaultName: "修改历史",
+            name: "",
             key: "history",
             hide: false,
             // 是否内置按钮
@@ -257,7 +271,8 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "更多",
+            defaultName: "更多",
+            name: "",
             key: "more",
             hide: false,
             // 是否内置按钮
@@ -268,9 +283,10 @@ export default function useCustomButtonConfig() {
     ];
 
     // 默认详情APP
-    const defaultAppDetialButtonList = [
+    const defaultAppDetailButtonList = [
         {
-            name: "新建相关",
+            defaultName: "新建相关",
+            name: "",
             key: "newRelated",
             hide: false,
             hideTip: "如果PC没有配置过新建相关页签，则APP不显示",
@@ -282,7 +298,8 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "编辑",
+            defaultName: "编辑",
+            name: "",
             key: "edit",
             hide: false,
             hideTip: "如果本身没有编辑权限即便设置显示也会隐藏",
@@ -293,7 +310,8 @@ export default function useCustomButtonConfig() {
             type: "primary",
         },
         {
-            name: "更多操作",
+            defaultName: "更多操作",
+            name: "",
             key: "more",
             hide: false,
             // 是否内置按钮
@@ -322,7 +340,7 @@ export default function useCustomButtonConfig() {
         },
         {
             label: "详情弹框(PC)",
-            name: "pcDetial",
+            name: "pcDetail",
             buttonList: [],
         },
         {
@@ -332,7 +350,7 @@ export default function useCustomButtonConfig() {
         },
         {
             label: "详情底部(Mobile)",
-            name: "appDetial",
+            name: "appDetail",
             buttonList: [],
         },
     ]);
@@ -494,8 +512,8 @@ export default function useCustomButtonConfig() {
         defaultPcTopButtonList,
         defaultPcColumnButtonList,
         tabList,
-        defaultPcDetialButtonList,
-        defaultAppDetialButtonList,
+        defaultPcDetailButtonList,
+        defaultAppDetailButtonList,
         defaultPcEditButtonList,
         getCustomAppButtons,
         customButtonHandler,

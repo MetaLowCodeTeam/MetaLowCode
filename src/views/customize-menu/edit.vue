@@ -101,7 +101,7 @@
                         }"
                         style="font-size: 12px;"
                     >
-                        {{ item.name }}
+                        {{ item.isNative ? item.name || item.defaultName : item.name }}
                     </span>
                 </el-button>
             </template>

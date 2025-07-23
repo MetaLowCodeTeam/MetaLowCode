@@ -57,7 +57,7 @@
 									>
 										<component :is="item.icon" />
 									</el-icon>
-									{{ item.name }}
+									{{ item.isNative ? item.name || item.defaultName : item.name }}
 									<span v-if="item.isNative">(内置)</span>
 								</div>
 								<div
@@ -198,7 +198,7 @@
                                     :link="currentTab == 'pcColumn'"
                                     :plain="getPlain(currentButton)"
                                     :round="isAppDetailOrList"
-                                    :class="{'app-detial-button': isAppDetailOrList}"
+                                    :class="{'app-Detail-button': isAppDetailOrList}"
                                 >
                                     <el-icon
                                         :size="16"
@@ -649,9 +649,9 @@ const {
     // 默认操作列按钮PC
     defaultPcColumnButtonList,
     // 默认详情按钮PC
-    defaultPcDetialButtonList,
+    defaultPcDetailButtonList,
     // 默认详情按钮APP
-    defaultAppDetialButtonList,
+    defaultAppDetailButtonList,
     // 默认编辑按钮PC
     defaultPcEditButtonList,
 } = useCustomButtonConfig();
@@ -673,15 +673,15 @@ const emit = defineEmits(["confirm"]);
 
 // 计算属性
 const isShowDisplayType = computed(() => {
-	return ['pcColumn', 'pcDetial', 'appDetial', 'pcEdit'].includes(currentTab.value);
+	return ['pcColumn', 'pcDetail', 'appDetail', 'pcEdit'].includes(currentTab.value);
 });
 
 const isShowAvailableType = computed(() => {
-	return currentButton.value?.action !== 1 && !['pcColumn', 'pcDetial', 'appDetial'].includes(currentTab.value);
+	return currentButton.value?.action !== 1 && !['pcColumn', 'pcDetail', 'appDetail'].includes(currentTab.value);
 });
 
 const isAppDetailOrList = computed(() => {
-	return ['appDetial', 'appList'].includes(currentTab.value);
+	return ['appDetail', 'appList'].includes(currentTab.value);
 });
 
 const isShow = ref(false);
@@ -736,6 +736,7 @@ const addButton = () => {
 		newButton.guid = getGuid();
 		currentButton.value = newButton;
 		buttonList.value.push(newButton);
+        entityFormList.value = [];
 	}
 };
 
@@ -893,8 +894,8 @@ const openDialog = async (entity) => {
 const TAB_DEFAULT_BUTTONS = {
 	pcTop: defaultPcTopButtonList,
 	pcColumn: defaultPcColumnButtonList,
-	pcDetial: defaultPcDetialButtonList,
-	appDetial: defaultAppDetialButtonList,
+	pcDetail: defaultPcDetailButtonList,
+	appDetail: defaultAppDetailButtonList,
 	pcEdit: defaultPcEditButtonList
 };
 
@@ -903,23 +904,34 @@ const initTabButtonConfig = (tab) => {
 	const findTab = tabList.value.find((item) => item.name === tab);
 	findTab.buttonList = layoutConfigData.value[tab] || [];
 	
-	// 获取现有按钮的所有key
-	const existingKeys = findTab.buttonList.map((btn) => btn.key);
-	
 	// 获取当前标签页的默认按钮列表
 	const defaultButtons = TAB_DEFAULT_BUTTONS[tab];
+
 	
-	// 添加不存在的默认按钮
+	// 处理默认按钮
 	if (defaultButtons) {
 		defaultButtons.forEach((defaultBtn) => {
-			if (!existingKeys.includes(defaultBtn.key)) {
-				findTab.buttonList.push(defaultBtn);
+			const existingBtnIndex = findTab.buttonList.findIndex(btn => btn.key === defaultBtn.key);
+			
+			if (existingBtnIndex === -1) {
+				// 按钮不存在，直接添加
+				findTab.buttonList.push({ ...defaultBtn });
+			} else {
+				// 按钮存在，检查并补充缺失的字段
+				const existingBtn = findTab.buttonList[existingBtnIndex];
+				const updatedBtn = { ...defaultBtn, ...existingBtn };
+				
+				// 只有当存在新字段时才更新
+				if (Object.keys(updatedBtn).length > Object.keys(existingBtn).length || 
+					Object.keys(defaultBtn).some(key => !(key in existingBtn))) {
+					findTab.buttonList[existingBtnIndex] = updatedBtn;
+				}
 			}
 		});
 	}
-	
 	buttonList.value = findTab.buttonList;
 };
+
 
 // 切换前触发
 const beforeTabChange = (tab) => {
@@ -1014,7 +1026,7 @@ const saveButton = async () => {
 };
 
 // 常量配置
-const PLAIN_TABS = ['pcDetial', 'appDetial', 'appList'];
+const PLAIN_TABS = ['pcDetail', 'appDetail', 'appList'];
 const PLAIN_BUTTONS = ['saveRefresh', 'saveSubmit'];
 
 const getPlain = (button) => {
@@ -1134,7 +1146,7 @@ defineExpose({
     font-size: 14px;
 }
 
-.app-detial-button {
+.app-Detail-button {
     background-color: #fff;
     &:hover {
         color: var(--el-color-primary);

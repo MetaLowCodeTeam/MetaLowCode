@@ -209,8 +209,8 @@
                         </template>
                         <template v-else>
                             <div 
-                                v-for="(item,customBtnItdenIndex) in customButtonList" 
-                                :key="customBtnItdenIndex" 
+                                v-for="(item,customBtnIndex) in customButtonList" 
+                                :key="customBtnIndex" 
                                 class="block-el-button"
                             >
                                 <slot v-if="item.type === 'slot'" :name="item.name" :row="rowResData"></slot>
@@ -249,7 +249,7 @@
                                                 item.icon,
                                         }"
                                     >
-                                        {{ item.name }}
+                                        {{ item.isNative ? item.name || item.defaultName : item.name }}
                                     </span>
                                 </el-button>
                                 <More
@@ -665,7 +665,7 @@ const getLayoutList = async () => {
             }
         }
         // 自定义按钮
-        customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetial');
+        customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetail');
         console.log(customButtonList.value,'customButtonList.value')
         // 先做权限和hide等所有显示逻辑过滤
         customButtonList.value.forEach(btn => {
