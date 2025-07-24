@@ -15,6 +15,8 @@ export default {
             isMobile: false,
             listExposed: this.listExposed,
         }
-        return this.renderFn(h, params)
+		const components = this.$root.$.appContext.components
+
+        return this.renderFn(h, params, components)
     }
 }

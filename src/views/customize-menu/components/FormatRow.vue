@@ -1,10 +1,10 @@
 <template>
     <!-- 自定义渲染 -->
     <div v-if="column.renderType == 'customizeRender'">
-        <table-column-custom-render 
-            :row="row" 
-            :column="column" 
-            :renderFn="getColumnRender(column)" 
+        <table-column-custom-render
+            :row="row"
+            :column="column"
+            :renderFn="getColumnRender(column)"
             :listExposed="listExposed"
         />
     </div>
@@ -95,14 +95,14 @@
                 >{{ field.name }}</span>
             </template>
         </div>
-        <div 
-            class="text-ellipsos" 
+        <div
+            class="text-ellipsos"
             v-else-if="column.fieldType == 'Location'"
         >
             {{ row[column.fieldName] ? row[column.fieldName].split(',')[2] : '' }}
         </div>
-        <div 
-            class="text-ellipsos" 
+        <div
+            class="text-ellipsos"
             v-else-if="column.fieldType == 'ReferenceList'"
         >
             {{  formatReferenceList(row[column.fieldName])  }}
@@ -203,7 +203,7 @@ const numberToCurrencyNo = (value) => {
 
 // 自定义渲染
 const getColumnRender = (column)=> {
-    return new Function('h', 'params', column.columnRender)
+    return new Function('h', 'params', 'components', column.columnRender)
 }
 
 
