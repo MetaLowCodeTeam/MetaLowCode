@@ -902,6 +902,7 @@ export default {
         // 获取条件op
         getSelectOp(item) {
             let { type, referTo } = item;
+            console.log(item,'item')
             let op = [];
             // 如果是引用类型
             if (type == "Reference" || type == "ReferenceList") {
