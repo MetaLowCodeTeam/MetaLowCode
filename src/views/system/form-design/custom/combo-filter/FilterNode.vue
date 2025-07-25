@@ -299,7 +299,7 @@ export default {
 				"reference-list": "ReferenceList",
 				"outer-reference": "OuterReference",
 			},
-			conditionsConfig: conditionsConfig,
+			conditionsConfig: actionOperatorConfig,
 			op_type: [],
 			// 不需要输入框的条件
 			op_no_value: [
@@ -386,7 +386,7 @@ export default {
 			let op = [];
 			// 如果是引用类型
 			if (type == "Reference" || type == "ReferenceList") {
-				let referenceObj = { ...conditionsConfig[type] };
+				let referenceObj = { ...actionOperatorConfig[type] };
 				// 有单独设定的 条件
 				if (referenceObj.referenceFilters.includes(referTo)) {
 					op = [...referenceObj[referTo]];
@@ -394,7 +394,7 @@ export default {
 					op = [...referenceObj.All];
 				}
 			} else {
-				op = conditionsConfig[type] ? [...conditionsConfig[type]] : [];
+				op = actionOperatorConfig[type] ? [...actionOperatorConfig[type]] : [];
 			}
 			return op;
 		},
