@@ -30,6 +30,16 @@
                     </el-icon>另存为
                 </el-button>
             </template>
+            <template #actionRules="{designer, formConfig}">
+                <ActionRulesSetting 
+                    ref="actionRulesSetting"
+                    :designer="designer" 
+                    :form-config="formConfig"
+                    :entity="entity"
+                    :entityLabel="entityLabel"
+                    @getFieldWidgets="getFieldWidgets"
+                ></ActionRulesSetting>
+            </template>
         </v-form-designer>
     </div>
     <!-- 选择表单弹框 -->
@@ -113,11 +123,13 @@ import { deepClone, overwriteObj, mlShortcutkeys, copyText } from "@/utils/util"
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import MlShareTo from "@/components/mlShareTo/index.vue";
 import AddField from "@/components/mlFormDesignComp/AddField.vue";
+import ActionRulesSetting from "./custom/ActionRulesSetting.vue";
 export default {
     name: "form-design",
     components: {
         AddField,
         MlShareTo,
+        ActionRulesSetting,
     },
     prop: {
         entity: {
@@ -201,6 +213,10 @@ export default {
     },
     emits: ['initComplete'],
     methods: {
+        getFieldWidgets() {
+            let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
+            this.$refs.actionRulesSetting.setFieldWidgets(fieldWidgets)
+        },
         loadFieldListData() {
             getMDFieldList(this.entity)
                 .then((res) => {
@@ -566,6 +582,8 @@ export default {
             if (data.layoutJson) {
                 this.layoutId = data.formLayoutId;
                 this.$refs.vfDesigner.setFormJson(data.layoutJson);
+                this.$refs.actionRulesSetting.setActionRules(JSON.parse(data.layoutJson)?.formConfig?.actionRules)
+                // console.log(JSON.parse(data.layoutJson),'data.layoutJson')
                 this.handleUsedFields();
             } else {
                 this.$refs.vfDesigner.clearDesigner();
@@ -659,9 +677,11 @@ export default {
         // 新建表单
         async createFormLayout(layoutName, shareTo) {
             this.loadActionLoading(layoutName, true);
+            let formJson = this.$refs.vfDesigner.getFormJson()
+            formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
             let res = await createFormLayout(
                 this.entity,
-                this.$refs.vfDesigner.getFormJson(),
+                formJson,
                 layoutName,
                 shareTo
             );
@@ -677,16 +697,20 @@ export default {
         },
         // 编辑表单
         async updateFormLayout() {
+            let formJson = this.$refs.vfDesigner.getFormJson()
+            formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
+            console.log(this.$refs.actionRulesSetting.getActionRules(),'ActionRules')
             this.loadActionLoading(false, true);
             let res = await updateFormLayout(
                 this.layoutId,
-                this.$refs.vfDesigner.getFormJson()
+                formJson
             );
 
             if (res && res.code == 200) {
                 this.$message.success("保存成功");
             }
             this.loadActionLoading(false, false);
+
         },
         // 编辑表名
         async updateNameFormLayout(layoutName, shareTo) {
@@ -731,6 +755,10 @@ export default {
 <style lang="scss" scoped>
 :deep(.toolbar-header .toolbar-container) {
     width: 100%;
+}
+
+:deep(.setting-panel-container .el-tabs__item) {
+    padding: 0 10px !important;
 }
 
 .el-button + .el-dropdown {
