@@ -247,7 +247,8 @@ const getFieldLabelByValue = (value) => {
 };
 
 const setActionRules = (data) => {
-    actionRules.value = data;
+    console.log(data,'data')
+    actionRules.value = data || [];
 }
 
 defineExpose({
