@@ -184,9 +184,7 @@
 									v-model="nodeData.field"
 									placeholder="请选择字段"
 									class="field-select"
-									@change="
-										onSelectFieldChange(nodeData.field)
-									"
+									@change="onSelectFieldChange(nodeData)"
 								>
 									<el-option-group
 										v-for="group in fieldOptions"
@@ -209,21 +207,29 @@
 									@change="onNodeChange"
 								>
 									<el-option
-										v-for="op in operatorOptions"
-										:key="op.value"
-										:label="op.label"
-										:value="op.value"
+										v-for="op in nodeData.opList"
+										:key="op"
+										:label="conditionsConfig.op_type[op]"
+										:value="op"
 									/>
 								</el-select>
 
 								<el-input
-									v-if="!isEmptyOperator"
+									v-if="!nodeData.field"
 									v-model="nodeData.value"
 									placeholder="请输入值"
 									class="value-input"
-									@input="onNodeChange"
 								/>
-
+								<template
+									v-if="
+										!op_no_value.includes(nodeData.operator)
+									"
+								>
+									<ShowComp
+										:node-data="nodeData"
+										@change="onNodeChange"
+									/>
+								</template>
 								<el-button
 									type="danger"
 									size="small"
@@ -243,9 +249,14 @@
 
 <script>
 // 配置文件
-import conditionsConfig from "@/config/conditionsConfig";
+import actionOperatorConfig from "@/config/actionOperatorConfig";
+import common from "@/api/common.js";
+import ShowComp from "./ShowComp.vue";
 export default {
 	name: "FilterNode",
+	components: {
+		ShowComp,
+	},
 	props: {
 		nodeData: {
 			type: Object,
@@ -288,6 +299,27 @@ export default {
 				"reference-list": "ReferenceList",
 				"outer-reference": "OuterReference",
 			},
+			conditionsConfig: conditionsConfig,
+			op_type: [],
+			// 不需要输入框的条件
+			op_no_value: [
+				"NL",
+				"NT",
+				"SFU",
+				"SFB",
+				"SFD",
+				"YTA",
+				"TDA",
+				"TTA",
+				"CUW",
+				"CUM",
+				"CUQ",
+				"CUY",
+				"REFD",
+				"REFU",
+				"REFNL",
+				"REFNT",
+			],
 		};
 	},
 	computed: {
@@ -303,32 +335,77 @@ export default {
 			this.$emit("change");
 		},
 		// 选择字段触发
-		onSelectFieldChange(field) {
+		async onSelectFieldChange(nodeData) {
 			// 1. 取当前选择的字段
 			// 从分组选项中查找字段
 			let selectField = null;
 			for (let group of this.fieldOptions) {
 				if (group.options) {
 					selectField = group.options.find(
-						(item) => item.value === field
+						(item) => item.value === nodeData.field
 					);
 					if (selectField) break;
 				}
 			}
-            let fieldValue = field.split('_')[1];
-            console.log(selectField,'selectField')
-            console.log(fieldValue,'fieldValue')
-			// // 2. 取当前字段类型
-			// let fieldType = this.formFieldMapping[selectField.type];
-			// console.log(fieldType, "fieldType");
-			// // 3. 取当前字段类型对应的条件op
-			// let op = conditionsConfig[fieldType];
-			// console.log(op, "op");
-			// // console.log(formFieldMapping[selectField.type],'selectField.type')
-			// console.log(conditionsConfig, "conditionsConfig");
-			// // console.log(selectField,'selectField')
-			this.onNodeChange();
-			//
+			// 2 找到字段对应的字段名
+			let fieldValue = nodeData.field.split("_")[1];
+			// 3 通过找到当前实体所有字段
+			let res = await common.getFieldListOfFilter({
+				entity: selectField.entity,
+				queryReference: false,
+			});
+			let currentField = null;
+			// 4 编辑当前实体所有字段找到当前字段的类型数据
+			if (res?.code == 200) {
+				currentField = res?.data?.find(
+					(item) => item.name === fieldValue
+				);
+				currentField.entity = selectField.entity;
+				nodeData.dbField = currentField;
+			}
+			console.log(currentField, "currentField");
+			// 5. 取当前字段类型对应的条件op
+			nodeData.opList = this.getSelectOp(currentField);
+			nodeData.opList = nodeData.opList.filter((el) => el != "BW");
+			if (!nodeData.opList.length) {
+				nodeData.opList = ["NL", "NT"];
+			}
+
+			// 6. 操作条件默认选中第一个
+			nodeData.operator = nodeData.opList[0];
+			// 7. 值默认清空
+			nodeData.value = null;
+			nodeData.refLabel = null;
+
+			// 8. 设置当前字段+条件显示的对应组件
+			this.getShowCom(nodeData);
+		},
+		// 获取条件op
+		getSelectOp(item) {
+			let { type, referTo } = item;
+			let op = [];
+			// 如果是引用类型
+			if (type == "Reference" || type == "ReferenceList") {
+				let referenceObj = { ...conditionsConfig[type] };
+				// 有单独设定的 条件
+				if (referenceObj.referenceFilters.includes(referTo)) {
+					op = [...referenceObj[referTo]];
+				} else {
+					op = [...referenceObj.All];
+				}
+			} else {
+				op = conditionsConfig[type] ? [...conditionsConfig[type]] : [];
+			}
+			return op;
+		},
+		// 获取当前字段+条件显示的对应组件
+		getShowCom(nodeData) {
+			const fieldWithOp = {
+				...nodeData.dbField,
+				op: nodeData.operator, // 添加当前选择的操作符
+			};
+			nodeData.showComponent =
+				this.conditionsConfig.getShowCom(fieldWithOp);
 		},
 
 		onChildChange() {

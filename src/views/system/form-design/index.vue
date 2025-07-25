@@ -582,6 +582,8 @@ export default {
             if (data.layoutJson) {
                 this.layoutId = data.formLayoutId;
                 this.$refs.vfDesigner.setFormJson(data.layoutJson);
+                this.$refs.actionRulesSetting.setActionRules(JSON.parse(data.layoutJson)?.formConfig?.actionRules)
+                // console.log(JSON.parse(data.layoutJson),'data.layoutJson')
                 this.handleUsedFields();
             } else {
                 this.$refs.vfDesigner.clearDesigner();
@@ -697,6 +699,7 @@ export default {
         async updateFormLayout() {
             let formJson = this.$refs.vfDesigner.getFormJson()
             formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
+            console.log(this.$refs.actionRulesSetting.getActionRules(),'ActionRules')
             this.loadActionLoading(false, true);
             let res = await updateFormLayout(
                 this.layoutId,

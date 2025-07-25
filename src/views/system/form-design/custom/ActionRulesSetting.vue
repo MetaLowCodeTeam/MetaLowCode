@@ -161,7 +161,7 @@ const downActionRule = (inx) => {
 };
 
 // 设置字段组件
-const setFieldWidgets = (widgets) => {
+const setFieldWidgets = async (widgets) => {
     // 先处理原始数据
     let newWidgets = widgets.map((item) => {
         let value = item.field?.id + "_" + item.field?.options?.name;
@@ -174,7 +174,6 @@ const setFieldWidgets = (widgets) => {
     });
     
     fieldWidgets.value = newWidgets;
-    console.log(fieldWidgets.value, 'fieldWidgets.value');
 };
 
 // 生成分组选项格式
@@ -247,12 +246,17 @@ const getFieldLabelByValue = (value) => {
 	return field ? field.label : '';
 };
 
+const setActionRules = (data) => {
+    actionRules.value = data;
+}
+
 defineExpose({
 	setFieldWidgets,
     getActionRules,
     getGroupedFieldOptions,
     getFieldByValue,
     getFieldLabelByValue,
+    setActionRules,
 });
 </script>
 
