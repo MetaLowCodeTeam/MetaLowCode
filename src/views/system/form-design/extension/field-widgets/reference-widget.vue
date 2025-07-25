@@ -509,7 +509,7 @@ export default {
 					this.syncUpdateFormModel(this.fieldModel);
                     // 第一条选中数据回填
                     this.doFillBack(this.fieldModel, rows[0]);
-                    this.onFieldChangeEvent(this.fieldModel);
+                    //this.onFieldChangeEvent(this.fieldModel); /* 下面的setSubFormValues方法会触发onChange事件，故此处屏蔽！！ */
                 }
                 rows.forEach((selectedRow,subInx) => {
                     // 把后面的数据已追加的方式追加进去。
