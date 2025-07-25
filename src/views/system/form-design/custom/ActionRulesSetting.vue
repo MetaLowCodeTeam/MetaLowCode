@@ -48,6 +48,8 @@
 import { ref } from "vue";
 import ActionRulesDialog from "./components/ActionRulesDialog.vue";
 import { getGuid } from "@/utils/util";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityLabelByName } = useCommonStore();
 const props = defineProps({
 	designer: {
 		type: Object,
@@ -197,7 +199,7 @@ const getGroupedFieldOptions = () => {
     const options = Object.keys(groupedFields).map(entityKey => {
         const fields = groupedFields[entityKey];
         return {
-            label: entityKey == props.entity ? `主表${entityKey}` : `从表${entityKey}`,   // 直接使用 entityKey 作为分组标签
+            label: entityKey == props.entity ? queryEntityLabelByName(props.entity) : queryEntityLabelByName(entityKey),   // 直接使用 entityKey 作为分组标签
             options: fields,    // 分组下的选项
         };
     });
