@@ -24,6 +24,7 @@
 					<span class="label-title"> 设置条件 </span>
 				</template>
 				<ComboFilter
+                    ref="comboFilterRef"
 					:field-options="fieldOptions"
 					v-model="dialogConfig.data.filterData"
 					:preview="false"
@@ -180,6 +181,8 @@ const closeDialog = () => {
 	dialogConfig.value.isShow = false;
 };
 
+const comboFilterRef = ref(null);
+
 const confirmActionRule = () => {
 	let { data } = dialogConfig.value;
 	if (!data.name) {
@@ -199,6 +202,7 @@ const confirmActionRule = () => {
 		ElMessage.error("请添加触发动作");
 		return;
 	}
+    data.filterExpression  = comboFilterRef.value.generateQueryString();
 	emit("confirm", data);
     closeDialog();
 };
