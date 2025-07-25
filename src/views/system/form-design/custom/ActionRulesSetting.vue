@@ -166,7 +166,7 @@ const downActionRule = (inx) => {
 const setFieldWidgets = async (widgets) => {
     // 先处理原始数据
     let newWidgets = widgets.map((item) => {
-        let value = item.field?.id + "_" + item.field?.options?.name;
+        let value = item.field?.options?.name;
         return {
             label: item.field?.options?.label,
             value,

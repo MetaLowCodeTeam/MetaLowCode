@@ -348,7 +348,7 @@ export default {
 				}
 			}
 			// 2 找到字段对应的字段名
-			let fieldValue = nodeData.field.split("_")[1];
+			let fieldValue = nodeData.field;
 			// 3 通过找到当前实体所有字段
 			let res = await common.getFieldListOfFilter({
 				entity: selectField.entity,
@@ -363,7 +363,6 @@ export default {
 				currentField.entity = selectField.entity;
 				nodeData.dbField = currentField;
 			}
-			console.log(currentField, "currentField");
 			// 5. 取当前字段类型对应的条件op
 			nodeData.opList = this.getSelectOp(currentField);
 			nodeData.opList = nodeData.opList.filter((el) => el != "BW");
