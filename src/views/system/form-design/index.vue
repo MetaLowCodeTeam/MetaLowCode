@@ -757,6 +757,10 @@ export default {
     width: 100%;
 }
 
+:deep(.setting-panel-container .el-tabs__item) {
+    padding: 0 10px !important;
+}
+
 .el-button + .el-dropdown {
     margin-left: 0 !important;
     margin-top: -2px;
