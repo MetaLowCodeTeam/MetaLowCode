@@ -145,9 +145,9 @@ export const evalFn = function (fn, DSV = null) {
     return f(DSV);
 };
 
-export const evalFnWithRF = function (fn, DSV = null) {
-    let f = new Function('DSV', 'RF', 'return ' + fn);
-    return f(DSV, RuleFunctions);
+export const evalFormRule = function (fn, formModel, DSV = null) {
+	let f = new Function('formModel', 'DSV', 'RF', 'return ' + fn);
+	return f(formModel, DSV, RuleFunctions);
 };
 
 export const generateId = function () {
@@ -395,7 +395,7 @@ const numberToCurrencyNo = (value) => {
  * 快捷键
  * Windows系统快捷键：
  * Shift + Alt + M + L
- * 
+ *
  * Mac系统 快捷键：
  * Shift + Option + M + L
  */
@@ -511,7 +511,7 @@ export const getModelName = (paramEntityName) => {
     }
     if (pathname.indexOf('/custom-page/') !== -1) {
         let splitPathname = pathname.split("/");
-        
+
         let checkGuid = splitPathname[splitPathname.length - 1];
         if(hasGuid(checkGuid) && !isDistinguishTopNav) {
             splitPathname.splice(splitPathname.length - 1, 1)
@@ -520,7 +520,7 @@ export const getModelName = (paramEntityName) => {
         if(paramEntityName && splitPathname[splitPathname.length - 1] != paramEntityName){
             return "";
         }
-        
+
         let newSplitName = [];
         splitPathname.forEach((item, inx) => {
             if (inx > 2) {

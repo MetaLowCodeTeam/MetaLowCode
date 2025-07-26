@@ -1,9 +1,9 @@
 export const RuleFunctions = {
     LK: (formModel, field, value) => {
-        return formModel[field] && formModel[field].contains(value);
+        return formModel[field] && formModel[field].includes(value);
     },
     NLK: (formModel, field, value) => {
-        return !formModel[field] || !formModel[field].contains(value);
+        return !formModel[field] || !formModel[field].includes(value);
     },
     EQ: (formModel, field, value) => {
         return formModel[field] == value;
