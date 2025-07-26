@@ -287,12 +287,29 @@ export default {
         .map((child) => {
           let childStr = ''
 
+          console.log('child', child)
+
           if (child.type === 'condition') {
             if (child.field && child.operator) {
-              childStr = `${child.field} ${this.getOperatorLabel(child.operator)}`
-              if (!['isEmpty', 'isNotEmpty'].includes(child.operator)) {
-                childStr += ` "${child.value || ''}"`
+              // childStr = `${child.field} ${this.getOperatorLabel(child.operator)}`
+              // if (!['isEmpty', 'isNotEmpty'].includes(child.operator)) {
+              //   childStr += ` "${child.value || ''}"`
+              // }
+
+              let optValue = typeof child.value === 'string' ? `'${child.value}'` : child.value
+              let operator = this.getOperatorLabel(child.operator)
+              if (child.dbField.type === 'Reference') {
+                if (optValue && optValue.id) {
+                  optValue = `'${optValue.id}'`
+                }
+
+                if (child.operator === 'EQ') {
+                  operator = 'REQ'
+                }
               }
+              
+              childStr = `RF.${operator}(formModel, '${child.field}', @optValue@)`
+              childStr = childStr.replace('@optValue@', optValue)
             }
           } else if (child.type === 'group') {
             const groupStr = this.generateNodeQueryString(child)
@@ -306,7 +323,7 @@ export default {
         .filter(str => str)
 
       if (childStrings.length > 1) {
-        const logic = node.childrenLogic || 'AND'
+        const logic = (node.childrenLogic === 'OR' ? '||' : '') || '&&'
         return childStrings.join(` ${logic} `)
       }
 

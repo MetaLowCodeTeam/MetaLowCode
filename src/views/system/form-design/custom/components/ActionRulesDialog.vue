@@ -14,14 +14,14 @@
 			<!-- 规则名称 -->
 			<el-form-item>
 				<template #label>
-					<span class="label-title"> 规则名称 </span>
+					<span class="label-title"> 1. 规则名称 </span>
 				</template>
 				<el-input v-model="dialogConfig.data.name" />
 			</el-form-item>
 			<!-- 规则条件 -->
 			<el-form-item>
 				<template #label>
-					<span class="label-title"> 设置条件 </span>
+					<span class="label-title"> 2. 触发条件设置 </span>
 				</template>
 				<ComboFilter
                     ref="comboFilterRef"
@@ -33,7 +33,7 @@
 			<!-- 触发动作 -->
 			<el-form-item>
 				<template #label>
-					<span class="label-title"> 触发动作 </span>
+					<span class="label-title"> 3. 触发动作 </span>
 				</template>
 				<el-row
 					v-for="(item, inx) in dialogConfig.data.action"
@@ -79,6 +79,7 @@
 							icon="delete"
 							type="danger"
 							circle
+							@click="deleteAction(inx)"
 						></el-button>
 					</el-col>
 				</el-row>
@@ -149,6 +150,11 @@ const defaultAction = ref({
 // 添加动作
 const addAction = () => {
 	dialogConfig.value.data.action.push(defaultAction.value);
+};
+
+// 删除动作
+const deleteAction = (inx) => {
+	dialogConfig.value.data.action.splice(inx, 1);
 };
 
 // 切换动作字段

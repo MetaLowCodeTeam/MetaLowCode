@@ -6,6 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { pinyin } from 'pinyin-pro'
 import JSEncrypt from 'jsencrypt';
 import http from "@/utils/request";
+import { RuleFunctions } from "@/utils/ruleFunctions";
 import { ElMessage } from 'element-plus';
 
 // 注册插件
@@ -131,6 +132,24 @@ dayjs.locale('zh-cn');
 //         doy: 4  // The week that contains Jan 4th is the first week of the year.
 //     }
 // })
+
+
+/**
+ * 用Function对象实现eval函数功能
+ * @param fn 函数体代码
+ * @param DSV DSV变量
+ * @returns {*}
+ */
+export const evalFn = function (fn, DSV = null) {
+    let f = new Function('DSV', 'return ' + fn);
+    return f(DSV);
+};
+
+export const evalFnWithRF = function (fn, DSV = null) {
+    let f = new Function('DSV', 'RF', 'return ' + fn);
+    return f(DSV, RuleFunctions);
+};
+
 export const generateId = function () {
     return Math.floor(Math.random() * 10000 + Math.random() * 5000);
 };

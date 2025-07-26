@@ -172,6 +172,7 @@ const setFieldWidgets = async (widgets) => {
             value,
             type: item.field?.type,
             entity: item.field?.subFormName || props.entity,
+			subFormName: item.field?.subFormName
         };
     });
     
@@ -186,12 +187,17 @@ const getGroupedFieldOptions = () => {
         if (!groups[entityKey]) {
             groups[entityKey] = [];
         }
-        groups[entityKey].push({
-            value: field.value,
-            label: field.label,
-            type: field.type,
-            entity: entityKey,
-        });
+
+		//暂不处理从表字段
+		if (!field.subFormName) {
+			groups[entityKey].push({
+				value: field.value,
+				label: field.label,
+				type: field.type,
+				entity: entityKey,
+			});
+		}
+
         return groups;
     }, {});
 
