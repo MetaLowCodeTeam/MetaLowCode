@@ -4,7 +4,7 @@
 		:title="dialogConfig.title"
 		v-model="dialogConfig.isShow"
 		:show-close="true"
-		class="ds-setting-drawer"
+		class="action-setting-drawer"
 		append-to-body
 		direction="rtl"
 		:modal="true"
@@ -36,7 +36,7 @@
 					<span class="label-title"> 3. 触发动作 </span>
 				</template>
 				<el-row
-					v-for="(item, inx) in dialogConfig.data.action"
+					v-for="(item, inx) in dialogConfig.data.actions"
 					:key="inx"
 					style="width: 100%; margin-bottom: 10px"
 					:gutter="10"
@@ -126,7 +126,7 @@ const defaultActionRule = ref({
 			children: [],
 		},
 	},
-	action: [],
+	actions: [],
 	guid: null,
 });
 
@@ -149,12 +149,12 @@ const defaultAction = ref({
 
 // 添加动作
 const addAction = () => {
-	dialogConfig.value.data.action.push(defaultAction.value);
+	dialogConfig.value.data.actions.push(defaultAction.value);
 };
 
 // 删除动作
 const deleteAction = (inx) => {
-	dialogConfig.value.data.action.splice(inx, 1);
+	dialogConfig.value.data.actions.splice(inx, 1);
 };
 
 // 切换动作字段
@@ -204,7 +204,7 @@ const confirmActionRule = () => {
 		ElMessage.error("请设置条件");
 		return;
 	}
-	if (!data.action || data.action.length === 0) {
+	if (!data.actions || data.actions.length === 0) {
 		ElMessage.error("请添加触发动作");
 		return;
 	}
@@ -219,5 +219,16 @@ defineExpose({
 </script>
 
 <style scoped>
-/* Styles here */
+
+</style>
+<style>
+.action-setting-drawer { 
+	.el-drawer__header {
+		margin-bottom: 20px !important;
+	}
+
+	.el-drawer__body {
+		padding: 0 20px !important;
+	}
+}
 </style>

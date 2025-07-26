@@ -217,6 +217,10 @@ const openDialog = (data) => {
 	emit("getFieldWidgets");
 	// 传递分组后的选项格式
 	const groupedOptions = getGroupedFieldOptions();
+	if (data && !data.actions) {
+		data.actions = []
+		delete data.action  //删除废弃属性action，改为actions
+	}
 	actionRulesDialogRef.value.openDialog(data, groupedOptions);
 };
 
@@ -227,9 +231,11 @@ const confirmActionRule = (data) => {
 			if (item.guid === data.guid) {
 				Object.assign(item, data);
 			}
+			delete item.action  //删除废弃属性action
 		});
 	} else {
 		data.guid = getGuid();
+		delete data.action  //删除废弃属性action
 		actionRules.value.push(data);
 	}
 };
