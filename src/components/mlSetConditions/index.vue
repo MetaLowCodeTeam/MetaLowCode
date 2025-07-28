@@ -286,6 +286,13 @@
                                         v-else-if="item.op == 'DEQ'"
                                     />
                                 </div>
+                                <!-- 级联 -->
+                                <div v-else-if="item.opCom =='cascader'">
+                                    <el-cascader
+                                        v-model="item.value"
+                                        :options="item.optionData"
+                                    />
+                                </div>
                             </el-col>
                         </template>
                     </el-row>
@@ -663,6 +670,13 @@
                                         v-else-if="item.op == 'DEQ'"
                                     />
                                 </div>
+                                <!-- 级联 -->
+                                <div v-else-if="item.type =='Cascader'">
+                                    <el-cascader
+                                        v-model="item.value"
+                                        :options="item.optionData"
+                                    />
+                                </div>
                             </el-col>
                         </el-row>
                         
@@ -853,6 +867,9 @@ export default {
                 if(el.op == 'SQL'){
                     conditionList.push(el);                         
                 }
+                if(el.type == 'Cascader') {
+                    el.value = JSON.parse(el.value);
+                }
                 this.fieldList.forEach((subEl) => {
                     subEl.showReferenceDialogFlag = false;
                     if (subEl.fieldName === el.fieldName) {
@@ -1033,6 +1050,9 @@ export default {
                         el.value2 = el.op == "REF" ? el.value : "";
                         el.value = idFieldName;
                     }
+                }
+                if(el.type == 'Cascader') {
+                    el.value = JSON.stringify(el.value);
                 }
             })
             // 如果不需要进行条件校验
