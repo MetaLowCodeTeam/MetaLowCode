@@ -14,6 +14,7 @@
 			@cancel="dialogIsShow = false"
 			:entityName="myEntityName"
             @confirm="conditionConfirm"
+            :enableSql="enableSql"
 		/>
 		<template #footer>
 			<el-button type="primary" @click="checkConfirm">确认</el-button>
@@ -29,6 +30,8 @@ const props = defineProps({
 	entityName: { type: String, default: "" },
 	title: { type: String, default: "" },
 	beforeOpenDialog: { type: Function, default: () => () => {} },
+    // 是否开启SQL
+    enableSql: { type: Boolean, default: false },
 });
 const emit = defineEmits(["confirm", "update:modelValue"]);
 

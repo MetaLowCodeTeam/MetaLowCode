@@ -42,6 +42,7 @@
                                             :conditionConf="tab.filter"
                                             :entityName="tab.detailEntityName"
                                             @confirm="(v) => conditionConfirm(v, tab.name)"
+                                            enableSql
                                         />
                                     </el-form-item>
                                     <el-form-item class="info-form-item">
