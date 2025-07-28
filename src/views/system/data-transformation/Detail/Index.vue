@@ -262,7 +262,9 @@ const queryTransformById = async () => {
 				true,
 				true,
 				true,
-				true
+				true,
+                false,
+                true
 			);
 			if (sourceRes) {
 				sourceEntity.value.fields = sourceRes.data;
@@ -297,7 +299,9 @@ const queryTransformById = async () => {
 				true,
 				true,
 				true,
-				true
+				true,
+                false,
+                true,
 			);
 			if (targetRes2) {
 				targetEntity2.value.fields = targetRes2.data;
@@ -458,6 +462,8 @@ const querySubTransform = async (sourceEntityName, targetEntityName, tabName) =>
         true,
         true,
         true,
+        true,
+        false,
         true
     );
     if (sourceRes) {
@@ -489,6 +495,8 @@ const querySubTransform = async (sourceEntityName, targetEntityName, tabName) =>
         true,
         true,
         true,
+        true,
+        false,
         true
     );
     if (targetRes2) {

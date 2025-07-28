@@ -142,10 +142,27 @@ export function queryById(entityId, fieldNames, body) {
  * @param {*} queryReserved 是否查询系统字段  true or false 默认 false
  * @param {*} firstReference 是否查询引用字段（不包含引用实体字段）  true or false 默认 false
  * @param {*} queryReferenceList 是否查询多引用字段（不包含引用实体字段）  true or false 默认 false
- * @param queryAnyReference 是否查询任意引用
+ * @param {*} queryAnyReference 是否查询任意引用
+ * @param {*} queryThirdReference 获取第三层的引用字段（需要queryReference = true 才生效）
  */
-export function queryEntityFields(entityCode, queryReference, queryReserved, firstReference, queryReferenceList, queryAnyReference) {
-    return http.get('/crud/queryEntityFields', { entityCode, queryReference, queryReserved, firstReference, queryReferenceList, queryAnyReference })
+export function queryEntityFields(
+    entityCode, 
+    queryReference, 
+    queryReserved, 
+    firstReference, 
+    queryReferenceList, 
+    queryAnyReference,
+    queryThirdReference
+) {
+    return http.get('/crud/queryEntityFields', { 
+        entityCode, 
+        queryReference, 
+        queryReserved, 
+        firstReference, 
+        queryReferenceList, 
+        queryAnyReference,
+        queryThirdReference
+    })
 }
 
 /**

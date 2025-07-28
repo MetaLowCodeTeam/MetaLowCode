@@ -706,6 +706,8 @@ export default {
         isOuterReference: { type: Boolean, default: false },
         // 外部引用配置
         outerReferenceConfig: { type: Object, default: () => null },
+        // 是否立即更新modelValue
+        someCondition: { type: Boolean, default: true },
     },
     data() {
         return {
@@ -762,19 +764,19 @@ export default {
                 "REFD",
                 "REFU",
                 "REFNT",
-            ]
+            ],
         };
     },
     watch: {
         modelValue: {
             handler() {
-                this.conditionConf = this.modelValue;
+                this.conditionConf = { ...this.modelValue };
             },
             deep: true,
+            immediate: true,
         },
     },
     mounted() {
-        this.conditionConf = this.modelValue;
         this.getFieldSet();
         this.conditionsConfig = { ...conditionsConfig };
         this.op_type = { ...this.conditionsConfig.op_type };
@@ -863,6 +865,9 @@ export default {
                         if(newItem.op == "REF" && newItem.value2){
                             newItem.value = newItem.value2;
                             newItem.value2 = "";
+                        }
+                        if(el.optionData) {
+                            newItem.optionData = subEl.optionData;
                         }
                         conditionList.push(newItem);
                     }

@@ -5,7 +5,7 @@
             ref="selectRefs" 
             style="width: 210px;" 
             v-model="defaultValue" 
-            @focus="showAdvfilter = false"
+            @focus="showAdvFilter = false"
             v-if="showSelect"
         >
             <template #empty>
@@ -37,14 +37,14 @@
                 </div>
             </template>
         </el-select>
-        <div class="select-filter" @click="showAdvfilter = !showAdvfilter">
+        <div class="select-filter" @click="showAdvFilter = !showAdvFilter">
             <el-icon class="select-filter-icon" size="16">
                 <ElIconFilter />
             </el-icon>
             <span v-if="isShowTag" class="select-filter-tag">●</span>
         </div>
-        <div class="dropdown-menu-advfilter" :class="{'isShow':showAdvfilter}">
-            <div class="close-icon" @click="showAdvfilter = false">
+        <div class="dropdown-menu-advFilter" :class="{'isShow':showAdvFilter}">
+            <div class="close-icon" @click="showAdvFilter = false">
                 <el-icon><CircleClose /></el-icon>
             </div>
             <div class="conditionConf">
@@ -61,7 +61,7 @@
                     type="primary"
                     @click="queryNow"
                     trigger="click"
-                    popper-class="advfilter-popper"
+                    popper-class="advFilter-popper"
                     @command="handleCommand"
                 >
                     <el-icon>
@@ -99,14 +99,14 @@
         <mlDialog
             title="修改高级查询"
             width="600"
-            v-model="editAdvDailog.isShow"
-            v-if="editAdvDailog.isShow"
+            v-model="editAdvDialog.isShow"
+            v-if="editAdvDialog.isShow"
         >
             <div class="save-dialog" v-loading="saveLoading">
                 <div class="conditionConf">
                     <mlSetConditions
                         ref="mlSetConditionsRefs"
-                        v-model="editAdvDailog.config"
+                        v-model="editAdvDialog.config"
                         @confirm="editConditionsConfirm"
                         :entityName="entityName"
                     />
@@ -115,14 +115,14 @@
                 <div style="border-top: 1px solid #eee;padding-top: 20px;">
                     <el-form label-width="40px">
                         <el-form-item label="名称" class="mb-10">
-                            <el-input v-model="editAdvDailog.configName" />
+                            <el-input v-model="editAdvDialog.configName" />
                         </el-form-item>
                         <el-form-item label=" " class="mb-10" v-if="$TOOL.checkRole('r6008')">
-                            <mlShareTo v-model="editAdvDailog.shareTo" />
+                            <mlShareTo v-model="editAdvDialog.shareTo" />
                         </el-form-item>
                         <el-form-item label=" ">
                             <el-button type="primary" style="width: 80px;" @click="editConfirm">确定</el-button>
-                            <el-button style="width: 80px;" @click="editAdvDailog.isShow = false">取消</el-button>
+                            <el-button style="width: 80px;" @click="editAdvDialog.isShow = false">取消</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
@@ -185,7 +185,7 @@ let opList = ref([
     },
 ]);
 // 是否显示高级查询条件
-let showAdvfilter = ref(false);
+let showAdvFilter = ref(false);
 let mlSetConditionsRefs = ref("");
 // 是否显示小标识
 let isShowTag = ref(false);
@@ -223,9 +223,9 @@ onBeforeMount(() => {
     //     if (skipClass.includes(e.target.className)) {
     //         return;
     //     }
-    //     let box = document.querySelector(".dropdown-menu-advfilter");
+    //     let box = document.querySelector(".dropdown-menu-advFilter");
     //     let box2 = document.querySelector(".select-filter");
-    //     let box3 = document.querySelector(".advfilter-popper");
+    //     let box3 = document.querySelector(".advFilter-popper");
     //     let box4 = document.querySelector(".el-overlay-dialog");
     //     let box5 = document.querySelector(".save-dialog");
     //     let box6 = document.querySelector(".mlselect-user-content");
@@ -241,7 +241,7 @@ onBeforeMount(() => {
     //     ) {
     //         // 不隐藏
     //     } else {
-    //         showAdvfilter.value = false;
+    //         showAdvFilter.value = false;
     //     }
     // });
 });
@@ -348,30 +348,31 @@ let saveConfirm = async () => {
     if (res) {
         $ElMessage.success("保存成功");
         saveDialog.isShow = false;
-        editAdvDailog.isShow = false;
-        showAdvfilter.value = false;
+        editAdvDialog.isShow = false;
+        showAdvFilter.value = false;
         emits("onAddAdv");
     }
     saveLoading.value = false;
 };
 
-let editAdvDailog = reactive({
+let editAdvDialog = reactive({
     isShow: false,
 });
 
 // 编辑常量查询
 const editAdv = (op) => {
-    editAdvDailog = Object.assign(editAdvDailog, op);
-    editAdvDailog.isShow = true;
-    editAdvDailog.config = initFilter(JSON.parse(editAdvDailog.config));
+    editAdvDialog = Object.assign(editAdvDialog, op);
+    editAdvDialog.isShow = true;
+    editAdvDialog.config = initFilter(JSON.parse(editAdvDialog.config));
     selectRefs.value.visible = false;
+    console.log(editAdvDialog,'editAdvDialog')
 };
 
 // 编辑条件调用
 const editConditionsConfirm = (e) => {
-    saveDialog = { ...editAdvDailog };
+    saveDialog = { ...editAdvDialog };
     saveDialog.isShow = false;
-    saveDialog.filter = { ...editAdvDailog.config };
+    saveDialog.filter = { ...editAdvDialog.config };
 
     saveConfirm();
 };
@@ -413,7 +414,7 @@ const conditionConfirm = (e) => {
         isShowTag.value = true;
     }
     if (cutAction.value == "queryNow") {
-        showAdvfilter.value = false;
+        showAdvFilter.value = false;
         
         emits(cutAction.value, e);
     }
@@ -431,7 +432,7 @@ const queryNow = () => {
 const refresh = () => {
     emits("refresh");
     isShowTag.value = false;
-    showAdvfilter.value = false;
+    showAdvFilter.value = false;
 };
 // 保存到常量查询
 const handleCommand = (e) => {
@@ -517,7 +518,7 @@ const handleCommand = (e) => {
         // top: 0;
     }
 }
-.dropdown-menu-advfilter {
+.dropdown-menu-advFilter {
     position: absolute;
     top: 47px;
     left: 0;
