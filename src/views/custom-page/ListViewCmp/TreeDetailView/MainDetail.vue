@@ -86,6 +86,7 @@ const initFormData = async (entity) => {
 	let res = await getFormLayout(entity.name);
 	if (res && res.data) {
 		if (res.data.layoutJson) {
+            globalDsv.value.useFormId = res.data.formLayoutId;
 			haveLayoutJson.value = true;
 			optionData.value = res.data.optionData || {};
             if(res.data.codeOptionData) {

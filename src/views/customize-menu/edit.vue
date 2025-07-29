@@ -544,10 +544,11 @@ const initFormLayout = async () => {
     globalDsv.value.formEntityIdFieldName = getEntityIdFieldName(row);
     globalDsv.value.setRowRecordId = setRowRecordId;
     let useFormId = formId.value;
-    globalDsv.value.useFormId = useFormId;
+  
     let res = await getFormLayout(row.entityName, useFormId);
     if (res) {
         if (res.data?.layoutJson) {
+            globalDsv.value.useFormId = res.data.formLayoutId;
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
             if(res.data.codeOptionData) {

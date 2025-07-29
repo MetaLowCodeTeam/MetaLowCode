@@ -141,6 +141,7 @@ const refresh = async () => {
     let res = await getFormLayout(detailDialog.entityName);
     if (res) {
         if (res.data?.layoutJson && activeTabName.value == "detail") {
+            globalDsv.value.useFormId = res.data.formLayoutId;
 			globalDsv.value.formStatus = "read";
 			globalDsv.value.formEntityId = detailDialog.id;
             haveLayoutJson.value = true;

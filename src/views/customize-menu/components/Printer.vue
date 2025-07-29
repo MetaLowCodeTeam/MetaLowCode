@@ -53,6 +53,7 @@ const initVformCom = async () => {
     let res = await getFormLayout(queryEntityNameById(entityId.value));
     haveLayoutJson.value = false;
     if (res && res.data?.layoutJson) {
+        globalDsv.value.useFormId = res.data.formLayoutId;
         haveLayoutJson.value = true;
         optionData.value = res.data.optionData || {};
         if(res.data.codeOptionData) {

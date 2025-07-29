@@ -329,7 +329,7 @@ let currentApprovalTaskId = ref(null);
 const initFormLayout = async (formLayoutId) => {
     haveLayoutJson.value = false;
     loading.value = true;
-    globalDsv.value.useFormId = formLayoutId;
+    
     globalDsv.value.formEntity = queryEntityNameById(props.entityId);
     let res = await getFormLayout(
         allEntityName.value[approvalTask.value.entityCode] || queryEntityNameById(props.entityId),
@@ -340,6 +340,7 @@ const initFormLayout = async (formLayoutId) => {
         if (res.data?.layoutJson) {
 			globalDsv.value.formStatus = "approval";
 			globalDsv.value.formEntityId = props.entityId;
+            globalDsv.value.useFormId = res.data.formLayoutId;
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
             if(res.data.codeOptionData) {

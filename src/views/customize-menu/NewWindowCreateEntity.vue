@@ -120,6 +120,7 @@ const loadForm = async () => {
 	if (res) {
 		if (res.data?.layoutJson) {
 			haveLayoutJson.value = true;
+            globalDsv.value.useFormId = res.data.formLayoutId;
 			optionData.value = res.data.optionData || {};
             if(res.data.codeOptionData) {
                 optionData.value = Object.assign(optionData.value, res.data.codeOptionData);

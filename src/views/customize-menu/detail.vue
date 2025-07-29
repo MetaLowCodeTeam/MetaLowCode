@@ -798,11 +798,11 @@ let detailTabsRefs = ref();
 const initData = async () => {
 	loading.value = true;
     haveLayoutJson.value = false;
-    globalDsv.value.useFormId = formId.value ?? props.recordDetailFormId;
 	let res = await getFormLayout(entityName.value, formId.value ?? props.recordDetailFormId);
 	noeData.value = false;
 	if (res) {
 		if (res.data?.layoutJson) {
+            globalDsv.value.useFormId = res.data.formLayoutId;
 			haveLayoutJson.value = true;
 			optionData.value = res.data.optionData || {};
             if(res.data.codeOptionData) {
