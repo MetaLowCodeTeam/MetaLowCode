@@ -236,9 +236,11 @@ import { copyObj, getSimplePinYin } from "@/utils/util";
 import FieldState from "@/views/system/field-state-variables";
 import ReferenceEntitySet from "@/components/mlReferenceSearch/reference-entity-set.vue";
 import useCommonStore from "@/store/modules/common";
+import { fieldEditorMixin } from "./field-editor-mixin";
 const { queryEntityCodeByName } = useCommonStore();
 export default {
     name: "ReferenceWidgetEditor",
+    mixins: [fieldEditorMixin],
     props: {
         entity: String,
         fieldName: String,
@@ -273,47 +275,6 @@ export default {
                     validators: [],
                 },
                 referenceSetting: null,
-            },
-
-            rules: {
-                name: [
-                    {
-                        required: true,
-                        message: "请输入字段名称",
-                        trigger: "blur",
-                    },
-                    {
-                        pattern: /^[a-z]+[A-Za-z\d_]*$/,
-                        message:
-                            "请以小写英文字母开头，中间可输入字母或数字，禁止中文",
-                        trigger: "blur",
-                    },
-                    {
-                        min: 2,
-                        max: 30,
-                        message: "文字长度应在2-30之间",
-                        trigger: "blur",
-                    },
-                ],
-                label: [
-                    {
-                        required: true,
-                        message: "请输入显示名称",
-                        trigger: "blur",
-                    },
-                    {
-                        pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
-                        message:
-                            "名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠",
-                        trigger: "blur",
-                    },
-                    {
-                        min: 2,
-                        max: 30,
-                        message: "名称长度在2-30之间，以中文、英文字母、数字开头，中间可输入下划线或横杠",
-                        trigger: "blur",
-                    },
-                ],
             },
             validators: [],
 

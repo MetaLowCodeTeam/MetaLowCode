@@ -186,10 +186,12 @@ import {
     getFieldSet,
 } from "@/api/system-manager";
 import { getSimplePinYin } from "@/utils/util";
+import { fieldEditorMixin } from "./field-editor-mixin";
 
 export default {
     name: "AnyReferenceWidgetEditor",
     props: ["entity", "showingInDialog"],
+    mixins: [fieldEditorMixin],
     data() {
         return {
             fieldProps: {
@@ -207,47 +209,6 @@ export default {
                 },
                 referTo: [],
                 referenceSetting: [],
-            },
-
-            rules: {
-                name: [
-                    {
-                        required: true,
-                        message: "请输入字段名称",
-                        trigger: "blur",
-                    },
-                    {
-                        pattern: /^[a-z]+[A-Za-z\d_]*$/,
-                        message:
-                            "请以小写英文字母开头，中间可输入字母或数字，禁止中文",
-                        trigger: "blur",
-                    },
-                    {
-                        min: 2,
-                        max: 30,
-                        message: "文字长度应在2-30之间",
-                        trigger: "blur",
-                    },
-                ],
-                label: [
-                    {
-                        required: true,
-                        message: "请输入显示名称",
-                        trigger: "blur",
-                    },
-                    {
-                        pattern: /^[A-Za-z\d\u4e00-\u9fa5]+[_-]*/,
-                        message:
-                            "请以中文、英文字母、数字开头，中间可输入下划线或横杠",
-                        trigger: "blur",
-                    },
-                    {
-                        min: 2,
-                        max: 30,
-                        message: "文字长度应在2-30之间",
-                        trigger: "blur",
-                    },
-                ],
             },
             validators: [],
 

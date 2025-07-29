@@ -15,6 +15,32 @@ export const fieldEditorMixin = {
 						trigger: 'blur'
 					},
 					{min: 2, max: 30, message: '文字长度应在2-30之间', trigger: 'blur'},
+                    {
+                        validator: (rule, value, callback) => {
+                            const systemFields = [
+                                'autoId',
+                                'createdOn',
+                                'createdBy', 
+                                'ownerUser',
+                                'ownerDepartment',
+                                'modifiedOn',
+                                'modifiedBy',
+                                'isDeleted',
+                                'approvalConfigId',
+                                'approvalStatus',
+                                'lastApprovedBy',
+                                'lastApprovedOn',
+                                'lastApprovalRemark'
+                            ];
+                            
+                            if (value && systemFields.some(field => field.toLowerCase() === value.toLowerCase())) {
+                                callback(new Error('字段名不能与系统字段重复，请使用其他名称'));
+                            } else {
+                                callback();
+                            }
+                        },
+                        trigger: 'blur',
+                    }
 				],
 				label: [
 					{required: true, message: '请输入显示名称', trigger: 'blur'},
