@@ -144,6 +144,16 @@ const props = defineProps({
         default: "default",
     },
     extraFilter: String,
+    // 过滤条件
+    filterConditions: {
+        type: Object,
+        default: () => {},
+    },
+    // 检查过滤条件
+    checkFilterConditions: {
+        type: Function,
+        default: () => {},
+    },
 });
 
 const emit = defineEmits([
@@ -165,7 +175,7 @@ let nameFieldName = ref("");
 
 let isDropdownVisible = ref(false);
 
-let filterConditions = ref(null);
+
 
 const handleCurrentChange = (v) => {
     currentPage.value = v;
@@ -191,59 +201,65 @@ const onFilter = (val) => {
     handleSearch(val);
 }
 
-const handleSearch = async (v) => {
+const handleSearch = (v) => {
     if (loading.value) return;
     searchValue.value = v || "";
-    loading.value = true;
-    let param = {
-        entity: props.entity,
-        refField: props.refField,
-        pageNo: currentPage.value,
-        pageSize: pageSize.value,
-    };
-    let filter = null;
-    if (props.searchFields.length > 0) {
-        filter = {
-            equation: "OR",
-            items: props.searchFields.map((el) => {
-                return {
-                    fieldName: el,
-                    value: searchValue.value,
-                    op: "LK",
-                };
-            }),
+    if(!props.checkFilterConditions()){
+        return
+    }
+    nextTick(async () => {
+        loading.value = true;
+        let param = {
+            entity: props.entity,
+            refField: props.refField,
+            pageNo: currentPage.value,
+            pageSize: pageSize.value,
         };
-    }
-    let res = await refFieldQuery2(
-        param.entity,
-        param.refField,
-        param.pageNo,
-        param.pageSize,
-        props.extraFilter,
-        filter,
-        filterConditions.value
-    );
-    if (res) {
-        tableColumns.value = res.data.columnList;
-        tableColumns.value.forEach((el) => {
-            el.fieldName = el.prop;
-            el.fieldType = el.type;
-        });
-        tableData.value = res.data.dataList;
-        total.value = res.data.pagination?.total || 0;
-        idFieldName.value = res.data.idFieldName;
-        nameFieldName.value = res.data.nameFieldName;
-    }
-    loading.value = false;
-    if (isDropdownVisible.value && tableData.value.length > 0) {
-        if (currentCursor.value === -1 || currentCursor.value >= tableData.value.length) {
-            currentCursor.value = 0;
+        let filter = null;
+        if (props.searchFields.length > 0) {
+            filter = {
+                equation: "OR",
+                items: props.searchFields.map((el) => {
+                    return {
+                        fieldName: el,
+                        value: searchValue.value,
+                        op: "LK",
+                    };
+                }),
+            };
         }
-        scrollToRow(currentCursor.value);
-    } else {
-        tableRef.value?.setCurrentRow(null);
-        currentCursor.value = -1;
-    }
+        let res = await refFieldQuery2(
+            param.entity,
+            param.refField,
+            param.pageNo,
+            param.pageSize,
+            props.extraFilter,
+            filter,
+            props.filterConditions,
+        );
+        if (res) {
+            tableColumns.value = res.data.columnList;
+            tableColumns.value.forEach((el) => {
+                el.fieldName = el.prop;
+                el.fieldType = el.type;
+            });
+            tableData.value = res.data.dataList;
+            total.value = res.data.pagination?.total || 0;
+            idFieldName.value = res.data.idFieldName;
+            nameFieldName.value = res.data.nameFieldName;
+        }
+        loading.value = false;
+        if (isDropdownVisible.value && tableData.value.length > 0) {
+            if (currentCursor.value === -1 || currentCursor.value >= tableData.value.length) {
+                currentCursor.value = 0;
+            }
+            scrollToRow(currentCursor.value);
+        } else {
+            tableRef.value?.setCurrentRow(null);
+            currentCursor.value = -1;
+        }
+    })
+    
 };
 
 let searchInputDomRef: HTMLInputElement | null = null;

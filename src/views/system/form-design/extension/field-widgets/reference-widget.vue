@@ -65,6 +65,8 @@
                 :disabled="field.options.disabled"
                 :fieldModel="fieldModel"
                 :extraFilter="searchFilter"
+                :filterConditions="filterConditions"
+                :checkFilterConditions="checkFilterConditions"
                 :size="field.options.size || globalConfig.size"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
