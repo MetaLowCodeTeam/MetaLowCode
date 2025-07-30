@@ -43,6 +43,13 @@ router.beforeEach(async (to, from, next) => {
     const { publicSetting } = storeToRefs(useCommonStore());
     const { queryEntityLabelByName } = useCommonStore();
     NProgress.start()
+    // 如果路由没有权限，则跳转到404页面
+    if(to.meta.notAuth) {
+        next({
+            path: appPath + "404"
+        });
+        return false;
+    }
     //动态标题
     document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
     if (to.path === appPath + "login") {

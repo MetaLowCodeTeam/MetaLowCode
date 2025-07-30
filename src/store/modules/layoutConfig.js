@@ -5,7 +5,7 @@ import layoutConfigApi from '@/api/layoutConfig.js';
 import http from "@/utils/request";
 import router from '@/router';
 const appPath = import.meta.env.VITE_APP_PATH;
-const floamtRoute = (el, isTopNav) => {
+const formatRouteItem = (el, isTopNav) => {
     let newRoute = {};
     if (el.type == 1) {
         newRoute.path = appPath + el.entityName + "/list" + (isTopNav ? '/' + el.guid : '');
@@ -207,7 +207,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             if (approvalCenter.includes(el.entityCode)) {
                 initMenu.meta.hidden = false;
             } else {
-                initMenu.meta.hidden = checkAuth(el);
+                let notAuth = checkAuth(el);
+                initMenu.meta.hidden = notAuth;
+                initMenu.meta.notAuth = notAuth;
             }
             
             // 如果有子菜单，递归处理
@@ -224,7 +226,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             } else {
                 // 叶子节点：生成实际的路由
                 initMenu.meta.type = el.type == 2 && el.openType != 1 ? "link" : "";
-                let { path, component, name } = floamtRoute(el, isTopNav);
+                let { path, component, name } = formatRouteItem(el, isTopNav);
                 initMenu.path = path;
                 initMenu.component = component;
                 initMenu.name = name;
@@ -266,8 +268,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     const getUseMenuList = () => {
         return [...useMenuList.value]
     }
-     // 检测是否有权限
-     const checkAuth = (item) => {
+    // 检测是否有权限
+    const checkAuth = (item) => {
         let isHidden = false;
 
         // 自定义权限
