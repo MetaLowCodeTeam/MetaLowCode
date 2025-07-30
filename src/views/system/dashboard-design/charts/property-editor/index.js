@@ -27,6 +27,7 @@ export const registerChartLibProperties = (app, PERegister) => {
         'dataEntity', 
         'setDimensional', 
         'setChartFilter', 
+        'setQueryPanel',
         'showHeader', 
         'showFullscreen', 
         'showRefresh', 
