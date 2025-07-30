@@ -927,7 +927,7 @@ export default {
             let op = [];
             // 如果是引用类型
             if (type == "Reference" || type == "ReferenceList") {
-                let referenceObj = { ...this.conditionsConfig[type] };
+                let referenceObj = { ...conditionsConfig[type] };
                 // 有单独设定的 条件
                 if (referenceObj.referenceFilters.includes(referTo)) {
                     op = [...referenceObj[referTo]];
@@ -935,8 +935,8 @@ export default {
                     op = [...referenceObj.All];
                 }
             } else {
-                op = this.conditionsConfig[type]
-                    ? [...this.conditionsConfig[type]]
+                op = conditionsConfig[type]
+                    ? [...conditionsConfig[type]]
                     : [];
             }
             return op;
