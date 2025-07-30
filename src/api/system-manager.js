@@ -180,24 +180,25 @@ export function getRefFieldExtras(field, entity) {
 }
 
 
-export function createFormLayout(entity, layoutJson, layoutName, shareTo) {
+/**
+ * 
+ * @param {*} entityName          实体名称
+ * @param {*} recordId            数据ID
+ * @param {*} layoutName          表单名称
+ * @param {*} shareTo             分享给
+ * @param {*} layoutJson          表单布局
+ * @param {*} originalTextMap     原始文本映射
+ * @returns 
+ */
+
+export function saveFormLayout(entityName, recordId, layoutName, shareTo, layoutJson, originalTextMap) {
     return http.post('formLayout/save', {
-        layoutJson:JSON.stringify(layoutJson),
+        entityName,
+        recordId,
+        layoutName,
         shareTo,
-    }, {
-        params: { entity, layoutName, }
-    })
-}
-
-export function updateFormLayout(layoutId, layoutJson) {
-    return http.post('formLayout/update', layoutJson, {
-        params: { layoutId }
-    })
-}
-
-export function updateNameFormLayout(layoutId, layoutName, shareTo) {
-    return http.post('formLayout/updateName', { shareTo }, {
-        params: { layoutId, layoutName, }
+        layoutJson:JSON.stringify(layoutJson),
+        originalTextMap,
     })
 }
 

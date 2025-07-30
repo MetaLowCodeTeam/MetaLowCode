@@ -111,13 +111,10 @@
 
 <script>
 import {
-    createFormLayout,
-    updateFormLayout,
-    getFormLayout,
+    saveFormLayout,
     getMDFieldList,
     getFormLayoutList,
     deleteFormLayout,
-    updateNameFormLayout,
 } from "@/api/system-manager";
 import { deepClone, overwriteObj, mlShortcutkeys, copyText } from "@/utils/util";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
@@ -679,11 +676,12 @@ export default {
             this.loadActionLoading(layoutName, true);
             let formJson = this.$refs.vfDesigner.getFormJson()
             formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
-            let res = await createFormLayout(
+            let res = await saveFormLayout(
                 this.entity,
-                formJson,
+                null,
                 layoutName,
-                shareTo
+                shareTo,
+                formJson,
             );
 
             if (res && res.code == 200) {
@@ -697,12 +695,16 @@ export default {
         },
         // 编辑表单
         async updateFormLayout() {
+            let { shareTo } =
+                this.saveAsDialogConf.formLayout;
             let formJson = this.$refs.vfDesigner.getFormJson()
             formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
-            console.log(this.$refs.actionRulesSetting.getActionRules(),'ActionRules')
             this.loadActionLoading(false, true);
-            let res = await updateFormLayout(
+            let res = await saveFormLayout(
+                this.entity,
                 this.layoutId,
+                null,
+                shareTo,
                 formJson
             );
 
@@ -716,9 +718,9 @@ export default {
         async updateNameFormLayout(layoutName, shareTo) {
             this.loadActionLoading(layoutName, true);
             let res = await updateNameFormLayout(
+                this.entity,
                 this.layoutId,
                 layoutName,
-                shareTo
             );
 
             if (res && res.code == 200) {
