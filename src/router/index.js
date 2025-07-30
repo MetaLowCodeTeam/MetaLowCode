@@ -197,10 +197,6 @@ function filterUserMenu(userRoutes, publicSetting) {
 function filterAsyncRouter(routerMap) {
     const accessedRouters = []
     routerMap.forEach(item => {
-        // 跳过隐藏的路由
-        if (item.hidden || item.meta?.hidden) {
-            return;
-        }
         item.meta = item.meta ? item.meta : {};
         //处理外部链接特殊路由
         if (item.meta.type == 'iframe') {
