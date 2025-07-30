@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import ActionRulesDialog from "./components/ActionRulesDialog.vue";
 import { getGuid } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
@@ -68,6 +68,10 @@ const props = defineProps({
         default: '',
     },
 });
+
+onMounted(() => {
+    setActionRules(props.formConfig.actionRules)
+})
 
 const emit = defineEmits(["getFieldWidgets"]);
 
@@ -139,7 +143,6 @@ const handleActionButtonClick = (item, button, inx) => {
 // 删除
 const deleteActionRule = (inx) => {
 	actionRules.value.splice(inx, 1);
-	// setFormConfigActionRules();
 };
 // 上移
 const upActionRule = (inx) => {
@@ -261,9 +264,10 @@ const getFieldLabelByValue = (value) => {
 };
 
 const setActionRules = (data) => {
-    console.log(data,'data')
     actionRules.value = data || [];
 }
+
+
 
 defineExpose({
 	setFieldWidgets,
