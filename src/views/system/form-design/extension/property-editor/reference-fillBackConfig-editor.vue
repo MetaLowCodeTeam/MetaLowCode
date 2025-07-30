@@ -870,9 +870,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+/*
 :deep(.el-form-item__label) {
 	height: 32px;
 }
+ */
+
 .fillBack-help-icon {
 	position: relative;
 	top: 5px;
