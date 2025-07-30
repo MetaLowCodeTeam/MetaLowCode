@@ -286,9 +286,6 @@ export default {
       const childStrings = node.children
         .map((child) => {
           let childStr = ''
-
-          console.log('child', child)
-
           if (child.type === 'condition') {
             if (child.field && child.operator) {
               // childStr = `${child.field} ${this.getOperatorLabel(child.operator)}`

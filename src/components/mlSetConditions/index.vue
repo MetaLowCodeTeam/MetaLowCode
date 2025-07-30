@@ -782,15 +782,15 @@ export default {
         };
     },
     watch: {
-        modelValue: {
+        modelValue: { 
             handler() {
-                this.conditionConf = { ...this.modelValue };
+                this.conditionConf = this.modelValue;
             },
             deep: true,
-            immediate: true,
         },
     },
     mounted() {
+        this.conditionConf = this.modelValue;
         this.getFieldSet();
         this.conditionsConfig = { ...conditionsConfig };
         this.op_type = { ...this.conditionsConfig.op_type };
