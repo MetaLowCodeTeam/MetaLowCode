@@ -717,7 +717,7 @@ export default {
         // 编辑表名
         async updateNameFormLayout(layoutName, shareTo) {
             this.loadActionLoading(layoutName, true);
-            let res = await updateNameFormLayout(
+            let res = await saveFormLayout(
                 this.entity,
                 this.layoutId,
                 layoutName,
