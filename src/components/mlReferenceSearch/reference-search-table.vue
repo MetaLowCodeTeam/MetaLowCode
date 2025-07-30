@@ -301,7 +301,7 @@ export default {
 		// 保存
 		async onSave() {
 			let saveConditionConf = JSON.parse(
-				JSON.stringify(this.conditionConf)
+				JSON.stringify(this.$refs.mlSetConditionsRef.conditionConf)
 			);
 			saveConditionConf.items.forEach((el) => {
 				el.value = null;
