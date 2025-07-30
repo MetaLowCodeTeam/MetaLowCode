@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import ActionRulesDialog from "./components/ActionRulesDialog.vue";
 import { getGuid } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
@@ -69,9 +69,7 @@ const props = defineProps({
     },
 });
 
-onMounted(() => {
-    setActionRules(props.formConfig.actionRules)
-})
+
 
 const emit = defineEmits(["getFieldWidgets"]);
 
@@ -268,6 +266,12 @@ const setActionRules = (data) => {
 }
 
 
+watch(props.formConfig, (newVal) => {
+    setActionRules(newVal.actionRules)
+}, {
+    immediate: true,
+    deep: true,
+})
 
 defineExpose({
 	setFieldWidgets,

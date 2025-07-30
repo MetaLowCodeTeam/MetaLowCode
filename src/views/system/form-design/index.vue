@@ -673,7 +673,6 @@ export default {
         async createFormLayout(layoutName, shareTo) {
             this.loadActionLoading(layoutName, true);
             let formJson = this.$refs.vfDesigner.getFormJson()
-            formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
             let res = await saveFormLayout(
                 this.entity,
                 null,
@@ -695,7 +694,8 @@ export default {
         async updateFormLayout() {
             let { shareTo } =
                 this.saveAsDialogConf.formLayout;
-            let formJson = this.$refs.vfDesigner.getFormJson()
+            let formJson = this.$refs.vfDesigner.getFormJson();
+            // console.log(formJson,'111');
             formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
             this.loadActionLoading(false, true);
             let res = await saveFormLayout(
