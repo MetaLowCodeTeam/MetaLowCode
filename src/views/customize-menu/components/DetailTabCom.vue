@@ -501,7 +501,6 @@ const getTableList = async () => {
         loading.value = true;
         let formLayoutRes = await getFormLayout(entityName.value);
         if (formLayoutRes) {
-            globalDsv.value.useFormId = formLayoutRes.data.formLayoutId;
             layoutJson.value = formLayoutRes.data?.layoutJson || null;
             optionData.value = formLayoutRes.data?.optionData || {};
             if(formLayoutRes.data.codeOptionData) {
