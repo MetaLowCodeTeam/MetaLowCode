@@ -1168,5 +1168,7 @@ export default {
     font-size: 14px;
     margin-right: 10px;
     color: #303030;
+    height: 32px;
+    line-height: 32px;
 }
 </style>

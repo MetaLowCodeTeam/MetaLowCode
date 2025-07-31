@@ -9,6 +9,16 @@
 			v-if="tableColumn.length > 0"
 			v-loading="tableLoading"
 		>
+            <div class="mb-10" v-if="showQueryPanel">
+                <CustomQueryPanel 
+                    :entityName="entity"
+                    :filter="cutField?.options?.setQueryPanel?.queryPanelConf?.filter"
+                    :forbidUserModifyField="cutField?.options?.setQueryPanel?.queryPanelConf?.forbidUserModifyField"
+                    :hideQueryMatchType="cutField?.options?.setQueryPanel?.queryPanelConf?.hideQueryMatchType"
+                    @onSearch="onSearch"
+                    @reset="onSearch"
+                />
+            </div>
 			<el-table
 				size="small"
 				:data="tableData"
@@ -75,6 +85,7 @@ import useChartSourceData from "@/hooks/ChartSourceData";
 const { getDataSourceData } = useChartSourceData();
 const getFormConfig = inject('getFormConfig');
 import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
+import CustomQueryPanel from "@/components/mlSetConditions/CustomQueryPanel.vue";
 defineOptions({
 	name: "listTable-widget",
 });
@@ -110,9 +121,21 @@ let total = ref(0);
 let entity = ref("");
 let myOptions = ref({});
 
+let builtInFilter = ref({});
+let showQueryPanel = ref(false);
+const onSearch = (event) => {
+    builtInFilter.value = event;
+    getTableData();
+}
+
 const initOption = async () => {
 	let { options } = cutField.value;
+    // console.log(props.designer,'designer')
 	if (options) {
+        showQueryPanel.value = options.setQueryPanel.isShow;
+        if(props.designer?.formConfig?.layoutType != 'PC') {
+            showQueryPanel.value = false;
+        }
         let { dsEnabled, dsName, dataSetName } = options;
         if(dsEnabled && dsName) {
             tableLoading.value = true;
@@ -174,6 +197,7 @@ const getTableData = async () => {
 		pageNo: currentPage.value,
 		filter: myOptions.value.setChartFilter,
 		sortFields: sortFields.value,
+        builtInFilter: showQueryPanel.value ? builtInFilter.value : null,
 	};
 	let res;
 	if (entity.value == "ApprovalTask") {
@@ -184,6 +208,9 @@ const getTableData = async () => {
 			pageSize: param.pageSize,
 			pageNo: param.pageNo,
 			sortFields: param.sortFields,
+            advFilter: null,
+            quickFilter: null,
+            builtInFilter: param.builtInFilter,
 		});
 	} else {
 		res = await getDataList(
@@ -192,7 +219,10 @@ const getTableData = async () => {
 			param.filter,
 			param.pageSize,
 			param.pageNo,
-			param.sortFields
+			param.sortFields,
+            null,
+            null,
+            param.builtInFilter,
 		);
 	}
 	if (res) {

@@ -1,21 +1,23 @@
 <template>
-	<el-form-item label="开启查询面板">
-		<el-switch v-model="setQueryPanel.isShow" @change="handleIsShowChange"/>
+	<el-form-item label="开启查询面板" v-if="designer?.formConfig?.layoutType == 'PC'">
+		<el-switch v-model="optionModel.setQueryPanel.isShow"/>
 	</el-form-item>
-	<el-form-item label="设置查询面板" v-if="setQueryPanel.isShow">
+    <el-form-item label="设置查询面板" v-if="optionModel.setQueryPanel.isShow && designer?.formConfig?.layoutType == 'PC'">
 		<el-button @click="openDialog">
-			点击设置
+			{{ getSetConditionText() }}
 		</el-button>
 	</el-form-item>
-	<SetQueryPanelDialog
+    <SetQueryPanelDialog
 		ref="setQueryPanelDialogRef"
 		:entityName="entityName"
+        :showSaveQueryValue="false"
 		@conditionsConfirm="conditionsConfirm"
 	/>
+    
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import SetQueryPanelDialog from "@/components/mlSetConditions/SetQueryPanelDialog.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
@@ -39,69 +41,39 @@ const props = defineProps({
 	},
 });
 
-const emits = defineEmits(["update:optionModel"]);
+let queryPanelConf = ref({})
 
-let myOptionModel = ref({});
-
-let setQueryPanel = ref({
-	isShow: false,
-	queryPanelConf: {},
-});
-
-watch(
-	() => props.optionModel,
-	(newVal) => {
-		myOptionModel.value = Object.assign({}, myOptionModel.value, newVal);
-		
-		// 确保 setQueryPanel 结构存在
-		if (!myOptionModel.value.setQueryPanel) {
-			myOptionModel.value.setQueryPanel = {
-				isShow: false,
-				queryPanelConf: {}
-			};
-		}
-		
-        setQueryPanel.value = Object.assign({}, setQueryPanel.value, myOptionModel.value.setQueryPanel);
-	},
-	{
-		immediate: true,
-		deep: true,
-	}
-);
-
-const handleIsShowChange = (val) => {
-    // 使用解构赋值确保对象结构
-    myOptionModel.value.setQueryPanel = {
-        ...myOptionModel.value.setQueryPanel,
-        isShow: val
-    };
-    emits("update:optionModel", myOptionModel.value);
-}
-
-// onMounted(() => {
-//     setQueryPanel.value = Object.assign({}, props.optionModel.setQueryPanel);
-// })
+watch(() => props.optionModel.dataEntity, (newVal) => {
+    if(props.optionModel?.setQueryPanel?.queryPanelConf?.filter){
+        props.optionModel.setQueryPanel.queryPanelConf.filter.items = [];
+    }
+})
+onMounted(() => {
+    queryPanelConf.value = props.optionModel.setQueryPanel.queryPanelConf;
+})
 
 
 let entityName = ref("");
-
-
 let setQueryPanelDialogRef = ref(null);
 const openDialog = () => {
-	// console.log(props.optionModel,'props.optionModel')
-	// dialogVisible.value = true;
 	if (!props.optionModel.dataEntity) {
 		ElMessage.error("请先选择图标数据实体");
 		return;
 	}
 	entityName.value = queryEntityNameByCode(props.optionModel.dataEntity);
-
-	setQueryPanelDialogRef.value.openDialog(JSON.parse(JSON.stringify(setQueryPanel.value.queryPanelConf)));
+	setQueryPanelDialogRef.value.openDialog(JSON.parse(JSON.stringify(queryPanelConf.value)));
 };
 
 const conditionsConfirm = (event) => {
-	// console.log(event,'event')
+    queryPanelConf.value = event;
+	props.optionModel.setQueryPanel.queryPanelConf = JSON.parse(JSON.stringify(queryPanelConf.value));
 };
+
+const getSetConditionText = () => {
+    let length = queryPanelConf.value?.filter?.items?.length || 0;
+    return length > 0 ? `已设置条件（${length}）` : "点击设置";
+}
+
 </script>
 
 <style scoped></style>

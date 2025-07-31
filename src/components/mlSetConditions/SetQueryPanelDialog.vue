@@ -16,7 +16,11 @@
 				<el-checkbox v-model="hideQueryMatchType" size="default">
 					隐藏查询匹配类型
 				</el-checkbox>
-				<el-checkbox v-model="isSaveQueryValue" size="default">
+				<el-checkbox 
+                    v-model="isSaveQueryValue" 
+                    size="default" 
+                    v-if="showSaveQueryValue"
+                >
 					是否保存查询值
 				</el-checkbox>
 			</div>
@@ -32,6 +36,7 @@
 import { ref } from "vue";
 const props = defineProps({
     entityName: { type: String, default: "" },
+    showSaveQueryValue: { type: Boolean, default: true },
 });
 const emit = defineEmits(["conditionsConfirm"]);
 let isShow = ref(false);
@@ -54,7 +59,7 @@ const conditionsConfirm = () => {
 }
 
 const openDialog = (data) => {
-    dialogConditions.value = Object.assign({}, dialogConditions.value, data);
+    dialogConditions.value = Object.assign({}, dialogConditions.value, data.filter);
     forbidUserModifyField.value = data.forbidUserModifyField;
     hideQueryMatchType.value = data.hideQueryMatchType;
     isSaveQueryValue.value = data.isSaveQueryValue;
