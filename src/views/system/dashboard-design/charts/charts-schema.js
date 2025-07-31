@@ -531,13 +531,6 @@ export const ext_charts_widgets = [
                 equation: "OR",
                 items: [],
             },
-            // 查询面板
-            setQueryPanel: {
-                // 是否显示查询面板
-                isShow: false,
-                // 查询面板配置
-                queryPanelConf: {},
-            },
             showHeader: true,
             showFullscreen: false,
             showRefresh: false,
