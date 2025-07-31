@@ -63,32 +63,11 @@
 		</div>
 	</div>
 	<!-- 设计查询面板 -->
-	<ml-dialog title="设计查询面板" v-model="isShow" width="700" append-to-body>
-		<div>
-			<mlSetConditions
-				v-model="dialogConditions"
-				:entityName="entityName"
-				notType
-			/>
-		</div>
-		<template #footer>
-			<div class="fl pl-20">
-				<el-checkbox v-model="forbidUserModifyField">
-                    禁止用户修改字段
-                </el-checkbox>
-				<el-checkbox v-model="hideQueryMatchType">
-                    隐藏查询匹配类型
-                </el-checkbox>
-                <el-checkbox v-model="isSaveQueryValue">
-                    是否保存查询值
-                </el-checkbox>
-			</div>
-			<el-button @click="isShow = false">取消</el-button>
-			<el-button type="primary" @click="conditionsConfirm">
-				确认
-			</el-button>
-		</template>
-	</ml-dialog>
+    <SetQueryPanelDialog 
+        ref="setQueryPanelDialogRef"
+        :entityName="entityName"
+        @conditionsConfirm="conditionsConfirm"
+    />
 </template>
 
 <script setup>
@@ -96,6 +75,7 @@ import { ref, watchEffect } from "vue";
 import layoutConfig from "@/api/layoutConfig";
 import { ElMessage } from "element-plus";
 import useCommonStore from "@/store/modules/common";
+import SetQueryPanelDialog from "@/components/mlSetConditions/SetQueryPanelDialog.vue";
 const { queryEntityInfoByName } = useCommonStore();
 
 const props = defineProps({
@@ -191,12 +171,6 @@ const refreshAdvancedQuery = () => {
 /**
  * 设计查询面板
  */
-// 弹框条件
-let dialogConditions = ref({
-	equation: "AND",
-	items: [],
-});
-
 // 禁止用户修改字段
 let forbidUserModifyField = ref(false);
 // 隐藏查询匹配类型
@@ -204,14 +178,23 @@ let hideQueryMatchType = ref(false);
 // 是否保存查询值
 let isSaveQueryValue = ref(true);
 
+let setQueryPanelDialogRef = ref(null);
+
 // 打开弹框
 const openDialog = () => {
-	isShow.value = true;
-	dialogConditions.value = JSON.parse(JSON.stringify(compConditions.value));
+    setQueryPanelDialogRef.value.openDialog({
+        filter: JSON.parse(JSON.stringify(compConditions.value)),
+        forbidUserModifyField: forbidUserModifyField.value,
+        hideQueryMatchType: hideQueryMatchType.value,
+        isSaveQueryValue: isSaveQueryValue.value,
+    });
 };
 // 弹框条件确认
-const conditionsConfirm = async () => {
-    let paramFilter = JSON.parse(JSON.stringify(dialogConditions.value));
+const conditionsConfirm = async (event) => {
+    let paramFilter = JSON.parse(JSON.stringify(event.filter));
+    forbidUserModifyField.value = event.forbidUserModifyField;
+    hideQueryMatchType.value = event.hideQueryMatchType;
+    isSaveQueryValue.value = event.isSaveQueryValue;
     if(!isSaveQueryValue.value){
         paramFilter.items.forEach(el => {
             el.value = null;
@@ -239,7 +222,7 @@ const conditionsConfirm = async () => {
 		emit("uploadItems", {
 			forbidUserModifyField: forbidUserModifyField.value,
 			hideQueryMatchType: hideQueryMatchType.value,
-			filter: dialogConditions.value,
+			filter: event.filter,
 			isSaveQueryValue: isSaveQueryValue.value,
 		});
 		isShow.value = false;

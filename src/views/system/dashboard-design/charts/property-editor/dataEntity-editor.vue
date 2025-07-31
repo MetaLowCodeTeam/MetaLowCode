@@ -70,6 +70,12 @@ const changeEntity = () => {
         equation: "OR",
         items: [],
     };
+    myOption.value.setQueryPanel = {
+        // 是否显示查询面板
+        isShow: false,
+        // 查询面板配置
+        queryPanelConf: {},
+    };
     emits("update:optionModel", myOption.value);
 };
 </script>
