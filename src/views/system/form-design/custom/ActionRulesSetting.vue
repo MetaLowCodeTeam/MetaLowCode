@@ -259,7 +259,6 @@ const openDialog = (data) => {
             return newItem
         })
     }
-    // console.log(data,'data')
 	actionRulesDialogRef.value.openDialog(JSON.parse(JSON.stringify(data)), groupedOptions, containerWidgets.value);
 };
 

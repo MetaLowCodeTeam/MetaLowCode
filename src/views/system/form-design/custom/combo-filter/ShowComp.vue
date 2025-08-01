@@ -116,7 +116,6 @@ let referenceDialogConfig = ref({
 
 // 打开引用弹窗
 const openReferenceDialog = (node) => {
-	console.log("node", node);
 	referenceDialogConfig.value = {
 		isShow: true,
 		formatEntityName: node.dbField.entity,

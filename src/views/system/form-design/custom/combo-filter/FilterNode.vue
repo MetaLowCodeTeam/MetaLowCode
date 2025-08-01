@@ -378,7 +378,6 @@ export default {
 				);
                 if(!currentField){
                     this.fieldOptions.forEach(group => {
-                        console.log(group,'group')
                         group.options.forEach(item => {
                             if(item.value === fieldValue){
                                 currentField = {...item};
