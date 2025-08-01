@@ -170,16 +170,16 @@ const setFieldWidgets = async (widgets) => {
     // 先处理原始数据
     let newWidgets = widgets.map((item) => {
         let value = item.field?.options?.name;
+        let subFormName = item.field?.subFormName;
         return {
             label: item.field?.options?.label,
-            value,
+            value: subFormName ? 'subForm_' + subFormName + '_' + value : value,
             type: item.field?.type,
             entity: item.field?.subFormName || props.entity,
-			subFormName: item.field?.subFormName,
-            optionData: item.field?.options?.optionItems || []
+			subFormName,
+            optionData: item.field?.options?.optionItems || [],
         };
     });
-    
     fieldWidgets.value = newWidgets;
 };
 
@@ -193,7 +193,7 @@ const setContainerWidgets = async (widgets) => {
             label = item.container.options?.label;
          }
         return {
-            value: item.name,
+            value: 'container_' + item.name,
             label: label || item.name,
         }
     })
@@ -212,16 +212,15 @@ const getGroupedFieldOptions = () => {
         }
 
 		//暂不处理从表字段
-		if (!field.subFormName) {
-			groups[entityKey].push({
-				value: field.value,
-				label: field.label,
-				type: field.type,
-				entity: entityKey,
-                optionData: field.optionData
-			});
-		}
-
+        if (!field.subFormName) {
+            groups[entityKey].push({
+                value: field.value,
+                label: field.label,
+                type: field.type,
+                entity: entityKey,
+                optionData: field.optionData,
+            });
+        }
         return groups;
     }, {});
 
@@ -233,7 +232,6 @@ const getGroupedFieldOptions = () => {
             options: fields,    // 分组下的选项
         };
     });
-
     return options;
 };
 const actionRulesDialogRef = ref(null);
@@ -243,13 +241,50 @@ const openDialog = (data) => {
 	const groupedOptions = getGroupedFieldOptions();
 	if (data && !data.actions) {
 		data.actions = []
-		delete data.action  //删除废弃属性action，改为actions
 	}
+    if(data?.actions?.length > 0){
+        data.actions = data.actions.map(item => {
+            let newItem = {
+                field: null,
+                label: item.label,
+                type: item.type,
+            }
+            if(item.ofSubForm) {
+                newItem.field = 'subForm_' + item.ofSubForm + '_' + item.field;
+            }else if(item.container){
+                newItem.field = 'container_' + item.container;
+            }else{
+                newItem.field = item.field;
+            }
+            return newItem
+        })
+    }
+    // console.log(data,'data')
 	actionRulesDialogRef.value.openDialog(JSON.parse(JSON.stringify(data)), groupedOptions, containerWidgets.value);
 };
 
 const confirmActionRule = (data) => {
     let newData = JSON.parse(JSON.stringify(data));
+    let oldActions = [...newData.actions];
+    newData.actions = oldActions.map(item => {
+        let newItem = {
+            field: null,
+            ofSubForm: null,
+            container: null,
+            type: item.type
+        }
+        if(item.field.includes('subForm_')){
+            newItem.ofSubForm = item.field.split('_')[1];
+            newItem.field = item.field.split('_')[2];
+        }else if(item.field.includes('container_')){
+            newItem.container = item.field.split('_')[1];
+        }else{
+            newItem.field = item.field;
+            newItem.ofSubForm = null;
+            newItem.container = null;
+        }
+        return newItem
+    })
 	// 是编辑
 	if (newData.guid) {
 		actionRules.value.forEach((item) => {

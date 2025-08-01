@@ -213,8 +213,7 @@ export default {
     methods: {
         initFormWidgets() {
             let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
-            let containerWidgets = this.$refs.vfDesigner.getContainerWidgets();
-            console.log(containerWidgets,'getContainerWidgets')
+            let containerWidgets = this.$refs.vfDesigner.getContainerWidgets(null, true);
             this.$refs.actionRulesSetting.setFieldWidgets(fieldWidgets)
             this.$refs.actionRulesSetting.setContainerWidgets(containerWidgets)
         },

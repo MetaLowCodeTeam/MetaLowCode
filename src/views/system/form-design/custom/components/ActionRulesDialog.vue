@@ -71,6 +71,7 @@
 								:key="option.value"
 								:label="option.label"
 								:value="option.value"
+                                :disabled="item.field.includes('container_') && (option.value == 'required' || option.value == 'notRequired')"
 							></el-option>
 						</el-select>
 					</el-col>
