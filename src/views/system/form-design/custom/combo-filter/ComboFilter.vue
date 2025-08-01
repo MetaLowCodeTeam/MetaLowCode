@@ -288,11 +288,6 @@ export default {
           let childStr = ''
           if (child.type === 'condition') {
             if (child.field && child.operator) {
-              // childStr = `${child.field} ${this.getOperatorLabel(child.operator)}`
-              // if (!['isEmpty', 'isNotEmpty'].includes(child.operator)) {
-              //   childStr += ` "${child.value || ''}"`
-              // }
-
               let optValue = typeof child.value === 'string' ? `'${child.value}'` : child.value
               let operator = this.getOperatorLabel(child.operator)
               if (child.dbField.type === 'Reference') {
@@ -302,9 +297,11 @@ export default {
 
                 if (child.operator === 'EQ') {
                   operator = 'REQ'
+                } else if (child.operator === 'NEQ') {
+                  operator = 'RNEQ'
                 }
               }
-              
+
               childStr = `RF.${operator}(formModel, '${child.field}', @optValue@)`
               childStr = childStr.replace('@optValue@', optValue)
             }
@@ -453,11 +450,11 @@ export default {
   align-items: stretch;
   gap: 8px;
   position: relative;
-  
+
   :deep(.el-card__body) {
     padding: 10px !important;
   }
-  
+
   :deep(.el-card__header) {
     padding: 10px !important;
   }

@@ -9,7 +9,7 @@ export const RuleFunctions = {
         return formModel[field] == value;
     },
     REQ: (formModel, field, idStr) => {  //引用类型等于需要特殊处理
-        return formModel[field] && idStr && formModel[field].id == idStr;
+        return formModel[field] && idStr && formModel[field].id === idStr;
     },
     DEQ: (formModel, field, value) => {
         return formModel[field] == value;
@@ -17,6 +17,13 @@ export const RuleFunctions = {
     NEQ: (formModel, field, value) => {
         return formModel[field] != value;
     },
+	RNEQ: (formModel, field, idStr) => {  //引用类型不等于需要特殊处理
+		if (!formModel[field]) {
+			return (idStr !== null) && (idStr !== undefined) && (idStr !== '');
+		} else {
+			return formModel[field].id !== idStr;
+		}
+	},
     GT: (formModel, field, value) => {
         return formModel[field] > value;
     },
