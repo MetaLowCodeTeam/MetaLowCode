@@ -368,6 +368,7 @@
                                             )
                                         "
                                         @confirm="conditionConfirm"
+                                        enableSql
                                     />
                                 </el-form-item>
                                 <el-form-item

@@ -512,10 +512,12 @@ let formModel = ref({
 	description: "",
 	rightValueMap: {},
 });
-
+// 过滤值
+let filterStr = ref("");
 // 打开弹框
 const openDialog = (row) => {
 	showRoleFormDialogFlag.value = true;
+    filterStr.value = null;
 	loadBlankRoleData(row);
 };
 
@@ -670,8 +672,7 @@ const columnCommand = (command, column) => {
 	);
 };
 
-// 过滤值
-let filterStr = ref("");
+
 let filterEntityList = ref([]);
 const queryEntity = () => {
 	if (!filterStr.value) {

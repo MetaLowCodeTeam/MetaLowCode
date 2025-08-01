@@ -110,6 +110,17 @@ const initFormConfig = async (key) => {
             clearCanvas();
         } else {
             let blankFormJson = JSON.parse(res.data[key]);
+            if(blankFormJson?.formConfig?.layoutType != 'PC') {
+                blankFormJson?.widgetList.forEach(el => {
+                    el.widgetList.forEach(subEl => {
+                        if(subEl.type == 'listTable') {
+                            subEl.options.setQueryPanel.isShow = false;
+                        }
+                    })
+                })
+            }
+            
+            console.log(blankFormJson,'blankFormJson')
             dbDesignerRef.value.setFormJson(blankFormJson);
             if (isMobile.value) {
                 dbDesignerRef.value.designer?.changeLayoutType("H5");

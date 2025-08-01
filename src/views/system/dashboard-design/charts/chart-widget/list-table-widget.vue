@@ -133,9 +133,6 @@ const initOption = async () => {
     // console.log(props.designer,'designer')
 	if (options) {
         showQueryPanel.value = options.setQueryPanel.isShow;
-        if(props.designer?.formConfig?.layoutType != 'PC') {
-            showQueryPanel.value = false;
-        }
         let { dsEnabled, dsName, dataSetName } = options;
         if(dsEnabled && dsName) {
             tableLoading.value = true;
