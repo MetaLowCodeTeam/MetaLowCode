@@ -185,6 +185,7 @@
 									placeholder="请选择字段"
 									class="field-select"
 									@change="onSelectFieldChange(nodeData)"
+                                    filterable
 								>
 									<el-option-group
 										v-for="group in fieldOptions"
@@ -320,6 +321,21 @@ export default {
 				"REFNL",
 				"REFNT",
 			],
+            // 非后端自定映射
+            nonBackendMapping: {
+                'Input': 'Text',
+                'Sign': 'Text',
+                'Rich-editor': 'Text',
+                'Textarea': 'TextArea',
+                'Number': 'Integer',
+                'Radio': 'Option',
+                'Check-tag': 'Option',
+                'Checkbox': 'Option',
+                'Select': 'Option',
+                'Time': 'DateTime',
+                'Time-range': 'DateTime',
+                'Date-range': 'Date',
+            }
 		};
 	},
 	computed: {
@@ -360,6 +376,18 @@ export default {
 				currentField = res?.data?.find(
 					(item) => item.name === fieldValue
 				);
+                if(!currentField){
+                    this.fieldOptions.forEach(group => {
+                        console.log(group,'group')
+                        group.options.forEach(item => {
+                            if(item.value === fieldValue){
+                                currentField = {...item};
+                                currentField.type = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+                                currentField.type = this.nonBackendMapping[currentField.type] || currentField.type;
+                            }
+                        })
+                    })
+                }
 				currentField.entity = selectField.entity;
 				nodeData.dbField = currentField;
 			}
@@ -378,6 +406,7 @@ export default {
 
 			// 8. 设置当前字段+条件显示的对应组件
 			this.getShowCom(nodeData);
+            this.onNodeChange();
 		},
 		// 获取条件op
 		getSelectOp(item) {

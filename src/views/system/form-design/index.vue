@@ -8,6 +8,7 @@
             @field-widget-used="handleFWU"
             @field-widget-removed="handleFWR"
             @form-json-updated="handleFJU"
+            :banned-widgets="['reference','reference-list','outer-reference','cascader-option']"
             class="visual-design"
         >
             <!-- 配置工具按钮 -->
@@ -37,7 +38,7 @@
                     :form-config="formConfig"
                     :entity="entity"
                     :entityLabel="entityLabel"
-                    @getFieldWidgets="getFieldWidgets"
+                    @initFormWidgets="initFormWidgets"
                 ></ActionRulesSetting>
             </template>
         </v-form-designer>
@@ -210,9 +211,12 @@ export default {
     },
     emits: ['initComplete'],
     methods: {
-        getFieldWidgets() {
+        initFormWidgets() {
             let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
+            let containerWidgets = this.$refs.vfDesigner.getContainerWidgets();
+            console.log(containerWidgets,'getContainerWidgets')
             this.$refs.actionRulesSetting.setFieldWidgets(fieldWidgets)
+            this.$refs.actionRulesSetting.setContainerWidgets(containerWidgets)
         },
         loadFieldListData() {
             getMDFieldList(this.entity)

@@ -4,7 +4,7 @@
 		:title="dialogConfig.title"
 		v-model="dialogConfig.isShow"
 		:show-close="true"
-		class="action-setting-drawer"
+		class="action-setting-drawer ds-setting-drawer"
 		append-to-body
 		direction="rtl"
 		:modal="true"
@@ -47,9 +47,10 @@
 							v-model="item.field"
 							placeholder="请选择"
 							@change="handleActionFieldChange(item)"
+                            filterable
 						>
 							<el-option-group
-								v-for="group in fieldOptions"
+								v-for="group in actionSelects"
 								:key="group.label"
 								:label="group.label"
 							>
@@ -132,6 +133,8 @@ const defaultActionRule = ref({
 
 // 测试数据
 const fieldOptions = ref([]);
+// 动作下拉数据
+const actionSelects = ref([]);
 // 动作类型
 const actionOptions = ref([
 	{ label: "显示", value: "show" },
@@ -165,7 +168,7 @@ const handleActionFieldChange = (item) => {
 };
 
 // 打开弹框
-const openDialog = (data, groupedFieldOptions) => {
+const openDialog = (data, groupedFieldOptions, containerWidgets) => {
 	let dialogData;
 	if (data) {
 		// 编辑时，保持原有数据
@@ -181,6 +184,13 @@ const openDialog = (data, groupedFieldOptions) => {
 	};
 	// 接收分组格式的字段选项
 	fieldOptions.value = [...groupedFieldOptions];
+    actionSelects.value = [...groupedFieldOptions];
+    if(containerWidgets.length > 0){
+        actionSelects.value.unshift({
+            label: '容器',
+            options: containerWidgets
+        })
+    }
 };
 
 const closeDialog = () => {

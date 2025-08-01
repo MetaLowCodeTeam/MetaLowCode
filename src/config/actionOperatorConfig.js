@@ -84,6 +84,9 @@ export default {
     Status: ["EQ", "NEQ", "NL", "NT"],
     File: ["NL", "NT"],
     Picture: ["NL", "NT"],
+    File: ["NL", "NT"],
+    Picture: ["NL", "NT"],
+    Cascader: ["LK", "NLK", "NL", "NT"],
     /**
      * 条件值组件
      */
@@ -128,6 +131,11 @@ export default {
             type: ["Reference", "ReferenceList"],
             referTo: [],
             op: ["EQ", "NEQ", "REF", "BTD"],
+        },
+        // 级联
+        cascader: {
+            type: ["Cascader"],
+            op: ["LK", "NLK"],
         },
     },
     getShowCom: function (item) {

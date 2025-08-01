@@ -66,9 +66,15 @@
 		@change="onNodeChange"
 		clearable
 		:type="nodeData.dbField.type == 'Date' ? 'date' : 'datetime'"
-		format="YYYY/MM/DD"
-		value-format="YYYY-MM-DD"
+		:format="nodeData.dbField.type == 'Date' ? 'YYYY/MM/DD' : 'YYYY/MM/DD HH:mm:ss'"
+		:value-format="nodeData.dbField.type == 'Date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'"
 	/>
+    <!-- 级联 -->
+    <el-cascader
+        v-if="nodeData.showComponent == 'cascader'"
+        v-model="nodeData.value"
+        :options="nodeData.dbField.optionData"
+    />
 	<el-dialog
 		title="请选择"
 		class="reference-dialog"

@@ -381,7 +381,7 @@ export default {
       }
     },
     onFilterChange() {
-      const filterData = this.getFilterData()
+      const filterData = this.getFilterData();
       this.$emit('update:modelValue', filterData)
       this.$emit('change', filterData)
     }

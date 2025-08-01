@@ -71,13 +71,15 @@ const props = defineProps({
 
 
 
-const emit = defineEmits(["getFieldWidgets"]);
+const emit = defineEmits(["initFormWidgets"]);
 
 // 动作规则
 const actionRules = ref([]);
 
 // 字段组件
 const fieldWidgets = ref([]);
+// 容器组件
+const containerWidgets = ref([]);
 
 // 操作按钮
 const actionButtons = ref([
@@ -173,12 +175,32 @@ const setFieldWidgets = async (widgets) => {
             value,
             type: item.field?.type,
             entity: item.field?.subFormName || props.entity,
-			subFormName: item.field?.subFormName
+			subFormName: item.field?.subFormName,
+            optionData: item.field?.options?.optionItems || []
         };
     });
     
     fieldWidgets.value = newWidgets;
 };
+
+// 设置容器组件
+const setContainerWidgets = async (widgets) => {
+    let newWidgets = widgets.map((item) => {
+        let label = null;
+        if(item.container.cols?.length > 0){
+            label = item.container.cols[0].options?.name;
+        }else{
+            label = item.container.options?.label;
+         }
+        return {
+            value: item.name,
+            label: label || item.name,
+        }
+    })
+    containerWidgets.value = newWidgets;
+}
+
+
 
 // 生成分组选项格式
 const getGroupedFieldOptions = () => {
@@ -196,6 +218,7 @@ const getGroupedFieldOptions = () => {
 				label: field.label,
 				type: field.type,
 				entity: entityKey,
+                optionData: field.optionData
 			});
 		}
 
@@ -215,29 +238,30 @@ const getGroupedFieldOptions = () => {
 };
 const actionRulesDialogRef = ref(null);
 const openDialog = (data) => {
-	emit("getFieldWidgets");
+	emit("initFormWidgets");
 	// 传递分组后的选项格式
 	const groupedOptions = getGroupedFieldOptions();
 	if (data && !data.actions) {
 		data.actions = []
 		delete data.action  //删除废弃属性action，改为actions
 	}
-	actionRulesDialogRef.value.openDialog(data, groupedOptions);
+	actionRulesDialogRef.value.openDialog(JSON.parse(JSON.stringify(data)), groupedOptions, containerWidgets.value);
 };
 
 const confirmActionRule = (data) => {
+    let newData = JSON.parse(JSON.stringify(data));
 	// 是编辑
-	if (data.guid) {
+	if (newData.guid) {
 		actionRules.value.forEach((item) => {
-			if (item.guid === data.guid) {
-				Object.assign(item, data);
+			if (item.guid === newData.guid) {
+				Object.assign(item, newData);
 			}
 			delete item.action  //删除废弃属性action
 		});
 	} else {
-		data.guid = getGuid();
-		delete data.action  //删除废弃属性action
-		actionRules.value.push(data);
+		newData.guid = getGuid();
+		delete newData.action  //删除废弃属性action
+		actionRules.value.push(newData);
 	}
 };
 
@@ -275,6 +299,7 @@ watch(props.formConfig, (newVal) => {
 
 defineExpose({
 	setFieldWidgets,
+    setContainerWidgets,
     getActionRules,
     getGroupedFieldOptions,
     getFieldByValue,
