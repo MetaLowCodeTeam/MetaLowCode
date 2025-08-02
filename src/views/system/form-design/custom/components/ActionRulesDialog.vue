@@ -153,7 +153,7 @@ const defaultAction = ref({
 
 // 添加动作
 const addAction = () => {
-	dialogConfig.value.data.actions.push(defaultAction.value);
+	dialogConfig.value.data.actions.push(JSON.parse(JSON.stringify(defaultAction.value)));
 };
 
 // 删除动作
