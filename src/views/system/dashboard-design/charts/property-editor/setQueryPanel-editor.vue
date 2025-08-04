@@ -43,14 +43,34 @@ const props = defineProps({
 
 let queryPanelConf = ref({})
 
-watch(() => props.optionModel.dataEntity, (newVal) => {
-    if(props.optionModel?.setQueryPanel?.queryPanelConf?.filter){
-        props.optionModel.setQueryPanel.queryPanelConf.filter.items = [];
+// 监听 dataEntity 变化，清空筛选条件
+watch(
+    () => props.optionModel.dataEntity,
+    (newVal, oldVal) => {
+        if (newVal !== oldVal && props.optionModel?.setQueryPanel?.queryPanelConf?.filter) {
+            props.optionModel.setQueryPanel.queryPanelConf.filter.items = [];
+        }
     }
-})
-onMounted(() => {
-    queryPanelConf.value = props.optionModel.setQueryPanel.queryPanelConf;
-})
+);
+
+// 监听 queryPanelConf 变化，同步本地数据
+watch(
+    () => props.optionModel.setQueryPanel?.queryPanelConf,
+    (newVal) => {
+        if (newVal) {
+            queryPanelConf.value = newVal;
+        }
+    },
+    {
+        immediate: true,
+        deep: true
+    }
+)
+
+// onMounted(() => {
+//     queryPanelConf.value = props.optionModel.setQueryPanel.queryPanelConf;
+//     console.log(queryPanelConf.value, '111')
+// })
 
 
 let entityName = ref("");

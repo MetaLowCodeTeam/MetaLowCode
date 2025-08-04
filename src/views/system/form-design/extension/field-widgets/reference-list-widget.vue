@@ -407,6 +407,10 @@ export default {
             } else {
                 this.filterConditions = null;
             }
+            // 如果有可视化排序配置
+            if(this.field.options?.sortField){
+                this.extraSort = `${this.field.options.sortField} ${this.field.options.sortOrder}`;
+            }
             this.showReferenceDialogFlag = true;
 		},
 

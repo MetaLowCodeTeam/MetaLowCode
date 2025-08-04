@@ -110,13 +110,13 @@
                                     />
                                 </div>
                                 <!-- 时间区间 -->
-                                <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime'">
+                                <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime'" style="line-height: 32px; height: 64px;">
                                     <el-date-picker
                                         size="default"
                                         v-model="item.value"
                                         type="datetime"
-                                        style="width: 100%;"
-                                        class="bw-start-icon mb-5"
+                                        style="width: 100%;height: 32px;"
+                                        class="bw-start-icon"
                                         :class="{'is-error':item.isError && !item.value}"
                                         format="YYYY/MM/DD HH:mm:ss"
                                         value-format="YYYY-MM-DD HH:mm:ss"
@@ -129,7 +129,7 @@
                                         size="default"
                                         v-model="item.value2"
                                         type="datetime"
-                                        style="width: 100%;"
+                                        style="width: 100%;height: 32px;margin-top: 5px;"
                                         class="bw-end-icon"
                                         :class="{'is-error':item.isError && !item.value2}"
                                         format="YYYY/MM/DD HH:mm:ss"
@@ -437,7 +437,7 @@
                                         unlink-panels
                                         start-placeholder="起"
                                         end-placeholder="止"
-                                        style="width: 90%;height: 32px;position: relative;top: 1px;"
+                                        style="width: 90%;height: 32px;"
                                         value-format="YYYY-MM-DD"
                                         @change="bwInputChange(item)"
                                     />
@@ -488,7 +488,7 @@
                                         date-format="YYYY/MM/DD ddd"
                                         time-format="A hh:mm:ss"
                                         value-format="YYYY-MM-DD HH:mm:ss"
-                                        style="width: 90%;height: 32px;position: relative;top: 1px;"
+                                        style="width: 90%;height: 32px;"
                                     />
                                 </div>
                                 

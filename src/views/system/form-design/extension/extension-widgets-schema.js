@@ -200,6 +200,12 @@ export const referenceListSchema = {
         treeCascadeFieldName: "",
         // 树数据源(实体名称)
         treeDataEntityName: "",
+        // 排序字段
+        sortField: "",
+        // 排序字段标签
+        sortFieldLabel: "",
+        // 排序顺序
+        sortOrder: "",
         // 过滤条件
         filterConditions: {},
 		//-------------------
