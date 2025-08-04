@@ -1245,13 +1245,15 @@ const getCustomButtonDisabled = (item, row) => {
         else {
             let { availableType, action } = item;
             let isDisabled = false;
-            
+            let rowLength = multipleSelection.value.length;
             if (action == 2 || action == 3) {
-                isDisabled = multipleSelection.value.length != 1;
-            } else if (action == 4) {
-                isDisabled = availableType == 1 
-                    ? multipleSelection.value.length != 1 
-                    : multipleSelection.value.length < 1;
+                isDisabled =  rowLength != 1;
+            }
+            if(action == 4 && availableType == 1 && rowLength != 1) {
+                isDisabled = true;
+            }
+            if(action == 4 && availableType == 2 && rowLength < 1) {
+                isDisabled = true;
             }
             return isDisabled;
         }

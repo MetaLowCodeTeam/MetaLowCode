@@ -33,6 +33,7 @@ export default function useCustomButtonConfig() {
         availableTypeList: [
             { label: "勾选一条数据", value: 1 },
             { label: "勾选多条数据", value: 2 },
+            { label: "无需勾选数据", value: 3 },
         ],
         // 默认自定义按钮配置
         defaultButtonConfig: {

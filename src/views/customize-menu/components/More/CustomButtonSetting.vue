@@ -324,28 +324,24 @@
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                                                    <el-col
-                            :span="24"
-                            v-if="isShowAvailableType"
-                        >
+                            <el-col
+                                :span="24"
+                                v-if="isShowAvailableType"
+                            >
                                 <el-form-item label="可用类型">
-                                    <el-radio-group
-                                        v-model="
-                                            currentButton.availableType
-                                        "
+                                    <el-select
+                                        v-model="currentButton.availableType"
+                                        placeholder="请选择"
+                                        style="width: 100%"
                                     >
-                                        <el-radio
+                                        <el-option
                                             v-for="item in availableTypeList"
                                             :key="item.value"
                                             :label="item.label"
                                             :value="item.value"
-                                            :disabled="
-                                                currentButton.action ==
-                                                    3 && item.value == 2 ||
-                                                currentButton.action == 2
-                                            "
+                                            :disabled="isOptionDisabled(item.value)"
                                         />
-                                    </el-radio-group>
+                                    </el-select>
                                 </el-form-item>
                             </el-col>
                             <!-- 过滤条件 -->
@@ -678,12 +674,22 @@ const isShowDisplayType = computed(() => {
 });
 
 const isShowAvailableType = computed(() => {
-	return currentButton.value?.action !== 1 && !['pcColumn', 'pcDetail', 'appDetail'].includes(currentTab.value);
+	return currentButton.value?.action !== 1 && !['pcColumn', 'pcDetail', 'appDetail', 'pcEdit'].includes(currentTab.value);
 });
 
 const isAppDetailOrList = computed(() => {
 	return ['appDetail', 'appList'].includes(currentTab.value);
 });
+
+// 判断选项是否禁用
+const isOptionDisabled = (itemValue) => {
+    let { action } = currentButton.value;
+    // 如果是编辑，禁用非勾选一条数据
+    if((action == 2 || action == 3) && itemValue !== 1) {
+        return true;
+    }
+	return false
+};
 
 const isShow = ref(false);
 

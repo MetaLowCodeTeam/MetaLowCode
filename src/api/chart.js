@@ -55,7 +55,7 @@ const formatItem = (list, target) => {
 }
 
 // 图表数据获取接口
-export async function queryChartData(formModel, type) {
+export async function queryChartData(formModel, type, otherFilters = []) {
     const { allEntityName } = storeToRefs(useCommonStore());
     // getEntityList().then(() => {
     let latitude = formatItem(formModel?.setDimensional.dimension || [], 'latitude');
@@ -77,7 +77,8 @@ export async function queryChartData(formModel, type) {
         latitude,
         longitude,
         noPrivileges: formModel?.setChartConf.useAllData,
-        filter: formModel.setChartFilter
+        filter: formModel.setChartFilter,
+        otherFilters
     };
     return http.post('/plugins/metaDataCube/chart/queryChartData', param)
     // });

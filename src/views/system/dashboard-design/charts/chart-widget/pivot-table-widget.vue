@@ -6,6 +6,16 @@
         :class="cutField?.options?.customClass"
     >
         <template v-if="!isNoData">
+            <div class="mb-10" v-if="showQueryPanel">
+                <CustomQueryPanel 
+                    :entityName="entity"
+                    :filter="cutField?.options?.setQueryPanel?.queryPanelConf?.filter"
+                    :forbidUserModifyField="cutField?.options?.setQueryPanel?.queryPanelConf?.forbidUserModifyField"
+                    :hideQueryMatchType="cutField?.options?.setQueryPanel?.queryPanelConf?.hideQueryMatchType"
+                    @onSearch="onSearch"
+                    @reset="onSearch"
+                />
+            </div>
             <div class="table-box" id="container" :style="{'height': tableBoxHeight}">
                 <SheetComponent
                     ref="s2"
@@ -30,9 +40,14 @@ import { onMounted, reactive, shallowRef, ref, watch, inject } from "vue";
 import "@antv/s2-vue/dist/style.min.css";
 import { queryChartData } from "@/api/chart";
 import useChartSourceData from "@/hooks/ChartSourceData";
+import CustomQueryPanel from "@/components/mlSetConditions/CustomQueryPanel.vue";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
+const { allEntityName } = storeToRefs(useCommonStore());
 const { getDataSourceData } = useChartSourceData();
 const getFormConfig = inject('getFormConfig');
-import { useRefreshDashboard } from '@/hooks/useRefreshDashboard';
+
 const adaptive = {
     width: true,
     height: true,
@@ -119,6 +134,10 @@ let paginationConf = reactive({
     pageSize: 20,
     total: 100,
 });
+
+
+
+
 watch(
     () => props.field,
     () => {
@@ -131,10 +150,22 @@ onMounted(() => {
     cutField.value = props.field;
     initOption();
 });
+let entity = ref("");
+let builtInFilter = ref({});
+let showQueryPanel = ref(false);
+const onSearch = (event) => {
+    builtInFilter.value = event;
+    getTableData();
+}
 
 const initOption = async () => {
     let { options } = cutField.value;
     if (options) {
+        entity.value =
+				options.dataEntity == 33
+					? "ApprovalTask"
+					: allEntityName.value[options.dataEntity];
+        showQueryPanel.value = options.setQueryPanel.isShow;
         // 汇总行
         let showSummary = options.setChartConf.showSummary;
         // 汇总列
@@ -196,7 +227,8 @@ const getTableData = async () => {
     if (!options) {
         return;
     }
-    let res = await queryChartData(options,type);
+    let otherFilters = showQueryPanel.value ? [builtInFilter.value] : [];
+    let res = await queryChartData(options,type,otherFilters);
     if (res && res.data) {
         // 元数据
         dataCfg.value.meta = res.data.meta;
@@ -238,7 +270,7 @@ const handleResize = () => {
         }
     }
     // 行高
-    let rowHeight = 32;
+    let rowHeight = 36;
     tableBoxHeight.value =
         // 数据行高
         (rowLine > 9 ? 10 : rowLine) * rowHeight +

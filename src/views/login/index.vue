@@ -7,7 +7,7 @@
                 <p>{{ appIntro }}</p>
             </div>
             <div class="login_adv__mask"></div>
-            <div class="login_adv__bottom">© {{ appPageFooter }} {{ appVer }}</div>
+            <div class="login_adv__bottom" v-if="appPageFooter || appVer">© {{ appPageFooter }} {{ appVer }}</div>
         </div>
         <div class="login_main">
             <div class="login-form">

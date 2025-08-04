@@ -20,16 +20,25 @@
                         </el-icon>新建字段
                     </el-button>
                 </AddField>
-                <el-button type="primary" link @click="saveDesign">
-                    <el-icon>
-                        <Finished />
-                    </el-icon>保存设计
-                </el-button>
-                <el-button type="primary" link @click="saveAsDesign" v-if="saveAsBtnShow">
-                    <el-icon>
-                        <Finished />
-                    </el-icon>另存为
-                </el-button>
+                <el-dropdown @command="handleSaveCommand">
+                    <el-button type="primary" link @click="saveDesign">
+                        <el-icon>
+                            <Finished />
+                        </el-icon>保存
+                        <el-icon class="el-icon--right">
+                            <ArrowDown />
+                        </el-icon>
+                    </el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item command="saveAs" v-if="saveAsBtnShow">
+                                <el-icon>
+                                    <Finished />
+                                </el-icon>另存为
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </template>
             <template #actionRules="{designer, formConfig}">
                 <ActionRulesSetting 
@@ -211,6 +220,13 @@ export default {
     },
     emits: ['initComplete'],
     methods: {
+        handleSaveCommand(command) {
+            if (command === 'save') {
+                this.saveDesign();
+            } else if (command === 'saveAs') {
+                this.saveAsDesign();
+            }
+        },
         initFormWidgets() {
             let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
             let containerWidgets = this.$refs.vfDesigner.getContainerWidgets(null, true);
