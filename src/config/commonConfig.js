@@ -3,7 +3,7 @@ export default [
     {
         label: "通用配置",
         code: "common",
-        confs: [
+        config: [
             {
                 label: "当前版本号",
                 key: "webVer",
@@ -105,7 +105,7 @@ export default [
     {
         label: "登录页配置",
         code: "loginPage",
-        confs: [
+        config: [
             {
                 label: "标题",
                 key: "appTitle",
@@ -166,7 +166,7 @@ export default [
     {
         label: "服务集成",
         code: "serviceIntegration",
-        confs: [
+        config: [
             {
                 label: "启用短信服务 (SUBMAIL)",
                 key: "smsOpen",
@@ -354,7 +354,7 @@ export default [
     {
         label: "钉钉集成",
         code: "dingTalkIntegration",
-        confs: [
+        config: [
             {
                 label: "启用钉钉服务",
                 key: "dingTalkOpen",
@@ -412,7 +412,7 @@ export default [
     {
         label: "企业微信集成",
         code: "wxWorkIntegration",
-        confs: [
+        config: [
             {
                 label: "启用企业微信服务",
                 key: "wxWorkOpen",
@@ -468,9 +468,60 @@ export default [
         ],
     },
     {
+        label: "飞书集成",
+        code: "larkIntegration",
+        config: [
+            {
+                label: "启用飞书服务",
+                key: "larkOpen",
+                type: "switch",
+            },
+            {
+                label: "APPID",
+                key: "larkappId",
+                type: "input",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "APPSECRET",
+                key: "larkappSecret",
+                type: "passwordInput",
+                required: true,
+                isError: false,
+            },
+            {
+                label: "应用首页地址",
+                subLabel: "请复制地址至飞书相关配置",
+                key: "larkHomeDir",
+                type: "input",
+                disabled: true,
+                needCopy: true,
+            },
+            {
+                label: "回调域名",
+                subLabel: "请复制地址至飞书相关配置",
+                key: "homeURL",
+                type: "input",
+                disabled: true,
+                needCopy: true,
+            },
+            {
+                label: "用户默认角色",
+                key: "larkNodeRole",
+                type: "mlSelectUser",
+            },
+            {
+                label: "自动同步飞书组织架构",
+                key: "nodeDep3",
+                type: "autoSync3",
+            },
+        ]
+    },
+    {
         label: "微信集成",
         code: "wxIntegration",
-        confs: [
+        config: [
             {
                 label: "启用小程序登录",
                 key: "wxMiniAppOpen",
@@ -495,7 +546,7 @@ export default [
     {
         label: "移动端样式配置",
         code: "mobileStyleConfig",
-        confs: [
+        config: [
             {
                 label: "列表展示样式",
                 key: "mobileTableStyleType",
@@ -535,7 +586,7 @@ export default [
     {
         label: "授权许可",
         code: 'authLicense',
-        confs: [
+        config: [
             {
                 label: "公司名称",
                 key: "companyName",

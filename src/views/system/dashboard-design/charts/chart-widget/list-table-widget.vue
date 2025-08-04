@@ -132,7 +132,7 @@ const initOption = async () => {
 	let { options } = cutField.value;
     // console.log(props.designer,'designer')
 	if (options) {
-        showQueryPanel.value = options.setQueryPanel.isShow;
+        showQueryPanel.value = options.setQueryPanel?.isShow;
         let { dsEnabled, dsName, dataSetName } = options;
         if(dsEnabled && dsName) {
             tableLoading.value = true;

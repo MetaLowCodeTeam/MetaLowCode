@@ -5,7 +5,7 @@
                 <template v-for="(card,cardInx) of confList" :key="cardInx">
                     <el-tab-pane :name="card.code" :label="card.label" v-if="!card.isHide">
                         <el-descriptions :border="true" :column="1">
-                            <template v-for="(item,inx) of card.confs" :key="inx">
+                            <template v-for="(item,inx) of card.config" :key="inx">
                                 <el-descriptions-item v-if="item.show ? item.show(confData) : true">
                                     <template #label>
                                         <div class="config-label">
@@ -112,6 +112,15 @@
                                             :disabled="!confData.wxWorkOpen"
                                         />
                                     </div>
+                                    <!-- 飞书集成用户选择框 -->
+                                    <div v-else-if="item.type == 'mlSelectUser' && item.key == 'larkNodeRole'">
+                                        <mlSelectUser
+                                            type="Role"
+                                            v-model="confData.larkNodeRole"
+                                            clearable
+                                            :disabled="!confData.larkOpen"
+                                        />
+                                    </div>
                                     <!-- 数字类型输入框 -->
                                     <div v-else-if="item.type == 'numInput'">
                                         <el-input-number
@@ -188,6 +197,39 @@
                                             <span class="ml-2">立即同步</span>
                                         </el-button>
                                     </div>
+                                    <!-- 立即同步 -->
+                                    <div v-else-if="item.type == 'autoSync3'">
+                                        <el-tooltip
+                                            popper-class="conmon-tooltip"
+                                            effect="dark"
+                                            :content="errorMessage3 || 'error'"
+                                            placement="top"
+                                            v-if="errorMessage3"
+                                            style="width: 300px;"
+                                        >
+                                            <el-button
+                                                :loading="autoSyncLoading3"
+                                                :disabled="isDisabled(card,item)"
+                                                @click="autoSync3"
+                                            >
+                                                <el-icon v-if="!autoSyncLoading3">
+                                                    <ElIconRefresh />
+                                                </el-icon>
+                                                <span class="ml-2">同步失败</span>
+                                            </el-button>
+                                        </el-tooltip>
+                                        <el-button
+                                            v-else
+                                            :loading="autoSyncLoading3"
+                                            :disabled="isDisabled(card,item)"
+                                            @click="autoSync3"
+                                        >
+                                            <el-icon v-if="!autoSyncLoading3">
+                                                <ElIconRefresh />
+                                            </el-icon>
+                                            <span class="ml-2">立即同步</span>
+                                        </el-button>
+                                    </div>
                                     <!-- 上传Logo -->
                                     <div class="upload-logo-div" v-else-if="item.type == 'uploadLogo'" style="width: 178px;">
                                         <ml-upload
@@ -253,6 +295,7 @@ import {
     updateSysSetting,
     getDingtalkSyncUser,
     getWxWorkSyncUser,
+    getLarkSyncUser,
     getHeavyTask,
 } from "@/api/setting";
 import commonConfig from "@/config/commonConfig";
@@ -294,6 +337,7 @@ let confData = reactive({
     nodeRole: [],
     homeDir: "",
     wxWorkNodeRole:[],
+    larkNodeRole: [],
 });
 // 加载状态
 let loading = ref(false);
@@ -358,6 +402,13 @@ let wxWorkFields = ref([
     "nodeDep2",
 ]);
 
+// 飞书字段
+let larkFields = ref([
+    "larkappId",
+    "larkappSecret",
+    "nodeDep3",
+]);
+
 // 微信字段
 let wxFields = ref([
     "wxMiniAppappId",
@@ -380,13 +431,13 @@ const initData = async () => {
             el.isHide = true;
         }
         if(pluginIdList.includes('metaTenant') && tenantId && el.code == "common"){
-            let newConfs = [];
-            el.confs.forEach(item => {
+            let newConfig = [];
+            el.config.forEach(item => {
                 if(commonConfKeys.value.includes(item.key)){
-                    newConfs.push(item);
+                    newConfig.push(item);
                 }
             })
-            el.confs = newConfs;
+            el.config = newConfig;
         }
         return el;
     });
@@ -403,6 +454,7 @@ const initData = async () => {
             dingTalkSetting,
             wxWorkSetting,
             wechatMiniAppSetting,
+            larkSetting,
          } =
             confData;
 
@@ -423,6 +475,9 @@ const initData = async () => {
         }
         if(!wechatMiniAppSetting){
             wechatMiniAppSetting = {};
+        }
+        if(!larkSetting){
+            larkSetting = {};
         }
         // 格式化短信
         confData.smsOpen = smsSetting?.openStatus;
@@ -480,6 +535,14 @@ const initData = async () => {
                 }
             }
         }
+        // 格式化飞书集成
+        confData.larkOpen = larkSetting?.openStatus;
+        for (const key in larkSetting) {
+            if (Object.hasOwnProperty.call(larkSetting, key)) {
+                const element = larkSetting[key];
+                confData["lark" + key] = element;
+            }
+        }
         // 格式化微信集成(小程序)
         confData.wxMiniAppOpen = wechatMiniAppSetting?.openStatus;
         for (const key in wechatMiniAppSetting) {
@@ -497,6 +560,8 @@ const initData = async () => {
         confData.homeDir = confData.homeURL + "/dingTalk/userLogin";
         // 初始化企业微信 应用首页地址
         confData.wxWorkHomeDir = confData.homeURL + "/wxWork/userLogin";
+        // 初始化飞书 应用首页地址
+        confData.larkHomeDir = confData.homeURL + "/lark/userLogin";
         // 如果存在租户ID
         if(tenantId){
             confData.homeDir += "/" + tenantId;
@@ -577,6 +642,14 @@ const isDisabled = (card, item) => {
         card.code == "wxWorkIntegration" &&
         !confData.wxWorkOpen &&
         wxWorkFields.value.includes(item.key)
+    ) {
+        return true;
+    }
+    // 如果是飞书集成 且 没有开启飞书服务
+    if (
+        card.code == "larkIntegration" &&
+        !confData.larkOpen &&
+        larkFields.value.includes(item.key)
     ) {
         return true;
     }
@@ -670,6 +743,24 @@ const onSubmit = async () => {
         };
     }
 
+    // 赋值飞书对象
+    if(!confData.larkSetting){
+        confData.larkSetting = {};
+    }
+    for (const key in confData.larkSetting) {
+        if (Object.hasOwnProperty.call(confData.larkSetting, key)) {
+            confData.larkSetting[key] = confData["lark" + key];
+        }
+    }
+
+    // 赋值飞书角色
+    confData.larkSetting.nodeRole = confData.larkNodeRole;
+
+
+    // 重新赋值飞书集成开关
+    confData.larkSetting.openStatus = confData.larkOpen;
+    
+
     // 赋值微信对象
     for (const key in confData.wechatMiniAppSetting) {
         if (Object.hasOwnProperty.call(confData.wechatMiniAppSetting, key)) {
@@ -709,8 +800,8 @@ const checkOnSave = () => {
     for (let index = 0; index < confList.value.length; index++) {
         const el = confList.value[index];
         // 循环当前tab下的字段集
-        for (let subInx = 0; subInx < el.confs.length; subInx++) {
-            const subEl = el.confs[subInx];
+        for (let subInx = 0; subInx < el.config.length; subInx++) {
+            const subEl = el.config[subInx];
             if (
                 subEl.validation == "url" &&
                 confData[subEl.key] &&
@@ -811,6 +902,18 @@ const checkOnSave = () => {
                 !confData[subEl.key] &&
                 wxWorkFields.value.includes(subEl.key) &&
                 confData.wxWorkOpen
+            ) {
+                subEl.isError = true;
+                activeName.value = el.code;
+                ElMessage.error(MsgType[subEl.type] + subEl.label);
+                return false;
+            }
+            // 如果字段是必填的，且该字段没有值 并且该字段属于飞书集成
+            if (
+                subEl.required &&
+                !confData[subEl.key] &&
+                larkFields.value.includes(subEl.key) &&
+                confData.larkOpen
             ) {
                 subEl.isError = true;
                 activeName.value = el.code;
@@ -937,13 +1040,53 @@ const getHeavyTaskApi2 = async () => {
     }
 };
 
-// 
+// 飞书同步
+let autoSyncLoading3 = ref(false);
+let cutTaskId3 = ref();
+let isFinish3 = ref(false);
+let errorMessage3 = ref("");
+
+const autoSync3 = async () => {
+    autoSyncLoading3.value = true;
+    let defaultRole = confData.larkNodeRole[0] ? confData.larkNodeRole[0].id : null;
+    let res = await getLarkSyncUser(defaultRole);
+    if (res && res.data) {
+        cutTaskId3.value = res.data;
+        getHeavyTaskApi3();
+    } else {
+        autoSyncLoading3.value = false;
+    }
+};
+
+const getHeavyTaskApi3 = async () => {
+    let taskRes3 = await getHeavyTask(cutTaskId3.value);
+    if (taskRes3 && taskRes3.data) {
+        isFinish3.value = taskRes3.data.finish;
+        errorMessage3.value = taskRes3.data.errorMessage;
+        if (!isFinish3.value) {
+            setTimeout(() => {
+                getHeavyTaskApi3();
+            }, 5000);
+        }
+    } else {
+        autoSyncLoading3.value = true;
+    }
+    if (isFinish3.value) {
+        autoSyncLoading3.value = false;
+        if (errorMessage3.value) {
+            ElMessage.error("同步失败");
+        } else {
+            ElMessage.success("同步成功");
+        }
+    }
+};
+
 
 // 数据自动备份
 const openAutoBackup = () => {
     return new Promise((resolve) => {
         if(!confData.databaseDumpPath){
-            confList.value[0].confs[8].isError = true
+            confList.value[0].config[8].isError = true
             ElMessage.error("请填写备份命令地址")
             return resolve(false)
         }

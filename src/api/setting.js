@@ -45,6 +45,14 @@ export function getWxWorkSyncUser(defaultRole) {
     return http.get('/organizationSync/wxWorkSyncUser', { defaultRole })
 }
 
+/**
+ * 飞书集成
+ */
+// -- 同步飞书组织架构
+export function getLarkSyncUser(defaultRole) {
+    return http.get('/organizationSync/larkSyncUser', { defaultRole })
+}
+
 
 // -- 异步任务状态
 export function getHeavyTask(taskId) {

@@ -8,6 +8,7 @@
                 <el-radio :value="2">外部人员</el-radio>
                 <el-radio :value="3" :disabled="!querySendState.dingState">钉钉机器人</el-radio>
                 <el-radio :value="4" :disabled="!querySendState.wxWorkState">企业微信机器人</el-radio>
+                <el-radio :value="6" :disabled="!querySendState.larkState">飞书机器人</el-radio>
             </el-radio-group>
             <div class="w-100 mt-5">
                 <mlSelectUser
@@ -53,6 +54,13 @@
             <el-input
                 v-model="trigger.actionContent.wxWorkRobotUrl"
                 placeholder="企业微信机器人Webhook地址"
+                clearable
+            ></el-input>
+        </el-form-item>
+        <el-form-item class="mt-20" label="Webhook地址" v-if="trigger.actionContent.userType == 6">
+            <el-input
+                v-model="trigger.actionContent.larkRobotUrl"
+                placeholder="飞书机器人Webhook地址"
                 clearable
             ></el-input>
         </el-form-item>
@@ -155,6 +163,11 @@ let typeList = ref([
         label: "企业微信通知",
         value: 32,
         code: "wxWorkState",
+    },
+    {
+        label: "飞书通知",
+        value: 64,
+        code: "larkState",
     },
 ]);
 // 选中集合

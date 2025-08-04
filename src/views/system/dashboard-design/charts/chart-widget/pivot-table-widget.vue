@@ -165,7 +165,7 @@ const initOption = async () => {
 				options.dataEntity == 33
 					? "ApprovalTask"
 					: allEntityName.value[options.dataEntity];
-        showQueryPanel.value = options.setQueryPanel.isShow;
+        showQueryPanel.value = options.setQueryPanel?.isShow;
         // 汇总行
         let showSummary = options.setChartConf.showSummary;
         // 汇总列
