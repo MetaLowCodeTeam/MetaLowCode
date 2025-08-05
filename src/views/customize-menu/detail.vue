@@ -666,7 +666,6 @@ const getLayoutList = async () => {
         }
         // 自定义按钮
         customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetail');
-        console.log(customButtonList.value,'customButtonList.value')
         // 先做权限和hide等所有显示逻辑过滤
         customButtonList.value.forEach(btn => {
             // 权限判断

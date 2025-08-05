@@ -8,8 +8,8 @@
 </style>
 <template>
 	<!-- 添加自定义标签 -->
-	<mlDialog v-model="isShow" title="自定义标签设置" width="500" append-to-body>
-		<div class="ml-dialog-content">
+	<mlDialog v-model="isShow" title="自定义标签设置" width="500" append-to-body :showClose="!loading">
+		<div class="ml-dialog-content" v-loading="loading">
 			<div class="item-box">
 				<div class="item-title">选择实体</div>
 				<el-select
@@ -40,10 +40,32 @@
 					placeholder="请输入过滤条件，如：关联id = {主实体id字段}"
 				/>
 			</div>
+            <div class="item-box mt-10">
+                <div class="item-title">
+                    <el-checkbox v-model="enableCustomQuery">使用自定义查询接口</el-checkbox>
+                </div>
+            </div>
+            <div class="item-box mt-10" v-if="enableCustomQuery">
+                <el-select 
+                    v-model="customQueryUrl" 
+                    placeholder="请输入自定义查询接口" 
+                    clearable
+                    filterable
+                    allow-create
+                >
+                    <el-option 
+                        v-for="item in customQueryList" 
+                        :key="item.methodUrl" 
+                        :label="item.methodName" 
+                        :value="item.methodUrl"
+                    ></el-option>
+                </el-select>
+                <!-- <div class="item-title">自定义查询接口</div> -->
+            </div>
 		</div>
         <template #footer>
-            <el-button @click="isShow = false">取消</el-button>
-            <el-button type="primary" @click="confirm">确认</el-button>
+            <el-button @click="isShow = false" :loading="loading">取消</el-button>
+            <el-button type="primary" @click="confirm" :loading="loading">确认</el-button>
         </template>
 	</mlDialog>
 </template>
@@ -53,18 +75,25 @@ import { ref } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
 import { useRouter } from 'vue-router';
+import { queryCustomListQuery } from "@/api/advancedApi";
 const router = useRouter();
 const { queryAllEntityList } = useCommonStore();
 const emit = defineEmits(["confirm"]);
 
 let isShow = ref(false);
+let loading = ref(false)
 
 let entityList = ref([]);
 
 let curtEntity = ref({});
 let filterEasySql = ref("");
 let selectEntityError = ref(false);
-const openDialog = () => {
+// 是否使用自定义查询接口
+let enableCustomQuery = ref(false);
+let customQueryList = ref([]);
+let customQueryUrl = ref("");
+
+const openDialog = async () => {
 	isShow.value = true;
 	entityList.value = queryAllEntityList(true, router.currentRoute.value.query.appAbbr).map((el) => {
 		return {
@@ -76,6 +105,13 @@ const openDialog = () => {
 		};
 	});
     filterEasySql.value = "";
+    customQueryList.value = [];
+    loading.value = true;
+    let res = await queryCustomListQuery();
+    if(res?.code == 200) {
+        customQueryList.value = res.data;
+    }
+    loading.value = false;
 };
 
 const confirm = () => {
@@ -85,6 +121,8 @@ const confirm = () => {
         return
     }
     curtEntity.value.filterEasySql = filterEasySql.value;
+    curtEntity.value.customQueryUrl = customQueryUrl.value;
+    curtEntity.value.enableCustomQuery = enableCustomQuery.value;
     emit("confirm", curtEntity.value);
     curtEntity.value = {};
     isShow.value = false;

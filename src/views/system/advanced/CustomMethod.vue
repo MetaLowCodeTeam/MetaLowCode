@@ -5,7 +5,7 @@
 		mainEntity="CustomMethod"
 		fieldsList="methodName,methodUrl,methodType,methodConfig,isDisabled"
 		:sortFields="sortFields"
-		fieldName="methodName"
+		fieldName="methodName,methodUrl"
 		:tableColumn="tableColumn"
 		ref="mlSingleListRef"
 		queryUrl="/cm/listQuery"
