@@ -142,6 +142,14 @@ const onSearch = (command) => {
                 el.value = idFieldName;
             }
         }
+        if(el.type == "DateTime" || el.type == "Date"){
+            if(el.value == 0) {
+                el.value = null;
+            }
+            if(el.value2 == 0) {
+                el.value2 = null;
+            }
+        }
     })
 	newCompConditions.items = tempItems.filter(
 		(el) =>

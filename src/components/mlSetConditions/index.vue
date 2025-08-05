@@ -957,7 +957,6 @@ export default {
                 return;
             }
             let condition = this.$CloneDeep(this.fieldList[0]);
-            // console.log(condition,'condition')
             this.fieldChange(condition);
             this.conditionConf.items.push(condition);
         },
@@ -1053,6 +1052,14 @@ export default {
                 }
                 if(el.type == 'Cascader') {
                     el.value = JSON.stringify(el.value);
+                }
+                if(el.type == "DateTime" || el.type == "Date"){
+                    if(el.value == 0) {
+                        el.value = null;
+                    }
+                    if(el.value2 == 0) {
+                        el.value2 = null;
+                    }
                 }
             })
             // 如果不需要进行条件校验
