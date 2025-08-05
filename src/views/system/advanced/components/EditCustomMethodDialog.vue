@@ -38,7 +38,7 @@
 						<el-form-item label="方法地址" prop="methodUrl">
 							<el-input v-model="formData.methodUrl" clearable>
 								<template #prepend>
-                                    {{ methodUrlPrefix[formData.methodType] }}
+                                    {{ methodUrlPrefix[formData.methodType?.value || formData.methodType] }}
                                 </template>
 							</el-input>
 						</el-form-item>
@@ -173,7 +173,7 @@ public class CustomListQueryDemo implements CommonScriptBody {
         //通过ContextAwareHolder.loadContextAware()可以获取到业务需要的bean
         CrudService crudService = ContextAwareHolder.loadContextAware().getBean(CrudService.class);
         //建议手动设置查询实体，防止非法请求通过此接口查询其他实体数据
-
+        requestBody.setMainEntity("实体名称");
         //查询示例
         if(true){ //调用crudService方法查询，会根据当前用户权限查询数据
             //前端传入的查询参数封装
