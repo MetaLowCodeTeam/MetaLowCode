@@ -60,13 +60,12 @@
 					</el-radio-group>
 				</el-form-item>
                 <el-form-item label="开启选项数据同步" >
-                    <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
+                    <el-checkbox v-model="checkedSync"/>
                 </el-form-item>
                 <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
                     <el-select
                         v-model="useFieldSync"
                         placeholder="选择字段"
-                        :disabled="fieldState !== 1"
                         filterable
                     >
                         <el-option
