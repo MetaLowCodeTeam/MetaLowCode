@@ -12,6 +12,7 @@
                     :filter="cutField?.options?.setQueryPanel?.queryPanelConf?.filter"
                     :forbidUserModifyField="cutField?.options?.setQueryPanel?.queryPanelConf?.forbidUserModifyField"
                     :hideQueryMatchType="cutField?.options?.setQueryPanel?.queryPanelConf?.hideQueryMatchType"
+                    :labelPosition="cutField?.options?.setQueryPanel?.queryPanelConf?.labelPosition"
                     @onSearch="onSearch"
                     @reset="onSearch"
                 />

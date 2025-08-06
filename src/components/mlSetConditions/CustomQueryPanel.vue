@@ -39,6 +39,8 @@
 				displayedComp
 				:forbidUserModifyField="forbidUserModifyField"
 				:hideQueryMatchType="hideQueryMatchType"
+                :labelPosition="labelPosition"
+                @onSaveAlias="onSaveAlias"
                 v-if="compConditions.items.length > 0"
 			/>
 		</div>
@@ -78,6 +80,8 @@ const props = defineProps({
     forbidUserModifyField: { type: Boolean, default: false },
     // 隐藏查询匹配类型
     hideQueryMatchType: { type: Boolean, default: false },
+    // 标签位置
+    labelPosition: { type: Number, default: 3 },
     // 查询条件
     filter: { type: Object, default: () => ({}) },
 });
@@ -171,4 +175,5 @@ const onReset = () => {
 	});
 	emit("reset", newCompConditions);
 };
+
 </script>

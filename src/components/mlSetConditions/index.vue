@@ -347,9 +347,27 @@
                     >
                         <el-row :gutter="5">
                             <!-- 字段名 -->
-                            <el-col :span="9" class="text-right" v-if="forbidUserModifyField">
-                                <div class="field-label yichu">
-                                    {{ getFieldLabel(item.fieldName) }}
+                            <el-col :span="9" v-if="forbidUserModifyField" :style="{textAlign: labelPosition == 1 ? 'left' : labelPosition == 2 ? 'center' : 'right'}">
+                                <div class="field-label yichu" v-if="!item.showEditAlias">
+                                    {{ item.aliasLabel || getFieldLabel(item.fieldName) }}
+                                    <el-button 
+                                        circle 
+                                        icon="EditPen" 
+                                        class="edit-alias-btn"
+                                        size="small"
+                                        @click="editAlias(item)"
+                                    ></el-button>
+                                </div>
+                                <div class="field-label" v-else>
+                                    <el-input 
+                                        v-model="item.aliasLabel" 
+                                        size="default" 
+                                        @blur="saveAlias(item)"
+                                        @keyup.enter="saveAlias(item)"
+                                        placeholder="请输入别名"
+                                        clearable
+                                    >
+                                    </el-input>
                                 </div>
                             </el-col>
                             <el-col :span="9" v-else>
@@ -712,6 +730,8 @@ export default {
         displayedComp: { type: Boolean, default: false },
         // 禁止用户修改字段
         forbidUserModifyField: { type: Boolean, default: false },
+        // 标签位置
+        labelPosition: { type: Number, default: 3 },
         // 隐藏查询匹配类型
         hideQueryMatchType: { type: Boolean, default: false },
         // 是否开启SQL
@@ -848,6 +868,7 @@ export default {
                         label: el.label,
                         optionData: el.optionData,
                         refLabel: "", 
+                        showEditAlias: false,
                     };
                 });
                 // 初始化已有字段
@@ -1113,6 +1134,15 @@ export default {
                 item.value2 = "";
             }
         },
+        // 编辑别名
+        editAlias(item) {
+            item.showEditAlias = true;
+        },
+        // 保存别名
+        saveAlias(item) {
+            item.showEditAlias = false;
+            this.$emit("onSaveAlias");
+        },
     },
 };
 </script>
@@ -1177,5 +1207,17 @@ export default {
     color: #303030;
     height: 32px;
     line-height: 32px;
+    position: relative;
+    .edit-alias-btn {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 4px;
+    }
+    &:hover {
+        .edit-alias-btn {
+            display: block;
+        }
+    }
 }
 </style>

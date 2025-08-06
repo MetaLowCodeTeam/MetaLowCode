@@ -27,8 +27,13 @@ onMounted(() => {
 	}
 });
 const renderedHandler = () => {
-	console.log("渲染完成");
-	ElMessage.success("渲染完成");
+    if(query.value.isPrint){
+        setTimeout(() => {
+            window.print();
+        }, 1000) 
+    }else {
+        ElMessage.success("渲染完成");
+    }
 };
 const errorHandler = () => {
 	console.log("渲染失败");

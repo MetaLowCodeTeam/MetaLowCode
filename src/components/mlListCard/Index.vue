@@ -625,6 +625,7 @@ let topSearchConfig = ref({
     isDefaultQueryPanel: true,
     forbidUserModifyField: false,
     hideQueryMatchType: false,
+    labelPosition: 3,
     filter: {
         equation: "AND",
 	    items: [],
@@ -651,6 +652,7 @@ const changeQueryPanel = async (target) => {
             filter: topSearchConfig.value.filter,
             forbidUserModifyField: topSearchConfig.value.forbidUserModifyField,
             hideQueryMatchType: topSearchConfig.value.hideQueryMatchType,
+            labelPosition: topSearchConfig.value.labelPosition,
         }),
 		entityCode: entity.value.code,
 	};
