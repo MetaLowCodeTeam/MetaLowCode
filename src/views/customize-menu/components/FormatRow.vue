@@ -46,7 +46,7 @@
         <div
             class="text-ellipsis"
             v-else-if="column.fieldType == 'Money'"
-        >{{ numberToCurrencyNo(row[column.fieldName]) }}</div>
+        >{{ getPreviewNum(true, 2, true, row[column.fieldName]) }}</div>
         <div
             class="text-ellipsis"
             v-else-if="column.fieldType == 'Cascader'"
@@ -123,7 +123,10 @@
                     fit="scale-down"
                 />
             </span>
-            <span v-else>{{ row[column.fieldName] }} </span>
+            <span v-else-if="column.thousandColumnSeparator">
+                {{ getPreviewNum(false, false, true, row[column.fieldName]) }}
+            </span>
+            <span v-else>{{ row[column.fieldName] }}</span>
         </div>
     </div>
 
@@ -135,7 +138,7 @@ import { ref } from "vue";
 import TableColumnCustomRender from "./table-column-custom-render";
 // 文件下载和预览
 import FileDownOrPreview from "@/components/mlOfficePreview/FileDownOrPreview.vue";
-
+import { getPreviewNum } from "@/utils/util";
 const props = defineProps({
     row: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
@@ -180,32 +183,13 @@ const openFilesDialog = (list) => {
     FileDownOrPreviewRef.value?.openDialog(list);
 };
 
-const numberToCurrencyNo = (value) => {
-    if (!value) return 0;
-    // 获取整数部分
-    const intPart = Math.trunc(value);
-    // 整数部分处理，增加,
-    const intPartFormat = intPart
-        .toString()
-        .replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
-    // 预定义小数部分
-    let floatPart = "";
-    // 将数值截取为小数部分和整数部分
-    const valueArray = value.toString().split(".");
-    if (valueArray.length === 2) {
-        // 有小数部分
-        floatPart = valueArray[1].toString(); // 取得小数部分
-        return intPartFormat + "." + floatPart;
-    }
-    return intPartFormat + floatPart;
-};
+
 
 
 // 自定义渲染
 const getColumnRender = (column)=> {
     return new Function('h', 'params', 'components', column.columnRender)
 }
-
 
 </script>
 <style lang='scss' scoped>

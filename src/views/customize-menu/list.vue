@@ -620,7 +620,7 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
-import { mlShortcutkeys, formatModelName } from "@/utils/util";
+import { mlShortcutkeys, formatModelName, getPreviewNum } from "@/utils/util";
 // 自定义按钮
 import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 const {
@@ -2206,10 +2206,14 @@ const getSummaries = (param) => {
             sums[index] = "统计";
             return;
         }
-        // property
         if (formatterStatistics.value[column.property]) {
             let { label, value } = formatterStatistics.value[column.property];
-            sums[index] = (label ? label + "：" : "") + (value || 0);
+            let valueStr = value || 0;
+            let sourceColumn = tableColumn.value.find(item => item.fieldName == column.property);
+            if(sourceColumn?.thousandStatisticSeparator){
+                valueStr = getPreviewNum(false, false, true, valueStr);
+            }
+            sums[index] = (label ? label + "：" : "") + valueStr;
         }
     });
 
