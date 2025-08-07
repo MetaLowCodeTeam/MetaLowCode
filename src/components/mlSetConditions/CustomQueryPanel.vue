@@ -40,7 +40,6 @@
 				:forbidUserModifyField="forbidUserModifyField"
 				:hideQueryMatchType="hideQueryMatchType"
                 :labelPosition="labelPosition"
-                @onSaveAlias="onSaveAlias"
                 v-if="compConditions.items.length > 0"
 			/>
 		</div>
