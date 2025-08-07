@@ -33,21 +33,21 @@ const routes = [
     },
     {
         path: appPath + "luckysheet",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/luckysheet.vue'),
+        component: () => import(/* webpackChunkName: "report-templates" */ '@/views/system/report-templates/luckysheet.vue'),
         meta: {
             title: "表单模板设计"
         }
     },
     {
         path: appPath + "dashboard-design",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/dashboard-design/index.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-design" */ '@/views/system/dashboard-design/index.vue'),
         meta: {
             title: "图表设计"
         }
     },
     {
         path: appPath + "Printer",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/customize-menu/components/Printer.vue'),
+        component: () => import(/* webpackChunkName: "printer" */ '@/views/customize-menu/components/Printer.vue'),
         meta: {
             title: "打印"
         }
@@ -55,7 +55,7 @@ const routes = [
     // 批量打印
     {
         path: appPath + "BatchPrinting",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/customize-menu/components/BatchPrinting.vue'),
+        component: () => import(/* webpackChunkName: "batch-printing" */ '@/views/customize-menu/components/BatchPrinting.vue'),
         meta: {
             title: "批量打印",
             icon: "el-icon-printer"
@@ -64,7 +64,7 @@ const routes = [
     // 填写表单
     {
         path: appPath + "inReport",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/report-templates/in-report.vue'),
+        component: () => import(/* webpackChunkName: "report-templates" */ '@/views/system/report-templates/in-report.vue'),
         name: "InReport",
         meta: {
             title: "填写表单",
@@ -73,7 +73,7 @@ const routes = [
     // 设计应用
     {
         path: appPath + "designApp",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/DesignApp.vue'),
+        component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/DesignApp.vue'),
         name: "DesignApp",
         redirect: { name: "DesignEntity" },
         meta: {
@@ -83,7 +83,7 @@ const routes = [
         children: [
             {
                 path: "designEntity",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignEntity",
                 meta: {
                     title: t("appManager.1400"),
@@ -93,7 +93,7 @@ const routes = [
             },
             {
                 path: "designSingleOption",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignSingleOption",
                 meta: {
                     title: t("appManager.1401"),
@@ -102,7 +102,7 @@ const routes = [
             },
             {
                 path: "designCodeSingleOption",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignCodeSingleOption",
                 meta: {
                     title: t("appManager.1409"),
@@ -111,7 +111,7 @@ const routes = [
             },
             {
                 path: "designMultipleOption",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignMultipleOption",
                 meta: {
                     title: t("appManager.1402"),
@@ -121,7 +121,7 @@ const routes = [
             // 审批流程
             {
                 path: "designApprovalProcess",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignApprovalProcess",
                 meta: {
                     title: t("appManager.1403"),
@@ -132,7 +132,7 @@ const routes = [
             {
                 path: appPath + "design-process-detail",
                 name: 'DesignProcessDetail',
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 hidden: true,
                 meta: { 
                     title: t('route.20403'), 
@@ -143,7 +143,7 @@ const routes = [
             // 触发器
             {
                 path: "designTrigger",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignTrigger",
                 meta: {
                     title: t("appManager.1404"),
@@ -153,7 +153,7 @@ const routes = [
             // 触发器详情
             {
                 path: appPath + "design-trigger-detail",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignTriggerDetail",
                 hidden: true,
                 meta: {
@@ -164,7 +164,7 @@ const routes = [
             },
             {
                 path: "designDashboard",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignDashboard",
                 meta: {
                     title: t("appManager.1405"),
@@ -173,7 +173,7 @@ const routes = [
             },
             {
                 path: "designReportDesign",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignReportDesign",
                 meta: {
                     title: t("appManager.1406"),
@@ -182,7 +182,7 @@ const routes = [
             },
             {
                 path: "designExternalForm",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignExternalForm",
                 meta: {
                     title: t("appManager.1407"),
@@ -191,7 +191,7 @@ const routes = [
             },
             {
                 path: "designMenuNavigation",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "DesignMenuNavigation",
                 meta: {
                     title: t("appManager.1408"),
@@ -201,7 +201,7 @@ const routes = [
             // 设计实体
             {
                 path:"appDesignEntity",
-                component: () => import(/* webpackChunkName: "luckysheet" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
+                component: () => import(/* webpackChunkName: "app-manager" */ '@/views/system/app-manager/components/DesignRouterView.vue'),
                 name: "AppDesignEntity",
                 meta: {
                     title: t("appManager.1011"),
@@ -214,7 +214,7 @@ const routes = [
     // 文件预览
     {
         path: appPath + "filePreview",
-        component: () => import(/* webpackChunkName: "luckysheet" */ '@/components/mlOfficePreview/Examples.vue'),
+        component: () => import(/* webpackChunkName: "office-preview" */ '@/components/mlOfficePreview/Examples.vue'),
         name: "FilePreview",
         meta: {
             title: "文件预览"

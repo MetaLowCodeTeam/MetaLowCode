@@ -36,9 +36,34 @@
 </template>
 
 <script setup>
-import { SheetComponent } from "@antv/s2-vue";
-import { onMounted, reactive, shallowRef, ref, watch, inject } from "vue";
-import "@antv/s2-vue/dist/style.min.css";
+import { onMounted, reactive, shallowRef, ref, watch, inject, defineAsyncComponent } from "vue";
+
+// 异步加载透视表组件
+const SheetComponent = defineAsyncComponent({
+    loader: async () => {
+        // 同时加载样式和组件
+        await import('@antv/s2-vue/dist/style.min.css');
+        const { SheetComponent } = await import('@antv/s2-vue');
+        return SheetComponent;
+    },
+    loadingComponent: {
+        template: `
+            <div v-loading="true" element-loading-text="正在加载透视表组件..." 
+                 style="height: 200px; display: flex; align-items: center; justify-content: center; border: 1px dashed #d9d9d9; border-radius: 4px;">
+                <span style="color: #999;">透视表加载中...</span>
+            </div>
+        `
+    },
+    errorComponent: {
+        template: `
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; border: 1px dashed #ff4d4f; border-radius: 4px;">
+                <el-alert title="透视表组件加载失败" type="error" description="请检查网络连接后重试" show-icon />
+            </div>
+        `
+    },
+    delay: 200,
+    timeout: 30000
+});
 import { queryChartData } from "@/api/chart";
 import useChartSourceData from "@/hooks/ChartSourceData";
 import CustomQueryPanel from "@/components/mlSetConditions/CustomQueryPanel.vue";

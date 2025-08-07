@@ -5,7 +5,7 @@
         :element-loading-text="loadingText"
         class="w-100"
     >
-        <MlReport
+        <LazyMlReport
             v-if="isLoad"
             @onSave="onSave"
             :reportName="reportName"
@@ -17,7 +17,30 @@
 </template>
 
 <script setup>
-import { MlReport } from "vue3-manner-report";
+import { defineAsyncComponent } from 'vue';
+
+// 直接定义异步报表组件
+const LazyMlReport = defineAsyncComponent({
+    loader: async () => {
+        // 同时加载样式和组件
+        await import('vue3-manner-report/lib/style.css');
+        const { MlReport } = await import('vue3-manner-report');
+        return MlReport;
+    },
+    loadingComponent: {
+        template: `
+            <div v-loading="true" element-loading-text="正在加载报表组件..." style="height: 200px; display: flex; align-items: center; justify-content: center;">
+            </div>
+        `
+    },
+    errorComponent: {
+        template: `
+            <el-alert title="报表组件加载失败" type="error" description="请检查网络连接后重试" show-icon />
+        `
+    },
+    delay: 200,
+    timeout: 30000
+});
 import "./luckysheet.scss";
 import http from "@/utils/request";
 import { saveRecord } from "@/api/crud";

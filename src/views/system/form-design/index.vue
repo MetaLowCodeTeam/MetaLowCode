@@ -131,6 +131,7 @@ import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import MlShareTo from "@/components/mlShareTo/index.vue";
 import AddField from "@/components/mlFormDesignComp/AddField.vue";
 import ActionRulesSetting from "./custom/ActionRulesSetting.vue";
+
 export default {
     name: "form-design",
     components: {

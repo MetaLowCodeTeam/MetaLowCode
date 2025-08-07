@@ -16,7 +16,36 @@ export default ({
         output: {
             // 分包
             manualChunks(id) {
-                if (id.includes("node_modules")) { return id.toString().split("node_modules/")[1].split("/")[0].toString() }
+                if (id.includes("node_modules")) {
+                    const packageName = id.toString().split("node_modules/")[1].split("/")[0].toString();
+                    
+                    // 将vue3-manner-report单独打包
+                    if (packageName === 'vue3-manner-report') {
+                        return 'vue3-manner-report';
+                    }
+                    
+                    // 将透视表组件单独打包
+                    if (packageName.includes('@antv')) {
+                        return 'antv-charts';
+                    }
+                    
+                    // 将大型UI库单独打包
+                    if (packageName === 'element-plus') {
+                        return 'element-plus';
+                    }
+                    
+                    // 将图表库单独打包
+                    if (packageName === 'echarts' || packageName === 'echarts-liquidfill') {
+                        return 'charts';
+                    }
+                    
+                    // 将Vue相关包放在一起
+                    if (['vue', 'vue-router', 'pinia', 'vue-i18n'].includes(packageName)) {
+                        return 'vue-vendor';
+                    }
+                    
+                    return packageName;
+                }
             },
             // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
             // globals: {
