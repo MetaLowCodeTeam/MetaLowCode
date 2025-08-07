@@ -128,6 +128,12 @@
                         placeholder="请输入过滤条件"
                     />
                 </el-form-item>
+                <el-form-item label="自定义查询接口" v-if="editColumnDialogData.enableCustomQuery && editColumnDialogData.customQueryUrl">
+                    <el-input
+                        :value="'/cm/listQuery/' + editColumnDialogData.customQueryUrl"
+                        disabled
+                    />
+                </el-form-item>
                 <el-form-item label="显示过滤条件" v-if="!editColumnDialogData.isCustomComponent">
                     <el-row>
                         <el-col :span="24">

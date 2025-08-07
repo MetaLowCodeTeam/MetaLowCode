@@ -26,8 +26,28 @@
 </template>
 
 <script setup>
-import scEcharts from "./index.vue";
-import { reactive, ref, watch, onMounted } from "vue";
+import { reactive, ref, watch, onMounted, defineAsyncComponent } from "vue";
+
+// 异步加载 scEcharts 组件
+const scEcharts = defineAsyncComponent({
+    loader: () => import("./index.vue"),
+    loadingComponent: {
+        template: `
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999; border: 1px dashed #d9d9d9; border-radius: 4px;">
+                <div v-loading="true" element-loading-text="正在加载图表组件..." style="width: 100%; height: 100%; min-height: 100px;"></div>
+            </div>
+        `
+    },
+    errorComponent: {
+        template: `
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed #ff4d4f; border-radius: 4px;">
+                <el-alert title="图表组件加载失败" type="error" description="请检查网络连接后重试" show-icon />
+            </div>
+        `
+    },
+    delay: 200,
+    timeout: 30000
+});
 const props = defineProps({
     option: Object,
     field: Object,

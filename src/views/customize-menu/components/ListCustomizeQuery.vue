@@ -34,6 +34,8 @@
 				displayedComp
 				:forbidUserModifyField="forbidUserModifyField"
 				:hideQueryMatchType="hideQueryMatchType"
+                :labelPosition="labelPosition"
+                @onSaveAlias="onSaveAlias"
 			/>
 		</div>
 		<div class="conditions-action">
@@ -168,6 +170,7 @@ const refreshAdvancedQuery = () => {
 	emit("queryNow", newCompConditions);
 };
 
+
 /**
  * 设计查询面板
  */
@@ -177,6 +180,8 @@ let forbidUserModifyField = ref(false);
 let hideQueryMatchType = ref(false);
 // 是否保存查询值
 let isSaveQueryValue = ref(true);
+// 标签位置
+let labelPosition = ref(3);
 
 let setQueryPanelDialogRef = ref(null);
 
@@ -187,14 +192,29 @@ const openDialog = () => {
         forbidUserModifyField: forbidUserModifyField.value,
         hideQueryMatchType: hideQueryMatchType.value,
         isSaveQueryValue: isSaveQueryValue.value,
+        labelPosition: labelPosition.value,
     });
 };
+
+
+
+const onSaveAlias = () => {
+    conditionsConfirm({
+        filter: JSON.parse(JSON.stringify(compConditions.value)),
+        forbidUserModifyField: forbidUserModifyField.value,
+        hideQueryMatchType: hideQueryMatchType.value,
+        isSaveQueryValue: isSaveQueryValue.value,
+        labelPosition: labelPosition.value,
+    })
+}
+
 // 弹框条件确认
 const conditionsConfirm = async (event) => {
     let paramFilter = JSON.parse(JSON.stringify(event.filter));
     forbidUserModifyField.value = event.forbidUserModifyField;
     hideQueryMatchType.value = event.hideQueryMatchType;
     isSaveQueryValue.value = event.isSaveQueryValue;
+    labelPosition.value = event.labelPosition;
     if(!isSaveQueryValue.value){
         paramFilter.items.forEach(el => {
             el.value = null;
@@ -207,6 +227,7 @@ const conditionsConfirm = async (event) => {
 			forbidUserModifyField: forbidUserModifyField.value,
 			hideQueryMatchType: hideQueryMatchType.value,
 			isSaveQueryValue: isSaveQueryValue.value,
+            labelPosition: labelPosition.value,
 			filter: paramFilter,
 		}),
 		entityCode: props.entityCode,
@@ -224,6 +245,7 @@ const conditionsConfirm = async (event) => {
 			hideQueryMatchType: hideQueryMatchType.value,
 			filter: event.filter,
 			isSaveQueryValue: isSaveQueryValue.value,
+            labelPosition: labelPosition.value,
 		});
 		isShow.value = false;
 		ElMessage.success("设置成功");
@@ -238,6 +260,7 @@ watchEffect(() => {
 	forbidUserModifyField.value = props.topSearchConfig.forbidUserModifyField;
 	hideQueryMatchType.value = props.topSearchConfig.hideQueryMatchType;
 	isSaveQueryValue.value = props.topSearchConfig.isSaveQueryValue;
+    labelPosition.value = props.topSearchConfig.labelPosition;
 });
 
 defineExpose({

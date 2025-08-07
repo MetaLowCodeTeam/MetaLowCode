@@ -85,7 +85,7 @@ const openDialog = () => {
 const confirm = () => {
 	formRef.value.validate((valid) => {
 		if (valid) {
-			emits("confirm", formData.value);
+			emits("confirm", JSON.parse(JSON.stringify(formData.value)));
 			isShow.value = false;
 		}
 	});

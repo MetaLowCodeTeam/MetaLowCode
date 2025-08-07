@@ -153,6 +153,11 @@ import FormatRow from "./FormatRow.vue";
 import Detail from "../detail.vue";
 import CardLayout from "./CardLayout.vue";
 import routerParamsStore from "@/store/modules/routerParams";
+import http from "@/utils/request";
+import { 
+    formatFilterToBase64,
+    unicodeToBase64
+} from "@/utils/util";
 const { setRouterParams } = routerParamsStore();
 const router = useRouter();
 const props = defineProps({
@@ -264,7 +269,10 @@ const cardSortCommand = (e) => {
 let curtTab = ref({});
 
 
-let dufaultFilter = ref(null);
+let defaultFilter = ref(null);
+
+let customQueryUrl = ref("");
+
 
 // 初始化数据
 const initData = async () => {
@@ -278,11 +286,15 @@ const initData = async () => {
     }
     defaultShowType.value = "table";
     let filterTabs = tabs.value[props.cutTabIndex - 1];
+    console.log(filterTabs,'filterTabs')
     if (filterTabs) {
         entityCode.value = filterTabs.entityCode;
         entityName.value = filterTabs.entityName;
         fieldName.value = filterTabs.fieldName;
         curtTab.value = filterTabs;
+        if(filterTabs.enableCustomQuery) {
+            customQueryUrl.value = '/cm/listQuery/' + filterTabs.customQueryUrl;
+        }
     }
     loading.value = true;
     let res = await $API.layoutConfig.getLayoutList(entityName.value, 'noModelName');
@@ -310,12 +322,12 @@ const initData = async () => {
             tableColumn.value = ALL.FILTER;
             defaultColumnShow.value = "ALL";
         }
-        dufaultFilter.value = null;
+        defaultFilter.value = null;
         // 如果存在默认过滤
         if (res.data.DEFAULT_FILTER) {
             let { config } = res.data.DEFAULT_FILTER;
             if(config){
-                dufaultFilter.value = JSON.parse(config);
+                defaultFilter.value = JSON.parse(config);
             }
         }
         // 如果存在列
@@ -453,7 +465,7 @@ const getTableList = async () => {
     if(curtTab.value.isCustomLabel) {
         const regex = new RegExp(`{${props.idFieldName}}`, 'g');
         filterEasySql = curtTab.value.filterEasySql.replace(regex,`'${props.entityId}'`);
-        filter = {...dufaultFilter.value};
+        filter = {...defaultFilter.value};
     }else {
         filter = {
             equation: "AND",
@@ -476,19 +488,35 @@ const getTableList = async () => {
         sortFields: sortFields.value,
         quickFilter: quickQueryVal.value,
     };
-    let res = await getDataList(
-        param.mainEntity,
-        param.fieldsList,
-        filter,
-        param.pageSize,
-        param.pageNo,
-        param.sortFields,
-        param.advFilter,
-        param.quickFilter,
-        null,
-        null,
-        filterEasySql
-    );
+    let res;
+    if(customQueryUrl.value) {
+        res = await http.post(customQueryUrl.value, {
+            'mainEntity': param.mainEntity,
+            'fieldsList': param.fieldsList,
+            filter: formatFilterToBase64(filter), 
+            pageSize: param.pageSize, 
+            pageNo: param.pageNo, 
+            sortFields: param.sortFields, 
+            advFilter: formatFilterToBase64(param.advFilter), 
+            quickFilter: param.quickFilter,
+            filterEasySql: filterEasySql ? unicodeToBase64(filterEasySql) : null, 
+        });
+    }else {
+        res = await getDataList(
+            param.mainEntity,
+            param.fieldsList,
+            filter,
+            param.pageSize,
+            param.pageNo,
+            param.sortFields,
+            param.advFilter,
+            param.quickFilter,
+            null,
+            null,
+            filterEasySql
+        );
+    }
+    
     if (res && res.data) {
         tableData.value = res.data.dataList;
         tableData.value.forEach( el => {

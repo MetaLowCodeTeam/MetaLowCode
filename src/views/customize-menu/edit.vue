@@ -485,7 +485,8 @@ const openDialog = async (v) => {
     row.fieldNameLabel = v.fieldNameLabel;
     row.fieldNameVale = v.fieldNameVale;
     row.idFieldName = getEntityIdFieldName(v);
-    row.nameFieldName = v.nameFieldName;
+    row.nameFieldName = getEntityNameFieldName(v);
+    console.log(row,'row')
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;
@@ -815,6 +816,7 @@ const confirm = async (target) => {
                         // 如果是新建，重新初始化表单。
                         if(!row.detailId){
                             row.detailId = resData[getEntityIdFieldName(row)];
+                            row.nameFieldName = getEntityNameFieldName(row);
                             initFormLayout()
                         }
                         if(target == 'submit'){
@@ -902,6 +904,10 @@ const reload = () => {
 
 const getEntityIdFieldName = (row) => {
     return queryEntityInfoByName(row.entityName).idFieldName;
+}
+
+const getEntityNameFieldName = (row) => {
+    return queryEntityInfoByName(row.entityName).nameFieldName;
 }
 
 defineExpose({

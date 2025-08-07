@@ -88,7 +88,6 @@ let myOptionItems = ref([]);
 
 watchEffect(() => {
 	myOptionItems.value = props.optionItems;
-	console.log(myOptionItems.value, "myOptionItems");
 });
 
 const addOption = () => {

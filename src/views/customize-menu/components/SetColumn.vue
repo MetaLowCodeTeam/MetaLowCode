@@ -1,5 +1,5 @@
 <template>
-    <mlDialog
+    <ml-dialog
         :title="editColumnDialog.chosenListType != 'BATCH_UPDATE' ? '设置列显示' : '批量编辑设置'"
         v-model="isShow"
         width="650px"
@@ -103,208 +103,240 @@
                 <el-button type="primary" @click="onSave" :loading="loading">保存</el-button>
             </div>
         </template>
-        <mlDialog
+        <ml-dialog
             v-model="editColumnDialogIsShow"
             v-if="editColumnDialogIsShow"
             appendToBody
             title="列设置"
-            width="500"
-            top="25vh"
+            width="600"
+            scrollbarMaxHeight="500px"
         >
-            <el-scrollbar height="500px">
-                <el-form label-width="100px">
-                    <el-form-item label="当前字段" class="mb-10">
-                        <el-input :value="editColumnDialogData.fieldLabel + '（' + editColumnDialogData.fieldName + '）'" disabled />
-                    </el-form-item>
-                    <el-form-item label="别名" class="mb-10">
-                        <el-input v-model="editColumnDialogData.columnAliasName" />
-                    </el-form-item>
-                    <el-form-item label="列隐藏" class="mb-10">
-                        <el-checkbox v-model="editColumnDialogData.pcHide" label="PC端隐藏" />
-                        <el-checkbox v-model="editColumnDialogData.mobileHide" label="移动端隐藏" class="ml-5" />
-                    </el-form-item>
-                    <el-form-item label="是否导出" class="mb-10">
-                        <el-checkbox v-model="editColumnDialogData.exportable" />
-                    </el-form-item>
-                    <el-form-item label="开启排序" class="mb-5">
-                        <el-checkbox v-model="editColumnDialogData.sortable" />
-                    </el-form-item>
-                    <el-form-item label="默认排序" class="mb-5" v-if="editColumnDialogData.sortable">
-                        <span
-                            class="sort-span"
-                            :class="{'is-active': editColumnDialogData.columnSort != ''}"
-                            @click="changeColumnSort"
-                        >
-                            {{ editColumnDialogData.columnSort == 'ASC' ? '升序' : editColumnDialogData.columnSort == 'DESC' ? '降序' : '暂无' }}
-                            <el-icon class="sort-icon">
-                                <ElIconTop v-if="editColumnDialogData.columnSort == 'ASC'" />
-                                <ElIconBottom v-else />
-                            </el-icon>
-                        </span>
-                    </el-form-item>
-                    <el-form-item label="冻结列" class="mb-5">
-                        <el-radio-group v-model="editColumnDialogData.fixed">
-                            <el-radio :value="false">不冻结</el-radio>
-                            <el-radio value="left">向左冻结</el-radio>
-                            <el-radio value="right">向右冻结</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="对齐(PC)" class="mb-5">
-                        <el-row :gutter="10" class="w-100">
-                            <el-col :span="12">
-                                <div class="small-label">表头对齐</div>
-                                <el-select 
-                                    v-model="editColumnDialogData.headerAlign"
-                                >
-                                    <el-option
-                                        v-for="item in alignOptions"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-col>
-                            <el-col :span="12">
-                                <div class="small-label">内容对齐</div>
-                                <el-select 
-                                    v-model="editColumnDialogData.align"
-                                >
-                                    <el-option
-                                        v-for="item in alignOptions"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-col>
-                        </el-row>
-                    </el-form-item>
-                    <el-form-item label="对齐(Mobile)" class="mb-3">
-                        <el-row :gutter="10" class="w-100">
-                            <el-col :span="12">
-                                <div class="small-label">表头对齐</div>
-                                <el-select 
-                                    v-model="editColumnDialogData.mobileHeaderAlign"
-                                >
-                                    <el-option
-                                        v-for="item in alignOptions"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-col>
-                            <el-col :span="12">
-                                <div class="small-label">内容对齐</div>
-                                <el-select 
-                                    v-model="editColumnDialogData.mobileAlign"
-                                >
-                                    <el-option
-                                        v-for="item in alignOptions"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-col>
-                        </el-row>
-                    </el-form-item>
-                    <el-form-item label="数据统计" class="mb-3">
-                        <el-checkbox v-model="editColumnDialogData.dataStatistics" />
-                    </el-form-item>
-                    <el-form-item
-                        label="统计类型"
-                        v-if="editColumnDialogData.dataStatistics"
-                        class="is-required mb-10"
-                    >
-                        <el-select
-                            v-model="editColumnDialogData.statisticType"
-                            placeholder="选择统计类型"
-                        >
-                            <el-option
-                                v-for="item in getUptadeMode()"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
+            <el-form label-width="100px">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="当前字段" class="mb-10">
+                            <el-input :value="editColumnDialogData.fieldLabel + '（' + editColumnDialogData.fieldName + '）'" disabled />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="别名" class="mb-10">
+                            <el-input v-model="editColumnDialogData.columnAliasName" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="列隐藏" class="mb-10">
+                            <el-checkbox v-model="editColumnDialogData.pcHide" label="PC端隐藏" />
+                            <el-checkbox v-model="editColumnDialogData.mobileHide" label="移动端隐藏" class="ml-5" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="默认列宽" class="mb-10">
+                            <el-input-number
+                                v-model="editColumnDialogData.columnWidth"
+                                :min="0"
+                                :max="500"
+                                controls-position="right"
+                                :step="10"
                             />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item
-                        label="显示名称"
-                        class="mb-10"
-                        v-if="editColumnDialogData.dataStatistics"
-                    >
-                        <el-input v-model="editColumnDialogData.statisticName" />
-                    </el-form-item>
-                    <el-form-item label="默认列宽" class="mb-10">
-                        <el-input-number
-                            v-model="editColumnDialogData.columnWidth"
-                            :min="0"
-                            :max="500"
-                            controls-position="right"
-                            :step="10"
-                        />
-                        <span class="ml-a-span ml-10" @click="applyColumns">应用到所有列</span>
-                    </el-form-item>
-                    <el-form-item label="是否在移动端显示" label-width="135px" class="mb-10">
-                        <el-checkbox v-model="editColumnDialogData.mobileShow" />
-                    </el-form-item>
-                    <el-tabs v-model="editColumnDialogData.renderType">
-                        <el-tab-pane label="默认渲染" name="defaultRender">
-                            <el-form-item label="字体大小" class="mb-10">
-                                <el-input-number
-                                    v-model="editColumnDialogData.fontSize"
-                                    :min="12"
-                                    :max="24"
-                                    controls-position="right"
-                                    :step="1"
+                            <span class="ml-a-span ml-10" @click="applyColumns">应用到所有列</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="是否导出" class="mb-5">
+                            <el-checkbox v-model="editColumnDialogData.exportable" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="开启排序" class="mb-5">
+                            <el-checkbox v-model="editColumnDialogData.sortable" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="默认排序" class="mb-5" v-if="editColumnDialogData.sortable">
+                                <span
+                                    class="sort-span"
+                                    :class="{'is-active': editColumnDialogData.columnSort != ''}"
+                                    @click="changeColumnSort"
+                                >
+                                    {{ editColumnDialogData.columnSort == 'ASC' ? '升序' : editColumnDialogData.columnSort == 'DESC' ? '降序' : '暂无' }}
+                                    <el-icon class="sort-icon">
+                                        <ElIconTop v-if="editColumnDialogData.columnSort == 'ASC'" />
+                                        <ElIconBottom v-else />
+                                    </el-icon>
+                                </span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="冻结列" class="mb-5">
+                            <el-radio-group v-model="editColumnDialogData.fixed">
+                                <el-radio :value="false">不冻结</el-radio>
+                                <el-radio value="left">向左冻结</el-radio>
+                                <el-radio value="right">向右冻结</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="数据统计" class="mb-5">
+                            <el-checkbox v-model="editColumnDialogData.dataStatistics" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="统计类型"
+                            v-if="editColumnDialogData.dataStatistics"
+                            class="is-required mb-5"
+                        >
+                            <el-select
+                                v-model="editColumnDialogData.statisticType"
+                                placeholder="选择统计类型"
+                            >
+                                <el-option
+                                    v-for="item in getUptadeMode()"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
                                 />
-                                <span class="info-text ml-10">
-                                    <span class="mr-5">表字体</span>
-                                    <span :style="{'font-size':editColumnDialogData.fontSize + 'px'}">大小</span>
-                                </span>
-                            </el-form-item>
-                            <el-form-item label="字体粗细" class="mb-10">
-                                <el-select v-model="editColumnDialogData.fontWeight" style="width: 150px;">
-                                    <el-option :label="100" :value="100" />
-                                    <el-option :label="200" :value="200" />
-                                    <el-option :label="300" :value="300" />
-                                    <el-option label="400(默认)" :value="400" />
-                                    <el-option :label="500" :value="500" />
-                                    <el-option :label="600" :value="600" />
-                                    <el-option label="700(加粗)" :value="700" />
-                                </el-select>
-                                <span class="info-text ml-10">
-                                    <span class="mr-5">表字体</span>
-                                    <span :style="{'font-weight':editColumnDialogData.fontWeight}">粗细</span>
-                                </span>
-                            </el-form-item>
-                            <el-form-item label="字体颜色" class="mb-5">
-                                <el-color-picker v-model="editColumnDialogData.fontColor" />
-                                <span class="info-text ml-10">
-                                    <span class="mr-5">表字体</span>
-                                    <span :style="{'color':editColumnDialogData.fontColor}">颜色</span>
-                                </span>
-                            </el-form-item>
-                        </el-tab-pane>
-                        <el-tab-pane label="自定义渲染" name="customizeRender">
-                            <div class="mb-10">
-                                <span class="">自定义渲染</span>
-                                <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/yu0gqztx7dhdkp8e?singleDoc#">使用文档</a>
-                            </div>
-                            <mlCodeEditor v-model="editColumnDialogData.columnRender"/>
-                        </el-tab-pane>
-                    </el-tabs>
-                </el-form>
-            </el-scrollbar>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="显示名称"
+                            v-if="editColumnDialogData.dataStatistics"
+                            class="mb-5"
+                        >
+                            <el-input v-model="editColumnDialogData.statisticName" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24" v-if="numType.includes(editColumnDialogData.fieldType)">
+                        <el-form-item label="千分符格式" class="mb-5">
+                            <el-checkbox v-model="editColumnDialogData.thousandColumnSeparator">
+                                数据列开启
+                            </el-checkbox>
+                            <el-checkbox v-model="editColumnDialogData.thousandStatisticSeparator">
+                                数据统计开启
+                            </el-checkbox>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-tabs v-model="editColumnDialogData.renderType">
+                    <el-tab-pane label="对齐方式" name="align">
+                        <el-form-item label="对齐(PC)" label-position="top">
+                            <el-row :gutter="10" class="w-100">
+                                <el-col :span="12">
+                                    <div class="small-label">表头对齐</div>
+                                    <el-select 
+                                        v-model="editColumnDialogData.headerAlign"
+                                    >
+                                        <el-option
+                                            v-for="item in alignOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="12">
+                                    <div class="small-label">内容对齐</div>
+                                    <el-select 
+                                        v-model="editColumnDialogData.align"
+                                    >
+                                        <el-option
+                                            v-for="item in alignOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+                        <el-form-item label="对齐(Mobile)" label-position="top">
+                            <el-row :gutter="10" class="w-100">
+                                <el-col :span="12">
+                                    <div class="small-label">表头对齐</div>
+                                    <el-select 
+                                        v-model="editColumnDialogData.mobileHeaderAlign"
+                                    >
+                                        <el-option
+                                            v-for="item in alignOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="12">
+                                    <div class="small-label">内容对齐</div>
+                                    <el-select 
+                                        v-model="editColumnDialogData.mobileAlign"
+                                    >
+                                        <el-option
+                                            v-for="item in alignOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+                    </el-tab-pane>
+                    <el-tab-pane label="默认渲染" name="defaultRender">
+                        <el-form-item label="字体大小" class="mb-10">
+                            <el-input-number
+                                v-model="editColumnDialogData.fontSize"
+                                :min="12"
+                                :max="24"
+                                controls-position="right"
+                                :step="1"
+                            />
+                            <span class="info-text ml-10">
+                                <span class="mr-5">表字体</span>
+                                <span :style="{'font-size':editColumnDialogData.fontSize + 'px'}">大小</span>
+                            </span>
+                        </el-form-item>
+                        <el-form-item label="字体粗细" class="mb-10">
+                            <el-select v-model="editColumnDialogData.fontWeight" style="width: 150px;">
+                                <el-option :label="100" :value="100" />
+                                <el-option :label="200" :value="200" />
+                                <el-option :label="300" :value="300" />
+                                <el-option label="400(默认)" :value="400" />
+                                <el-option :label="500" :value="500" />
+                                <el-option :label="600" :value="600" />
+                                <el-option label="700(加粗)" :value="700" />
+                            </el-select>
+                            <span class="info-text ml-10">
+                                <span class="mr-5">表字体</span>
+                                <span :style="{'font-weight':editColumnDialogData.fontWeight}">粗细</span>
+                            </span>
+                        </el-form-item>
+                        <el-form-item label="字体颜色" class="mb-5">
+                            <el-color-picker v-model="editColumnDialogData.fontColor" />
+                            <span class="info-text ml-10">
+                                <span class="mr-5">表字体</span>
+                                <span :style="{'color':editColumnDialogData.fontColor}">颜色</span>
+                            </span>
+                        </el-form-item>
+                    </el-tab-pane>
+                    <el-tab-pane label="自定义渲染" name="customizeRender">
+                        <div class="mb-10">
+                            <span class="">自定义渲染</span>
+                            <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/yu0gqztx7dhdkp8e?singleDoc#">使用文档</a>
+                        </div>
+                        <mlCodeEditor v-model="editColumnDialogData.columnRender"/>
+                    </el-tab-pane>
+
+                </el-tabs>
+            </el-form>
             <template #footer>
                 <div class="footer-div">
                     <el-button @click="editColumnDialogIsShow = false">取消</el-button>
                     <el-button type="primary" @click="confirmColumnEdit">保存</el-button>
                 </div>
             </template>
-        </mlDialog>
-    </mlDialog>
+        </ml-dialog>
+    </ml-dialog>
 </template>
 
 <script setup>
@@ -407,8 +439,8 @@ let defaultEditColumnDialogData = {
     statisticType: "",
     // 显示名称
     statisticName: "",
-    // 渲染类型 defaultRender 默认渲染  customizeRender 自定义渲染
-    renderType: "defaultRender",
+    // 渲染类型 defaultRender => 默认渲染;  customizeRender => 自定义渲染; align => 对齐方式
+    renderType: "align",
     // 自定义渲染JS
     columnRender:"",
     // 冻结列  默认false  向左left 向右right

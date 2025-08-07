@@ -40,6 +40,9 @@
                                     <el-dropdown-item command="previewPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
                                         预览PDF
                                     </el-dropdown-item>
+                                    <el-dropdown-item command="printPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+                                        打印PDF
+                                    </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -121,6 +124,9 @@ const handleCommand = (command, item) => {
         case "previewPdf":
             previewPdf(item)
             break;
+        case "printPdf":
+            previewPdf(item, true)
+            break;
     }
 }
 
@@ -136,13 +142,15 @@ const previewExcel = (item) => {
     window.open(url.href)
 }
 
-const previewPdf = (item) => {
+
+const previewPdf = (item, isPrint = false) => {
     // 如需浏览器新开窗口
-    let url = router.resolve({
+    let url = router.resolve({ 
     name: "FilePreview",
     query: {
         url: `/plugins/mannerReport/exportPDF?reportConfigId=${item.reportConfigId}&entityId=${detailId.value}`,
-        type: 'pdf'
+        type: 'pdf',
+        isPrint: isPrint
     }
     })
     window.open(url.href)
@@ -155,7 +163,7 @@ const downReport = async (item) => {
 	);
 };
 
-const downPdf = async (item) => {
+const downPdf = async (item, isPrint = false) => {
     if(defaultShow.value == 'PDF'){
         let res = await http.post(
             "/plugins/mannerReport/exportPdfZip?reportConfigId=" + item.reportConfigId,

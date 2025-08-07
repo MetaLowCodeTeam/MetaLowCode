@@ -23,6 +23,7 @@
 							<el-select
 								v-model="formData.methodType"
 								placeholder="请选择方法类型"
+                                @change="onMethodTypeChange"
 							>
 								<el-option
 									v-for="item in methodTypeList"
@@ -36,7 +37,9 @@
 					<el-col :span="24">
 						<el-form-item label="方法地址" prop="methodUrl">
 							<el-input v-model="formData.methodUrl" clearable>
-								<template #prepend>/cm/call/</template>
+								<template #prepend>
+                                    {{ methodUrlPrefix[formData.methodType?.value || formData.methodType] }}
+                                </template>
 							</el-input>
 						</el-form-item>
 					</el-col>
@@ -84,6 +87,12 @@ import trigger from "@/api/trigger";
 
 const emit = defineEmits(["refresh"]);
 
+// 方法地址前缀
+const methodUrlPrefix = ref({
+    1: '/cm/call/',
+    2: '/cm/listQuery/',
+});
+
 // 默认java代码
 let defaultJavaCode = `import cn.granitech.business.liteflow.context.CustomMethodContext;
 import cn.granitech.business.liteflow.context.TriggerScriptContext;
@@ -129,6 +138,87 @@ public class CustomMethodDemo implements CommonScriptBody {
     }
 }
 `;
+
+let defaultCustomQueryJavaCode = `import cn.granitech.business.liteflow.context.CustomListQueryContext;
+import cn.granitech.business.service.CrudService;
+import cn.granitech.util.FilterHelper;
+import cn.granitech.variantorm.pojo.Pagination;
+import cn.granitech.variantorm.pojo.QuerySchema;
+import cn.granitech.web.pojo.ListQueryRequestBody;
+import cn.granitech.web.pojo.ListQueryResult;
+import cn.granitech.web.pojo.filter.Filter;
+import com.yomahub.liteflow.script.ScriptExecuteWrap;
+import com.yomahub.liteflow.script.body.CommonScriptBody;
+import com.yomahub.liteflow.spi.holder.ContextAwareHolder;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 自定义列表查询接口JAVA脚本示例
+ * 可用于替换列表的查询接口，需按列表要求返回参数
+ *
+ * 代码位置：cn.granitech.business.liteflow.cmp.CustomListQueryDemo
+ * CustomListQueryDemo: 名称可以自行定义(不修改也行)
+ * implements: 脚本类必须实现CommonScriptBody接口
+ */
+public class CustomListQueryDemo implements CommonScriptBody {
+
+    /**
+     * 书写自定义查询逻辑逻辑
+     * @param requestBody 查询参数
+     * @return 返回值
+     */
+    private ListQueryResult script(ListQueryRequestBody requestBody) {
+        //通过ContextAwareHolder.loadContextAware()可以获取到业务需要的bean
+        CrudService crudService = ContextAwareHolder.loadContextAware().getBean(CrudService.class);
+        //建议手动设置查询实体，防止非法请求通过此接口查询其他实体数据
+        requestBody.setMainEntity("实体名称");
+        //查询示例
+        if(true){ //调用crudService方法查询，会根据当前用户权限查询数据
+            //前端传入的查询参数封装
+            QuerySchema querySchema = requestBody.querySchema();
+            //前端传入的分页封装
+            Pagination pagination = requestBody.pagination();
+            //固定地列表查询接口返回对象
+            ListQueryResult queryResult = new ListQueryResult();
+            List<Map<String, Object>> resultList = crudService.queryListMap(querySchema, pagination);
+            //查询结果
+            queryResult.setDataList(resultList);
+            //查询数据统计相关，按需调用
+            List<Map<String, Object>> statisticsList = crudService.queryListStatistics(querySchema, requestBody.getStatistics());
+            queryResult.setStatisticsList(statisticsList);
+            //需要返回分页对象，总条数会在接口中自动填充进去
+            queryResult.setPagination(pagination);
+            return queryResult;
+        }else{ //调用baseService方法查询，会查询所有符合条件的数据，不做任何权限过滤
+            ListQueryResult listQueryResult = crudService.queryListMap(requestBody);
+            return listQueryResult;
+        }
+    }
+
+
+    /**
+     * 脚本入口函数
+     * 无需修改该方法
+     */
+    public Void body(ScriptExecuteWrap wrap) {
+        //脚本上下文
+        CustomListQueryContext contextBean = wrap.getCmp().getContextBean(CustomListQueryContext.class);
+        contextBean.setResult(this.script( contextBean.getRequestBody()));
+        return null;
+    }
+}
+`
+
+const onMethodTypeChange = (val) => {
+    if(val == 2){
+        formData.value.javaCode = defaultCustomQueryJavaCode;
+    }else{
+        formData.value.javaCode = defaultJavaCode;
+    }
+}
+
 // 默认数据
 let defaultData = ref({
 	methodName: "",
@@ -238,8 +328,15 @@ const onSave = async (paramData) => {
 		dialogConf.value.show = false;
 		return;
 	}
+    const lines = paramData.javaCode.split('\n');
+    // 如果第一行以 'package' 开头，则删除第一行
+    if (lines.length > 0 && lines[0].trim().startsWith('package')) {
+        paramData.methodConfig = lines.slice(1).join('\n');
+    } else {
+        paramData.methodConfig = paramData.javaCode;
+    }
     dialogConf.value.loading = true;
-    if(paramData.methodType == 1 || paramData.methodType.value == 1){
+    if(paramData.methodType == 1 || paramData.methodType.value == 1 || paramData.methodType == 2 || paramData.methodType.value == 2){
         let checkRes = await trigger.detail.scriptValidator(paramData.methodConfig);
         if(!checkRes || !checkRes.data){
             dialogConf.value.loading = false;

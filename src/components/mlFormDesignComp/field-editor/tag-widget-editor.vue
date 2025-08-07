@@ -65,14 +65,14 @@
 					</el-radio-group>
 				</el-form-item>
                 <el-form-item label="开启选项数据同步" >
-                    <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
+                    <el-checkbox v-model="checkedSync" :disabled="getCheckedSyncDisabled()"/>
                 </el-form-item>
                 <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
                     <el-select
                         v-model="useFieldSync"
                         placeholder="选择字段"
-                        :disabled="fieldState !== 1"
                         filterable
+                        :disabled="getCheckedSyncDisabled()"
                     >
                         <el-option
                             v-for="item in fieldsSync"
@@ -165,6 +165,13 @@ export default {
         this.initApi();
     },
     methods: {
+        getCheckedSyncDisabled(){
+            let isDisabled = false;
+            if(this.fieldState !== 1 && this.fieldProps?.fieldViewModel?.tagSyncModel?.entityName){
+                return true
+            }
+            return isDisabled;
+        },
         async initApi(){
             // 取所有可同步的字段
             let res = await getTagFields();

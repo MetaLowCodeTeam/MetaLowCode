@@ -3,7 +3,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/display.css'
 import 'vant/lib/index.css';
-import 'vue3-manner-report/lib/style.css';
+// import 'vue3-manner-report/lib/style.css'; // 改为按需动态导入
 import scui from './ml'
 import i18n from './locales'
 import router from './router'
