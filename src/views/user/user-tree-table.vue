@@ -30,6 +30,12 @@
                                 style="width: 15px;height: 15px;position: relative;top: 2px;"
                                 alt
                             />
+                            <img
+                                v-else-if="node.data.larkDepartmentId"
+                                src="@/assets/imgs/lark.png"
+                                style="width: 15px;height: 15px;position: relative;top: 2px;"
+                                alt
+                            />
 							<el-icon v-else><OfficeBuilding /></el-icon>
                             {{ node.label }}
                         </span>
@@ -175,7 +181,9 @@ import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 // import ListDetail from "./components/ListDetail.vue";
 import ddImg from "@/assets/imgs/dd.png";
 import wXWorkImg from "@/assets/imgs/WXWork.png";
+import lark from "@/assets/imgs/lark.png";
 import EditDepartment from '@/views/user/components/EditDepartment.vue'
+
 export default {
     name: "UserTreeTable",
     components: {
@@ -188,7 +196,7 @@ export default {
         return {
             entity: "User",
             fieldsList:
-                "userName, loginName, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar,dingTalkUserId,wxWorkUserId",
+                "userName, loginName, larkUserId, jobTitle,mobilePhone,departmentId,disabled,createdOn, createdBy, modifiedOn, modifiedBy, departmentId,avatar,dingTalkUserId,wxWorkUserId",
             showFormDialogFlag: false,
             layout: {},
             formState: 1,
@@ -259,6 +267,9 @@ export default {
                         }
                         if (row.wxWorkUserId) {
                             return wXWorkImg;
+                        }
+                        if(row.larkUserId){
+                            return lark;
                         }
                         return false;
                     },

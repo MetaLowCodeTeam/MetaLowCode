@@ -501,7 +501,7 @@ export default [
             {
                 label: "回调域名",
                 subLabel: "请复制地址至飞书相关配置",
-                key: "homeURL",
+                key: "larkHomeURL",
                 type: "input",
                 disabled: true,
                 needCopy: true,

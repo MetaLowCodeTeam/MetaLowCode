@@ -562,6 +562,7 @@ const initData = async () => {
         confData.wxWorkHomeDir = confData.homeURL + "/wxWork/userLogin";
         // 初始化飞书 应用首页地址
         confData.larkHomeDir = confData.homeURL + "/lark/userLogin";
+        confData.larkHomeURL = confData.homeURL + "/lark/userAuth";
         // 如果存在租户ID
         if(tenantId){
             confData.homeDir += "/" + tenantId;
