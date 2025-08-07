@@ -41,9 +41,9 @@
                 </el-dropdown>
             </template>
             <template #actionRules="{designer, formConfig}">
-                <ActionRulesSetting 
+                <ActionRulesSetting
                     ref="actionRulesSetting"
-                    :designer="designer" 
+                    :designer="designer"
                     :form-config="formConfig"
                     :entity="entity"
                     :entityLabel="entityLabel"
@@ -476,7 +476,10 @@ export default {
 
 				fieldSchema.refUserFlag = !!fldObj.refUserFlag
 				fieldSchema.refDepartmentFlag = !!fldObj.refDepartmentFlag
-            }
+				fieldSchema.refEntities = fldObj.refEntities
+            } else if (fldObj.type === "ReferenceList") {
+				fieldSchema.refEntities = fldObj.refEntities
+			}
 
 			/* 处理单选项字段 */
             if (fieldSchema.options.hasOwnProperty("optionItems")) {
