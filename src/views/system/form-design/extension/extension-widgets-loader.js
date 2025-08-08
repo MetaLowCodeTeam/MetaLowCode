@@ -40,6 +40,7 @@ import referenceFilterConditionsEditor from '@/views/system/form-design/extensio
 import referenceTreeDataSelectEditor from '@/views/system/form-design/extension/property-editor/reference-treeDataSelect-editor.vue';
 import referenceSearchInPlaceEditor from '@/views/system/form-design/extension/property-editor/reference-searchInPlace-editor.vue';
 import referenceSortFieldEditor from '@/views/system/form-design/extension/property-editor/reference-sortField-editor.vue';
+import referenceUseUserDepartmentTreeEditor from '@/views/system/form-design/extension/property-editor/reference-useUserDepartmentTree-editor.vue';
 // 子表单内禁止多选
 import referenceDisableMultipleSelectionInSubFormEditor from "@/views/system/form-design/extension/property-editor/reference-disableMultipleSelectionInSubForm-editor.vue";
 // 二次确认选择
@@ -140,6 +141,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
 	PERegister.registerCPEditor(app, 'sortField', 'reference-sortField-editor', referenceSortFieldEditor)
 	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
+	PERegister.registerCPEditor(app, 'useUserDepartmentTree', 'reference-useUserDepartmentTree-editor', referenceUseUserDepartmentTreeEditor)
     // 注册外部引用前置事件
     PERegister.registerEPEditor(app, 'onBeforeListQuery', 'onBeforeListQuery-editor', onBeforeListQueryEditor)
     // 注册外部引用后置事件

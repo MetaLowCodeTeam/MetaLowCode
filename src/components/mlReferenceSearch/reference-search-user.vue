@@ -25,6 +25,7 @@
 						:filter-node-method="filterNode"
 						:default-expanded-keys="expandedKeys"
 						@node-click="handleNodeClick"
+                        :empty-text="hasDepartmentField ? '暂无数据' : '该字段引用实体处搜索字段没有部门字段，请先配置'"
 					>
 					</el-tree>
 				</div>
@@ -203,7 +204,9 @@ export default {
 						type: "DESC",
 					},
 				],
-			}
+			},
+            // 是否有部门字段
+            hasDepartmentField: false,
 		};
 	},
 
@@ -338,6 +341,9 @@ export default {
 			let res = await getDepartmentTree()
 			let orgData = res?.data?.data ||  [];
 			let userList = await this.getUserList()
+            if(userList?.length > 0) {
+                this.hasDepartmentField = userList[0]?.departmentId?.id ? true : false;
+            }
 			this.putUserToOrgTree(orgData,userList);
 			this.loading = false;
 		},

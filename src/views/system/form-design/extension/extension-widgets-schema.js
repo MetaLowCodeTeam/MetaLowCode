@@ -149,6 +149,8 @@ export const referenceSchema = {
         searchFields: [],
         // 子表单内禁止多选
         disableMultipleSelectionInSubForm: false,
+        // 开启用户部门树
+        useUserDepartmentTree: false,
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
@@ -208,6 +210,8 @@ export const referenceListSchema = {
         sortOrder: "",
         // 过滤条件
         filterConditions: {},
+        // 开启用户部门树
+        useUserDepartmentTree: false,
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

@@ -358,12 +358,12 @@ export default {
 			}
             // 默认树
             this.referenceDialogType = 'table';
-            let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
+            let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName, useUserDepartmentTree } = this.field.options;
 			this.curRefField = name;
 			//  如果是用户，则修改弹框
-			// if(this.field.refEntities && this.field.refEntities === "User"){
-			// 	this.referenceDialogType = 'user';
-			// } else 
+			if(useUserDepartmentTree){
+				this.referenceDialogType = 'user';
+			} else 
             if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
 			{
                 this.referenceDialogType = 'tree';
