@@ -390,6 +390,7 @@ export default {
 			const deptMap = {};
 			// 构建部门映射表
 			this.buildDeptMap(orgData, deptMap);
+            console.log(deptMap,'deptMap')
 			// 遍历用户列表，将用户添加到对应的部门
 			userList.forEach(user => {
 				const deptId = user?.departmentId?.id;

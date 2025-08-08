@@ -341,9 +341,10 @@ export default {
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
 			this.curRefField = name;
             // 如果启用了树形数据选择弹框，且选择了父子级联字段
-			if(this.field && this.field.refUserFlag){
-				this.referenceDialogType = 'user';
-			} else if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
+			// if(this.field && this.field.refUserFlag){
+			// 	this.referenceDialogType = 'user';
+			// } else 
+            if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
 			{
                 this.referenceDialogType = 'tree';
                 this.showReferenceDialogFlag = true;
