@@ -64,6 +64,7 @@
                                 :key="column.prop"
                                 :label="column.label"
                                 :prop="column.prop"
+                                :width="column.width"
                             >
                                 <template #default="scope">
                                     <FormatRow
@@ -105,7 +106,7 @@ import { ref, watchEffect, nextTick, onMounted, onUnmounted } from "vue";
 import { refFieldQuery2 } from "@/api/crud";
 import FormatRow from "@/views/customize-menu/components/FormatRow.vue";
 import { Search } from '@element-plus/icons-vue';
-
+import { setColumnFormatter } from "@/utils/util";
 const props = defineProps({
     fieldModel: {
         type: Object,
@@ -238,10 +239,16 @@ const handleSearch = (v) => {
             props.filterConditions,
         );
         if (res) {
-            tableColumns.value = res.data.columnList;
-            tableColumns.value.forEach((el) => {
-                el.fieldName = el.prop;
-                el.fieldType = el.type;
+            // tableColumns.value = res.data.columnList;
+            let columnList = res.data.columnList;
+            let fieldStyleMap = res.data.fieldStyleMap || {};
+            tableColumns.value = columnList.filter(cl => fieldStyleMap[cl.prop]?.isHide !== true);
+            tableColumns.value.forEach((cl) => {
+                cl.label = fieldStyleMap[cl.prop]?.aliasName || cl.label;
+                cl.width = fieldStyleMap[cl.prop]?.width || '';
+                cl.fieldName = cl.prop;
+                cl.fieldType = cl.type;
+                setColumnFormatter(cl);
             });
             tableData.value = res.data.dataList;
             total.value = res.data.pagination?.total || 0;

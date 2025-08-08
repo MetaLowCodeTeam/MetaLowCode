@@ -4,7 +4,23 @@
 			<div class="fields-list" style="height: 100%">
 				<div class="fields-list-header">{{ title }}</div>
 				<div class="fields-list-box" v-loading="treeLoading">
-					<el-scrollbar>
+					<!-- 搜索框 -->
+					<div class="search-box">
+						<el-input
+							v-model="searchKeyword"
+							placeholder="搜索字段..."
+							clearable
+							@input="handleSearch"
+							@clear="handleSearch"
+						>
+							<template #prefix>
+								<el-icon>
+									<ElIconSearch />
+								</el-icon>
+							</template>
+						</el-input>
+					</div>
+					<el-scrollbar style="height: calc(100% - 50px);">
 						<el-tree
 							ref="treeRefs"
 							:data="treeList"
@@ -14,6 +30,7 @@
 							check-strictly
 							node-key="$inx"
 							@node-click="handleTreeNodeClick"
+                            
 						/>
 					</el-scrollbar>
 				</div>
@@ -144,8 +161,9 @@ const props = defineProps({
 });
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
-// 搜索参数
-let keyword = ref("");
+// 搜索相关
+let searchKeyword = ref("");
+let originalTreeList = ref([]); // 保存原始数据
 // 左侧树loading
 let treeLoading = ref(false);
 let treeList = ref([]);
@@ -178,12 +196,15 @@ const getTreeList = async () => {
 	let res = await props.getTreeFn(appAbbr, optionType);
 	if (res) {
         treeList.value = [];
+        let formattedData = [];
         if(props.pageType == 'system') {
-            treeList.value = formatSystemTree(res.data);
+            formattedData = formatSystemTree(res.data);
         }
         else {
-            treeList.value = formatTree(res.data || []);
+            formattedData = formatTree(res.data || []);
         }
+        originalTreeList.value = JSON.parse(JSON.stringify(formattedData)); // 保存原始数据
+        treeList.value = formattedData;
 		if (treeList.value.length > 0) {
 			cutNode.value = treeList.value[0].children[0];
 			nextTick(() => {
@@ -197,6 +218,37 @@ const getTreeList = async () => {
 		mainLoading.value = false;
 	}
 	treeLoading.value = false;
+};
+
+// 搜索处理
+const handleSearch = () => {
+	if (!searchKeyword.value.trim()) {
+		// 如果搜索关键词为空，恢复原始数据
+		treeList.value = JSON.parse(JSON.stringify(originalTreeList.value));
+		return;
+	}
+	
+	// 过滤树形数据
+	const filterTree = (nodes) => {
+		return nodes.filter(node => {
+			// 检查当前节点是否匹配
+			const nodeMatch = node.label.toLowerCase().includes(searchKeyword.value.toLowerCase());
+			
+			// 如果有子节点，递归过滤
+			if (node.children && node.children.length > 0) {
+				const filteredChildren = filterTree(node.children);
+				node.children = filteredChildren;
+				// 如果当前节点匹配或有匹配的子节点，则保留
+				return nodeMatch || filteredChildren.length > 0;
+			}
+			
+			// 叶子节点，只检查当前节点是否匹配
+			return nodeMatch;
+		});
+	};
+	
+	// 应用搜索过滤
+	treeList.value = filterTree(JSON.parse(JSON.stringify(originalTreeList.value)));
 };
 
 // 格式化系统项tree
@@ -585,7 +637,14 @@ const onSave = async (msg) => {
 	font-size: 16px;
 }
 .fields-list-box {
-	height: calc(100% - 55px);
+	height: calc(100% - 65px);
+	
+	.search-box {
+		padding: 10px;
+		.el-input {
+			width: 100%;
+		}
+	}
 }
 .main-header {
 	padding: 0 20px;
