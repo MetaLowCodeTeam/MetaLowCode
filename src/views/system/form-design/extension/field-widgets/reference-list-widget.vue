@@ -89,18 +89,29 @@
 			:append-to-body="true"
             scrollbarMaxHeight="600px"
 		>
-			<ReferenceSearchTable
-				ref="referST"
+			<ReferenceSearchUser
+				ref="referSU"
 				:entity="entity"
 				:refField="curRefField"
 				:extraFilter="searchFilter"
                 :extraSort="extraSort"
                 :filterConditions="filterConditions"
-				:gDsv="gDsv"
-                showCheckBox
                 :showMultipleSelectConfirm="false"
                 :defaultSelected="fieldModel"
-                v-if="referenceDialogType == 'table'"
+                v-if="referenceDialogType == 'user'"
+			></ReferenceSearchUser>
+			<ReferenceSearchTable
+				ref="referST"
+				:entity="entity"
+				:refField="curRefField"
+				:extraFilter="searchFilter"
+				:extraSort="extraSort"
+				:filterConditions="filterConditions"
+				:gDsv="gDsv"
+				showCheckBox
+				:showMultipleSelectConfirm="false"
+				:defaultSelected="fieldModel"
+				v-else-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
                 v-else
@@ -164,10 +175,12 @@
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import ReferenceSearchUser from "@/components/mlReferenceSearch/reference-search-user.vue";
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import Detail from "@/views/customize-menu/detail.vue";
 import { deepClone } from '@/utils/util';
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
+
 
 export default {
 	name: "reference-list-widget",
@@ -203,6 +216,7 @@ export default {
 		ReferenceSearchTable,
         ReferenceSearchTree,
 		Detail,
+		ReferenceSearchUser
 	},
 	data() {
 		return {
@@ -342,13 +356,15 @@ export default {
 					return;
 				}
 			}
-
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
 			this.curRefField = name;
-            // 如果启用了树形数据选择弹框，且选择了父子级联字段
-            if(useTreeDataSelect && treeCascadeFieldName) {
+			//  如果是用户，则修改弹框
+			if(this.field.refEntities && this.field.refEntities === "User"){
+				this.referenceDialogType = 'user';
+			} else if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
+			{
                 this.referenceDialogType = 'tree';
                 this.showReferenceDialogFlag = true;
                 this.treeDialogConf = {
@@ -407,10 +423,6 @@ export default {
             } else {
                 this.filterConditions = null;
             }
-            // 如果有可视化排序配置
-            if(this.field.options?.sortField){
-                this.extraSort = `${this.field.options.sortField} ${this.field.options.sortOrder}`;
-            }
             this.showReferenceDialogFlag = true;
 		},
 
@@ -421,7 +433,21 @@ export default {
 
         // 树选择回填
         treeDialogConfirm() {
-            if(this.referenceDialogType === 'tree') {
+			if(this.referenceDialogType === 'user') {
+				let fieldNames = this.$refs.referSU?.getIdNameField() || {};
+				let rows = this.$refs.referSU?.getMultipleSelection() || [];
+				let res = this.handleRecordSelectedEvent(rows, rows);
+				if(res === false){
+					return
+				}
+				this.fieldModel = rows.map(el => {
+					return {
+						id: el[fieldNames.idField],
+						name: el[fieldNames.nameField]
+					}
+				});
+				this.onFieldChangeEvent(this.fieldModel);
+			}else if(this.referenceDialogType === 'tree') {
                 let selectedNodes = this.$refs.referTree?.getSelectedNode();
                 if(selectedNodes.length < 1) {
                     this.fieldModel = [];

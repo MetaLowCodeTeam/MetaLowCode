@@ -104,6 +104,20 @@
 			:append-to-body="true"
             scrollbarMaxHeight="600px"
 		>
+			<ReferenceSearchUser
+				ref="referSU"
+				:entity="entity"
+				:refField="curRefField"
+				:extraFilter="searchFilter"
+				:extraSort="extraSort"
+				:filterConditions="filterConditions"
+				:isSingleCheck="!(subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval')"
+				:showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+				@recordSelected="beforeSetReferRecord"
+				@multipleRecordSelected="beforeMultipleSetReferRecord"
+				:defaultSelected="fieldModel"
+				v-if="referenceDialogType == 'user'"
+			></ReferenceSearchUser>
 			<ReferenceSearchTable
 				ref="referST"
 				:entity="entity"
@@ -117,7 +131,7 @@
                 :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 :defaultSelected="fieldModel"
-                v-if="referenceDialogType == 'table'"
+                v-else-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
                 v-else
@@ -136,6 +150,7 @@
 
 <script>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
+import ReferenceSearchUser from "@/components/mlReferenceSearch/reference-search-user.vue";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import ReferenceSearchRemote from "@/components/mlReferenceSearch/reference-search-remote.vue";
@@ -180,6 +195,7 @@ export default {
         ReferenceSearchTree,
 		Detail,
 		ReferenceSearchRemote,
+		ReferenceSearchUser
 	},
 	data() {
 		return {
@@ -247,6 +263,7 @@ export default {
 	mounted() {
 		this.handleOnMounted();
 		this.setDefaultValue();
+
         this.globalConfig = this.getFormConfig();
 	},
 
@@ -324,7 +341,10 @@ export default {
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName } = this.field.options;
 			this.curRefField = name;
             // 如果启用了树形数据选择弹框，且选择了父子级联字段
-            if(useTreeDataSelect && treeCascadeFieldName) {
+			if(this.field && this.field.refUserFlag){
+				this.referenceDialogType = 'user';
+			} else if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
+			{
                 this.referenceDialogType = 'tree';
                 this.showReferenceDialogFlag = true;
                 this.treeDialogConf = {
