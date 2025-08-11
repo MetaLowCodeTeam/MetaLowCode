@@ -19,7 +19,7 @@ export default {
 	},
 	computed: {
 		refUserFlag() {
-			return !!this.designer.selectedWidget.refUserFlag
+			return !!this.designer.selectedWidget.refUserFlag || this.designer?.selectedWidget?.refEntities == 'User'
 		},
 	},
 	created() {

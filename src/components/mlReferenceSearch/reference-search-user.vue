@@ -34,7 +34,7 @@
 				<div class="work-flow-conditions w-100">
 					<div class="head-selector-container">
 						<div class="head-tree-container">
-							<el-input style="width: 100%;" v-model="filterText" placeholder="输入关键字过滤" clearable>
+							<el-input class="head-tree-input" v-model="filterText" placeholder="输入关键字过滤" clearable>
 							</el-input>
 						</div>
 						<div class="head-selected-container">
@@ -65,6 +65,7 @@
 								:filter-node-method="filterNode"
 								@check="handleNodeCheck"
 								:default-expanded-keys="expandedKeys"
+                                :empty-text="hasDepartmentField ? '暂无数据' : '该字段引用实体处搜索字段没有部门字段，请先配置'"
 							/>
 						</div>
 						<!-- 右边选中的用户列表 -->
@@ -504,6 +505,20 @@ export default {
 		margin-bottom: 5px;
 	}
 }
+
+.head-tree-container {
+	flex: 1;
+	border-right: 1px solid #ebeef5;
+	padding: 0px 10px;
+    .head-tree-input {
+        width: 100%;
+        :deep(.el-input__wrapper){
+            box-shadow: none;
+            padding: 1px 0;
+        }
+    }
+    
+}
 </style>
 
 <style>
@@ -557,11 +572,7 @@ export default {
 	overflow: hidden;
 }
 
-.head-tree-container {
-	flex: 1;
-	border-right: 1px solid #ebeef5;
-	padding: 0px 10px;
-}
+
 
 .head-selected-container {
 	flex: 1;
