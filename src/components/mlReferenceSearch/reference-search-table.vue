@@ -54,7 +54,7 @@
 			>
                 <div class="tab-list">
                     <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-                        <el-tab-pane v-for="tab in tabList" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
+                        <el-tab-pane v-for="tab in tabList" :key="tab.value" :label="tab.label + '(' + selectedData.filter(el => el.formEntityName == tab.value).length + ')'" :name="tab.value"></el-tab-pane>
                     </el-tabs>
                 </div>
 				<mlSetConditions
@@ -117,7 +117,7 @@
                     <el-tag
                         type="primary"
                         size="small"
-                        v-for="item in selectedData"
+                        v-for="item in getSelectedData()"
                         :key="item.id"
                         class="item-tag"
                         closable
@@ -487,6 +487,7 @@ export default {
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
+                const { queryEntityInfoByName, queryEntityNameById } = useCommonStore();
 				if (
 					newDefaultSelected &&
 					newDefaultSelected.length > 0 &&
@@ -495,8 +496,10 @@ export default {
 				) {
 					this.selectedData = newDefaultSelected.map((el) => {
 						let row = {};
-						row[this.idField] = el.id;
-						row[this.nameField] = el.name;
+                        row.formEntityName = queryEntityNameById(el.id);
+                        let entityInfo = queryEntityInfoByName(row.formEntityName);
+                        row[entityInfo.idFieldName] = el.id;
+                        row[entityInfo.nameFieldName] = el.name;
 						return row;
 					});
 				}
@@ -650,12 +653,26 @@ export default {
 		},
 		// 获取所有选中数据
 		getMultipleSelection() {
-			return this.selectedData;
+            const { queryEntityInfoByName } = useCommonStore();
+			return this.selectedData.map(el => {
+                if(el.formEntityName) {
+                    let entityInfo = queryEntityInfoByName(el.formEntityName);
+                    el.idFieldName = entityInfo.idFieldName;
+                    el.nameFieldName = entityInfo.nameFieldName;
+                    return {
+                        ...el,
+                    }
+                }
+                return el
+            });
 		},
 		// 多选触发
 		selects(selection, row) {
 			if (this.selectedData.length === 0) {
-				this.selectedData = selection;
+				this.selectedData = selection.map( el=> {
+                    el.formEntityName = this.currentTab || '';
+                    return el;
+                });
 			} else {
 				if (this.selectedData.length > 0 && !row) {
 					// 然后修改 回显数据
@@ -670,7 +687,10 @@ export default {
 								);
 							});
 							if (!find) {
-								this.selectedData.push(item);
+								this.selectedData.push({
+                                    ...item,
+                                    formEntityName: this.currentTab || '',
+                                });
 							}
 						});
 					} else {
@@ -699,7 +719,10 @@ export default {
 						);
 					} else {
 						// 如果点击的行不存在于 selectedData 中，则将其添加到 selectedData 中
-						this.selectedData.push(row);
+						this.selectedData.push({
+                            ...row,
+                            formEntityName: this.currentTab || '',
+                        });
 					}
 				}
 			}
@@ -721,6 +744,10 @@ export default {
             const { checkDetailEntityFlag } = useCommonStore();
             return checkDetailEntityFlag(entityName)
         },
+        // 获取已选数据
+        getSelectedData(){
+            return this.selectedData.filter(item => item.formEntityName == this.currentTab);
+        }
 	},
 };
 </script>

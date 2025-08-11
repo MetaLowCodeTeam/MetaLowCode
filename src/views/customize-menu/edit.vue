@@ -486,7 +486,6 @@ const openDialog = async (v) => {
     row.fieldNameVale = v.fieldNameVale;
     row.idFieldName = getEntityIdFieldName(v);
     row.nameFieldName = getEntityNameFieldName(v);
-    console.log(row,'row')
     row.detailEntityFlag = v.detailEntityFlag;
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;

@@ -479,8 +479,8 @@ export default {
                 }
                 this.fieldModel = rows.map(el => {
                     return {
-                        id: el[fieldNames.idField],
-                        name: el[fieldNames.nameField]
+                        id: el.idFieldName ? el[el.idFieldName] : el[fieldNames.idField],
+                        name: el.nameFieldName ? el[el.nameFieldName] : el[fieldNames.nameField],
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
