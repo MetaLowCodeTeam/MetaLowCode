@@ -19,22 +19,22 @@ export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraF
     );
 }
 
-export function saveRefFilterPanel(entity, field, filter) {
+export function saveRefFilterPanel(entity, field, filter, referenceEntityName) {
     return http.post(
         'crud/saveRefFilterPanel',
         filter,
         {
-            params: { entity, 'refField': field}
+            params: { entity, 'refField': field, referenceEntityName}
         }
     );
 }
 
-export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort) {
+export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort, referenceEntityName) {
 	return http.post(
 		'crud/refFieldQuery2',
 		[formFilter, formFilter2],
 		{
-			params: { entity, 'refField': field, pageNo, pageSize, sort },
+			params: { entity, 'refField': field, pageNo, pageSize, sort, referenceEntityName },
             headers: {
                 extraFilter
             }

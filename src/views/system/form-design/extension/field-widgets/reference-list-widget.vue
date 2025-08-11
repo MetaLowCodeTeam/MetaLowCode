@@ -111,6 +111,7 @@
 				showCheckBox
 				:showMultipleSelectConfirm="false"
 				:defaultSelected="fieldModel"
+                :multipleSelectEntity="multipleSelectEntity"
 				v-else-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
@@ -240,6 +241,7 @@ export default {
                 data: [],
                 sourceData: [],
             },
+            multipleSelectEntity: [], // 多选实体
 		};
 	},
     watch: {
@@ -356,6 +358,7 @@ export default {
 					return;
 				}
 			}
+            this.multipleSelectEntity = this.field.refEntities?.split(',');
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName, useUserDepartmentTree } = this.field.options;

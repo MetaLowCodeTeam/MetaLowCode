@@ -52,11 +52,17 @@
 				class="work-flow-conditions w-100"
 				v-if="referenceEntityName && showQueryPanel && !gDsv?.isExternalForm && !isOuterReference"
 			>
+                <div class="tab-list">
+                    <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+                        <el-tab-pane v-for="tab in tabList" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
+                    </el-tabs>
+                </div>
 				<mlSetConditions
 					ref="mlSetConditionsRef"
 					v-model="conditionConf"
 					:entityName="referenceEntityName"
 					notType
+                    v-if="!hideSetConditions"
 				>
 					<template #afterAddConditions>
 						<div class="fr">
@@ -165,10 +171,11 @@
 import { setColumnFormatter } from "@/utils/util";
 import { refFieldQuery2, saveRefFilterPanel } from "@/api/crud";
 import { externalRefFieldQuery } from "@/api/external";
-import useCommonStore from "@/store/modules/common";
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import http from "@/utils/request";
-//
+// 通用模块
+import useCommonStore from "@/store/modules/common";
+
 export default {
     components:{
         mlCustomEdit,
@@ -217,6 +224,11 @@ export default {
         outerReferenceConfig: {
             type: Object,
             default: () => null,
+        },
+        // 多选实体
+        multipleSelectEntity: {
+            type: Array,
+            default: () => [],
         },
 	},
 	watch: {
@@ -269,14 +281,40 @@ export default {
                 "REFD",
                 "REFU",
             ],
+            tabList: [],
+            activeTab: '',
+            currentTab: '',
+            hideSetConditions: false,
 		};
 	},
 
 	mounted() {
-		this.loadTableTable("isReset");
+		
+        // 初始化页签
+        this.initTab();
 	},
 
 	methods: {
+        // 初始化页签
+        initTab(){
+            const { queryEntityLabelByName } = useCommonStore();
+            this.tabList = [];
+            this.activeTab = '';
+            this.currentTab = '';
+            if(this.multipleSelectEntity.length > 1){
+                this.tabList = this.multipleSelectEntity.map(el => {
+                    return {
+                        label: queryEntityLabelByName(el),
+                        value: el,
+                    }
+                })
+                this.activeTab = this.tabList[0].value;
+                this.currentTab = this.activeTab;
+            }
+            // 加载过滤条件
+            this.loadFilterConditions();
+            // console.log(this.tabList,'this.tabList')
+        },
 		/**
 		 * 筛选条件方法 beg
 		 */
@@ -311,7 +349,8 @@ export default {
 			let res = await saveRefFilterPanel(
 				this.entity,
 				this.refField,
-				saveConditionConf
+				saveConditionConf,
+                this.currentTab
 			);
 			if (res) {
 				this.$message.success("保存成功");
@@ -321,6 +360,13 @@ export default {
 		/**
 		 * 筛选条件方法 end
 		 */
+        // 切换页签
+        handleTabClick(tab) {
+            this.currentTab = tab.props.name;
+            this.hideSetConditions = true;
+            this.loadFilterConditions();
+        },
+
 		// 改变分页大小处理
 		handleSizeChange(val) {
 			this.page.limit = val;
@@ -332,6 +378,38 @@ export default {
 			this.page.pageNo = val;
 			this.loadTableTable();
 		},
+        // 加载过滤条件
+        async loadFilterConditions(){
+            // 如果是外部引用或者外部表单不加载
+            if(this.isOuterReference || this.gDsv?.isExternalForm) {
+                return
+            }
+            // console.log(this.currentTab,'this.currentTab')
+            let res = await refFieldQuery2(
+                this.entity,
+                this.refField,
+                1,
+				1,
+				null,
+				null,
+				null,
+				null,
+                this.currentTab
+            );
+            if(res?.code == 200) {
+                this.conditionConf = {
+                    equation: "AND",
+                    items: [],
+                };
+                if (res.data.filter) {
+					this.conditionConf = res.data.filter;
+				}
+				this.referenceEntityName = res.data.entityName;
+                this.referenceEntityNameFieldName = res.data.nameFieldName;
+                this.hideSetConditions = false;
+                this.loadTableTable();
+            }
+        },
 
 		loadTableTable(type) {
             if(this.isOuterReference){
@@ -372,8 +450,9 @@ export default {
 						this.page.limit,
 						this.extraFilter,
 						this.filterConditions || null,
-						type == "isReset" ? null : tempConditionConf,
-						this.extraSort
+						tempConditionConf,
+						this.extraSort,
+                        this.currentTab
 					)
 				);
 			}
@@ -428,13 +507,6 @@ export default {
 					);
 				}
 				this.page.total = res.data.pagination.total;
-				if (!this.referenceEntityName && res.data.filter) {
-					this.conditionConf = JSON.parse(
-						JSON.stringify(res.data.filter)
-					);
-				}
-				this.referenceEntityName = res.data.entityName;
-                this.referenceEntityNameFieldName = res.data.nameFieldName;
 			}
 			this.loading = false;
 		},

@@ -20,7 +20,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="引用实体设置" v-if="referenceList.length < 1">
+                <el-form-item label="引用实体设置" class="mb-0">
                     <el-button style="float: right" icon="el-icon-plus" @click="addRefEntity">添加</el-button>
                 </el-form-item>
                 <hr style="border: 0;margin-bottom: 15px" />
@@ -389,12 +389,57 @@ export default {
             this.showRefEntityDialogFlag = true;
             this.refEntityIndex = refIdx;
 
-            // this.refEntityName = "";
-            // this.refEntityLabel = "";
-            // this.refEntityFullName = "";
-            // this.fieldItems.length = 0;
-            // this.selectedFieldItems.length = 0;
+            // 清空之前的数据
+            this.refEntityName = "";
+            this.refEntityLabel = "";
+            this.refEntityFullName = "";
+            this.fieldItems.length = 0;
+            this.selectedFieldItems.length = 0;
+
+            // 如果当前引用实体已有数据，则加载对应的数据
+            const currentRef = this.referenceList[refIdx];
+            if (currentRef && currentRef.currentRefEntity) {
+                this.refEntityName = currentRef.currentRefEntity;
+                // 需要根据实体名称重新获取实体标签和字段信息
+                this.loadRefEntityData(currentRef.currentRefEntity, currentRef.selectedFieldItems);
+            }
         },
+        
+        async loadRefEntityData(entityName, selectedFields = []) {
+            try {
+                // 获取实体信息
+                let res = await getEntitySet();
+                if (res && res.code == 200) {
+                    const entity = res.data.find(el => el.name === entityName);
+                    if (entity) {
+                        this.refEntityLabel = entity.label;
+                        this.refEntityFullName = this.refEntityLabel + "(" + this.refEntityName + ")";
+                    }
+                }
+                
+                // 获取字段信息
+                let fieldRes = await getFieldSet(entityName);
+                if (fieldRes && fieldRes.code == 200) {
+                    this.fieldItems.length = 0;
+                    let resultList = fieldRes.data;
+                    if (!!resultList) {
+                        resultList.filter((item) => {
+                            if (item.type !== "PrimaryKey") {
+                                this.fieldItems.push(item);
+                            }
+                        });
+                    }
+                }
+                
+                // 恢复已选择的字段
+                if (selectedFields && selectedFields.length > 0) {
+                    this.selectedFieldItems = JSON.parse(JSON.stringify(selectedFields));
+                }
+            } catch (error) {
+                console.error('加载引用实体数据失败:', error);
+            }
+        },
+
         isSelectedField(fieldItem) {
             let matchedFlag = false;
             this.selectedFieldItems.forEach((item) => {
@@ -426,6 +471,13 @@ export default {
             // console.log( JSON.stringify(this.fieldProps.referenceSetting) )
 
             this.showRefEntityDialogFlag = false;
+            
+            // 清空对话框相关的数据，避免影响下次使用
+            this.refEntityName = "";
+            this.refEntityLabel = "";
+            this.refEntityFullName = "";
+            this.fieldItems.length = 0;
+            this.selectedFieldItems.length = 0;
         },
 
         async showEntityListDialog() {
@@ -460,7 +512,10 @@ export default {
                 this.refEntityLabel + "(" + this.refEntityName + ")";
             this.showEntityListDialogFlag = false;
 
+            // 清空之前选择的字段数据
             this.fieldItems.length = 0;
+            this.selectedFieldItems.length = 0;
+            
             let res = await getFieldSet(this.refEntityName);
             if (res && res.code == 200) {
                 let resultList = res.data;
