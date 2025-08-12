@@ -21,7 +21,14 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="引用实体设置" class="mb-0">
-                    <el-button style="float: right" icon="el-icon-plus" @click="addRefEntity">添加</el-button>
+                    <el-button 
+                        :disabled="fieldState !== 1"
+                        style="float: right" 
+                        icon="el-icon-plus" 
+                        @click="addRefEntity"
+                    >
+                        添加
+                    </el-button>
                 </el-form-item>
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item
@@ -179,7 +186,21 @@
                 :max-height="420"
             >
                 <template #table_operation="{scope}">
-                    <el-button class icon="el-icon-check" @click="selectEntity(scope.row)">选择</el-button>
+                    <el-button 
+                        v-if="!scope.row.isSelected"
+                        class 
+                        icon="el-icon-check" 
+                        @click="selectEntity(scope.row)"
+                    >
+                        选择
+                    </el-button>
+                    <el-button 
+                        v-else
+                        disabled
+                        type="success"
+                    >
+                        已选择
+                    </el-button>
                 </template>
             </SimpleTable>
         </el-dialog>
@@ -316,7 +337,6 @@ export default {
 
                     this.fieldItems = res.data.fieldItems;
                     this.selectedFieldItems = res.data.selectedFieldItems;
-
                     this.referenceList = [
                         {
                             currentRefEntity: res.data.currentRefEntity,
@@ -324,13 +344,12 @@ export default {
                             refEntityAndFields: res.data.refEntityAndFields,
                         },
                     ];
+                    
+                    // 同步更新 fieldProps.referTo 和 fieldProps.referenceSetting
+                    this.buildReferToAndReferenceSetting();
                 }
             }
             this.saveLoading = false;
-
-            /*
-			// TODO: 需参考reference-widget-editor.vue实现字段已保存属性的加载显示！！
-			 */
         },
 
         saveField() {
@@ -389,19 +408,29 @@ export default {
             this.showRefEntityDialogFlag = true;
             this.refEntityIndex = refIdx;
 
-            // 清空之前的数据
-            this.refEntityName = "";
-            this.refEntityLabel = "";
-            this.refEntityFullName = "";
-            this.fieldItems.length = 0;
-            this.selectedFieldItems.length = 0;
-
             // 如果当前引用实体已有数据，则加载对应的数据
             const currentRef = this.referenceList[refIdx];
             if (currentRef && currentRef.currentRefEntity) {
                 this.refEntityName = currentRef.currentRefEntity;
+                this.refEntityLabel = currentRef.currentRefEntity; // 临时设置，后面会通过API获取正确的标签
+                this.refEntityFullName = currentRef.currentRefEntity + "(" + currentRef.currentRefEntity + ")"; // 临时设置
+                
+                // 先恢复已选择的字段，避免清空后丢失
+                if (currentRef.selectedFieldItems && currentRef.selectedFieldItems.length > 0) {
+                    this.selectedFieldItems = JSON.parse(JSON.stringify(currentRef.selectedFieldItems));
+                } else {
+                    this.selectedFieldItems = [];
+                }
+                
                 // 需要根据实体名称重新获取实体标签和字段信息
                 this.loadRefEntityData(currentRef.currentRefEntity, currentRef.selectedFieldItems);
+            } else {
+                // 只有在没有现有数据时才清空
+                this.refEntityName = "";
+                this.refEntityLabel = "";
+                this.refEntityFullName = "";
+                this.fieldItems.length = 0;
+                this.selectedFieldItems.length = 0;
             }
         },
         
@@ -430,11 +459,6 @@ export default {
                         });
                     }
                 }
-                
-                // 恢复已选择的字段
-                if (selectedFields && selectedFields.length > 0) {
-                    this.selectedFieldItems = JSON.parse(JSON.stringify(selectedFields));
-                }
             } catch (error) {
                 console.error('加载引用实体数据失败:', error);
             }
@@ -455,6 +479,15 @@ export default {
                 return;
             }
 
+            // 检查是否与其他引用实体重复
+            for (let i = 0; i < this.referenceList.length; i++) {
+                if (i !== this.refEntityIndex && 
+                    this.referenceList[i].currentRefEntity === this.refEntityName) {
+                    this.$message.error(`不能选择重复的实体：${this.refEntityLabel}(${this.refEntityName})`);
+                    return;
+                }
+            }
+
             let tempStr = this.refEntityLabel + "[";
             for (let i = 0; i < this.selectedFieldItems.length; i++) {
                 tempStr += this.selectedFieldItems[i].label + ",";
@@ -471,6 +504,7 @@ export default {
             // console.log( JSON.stringify(this.fieldProps.referenceSetting) )
 
             this.showRefEntityDialogFlag = false;
+            
             
             // 清空对话框相关的数据，避免影响下次使用
             this.refEntityName = "";
@@ -494,9 +528,12 @@ export default {
                 if (!!entityItems) {
                     entityItems.filter((entity) => {
                         if (!entity.internalEntityFlag) {
+                            let refEntityFullName = entity.label + "(" + entity.name + ")";
+                            // 检查当前实体是否已被选择
                             this.tableData.push({
                                 name: entity.name,
                                 label: entity.label,
+                                isSelected: this.refEntityFullName === refEntityFullName
                             });
                         }
                     });
@@ -506,6 +543,14 @@ export default {
         },
 
         async selectEntity(row) {
+            // 检查是否与其他引用实体重复
+            for (let i = 0; i < this.referenceList.length; i++) {
+                if (this.referenceList[i].currentRefEntity === row.name) {
+                    this.$message.error(`不能选择重复的实体：${row.label}(${row.name})`);
+                    return;
+                }
+            }
+
             this.refEntityName = row.name;
             this.refEntityLabel = row.label;
             this.refEntityFullName =

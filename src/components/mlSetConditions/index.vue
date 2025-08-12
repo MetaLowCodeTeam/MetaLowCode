@@ -236,23 +236,25 @@
                                             </el-button>
                                         </template>
                                     </el-input>
-                                    <el-dialog
+                                    <ml-dialog
                                         title="请选择"
                                         class="reference-dialog"
                                         v-model="item.showReferenceDialogFlag"
                                         append-to-body
-                                        width="520"
+                                        width="800"
                                         v-if="formatEntityName"
                                         size="default"
                                     >
-                                        <ReferenceSearchTable
+                                        <reference-search-table
                                             v-if="item.showReferenceDialogFlag"
                                             :entity="formatEntityName"
                                             :refField="item.fieldName"
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
+                                            :multipleSelectEntity="item.referTo.split(',')"
+                                            :showLabelSelectNumber="false"
                                             @recordSelected="(event)=> setReferRecord(event,item) "
                                         />
-                                    </el-dialog>
+                                    </ml-dialog>
                                 </div>
                                 <!-- DateTime类型 -->
                                 <div v-else-if="item.type == 'DateTime'">
@@ -641,12 +643,12 @@
                                             </el-button>
                                         </template>
                                     </el-input>
-                                    <el-dialog
+                                    <ml-dialog
                                         title="请选择"
                                         class="reference-dialog"
                                         v-model="item.showReferenceDialogFlag"
                                         append-to-body
-                                        width="520"
+                                        width="800"
                                         v-if="formatEntityName"
                                     >
                                         <ReferenceSearchTable
@@ -654,9 +656,11 @@
                                             :entity="formatEntityName"
                                             :refField="item.fieldName"
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
+                                            :multipleSelectEntity="item.referTo.split(',')"
+                                            :showLabelSelectNumber="false"
                                             @recordSelected="(event)=> setReferRecord(event,item) "
                                         />
-                                    </el-dialog>
+                                    </ml-dialog>
                                 </div>
                                 <!-- DateTime类型 -->
                                 <div v-else-if="item.type == 'DateTime'">
@@ -825,10 +829,15 @@ export default {
             item.showReferenceDialogFlag = true;
             this.clearError(item);
         },
+        // 引用单选
         setReferRecord(event, item) {
             item.value = event.id;
             item.refLabel = event.label;
             item.showReferenceDialogFlag = false;
+        },
+        // 引用多选
+        multipleSelectRecord(event, item) {
+            console.log(event, item, 'event, item')
         },
         async getFieldSet() {
             if(this.isOuterReference){

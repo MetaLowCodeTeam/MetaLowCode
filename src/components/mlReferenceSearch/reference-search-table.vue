@@ -54,7 +54,7 @@
 			>
                 <div class="tab-list">
                     <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-                        <el-tab-pane v-for="tab in tabList" :key="tab.value" :label="tab.label + '(' + selectedData.filter(el => el.formEntityName == tab.value).length + ')'" :name="tab.value"></el-tab-pane>
+                        <el-tab-pane v-for="tab in tabList" :key="tab.value" :label="getTabLabel(tab)" :name="tab.value"></el-tab-pane>
                     </el-tabs>
                 </div>
 				<mlSetConditions
@@ -230,6 +230,11 @@ export default {
             type: Array,
             default: () => [],
         },
+        // 显示标签已选数量
+        showLabelSelectNumber: {
+            type: Boolean,
+            default: true,
+        }
 	},
 	watch: {
 		refField: {
@@ -285,6 +290,7 @@ export default {
             activeTab: '',
             currentTab: '',
             hideSetConditions: false,
+            singleSelectedFormTab: null,
 		};
 	},
 
@@ -301,6 +307,7 @@ export default {
             this.tabList = [];
             this.activeTab = '';
             this.currentTab = '';
+            this.singleSelectedFormTab = null;
             if(this.multipleSelectEntity.length > 1){
                 this.tabList = this.multipleSelectEntity.map(el => {
                     return {
@@ -474,6 +481,7 @@ export default {
 				});
 				this.columns = columnList;
 				this.tableData = res.data.dataList;
+                const { queryEntityInfoByName, queryEntityNameById } = useCommonStore();
                 // 如果是单选，则回填默认选中数据
                 if(!this.showCheckBox){
                     this.tableData.forEach(el => {
@@ -482,12 +490,13 @@ export default {
                             el.isSelected = true;
                         }
                     })
+                    this.singleSelectedFormTab = queryEntityNameById(this.defaultSelected?.id);
                 }
                 let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
-                const { queryEntityInfoByName, queryEntityNameById } = useCommonStore();
+                
 				if (
 					newDefaultSelected &&
 					newDefaultSelected.length > 0 &&
@@ -747,6 +756,18 @@ export default {
         // 获取已选数据
         getSelectedData(){
             return this.selectedData.filter(item => item.formEntityName == this.currentTab);
+        },
+        // 获取页签标签
+        getTabLabel(tab){
+            let label = tab.label;
+            if(this.showLabelSelectNumber){
+                label += '(' + this.selectedData.filter(el => el.formEntityName == tab.value).length + ')';
+            }else {
+                if(this.singleSelectedFormTab == tab.value){
+                    label += '(1)';
+                }   
+            }
+            return label;
         }
 	},
 };
