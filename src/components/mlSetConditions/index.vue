@@ -250,7 +250,7 @@
                                             :entity="formatEntityName"
                                             :refField="item.fieldName"
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
-                                            :multipleSelectEntity="item.referTo.split(',')"
+                                            :multipleSelectEntity="item.referTo?.split(',')"
                                             :showLabelSelectNumber="false"
                                             @recordSelected="(event)=> setReferRecord(event,item) "
                                         />
@@ -656,7 +656,7 @@
                                             :entity="formatEntityName"
                                             :refField="item.fieldName"
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
-                                            :multipleSelectEntity="item.referTo.split(',')"
+                                            :multipleSelectEntity="item.referTo?.split(',')"
                                             :showLabelSelectNumber="false"
                                             @recordSelected="(event)=> setReferRecord(event,item) "
                                         />
