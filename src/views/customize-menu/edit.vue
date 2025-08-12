@@ -722,7 +722,7 @@ const getFieldListOfEntityApi = async (tag) => {
 let SubmitApprovalDialogRefs = ref();
 
 // 保存
-const confirm = async (target) => {
+const confirm = async (target, resetFormData = {}) => {
     if (!vFormRef.value) {
         isShow.value = false;
         return;
@@ -751,7 +751,7 @@ const confirm = async (target) => {
                 await new Promise(resolve => setTimeout(resolve, 500));
                 let saveRes;
                 if (props.queryUrl) {
-                    saveRes = await http.post(props.queryUrl, formData, {
+                    saveRes = await http.post(props.queryUrl, Object.assign(formData, resetFormData), {
                         params: { entity: row.entityName, [props.queryUrlIdName]: row.detailId },
                     });
                 }
@@ -767,33 +767,33 @@ const confirm = async (target) => {
                     saveRes = await saveRecord(
                         row.formEntityId ? row.entityName : referenceCompEntity,
                         row.detailId,
-                        saveFormData,
+                        Object.assign(saveFormData, resetFormData),
                     );
                 }else {
                     if (props.isTeam) {
                         saveRes = await saveTeam(
                             row.entityName,
                             row.detailId,
-                            formData
+                            Object.assign(formData, resetFormData)
                         );
                     } else if (props.isUser || row.entityName == 'User') {
                         saveRes = await saveUser(
                             row.entityName,
                             row.detailId,
-                            formData
+                            Object.assign(formData, resetFormData)
                         );
                     } else if(row.entityName == 'Department') {
                         saveRes = await saveDepartment(
                             row.entityName,
                             row.detailId,
-                            formData
+                            Object.assign(formData, resetFormData)
                         );
                     }
                     else {
                         saveRes = await saveRecord(
                             row.entityName,
                             row.detailId,
-                            formData
+                            Object.assign(formData, resetFormData)
                         );
                     }
                 }
