@@ -490,7 +490,9 @@ export default {
                             el.isSelected = true;
                         }
                     })
-                    this.singleSelectedFormTab = queryEntityNameById(this.defaultSelected?.id);
+                    if(this.defaultSelected?.id){
+                        this.singleSelectedFormTab = queryEntityNameById(this.defaultSelected?.id);
+                    }
                 }
                 let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
