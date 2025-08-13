@@ -268,7 +268,18 @@ export default {
 		},
 
 		dialogWidth() {
-			return this.field.options.searchDialogWidth || "520px";
+			const defaultWidth = 600;
+			const configuredWidth = this.field.options.searchDialogWidth;
+			
+			if (!configuredWidth) {
+				return `${defaultWidth}px`;
+			}
+			
+			// 提取数字，支持 "520px" 或 520 这样的格式
+			const width = parseInt(configuredWidth);
+			
+			// 如果低于600，使用600作为最小值
+			return `${Math.max(width, defaultWidth)}px`;
 		},
 	},
 	// },
