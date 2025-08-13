@@ -13,7 +13,7 @@
                 @click="goHelp"
                 v-if="currentScriptType == 'aviator'"
             >
-                如何使用 AviatorScript 公式?
+                如何使用 AviatorScript 公式? 
             </span>
         </div>
         <div 
@@ -21,7 +21,6 @@
             v-if="showAdvanced && currentScriptType == 'aviator'" 
             :class="{'loading':checkLoading}"
             v-loading="checkLoading"
-            element-loading-text="脚本校验中..."
         >
             <el-input
                 v-model="formulaVal"
@@ -42,7 +41,6 @@
             v-if="!showAdvanced && currentScriptType == 'aviator'"
             :class="{'loading':checkLoading}"
             v-loading="checkLoading"
-            element-loading-text="脚本校验中..."
         >
             <div class="formula-val mb-10 need-change" v-if="formulaNumList.length > 0">
                 <span class="change-span" @click.stop="showAdvanced = !showAdvanced">
@@ -115,14 +113,12 @@
                 </div>
             </div>
         </div>
-
-        <LiteFlowJava 
-            v-if="currentScriptType == 'liteFlowJava'" 
-            v-model="javaScriptVal" 
-            v-loading="checkLoading"
-            element-loading-text="脚本校验中..."
-        />
-
+        <div v-loading="checkLoading">
+            <LiteFlowJava 
+                v-if="currentScriptType == 'liteFlowJava'" 
+                v-model="javaScriptVal" 
+            />
+        </div>
         <el-popover
             ref="popoverRef"
             :virtual-ref="buttonRef"
@@ -231,6 +227,7 @@ let currentScriptType = ref("aviator");
 let javaScriptVal = ref("");
 // 检查loading
 let checkLoading = ref(false);
+let checkLoadingText = ref("脚本校验中...");
 
 watch(
     () => isShow.value,
@@ -356,6 +353,9 @@ let numFormulaVal = ref("");
 const confirm = async () => {
     if(currentScriptType.value == "liteFlowJava"){
         checkLoading.value = true;
+        if(javaScriptVal.value.startsWith('package')){
+            javaScriptVal.value = javaScriptVal.value.split('\n').slice(1).join('\n');
+        }
         let res = await $API.trigger.detail.scriptValidator(javaScriptVal.value);
         if(res && res.data){
             if(isPreview.value){
