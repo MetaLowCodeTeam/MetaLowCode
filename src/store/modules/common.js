@@ -78,6 +78,7 @@ const useCommonStore = defineStore('commonStore', () => {
     }
     // 根据ID查实体名称
     const queryEntityNameById = (id) => {
+        console.log(allEntityName,'allEntityName')
         return allEntityName[parseInt(id.split('-')[0])];
     }
     // 根据ID查名称字段

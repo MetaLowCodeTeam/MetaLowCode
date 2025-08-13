@@ -24,15 +24,12 @@
             </el-table-column>
         </template>
     </mlSingleList>
-    <mlDialog v-model="historyDialog" title="变更详情" width="35%">
-        <div>
-            <el-table :data="historyData" style="width: 100%" stripe size="large">
-                <el-table-column prop="label" label="字段" />
-                <el-table-column prop="before" label="变更前" />
-                <el-table-column prop="after" label="变更后" />
-            </el-table>
-        </div>
-    </mlDialog>
+    
+    <!-- 使用新的变更详情组件 -->
+    <ml-revision-history 
+        ref="historyDialog"
+    />
+    
     <ListDetail
         v-if="showListDetail"
         ref="listDetailRefs"
@@ -52,6 +49,8 @@ import http from "@/utils/request";
 const { allEntityLabel, allEntityName } = storeToRefs(useCommonStore());
 import ListDetail from "@/views/user/components/ListDetail.vue";
 import Detail from "@/views/customize-menu/detail.vue";
+import MlRevisionHistory from "@/components/mlRevisionHistory/index.vue";
+
 let mlSingleListRef = ref("");
 // 默认排序
 let sortFields = ref([
@@ -109,22 +108,12 @@ let tableColumn = ref([
     },
 ]);
 
-// 历史详情弹框是否显示
-let historyDialog = ref(false);
-let historyData = ref([]);
+// 变更详情组件引用
+let historyDialog = ref(null);
+
+// 查看变更详情
 async function activeRow(row) {
-    mlSingleListRef.value.loading = true;
-    let res = await http.get(
-        "/revisionHistory/detailsById?revisionHistoryId=" +
-            row.revisionHistoryId
-    );
-    if (res) {
-        if (res.data && res.data.length > 0) {
-            historyData.value = res.data;
-            historyDialog.value = true;
-        }
-    }
-    mlSingleListRef.value.loading = false;
+    historyDialog.value.openDialog(row.revisionHistoryId);
 }
 
 const onRefresh = () => {

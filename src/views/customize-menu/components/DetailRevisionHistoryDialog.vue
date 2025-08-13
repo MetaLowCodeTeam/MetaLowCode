@@ -29,6 +29,7 @@
 					border
 					stripe
 					class="font-size"
+                    @sort-change="handleSortChange"
 				>
 					<el-table-column
 						prop="revisionBy.name"
@@ -37,6 +38,7 @@
 					<el-table-column
 						prop="revisionOn"
 						label="修改时间"
+                        sortable="custom"
 					></el-table-column>
 					<el-table-column label="操作" :align="'center'" width="100">
 						<template #default="scope">
@@ -71,26 +73,16 @@
 			</template>
 		</div>
 	</ml-dialog>
-	<mlDialog v-model="historyDialog" title="变更详情" width="35%">
-		<div v-loading="historyLoading" element-loading-text="数据加载中...">
-			<el-table
-				:data="historyData"
-				style="width: 100%"
-				stripe
-				size="large"
-			>
-				<el-table-column prop="label" label="字段" />
-				<el-table-column prop="before" label="变更前" />
-				<el-table-column prop="after" label="变更后" />
-			</el-table>
-		</div>
-	</mlDialog>
+    <ml-revision-history 
+        ref="historyDialog"
+    />
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-import { queryByRecordId, revisionHistoryDetailsById } from "@/api/crud";
+import { queryByRecordId } from "@/api/crud";
+import MlRevisionHistory from "@/components/mlRevisionHistory/index.vue";
 
 let isShow = ref(false);
 let loading = ref(false);
@@ -103,6 +95,11 @@ let pageConf = ref({
 	total: 0,
 });
 let tableData = ref([]);
+
+// 排序相关
+let sortBy = ref(null); // 默认降序，支持 ASC、DESC、NULL
+
+
 
 const openDialog = (recordId) => {
 	isShow.value = true;
@@ -119,11 +116,25 @@ const handleSizeChange = (v) => {
     loadTableData();
 }
 
+// 处理排序变化
+const handleSortChange = ({ prop, order }) => {
+    // 将 Element Plus 的排序参数转换为字符串
+    if (order === 'ascending') {
+        sortBy.value = 'ASC';
+    } else if (order === 'descending') {
+        sortBy.value = 'DESC';
+    } else {
+        sortBy.value = null;
+    }
+    // 重新加载数据
+    loadTableData();
+}
+
 const loadTableData = async () => {
 	let { pageNo, pageSize } = pageConf.value;
 	loading.value = true;
 	showEmpty.value = false;
-	let res = await queryByRecordId(curtRecordId.value, pageNo, pageSize);
+	let res = await queryByRecordId(curtRecordId.value, pageNo, pageSize, sortBy.value);
 	if (res) {
 		tableData.value = res.data.dataList || [];
 		if (tableData.value.length < 1) {
@@ -135,22 +146,15 @@ const loadTableData = async () => {
 };
 
 // 查看变更历史
-let historyDialog = ref(false);
-let historyData = ref([]);
-let historyLoading = ref(false);
+let historyDialog = ref(null);
 const viewRow = async (row) => {
-	historyDialog.value = true;
-	historyLoading.value = true;
-	let res = await revisionHistoryDetailsById(row.revisionHistoryId);
-	if (res) {
-		if (res.data && res.data.length > 0) {
-			historyData.value = res.data;
-		}
-	}
-	historyLoading.value = false;
+	historyDialog.value.openDialog(row.revisionHistoryId);
 };
+
 
 defineExpose({
 	openDialog,
 });
 </script>
+
+

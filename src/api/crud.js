@@ -264,8 +264,8 @@ export function queryDetailEntityFields(entityName) {
 }
 
 // 详情-修改历史
-export function queryByRecordId(recordId, pageNo, pageSize) {
-    return http.get('/revisionHistory/queryByRecordId', { recordId, pageNo, pageSize })
+export function queryByRecordId(recordId, pageNo, pageSize, sortBy) {
+    return http.get('/revisionHistory/queryByRecordId', { recordId, pageNo, pageSize, sortBy })
 }
 // 修改历史-修改记录详情
 export function revisionHistoryDetailsById(revisionHistoryId) {
