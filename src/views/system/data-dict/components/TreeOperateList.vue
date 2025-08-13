@@ -67,12 +67,7 @@
 					>
 						<div class="op-item-text yichu" :title="item.label">
 							{{ item.label }}
-                            <span v-if="props.pageType == 'system'">
-                                ({{ item.value }})
-                            </span>
-                            <span v-if="props.isCodeOption">
-                                ({{ item.value }})
-                            </span>
+                            <span class="info-text" style="font-size: 12px;">({{ item.value }})</span>
 						</div>
 						<div class="op-icon-box">
 							<span
