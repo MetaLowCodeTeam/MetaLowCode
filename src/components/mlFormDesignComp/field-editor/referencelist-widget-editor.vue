@@ -167,43 +167,7 @@
                 </div>
             </template>
         </el-dialog>
-
-        <el-dialog
-            ref="entityListDlg"
-            title="选择引用实体"
-            v-model="showEntityListDialogFlag"
-            :append-to-body="true"
-            class="entity-list-dialog"
-            width="560px"
-        >
-            <SimpleTable
-                :show-pagination="false"
-                :show-check-box="false"
-                :table-size="'small'"
-                :columns="columns"
-                :data="tableData"
-                :show-operation-column="true"
-                :max-height="420"
-            >
-                <template #table_operation="{scope}">
-                    <el-button 
-                        v-if="!scope.row.isSelected"
-                        class 
-                        icon="el-icon-check" 
-                        @click="selectEntity(scope.row)"
-                    >
-                        选择
-                    </el-button>
-                    <el-button 
-                        v-else
-                        disabled
-                        type="success"
-                    >
-                        已选择
-                    </el-button>
-                </template>
-            </SimpleTable>
-        </el-dialog>
+        <SelectEntityDialog ref="selectEntityDialogRef" @selectEntity="selectEntity" />
     </el-container>
 </template>
 
@@ -219,7 +183,7 @@ import {
 import FieldState from "@/views/system/field-state-variables";
 import { copyObj, getSimplePinYin } from "@/utils/util";
 import { fieldEditorMixin } from "./field-editor-mixin";
-
+import SelectEntityDialog from "./components/SelectEntityDialog.vue";
 export default {
     name: "ReferenceListWidgetEditor",
     mixins: [fieldEditorMixin],
@@ -231,6 +195,10 @@ export default {
             type: Number,
             default: FieldState.NEW,
         },
+    },
+    emits: ['fieldSaved', 'cancelSave'],
+    components: {
+        SelectEntityDialog,
     },
     data() {
         return {
@@ -515,31 +483,7 @@ export default {
         },
 
         async showEntityListDialog() {
-            this.tableData.length = 0;
-            let appAbbr = this.$route.query.appAbbr;
-            let res = await getEntitySet();
-            if (res && res.code == 200) {
-                let entityItems;
-                if(appAbbr){
-                    entityItems = res.data.filter(el => el.systemEntityFlag || el.appAbbr === appAbbr);
-                }else{
-                    entityItems = res.data.filter(el => !el.appAbbr);
-                }
-                if (!!entityItems) {
-                    entityItems.filter((entity) => {
-                        if (!entity.internalEntityFlag) {
-                            let refEntityFullName = entity.label + "(" + entity.name + ")";
-                            // 检查当前实体是否已被选择
-                            this.tableData.push({
-                                name: entity.name,
-                                label: entity.label,
-                                isSelected: this.refEntityFullName === refEntityFullName
-                            });
-                        }
-                    });
-                }
-                this.showEntityListDialogFlag = true;
-            }
+            this.$refs.selectEntityDialogRef.openDialog(this.$route.query.appAbbr, this.refEntityName);
         },
 
         async selectEntity(row) {

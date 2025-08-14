@@ -164,59 +164,8 @@
                 </div>
             </template>
         </el-dialog>
-
-        <el-dialog
-            ref="entityListDlg"
-            title="选择引用实体"
-            v-model="showEntityListDialogFlag"
-            v-if="showEntityListDialogFlag"
-            :append-to-body="true"
-            :destroy-on-close="true"
-            class="entity-list-dialog"
-            width="760px"
-        >
-            <el-container>
-                <el-header>
-                    <el-input
-                        v-model="queryText"
-                        type="text"
-                        placeholder="请输入关键词搜索"
-                        @keyup.enter.native="doSearch"
-                        clearable
-                        @clear="cancelSearch"
-                    >
-                        <template #append>
-                            <el-button @click="doSearch">
-                                <el-icon>
-                                    <Search />
-                                </el-icon>
-                            </el-button>
-                        </template>
-                    </el-input>
-                </el-header>
-
-                <el-main class="table-main-wrapper">
-                    <SimpleTable
-                        :show-pagination="false"
-                        :show-check-box="false"
-                        :table-size="'small'"
-                        :columns="columns"
-                        :data="tableData"
-                        :show-operation-column="true"
-                        :max-height="420"
-                    >
-                        <template #table_operation="{scope}">
-                            <el-button
-                                class
-                                icon="el-icon-check"
-                                @click="selectEntity(scope.row)"
-                            >选择</el-button>
-                        </template>
-                    </SimpleTable>
-                </el-main>
-            </el-container>
-        </el-dialog>
     </el-container>
+    <SelectEntityDialog ref="selectEntityDialogRef" @selectEntity="selectEntity" />
 </template>
 
 <script>
@@ -237,6 +186,7 @@ import FieldState from "@/views/system/field-state-variables";
 import ReferenceEntitySet from "@/components/mlReferenceSearch/reference-entity-set.vue";
 import useCommonStore from "@/store/modules/common";
 import { fieldEditorMixin } from "./field-editor-mixin";
+import SelectEntityDialog from "./components/SelectEntityDialog.vue";
 const { queryEntityCodeByName } = useCommonStore();
 export default {
     name: "ReferenceWidgetEditor",
@@ -251,8 +201,10 @@ export default {
         },
         entityProps: Object,
     },
+    emits: ['fieldSaved', 'cancelSave'],
     components: {
         ReferenceEntitySet,
+        SelectEntityDialog,
     },
     data() {
         return {
@@ -293,30 +245,6 @@ export default {
             fieldItems: [],
             selectedFieldItems: [],
             virtualFields: [],
-
-            columns: [
-                {
-                    prop: "name",
-                    label: "实体名称",
-                    width: "150",
-                    align: "center",
-                },
-                {
-                    prop: "label",
-                    label: "显示名称",
-                    width: "200",
-                    align: "center",
-                    formatter: this.formatter,
-                },
-                {
-                    prop: "entityType",
-                    label: "实体类型",
-                    width: "150",
-                    align: "center",
-                },
-            ],
-            tableData: [],
-            queryText: "",
             activeTabName: "first",
             // 字段样式
             fieldStyleMap: {},
@@ -462,9 +390,7 @@ export default {
         },
 
         showEntityListDialog() {
-            this.tableData.length = 0;
-            this.loadEntityList();
-            this.showEntityListDialogFlag = true;
+            this.$refs.selectEntityDialogRef.openDialog(this.$route.query.appAbbr, this.refEntityName);
         },
 
         async selectEntity(row) {
@@ -557,13 +483,7 @@ export default {
             }
         },
 
-        doSearch() {
-            this.loadEntityList();
-        },
-
-        cancelSearch() {
-            this.loadEntityList();
-        },
+       
         handleNullableChange(){
             if(!this.fieldProps.nullable){
                 this.fieldProps.creatable = true;
