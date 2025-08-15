@@ -186,7 +186,6 @@ export default {
             let dom = this.data.filter((item) => {
                 return item[idField] == row[idField];
             });
-            console.log(dom,'dom')
             if(dom[0]) {
                 this.$refs.multipleTable.toggleRowSelection(dom[0], selected);
             }
