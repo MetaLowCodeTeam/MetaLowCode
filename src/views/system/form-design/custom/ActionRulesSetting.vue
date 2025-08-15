@@ -251,6 +251,7 @@ const openDialog = (data) => {
                 actionType: item.actionType,
                 actionLabel: item.actionLabel,
                 guid: item.guid,
+                actionParams: item.actionParams || {},
             }
             if(item.ofSubForm) {
                 newItem.field = 'subForm_' + item.ofSubForm + '_' + item.field;
@@ -280,6 +281,7 @@ const confirmActionRule = (data) => {
             actionType: item.actionType,
             actionLabel: item.actionLabel,
             guid: item.guid,
+            actionParams: item.actionParams || {},
         }
         if(item.field.includes('subForm_')){
             newItem.ofSubForm = item.field.split('_')[1];
