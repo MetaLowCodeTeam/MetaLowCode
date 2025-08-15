@@ -181,6 +181,12 @@ export default {
             // console.log(user,'user')
             // return
             if (user) {
+                if(user.data.forcefullyChangingPassword){
+                    this.$router.push({
+                        name: "ResetPassword",
+                    });
+                    return;
+                }
                 let userData = user.data;
                 userData.loginName = this.form.user;
                 setUserInfo(userData);

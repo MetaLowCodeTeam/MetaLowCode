@@ -83,6 +83,11 @@ import http from "@/utils/request";
 // API
 import { deleteUserById, getUserRole } from "@/api/user";
 import { encrypt } from "@/utils/util";
+import { checkPassword } from "@/hooks/usePasswordStrength";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
+
+
 
 const { queryEntityNameById } = useCommonStore();
 const $TOOL = inject("$TOOL");
@@ -149,12 +154,11 @@ const confirmResetPassword = async () => {
 		ElMessage.error("请输入密码");
 		return;
 	}
-	let regEx =
-		/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/;
-	if (!regEx.test(newPassword.value)) {
-		ElMessage.error("必须包含数字、英文。可有字符。密码长度为：6-20位");
-		return;
-	}
+    let { passed, message } = checkPassword(newPassword.value, publicSetting.value.userPasswordRuleLevel);
+    if(!passed){
+        ElMessage.error(message);
+        return;
+    }
     let encryptPassword = await encrypt(newPassword.value);
 	let res = await http.get("/user/resetPassword", {
 		password: encryptPassword,
