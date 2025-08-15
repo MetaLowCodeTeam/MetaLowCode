@@ -248,6 +248,9 @@ const openDialog = (data) => {
                 field: null,
                 label: item.label,
                 type: item.type,
+                actionType: item.actionType,
+                actionLabel: item.actionLabel,
+                guid: item.guid,
             }
             if(item.ofSubForm) {
                 newItem.field = 'subForm_' + item.ofSubForm + '_' + item.field;
@@ -255,6 +258,9 @@ const openDialog = (data) => {
                 newItem.field = 'container_' + item.container;
             }else{
                 newItem.field = item.field;
+            }
+            if(!item.guid) {
+                newItem.guid = getGuid();
             }
             return newItem
         })
@@ -270,7 +276,10 @@ const confirmActionRule = (data) => {
             field: null,
             ofSubForm: null,
             container: null,
-            type: item.type
+            type: item.type,
+            actionType: item.actionType,
+            actionLabel: item.actionLabel,
+            guid: item.guid,
         }
         if(item.field.includes('subForm_')){
             newItem.ofSubForm = item.field.split('_')[1];

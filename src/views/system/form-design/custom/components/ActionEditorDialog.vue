@@ -5,20 +5,26 @@
 			<div class="action-editor-left">
 				<div class="left-header">执行动作</div>
 				<el-tree
+					ref="actionTreeRef"
 					class="action-tree"
 					:data="treeData"
 					:props="treeProps"
 					node-key="id"
 					default-expand-all
 					highlight-current
+					:current-node-key="currentKey"
 					@node-click="handleNodeClick"
 				/>
 			</div>
 			<!-- 右侧：基础配置占位 -->
 			<div class="action-editor-right">
 				<div class="right-title">基础配置</div>
-				<!-- TODO: 这里留空，后续你填入表单/配置内容 -->
-				<FormControl :controlList="controlList" v-if="currentNode?.value === 'form_control'"/>
+				<!-- 将表单与规则数据进行关联：v-model 传递 dialogConfig.data -->
+				<FormControl 
+					v-if="currentNode?.id === 'widget_common_action'"
+					v-model="dialogConfig.data"
+					:controlList="controlList"
+				/>
 			</div>
 		</div>
 
@@ -30,8 +36,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import FormControl from "./Form-Control.vue";
+
+const emit = defineEmits(['confirmAction']);
 
 const dialogConfig = ref({
 	isShow: false,
@@ -44,7 +52,7 @@ const treeData = ref([
 		id: "form",
 		label: "表单",
 		children: [
-			{ id: "form_control", label: "组件控制" },
+			{ id: "widget_common_action", label: "组件控制" },
 		],
 	},
 ]);
@@ -55,27 +63,46 @@ const treeProps = {
 };
 
 let currentNode = ref(null);
+const currentKey = ref(null);
+const actionTreeRef = ref(null);
 // 组件列表
 const controlList = ref([]);
 
 const handleNodeClick = (node) => {
 	// 这里根据点击节点切换右侧配置内容（保留给你后续实现）
-	// console.log('clicked:', node)
+	console.log('clicked:', node)
     currentNode.value = node;
+    currentKey.value = node?.id || null;
+    dialogConfig.value.data.actionLabel = node?.label || "";
+    dialogConfig.value.data.actionType = node?.id || "";
 };
 
-const openDialog = (data, componentOptions) => {
+const openDialog = async (data, componentOptions) => {
 	dialogConfig.value.data = JSON.parse(JSON.stringify(data));
+    console.log(data,'data')
 	dialogConfig.value.isShow = true;
     controlList.value = componentOptions;
+    if(!data.actionType){
+        // 默认选中第一个叶子节点（示例：组件控制）
+        const defaultNode = treeData.value[0]?.children?.[0] || null;
+        currentNode.value = defaultNode;
+        dialogConfig.value.data.actionLabel = defaultNode?.label || "";
+        dialogConfig.value.data.actionType = defaultNode?.id || "";
+        currentKey.value = defaultNode?.id || null;
+        await nextTick();
+        // 高亮树节点
+        if (actionTreeRef.value && currentKey.value) {
+            actionTreeRef.value.setCurrentKey(currentKey.value);
+        }
+    }
 };
 const closeDialog = () => {
 	dialogConfig.value.isShow = false;
 };
 
 const confirmAction = () => {
-	console.log(dialogConfig.value.data);
 	dialogConfig.value.isShow = false;
+    emit('confirmAction', dialogConfig.value.data);
 };
 
 defineExpose({

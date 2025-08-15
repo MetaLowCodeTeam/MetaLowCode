@@ -41,48 +41,23 @@
 					style="width: 100%; margin-bottom: 10px"
 					:gutter="10"
 				>
-					<!-- 选择字段 -->
-					<!-- <el-col :span="10">
-						<el-select
-							v-model="item.field"
-							placeholder="请选择"
-							@change="handleActionFieldChange(item)"
-                            filterable
-						>
-							<el-option-group
-								v-for="group in actionSelects"
-								:key="group.label"
-								:label="group.label"
-							>
-								<el-option
-									v-for="option in group.options"
-									:key="option.value"
-									:label="option.label"
-									:value="option.value"
-								></el-option>
-							</el-option-group>
-						</el-select>
-					</el-col> -->
-					<!-- 选择类型 -->
-					<!-- <el-col :span="10">
-						<el-select v-model="item.type" placeholder="请选择">
-							<el-option
-								v-for="option in actionOptions"
-								:key="option.value"
-								:label="option.label"
-								:value="option.value"
-                                :disabled="item.field.includes('container_') && (option.value == 'required' || option.value == 'notRequired')"
-							></el-option>
-						</el-select>
-					</el-col> -->
+                    <el-col :span="20">
+                        {{ item.actionLabel || '组件控制' }} 
+                    </el-col>
 					<!-- 操作 -->
 					<el-col :span="4">
-						<!-- <el-button
+                        <el-button
+							icon="edit"
+							type="primary"
+							circle
+							@click="editAction(item)"
+						></el-button>
+						<el-button
 							icon="delete"
 							type="danger"
 							circle
 							@click="deleteAction(inx)"
-						></el-button> -->
+						></el-button>
 					</el-col>
 				</el-row>
 				<div class="action-rule-add">
@@ -105,7 +80,7 @@
 			</el-button>
 		</template>
 	</el-drawer>
-    <ActionEditorDialog ref="actionEditorDialogRef" />
+    <ActionEditorDialog ref="actionEditorDialogRef" @confirmAction="handleConfirmAction"/>
 </template>
 
 <script setup>
@@ -113,6 +88,7 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import ComboFilter from "../combo-filter/ComboFilter.vue";
 import ActionEditorDialog from "./ActionEditorDialog.vue";
+import { deepClone, getGuid } from "@/utils/util";
 const emit = defineEmits(["confirm"]);
 
 // 弹框配置
@@ -138,28 +114,39 @@ const defaultActionRule = ref({
 const fieldOptions = ref([]);
 // 动作下拉数据
 const actionSelects = ref([]);
-// 动作类型
-const actionOptions = ref([
-	{ label: "显示", value: "show" },
-	{ label: "隐藏", value: "hide" },
-	{ label: "必填", value: "required" },
-	{ label: "非必填", value: "notRequired" },
-	{ label: "禁用", value: "disabled" },
-	{ label: "启用", value: "enabled" },
-]);
+
 // 默认动作
 const defaultAction = ref({
     // 动作类型
     actionType: "",
+    actionLabel: "",
+    field: "",
+    type: "",
+    guid: null,
 });
 
 const actionEditorDialogRef = ref(null);
 
 // 添加动作
 const addAction = () => {
-	// dialogConfig.value.data.actions.push(JSON.parse(JSON.stringify(defaultAction.value)));
     actionEditorDialogRef.value.openDialog(defaultAction.value, actionSelects.value);
 };
+// 编辑动作
+const editAction = (item) => {
+    actionEditorDialogRef.value.openDialog(item, actionSelects.value);
+}
+// 确认动作
+const handleConfirmAction = (data) => {
+    if(data.guid){
+        let index = dialogConfig.value.data.actions.findIndex(item => item.guid === data.guid);
+        dialogConfig.value.data.actions[index] = deepClone(data);
+    }
+    else {
+        data.guid = getGuid();
+        dialogConfig.value.data.actions.push(deepClone(data));
+    }
+    // console.log(dialogConfig.value.data.actions,'---西欧改后')
+}
 
 // 删除动作
 const deleteAction = (inx) => {
@@ -178,10 +165,10 @@ const openDialog = (data, groupedFieldOptions, containerWidgets) => {
 	let dialogData;
 	if (data) {
 		// 编辑时，保持原有数据
-		dialogData = JSON.parse(JSON.stringify(data));
+		dialogData = deepClone(data);
 	} else {
 		// 新增时，使用默认数据并生成guid
-		dialogData = JSON.parse(JSON.stringify(defaultActionRule.value));
+		dialogData = deepClone(defaultActionRule.value);
 	}
 	dialogConfig.value = {
 		isShow: true,
@@ -247,4 +234,4 @@ defineExpose({
 		padding: 0 20px !important;
 	}
 }
-</style>
+</style>    
