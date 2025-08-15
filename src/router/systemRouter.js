@@ -26,6 +26,7 @@ const routes = [
     },
     {
         path: appPath + "reset_password",
+        name: "ResetPassword",
         component: () => import(/* webpackChunkName: "resetPassword" */ '@/views/login/resetPassword.vue'),
         meta: {
             title: "重置密码"

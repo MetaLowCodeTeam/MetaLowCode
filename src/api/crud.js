@@ -9,7 +9,7 @@ import http, { request } from '@/utils/request'
 export function refFieldQuery(entity, field, pageNo, pageSize, queryText, extraFilter, formFilter) {
     return http.post(
         'crud/refFieldQuery',
-        formFilter,
+        formatFilterToBase64(formFilter),
         {
             params: { entity, 'refField': field, pageNo, pageSize, queryText },
             headers: {
@@ -32,7 +32,7 @@ export function saveRefFilterPanel(entity, field, filter, referenceEntityName) {
 export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort, referenceEntityName) {
 	return http.post(
 		'crud/refFieldQuery2',
-		[formFilter, formFilter2],
+		[formatFilterToBase64(formFilter), formatFilterToBase64(formFilter2)],
 		{
 			params: { entity, 'refField': field, pageNo, pageSize, sort, referenceEntityName },
             headers: {

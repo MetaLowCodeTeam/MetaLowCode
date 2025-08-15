@@ -1,4 +1,4 @@
-import useCommonStore from "@/store/modules/common";
+import { passwordRuleOptions } from "@/hooks/usePasswordStrength";
 export default [
     {
         label: "通用配置",
@@ -149,6 +149,20 @@ export default [
                 label: "账密登录开启图片验证码",
                 key: "verificationCodeLogin",
                 type: "switch",
+            },
+            {
+                label: "首次登录强制用户修改密码",
+                key: "forcefullyChangingPassword",
+                type: "switch",
+            },
+            {
+                label: "密码强度等级",
+                key: "userPasswordRuleLevel",
+                type: "select",
+                selectWidth: "360px",
+                placeholder: "请选择密码强度等级",
+                options: passwordRuleOptions,
+                show: (confData) => confData.forcefullyChangingPassword,
             },
             {
                 label: "会话指纹验证",
