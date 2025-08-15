@@ -87,7 +87,6 @@ const getUserList = async () => {
 
 // 格式化表格数据
 const formatTableData = (data) => {
-    console.log(data,'data')
 	if (search.value) {
 		return data.filter((item) =>
 			item.userName.toLowerCase().includes(search.value.toLowerCase())

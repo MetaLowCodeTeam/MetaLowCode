@@ -79,7 +79,6 @@ const handleNodeClick = (node) => {
 
 const openDialog = async (data, componentOptions) => {
 	dialogConfig.value.data = JSON.parse(JSON.stringify(data));
-    console.log(data,'data')
 	dialogConfig.value.isShow = true;
     controlList.value = componentOptions;
     if(!data.actionType){
