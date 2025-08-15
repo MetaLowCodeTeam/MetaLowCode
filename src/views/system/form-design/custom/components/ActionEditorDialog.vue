@@ -18,7 +18,7 @@
 			<div class="action-editor-right">
 				<div class="right-title">基础配置</div>
 				<!-- TODO: 这里留空，后续你填入表单/配置内容 -->
-				<div class="right-empty"></div>
+				<FormControl :controlList="controlList" v-if="currentNode?.value === 'form_control'"/>
 			</div>
 		</div>
 
@@ -31,6 +31,7 @@
 
 <script setup>
 import { ref } from "vue";
+import FormControl from "./Form-Control.vue";
 
 const dialogConfig = ref({
 	isShow: false,
@@ -40,34 +41,10 @@ const dialogConfig = ref({
 // 示例树数据（后续你可替换为真实数据）
 const treeData = ref([
 	{
-		id: "page",
-		label: "页面",
-		children: [
-			{ id: "page_jump", label: "跳转页面" },
-			{ id: "page_refresh", label: "刷新页面" },
-		],
-	},
-	{
-		id: "dialog",
-		label: "弹窗",
-		children: [
-			{ id: "dialog_open", label: "打开弹窗" },
-			{ id: "dialog_close", label: "关闭弹窗" },
-			{ id: "dialog_message", label: "消息提醒" },
-		],
-	},
-	{
 		id: "form",
 		label: "表单",
 		children: [
-			{ id: "form_submit", label: "提交表单" },
-		],
-	},
-	{
-		id: "other",
-		label: "其他",
-		children: [
-			{ id: "other_custom", label: "自定义" },
+			{ id: "form_control", label: "组件控制" },
 		],
 	},
 ]);
@@ -77,14 +54,20 @@ const treeProps = {
 	label: "label",
 };
 
+let currentNode = ref(null);
+// 组件列表
+const controlList = ref([]);
+
 const handleNodeClick = (node) => {
 	// 这里根据点击节点切换右侧配置内容（保留给你后续实现）
 	// console.log('clicked:', node)
+    currentNode.value = node;
 };
 
-const openDialog = (data) => {
+const openDialog = (data, componentOptions) => {
 	dialogConfig.value.data = JSON.parse(JSON.stringify(data));
 	dialogConfig.value.isShow = true;
+    controlList.value = componentOptions;
 };
 const closeDialog = () => {
 	dialogConfig.value.isShow = false;

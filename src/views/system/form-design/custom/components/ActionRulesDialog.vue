@@ -149,8 +149,8 @@ const actionOptions = ref([
 ]);
 // 默认动作
 const defaultAction = ref({
-	field: "",
-	type: "",
+    // 动作类型
+    actionType: "",
 });
 
 const actionEditorDialogRef = ref(null);
@@ -158,7 +158,7 @@ const actionEditorDialogRef = ref(null);
 // 添加动作
 const addAction = () => {
 	// dialogConfig.value.data.actions.push(JSON.parse(JSON.stringify(defaultAction.value)));
-    actionEditorDialogRef.value.openDialog(defaultAction.value);
+    actionEditorDialogRef.value.openDialog(defaultAction.value, actionSelects.value);
 };
 
 // 删除动作
