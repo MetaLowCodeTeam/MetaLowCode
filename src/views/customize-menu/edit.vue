@@ -721,117 +721,121 @@ const getFieldListOfEntityApi = async (tag) => {
 // 提交审批弹框
 let SubmitApprovalDialogRefs = ref();
 
-// 保存
+// 保存（并发互斥 + finally 复位 + 可选 blur 同步等待）
 const confirm = async (target, resetFormData = {}) => {
     if (!vFormRef.value) {
         isShow.value = false;
         return;
     }
-    let listSubForm = [];
-    vFormRef.value.getContainerWidgets().forEach(el => {
-        if(el.type == 'list-sub-form'){
-            listSubForm.push(el.name);
-        }
-    })
-    vFormRef.value
-        .getFormData()
-        .then(async (formData) => {
-            if (row.fieldName) {
-                formData[row.fieldName] = {
-                    id: row.fieldNameVale,
-                    name: row.fieldNameLabel,
-                };
-            }
-            if (formData) {
-                listSubForm.forEach(el => {
-                    delete formData[el];
-                })
-                loading.value = true;
-                // 添加 500ms 延迟
-                await new Promise(resolve => setTimeout(resolve, 500));
-                let saveRes;
-                if (props.queryUrl) {
-                    saveRes = await http.post(props.queryUrl, Object.assign(formData, resetFormData), {
-                        params: { entity: row.entityName, [props.queryUrlIdName]: row.detailId },
-                    });
-                }
-                else if(isReferenceComp.value){
-                    let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
-                    delete referenceCompFormData.value.referenceCompName
-                    delete referenceCompFormData.value.referenceCompEntity
-                    let saveFormData = row.formEntityId ? cloneDeep(formData) : referenceCompFormData.value;
-                    referenceCompFormData.value[referenceCompName] = [cloneDeep(formData)];
-                    if(row.formEntityId){
-                        saveFormData[row.detailEntityFlag ? row.mainDetailField : row.refEntityBindingField] = row.formEntityId;
-                    }
-                    saveRes = await saveRecord(
-                        row.formEntityId ? row.entityName : referenceCompEntity,
-                        row.detailId,
-                        Object.assign(saveFormData, resetFormData),
-                    );
-                }else {
-                    if (props.isTeam) {
-                        saveRes = await saveTeam(
-                            row.entityName,
-                            row.detailId,
-                            Object.assign(formData, resetFormData)
-                        );
-                    } else if (props.isUser || row.entityName == 'User') {
-                        saveRes = await saveUser(
-                            row.entityName,
-                            row.detailId,
-                            Object.assign(formData, resetFormData)
-                        );
-                    } else if(row.entityName == 'Department') {
-                        saveRes = await saveDepartment(
-                            row.entityName,
-                            row.detailId,
-                            Object.assign(formData, resetFormData)
-                        );
-                    }
-                    else {
-                        saveRes = await saveRecord(
-                            row.entityName,
-                            row.detailId,
-                            Object.assign(formData, resetFormData)
-                        );
-                    }
-                }
-                if (
-                    saveRes &&
-                    (saveRes.data?.code == 200 || saveRes.code == 200)
-                ) {
-                    ElMessage.success("保存成功");
-                    let resData = saveRes.data.formData || {};
-                    resData.needCb = false;
-                    if(isReferenceComp.value && !row.formEntityId){
-                        resData.needCb = true;
-                    }
-                    emits("saveFinishCallBack", resData);
-                    
-                    if(target != 'notCloseDialog' && target != 'submit'){ 
-                        isShow.value = false;
-                    }else {
-                        // 如果是新建，重新初始化表单。
-                        if(!row.detailId){
-                            row.detailId = resData[getEntityIdFieldName(row)];
-                            row.nameFieldName = getEntityNameFieldName(row);
-                            initFormLayout()
-                        }
-                        if(target == 'submit'){
-                            SubmitApprovalDialogRefs.value?.openDialog(row.detailId);
-                        }
-                    }
-                }
-                loading.value = false;
-            }
-        })
-        .catch((err) => {
-            console.log(err,'err')
-            if(!globalDsv.value.defaultValidationMessageDisabled){
-                ElMessage.error("表单校验失败，请修改后重新提交");
+    // 并发互斥：正在保存时直接返回
+    if (loading.value) return;
+    loading.value = true;
+
+    try {
+        // 收集子表字段名称，后续剔除
+        let listSubForm = [];
+        vFormRef.value.getContainerWidgets().forEach(el => {
+            if (el.type == 'list-sub-form') {
+                listSubForm.push(el.name);
             }
         });
+
+        // 确保触发当前输入控件的 blur，使 v-model / 校验值完成同步
+        await flushActiveFieldBlur();
+
+        const formData = await vFormRef.value.getFormData();
+        if (!formData) return;
+
+        if (row.fieldName) {
+            formData[row.fieldName] = {
+                id: row.fieldNameVale,
+                name: row.fieldNameLabel,
+            };
+        }
+
+        // 去除子表数据
+        listSubForm.forEach(el => { delete formData[el]; });
+
+        let saveRes;
+        if (props.queryUrl) {
+            saveRes = await http.post(
+                props.queryUrl,
+                Object.assign(formData, resetFormData),
+                { params: { entity: row.entityName, [props.queryUrlIdName]: row.detailId } }
+            );
+        } else if (isReferenceComp.value) {
+            let { referenceCompName, referenceCompEntity } = referenceCompFormData.value;
+            delete referenceCompFormData.value.referenceCompName;
+            delete referenceCompFormData.value.referenceCompEntity;
+            let saveFormData = row.formEntityId ? cloneDeep(formData) : referenceCompFormData.value;
+            referenceCompFormData.value[referenceCompName] = [cloneDeep(formData)];
+            if (row.formEntityId) {
+                saveFormData[row.detailEntityFlag ? row.mainDetailField : row.refEntityBindingField] = row.formEntityId;
+            }
+            saveRes = await saveRecord(
+                row.formEntityId ? row.entityName : referenceCompEntity,
+                row.detailId,
+                Object.assign(saveFormData, resetFormData),
+            );
+        } else {
+            if (props.isTeam) {
+                saveRes = await saveTeam(row.entityName, row.detailId, Object.assign(formData, resetFormData));
+            } else if (props.isUser || row.entityName == 'User') {
+                saveRes = await saveUser(row.entityName, row.detailId, Object.assign(formData, resetFormData));
+            } else if (row.entityName == 'Department') {
+                saveRes = await saveDepartment(row.entityName, row.detailId, Object.assign(formData, resetFormData));
+            } else {
+                saveRes = await saveRecord(row.entityName, row.detailId, Object.assign(formData, resetFormData));
+            }
+        }
+
+        if (saveRes && (saveRes.data?.code == 200 || saveRes.code == 200)) {
+            ElMessage.success("保存成功");
+            let resData = saveRes.data.formData || {};
+            resData.needCb = isReferenceComp.value && !row.formEntityId ? true : false;
+            emits("saveFinishCallBack", resData);
+
+            if (target != 'notCloseDialog' && target != 'submit') {
+                isShow.value = false;
+            } else {
+                // 如果是新建，重新初始化表单
+                if (!row.detailId) {
+                    row.detailId = resData[getEntityIdFieldName(row)];
+                    row.nameFieldName = getEntityNameFieldName(row);
+                    initFormLayout();
+                }
+                if (target == 'submit') {
+                    SubmitApprovalDialogRefs.value?.openDialog(row.detailId);
+                }
+            }
+        }
+    } catch (err) {
+        console.log(err, 'err');
+        if (!globalDsv.value.defaultValidationMessageDisabled) {
+            ElMessage.error("表单校验失败，请修改后重新提交");
+        }
+    } finally {
+        // 确保任何分支都复位 loading
+        loading.value = false;
+    }
+};
+
+// 主动触发当前激活输入的 blur，并提供一个可配置的“稳定等待时间”，避免因为未触发 blur 导致值不同步
+const flushActiveFieldBlur = async () => {
+    try {
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+            active.blur();
+        }
+    } catch (e) {
+        // 忽略
+    }
+    await nextTick();
+    // 可通过 editParamConf.blurSettleMs 配置等待时长，默认 120ms；若你需要 500ms，可在调用处传入配置
+    const settleMs = editParamConf.value?.blurSettleMs ?? 120;
+    if (settleMs > 0) {
+        await new Promise(resolve => setTimeout(resolve, settleMs));
+    }
 };
 
 const cloneDeep = (data) => {
