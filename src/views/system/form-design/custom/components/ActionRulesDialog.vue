@@ -42,7 +42,7 @@
 					:gutter="10"
 				>
 					<!-- 选择字段 -->
-					<el-col :span="10">
+					<!-- <el-col :span="10">
 						<el-select
 							v-model="item.field"
 							placeholder="请选择"
@@ -62,9 +62,9 @@
 								></el-option>
 							</el-option-group>
 						</el-select>
-					</el-col>
+					</el-col> -->
 					<!-- 选择类型 -->
-					<el-col :span="10">
+					<!-- <el-col :span="10">
 						<el-select v-model="item.type" placeholder="请选择">
 							<el-option
 								v-for="option in actionOptions"
@@ -74,15 +74,15 @@
                                 :disabled="item.field.includes('container_') && (option.value == 'required' || option.value == 'notRequired')"
 							></el-option>
 						</el-select>
-					</el-col>
+					</el-col> -->
 					<!-- 操作 -->
 					<el-col :span="4">
-						<el-button
+						<!-- <el-button
 							icon="delete"
 							type="danger"
 							circle
 							@click="deleteAction(inx)"
-						></el-button>
+						></el-button> -->
 					</el-col>
 				</el-row>
 				<div class="action-rule-add">
@@ -105,12 +105,14 @@
 			</el-button>
 		</template>
 	</el-drawer>
+    <ActionEditorDialog ref="actionEditorDialogRef" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import ComboFilter from "../combo-filter/ComboFilter.vue";
+import ActionEditorDialog from "./ActionEditorDialog.vue";
 const emit = defineEmits(["confirm"]);
 
 // 弹框配置
@@ -151,9 +153,12 @@ const defaultAction = ref({
 	type: "",
 });
 
+const actionEditorDialogRef = ref(null);
+
 // 添加动作
 const addAction = () => {
-	dialogConfig.value.data.actions.push(JSON.parse(JSON.stringify(defaultAction.value)));
+	// dialogConfig.value.data.actions.push(JSON.parse(JSON.stringify(defaultAction.value)));
+    actionEditorDialogRef.value.openDialog(defaultAction.value);
 };
 
 // 删除动作
