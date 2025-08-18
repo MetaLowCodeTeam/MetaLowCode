@@ -110,6 +110,7 @@ const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     isHideAddNode: { type: Boolean, default: false },
+    isView: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref({});
@@ -137,6 +138,9 @@ onMounted(() => {
 });
 
 const show = (index) => {
+    if(props.isView) {
+        return;
+    }
     cutIndex.value = index;
     form.value = nodeConfig.value.conditionNodes[index];
     lastNodes.value = false;

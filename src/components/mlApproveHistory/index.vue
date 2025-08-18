@@ -25,7 +25,7 @@
             </div>
             <div class="approve-view-box" v-else>
                 <el-scrollbar max-height="600px">
-                    <mlWorkflow v-model="nodeConfig" isHideZoom isHideAddNode/>
+                    <mlWorkflow v-model="nodeConfig" isHideZoom isHideAddNode isView/>
                 </el-scrollbar>
             </div>
             <div class="timeline-div">

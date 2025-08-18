@@ -50,7 +50,7 @@
             </el-popover>
         </div>
         <div class="box-scale">
-            <node-wrap v-if="nodeConfig" v-model="nodeConfig" :isHideAddNode="isHideAddNode"></node-wrap>
+            <node-wrap v-if="nodeConfig" v-model="nodeConfig" :isHideAddNode="isHideAddNode" :isView="isView"></node-wrap>
             <div class="end-node">
                 <div class="end-node-circle"></div>
                 <div class="end-node-text">流程结束</div>
@@ -76,6 +76,8 @@ const props = defineProps({
     isHideZoom: { type: Boolean, default: false },
     // 是否隐藏添加节点
     isHideAddNode: { type: Boolean, default: false },
+    // 是否查看模式
+    isView: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref(null);

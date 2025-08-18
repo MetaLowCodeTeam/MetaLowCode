@@ -108,6 +108,7 @@ const { style } = storeToRefs(usePpprovalProcessStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     isHideAddNode: { type: Boolean, default: false },
+    isView: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -147,6 +148,9 @@ const associatedRecordsFinish = (v) => {
 }
 
 const show = () => {
+    if(props.isView) {
+        return;
+    }
     form = Object.assign(form, nodeConfig.value);
     isEditTitle.value = false;
     drawer.value = true;

@@ -158,6 +158,7 @@ const { allEntityName } = storeToRefs(useCommonStore());
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     isHideAddNode: { type: Boolean, default: false },
+    isView: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:modelValue"]);
 let nodeConfig = ref({});
@@ -276,6 +277,9 @@ const getDepartment = async () => {
 };
 
 const show = () => {
+    if(props.isView) {
+        return;
+    }
     form = Object.assign(form, nodeConfig.value);
     isEditTitle.value = false;
     drawer.value = true;
