@@ -87,6 +87,9 @@
                                             :targetEntity="sourceEntity2"
                                             title="回填字段映射"
                                         />
+                                        <div class="info-text mt-10">
+                                            注意：回填逻辑在 自定义按钮-基于选中新建 这种前端转化中并不生效。
+                                        </div>
                                     </el-form-item>
                                 </el-form>
                             </el-scrollbar>
@@ -149,7 +152,7 @@ import { queryEntityFields } from "@/api/crud";
  * 组件
  */
 import MappingComp from "./MappingComp.vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import Edit from "../Edit/index.vue";
 // 条件弹框
 import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
@@ -339,28 +342,52 @@ const formatEntityData = (target, key) => {
 let fieldMappingError = ref(false);
 // 保存
 const onSave = async () => {
-    for(let inx = 0; inx < tabList.value.length; inx++) {
-        let cutTab = tabList.value[inx];
-        if(cutTab.transformTargetEntity && cutTab.transformTargetEntity.fields) {
-            // 取转化字段映射目标字段必填字段
-            let findTargetFields = cutTab.transformTargetEntity.fields.filter(
-                (el) => !el.isNullable
-            );
-            // 取转化字段映射已添加的目标字段
-            let findFieldMappingFields = cutTab.fieldMapping.map((el) => el.targetField);
-            // 查必填字段是否存在
-            for (let index = 0; index < findTargetFields.length; index++) {
-                const element = findTargetFields[index];
-                if (!findFieldMappingFields.includes(element.fieldName)) {
-                    if(activeTab.value != cutTab.name) {
-                        activeTab.value = cutTab.name;
-                        await tabChange(cutTab.name);
-                    }
-                    ElMessage.error(tabList.value[inx].label + "：转化字段映射目标字段【" + element.fieldLabel + "】为必填字段。");
-                    fieldMappingError.value = true;
-                    return;
+    // 收集第一个有缺失必填映射的页签及字段
+    let firstMissingFields = [];
+    let firstMissingTabIndex = -1;
+
+    for (let inx = 0; inx < tabList.value.length; inx++) {
+        const cutTab = tabList.value[inx];
+        if (cutTab.transformTargetEntity && cutTab.transformTargetEntity.fields) {
+            // 必填目标字段
+            const requiredTargets = cutTab.transformTargetEntity.fields.filter((el) => !el.isNullable);
+            // 已映射的目标字段名
+            const mappedTargets = cutTab.fieldMapping.map((el) => el.targetField);
+            // 找出缺失的必填目标字段
+            const missing = [];
+            requiredTargets.forEach((tf) => {
+                if (!mappedTargets.includes(tf.fieldName)) {
+                    missing.push(tf.fieldLabel);
                 }
+            });
+            if (missing.length > 0 && firstMissingTabIndex === -1) {
+                firstMissingFields = missing;
+                firstMissingTabIndex = inx;
             }
+        }
+    }
+
+    if (firstMissingTabIndex !== -1) {
+        // 切换至对应页签并标红
+        const missTab = tabList.value[firstMissingTabIndex];
+        if (activeTab.value !== missTab.name) {
+            activeTab.value = missTab.name;
+            await tabChange(missTab.name);
+        }
+        fieldMappingError.value = true;
+
+        const content = `转化字段映射目标字段【${firstMissingFields.join("、")}】为必填字段，请确认是否不做任何映射。`;
+        try {
+            await ElMessageBox.confirm(content, '主实体转化', {
+                confirmButtonText: '继续保存',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: false,
+            });
+            // 用户确认 -> 继续保存
+        } catch (e) {
+            // 取消
+            return;
         }
     }
     let detailTransformConfig = [];
