@@ -103,7 +103,7 @@
         draggable
     >
         <div v-loading="saveAsDialogConf.loading" class="pr-30">
-            <el-form label-width="70px">
+            <el-form label-width="70px" @submit.prevent>
                 <el-form-item label="名称" class="mb-5 is-required">
                     <el-input v-model="saveAsDialogConf.formLayout.layoutName" clearable />
                 </el-form-item>
