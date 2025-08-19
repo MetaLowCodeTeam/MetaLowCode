@@ -24,8 +24,9 @@ const lengthRegex = /^.{6,20}$/;
 const hasLower = /[a-z]/;
 const hasUpper = /[A-Z]/;
 const hasDigit = /\d/;
-// 特殊字符：除字母数字下划线与空白以外的任意字符
-const hasSpecial = /[^\w\s]/;
+// 特殊字符：包含下划线，以及除字母数字与空白以外的任意字符
+// 说明：原先 /[^\w\s]/ 不包含下划线，这里额外把 '_' 计入特殊字符
+const hasSpecial = /_|[^\w\s]/;
 
 export function validatePasswordByLevel(password, level) {
     if (typeof password !== 'string') return false;
