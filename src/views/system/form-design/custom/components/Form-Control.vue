@@ -94,7 +94,3 @@ const actionOptions = ref([
 	{ label: "启用", value: "enabled" },
 ]);
 </script>
-
-<style scoped>
-/* Styles here */
-</style>

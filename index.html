@@ -15,7 +15,11 @@
         <script src="/spectrum.min.js"></script>
         <script src="/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript">
-			document.write("<script src='/config.js?"+new Date().getTime()+"'><\/script>");
+			(function(){
+				var s = document.createElement('script');
+				s.src = '/config.js?_t=' + Date.now();
+				document.head.appendChild(s);
+			})();
 		</script>
 	</head>
 	<body>
