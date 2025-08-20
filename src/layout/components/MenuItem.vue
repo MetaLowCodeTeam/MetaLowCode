@@ -12,7 +12,7 @@
       </div>
       <div class="fl item text-ellipsis">
         <el-icon class="icon" v-if="!item.useIcon">
-          <SetUp />
+          <Notebook />
         </el-icon>
         <el-icon class="icon" v-else :color="item.iconColor">
           <component :is="item.useIcon" />
@@ -67,11 +67,11 @@
 import { computed, inject } from 'vue';
 import { VueDraggableNext } from 'vue-draggable-next';
 import { ElIcon } from 'element-plus';
-import { 
-  Rank as ElIconRank, 
-  Plus as ElIconPlus, 
-  CloseBold as ElIconCloseBold, 
-  SetUp 
+import {
+  Rank as ElIconRank,
+  Plus as ElIconPlus,
+  CloseBold as ElIconCloseBold,
+  Notebook
 } from '@element-plus/icons-vue';
 
 const props = defineProps({
@@ -116,13 +116,13 @@ const getAddButtonTitle = computed(() => {
   position: relative;
   display: flex;
   align-items: center;
-  
+
   &:hover {
     .action-icon {
       display: block;
     }
   }
-  
+
   &.is-active {
     background: #dedede;
   }
@@ -133,22 +133,22 @@ const getAddButtonTitle = computed(() => {
   right: 10px;
   top: 10px;
   display: none;
-  
+
   .icon-span {
     cursor: pointer;
     display: inline-block;
     color: #a1a1a1;
     margin-right: 5px;
-    
+
     &.add-icon {
       position: relative;
       top: -1px;
     }
-    
+
     &:hover {
       color: #666;
     }
-    
+
     &.is-disabled {
       color: #aeb1b7;
       cursor: not-allowed;
@@ -163,13 +163,13 @@ const getAddButtonTitle = computed(() => {
   background: var(--el-color-primary);
   text-align: center;
   color: #fff;
-  
+
   .icon {
     float: left;
     margin-left: 6px;
     margin-top: 8px;
   }
-  
+
   &:hover {
     cursor: move;
     background: var(--el-color-primary-light-3);
@@ -184,7 +184,7 @@ const getAddButtonTitle = computed(() => {
   width: calc(100% - 32px);
   box-sizing: border-box;
   padding: 0 10px;
-  
+
   .icon {
     position: relative;
     top: 2px;
@@ -194,7 +194,7 @@ const getAddButtonTitle = computed(() => {
 .ghost {
   background: #fff !important;
   border: 1px dashed #999;
-  
+
   .mover,
   .item {
     opacity: 0;
@@ -218,4 +218,4 @@ const getAddButtonTitle = computed(() => {
 .mr-5 {
   margin-right: 5px;
 }
-</style> 
+</style>

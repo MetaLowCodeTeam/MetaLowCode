@@ -158,8 +158,8 @@
 					>
 						<div class="app-manager-item">
                             <!-- 导出小标签 -->
-                            <span 
-                                class="app-manager-item-export-tag" 
+                            <span
+                                class="app-manager-item-export-tag"
                                 @click="handleExportApp(item)"
                                 :title="$t('appManager.1007')"
                                 v-if="activeTab === 'developing'"
@@ -188,7 +188,7 @@
 									v-else
 								>
 									<el-icon :size="24">
-										<SetUp />
+										<Monitor />
 									</el-icon>
 								</div>
 
@@ -220,8 +220,8 @@
 								>
 									{{ $t("appManager.1003") }}
 								</el-button>
-								<el-dropdown 
-                                    class="fr" 
+								<el-dropdown
+                                    class="fr"
                                     trigger="click"
                                     @command="handleMoreFunc(item, $event)"
                                 >
@@ -365,7 +365,7 @@ const handleMoreFunc = (item, command) => {
     // 编辑
     if (command === "edit") {
         listDialogRef.value.openDialog("edit", item);
-    } 
+    }
     // 删除
     else if (command === "delete") {
         handleDeleteApp(item);

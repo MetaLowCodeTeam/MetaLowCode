@@ -26,8 +26,8 @@
                     <div class="top-more-nav-content">
                         <el-row :gutter="10">
                             <el-col :span="6" v-for="(item,inx) in menu" :key="inx">
-                                <div 
-                                    class="top-more-nav-content-item yichu" 
+                                <div
+                                    class="top-more-nav-content-item yichu"
                                     :title="item.meta.title"
                                     @click="showMenu(item)"
                                     :class="pmenu.path == item.path ? 'active' : '' "
@@ -39,8 +39,8 @@
                                 </div>
                             </el-col>
                         </el-row>
-                        <!-- <div 
-                            class="top-more-nav-content-item" 
+                        <!-- <div
+                            class="top-more-nav-content-item"
                             v-for="(item,inx) in menu" :key="inx"
                         >
                             <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
@@ -66,7 +66,7 @@
                     <el-icon size="20"><Menu /></el-icon>
                 </span>
             </el-tooltip>
-            
+
             <div
                 class="adminui-header-center"
                 v-if="!ismobileFn"
@@ -231,7 +231,7 @@
                     </div>
                 </el-scrollbar>
             </div>
-            <div class="adminui-header-right" style="min-width: 280px;">         
+            <div class="adminui-header-right" style="min-width: 280px;">
                 <userbar isDockLayout></userbar>
             </div>
         </header>
@@ -643,7 +643,8 @@ export default {
     cursor: pointer;
     height: 58px;
     padding: 0 15px;
-    font-size: 14px;
+    font-size: 15px;
+	font-weight: 600;
     color: rgba(255, 255, 255, 0.6);
     &.active {
         background: rgba(255, 255, 255, 0.1);
@@ -674,12 +675,12 @@ export default {
 }
 .top-more-nav-content {
     width: 600px;
-    font-size: 14px;
-    font-weight: normal;
+    font-size: 15px;
+	font-weight: normal;
     .top-more-nav-content-item {
         line-height: 30px;
         box-sizing: border-box;
-        padding: 0 10px;
+        padding: 4px 10px;
         cursor: pointer;
         border-radius: 4px;
         &.active {
@@ -687,13 +688,13 @@ export default {
         }
         &:hover {
             background-color: #f0f2f5;
-            
+
         }
         .menu-icon {
             position: relative;
             top: 2px;
         }
-        
+
     }
     // display: flex;
     // .top-more-nav-content-item {

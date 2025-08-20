@@ -41,8 +41,8 @@
 				<div class="fl right-div" v-else>
 					<el-tabs v-model="cutMenu.type" @tab-change="useComponentChange">
 						<el-tab-pane label="关联项" :name="1"></el-tab-pane>
-						<el-tab-pane 
-                            label="仪表盘" 
+						<el-tab-pane
+                            label="仪表盘"
                             :name="5"
                             :disabled="
                                 cutMenu.children && cutMenu.children.length > 0
@@ -235,7 +235,7 @@
 										class="icon"
 										v-if="!cutMenu.useIcon"
 									>
-										<SetUp />
+										<Notebook />
 									</el-icon>
 									<el-icon
 										class="icon"
@@ -254,7 +254,7 @@
 							<el-radio :value="1">嵌入式</el-radio>
 						</el-radio-group>
                         <div>
-                            <el-checkbox 
+                            <el-checkbox
                                 v-model="cutMenu.redirectCarrySessionId"
                                 label="添加sessionId重定向"
                             />
@@ -272,7 +272,7 @@
 					</div>
                     <div
                         v-if="
-                            cutMenu.type == 1 && 
+                            cutMenu.type == 1 &&
                             !filterUseCustomEntity.includes(cutMenu.entityName)"
 						class="mt-10"
 					>
@@ -316,7 +316,7 @@
 					<div
 						class="mt-5"
 						v-if="
-                            cutMenu.type == 1 && 
+                            cutMenu.type == 1 &&
                             cutMenu.useCustom &&
                             !filterUseCustomEntity.includes(cutMenu.entityName)"
 					>
@@ -334,7 +334,7 @@
 							/>
 						</el-select>
                         <div class="mt-10 mb-5">
-                            布局编码 
+                            布局编码
                             <el-tooltip placement="top">
                                 <template #content>
                                     <div style="width: 300px;">
@@ -348,7 +348,7 @@
                         </div>
                         <el-input v-model="cutMenu.modelName" placeholder="请输入布局编码" clearable/>
 					</div>
-                    
+
                     <div class="mt-5">
                         <el-checkbox
 							v-model="cutMenu.pcShow"
@@ -419,7 +419,7 @@ import { getDataList } from "@/api/crud";
 import { customListEntry } from "@/views/custom-page/customListEntry";
 import { getFormLayoutList, getSystemConstants } from "@/api/system-manager";
 import { VueDraggableNext } from "vue-draggable-next";
-import { Select, Finished } from "@element-plus/icons-vue";
+import { Select, Finished, Notebook } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { t } from "@/locales";
 import { useMenuOperations } from '@/composables/useMenuOperations';
@@ -589,7 +589,7 @@ const nodeClick = (node) => {
         cutMenu.value.mobileShow = true;
     }
     useComponentChange();
-    
+
     if(cutMenu.value.type == 6) {
         formEntityCodeChange(cutMenu.value.formEntityCode,'init');
     }
@@ -667,20 +667,20 @@ const systemEntityPath = reactive({
 });
 
 // 使用 composable，同步参数（基于用户变化，移除重复函数）
-const { 
-    addMenu, 
-    associationChange, 
-    confirmMenu, 
+const {
+    addMenu,
+    associationChange,
+    confirmMenu,
     formatMenuList,
     getGuid,
     defaultMenu
 } = useMenuOperations(
-    menuData, 
-    cutMenu, 
-    getGroupEntityList, 
-    systemEntityName, 
-    systemEntityPath, 
-    filterUseCustomEntity, 
+    menuData,
+    cutMenu,
+    getGroupEntityList,
+    systemEntityName,
+    systemEntityPath,
+    filterUseCustomEntity,
     ElMessage
 );
 
@@ -714,7 +714,7 @@ const getCustomRightList = async () => {
 let chartList = ref([]);
 // 获取仪表盘数据
 let getChartList = async () => {
-	
+
 	let filter = {
 		equation: "AND",
 		items: [{ fieldName: "chartData", op: "NT", value: "" }],
@@ -793,12 +793,12 @@ const addChildrenMenu = (menu) => {
   // 计算当前菜单的深度
   const currentDepth = calculateMenuDepth(menu);
   const maxDepth = 8;
-  
+
   if (currentDepth >= maxDepth) {
     ElMessage.warning(`最多支持${maxDepth}级菜单`);
     return;
   }
-  
+
   if (!menu.children) menu.children = [];
   const newChild = { ...defaultMenu, guid: getGuid(), parentGuid: menu.guid };
   menu.children.push(newChild);
@@ -861,9 +861,9 @@ const deleteMenuByGuid = (menuToDelete) => {
       }
       return false;
     };
-    
+
     removeFromArray(menuData.list, menuToDelete.guid);
-    
+
     if (cutMenu.value?.guid === menuToDelete.guid) {
       cutMenu.value = null;
     }
