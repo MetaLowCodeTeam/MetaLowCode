@@ -5,12 +5,14 @@
 		label-width="120px"
 		v-if="!optionModel.useTreeDataSelect"
 	>
-		<el-switch v-model="optionModel.openSearchInPlace" />
+		<el-switch
+			v-model="optionModel.openSearchInPlace"
+			@change="onToggleSearchInPlace"
+		/>
 	</el-form-item>
 	<el-form-item
 		label="搜索字段"
 		label-width="120px"
-		v-if="optionModel.openSearchInPlace"
 		v-loading="loading"
 	>
 		<el-button @click="handleSearchField" class="w-100">
@@ -71,8 +73,23 @@ export default {
 			isShow: false,
 		};
 	},
+	computed: {
+		// 是否已设置搜索字段
+		hasSearchFieldForInPlace() {
+			if (Array.isArray(this.fieldList) && this.fieldList.some(item => item.isSelected)) {
+				return true;
+			}
+			return Array.isArray(this.optionModel.searchFields) && this.optionModel.searchFields.length > 0;
+		}
+	},
     inject: ["isSubFormChildWidget"],
 	methods: {
+		onToggleSearchInPlace(val) {
+			if (val && !this.hasSearchFieldForInPlace) {
+				this.$message.warning('请先选择搜索字段');
+				this.optionModel.openSearchInPlace = false;
+			}
+		},
 		async handleSearchField() {
             let paramEntity = "";
             // 1 获取表单上的字段组件
@@ -168,6 +185,9 @@ export default {
 			this.optionModel.searchFields = this.fieldList
 				.filter((item) => item.isSelected)
 				.map((item) => item.name);
+			if (!this.optionModel.searchFields || this.optionModel.searchFields.length === 0) {
+				this.optionModel.openSearchInPlace = false;
+			}
 			this.isShow = false;
 		},
 	},
