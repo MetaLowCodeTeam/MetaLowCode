@@ -226,7 +226,7 @@ export default function useCustomButtonConfig() {
             // 是否内置按钮
             isNative: true,
             guid: getGuid(),
-            icon: "SetUp",
+            icon: "Stamp",
             showType: 1,
             type: "primary"
         },
@@ -364,19 +364,19 @@ export default function useCustomButtonConfig() {
     // 自定义按钮处理
     const customButtonHandler = async (
         // 按钮自己
-        el, 
+        el,
         // 当前数据
-        rows, 
+        rows,
         // 当前组件导出的方法
-        exposed, 
+        exposed,
         // 当前数据Id
-        recordId, 
+        recordId,
         // 当前组件Loading
-        loading, 
+        loading,
         // 新建回调
-        addCb, 
+        addCb,
         // 编辑回调
-        editCb, 
+        editCb,
         // 基于选中新建回调
         recordAddCb,
         // 路由
@@ -391,7 +391,7 @@ export default function useCustomButtonConfig() {
             try {
                 // 捕获 customButtonEvent 函数调用本身可能抛出的同步错误
                 const rawResult = customButtonEvent(el.beforeEvent);
-    
+
                 // 判断是否为 Promise
                 if (rawResult instanceof Promise) {
                     // 等待 Promise 完成，并捕获 Promise 拒绝（rejected）的错误
@@ -407,7 +407,7 @@ export default function useCustomButtonConfig() {
                 // 发生错误时，通常也应该中断后续操作
                 return;
             }
-    
+
             // 只有当没有发生错误时，才进行结果判断
             if (!hasError) {
                 // 统一判断：只有当 beforeEventResult 严格等于 false 时才中断

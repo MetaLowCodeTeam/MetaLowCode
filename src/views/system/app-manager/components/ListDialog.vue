@@ -67,7 +67,7 @@
                             @click="openSelectIconDialog"
                         >
                             <el-icon class="icon-top-2" v-if="!fromData?.iconConfig?.useIcon">
-                                <SetUp />
+                                <Monitor />
                             </el-icon>
                             <el-icon class="icon-top-2" v-else :color="fromData?.iconConfig?.iconColor">
                                 <component :is="fromData?.iconConfig?.useIcon" />
@@ -280,9 +280,9 @@
 		</template>
 	</ml-dialog>
     <ml-dialog v-model="errMsgDialog.isShow" :title="$t('appManager.1305')" width="600px">
-		<el-table 
-            :data="errMsgDialog.msgList" 
-            style="width: 100%" 
+		<el-table
+            :data="errMsgDialog.msgList"
+            style="width: 100%"
             :show-header="false"
             max-height="400"
             class="err-msg-table"
@@ -291,13 +291,14 @@
 		</el-table>
 	</ml-dialog>
     <mlSelectIcon v-model="isShowIconDialog" :useIcon="cutMenuIcon" @confirmIcon="selectIcon" />
-</template> 
+</template>
 <script setup>
 import { ref, reactive } from "vue";
 import { t } from "@/locales";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getSimplePinYin, upperFirstLetter } from "@/utils/util";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
+import { Monitor } from '@element-plus/icons-vue';
 // API
 import { saveRecord, exportApp, installApp } from "@/api/appManager";
 import { downloadBase64 } from "@/utils/util";

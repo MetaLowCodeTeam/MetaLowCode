@@ -181,15 +181,15 @@ export default {
             // console.log(user,'user')
             // return
             if (user) {
+                let userData = user.data;
+                userData.loginName = this.form.user;
+                setUserInfo(userData);
                 if(user.data.forcefullyChangingPassword){
                     this.$router.push({
                         name: "ResetPassword",
                     });
                     return;
                 }
-                let userData = user.data;
-                userData.loginName = this.form.user;
-                setUserInfo(userData);
                 this.$TOOL.cookie.remove("userInfo");
                 // 勾选了记住密码
                 if (this.form.autologin) {

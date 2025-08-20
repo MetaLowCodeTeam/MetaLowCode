@@ -14,8 +14,8 @@
         :scrollbarMaxHeight="styleConf?.newDialogConfig?.editMaxHeight || '500px'"
         :scrollbarMinHeight="styleConf?.newDialogConfig?.editMinHeight"
     >
-        <div 
-            class="main fullScreen-man" 
+        <div
+            class="main fullScreen-man"
             v-loading="loading"
         >
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
@@ -30,8 +30,8 @@
         </div>
         <template #footer v-if="editParamConf.showFooter && customButtonList.length == 0">
             <slot name="beforeCancelBtn"></slot>
-            <el-button 
-                @click="cancel" 
+            <el-button
+                @click="cancel"
                 :loading="loading"
                 v-if="editParamConf.showCancelBtn"
             >
@@ -65,14 +65,14 @@
                 v-if="editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
                 :loading="loading"
                 plain
-                icon="SetUp"
+                icon="Stamp"
             >
                 保存并提交
             </el-button>
             <slot name="afterConfirmAndSubmitBtn"></slot>
         </template>
         <template #footer v-else>
-            <template 
+            <template
                 v-for="(item,index) of customButtonList" :key="index"
             >
                 <slot v-if="item.type === 'slot'" :name="item.name" :row="row"></slot>
@@ -108,18 +108,18 @@
         </template>
         <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
     </ml-dialog>
-    
+
 </template>
 
 <script setup>
 defineOptions({
     name: "default-edit",
 });
-import { 
-    reactive, 
-    ref, 
-    inject, 
-    nextTick, 
+import {
+    reactive,
+    ref,
+    inject,
+    nextTick,
     onMounted,
     watch,
     watchEffect,
@@ -134,9 +134,9 @@ import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
-import { 
-    globalDsvDefaultData, 
-    getModelName, 
+import {
+    globalDsvDefaultData,
+    getModelName,
     formatFormVirtualField,
     formatQueryByIdParam,
 } from "@/utils/util";
@@ -149,10 +149,10 @@ import { useRouter } from "vue-router";
 const { router } = useRouter();
 const { getCustomAppButtons, customButtonHandler } = useCustomButtonConfig();
 
-const { 
-    queryEntityNameById, 
-    queryEntityLabelByName, 
-    checkModifiableEntity, 
+const {
+    queryEntityNameById,
+    queryEntityLabelByName,
+    checkModifiableEntity,
     queryEntityInfoByName,
     queryEntityCodeByName,
 } = useCommonStore();
@@ -276,7 +276,7 @@ const onAdd = (e) => {
 	let tempV = {};
     tempV.entityName = e.entityName;
     if(e.formId) {
-        tempV.formId = e.formId; 
+        tempV.formId = e.formId;
     }
     isShow.value = false;
     openDialog(tempV);
@@ -302,7 +302,7 @@ const loadMyLayoutConfig = async () => {
                 code: queryEntityCodeByName(row.entityName),
                 label: queryEntityLabelByName(row.entityName),
             }
-            // 获取弹框配置 
+            // 获取弹框配置
             let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
             if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
                 newDialogConfig.editMaxHeight = '500px';
@@ -459,7 +459,7 @@ const openDialog = async (v) => {
         data: {},
         defaultFormData: {},
     });
-    
+
     // 重置其他相关状态变量
     optionData.value = {};
     haveLayoutJson.value = false;
@@ -468,10 +468,10 @@ const openDialog = async (v) => {
     formId.value = "";
     isShowSaveAndSubmit.value = false;
     paramDialogConf.value = null;
-    
+
     // 重置globalDsv为默认状态
     globalDsv.value = globalDsvDefaultData();
-    
+
     row.dialogTitle = "Loading...";
     row.customDialogTitle = v.customDialogTitle;
     row.detailId = v.detailId;
@@ -544,7 +544,7 @@ const initFormLayout = async () => {
     globalDsv.value.formEntityIdFieldName = getEntityIdFieldName(row);
     globalDsv.value.setRowRecordId = setRowRecordId;
     let useFormId = formId.value;
-  
+
     let res = await getFormLayout(row.entityName, useFormId);
     if (res) {
         if (res.data?.layoutJson) {
@@ -571,9 +571,9 @@ const initFormLayout = async () => {
                 globalDsv.value.fileDownloadPrefix =
                     res.data.formUploadParam.fileDownloadPrefix;
             }
-            
+
             // 是编辑
-            if (row.detailId) { 
+            if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过
                 nextTick(async () => {
 					globalDsv.value.formStatus = 'edit';
@@ -581,8 +581,8 @@ const initFormLayout = async () => {
                     vFormRef.value?.setFormJson(res.data.layoutJson);
                     let formFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
 					let formData = await queryById(
-                        row.detailId, 
-                        formFieldSchema.fieldNames, 
+                        row.detailId,
+                        formFieldSchema.fieldNames,
                         { queryDetailList: formFieldSchema.queryDetailList }
                     );
                     if (formData && formData.data) {

@@ -13,7 +13,7 @@
                         <div class="content-card" :title="subItem.name" @click="goNav(subItem)">
                             <div class="item-icon">
                                 <el-icon class="icon" v-if="!subItem.useIcon" color="#FFF">
-                                    <SetUp />
+                                    <Notebook />
                                 </el-icon>
                                 <el-icon class="icon" v-else color="#FFF">
                                     <component :is="subItem.useIcon" />

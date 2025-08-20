@@ -1,7 +1,7 @@
 <template>
-    <div 
-        class="quick-nav-widget" 
-        @click.stop="setSelected" 
+    <div
+        class="quick-nav-widget"
+        @click.stop="setSelected"
         v-loading="loading"
         :class="cutField?.options?.customClass"
     >
@@ -20,7 +20,7 @@
                             v-if="!item.useIcon"
                             :color="contrastTextColor(item.iconColor)"
                         >
-                            <SetUp />
+                            <Notebook />
                         </el-icon>
                         <el-icon
                             class="icon-span"
@@ -123,7 +123,7 @@ const navClick = async (item) => {
                 2,
                 item.openType == 1 ? 1 : 2,
                 appPath + "custom-page/" + item.outLink
-            )  
+            )
         }else {
             let res = await layoutConfigApi.saveUserLayoutCache("NAV", item.navigationId);
             if(res) {

@@ -24,7 +24,7 @@
                                 </div>
                                 <div class="fl item text-ellipsis">
                                     <el-icon class="icon" v-if="!parent.useIcon">
-                                        <SetUp />
+                                        <Notebook />
                                     </el-icon>
                                     <el-icon class="icon" v-else :color="parent.iconColor">
                                         <component :is="parent.useIcon" />
@@ -92,7 +92,7 @@
                                     @click="openSelectIconDialog"
                                 >
                                     <el-icon class="icon" v-if="!cutMenu.useIcon">
-                                        <SetUp />
+                                        <Notebook />
                                     </el-icon>
                                     <el-icon class="icon" v-else :color="cutMenu.iconColor">
                                         <component :is="cutMenu.useIcon" />

@@ -82,7 +82,7 @@
                     <template #prepend>
                         <span class="select-icon-span" title="选择图标" @click="openSelectIconDialog">
                             <el-icon class="icon" v-if="!cutMenu.useIcon">
-                                <SetUp />
+                                <Notebook />
                             </el-icon>
                             <el-icon class="icon" v-else :color="cutMenu.iconColor">
                                 <component :is="cutMenu.useIcon" />
@@ -219,7 +219,7 @@ const loadCustomPageList = () => {
             }
         });
     };
-    nav.forEach(el => { 
+    nav.forEach(el => {
         try {
             let config = JSON.parse(el.config);
             processSubElements(config, el.layoutConfigId); // 处理当前元素的配置

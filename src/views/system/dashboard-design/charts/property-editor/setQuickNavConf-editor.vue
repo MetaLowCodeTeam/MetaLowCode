@@ -44,7 +44,7 @@
                 <div class="paren-div">
                     <div class="fl item text-ellipsis">
                         <el-icon class="span-icon" v-if="!item.useIcon">
-                            <SetUp />
+                            <Notebook />
                         </el-icon>
                         <el-icon class="span-icon" v-else :color="item.iconColor">
                             <component :is="item.useIcon" />

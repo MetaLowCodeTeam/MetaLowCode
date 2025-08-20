@@ -26,7 +26,7 @@
                 v-if="navMenu.meta&&navMenu.meta.icon"
                 :style="{'color':navMenu.meta.iconColor}"
             >
-                <component :is="navMenu.meta.icon || 'el-icon-menu'" />
+                <component :is="navMenu.meta.icon || 'Notebook'" />
             </el-icon>
             <template #title>
                 <span class="menu-title-wrap">{{navMenu.meta.title}}</span>
@@ -39,7 +39,7 @@
                     v-if="navMenu.meta&&navMenu.meta.icon"
                     :style="{'color':navMenu.meta.iconColor}"
                 >
-                    <component :is="navMenu.meta.icon || 'el-icon-menu'" />
+                    <component :is="navMenu.meta.icon || 'Notebook'" />
                 </el-icon>
                 <span class="menu-title-wrap">{{navMenu.meta.title}}</span>
                 <span v-if="navMenu.meta.tag" class="menu-tag">{{navMenu.meta.tag}}</span>
