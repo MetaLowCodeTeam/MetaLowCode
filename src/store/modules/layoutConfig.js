@@ -40,7 +40,7 @@ const formatRouteItem = (el, isTopNav) => {
            newRoute.path += isTopNav ? '/' + el.guid : '';
            newRoute.component = "custom-page/" + getCustomPageComponent(el.outLink);
         }
-        
+
     }
     newRoute.name = el.guid + (isTopNav ? new Date().getTime() : '')
     return newRoute
@@ -172,12 +172,12 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     // 递归处理菜单项
     const processMenuItems = (items, isTopNav) => {
         let routers = [];
-        
+
         items.forEach((el) => {
             let initMenu = {
                 meta: {},
             };
-            
+
             // 处理自定义列表模板
             if(el.type == 1 && el.useCustom){
                 el.type = 3;
@@ -186,17 +186,17 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     el.outLink += "&modelName=" + el.modelName;
                 }
             }
-            
+
             // 设置基本菜单属性
             initMenu.meta.title = el.name;
             initMenu.meta.entityCode = el.entityCode;
             initMenu.meta.entityName = el.entityName;
             initMenu.meta.isOpeneds = el.isOpeneds;
-            initMenu.meta.icon = el.useIcon || 'set-up';
+            initMenu.meta.icon = el.useIcon || 'Notebook';
             initMenu.meta.iconColor = el.iconColor || "";
             initMenu.meta.redirectCarrySessionId = el.redirectCarrySessionId;
             initMenu.meta.outLink = el.outLink;
-            
+
             // 如果是审批中心页面直接跳过权限判断
             let approvalCenter = [
                 "approvalHandle",
@@ -211,12 +211,12 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.meta.hidden = notAuth;
                 initMenu.meta.notAuth = notAuth;
             }
-            
+
             // 如果有子菜单，递归处理
             if (el.children && el.children.length > 0) {
                 initMenu.children = processMenuItems(el.children, isTopNav);
                 initMenu.path = "/" + el.guid;
-                
+
                 // 父菜单权限处理：如果所有子菜单都被隐藏，则隐藏父菜单
                 if(initMenu.children.length > 0) {
                     initMenu.meta.hidden = initMenu.children.every((item) => item.meta.hidden);
@@ -230,7 +230,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 initMenu.path = path;
                 initMenu.component = component;
                 initMenu.name = name;
-                
+
                 // 设置特殊类型的菜单属性
                 if (el.type == 3) {
                     initMenu.meta.type = 3;
@@ -253,15 +253,15 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                     };
                 }
             }
-            
+
             // 处理默认展开
             if(el.isOpeneds){
                 topDefaultUnfold.value.push(initMenu.path);
             }
-            
+
             routers.push(initMenu);
         });
-        
+
         return routers;
     }
     // 获取左侧菜单
@@ -279,11 +279,11 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             hasCustomCode = !hasCustomCode;
         }
 
-        
+
         // 1 如果有实体CODE
         // 2 并且没有权限 或者 没有自定义权限
         // 3 并且不是父菜单
-        // 4 并且类型为1 关联项 
+        // 4 并且类型为1 关联项
         let checkCode = item.detailEntityFlag ? item.mainEntityCode : item.entityCode;
         if(item.entityCode && (!tool.checkRole('r' + checkCode + '-1') || hasCustomCode) && item.entityCode != "parentMenu" && item.type == 1){
             isHidden = true;
@@ -292,14 +292,14 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         if(item.type == 5 && !tool.checkRole('r52-1')){
             isHidden = true;
         }
-        
+
         // 1 如果有自定义权限
         // 2 并且不是父菜单
         // 3 并且类型是2、3、5、6  外部地址、自定义页面、仪表盘、自定义表单
         if(hasCustomCode && item.entityCode != "parentMenu" && (item.type == 2 || item.type == 3 || item.type == 5 || item.type == 6)){
             isHidden = true;
         }
-        // 1 如果是自定义列表 
+        // 1 如果是自定义列表
         if(item.useCustom && item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 3){
             isHidden = true;
         }
@@ -318,7 +318,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     let topDefaultUnfold = ref([]);
     // 设置顶部导航数据
     const setTopNavigation = (data) => {
-        // let 
+        // let
         let formatConfig = data.config ? JSON.parse(data.config) : {};
         isHideWorkbench.value = formatConfig.isHideWorkbench;
         let navList = formatConfig.navList ? JSON.parse(JSON.stringify(formatConfig.navList)) : [];
@@ -383,7 +383,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
     const checkCollectMenu = (menu) => {
         const foundMenu = collectMenuList.value.find(el => el.navigationId == menu.navigationId && el.title == menu.title && el.fullPath == menu.fullPath);
         return foundMenu ? foundMenu.recordId : null;
-    } 
+    }
     return {
         getNavigationApi,
         navigationList,
