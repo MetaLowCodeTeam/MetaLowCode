@@ -103,6 +103,7 @@
                                     @click="beforeConfirmApprove" 
                                     style="min-width: 60px !important;"
                                     icon="Finished"
+                                    :loading="loading"  
                                 >
                                     {{ customButtonText.confirmButtonText }}
                                 </el-button>
@@ -112,12 +113,14 @@
                                     style="min-width: 60px !important;"
                                     v-if="!approvalTask.prohibitRejection"
                                     icon="RefreshLeft"
+                                    :loading="loading"  
                                 >
                                     {{ customButtonText.rejectButtonText }}
                                 </el-button>
                                 <el-button 
                                     @click="canner" 
                                     style="min-width: 60px !important;"
+                                    :loading="loading"  
                                 >
                                     {{ customButtonText.cancelButtonText }}
                                 </el-button>
@@ -572,8 +575,9 @@ function confirmApprove(isBacked) {
         );
         if (saveRes) {
             executeApproval(isBacked);
+        }else {
+            loading.value = false;
         }
-        loading.value = false;
 
     }).catch(err => {
         if(!globalDsv.value.defaultValidationMessageDisabled){
