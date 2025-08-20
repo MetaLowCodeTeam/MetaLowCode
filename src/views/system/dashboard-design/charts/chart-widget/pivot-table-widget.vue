@@ -336,4 +336,9 @@ defineExpose({
         color: var(--el-color-primary);
     }
 }
+:deep(.antv-s2-container) {
+    canvas {
+        width: 100% !important;
+    }
+}
 </style>
