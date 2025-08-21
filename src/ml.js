@@ -38,7 +38,7 @@ import mlAvatar from './components/mlAvatar/index.vue';
 import mlUpload from "./components/mlUpload/index.vue";
 import mlWaterMark from './components/mlWaterMark/index.vue';
 import { ElMessage } from 'element-plus'
-
+import QrcodeVue from 'qrcode.vue'
 // 集成ParkIcons图标
 import * as ParkIcons from '@icon-park/vue-next';
 import {Popup, Picker, PickerGroup, DatePicker, TimePicker, Cascader, Checkbox, Icon} from 'vant'
@@ -79,6 +79,7 @@ export default {
         app.component('mlListDetails', mlListDetails);
         app.component('mlActiveDialog', mlActiveDialog);
         app.component('mlEntityMenuAndList', mlEntityMenuAndList);
+        app.component('QrcodeVue', QrcodeVue);
         app.component('mlUpload', mlUpload);
         app.component('mlWaterMark', mlWaterMark);
         app.component('mlLogo', mlLogo);

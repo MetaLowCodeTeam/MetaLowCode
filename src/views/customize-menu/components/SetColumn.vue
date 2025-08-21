@@ -324,7 +324,7 @@
                             <span class="">自定义渲染</span>
                             <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/yu0gqztx7dhdkp8e?singleDoc#">使用文档</a>
                         </div>
-                        <mlCodeEditor v-model="editColumnDialogData.columnRender"/>
+                        <mlCodeEditor v-model="editColumnDialogData.columnRender" funcParam="params, components"/>
                     </el-tab-pane>
 
                 </el-tabs>
