@@ -62,7 +62,7 @@
             <el-button
                 type="primary"
                 @click="confirmSaveAndSubmit"
-                v-if="editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
+                v-if="editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit.value && row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
                 :loading="loading"
                 plain
                 icon="Stamp"
@@ -81,7 +81,7 @@
                     :type="item.type"
                     :plain="item.key == 'saveRefresh' || item.key == 'saveSubmit'"
                     :disabled="item.disabled"
-                    v-else-if="!item.hidden"
+                    v-else-if="!item.hidden && (item.key != 'saveSubmit' || (item.key == 'saveSubmit' && editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit.value && row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
                 >
                     <el-icon
                         :color="item.iconColor"
@@ -372,7 +372,6 @@ const loadMyLayoutConfig = async () => {
             })
         }
     }
-    console.log(customButtonList.value, 'customButtonList.value')
     // 辅助函数：查找 key 的索引
     const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
     // 在 key='cancel' 前插入
@@ -397,6 +396,8 @@ const loadMyLayoutConfig = async () => {
         customButtonList.value.splice(saveSubmitIndex + 2, 0, { type: 'slot', name: 'afterConfirmAndSubmitBtn' });
     }
 };
+
+
 
 let row = reactive({
     // 自定义弹框标题
