@@ -16,7 +16,6 @@
     >
         <div
             class="main fullScreen-man"
-            v-loading="loading"
         >
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
@@ -25,6 +24,7 @@
                 ref="vFormRef"
                 :global-dsv="globalDsv"
                 :option-data="optionData"
+                v-loading="loading"
             />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
@@ -873,7 +873,7 @@ const refresh = () => {
 }
 
 const cancel = () => {
-    isShow.value = false
+    isShow.value = false;
 }
 
 const getCurEntityName = () => {
