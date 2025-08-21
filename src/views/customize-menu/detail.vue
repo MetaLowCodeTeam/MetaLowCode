@@ -700,7 +700,7 @@ const getLayoutList = async () => {
             }
         });
         // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
-        let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && btn.action !== 1);
+        let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && JSON.stringify(btn.filterJson) !== '{}' && btn.action !== 1);
         if (filterBtns.length > 0) {
             let filterList = filterBtns.map(item => item.filterJson);
             let filterParam = {

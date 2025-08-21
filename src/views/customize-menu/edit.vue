@@ -332,7 +332,7 @@ const loadMyLayoutConfig = async () => {
         }
     })
     // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
-    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && btn.action !== 1);
+    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && JSON.stringify(btn.filterJson) !== '{}' && btn.action !== 1);
     if (filterBtns.length > 0) {
         // 如果是编辑 可以检测条件
         if(row.detailId) {
@@ -372,6 +372,7 @@ const loadMyLayoutConfig = async () => {
             })
         }
     }
+    console.log(customButtonList.value, 'customButtonList.value')
     // 辅助函数：查找 key 的索引
     const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
     // 在 key='cancel' 前插入

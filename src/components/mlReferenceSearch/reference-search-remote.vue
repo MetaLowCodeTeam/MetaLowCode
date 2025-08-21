@@ -121,7 +121,7 @@ const props = defineProps({
         default: "",
     },
     entity: {
-        type: String,
+        type: [String, Number],
         default: "",
     },
     refField: {

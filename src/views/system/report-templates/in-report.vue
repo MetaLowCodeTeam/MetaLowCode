@@ -15,7 +15,7 @@
                 />
                 <el-empty v-else :image-size="100" :description="errorText" />
             </div>
-            <div class="in-report-footer" v-if="haveLayoutJson">
+            <div class="in-report-footer" v-if="haveLayoutJson && !entityId">
                 <el-button
                     type="primary"
                     @click="confirm"
@@ -33,10 +33,11 @@ import { onMounted, ref, nextTick, onBeforeMount } from "vue";
  * API
  */
 // import { getFormLayout, getFieldListOfEntity } from "@/api/system-manager";
-import { getExternalFormData, saveRecord } from "@/api/external";
+import { getExternalFormData, saveRecord, queryExternalFormById } from "@/api/external";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { globalDsvDefaultData } from "@/utils/util";
+import { globalDsvDefaultData, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
+
 const Router = useRouter();
 
 const vFormRef = ref();
@@ -63,6 +64,9 @@ let defaultFormData = ref({});
 // 是否移动端
 let isMobile = ref(false);
 
+// 实体ID
+let entityId = ref(null);
+
 onBeforeMount(() => {
     // 客户端才执行UA判断
     isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -72,6 +76,7 @@ onMounted(() => {
     let routeQuery = Router.currentRoute.value.query;
     externalId.value = routeQuery.externalId;
     tenantId.value = routeQuery.tenantId;
+    entityId.value = routeQuery.entityId;
     if (externalId.value) {
         for (const key in routeQuery) {
             if (Object.prototype.hasOwnProperty.call(routeQuery, key)) {
@@ -123,6 +128,22 @@ const initExternalData = async () => {
 				globalDsv.value.formStatus = 'read'
 				globalDsv.value.formEntityId = externalId.value;
                 vFormRef.value.setFormJson(layoutData.layoutJson);
+                if(entityId.value) {
+                    let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
+                    let recordDataRes = await queryExternalFormById(entityId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList }, externalId.value);
+                    if(recordDataRes && recordDataRes.code == 200) {
+                        globalDsv.value.recordData = recordDataRes.data;
+                        nextTick(() => {
+                            vFormRef.value?.setFormData(formatFormVirtualField(recordDataRes.data));
+                            nextTick(() => {
+                                vFormRef.value?.reloadOptionData();
+                                vFormRef.value?.setReadMode();
+                            });
+                        })
+                    }
+                    loading.value = false;
+                    return
+                }
                 if (res.data.recordData) {
                     approvalStatus.value = res.data.recordData.approvalStatus;
                     vFormRef.value.setFormData(res.data.recordData);
@@ -140,14 +161,16 @@ const initExternalData = async () => {
                 }else {
                     vFormRef.value.setFormData(defaultFormData.value);
                 }
-
                 nextTick(() => {
                     vFormRef.value.reloadOptionData();
+                    loading.value = false;
                 });
             });
         }
+    }else {
+        loading.value = false;
     }
-    loading.value = false;
+    // 
 };
 
 // 保存
