@@ -1,6 +1,6 @@
 <template>
 	<el-drawer
-		:size="isFullScreen ? '100%' : '62.4%'"
+		:size="isFullScreen ? '100%' : styleConf?.newDialogConfig?.detailWidth || '62.4%'"
 		class="ml-drawer"
         v-if="detailDialog.isShow"
         v-model="detailDialog.isShow"
@@ -641,6 +641,21 @@ const getLayoutList = async () => {
             styleConf.value = JSON.parse(STYLE.config);
             if (styleConf.value?.detailConf.autoFullScreen) {
                 isFullScreen.value = true;
+            }
+            let { dialogConfig } = styleConf.value;
+            if(dialogConfig){
+                let recordData = {};
+                let entity = {
+                    name: entityName.value,
+                    code: entityCode.value,
+                    label: queryEntityLabelByName(entityName.value),
+                }
+                // 获取弹框配置 
+                let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
+                if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
+                    newDialogConfig.editMaxHeight = '500px';
+                }
+                styleConf.value.newDialogConfig = newDialogConfig;
             }
         }
         // 如果有页签配置
