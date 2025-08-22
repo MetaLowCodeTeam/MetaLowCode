@@ -150,6 +150,7 @@ const initOption = async () => {
             return;
         }
 		let { showFields } = options.setDimensional;
+        console.log(showFields,'showFields')
 		tableColumn.value = [...showFields];
 		if (tableColumn.value.length > 0) {
 			fieldsList.value = tableColumn.value.map((el) => el.fieldName);
@@ -237,31 +238,42 @@ const getTableData = async () => {
 
 const formatData = (datList) => {
     let showSumcol = cutField.value?.options.setChartConf.showSumcol;
-    // 如果需要汇总列
+    // 统一移除已存在的汇总列，防止重复追加
+    const removeSumcolColumn = () => {
+        tableColumn.value = tableColumn.value.filter(
+            (col) => col.fieldName !== "sumcol" && col.prop !== "sumcol"
+        );
+    };
+
     if (showSumcol) {
+        // 计算时排除汇总列本身
+        const baseColumns = tableColumn.value.filter(
+            (col) => col.fieldName !== "sumcol" && col.prop !== "sumcol"
+        );
         datList.forEach((rowEl) => {
-            const values = tableColumn.value.map((item) =>
-                Number(rowEl[item.fieldName] || rowEl[item.prop])
+            const values = baseColumns.map((item) =>
+                Number(rowEl[item.fieldName] ?? rowEl[item.prop])
             );
-            // console.log(values,'values')
             if (!values.every((value) => Number.isNaN(value))) {
-                rowEl.sumcol = `${values.reduce((prev, curr) => {
+                const sum = values.reduce((prev, curr) => {
                     const value = Number(curr);
-                    if (!Number.isNaN(value)) {
-                        return prev + curr;
-                    } else {
-                        return prev;
-                    }
-                }, 0)}`;
+                    return Number.isNaN(value) ? prev : prev + value;
+                }, 0);
+                rowEl.sumcol = `${sum}`;
             } else {
                 rowEl.sumcol = "N/A";
             }
         });
-        tableColumn.value[tableColumn.value.length] = {
+        // 确保只追加一次“汇总”列
+        removeSumcolColumn();
+        tableColumn.value.push({
             alias: "汇总",
             fieldName: "sumcol",
             prop: "sumcol",
-        };
+        });
+    } else {
+        // 未启用时移除“汇总”列
+        removeSumcolColumn();
     }
     tableData.value = [...datList];
 }
