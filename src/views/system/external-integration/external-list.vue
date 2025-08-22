@@ -138,27 +138,44 @@ const saveProcess = async () => {
     mlEntityMenuAndListRef.value.getEntityList();
 };
 
-const copyRow = (row) => {
-    let homeURL = publicSetting.value.homeURL;
-    if (homeURL.substr(homeURL.length - 1, 1) != "/") {
-        homeURL += "/";
+const appPath = import.meta.env.VITE_APP_PATH;
+
+// 构建外部填报链接，确保不会破坏协议中的 "//"
+const buildInReportUrl = (externalFormId) => {
+    let baseUrl = publicSetting.value.homeURL || "";
+    let pathPrefix = String(appPath || "");
+    if (pathPrefix && !pathPrefix.endsWith("/")) {
+        pathPrefix += "/";
     }
-    homeURL += "web/inReport?externalId=";
-    homeURL += row.externalFormId;
-    copyText(homeURL);
+    const relativePath = `${pathPrefix.replace(/^\/+/, "")}inReport?externalId=${externalFormId}`;
+    try {
+        // 优先使用 URL 保证拼接正确
+        return new URL(relativePath, baseUrl).href;
+    } catch (e) {
+        // 兜底：手动安全拼接，避免出现 "http:/" 或路径中出现多个斜杠
+        const baseNormalized = String(baseUrl).replace(/\/+$/, "");
+        const relativeNormalized = String(relativePath).replace(/^\/+/, "");
+        return `${baseNormalized}/${relativeNormalized}`;
+    }
+};
+
+const copyRow = (row) => {
+    const url = buildInReportUrl(row.externalFormId);
+    copyText(url);
 };
 
 const downErCode = async (row) => {
-    let homeURL = publicSetting.value.homeURL;
-    if (homeURL.substr(homeURL.length - 1, 1) != "/") {
-        homeURL += "/";
+    let url = buildInReportUrl(row.externalFormId);
+    if (publicSetting.value.tenantId) {
+        try {
+            const urlObj = new URL(url);
+            urlObj.searchParams.set("tenantId", publicSetting.value.tenantId);
+            url = urlObj.href;
+        } catch (e) {
+            url += (url.includes("?") ? "&" : "?") + "tenantId=" + publicSetting.value.tenantId;
+        }
     }
-    homeURL += "web/inReport?externalId=";
-    homeURL += row.externalFormId;
-    if(publicSetting.value.tenantId){
-        homeURL += "&tenantId=" + publicSetting.value.tenantId;
-    }
-    let res = await http.post("/picture/getQR", {url:homeURL});
+    let res = await http.post("/picture/getQR", { url });
     if (res && res.data) {
         let blob = base64ToBlob(res.data.qrData);
         let downloadElement = document.createElement("a");
@@ -182,7 +199,7 @@ const base64ToBlob = (base64) => {
     }
     return new Blob([u8arr], { type: mime });
 };
-const appPath = import.meta.env.VITE_APP_PATH;
+
 // 跳转详情
 const goDetail = (row) => {
     router.push({
