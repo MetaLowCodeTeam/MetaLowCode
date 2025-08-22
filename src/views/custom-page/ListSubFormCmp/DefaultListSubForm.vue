@@ -120,6 +120,12 @@ export default {
         getTableDataList(){
             return this.$refs.EntityListRefs.getTableDataList();
         },
+        getSelectedRow(){
+            return this.$refs.EntityListRefs.getSelectedRow();
+        },
+        getCurrentExposed(){
+            return this.$refs.EntityListRefs.getCurrentExposed();
+        },
         refresh(){
             this.$refs.EntityListRefs.refreshList();
         }

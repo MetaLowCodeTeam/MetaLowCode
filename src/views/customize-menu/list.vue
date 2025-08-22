@@ -2545,6 +2545,10 @@ const previewFile = (src) => {
     }
 }
 
+const getCurrentExposed = () => {
+    return currentExposed.value;
+}
+
 
 defineExpose({
     resetList,
@@ -2572,6 +2576,7 @@ defineExpose({
     pageLoading,
     queryNow,
     setRouterParams,
+    getCurrentExposed,
 })
 
 </script>

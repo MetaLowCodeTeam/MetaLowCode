@@ -76,6 +76,12 @@ export default {
         getTableDataList(){
             return this.$refs.listSubForm?.getTableDataList();
         },
+        getSelectedRow(){
+            return this.$refs.listSubForm?.getSelectedRow();
+        },
+        getCurrentExposed(){
+            return this.$refs.listSubForm.getCurrentExposed();
+        },
         refresh(){
             this.$refs.listSubForm?.refresh();
         },
