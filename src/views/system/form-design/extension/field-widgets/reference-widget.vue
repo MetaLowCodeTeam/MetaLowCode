@@ -224,14 +224,14 @@ export default {
 		dialogWidth() {
 			const defaultWidth = 600;
 			const configuredWidth = this.field.options.searchDialogWidth;
-			
+
 			if (!configuredWidth) {
 				return `${defaultWidth}px`;
 			}
-			
+
 			// 提取数字，支持 "520px" 或 520 这样的格式
 			const width = parseInt(configuredWidth);
-			
+
 			// 如果低于600，使用600作为最小值
 			return `${Math.max(width, defaultWidth)}px`;
 		},
@@ -354,7 +354,7 @@ export default {
             // 如果启用了树形数据选择弹框，且选择了父子级联字段
 			if(useUserDepartmentTree){
 				this.referenceDialogType = 'user';
-			} else 
+			} else
             if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
 			{
                 this.referenceDialogType = 'tree';
@@ -753,7 +753,15 @@ export default {
 		},
         onSelectedRemote({record, selectedRow}) {
             this.setReferRecord(record, selectedRow);
-        }
+        },
+
+		focus() {
+			if (!this.isReadMode && this.field.options.openSearchInPlace) {
+				this.$refs.referRemote.focus();
+			} else if (this.getFieldEditor() && this.getFieldEditor().focus) {
+				this.getFieldEditor().focus()
+			}
+		}
 	},
 };
 </script>

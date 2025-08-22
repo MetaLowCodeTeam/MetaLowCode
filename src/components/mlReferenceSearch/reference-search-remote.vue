@@ -266,7 +266,7 @@ const handleSearch = (v) => {
             currentCursor.value = -1;
         }
     })
-    
+
 };
 
 let searchInputDomRef: HTMLInputElement | null = null;
@@ -427,5 +427,13 @@ onUnmounted(() => {
     if (inputElement) {
         inputElement.removeEventListener('keydown', handleKeyDown);
     }
+});
+
+const focus = () => {
+	selectRef.value.focus();
+};
+
+defineExpose({
+	focus
 });
 </script>
