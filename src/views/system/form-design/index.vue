@@ -742,6 +742,7 @@ export default {
                 this.entity,
                 this.layoutId,
                 layoutName,
+                shareTo
             );
 
             if (res && res.code == 200) {
