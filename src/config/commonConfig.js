@@ -162,7 +162,6 @@ export default [
                 selectWidth: "360px",
                 placeholder: "请选择密码强度等级",
                 options: passwordRuleOptions,
-                show: (confData) => confData.forcefullyChangingPassword,
             },
             {
                 label: "会话指纹验证",
