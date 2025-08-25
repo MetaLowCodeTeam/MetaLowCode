@@ -223,8 +223,8 @@ $--table-header-bg-color: var(--el-table-header-bg-color);;
 $--table-header-text-color: var(--el-table-header-text-color);
 // 实体列表表格Td背景颜色
 $--table-td-bg-color: var(--el-table-bg-color);
-// 实体列表表格Td文字颜色
-$--table-td-text-color: var(--el-table-text-color);
+// 实体列表表格Td文字颜色 -- 继承父级 （如果改了这个，那么列表-更多-其他列表设置-自定义行样式属性设置文本颜色将不生效）
+$--table-td-text-color: inherit;
 // 实体列表表格Tr背景颜色
 $--table-tr-bg-color: var(--el-table-tr-bg-color);
 // 实体列表表格斑马纹背景颜色
