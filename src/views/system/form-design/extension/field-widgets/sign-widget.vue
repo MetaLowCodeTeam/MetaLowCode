@@ -58,15 +58,18 @@
 		</div>
 	</form-item-wrapper>
     <MlSign v-model="fieldModel" ref="mlSignRef" @onGenerate="handleGenerate" />
+    <MlSignMobile v-model="fieldModel" ref="mlSignMobileRef" @onGenerate="handleGenerate" />
 </template>
 
 <script>
 // 签名组件
-import vueEsign from "vue-esign";
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 const { FormItemWrapper, emitter, i18n, fieldMixin, Utils } =
 	VisualDesign.VFormSDK;
 import MlSign from "@/components/mlSign/index.vue";
+// 移动端签名
+import MlSignMobile from "@/components/mlSign/mobile-index.vue";
+
 export default {
 	name: "sign-widget",
 	componentName: "FieldWidget", //必须固定为FieldWidget，用于接收父级组件的broadcast事件
@@ -99,6 +102,7 @@ export default {
 	components: {
 		FormItemWrapper,
 		MlSign,
+		MlSignMobile,
 	},
 	data() {
 		return {
@@ -146,7 +150,20 @@ export default {
 	methods: {
 		// 打开签名组件
 		openEsign() {
-            this.$refs.mlSignRef.openSign();
+            if (this.isMobileUA()) {
+                this.$refs.mlSignMobileRef && this.$refs.mlSignMobileRef.openSign();
+            } else {
+                this.$refs.mlSignRef && this.$refs.mlSignRef.openSign();
+            }
+		},
+		// UA 判断：是否为移动端
+		isMobileUA() {
+            if (typeof navigator === "undefined") return false;
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isIpadOS13 = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+            const isMobileMatch = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+            const isUaDataMobile = !!(navigator.userAgentData && navigator.userAgentData.mobile);
+            return isMobileMatch || isIpadOS13 || isUaDataMobile;
 		},
 		// 确认签名
 		handleGenerate(signImg) {
