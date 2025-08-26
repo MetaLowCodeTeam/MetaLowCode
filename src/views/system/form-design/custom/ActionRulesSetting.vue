@@ -4,10 +4,10 @@
         <div class="action-rules-setting">
             <div
                 v-for="(item, inx) in actionRules"
-                :key="item.name"
+                :key="item.guid || item.name"
                 class="action-rule-item"
             >
-                <div class="action-rule-item-name">
+                <div class="action-rule-item-name" :title="item.name">
                     {{ item.name }}
                 </div>
                 <div class="action-rule-item-action">
@@ -107,6 +107,13 @@ const actionButtons = ref([
 		plain: true,
 	},
 	{
+		icon: "copy-document",
+		type: "info",
+		size: "small",
+		key: "copy",
+		plain: true,
+	},
+	{
 		icon: "edit",
 		type: "primary",
 		size: "small",
@@ -147,6 +154,9 @@ const handleActionButtonClick = (item, button, inx) => {
 		case "down":
 			downActionRule(inx);
 			break;
+		case "copy":
+			copyActionRule(inx);
+			break;
 	}
 };
 // 将本地规则同步回传入的 formConfig（selectedWidget.options 或全局配置）
@@ -181,6 +191,19 @@ const downActionRule = (inx) => {
 		];
 	}
 	syncToFormConfig();
+};
+
+// 复制
+const copyActionRule = (inx) => {
+    const src = actionRules.value[inx];
+    if (!src) return;
+    const copied = JSON.parse(JSON.stringify(src));
+    copied.guid = getGuid();
+    if (copied.name) {
+        copied.name = copied.name + " - 副本";
+    }
+    actionRules.value.splice(inx + 1, 0, copied);
+    syncToFormConfig();
 };
 
 // 设置字段组件
@@ -398,11 +421,33 @@ defineExpose({
 .action-rules-setting {
     font-size: 13px;
     .action-rule-item {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
         line-height: 34px;
         border-bottom: 1px dashed #e5e5e5;
+        padding-right: 80px;
+        &:hover {
+            background: #f8f8fb;
+        }
+        .action-rule-item-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .action-rule-item-action {
+            position: absolute;
+            right: 8px;
+            top: 48%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity .15s ease;
+        }
+        &:hover .action-rule-item-action {
+            opacity: 1;
+        }
     }
     .action-rule-add {
         margin-top: 15px;

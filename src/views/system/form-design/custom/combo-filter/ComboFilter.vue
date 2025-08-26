@@ -301,8 +301,16 @@ export default {
                   operator = 'RNEQ'
                 }
               }
-
-              childStr = `RF.${operator}(formModel, '${child.field}', @optValue@)`
+              if(child.field.indexOf('subForm_') === 0) {
+                let newField = child.field.split('_')[2];
+                childStr = `RF.${operator}(rowModel, '${newField}', @optValue@)`
+              }else {
+                let newField = child.field;
+                if(child.field.indexOf('container_') === 0) {
+                    newField = child.field.split('_')[1];
+                }
+                childStr = `RF.${operator}(formModel, '${newField}', @optValue@)`
+              }
               childStr = childStr.replace('@optValue@', optValue)
             }
           } else if (child.type === 'group') {
