@@ -279,7 +279,6 @@ const openDialog = (data) => {
                 actionLabel: item.actionLabel,
                 guid: item.guid,
                 actionParams: item.actionParams || {},
-                bindingEvents: props.bindingEvents || null,
             }
             if(item.ofSubForm) {
                 newItem.field = 'subForm_' + item.ofSubForm + '_' + item.field;
@@ -300,6 +299,10 @@ const openDialog = (data) => {
 const confirmActionRule = (data) => {
     let newData = JSON.parse(JSON.stringify(data));
     let oldActions = [...newData.actions];
+    newData.bindingEvents = null;
+    if(props.bindingEvents && props.bindingEvents.length > 0){
+        newData.bindingEvents = props.bindingEvents;
+    }
     newData.actions = oldActions.map(item => {
         let newItem = {
             field: null,
@@ -310,7 +313,6 @@ const confirmActionRule = (data) => {
             actionLabel: item.actionLabel,
             guid: item.guid,
             actionParams: item.actionParams || {},
-            bindingEvents: props.bindingEvents || null,
         }
         if(item.field.includes('subForm_')){
             newItem.ofSubForm = item.field.split('_')[1];
