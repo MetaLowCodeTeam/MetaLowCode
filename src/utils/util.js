@@ -681,13 +681,32 @@ export const formatQueryByIdParam = (formFieldSchema) => {
 
 
 // 检测审批相关前置事件
-export const checkApprovalPreEvent = (preEvent, vFormRef, elMessage) => {
+export const checkApprovalPreEvent = async (preEvent, vFormRef, elMessage) => {
     // 如果没有前置事件 直接返回 通过
-    if(!preEvent){
+    if (!preEvent) {
         return true;
     }
-    let newFunc = new Function('data','vFormRef', 'ElMessage', preEvent)(vFormRef.getFormData(false), vFormRef, elMessage);
-    return newFunc;
+    try {
+        const result = new Function('data','vFormRef','ElMessage', preEvent)(
+            vFormRef.getFormData(false),
+            vFormRef,
+            elMessage
+        );
+        // 支持异步和同步：返回 false 则拦截，其他情况默认放行
+        if (result && typeof result.then === 'function') {
+            try {
+                const resolved = await result;
+                return resolved !== false;
+            } catch (err) {
+                elMessage?.error?.(err?.message || '前置事件执行失败');
+                return false;
+            }
+        }
+        return result !== false;
+    } catch (error) {
+        elMessage?.error?.(error?.message || '前置事件脚本异常');
+        return false;
+    }
 }
 
 // 检测是否子表单

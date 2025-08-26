@@ -456,10 +456,10 @@ const confirmApproveTask = () => {
 
 
 // 拓展按钮点击
-function handleCommand(type) {
+async function handleCommand(type) {
     // 转审、加签前置事件
     let preEvent = customButtonText.value[type == 1 ? 'specialReviewButtonTextPreEvent' : 'addSignatureButtonTextPreEvent'];
-    if(!checkApprovalPreEvent(preEvent, vFormRef.value, ElMessage)) {
+    if(!(await checkApprovalPreEvent(preEvent, vFormRef.value, ElMessage))) {
         return;
     }
     otherDialog.value = true;
@@ -529,9 +529,9 @@ const handleGenerate = () => {
 };
 
 // 同意前触发
-const beforeConfirmApprove = () => {
+const beforeConfirmApprove = async () => {
     // 同意前置事件
-    if(!checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage)) {
+    if(!(await checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage))) {
         return;
     }
     // 需要手写签名
@@ -545,7 +545,7 @@ const beforeConfirmApprove = () => {
 // 驳回前触发
 const beforeReject = async () => {
     // 驳回前置事件
-    if(!checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage)) {
+    if(!(await checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage))) {
         return;
     }
     let { flowType, rejectType } = approvalTask.value;

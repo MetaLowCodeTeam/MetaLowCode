@@ -409,7 +409,10 @@
         <div class="mb-10">
             前置事件 <span class="ml-a-span" @click="goDoc">使用文档</span>
         </div>
-        <mlCodeEditor v-model="preEventDialogConf.script"/>
+        <mlCodeEditor 
+            v-model="preEventDialogConf.script"
+            funcParam="data,vFormRef,ElMessage"
+        />
         <template #footer>
             <el-button @click="preEventDialogConf.show = false">取消</el-button>
             <el-button type="primary" @click="savePreEvent">确认</el-button>
