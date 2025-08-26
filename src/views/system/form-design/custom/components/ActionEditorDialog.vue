@@ -1,20 +1,20 @@
 <template>
-	<ml-dialog v-model="dialogConfig.isShow" title="设置动作" width="920px">
+	<ml-dialog v-model="dialogConfig.isShow" title="设置动作" width="920px" append-to-body>
 		<div class="action-editor">
 			<!-- 左侧：树 -->
 			<div class="action-editor-left">
 				<div class="left-header">执行动作</div>
-				<el-tree
-					ref="actionTreeRef"
-					class="action-tree"
-					:data="treeData"
-					:props="treeProps"
-					node-key="id"
-					default-expand-all
-					highlight-current
-					:current-node-key="currentKey"
-					@node-click="handleNodeClick"
-				/>
+                <el-tree
+                    ref="actionTreeRef"
+                    class="action-tree"
+                    :data="treeData"
+                    :props="treeProps"
+                    node-key="id"
+                    default-expand-all
+                    highlight-current
+                    :current-node-key="currentKey"
+                    @node-click="handleNodeClick"
+                />
 			</div>
 			<!-- 右侧：基础配置占位 -->
 			<div class="action-editor-right">
@@ -29,8 +29,8 @@
 		</div>
 
 		<template #footer>
-			<el-button @click="closeDialog">取消</el-button>
-			<el-button type="primary" @click="confirmAction">确认</el-button>
+			<el-button @click="closeDialog" size="default">取消</el-button>
+			<el-button type="primary" @click="confirmAction" size="default">确认</el-button>
 		</template>
 	</ml-dialog>
 </template>
@@ -132,6 +132,14 @@ defineExpose({
 .action-tree {
 	padding: 0 8px;
 	overflow: auto;
+}
+/* 局部还原 Tree 行高为 default（避免被全局 small 影响） */
+.action-tree :deep(.el-tree-node__content) {
+	height: 32px;
+	line-height: 32px;
+}
+.action-tree :deep(.el-tree-node__label) {
+	font-size: 14px;
 }
 
 .action-editor-right {

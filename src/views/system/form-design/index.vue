@@ -41,14 +41,29 @@
                 </el-dropdown>
             </template>
             <template #actionRules="{designer, formConfig}">
-                <ActionRulesSetting
-                    ref="actionRulesSetting"
-                    :designer="designer"
-                    :form-config="formConfig"
-                    :entity="entity"
-                    :entityLabel="entityLabel"
-                    @initFormWidgets="initFormWidgets"
-                ></ActionRulesSetting>
+                <el-tab-pane label="交互逻辑" name="4">
+                    <ActionRulesSetting
+                        ref="actionRulesSetting"
+                        :designer="designer"
+                        :form-config="formConfig"
+                        :entity="entity"
+                        :entityLabel="entityLabel"
+                        @initFormWidgets="initFormWidgets('actionRulesSetting')"
+                    ></ActionRulesSetting>
+                </el-tab-pane>
+            </template>
+            <template #widgetSetting="{designer, formConfig, selectedWidget, optionModel}">
+                <el-collapse-item name="actionRules" title="交互属性" v-if="selectedWidget.id">
+                    <ActionRulesSetting
+                        ref="actionRulesSettingComp"
+                        :designer="designer" 
+                        :form-config="selectedWidget.options"
+                        :subFormName="selectedWidget.subFormName"
+                        :entity="entity"
+                        :entityLabel="entityLabel"
+                        @initFormWidgets="initFormWidgets('actionRulesSettingComp')"
+                    ></ActionRulesSetting>
+                </el-collapse-item>
             </template>
         </v-form-designer>
     </div>
@@ -221,6 +236,9 @@ export default {
     },
     emits: ['initComplete'],
     methods: {
+        handleTest(designer, formConfig, selectedWidget, optionModel) {
+            console.log(selectedWidget,'selectedWidget')
+        },
         handleSaveCommand(command) {
             if (command === 'save') {
                 this.saveDesign();
@@ -228,11 +246,11 @@ export default {
                 this.saveAsDesign();
             }
         },
-        initFormWidgets() {
+        initFormWidgets(refName) {
             let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
             let containerWidgets = this.$refs.vfDesigner.getContainerWidgets(null, true);
-            this.$refs.actionRulesSetting.setFieldWidgets(fieldWidgets)
-            this.$refs.actionRulesSetting.setContainerWidgets(containerWidgets)
+            this.$refs[refName].setFieldWidgets(fieldWidgets)
+            this.$refs[refName].setContainerWidgets(containerWidgets)
         },
         loadFieldListData() {
             getMDFieldList(this.entity)
@@ -720,6 +738,7 @@ export default {
             let formJson = this.$refs.vfDesigner.getFormJson();
             // console.log(formJson,'111');
             formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
+            console.log(formJson,'ssss')
             this.loadActionLoading(false, true);
             let res = await saveFormLayout(
                 this.entity,

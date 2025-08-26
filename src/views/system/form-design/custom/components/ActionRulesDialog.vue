@@ -68,13 +68,14 @@
 			</el-form-item>
 		</el-form>
 		<template #footer>
-			<el-button @click="closeDialog" style="width: 100px">
+			<el-button @click="closeDialog" style="width: 100px" size="default">
 				取消
 			</el-button>
 			<el-button
 				type="primary"
 				@click="confirmActionRule"
 				style="width: 100px"
+				size="default"
 			>
 				确认
 			</el-button>

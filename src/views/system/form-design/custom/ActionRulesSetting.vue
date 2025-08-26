@@ -1,43 +1,42 @@
 <!-- 自定义表单设计器中的动作规则设置 -->
 <template>
-	<el-tab-pane label="交互逻辑" name="4">
-		<el-scrollbar class="setting-scrollbar">
-			<div class="action-rules-setting">
-				<div
-					v-for="(item, inx) in actionRules"
-					:key="item.name"
-					class="action-rule-item"
-				>
-					<div class="action-rule-item-name">
-						{{ item.name }}
-					</div>
-					<div class="action-rule-item-action">
-						<el-button
-							v-for="button in actionButtons"
-							:key="button.icon"
-							:type="button.type"
-							:icon="button.icon"
-							circle
-							size="small"
-							:plain="button.plain"
-							:disabled="isButtonDisabled(button, inx)"
-							@click="handleActionButtonClick(item, button, inx)"
-						></el-button>
-					</div>
-				</div>
-				<div class="action-rule-add">
-					<el-button
-						type="primary"
-						icon="plus"
-						@click="openDialog(null)"
-						plain
-					>
-						添加交互规则
-					</el-button>
-				</div>
-			</div>
-		</el-scrollbar>
-	</el-tab-pane>
+    <el-scrollbar class="setting-scrollbar">
+        <div class="action-rules-setting">
+            <div
+                v-for="(item, inx) in actionRules"
+                :key="item.name"
+                class="action-rule-item"
+            >
+                <div class="action-rule-item-name">
+                    {{ item.name }}
+                </div>
+                <div class="action-rule-item-action">
+                    <el-button
+                        v-for="button in actionButtons"
+                        :key="button.icon"
+                        :type="button.type"
+                        :icon="button.icon"
+                        circle
+                        size="small"
+                        :plain="button.plain"
+                        :disabled="isButtonDisabled(button, inx)"
+                        @click="handleActionButtonClick(item, button, inx)"
+                    ></el-button>
+                </div>
+            </div>
+            <div class="action-rule-add">
+                <el-button
+                    type="primary"
+                    icon="plus"
+                    @click="openDialog(null)"
+                    plain
+                    size="default"
+                >
+                    添加交互规则
+                </el-button>
+            </div>
+        </div>
+    </el-scrollbar>
 	<ActionRulesDialog
 		ref="actionRulesDialogRef"
 		@confirm="confirmActionRule"
@@ -64,6 +63,11 @@ const props = defineProps({
         default: '',
     },
     entityLabel: {
+        type: String,
+        default: '',
+    },
+    // 子表名称
+    subFormName: {
         type: String,
         default: '',
     },
@@ -140,9 +144,16 @@ const handleActionButtonClick = (item, button, inx) => {
 			break;
 	}
 };
+// 将本地规则同步回传入的 formConfig（selectedWidget.options 或全局配置）
+const syncToFormConfig = () => {
+	if (!props.formConfig) return;
+	const copied = JSON.parse(JSON.stringify(actionRules.value || []));
+	props.formConfig.actionRules = copied;
+};
 // 删除
 const deleteActionRule = (inx) => {
 	actionRules.value.splice(inx, 1);
+	syncToFormConfig();
 };
 // 上移
 const upActionRule = (inx) => {
@@ -153,6 +164,7 @@ const upActionRule = (inx) => {
 			actionRules.value[inx],
 		];
 	}
+	syncToFormConfig();
 };
 // 下移
 const downActionRule = (inx) => {
@@ -163,6 +175,7 @@ const downActionRule = (inx) => {
 			actionRules.value[inx],
 		];
 	}
+	syncToFormConfig();
 };
 
 // 设置字段组件
@@ -210,9 +223,8 @@ const getGroupedFieldOptions = () => {
         if (!groups[entityKey]) {
             groups[entityKey] = [];
         }
-
-		//暂不处理从表字段
-        if (!field.subFormName) {
+        // 主表字段 和 如果存在子表，拿当前子表单所有字段。
+        if(!field.subFormName || (props.subFormName && field.subFormName == props.subFormName)){
             groups[entityKey].push({
                 value: field.value,
                 label: field.label,
@@ -221,6 +233,16 @@ const getGroupedFieldOptions = () => {
                 optionData: field.optionData,
             });
         }
+		//暂不处理从表字段
+        // if (!field.subFormName) {
+        //     groups[entityKey].push({
+        //         value: field.value,
+        //         label: field.label,
+        //         type: field.type,
+        //         entity: entityKey,
+        //         optionData: field.optionData,
+        //     });
+        // }
         return groups;
     }, {});
 
@@ -308,6 +330,7 @@ const confirmActionRule = (data) => {
 		delete newData.action  //删除废弃属性action
 		actionRules.value.push(newData);
 	}
+	syncToFormConfig();
 };
 
 const getActionRules = () => {
@@ -331,16 +354,21 @@ const getFieldLabelByValue = (value) => {
 };
 
 const setActionRules = (data) => {
-    actionRules.value = data || [];
+    actionRules.value = data ? JSON.parse(JSON.stringify(data)) : [];
 }
 
 
-watch(props.formConfig, (newVal) => {
-    setActionRules(newVal.actionRules)
-}, {
-    immediate: true,
-    deep: true,
-})
+// 监听传入的配置引用变化（切换选中组件时会更新 selectedWidget.options 的引用）
+watch(
+    () => props.formConfig,
+    (newVal) => {
+        setActionRules(newVal?.actionRules)
+    },
+    {
+        immediate: true,
+        deep: true,
+    }
+)
 
 defineExpose({
 	setFieldWidgets,

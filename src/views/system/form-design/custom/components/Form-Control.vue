@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form-item label="选择组件" class="is-required">
+		<el-form-item label="选择组件" class="is-required" size="default">
 			<el-select
 				v-model="localValue.field"
 				placeholder="请选择组件"
@@ -20,7 +20,7 @@
 				</el-option-group>
 			</el-select>
 		</el-form-item>
-		<el-form-item label="选择动作" class="is-required">
+		<el-form-item label="选择动作" class="is-required" size="default">
 			<el-select
 				v-model="localValue.type"
 				placeholder="请选择动作"
