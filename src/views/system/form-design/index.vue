@@ -62,6 +62,7 @@
                         :entity="entity"
                         :entityLabel="entityLabel"
                         @initFormWidgets="initFormWidgets('actionRulesSettingComp')"
+                        :bindingEvents="['onChange']"
                     ></ActionRulesSetting>
                 </el-collapse-item>
             </template>
