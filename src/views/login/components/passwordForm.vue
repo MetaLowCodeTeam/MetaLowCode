@@ -69,11 +69,11 @@
 
 <script>
 import useCommonStore from "@/store/modules/common";
-import useCheckStatusStore from "@/store/modules/checkStatus";
+// import useCheckStatusStore from "@/store/modules/checkStatus";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 const { getEntityList, setUserInfo, setPublicSetting } = useCommonStore();
-const { setNewMsgNum } = useCheckStatusStore();
+// const { setNewMsgNum } = useCheckStatusStore();
 import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
 import { encrypt } from "@/utils/util";
@@ -212,7 +212,7 @@ export default {
                 /**
                  * 登录成功调用
                  */
-                this.roundRobin(5000);
+                // this.roundRobin(5000);
                 // 调用实体数据
                 getEntityList();
                 this.queryPublicSetting();
@@ -225,20 +225,20 @@ export default {
             this.codeSrc();
             this.loginLoading = false;
         },
-        // 轮循获取新消息
-        roundRobin(ms) {
-            this.timer = setInterval(() => {
-                this.getNewMsgNum();
-            }, ms);
-        },
-        async getNewMsgNum() {
-            let checkStatusRes = await http.get("/crud/checkStatus");
-            if (checkStatusRes && checkStatusRes.code == 200) {
-                setNewMsgNum(checkStatusRes.data?.noteCount);
-            }else {
-                clearInterval(this.timer);
-            }
-        },
+        // // 轮循获取新消息
+        // roundRobin(ms) {
+        //     this.timer = setInterval(() => {
+        //         this.getNewMsgNum();
+        //     }, ms);
+        // },
+        // async getNewMsgNum() {
+        //     let checkStatusRes = await http.get("/crud/checkStatus");
+        //     if (checkStatusRes && checkStatusRes.code == 200) {
+        //         setNewMsgNum(checkStatusRes.data?.noteCount);
+        //     }else {
+        //         clearInterval(this.timer);
+        //     }
+        // },
         // 获取公开系统配置
         async queryPublicSetting()  {
             let res = await getPublicSetting();
@@ -249,9 +249,9 @@ export default {
         },
 
     },
-    beforeDestroy() {
-        clearInterval(this.timer);
-    },
+    // beforeDestroy() {
+    //     clearInterval(this.timer);
+    // },
 };
 </script>
 

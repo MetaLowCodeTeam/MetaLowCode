@@ -3,6 +3,8 @@ import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import sysConfig from "@/config";
 import tool from '@/utils/tool';
 import router from '@/router';
+import useCheckStatusStore from "@/store/modules/checkStatus";
+import pinia from "@/store";
 
 //axios.defaults.baseURL = ''
 axios.defaults.baseURL = import.meta.env.VITE_APP_BASE_API || "/"
@@ -47,6 +49,14 @@ const appPath = import.meta.env.VITE_APP_PATH;
 axios.interceptors.response.use(
     (response) => {
         if (response.data?.code == 200) {
+            const checkStatusStore = useCheckStatusStore(pinia);
+            const headerCount = response?.headers?.['notification-count'];
+            if (headerCount !== undefined && headerCount !== null && headerCount !== '') {
+                const parsed = parseInt(headerCount, 10);
+                if (!isNaN(parsed)) {
+                    checkStatusStore.setNewMsgNum(parsed);
+                }
+            }
             return response
         }
         if (response.data?.code === 403) {

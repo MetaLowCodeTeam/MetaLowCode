@@ -47,7 +47,6 @@ import http from "@/utils/request";
 import { ElMessage } from "element-plus";
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
-const { setNewMsgNum } = useCheckStatusStore();
 const COMMON_CONFIG = inject("COMMON_CONFIG");
 const $ElMessage = inject("$ElMessage");
 const $TOOL = inject("$TOOL");
@@ -181,8 +180,6 @@ const activeRow = (item) => {
 // 标记单条已读
 const markRead = (item) => {
     item.unread = false;
-    let num = newMsgNum.value;
-    setNewMsgNum(num - 1);
     http.post("/note/read?id=" + item.notificationId);
 };
 
@@ -193,7 +190,6 @@ let mlSingleListRefs = ref();
 const markAllRead = async () => {
     let res = await http.post("/note/readAll");
     if(res){
-        setNewMsgNum(0);
         mlSingleListRefs.value.getTableList();
         ElMessage.success("设置成功")
     }

@@ -191,7 +191,6 @@ import search from "./search.vue";
 import tasks from "./tasks.vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
-import useCheckStatusStore from "@/store/modules/checkStatus";
 import useCommonStore from "@/store/modules/common";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import { storeToRefs } from "pinia";
@@ -200,8 +199,8 @@ import { $fromNow } from "@/utils/util";
 import Detail from "@/views/customize-menu/detail.vue";
 import mlApprove from "@/components/mlApprove/index.vue";
 import setTopMenu from './setTopMenu.vue';
+import useCheckStatusStore from "@/store/modules/checkStatus";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
-const { setNewMsgNum } = useCheckStatusStore();
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { setCollectMenuList } = useLayoutConfigStore();
 const { collectMenuList, chosenNavigationId } = storeToRefs(useLayoutConfigStore());
@@ -338,7 +337,6 @@ const getMsgList = async () => {
     let msgRes = await http.get("/note/query?unread=true");
     if (msgRes) {
         msgList.value = msgRes.data || [];
-        setNewMsgNum(msgList.value.length);
     }
     msgLoading.value = false;
 };
@@ -401,7 +399,6 @@ const msgClick = (item, inx) => {
 // 标记单条已读
 const markRead = (item, inx) => {
     msgList.value.splice(inx, 1);
-    setNewMsgNum(msgList.value.length);
     http.post("/note/read?id=" + item.notificationId);
 };
 
@@ -409,7 +406,6 @@ const markRead = (item, inx) => {
 const markAllRead = () => {
     http.post("/note/readAll");
     msgList.value = [];
-    setNewMsgNum(0);
 };
 // 去消息中心
 function goNotification() {
