@@ -421,7 +421,7 @@ const setColumnWidth = (column) => {
     if (column.columnWidth && column.columnWidth > 0) {
         return column.columnWidth;
     }
-    return "150";
+    return "";
 };
 
 // 刷新数据
