@@ -127,10 +127,10 @@ const initApi = async () => {
         if (res.data.data) {
             isShowBody.value = false;
             setUserInfo(res.data.data);
-            // 轮循获取新消息
-            roundRobin(5000);
-            // 获取新消息
-            getNewMsgNum();
+            // // 轮循获取新消息
+            // roundRobin(5000);
+            // // 获取新消息
+            // getNewMsgNum();
             // 获取实体列表
             await getEntityList();
             isShowBody.value = true;
@@ -187,27 +187,27 @@ const setProperty = (theme, type, val, inx) => {
         colorTool[type](val, inx / 10)
     );
 };
+// 轮询获取新消息---2025-08-26 已废弃 已用最新的接口响应头获取
+// // 获取新消息
+// const getNewMsgNum = async () => {
+//     let checkStatusRes = await http.get("/crud/checkStatus");
+//     if (checkStatusRes && checkStatusRes.code == 200) {
+//         setNewMsgNum(checkStatusRes.data?.noteCount);
+//     }else {
+//         clearInterval(timer.value);
+//     }
+// };
+// let timer = ref(null);
+// // 轮循获取新消息
+// const roundRobin = (ms) => {
+//     timer.value = setInterval(() => {
+//         getNewMsgNum();
+//     }, ms);
+// };
 
-// 获取新消息
-const getNewMsgNum = async () => {
-    let checkStatusRes = await http.get("/crud/checkStatus");
-    if (checkStatusRes && checkStatusRes.code == 200) {
-        setNewMsgNum(checkStatusRes.data?.noteCount);
-    }else {
-        clearInterval(timer.value);
-    }
-};
-let timer = ref(null);
-// 轮循获取新消息
-const roundRobin = (ms) => {
-    timer.value = setInterval(() => {
-        getNewMsgNum();
-    }, ms);
-};
-
-onBeforeUnmount(() => {
-    clearInterval(timer.value);
-});
+// onBeforeUnmount(() => {
+//     clearInterval(timer.value);
+// });
 </script>
 
 <style lang="scss">
