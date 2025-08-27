@@ -68,7 +68,7 @@
 <script setup>
 import { onMounted, ref, nextTick } from "vue";
 import { ElMessage } from "element-plus";
-import { globalDsvDefaultData } from "@/utils/util";
+import { globalDsvDefaultData, formatQueryByIdParam, formatFormVirtualField } from "@/utils/util";
 // 引入 控制Tabs方法
 import useTabs from "@/utils/useTabs";
 import { useRouter } from "vue-router";
@@ -76,11 +76,11 @@ import { useRouter } from "vue-router";
 // API
 import { getFormLayout } from "@/api/system-manager";
 import { saveRecord } from "@/api/crud";
+import { queryById } from "@/api/crud";
 
 // 公共方法
 import useCommonStore from "@/store/modules/common";
 const { queryEntityInfoByName } = useCommonStore();
-
 const router = useRouter();
 
 // 实体名称
@@ -156,13 +156,15 @@ const loadForm = async () => {
 };
 
 // 保存表单
-const saveForm = (type) => {
+const saveForm = async (type) => {
 	let listSubForm = [];
 	vFormRef.value.getContainerWidgets().forEach((el) => {
 		if (el.type == "list-sub-form") {
 			listSubForm.push(el.name);
 		}
 	});
+	// 等待 500ms，确保输入事件完成并同步到表单模型
+	await new Promise((resolve) => setTimeout(resolve, 500));
 	vFormRef.value
 		.getFormData()
 		.then(async (formData) => {
@@ -177,7 +179,15 @@ const saveForm = (type) => {
 					(saveRes.data?.code == 200 || saveRes.code == 200)
 				) {
                     let entityInfo = queryEntityInfoByName(entity.value);
+                    let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
                     recordId.value = saveRes.data?.formData[entityInfo.idFieldName];
+                    let queryByIdRes = await queryById(recordId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
+                    if (queryByIdRes && queryByIdRes.data) {
+                        globalDsv.value.recordData = queryByIdRes.data;
+                        nextTick(() => {
+                            vFormRef.value?.setFormData(formatFormVirtualField(queryByIdRes.data));
+                        });
+                    }
 					ElMessage.success("保存成功");
                     localStorage.setItem("NewWindowCreateEntity", entity.value);
                     if(type == 'close'){
