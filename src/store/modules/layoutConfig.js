@@ -196,6 +196,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
             initMenu.meta.iconColor = el.iconColor || "";
             initMenu.meta.redirectCarrySessionId = el.redirectCarrySessionId;
             initMenu.meta.outLink = el.outLink;
+            initMenu.meta.pcShow = el.pcShow;
 
             // 如果是审批中心页面直接跳过权限判断
             let approvalCenter = [
@@ -303,9 +304,9 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         if(item.useCustom && item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 3){
             isHidden = true;
         }
-        if(item.pcShow != undefined && !item.pcShow) {
-            isHidden = true;
-        }
+        // if(item.pcShow != undefined && !item.pcShow) {
+        //     isHidden = true;
+        // }
         return isHidden;
     }
     /**
@@ -347,6 +348,7 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
                 iconColor: el.iconColor || '',
                 type: el.type,
                 outLink: el.outLink,
+                pcShow: el.pcShow,
             };
             if (el.type == 1) {
                 let findNav = navigationList.value.filter(subEl => subEl.layoutConfigId == el.layoutConfigId)

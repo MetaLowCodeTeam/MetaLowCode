@@ -505,6 +505,10 @@ export default {
         });
         this.menu = this.menu.filter(el => !(el.children?.length < 1));
         this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == '/web/home'));
+        // 过滤掉 meta.psShow === false 的菜单（undefined/null 忽略）
+        this.menu = this.menu.filter(el => (el?.meta?.pcShow !== false));
+        
+        console.log(this.menu,'this.menu');
         // this.menu.shift();
         this.getDefaultOpeneds();
         this.showThis();
@@ -604,6 +608,10 @@ export default {
             map &&
                 map.forEach((item) => {
                     item.meta = item.meta ? item.meta : {};
+                    // 处理权限显示：pcShow 为 false 则隐藏；undefined/null 忽略
+                    if (item.meta.pcShow === false) {
+                        return false;
+                    }
                     //处理隐藏
                     if (item.meta.hidden || item.meta.type == "button") {
                         return false;
