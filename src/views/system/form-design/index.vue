@@ -737,9 +737,7 @@ export default {
             let { shareTo } =
                 this.saveAsDialogConf.formLayout;
             let formJson = this.$refs.vfDesigner.getFormJson();
-            // console.log(formJson,'111');
             formJson.formConfig.actionRules = this.$refs.actionRulesSetting.getActionRules()
-            console.log(formJson,'ssss')
             this.loadActionLoading(false, true);
             let res = await saveFormLayout(
                 this.entity,

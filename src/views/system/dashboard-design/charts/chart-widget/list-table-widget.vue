@@ -150,7 +150,6 @@ const initOption = async () => {
             return;
         }
 		let { showFields } = options.setDimensional;
-        console.log(showFields,'showFields')
 		tableColumn.value = [...showFields];
 		if (tableColumn.value.length > 0) {
 			fieldsList.value = tableColumn.value.map((el) => el.fieldName);

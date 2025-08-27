@@ -169,7 +169,6 @@ const openDialog = (data, node) => {
             cascaderOptionItemId: data.cascaderOptionItemId || null,
         });
     } else {
-        console.log(node);
         // 新建模式
         currentEditNode.value = null;
         currentEditValue.value = null;

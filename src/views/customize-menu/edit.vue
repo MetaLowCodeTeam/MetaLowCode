@@ -372,7 +372,6 @@ const loadMyLayoutConfig = async () => {
             })
         }
     }
-    console.log(customButtonList.value,'customButtonList.value---自定义按钮')
     // 辅助函数：查找 key 的索引
     const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
     // 在 key='cancel' 前插入

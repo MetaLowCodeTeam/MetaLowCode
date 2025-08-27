@@ -70,7 +70,6 @@ const controlList = ref([]);
 
 const handleNodeClick = (node) => {
 	// 这里根据点击节点切换右侧配置内容（保留给你后续实现）
-	console.log('clicked:', node)
     currentNode.value = node;
     currentKey.value = node?.id || null;
     dialogConfig.value.data.actionLabel = node?.label || "";

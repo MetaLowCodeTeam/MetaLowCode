@@ -248,7 +248,6 @@ const formRef = ref(null);
 const onSave = () => {
 	formRef.value.validate((valid) => {
 		if (valid) {
-			console.log(form.value);
             emit("confirm", form.value);
             closeDialog();
 		}

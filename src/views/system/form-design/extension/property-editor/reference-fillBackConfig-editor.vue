@@ -460,7 +460,6 @@ export default {
 		openFillBackDialog() {
             // 如果是外部引用 并且 没有设置外部引用接口参数
             this.isOuterReference = this.selectedWidget.type == 'outer-reference';
-            console.log(this.isOuterReference,'this.isOuterReference')
             if(this.isOuterReference && !this.selectedWidget.options.outerDialogSetting?.requestUrl){
                 this.$message.error('请先配置弹窗设置');
                 return;
@@ -481,7 +480,6 @@ export default {
 			this.loadTargetColumn();
             // 如果是外部引用
             if(this.isOuterReference){
-                console.log('外部引用')
                 this.loadOuterReferenceColumn();
             }
             // 正常
