@@ -24,6 +24,8 @@ import checkTagShowCheckboxEditor from "@/views/system/form-design/extension/pro
 
 import onRecordSelectedEditor
 	from "@/views/system/form-design/extension/property-editor/onRecordSelected-editor.vue";
+import onAfterFillBackEditor
+	from "@/views/system/form-design/extension/property-editor/onAfterFillBack-editor.vue";
 import onAppendButtonClickEditor
 	from "@/views/system/form-design/extension/property-editor/onAppendButtonClick-editor.vue";
 import onBeforeDialogOpenEditor
@@ -149,6 +151,7 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerEPEditor(app, 'onAppendButtonClick', 'onAppendButtonClick-editor', onAppendButtonClickEditor)
 	PERegister.registerEPEditor(app, 'onBeforeDialogOpen', 'onBeforeDialogOpen-editor', onBeforeDialogOpenEditor)
 	PERegister.registerEPEditor(app, 'onRecordSelected', 'onRecordSelected-editor', onRecordSelectedEditor)
+    PERegister.registerEPEditor(app, 'onAfterFillBack', 'onAfterFillBack-editor', onAfterFillBackEditor)
 	PERegister.registerCPEditor(app, 'openSearchInPlace', 'reference-searchInPlace-editor', referenceSearchInPlaceEditor)
 	PERegister.registerCPEditor(app, 'disableMultipleSelectionInSubForm', 'reference-disableMultipleSelectionInSubForm-editor', referenceDisableMultipleSelectionInSubFormEditor)
 	PERegister.registerCPEditor(app, 'confirmSelect', 'reference-confirmSelect-editor', referenceConfirmSelectEditor)

@@ -481,6 +481,24 @@ export default {
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
+                // 回填完成后置事件（树）
+                if (!!this.field.options.onAfterFillBack) {
+                    try {
+                        let customFn = new Function(
+                            "selectedRow",
+                            "allSelectedRows",
+                            this.field.options.onAfterFillBack,
+                        );
+                        const ret = customFn.call(this, selectedNodes, selectedNodes);
+                        if (ret && typeof ret.then === 'function') {
+                            ret.catch(err => {
+                                this.$message?.error?.(err?.message || 'onAfterFillBack 执行失败');
+                            });
+                        }
+                    } catch (error) {
+                        this.$message?.error?.(error?.message || 'onAfterFillBack 脚本异常');
+                    }
+                }
             }else {
                 let fieldNames = this.$refs.referST?.getIdNameField() || {};
                 let rows = this.$refs.referST?.getMultipleSelection() || [];
@@ -495,6 +513,24 @@ export default {
                     }
                 });
                 this.onFieldChangeEvent(this.fieldModel);
+                // 回填完成后置事件（表格）
+                if (!!this.field.options.onAfterFillBack) {
+                    try {
+                        let customFn = new Function(
+                            "selectedRow",
+                            "allSelectedRows",
+                            this.field.options.onAfterFillBack,
+                        );
+                        const ret = customFn.call(this, rows, rows);
+                        if (ret && typeof ret.then === 'function') {
+                            ret.catch(err => {
+                                this.$message?.error?.(err?.message || 'onAfterFillBack 执行失败');
+                            });
+                        }
+                    } catch (error) {
+                        this.$message?.error?.(error?.message || 'onAfterFillBack 脚本异常');
+                    }
+                }
             }
             this.showReferenceDialogFlag = false;
         },

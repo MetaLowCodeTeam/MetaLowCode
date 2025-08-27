@@ -567,6 +567,25 @@ export default {
 
             subFormCom.setSubFormValues(subFormValues);
 
+            // 回填完成后置事件（多选）
+            if (!!this.field.options.onAfterFillBack) {
+                try {
+                    let customFn = new Function(
+                        "selectedRow",
+                        "allSelectedRows",
+                        this.field.options.onAfterFillBack
+                    );
+                    const ret = customFn.call(this, rows, rows);
+                    if (ret && typeof ret.then === 'function') {
+                        ret.catch(err => {
+                            this.$message?.error?.(err?.message || 'onAfterFillBack 执行失败');
+                        });
+                    }
+                } catch (error) {
+                    this.$message?.error?.(error?.message || 'onAfterFillBack 脚本异常');
+                }
+            }
+
             // 关闭弹框
             this.showReferenceDialogFlag = false;
         },
@@ -595,6 +614,24 @@ export default {
 			this.onFieldChangeEvent(this.fieldModel);
             // 回填
 			this.doFillBack(recordObj, selectedRow);
+            // 回填完成后置事件
+            if (!!this.field.options.onAfterFillBack) {
+                try {
+                    let customFn = new Function(
+                        "selectedRow",
+                        "allSelectedRows",
+                        this.field.options.onAfterFillBack
+                    );
+                    const ret = customFn.call(this, selectedRow, [selectedRow]);
+                    if (ret && typeof ret.then === 'function') {
+                        ret.catch(err => {
+                            this.$message?.error?.(err?.message || 'onAfterFillBack 执行失败');
+                        });
+                    }
+                } catch (error) {
+                    this.$message?.error?.(error?.message || 'onAfterFillBack 脚本异常');
+                }
+            }
 			this.showReferenceDialogFlag = false;
 		},
         // 二次确认选择

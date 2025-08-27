@@ -170,6 +170,7 @@ export const referenceSchema = {
 		onAppendButtonClick: '',  //后置按钮点击事件
 		onBeforeDialogOpen: '',  //引用弹窗打开前置事件
 		onRecordSelected: '',  //记录选择回填事件
+        onAfterFillBack: "",  //表单回填后置事件
 	}
 }
 
@@ -231,6 +232,7 @@ export const referenceListSchema = {
 		onAppendButtonClick: '',  //后置按钮点击事件
 		onBeforeDialogOpen: '',  //引用弹窗打开前置事件
 		onRecordSelected: '',  //记录选择回填事件
+        onAfterFillBack: "",  //表单回填后置事件
 	}
 }
 
