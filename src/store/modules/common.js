@@ -16,11 +16,11 @@ const useCommonStore = defineStore('commonStore', () => {
     let unSystemEntityList = ref([]);
     // 审批流程实体
     let processEntityList = ref([]);
-
+    
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.254 20250827"
+        webVer: "1.8.255 20250827"
     });
 
     // 添加登录状态管理

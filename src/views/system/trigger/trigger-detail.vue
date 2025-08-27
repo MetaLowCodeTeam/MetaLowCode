@@ -346,6 +346,9 @@ const onSave = async (target) => {
                 return;
             }
             initLoading.value = true;
+            if(actionContent.script.startsWith('package')){
+                actionContent.script = actionContent.script.split('\n').slice(1).join('\n');
+            }
             let res = await $API.trigger.detail.scriptValidator(actionContent.script);
             if(!res || !res.data){
                 initLoading.value = false;
