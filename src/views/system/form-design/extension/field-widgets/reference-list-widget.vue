@@ -180,6 +180,7 @@ import ReferenceSearchUser from "@/components/mlReferenceSearch/reference-search
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import Detail from "@/views/customize-menu/detail.vue";
 import { deepClone } from '@/utils/util';
+import useCommonStore from "@/store/modules/common";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 
 
@@ -293,6 +294,10 @@ export default {
 			this.gDsv["formEntity"] ||
 			this.$route.query.entity ||
 			this.$route.meta.entityName;
+        if(!this.entity && this.$route.query.formEntityCode){
+            const { queryEntityNameByCode } = useCommonStore();
+            this.entity = queryEntityNameByCode(this.$route.query.formEntityCode);
+        }
 		if (!!this.subFormItemFlag) {
 			//设置为明细实体名称！！
 			this.entity = this.subFormName;
