@@ -191,7 +191,7 @@
                                 placeholder="选择统计类型"
                             >
                                 <el-option
-                                    v-for="item in getUptadeMode()"
+                                    v-for="item in getUpdateMode()"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
@@ -466,7 +466,7 @@ let defaultEditColumnDialogData = {
 let editColumnDialogData = ref({});
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 // 获取聚合方式
-const getUptadeMode = () => {
+const getUpdateMode = () => {
     // 如果是数字类型
     if (numType.value.includes(editColumnDialogData.value.fieldType)) {
         return [

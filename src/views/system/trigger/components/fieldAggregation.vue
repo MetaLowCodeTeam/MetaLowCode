@@ -75,7 +75,7 @@
                         @change="updateModeChange"
                     >
                         <el-option
-                            v-for="(op,inx) in getUptadeMode()"
+                            v-for="(op,inx) in getUpdateMode()"
                             :key="inx"
                             :label="op.label"
                             :value="op.value"
@@ -279,7 +279,7 @@ const getTagEntityFields = async (entityCode) => {
                 tagEntityFields.value[0].fieldName
             );
             // 聚合方式默认选中
-            updateRule.calcMode = getUptadeMode()[0].value;
+            updateRule.calcMode = getUpdateMode()[0].value;
             // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
             if (updateRule.calcMode !== "forCompile") {
                 updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
@@ -348,7 +348,7 @@ const targetFieldChange = (e) => {
     updateRule.targetField = e.fieldName;
     // 获取字段的type
     toFixedForFieldType.value = getUpdateRuleTargetFieldType(e.fieldName);
-    updateRule.calcMode = getUptadeMode()[0].value;
+    updateRule.calcMode = getUpdateMode()[0].value;
     // 如果聚合方式不是 计算公式 ，源字段默认选中第一个
     if (updateRule.calcMode !== "forCompile") {
         updateRule.sourceField = floatSourceFieldList()[0]?.fieldName;
@@ -358,7 +358,7 @@ const targetFieldChange = (e) => {
 };
 
 // 获取聚合方式
-const getUptadeMode = () => {
+const getUpdateMode = () => {
     // 如果是数字类型
     if (numType.value.includes(toFixedForFieldType.value)) {
         return [

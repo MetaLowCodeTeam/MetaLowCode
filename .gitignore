@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 /package-lock.json
 /MetaLowCode.iml
+
+# ignore custom features directory
+/src/views/custom-page/features/
