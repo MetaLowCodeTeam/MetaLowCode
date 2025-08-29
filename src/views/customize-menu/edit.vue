@@ -731,6 +731,7 @@ const confirm = async (target, resetFormData = {}) => {
     }
     // 并发互斥：正在保存时直接返回
     if (loading.value) return;
+    
     loading.value = true;
 
     try {
@@ -744,7 +745,7 @@ const confirm = async (target, resetFormData = {}) => {
 
         // 确保触发当前输入控件的 blur，使 v-model / 校验值完成同步
         await flushActiveFieldBlur();
-
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const formData = await vFormRef.value.getFormData();
         if (!formData) return;
 
