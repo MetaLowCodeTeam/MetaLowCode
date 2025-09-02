@@ -68,7 +68,9 @@ axios.interceptors.response.use(
             router.replace({ path: appPath + "login", query});
             return response
         } else {
-            ElMessage.error(response.data?.error)
+            if(response.data?.error) {
+                ElMessage.error(response.data?.error)
+            }
             return {}
         }
     },

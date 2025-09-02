@@ -1760,13 +1760,13 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
             ElMessage.error("主表单未保存，不能新建关联引用记录。")
             return
         }
-        emits('referenceCompAdd',(formData) => {
+        emits('referenceCompAdd',(formData) => { 
             let tempV = {
                 isReferenceComp: true,
                 detailEntityFlag,
                 refEntityBindingField,
             };
-            tempV.entityName = entityName.value;
+            tempV.entityName = targetEntity || entityName.value;
             tempV.formData = formData;
             tempV.idFieldName = idFieldName.value;
             tempV.formEntityId = myFormEntityId.value;
