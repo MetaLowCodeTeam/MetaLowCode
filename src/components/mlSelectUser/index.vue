@@ -26,7 +26,7 @@
         class="ml-select-user"
     >
         <template #empty>
-            <div class="mlselect-user-content" v-loading="loading">
+            <div class="ml-select-user-content" v-loading="loading">
                 <el-row :gutter="20" class="mb-10">
                     <el-col :span="19">
                         <el-input
@@ -44,7 +44,7 @@
                 <div class="mb-10">
                     <el-tabs
                         type="border-card"
-                        class="mlselect-user-tabs"
+                        class="ml-select-user-tabs"
                         v-model="cutTabCode"
                         @tab-change="getData"
                         v-if="tabList.length > 1"
@@ -63,7 +63,9 @@
                                     :node-key="treeIdKey"
                                     :default-expand-all="true"
                                     :show-checkbox="multiple"
+                                    :check-strictly="false"
                                     :highlight-current="!multiple"
+                                    :filter-node-method="filterTreeNode"
                                     @check-change="handleTreeCheckChange"
                                     @node-click="handleTreeNodeClick"
                                 />
@@ -85,7 +87,7 @@
                             </div>
                         </el-tab-pane>
                     </el-tabs>
-                    <div class="mlselect-tab item-li-box" v-else>
+                    <div class="ml-select-tab item-li-box" v-else>
                         <template v-if="isTreeMode">
                             <el-tree
                                 ref="singleTreeRef"
@@ -94,7 +96,9 @@
                                 :node-key="treeIdKey"
                                 :default-expand-all="true"
                                 :show-checkbox="multiple"
+                                :check-strictly="false"
                                 :highlight-current="!multiple"
+                                :filter-node-method="filterTreeNode"
                                 @check-change="handleTreeCheckChange"
                                 @node-click="handleTreeNodeClick"
                             />
@@ -203,9 +207,9 @@ let tabData = ref([]);
 let cutTabCode = ref("User");
 // 是否树形模式（用户、部门）
 const isTreeMode = computed(() => cutTabCode.value === 'User' || cutTabCode.value === 'Department');
-// 树 props/keys（避免模板依赖 cutTabItem 尚未赋值时报 undefined）
-const treeLabelKey = computed(() => (cutTabCode.value === 'User' ? 'label' : 'departmentName'));
-const treeIdKey = computed(() => (cutTabCode.value === 'User' ? 'id' : 'departmentId'));
+// 树 props/keys（用户/部门树均为 label/id）
+const treeLabelKey = computed(() => 'label');
+const treeIdKey = computed(() => 'id');
 const treeProps = computed(() => ({ children: 'children', label: treeLabelKey.value }));
 // el-tree 引用
 let treeRefMap = reactive({});
@@ -214,6 +218,15 @@ const setTreeRef = (el, key) => {
     if (el) {
         treeRefMap[key] = el;
     }
+};
+// 收集当前树的所有 id，便于与其它 Tab 选择合并不相互覆盖
+const collectTreeIds = (nodes, acc = new Set()) => {
+    if (!Array.isArray(nodes)) return acc;
+    nodes.forEach((n) => {
+        if (n && n[treeIdKey.value] != null) acc.add(n[treeIdKey.value]);
+        if (Array.isArray(n?.children) && n.children.length > 0) collectTreeIds(n.children, acc);
+    });
+    return acc;
 };
 let cutTabItem = reactive({});
 watch(
@@ -259,7 +272,7 @@ const initData = () => {
 // 获取数据
 let getData = async () => {
     loading.value = true;
-    // 查询参数
+    // 查询参数（列表模式用；树模式优先本地过滤）
     let param = {
         search: keyword.value,
     };
@@ -273,7 +286,7 @@ let getData = async () => {
     // 获取当前tab接口
     let res;
     if (isTreeMode.value) {
-        const query = Object.assign({}, props.filter[cutTabCode.value] || {}, { search: keyword.value });
+        const query = Object.assign({}, props.filter[cutTabCode.value] || {});
         const apiName = cutTabCode.value === 'User' ? 'getUserTreeData' : 'getDepartmentTreeData';
         res = await api.common[apiName](query);
     } else {
@@ -286,10 +299,13 @@ let getData = async () => {
             await nextTick();
             const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
             if (currentTreeRef && currentTreeRef.store) {
+                // 仅勾选属于当前树的数据，避免误勾选并确保与其他Tab合并
+                const presentIds = Array.from(collectTreeIds(tabData.value));
+                const toCheck = cutSelectedIds.filter((id) => id && presentIds.includes(id));
                 if (props.multiple) {
-                    currentTreeRef.setCheckedKeys && currentTreeRef.setCheckedKeys(cutSelectedIds.filter(Boolean));
+                    currentTreeRef.setCheckedKeys && currentTreeRef.setCheckedKeys(toCheck);
                 } else if (cutSelectedIds && cutSelectedIds.length > 0) {
-                    currentTreeRef.setCurrentKey && currentTreeRef.setCurrentKey(cutSelectedIds[0]);
+                    currentTreeRef.setCurrentKey && currentTreeRef.setCurrentKey(toCheck[0]);
                 }
             }
         } else {
@@ -302,6 +318,15 @@ let getData = async () => {
                 return el;
             });
         }
+    }
+    // 树模式：使用本地过滤，不再调接口
+    if (isTreeMode.value) {
+        const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
+        nextTick(() => {
+            if (currentTreeRef && currentTreeRef.filter) {
+                currentTreeRef.filter(keyword.value || '');
+            }
+        })
     }
     loading.value = false;
 };
@@ -326,15 +351,13 @@ let selectUser = (item, tab) => {
             id: item[tab.itemId],
         };
         if (props.multiple) {
-            defaultValue.value.push(value);
+            // 合并不同Tab选择，避免覆盖
+            const exists = (defaultValue.value || []).some((v) => v.id === value.id);
+            if (!exists) defaultValue.value.push(value);
         } else {
-            tabData.value.forEach((el) => {
-                el.isActive = false;
-                if (value.id === el[tab.itemId]) {
-                    el.isActive = true;
-                }
-            });
-            defaultValue.value[0] = value;
+            // 单选：仅替换同域数据
+            const others = (defaultValue.value || []).filter((v) => v.id !== value.id);
+            defaultValue.value = [...others, value];
         }
     } else {
         item.isActive = false;
@@ -349,14 +372,34 @@ let selectUser = (item, tab) => {
     emit("change", defaultValue.value);
 };
 // 树-勾选变更
-let handleTreeCheckChange = () => {
+let handleTreeCheckChange = (data, checked, indeterminate) => {
     const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
     if (!currentTreeRef || !currentTreeRef.getCheckedNodes) return;
-    const nodes = currentTreeRef.getCheckedNodes();
-    defaultValue.value = nodes.map((n) => ({ id: n[treeIdKey.value], name: n[treeLabelKey.value] }));
+    const nodes = currentTreeRef.getCheckedNodes(true); // 包含半选
+    // 合并：保留其它Tab已选；仅用当前树的选择替换同域
+    const presentIdSet = collectTreeIds(tabData.value);
+    const others = (defaultValue.value || []).filter((v) => !presentIdSet.has(v.id));
+    const current = nodes.map((n) => ({ id: n[treeIdKey.value], name: n[treeLabelKey.value] }));
+    defaultValue.value = [...others, ...current];
     autoCurrentLabel();
     emit("update:modelValue", defaultValue.value);
     emit("change", defaultValue.value);
+
+    // 如果是勾选了根节点（全选），则自动失焦关闭弹层，避免首行标签未即时渲染造成的观感问题
+    if (checked && isTreeMode.value) {
+        const nodeRef = currentTreeRef.getNode && currentTreeRef.getNode(data);
+        const isRoot = nodeRef && nodeRef.level === 1; // 顶层根节点
+        // 根节点下有大量子项时，等 DOM 与 tag 渲染稳定后再关闭
+        if (isRoot) {
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    if (selectRefs.value && typeof selectRefs.value.blur === 'function') {
+                        selectRefs.value.blur();
+                    }
+                }, 0);
+            })
+        }
+    }
 };
 // 树-节点点击（单选）
 let handleTreeNodeClick = (data) => {
@@ -378,14 +421,23 @@ let visibleChange = (visible) => {
 
 // tags删除后回调
 let removeTag = (item) => {
-    let cutTabItem = tabList.value.filter(
-        (el) => cutTabCode.value == el.name
-    )[0];
-    tabData.value.forEach((el) => {
-        if (item.id == el[cutTabItem.itemId]) {
-            el.isActive = false;
+    // 列表模式：同步取消选中标记
+    if (!isTreeMode.value) {
+        let cutTabItem = tabList.value.filter(
+            (el) => cutTabCode.value == el.name
+        )[0];
+        tabData.value.forEach((el) => {
+            if (item.id == el[cutTabItem.itemId]) {
+                el.isActive = false;
+            }
+        });
+    } else {
+        // 树模式：取消对应节点勾选
+        const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
+        if (currentTreeRef && currentTreeRef.setChecked) {
+            currentTreeRef.setChecked(item.id, false, true);
         }
-    });
+    }
     emit("update:modelValue", defaultValue.value);
 };
 //清空后的回调
@@ -399,17 +451,34 @@ let clear = () => {
 let filterMethod = (keyword) => {
     if (!keyword) {
         keyword.value = null;
+        // 树模式下清除过滤
+        if (isTreeMode.value) {
+            const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
+            nextTick(() => currentTreeRef && currentTreeRef.filter(''))
+        }
         return false;
     }
     keyword.value = keyword;
-    getData();
+    if (isTreeMode.value) {
+        const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
+        nextTick(() => currentTreeRef && currentTreeRef.filter(keyword))
+    } else {
+        getData();
+    }
+};
+
+// 树过滤方法
+const filterTreeNode = (value, data) => {
+    if (!value) return true;
+    const label = (data && data[treeLabelKey.value]) || '';
+    return String(label).toLowerCase().includes(String(value).toLowerCase());
 };
 </script>
 
 <style lang="scss" scoped>
-.mlselect-user-content {
+.ml-select-user-content {
     padding: 20px;
-    .mlselect-tab {
+    .ml-select-tab {
         border: 1px solid #dcdfe6;
     }
     .item-li-box {
