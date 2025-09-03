@@ -55,15 +55,20 @@
                             v-for="(tab,inx) of tabList"
                             :key="inx"
                         >
-                            <!-- <div class="tab-item-title">
-                                <div class="tab-item-check-box">
-                                    <el-checkbox v-model="tab.isChecked" @change="checkTab(tab)"></el-checkbox>
-                                </div>
-                                <div class="tab-item-title-text">
-                                    {{ tab.label }}名称
-                                </div>
-                            </div> -->
-                            <div class="item-li-box">
+                            <div class="item-li-box" v-if="isTreeMode">
+                                <el-tree
+                                    :ref="(el) => setTreeRef(el, tab.name)"
+                                    :data="tabData"
+                                    :props="treeProps"
+                                    :node-key="treeIdKey"
+                                    :default-expand-all="true"
+                                    :show-checkbox="multiple"
+                                    :highlight-current="!multiple"
+                                    @check-change="handleTreeCheckChange"
+                                    @node-click="handleTreeNodeClick"
+                                />
+                            </div>
+                            <div class="item-li-box" v-else>
                                 <div
                                     class="tab-item-li"
                                     v-for="(item,itemInx) of tabData"
@@ -81,19 +86,34 @@
                         </el-tab-pane>
                     </el-tabs>
                     <div class="mlselect-tab item-li-box" v-else>
-                        <div
-                            class="tab-item-li"
-                            v-for="(item,itemInx) of tabData"
-                            :key="itemInx"
-                            @click="selectUser(item,cutTabItem)"
-                        >
-                            {{ item[cutTabItem.itemName] }}
-                            <div class="tab-item-icon fr" v-if="item.isActive">
-                                <el-icon class="tab-item-icon-el">
-                                    <ElIconSelect />
-                                </el-icon>
+                        <template v-if="isTreeMode">
+                            <el-tree
+                                ref="singleTreeRef"
+                                :data="tabData"
+                                :props="treeProps"
+                                :node-key="treeIdKey"
+                                :default-expand-all="true"
+                                :show-checkbox="multiple"
+                                :highlight-current="!multiple"
+                                @check-change="handleTreeCheckChange"
+                                @node-click="handleTreeNodeClick"
+                            />
+                        </template>
+                        <template v-else>
+                            <div
+                                class="tab-item-li"
+                                v-for="(item,itemInx) of tabData"
+                                :key="itemInx"
+                                @click="selectUser(item,cutTabItem)"
+                            >
+                                {{ item[cutTabItem.itemName] }}
+                                <div class="tab-item-icon fr" v-if="item.isActive">
+                                    <el-icon class="tab-item-icon-el">
+                                        <ElIconSelect />
+                                    </el-icon>
+                                </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -102,7 +122,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, inject, nextTick, reactive } from "vue";
+import { ref, watch, onMounted, inject, nextTick, reactive, computed } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -181,6 +201,20 @@ let tabList = ref([]);
 let tabData = ref([]);
 // 当前页签
 let cutTabCode = ref("User");
+// 是否树形模式（用户、部门）
+const isTreeMode = computed(() => cutTabCode.value === 'User' || cutTabCode.value === 'Department');
+// 树 props/keys（避免模板依赖 cutTabItem 尚未赋值时报 undefined）
+const treeLabelKey = computed(() => (cutTabCode.value === 'User' ? 'label' : 'departmentName'));
+const treeIdKey = computed(() => (cutTabCode.value === 'User' ? 'id' : 'departmentId'));
+const treeProps = computed(() => ({ children: 'children', label: treeLabelKey.value }));
+// el-tree 引用
+let treeRefMap = reactive({});
+let singleTreeRef = ref();
+const setTreeRef = (el, key) => {
+    if (el) {
+        treeRefMap[key] = el;
+    }
+};
 let cutTabItem = reactive({});
 watch(
     () => props.modelValue,
@@ -237,16 +271,37 @@ let getData = async () => {
         : [];
     tabData.value = [];
     // 获取当前tab接口
-    let res = await api.common["get" + cutTabCode.value](param, props.filter[cutTabCode.value]);
+    let res;
+    if (isTreeMode.value) {
+        const query = Object.assign({}, props.filter[cutTabCode.value] || {}, { search: keyword.value });
+        const apiName = cutTabCode.value === 'User' ? 'getUserTreeData' : 'getDepartmentTreeData';
+        res = await api.common[apiName](query);
+    } else {
+        res = await api.common["get" + cutTabCode.value](param, props.filter[cutTabCode.value]);
+    }
     if (res) {
-        tabData.value = res.data.map((el) => {
-            el.isActive = false;
-            // 如果该ID已在选中集里，默认选中
-            if (cutSelectedIds.includes(el[cutTabItem.itemId])) {
-                el.isActive = true;
+        if (isTreeMode.value) {
+            tabData.value = res.data || [];
+            // 默认勾选/高亮
+            await nextTick();
+            const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
+            if (currentTreeRef && currentTreeRef.store) {
+                if (props.multiple) {
+                    currentTreeRef.setCheckedKeys && currentTreeRef.setCheckedKeys(cutSelectedIds.filter(Boolean));
+                } else if (cutSelectedIds && cutSelectedIds.length > 0) {
+                    currentTreeRef.setCurrentKey && currentTreeRef.setCurrentKey(cutSelectedIds[0]);
+                }
             }
-            return el;
-        });
+        } else {
+            tabData.value = (res.data || []).map((el) => {
+                el.isActive = false;
+                // 如果该ID已在选中集里，默认选中
+                if (cutSelectedIds.includes(el[cutTabItem.itemId])) {
+                    el.isActive = true;
+                }
+                return el;
+            });
+        }
     }
     loading.value = false;
 };
@@ -289,6 +344,24 @@ let selectUser = (item, tab) => {
             }
         });
     }
+    autoCurrentLabel();
+    emit("update:modelValue", defaultValue.value);
+    emit("change", defaultValue.value);
+};
+// 树-勾选变更
+let handleTreeCheckChange = () => {
+    const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
+    if (!currentTreeRef || !currentTreeRef.getCheckedNodes) return;
+    const nodes = currentTreeRef.getCheckedNodes();
+    defaultValue.value = nodes.map((n) => ({ id: n[treeIdKey.value], name: n[treeLabelKey.value] }));
+    autoCurrentLabel();
+    emit("update:modelValue", defaultValue.value);
+    emit("change", defaultValue.value);
+};
+// 树-节点点击（单选）
+let handleTreeNodeClick = (data) => {
+    if (props.multiple) return;
+    defaultValue.value = [{ id: data[treeIdKey.value], name: data[treeLabelKey.value] }];
     autoCurrentLabel();
     emit("update:modelValue", defaultValue.value);
     emit("change", defaultValue.value);
