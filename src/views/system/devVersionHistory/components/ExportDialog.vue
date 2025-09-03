@@ -138,6 +138,19 @@ const defaultExportModules = ref([
 		label: "数据转化",
 		value: "Transform",
 	},
+    {
+		label: "自定义方法",
+		value: "CustomMethod",
+	},
+	{
+		label: "国际化翻译项",
+		value: "I18n",
+	},
+	{
+		label: "国际化翻译",
+		value: "I18nItem",
+	},
+
 ]);
 
 const openDialog = async (data) => {
