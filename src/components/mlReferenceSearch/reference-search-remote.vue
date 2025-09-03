@@ -77,7 +77,7 @@
                         </el-table>
                         <div class="sc-table-select__page mt-10">
                             <el-pagination
-                                small
+                                size="small"
                                 background
                                 layout="prev, pager, next"
                                 :total="total"
