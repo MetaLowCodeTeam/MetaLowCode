@@ -99,7 +99,12 @@ export default [
                 required: true,
                 type: "numInput",
             },
-
+            {
+                label: "触发器日志保留时间",
+                key: "triggerLogRetentionTime",
+                type: "numInput",
+                suffixText: "为 0 时日志永久保存"
+            },
         ],
     },
     {

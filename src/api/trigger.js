@@ -64,3 +64,9 @@ export default {
 
     },
 }
+
+
+// 触发器日志路径
+export function getTriggerLogTree(executePath) {
+    return http.get("/plugins/metaTrigger/trigger/logTree", { executePath });
+}

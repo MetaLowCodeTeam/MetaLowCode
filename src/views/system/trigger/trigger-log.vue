@@ -3,24 +3,41 @@
     <mlSingleList
         title="触发器日志"
         mainEntity="TriggerLog"
-        fieldsList="actionType,triggerReason,recordId,executeFlag,triggerConfigId,createdOn,errorLog"
+        fieldsList="actionType,triggerReason,recordId,executeFlag,triggerConfigId,createdOn,errorLog,executePath"
         :sortFields="sortFields"
         fieldName="triggerConfigId.name,triggerReason"
         :tableColumn="tableColumn"
         queryUrl="/plugins/metaTrigger/trigger/log"
         @highlightClick="highlightClick"
-    ></mlSingleList>
+    >
+        <template #activeRow>
+            <el-table-column label="操作" fixed="right" :align="'center'" width="120">
+                <template #default="scope">
+                    <el-button 
+                        type="primary" 
+                        link 
+                        @click="viewLog(scope.row)"
+                        v-if="scope.row.executePath"
+                    >
+                        查看执行路径
+                    </el-button>
+                </template>
+            </el-table-column>
+        </template>
+    </mlSingleList>
     <Detail ref="detailRefs" />
     <!-- 异常执行弹框 -->
-    <ml-dialog title="异常执行日志" v-model="errorLogDialog.isShow" width="80%">
+    <ml-dialog title="异常执行日志" v-model="errorLogDialog.isShow" width="80%" append-to-body>
         <div class="errorlog-box">{{ errorLogDialog.log }}</div>
     </ml-dialog>
+    <TriggerLogFlowDialog ref="triggerLogFlowDialogRefs" @error-click="errorClick" />
 </template>
    
 <script setup>
 import { ref } from "vue";
 import { $fromNow } from "@/utils/util";
 import Detail from "@/views/customize-menu/detail.vue";
+import TriggerLogFlowDialog from "./components/triggerLogFlow/TriggerLogFlowDialog.vue";
 // 默认排序
 let sortFields = ref([
     {
@@ -103,12 +120,25 @@ const highlightClick = (item) => {
 };
 
 /**
+ * 查看日志
+ */
+let triggerLogFlowDialogRefs = ref("");
+const viewLog = (row) => {
+    triggerLogFlowDialogRefs.value.openDialog(row.executePath);
+};
+
+/**
  * 异常执行日志
  */
 let errorLogDialog = ref({
     isShow: false,
     log: "",
 });
+
+const errorClick = (item) => {
+    errorLogDialog.value.log = item.errorLog || "未查询到日志";
+    errorLogDialog.value.isShow = true;
+};
 </script>
 <style lang="scss" scoped>
 

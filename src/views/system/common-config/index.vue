@@ -125,8 +125,15 @@
                                     <div v-else-if="item.type == 'numInput'">
                                         <el-input-number
                                             v-model="confData[item.key]"
+                                            :min="0"
+                                            :max="99999"
+                                            v-if="item.key == 'triggerLogRetentionTime'"
+                                        />
+                                        <el-input-number
+                                            v-model="confData[item.key]"
                                             :min="1"
                                             :max="99999"
+                                            v-else
                                             :disabled="!confData.autoBackup"
                                         />
                                         <span v-if="item.suffixText" class="ml-10">{{ item.suffixText }}</span>

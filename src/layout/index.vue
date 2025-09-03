@@ -507,8 +507,6 @@ export default {
         this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == '/web/home'));
         // 过滤掉 meta.psShow === false 的菜单（undefined/null 忽略）
         this.menu = this.menu.filter(el => (el?.meta?.pcShow !== false));
-        
-        console.log(this.menu,'this.menu');
         // this.menu.shift();
         this.getDefaultOpeneds();
         this.showThis();
