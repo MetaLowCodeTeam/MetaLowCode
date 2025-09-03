@@ -20,6 +20,23 @@
 			{{ getQueryFieldLabel() }}
 		</el-button>
 	</el-form-item>
+    <el-form-item 
+        label="回车开始查询"
+        label-width="120px"
+        v-if="optionModel.openSearchInPlace"
+    >
+        <el-switch
+            v-model="optionModel.enterStartSearch"
+        />
+        <el-tooltip
+            content="默认输入后立即查询数据，开启选项后按回车键才查询数据。"
+            placement="top"
+        >
+            <el-icon size="16" class="ml-5">
+                <QuestionFilled />
+            </el-icon>
+        </el-tooltip>
+    </el-form-item>
      <!--  -->
 	<el-form-item
 		label="移动端扫码回填"

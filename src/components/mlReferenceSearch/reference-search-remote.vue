@@ -155,6 +155,11 @@ const props = defineProps({
         type: Function,
         default: () => {},
     },
+    // 回车开始查询 默认输入后立即查询数据，开启选项后按回车键才查询数据。
+    enterStartSearch: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits([
@@ -178,6 +183,16 @@ let isDropdownVisible = ref(false);
 
 
 
+// 清空查询结果（可选是否重置关键字）
+const clearResults = (resetKeyword = false) => {
+    tableData.value = [];
+    total.value = 0;
+    currentPage.value = 1;
+    currentCursor.value = -1;
+    tableRef.value?.setCurrentRow(null);
+    if (resetKeyword) searchValue.value = "";
+};
+
 const handleCurrentChange = (v) => {
     currentPage.value = v;
     handleSearch(null);
@@ -186,7 +201,13 @@ const handleCurrentChange = (v) => {
 const handleVisibleChange = (e) => {
     isDropdownVisible.value = e;
     if (e) {
-        handleSearch(null);
+        if (!props.enterStartSearch) {
+            handleSearch(null);
+        }
+        // enterStartSearch 开启时，打开下拉清空旧数据，等待回车再查
+        if (props.enterStartSearch) {
+            clearResults(false);
+        }
         nextTick(() => {
             getSearchInputRef()?.focus();
             currentCursor.value = -1;
@@ -194,12 +215,21 @@ const handleVisibleChange = (e) => {
     } else {
         currentCursor.value = -1;
         tableRef.value?.setCurrentRow(null);
+        // enterStartSearch 开启时，关闭下拉同时清空数据
+        if (props.enterStartSearch) {
+            clearResults(false);
+        }
     }
 };
 
 const onFilter = (val) => {
     searchValue.value = val;
-    handleSearch(val);
+    if (!props.enterStartSearch) {
+        handleSearch(val);
+    } else {
+        // 启用回车查询时，输入过程中若已有数据则清空，避免显示旧数据
+        if (tableData.value.length > 0) clearResults(false);
+    }
 }
 
 const handleSearch = (v) => {
@@ -352,24 +382,42 @@ const handleArrowUp = () => {
 
 // 回车事件：选中数据后下拉框消失，焦点仍在输入框
 const handleEnter = () => {
+    if (props.enterStartSearch) {
+        // 有数据就回填；没数据则先搜索
+        if (tableData.value.length === 0) {
+            if (!searchValue.value) return; // 无关键字不搜索
+            handleSearch(searchValue.value);
+            return;
+        }
+        if (currentCursor.value !== -1 && tableData.value[currentCursor.value]) {
+            const selectedRow = tableData.value[currentCursor.value];
+            clickRow(selectedRow);
+            nextTick(() => {
+                getSearchInputRef()?.focus();
+            });
+            return;
+        }
+        if (currentCursor.value === -1 && tableData.value.length > 0) {
+            currentCursor.value = 0;
+            clickRow(tableData.value[currentCursor.value]);
+            nextTick(() => {
+                getSearchInputRef()?.focus();
+            });
+            return;
+        }
+        return;
+    }
+
+    // 默认：始终回填
     if (currentCursor.value !== -1 && tableData.value[currentCursor.value]) {
         const selectedRow = tableData.value[currentCursor.value];
-        clickRow(selectedRow); // 调用 clickRow 选中数据
-        // 在 clickRow 内部会进行 blur() 操作来关闭下拉框
-        // 紧接着在 nextTick 之后，手动将焦点设置回输入框
+        clickRow(selectedRow);
         nextTick(() => {
             getSearchInputRef()?.focus();
         });
     } else if (currentCursor.value === -1 && tableData.value.length > 0) {
-        // 如果光标在输入框，且有数据，默认选中第一项
         currentCursor.value = 0;
-        clickRow(tableData.value[currentCursor.value]); // 调用 clickRow 选中数据
-        nextTick(() => {
-            getSearchInputRef()?.focus();
-        });
-    }
-    // 如果没有数据可选中，保持焦点在输入框
-    if (tableData.value.length === 0) {
+        clickRow(tableData.value[currentCursor.value]);
         nextTick(() => {
             getSearchInputRef()?.focus();
         });
@@ -402,6 +450,10 @@ const clickRow = (row) => {
         selectedRow: row,
     });
     // 焦点恢复逻辑放在 handleEnter 和外部需要保持焦点的场景中
+    // 若开启 enterStartSearch，选中后清空结果与关键字，防止再次回车沿用旧数据
+    if (true === (/** @type {any} */(props)).enterStartSearch) {
+        clearResults(true);
+    }
 };
 
 watchEffect(() => {

@@ -135,6 +135,8 @@ export const referenceSchema = {
         sortOrder: "",
         // 启用树模式
         useTreeDataSelect: false,
+        // 回车开始查询
+        enterStartSearch: false,
         // 树引用字段
         treeCascadeFieldName: "",
         // 树数据源(实体名称)

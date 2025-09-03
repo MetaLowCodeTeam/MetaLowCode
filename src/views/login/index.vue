@@ -144,11 +144,6 @@ export default {
         clearViewTags();
         clearKeepLive();
         clearIframeList();
-        console.log(
-            "%c 美乐低代码 %c Gitee: https://gitee.com/MetaLowCode/MetaLowCode",
-            "background:#666;color:#fff;border-radius:3px;",
-            ""
-        );
     },
     methods: {
         configDark() {
