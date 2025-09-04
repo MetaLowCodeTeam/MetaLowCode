@@ -1850,6 +1850,7 @@ const onEditRow = (row, localDsv, formId) => {
     tempV.data = row;
     tempV.localDsv = {
         parentListExposed:  currentExposed.value,
+        parentFormRef: parentFormRef.value,
         ...localDsv,
     }
     // !!formId && (tempV.formId = formId)
@@ -1899,6 +1900,7 @@ const openDetailDialog = (row, localDsv, formId) => {
     }
     let newLocalDsv = {
         parentListExposed:  currentExposed.value,
+        parentFormRef: parentFormRef.value,
         ...localDsv,
         modelName: formatModelName(myModelName.value, currentTab.value)
     }
