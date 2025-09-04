@@ -56,10 +56,14 @@ export default {
 	beforeUnmount() {
 		this.unregisterFromRefList();
 	},
+    mounted(){
+        this.$nextTick(() => {
+            this.$refs.listSubForm.setParentFormRef(this.getForm());
+        })
+    },
 	methods: {
 		getForm() {
 			let formRef = this.getFormRef();
-			formRef.referenceCompName = this.widget.options.name;
 			return formRef;
 		},
         getFormEntityId(){
@@ -83,7 +87,7 @@ export default {
         },
         refresh(){
             this.$refs.listSubForm.refresh();
-        }
+        },
 	},
 };
 </script>
