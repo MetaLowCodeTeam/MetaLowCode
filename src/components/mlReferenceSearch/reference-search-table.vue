@@ -63,6 +63,7 @@
 					:entityName="referenceEntityName"
 					notType
                     v-if="!hideSetConditions"
+                    @enterInput="onSearch('OR')"
 				>
 					<template #afterAddConditions>
 						<div class="fr">

@@ -184,6 +184,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 布尔类型 -->
@@ -592,6 +593,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 布尔类型 -->
@@ -747,6 +749,7 @@ export default {
         // 是否立即更新modelValue
         someCondition: { type: Boolean, default: true },
     },
+    emits: ["enterInput"],
     data() {
         return {
             // 所有类型
@@ -822,6 +825,9 @@ export default {
         this.defaultTimeGE = new Date(2000, 1, 1, 23, 59, 59);
     },
     methods: {
+        enterInput(item) {
+            this.$emit("enterInput", item);
+        },
         getFieldLabel(fieldName) {
             return this.fieldList.find(el => el.fieldName === fieldName)?.label;
         },
