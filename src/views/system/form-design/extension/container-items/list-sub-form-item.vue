@@ -64,6 +64,7 @@ export default {
 	methods: {
 		getForm() {
 			let formRef = this.getFormRef();
+            formRef.referenceCompName = this.widget.options.name;
 			return formRef;
 		},
         getFormEntityId(){
