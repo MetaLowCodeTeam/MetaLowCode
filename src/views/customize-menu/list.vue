@@ -1750,6 +1750,11 @@ let editRefs = ref();
 // 引用组件所关联的主表行ID
 let myFormEntityId = ref("");
 
+let parentFormRef = ref(null);
+
+const setParentFormRef = (formRef) => {
+    parentFormRef.value = formRef;
+}
 
 // 新建
 const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
@@ -1775,6 +1780,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
             tempV.localDsv = {
                 sourceRecord: formData,
                 parentListExposed:  currentExposed.value,
+                parentFormRef: parentFormRef.value,
                 ...localDsv,
             };
             !!formId && (tempV.formId = formId)
@@ -1805,6 +1811,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
     tempV.formEntityId = "";
     tempV.localDsv = {
         parentListExposed:  currentExposed.value,
+        parentFormRef: parentFormRef.value,
         ...localDsv,
     }
     tempV.formId = formId || listParamConf.value.recordNewFormId || rowStyleConf.value?.formConf?.pcAddFormId;
@@ -2577,6 +2584,7 @@ defineExpose({
     queryNow,
     setRouterParams,
     getCurrentExposed,
+    setParentFormRef,
 })
 
 </script>

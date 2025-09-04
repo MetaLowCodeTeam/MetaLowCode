@@ -128,8 +128,10 @@ export default {
         },
         refresh(){
             this.$refs.EntityListRefs.refreshList();
+        },
+        setParentFormRef(formRef){
+            this.$refs.EntityListRefs.setParentFormRef(formRef);
         }
-
 	},
 };
 </script>

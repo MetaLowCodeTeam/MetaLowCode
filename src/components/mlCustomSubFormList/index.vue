@@ -85,6 +85,9 @@ export default {
         refresh(){
             this.$refs.listSubForm?.refresh();
         },
+        setParentFormRef(formRef){
+            this.$refs.listSubForm?.setParentFormRef(formRef);
+        },
     }
 };
 </script>

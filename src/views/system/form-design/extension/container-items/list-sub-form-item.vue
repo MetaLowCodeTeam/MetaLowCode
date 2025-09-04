@@ -56,6 +56,12 @@ export default {
 	beforeUnmount() {
 		this.unregisterFromRefList();
 	},
+    mounted(){
+        // console.log(this.getForm(),'this.getForm()---子表单')
+        this.$nextTick(() => {
+            this.$refs.listSubForm.setParentFormRef(this.getForm());
+        })
+    },
 	methods: {
 		getForm() {
 			let formRef = this.getFormRef();
@@ -83,7 +89,7 @@ export default {
         },
         refresh(){
             this.$refs.listSubForm.refresh();
-        }
+        },
 	},
 };
 </script>
