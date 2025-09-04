@@ -57,7 +57,6 @@ export default {
 		this.unregisterFromRefList();
 	},
     mounted(){
-        // console.log(this.getForm(),'this.getForm()---子表单')
         this.$nextTick(() => {
             this.$refs.listSubForm.setParentFormRef(this.getForm());
         })
@@ -65,7 +64,6 @@ export default {
 	methods: {
 		getForm() {
 			let formRef = this.getFormRef();
-			formRef.referenceCompName = this.widget.options.name;
 			return formRef;
 		},
         getFormEntityId(){
