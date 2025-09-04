@@ -78,6 +78,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 日期区间 -->
@@ -94,6 +95,7 @@
                                         @change="bwChange(item)"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         size="default"
@@ -107,6 +109,7 @@
                                         @change="bwChange(item)"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 时间区间 -->
@@ -124,6 +127,7 @@
                                         @focus="clearError(item)"
                                         :default-time="defaultTimeLE"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         size="default"
@@ -138,6 +142,7 @@
                                         @focus="clearError(item)"
                                         :default-time="defaultTimeGE"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 
@@ -151,6 +156,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 数字输入框区间 -->
@@ -164,6 +170,7 @@
                                         @focus="clearError(item)"
                                         @change="bwChange(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-input-number
                                         size="default"
@@ -174,6 +181,7 @@
                                         @focus="clearError(item)"
                                         @change="bwChange(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 文本输入框 -->
@@ -267,6 +275,7 @@
                                         :default-time="defaultTimeLE"
                                         v-if="item.op == 'LE'"
                                         size="default"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         v-model="item.value"
@@ -276,6 +285,7 @@
                                         :default-time="defaultTimeGE"
                                         v-else-if="item.op == 'GE'"
                                         size="default"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         size="default"
@@ -287,6 +297,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         v-else-if="item.op == 'DEQ'"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 级联 -->
@@ -416,6 +427,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 日期区间 -->
@@ -435,6 +447,7 @@
                                         @change="bwChange(item)"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         size="default"
@@ -448,6 +461,7 @@
                                         @change="bwChange(item)"
                                         @focus="clearError(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <div v-else-if="item.opCom =='datePickerBw' && item.type != 'DateTime' && displayedComp">
@@ -461,6 +475,7 @@
                                         style="width: 90%;height: 32px;"
                                         value-format="YYYY-MM-DD"
                                         @change="bwInputChange(item)"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 时间区间 -->
@@ -481,6 +496,7 @@
                                         @focus="clearError(item)"
                                         :default-time="defaultTimeLE"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         size="default"
@@ -495,6 +511,7 @@
                                         @focus="clearError(item)"
                                         :default-time="defaultTimeGE"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <div v-else-if="item.opCom =='datePickerBw' && item.type == 'DateTime' && displayedComp">
@@ -510,6 +527,7 @@
                                         time-format="A hh:mm:ss"
                                         value-format="YYYY-MM-DD HH:mm:ss"
                                         style="width: 90%;height: 32px;"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 
@@ -524,6 +542,7 @@
                                         @focus="clearError(item)"
                                         style="margin-top: 1px;"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 数字输入框区间 -->
@@ -541,6 +560,7 @@
                                         @change="bwChange(item)"
                                         clearable
                                         style="height: 32px;"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-input-number
                                         size="default"
@@ -552,6 +572,7 @@
                                         @focus="clearError(item)"
                                         @change="bwChange(item)"
                                         clearable
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <div v-else-if="item.opCom =='numberInputBw' && displayedComp">
@@ -564,6 +585,7 @@
                                         clearable
                                         :controls="false"
                                         style="width: 49%;height: 32px;"
+                                        @keyup.enter="enterInput(item)"
                                     >
                                         <template #prefix>
                                             <span>起</span>
@@ -578,7 +600,7 @@
                                         @change="bwChange(item)"
                                         :controls="false"
                                         clearable
-                                        
+                                        @keyup.enter="enterInput(item)"
                                     >
                                         <template #prefix>
                                             <span>止</span>
@@ -673,6 +695,7 @@
                                         value-format="YYYY-MM-DD HH:mm:ss"
                                         :default-time="defaultTimeLE"
                                         v-if="item.op == 'LE'"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         v-model="item.value"
@@ -681,6 +704,7 @@
                                         value-format="YYYY-MM-DD HH:mm:ss"
                                         :default-time="defaultTimeGE"
                                         v-else-if="item.op == 'GE'"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                     <el-date-picker
                                         size="default"
@@ -692,6 +716,7 @@
                                         :class="{'is-error':item.isError}"
                                         @focus="clearError(item)"
                                         v-else-if="item.op == 'DEQ'"
+                                        @keyup.enter="enterInput(item)"
                                     />
                                 </div>
                                 <!-- 级联 -->
