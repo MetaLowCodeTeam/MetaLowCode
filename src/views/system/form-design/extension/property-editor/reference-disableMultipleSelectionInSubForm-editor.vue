@@ -1,6 +1,6 @@
 <template>
 	<!--  --> 
-	<el-form-item label="子表单内禁止多选" label-width="120px">
+	<el-form-item label="子表单内禁止多选" label-width="120px" v-if="!isDashboard">
 		<el-switch v-model="optionModel.disableMultipleSelectionInSubForm" />
 	</el-form-item>
 </template>
@@ -17,7 +17,12 @@ export default {
 		selectedWidget: Object,
 		optionModel: Object,
 	},
-
+    inject: ["getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	data() {
 		return {};
 	},

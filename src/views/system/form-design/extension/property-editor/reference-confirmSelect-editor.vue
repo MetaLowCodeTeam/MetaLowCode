@@ -1,5 +1,5 @@
 <template>
-	<el-form-item label="是否二次确认选择">
+	<el-form-item label="是否二次确认选择" v-if="!isDashboard">
 		<el-switch v-model="optionModel.confirmSelect" />
 	</el-form-item>
     <el-form-item label="确认提示内容" v-if="optionModel.confirmSelect">
@@ -15,6 +15,12 @@ const {i18n} = VisualDesign.VFormSDK
 export default {
 	name: "reference-confirmSelect-editor",
 	mixins: [i18n],
+    inject: ["getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	props: {
 		designer: Object,
 		selectedWidget: Object,

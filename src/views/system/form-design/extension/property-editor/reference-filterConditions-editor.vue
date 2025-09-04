@@ -1,6 +1,6 @@
 <template>
 	<!--  -->
-	<el-form-item label="过滤条件" label-width="120px" v-if="!optionModel.useTreeDataSelect">
+	<el-form-item label="过滤条件" label-width="120px" v-if="!optionModel.useTreeDataSelect && !isDashboard">
 		<el-button class="w-100" @click="openFilterDialog" v-if="!optionModel.filterConditions?.items || optionModel.filterConditions?.items?.length == 0">
 			设置过滤条件
 		</el-button>
@@ -227,7 +227,12 @@ export default {
             subFormName: "",
 		};
 	},
-	inject: ["isSubFormChildWidget"],
+	inject: ["isSubFormChildWidget", "getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	methods: {
 		// 打开过滤条件弹框
 		async openFilterDialog() {

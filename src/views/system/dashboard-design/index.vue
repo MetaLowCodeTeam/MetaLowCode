@@ -62,6 +62,7 @@ let designerConfig = ref({
     generateSFCButton: false,
     toolbarMaxWidth: 300,
     chartLib: true,
+    isDashboard: true, // 是仪表盘
 });
 let bannedWidgets = ref(['section']);
 let dbDesignerRef = ref();

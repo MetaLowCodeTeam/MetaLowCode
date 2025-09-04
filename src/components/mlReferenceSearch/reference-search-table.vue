@@ -240,7 +240,6 @@ export default {
 	watch: {
 		refField: {
 			handler(newVal) {
-                console.log(1,'1')
 				this.loadTableTable();
 			},
 		},

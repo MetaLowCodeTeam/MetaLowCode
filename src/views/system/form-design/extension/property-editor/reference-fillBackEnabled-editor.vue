@@ -1,6 +1,6 @@
 <template>
 	<!--  --> 
-	<el-form-item label="启用表单回填" label-width="120px" v-if="!optionModel.useTreeDataSelect">
+	<el-form-item label="启用表单回填" label-width="120px" v-if="!optionModel.useTreeDataSelect && !isDashboard">
 		<el-switch v-model="optionModel.fillBackEnabled" />
 	</el-form-item>
 </template>
@@ -17,7 +17,12 @@ export default {
 		selectedWidget: Object,
 		optionModel: Object,
 	},
-
+    inject: ["getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	data() {
 		return {};
 	},

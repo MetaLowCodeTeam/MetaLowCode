@@ -3,7 +3,7 @@
 	<el-form-item
 		label="排序条件"
 		label-width="120px"
-		v-if="!optionModel.useTreeDataSelect"
+		v-if="!optionModel.useTreeDataSelect && !isDashboard"
 	>
 		<el-button class="w-100" @click="openSortDialog" v-if="!optionModel.sortField">
 			设置排序字段
@@ -68,7 +68,7 @@ export default {
 		selectedWidget: Object,
 		optionModel: Object,
 	},
-	inject: ["isSubFormChildWidget"],
+	inject: ["isSubFormChildWidget", "getDesignerConfig"],
 	data() {
 		return {
 			sortDialogConf: {
@@ -86,6 +86,9 @@ export default {
         },
         sortOrder() {
             return this.optionModel.sortOrder;
+        },
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
         }
     },
     mounted() {},

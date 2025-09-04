@@ -58,8 +58,8 @@
 			<ReferenceSearchRemote
                 ref="referRemote"
                 v-if="!isReadMode && field.options.openSearchInPlace"
-                :entity="entity"
-				:refField="field.options.name"
+                :entity="resetRefEntity || entity"
+				:refField="resetRefField || field.options.name"
                 :searchFields="field.options.searchFields"
                 :dialogWidth="field.options.searchDialogWidth"
                 :disabled="field.options.disabled"
@@ -107,7 +107,7 @@
 		>
 			<ReferenceSearchUser
 				ref="referSU"
-				:entity="entity"
+				:entity="resetRefEntity || entity"
 				:refField="curRefField"
 				:extraFilter="searchFilter"
 				:extraSort="extraSort"
@@ -121,8 +121,8 @@
 			></ReferenceSearchUser>
 			<ReferenceSearchTable
 				ref="referST"
-				:entity="entity"
-				:refField="curRefField"
+				:entity="resetRefEntity || entity"
+				:refField="resetRefField || field.options.name"
 				:extraFilter="searchFilter"
                 :extraSort="extraSort"
                 :filterConditions="filterConditions"
@@ -208,6 +208,8 @@ export default {
 			showReferenceDialogFlag: false,
             treeDialogConf: {},
 			entity: null,
+			resetRefEntity: null,
+            resetRefField: null,
 			curRefField: null,
 			searchFilter: "",
             extraSort: "",
@@ -802,7 +804,12 @@ export default {
 			} else if (this.getFieldEditor() && this.getFieldEditor().focus) {
 				this.getFieldEditor().focus()
 			}
-		}
+		},
+        // 重置当前引用组件参数
+        resetCurRefParam(refEntity, fieldName) {
+            this.resetRefEntity = refEntity;
+            this.resetRefField = fieldName;
+        }
 	},
 };
 </script>

@@ -3,7 +3,7 @@
 	<el-form-item
 		label="开启在位输入搜索"
 		label-width="120px"
-		v-if="!optionModel.useTreeDataSelect"
+		v-if="!optionModel.useTreeDataSelect && !isDashboard"
 	>
 		<el-switch
 			v-model="optionModel.openSearchInPlace"
@@ -41,7 +41,7 @@
 	<el-form-item
 		label="移动端扫码回填"
 		label-width="120px"
-		v-if="!optionModel.useTreeDataSelect"
+		v-if="!optionModel.useTreeDataSelect && !isDashboard"
 	>
 		<el-switch
 			v-model="optionModel.openScanFillBack"
@@ -101,7 +101,12 @@ export default {
 			isShow: false,
 		};
 	},
-    inject: ["isSubFormChildWidget"],
+    inject: ["isSubFormChildWidget", "getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	methods: {
         getQueryFieldLabel() {
             if(this.optionModel.searchFields?.length > 0) {

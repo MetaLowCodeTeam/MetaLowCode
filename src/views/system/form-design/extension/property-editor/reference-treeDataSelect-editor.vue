@@ -1,5 +1,5 @@
 <template>
-	<el-form-item :label="i18nt('extension.setting.useTreeDataSelect')">
+	<el-form-item :label="i18nt('extension.setting.useTreeDataSelect')" v-if="!isDashboard">
 		<el-switch v-model="optionModel.useTreeDataSelect"></el-switch>
 		<el-button
 			class="ml-20"
@@ -88,7 +88,12 @@ export default {
 	mounted() {
 		//
 	},
-	inject: ["isSubFormChildWidget"],
+	inject: ["isSubFormChildWidget", "getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	methods: {
 		async openDialog() {
 			this.oldTreeCascadeFieldName =

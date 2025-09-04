@@ -1,5 +1,5 @@
 <template>
-	<el-form-item label="查看禁止跳转详情" title="查看状态不显示详情链接" label-width="120px">
+	<el-form-item label="查看禁止跳转详情" title="查看状态不显示详情链接" label-width="120px" v-if="!isDashboard">
 		<el-switch v-model="optionModel.detailLinkDisabled" />
 	</el-form-item>
 </template>
@@ -16,6 +16,12 @@ export default {
 		selectedWidget: Object,
 		optionModel: Object,
 	},
+    inject: ["getDesignerConfig"],
+    computed: {
+        isDashboard() {
+            return this.getDesignerConfig().isDashboard;
+        }
+    },
 	data() {
 		return {};
 	},
