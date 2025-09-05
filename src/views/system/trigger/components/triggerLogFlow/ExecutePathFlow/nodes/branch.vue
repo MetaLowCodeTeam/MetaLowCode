@@ -10,7 +10,7 @@
                                 <div class="title branch">
                                     <div class="title-left">
                                         <span class="trigger-reason">{{ item.triggerReason }}</span>
-                                        <span class="node-title">{{ item.nodeName }}</span>
+                                        <span class="node-title" :title="item.nodeName">{{ item.nodeName }}</span>
                                     </div>
                                     <el-button
                                         type="primary"
@@ -132,9 +132,7 @@ const openRefDialog = (item) => {
     background: rgb(202, 202, 202);
 
 }
-.branch-box {
-    // margin-top: 18px !important;
-}
+
 .auto-judge {
     .title {
         height: 32px !important;
@@ -143,8 +141,6 @@ const openRefDialog = (item) => {
         padding-right: 6px !important;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 6px;
         .trigger-reason {
             display: inline-block;
             height: 20px;
@@ -155,16 +151,18 @@ const openRefDialog = (item) => {
             border-radius: 10px;
             color: #68C23A;
             font-size: 12px;
+            flex: 0 0 auto;
         }
         .title-left {
             display: inline-flex;
             align-items: center;
             min-width: 0;
             gap: 8px;
-            flex: 1;
+            flex: 1 1 auto;
             .node-title {
                 display: inline-block;
-                max-width: 120px;
+                flex: 1 1 auto;
+                min-width: 0;
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -172,6 +170,13 @@ const openRefDialog = (item) => {
         }
         > .small-circle-button {
             margin-left: 0;
+            flex: 0 0 24px;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
     }
     .content {

@@ -147,6 +147,7 @@ import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import MlShareTo from "@/components/mlShareTo/index.vue";
 import AddField from "@/components/mlFormDesignComp/AddField.vue";
 import ActionRulesSetting from "./custom/ActionRulesSetting.vue";
+import { globalDsvDefaultData } from "@/utils/util";
 
 export default {
     name: "form-design",
@@ -182,9 +183,7 @@ export default {
                 toolbarMaxWidth: 300,
             },
             globalDsv: {
-                uploadServer: import.meta.env.VITE_APP_BASE_API,
-				baseApi: import.meta.env.VITE_APP_BASE_API,
-                SERVER_API: import.meta.env.VITE_APP_BASE_API,
+                ...globalDsvDefaultData(),
             },
             fieldListData: {},
             layoutId: null,

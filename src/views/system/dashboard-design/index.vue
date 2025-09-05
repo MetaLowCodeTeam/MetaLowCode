@@ -4,6 +4,7 @@
         ref="dbDesignerRef"
         :designer-config="designerConfig"
 		:banned-widgets="bannedWidgets"
+        :global-dsv="globalDsv"
         class="visual-design"
         v-loading="loading"
     >
@@ -39,11 +40,14 @@
 <script setup>
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 import { dashboard_container_schema } from "@/views/system/dashboard-design/charts/charts-schema";
-import {deepClone, mlShortcutkeys} from "@/utils/util";
+import {deepClone, mlShortcutkeys, globalDsvDefaultData} from "@/utils/util";
 import { saveRecord, queryById } from "@/api/crud";
 import { onMounted, ref, onBeforeUnmount, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
+
+let globalDsv = ref(globalDsvDefaultData());
+
 const router = useRouter();
 const { Utils } = VisualDesign.VFormSDK;
 
