@@ -48,6 +48,7 @@
         >
             <template #empty>
                 <div
+                    v-if="isDropdownVisible"
                     class="empty-box"
                     :style="{ minWidth: dialogWidth }"
                 >
