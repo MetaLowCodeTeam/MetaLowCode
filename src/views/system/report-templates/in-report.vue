@@ -23,6 +23,18 @@
                 >提交</el-button>
             </div>
         </el-card>
+        <div v-if="haveLayoutJson && showSuccessOverlay" class="in-report-mask">
+            <div class="in-report-mask-content">
+                <el-result icon="success" title="提交成功" class="success-result">
+                    <template #extra>
+                        <div class="success-actions">
+                            <el-link type="primary" :underline="false" class="success-link" @click="closeSuccessOverlay">查看提交内容</el-link>
+                            <el-button v-if="!isMobile" @click="closeCurrentPage">关闭</el-button>
+                        </div>
+                    </template>
+                </el-result>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -54,6 +66,9 @@ let externalData = ref({});
 let errorText = ref("未查询到相关配置数据");
 
 let btnDisabled = ref(false);
+
+// 提交成功遮罩
+let showSuccessOverlay = ref(false);
 
 // 审批状态
 let approvalStatus = ref();
@@ -191,6 +206,7 @@ const confirm = async () => {
                     vFormRef.value.disableForm();
                     btnDisabled.value = true;
                     ElMessage.success("保存成功");
+                    showSuccessOverlay.value = true;
                 }
                 loading.value = false;
             }
@@ -200,6 +216,27 @@ const confirm = async () => {
                 ElMessage.error("表单校验失败，请修改后重新提交");
             }
         });
+};
+
+// 关闭提交成功遮罩
+const closeSuccessOverlay = () => {
+    showSuccessOverlay.value = false;
+};
+
+// 关闭当前页面
+const closeCurrentPage = () => {
+    // 若为外部打开页尝试关闭；否则回退
+    if (window.history.length > 1) {
+        window.close();
+        // 如关闭失败（浏览器策略），回退
+        setTimeout(() => {
+            if (!document.hidden) {
+                window.history.back();
+            }
+        }, 100);
+    } else {
+        window.close();
+    }
 };
 </script>
 <style lang='scss' scoped>
@@ -235,6 +272,91 @@ const confirm = async () => {
 @media screen and (max-width: 1200px) {
     .in-report-card {
         width: 80%;
+    }
+}
+
+// 提交成功遮罩
+.in-report-mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff; /* 全屏白底以适配移动端 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.in-report-mask-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px; /* 移动端左右留白 */
+}
+.in-report-mask-content .success-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+.in-report-mask-content .success-actions {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr; /* 单列布局：一人一块 */
+    row-gap: 12px;
+    width: 100%;
+}
+
+/* 缩小 el-result 内容与按钮区域的间距 */
+.success-result :deep(.el-result__extra) {
+    margin-top: 20px;
+}
+
+/* 整体上移一些，让视觉重心更靠上 */
+.success-result {
+    transform: translateY(-6vh);
+}
+
+@media screen and (max-width: 900px) {
+    .success-result {
+        transform: translateY(-4vh);
+    }
+}
+
+/* 块级按钮等宽，自适应移动端 */
+.success-actions :deep(.el-button) {
+    display: block;
+    width: 240px;
+    max-width: 80vw;
+    margin: 0 auto;
+}
+.success-actions :deep(.el-button + .el-button) {
+    margin-left: 0; /* 覆盖按钮组默认左间距 */
+}
+
+/* 文本链接与透明度效果 */
+.success-link {
+    display: block;
+    width: 240px;
+    max-width: 80vw;
+    margin: 0 auto;
+    opacity: 0.9;
+    transition: opacity .2s ease;
+}
+.success-link:hover {
+    opacity: 1;
+}
+.success-link:active {
+    opacity: 0.8;
+}
+
+@media screen and (max-width: 900px) {
+    .in-report-mask-content .success-text {
+        font-size: 16px;
     }
 }
 
