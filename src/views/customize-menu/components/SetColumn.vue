@@ -394,6 +394,9 @@ let showColumn = ref([]);
 // 源所有列
 let sourceColumn = ref([]);
 
+// 原始列数据映射，按 fieldName 存储，删除时从原始数据还原
+let originalFieldMap = {};
+
 // 筛选字段
 let searchField = ref("");
 const notShowColumn = () => {
@@ -683,7 +686,15 @@ const confirmColumnEdit = () => {
 // 删除显示列
 const delColumn = (column, inx) => {
     showColumn.value.splice(inx, 1);
-    sourceColumn.value.push(column);
+    // 从原始数据中取该字段，避免把左侧已修改的对象放回右侧
+    const original = originalFieldMap[column.fieldName] || column;
+    // 如果右侧已有该字段，先移除，避免重复
+    const existIdx = sourceColumn.value.findIndex((el) => el.fieldName === column.fieldName);
+    if (existIdx !== -1) {
+        sourceColumn.value.splice(existIdx, 1);
+    }
+    // 放到最前面，便于用户立即看到
+    sourceColumn.value.unshift(original);
 };
 
 // 获取所有列数据
@@ -694,6 +705,13 @@ const getAllColumn = async () => {
         entityCode,
     );
     if (res) {
+        // 记录原始字段映射
+        originalFieldMap = {};
+        Array.isArray(res.data) && res.data.forEach((el) => {
+            if (el && el.fieldName) {
+                originalFieldMap[el.fieldName] = el;
+            }
+        });
         showColumn.value = [];
         let hasFieldName = [];
         if (config) {
