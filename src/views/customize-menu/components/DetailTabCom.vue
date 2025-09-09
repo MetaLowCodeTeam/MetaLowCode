@@ -461,38 +461,39 @@ const getTableList = async () => {
     loading.value = true;
     let filter = null;
     let filterEasySql = null;
+    // 如果默认筛选条件有后置条件
+    if(defaultFilter.value.javaScriptVal){
+        let { equation, items, javaScriptVal } = JSON.parse(JSON.stringify(defaultFilter.value));
+        try {
+            let newFilter = new Function('defaultFilter', 'exposed', javaScriptVal)(
+                {
+                    equation,
+                    items,
+                },
+                {
+                    http,
+                    isMobile: false,
+                },
+            );
+            // 判断是否是 Promise
+            if (newFilter instanceof Promise) {
+                newFilter = await newFilter; // 等待异步结果
+            }
+            // 后续同步判断
+            if (newFilter?.equation && newFilter?.items) {
+                defaultFilter.value.equation = newFilter.equation;
+                defaultFilter.value.items = newFilter.items;
+            }
+        } catch (error) {
+            console.error('执行默认查询后置条件时出错:', error);
+        }
+    }
     // 是自定义标签
     if(curtTab.value.isCustomLabel) {
         const regex = new RegExp(`{${props.idFieldName}}`, 'g');
         filterEasySql = curtTab.value.filterEasySql.replace(regex,`'${props.entityId}'`);
         filter = {};
-        // 如果默认筛选条件有后置条件
-        if(defaultFilter.value.javaScriptVal){
-            let { equation, items, javaScriptVal } = JSON.parse(JSON.stringify(defaultFilter.value));
-            try {
-                let newFilter = new Function('defaultFilter', 'exposed', javaScriptVal)(
-                    {
-                        equation,
-                        items,
-                    },
-                    {
-                        http,
-                        isMobile: false,
-                    },
-                );
-                // 判断是否是 Promise
-                if (newFilter instanceof Promise) {
-                    newFilter = await newFilter; // 等待异步结果
-                }
-                // 后续同步判断
-                if (newFilter?.equation && newFilter?.items) {
-                    filter.equation = newFilter.equation;
-                    filter.items = newFilter.items;
-                }
-            } catch (error) {
-                console.error('执行默认查询后置条件时出错:', error);
-            }
-        }
+       
     }else {
         filter = {
             equation: "AND",
@@ -527,6 +528,7 @@ const getTableList = async () => {
             advFilter: formatFilterToBase64(param.advFilter), 
             quickFilter: param.quickFilter,
             filterEasySql: filterEasySql ? unicodeToBase64(filterEasySql) : null, 
+            defaultFilter: defaultFilter.value
         });
     }else {
         res = await getDataList(
@@ -540,7 +542,8 @@ const getTableList = async () => {
             param.quickFilter,
             null,
             null,
-            filterEasySql
+            filterEasySql,
+            defaultFilter.value
         );
     }
     
