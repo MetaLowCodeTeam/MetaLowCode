@@ -60,19 +60,21 @@
                     class="readonly-mode-field"
 				>
                     {{ contentForReadMode }}
-                    <el-button
-						v-if="fieldModel && fieldModel.length > 0"
-						type="primary"
-						circle
-						size="small"
-						class="small-circle-button"
-						title="打开详情弹窗"
-                        @click="handleViewEvent"
-					>
-						<el-icon>
-							<TopRight />
-						</el-icon>
-					</el-button>
+                    <template v-if="!field.options.detailLinkDisabled">
+                        <el-button
+                            v-if="fieldModel && fieldModel.length > 0"
+                            type="primary"
+                            circle
+                            size="small"
+                            class="small-circle-button"
+                            title="打开详情弹窗"
+                            @click="handleViewEvent"
+                        >
+                            <el-icon>
+                                <TopRight />
+                            </el-icon>
+                        </el-button>
+                    </template>
 				</span>
 			</template>
 		</form-item-wrapper>

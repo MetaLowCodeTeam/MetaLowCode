@@ -677,8 +677,9 @@ const initFormLayout = async () => {
                 });
             }
         }
+    }else {
+        loading.value = false;
     }
-    loading.value = false;
 };
 
 /**
