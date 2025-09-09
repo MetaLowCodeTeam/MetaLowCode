@@ -1,5 +1,5 @@
 <template>
-    <ml-dialog :title="labelData.label" v-model="dialogShow" width="560px" append-to-body>
+    <ml-dialog :title="labelData.label" v-model="dialogShow" width="560px" append-to-body :showClose="!loading">
         <div v-loading="loading" class="main" v-if="labelData.type != 'del'">
             <el-form label-width="140px">
                 <el-form-item
@@ -87,6 +87,9 @@
                 </div>
             </template>
         </div>
+        <div class="del-text" v-if="showDelText">
+            {{ showDelText }}
+        </div>
         <template #footer>
             <el-button @click="dialogShow=false" :loading="loading">取消</el-button>
             <el-button @click="confirm" :loading="loading" type="primary">确定</el-button>
@@ -103,6 +106,7 @@ import {
     shareRecord,
     cancelShareRecord,
     deleteRecords,
+    getExecutionProgress,
 } from "@/api/crud";
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
@@ -113,6 +117,9 @@ const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
 let dialogShow = ref(false);
 let loading = ref(false);
+let showDelText = ref(false);
+// 轮询定时器
+let pollingTimer = null;
 // 分配实体列表
 let entityList = ref([]);
 let formData = reactive({
@@ -239,15 +246,39 @@ const confirm = async () => {
         };
         res = await deleteRecords(param.body);
     }
-    if (res) {
-        if (res.data > 0) {
+    if (res?.code == 200) {
+        // 如果返回的是字符串，则启动轮询
+        if (typeof res.data === 'string' && labelData.type == "del") {
+            const processId = res.data;
+            showDelText.value = `正在删除中：0%`; // 初始化进度文本
+            pollingTimer = setInterval(async () => {
+                const progressRes = await getExecutionProgress(processId);
+                const progressValue = parseInt(progressRes.data);
+                // 如果返回的不是字符串，或者能解析为数字且为 100，则停止轮询
+                if (isNaN(progressValue) || progressValue === 100) {
+                    clearInterval(pollingTimer);
+                    pollingTimer = null;
+                    showDelText.value = false;
+                    $ElMessage.success(`${labelData.label}成功`);
+                    loading.value = false;
+                    emits("allocationSuccess", { isDel: labelData.type == "del" });
+                    dialogShow.value = false;
+                } else {
+                    // 更新显示进度
+                    showDelText.value = `正在删除中：${progressValue}%`;
+                }
+            }, 1000);
+        } else if (res.data > 0) {
             $ElMessage.success(`成功${labelData.label} ${res.data} 条记录`);
+            emits("allocationSuccess", { isDel: labelData.type == "del" });
+            dialogShow.value = false;
+            loading.value = false;
         } else {
             $ElMessage.success(`${labelData.label}成功`);
+            emits("allocationSuccess", { isDel: labelData.type == "del" });
+            dialogShow.value = false;
+            loading.value = false;
         }
-        emits("allocationSuccess", { isDel: labelData.type == "del" });
-        dialogShow.value = false;
-        loading.value = false;
     } else {
         loading.value = false;
     }
@@ -276,5 +307,12 @@ defineExpose({
             top: 6px;
         }
     }
+}
+.del-text {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    margin-top: 10px;
+    line-height: 30px;
 }
 </style>

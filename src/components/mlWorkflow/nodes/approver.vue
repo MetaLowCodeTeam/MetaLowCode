@@ -91,7 +91,7 @@
                             v-if="form.nodeRoleType == 5 || form.nodeRoleType == 6"
                         >
                             <el-option
-                                v-for="(item,depInx) in nodeRoleTypeChilerenList"
+                                v-for="(item,depInx) in nodeRoleTypeChildrenList"
                                 :key="depInx"
                                 :label="item.label"
                                 :value="item.value"
@@ -190,7 +190,7 @@ let nodeRoleTypeList = ref([
     },
 ]);
 
-let nodeRoleTypeChilerenList = ref([
+let nodeRoleTypeChildrenList = ref([
     {
         label: "当前部门",
         value: 0,

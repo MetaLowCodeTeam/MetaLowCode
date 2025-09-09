@@ -69,6 +69,12 @@ export function deleteRecord(id) {
     })
 }
 
+export function getExecutionProgress(executeId) {
+    return http.get('crud/getExecutionProgress', { executeId })
+}
+
+
+
 export function deleteRecords(body) {
     return http.post('crud/deleteRecord', body)
 }

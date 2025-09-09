@@ -22,11 +22,11 @@
             <!-- 由谁审批 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="label-title mb-3">由谁审批</div>
-                <div class="mt-10 flex-box">
+                <div class="mt-10">
                     <el-select
                         v-model="myFormData.nodeRoleType"
                         placeholder="选择由谁审批"
-                        style="width: 180px;"
+                        style="width: 100%;"
                         @change="nodeRoleTypeChange"
                     >
                         <el-option
@@ -36,7 +36,7 @@
                             :value="item.type"
                         />
                     </el-select>
-                    <div style="width: calc(100% - 200px);display: inline-block;margin-left: 10px;">
+                    <div style="width: 100%; display: block; margin-left: 0; margin-top: 10px;">
                         <!-- 3 指定审批人 -->
                         <mlSelectUser
                             v-if="myFormData.nodeRoleType == 3"
@@ -54,6 +54,7 @@
                             value-key="name"
                             placeholder="请选择负责人"
                             v-if="myFormData.nodeRoleType == 4"
+                            style="width: 100%;"
                         >
                             <el-option
                                 v-for="(item,depInx) in departmentList"
@@ -64,18 +65,36 @@
                             />
                         </el-select>
                         <!-- 5 发起人部门负责人、6 数据所属部门负责人 -->
-                        <el-select
-                            v-model="myFormData.deptLevel"
-                            placeholder="请选择部门"
-                            v-if="myFormData.nodeRoleType == 5 || myFormData.nodeRoleType == 6"
-                        >
-                            <el-option
-                                v-for="(item,depInx) in nodeRoleTypeChilerenList"
-                                :key="depInx"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
+                        <template v-if="myFormData.nodeRoleType == 5 || myFormData.nodeRoleType == 6">
+                            <div class="dept-select-row">
+                                <!-- 顺序选择：从上至下 / 从下至上 -->
+                                <el-select
+                                    v-model="myFormData.deptOrder"
+                                    style="width: 180px;"
+                                    @change="deptOrderChange"
+                                >
+                                    <el-option
+                                        v-for="op in deptOrderOptions"
+                                        :key="op.value"
+                                        :label="op.label"
+                                        :value="op.value"
+                                    />
+                                </el-select>
+                                <!-- 部门层级选择：根据顺序切换备选项 -->
+                                <el-select
+                                    v-model="myFormData.deptLevel"
+                                    placeholder="请选择部门"
+                                    style="flex: 1;"
+                                >
+                                    <el-option
+                                        v-for="(item,depInx) in (myFormData.deptOrder === 'BOTTOM_UP' ? nodeRoleTypeBottomUpList : nodeRoleTypeChildrenList)"
+                                        :key="depInx"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </div>
+                        </template>
                         <!-- 7 实体字段 -->
                         <el-select
                             v-model="myFormData.fieldNames"
@@ -86,6 +105,7 @@
                             multiple
                             v-if="myFormData.nodeRoleType == 7"
                             @change="fieldNamesChange"
+                            style="width: 100%;"
                         >
                             <el-option
                                 v-for="(field,fieldInx) in entityFields"
@@ -309,11 +329,98 @@
             <template #title>
                 <h3>抄送设置</h3>
             </template>
-            <!-- 抄送用户 -->
-            <div class="work-flow-conditions mt-20">
-                <div class="label-title mb-3">抄送用户</div>
-                <div class="mb-10 mt-10">
-                    <mlSelectUser v-model="myFormData.ccToUserList" multiple clearable />
+            <!-- 抄送设置：与“由谁审批”一致 -->
+            <div class="work-flow-conditions">
+                <div class="label-title mb-3">由谁抄送</div>
+                <div class="mt-10">
+                    <el-select
+                        v-model="myFormData.ccNodeRoleType"
+                        placeholder="选择由谁抄送"
+                        style="width: 100%;"
+                        @change="ccNodeRoleTypeChange"
+                    >
+                        <el-option
+                            v-for="item in nodeRoleTypeList"
+                            :key="item.type"
+                            :label="item.type === 3 ? '指定抄送人' : item.label"
+                            :value="item.type"
+                        />
+                    </el-select>
+                    <div style="width: 100%; display: block; margin-left: 0; margin-top: 10px;">
+                        <!-- 3 指定用户：抄送给谁保持 ccToUserList -->
+                        <mlSelectUser
+                            v-if="myFormData.ccNodeRoleType == 3"
+                            v-model="myFormData.ccToUserList"
+                            multiple
+                            clearable
+                            style="width: 100%;"
+                        />
+                        <!-- 4 指定部门负责人：选择部门列表（本地存 ccNodeRoleList） -->
+                        <el-select
+                            v-model="myFormData.ccNodeRoleList"
+                            v-loading="departmentLoading"
+                            clearable
+                            multiple
+                            value-key="name"
+                            placeholder="请选择负责人所在部门"
+                            v-if="myFormData.ccNodeRoleType == 4"
+                            style="width: 100%;"
+                        >
+                            <el-option
+                                v-for="(item,depInx) in departmentList"
+                                :key="depInx"
+                                :disabled="item.name.indexOf('未设置负责人') != -1"
+                                :label="item.name"
+                                :value="item"
+                            />
+                        </el-select>
+                        <!-- 5/6 部门负责人：顺序 + 层级 -->
+                        <template v-if="myFormData.ccNodeRoleType == 5 || myFormData.ccNodeRoleType == 6">
+                            <div class="dept-select-row">
+                                <el-select
+                                    v-model="myFormData.ccDeptOrder"
+                                    style="width: 180px;"
+                                    @change="ccDeptOrderChange"
+                                >
+                                    <el-option
+                                        v-for="op in deptOrderOptions"
+                                        :key="op.value"
+                                        :label="op.label"
+                                        :value="op.value"
+                                    />
+                                </el-select>
+                                <el-select
+                                    v-model="myFormData.ccDeptLevel"
+                                    placeholder="请选择部门"
+                                    style="flex: 1;"
+                                >
+                                    <el-option
+                                        v-for="(item,depInx) in (myFormData.ccDeptOrder === 'BOTTOM_UP' ? nodeRoleTypeBottomUpList : nodeRoleTypeChildrenList)"
+                                        :key="depInx"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </div>
+                        </template>
+                        <!-- 7 实体字段：单选，字段名存 ccFieldName -->
+                        <el-select
+                            v-model="myFormData.ccFieldName"
+                            v-loading="entityFieldsLoading"
+                            clearable
+                            value-key="name"
+                            placeholder="请选择字段"
+                            v-if="myFormData.ccNodeRoleType == 7"
+                            style="width: 100%;"
+                        >
+                            <el-option
+                                v-for="(field,fieldInx) in entityFields"
+                                :key="fieldInx"
+                                :label="field.label"
+                                :value="field.name"
+                            />
+                        </el-select>
+                    </div>
                 </div>
             </div>
         </el-collapse-item>
@@ -494,6 +601,13 @@ onMounted(() => {
 // 初始化API
 const initApi = () => {
     myFormData.value = Object.assign(myFormData.value, props.formData);
+    // 默认顺序：从上至下（审批用）与抄送用各自独立
+    if (!('deptOrder' in myFormData.value)) myFormData.value.deptOrder = 'TOP_DOWN';
+    if (!('ccDeptOrder' in myFormData.value)) myFormData.value.ccDeptOrder = 'TOP_DOWN';
+    // 兼容老数据：抄送对象类型默认 3（指定用户）
+    if (myFormData.value.ccNodeRoleType === undefined || myFormData.value.ccNodeRoleType === null) {
+        myFormData.value.ccNodeRoleType = 3;
+    }
     // 获取部门负责人数据
     getDepartment();
     // 获取所有实体字段
@@ -512,6 +626,26 @@ const initApi = () => {
 const fieldNamesChange = (val) => {
     myFormData.value.fieldName = val.join(',');
 }
+
+// 抄送类型切换，清理不相关字段
+const ccNodeRoleTypeChange = () => {
+    if (myFormData.value.ccNodeRoleType !== 3) {
+        // ccToUserList 保留
+    }
+    if (myFormData.value.ccNodeRoleType !== 4) {
+        myFormData.value.ccNodeRoleList = [];
+    }
+    if (!(myFormData.value.ccNodeRoleType == 5 || myFormData.value.ccNodeRoleType == 6)) {
+        myFormData.value.ccDeptLevel = undefined;
+        if (!('ccDeptOrder' in myFormData.value)) myFormData.value.ccDeptOrder = 'TOP_DOWN';
+    } else {
+        // 如果切换到抄送部门负责人，根据当前的 ccDeptOrder 设定默认层级
+        myFormData.value.ccDeptLevel = myFormData.value.ccDeptOrder === 'BOTTOM_UP' ? -1 : 0;
+    }
+    if (myFormData.value.ccNodeRoleType !== 7) {
+        myFormData.value.ccFieldName = undefined;
+    }
+};
 
 
 /**
@@ -541,7 +675,13 @@ let nodeRoleTypeList = ref([
     },
 ]);
 
-let nodeRoleTypeChilerenList = ref([
+// 从上至下/从下至上选项
+const deptOrderOptions = [
+    { label: "从上至下", value: 'TOP_DOWN' },
+    { label: "从下至上", value: 'BOTTOM_UP' },
+];
+
+let nodeRoleTypeChildrenList = ref([
     {
         label: "当前部门",
         value: 0,
@@ -582,6 +722,19 @@ let nodeRoleTypeChilerenList = ref([
         label: "十级部门",
         value: 9,
     },
+]);
+// 从下至上：最高部门负责人(-1) ~ 第十层部门负责人(-10)
+let nodeRoleTypeBottomUpList = ref([
+    { label: "最高部门负责人", value: -1 },
+    { label: "第二层部门负责人", value: -2 },
+    { label: "第三层部门负责人", value: -3 },
+    { label: "第四层部门负责人", value: -4 },
+    { label: "第五层部门负责人", value: -5 },
+    { label: "第六层部门负责人", value: -6 },
+    { label: "第七层部门负责人", value: -7 },
+    { label: "第八层部门负责人", value: -8 },
+    { label: "第九层部门负责人", value: -9 },
+    { label: "第十层部门负责人", value: -10 },
 ]);
 let departmentLoading = ref(false);
 let departmentList = ref([]);
@@ -627,6 +780,24 @@ const getEntityFields = async () => {
 // 由谁审批切换
 const nodeRoleTypeChange = () => {
     myFormData.value.nodeRoleList = [];
+    if (myFormData.value.nodeRoleType === 5 || myFormData.value.nodeRoleType === 6) {
+        // 根据当前的 deptOrder 设定默认层级
+        myFormData.value.deptLevel = myFormData.value.deptOrder === 'BOTTOM_UP' ? -1 : 0;
+    } else {
+        myFormData.value.deptLevel = undefined;
+    }
+};
+
+// 顺序切换时，处理层级值 0 和 -1 的互换
+const deptOrderChange = (val) => {
+    // 切换时强制设置为当前顺序的默认值
+    myFormData.value.deptLevel = val === 'BOTTOM_UP' ? -1 : 0;
+};
+
+// 抄送部门顺序切换时，同步处理 ccDeptLevel 的 0 与 -1 互换
+const ccDeptOrderChange = (val) => {
+    // 切换时强制设置为当前顺序的默认值
+    myFormData.value.ccDeptLevel = val === 'BOTTOM_UP' ? -1 : 0;
 };
 
 /**
@@ -920,5 +1091,9 @@ defineExpose({
 }
 .flex-box {
     display: flex;
+}
+.dept-select-row {
+    display: flex;
+    gap: 10px;
 }
 </style>
