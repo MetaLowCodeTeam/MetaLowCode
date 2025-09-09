@@ -100,11 +100,11 @@ const { pushViewTags,removeViewTags } = viewTagsStore;
 const { pushKeepLive,removeKeepLive,setRouteShow } = keepAliveStore;
 const { removeIframeList,refreshIframe } = iframeStore;
 // 当前菜单导航
-const { chosenNavigationId } = storeToRefs(useLayoutConfigStore());
+const { chosenNavigationId, isHideWorkbench } = storeToRefs(useLayoutConfigStore());
 // 收藏菜单 、 删除收藏菜单 、 获取收藏菜单
 const {
     checkCollectMenu,
-    setCollectMenuList
+    setCollectMenuList,
 } = useLayoutConfigStore();
 const appPath = import.meta.env.VITE_APP_PATH;
 export default {
@@ -194,7 +194,10 @@ export default {
         if (dashboardRoute && !this.isAppManagement) {
             let formatDashboardRoute = {...dashboardRoute};
             formatDashboardRoute.fullPath = config.DASHBOARD_URL;
-            this.addViewTags(formatDashboardRoute);
+            // 如果勾选了隐藏工作台，就不显示仪表盘
+            if(!isHideWorkbench.value) {
+                this.addViewTags(formatDashboardRoute);
+            }
             this.addViewTags(this.$route);
         }
         if(this.isAppManagement){

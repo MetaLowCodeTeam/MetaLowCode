@@ -503,6 +503,7 @@ export default {
                 this.dockMenu.push(item);
             }
         });
+        this.dockMenu = this.dockMenu.filter(el => !(isHideWorkbench.value && el.path == "/web/dashboard"));
         this.menu = this.menu.filter(el => !(el.children?.length < 1));
         this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == '/web/home'));
         // 过滤掉 meta.psShow === false 的菜单（undefined/null 忽略）
@@ -581,6 +582,7 @@ export default {
                 ? this.$route.meta.breadcrumb[0]
                 : {};
             this.nextMenu = this.filterUrl(this.pmenu.children);
+            this.nextMenu = this.nextMenu.filter(el => !(isHideWorkbench.value && el.path == "/web/dashboard"))
             this.$nextTick(() => {
                 this.active = this.$route.meta.active || this.$route.fullPath;
             });
@@ -593,6 +595,7 @@ export default {
             }
             this.pmenu = route;
             this.nextMenu = this.filterUrl(route.children);
+            this.nextMenu = this.nextMenu.filter(el => !(isHideWorkbench.value && el.path == "/web/dashboard"))
             if (
                 (!route.children || route.children.length == 0) &&
                 route.component
