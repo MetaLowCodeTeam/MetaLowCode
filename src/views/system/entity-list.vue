@@ -14,18 +14,18 @@
                         @input="filterEntityList"
                     >
                         <template #prepend>
-                            <el-select 
-                                v-model="searchTag" 
+                            <el-select
+                                v-model="searchTag"
                                 style="width: 100px"
                                 @change="filterEntityList"
                             >
                                 <el-option label="全部标签" value="全部标签" />
                                 <el-option label="未分组" value="未分组" />
-                                <el-option 
-                                    v-for="(op,inx) of allTags" 
-                                    :key="inx" 
-                                    :label="op" 
-                                    :value="op" 
+                                <el-option
+                                    v-for="(op,inx) of allTags"
+                                    :key="inx"
+                                    :label="op"
+                                    :value="op"
                                 />
                             </el-select>
                         </template>
@@ -54,10 +54,10 @@
                         </div>
                         <div class="item" @click="openCopyEntityDialog" v-if="props.isAppManagement">
                             <span class="icon-top-1">
-                                <el-icon>   
+                                <el-icon>
                                     <CopyDocument />
                                 </el-icon>
-                            </span> 
+                            </span>
                             从实体中复制
                         </div>
                     </div>
@@ -122,7 +122,7 @@
                         :filter-entity-method="filterMainEntity"
                     />
                 </div>
-                
+
                 <template #footer>
                     <div class="dialog-footer">
                         <el-button
@@ -145,7 +145,7 @@
         </el-main>
     </el-container>
     <EntityImportExport ref="entityImportExportRef" :entityList="entityItems"/>
-    <EntitySelected 
+    <EntitySelected
         ref="entitySelectedRef"
         @selectEntity="selectCopyEntity"
         title="选择实体复制"
@@ -293,7 +293,7 @@ const filterEntityList = () => {
     } else {
         availableEntityList.value = [...filterEntitys];
     }
-    
+
     for (const key in entityGroup.value) {
         if (entityGroup.value.hasOwnProperty.call(entityGroup.value, key)) {
             entityGroup.value[key] = [];
@@ -393,16 +393,16 @@ const saveNewEntity = () => {
             ElMessage.error("实体不能使用系统保留关键字，请修改。");
             return;
         }
-        
+
         newEntityProps.value = Object.assign(
             newEntityProps.value,
             EPEditor.value.entityProps
         );
-        
+
         const mainEntityName = !newEntityProps.value.mainEntity
             ? "null"
             : newEntityProps.value.mainEntity;
-            
+
         saveLoading.value = true;
         let tags = [];
         if (newEntityProps.value.useTag) {
@@ -538,7 +538,7 @@ const deleteSelectedEntity = () => {
 
             let confirmText = [
                 "实体删除后不能恢复，是否确认删除?",
-                "1. 删除实体会清空该实体的所有数据，包括实体所有字段、表单布局和列表设置，且不能恢复；’",
+                "1. 删除实体会清空该实体的所有数据，包括实体所有字段、表单布局和列表设置，且不能恢复；",
                 "2. 如该实体包含明细实体，请先删除明细实体；",
                 "3. 如有其他实体引用字段指向该实体，请手工删除引用字段；",
             ];
@@ -754,7 +754,7 @@ const selectCopyEntity = (row) => {
             color: #fff;
         }
 	}
-    
+
     .el-dialog__footer {
         padding: 10px 20px;
     }
@@ -789,7 +789,7 @@ const selectCopyEntity = (row) => {
 //     }
 // }
 
-.table-setting-item-box { 
+.table-setting-item-box {
     .item {
         height: 26px;
         line-height: 26px;
