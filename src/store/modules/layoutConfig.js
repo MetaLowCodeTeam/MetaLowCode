@@ -275,8 +275,8 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
 
         // 自定义权限
         let hasCustomCode = item.customCode && !tool.checkRole(item.customCode.trim());
-        // 取反权限
-        if(item.reversalCustomCode){
+        // 取反权限 并且 不是管理员 才生效
+        if(item.reversalCustomCode && !tool.checkRole('r6000')){
             hasCustomCode = !hasCustomCode;
         }
 

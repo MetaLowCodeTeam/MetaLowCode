@@ -212,7 +212,13 @@
                                 </el-select>
                             </el-col>
                             <el-col :span="3">
-                                <el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+                                <el-tooltip placement="top">
+                                    <template #content>
+                                        <div>
+                                            <span>取反后，用户不包含选定条件菜单才会显示。</span> <br />
+                                            <span>（拥有管理员权限的账号查看依然会显示）</span>
+                                        </div>
+                                    </template>
                                     <el-checkbox v-model="cutMenu.reversalCustomCode" label="取反" />
                                 </el-tooltip>
                             </el-col>
@@ -294,7 +300,13 @@
                                 </el-select>
                             </el-col>
                             <el-col :span="3">
-                                <el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+                                <el-tooltip placement="top">
+                                    <template #content>
+                                        <div>
+                                            <span>取反后，用户不包含选定条件菜单才会显示。</span> <br />
+                                            <span>（拥有管理员权限的账号查看依然会显示）</span>
+                                        </div>
+                                    </template>
                                     <el-checkbox v-model="cutMenu.reversalCustomCode" label="取反" />
                                 </el-tooltip>
                             </el-col>
