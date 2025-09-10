@@ -457,7 +457,7 @@ const gotoEntityManager = () => {
         query: {
             entity: selectedEntityObj.value.name,
             entityLabel: selectedEntityObj.value.label,
-            customRouteTitle: selectedEntityObj.value.label + " - 字段管理",
+            customRouteTitle: "字段管理 - " + selectedEntityObj.value.label,
         },
     });
 };
@@ -473,7 +473,7 @@ const gotoFormLayout = () => {
         query: {
             entity: selectedEntityObj.value.name,
             entityLabel: selectedEntityObj.value.label,
-            customRouteTitle: selectedEntityObj.value.label + " - 可视化表单设计",
+            customRouteTitle: "可视化表单设计 - " + selectedEntityObj.value.label,
         },
     });
 };
@@ -510,7 +510,7 @@ const gotoRoute = (routePage, disableDetailEntity, customRouteTitle) => {
         path: appPath + routePage,
         query: {
             entityCode: selectedEntityObj.value.entityCode,
-            customRouteTitle: selectedEntityObj.value.label + " - " + customRouteTitle,
+            customRouteTitle: customRouteTitle + " - " + selectedEntityObj.value.label,
         }
     };
     if(props.isAppManagement) {
