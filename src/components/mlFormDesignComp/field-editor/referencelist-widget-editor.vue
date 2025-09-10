@@ -305,13 +305,20 @@ export default {
 
                     this.fieldItems = res.data.fieldItems;
                     this.selectedFieldItems = res.data.selectedFieldItems;
-                    this.referenceList = [
-                        {
-                            currentRefEntity: res.data.currentRefEntity,
-                            selectedFieldItems: res.data.selectedFieldItems,
-                            refEntityAndFields: res.data.refEntityAndFields,
-                        },
-                    ];
+                    this.referenceList = res.data.refEntityList.map(el => {
+                        return {
+                            currentRefEntity: el.currentRefEntity,
+                            selectedFieldItems: el.selectedFieldItems,
+                            refEntityAndFields: el.refEntityAndFields,
+                        }
+                    })
+                    // [
+                    //     {
+                    //         currentRefEntity: res.data.currentRefEntity,
+                    //         selectedFieldItems: res.data.selectedFieldItems,
+                    //         refEntityAndFields: res.data.refEntityAndFields,
+                    //     },
+                    // ];
                     
                     // 同步更新 fieldProps.referTo 和 fieldProps.referenceSetting
                     this.buildReferToAndReferenceSetting();
