@@ -94,7 +94,7 @@
             </div>
         </template>
         <div v-if="dialogIsShow">
-            <mlDialog title="附加过滤条件" append-to-body width="37%" v-model="dialogIsShow">
+            <mlDialog title="显示过滤条件(不满足条件不显示该页签)" append-to-body width="37%" v-model="dialogIsShow">
                 <mlSetConditions
                     v-model="conditionConf"
                     footer
