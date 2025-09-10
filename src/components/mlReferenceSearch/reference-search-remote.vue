@@ -36,7 +36,7 @@
 </style>
 <template>
     <div class="remote-box w-100">
-        <el-select
+        <el-select-v2
             v-model="value"
             :multiple="multiple"
             class="remote-select"
@@ -45,6 +45,9 @@
             filterable
             @visible-change="handleVisibleChange"
             :filter-method="onFilter"
+            :options="[]"
+            :placeholder="placeholder"
+            :remote-show-suffix="true"
         >
             <template #empty>
                 <div
@@ -90,7 +93,7 @@
                     </div>
                 </div>
             </template>
-        </el-select>
+        </el-select-v2>
         <div
             class="remote-icon-box"
             :class="[size]"
@@ -105,9 +108,9 @@
 <script setup lang="ts">
 import { ref, watchEffect, nextTick, onMounted, onUnmounted } from "vue";
 import { refFieldQuery2 } from "@/api/crud";
-import FormatRow from "@/views/customize-menu/components/FormatRow.vue";
 import { Search } from '@element-plus/icons-vue';
 import { setColumnFormatter } from "@/utils/util";
+import FormatRow from "@/views/customize-menu/components/FormatRow.vue";
 const props = defineProps({
     fieldModel: {
         type: Object,
@@ -181,16 +184,11 @@ let idFieldName = ref("");
 let nameFieldName = ref("");
 
 let isDropdownVisible = ref(false);
-
-
-
 // 清空查询结果（可选是否重置关键字）
 const clearResults = (resetKeyword = false) => {
     tableData.value = [];
     total.value = 0;
     currentPage.value = 1;
-    currentCursor.value = -1;
-    tableRef.value?.setCurrentRow(null);
     if (resetKeyword) searchValue.value = "";
 };
 
@@ -214,12 +212,12 @@ const handleVisibleChange = (e) => {
             currentCursor.value = -1;
         });
     } else {
-        currentCursor.value = -1;
-        tableRef.value?.setCurrentRow(null);
         // enterStartSearch 开启时，关闭下拉同时清空数据
         if (props.enterStartSearch) {
             clearResults(false);
         }
+        currentCursor.value = -1;
+        tableRef.value?.setCurrentRow(null);
     }
 };
 
@@ -239,8 +237,9 @@ const handleSearch = (v) => {
     if(!props.checkFilterConditions()){
         return
     }
+    // 先加锁，避免 visible-change 与 filter-method 竞态触发导致并发
+    loading.value = true;
     nextTick(async () => {
-        loading.value = true;
         let param = {
             entity: props.entity,
             refField: props.refField,
@@ -310,6 +309,7 @@ const getSearchInputRef = () => {
 
 const selectRef = ref(null);
 const currentCursor = ref(-1);
+let tableRef = ref(null);
 
 const handleKeyDown = (event) => {
     if (!isDropdownVisible.value) {
@@ -317,23 +317,23 @@ const handleKeyDown = (event) => {
         return;
     }
 
-    if (['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Enter', 'Escape'].includes(event.key)) {
+    if (["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft", "Enter", "Escape"].includes(event.key)) {
         event.preventDefault();
-        event.stopPropagation(); // 阻止事件冒泡到父元素，防止ElSelect默认行为干扰
+        event.stopPropagation();
     }
 
     switch (event.key) {
-        case "ArrowDown":
-            handleArrowDown();
-            break;
-        case "ArrowUp":
-            handleArrowUp();
-            break;
         case "ArrowRight":
             handleArrowRight();
             break;
         case "ArrowLeft":
             handleArrowLeft();
+            break;
+        case "ArrowDown":
+            handleArrowDown();
+            break;
+        case "ArrowUp":
+            handleArrowUp();
             break;
         case "Enter":
             handleEnter();
@@ -425,7 +425,6 @@ const handleEnter = () => {
     }
 };
 
-let tableRef = ref(null);
 const scrollToRow = (index: number) => {
     nextTick(() => {
         if (!tableRef.value) return;
@@ -439,7 +438,7 @@ const scrollToRow = (index: number) => {
     });
 };
 
-// 恢复 clickRow 的默认行为，即调用 blur() 来关闭下拉框
+// 行点击：关闭下拉并回填
 const clickRow = (row) => {
     selectRef.value.blur(); // 这会关闭下拉框，并使el-select失焦
 
@@ -458,7 +457,7 @@ const clickRow = (row) => {
 };
 
 watchEffect(() => {
-    value.value = props.fieldModel && props.fieldModel.name ? props.fieldModel.name : "";
+    value.value = props.fieldModel && (props.fieldModel as any).name ? (props.fieldModel as any).name : "";
 });
 
 const onAppendButtonClick = () => {
