@@ -48,6 +48,7 @@
             :options="[]"
             :placeholder="placeholder"
             :remote-show-suffix="true"
+            :fit-input-width="800"
         >
             <template #empty>
                 <div
