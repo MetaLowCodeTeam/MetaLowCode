@@ -457,6 +457,7 @@ const gotoEntityManager = () => {
         query: {
             entity: selectedEntityObj.value.name,
             entityLabel: selectedEntityObj.value.label,
+            customRouteTitle: selectedEntityObj.value.label + " - 字段管理",
         },
     });
 };
@@ -472,6 +473,7 @@ const gotoFormLayout = () => {
         query: {
             entity: selectedEntityObj.value.name,
             entityLabel: selectedEntityObj.value.label,
+            customRouteTitle: selectedEntityObj.value.label + " - 可视化表单设计",
         },
     });
 };
@@ -492,7 +494,7 @@ const gotoListView = () => {
     router.push(appPath + selectedEntityObj.value.name + "/list");
 };
 
-const gotoRoute = (routePage, disableDetailEntity) => {
+const gotoRoute = (routePage, disableDetailEntity, customRouteTitle) => {
     if (
         selectedEntityObj.value.systemEntityFlag ||
         selectedEntityObj.value.internalEntityFlag
@@ -500,7 +502,6 @@ const gotoRoute = (routePage, disableDetailEntity) => {
         ElMessage.info("当前实体不允许此操作");
         return;
     }
-
     if (disableDetailEntity && selectedEntityObj.value.detailEntityFlag) {
         ElMessage.info("明细实体不允许此操作");
         return;
@@ -509,6 +510,7 @@ const gotoRoute = (routePage, disableDetailEntity) => {
         path: appPath + routePage,
         query: {
             entityCode: selectedEntityObj.value.entityCode,
+            customRouteTitle: selectedEntityObj.value.label + " - " + customRouteTitle,
         }
     };
     if(props.isAppManagement) {
@@ -663,11 +665,11 @@ const handleCommand = (command, entityItem) => {
 	} else if (command === 'c30') {
 		gotoListView();
 	} else if (command === 'c40') {
-		gotoRoute(props.isAppManagement ? 'designApp/designApprovalProcess' : 'process-list', true);
+		gotoRoute(props.isAppManagement ? 'designApp/designApprovalProcess' : 'process-list', true, '流程设计');
 	} else if (command === 'c50') {
-		gotoRoute(props.isAppManagement ? 'designApp/designTrigger' : 'trigger-list', false);
+		gotoRoute(props.isAppManagement ? 'designApp/designTrigger' : 'trigger-list', false, '触发器设计');
 	} else if (command === 'c60') {
-		gotoRoute(props.isAppManagement ? 'designApp/designReportDesign' : 'templates-list', true);
+		gotoRoute(props.isAppManagement ? 'designApp/designReportDesign' : 'templates-list', true, '报表设计');
 	} else if (command === 'c70') {
         // 如果复制的实体存在标签，且不在所有标签数组中，就push进去
         if(entityItem.tags &&!allTags.value.includes(entityItem.tags)){

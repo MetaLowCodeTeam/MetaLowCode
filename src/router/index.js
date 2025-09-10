@@ -81,6 +81,9 @@ router.beforeEach(async (to, from, next) => {
     if(!to.meta.title && to.query.routerName) {
         to.meta.title = to.query.routerName
     }
+    if(to.query.customRouteTitle) {
+        to.meta.title = to.query.customRouteTitle
+    }
     //整页路由处理
     if (to.meta.fullpage) {
         to.matched = [to.matched[to.matched.length - 1]]
