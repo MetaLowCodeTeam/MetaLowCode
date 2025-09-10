@@ -13,7 +13,7 @@
                     <el-option
                         :label="op.label"
                         :value="op.name"
-                        v-for="(op,inx) of unSystemEntityList"
+                        v-for="(op,inx) of myUnSystemEntityList"
                         :key="inx"
                     />
                 </el-select>
@@ -100,7 +100,7 @@ import { storeToRefs } from "pinia";
 import { queryEntityFields } from "@/api/crud";
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
-const { unSystemEntityList } = storeToRefs(useCommonStore());
+const { queryAllEntityList } = useCommonStore();
 const props = defineProps({
     modelValue: null,
 });
@@ -111,7 +111,11 @@ let entityCode = ref();
 let myUnSystemEntityList = ref([]);
 onMounted(() => {
     fromData.value = props.modelValue;
-    myUnSystemEntityList.value = unSystemEntityList.value.filter(el => !el.appAbbr);
+    myUnSystemEntityList.value = queryAllEntityList().filter((el) => {
+        const isNonSystem = !el.systemEntityFlag;
+        const isUserOrDeptSystem = el.systemEntityFlag && (el.name === 'User' || el.name === 'Department');
+        return !el.appAbbr && (isNonSystem || isUserOrDeptSystem);
+    });
     // 初始化选中第一个实体
     if (myUnSystemEntityList.value.length > 0) {
         fromData.value.mainEntity = myUnSystemEntityList.value[0].name;
