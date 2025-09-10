@@ -118,7 +118,7 @@
             :append-to-body="true"
             width="560px"
         >
-            <el-container>
+            <el-container v-loading="fieldLoading" element-loading-text="加载中...">
                 <el-header>
                     <el-input placeholder="请选择引用实体" v-model="refEntityFullName" :disabled="fieldState !== 1">
                         <template #append>
@@ -140,7 +140,7 @@
                             <el-checkbox
                                 v-for="(fieldItem, idx) in fieldItems"
                                 :key="idx"
-                                :checked="isSelectedField(fieldItem)"
+                                v-model="fieldItem.isChecked"
                                 @change="(value) => setRefEntityListField(fieldItem, value)"
                             >{{ fieldItem.label }}({{ fieldItem.name }})</el-checkbox>
                         </el-card>
@@ -240,6 +240,7 @@ export default {
             showEntityListDialogFlag: false,
 
             fieldItems: [],
+            fieldLoading: false,
             selectedFieldItems: [],
 
             columns: [
@@ -310,16 +311,9 @@ export default {
                             currentRefEntity: el.currentRefEntity,
                             selectedFieldItems: el.selectedFieldItems,
                             refEntityAndFields: el.refEntityAndFields,
+                            fieldItems: el.fieldItems,
                         }
                     })
-                    // [
-                    //     {
-                    //         currentRefEntity: res.data.currentRefEntity,
-                    //         selectedFieldItems: res.data.selectedFieldItems,
-                    //         refEntityAndFields: res.data.refEntityAndFields,
-                    //     },
-                    // ];
-                    
                     // 同步更新 fieldProps.referTo 和 fieldProps.referenceSetting
                     this.buildReferToAndReferenceSetting();
                 }
@@ -389,14 +383,12 @@ export default {
                 this.refEntityName = currentRef.currentRefEntity;
                 this.refEntityLabel = currentRef.currentRefEntity; // 临时设置，后面会通过API获取正确的标签
                 this.refEntityFullName = currentRef.currentRefEntity + "(" + currentRef.currentRefEntity + ")"; // 临时设置
-                
                 // 先恢复已选择的字段，避免清空后丢失
                 if (currentRef.selectedFieldItems && currentRef.selectedFieldItems.length > 0) {
                     this.selectedFieldItems = JSON.parse(JSON.stringify(currentRef.selectedFieldItems));
                 } else {
                     this.selectedFieldItems = [];
                 }
-                
                 // 需要根据实体名称重新获取实体标签和字段信息
                 this.loadRefEntityData(currentRef.currentRefEntity, currentRef.selectedFieldItems);
             } else {
@@ -411,6 +403,7 @@ export default {
         
         async loadRefEntityData(entityName, selectedFields = []) {
             try {
+                this.fieldLoading = true;
                 // 获取实体信息
                 let res = await getEntitySet();
                 if (res && res.code == 200) {
@@ -424,7 +417,7 @@ export default {
                 // 获取字段信息
                 let fieldRes = await getFieldSet(entityName);
                 if (fieldRes && fieldRes.code == 200) {
-                    this.fieldItems.length = 0;
+                    this.fieldItems = [];
                     let resultList = fieldRes.data;
                     if (!!resultList) {
                         resultList.filter((item) => {
@@ -433,20 +426,19 @@ export default {
                             }
                         });
                     }
+                    this.fieldItems.forEach(el => {
+                        el.isChecked = false;
+                        selectedFields.forEach(subEl => {
+                            if(subEl.name === el.name){
+                                el.isChecked = true;
+                            }
+                        })
+                    })
                 }
+                this.fieldLoading = false;
             } catch (error) {
                 console.error('加载引用实体数据失败:', error);
             }
-        },
-
-        isSelectedField(fieldItem) {
-            let matchedFlag = false;
-            this.selectedFieldItems.forEach((item) => {
-                if (fieldItem.name === item.name) {
-                    matchedFlag = true;
-                }
-            });
-            return matchedFlag;
         },
         setRefEntity() {
             if (this.selectedFieldItems.length <= 0) {
@@ -567,9 +559,6 @@ export default {
                     });
                 }
             });
-
-            //console.log(JSON.stringify(this.fieldProps.referTo))
-            //console.log(JSON.stringify(this.fieldProps.referenceSetting))
         },
 
         handleFieldLabelChange(val) {
