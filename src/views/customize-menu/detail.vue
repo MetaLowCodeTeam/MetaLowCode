@@ -450,6 +450,8 @@ onMounted(() => {
 
 // 整体配置信息
 let myLayoutConfig = ref({});
+// 源实体配置
+let sourceLayoutConfig = ref({});
 // 列表样式配置
 let styleConf = ref({
 	// 查看侧滑栏属性
@@ -633,9 +635,10 @@ const getLayoutList = async () => {
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName, false);
 	if (res) {
-        myLayoutConfig.value = res.data;
-        myLayoutConfig.value.entityCode = entityCode.value;
-        myLayoutConfig.value.entityName = entityName.value;
+        sourceLayoutConfig.value = res.data;
+        sourceLayoutConfig.value.entityCode = entityCode.value;
+        sourceLayoutConfig.value.entityName = entityName.value;
+        myLayoutConfig.value = {...sourceLayoutConfig.value};
         let { STYLE } = res.data;
         if (STYLE && STYLE.config) {
             styleConf.value = JSON.parse(STYLE.config);
@@ -909,6 +912,7 @@ const onEditRow = (localDsv, formId) => {
     };
     !!localDsv && (tempV.localDsv = localDsv)
     tempV.formId = formId || props.recordEditFormId
+    myLayoutConfig.value = {...sourceLayoutConfig.value};
     let cutEditEntity = queryEntityNameById(detailId.value);
     // 如果是修改部门
     if(cutEditEntity == 'Department'){
@@ -923,7 +927,7 @@ const onEditRow = (localDsv, formId) => {
 };
 
 // 新建
-const onAdd = (e) => {
+const onAdd = (e, outerLayoutConfig) => {
 	let tempV = {};
 	tempV.entityName = e.entityName;
 	tempV.fieldName = e.fieldName;
@@ -935,6 +939,9 @@ const onAdd = (e) => {
     }
     if(e.localDsv) {
         tempV.localDsv = e.localDsv;
+    }
+    if(outerLayoutConfig) {
+        myLayoutConfig.value = {...outerLayoutConfig};
     }
     editRefs.value.openDialog(tempV);
 };

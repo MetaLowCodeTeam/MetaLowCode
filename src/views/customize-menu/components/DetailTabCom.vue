@@ -185,7 +185,7 @@ onMounted(() => {
 });
 
 let loading = ref(false);
-let layoutConfig = reactive({});
+let layoutConfig = ref({});
 // 当前所有页签
 let tabs = ref([]);
 // 当前导航显示的列
@@ -286,7 +286,6 @@ const initData = async () => {
     }
     defaultShowType.value = "table";
     let filterTabs = tabs.value[props.cutTabIndex - 1];
-    console.log(filterTabs,'filterTabs')
     if (filterTabs) {
         entityCode.value = filterTabs.entityCode;
         entityName.value = filterTabs.entityName;
@@ -301,8 +300,8 @@ const initData = async () => {
     if (res) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
-        layoutConfig = res.data ? { ...res.data } : {};
-        let { chosenListType, LIST } = layoutConfig;
+        layoutConfig.value = res.data ? { ...res.data } : {};
+        let { chosenListType, LIST } = layoutConfig.value;
         let { ALL, SELF } = LIST;
         titleWidthForAll = res.data.titleWidthForAll
             ? { ...JSON.parse(res.data.titleWidthForAll) }
@@ -462,7 +461,7 @@ const getTableList = async () => {
     let filter = null;
     let filterEasySql = null;
     // 如果默认筛选条件有后置条件
-    if(defaultFilter.value.javaScriptVal){
+    if(defaultFilter.value?.javaScriptVal){
         let { equation, items, javaScriptVal } = JSON.parse(JSON.stringify(defaultFilter.value));
         try {
             let newFilter = new Function('defaultFilter', 'exposed', javaScriptVal)(
@@ -592,7 +591,7 @@ const onAdd = () => {
     emits("addRow", {
         entityName: entityName.value,
         fieldName: fieldName.value
-    });
+    }, layoutConfig.value);
 }
 
 
