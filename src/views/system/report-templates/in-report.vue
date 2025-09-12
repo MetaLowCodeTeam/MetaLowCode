@@ -142,6 +142,9 @@ const initExternalData = async () => {
             nextTick(async () => {
 				globalDsv.value.formStatus = 'read'
 				globalDsv.value.formEntityId = externalId.value;
+                if(isMobile.value) {
+                    layoutData.layoutJson?.formConfig?.layoutType = "H5";
+                }
                 vFormRef.value.setFormJson(layoutData.layoutJson);
                 if(entityId.value) {
                     let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
