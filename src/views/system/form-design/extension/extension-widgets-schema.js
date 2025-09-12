@@ -145,6 +145,8 @@ export const referenceSchema = {
         openSearchInPlace: false,
         // 开启扫码回填
         openScanFillBack: false,
+        // 是否精确搜索
+        isExactSearch: false,
         // 是否二次确认选择
         confirmSelect: false,
         // 确认提示内容

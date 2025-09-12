@@ -69,6 +69,7 @@
                 :checkFilterConditions="checkFilterConditions"
                 :enterStartSearch="field.options.enterStartSearch"
                 :size="field.options.size || globalConfig.size"
+                :isExactSearch="field.options.isExactSearch"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
             />

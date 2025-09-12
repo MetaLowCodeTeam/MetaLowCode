@@ -29,12 +29,12 @@ export function saveRefFilterPanel(entity, field, filter, referenceEntityName) {
     );
 }
 
-export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort, referenceEntityName) {
+export function refFieldQuery2(entity, field, pageNo, pageSize, extraFilter, formFilter, formFilter2, sort, referenceEntityName, queryText = "") {
 	return http.post(
 		'crud/refFieldQuery2',
 		[formatFilterToBase64(formFilter), formatFilterToBase64(formFilter2)],
 		{
-			params: { entity, 'refField': field, pageNo, pageSize, sort, referenceEntityName },
+			params: { entity, 'refField': field, pageNo, pageSize, sort, referenceEntityName, queryText },
             headers: {
                 extraFilter
             }

@@ -138,13 +138,14 @@ export const loadExtensionWidgets = (app) => {
     PERegister.registerCPEditor(app, 'outerDetailURL', 'outer-reference-detail-url-editor', outerDetailURLEditor)
 	PERegister.registerCPEditor(app, 'searchDialogWidth', 'reference-searchDialogWidth-editor', searchDialogWidthEditor)
 	PERegister.registerCPEditor(app, 'useCurrentUser', 'reference-useCurrentUser-editor', referenceUseCurrentUserEditor)
+    PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
+    PERegister.registerCPEditor(app, 'useUserDepartmentTree', 'reference-useUserDepartmentTree-editor', referenceUseUserDepartmentTreeEditor)
 	PERegister.registerCPEditor(app, 'fillBackEnabled', 'reference-fillBackEnabled-editor', referenceFillBackEnabledEditor)
 	PERegister.registerCPEditor(app, 'fillBackConfig', 'reference-fillBackConfig-editor', referenceFillBackConfigEditor)
 	PERegister.registerCPEditor(app, 'filterConditions', 'reference-filterConditions-editor', referenceFilterConditionsEditor)
 	PERegister.registerCPEditor(app, 'sortField', 'reference-sortField-editor', referenceSortFieldEditor)
-	PERegister.registerCPEditor(app, 'useTreeDataSelect', 'reference-treeDataSelect-editor', referenceTreeDataSelectEditor)
-	PERegister.registerCPEditor(app, 'useUserDepartmentTree', 'reference-useUserDepartmentTree-editor', referenceUseUserDepartmentTreeEditor)
-    // 注册外部引用前置事件
+	
+	// 注册外部引用前置事件
     PERegister.registerEPEditor(app, 'onBeforeListQuery', 'onBeforeListQuery-editor', onBeforeListQueryEditor)
     // 注册外部引用后置事件
     PERegister.registerEPEditor(app, 'onAfterListQuery', 'onAfterListQuery-editor', onAfterListQueryEditor)

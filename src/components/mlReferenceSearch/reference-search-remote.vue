@@ -165,6 +165,11 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    // 是否精确搜索
+    isExactSearch: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits([
@@ -255,7 +260,7 @@ const handleSearch = (v) => {
                     return {
                         fieldName: el,
                         value: searchValue.value,
-                        op: "LK",
+                        op: props.isExactSearch ? "EQ" : "LK",
                     };
                 }),
             };
@@ -268,6 +273,9 @@ const handleSearch = (v) => {
             props.extraFilter,
             filter,
             props.filterConditions,
+            null,
+            null,
+            filter ? "" : searchValue.value
         );
         if (res) {
             // tableColumns.value = res.data.columnList;

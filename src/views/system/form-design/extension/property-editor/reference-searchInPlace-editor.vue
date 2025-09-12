@@ -1,24 +1,40 @@
 <template>
 	<!--  -->
+    <el-form-item
+		label-width="120px"
+		v-loading="loading"
+        v-if="!optionModel.useTreeDataSelect && !isDashboard"
+	>
+        <template #label>
+            搜索字段
+            <el-tooltip
+                content="如果没有选择字段默认查名称、ID字段"
+                placement="top"
+            >
+                <el-icon size="16" class="search-field-help-icon">
+                    <QuestionFilled />
+                </el-icon>
+            </el-tooltip>
+        </template>
+		<el-button @click="handleSearchField" class="w-100">
+			{{ getQueryFieldLabel() }}
+		</el-button>
+	</el-form-item>
+    <el-form-item
+		label="是否精确搜索"
+		label-width="120px"
+		v-if="!optionModel.useTreeDataSelect && !isDashboard && optionModel?.searchFields?.length > 0"
+	>
+		<el-switch v-model="optionModel.isExactSearch" />
+	</el-form-item>
 	<el-form-item
 		label="开启在位输入搜索"
 		label-width="120px"
 		v-if="!optionModel.useTreeDataSelect && !isDashboard"
-	>
+	>   
 		<el-switch
 			v-model="optionModel.openSearchInPlace"
 		/>
-	</el-form-item>
-   
-	<el-form-item
-		label="搜索字段"
-		label-width="120px"
-		v-loading="loading"
-        v-if="optionModel.openSearchInPlace"
-	>
-		<el-button @click="handleSearchField" class="w-100">
-			{{ getQueryFieldLabel() }}
-		</el-button>
 	</el-form-item>
     <el-form-item 
         label="回车开始查询"
@@ -226,5 +242,10 @@ export default {
 	max-height: 400px;
 	overflow-x: hidden;
 	overflow-y: auto;
+}
+.search-field-help-icon {
+    margin-left: 5px;
+    position: relative;
+    top: 3px;
 }
 </style>
