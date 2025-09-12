@@ -142,10 +142,11 @@ const initExternalData = async () => {
             nextTick(async () => {
 				globalDsv.value.formStatus = 'read'
 				globalDsv.value.formEntityId = externalId.value;
+                let fmJson = JSON.parse(layoutData.layoutJson);
                 if(isMobile.value) {
-                    layoutData.layoutJson?.formConfig?.layoutType = "H5";
+                    fmJson.formConfig.layoutType = "H5";
                 }
-                vFormRef.value.setFormJson(layoutData.layoutJson);
+                vFormRef.value.setFormJson(fmJson);
                 if(entityId.value) {
                     let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
                     let recordDataRes = await queryExternalFormById(entityId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList }, externalId.value);
