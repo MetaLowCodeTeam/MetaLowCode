@@ -158,11 +158,6 @@
 				</SimpleTable>
 			</div>
 		</div>
-		<div class="footer-box" v-if="showMultipleSelectConfirm">
-			<el-button type="primary" @click="multipleSelectRecord">
-				确认选择
-			</el-button>
-		</div>
         <mlCustomEdit ref="editRefs" @saveFinishCallBack="loadTableTable" :nameFieldName="referenceEntityNameFieldName"/>
 	</div>
     <!--  -->
@@ -291,6 +286,7 @@ export default {
             currentTab: '',
             hideSetConditions: false,
             singleSelectedFormTab: null,
+            currentSelectedRow: null,
 		};
 	},
 
@@ -626,6 +622,31 @@ export default {
 		},
 		// 点选回填
 		selectRecord(row) {
+            this.currentSelectedRow = row;
+            this.tableData.forEach(el => {
+                el.isSelected = false;
+            })
+            row.isSelected = true;
+            // row.isSelected = !row.isSelected;
+            // if(this.isOuterReference){
+            //     let { uniqueField, nameField } = this.outerReferenceConfig;
+            //     this.$emit("recordSelected", {
+            //         id: row[uniqueField],
+            //         label: row[nameField],
+            //     }, row);
+            //     return;
+            // }
+			// this.$emit(
+			// 	"recordSelected",
+			// 	{
+			// 		id: row[this.idField],
+			// 		label: row[this.nameField],
+			// 	},
+			// 	row
+			// );
+		},
+        recordSelected() {
+            let row = this.currentSelectedRow;
             if(this.isOuterReference){
                 let { uniqueField, nameField } = this.outerReferenceConfig;
                 this.$emit("recordSelected", {
@@ -634,15 +655,15 @@ export default {
                 }, row);
                 return;
             }
-			this.$emit(
-				"recordSelected",
-				{
-					id: row[this.idField],
-					label: row[this.nameField],
-				},
-				row
-			);
-		},
+            this.$emit(
+                "recordSelected",
+                {
+                    id: row[this.idField],
+                    label: row[this.nameField],
+                },
+                row
+            );
+        },
 		// 表格多选
 		handleSelectionChange(v) {
 			this.multipleSelection = v;

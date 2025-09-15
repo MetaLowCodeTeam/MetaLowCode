@@ -141,7 +141,7 @@
                 :treeConf="treeDialogConf"
                 :defaultSelected="fieldModel"
             />
-            <template #footer v-if="referenceDialogType == 'tree'">
+            <template #footer>
                 <el-button @click="showReferenceDialogFlag = false">取消</el-button>
                 <el-button type="primary" @click="beforeTreeDialogConfirm">确认</el-button>
             </template>
@@ -643,6 +643,10 @@ export default {
 		},
         // 二次确认选择
         beforeTreeDialogConfirm() {
+            if(this.referenceDialogType !== 'tree'){
+                this.nonTreeDialogConfirm();
+                return
+            }
             let { confirmSelect, confirmSelectContent } = this.field.options;
             if(confirmSelect) {
                 this.$confirm(confirmSelectContent || "确定选择该记录吗？", '操作确认', {
@@ -652,6 +656,14 @@ export default {
                 })
             }else {
                 this.treeDialogConfirm();
+            }
+        },
+        // 非tree点击确认回填
+        nonTreeDialogConfirm() {
+            if(this.subFormItemFlag && !this.field.options.disableMultipleSelectionInSubForm && this.gDsv.formStatus != 'approval'){
+                this.$refs.referST.multipleSelectRecord();
+            }else {
+                this.$refs.referST.recordSelected();
             }
         },
         // 树选择回填
