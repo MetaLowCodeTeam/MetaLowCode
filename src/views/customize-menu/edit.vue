@@ -460,6 +460,7 @@ const openDialog = async (v) => {
         disableWidgets: [],
         data: {},
         defaultFormData: {},
+        actionType: "",
     });
 
     // 重置其他相关状态变量
@@ -492,6 +493,7 @@ const openDialog = async (v) => {
     row.refEntityBindingField = v.refEntityBindingField;
     row.disableWidgets = v.disableWidgets;
     row.data = v.data;
+    row.actionType = v.actionType;
     // 表单默认赋值
     row.defaultFormData = v.defaultFormData;
     paramDialogConf.value = v.dialogConf;
@@ -525,7 +527,7 @@ const openDialog = async (v) => {
         await initFormLayout();
     } else {
         ElMessage.error(
-            "当前用户没有" + (v.detailId ? "编辑" : "新建") + "权限"
+            "当前用户没有" + (v.actionType == 'copy' ? "复制" : (v.detailId ? "编辑" : "新建")) + "权限"
         );
     }
 };
@@ -762,6 +764,10 @@ const confirm = async (target, resetFormData = {}) => {
         listSubForm.forEach(el => { delete formData[el]; });
 
         let saveRes;
+        if(row.actionType == 'copy'){
+            row.detailId = null;
+            row.actionType = '';
+        }
         if (props.queryUrl) {
             saveRes = await http.post(
                 props.queryUrl,

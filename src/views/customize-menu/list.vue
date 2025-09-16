@@ -558,6 +558,8 @@
             :entityId="approverRecordId"
             @confirm="ApprovalSuccess"
         />
+        <!-- 树状图 -->
+        <mlTreeEchart ref="mlTreeEchartRefs" />
     </div>
 </template>
 
@@ -589,7 +591,7 @@ import More from "./components/More/Index.vue";
 // import Edit from "./edit.vue";
 import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
-
+import mlTreeEchart from '@/components/mlEchart/TreeEchart.vue';
 
 
 import FormatRow from "./components/FormatRow.vue";
@@ -1832,7 +1834,7 @@ const getEditBtnTitle = (row) => {
 
 let isOtherEntity = ref(false);
 // 编辑
-const onEditRow = (row, localDsv, formId) => {    
+const onEditRow = (row, localDsv, formId, customDialogTitle, actionType) => {    
     isOtherEntity.value = false;
     if (!row) {
         $ElMessage.warning("请先选择数据");
@@ -1855,6 +1857,8 @@ const onEditRow = (row, localDsv, formId) => {
     }
     // !!formId && (tempV.formId = formId)
     tempV.formId = formId || listParamConf.value.recordEditFormId || rowStyleConf.value?.formConf?.pcEditFormId;
+    tempV.customDialogTitle = customDialogTitle;
+    tempV.actionType = actionType;
     editRefs.value.openDialog(tempV);
 };
 
@@ -2505,13 +2509,18 @@ const listMoreSetting = (type) => {
 }
 
 // 编辑行
-const editRow = (row, localDsv, formId) => {
-    onEditRow(row, localDsv, formId);
+const editRow = (row, localDsv, formId, customDialogTitle) => {
+    onEditRow(row, localDsv, formId, customDialogTitle);
 }
 
 // 查看行
 const viewRow = (row, localDsv, formId) => {
     openDetailDialog(row, localDsv, formId)
+}
+
+// 复制行
+const copyRow = (row, localDsv, formId, customDialogTitle) => {
+    onEditRow(row, localDsv, formId, customDialogTitle, 'copy');
 }
 
 
@@ -2558,6 +2567,12 @@ const getCurrentExposed = () => {
     return currentExposed.value;
 }
 
+// 打开树状图
+let mlTreeEchartRefs = ref("");
+const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts) => {
+    mlTreeEchartRefs.value.openDialog(dialogTitle, echartData, dialogConf, echartOpts);
+}
+
 
 defineExpose({
     resetList,
@@ -2587,6 +2602,8 @@ defineExpose({
     setRouterParams,
     getCurrentExposed,
     setParentFormRef,
+    openTreeEchart,
+    copyRow,
 })
 
 </script>

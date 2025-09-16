@@ -142,8 +142,9 @@ const initExternalData = async () => {
             nextTick(async () => {
 				globalDsv.value.formStatus = 'read'
 				globalDsv.value.formEntityId = externalId.value;
-                let fmJson = JSON.parse(layoutData.layoutJson);
+                let fmJson = typeof layoutData.layoutJson === 'string' ? JSON.parse(layoutData.layoutJson) : JSON.parse(JSON.stringify(layoutData.layoutJson));
                 if(isMobile.value) {
+                    fmJson.formConfig = fmJson.formConfig || {};
                     fmJson.formConfig.layoutType = "H5";
                 }
                 vFormRef.value.setFormJson(fmJson);
@@ -173,7 +174,7 @@ const initExternalData = async () => {
                         ) {
                             vFormRef.value.disableForm();
                         }
-                        if (pageStatus.value == 2) {
+                        if (typeof pageStatus !== "undefined" && pageStatus?.value == 2) {
                             vFormRef.value.disableForm();
                         }
                     });
