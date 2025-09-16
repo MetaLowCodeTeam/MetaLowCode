@@ -188,6 +188,9 @@ export default {
 			/* 子表单组件行Id，唯一id且不可变 */ type: String,
 			default: "",
 		},
+		style: {
+			type: Object,
+		},
 	},
     inject: ['getFormConfig'],
 	components: {
