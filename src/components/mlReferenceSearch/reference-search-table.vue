@@ -230,7 +230,12 @@ export default {
         showLabelSelectNumber: {
             type: Boolean,
             default: true,
-        }
+        },
+        // 有底部按钮
+        hasFooterButton: {
+            type: Boolean,
+            default: false,
+        },
 	},
 	watch: {
 		refField: {
@@ -622,28 +627,31 @@ export default {
 		},
 		// 点选回填
 		selectRecord(row) {
-            this.currentSelectedRow = row;
-            this.tableData.forEach(el => {
-                el.isSelected = false;
-            })
-            row.isSelected = true;
-            // row.isSelected = !row.isSelected;
-            // if(this.isOuterReference){
-            //     let { uniqueField, nameField } = this.outerReferenceConfig;
-            //     this.$emit("recordSelected", {
-            //         id: row[uniqueField],
-            //         label: row[nameField],
-            //     }, row);
-            //     return;
-            // }
-			// this.$emit(
-			// 	"recordSelected",
-			// 	{
-			// 		id: row[this.idField],
-			// 		label: row[this.nameField],
-			// 	},
-			// 	row
-			// );
+            if(this.hasFooterButton){
+                this.currentSelectedRow = row;
+                this.tableData.forEach(el => {
+                    el.isSelected = false;
+                })
+                row.isSelected = true;
+            }else {
+                row.isSelected = !row.isSelected;
+                if(this.isOuterReference){
+                    let { uniqueField, nameField } = this.outerReferenceConfig;
+                    this.$emit("recordSelected", {
+                        id: row[uniqueField],
+                        label: row[nameField],
+                    }, row);
+                    return;
+                }
+                this.$emit(
+                    "recordSelected",
+                    {
+                        id: row[this.idField],
+                        label: row[this.nameField],
+                    },
+                    row
+                );
+            }
 		},
         recordSelected() {
             let row = this.currentSelectedRow;

@@ -133,6 +133,7 @@
                 :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
                 :defaultSelected="fieldModel"
+                hasFooterButton
                 v-else-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree
