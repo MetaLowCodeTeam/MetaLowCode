@@ -2,7 +2,7 @@
     <!--  -->
     <el-container>
         <el-header class="entity-action-section">
-            实体列表
+            实体列表（总计{{ entityItems.length }}，自定义实体：{{ entityItems.filter(el => el.entityCode > 1000 && el.entityCode < 100000).length }}）
             <div style="float: right">
                 <div class="entity-search-wrapper">
                     <el-input
@@ -248,6 +248,7 @@ const getEntityList = () => {
         let res = await getEntitySet(appAbbr.value || "NOT_APP");
         if (res && res.data) {
             entityItems.value = res.data;
+            console.log(entityItems.value,'entityItems.value')
             refreshCache(res.data || []);
         }
         resolve();
