@@ -855,7 +855,7 @@ const approvalTypeChange = async () => {
                 items: [
                     {
                         fieldName: "flowType",
-                        op: "LK",
+                        op: "EQ",
                         value: 2
                     }
                 ]
