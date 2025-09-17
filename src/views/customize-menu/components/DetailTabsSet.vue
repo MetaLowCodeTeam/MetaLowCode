@@ -134,6 +134,11 @@
                         disabled
                     />
                 </el-form-item>
+                <!-- 是否隐藏新建 -->
+                <el-form-item label="是否隐藏新建">
+                    <el-checkbox v-model="editColumnDialogData.isHideNew">
+                    </el-checkbox>
+                </el-form-item>
                 <el-form-item label="显示过滤条件" v-if="!editColumnDialogData.isCustomComponent">
                     <el-row>
                         <el-col :span="24">

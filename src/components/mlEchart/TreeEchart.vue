@@ -80,14 +80,29 @@ let nodeClickCallbackRef = ref(null);
 let openDialog = (title, echartData = [], dialogConf = {}, echartOpts = {}, nodeClickCallback = null) => {
 	isShow.value = true;
 	dialogTitle.value = title;
-	treeEchartOptions.value = Object.assign({}, treeEchartOptions.value, echartOpts || {});
+    console.log(echartOpts,'echartOpts')
+	// 注意：Object.assign/浅拷贝会整体替换 series 数组，导致默认配置丢失。
+	// 这里进行保守合并：顶层浅并 + tooltip 合并 + 仅合并第一条 series 的字段，保留默认项。
+	const base = treeEchartOptions.value || {};
+	const incoming = echartOpts || {};
+	treeEchartOptions.value = {
+		...base,
+		...incoming,
+		tooltip: { ...(base.tooltip || {}), ...(incoming.tooltip || {}) },
+		series: [
+			{ ...(base.series?.[0] || {}), ...(incoming.series?.[0] || {}) }
+		],
+	};
 	if (!Array.isArray(treeEchartOptions.value.series) || treeEchartOptions.value.series.length === 0) {
 		treeEchartOptions.value.series = [{ type: "tree", data: [] }];
 	}
 	if (Array.isArray(echartData)) {
 		treeEchartOptions.value.series[0].data = echartData;
 	}
-	currentDialogConf.value = Object.assign({}, currentDialogConf.value, dialogConf || {});
+	// dialogConf 也做保守合并（顶层浅并），以保留默认弹窗参数
+	const dlgBase = currentDialogConf.value || {};
+	const dlgIncoming = dialogConf || {};
+	currentDialogConf.value = { ...dlgBase, ...dlgIncoming };
 	// 仅当传入的是函数时才注册回调
 	nodeClickCallbackRef.value = typeof nodeClickCallback === 'function' ? nodeClickCallback : null;
 };

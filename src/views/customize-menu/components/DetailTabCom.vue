@@ -64,7 +64,7 @@
                         type="primary" 
                         icon="Plus" 
                         @click="onAdd"
-                        v-if="$TOOL.checkRole('r' + entityCode + '-2')" 
+                        v-if="$TOOL.checkRole('r' + entityCode + '-2') && !curtTab.isHideNew" 
                     >
                         新建
                     </el-button>
