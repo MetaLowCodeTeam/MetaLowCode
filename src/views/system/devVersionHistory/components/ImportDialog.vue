@@ -23,6 +23,7 @@
 				customUpload
 				@on-custom-upload="onCustomUpload"
 				class="ml-upload"
+                :maxSize="1024"
 			>
 				<template #trigger>
 					<el-button>

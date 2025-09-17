@@ -21,7 +21,7 @@ const $API = inject("$API");
 const props = defineProps({
     action: { type: String, default: "" },
     accept: { type: String, default: "" },
-    maxSize: { type: Number, default: 10 },
+    maxSize: { type: Number, default: 50 },
     uploadUrl: { type: String, default: "" },
     skipMaxSize : {
         type: Boolean,

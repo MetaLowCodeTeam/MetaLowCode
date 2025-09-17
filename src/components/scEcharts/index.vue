@@ -51,6 +51,7 @@ export default {
         nodata: { type: Boolean, default: false },
         option: { type: Object, default: () => {} },
     },
+    emits: ['chart-click'],
     data() {
         return {
             isActivat: false,
@@ -148,6 +149,15 @@ export default {
                     myChart.setOption(this.myOptions);
                 }
                 this.myChart = myChart;
+                // 绑定点击事件并向外抛出
+                try {
+                    this.myChart.off && this.myChart.off('click');
+                    this.myChart.on && this.myChart.on('click', (params) => {
+                        this.$emit('chart-click', params);
+                    });
+                } catch (e) {
+                    console.warn('Bind chart click event failed:', e);
+                }
                 this.loading = false;
                 this.initRetryCount = 0; // 重置重试计数
                 

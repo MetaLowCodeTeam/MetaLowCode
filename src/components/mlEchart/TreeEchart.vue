@@ -15,6 +15,7 @@
 						:option="treeEchartOptions"
 						height="60vh"
 						width="100%"
+						@chart-click="onChartClick"
 					/>
 				</template>
 				<template #fallback>
@@ -74,7 +75,9 @@ let currentDialogConf = ref({
     height: "600px",
 });
 
-let openDialog = (title, echartData = [], dialogConf = {}, echartOpts = {}) => {
+let nodeClickCallbackRef = ref(null);
+
+let openDialog = (title, echartData = [], dialogConf = {}, echartOpts = {}, nodeClickCallback = null) => {
 	isShow.value = true;
 	dialogTitle.value = title;
 	treeEchartOptions.value = Object.assign({}, treeEchartOptions.value, echartOpts || {});
@@ -85,9 +88,20 @@ let openDialog = (title, echartData = [], dialogConf = {}, echartOpts = {}) => {
 		treeEchartOptions.value.series[0].data = echartData;
 	}
 	currentDialogConf.value = Object.assign({}, currentDialogConf.value, dialogConf || {});
+	// 仅当传入的是函数时才注册回调
+	nodeClickCallbackRef.value = typeof nodeClickCallback === 'function' ? nodeClickCallback : null;
+};
+
+// 对外抛出点击节点事件
+const onChartClick = (params) => {
+    // 这里仅转发，父组件可在使用 TreeEchart 时监听 @node-click
+    // console.log('TreeEchart click:', params);
+    if (typeof nodeClickCallbackRef.value === 'function') {
+        nodeClickCallbackRef.value(params);
+    }
 };
 
 defineExpose({
-	openDialog,
+    openDialog,
 });
 </script>

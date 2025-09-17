@@ -20,7 +20,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.294 20250917"
+        webVer: "1.8.295 20250917"
     });
 
     // 添加登录状态管理
@@ -79,7 +79,6 @@ const useCommonStore = defineStore('commonStore', () => {
     // 根据ID查实体名称
     const queryEntityNameById = (id) => {
         if(!id) {
-            console.log(id, 'id不存在')
             return "";
         }
         return allEntityName[parseInt(id.split('-')[0])];

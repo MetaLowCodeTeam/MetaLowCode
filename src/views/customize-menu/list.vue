@@ -2569,8 +2569,8 @@ const getCurrentExposed = () => {
 
 // 打开树状图
 let mlTreeEchartRefs = ref("");
-const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts) => {
-    mlTreeEchartRefs.value.openDialog(dialogTitle, echartData, dialogConf, echartOpts);
+const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts, nodeClickCallback) => {
+    mlTreeEchartRefs.value.openDialog(dialogTitle, echartData, dialogConf, echartOpts, nodeClickCallback);
 }
 
 
