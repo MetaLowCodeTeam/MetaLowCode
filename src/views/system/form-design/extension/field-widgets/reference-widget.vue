@@ -743,6 +743,7 @@ export default {
                 let res = await queryById(recordObj.id, "", { queryDetailList: subFormFields });
                 if(res){
                     let resData = res.data || {};
+                    const { queryEntityInfoByName, queryEntityNameById } = useCommonStore();
                     subFormFillBackConfig.forEach(el => {
                         let subFormCom = this.getWidgetRef(el.targetWidget.name);
                         if(el.fllBackItems){
@@ -750,7 +751,17 @@ export default {
                             resData[el.sourceWidget.entityName].forEach(fllBackEl => {
                                 let fllBackItem = {};
                                 el.fllBackItems.forEach(subEl => {
-                                    fllBackItem[subEl.targetField] = fllBackEl[subEl.sourceField];
+                                    // 1 如果源字段是 PrimaryKey 要拿id,name
+                                    if(subEl.sourceFieldType == 'PrimaryKey'){
+                                        let getTargetEntityName = queryEntityNameById(fllBackEl[subEl.sourceField]);
+                                        let getTargetEntityInfo = queryEntityInfoByName(getTargetEntityName);
+                                        fllBackItem[subEl.targetField] = {
+                                            id: fllBackEl[subEl.sourceField],
+                                            name: fllBackEl[getTargetEntityInfo.nameFieldName],
+                                        };
+                                    }else {
+                                        fllBackItem[subEl.targetField] = fllBackEl[subEl.sourceField];
+                                    }
                                 })
                                 subFormFllBackItems.push(fllBackItem)
                             })

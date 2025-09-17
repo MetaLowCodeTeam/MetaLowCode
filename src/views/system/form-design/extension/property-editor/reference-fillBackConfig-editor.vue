@@ -409,6 +409,8 @@ export default {
 				// 目标字段
 				targetField: "",
 				targetError: false,
+				// 目标字段类型
+				targetFieldType: "",
 				// 是否强制回填
 				forceFillBack: false,
 				// 明细实体名称
@@ -633,12 +635,14 @@ export default {
 		},
 		// 目标字段切换
 		targetFieldChange(item) {
-			let findColumn = this.targetColumn.filter(
-				(el) => el.name == item.targetField
-			);
-			item.targetSubForm = findColumn[0]
-				? findColumn[0].targetSubForm
-				: "";
+			// 兼容主表与子表单：子表单存在 item.targetOps，主表使用 this.targetColumn
+			let candidates = (Array.isArray(item.targetOps) && item.targetOps.length > 0)
+				? item.targetOps
+				: this.targetColumn;
+			let findColumn = candidates.filter((el) => el.name == item.targetField);
+			let col = findColumn[0] || {};
+			item.targetSubForm = col.targetSubForm || "";
+			item.targetFieldType = col.fieldType || "";
 			this.selectedTargetColumn.push(item.targetField);
 		},
 		// 首字母大写
@@ -690,6 +694,15 @@ export default {
                         this.activeTabName = "mainTableFillBack";
 						return;
 					}
+					// 补全类型信息
+					if(!el.sourceFieldType){
+						let sc = this.sourceColumn.filter((s)=> s.prop == el.sourceField)[0];
+						el.sourceFieldType = sc?.formFieldType || "";
+					}
+					if(!el.targetFieldType){
+						let tc = this.targetColumn.filter((t)=> t.name == el.targetField)[0];
+						el.targetFieldType = tc?.fieldType || "";
+					}
 				}
 				this.optionModel.fillBackConfig = fllBackItems.map((el) => {
 					let newItem = Object.assign({}, el);
@@ -717,17 +730,30 @@ export default {
                         this.activeTabName = "subFormFillBack";
 						return;
 					}
+					// 补全类型信息（子表单）
+					if(!el.sourceFieldType){
+						let sList = this.entityListFields[this.widgetMappingList[index].sourceWidget.entityCode] || [];
+						let sf = sList.filter((s)=> s.fieldName == el.sourceField)[0];
+						el.sourceFieldType = sf?.fieldType || "";
+					}
+					if(!el.targetFieldType){
+						let tList = this.allSubFormFields[this.widgetMappingList[index].targetWidget.name] || [];
+						let tf = tList.filter((t)=> t.name == el.targetField)[0];
+						el.targetFieldType = tf?.fieldType || "";
+					}
                 }
             }
             let subFormFillBackConfig = [];
             this.widgetMappingList.forEach(el => {
                 subFormFillBackConfig.push({
-                    fllBackItems: el.fllBackItems.map((subEl) => {
-                        return {
-                            sourceField: subEl.sourceField,
-                            targetField: subEl.targetField
-                        };
-                    }),
+					fllBackItems: el.fllBackItems.map((subEl) => {
+						return {
+							sourceField: subEl.sourceField,
+							sourceFieldType: subEl.sourceFieldType,
+							targetField: subEl.targetField,
+							targetFieldType: subEl.targetFieldType,
+						};
+					}),
                     sourceWidget: {
                         entityLabel: el.sourceWidget.entityLabel,
                         entityCode: el.sourceWidget.entityCode,
@@ -806,9 +832,11 @@ export default {
             // 1 根据当前字段名称找到源字段数据
             let findSourceField = this.entityListFields[widgets.sourceWidget.entityCode].filter((el) => item.sourceField == el.fieldName);
             // 2 取源字段的字段类型
-            let fieldType = findSourceField[0]?.fieldType;
+				let fieldType = findSourceField[0]?.fieldType;
             // 3 找到源字段可回填的目标字段
             let targetType = formFieldMapping[fieldType]?.type;
+            // 写入源字段类型，便于保存
+            widgets.fllBackItems[inx].sourceFieldType = fieldType || "";
             // 4 如果不是 init 清空欲回填的字段以及欲回填的字段下拉数据
             if(target !== 'init'){
                 widgets.fllBackItems[inx].targetField = "";
@@ -830,6 +858,11 @@ export default {
                 this.allSubFormFields[widgets.targetWidget.name].forEach( el => {
                     widgets.fllBackItems[inx].targetOps.push(el);
                 })
+            }
+            // 6. 若已存在目标字段，补充其类型
+            if (widgets.fllBackItems[inx].targetField) {
+                let tf = (widgets.fllBackItems[inx].targetOps || []).filter(el=> el.name == widgets.fllBackItems[inx].targetField)[0];
+                widgets.fllBackItems[inx].targetFieldType = tf?.fieldType || "";
             }
         },
         // 子表单回填-检测是否存在回填实体

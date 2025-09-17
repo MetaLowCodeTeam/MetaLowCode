@@ -413,6 +413,10 @@ export default {
 					this.conditionConf = res.data.filter;
 				}
 				this.referenceEntityName = res.data.entityName;
+                // 当只有一个实体时，初始化当前页签为该实体，供“已选”区域过滤使用
+                if(!this.activeTab && !this.currentTab){
+                    this.currentTab = this.referenceEntityName;
+                }
                 this.referenceEntityNameFieldName = res.data.nameFieldName;
                 this.hideSetConditions = false;
                 this.loadTableTable();
@@ -485,10 +489,13 @@ export default {
                 const { queryEntityInfoByName, queryEntityNameById } = useCommonStore();
                 // 如果是单选，则回填默认选中数据
                 if(!this.showCheckBox){
+                    // 每次加载先清空当前选择
+                    this.currentSelectedRow = null;
                     this.tableData.forEach(el => {
                         el.isSelected = false;
                         if(el[this.idField] == this.defaultSelected?.id){
                             el.isSelected = true;
+                            this.currentSelectedRow = el;
                         }
                     })
                     if(this.defaultSelected?.id){
@@ -499,7 +506,6 @@ export default {
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
-                
 				if (
 					newDefaultSelected &&
 					newDefaultSelected.length > 0 &&
@@ -655,6 +661,10 @@ export default {
 		},
         recordSelected() {
             let row = this.currentSelectedRow;
+            if(!row){
+                this.$message?.info?.("请先选择一条记录");
+                return;
+            }
             if(this.isOuterReference){
                 let { uniqueField, nameField } = this.outerReferenceConfig;
                 this.$emit("recordSelected", {
@@ -786,6 +796,10 @@ export default {
         },
         // 获取已选数据
         getSelectedData(){
+            // 没有页签或未设置 currentTab 时，直接返回全部已选
+            if(!this.currentTab){
+                return this.selectedData;
+            }
             return this.selectedData.filter(item => item.formEntityName == this.currentTab);
         },
         // 获取页签标签
