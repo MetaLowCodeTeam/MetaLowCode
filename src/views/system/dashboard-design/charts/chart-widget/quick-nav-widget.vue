@@ -10,14 +10,14 @@
                 v-for="(item,inx) of myQuickNavConf.inletList" 
                 :key="inx" 
                 class="list-box fl" 
-                :style="cutDevice.value !== 'pc' ? {width: myQuickNavConf.itemCol == 1 ? '50%' : '100%'} : {}"
+                :style="cutDevice == 'mobile' ? {width: myQuickNavConf.itemCol == 1 ? '50%' : '100%'} : {}"
             >
                 <!-- 列表 -->
                 <div
                     :class="['li-item',myQuickNavConf.type == 1 ? 'list-item' : 'card-item',myQuickNavConf.borderIsShow ? '': 'not-border']"
                     :style="{
                         'borderColor':item.iconColor,
-                        'width': cutDevice.value == 'pc' 
+                        'width': cutDevice == 'pc' 
                             ? (item.itemWidth ? item.itemWidth + 'px' : '200px') 
                             : '100%',
                         'height': item.itemHeight ? item.itemHeight + 'px' : myQuickNavConf.type == 1 ? '40px' : '70px',
@@ -238,6 +238,11 @@ defineExpose({
         // margin-right: 10px;
         border: 1px solid #ddd;
         margin-bottom: 10px;
+        transition: box-shadow .15s ease, filter .15s ease;
+        &:hover {
+            box-shadow: var(--el-box-shadow);
+            filter: brightness(0.97);
+        }
         .item-icon {
             width: 26px;
             height: 26px;
