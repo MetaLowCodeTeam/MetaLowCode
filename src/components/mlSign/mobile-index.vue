@@ -10,7 +10,7 @@
                     <el-row>
                         <el-col :span="12">
                             <el-form-item label="画布背景色">
-                                <el-color-picker v-model="signConf.bgColor" teleported  popper-class="sign-color-picker" />
+                                <el-color-picker v-model="signConf.bgColor" show-alpha teleported  popper-class="sign-color-picker" :predefine="getElColorPickerPredefineColors()" />
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
@@ -26,7 +26,7 @@
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="画笔颜色">
-                                <el-color-picker v-model="signConf.lineColor" teleported  popper-class="sign-color-picker" />
+                                <el-color-picker v-model="signConf.lineColor" show-alpha teleported  popper-class="sign-color-picker" :predefine="getElColorPickerPredefineColors()" />
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
@@ -95,6 +95,7 @@ import vueEsign from "vue-esign";
 import { Overlay, showDialog  } from "vant";
 import { ref, watchEffect, nextTick } from "vue";
 import { ElMessage } from "element-plus";
+import { getElColorPickerPredefineColors } from "@/utils/util";
 const props = defineProps({
     // 绑定值
     modelValue: {

@@ -92,7 +92,7 @@
                                     </div>
                                     <!-- 颜色选择器 -->
                                     <div v-else-if="item.type == 'picker'">
-                                        <el-color-picker v-model="confData[item.key]" />
+                                        <el-color-picker v-model="confData[item.key]" show-alpha :predefine="getElColorPickerPredefineColors()" />
                                     </div>
                                     <!-- 钉钉集成用户选择框 -->
                                     <div v-else-if="item.type == 'mlSelectUser' && item.key == 'nodeRole'">
@@ -312,7 +312,7 @@ import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 
-import { mlShortcutkeys } from "@/utils/util";
+import { mlShortcutkeys, getElColorPickerPredefineColors } from "@/utils/util";
 
 // 快捷键
 let mlShortcutCleanup = ref(null);

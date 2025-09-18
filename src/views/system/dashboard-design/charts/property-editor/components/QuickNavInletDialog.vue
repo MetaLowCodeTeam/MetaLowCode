@@ -116,6 +116,41 @@
                     </el-radio>
                 </el-radio-group>
             </div>
+            <!-- 导航样式 -->
+            <div class="mt-15 content-box">
+                <el-form-item label="宽度" size="default" label-width="80px">
+                    <el-input-number v-model="cutMenu.itemWidth" :min="10"></el-input-number>
+                    <span class="ml-5">
+                        <el-tooltip
+                            class="item"
+                            effect="dark"
+                            content="移动端为珊格布局，不受此宽度影响"
+                            placement="top"
+                        >
+                            <el-icon size="18" style="position: relative;top: 4px;"><QuestionFilled /></el-icon>
+                        </el-tooltip>
+                    </span>
+                </el-form-item>
+                <el-form-item label="高度" size="default" label-width="80px">
+                    <el-input-number v-model="cutMenu.itemHeight" :min="0"></el-input-number>
+                    <span class="ml-5">
+                        <el-tooltip
+                            class="item"
+                            effect="dark"
+                            content="默认高度 列表40卡片70"
+                            placement="top"
+                        >
+                            <el-icon size="18" style="position: relative;top: 4px;"><QuestionFilled /></el-icon>
+                        </el-tooltip>
+                    </span>
+                </el-form-item>
+                <el-form-item label="背景色" size="default" label-width="80px">
+                    <el-color-picker v-model="cutMenu.itemBgColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
+                </el-form-item>
+                <el-form-item label="文本颜色" size="default" label-width="80px">
+                    <el-color-picker v-model="cutMenu.textColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
+                </el-form-item>
+            </div>
         </div>
         <template #footer>
             <div class="footer-div">
@@ -138,6 +173,7 @@ import useLayoutConfigStore from "@/store/modules/layoutConfig";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { getElColorPickerPredefineColors } from "@/utils/util";
 
 const Router = useRouter();
 
@@ -185,6 +221,14 @@ const DefaultMenu = {
     pcShow: true,
     // 移动端显示
     mobileShow: false,
+    // 导航宽度
+    itemWidth: 200,
+    // 导航背景色
+    itemBgColor: "",
+    // 导航高度
+    itemHeight: 0,
+    // 文本颜色
+    textColor: "",
 };
 
 // 打开数据弹框
@@ -194,6 +238,12 @@ const openDialog = async (status, cut, list) => {
     pageStatus.value = status;
     isShow.value = true;
     loading.value = true;
+    if(!cutMenu.value.itemWidth) {
+        cutMenu.value.itemWidth = 200;
+    }
+    if(cutMenu.value.itemHeight == null || cutMenu.value.itemHeight == undefined) {
+        cutMenu.value.itemHeight = 0;
+    }
 
     await getNavigationApi();
     // 加载自定义列表

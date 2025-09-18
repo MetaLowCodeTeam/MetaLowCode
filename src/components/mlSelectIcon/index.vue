@@ -43,7 +43,7 @@
         </div>
         <template #footer>
             <span class="fl ml-10">
-                <el-color-picker v-model="selectedIcon.color" />
+                <el-color-picker v-model="selectedIcon.color" show-alpha :predefine="getElColorPickerPredefineColors()" />
                 <span class="ml-5">选择颜色</span>
             </span>
             <el-button style="width: 80px;" @click="clearIcon" size="default" plain>清空</el-button>
@@ -57,6 +57,7 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import config from "@/config/iconSelect";
+import { getElColorPickerPredefineColors } from "@/utils/util";
 const props = defineProps({
     modelValue: null,
     useIcon: {

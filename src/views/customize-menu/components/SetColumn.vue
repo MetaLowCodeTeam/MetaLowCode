@@ -312,7 +312,7 @@
                             </span>
                         </el-form-item>
                         <el-form-item label="字体颜色" class="mb-5">
-                            <el-color-picker v-model="editColumnDialogData.fontColor" />
+                            <el-color-picker v-model="editColumnDialogData.fontColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
                             <span class="info-text ml-10">
                                 <span class="mr-5">表字体</span>
                                 <span :style="{'color':editColumnDialogData.fontColor}">颜色</span>
@@ -347,6 +347,7 @@ import { queryEntityListableFields } from "@/api/crud";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import useCommonStore from "@/store/modules/common";
+import { getElColorPickerPredefineColors } from "@/utils/util";
 const { queryEntityNameByCode } = useCommonStore();
 const $API = inject("$API");
 const props = defineProps({

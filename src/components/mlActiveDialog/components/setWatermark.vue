@@ -19,6 +19,8 @@
 					v-model="watermarkConf.fontColor"
 					@change="changeColor"
                     color-format="rgb"
+                    :predefine="getElColorPickerPredefineColors()"
+                    show-alpha
 				/>
 			</el-form-item>
 			<el-form-item label="不透明度">
@@ -58,7 +60,7 @@
 <script setup>
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
-
+import { getElColorPickerPredefineColors } from "@/utils/util";
 const emits = defineEmits(["confirm"]);
 
 let show = ref(false);

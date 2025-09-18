@@ -2,7 +2,7 @@
     <div class="chart-styles">
         <div class="c-s-t">图表样式</div>
         <el-form-item label="颜色选择">
-            <el-color-picker v-model="optionModel.setChartStyle.useTextColor" />
+            <el-color-picker v-model="optionModel.setChartStyle.useTextColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
         </el-form-item>
         <el-form-item label="货币符号">
             <div class="w-100 currency-symbol">
@@ -39,7 +39,7 @@
 </template>
 <script setup>
 import { ref } from "vue";
-
+import { getElColorPickerPredefineColors } from "@/utils/util";
 defineOptions({
     name: "setChartStyle-editor",
 });

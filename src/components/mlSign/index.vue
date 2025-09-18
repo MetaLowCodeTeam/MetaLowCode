@@ -3,13 +3,13 @@
         <div class="sign-tool-bar">
             <el-form label-width="90px" inline :disabled="!!signConf.resultImg">
                 <el-form-item label="画布背景色">
-                    <el-color-picker v-model="signConf.bgColor" />
+                    <el-color-picker v-model="signConf.bgColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
                 </el-form-item>
                 <el-form-item label="画笔粗细">
                     <el-input-number v-model="signConf.lineWidth" :min="1" :max="10" />
                 </el-form-item>
                 <el-form-item label="画笔颜色">
-                    <el-color-picker v-model="signConf.lineColor" />
+                    <el-color-picker v-model="signConf.lineColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
                 </el-form-item>
                 <el-form-item label="是否裁剪">
                     <el-tooltip content="在画布原有尺寸基础上裁掉四周空白部分">
@@ -51,6 +51,7 @@
 import vueEsign from "vue-esign";
 import { ref, watchEffect } from "vue";
 import { ElMessage } from "element-plus";
+import { getElColorPickerPredefineColors } from "@/utils/util";
 const props = defineProps({
 	// 绑定值
 	modelValue: {

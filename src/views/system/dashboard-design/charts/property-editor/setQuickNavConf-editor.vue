@@ -11,8 +11,9 @@
                 </el-radio>
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="宽度" v-if="cutDevice == 'pc'">
-            <el-input-number v-model="optionModel.setQuickNavConf.itemWidth" :min="100"></el-input-number>
+        <el-form-item label="样式" v-if="cutDevice == 'pc'">
+            下方入口列表处点击编辑
+            <!-- <el-input-number v-model="optionModel.setQuickNavConf.itemWidth" :min="100"></el-input-number> -->
         </el-form-item>
         <el-form-item label="宽度(删格)" v-if="cutDevice == 'mobile'">
             <el-radio-group v-model="optionModel.setQuickNavConf.itemCol">
@@ -24,7 +25,7 @@
                 </el-radio>
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="边框是否显示">
+        <el-form-item label="边框是否显示" v-if="cutDevice == 'mobile'">
             <el-switch v-model="optionModel.setQuickNavConf.borderIsShow"></el-switch>
         </el-form-item>
 
