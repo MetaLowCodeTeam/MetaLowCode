@@ -1,5 +1,5 @@
 <template>
-    <mlDialog :title="(pageStatus == 1 ? '新建' : '编辑') + '快捷入口'" v-model="isShow" width="480px" append-to-body>
+    <mlDialog :title="(pageStatus == 1 ? '新建' : '编辑') + '快捷入口'" v-model="isShow" width="600px" append-to-body>
         <div v-loading="loading">
             <el-tabs v-model="cutMenu.type">
                 <el-tab-pane label="关联项" :name="1"></el-tab-pane>
@@ -118,38 +118,92 @@
             </div>
             <!-- 导航样式 -->
             <div class="mt-15 content-box">
-                <el-form-item label="宽度" size="default" label-width="80px">
-                    <el-input-number v-model="cutMenu.itemWidth" :min="10"></el-input-number>
-                    <span class="ml-5">
-                        <el-tooltip
-                            class="item"
-                            effect="dark"
-                            content="移动端为珊格布局，不受此宽度影响"
-                            placement="top"
-                        >
-                            <el-icon size="18" style="position: relative;top: 4px;"><QuestionFilled /></el-icon>
-                        </el-tooltip>
-                    </span>
-                </el-form-item>
-                <el-form-item label="高度" size="default" label-width="80px">
-                    <el-input-number v-model="cutMenu.itemHeight" :min="0"></el-input-number>
-                    <span class="ml-5">
-                        <el-tooltip
-                            class="item"
-                            effect="dark"
-                            content="默认高度 列表40卡片70"
-                            placement="top"
-                        >
-                            <el-icon size="18" style="position: relative;top: 4px;"><QuestionFilled /></el-icon>
-                        </el-tooltip>
-                    </span>
-                </el-form-item>
-                <el-form-item label="背景色" size="default" label-width="80px">
-                    <el-color-picker v-model="cutMenu.itemBgColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
-                </el-form-item>
-                <el-form-item label="文本颜色" size="default" label-width="80px">
-                    <el-color-picker v-model="cutMenu.textColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="容器宽度" size="default" label-width="70px">
+                            <el-input-number v-model="cutMenu.itemWidth" :min="10"></el-input-number>
+                            <span class="ml-5">
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="移动端为珊格布局，不受此宽度影响"
+                                    placement="top"
+                                >
+                                    <el-icon size="14" style="position: relative;top: 2px;"><QuestionFilled /></el-icon>
+                                </el-tooltip>
+                            </span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="容器高度" size="default" label-width="70px">
+                            <el-input-number v-model="cutMenu.itemHeight" :min="0"></el-input-number>
+                            <span class="ml-5">
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="默认高度 列表40卡片70"
+                                    placement="top"
+                                >
+                                    <el-icon size="14" style="position: relative;top: 2px;"><QuestionFilled /></el-icon>
+                                </el-tooltip>
+                            </span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="图标大小" size="default" label-width="70px">
+                            <el-input-number v-model="cutMenu.iconSize" :min="10"></el-input-number>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="图标类型" size="default" label-width="70px">
+                            <el-select v-model="cutMenu.iconType" size="default">
+                                <el-option label="方形" :value="1" />
+                                <el-option label="圆形" :value="2" />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="字体大小" size="default" label-width="70px">
+                            <el-input-number v-model="cutMenu.fontSize" :min="10"></el-input-number>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="字体粗细" size="default" label-width="70px">
+                            <el-select v-model="cutMenu.fontWeight" size="default">
+                                <el-option label="默认" :value="1" />
+                                <el-option label="加粗" :value="2" />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="背景色" size="default" label-width="70px">
+                            <el-color-picker v-model="cutMenu.itemBgColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="透明背景" size="default" label-width="70px">
+                            <div style="display: inline-block;">
+                                <el-checkbox v-model="cutMenu.transparentBg" size="default">
+                                </el-checkbox>
+                            </div>
+                            <span class="ml-5">
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="透明背景时，背景色无效"
+                                    placement="top"
+                                >
+                                    <el-icon size="14" style="position: relative;top: 1px;"><QuestionFilled /></el-icon>
+                                </el-tooltip>
+                            </span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="文本颜色" size="default" label-width="70px">
+                            <el-color-picker v-model="cutMenu.textColor" show-alpha :predefine="getElColorPickerPredefineColors()" />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </div>
         </div>
         <template #footer>
@@ -229,6 +283,14 @@ const DefaultMenu = {
     itemHeight: 0,
     // 文本颜色
     textColor: "",
+    // 图标大小
+    iconSize: 18,
+    // 字体大小
+    fontSize: 14,
+    // 图标类型
+    iconType: 1,
+    // 字体粗细
+    fontWeight: 1,
 };
 
 // 打开数据弹框
@@ -244,7 +306,18 @@ const openDialog = async (status, cut, list) => {
     if(cutMenu.value.itemHeight == null || cutMenu.value.itemHeight == undefined) {
         cutMenu.value.itemHeight = 0;
     }
-
+    if(cutMenu.value.iconSize == null || cutMenu.value.iconSize == undefined) {
+        cutMenu.value.iconSize = 18;
+    }
+    if(cutMenu.value.fontSize == null || cutMenu.value.fontSize == undefined) {
+        cutMenu.value.fontSize = 14;
+    }
+    if(cutMenu.value.iconType == null || cutMenu.value.iconType == undefined) {
+        cutMenu.value.iconType = 1;
+    }
+    if(cutMenu.value.fontWeight == null || cutMenu.value.fontWeight == undefined) {
+        cutMenu.value.fontWeight = 1;
+    }
     await getNavigationApi();
     // 加载自定义列表
     loadCustomPageList();

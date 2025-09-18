@@ -414,6 +414,7 @@
                                 link
                                 type="primary"
                                 @click.stop="onEditRow(scope.row)"
+                                @dblclick.stop
                                 :disabled="scope.row.btnDisabled.edit"
                             >
                                 编辑
@@ -424,6 +425,7 @@
                                 link
                                 type="primary"
                                 @click.stop="openDetailDialog(scope.row)"
+                                @dblclick.stop
                                 :disabled="scope.row.btnDisabled.view"
                             >
                                 查看
@@ -476,6 +478,7 @@
                                     <!-- 底部 -->
                                     <el-button
                                         @click.stop="customButtonClick(item, scope.row)"
+                                        @dblclick.stop
                                         link
                                         :type="item.type"
                                         v-if="getColumnCustomButtonShow(item, scope.row)"

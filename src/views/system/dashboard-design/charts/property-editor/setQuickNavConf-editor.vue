@@ -15,8 +15,11 @@
             下方入口列表处点击编辑
             <!-- <el-input-number v-model="optionModel.setQuickNavConf.itemWidth" :min="100"></el-input-number> -->
         </el-form-item>
-        <el-form-item label="宽度(删格)" v-if="cutDevice == 'mobile'">
+        <el-form-item label="宽度(栅格)" v-if="cutDevice == 'mobile'">
             <el-radio-group v-model="optionModel.setQuickNavConf.itemCol">
+                <el-radio :value="3">
+                    <span class="radio-span">6</span>
+                </el-radio>
                 <el-radio :value="1">
                     <span class="radio-span">12</span>
                 </el-radio>

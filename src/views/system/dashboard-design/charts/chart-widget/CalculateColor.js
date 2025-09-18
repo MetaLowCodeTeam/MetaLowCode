@@ -8,11 +8,15 @@
 const colorByBgColor = new Map()
 
 const rgbRegex = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/
+const rgbaRegex = /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(?:0|0?\.\d+|1(?:\.0)?)\s*\)$/
 
 const hex = (x) => ("0" + parseInt(x).toString(16)).slice(-2);
 
-function convertRGBToHex(rgb) {
-    const bg = rgb.match(rgbRegex);
+function convertRGBToHex(rgbStr) {
+    let bg = rgbStr.match(rgbRegex);
+    if (!bg) {
+        bg = rgbStr.match(rgbaRegex);
+    }
     if (!bg) {
         return ''
     }

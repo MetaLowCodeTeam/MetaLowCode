@@ -10,28 +10,40 @@
                 v-for="(item,inx) of myQuickNavConf.inletList" 
                 :key="inx" 
                 class="list-box fl" 
-                :style="cutDevice == 'mobile' ? {width: myQuickNavConf.itemCol == 1 ? '50%' : '100%'} : {}"
+                :style="cutDevice == 'mobile' ? { width: myQuickNavConf.itemCol == 1 ? '50%' : (myQuickNavConf.itemCol == 3 ? '33.33%' : '100%') } : {}"
             >
                 <!-- 列表 -->
                 <div
-                    :class="['li-item',myQuickNavConf.type == 1 ? 'list-item' : 'card-item',myQuickNavConf.borderIsShow ? '': 'not-border']"
+                    :class="['li-item', myQuickNavConf.type == 1 ? 'list-item' : 'card-item', myQuickNavConf.borderIsShow ? '' : 'not-border', item.transparentBg ? 'transparent-bg' : '']"
                     :style="{
                         'borderColor':item.iconColor,
                         'width': cutDevice == 'pc' 
                             ? (item.itemWidth ? item.itemWidth + 'px' : '200px') 
                             : '100%',
                         'height': item.itemHeight ? item.itemHeight + 'px' : myQuickNavConf.type == 1 ? '40px' : '70px',
-                        'background': item.itemBgColor ? item.itemBgColor : '#fff',
+                        'background': item.transparentBg ? 'transparent' : item.itemBgColor ? item.itemBgColor : '#fff',
                         'color': item.textColor ? item.textColor : '#303030',
+                        'fontSize': item.fontSize ? item.fontSize + 'px' : '14px',
+                        'fontWeight': item.fontWeight == 1 ? 'normal' : 'bold',
                     }"
                     @click.stop="navClick(item)"
                     v-if="designer || item.type != 3 || (item.type == 3 && item.pcShow)"
                 >
-                    <div class="item-icon" :style="{'background':item.iconColor || '#ddd',}">
+                    <div 
+                        class="item-icon" 
+                        :style="{
+                            'background':item.iconColor || '#ddd',
+                            height: item.iconSize ? (item.iconSize + 12) + 'px' : '26px',
+                            width: item.iconSize ? (item.iconSize + 12) + 'px' : '26px',
+                            textAlign: 'center',
+                            borderRadius: item.iconType == 2 ? '50%' : '4px',
+                        }"
+                    >
                         <el-icon
                             class="icon-span"
                             v-if="!item.useIcon"
                             :color="contrastTextColor(item.iconColor)"
+                            :size="item.iconSize || 18"
                         >
                             <Notebook />
                         </el-icon>
@@ -39,6 +51,7 @@
                             class="icon-span"
                             v-else
                             :color="contrastTextColor(item.iconColor)"
+                            :size="item.iconSize || 15"
                         >
                             <component :is="item.useIcon" />
                         </el-icon>
@@ -107,7 +120,6 @@ onMounted(() => {
 
 const initOption = () => {
     myQuickNavConf.value = cutField.value.options?.setQuickNavConf;
-    console.log(myQuickNavConf.value,'myQuickNavConf.value')
 };
 
 const setSelected = () => {
@@ -198,11 +210,11 @@ const getItemStyle = () => {
     }
     // 如果是移动
     else {
-        // 如果是删格12
+        // 如果是栅格12
         if (myQuickNavConf.value.itemCol == 1) {
             itemStyle.width = "50%";
         }
-        // 如果是删格24
+        // 如果是栅格24
         else {
             itemStyle.width = "100%";
         }
@@ -243,33 +255,33 @@ defineExpose({
             box-shadow: var(--el-box-shadow);
             filter: brightness(0.97);
         }
+        &.transparent-bg {
+            background: transparent !important;
+            border-color: transparent;
+            box-shadow: none !important;
+        }
         .item-icon {
-            width: 26px;
-            height: 26px;
-            line-height: 26px;
-            text-align: center;
             border-radius: 4px;
-            .icon-span {
-                font-size: 15px;
-                position: relative;
-                top: 2px;
-            }
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         &.list-item {
-            height: 40px;
-            line-height: 40px;
             border-radius: 4px;
             // width: 200px;
             width: 100%;
             padding: 0 10px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-column-gap: 8px;
+            align-items: center;
             .item-icon {
-                float: left;
-                margin-top: 7px;
-                margin-right: 5px;
+                float: none;
+                margin: 0;
             }
             .item-span {
-                display: inline-block;
-                width: calc(100% - 31px);
+                display: block;
+                width: auto;
             }
         }
         &.card-item {
@@ -283,10 +295,6 @@ defineExpose({
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            .item-icon {
-                display: inline-block;
-                line-height: 26px;
-            }
             .item-span {
                 margin-top: 5px;
                 padding: 0 20px;
