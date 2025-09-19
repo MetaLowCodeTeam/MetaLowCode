@@ -148,7 +148,7 @@
             </template>
 		</ml-dialog>
 	</div>
-	<!-- <Detail ref="detailRef" /> -->
+	<Detail ref="detailRef" />
 </template>
 
 <script>
