@@ -94,7 +94,22 @@ const navClick = async (item) => {
         item.layoutConfigId
     );
     if (res) {
-        window.location.href = "/";
+        // 检查顶部导航是否存在对应项
+        const { getTopNavMenuList } = useLayoutConfigStore();
+        const topNavList = getTopNavMenuList();
+        
+        // 查找顶部导航中是否有对应的导航项
+        const matchingTopNav = topNavList.find(topNav => 
+            topNav.layoutConfigId === item.layoutConfigId
+        );
+        
+        if (matchingTopNav) {
+            // 如果顶部导航存在对应项，直接跳转（不刷新）
+            router.push({ path: matchingTopNav.path });
+        } else {
+            // 如果顶部导航不存在对应项，刷新页面
+            window.location.href = "/";
+        }
     }
 };
 
