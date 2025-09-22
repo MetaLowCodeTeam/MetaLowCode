@@ -609,6 +609,7 @@ const initFormLayout = async () => {
                             if(row.defaultFormData) {
                                 setFormData = Object.assign(setFormData, row.defaultFormData);
                             }
+                            console.log(formData.data,'formData.data')
 							vFormRef.value.setFormData(setFormData);
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
@@ -663,7 +664,8 @@ const initFormLayout = async () => {
                         if(row.defaultFormData) {
                             param = Object.assign(param, row.defaultFormData);
                         }
-						vFormRef.value.setFormData(param);
+                        let setFormData = formatFormVirtualField(param);
+						vFormRef.value.setFormData(setFormData);
 						nextTick(() => {
 							if (row.fieldName && !props.unDisableWidgets.includes(row.fieldName)) {
 								vFormRef.value.disableWidgets([row.fieldName]);
