@@ -412,6 +412,11 @@ export default {
                 if (res.data.filter) {
 					this.conditionConf = res.data.filter;
 				}
+                this.conditionConf.items.forEach(el => {
+                    if(el.refLabel) {
+                        el.refLabel = '';
+                    }
+                })
 				this.referenceEntityName = res.data.entityName;
                 // 当只有一个实体时，初始化当前页签为该实体，供“已选”区域过滤使用
                 if(!this.activeTab && !this.currentTab){
@@ -447,10 +452,21 @@ export default {
 			} else {
 				paramStr = this.entity;
                 let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
+                const { queryEntityInfoByName } = useCommonStore();
+                let idFieldName = queryEntityInfoByName(this.referenceEntityName).idFieldName;
                 tempConditionConf.items = tempConditionConf.items.filter(el => {
                     const hasValidValue = (val) => val !== undefined && val !== null && val !== "";
                     if((el.type == 'Date' || el.type == 'DateTime') && !el.value && !el.value2){
                         return false;
+                    }
+                    // 如果是本人、本部门
+                    if(el.op == "REFD" || el.op == "REFU"){
+                        el.value = idFieldName;
+                    }
+                    // 如果是包含
+                    if(el.op == "REF"){
+                        el.value2 = el.value;
+                        el.value = idFieldName;
                     }
                     return hasValidValue(el.value) || hasValidValue(el.value2) || this.notEmptyItems.includes(el.op);
                 });
