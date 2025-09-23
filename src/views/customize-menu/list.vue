@@ -1786,6 +1786,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
                 sourceRecord: formData,
                 parentListExposed:  currentExposed.value,
                 parentFormRef: parentFormRef.value,
+                parentDataRecordId: myFormEntityId.value,
                 ...localDsv,
             };
             !!formId && (tempV.formId = formId)

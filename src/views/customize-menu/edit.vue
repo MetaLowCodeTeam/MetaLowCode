@@ -582,6 +582,7 @@ const initFormLayout = async () => {
                 nextTick(async () => {
 					globalDsv.value.formStatus = 'edit';
 					globalDsv.value.formEntityId = row.detailId;
+					globalDsv.value.dataRecordId = row.detailId;
                     vFormRef.value?.setFormJson(res.data.layoutJson);
                     let formFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
 					let formData = await queryById(
@@ -638,6 +639,7 @@ const initFormLayout = async () => {
                         "新建：" + queryEntityLabelByName(row.entityName);
 					globalDsv.value.formStatus = 'new';
                     globalDsv.value.formEntityId = "";
+                    globalDsv.value.dataRecordId = row.detailId;
                     vFormRef.value.setFormJson(res.data.layoutJson);
                     let param = {};
                     if (row.fieldName) {
