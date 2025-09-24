@@ -421,6 +421,11 @@ export default [
                 type: "mlSelectUser",
             },
             {
+                label: "给新建用户发送账号创建通知",
+                key: "sendAccountCreatedMessage",
+                type: "switch",
+            },
+            {
                 label: "自动同步部门用户",
                 key: "nodeDep",
                 type: "autoSync",
@@ -479,6 +484,11 @@ export default [
                 type: "mlSelectUser",
             },
             {
+                label: "给新建用户发送账号创建通知",
+                key: "wxsendAccountCreatedMessage",
+                type: "switch",
+            },
+            {
                 label: "自动同步企业微信组织架构",
                 key: "nodeDep2",
                 type: "autoSync2",
@@ -528,6 +538,11 @@ export default [
                 label: "用户默认角色",
                 key: "larkNodeRole",
                 type: "mlSelectUser",
+            },
+            {
+                label: "给新建用户发送账号创建通知",
+                key: "larksendAccountCreatedMessage",
+                type: "switch",
             },
             {
                 label: "自动同步飞书组织架构",

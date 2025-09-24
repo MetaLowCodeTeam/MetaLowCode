@@ -32,8 +32,8 @@ export function registerLicenseApi(body) {
  * 钉钉集成
  */
 // -- 同步钉钉组织架构
-export function getDingtalkSyncUser(defaultRole) {
-    return http.get('/organizationSync/dingtalkSyncUser', { defaultRole })
+export function getDingtalkSyncUser(defaultRole, sendAccountCreatedMessage) {
+    return http.get('/organizationSync/dingtalkSyncUser', { defaultRole, sendAccountCreatedMessage })
 }
 
 
@@ -41,16 +41,16 @@ export function getDingtalkSyncUser(defaultRole) {
  * 企业微信集成
  */
 // -- 同步企业微信组织架构
-export function getWxWorkSyncUser(defaultRole) {
-    return http.get('/organizationSync/wxWorkSyncUser', { defaultRole })
+export function getWxWorkSyncUser(defaultRole, sendAccountCreatedMessage) {
+    return http.get('/organizationSync/wxWorkSyncUser', { defaultRole, sendAccountCreatedMessage })
 }
 
 /**
  * 飞书集成
  */
 // -- 同步飞书组织架构
-export function getLarkSyncUser(defaultRole) {
-    return http.get('/organizationSync/larkSyncUser', { defaultRole })
+export function getLarkSyncUser(defaultRole, sendAccountCreatedMessage) {
+    return http.get('/organizationSync/larkSyncUser', { defaultRole, sendAccountCreatedMessage })
 }
 
 

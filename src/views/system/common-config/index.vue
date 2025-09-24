@@ -87,7 +87,7 @@
                                             <el-switch v-model="confData[item.key]" disabled />
                                         </el-tooltip>
                                         <el-switch v-else-if="item.key == 'autoBackup'" :beforeChange="openAutoBackup" v-model="confData[item.key]" />
-                                        <el-switch v-else v-model="confData[item.key]" />
+                                        <el-switch v-else v-model="confData[item.key]" :disabled="isDisabled(card,item)"/>
                                         <span class="info-text ml-10" v-if="item.subLabel">{{ item.subLabel }}</span>
                                     </div>
                                     <!-- 颜色选择器 -->
@@ -203,6 +203,7 @@
                                             </el-icon>
                                             <span class="ml-2">立即同步</span>
                                         </el-button>
+                                        
                                     </div>
                                     <!-- 立即同步 -->
                                     <div v-else-if="item.type == 'autoSync3'">
@@ -399,6 +400,7 @@ let dingTalkFields = ref([
     "dingTalkAppSecret",
     "dingTalkAgentId",
     "nodeDep",
+    "sendAccountCreatedMessage",
 ]);
 
 // 企业微信字段
@@ -407,6 +409,7 @@ let wxWorkFields = ref([
     "wxWorkAgentId",
     "wxWorkCorpSecret",
     "nodeDep2",
+    "wxsendAccountCreatedMessage",
 ]);
 
 // 飞书字段
@@ -414,6 +417,7 @@ let larkFields = ref([
     "larkappId",
     "larkappSecret",
     "nodeDep3",
+    "larksendAccountCreatedMessage",
 ]);
 
 // 微信字段
@@ -531,7 +535,9 @@ const initData = async () => {
         for (const key in wxWorkSetting) {
             if (Object.hasOwnProperty.call(wxWorkSetting, key)) {
                 const element = wxWorkSetting[key];
-                if (key == "nodeRole" ) {
+                if(key == "sendAccountCreatedMessage"){
+                    confData["wx" + key] = element;
+                }else if (key == "nodeRole" ) {
                     if(!element || element.length < 1){
                         confData.wxWorkNodeRole = [];
                     }else {
@@ -736,7 +742,11 @@ const onSubmit = async () => {
     // 赋值企业微信对象
     for (const key in confData.wxWorkSetting) {
         if (Object.hasOwnProperty.call(confData.wxWorkSetting, key)) {
-            confData.wxWorkSetting[key] = confData[key];
+            if(key == "sendAccountCreatedMessage"){
+                confData.wxWorkSetting[key] = confData['wx' + key];
+            }else {
+                confData.wxWorkSetting[key] = confData[key];
+            }
         }
     }
     // 赋值企业微信角色
@@ -974,7 +984,7 @@ let errorMessage = ref("");
 const autoSync = async () => {
     autoSyncLoading.value = true;
     let defaultRole = confData.nodeRole[0] ? confData.nodeRole[0].id : null;
-    let res = await getDingtalkSyncUser(defaultRole);
+    let res = await getDingtalkSyncUser(defaultRole, confData.sendAccountCreatedMessage);
     if (res && res.data) {
         cutTaskId.value = res.data;
         getHeavyTaskApi();
@@ -1016,7 +1026,7 @@ let errorMessage2 = ref("");
 const autoSync2 = async () => {
     autoSyncLoading2.value = true;
     let defaultRole = confData.wxWorkNodeRole[0] ? confData.wxWorkNodeRole[0].id : null;
-    let res = await getWxWorkSyncUser(defaultRole);
+    let res = await getWxWorkSyncUser(defaultRole, confData.wxsendAccountCreatedMessage);
     if (res && res.data) {
         cutTaskId2.value = res.data;
         getHeavyTaskApi2();
@@ -1057,7 +1067,7 @@ let errorMessage3 = ref("");
 const autoSync3 = async () => {
     autoSyncLoading3.value = true;
     let defaultRole = confData.larkNodeRole[0] ? confData.larkNodeRole[0].id : null;
-    let res = await getLarkSyncUser(defaultRole);
+    let res = await getLarkSyncUser(defaultRole, confData.larksendAccountCreatedMessage);
     if (res && res.data) {
         cutTaskId3.value = res.data;
         getHeavyTaskApi3();
