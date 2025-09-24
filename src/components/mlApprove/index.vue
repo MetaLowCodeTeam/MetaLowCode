@@ -19,7 +19,7 @@
                 </div>
             </div>
         </template>
-        <div class="detail-main" v-loading="loading">
+        <div class="detail-main" v-loading="loading || otherLoading">
             <el-row :gutter="20">
                 <el-col :span="approvalTask.type ? 18 : 24">
                     <div class="detail-container">
@@ -62,12 +62,12 @@
                             <template #label>
                                 <el-icon class="icon promotion-icon">
                                     <el-icon-promotion />
-                                </el-icon>本次审批结果将抄送给
+                                </el-icon>本次审批结果将抄送给 
                             </template>
                             <mlSelectUser v-model="form.currentCCToUserList" multiple clearable />
                         </el-form-item>
                         <el-form-item style="margin-bottom: 0;">
-                            <div class="foot-btn w-100">
+                            <div class="foot-btn w-100" v-loading="loading || otherLoading">
                                 <el-dropdown
                                     trigger="click"
                                     @command="handleCommand"
@@ -103,7 +103,7 @@
                                     @click="beforeConfirmApprove" 
                                     style="min-width: 60px !important;"
                                     icon="Finished"
-                                    :loading="loading"  
+                                    :loading="loading || otherLoading"  
                                 >
                                     {{ customButtonText.confirmButtonText }}
                                 </el-button>
@@ -113,14 +113,14 @@
                                     style="min-width: 60px !important;"
                                     v-if="!approvalTask.prohibitRejection"
                                     icon="RefreshLeft"
-                                    :loading="loading"  
+                                    :loading="loading || otherLoading"  
                                 >
                                     {{ customButtonText.rejectButtonText }}
                                 </el-button>
                                 <el-button 
                                     @click="canner" 
                                     style="min-width: 60px !important;"
-                                    :loading="loading"  
+                                    :loading="loading || otherLoading"  
                                 >
                                     {{ customButtonText.cancelButtonText }}
                                 </el-button>
@@ -554,9 +554,7 @@ const beforeReject = async () => {
         // 打开驳回弹框
         openRejectDialog();
     } else {
-        loading.value = true;
         await executeApproval(true);
-        loading.value = false;
     }
 };
 
@@ -593,6 +591,7 @@ const executeApproval = async (isBacked) => {
         saveComplexFlow(isBacked ? 2 : 1);
         return;
     } else {
+        loading.value = true;
         form.value.entityId = props.entityId;
         form.value.isBacked = isBacked;
         form.value.signatureImage = esignConf.value.resultImg;
@@ -606,6 +605,7 @@ const executeApproval = async (isBacked) => {
             canner();
             emit("confirm");
         }
+        loading.value = false;
     }
 }
 
