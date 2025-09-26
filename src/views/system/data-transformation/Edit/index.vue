@@ -146,7 +146,7 @@ const getTargetEntityList = () => {
 		);
 	}
 	return unSystemEntityList.value.filter(
-		(el) => !el.detailEntityFlag && !el.appAbbr
+		(el) => !el.appAbbr
 	);
 };
 
