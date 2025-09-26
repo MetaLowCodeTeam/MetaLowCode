@@ -208,7 +208,7 @@
                     <div
                         class="pl-20 item"
                         @click="openListTabDialog"
-                        v-if="!isListCalendar && !isListCard && !isReferenceComp"
+                        v-if="!isListCalendar && !isListCard"
                     >
                         列表页签设置
                     </div>
