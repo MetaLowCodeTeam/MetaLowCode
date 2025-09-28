@@ -91,6 +91,7 @@
                     @downOption="downTag" 
                     @editOption="editTag" 
                     @deleteOption="deleteTag"
+                    showCode
                 />
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>

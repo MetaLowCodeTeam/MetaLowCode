@@ -19,7 +19,7 @@
                         {{ item.label }}
                     </span>
 					<span v-if="showCode">
-						[{{ item.value }}]
+						({{ item.value }})
 					</span>
 				</div>
 				<div class="option-item">

@@ -86,6 +86,7 @@
                     @downOption="downOption"
                     @editOption="editOption"
                     @deleteOption="deleteOption"
+                    showCode
                 />
                 <hr style="border: 0;margin-bottom: 15px" />
                 <el-form-item>
