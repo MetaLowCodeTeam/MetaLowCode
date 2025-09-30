@@ -1,5 +1,5 @@
 <template>
-	<span class="ml-a-span" @click="setCondition">{{
+	<span class="ml-a-span action-button" @click="setCondition">{{
 		getSetConditionText()
 	}}</span>
 	<ml-dialog
@@ -17,8 +17,19 @@
             :enableSql="enableSql"
 		/>
 		<template #footer>
-			<el-button type="primary" @click="checkConfirm">确认</el-button>
-			<el-button @click="close">取消</el-button>
+			<el-button 
+                type="primary" 
+                @click="checkConfirm"
+                :size="size"
+            >
+                确认
+            </el-button>
+			<el-button 
+                @click="close"
+                :size="size"
+            >
+                取消
+            </el-button>
 		</template>
 	</ml-dialog>
 </template>
@@ -32,6 +43,8 @@ const props = defineProps({
 	beforeOpenDialog: { type: Function, default: () => () => {} },
     // 是否开启SQL
     enableSql: { type: Boolean, default: false },
+    // 主题大小
+    size: { type: String, default: "default" },
 });
 const emit = defineEmits(["confirm", "update:modelValue"]);
 

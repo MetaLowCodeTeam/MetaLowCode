@@ -157,6 +157,7 @@
                         shadow="never"
                         v-for="(widgets,WidgetsInx) of widgetMappingList"
                         :key="WidgetsInx"
+                        class="sub-form-card"
                     >
                         <template #header>
                             <div class="card-header">
@@ -191,6 +192,18 @@
                                 </div>
                             </div>
                         </template>
+                        <el-form-item label-width="75">
+                            <template #label>
+                                <span class="form-label"> 过滤条件 </span>
+                            </template>
+                            <SetConditionsDialog
+                                title="附加过滤条件"
+                                :conditionConf="widgets.filterJson"
+                                :entityName="widgets.sourceWidget.entityName"
+                                enableSql
+                                @confirm="(v) => conditionConfirm(v, widgets)"
+                            />
+                        </el-form-item>
                         <el-form-item
                             label-width="75"
                             :class="{
@@ -378,6 +391,7 @@
 			</el-button>
 		</template>
     </mlDialog>
+ 
 </template>
 
 <script>
@@ -388,6 +402,8 @@ import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import { queryEntityListByReferenceField } from '@/api/system-manager';
 import { checkIsSubForm } from '@/utils/util';
 import http from "@/utils/request";
+// 条件弹框
+import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 export default {
 	name: "reference-fillBackConfig-editor",
 	mixins: [i18n, eventMixin, Utils],
@@ -396,6 +412,9 @@ export default {
 		selectedWidget: Object,
 		optionModel: Object,
 	},
+    components: {
+        SetConditionsDialog,
+    },
 	data() {
 		return {
             entity:"",
@@ -454,10 +473,17 @@ export default {
             isInSubForm: false,
             // 是否外部引用
             isOuterReference: false,
+            // 过滤条件索引
+            filterConditionsIndex: 0,
+            // 过滤条件实体名称
+            filterConditionsEntityName: "",
 		};
 	},
 	inject: ["isSubFormChildWidget"],
 	methods: {
+        conditionConfirm(v, widgets) {
+            widgets.filterJson = v;
+        },
 		// 打开回填弹框
 		openFillBackDialog() {
             // 如果是外部引用 并且 没有设置外部引用接口参数
@@ -768,6 +794,7 @@ export default {
                         }
                     },
                     forceFillBack: el.forceFillBack,
+                    filterJson: el.filterJson,
                 })
             })
             this.optionModel.subFormFillBackConfig = Object.assign([], subFormFillBackConfig);
@@ -901,6 +928,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+:deep(.action-button) {
+    font-size: 14px;
+    line-height: 32px;
+    margin-left: 8px;
+}
+:deep(.sub-form-card .el-card__body) {
+    padding: 0px 20px;
+}
 /*
 :deep(.el-form-item__label) {
 	height: 32px;
@@ -921,10 +956,9 @@ export default {
 }
 .has-row {
 	.form-label {
-		top: 3px;
 	}
 	.fillBack-help-icon {
-		top: 8px;
+		top: 6px;
 	}
 }
 .delete-btn {

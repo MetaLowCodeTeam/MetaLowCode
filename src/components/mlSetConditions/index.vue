@@ -774,7 +774,7 @@ export default {
         // 是否立即更新modelValue
         someCondition: { type: Boolean, default: true },
     },
-    emits: ["enterInput"],
+    emits: ["enterInput", "confirm", "cancel", "onSaveAlias"],
     data() {
         return {
             // 所有类型

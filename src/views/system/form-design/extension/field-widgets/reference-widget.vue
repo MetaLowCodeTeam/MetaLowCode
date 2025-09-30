@@ -737,7 +737,8 @@ export default {
                 subFormFillBackConfig.forEach(el => {
                     subFormFields.push({
                         entityName: el.sourceWidget.entityName,
-                        queryFields: el.fllBackItems.map(el => el.sourceField).join(',')
+                        queryFields: el.fllBackItems.map(el => el.sourceField).join(','),
+                        filterList: [el.filterJson],
                     })
                 })
                 let res = await queryById(recordObj.id, "", { queryDetailList: subFormFields });
