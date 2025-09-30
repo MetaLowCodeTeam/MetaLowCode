@@ -195,6 +195,18 @@
                         <el-form-item label-width="75">
                             <template #label>
                                 <span class="form-label"> 过滤条件 </span>
+                                <el-tooltip
+                                    class="box-item"
+                                    effect="dark"
+                                    placement="bottom"
+                                >
+                                    <template #content>
+                                        设置过滤条件后，则使用满足条件的数据回填
+                                    </template>
+                                    <span class="fillBack-help-icon">
+                                        <el-icon><QuestionFilled /></el-icon>
+                                    </span>
+                                </el-tooltip>
                             </template>
                             <SetConditionsDialog
                                 title="附加过滤条件"
