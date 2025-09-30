@@ -50,6 +50,7 @@
                                             :placeholder="item.placeholder" 
                                             :style="{'width': item.selectWidth }"
                                             @change="item.onChange"
+                                            :clearable="item.selectClearable"
                                         >
                                             <el-option
                                                 v-for="op in item.options"
@@ -576,6 +577,10 @@ const initData = async () => {
         // 初始化飞书 应用首页地址
         confData.larkHomeDir = confData.homeURL + "/lark/userLogin";
         confData.larkHomeURL = confData.homeURL + "/lark/userAuth";
+        // 初始化自定义主题
+        if(!confData.customScssFile) {
+            confData.customScssFile = "default";
+        }
         // 如果存在租户ID
         if(tenantId){
             confData.homeDir += "/" + tenantId;

@@ -1,4 +1,5 @@
 import { passwordRuleOptions } from "@/hooks/usePasswordStrength";
+import { customImportScss } from "@/style/customScss/customImportScss";
 export default [
     {
         label: "通用配置",
@@ -54,6 +55,13 @@ export default [
                     { label: "顶部", value: "top" },
                     { label: "居左", value: "left" },
                 ],
+            },
+            {
+                label: "自定义主题样式",
+                key: "customScssFile",
+                type: "select",
+                options: customImportScss,
+                selectWidth: "300px",
             },
             {
                 label: "版本号",

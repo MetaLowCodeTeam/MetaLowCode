@@ -35,7 +35,7 @@ watchEffect(() => {
     line-height: 45px;
     color: #fff;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-    border-radius: 2px;
+    border-radius: 4px;
     padding-left: 20px;
     margin-bottom: 10px;
     &.info {

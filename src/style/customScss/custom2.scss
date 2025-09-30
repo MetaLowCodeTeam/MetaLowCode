@@ -90,19 +90,21 @@ $--nav-menu-text-color: rgb(48, 49, 51);
 *  顶部导航样式  -------------------- end --------------------
 * 
 */
+$--top-nav-bg-color: var(--el-color-primary);
+$--top-nav-text-color: #ffffff;
 .adminui-header {
-    background: var(--top-nav-bg-color, var(--el-color-primary));
-    color: var(--top-nav-text-color, #ffffff);
+    background: #{$--top-nav-bg-color};
+    color: #{$--top-nav-text-color};
     .scrollbar-demo-item {
-        color: var(--top-nav-text-color, #ffffff) !important;
+        color: #{$--top-nav-text-color} !important;
     }
     .approval-center .approval-icon-span{
-        color: var(--top-nav-text-color, #ffffff) !important;
+        color: #{$--top-nav-text-color} !important;
     }
     .user-bar .user-avatar {
-        color: var(--top-nav-text-color, #ffffff) !important;
+        color: #{$--top-nav-text-color} !important;
         label {
-            color: var(--top-nav-text-color, #ffffff) !important;
+            color: #{$--top-nav-text-color} !important;
         }
     }
 }

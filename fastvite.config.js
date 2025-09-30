@@ -121,7 +121,7 @@ export default ({
                 scss: {
                     // 定义全局的scss变量
                     // 给导入的路径最后加上 ;
-                    additionalData: `@use './src/style/global.scss';`,
+                    // additionalData: `@use './src/style/custom.scss';`,
                     javascriptEnabled: true,
                     api: 'modern-compiler', // 修改api调用方式
                     silenceDeprecations: ['legacy-js-api'],

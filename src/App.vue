@@ -39,6 +39,7 @@ import { getLoginUser, tokenLogin } from "@/api/user";
 import { useRouter } from "vue-router";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import loginManager from "@/utils/loginManager";
+import dynamicScssLoader from "@/utils/dynamicScssLoader";
 const { getEntityList, setPublicSetting, setUserInfo } = useCommonStore();
 const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -167,6 +168,12 @@ const queryPublicSetting = async () => {
         let resData = res.data || {};
         resData.themeColor = res.data.themeColor || "#409EFF";
         colorPrimary(resData.themeColor);
+        resData.customScssFile = resData.customScssFile || "default";
+        // 动态加载SCSS文件
+        if (resData.customScssFile) {
+            await dynamicScssLoader.loadScssFile(resData.customScssFile);
+        }
+        
         setPublicSetting(resData);
     }
 };
