@@ -36,7 +36,6 @@
 				>
 					<template #table_operation="{ scope }">
 						<el-button
-							class
 							icon="el-icon-check"
 							@click="selectEntity(scope.row)"
                             v-if="!defaultSelectedEntity || scope.row.name !== defaultSelectedEntity"
@@ -44,9 +43,8 @@
 							选择
 						</el-button>
                         <el-button
-							class
                             v-else
-                            type="success"
+                            type="primary" 
                             style="width: 81px;"
                             disabled
 						>

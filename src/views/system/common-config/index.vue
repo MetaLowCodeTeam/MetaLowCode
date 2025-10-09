@@ -93,7 +93,7 @@
                                     </div>
                                     <!-- 颜色选择器 -->
                                     <div v-else-if="item.type == 'picker'">
-                                        <el-color-picker v-model="confData[item.key]" show-alpha :predefine="getElColorPickerPredefineColors()" />
+                                        <el-color-picker v-model="confData[item.key]"/>
                                     </div>
                                     <!-- 钉钉集成用户选择框 -->
                                     <div v-else-if="item.type == 'mlSelectUser' && item.key == 'nodeRole'">

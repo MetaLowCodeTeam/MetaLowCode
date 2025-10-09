@@ -88,12 +88,8 @@
                                             placement="top"
                                             v-if="activity.remark"
                                         >
-                                            <span
-                                                style="position: relative;top: 2px;cursor: pointer;"
-                                            >
-                                                <el-icon>
-                                                    <ElIconQuestionFilled />
-                                                </el-icon>
+                                            <span class="ml-a-span">
+                                                查看批注
                                             </span>
                                         </el-tooltip>
                                     </span>
@@ -103,14 +99,9 @@
                                             effect="dark"
                                             :content="activity.remark || 'error'"
                                             placement="top"
-                                            v-if="activity.remark"
                                         >
-                                            <span
-                                                style="position: relative;top: 2px;cursor: pointer;"
-                                            >
-                                                <el-icon>
-                                                    <ElIconQuestionFilled />
-                                                </el-icon>
+                                            <span class="ml-a-span">
+                                                查看批注
                                             </span>
                                         </el-tooltip>
                                     </span>
@@ -122,12 +113,8 @@
                                             placement="top"
                                             v-if="activity.remark"
                                         >
-                                            <span
-                                                style="position: relative;top: 2px;cursor: pointer;"
-                                            >
-                                                <el-icon>
-                                                    <ElIconQuestionFilled />
-                                                </el-icon>
+                                            <span class="ml-a-span">
+                                                查看批注
                                             </span>
                                         </el-tooltip>
                                     </span>
