@@ -13,7 +13,7 @@
             <a
                 v-if="navMenu.meta&&navMenu.meta.type=='link'"
                 :href="formatOutLink(navMenu.meta)"
-                :target="navMenu.meta.outLink.indexOf('/') == 0 ?'' : '_blank'"
+                :target="navMenu.meta.outLink.indexOf('/') !== 0 || navMenu.meta._blank ? '_blank' : ''"
                 @click.stop="()=>{}"
                 class="full-link-area"
             ></a>

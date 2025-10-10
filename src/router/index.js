@@ -61,9 +61,9 @@ router.beforeEach(async (to, from, next) => {
         next();
         return false;
     }
-    if (to.path == '/') {
+    if (to.path == '/' || to.path == appPath) {
         next({
-            path: appPath + config.DASHBOARD_URL
+            path: config.DASHBOARD_URL
         });
         return false;
     }

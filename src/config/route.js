@@ -369,7 +369,8 @@ const routes = [
                                     icon: 'el-icon-menu',
                                     outLink: "/plugins/metaView/view/index",
                                     type: "link",
-                                    role: 'r6030'
+                                    role: 'r6030',
+                                    _blank: true,
                                 },
 								component: 'system/dashboard-design/data-screen-management',
 							},

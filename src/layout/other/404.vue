@@ -14,11 +14,12 @@
 </template>
 
 <script>
+    import config from "@/config"
     const appPath = import.meta.env.VITE_APP_PATH;
 	export default {
 		methods: {
 			gohome(){
-				location.href="/"
+				location.href= config.DASHBOARD_URL;
 			},
 			goback(){
 				this.$router.go(-1);
