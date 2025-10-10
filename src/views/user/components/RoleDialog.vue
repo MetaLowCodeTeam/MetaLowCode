@@ -809,6 +809,10 @@ let funcRight = shallowRef([
 				label: "外部表单",
 				value: "r6020",
 			},
+            {
+				label: "数据大屏管理",
+				value: "r6030",
+			},
 		],
 	},
 	{

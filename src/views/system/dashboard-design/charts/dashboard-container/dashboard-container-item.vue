@@ -16,6 +16,7 @@
                 :collapse="item.options.showCollapse"
                 :fullscreen="item.options.showFullscreen"
                 @on-refresh="onRefresh(item)"
+                :class="item.options.customClass"
             >
                 <template #toolbar v-if="item.options.topBarBtnConfig?.show">
                     <div style="border-left: 1px solid rgba(0,0,0,.09);height: 24px;margin-right: 10px;">

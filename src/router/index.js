@@ -196,6 +196,10 @@ function filterUserMenu(userRoutes, publicSetting) {
         if(OuterDataSourceHideMenu.includes(node.name) && (!pluginIdList || !pluginIdList.includes('metaDataWarehouse'))) {
             return false
         }
+        // 如果是数据大屏，并且没有数据大屏插件，不显示该菜单
+        if(node.name == "DataScreenManagement" && (!pluginIdList || !pluginIdList.includes('metaView'))) {
+            return false
+        }
         return true
     })
 }

@@ -361,6 +361,18 @@ const routes = [
 								meta: { title: '仪表盘', icon: 'el-icon-menu', role: 'r52-1' },
 								component: 'system/dashboard-design/chart',
 							},
+                            {
+								path: appPath + 'data-screen-management',
+								name: 'DataScreenManagement',
+								meta: { 
+                                    title: '数据大屏', 
+                                    icon: 'el-icon-menu',
+                                    outLink: "/plugins/metaView/view/index",
+                                    type: "link",
+                                    role: 'r6030'
+                                },
+								component: 'system/dashboard-design/data-screen-management',
+							},
 						]
 					},
 					// 报表设计
