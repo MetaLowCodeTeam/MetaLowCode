@@ -491,9 +491,9 @@ export default {
             let computedWidth;
             let nameLangth = this.appName?.length;
             if(nameLangth < 7){
-                computedWidth = 620;
+                computedWidth = 588;
             }else {
-                computedWidth = 620 + ((nameLangth - 6 ) * 20);
+                computedWidth = 588 + ((nameLangth - 6 ) * 20);
             }
             return "calc(100% - "+ computedWidth +"px)";
         },
@@ -643,9 +643,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-// .adminui-header-center {
-//     width: calc(100% - 560px);
-// }
+.adminui-header-center {
+    // width: calc(100% - 560px);
+    display: flex;
+}
 .scrollbar-flex-content {
     display: flex;
 }
