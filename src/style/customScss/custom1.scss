@@ -1,6 +1,5 @@
 :root {
     --el-menu-item-height: 50px;
-    --el-color-primary: #2255F1;
 }
 /**
 * 
@@ -49,7 +48,9 @@ $--top-nav-text-color: #4b4a61;
         justify-content: flex-end;  /* 里面的内容也靠右排 */
         .scrollbar-demo-item {
             font-size: 15px;
-            font-weight: normal;
+            font-weight: 600; // 统一使用加粗，避免切换时变化
+            // font-weight: normal;
+            transition: color 0.2s ease; // 添加颜色过渡动画
             &.active {
                 color: var(--el-color-primary) !important;
             }
@@ -111,7 +112,7 @@ $--top-nav-text-color: #4b4a61;
 }
 
 .aminui-side {
-    background: url('@/assets/imgs/menu-bg.png') no-repeat center center;
+    background: url('/img/menu-bg.png') no-repeat center center;
     background-size: 100% 100%;
     background-position: center;
     overflow: hidden;
@@ -128,7 +129,8 @@ $--top-nav-text-color: #4b4a61;
                 &:hover {
                     background: none;
                 }
-                &.is-active {
+                &.is-active,
+                &.isActive {
                     position: relative;
                     &::after {
                         content: '';
@@ -137,7 +139,7 @@ $--top-nav-text-color: #4b4a61;
                         top: 10%;
                         width: 90%;
                         height: 80%;
-                        background: #2255F1;
+                        background: var(--el-color-primary);
                         border-radius: 4px;
                     }
                     color: #fff;
@@ -167,7 +169,7 @@ $--top-nav-text-color: #4b4a61;
         top: 10%;
         width: 80%;
         height: 80%;
-        background: #2255F1;
+        background: var(--el-color-primary);
         border-radius: 4px;
     }
     .el-tree-node__label {
@@ -284,12 +286,11 @@ $--dashboard-container-bg-color: #fff;
     }
 }
 
-// 统计数值组件背景样式
-.form-widget-list .widget-statistic,
-.adminui-main .dashboard .widget-statistic{
-    // background: url('@/assets/imgs/statistic-bg.png') no-repeat center center;
-    // background-size: 100% 100%;
-    // background-position: center;
-    // overflow: hidden;
-}
-
+// 统计数值组件背景样式（已注释）
+// .form-widget-list .widget-statistic,
+// .adminui-main .dashboard .widget-statistic{
+//     background: url('/img/statistic-bg.png') no-repeat center center;
+//     background-size: 100% 100%;
+//     background-position: center;
+//     overflow: hidden;
+// }
