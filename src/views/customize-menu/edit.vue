@@ -683,6 +683,8 @@ const initFormLayout = async () => {
 					});
                 });
             }
+        }else {
+            loading.value = false;
         }
     }else {
         loading.value = false;

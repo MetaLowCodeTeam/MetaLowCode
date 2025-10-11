@@ -58,7 +58,7 @@ export default {
 	},
     mounted(){
         this.$nextTick(() => {
-            this.$refs.listSubForm.setParentFormRef(this.getForm());
+            this.$refs.listSubForm?.setParentFormRef(this.getForm());
         })
     },
 	methods: {

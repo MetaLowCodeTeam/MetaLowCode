@@ -127,10 +127,10 @@ export default {
             return this.$refs.EntityListRefs.getCurrentExposed();
         },
         refresh(){
-            this.$refs.EntityListRefs.refreshList();
+            this.$refs.EntityListRefs?.refreshList();
         },
         setParentFormRef(formRef){
-            this.$refs.EntityListRefs.setParentFormRef(formRef);
+            this.$refs.EntityListRefs?.setParentFormRef(formRef);
         }
 	},
 };

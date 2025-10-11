@@ -85,10 +85,10 @@ export default {
             return this.$refs.listSubForm.getCurrentExposed();
         },
         refresh(){
-            this.$refs.listSubForm.refresh();
+            this.$refs.listSubForm?.refresh();
         },
         setParentFormRef(formRef){
-           this.$refs.listSubForm.setParentFormRef(formRef);
+           this.$refs.listSubForm?.setParentFormRef(formRef);
         },
 	},
 };
