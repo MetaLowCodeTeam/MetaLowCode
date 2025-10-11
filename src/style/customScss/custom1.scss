@@ -49,7 +49,7 @@ $--top-nav-text-color: #4b4a61;
         align-items: center;
         justify-content: flex-end;  /* 里面的内容也靠右排 */
         .scrollbar-demo-item {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: normal;
             &.active {
                 color: var(--el-color-primary) !important;
@@ -112,11 +112,11 @@ $--top-nav-text-color: #4b4a61;
 }
 
 .aminui-side {
+    background: url('@/assets/imgs/menu-bg.png') no-repeat center center;
+    background-size: 100% 100%;
+    background-position: center;
+    overflow: hidden;
     .adminui-side-scroll {
-        background: url('@/assets/imgs/menu-bg.png') no-repeat center center;
-        background-size: 100% 100%;
-        background-position: center;
-        overflow: hidden;
         .el-menu {
             background: transparent;
             .el-sub-menu__title {
@@ -147,6 +147,10 @@ $--top-nav-text-color: #4b4a61;
                 }
             }
         }
+    }
+    .adminui-side-bottom {
+        background: transparent;
+        border-top: 0;
     }
 
 }
