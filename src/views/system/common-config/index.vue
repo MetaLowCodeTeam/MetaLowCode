@@ -1152,7 +1152,6 @@ const showTab = (code) => {
 }
 .common-config {
     padding: 20px;
-    padding-bottom: 0;
     .config-label {
         position: relative;
         .is-required {
