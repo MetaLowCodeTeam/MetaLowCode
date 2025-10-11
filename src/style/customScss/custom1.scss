@@ -30,14 +30,13 @@ $--top-nav-text-color: #4b4a61;
 	}
 	.top-more-nav {
 		color: #{$--top-nav-text-color} !important;
-        &.left {
-            display: none;
-        }
-        &.right {
-            display: flex !important;
-            margin-left: -30px;
-            margin-right: -30px;
-        }
+        // &.left {
+            // display: none;
+        // }
+        // &.right {
+        //     display: flex !important;
+        //     margin-left: -30px;
+        // }
 	}
 	.adminui-header-center {
         // margin-left: auto;

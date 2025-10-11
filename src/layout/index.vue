@@ -21,37 +21,38 @@
                     </li>
                 </ul> -->
             </div>
-            <el-tooltip effect="light" placement="bottom-start">
-                <template #content>
-                    <div class="top-more-nav-content">
-                        <el-row :gutter="10">
-                            <el-col :span="6" v-for="(item,inx) in menu" :key="inx">
-                                <div
-                                    class="top-more-nav-content-item yichu"
-                                    :title="item.meta.title"
-                                    @click="showMenu(item)"
-                                    :class="pmenu.path == item.path ? 'active' : '' "
-                                >
-                                    <el-icon :style="{'color':item.meta.iconColor}" class="menu-icon mr-2">
-                                        <component :is="item.meta.icon || 'el-icon-menu'" />
-                                    </el-icon>
-                                    {{ item.meta.title }}
-                                </div>
-                            </el-col>
-                        </el-row>
-                    </div>
-
-                </template>
-                <span class="top-more-nav left" v-if="menu.length > 4">
-                    <el-icon size="20"><Menu /></el-icon>
-                </span>
-            </el-tooltip>
+            
 
             <div
                 class="adminui-header-center"
                 v-if="!ismobileFn"
                 :style="{'width': getHeaderCenterWidth}"
             >
+                <el-tooltip effect="light" placement="bottom-start">
+                    <template #content>
+                        <div class="top-more-nav-content">
+                            <el-row :gutter="10">
+                                <el-col :span="6" v-for="(item,inx) in menu" :key="inx">
+                                    <div
+                                        class="top-more-nav-content-item yichu"
+                                        :title="item.meta.title"
+                                        @click="showMenu(item)"
+                                        :class="pmenu.path == item.path ? 'active' : '' "
+                                    >
+                                        <el-icon :style="{'color':item.meta.iconColor}" class="menu-icon mr-2">
+                                            <component :is="item.meta.icon || 'el-icon-menu'" />
+                                        </el-icon>
+                                        {{ item.meta.title }}
+                                    </div>
+                                </el-col>
+                            </el-row>
+                        </div>
+
+                    </template>
+                    <span class="top-more-nav left" v-if="menu.length > 4">
+                        <el-icon size="16"><Menu /></el-icon>
+                    </span>
+                </el-tooltip>
                 <el-scrollbar :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
                         <p
@@ -69,7 +70,7 @@
                     </div>
                 </el-scrollbar>
             </div>
-            <el-tooltip effect="light" placement="bottom-start">
+            <!-- <el-tooltip effect="light" placement="bottom-start">
                 <template #content>
                     <div class="top-more-nav-content">
                         <el-row :gutter="10">
@@ -93,7 +94,7 @@
                 <span class="top-more-nav right" v-if="menu.length > 4">
                     <el-icon size="16"><Menu /></el-icon>
                 </span>
-            </el-tooltip>
+            </el-tooltip> -->
             <div class="adminui-header-right">
                 <userbar></userbar>
             </div>
