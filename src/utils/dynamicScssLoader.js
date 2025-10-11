@@ -23,7 +23,7 @@ class DynamicScssLoader {
 
     try {
       // 获取应用基础路径
-      const basePath = import.meta.env.VITE_APP_PATH || '/';
+      const basePath = '/';
       
       // 构建CSS文件路径
       const cssPath = `${basePath}css/${scssFileName}.css`;
