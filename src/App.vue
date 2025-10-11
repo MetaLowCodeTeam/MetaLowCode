@@ -18,21 +18,13 @@
 
 <script setup>
 import {
-    getCurrentInstance,
-    computed,
-    reactive,
     onBeforeMount,
     inject,
     ref,
-    nextTick,
-    onMounted,
-    onBeforeUnmount
 } from "vue";
 import mlCustomerService from "@/components/mlCustomerService/index.vue";
 import colorTool from "@/utils/color";
-import useCheckStatusStore from "@/store/modules/checkStatus";
 import { getPublicSetting } from "@/api/setting";
-import http from "@/utils/request";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { getLoginUser, tokenLogin } from "@/api/user";
@@ -41,27 +33,12 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import loginManager from "@/utils/loginManager";
 import dynamicScssLoader from "@/utils/dynamicScssLoader";
 const { getEntityList, setPublicSetting, setUserInfo } = useCommonStore();
-const { setNewMsgNum } = useCheckStatusStore();
 const { publicSetting } = storeToRefs(useCommonStore());
 const router = useRouter();
-const instance = getCurrentInstance();
 const $CONFIG = inject("$CONFIG");
 const $TOOL = inject("$TOOL");
-let { proxy } = instance;
 let isShowBody = ref(false);
-let config = reactive({
-    size: "default",
-    zIndex: 2000,
-    button: {
-        autoInsertSpace: false,
-    },
-});
-let loading = ref(false);
-// computed()
-let locale = computed(() => {
-    // return $TOOL.data.get("APP_LANG");
-    return ""
-});
+
 const appPath = import.meta.env.VITE_APP_PATH;
 onBeforeMount(async () => {
     const app_color =

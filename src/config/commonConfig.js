@@ -61,7 +61,6 @@ export default [
                 key: "customScssFile",
                 type: "select",
                 options: customImportScss,
-                selectWidth: "300px",
             },
             {
                 label: "版本号",

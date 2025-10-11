@@ -550,7 +550,7 @@ $--dashboard-container-bg-color: #fff;
     .dashboard {
         background: #{$--dashboard-bg-color};
         .widget-body__content {
-            background: #{$--dashboard-container-bg-color};
+            background: initial;
         }
     }
 }

@@ -15,11 +15,6 @@ $--top-nav-text-color: #4b4a61;
 	border-bottom: 1px solid #e7e8e9;
 	display: flex;
 	justify-content: space-between;
-	.top-more-nav {
-		margin-left: auto;
-		flex: 0 0 auto;
-		margin-right: 5px;
-	}
 	// justify-content: left;
 	.scrollbar-demo-item {
 		color: #{$--top-nav-text-color} !important;
@@ -35,12 +30,21 @@ $--top-nav-text-color: #4b4a61;
 	}
 	.top-more-nav {
 		color: #{$--top-nav-text-color} !important;
+        &.left {
+            display: none;
+        }
+        &.right {
+            display: flex !important;
+            margin-left: -30px;
+            margin-right: -30px;
+        }
 	}
 	.adminui-header-center {
-        margin-left: auto;
-        flex: 0 0 auto;
-		width: calc(100% - 1000px) !important;
-		margin-right: 10px;
+        // margin-left: auto;
+        // flex: 0 0 auto;
+		// max-width: calc(100% - 1000px) !important;
+        // width: auto !important;
+		// margin-right: 10px;
         display: flex;
         align-items: center;
         justify-content: flex-end;  /* 里面的内容也靠右排 */
@@ -109,7 +113,12 @@ $--top-nav-text-color: #4b4a61;
 
 .aminui-side {
     .adminui-side-scroll {
+        background: url('@/assets/imgs/menu-bg.png') no-repeat center center;
+        background-size: 100% 100%;
+        background-position: center;
+        overflow: hidden;
         .el-menu {
+            background: transparent;
             .el-sub-menu__title {
                 &:hover {
                     background: none;
@@ -241,3 +250,43 @@ $--top-nav-text-color: #4b4a61;
         border-left-color: #5AB75E;
     }
 }
+
+// 仪表盘背景颜色
+$--dashboard-bg-color: #F1F5FF;
+// 每个容器背景颜色
+$--dashboard-container-bg-color: #fff;
+
+.adminui-main {
+    background: #{$--dashboard-bg-color};
+    .dashboard {
+        background: #{$--dashboard-bg-color};
+        .widget-body__content {
+            background: initial;
+        }
+    }
+    .customize-menu-list {
+        padding: 15px;
+        border-radius: 4px;
+    }
+    .table-box {
+        // padding: 10px;
+        // background: #fff;
+        // height: calc(100% - 50px) !important;
+        border-radius: 4px;
+        .table-div {
+            padding: 0 5px 5px 5px;
+            box-sizing: border-box;
+            background: #fff;
+        }
+    }
+}
+
+// 统计数值组件背景样式
+.form-widget-list .widget-statistic,
+.adminui-main .dashboard .widget-statistic{
+    // background: url('@/assets/imgs/statistic-bg.png') no-repeat center center;
+    // background-size: 100% 100%;
+    // background-position: center;
+    // overflow: hidden;
+}
+
