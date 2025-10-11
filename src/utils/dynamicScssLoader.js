@@ -22,34 +22,28 @@ class DynamicScssLoader {
     }
 
     try {
-      // 动态导入SCSS文件
-      const scssPath = `../style/customScss/${scssFileName}.scss`;
-      const scssModule = await import(/* @vite-ignore */ scssPath);
+      // 获取应用基础路径
+      const basePath = import.meta.env.VITE_APP_PATH || '/';
       
-      // 创建style标签注入CSS内容
-      const styleElement = document.createElement('style');
-      styleElement.id = `dynamic-scss-${scssFileName}`;
-      styleElement.type = 'text/css';
+      // 构建CSS文件路径
+      const cssPath = `${basePath}css/${scssFileName}.css`;
       
-      // 如果导入的是CSS字符串
-      if (typeof scssModule.default === 'string') {
-        styleElement.textContent = scssModule.default;
-      } else if (scssModule.default && scssModule.default.toString) {
-        styleElement.textContent = scssModule.default.toString();
-      } else {
-        console.warn('SCSS文件内容格式不正确');
-        return;
-      }
+      // 创建link标签加载CSS文件
+      const linkElement = document.createElement('link');
+      linkElement.id = `dynamic-scss-${scssFileName}`;
+      linkElement.rel = 'stylesheet';
+      linkElement.type = 'text/css';
+      linkElement.href = cssPath;
       
       // 添加到head
-      document.head.appendChild(styleElement);
+      document.head.appendChild(linkElement);
       
       // 记录当前加载的文件
       this.currentLoadedFile = scssFileName;
       
-      console.log(`成功加载SCSS文件: ${scssFileName}.scss`);
+      console.log(`成功加载SCSS文件: ${scssFileName}.css`);
     } catch (error) {
-      console.error(`加载SCSS文件失败: ${scssFileName}.scss`, error);
+      console.error(`加载SCSS文件失败: ${scssFileName}.css`, error);
     }
   }
 

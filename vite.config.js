@@ -131,7 +131,11 @@ export default ({
             rollupOptions,
             commonjsOptions: {
                 include: /node_modules|lib/  //这里记得把lib目录加进来，否则生产打包会报错！！
-            }
+            },
+            // 确保CSS文件单独输出
+            cssCodeSplit: true,
+            // 复制自定义SCSS文件到构建目录
+            copyPublicDir: true
         },
         esbuild,
         optimizeDeps,

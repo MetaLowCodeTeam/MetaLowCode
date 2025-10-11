@@ -7,8 +7,8 @@
 		"serve": "vite --force",
 		"start": "vite --force",
 		"preview": "vite preview",
-		"build": "vite build",
-		"fast-build": "vite build --config fastvite.config.js"
+		"build": "vite build && node scripts/build-custom-css.js",
+		"fast-build": "vite build --config fastvite.config.js && node scripts/build-custom-css.js"
 	},
 	"dependencies": {
 		"@antv/s2-vue": "^1.5.0",
