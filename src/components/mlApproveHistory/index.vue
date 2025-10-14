@@ -242,10 +242,51 @@ const getTaskDetailsById = async () => {
     if(res) {
         approveHistory.value = formatResData(res.data.approvalStepsList);
         isComplexWorkFlow.value = res.data.flowType == 2;
+        let newNodeConfig = {};
+        if(res.data.approvalTask){
+            let { approvalTask } = res.data;
+            newNodeConfig = {
+                nodeName: "发起人",
+                type: 0,
+                // 谁可以审批
+                nodeRoleType: 3,
+                isHighlight: true,
+                // 指定用户
+                nodeRoleList: [
+                    { id: 1, name: res.data.approvalStepsList ? res.data.approvalStepsList[0].stepUserName : "" }
+                ],
+                // 发起条件
+                filter: {
+                    equation: "",
+                    items: [],
+                },
+                childNode: formatAttrMore(approvalTask.attrMore ? JSON.parse(approvalTask.attrMore) : [], approvalTask.currentNode)
+            };
+        }
+        nodeConfig.value = newNodeConfig;
     }
     loading.value = false;
 }
 
+const formatAttrMore = (attrMore, currentNode) => {
+    let newAttrMore = {};
+    let current = newAttrMore;
+    // 遍历 attrMore，将每个元素链接到其 childNode
+    attrMore.forEach((item, index) => {
+        if (index === 0) {
+            item.isHighlight = currentNode > index;
+            item.highlightBefore = currentNode >= index;
+            newAttrMore = item;
+            current = newAttrMore;
+        } else {
+            item.isHighlight = currentNode > index;
+            item.highlightBefore = currentNode >= index;
+            current.childNode = item;
+            current = current.childNode;
+        }
+    });
+    return newAttrMore;
+}
 
 
 const getTimelineType = (index, activity) => {

@@ -247,7 +247,7 @@ export default {
             }
         },
         initFormWidgets(refName) {
-            let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets()
+            let fieldWidgets = this.$refs.vfDesigner.getFieldWidgets(null, true);
             let containerWidgets = this.$refs.vfDesigner.getContainerWidgets(null, true);
             this.$refs[refName].setFieldWidgets(fieldWidgets)
             this.$refs[refName].setContainerWidgets(containerWidgets)

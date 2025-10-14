@@ -208,6 +208,7 @@ const copyActionRule = (inx) => {
 
 // 设置字段组件
 const setFieldWidgets = async (widgets) => {
+    console.log(widgets,'-widgets')
     // 先处理原始数据
     let newWidgets = widgets.map((item) => {
         let value = item.field?.options?.name;
