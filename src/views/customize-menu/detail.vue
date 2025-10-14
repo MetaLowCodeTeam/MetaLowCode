@@ -267,7 +267,7 @@
                                 />
                             </div>
                         </template>
-						<el-row class="group-el-button" v-if="detailParamConf.showProcessBlock && (contentSlots.processBlockUnshift || recordApproval || contentSlots.processBlockPush)">
+						<el-row class="group-el-button" v-if="detailParamConf.showProcessBlock && (contentSlots.processBlockUnshift || recordApproval || contentSlots.processBlockPush) && cutTab == 'detail'">
                             <el-col :span="24" v-if="contentSlots.processBlockUnshift">
                                 <slot name="processBlockUnshift"></slot>
                             </el-col>
@@ -587,7 +587,10 @@ const newRelatedConfirm = async () => {
 		formatNewRelated(res.data.ADD);
 		if (cutTab.value == "detail") {
 			initData();
-		} else {
+		} else if(cutTab.value.includes('detail_custom_component_all') || cutTab.value.includes('detail_custom_component_pc')) {
+            // 如果是自定义组件可添加对应的方法用于刷新
+            customComponentRefs.value?.refresh();
+        } else {
 			detailTabComRefs.value.initData();
 		}
 	}
@@ -975,7 +978,11 @@ const editColumnConfirm = (v) => {
 const onConfirm = () => {
 	if (cutTab.value == "detail") {
 		getLayoutList();
-	} else {
+	} else if(cutTab.value.includes('detail_custom_component_all') || cutTab.value.includes('detail_custom_component_pc')) {
+        // 如果是自定义组件可添加对应的方法用于刷新
+        customComponentRefs.value?.refresh();
+    }
+    else {
 		detailTabComRefs.value.initData();
 	}
     customButtonAfterEventCb()
