@@ -348,7 +348,7 @@
                             <el-col
                                 :span="24"
                                 v-if="
-                                    currentButton.action != 1 &&
+                                    (currentTab === 'pcTop' || currentTab === 'appList' ? currentButton.action != 1 : true) &&
                                     currentButton.availableType == 1
                                 "
                             >

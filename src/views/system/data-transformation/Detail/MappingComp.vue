@@ -43,7 +43,7 @@
 			</el-button>
 		</div>
 	</div>
-	<ml-dialog :title="title" width="600px" v-model="dialogConf.show">
+	<ml-dialog :title="title" width="600px" v-model="dialogConf.show" appendToBody>
 		<el-row :gutter="10" class="text-center">
 			<el-col :span="9">{{ targetEntity.label }}</el-col>
 			<el-col :span="9" :offset="6">
