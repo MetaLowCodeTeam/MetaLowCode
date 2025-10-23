@@ -2169,13 +2169,13 @@ const getTableList = async () => {
         if(filterPcColumn.length > 0){
             let filterParam = {
                 entityName: entityName.value,
-                recordIdList: sliceTable.value.map(item => item[idFieldName.value]),
+                recordIdList: tableData.value.map(item => item[idFieldName.value]),
                 filterList: filterPcColumn
             };
             let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
             if(checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
                 let filterRes = checkCustomButtonFiltersRes.data;
-                sliceTable.value.forEach(el => {
+                tableData.value.forEach(el => {
                     filterRes.forEach(item => {
                         if(item.id == el[idFieldName.value]){
                             el.customBtnShow = {...item};

@@ -27,7 +27,7 @@
                         'fontWeight': item.fontWeight == 1 ? 'normal' : 'bold',
                     }"
                     @click.stop="navClick(item)"
-                    v-if="designer || item.type != 3 || (item.type == 3 && item.pcShow)"
+                    v-if="(designer || item.type != 3 || (item.type == 3 && item.pcShow)) && $TOOL.checkRole('r' + item.entityCode + '-1')"
                 >
                     <div 
                         class="item-icon" 
