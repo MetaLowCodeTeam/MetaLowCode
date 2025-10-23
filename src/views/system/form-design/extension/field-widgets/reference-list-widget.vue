@@ -93,8 +93,8 @@
 		>
 			<ReferenceSearchUser
 				ref="referSU"
-				:entity="entity"
-				:refField="curRefField"
+				:entity="resetRefEntity || entity"
+				:refField="resetRefField || curRefField"
 				:extraFilter="searchFilter"
                 :extraSort="extraSort"
                 :filterConditions="filterConditions"
@@ -104,8 +104,8 @@
 			></ReferenceSearchUser>
 			<ReferenceSearchTable
 				ref="referST"
-				:entity="entity"
-				:refField="curRefField"
+				:entity="resetRefEntity || entity"
+				:refField="resetRefField || curRefField"
 				:extraFilter="searchFilter"
 				:extraSort="extraSort"
 				:filterConditions="filterConditions"
@@ -233,6 +233,8 @@ export default {
 			showReferenceDialogFlag: false,
             treeDialogConf: {},
 			entity: null,
+            resetRefEntity: null,
+            resetRefField: null,
 			curRefField: null,
 			searchFilter: "",
             extraSort: "",
@@ -606,6 +608,11 @@ export default {
             this.onFieldChangeEvent(this.fieldModel);
             this.viewDialogConf.show = false;
         },
+         // 重置当前引用组件参数
+         resetCurRefParam(refEntity, fieldName) {
+            this.resetRefEntity = refEntity;
+            this.resetRefField = fieldName;
+        }
 	},
 };
 </script>
