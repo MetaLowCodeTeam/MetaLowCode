@@ -38,6 +38,18 @@
 	<div>
 		<div class="label-title mb-10">允许修改字段</div>
 		<div class="edit-field-list-box" v-if="entityTabs?.length == 1">
+            <div v-if="entityTabs[0].isSubForm">
+                <el-checkbox 
+                    :model-value="getSubFormConfig(entityTabs[0].name).isAlowAdd"
+                    @change="updateSubFormConfig(entityTabs[0].name, 'isAlowAdd', $event)"
+                    label="子表是否允许新增">
+                </el-checkbox>
+                <el-checkbox 
+                    :model-value="getSubFormConfig(entityTabs[0].name).isAlowDel"
+                    @change="updateSubFormConfig(entityTabs[0].name, 'isAlowDel', $event)"
+                    label="子表是否允许删除">
+                </el-checkbox>
+            </div>
 			<div
 				class="edit-field-list"
 				v-for="(field, fieldInx) of myFormData.modifiableFields"
@@ -71,13 +83,25 @@
 				:key="inx"
 			>
                 <div class="edit-field-list-box">
+                    <div v-if="tab.isSubForm">
+                        <el-checkbox 
+                            :model-value="getSubFormConfig(tab.name).isAlowAdd"
+                            @change="updateSubFormConfig(tab.name, 'isAlowAdd', $event)"
+                            label="子表是否允许新增">
+                        </el-checkbox>
+                        <el-checkbox 
+                            :model-value="getSubFormConfig(tab.name).isAlowDel"
+                            @change="updateSubFormConfig(tab.name, 'isAlowDel', $event)"
+                            label="子表是否允许删除">
+                        </el-checkbox>
+                    </div>
                     <div
                         class="edit-field-list"
                         v-for="(field, fieldInx) of tab.fields"
                         :key="fieldInx"
                     >
                         {{ field.label }}
-                        <span class="fr del-icon" @click="subDelSelectedField(field)">
+                        <span class="fr del-icon" @click="subDelSelectedField(field, tab.name)">
                             <el-icon size="16">
                                 <ElIconClose />
                             </el-icon>
@@ -127,6 +151,42 @@ let myFormData = ref(props.formData);
 
 let SelectFieldDialog = ref(false);
 
+// 初始化子表配置
+const initSubFormConfig = () => {
+    if (!myFormData.value.otherConfig) {
+        myFormData.value.otherConfig = {};
+    }
+    if (!myFormData.value.otherConfig.detailEntityConfig) {
+        myFormData.value.otherConfig.detailEntityConfig = [];
+    }
+};
+
+// 获取子表配置
+const getSubFormConfig = (entityName) => {
+    const config = myFormData.value.otherConfig.detailEntityConfig.find(
+        item => item.entityName === entityName
+    );
+    return config || { entityName, isAlowAdd: false, isAlowDel: false };
+};
+
+// 更新子表配置
+const updateSubFormConfig = (entityName, field, value) => {
+    const configIndex = myFormData.value.otherConfig.detailEntityConfig.findIndex(
+        item => item.entityName === entityName
+    );
+    
+    if (configIndex !== -1) {
+        myFormData.value.otherConfig.detailEntityConfig[configIndex][field] = value;
+    } else {
+        myFormData.value.otherConfig.detailEntityConfig.push({
+            entityName,
+            isAlowAdd: false,
+            isAlowDel: false,
+            [field]: value
+        });
+    }
+};
+
 //  打开选择字段弹框
 const openSelectFieldDialog = () => {
 	SelectFieldDialog.value.openDialog();
@@ -138,8 +198,9 @@ const delSelectedField = (inx) => {
 };
 
 // 多页签删除字段
-const subDelSelectedField = (field) => {
-    let inx = myFormData.value.modifiableFields.findIndex(item => item.name === field.name)
+const subDelSelectedField = (field, tabName) => {
+    // 先从底层数据中删除字段
+    let inx = myFormData.value.modifiableFields.findIndex(item => item.name === field.name && item.formEntity === tabName);
     delSelectedField(inx);
 }
 
@@ -151,7 +212,7 @@ const fieldRequiredChange = (field) => {
 };
 
 watch(
-	() => myFormData.value.modifiableFields.length,
+	() => myFormData.value.modifiableFields,
 	() => {
 		// 格式化字段页签
 		formatFieldsTab();
@@ -160,8 +221,13 @@ watch(
 );
 
 onMounted(() => {
+	initSubFormConfig();
 	formatFieldsTab();
 });
+
+
+
+
 
 // 实体页签
 let entityTabs = ref([]);
@@ -185,6 +251,7 @@ const formatFieldsTab = () => {
 					label: el.formEntityLabel,
 					name: el.formEntity,
 					fields: [el],
+                    isSubForm: true,
 				});
 			}
 			// 否则就是记录过
@@ -214,4 +281,6 @@ const formatFieldsTab = () => {
 	});
 	entityTabs.value = tabList;
 };
+
+
 </script>

@@ -369,7 +369,8 @@ const initFormLayout = async (formLayoutId) => {
                             vFormRef.value.disableForm();
                             nextTick(() => {
                                 let modifiableFields = approvalTask.value?.modifiableFields || [];
-                                // console.log(modifiableFields,'modifiableFields');
+                                let otherConfig = approvalTask.value?.otherConfig || {};
+                                let detailEntityConfig = otherConfig?.detailEntityConfig || [];
                                 // 主表
                                 // 显示可编辑的字段
                                 let enableWidgets = [];
@@ -400,9 +401,24 @@ const initFormLayout = async (formLayoutId) => {
                                             subFormRequiredWidgets.push(subFormField);
                                         }
                                     });
+                                    
                                     subFormRef.setWidgetDisabledOfSubForm(subFormEnableWidgets, false);
                                     subFormRef.setWidgetRequiredOfSubForm(subFormRequiredWidgets, true);
                                     subFormRef.setWidgetHiddenOfSubForm(subFormEnableWidgets, false);
+                                    // 获取审批子表单的配置
+                                    let subFormDetailEntityConfig = detailEntityConfig.find(item => item.entityName == subForm);
+                                    // 允许新增
+                                    if(!subFormDetailEntityConfig?.isAlowAdd) {
+                                        subFormRef.widget.options.disabled = false;
+                                        subFormRef.actionDisabled = false;
+                                        subFormRef.setInsertDisabled(false);
+                                    }
+                                    // 允许删除
+                                    if(!subFormDetailEntityConfig?.isAlowDel) {
+                                        subFormRef.widget.options.disabled = false;
+                                        subFormRef.actionDisabled = false;
+                                        subFormRef.setDeleteDisabled(false);
+                                    }
                                 });
                                 // console.log(vFormRef.value.getWidgets('从表'),'vFormRef.value.getWidgets()');
                                 vFormRef.value.enableWidgets(enableWidgets);
