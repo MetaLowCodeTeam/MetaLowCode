@@ -140,6 +140,19 @@
                     </el-radio-group>
                 </div>
             </div>
+            <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
+                <div class="label-title mb-3">撤回设置</div>
+                <div class="mb-10 mt-10">
+                    <el-checkbox v-model="myFormData.approvalCannotBeWithdrawn" label="禁止发起人撤回审批" />
+                    <el-tooltip effect="dark" content="数据审批中，审批发起人可以主动撤回审批" placement="top">
+                        <span class="ml-3">
+                            <el-icon>
+                                <ElIconQuestionFilled />
+                            </el-icon>
+                        </span>
+                    </el-tooltip>
+                </div>
+            </div>
             <!-- 审批人为空时 -->
             <div class="work-flow-conditions mt-20" v-if="myFormData.approvalType == 1">
                 <div class="label-title mb-3">审批人为空时</div>

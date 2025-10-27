@@ -52,6 +52,8 @@ export const NodeDefaultData = {
         addSignaturesApproval: false,
         // 禁止审批人驳回
         prohibitRejection: false,
+        // 禁止发起人撤回
+        approvalCannotBeWithdrawn: false,
         // 驳回设置  类型 （1.驳回至未提交 2.驳回至上一步审核 3.驳回至任意步骤）
         rejectType: 1,
         // 审批人为空时（1.自动通过 2.指定审批人）

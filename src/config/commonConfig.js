@@ -62,11 +62,11 @@ export default [
                 type: "select",
                 options: customImportScss,
             },
-            {
-                label: "版本号",
-                key: "dbVersion",
-                type: "input",
-            },
+            // {
+            //     label: "版本号",
+            //     key: "dbVersion",
+            //     type: "input",
+            // },
             {
                 label: "是否开启岗位模块",
                 key: "openJobPosition",

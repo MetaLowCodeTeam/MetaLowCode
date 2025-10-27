@@ -332,6 +332,8 @@ const initData = async () => {
         // 如果存在列
         if (tableColumn.value.length > 0) {
             refreshData();
+        }else {
+            loading.value = false;
         }
     }else {
         loading.value = false;

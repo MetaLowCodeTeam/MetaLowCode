@@ -11,6 +11,8 @@
                 v-model="conditionConf"
                 :entityName="entityCode"
                 enableSql
+                :enableSavePlanQuery="false"
+                :enableAdd="false"
             />
         </el-collapse-item>
     </el-collapse>

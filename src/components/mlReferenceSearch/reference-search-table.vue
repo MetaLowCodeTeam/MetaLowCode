@@ -94,7 +94,7 @@
 								type="primary"
 								plain
 								@click="onSave"
-								v-if="$TOOL.checkRole('r6008')"
+								v-if="$TOOL.checkRole('r6008') && enableSavePlanQuery"
                                 size="default"
 							>
 								保存查询面板
@@ -104,7 +104,7 @@
 								plain
 								@click="onAdd"
                                 size="default"
-                                v-if="$TOOL.checkRole('r' + queryEntityCode(referenceEntityName) + '-2') && !isDetailEntityFlag(referenceEntityName)"
+                                v-if="$TOOL.checkRole('r' + queryEntityCode(referenceEntityName) + '-2') && !isDetailEntityFlag(referenceEntityName) && enableAdd"
 							>
 								新建
 							</el-button>
@@ -235,6 +235,16 @@ export default {
         hasFooterButton: {
             type: Boolean,
             default: false,
+        },
+        // 是否开启保存查询值
+        enableSavePlanQuery: {
+            type: Boolean,
+            default: true,
+        },
+        // 是否开启添加条件
+        enableAdd: {
+            type: Boolean,
+            default: true,
         },
 	},
 	watch: {

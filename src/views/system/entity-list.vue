@@ -248,7 +248,6 @@ const getEntityList = () => {
         let res = await getEntitySet(appAbbr.value || "NOT_APP");
         if (res && res.data) {
             entityItems.value = res.data;
-            console.log(entityItems.value,'entityItems.value')
             refreshCache(res.data || []);
         }
         resolve();

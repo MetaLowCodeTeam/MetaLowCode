@@ -261,7 +261,9 @@
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
                                             :multipleSelectEntity="item.referTo?.split(',')"
                                             :showLabelSelectNumber="false"
-                                            @recordSelected="(event)=> setReferRecord(event,item) "
+                                            @recordSelected="(event)=> setReferRecord(event,item)"
+                                            :enableSavePlanQuery="enableSavePlanQuery"
+                                            :enableAdd="enableAdd"
                                         />
                                     </ml-dialog>
                                 </div>
@@ -682,7 +684,9 @@
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
                                             :multipleSelectEntity="item.referTo?.split(',')"
                                             :showLabelSelectNumber="false"
-                                            @recordSelected="(event)=> setReferRecord(event,item) "
+                                            @recordSelected="(event)=> setReferRecord(event,item)"
+                                            :enableSavePlanQuery="enableSavePlanQuery"
+                                            :enableAdd="enableAdd"
                                         />
                                     </ml-dialog>
                                 </div>
@@ -773,6 +777,10 @@ export default {
         outerReferenceConfig: { type: Object, default: () => null },
         // 是否立即更新modelValue
         someCondition: { type: Boolean, default: true },
+        // 是否开启保存查询值
+        enableSavePlanQuery: { type: Boolean, default: true },
+        // 是否开启添加条件
+        enableAdd: { type: Boolean, default: true },
     },
     emits: ["enterInput", "confirm", "cancel", "onSaveAlias"],
     data() {

@@ -475,8 +475,7 @@ const openDialog = async (v) => {
     // 重置globalDsv为默认状态
     globalDsv.value = globalDsvDefaultData();
 
-    row.dialogTitle = "Loading...";
-    row.customDialogTitle = v.customDialogTitle;
+    
     row.detailId = v.detailId;
     row.formEntityId = v.formEntityId;
     row.mainDetailField = v.mainDetailField;
@@ -494,6 +493,12 @@ const openDialog = async (v) => {
     row.disableWidgets = v.disableWidgets;
     row.data = v.data;
     row.actionType = v.actionType;
+    row.customDialogTitle = v.customDialogTitle;
+    if(row.detailId) {
+        row.dialogTitle = "编辑：" + row[row.nameFieldName];
+    }else {
+        row.dialogTitle = "新建：" + queryEntityLabelByName(row.entityName);
+    }
     // 表单默认赋值
     row.defaultFormData = v.defaultFormData;
     paramDialogConf.value = v.dialogConf;
@@ -575,7 +580,6 @@ const initFormLayout = async () => {
                 globalDsv.value.fileDownloadPrefix =
                     res.data.formUploadParam.fileDownloadPrefix;
             }
-
             // 是编辑
             if (row.detailId) {
                 // 根据数据渲染出页面填入的值，填过
@@ -680,7 +684,7 @@ const initFormLayout = async () => {
 							getFieldListOfEntityApi("creatable");
                             loading.value = false;
 						});
-					});
+					});　
                 });
             }
         }else {

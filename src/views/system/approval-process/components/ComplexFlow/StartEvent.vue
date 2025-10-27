@@ -50,6 +50,8 @@
                 @cancel="dialogIsShow = false"
                 @confirm="conditionConfirm"
                 :entityName="entityCode"
+                :enableSavePlanQuery="false"
+                :enableAdd="false"
             />
         </mlDialog>
     </div>

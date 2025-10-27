@@ -1109,7 +1109,8 @@ const getHeavyTaskApi3 = async () => {
 const openAutoBackup = () => {
     return new Promise((resolve) => {
         if(!confData.databaseDumpPath){
-            confList.value[0].config[8].isError = true
+            let findInx = confList.value[0].config.findIndex(item => item.key == 'databaseDumpPath');
+            confList.value[0].config[findInx].isError = true
             ElMessage.error("请填写备份命令地址")
             return resolve(false)
         }

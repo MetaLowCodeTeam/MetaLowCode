@@ -151,6 +151,10 @@ export const referenceSchema = {
         confirmSelect: false,
         // 确认提示内容
         confirmSelectContent: "",
+        // 隐藏保存查询面板
+        hideSavePlanQueryButton: false,
+        // 隐藏新建按钮
+        hideAddButton: false,
         // 搜索字段
         searchFields: [],
         // 子表单内禁止多选
@@ -219,6 +223,10 @@ export const referenceListSchema = {
         filterConditions: {},
         // 开启用户部门树
         useUserDepartmentTree: false,
+        // 隐藏保存查询面板
+        hideSavePlanQueryButton: false,
+        // 隐藏新建按钮
+        hideAddButton: false,
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,

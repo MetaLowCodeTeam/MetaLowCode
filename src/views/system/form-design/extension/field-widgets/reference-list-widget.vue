@@ -114,6 +114,8 @@
 				:showMultipleSelectConfirm="false"
 				:defaultSelected="fieldModel"
                 :multipleSelectEntity="multipleSelectEntity"
+                :enableSavePlanQuery="!field.options.hideSavePlanQueryButton"
+                :enableAdd="!field.options.hideAddButton"
 				v-else-if="referenceDialogType == 'table'"
 			></ReferenceSearchTable>
             <ReferenceSearchTree

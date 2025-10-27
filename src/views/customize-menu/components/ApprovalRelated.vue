@@ -306,7 +306,7 @@ const withdrawApproval = () => {
             emits("onRevokeIng");
 			approvalDialog.loading = true;
             // 是否复杂工作流
-            let isFlowVariables = !!myApproval.value.flowVariables;
+            let isFlowVariables = myApproval.value?.flowType == 2;
             if(isFlowVariables){
                 // 复杂工作流
                 let res = await http.post(
