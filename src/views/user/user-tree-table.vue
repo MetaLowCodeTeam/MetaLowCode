@@ -76,6 +76,7 @@
                 :advFilter="advFilter"
                 @highlightClick="highlightClick"
                 @changeSwitch="changeSwitch"
+                @onLoadFinish="onLoadFinish"
             >
                 <template #addButton>
                     <el-button
@@ -157,7 +158,7 @@
             @onRefresh="onRefresh"
             :disableWidgets="disableWidgets"
         /> -->
-        <mlCustomDetail ref="mlCustomDetailRefs" entityName="User" @updateData="onRefresh" />
+        <mlCustomDetail ref="mlCustomDetailRefs" entityName="User" @updateData="onRefresh" :recordIds="recordIds" />
         <!-- 新建、编辑部门 -->
         <EditDepartment 
             ref="EditDepartmentRef"
@@ -340,6 +341,8 @@ export default {
             unDisableWidgets: [],
             // 部门树节点
             node:{},
+            // 记录id集
+            recordIds: [],
         };
     },
     computed: {
@@ -359,6 +362,9 @@ export default {
     methods: {
         checkRole(str) {
             return this.$TOOL.checkRole(str);
+        },
+        onLoadFinish(data) {
+            this.recordIds = data.map(item => item.userId);
         },
         // 重置
         resetting() {

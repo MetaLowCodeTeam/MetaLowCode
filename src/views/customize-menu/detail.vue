@@ -145,6 +145,7 @@
                                         :addConf="addConf"
                                         @confirm="newRelatedConfirm"
                                         @add="onAdd"
+                                        :modelName="modelName"
                                         :checkNewRelatedFilter="checkNewRelatedFilter"
                                     />
                                 </el-col>
@@ -218,6 +219,7 @@
                                     v-else-if="item.key == 'newRelated' && !item.hide"
                                     :entityName="entityName"
                                     :entityCode="entityCode"
+                                    :modelName="modelName"
                                     :addConf="addConf"
                                     @confirm="newRelatedConfirm"
                                     @add="onAdd"

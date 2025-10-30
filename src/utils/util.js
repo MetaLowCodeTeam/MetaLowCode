@@ -681,16 +681,17 @@ export const formatQueryByIdParam = (formFieldSchema) => {
 
 
 // 检测审批相关前置事件
-export const checkApprovalPreEvent = async (preEvent, vFormRef, elMessage) => {
+export const checkApprovalPreEvent = async (preEvent, vFormRef, elMessage, elMessageBox) => {
     // 如果没有前置事件 直接返回 通过
     if (!preEvent) {
         return true;
     }
     try {
-        const result = new Function('data','vFormRef','ElMessage', preEvent)(
+        const result = new Function('data','vFormRef','ElMessage','ElMessageBox', preEvent)(
             vFormRef.getFormData(false),
             vFormRef,
-            elMessage
+            elMessage,
+            elMessageBox
         );
         // 支持异步和同步：返回 false 则拦截，其他情况默认放行
         if (result && typeof result.then === 'function') {

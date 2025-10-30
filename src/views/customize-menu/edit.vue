@@ -28,12 +28,12 @@
             />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
-        <template #footer v-if="editParamConf.showFooter && customButtonList.length == 0">
+        <template #footer v-if="editParamConf.showFooter && showFooterButtonConfig.showFooter && customButtonList.length == 0">
             <slot name="beforeCancelBtn"></slot>
             <el-button
                 @click="cancel"
                 :loading="loading"
-                v-if="editParamConf.showCancelBtn"
+                v-if="editParamConf.showCancelBtn && showFooterButtonConfig.showCancelBtn"
             >
                 取消
             </el-button>
@@ -41,7 +41,7 @@
             <el-button
                 type="primary"
                 @click="confirm"
-                v-if="editParamConf.showConfirmBtn && (row.detailId ? checkModifiableEntity(row.detailId,row.approvalStatus?.value) : true)"
+                v-if="editParamConf.showConfirmBtn && showFooterButtonConfig.showConfirmBtn && (row.detailId ? checkModifiableEntity(row.detailId,row.approvalStatus?.value) : true)"
                 :loading="loading"
                 icon="Select"
             >
@@ -51,7 +51,7 @@
             <el-button
                 type="primary"
                 @click="confirmRefresh"
-                v-if="editParamConf.showConfirmRefreshBtn && (row.detailId ? checkModifiableEntity(row.detailId,row.approvalStatus?.value) : true)"
+                v-if="editParamConf.showConfirmRefreshBtn && showFooterButtonConfig.showConfirmRefreshBtn && (row.detailId ? checkModifiableEntity(row.detailId,row.approvalStatus?.value) : true)"
                 :loading="loading"
                 plain
                 icon="Refresh"
@@ -62,7 +62,7 @@
             <el-button
                 type="primary"
                 @click="confirmSaveAndSubmit"
-                v-if="editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
+                v-if="editParamConf.showConfirmAndSubmitBtn && showFooterButtonConfig.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3"
                 :loading="loading"
                 plain
                 icon="Stamp"
@@ -71,7 +71,7 @@
             </el-button>
             <slot name="afterConfirmAndSubmitBtn"></slot>
         </template>
-        <template #footer v-else>
+        <template #footer v-else-if="editParamConf.showFooter && showFooterButtonConfig.showFooter && customButtonList.length > 0">
             <template
                 v-for="(item,index) of customButtonList" :key="index"
             >
@@ -322,6 +322,22 @@ const loadMyLayoutConfig = async () => {
             btn.hidden = true;
             return;
         }
+        if(btn.key == 'cancel') {
+            btn.hidden = !showFooterButtonConfig.value.showCancelBtn;
+            return;
+        }
+        if(btn.key == 'save') {
+            btn.hidden = !showFooterButtonConfig.value.showConfirmBtn;
+            return;
+        }
+        if(btn.key == 'saveRefresh') {
+            btn.hidden = !showFooterButtonConfig.value.showConfirmRefreshBtn;
+            return;
+        }
+        if(btn.key == 'saveSubmit') {
+            btn.hidden = !showFooterButtonConfig.value.showConfirmAndSubmitBtn;
+            return;
+        }
         // 如果是编辑需要检测是否有权限
         if(row.detailId) {
             // 需要校验审批权限的按钮
@@ -439,6 +455,15 @@ let formId = ref("");
 // 是否显示保存并提交
 let isShowSaveAndSubmit = ref(false);
 
+// 底部按钮显示
+let showFooterButtonConfig = ref({
+    showFooter: true,
+    showCancelBtn: true,
+    showConfirmBtn: true,
+    showConfirmRefreshBtn: true,
+    showConfirmAndSubmitBtn: true,
+});
+
 const openDialog = async (v) => {
     // 重置row对象，避免编辑和新建之间的数据污染
     Object.assign(row, {
@@ -463,6 +488,7 @@ const openDialog = async (v) => {
         actionType: "",
     });
 
+    showFooterButtonConfig.value = Object.assign(showFooterButtonConfig.value, v.showFooterButtonConfig);
     // 重置其他相关状态变量
     optionData.value = {};
     haveLayoutJson.value = false;

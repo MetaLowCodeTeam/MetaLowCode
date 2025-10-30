@@ -5,6 +5,7 @@
         :is="comName" 
         ref="DetailRef"
         @onConfirm="updateData"
+        :recordIds="recordIds"
     ></component>
 </template>
 
@@ -18,6 +19,11 @@ const props = defineProps({
 	entityName: {
 		type: String,
 		default: "default-detail",
+	},
+    // 记录id集
+    recordIds: {
+		type: Array,
+		default: () => [],
 	},
     // // 详情记录表单id
     // recordDetailFormId: {

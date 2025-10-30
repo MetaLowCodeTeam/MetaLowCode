@@ -196,7 +196,7 @@ import http from "@/utils/request";
 import { getDataList } from "@/api/crud";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const emits = defineEmits(["highlightClick", "changeSwitch"]);
+const emits = defineEmits(["highlightClick", "changeSwitch", "onLoadFinish"]);
 
 
 const $API = inject("$API");
@@ -340,6 +340,7 @@ async function getTableList() {
 	}
 	if (res && res.data) {
 		tableList.value = res.data?.dataList || [];
+        emits("onLoadFinish", tableList.value);
 		page.total = res.data.pagination.total;
 	}
 	loading.value = false;

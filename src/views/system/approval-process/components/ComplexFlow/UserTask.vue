@@ -531,7 +531,7 @@
         </div>
         <mlCodeEditor 
             v-model="preEventDialogConf.script"
-            funcParam="data,vFormRef,ElMessage"
+            funcParam="data,vFormRef,ElMessage,ElMessageBox"
         />
         <template #footer>
             <el-button @click="preEventDialogConf.show = false">取消</el-button>

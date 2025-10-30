@@ -248,7 +248,7 @@ import {
 import mlApproveBar from "@/components/mlApproveBar/index.vue";
 // 签名组件
 import vueEsign from "vue-esign";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 const { allEntityName } = storeToRefs(useCommonStore());
 const { queryEntityNameById } = useCommonStore();
 const props = defineProps({
@@ -475,7 +475,7 @@ const confirmApproveTask = () => {
 async function handleCommand(type) {
     // 转审、加签前置事件
     let preEvent = customButtonText.value[type == 1 ? 'specialReviewButtonTextPreEvent' : 'addSignatureButtonTextPreEvent'];
-    if(!(await checkApprovalPreEvent(preEvent, vFormRef.value, ElMessage))) {
+    if(!(await checkApprovalPreEvent(preEvent, vFormRef.value, ElMessage, ElMessageBox))) {
         return;
     }
     otherDialog.value = true;
@@ -547,7 +547,7 @@ const handleGenerate = () => {
 // 同意前触发
 const beforeConfirmApprove = async () => {
     // 同意前置事件
-    if(!(await checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage))) {
+    if(!(await checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage, ElMessageBox))) {
         return;
     }
     // 需要手写签名
@@ -561,7 +561,7 @@ const beforeConfirmApprove = async () => {
 // 驳回前触发
 const beforeReject = async () => {
     // 驳回前置事件
-    if(!(await checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage))) {
+    if(!(await checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage, ElMessageBox))) {
         return;
     }
     let { flowType, rejectType } = approvalTask.value;

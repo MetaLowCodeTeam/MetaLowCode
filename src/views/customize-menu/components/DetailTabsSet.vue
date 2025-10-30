@@ -378,7 +378,7 @@ const getAllColumn = async () => {
         false,
         true,
         props.entityCode == '21' ? true : false,
-        true
+        false
     );
     if (res) {
         if (res.data && res.data.length > 0) {

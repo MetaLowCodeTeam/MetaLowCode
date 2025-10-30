@@ -13,6 +13,7 @@
         ref="EntityListDetailRefs" 
         :detailConf="detailConf"
         @onLayoutFinish="updateData"
+        :recordIds="recordIds"
     >
 		<!-- 更多插槽看 第4行 API -->
 		<template #beforeEditBtn>
@@ -85,6 +86,12 @@ import { deleteUserById, getUserRole } from "@/api/user";
 import { encrypt } from "@/utils/util";
 import { checkPassword } from "@/hooks/usePasswordStrength";
 import { storeToRefs } from "pinia";
+const props = defineProps({
+    recordIds: {
+        type: Array,
+        default: () => [],
+    },
+});
 const { publicSetting } = storeToRefs(useCommonStore());
 
 

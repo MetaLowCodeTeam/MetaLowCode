@@ -19,6 +19,7 @@
         ref="detailTabsSetRefs"
         :entityCode="entityCode"
         :entityName="entityName"
+        :modelName="modelName"
         @confirm="confirm"
         applyType="ADD"
         title="配置新建相关"
@@ -37,7 +38,8 @@ const props = defineProps({
     checkNewRelatedFilter: {
         type: Object,
         default: () => ({})
-    }
+    },
+    modelName: { type: String, default: "" },
 });
 const emits = defineEmits(["confirm", "add"]);
 let myAddConfig  = ref([]);
@@ -45,7 +47,7 @@ watchEffect(() => {
     myAddConfig.value = [];
     if(props.addConf?.config) {
         let config = JSON.parse(props.addConf.config);
-        let checkNewRelatedFilter = props.checkNewRelatedFilter || {};;
+        let checkNewRelatedFilter = props.checkNewRelatedFilter || {};
         config.forEach((el,inx) => {
             // 有查看权限且过滤条件通过
             if($TOOL.checkRole('r' + el.entityCode + '-2') && checkNewRelatedFilter[inx]){
