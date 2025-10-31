@@ -546,32 +546,48 @@ const handleGenerate = () => {
 
 // 同意前触发
 const beforeConfirmApprove = async () => {
-    // 同意前置事件
-    if(!(await checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage, ElMessageBox))) {
-        return;
-    }
-    // 需要手写签名
-    if (approvalTask.value.autograph) {
-        esignConf.value.show = true;
-    } else {
-        confirmApprove(false);
-    }
+    ElMessageBox.confirm('是否同意审批？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'approve-confirm-dialog',
+    }).then(async () => {
+        // 同意前置事件
+        if(!(await checkApprovalPreEvent(customButtonText.value.confirmButtonTextPreEvent, vFormRef.value, ElMessage, ElMessageBox))) {
+            return;
+        }
+        // 需要手写签名
+        if (approvalTask.value.autograph) {
+            esignConf.value.show = true;
+        } else {
+            confirmApprove(false);
+        }
+    }).catch(() => {
+        console.log('取消');
+    });
 };
 
 // 驳回前触发
 const beforeReject = async () => {
-    // 驳回前置事件
-    if(!(await checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage, ElMessageBox))) {
-        return;
-    }
-    let { flowType, rejectType } = approvalTask.value;
-    // 如果是复杂工作流，且驳回类型是 3（驳回到任意节点）
-    if (flowType == 2 && rejectType == 3) {
-        // 打开驳回弹框
-        openRejectDialog();
-    } else {
-        await executeApproval(true);
-    }
+    ElMessageBox.confirm('是否驳回审批？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'approve-confirm-dialog',
+    }).then(async () => {
+        // 驳回前置事件
+        if(!(await checkApprovalPreEvent(customButtonText.value.rejectButtonTextPreEvent, vFormRef.value, ElMessage, ElMessageBox))) {
+            return;
+        }
+        let { flowType, rejectType } = approvalTask.value;
+        // 如果是复杂工作流，且驳回类型是 3（驳回到任意节点）
+        if (flowType == 2 && rejectType == 3) {
+            // 打开驳回弹框
+            openRejectDialog();
+        } else {
+            await executeApproval(true);
+        }
+    }).catch(() => {})
 };
 
 // 同意审批
@@ -906,5 +922,13 @@ defineExpose({
 .esignature {
     border: 2px solid #ccc;
     margin-bottom: 10px;
+}
+</style>
+
+<style lang="scss">
+// 调整审批确认框位置
+.approve-confirm-dialog {
+    top: -15vh !important;
+    margin-top: 0 !important;
 }
 </style>

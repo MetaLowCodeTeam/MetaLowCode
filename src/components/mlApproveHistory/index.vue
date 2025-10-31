@@ -371,6 +371,7 @@ const goApprovalList = (activity) => {
             entityCode: queryEntityCodeById(props.entityId),
             look: 1,
             flowType: activity.flowType || 1,
+            customRouteTitle: activity.stepName
         },
     });
     emit('confirm')

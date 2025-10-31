@@ -640,7 +640,6 @@ const initFormLayout = async () => {
                             if(row.defaultFormData) {
                                 setFormData = Object.assign(setFormData, row.defaultFormData);
                             }
-                            console.log(formData.data,'formData.data')
 							vFormRef.value.setFormData(setFormData);
                             nextTick(() => {
                                 vFormRef.value.reloadOptionData();
