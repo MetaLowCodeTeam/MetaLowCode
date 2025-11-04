@@ -2581,7 +2581,7 @@ const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts, nodeCli
 }
 
 // 获取查询参数
-const getDataExportData = () => {
+const getQueryParams = () => {
     return dataExportData.value;
 }
 
@@ -2623,7 +2623,7 @@ defineExpose({
     openTreeEchart,
     copyRow,
     openPriceComparisonDialog,
-    getDataExportData,
+    getQueryParams,
 })
 
 </script>
