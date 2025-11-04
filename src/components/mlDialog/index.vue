@@ -19,6 +19,7 @@
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
+            <slot name="subtitle"></slot>
             <span class="fr close-icon" @click="close" v-if="showClose">
                 <el-icon size="20">
                     <ElIconClose />

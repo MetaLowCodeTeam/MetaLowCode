@@ -117,6 +117,17 @@ export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields
     })
 }
 
+// 简化版listQuery
+export function crudListQuery(body) {
+    let param = {...body};
+    param.filter = formatFilterToBase64(param.filter);
+    param.advFilter = formatFilterToBase64(param.advFilter);
+    param.builtInFilter = formatFilterToBase64(param.builtInFilter);
+    param.defaultFilter = formatFilterToBase64(param.defaultFilter);
+    param.otherFilters = param.otherFilters ? param.otherFilters.map(item => formatFilterToBase64(item)) : null;
+    return http.post('crud/listQuery', param)
+}
+
 export function initDataList(entity) {
     return http.get('crud/initDataList', { entity })
 }

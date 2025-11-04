@@ -16,6 +16,7 @@
     >
         <div
             class="main fullScreen-man"
+            v-loading="loading"
         >
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
@@ -24,7 +25,6 @@
                 ref="vFormRef"
                 :global-dsv="globalDsv"
                 :option-data="optionData"
-                v-loading="loading"
             />
             <el-empty v-else :image-size="100" description="未查询到相关配置数据" />
         </div>
@@ -108,7 +108,7 @@
         </template>
         <SubmitApprovalDialog ref="SubmitApprovalDialogRefs" @onSubmit="submitApprovalSuccess" append-to-body/>
     </ml-dialog>
-
+    <PriceComparisonDialog ref="PriceComparisonDialogRefs"/>
 </template>
 
 <script setup>
@@ -134,6 +134,8 @@ import { ElMessage } from "element-plus";
 import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
+// 价格对比弹框
+import PriceComparisonDialog from "@/views/custom-page/YtCustomComponent/PriceComparisonDialog.vue";
 import {
     globalDsvDefaultData,
     getModelName,
@@ -182,7 +184,7 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['saveFinishCallBack']);
+const emits = defineEmits(['saveFinishCallBack', 'onConfirm']);
 
 
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/kon80ysuog88r0um?singleDoc# 《自定义实体新建编辑PC》
@@ -763,7 +765,7 @@ const getFieldListOfEntityApi = async (tag) => {
 let SubmitApprovalDialogRefs = ref();
 
 // 保存（并发互斥 + finally 复位 + 可选 blur 同步等待）
-const confirm = async (target, resetFormData = {}) => {
+const confirm = async (target, resetFormData = {}, callback) => {
     if (!vFormRef.value) {
         isShow.value = false;
         return;
@@ -840,7 +842,8 @@ const confirm = async (target, resetFormData = {}) => {
             let resData = saveRes.data.formData || {};
             resData.needCb = isReferenceComp.value && !row.formEntityId ? true : false;
             emits("saveFinishCallBack", resData);
-
+            emits("onConfirm", resData);
+            callback && callback(resData);
             if (target != 'notCloseDialog' && target != 'submit') {
                 isShow.value = false;
             } else {
@@ -901,6 +904,7 @@ const confirmSaveAndSubmit = () => {
 const submitApprovalSuccess = () => {
     isShow.value = false;
     emits("saveFinishCallBack");
+    emits("onConfirm");
 }
 
 /**
@@ -916,6 +920,7 @@ const setRowRecordId = (id) => {
 
 const refresh = () => {
     emits("saveFinishCallBack", {});
+    emits("onConfirm", {});
 }
 
 const cancel = () => {
@@ -958,6 +963,11 @@ const getEntityIdFieldName = (row) => {
 const getEntityNameFieldName = (row) => {
     return queryEntityInfoByName(row.entityName).nameFieldName;
 }
+// 打开价格对比弹框
+let PriceComparisonDialogRefs = ref();
+const openPriceComparisonDialog = (recordId = '') => {
+    PriceComparisonDialogRefs.value?.openDialog(recordId);
+}
 
 defineExpose({
     openDialog,
@@ -971,6 +981,7 @@ defineExpose({
     editById,
     loading,
     reload,
+    openPriceComparisonDialog
 });
 </script>
 <style lang='scss' scoped>

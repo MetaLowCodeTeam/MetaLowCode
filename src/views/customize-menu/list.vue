@@ -466,7 +466,7 @@
                                                         item.showType == 1 &&
                                                         item.icon,
                                                 }"
-                                                style="font-size: 12px;"
+                                                style="font-size: 13px;"
                                             >
                                                 {{ item.name || item.defaultName }}
                                             </span>
@@ -500,7 +500,7 @@
                                                     item.showType == 1 &&
                                                     item.icon,
                                             }"
-                                            style="font-size: 12px;"
+                                            style="font-size: 13px;"
                                         >
                                             {{ item.isNative ? item.name || item.defaultName : item.name }}
                                         </span>
@@ -563,6 +563,8 @@
         />
         <!-- 树状图 -->
         <mlTreeEchart ref="mlTreeEchartRefs" />
+        <!-- 价格对比弹框 -->
+        <PriceComparisonDialog ref="PriceComparisonDialogRefs"/>
     </div>
 </template>
 
@@ -596,7 +598,8 @@ import mlCustomDetail from '@/components/mlCustomDetail/index.vue';
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import mlTreeEchart from '@/components/mlEchart/TreeEchart.vue';
 
-
+// 价格对比弹框
+import PriceComparisonDialog from "@/views/custom-page/YtCustomComponent/PriceComparisonDialog.vue";
 import FormatRow from "./components/FormatRow.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
@@ -2577,6 +2580,17 @@ const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts, nodeCli
     mlTreeEchartRefs.value.openDialog(dialogTitle, echartData, dialogConf, echartOpts, nodeClickCallback);
 }
 
+// 获取查询参数
+const getDataExportData = () => {
+    return dataExportData.value;
+}
+
+// 打开价格对比弹框
+let PriceComparisonDialogRefs = ref();
+const openPriceComparisonDialog = (recordId = '') => {
+    PriceComparisonDialogRefs.value?.openDialog(recordId);
+}
+
 
 defineExpose({
     resetList,
@@ -2608,6 +2622,8 @@ defineExpose({
     setParentFormRef,
     openTreeEchart,
     copyRow,
+    openPriceComparisonDialog,
+    getDataExportData,
 })
 
 </script>

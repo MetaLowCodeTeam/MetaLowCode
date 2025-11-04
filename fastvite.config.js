@@ -4,6 +4,7 @@ import vuePlugin from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { lazyImport, VxeResolver } from 'vite-plugin-lazy-import'
 // import legacy from "@vitejs/plugin-legacy"
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -96,6 +97,13 @@ export default ({
         optimizeDeps,
         plugins: [
             vuePlugin(),
+            lazyImport({
+                resolvers: [
+                    VxeResolver({
+                    libraryName: 'vxe-gantt'
+                    })
+                ]
+            }),
             // AutoImport({ resolvers: [ElementPlusResolver()] }),
             // Components({ resolvers: [ElementPlusResolver()] }),
             createSvgIconsPlugin({
