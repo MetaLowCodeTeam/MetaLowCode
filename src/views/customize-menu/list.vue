@@ -2623,7 +2623,7 @@ defineExpose({
     openTreeEchart,
     copyRow,
     openPriceComparisonDialog,
-    getQueryParams,
+    getQueryParams, 
 })
 
 </script>
