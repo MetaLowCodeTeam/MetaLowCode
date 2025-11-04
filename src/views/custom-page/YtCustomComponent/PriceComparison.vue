@@ -171,16 +171,6 @@ const calculateTaxExclusivePrice = (supplier) => {
     return taxExclusive.toFixed(2);
 };
 
-// 获取标签类型
-const getTagType = (tag) => {
-    const typeMap = {
-        '认证供应商': 'success',
-        '长期合作': 'info',
-        '新供应商': 'warning',
-    };
-    return typeMap[tag] || '';
-};
-
 
 let showEmpty = ref(false);
 
@@ -190,7 +180,6 @@ const loadData = async () => {
     loading.value = true;
     let res = await queryById(props.recordId);
     if(res?.code == 200) {
-        console.log(res.data,'res.data')
         // 指定供应商
         let selectSupplier = res.data.selectSupplier;
         // 查供应商条件
