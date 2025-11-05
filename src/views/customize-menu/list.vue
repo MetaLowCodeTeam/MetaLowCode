@@ -599,7 +599,7 @@ import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import mlTreeEchart from '@/components/mlEchart/TreeEchart.vue';
 
 // 价格对比弹框
-import PriceComparisonDialog from "@/views/custom-page/YtCustomComponent/PriceComparisonDialog.vue";
+import PriceComparisonDialog from "@/views/custom-page/Yt/PriceComparisonDialog.vue";
 import FormatRow from "./components/FormatRow.vue";
 import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
@@ -2582,7 +2582,7 @@ const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts, nodeCli
 
 // 获取查询参数
 const getQueryParams = () => {
-    return dataExportData.value;
+    return dataExportData;
 }
 
 // 打开价格对比弹框

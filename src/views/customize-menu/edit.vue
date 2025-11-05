@@ -135,7 +135,7 @@ import { getApprovalConfigByEntity } from "@/api/approval";
 // 提交审批弹框
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 价格对比弹框
-import PriceComparisonDialog from "@/views/custom-page/YtCustomComponent/PriceComparisonDialog.vue";
+import PriceComparisonDialog from "@/views/custom-page/Yt/PriceComparisonDialog.vue";
 import {
     globalDsvDefaultData,
     getModelName,
