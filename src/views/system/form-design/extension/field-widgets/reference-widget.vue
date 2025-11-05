@@ -414,7 +414,7 @@ export default {
                 if(fieldWidget){
                     let fieldType = fieldWidget.field.type;
                     let fieldLabel = fieldWidget.field.options.label;
-                    let fieldValue = fieldWidget.getValue();
+                    let fieldValue = fieldWidget?.getValue();
                     // 如果是单选
                     if(fieldType == "radio"){
                         el.value = fieldValue || false;
@@ -714,7 +714,7 @@ export default {
 						const targetFieldName = el.targetField + '@row' + this.subFormRowId
 						let targetFieldValue = this.getWidgetRef(
 							targetFieldName
-						).getValue();
+						)?.getValue();
 						// 如果目标字段有值 且 不是强制回填 不往下执行
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;

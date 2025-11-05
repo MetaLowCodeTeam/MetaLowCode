@@ -286,7 +286,7 @@ export default {
 						const targetFieldName = el.targetField + '@row' + this.subFormRowId
 						let targetFieldValue = this.getWidgetRef(
 							targetFieldName
-						).getValue();
+						)?.getValue();
 						// 如果目标字段有值 且 不是强制回填 不往下执行
 						if (targetFieldValue && JSON.stringify(targetFieldValue) !== "{}" && !el.forceFillBack) {
 							return;

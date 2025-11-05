@@ -308,7 +308,6 @@ const getSlotClass = (status) => {
 
 // 仓位点击事件
 const handleSlotClick = (slot) => {
-	console.log("点击仓位:", slot);
 	// 跳转到仓位详情页，传递 warehouseLocationInformationId
 	if (slot.rawData?.warehouseLocationInformationId && detailRefs.value) {
 		detailRefs.value.openDialog(
@@ -387,29 +386,44 @@ const handleEdit = (data) => {
 		max-height: calc(100% - 54px - 72px);
 		border-right: none;
 		:deep(.el-tree-node__content) {
-			height: 36px;
-			line-height: 36px;
+			min-height: 36px;
+			height: auto;
+			line-height: 1.5;
+			padding: 6px 0;
 		}
 
 		.tree-node-wrapper {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 			justify-content: space-between;
 			width: 100%;
 
 			.node-label {
 				display: flex;
-				align-items: center;
+				align-items: flex-start;
 				flex: 1;
+				min-width: 0;
 
 				.location-icon {
 					margin-right: 6px;
 					color: #409eff;
+					flex-shrink: 0;
+					margin-top: 2px;
+				}
+
+				span {
+					white-space: normal;
+					word-break: break-word;
+					word-wrap: break-word;
+					line-height: 1.5;
 				}
 			}
 
 			.node-actions {
 				display: none;
+				flex-shrink: 0;
+				align-self: flex-start;
+				margin-left: 8px;
 			}
 		}
 
