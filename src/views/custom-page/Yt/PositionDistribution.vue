@@ -1,7 +1,11 @@
 <template>
 	<div class="position-distribution-container">
 		<!-- 左侧：仓库基本信息树 -->
-		<div class="left-sidebar">
+		<div
+			class="left-sidebar"
+			v-loading="treeLoading"
+			element-loading-text="加载中..."
+		>
 			<div class="sidebar-header">
 				<h3>仓库基本信息</h3>
 			</div>
@@ -39,17 +43,9 @@
 									link
 									type="primary"
 									@click.stop="handleEdit(data)"
-                                    style="margin-right: 2px;"
+									style="margin-right: 2px"
 								>
 									<el-icon><EditPen /></el-icon>
-								</el-button>
-								<el-button
-									link
-									type="primary"
-									@click.stop="handleDelete(data)"
-                                    style="margin-right: 2px;margin-left: 0;"
-								>
-									<el-icon><Delete /></el-icon>
 								</el-button>
 							</span>
 						</div>
@@ -65,8 +61,15 @@
 		</div>
 
 		<!-- 右侧：仓位分布 -->
-		<div class="right-content">
+		<div
+			class="right-content"
+			v-loading="slotLoading"
+			element-loading-text="加载中..."
+		>
 			<div class="content-header">
+                <div class="header-left">
+                    <span class="warehouse-title">{{ currentWarehouseTitle }}</span>
+                </div>
 				<div class="header-right">
 					<div class="status-summary">
 						<div class="status-item">
@@ -97,47 +100,6 @@
 				</div>
 			</div>
 			<div class="slot-grid-container">
-				<div class="title-legend-row">
-					<div class="warehouse-title">
-						{{
-							currentWarehouseTitle ||
-							"显示 AGV入库仓库区域的仓位分布"
-						}}
-					</div>
-					<div class="legend">
-						<div class="legend-item">
-							<span
-								class="legend-color"
-								style="background-color: #67c23a"
-							></span>
-							<span>有货</span>
-						</div>
-						<div class="legend-item">
-							<span
-								class="legend-color"
-								style="background-color: #e6a23c"
-							></span>
-							<span>满仓</span>
-						</div>
-						<div class="legend-item">
-							<span
-								class="legend-color"
-								style="
-									background-color: #ffffff;
-									border: 1px solid #dcdfe6;
-								"
-							></span>
-							<span>空闲</span>
-						</div>
-						<div class="legend-item">
-							<span
-								class="legend-color"
-								style="background-color: #f56c6c"
-							></span>
-							<span>停用</span>
-						</div>
-					</div>
-				</div>
 				<div class="slot-grid">
 					<div
 						v-for="slot in slotList"
@@ -152,59 +114,169 @@
 			</div>
 		</div>
 	</div>
+	<mlCustomEdit
+		ref="editRefs"
+		entityName="BasicInformationoftheWarehouse"
+		@saveFinishCallBack="onLoadTreeData"
+	/>
+	<mlCustomDetail
+		ref="detailRefs"
+		entityName="WarehouseLocationInformation"
+		@updateData="() => {}"
+	/>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-
+import { crudListQuery } from "@/api/crud";
+import http from "@/utils/request";
+import mlCustomDetail from "@/components/mlCustomDetail/index.vue";
+import mlCustomEdit from "@/components/mlCustomEdit/index.vue";
 // 树形数据
-const treeData = ref([
-	{
-		id: "area1",
-		label: "区域1",
-		children: [],
-	},
-	{
-		id: "area2",
-		label: "区域2",
-		children: [
-			{
-				id: "warehouse1",
-				label: "普通存储仓库A",
-				parentId: "area2",
-			},
-			{
-				id: "warehouse2",
-				label: "普通存储仓库B",
-				parentId: "area2",
-			},
-		],
-	},
-	{
-		id: "area3",
-		label: "区域3",
-		children: [
-			{
-				id: "warehouse3",
-				label: "冷藏仓库",
-				parentId: "area3",
-			},
-		],
-	},
-]);
+const treeData = ref([]);
 
 const treeProps = {
 	children: "children",
 	label: "label",
 };
-
+// 编辑组件
+let editRefs = ref(null);
+// 详情组件
+let detailRefs = ref(null);
 const treeRef = ref(null);
 const currentWarehouseId = ref(null);
 const currentWarehouseTitle = ref("");
 
 // 仓位数据
 const slotList = ref([]);
+
+let treeLoading = ref(false);
+let slotLoading = ref(false);
+
+// 初始化：
+onMounted(() => {
+	onLoadTreeData('inStock');
+});
+
+// 加载树数据
+const onLoadTreeData = async (status) => {
+	treeLoading.value = true;
+	let res = await crudListQuery({
+		mainEntity: "BasicInformationoftheWarehouse",
+		pageSize: 99999,
+		pageNo: 1,
+	});
+	if (res?.code == 200) {
+		let dataList = res.data.dataList || [];
+
+		// 按 region?.label 分组
+		const groupedData = {};
+		dataList.forEach((item) => {
+			const regionLabel = item.region?.label || "未分组";
+			if (!groupedData[regionLabel]) {
+				groupedData[regionLabel] = [];
+			}
+			groupedData[regionLabel].push(item);
+		});
+
+		// 转换为树形结构
+		const formattedTreeData = Object.keys(groupedData).map(
+			(regionLabel, index) => {
+				const warehouses = groupedData[regionLabel];
+				return {
+					id: `region_${index}_${regionLabel}`,
+					label: regionLabel,
+					children: warehouses.map((warehouse, wIndex) => ({
+						id:
+							warehouse.basicInformationoftheWarehouseId ||
+							`warehouse_${index}_${wIndex}`,
+						label: warehouse.warehouseName || "未命名仓库",
+						rawData: warehouse, // 保存原始数据，用于后续操作
+					})),
+				};
+			}
+		);
+
+		treeData.value = formattedTreeData;
+
+		// 默认加载第一个仓库的数据
+		if (
+			formattedTreeData.length > 0 &&
+			formattedTreeData[0].children.length > 0
+            && status == 'inStock'
+		) {
+			const firstWarehouse = formattedTreeData[0].children[0];
+			handleNodeClick(firstWarehouse);
+		}
+	}
+	treeLoading.value = false;
+};
+
+// 树节点点击事件
+const handleNodeClick = (data) => {
+	// 只处理二级节点（仓库）
+	if (!data.children || data.children.length === 0) {
+		currentWarehouseId.value = data.id;
+		currentWarehouseTitle.value = `${data.label}的仓位`;
+		// 使用原始数据中的ID或当前节点ID
+		const warehouseId = data.rawData?.basicInformationoftheWarehouseId;
+		loadSlotData(warehouseId);
+	}
+};
+
+// 状态值映射：locationStatus.value -> 内部状态
+const mapStatusValue = (statusValue) => {
+	// 根据状态值映射
+	// 2: 停用, 3: 有货, 4: 满仓, 5: 空闲, else: 停用
+	const statusMap = {
+		2: "disabled", // 停用
+		3: "inStock", // 有货
+		4: "full", // 满仓
+		5: "idle", // 空闲
+	};
+
+	// 如果 statusValue 是 null 或 undefined，或者不在映射表中，返回停用
+	if (statusValue === null || statusValue === undefined) {
+		return "disabled";
+	}
+
+	return statusMap[statusValue] || "disabled";
+};
+
+// 加载仓位数据
+const loadSlotData = async (basicInformationoftheWarehouseId) => {
+	if (!basicInformationoftheWarehouseId) {
+		slotList.value = [];
+		return;
+	}
+	slotLoading.value = true;
+	let res = await http.post("/cm/call/storageLocations", {
+		basicInformationoftheWarehouseId,
+	});
+	if (res?.code == 200) {
+		let dataList = res.data || [];
+
+		// 转换为网格数据格式
+		const slots = dataList.map((item) => {
+			// 映射状态：locationStatus.value 是状态值，null 表示停用
+			const status = mapStatusValue(item.locationStatus?.value);
+
+			return {
+				id: item.warehouseLocationInformationId,
+				label: item.locationSeqNo || "未编号", // 编号使用 locationSeqNo
+				status: status,
+				warehouseId: basicInformationoftheWarehouseId,
+				rawData: item, // 保存原始数据
+			};
+		});
+
+		slotList.value = slots;
+	} else {
+		slotList.value = [];
+	}
+	slotLoading.value = false;
+};
 
 // 状态统计
 const statusCounts = computed(() => {
@@ -223,40 +295,6 @@ const statusCounts = computed(() => {
 	return counts;
 });
 
-// 树节点点击事件
-const handleNodeClick = (data) => {
-	// 只处理二级节点（仓库）
-	if (!data.children || data.children.length === 0) {
-		currentWarehouseId.value = data.id;
-		currentWarehouseTitle.value = `显示 ${data.label}的仓位分布`;
-		loadSlotData(data.id);
-	}
-};
-
-// 加载仓位数据
-const loadSlotData = (warehouseId) => {
-	// 模拟数据，实际应该调用API
-	// 根据warehouseId生成4行10列的仓位数据
-	const slots = [];
-	const rows = ["A", "B", "C", "D"];
-	const statuses = ["inStock", "full", "idle", "disabled"];
-
-	rows.forEach((row, rowIndex) => {
-		for (let col = 1; col <= 10; col++) {
-			const slotNum = String(col).padStart(2, "0");
-			const statusIndex = (rowIndex * 10 + col - 1) % statuses.length;
-			slots.push({
-				id: `${warehouseId}_${row}-1-${slotNum}`,
-				label: `${row}-1-${slotNum}`,
-				status: statuses[statusIndex],
-				warehouseId: warehouseId,
-			});
-		}
-	});
-
-	slotList.value = slots;
-};
-
 // 获取仓位样式类
 const getSlotClass = (status) => {
 	const classMap = {
@@ -271,56 +309,35 @@ const getSlotClass = (status) => {
 // 仓位点击事件
 const handleSlotClick = (slot) => {
 	console.log("点击仓位:", slot);
-	// TODO: 跳转到仓位详情页
-	ElMessage.info(`点击了仓位: ${slot.label}`);
+	// 跳转到仓位详情页，传递 warehouseLocationInformationId
+	if (slot.rawData?.warehouseLocationInformationId && detailRefs.value) {
+		detailRefs.value.openDialog(
+			slot.rawData.warehouseLocationInformationId
+		);
+	}
 };
 
 // 新增
 const handleAdd = () => {
-	console.log("新增区域/仓库");
+	let tempV = {};
+	editRefs.value.openDialog({
+		entityName: "BasicInformationoftheWarehouse",
+	});
 };
 
 // 编辑
 const handleEdit = (data) => {
-	console.log("编辑仓库:", data);
-};
-
-// 删除
-const handleDelete = async (data) => {
-	try {
-		await ElMessageBox.confirm(
-			`确定要删除 "${data.label}" 吗？`,
-			"删除确认",
-			{
-				confirmButtonText: "确定",
-				cancelButtonText: "取消",
-				type: "warning",
-			}
-		);
-		// TODO: 调用删除API
-		ElMessage.success("删除成功");
-		// 刷新树数据
-		// refreshTreeData();
-	} catch {
-		// 用户取消删除
+	// 使用原始数据
+	if (data.rawData) {
+		console.log("原始数据:", data.rawData);
 	}
+	let tempV = {
+		entityName: "BasicInformationoftheWarehouse",
+		detailId: data.rawData?.basicInformationoftheWarehouseId,
+	};
+	editRefs.value.openDialog(tempV);
 };
 
-// 保存（如果需要的话可以保留，但当前不调用）
-const handleSave = () => {
-	console.log("保存");
-};
-
-// 初始化：默认加载第一个仓库的数据
-onMounted(() => {
-	// 查找第一个有子节点的区域
-	const firstArea = treeData.value.find(
-		(area) => area.children && area.children.length > 0
-	);
-	if (firstArea && firstArea.children.length > 0) {
-		handleNodeClick(firstArea.children[0]);
-	}
-});
 </script>
 
 <style lang="scss" scoped>
@@ -368,7 +385,7 @@ onMounted(() => {
 		padding: 10px;
 		min-height: 0;
 		max-height: calc(100% - 54px - 72px);
-        border-right: none;
+		border-right: none;
 		:deep(.el-tree-node__content) {
 			height: 36px;
 			line-height: 36px;
@@ -434,7 +451,7 @@ onMounted(() => {
 
 			.add-text {
 				color: #909399;
-                user-select: none;
+				user-select: none;
 			}
 
 			&:hover {
@@ -460,17 +477,29 @@ onMounted(() => {
 	min-height: 0;
 	align-self: stretch;
 	overflow: hidden;
-    border-left: 1px solid #e4e7ed;
+	border-left: 1px solid #e4e7ed;
 	.content-header {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
 		align-items: center;
 		padding: 15px;
 		border-bottom: 1px solid #e4e7ed;
 		flex-shrink: 0;
-		min-height: 54px;
+		height: 54px;
 		box-sizing: border-box;
 		background: #fff;
+
+		.header-left {
+			display: flex;
+			align-items: center;
+
+			.warehouse-title {
+				font-size: 14px;
+				font-weight: 600;
+				color: #303133;
+				text-align: left;
+			}
+		}
 
 		.header-right {
 			.status-summary {
@@ -529,16 +558,6 @@ onMounted(() => {
 		flex: 1;
 		overflow-y: auto;
 		padding: 20px;
-		.title-legend-row {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 20px;
-			background: #fff;
-			border: 1px solid #e4e7ed;
-			border-radius: 4px;
-			padding: 12px 15px;
-		}
 
 		.warehouse-title {
 			font-size: 14px;
@@ -568,7 +587,6 @@ onMounted(() => {
 		.slot-grid {
 			display: grid;
 			grid-template-columns: repeat(10, 1fr);
-			grid-template-rows: repeat(4, 1fr);
 			gap: 10px;
 
 			.slot-cell {
@@ -635,16 +653,4 @@ onMounted(() => {
 	}
 }
 
-:deep(.el-tree--highlight-current) {
-	.el-tree-node__content {
-		&::after {
-			display: none;
-		}
-	}
-	.el-tree-node.is-current {
-		.el-tree-node__content {
-			background: var(--el-tree-node-hover-bg-color);
-		}
-	}
-}
 </style>

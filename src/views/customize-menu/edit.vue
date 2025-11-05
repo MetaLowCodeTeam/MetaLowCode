@@ -17,6 +17,8 @@
         <div
             class="main fullScreen-man"
             v-loading="loading"
+            element-loading-custom-class="edit-loading"
+            element-loading-text="加载中..."
         >
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
@@ -1002,6 +1004,13 @@ defineExpose({
         text-align: center;
         color: #fff;
         border-radius: 3px;
+    }
+}
+</style>
+<style lang="scss">
+.edit-loading {
+    .el-loading-spinner {
+        top: 30%;
     }
 }
 </style>

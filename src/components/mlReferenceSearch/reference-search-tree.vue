@@ -168,4 +168,17 @@ defineExpose({
 :deep(.el-tree-node__content) {
 	height: 32px;
 }
+// :deep(.el-tree--highlight-current) {
+// 	.el-tree-node__content {
+// 		&::after {
+// 			display: none;
+// 		}
+// 	}
+// 	.el-tree-node.is-current > .el-tree-node__content{
+// 		background: var(--el-tree-node-hover-bg-color);
+//         .el-tree-node__label {
+//             color: #606266;
+//         }
+// 	}
+// }
 </style>

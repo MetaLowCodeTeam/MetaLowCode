@@ -75,7 +75,7 @@
                             <!-- 含税单价 -->
                             <template v-else-if="row.dimension === '含税单价(元)'">
                                 <div class="price-cell">
-                                    <div class="tax-inclusive-price">
+                                    <div class="tax-inclusive-price" :class="{'red-price': index == 0}">
                                         ¥{{ supplier.taxInclusivePrice }}
                                     </div>
                                     <div class="tax-exclusive-price">
@@ -364,9 +364,11 @@ const loadData = async () => {
         .price-cell {
             .tax-inclusive-price {
                 font-size: 18px;
-                font-weight: bold;
-                color: #f56c6c;
                 margin-bottom: 6px;
+                color: #303030;
+                &.red-price {
+                    color: #f56c6c;
+                }
             }
 
             .tax-exclusive-price {
