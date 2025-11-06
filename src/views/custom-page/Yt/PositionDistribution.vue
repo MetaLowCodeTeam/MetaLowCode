@@ -100,7 +100,7 @@
 				</div>
 			</div>
 			<div class="slot-grid-container">
-				<div class="slot-grid">
+				<div class="slot-grid" v-if="slotList.length > 0" :style="{ gridTemplateColumns: `repeat(${currentX || 10}, 100px)` }">
 					<div
 						v-for="slot in slotList"
 						:key="slot.id"
@@ -111,6 +111,9 @@
 						<span class="slot-label">{{ slot.label }}</span>
 					</div>
 				</div>
+                <div class="slot-grid-empty" v-else>
+                    <el-empty description="暂无仓位" />
+                </div>
 			</div>
 		</div>
 	</div>
@@ -213,14 +216,25 @@ const onLoadTreeData = async (status) => {
 	treeLoading.value = false;
 };
 
+let currentX = ref(null);
+let currentY = ref(null);
+
 // 树节点点击事件
 const handleNodeClick = (data) => {
 	// 只处理二级节点（仓库）
 	if (!data.children || data.children.length === 0) {
+        currentX.value = data.rawData.spatialinformationX || 0;
+        currentY.value = data.rawData.spatialinformationY || 0;
 		currentWarehouseId.value = data.id;
-		currentWarehouseTitle.value = `${data.label}的仓位`;
+		currentWarehouseTitle.value = `${data.label}的仓位（${currentX.value}*${currentY.value}）`;
 		// 使用原始数据中的ID或当前节点ID
 		const warehouseId = data.rawData?.basicInformationoftheWarehouseId;
+        
+        // 没有坐标信息，不加载仓位数据
+        if(!currentX.value || !currentY.value){
+            slotList.value = [];
+            return;
+        }
 		loadSlotData(warehouseId);
 	}
 };
@@ -570,6 +584,7 @@ const handleEdit = (data) => {
 
 	.slot-grid-container {
 		flex: 1;
+		overflow-x: auto;
 		overflow-y: auto;
 		padding: 20px;
 
@@ -600,8 +615,9 @@ const handleEdit = (data) => {
 
 		.slot-grid {
 			display: grid;
-			grid-template-columns: repeat(10, 1fr);
 			gap: 10px;
+			width: fit-content;
+			min-width: 100%;
 
 			.slot-cell {
 				aspect-ratio: 1;
@@ -612,11 +628,12 @@ const handleEdit = (data) => {
 				justify-content: center;
 				cursor: pointer;
 				transition: all 0.2s;
-				min-height: 60px;
-
+				width: 100px;
+				height: 100px;
+                box-sizing: border-box;
+                padding: 0 5px;
 				.slot-label {
-					font-size: 12px;
-					font-weight: 500;
+					font-size: 13px;
 					color: #303133;
 				}
 
@@ -657,6 +674,13 @@ const handleEdit = (data) => {
 					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 				}
 			}
+		}
+
+		.slot-grid-empty {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 60%;
 		}
 
 		.help-text {
