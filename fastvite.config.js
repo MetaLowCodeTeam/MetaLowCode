@@ -100,7 +100,7 @@ export default ({
             lazyImport({
                 resolvers: [
                     VxeResolver({
-                    libraryName: 'vxe-gantt'
+                        libraryName: 'vxe-gantt'
                     })
                 ]
             }),

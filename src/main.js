@@ -35,6 +35,12 @@ import { registerCustomServiceTaskCmp } from "@/views/system/approval-process/co
 import { registerDetailTabCustomComponent } from "@/views/custom-page/CustomDetailTabComponent/index.js";
 // console.log("1. 使用路由...",router)
 import { getSimplePinYin } from "@/utils/util";
+// 甘特图
+import VxeUIBase from 'vxe-pc-ui'
+import 'vxe-pc-ui/es/style.css'
+
+import VxeUITable from 'vxe-table'
+import 'vxe-table/es/style.css'
 
 //初始化高德地图组件
 initAMapApiLoader({
@@ -48,7 +54,9 @@ app.config.globalProperties.$dayjs = dayjs;
 app.config.globalProperties.$getPinYin = getSimplePinYin;
 app.config.globalProperties.$eventBus = eventBus;
 
+
 app.use(VueResizeObserver);
+
 app.use(router);
 app.use(pinia);
 app.use(ElementPlus);
@@ -63,6 +71,8 @@ registerCustomEditCmp(app);
 registerCustomListSubFormCmp(app);
 registerCustomServiceTaskCmp(app);
 registerDetailTabCustomComponent(app);
+app.use(VxeUIBase);
+app.use(VxeUITable);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);
