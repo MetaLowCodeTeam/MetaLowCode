@@ -460,13 +460,15 @@ let formId = ref("");
 let isShowSaveAndSubmit = ref(false);
 
 // 底部按钮显示
-let showFooterButtonConfig = ref({
+let defaultShowFooterButtonConfig = ref({
     showFooter: true,
     showCancelBtn: true,
     showConfirmBtn: true,
     showConfirmRefreshBtn: true,
     showConfirmAndSubmitBtn: true,
 });
+
+let showFooterButtonConfig = ref({});
 
 const openDialog = async (v) => {
     // 重置row对象，避免编辑和新建之间的数据污染
@@ -492,7 +494,7 @@ const openDialog = async (v) => {
         actionType: "",
     });
 
-    showFooterButtonConfig.value = Object.assign(showFooterButtonConfig.value, v.showFooterButtonConfig);
+    showFooterButtonConfig.value = Object.assign(JSON.parse(JSON.stringify(defaultShowFooterButtonConfig.value)), v.showFooterButtonConfig);
     // 重置其他相关状态变量
     optionData.value = {};
     haveLayoutJson.value = false;
