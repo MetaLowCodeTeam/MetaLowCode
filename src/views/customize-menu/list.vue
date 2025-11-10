@@ -719,7 +719,11 @@ const props = defineProps({
         type: Function,
         default: null
     },
-
+    // 自定义实体
+    customEntity: {
+        type: String,
+        default: "",
+    }
 })
 
 // 页面Loading
@@ -802,7 +806,6 @@ let showActionColumnSlot = ref(false);
 
 // 是否显示列配置
 let showColumnSet = ref(false);
-
 
 // Api：https://www.yuque.com/xieqi-nzpdn/as7g0w/khgyptll0tom0iog
 // 配置项
@@ -889,7 +892,7 @@ const formatReferenceEntity = () => {
 
 
 onBeforeMount(() => {
-    let routerEntityName = router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
+    let routerEntityName = props.customEntity ||router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
     if (routerEntityName) {
         entityCode.value = allEntityCode.value[routerEntityName];
         entityName.value = routerEntityName;

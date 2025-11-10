@@ -52,7 +52,7 @@ const pagerVO = reactive({
 });
 
 const defaultGanttOptions = ref({
-	height: 337,
+	height: 377,
 	loading: false,
 	taskViewConfig: {},
 	pagerConfig: pagerVO,
@@ -328,7 +328,8 @@ const handlePageData = async () => {
 </script>
 <style lang="scss" scoped>
 .table-gantt-page {
-	padding: 10px;
+	padding: 10px 10px;
+    padding-top: 0;
 	box-sizing: border-box;
 	height: 100%;
 }
@@ -354,5 +355,10 @@ const handlePageData = async () => {
 }
 :deep(.mr-10) {
 	margin-right: 10px !important;
+}
+:deep(.vxe-gantt--pager-wrapper) {
+    .vxe-pager {
+        text-align: center;
+    }
 }
 </style>

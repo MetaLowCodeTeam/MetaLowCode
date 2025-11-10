@@ -582,9 +582,7 @@ let entityName = ref("");
 watch(
     () => props.formData,
     (newVal,oldVal) => {
-        if(JSON.stringify(newVal) !== JSON.stringify(oldVal)){
-            initApi();
-        }
+        initApi();
     },
     { deep: true }
 );

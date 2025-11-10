@@ -153,6 +153,15 @@ const routes = [
                 },
                 component: 'custom-page/approval-detail',
             },
+            // Yt-流程图
+            {
+                path: appPath + "custom-page/Yt/Flowchart",
+                name: "YtFlowchart",
+                "meta": {
+                    hidden: true,
+                },
+                component: 'custom-page/Yt/Flowchart',
+            },
             // 内嵌的iframe导航
             // {
             //     path: appPath + "custom-page/iframe",
