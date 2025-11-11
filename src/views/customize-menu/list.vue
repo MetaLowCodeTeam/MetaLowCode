@@ -565,6 +565,8 @@
         <mlTreeEchart ref="mlTreeEchartRefs" />
         <!-- 价格对比弹框 -->
         <PriceComparisonDialog ref="PriceComparisonDialogRefs"/>
+        <!-- 手动排程弹框 -->
+        <SchedulingDialog ref="SchedulingDialogRefs" @onRefresh="getTableList"/>
     </div>
 </template>
 
@@ -627,6 +629,8 @@ import ListTabFilter from './components/ListTabFilter.vue';
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
+// 手动排程弹框
+import SchedulingDialog from "@/views/custom-page/Yt/SchedulingDialog.vue";
 import http from "@/utils/request";
 import { mlShortcutkeys, formatModelName, getPreviewNum } from "@/utils/util";
 // 自定义按钮
@@ -2594,6 +2598,11 @@ const openPriceComparisonDialog = (recordId = '') => {
     PriceComparisonDialogRefs.value?.openDialog(recordId);
 }
 
+// 打开手动排程弹框
+let SchedulingDialogRefs = ref();
+const openSchedulingDialog = (rows = []) => {
+    SchedulingDialogRefs.value?.openDialog(rows);
+}
 
 defineExpose({
     resetList,
@@ -2627,6 +2636,7 @@ defineExpose({
     copyRow,
     openPriceComparisonDialog,
     getQueryParams, 
+    openSchedulingDialog,
 })
 
 </script>
