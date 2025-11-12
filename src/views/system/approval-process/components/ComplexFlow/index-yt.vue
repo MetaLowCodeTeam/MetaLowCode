@@ -56,7 +56,10 @@
                 <user-task-custom  ref="UserTaskCustomRef"
                     v-if="drawerData.type == 'bpmn:userTask'"
                     :formData="drawerData.formData"
+                    :processDetail="processDetail"
                     @setNodeData="setNodeData"
+                    @changeProcessDetail="changeProcessDetail"
+                    :selectProcessDetail="selectProcessDetail"
                 />
             </div>
         </div>
@@ -66,10 +69,8 @@
 <script setup>
 import "@/../lib/flow-designer/style.css";
 import { ElMessage } from "element-plus";
-import { inject, nextTick, onMounted, reactive, ref } from "vue";
+import { inject, nextTick, onMounted, ref } from "vue";
 
-// 公用方法
-import { checkConditionList } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
 
 import { storeToRefs } from "pinia";
@@ -77,7 +78,6 @@ import { storeToRefs } from "pinia";
 import UserTaskCustom from "./UserTask-Custom.vue";
 
 // API
-import { getFormLayoutList } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 
 import { useRouter } from "vue-router";
@@ -88,8 +88,6 @@ import {
     EliminateNode,
     // 节点触发事件
     NodeTypeFn,
-    // 默认节点颜色
-    DefaultNodeColor
 } from "./nodeDefaultConfig";
 
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -122,6 +120,9 @@ let recordId = ref("");
 let graphData = ref("");
 let loading = ref(false);
 
+// 绑定明细数组
+let processDetail = ref([]);
+
 let recordData = ref({});
 
 onMounted(() => {
@@ -136,13 +137,13 @@ onMounted(() => {
 });
 
 // 该实体所有表单
-let entityFromList = ref([]);
 const loadComplexFlow = async () => { 
     loading.value = true;
     let res = await queryById(recordId.value);
     if (res && res.code == 200) {
         let recordFlowChart = res.data.recordFlowChart;
         recordData.value = res.data;
+        processDetail.value = res.data.ProcessDetail || [];
         if(recordFlowChart) {
             recordFlowChart = JSON.parse(recordFlowChart);
             graphData.value = recordFlowChart.logicFlowXml;
@@ -170,6 +171,20 @@ const nodeDelete = () => {
     drawerData.value = {};
 };
 
+// 获取所有节点的selectProcessDetail数据
+let selectProcessDetail = ref([]);
+const getSelectProcessDetail = () => {
+    selectProcessDetail.value = [];
+    MetaFlowDesignerRef.value.getJsonData().nodes.forEach(el => {
+        if(el.properties?.flowJson) {
+            let flowJson = getProperties(el.properties.flowJson);
+            if(flowJson.processDetail) {
+                selectProcessDetail.value.push(flowJson.processDetail);
+            }
+        }
+    });
+    console.log(selectProcessDetail.value,'selectProcessDetail.value')
+}
 
 // 节点点击
 const openDrawer = (data) => {
@@ -186,6 +201,8 @@ const openDrawer = (data) => {
     } else {
         drawerData.value.formData = initNodeFlowJson(data);
     }
+    // 获取所有节点的selectProcessDetail数据
+    getSelectProcessDetail();
 };
 
 const initNodeFlowJson = (data) => {
@@ -193,12 +210,6 @@ const initNodeFlowJson = (data) => {
     return newData;
 }
 
-// 开始节点
-let StartEventRef = ref("");
-// 线节点
-let SequenceFlowRef = ref("");
-// 用户任务节点
-let UserTaskRef = ref("");
 
 // 获取节点属性
 const getProperties = (jsonStr) => {
@@ -344,6 +355,17 @@ const clearData = () => {
 
 const cloneDeep = (data) => {
     return JSON.parse(JSON.stringify(data));
+};
+
+const changeProcessDetail = (data) => {
+    drawerTitle.value = data.processname;
+    MetaFlowDesignerRef.value.lf.updateText(
+        drawerData.value.id,
+        data.processname
+    );
+    nextTick(() => {
+        getSelectProcessDetail();
+    })
 };
 </script>
 <style lang='scss' scoped>

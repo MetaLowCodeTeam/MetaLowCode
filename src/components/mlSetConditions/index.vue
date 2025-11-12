@@ -1122,14 +1122,15 @@ export default {
                 if(el.type == 'Cascader') {
                     el.value = JSON.stringify(el.value);
                 }
-                if(el.type == "DateTime" || el.type == "Date"){
-                    if(el.value == 0) {
-                        el.value = null;
-                    }
-                    if(el.value2 == 0) {
-                        el.value2 = null;
-                    }
-                }
+                // 时间类型可以包含0，2025-11-12 注释。 比如0天后 0月后
+                // if(el.type == "DateTime" || el.type == "Date"){  
+                //     if(el.value == 0) {
+                //         el.value = null;
+                //     }
+                //     if(el.value2 == 0) {
+                //         el.value2 = null;
+                //     }
+                // }
             })
             // 如果不需要进行条件校验
             if(noVerification) {

@@ -1,6 +1,28 @@
 <template>
 	<el-collapse v-model="activeNames">
-		<!-- 审批设置 -->
+        <!-- 明细设置 -->
+        <el-collapse-item name="2">
+            <template #title>
+                <h3>明细设置</h3>
+            </template>
+            <div>
+                <el-select
+                    v-model="myFormData.processDetail"
+                    placeholder="请选择明细"
+                    style="width: 100%;"
+                    @change="processDetailChange"
+                >
+                    <el-option
+                        v-for="item in processDetail"
+                        :key="item.processDetailId"
+                        :label="item.processname"
+                        :value="item.processDetailId"
+                        :disabled="selectProcessDetail.includes(item.processDetailId)"
+                    />
+                </el-select>
+            </div>
+        </el-collapse-item>
+		<!-- 节点设置 -->
 		<el-collapse-item name="1">
 			<template #title>
 				<h3>节点设置</h3>
@@ -44,13 +66,21 @@
 <script setup>
 import { ref, watchEffect, watch } from "vue";
 
-const emits = defineEmits(["setNodeData"]);
+const emits = defineEmits(["setNodeData", "changeProcessDetail"]);
 
 const props = defineProps({
 	formData: {
 		type: Object,
 		default: () => {},
 	},
+    processDetail: {
+        type: Array,
+        default: () => [],
+    },
+    selectProcessDetail: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 let formConfig = ref([
@@ -138,7 +168,7 @@ let formConfig = ref([
 	},
 ]);
 
-let activeNames = ref(["1"]);
+let activeNames = ref(["1", "2"]);
 let formLabelWidth = ref("65px");
 
 let defaultFormData = ref({
@@ -187,6 +217,14 @@ watch(
 watchEffect(() => {
 	myFormData.value = Object.assign(cloneDeep(defaultFormData.value), props.formData);
 });
+
+const processDetailChange = (value) => {
+    // console.log(value);
+    let findProcessDetail = props.processDetail.find(item => item.processDetailId == value);
+    emits("changeProcessDetail", findProcessDetail);
+};
+
+
 
 
 </script>
