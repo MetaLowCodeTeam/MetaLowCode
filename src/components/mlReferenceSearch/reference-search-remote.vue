@@ -200,7 +200,8 @@ const clearResults = (resetKeyword = false) => {
 
 const handleCurrentChange = (v) => {
     currentPage.value = v;
-    handleSearch(null);
+    // 分页切换时保持当前搜索值，不重置
+    handleSearch(searchValue.value || null);
 };
 
 const handleVisibleChange = (e) => {
@@ -239,7 +240,11 @@ const onFilter = (val) => {
 
 const handleSearch = (v) => {
     if (loading.value) return;
-    searchValue.value = v || "";
+    // 如果传入的值不为 null 或 undefined，才更新 searchValue
+    // 分页切换时传入 searchValue.value，保持搜索条件
+    if (v !== null && v !== undefined) {
+        searchValue.value = v;
+    }
     if(!props.checkFilterConditions()){
         return
     }

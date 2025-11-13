@@ -53,9 +53,9 @@
 						<el-radio value="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
-                <!-- <el-form-item label="开启选项数据同步" >
+                <el-form-item label="开启选项数据同步" >
                     <el-checkbox v-model="checkedSync" :disabled="fieldState !== 1"/>
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="请选择跟哪个字段同步" v-if="this.checkedSync">
                     <el-select
                         v-model="useFieldSync"
@@ -165,7 +165,7 @@ export default {
         async initApi(){
             let appAbbr = this.$route.query.appAbbr;
             // 取所有可同步的字段
-            let res = await getOptionFields(appAbbr);
+            let res = await getOptionFields(appAbbr, 'Cascader');
             this.fieldsSync = [];
             if(res){
                 let fields = res.data || [];
