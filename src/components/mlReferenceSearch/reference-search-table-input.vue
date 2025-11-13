@@ -30,6 +30,7 @@
 		append-to-body
 		width="800"
 		v-if="entity"
+        :show-close="!loading"
 	>
 		<ReferenceSearchTable
             ref="referST"
@@ -44,10 +45,11 @@
             @multipleRecordSelected="handleMultipleRecordSelected"
             hasFooterButton
             :extraFilter="extraFilter"
+            @onLoading="onLoading"
 		/>
         <template #footer>
-            <el-button @click="showReferenceDialogFlag = false">取消</el-button>
-            <el-button type="primary" @click="confirmReferenceDialog">确认</el-button>
+            <el-button @click="showReferenceDialogFlag = false" :loading="loading">取消</el-button>
+            <el-button type="primary" @click="confirmReferenceDialog" :loading="loading">确认</el-button>
         </template>
 	</ml-dialog>
 </template>
@@ -58,7 +60,6 @@ import { Search as ElIconSearch, Close } from "@element-plus/icons-vue";
 import ReferenceSearchTable from "./reference-search-table.vue";
 
 let showReferenceDialogFlag = ref(false);
-let extraFilter = ref(null);
 
 const props = defineProps({
 	modelValue: {
@@ -95,7 +96,11 @@ const props = defineProps({
     showCheckBox: {
         type: Boolean,
         default: false,
-    }
+    },
+    extraFilter: {
+        type: String,
+        default: null,
+    },
 });
 
 const emit = defineEmits(["update:modelValue", "update:errorField"]);
@@ -158,13 +163,12 @@ const handleMultipleRecordSelected = (recordObj, rows) => {
     emit("update:errorField", false);
 };
 
-const setExtraFilter = (filter) => {
-    extraFilter.value = filter;
-};
+let loading = ref(false);   
 
-defineExpose({
-    setExtraFilter,
-});
+const onLoading = (val) => {
+    loading.value = val;
+}
+
 
 </script>
 

@@ -57,7 +57,7 @@
 				<el-table-column prop="equipment" label="*设备" width="200">
 					<template #default="{ row }">
 						<reference-search-table-input
-							ref="equipmentReferST"
+							:extraFilter="row.equipmentSqlFilter"
 							v-model="row.equipment"
 							:errorField="row.equipmentIsError"
 							@update:errorField="row.equipmentIsError = $event"
@@ -77,7 +77,7 @@
 				<el-table-column prop="workTeam" label="*班组" width="200">
 					<template #default="{ row }">
 						<reference-search-table-input
-							ref="workTeamReferST"
+							:extraFilter="row.workTeamSqlFilter"
 							v-model="row.workTeam"
 							:errorField="row.workTeamIsError"
 							@update:errorField="row.workTeamIsError = $event"
@@ -201,6 +201,7 @@ const closeDialog = () => {
 	isShow.value = false;
 };
 
+// 选设备
 let equipmentReferST = ref(null);
 const handleEquipmentClick = (row) => {
 	let workshopId = row.workshop?.id;
@@ -209,14 +210,12 @@ const handleEquipmentClick = (row) => {
 		row.workshopIsError = true;
 		return false;
 	}
-	equipmentReferST.value.setExtraFilter(
-		"deviceInfoId in (select toId from ReferenceListMap where fieldName = 'equipment' and objectId='" +
-			workshopId +
-			"' ) "
-	);
+	row.equipmentSqlFilter = "deviceInfoId in (select toId from ReferenceListMap where fieldName = 'equipment' and objectId='" + workshopId + "' ) ";
+    console.log(row.equipmentSqlFilter,'row.equipmentSqlFilter')
 	return true;
 };
 
+// 选班组
 let workTeamReferST = ref(null);
 const handleWorkTeamClick = (row) => {
 	let equipment = row.equipment;
@@ -226,11 +225,8 @@ const handleWorkTeamClick = (row) => {
 		return false;
 	}
 	let idStr = equipment.map((item) => `'${item.id}'`).join(",");
-	workTeamReferST.value.setExtraFilter(
-		"workingTeamId in (select toId from ReferenceListMap where fieldName = 'workingTeamId' and objectId in (" +
-			idStr +
-			") ) "
-	);
+    row.workTeamSqlFilter = "workingTeamId in (select toId from ReferenceListMap where fieldName = 'workingTeamId' and objectId in (" + idStr + ") ) ";
+	console.log(row.workTeamSqlFilter,'row.workTeamSqlFilter')
 	return true;
 };
 

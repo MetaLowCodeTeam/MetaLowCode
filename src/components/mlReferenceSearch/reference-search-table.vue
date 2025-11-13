@@ -247,6 +247,7 @@ export default {
             default: true,
         },
 	},
+	emits: ['onLoading'],
 	watch: {
 		refField: {
 			handler(newVal) {
@@ -364,6 +365,7 @@ export default {
 				el.value2 = null;
 			});
 			this.loading = true;
+            this.$emit('onLoading', true);
 			let res = await saveRefFilterPanel(
 				this.entity,
 				this.refField,
@@ -374,6 +376,7 @@ export default {
 				this.$message.success("保存成功");
 			}
 			this.loading = false;
+            this.$emit('onLoading', false);
 		},
 		/**
 		 * 筛选条件方法 end
@@ -460,6 +463,7 @@ export default {
 					)
 				);
 			} else {
+                console.log(this.extraFilter,'this.extraFilter')
 				paramStr = this.entity;
                 let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
                 const { queryEntityInfoByName } = useCommonStore();
@@ -498,6 +502,7 @@ export default {
 
 		async refFieldQueryApi(cb) {
 			this.loading = true;
+            this.$emit('onLoading', true);
 			let res = await cb;
 			if (res) {
 				this.idField = res.data.idFieldName;
@@ -556,6 +561,7 @@ export default {
 				this.page.total = res.data.pagination.total;
 			}
 			this.loading = false;
+            this.$emit('onLoading', false);
 		},
         // 加载外部引用表格
         async loadOuterReferenceTable(){
