@@ -632,7 +632,7 @@ export default {
 
 .readonly-mode-field {
 	cursor: pointer;
-
+    overflow: hidden;
 	.small-circle-button {
 		height: 16px !important;
 		width: 16px !important;
