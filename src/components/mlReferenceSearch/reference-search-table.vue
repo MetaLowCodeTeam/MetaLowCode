@@ -463,7 +463,6 @@ export default {
 					)
 				);
 			} else {
-                console.log(this.extraFilter,'this.extraFilter')
 				paramStr = this.entity;
                 let tempConditionConf = JSON.parse(JSON.stringify(this.conditionConf));
                 const { queryEntityInfoByName } = useCommonStore();

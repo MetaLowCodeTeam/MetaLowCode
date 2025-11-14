@@ -434,12 +434,12 @@ export default {
                             return
                         }
                         el.value = fieldValue;
-                        if(typeof fieldValue == 'object'){
-                            if(fieldType == "select"){
-                                el.value = fieldValue.value
-                            }else {
-                                el.value = fieldValue.id;
-                            }
+                        if(fieldType == "select"){
+                            el.value = fieldValue.value
+                        }else if(fieldType == "cascader"){
+                            el.value = JSON.stringify(fieldValue);
+                        }else {
+                            el.value = fieldValue.id;
                         }
                     }
                 }

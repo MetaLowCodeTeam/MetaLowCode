@@ -415,6 +415,7 @@ export default {
                     let fieldType = fieldWidget.field.type;
                     let fieldLabel = fieldWidget.field.options.label;
                     let fieldValue = fieldWidget?.getValue();
+                    console.log(fieldValue,'fieldValue')
                     // 如果是单选
                     if(fieldType == "radio"){
                         el.value = fieldValue || false;
@@ -427,6 +428,8 @@ export default {
                         if(typeof fieldValue == 'object'){
                             if(fieldType == "select"){
                                 el.value = fieldValue.value
+                            }else if(fieldType == "cascader"){
+                                el.value = JSON.stringify(fieldValue);
                             }else {
                                 el.value = fieldValue.id;
                             }
