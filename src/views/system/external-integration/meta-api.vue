@@ -65,6 +65,7 @@
 						link
 						type="primary"
 						@click="viewTenantIdDialog = true"
+                        v-if="publicSetting.tenantId"
 					>
 						<span class="mr-3">
 							<el-icon>

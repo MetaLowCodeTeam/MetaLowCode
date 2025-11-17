@@ -88,6 +88,8 @@
 								'is-error': errorInfo.appAbbrError,
 							}"
 							@focus="errorInfo.appAbbrError = false"
+                            :maxlength="4"
+                            show-word-limit
 						/>
 						<el-tooltip placement="top">
 							<template #content>
