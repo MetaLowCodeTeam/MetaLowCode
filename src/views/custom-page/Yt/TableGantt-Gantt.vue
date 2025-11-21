@@ -22,10 +22,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, watch, computed } from "vue";
 import { VxeUI, VxeGantt } from "vxe-gantt";
 import { crudListQuery } from "@/api/crud";
 import "vxe-gantt/lib/style.css";
+
+// 接收搜索参数
+const props = defineProps({
+	searchParams: {
+		type: Object,
+		default: () => ({}),
+	},
+});
 
 let buttonList = ref([
 	{
@@ -136,6 +144,21 @@ onMounted(() => {
 	handlePageData();
 });
 
+const ganttLoading = computed(() => !!ganttOptions.value?.loading);
+defineExpose({
+	loading: ganttLoading,
+});
+// 监听搜索参数变化，重新加载数据
+watch(
+	() => props.searchParams,
+	() => {
+		// 重置到第一页
+		pagerVO.currentPage = 1;
+		handlePageData();
+	},
+	{ deep: true, immediate: false }
+);
+
 // 根据状态设置行样式
 const setRowBgColor = (row) => {
 	const status = String(row.productionStatus ?? "");
@@ -185,21 +208,103 @@ const handlePageData = async () => {
 		.map((item) => item.field)
 		.join(",");
 	const { pageSize, currentPage } = pagerVO;
+	
+	// 构建过滤条件
+	// 默认排除未排产（5），如果选择 all 则保持默认，否则替换为选中的值
+	const filterItems = [];
+	
+	// 生产单状态过滤条件
+	if (props.searchParams.productionStatus && props.searchParams.productionStatus !== "all") {
+		// 如果选择了具体状态，使用 EQ 查询该状态
+		filterItems.push({
+			fieldName: "productionStatus",
+			op: "EQ",
+			value: props.searchParams.productionStatus
+		});
+	} else {
+		// 如果选择 all 或未选择，默认排除未排产（5）
+		filterItems.push({
+			fieldName: "productionStatus",
+			op: "NEQ",
+			value: "5"
+		});
+	}
+	
+	// 添加搜索条件
+	if (props.searchParams.productionTask) {
+		filterItems.push({
+			fieldName: "productionTask.productionTaskNo",
+			op: "LK",
+			value: props.searchParams.productionTask
+		});
+	}
+	
+	if (props.searchParams.workshopId) {
+		filterItems.push({
+			fieldName: "workshop",
+			op: "EQ",
+			value: props.searchParams.workshopId
+		});
+	}
+	
+	if (props.searchParams.equipmentId) {
+		filterItems.push({
+			fieldName: "equipment",
+			op: "EQ",
+			value: props.searchParams.equipmentId
+		});
+	}
+	
+	if (props.searchParams.workTeamId) {
+		filterItems.push({
+			fieldName: "workTeam",
+			op: "EQ",
+			value: props.searchParams.workTeamId
+		});
+	}
+	
+	if (props.searchParams.productCode) {
+		filterItems.push({
+			fieldName: "productionTask.selectedProduct.productcode",
+			op: "LK",
+			value: props.searchParams.productCode
+		});
+	}
+	
+	if (props.searchParams.productName) {
+		filterItems.push({
+			fieldName: "productionTask.selectedProduct.productName",
+			op: "LK",
+			value: props.searchParams.productName
+		});
+	}
+	
+	// 计划日期范围查询：查找计划开始时间或结束时间在指定范围内的记录
+	if (props.searchParams.expectedStartTime) {
+		filterItems.push({
+			fieldName: "productionTask.plannedStartTime",
+			op: "GT",
+			value: props.searchParams.expectedStartTime
+		});
+	}
+	
+	if (props.searchParams.expectedEndTime) {
+		filterItems.push({
+			fieldName: "productionTask.plannedEndTime",
+			op: "LT",
+			value: props.searchParams.expectedEndTime
+		});
+	}
+	
 	let res = await crudListQuery({
 		mainEntity: "ProcessTaskOrder",
 		fieldsList:
 			fieldsList + ",productionStatus,expectedStartTime,expectedEndTime",
 		pageSize: pageSize,
 		pageNo: currentPage,
-		filters: {
-			equation: "OR",
-			items: [
-				{
-					fieldName: "productionStatus",
-                    op: "NEQ",
-                    value: "5"
-				},
-			],
+		filter: {
+			equation: "AND",
+			items: filterItems,
 		},
 		sortFields: [{ fieldName: "productionTask", type: "DESC" }],
 	});
@@ -207,9 +312,9 @@ const handlePageData = async () => {
 		let dataList = res.data.dataList || [];
 		dataList = dataList.map((el) => {
 			el.productionTask = el.productionTask?.name;
-			el.workTeam = el.workTeam?.name;
+			el.workTeam = el.workTeam ? el.workTeam.map(item => item.name).join(",") : "";
 			el.workshop = el.workshop?.name;
-			el.equipment = el.equipment?.name;
+			el.equipment = el.equipment ? el.equipment.map(item => item.name).join(",") : "";
 			el.start = el.expectedStartTime;
 			el.end = el.expectedEndTime;
 			el.productionStatus = el.productionStatus.value;

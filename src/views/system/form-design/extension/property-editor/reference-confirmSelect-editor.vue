@@ -5,12 +5,7 @@
     <el-form-item label="确认提示内容" v-if="optionModel.confirmSelect">
         <el-input type="text" v-model="optionModel.confirmSelectContent" placeholder="请输入确认提示内容" clearable/>
     </el-form-item>
-    <el-form-item label="隐藏保存查询面板">
-        <el-switch v-model="optionModel.hideSavePlanQueryButton" />
-    </el-form-item>
-    <el-form-item label="隐藏新建按钮">
-        <el-switch v-model="optionModel.hideAddButton" />
-    </el-form-item>
+    
 </template>
 
 <script>

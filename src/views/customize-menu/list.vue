@@ -727,6 +727,21 @@ const props = defineProps({
     customEntity: {
         type: String,
         default: "",
+    },
+    // 外部过滤条件（保持向后兼容）
+    externalFilter: {
+        type: Object,
+        default: () => ({}),
+    },
+    // 外部过滤条件项
+    externalFilterItems: {
+        type: Array,
+        default: () => [],
+    },
+    // 外部排序
+    externalSort: {
+        type: Array,
+        default: () => [],
     }
 })
 
@@ -1978,6 +1993,16 @@ const queryNow = (e) => {
     queryFilter.value = { ...e };
     getTableList();
 };
+
+// 监听外部过滤条件变化
+watch(
+    () => [props.externalFilter, props.externalFilterItems],
+    () => {
+        page.no = 1;
+        getTableList();
+    },
+    { deep: true, immediate: false }
+);
 // 重置高级筛选
 const refreshAdvancedQuery = () => {
     queryFilter.value = { equation: "AND", items: [] };
@@ -2090,14 +2115,33 @@ const getTableList = async () => {
     if(currentTab.value){
         tabFilter = listTabs.value.find(item => item.key == currentTab.value)?.filter;
     }
+    
+    // 外部过滤条件（由父组件传入，保证模板通用性）
+    const externalFilterItems = props.externalFilterItems
+        ? JSON.parse(JSON.stringify(props.externalFilterItems))
+        : [];
+    
+    // 合并外部过滤条件到 queryFilter
+    const mergedFilter = JSON.parse(JSON.stringify(queryFilter.value));
+    if (externalFilterItems.length > 0) {
+        mergedFilter.items = [...mergedFilter.items, ...externalFilterItems];
+    }
+    
+    // 合并外部排序
+    let mergedSortFields = [...sortFields.value];
+    if (props.externalSort && props.externalSort.length > 0) {
+        // 将外部排序添加到排序数组的开头（优先级更高）
+        mergedSortFields = [...props.externalSort, ...mergedSortFields];
+    }
+    
     let param = {
         mainEntity: entityName.value,
         fieldsList: allFields.value.join(),
         pageSize: page.size,
         pageNo: page.no,
-        filter: JSON.parse(JSON.stringify(queryFilter.value)),
+        filter: mergedFilter,
         advFilter: { ...comQueriesList.value },
-        sortFields: sortFields.value,
+        sortFields: mergedSortFields,
         quickFilter: quickQuery.value,
         builtInFilter: builtInFilter.value,
         statistics: statistics.value,

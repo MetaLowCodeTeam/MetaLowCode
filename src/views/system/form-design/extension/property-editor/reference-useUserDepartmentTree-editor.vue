@@ -2,6 +2,12 @@
 	<el-form-item v-if="refUserFlag" :label="i18nt('extension.setting.useUserDepartmentTree')">
 		<el-switch v-model="optionModel.useUserDepartmentTree"></el-switch>
 	</el-form-item>
+    <el-form-item label="隐藏保存查询面板">
+        <el-switch v-model="optionModel.hideSavePlanQueryButton" />
+    </el-form-item>
+    <el-form-item label="隐藏新建按钮">
+        <el-switch v-model="optionModel.hideAddButton" />
+    </el-form-item>
 </template>
 
 <script>
