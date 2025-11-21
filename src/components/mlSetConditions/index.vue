@@ -230,21 +230,15 @@
                                     </el-select>
                                 </div>
                                 <div v-else-if="item.opCom =='referenceSearch'">
-                                    <el-input 
-                                        v-model="item.refLabel" 
-                                        readonly 
-                                        :class="{'is-error':item.isError}" 
-                                        @focus="clearError(item)"
-                                        size="default"
-                                    >
-                                        <template #append>
-                                            <el-button @click="openReferenceDialog(item)">
-                                                <el-icon>
-                                                    <ElIconSearch />
-                                                </el-icon>
-                                            </el-button>
-                                        </template>
-                                    </el-input>
+                                    <reference-search-remote
+                                        :fieldModel="{id: item.value, name: item.refLabel}"
+                                        :entity="formatEntityName"
+                                        :refField="item.fieldName"
+                                        :checkFilterConditions="() => true"
+                                        @onAppendButtonClick="openReferenceDialog(item)"
+                                        @onSelectedRemote="onSelectedRemote($event, item)"
+                                        style="position: relative;top: 2px;"
+                                    />
                                     <ml-dialog
                                         title="请选择"
                                         class="reference-dialog"
@@ -260,7 +254,6 @@
                                             :refField="item.fieldName"
                                             :defaultSelected="{id: item.value, name: item.refLabel}"
                                             :multipleSelectEntity="item.referTo?.split(',')"
-                                            :showLabelSelectNumber="false"
                                             @recordSelected="(event)=> setReferRecord(event,item)"
                                             :enableSavePlanQuery="enableSavePlanQuery"
                                             :enableAdd="enableAdd"
@@ -655,20 +648,14 @@
                                     </el-select>
                                 </div>
                                 <div v-else-if="item.opCom =='referenceSearch'">
-                                    <el-input 
-                                        v-model="item.refLabel" 
-                                        readonly 
-                                        :class="{'is-error':item.isError}" 
-                                        @focus="clearError(item)"
-                                    >
-                                        <template #append>
-                                            <el-button @click="openReferenceDialog(item)">
-                                                <el-icon>
-                                                    <ElIconSearch />
-                                                </el-icon>
-                                            </el-button>
-                                        </template>
-                                    </el-input>
+                                    <reference-search-remote
+                                        :fieldModel="{id: item.value, name: item.refLabel}"
+                                        :entity="formatEntityName"
+                                        :refField="item.fieldName"
+                                        :checkFilterConditions="() => true"
+                                        @onAppendButtonClick="openReferenceDialog(item)"
+                                        style="position: relative;top: 2px;"
+                                    />
                                     <ml-dialog
                                         title="请选择"
                                         class="reference-dialog"
@@ -748,11 +735,13 @@
 <script>
 import conditionsConfig from "@/config/conditionsConfig";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import ReferenceSearchRemote from "@/components/mlReferenceSearch/reference-search-remote.vue";
 import useCommonStore from "@/store/modules/common";
 
 export default {
     components: {
         ReferenceSearchTable,
+        ReferenceSearchRemote
     },
     props: {
         modelValue: null,
@@ -867,6 +856,10 @@ export default {
         openReferenceDialog(item) {
             item.showReferenceDialogFlag = true;
             this.clearError(item);
+        },
+        onSelectedRemote(event, item) {
+            item.value = event.record.id;
+            item.refLabel = event.record.label;
         },
         // 引用单选
         setReferRecord(event, item) {

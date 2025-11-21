@@ -2150,22 +2150,29 @@ const getTableList = async () => {
         otherFilters: [...otherFilters.value, tabFilter],
     }; 
     dataExportData.queryParm = { ...param };
-    let res = await getDataList(
-        param.mainEntity,
-        param.fieldsList,
-        param.filter,
-        param.pageSize,
-        param.pageNo,
-        param.sortFields,
-        param.advFilter,
-        param.quickFilter,
-        param.builtInFilter,
-        param.statistics,
-        param.filterEasySql,
-        param.defaultFilter,
-        formatModelName(myModelName.value, currentTab.value),
-        param.otherFilters
-    );
+    let listApi = rowStyleConf.value.listConf?.customListApi || null;
+    let res;
+    if(listApi) {
+        res = await http.post(listApi, param);
+    }else {
+        res = await getDataList(
+            param.mainEntity,
+            param.fieldsList,
+            param.filter,
+            param.pageSize,
+            param.pageNo,
+            param.sortFields,
+            param.advFilter,
+            param.quickFilter,
+            param.builtInFilter,
+            param.statistics,
+            param.filterEasySql,
+            param.defaultFilter,
+            formatModelName(myModelName.value, currentTab.value),
+            param.otherFilters
+        );
+    }
+    
     if (res && res.data) {
         recordIds.value = res.data.dataList.map(item => item[idFieldName.value]);
         let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;

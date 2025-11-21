@@ -162,7 +162,7 @@
                     <div class="form-title">列表设置</div>
                 </el-col>
                 <el-col :span="10">
-                    <div class="form-item mt-10">
+                    <div class="form-item mt-5">
                         <div class="info-text">序号列设置</div>
                         <el-checkbox v-model="styleConf.listConf.showRowNumber">
                             是否显示
@@ -184,6 +184,17 @@
                             style="width: 160px"
                         />
                         <span class="ml-10">px</span>
+                    </div>
+                </el-col>
+                <el-col :span="14">
+                    <div class="form-item mt-5">
+                        <div class="info-text">列表自定义接口</div>
+                        <el-input 
+                            v-model="styleConf.listConf.customListApi" 
+                            placeholder="请输入列表自定义接口" 
+                            style="width: 100%;margin-top: 5px;" 
+                            clearable
+                        />
                     </div>
                 </el-col>
                 <el-divider style="margin: 10px 0 15px 0 ;"/>

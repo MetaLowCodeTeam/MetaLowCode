@@ -509,9 +509,10 @@ export default {
                 this.dockMenu.push(item);
             }
         });
-        this.dockMenu = this.dockMenu.filter(el => !(isHideWorkbench.value && el.path == "/web/dashboard"));
+        const appPath = import.meta.env.VITE_APP_PATH;
+        this.dockMenu = this.dockMenu.filter(el => !(isHideWorkbench.value && el.path == appPath + "dashboard"));
         this.menu = this.menu.filter(el => !(el.children?.length < 1));
-        this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == '/web/home'));
+        this.menu = this.menu.filter(el => !(isHideWorkbench.value && el.path == appPath + 'home'));
         // 过滤掉 meta.psShow === false 的菜单（undefined/null 忽略）
         this.menu = this.menu.filter(el => (el?.meta?.pcShow !== false));
         // this.menu.shift();
