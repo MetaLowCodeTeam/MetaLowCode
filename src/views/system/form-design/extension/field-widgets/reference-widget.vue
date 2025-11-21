@@ -113,8 +113,8 @@
 				:extraFilter="searchFilter"
 				:extraSort="extraSort"
 				:filterConditions="filterConditions"
-				:isSingleCheck="!(subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval')"
-				:showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+				:isSingleCheck="!allowMultipleSelection"
+				:showMultipleSelectConfirm="allowMultipleSelection"
 				@recordSelected="beforeSetReferRecord"
 				@multipleRecordSelected="beforeMultipleSetReferRecord"
 				:defaultSelected="fieldModel"
@@ -130,8 +130,8 @@
 				@recordSelected="beforeSetReferRecord"
                 @multipleRecordSelected="beforeMultipleSetReferRecord"
 				:gDsv="gDsv"
-                :showCheckBox="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
-                :showMultipleSelectConfirm="subFormItemFlag && !field.options.disableMultipleSelectionInSubForm && gDsv.formStatus != 'approval'"
+                :showCheckBox="allowMultipleSelection"
+                :showMultipleSelectConfirm="allowMultipleSelection"
                 :defaultSelected="fieldModel"
                 hasFooterButton
                 :enableSavePlanQuery="!field.options.hideSavePlanQueryButton"
@@ -223,11 +223,27 @@ export default {
             filterConditions:{},
 			gDsv: {},
             globalConfig: {},
+            subFormInsertDisabled: true,
 		};
 	},
 	computed: {
 		contentForReadMode() {
 			return this.fieldModel ? this.fieldModel.name : "--";
+		},
+
+		allowMultipleSelection() {
+			if (
+				!this.subFormItemFlag ||
+				this.field?.options?.disableMultipleSelectionInSubForm
+			) {
+				return false;
+			}
+
+			if (this.gDsv.formStatus !== "approval") {
+				return true;
+			}
+
+			return !this.subFormInsertDisabled;
 		},
 
 		dialogWidth() {
@@ -360,6 +376,13 @@ export default {
 					return;
 				}
 			}
+
+            this.subFormInsertDisabled = true;
+            if(this.subFormName) {
+                let subFormRef = this.getWidgetRef(this.subFormName);
+                let { actionDisabled } = subFormRef;
+                this.subFormInsertDisabled = actionDisabled;
+            }
             // 默认树
             this.referenceDialogType = 'table';
             let { name, useTreeDataSelect, treeCascadeFieldName, treeDataEntityName, useUserDepartmentTree } = this.field.options;
@@ -669,7 +692,7 @@ export default {
         },
         // 非tree点击确认回填
         nonTreeDialogConfirm() {
-            if(this.subFormItemFlag && !this.field.options.disableMultipleSelectionInSubForm && this.gDsv.formStatus != 'approval'){
+            if(this.allowMultipleSelection){
                 this.$refs.referST.multipleSelectRecord();
             }else {
                 this.$refs.referST.recordSelected();

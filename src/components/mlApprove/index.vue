@@ -408,13 +408,13 @@ const initFormLayout = async (formLayoutId) => {
                                     // 获取审批子表单的配置
                                     let subFormDetailEntityConfig = detailEntityConfig.find(item => item.entityName == subForm);
                                     // 允许新增
-                                    if(!subFormDetailEntityConfig?.isAlowAdd) {
+                                    if(subFormDetailEntityConfig?.isAlowAdd) {
                                         subFormRef.widget.options.disabled = false;
                                         subFormRef.actionDisabled = false;
                                         subFormRef.setInsertDisabled(false);
                                     }
                                     // 允许删除
-                                    if(!subFormDetailEntityConfig?.isAlowDel) {
+                                    if(subFormDetailEntityConfig?.isAlowDel) {
                                         subFormRef.widget.options.disabled = false;
                                         subFormRef.actionDisabled = false;
                                         subFormRef.setDeleteDisabled(false);
