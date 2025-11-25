@@ -33,6 +33,10 @@ const props = defineProps({
 		type: Object,
 		default: () => ({}),
 	},
+    selectedProductionTaskNos: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 let buttonList = ref([
@@ -60,7 +64,7 @@ const pagerVO = reactive({
 });
 
 const defaultGanttOptions = ref({
-	height: 377,
+	height: 337,
 	loading: false,
 	taskViewConfig: {},
 	pagerConfig: pagerVO,
@@ -154,6 +158,14 @@ watch(
 	() => {
 		// 重置到第一页
 		pagerVO.currentPage = 1;
+		handlePageData();
+	},
+	{ deep: true, immediate: false }
+);
+
+watch(
+	() => props.selectedProductionTaskNos,
+	() => {
 		handlePageData();
 	},
 	{ deep: true, immediate: false }
@@ -309,8 +321,8 @@ const handlePageData = async () => {
 		sortFields: [{ fieldName: "productionTask", type: "DESC" }],
 	});
 	if (res?.code == 200) {
-		let dataList = res.data.dataList || [];
-		dataList = dataList.map((el) => {
+		let sourceDataList = res.data.dataList || [];
+		let formattedDataList = sourceDataList.map((el) => {
 			el.productionTask = el.productionTask?.name;
 			el.workTeam = el.workTeam ? el.workTeam.map(item => item.name).join(",") : "";
 			el.workshop = el.workshop?.name;
@@ -320,6 +332,13 @@ const handlePageData = async () => {
 			el.productionStatus = el.productionStatus.value;
 			return el;
 		});
+        let dataList = [];
+        if(props.selectedProductionTaskNos.length > 0) {
+            let searchDataList = formattedDataList.filter(el => props.selectedProductionTaskNos.includes(el.productionTask));
+            dataList = JSON.parse(JSON.stringify(searchDataList));
+        }else {
+            dataList = JSON.parse(JSON.stringify(formattedDataList));
+        }
 
 		// 自动计算合并单元格（分层合并）
 		// 列索引：0=生产工单号, 1=车间, 2=设备, 3=班组, 4=工序（不合并）

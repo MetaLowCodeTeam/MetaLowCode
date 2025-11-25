@@ -1,5 +1,8 @@
 <template>
 	<!--  -->
+  <el-form-item :label="i18nt('extension.setting.showChangeQueryPanel')" label-width="120px">
+		<el-switch v-model="optionModel.showChangeQueryPanel" />
+	</el-form-item>
 	<el-form-item :label="i18nt('extension.setting.showAdvancedQuery')" label-width="120px">
 		<el-switch v-model="optionModel.showAdvancedQuery" />
 	</el-form-item>

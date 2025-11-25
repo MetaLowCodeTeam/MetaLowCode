@@ -23,6 +23,8 @@ export const listSubFormSchema = {
         showAdvancedQuery: true,
         // 是否显示快速查询
         showQuickQuery: true,
+        // 是否显示切换查询
+        showChangeQueryPanel: true,
         // 是否显示更多按钮
         showMoreBtn: true,
         // 是否显示操作列

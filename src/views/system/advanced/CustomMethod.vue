@@ -79,6 +79,11 @@ let sortFields = ref([
 // const revisionType = ref({
 //     1: "更新",
 // });
+// 方法地址前缀
+const methodUrlPrefix = ref({
+    1: '/cm/call/',
+    2: '/cm/listQuery/',
+});
 
 let tableColumn = ref([
 	{
@@ -89,7 +94,7 @@ let tableColumn = ref([
 		label: "接口地址",
 		prop: "methodUrl",
 		formatter: (row) => {
-			return "/cm/call/" + row.methodUrl;
+			return methodUrlPrefix.value[row.methodType?.value] + row.methodUrl;
 		},
 	},
 	{

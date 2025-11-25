@@ -2,112 +2,98 @@
 	<div v-loading="globalLoading" element-loading-text="加载中...">
 		<div class="search-box">
 			<el-form :model="searchForm" label-width="100px">
-				<el-row :gutter="20">
-					<!-- 第一行 -->
-					<el-col :span="8">
-						<el-form-item label="生产订单号">
-							<el-input
-								v-model="searchForm.productionTask"
-								placeholder="请输入生产订单号"
-								clearable
-							/>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="生产单状态">
-							<el-select
-								v-model="searchForm.productionStatus"
-								placeholder="请选择生产单状态"
-								clearable
-								style="width: 100%"
-							>
-								<el-option label="全部" value="all" />
-								<el-option v-for="item in optionItems" :key="item.value" :label="item.label" :value="item.value" />
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="车间">
-							<reference-search-table-input
-								v-model="searchForm.workshop"
-								entity="ProcessTaskOrder"
-								refField="workshop"
-								:enableAdd="false"
-								:enableSavePlanQuery="false"
-							/>
-						</el-form-item>
-					</el-col>
-					<!-- 第二行 -->
-					<el-col :span="8">
-						<el-form-item label="设备">
-							<reference-search-table-input
-								v-model="searchForm.equipment"
-								entity="ProcessTaskOrder"
-								refField="equipment"
-								:enableAdd="false"
-								:enableSavePlanQuery="false"
-							/>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="班组">
-							<reference-search-table-input
-								v-model="searchForm.workTeam"
-								entity="ProcessTaskOrder"
-								refField="workTeam"
-								:enableAdd="false"
-								:enableSavePlanQuery="false"
-							/>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="产品编号">
-							<el-input
-								v-model="searchForm.productCode"
-								placeholder="请输入产品编号"
-								clearable
-							/>
-						</el-form-item>
-					</el-col>
-					<!-- 第三行 -->
-					<el-col :span="8">
-						<el-form-item label="名称">
-							<el-input
-								v-model="searchForm.productName"
-								placeholder="请输入名称"
-								clearable
-							/>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="计划日期范围">
-							<el-date-picker
-								v-model="searchForm.dateRange"
-								type="daterange"
-								range-separator="至"
-								start-placeholder="开始日期"
-								end-placeholder="结束日期"
-								value-format="YYYY-MM-DD"
-								style="width: 100%"
-								clearable
-							/>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item>
-							<el-button
-								type="primary"
-								style="width: 80px"
-								@click="handleSearch"
-							>
-								搜索
-							</el-button>
-							<el-button style="width: 80px" @click="handleReset">
-								重置
-							</el-button>
-						</el-form-item>
-					</el-col>
-				</el-row>
+				<!-- 第一行：5个字段 -->
+				<div class="search-row">
+					<el-form-item label="生产订单号" class="search-item">
+						<el-input
+							v-model="searchForm.productionTask"
+							placeholder="请输入生产订单号"
+							clearable
+						/>
+					</el-form-item>
+					<el-form-item label="生产单状态" class="search-item">
+						<el-select
+							v-model="searchForm.productionStatus"
+							placeholder="请选择生产单状态"
+							clearable
+							style="width: 100%"
+						>
+							<el-option label="全部" value="all" />
+							<el-option v-for="item in optionItems" :key="item.value" :label="item.label" :value="item.value" />
+						</el-select>
+					</el-form-item>
+					<el-form-item label="产品编号" class="search-item">
+						<el-input
+							v-model="searchForm.productCode"
+							placeholder="请输入产品编号"
+							clearable
+						/>
+					</el-form-item>
+					<el-form-item label="名称" class="search-item">
+						<el-input
+							v-model="searchForm.productName"
+							placeholder="请输入名称"
+							clearable
+						/>
+					</el-form-item>
+					<el-form-item label="计划日期范围" class="search-item">
+						<el-date-picker
+							v-model="searchForm.dateRange"
+							type="daterange"
+							range-separator="至"
+							start-placeholder="开始日期"
+							end-placeholder="结束日期"
+							value-format="YYYY-MM-DD"
+							style="width: 100%"
+							clearable
+						/>
+					</el-form-item>
+				</div>
+				<!-- 第二行：3个字段 + 按钮区域 -->
+				<div class="search-row">
+                    <el-form-item label="车间" class="search-item">
+						<reference-search-table-input
+							v-model="searchForm.workshop"
+							entity="ProcessTaskOrder"
+							refField="workshop"
+							:enableAdd="false"
+							:enableSavePlanQuery="false"
+                            placeholder="请选择车间"
+						/>
+					</el-form-item>
+					<el-form-item label="设备" class="search-item">
+						<reference-search-table-input
+							v-model="searchForm.equipment"
+							entity="ProcessTaskOrder"
+							refField="equipment"
+							:enableAdd="false"
+							:enableSavePlanQuery="false"
+                            placeholder="请选择设备"
+						/>
+					</el-form-item>
+					<el-form-item label="班组" class="search-item">
+						<reference-search-table-input
+							v-model="searchForm.workTeam"
+							entity="ProcessTaskOrder"
+							refField="workTeam"
+							:enableAdd="false"
+							:enableSavePlanQuery="false"
+                            placeholder="请选择班组"
+						/>
+					</el-form-item>
+					<div class="search-buttons">
+						<el-button
+							type="primary"
+							style="width: 80px"
+							@click="handleSearch"
+						>
+							搜索
+						</el-button>
+						<el-button style="width: 80px" @click="handleReset">
+							重置
+						</el-button>
+					</div>
+				</div>
 			</el-form>
 		</div>
 		<EntityList
@@ -117,8 +103,9 @@
 			modelName="Yt-TableGantt"
 			:externalFilterItems="listFilterItems"
 			:externalSort="[{ fieldName: 'productionTask', type: 'DESC' }]"
+            @onSelectedChange="handleSelectedChange"
 		/>
-		<Gantt ref="ganttRef" :searchParams="searchParams" />
+		<Gantt ref="ganttRef" :searchParams="searchParams" :selectedProductionTaskNos="selectedProductionTaskNos" />
 	</div>
 </template>
 
@@ -309,6 +296,7 @@ const buildListFilterItems = (params) => {
 			value: params.expectedEndTime,
 		});
 	}
+    console.log(items, "items");
 	return items;
 };
 
@@ -335,6 +323,12 @@ const handleReset = () => {
 	listFilterItems.value = [];
 };
 
+const selectedProductionTaskNos = ref([]);
+const handleSelectedChange = (selected) => {
+    let productionTaskNoList = selected.map(el => el.productionTaskNo);
+    selectedProductionTaskNos.value = productionTaskNoList;
+};
+
 watch(
 	() => entityListRef.value?.pageLoading?.value,
 	(val) => {
@@ -357,15 +351,64 @@ watchEffect(() => {
 	border-radius: 4px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	margin-bottom: 0;
-	:deep(.el-form-item) {
+	
+	.search-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
 		margin-bottom: 10px;
+		
+		&:last-child {
+			margin-bottom: 0;
+		}
+		
+		// 第一行：5个字段平均分配
+		&:first-child .search-item {
+			flex: 0 0 calc(20% - 16px);
+			min-width: 0;
+		}
+		
+		// 第二行：3个字段 + 按钮区域
+		&:last-child {
+			justify-content: space-between;
+			
+			.search-item {
+				flex: 0 0 calc(20% - 16px);
+				min-width: 0;
+			}
+			
+			.search-buttons {
+				flex: 0 0 calc(40% - 16px);
+				display: flex;
+				justify-content: flex-end;
+				align-items: flex-end;
+			}
+		}
+		
+		.search-item {
+			margin-bottom: 0;
+		}
+		
+		.search-buttons {
+			.el-button {
+				margin-left: 10px;
+				
+				&:first-child {
+					margin-left: 0;
+				}
+			}
+		}
+	}
+	
+	:deep(.el-form-item) {
+		margin-bottom: 0;
 	}
 }
 
 :deep(.customize-menu-list) {
 	padding: 10px;
 	.table-box {
-		height: 399px;
+		height: 359px;
 		background: #fff;
 		box-sizing: border-box;
 		padding-top: 10px;

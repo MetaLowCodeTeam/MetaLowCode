@@ -4,6 +4,7 @@
 		readonly
 		:class="{ 'is-error': !!errorField }"
 		@focus="clearError()"
+		:placeholder="placeholder"
 	>
 		<template #suffix>
 			<el-icon
@@ -100,6 +101,10 @@ const props = defineProps({
     extraFilter: {
         type: String,
         default: null,
+    },
+    placeholder: {
+        type: String,
+        default: "请选择",
     },
 });
 

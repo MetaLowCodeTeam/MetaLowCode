@@ -34,6 +34,7 @@ export default {
             batchUpdateBtnInfo: "Batch editing fields need to be set to display",
             showMoreBtn: "ShowMoreBtn",
             showOperateColumn: "ShowOperateColumn",
+            showChangeQueryPanel: "ShowChangeQueryPanel",
             showPagination: "ShowPagination",
             paginationSize: "PaginationSize",
             paginationPlaceholder:"Please select the number of entries per page",

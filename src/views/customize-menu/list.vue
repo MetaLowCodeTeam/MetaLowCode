@@ -652,7 +652,7 @@ const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
 
-const emits = defineEmits(['referenceCompAdd', 'onCellClick', 'onRowClick'])
+const emits = defineEmits(['referenceCompAdd', 'onCellClick', 'onRowClick', 'onSelectedChange'])
 
 const props = defineProps({
     listConf: {
@@ -1733,6 +1733,7 @@ let selectedAllStatus = computed(() => {
         status = 2;
     }
     multipleSelection.value = [...findSelected];
+    emits('onSelectedChange', multipleSelection.value);
     // 没有任何选中
     return status;
 })

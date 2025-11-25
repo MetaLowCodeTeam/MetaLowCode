@@ -34,6 +34,7 @@ export default {
             batchUpdateBtnInfo: "需要设置批量编辑字段才可显示",
             showMoreBtn: "是否显示更多按钮",
             showOperateColumn: "是否显示操作列",
+            showChangeQueryPanel: "是否显示切换查询",
             showPagination: "是否显示分页",
             paginationSize: "每页显示多少条",
             paginationPlaceholder:"请选择每页条数",

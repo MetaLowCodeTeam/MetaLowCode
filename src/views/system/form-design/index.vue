@@ -867,7 +867,7 @@ export default {
 }
 
 .form-design-box-div {
-    min-width: 1400px;
+    /* min-width: 1400px; */
     height: 100%;
     overflow: auto;
 }

@@ -20,6 +20,7 @@
 					showHeader: widget.options.showListHeader,
 					showAdvancedQuery: widget.options.showAdvancedQuery,
 					showQuickQuery: widget.options.showQuickQuery,
+					showChangeQueryPanel: widget.options.showChangeQueryPanel,
 					showOpenBtn: widget.options.showOpenBtn,
 					showEditBtn: widget.options.showEditBtn,
 					showAddBtn: widget.options.showAddBtn,
