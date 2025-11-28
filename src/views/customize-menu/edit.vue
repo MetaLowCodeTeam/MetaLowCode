@@ -23,7 +23,7 @@
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value != 1 &&!checkModifiableEntity(row.detailId, row.approvalStatus.value)">记录已完成审批，禁止编辑</div>
             <div class="info-box" v-if="row.detailId && row.approvalStatus.value == 1">记录正在审批中，禁止编辑</div>
             <v-form-render
-                v-if="haveLayoutJson"
+                v-if="haveLayoutJson && isShow"
                 ref="vFormRef"
                 :global-dsv="globalDsv"
                 :option-data="optionData"

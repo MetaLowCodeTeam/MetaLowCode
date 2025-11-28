@@ -325,6 +325,10 @@ export default {
 				return
 			}
 
+            if (!this.field.options.useCurrentUser && !this.field.options.useCurrentDepartment) {
+                return
+            }
+
 			let loginUser = null
 			if (localStorage.getItem('USER_INFO')) {
 				loginUser = JSON.parse(localStorage.getItem('USER_INFO')).content

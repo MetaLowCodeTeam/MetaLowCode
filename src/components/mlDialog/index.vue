@@ -1,6 +1,7 @@
 <template>
     <el-dialog
         class="ml-dialog"
+        destroy-on-close
         :append-to-body="appendToBody"
         :width="isFullScreen ? '100%' : width"
         v-model="isShow"

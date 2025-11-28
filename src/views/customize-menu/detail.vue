@@ -8,6 +8,7 @@
 		:show-close="false"
 		:append-to-body="true"
 		:modal-append-to-body="false"
+		destroy-on-close
 	>
 		<template #header>
 			<div class="detail-header">
@@ -17,9 +18,9 @@
                     </span>
 					<div class="fr fr-box">
                         <span v-if="styleConf.detailConf.enablePagination || styleConf.detailConf.enablePagination == undefined" class="enable-pagination-span">
-                            <el-button 
-                                size="small" 
-                                type="primary" 
+                            <el-button
+                                size="small"
+                                type="primary"
                                 @click="onPrev"
                                 :disabled="!prevRecordId"
                                 :loading="loading"
@@ -28,9 +29,9 @@
                             >
                                 上一条
                             </el-button>
-                            <el-button 
-                                size="small" 
-                                type="primary" 
+                            <el-button
+                                size="small"
+                                type="primary"
                                 @click="onNext"
                                 :disabled="!nextRecordId"
                                 :loading="loading"
@@ -87,7 +88,7 @@
                             <div v-if="cutTab == 'detail'">
                                 <mlApproveBar :approvalInfo="approvalStatus" />
                                 <v-form-render
-                                    v-if="haveLayoutJson"
+                                    v-if="haveLayoutJson && detailDialog.isShow"
                                     :option-data="optionData"
                                     :global-dsv="globalDsv"
                                     ref="vFormRef"
@@ -103,9 +104,9 @@
                             </div>
                             <div v-else-if="cutTab.includes('detail_custom_component_all') || cutTab.includes('detail_custom_component_pc')">
                                 <!-- 拿最后一个-后面的字符串 -->
-                                <component 
-                                    v-if="componentExists(cutTab.split('_').pop())" 
-                                    :is="cutTab.split('_').pop()" 
+                                <component
+                                    v-if="componentExists(cutTab.split('_').pop())"
+                                    :is="cutTab.split('_').pop()"
                                     :recordId="detailId"
                                     ref="customComponentRefs"
                                 />
@@ -209,9 +210,9 @@
                             </el-row>
                         </template>
                         <template v-else>
-                            <div 
-                                v-for="(item,customBtnIndex) in customButtonList" 
-                                :key="customBtnIndex" 
+                            <div
+                                v-for="(item,customBtnIndex) in customButtonList"
+                                :key="customBtnIndex"
                                 class="block-el-button"
                             >
                                 <slot v-if="item.type === 'slot'" :name="item.name" :row="rowResData"></slot>
@@ -291,7 +292,7 @@
 			</el-row>
 			<el-empty v-else description="暂无数据" />
 		</div>
-        <mlCustomEdit 	
+        <mlCustomEdit
             ref="editRefs"
             @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
@@ -299,7 +300,7 @@
             :isUser="isUser"
         />
         <!-- 新建、编辑部门 -->
-        <EditDepartment 
+        <EditDepartment
             ref="EditDepartmentRef"
             @onRefresh="onConfirm"
             :nameFieldName="nameFieldName"
@@ -316,11 +317,11 @@ defineOptions({
 import mlCustomEdit from '@/components/mlCustomEdit/index.vue';
 import EditDepartment from '@/views/user/components/EditDepartment.vue'
 
-import { 
-    ref, 
-    reactive, 
-    inject, 
-    nextTick, 
+import {
+    ref,
+    reactive,
+    inject,
+    nextTick,
     watch,
     watchEffect,
     onMounted,
@@ -404,7 +405,7 @@ const props = defineProps({
 		default: () => [],
 	},
     // 当前modelName
-    modelName: {    
+    modelName: {
 		type: String,
 		default: "",
 	},
@@ -534,7 +535,7 @@ const openDialog = (id, localDsv, paramFormId) => {
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
 	detailDialog.isShow = true;
-    
+
 	// 加载数据
 	refresh();
     nextTick(() => {
@@ -658,7 +659,7 @@ const getLayoutList = async () => {
                     code: entityCode.value,
                     label: queryEntityLabelByName(entityName.value),
                 }
-                // 获取弹框配置 
+                // 获取弹框配置
                 let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
                 if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
                     newDialogConfig.editMaxHeight = '500px';
@@ -777,8 +778,8 @@ const getLayoutList = async () => {
             customButtonList.value.splice(moreIndex, 0, { type: 'slot', name: 'beforeMoreBtn' });
             customButtonList.value.splice(moreIndex + 2, 0, { type: 'slot', name: 'afterMoreBtn' });
         }
-        
-        
+
+
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         // 新建配置项
 		formatNewRelated(res.data.ADD);
@@ -860,7 +861,7 @@ const initData = async () => {
                             code: entityCode.value,
                             label: queryEntityLabelByName(entityName.value),
                         }
-                        // 获取弹框配置 
+                        // 获取弹框配置
                         let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
                         if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
                             newDialogConfig.editMaxHeight = '500px';
@@ -940,7 +941,7 @@ const onAdd = (e, outerLayoutConfig) => {
 	tempV.fieldNameLabel = detailName.value;
 	tempV.sourceRecord = multipleSelection.value[0];
     if(e.formId) {
-        tempV.formId = e.formId; 
+        tempV.formId = e.formId;
     }
     if(e.localDsv) {
         tempV.localDsv = e.localDsv;
@@ -971,7 +972,7 @@ const editColumnConfirm = (v) => {
 		detailDialog.isShow = false;
 		emits("onConfirm");
 	} else {
-        
+
 		onConfirm();
 	}
 };
@@ -1057,11 +1058,11 @@ const showApprovalRelated = () => {
     if(!recordApproval.value) {
         return false;
     }
-    let { 
-        imApproval, 
-        startApproval, 
-        queryHistory, 
-        revokeApproval 
+    let {
+        imApproval,
+        startApproval,
+        queryHistory,
+        revokeApproval
     } = recordApproval.value;
     if(imApproval){
         return true
