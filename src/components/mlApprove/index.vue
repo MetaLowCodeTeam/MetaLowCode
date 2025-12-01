@@ -353,8 +353,6 @@ const initFormLayout = async (formLayoutId) => {
             nextTick(async () => {
                 if(!props.isDialog) {
                     await getApprovalTaskInfo();
-                }else {
-                    await getApprovalTaskById();
                 }
                 vFormRef.value.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
@@ -682,9 +680,7 @@ async function getApprovalTaskById() {
                 }
             }
         }
-        if(!props.isDialog) {
-            initFormLayout(approvalTask.value.formLayoutId);
-        }
+        initFormLayout(approvalTask.value.formLayoutId);
     } else {
         loading.value = false;
     }
@@ -710,7 +706,7 @@ const getApprovalTaskInfo = async () => {
                     };
                 }else {
                     isShow.value = true;
-                    initFormLayout();
+                    await getApprovalTaskById();
                 }
             }
         }

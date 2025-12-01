@@ -264,6 +264,7 @@ export default {
 			columns: [],
 			tableData: [],
 			selectedData: [],
+            isManuallyCleared: false, // 标记用户是否手动清空了已选项
 			page: {
 				pageNo: 1,
 				limit: 10,
@@ -353,6 +354,7 @@ export default {
                 el.referTo = null;
                 el.refLabel = null;
 			});
+            this.isManuallyCleared = true;
 			this.loadTableTable("isReset");
 		},
 		// 保存
@@ -532,7 +534,9 @@ export default {
                         this.singleSelectedFormTab = queryEntityNameById(this.defaultSelected?.id);
                     }
                 }
+               
                 let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
+             
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
@@ -540,7 +544,8 @@ export default {
 					newDefaultSelected &&
 					newDefaultSelected.length > 0 &&
 					this.selectedData &&
-					this.selectedData.length < 1
+					this.selectedData.length < 1 &&
+					!this.isManuallyCleared
 				) {
 					this.selectedData = newDefaultSelected.map((el) => {
 						let row = {};
@@ -645,7 +650,10 @@ export default {
         handleClose(item) {
             this.selectedData = this.selectedData.filter(el => el[this.idField] !== item[this.idField]);
             this.$refs.SimpleTableRef?.toggleSingleRowSelection(item, false, this.idField);
-
+            // 如果删除后已选项为空，标记为手动清空
+            if (this.selectedData.length === 0) {
+                this.isManuallyCleared = true;
+            }
         },
 		// 多选回填
 		multipleSelectRecord() {
@@ -754,6 +762,10 @@ export default {
                     el.formEntityName = this.currentTab || '';
                     return el;
                 });
+                // 用户重新选择项时，重置手动清空标志
+				if (this.selectedData.length > 0) {
+					this.isManuallyCleared = false;
+				}
 			} else {
 				if (this.selectedData.length > 0 && !row) {
 					// 然后修改 回显数据

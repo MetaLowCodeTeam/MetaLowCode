@@ -24,7 +24,8 @@ export default {
         },
         // 提交复杂工作流
         startComplexFlowApproval: async (body) => {
-            return await http.post("/approval/startRelatedProcess", body);
+            return await http.post("/approval/startRelatedProcess", body); 
+            // return await http.post("/plugins/metaWorkFlow/workflow/startRelatedProcess", body);
         },
     },
     list: {

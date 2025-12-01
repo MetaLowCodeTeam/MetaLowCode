@@ -146,6 +146,17 @@ const loadForm = async () => {
 			globalDsv.value.formEntityId = "";
 			nextTick(() => {
 				vFormRef.value.setFormJson(res.data.layoutJson);
+                let newWindowCreateEntityLocalDsv = localStorage.getItem("NewWindowCreateEntityLocalDsv");
+                if(newWindowCreateEntityLocalDsv){
+                    let newWindowCreateEntityLocalDsvObj = JSON.parse(newWindowCreateEntityLocalDsv);
+                    if(newWindowCreateEntityLocalDsvObj.entity == entity.value && newWindowCreateEntityLocalDsvObj.localDsv){
+                        let { localDsv } = newWindowCreateEntityLocalDsvObj;
+                        globalDsv.value = Object.assign(globalDsv.value, localDsv);
+                        nextTick(() => {
+                            vFormRef.value.setFormData(localDsv.backfillFormData);
+                        })
+                    }
+                }
 			});
 		}
 	}

@@ -1821,7 +1821,12 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
         });
         return
     }
+    
     if(rowStyleConf.value?.actionConf?.newTabOpenNew){
+        localStorage.setItem("NewWindowCreateEntityLocalDsv", JSON.stringify({
+            entity: targetEntity || entityName.value,
+            localDsv: localDsv,
+        }));
         // 新窗口创建实体
         router.push({
             name: "NewWindowCreateEntity",
