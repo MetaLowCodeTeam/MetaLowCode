@@ -44,7 +44,7 @@
       chosen-class="chosenClass"
       animation="300"
       handle=".mover"
-      group="menuItems"
+      :group="{ name: 'menuItems', pull: false, put: false }"
     >
       <MenuItem
         v-for="(child, childIndex) in item.children"

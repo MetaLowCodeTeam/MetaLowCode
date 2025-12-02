@@ -19,7 +19,7 @@
 						:force-fallback="false"
 						handle=".mover"
 						:list="menuData.list"
-						group="menuItems"
+						:group="{ name: 'menuItems', pull: false, put: false }"
 					>
 						<MenuItem
 							v-for="(parent, inx) in menuData.list"
