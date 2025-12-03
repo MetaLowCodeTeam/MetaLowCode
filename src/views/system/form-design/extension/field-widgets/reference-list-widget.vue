@@ -220,7 +220,6 @@ export default {
 		FormItemWrapper,
 		ReferenceSearchTable,
         ReferenceSearchTree,
-		Detail,
 		ReferenceSearchUser
 	},
 	data() {

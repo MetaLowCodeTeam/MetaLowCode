@@ -198,7 +198,6 @@ export default {
 		FormItemWrapper,
 		ReferenceSearchTable,
         ReferenceSearchTree,
-		Detail,
 		ReferenceSearchRemote,
 		ReferenceSearchUser
 	},
