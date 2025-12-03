@@ -100,7 +100,7 @@
                         <el-icon-chat-dot-round />
                     </el-icon>
                 </el-badge>
-                <el-drawer  class='new-message' title="新消息" v-model="msg" :size="400" append-to-body destroy-on-close>
+                <el-drawer v-if="msg" class='new-message' title="新消息" v-model="msg" :size="400" append-to-body destroy-on-close>
                     <el-container v-loading="msgLoading">
                         <el-main class="nopadding">
                             <el-scrollbar>

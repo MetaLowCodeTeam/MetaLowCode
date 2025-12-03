@@ -6,6 +6,7 @@
         direction="rtl" 
         :show-close="false"
         :append-to-body="true"
+        v-if="isShow"
     >
         <template #header>
             <div class="detail-header">
