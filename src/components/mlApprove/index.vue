@@ -223,6 +223,7 @@
 			</el-form-item>
 		</el-form>
 	</mlDialog>
+    <Detail ref="detailRef" />
 </template>
 
 <script setup>
@@ -241,6 +242,11 @@ import {
     formatQueryByIdParam,
     checkApprovalPreEvent
  } from "@/utils/util";
+import Detail from "@/views/customize-menu/detail.vue";
+
+let detailRef = ref("");
+
+
 
 
 /**
@@ -345,6 +351,7 @@ const initFormLayout = async (formLayoutId) => {
 			globalDsv.value.formStatus = "approval";
 			globalDsv.value.formEntityId = props.entityId;
             globalDsv.value.useFormId = res.data.formLayoutId;
+            globalDsv.value.openDetailDialog = openDetailDialog;
             haveLayoutJson.value = true;
             optionData.value = res.data.optionData || {};
             if(res.data.codeOptionData) {
@@ -445,6 +452,7 @@ const initFormLayout = async (formLayoutId) => {
  * *********************************************************** 表单信息相关 end
  *
  */
+
 
 
 /**
@@ -816,6 +824,11 @@ const openDialog = () => {
         // initFormLayout();
     })
     // console.log(props.entityId,'approverRecordId')
+}
+
+//  打开详情弹框
+const openDetailDialog = (recordId) => {
+    detailRef.value?.openDialog(recordId);
 }
 
 defineExpose({

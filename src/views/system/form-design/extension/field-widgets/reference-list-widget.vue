@@ -174,7 +174,6 @@
             </template>
         </ml-dialog>
 	</div>
-	<Detail ref="detailRef" />
 </template>
 
 <script>
@@ -357,7 +356,9 @@ export default {
 		},
         // 点击标签
         handleTagClick(tag){
-            this.$refs.detailRef.openDialog(tag.id);
+            if(this.gDsv.openDetailDialog && tag.id){
+                this.gDsv.openDetailDialog(tag.id);
+            }
         },
 
 		onAppendButtonClick() {

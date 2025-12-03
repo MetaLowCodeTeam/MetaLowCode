@@ -150,7 +150,6 @@
             </template>
 		</ml-dialog>
 	</div>
-	<Detail ref="detailRef" />
 </template>
 
 <script>
@@ -160,7 +159,6 @@ import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-searc
 import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search-tree.vue";
 import ReferenceSearchRemote from "@/components/mlReferenceSearch/reference-search-remote.vue";
 import useCommonStore from "@/store/modules/common";
-import Detail from "@/views/customize-menu/detail.vue";
 import { queryById } from "@/api/crud";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 export default {
@@ -851,8 +849,8 @@ export default {
 			}
 
 			let refId = this.fieldModel ? this.fieldModel.id : null;
-			if (refId && this.$refs.detailRef) {
-				this.$refs.detailRef.openDialog(refId);
+			if (refId && this.gDsv.openDetailDialog) {
+				this.gDsv.openDetailDialog(refId);
 			}
 		},
         onSelectedRemote({record, selectedRow}) {

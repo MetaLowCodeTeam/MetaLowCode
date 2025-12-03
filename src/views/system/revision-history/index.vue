@@ -45,7 +45,6 @@ import { nextTick, ref } from "vue";
 import { $fromNow } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
-import http from "@/utils/request";
 const { allEntityLabel, allEntityName } = storeToRefs(useCommonStore());
 import ListDetail from "@/views/user/components/ListDetail.vue";
 import Detail from "@/views/customize-menu/detail.vue";

@@ -838,6 +838,7 @@ const initData = async () => {
 			nextTick(async () => {
 				globalDsv.value.formStatus = 'read';
 				globalDsv.value.formEntityId = detailId.value;
+                globalDsv.value.openDetailDialog = openDialog;
                 // 获取审批信息
                 let recordApprovalRes = await getRecordApprovalState(detailId.value);
                 if(recordApprovalRes){
