@@ -9,7 +9,7 @@
             </template>
             <NavMenu :navMenus="navMenu.children"></NavMenu>
         </el-menu-item-group>
-        <el-menu-item v-else-if="!hasChildren(navMenu)" :index="navMenu.path" :class="{'isActive': activePath == navMenu.path}">
+        <el-menu-item v-else-if="!hasChildren(navMenu)" :index="navMenu.path" :class="{'isActive': activePath == navMenu.path}" :disabled="navMenu.name === 'NewWindowCreateEntity'">
             <a
                 v-if="navMenu.meta&&navMenu.meta.type=='link'"
                 :href="formatOutLink(navMenu.meta)"

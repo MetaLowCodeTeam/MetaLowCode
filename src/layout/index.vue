@@ -38,6 +38,7 @@
                                         :title="item.meta.title"
                                         @click="showMenu(item)"
                                         :class="pmenu.path == item.path ? 'active' : '' "
+                                        v-if="item.name != 'CustomAddNav'"
                                     >
                                         <el-icon :style="{'color':item.meta.iconColor}" class="menu-icon mr-2">
                                             <component :is="item.meta.icon || 'el-icon-menu'" />

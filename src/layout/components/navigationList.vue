@@ -15,18 +15,17 @@
                     :class="{'is-active':chosenNavigationId == item.layoutConfigId}"
                     @click="navClick(item)"
                 >
-                {{ item.configName }}
-                <div class="action-icon" v-if="$TOOL.checkRole('r6007')">
-                    <span class="icon-span edit-icon mr-5" @click.stop="editMenu(item)">
-                        <el-icon>
-                            <ElIconEditPen />
-                        </el-icon>
-                    </span>
-                    <span class="icon-span" @click.stop="delMenu(item,inx)">
-                        <el-icon size="16">
-                            <ElIconCloseBold />
-                        </el-icon>
-                    </span>
+                    <div class="action-icon" v-if="$TOOL.checkRole('r6007')">
+                        <span class="icon-span edit-icon mr-5" @click.stop="editMenu(item)">
+                            <el-icon>
+                                <ElIconEditPen />
+                            </el-icon>
+                        </span>
+                        <span class="icon-span" @click.stop="delMenu(item,inx)">
+                            <el-icon size="16">
+                                <ElIconCloseBold />
+                            </el-icon>
+                        </span>
                     </div>
                 </div>
             </el-scrollbar>
