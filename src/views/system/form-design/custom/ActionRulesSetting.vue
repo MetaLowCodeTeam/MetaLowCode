@@ -44,6 +44,8 @@
 </template>
 
 <script setup>
+import VisualDesign from "@/../lib/visual-design/designer.umd.js";
+const { Utils } = VisualDesign.VFormSDK;
 import { ref, watch } from "vue";
 import ActionRulesDialog from "./components/ActionRulesDialog.vue";
 import { getGuid } from "@/utils/util";
@@ -208,21 +210,24 @@ const copyActionRule = (inx) => {
 
 // 设置字段组件
 const setFieldWidgets = async (widgets) => {
-    console.log(widgets,'-widgets')
     // 先处理原始数据
     let newWidgets = widgets.map((item) => {
         let value = item.field?.options?.name;
-        let subFormName = item.field?.subFormName;
+        let subFormName = item.field?.subFormName || getSubFormName(item.field.id);
         return {
             label: item.field?.options?.label,
             value: subFormName ? 'subForm_' + subFormName + '_' + value : value,
             type: item.field?.type,
-            entity: item.field?.subFormName || props.entity,
+            entity: subFormName|| props.entity,
 			subFormName,
             optionData: item.field?.options?.optionItems || [],
         };
     });
     fieldWidgets.value = newWidgets;
+};
+
+const getSubFormName = (fieldId) => {
+    return Utils.getSubFormNameByFieldId(props.designer.widgetList, fieldId);
 };
 
 // 设置容器组件
@@ -249,6 +254,7 @@ const getGroupedFieldOptions = () => {
     // 按 entity 分组
     const groupedFields = fieldWidgets.value.reduce((groups, field) => {
         const entityKey = field.entity;
+        
         if (!groups[entityKey]) {
             groups[entityKey] = [];
         }
@@ -262,7 +268,7 @@ const getGroupedFieldOptions = () => {
                 optionData: field.optionData,
             });
         }
-		//暂不处理从表字段
+		// // 暂不处理从表字段
         // if (!field.subFormName) {
         //     groups[entityKey].push({
         //         value: field.value,
@@ -274,7 +280,6 @@ const getGroupedFieldOptions = () => {
         // }
         return groups;
     }, {});
-
     // 转换为 Element Plus Select 分组格式
     const options = Object.keys(groupedFields).map(entityKey => {
         const fields = groupedFields[entityKey];

@@ -58,7 +58,7 @@
                         ref="actionRulesSettingComp"
                         :designer="designer" 
                         :form-config="selectedWidget.options"
-                        :subFormName="selectedWidget.subFormName"
+                        :subFormName="selectedWidget.subFormName || getSubFormName(designer.widgetList, selectedWidget.id)"
                         :entity="entity"
                         :entityLabel="entityLabel"
                         @initFormWidgets="initFormWidgets('actionRulesSettingComp')"
@@ -142,6 +142,8 @@ import {
     getFormLayoutList,
     deleteFormLayout,
 } from "@/api/system-manager";
+import VisualDesign from "@/../lib/visual-design/designer.umd.js";
+const { Utils } = VisualDesign.VFormSDK;
 import { deepClone, overwriteObj, mlShortcutkeys, copyText } from "@/utils/util";
 import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import MlShareTo from "@/components/mlShareTo/index.vue";
@@ -236,6 +238,9 @@ export default {
     },
     emits: ['initComplete'],
     methods: {
+        getSubFormName(widgetList, fieldId) {
+            return Utils.getSubFormNameByFieldId(widgetList, fieldId);
+        },
         handleTest(designer, formConfig, selectedWidget, optionModel) {
             console.log(selectedWidget,'selectedWidget')
         },
