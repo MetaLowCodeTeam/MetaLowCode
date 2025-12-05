@@ -56,18 +56,19 @@
                 </el-tooltip>
                 <el-scrollbar :always="topMenuAlways">
                     <div class="scrollbar-flex-content">
-                        <p
-                            v-for="item in menu"
-                            :key="item"
-                            class="scrollbar-demo-item"
-                            :class="pmenu.path==item.path ? 'active' : '' "
-                            @click="showMenu(item)"
-                        >
-                            <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
-                                <component :is="item.meta.icon || 'el-icon-menu'" />
-                            </el-icon>
-                            {{ item.meta.title }}
-                        </p>
+                        <template v-for="item in menu" :key="item">
+                            <p
+                                class="scrollbar-demo-item"
+                                :class="pmenu.path==item.path ? 'active' : '' "
+                                @click="showMenu(item)"
+                                v-if="item.name != 'CustomAddNav'"
+                            >
+                                <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
+                                    <component :is="item.meta.icon || 'el-icon-menu'" />
+                                </el-icon>
+                                {{ item.meta.title }}
+                            </p>
+                        </template>
                     </div>
                 </el-scrollbar>
             </div>
