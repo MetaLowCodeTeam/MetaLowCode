@@ -931,14 +931,15 @@ onBeforeMount(() => {
         entityName.value = info.meta?.entityName || '';
     }
     
-    if (!entityCode.value) {
-        ElMessage.warning("该实体不存在或者已删除");
-        return;
-    }
+    
     // 是引入组件
     if(props.isReferenceComp){
         formatReferenceEntity();
         return
+    }
+    if (!entityCode.value) {
+        ElMessage.warning("该实体不存在或者已删除");
+        return;
     }
     quickQueryConf.entityCode = entityCode.value;
     loadRouterParams();
