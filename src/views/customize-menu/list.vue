@@ -914,7 +914,7 @@ const routeInfo = computed(() => {
         query: { ...query },
         meta: { ...meta },
         entityName: params?.entityname || query?.entity,
-        entityCode: queryEntityCodeByName(params?.entityname || query?.entity) || meta?.entityCode
+        entityCode: queryEntityCodeByEntityName(params?.entityname || query?.entity) || meta?.entityCode
     };
 });
 
