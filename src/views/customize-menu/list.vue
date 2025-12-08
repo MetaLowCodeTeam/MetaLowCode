@@ -390,12 +390,12 @@
                             v-if="!(customButtonConfig?.pcColumn?.length > 0)"
                         >
                             <slot name="beforeRowEditBtn" :row="scope.row"></slot>
-                            <el-tooltip
+                            <!-- <el-tooltip
                                 class="box-item"
                                 effect="dark"
-                                :content="getEditBtnTitle(scope.row) || '此状态不可编辑'"
+                                :content="scope.row.editTitle"
                                 placement="top"
-                                v-if="hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value)"
+                                v-if="hasEditRight && !scope.row.editCheckModifiable"
                             >
                                 <el-button
                                     size="small"
@@ -406,16 +406,17 @@
                                 >
                                     编辑
                                 </el-button>
-                            </el-tooltip>
+                            </el-tooltip> -->
                             <el-button
-                                v-else-if="hasEditRight && !mainDetailField"
+                                v-if="scope.row.hasEditRight"
                                 size="small"
                                 icon="el-icon-edit"
                                 link
                                 type="primary"
+                                :title="scope.row.editBtnTitle"
                                 @click.stop="onEditRow(scope.row)"
                                 @dblclick.stop
-                                :disabled="scope.row.btnDisabled.edit"
+                                :disabled="scope.row.btnDisabled.edit || !scope.row.editBtnCheckModifiable"
                             >
                                 编辑
                             </el-button>
@@ -952,6 +953,11 @@ let currentExposed = ref({});
 // 快捷键
 let mlShortcutCleanup = ref(null);
 
+// 是否有编辑权限
+let hasEditRight = ref(false);
+// 是否有新建权限
+let hasCreateRight = ref(false);
+
 onMounted(()=>{
     // 挂载
 	// TableRef.value &&
@@ -969,6 +975,10 @@ onMounted(()=>{
     contentSlots = useSlots();
     // 判断是否有操作列插槽
     showActionColumnSlot.value = contentSlots.actionColumn ? true : false;
+    // 获取编辑权限
+    hasEditRight.value = getEditRight();
+    // 获取新建权限
+    hasCreateRight.value = getCreateRight();
     // 判断路由自动打开新建、编辑详情等页面
     nextTick(() => {
         checkRouterAutoOpen();
@@ -1037,13 +1047,13 @@ onUnmounted(() => {
     }
 });
 
-const hasCreateRight = computed(() => {
+const getCreateRight = (() => {
 	const entityCodeForRight = queryEntityCodeByEntityName(props.isReferenceComp ?
 		props.referenceEntity : entityName.value)
 	return $TOOL.checkRole('r' + entityCodeForRight + '-2')
 })
 
-const hasEditRight = computed(() => {
+const getEditRight = (() => {
 	const entityCodeForRight = queryEntityCodeByEntityName(props.isReferenceComp ?
 		props.referenceEntity : entityName.value)
 	return $TOOL.checkRole('r' + entityCodeForRight + '-3')
@@ -2235,7 +2245,7 @@ const getTableList = async () => {
                 };
             });
         }
-        sliceTable.value = tableData.value.slice(0, 20);
+        
         // 获取操作列自定义按钮
         let { pcColumn } = customButtonConfig.value;
         // 过滤出有过滤条件的自定义按钮
@@ -2264,6 +2274,12 @@ const getTableList = async () => {
                 })
             }
         }
+        sliceTable.value = tableData.value.slice(0, 20);
+        sliceTable.value.forEach(el => {
+            el.editBtnCheckModifiable = checkModifiableEntity(el[idFieldName.value],el.approvalStatus?.value);
+            el.editBtnTitle = !el.editCheckModifiable ? getEditBtnTitle(el) || '此状态不可编辑' : '';
+            el.hasEditRight = hasEditRight.value;
+        })
     }
     pageLoading.value = false;
 };
