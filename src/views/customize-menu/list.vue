@@ -643,7 +643,7 @@ const {
 } = useCustomButtonConfig();
 
 const { allEntityCode } = storeToRefs(useCommonStore());
-const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName, queryEntityLabelByName } = useCommonStore();
+const { queryNameByObj, checkModifiableEntity, queryEntityCodeByEntityName } = useCommonStore();
 const { setRouterParams } = routerParamsStore();
 const { routerParams } = storeToRefs(routerParamsStore());
 const router = useRouter();
@@ -906,19 +906,32 @@ const formatReferenceEntity = () => {
 // isShowAdvancedQuery: true,
 
 
-
+// 使用计算属性获取路由信息
+const routeInfo = computed(() => {
+    const { params, query, meta } = router.currentRoute.value;
+    return {
+        params: { ...params },
+        query: { ...query },
+        meta: { ...meta },
+        entityName: params?.entityname || query?.entity,
+        entityCode: queryEntityCodeByEntityName(params?.entityname || query?.entity) || meta?.entityCode
+    };
+});
 
 
 
 onBeforeMount(() => {
-    let routerEntityName = props.customEntity ||router.currentRoute.value.params?.entityname || router.currentRoute.value.query?.entity;
-    if (routerEntityName) {
-        entityCode.value = allEntityCode.value[routerEntityName];
-        entityName.value = routerEntityName;
+    const info = routeInfo.value;
+    
+    if (info.entityName) {
+        entityCode.value = info.entityCode || '';
+        entityName.value = info.entityName || '';
     } else {
-        entityCode.value = router.currentRoute.value.meta.entityCode;
-        entityName.value = router.currentRoute.value.meta.entityName;
+        entityCode.value = info.meta?.entityCode || '';
+        entityName.value = info.meta?.entityName || '';
     }
+    
+    
     // 是引入组件
     if(props.isReferenceComp){
         formatReferenceEntity();
