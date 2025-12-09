@@ -343,10 +343,17 @@ export const upperFirstLetter = (inStr) => {
 /**
  * 获取汉字拼音字母
  * @param chStr
+ * @param pattern 'pinyin' 全拼（默认） | 'first' 首字母
  * @returns {string}
  */
-export const getSimplePinYin = (chStr) => {
-    return pinyin(chStr, { toneType: 'none' }).replaceAll(' ', '').replaceAll('ü', 'v')
+export const getSimplePinYin = (chStr, pattern = 'pinyin') => {
+    // 默认返回全拼；需要首字母时传 pattern: 'first'
+    return pinyin(chStr, {
+        pattern,          // 'pinyin' | 'first' 等
+        toneType: 'none', // 去掉声调数字/符号
+    })
+        .replaceAll(' ', '')
+        .replaceAll('ü', 'v');
 }
 
 
