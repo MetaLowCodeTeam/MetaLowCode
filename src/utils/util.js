@@ -348,9 +348,6 @@ export const upperFirstLetter = (inStr) => {
  */
 export const getSimplePinYin = (chStr, pattern = 'pinyin') => {
     // 默认返回全拼；需要首字母时传 pattern: 'first'
-    // 例如：
-    // getSimplePinYin('你好啊')            -> 'nihaoa'
-    // getSimplePinYin('你好啊', 'first')  -> 'nha'
     return pinyin(chStr, {
         pattern,          // 'pinyin' | 'first' 等
         toneType: 'none', // 去掉声调数字/符号
