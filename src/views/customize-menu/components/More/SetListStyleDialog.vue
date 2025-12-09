@@ -198,7 +198,7 @@
                     </div>
                 </el-col>
                 <el-divider style="margin: 10px 0 15px 0 ;"/>
-                <el-col :span="24" v-if="!isListCard && !isListCalendar">
+                <el-col :span="24" v-if="!isListCard && !isListCalendar && !publicSetting.listDevSettingDisabled || (publicSetting.listDevSettingDisabled && $TOOL.checkRole('r6000'))">
                     <div class="form-title">自定义渲染</div>
                     <el-tabs v-model="activeName">
                         <el-tab-pane label="自定义行选中禁用设置" name="rowDisabledRender">
@@ -271,7 +271,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, ref, computed } from "vue";
+import { onMounted, watch, ref, computed, inject } from "vue";
 import { ElMessage } from "element-plus";
 /**
  * API
@@ -285,7 +285,10 @@ import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { getFormLayoutList } from "@/api/system-manager";
 import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const { queryEntityNameByCode } = useCommonStore();
+const $TOOL = inject("$TOOL");
 const props = defineProps({
 	modelValue: null,
 	entityCode: { type: [Number, String] },
