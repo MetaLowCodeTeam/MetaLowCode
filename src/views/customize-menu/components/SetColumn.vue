@@ -319,7 +319,7 @@
                             </span>
                         </el-form-item>
                     </el-tab-pane>
-                    <el-tab-pane label="自定义渲染" name="customizeRender">
+                    <el-tab-pane label="自定义渲染" name="customizeRender" v-if="!publicSetting.listDevSettingDisabled || (publicSetting.listDevSettingDisabled && $TOOL.checkRole('r6000'))">
                         <div class="mb-10">
                             <span class="">自定义渲染</span>
                             <a class="ml-a-span" target="_blank" href="https://www.yuque.com/visualdev/melecode/yu0gqztx7dhdkp8e?singleDoc#">使用文档</a>
@@ -348,8 +348,11 @@ import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import useCommonStore from "@/store/modules/common";
 import { getElColorPickerPredefineColors } from "@/utils/util";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
 const { queryEntityNameByCode } = useCommonStore();
 const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const props = defineProps({
     modelValue: null,
     // 数据
