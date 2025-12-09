@@ -438,7 +438,7 @@
                                 v-for="(item,index) of customButtonConfig.pcColumn" :key="index"
                             >
                                 <slot v-if="item.type === 'slot'" :name="item.name" :row="scope.row"></slot>
-                                <template v-else-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) || referenceCompStatus == 'read'">
+                                <template v-else-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value)">
                                     <el-tooltip
                                         class="box-item"
                                         effect="dark"
@@ -475,7 +475,6 @@
                                     </el-tooltip>
                                 </template>
                                 <template v-else>
-                                    
                                     <!-- 底部 -->
                                     <el-button
                                         @click.stop="customButtonClick(item, scope.row)"
@@ -995,6 +994,7 @@ onMounted(()=>{
                 }
             })
         }
+        listParamConf.value.showMoreBtn = true;
     })
     
 })
