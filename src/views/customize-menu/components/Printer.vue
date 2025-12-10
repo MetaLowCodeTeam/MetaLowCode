@@ -32,10 +32,13 @@ let nameFieldName = ref("");
 
 // 打印标题
 let printerTitle = ref("");
+// 指定表单
+let formId = ref("");
 
 onMounted(async () => {
     entityId.value = router.currentRoute.value.query.entityId;
     nameFieldName.value = router.currentRoute.value.query.nameFieldName;
+    formId.value = router.currentRoute.value.query.formId;
     if (entityId.value) {
         router.go(-1);
     }
@@ -50,7 +53,7 @@ let globalDsv = ref(globalDsvDefaultData());
 // 加载vform表单
 const initVformCom = async () => {
     loading.value = true;
-    let res = await getFormLayout(queryEntityNameById(entityId.value));
+    let res = await getFormLayout(queryEntityNameById(entityId.value), formId.value);
     haveLayoutJson.value = false;
     if (res && res.data?.layoutJson) {
         globalDsv.value.useFormId = res.data.formLayoutId;
@@ -107,6 +110,10 @@ const initVformCom = async () => {
     padding-top: 30px;
     background: #FFF;
     min-height: 100%;
+    box-sizing: border-box;
+    width: 794px;
+    margin: 0 auto;
+    padding: 0 20px;
     .printer-content {
         width: 100%;
         // margin: 0 auto;
