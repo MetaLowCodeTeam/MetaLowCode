@@ -63,6 +63,17 @@
 			v-model="optionModel.openScanFillBack"
 		/>
 	</el-form-item>
+    <el-form-item
+		label="移动端保留手动选择"
+		label-width="120px"
+		v-if="!optionModel.useTreeDataSelect && !isDashboard && optionModel.openScanFillBack"
+	>
+		<el-switch
+			v-model="optionModel.keepManualSelectionOnMobile"
+		/>
+	</el-form-item>
+    
+    
 	<ml-dialog title="选择搜索字段" v-model="isShow" width="700" append-to-body>
 		<div
 			v-loading="loading"
