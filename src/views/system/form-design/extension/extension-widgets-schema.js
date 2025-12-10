@@ -147,6 +147,8 @@ export const referenceSchema = {
         openSearchInPlace: false,
         // 开启扫码回填
         openScanFillBack: false,
+        // 移动端保留手动选择
+        keepManualSelectionOnMobile: false,
         // 是否精确搜索
         isExactSearch: false,
         // 是否二次确认选择
