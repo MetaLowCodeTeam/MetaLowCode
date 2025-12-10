@@ -124,3 +124,8 @@ const initVformCom = async () => {
 
 
 </style>
+<style>
+    #app, body, html {
+        height: 98%;
+    }
+</style>
