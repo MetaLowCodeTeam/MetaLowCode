@@ -1,12 +1,12 @@
 
 
 const DEFAULT_CONFIG = {
-	//标题
-	APP_NAME: import.meta.env.VITE_APP_TITLE,
+    //标题
+    APP_NAME: import.meta.env.VITE_APP_TITLE,
 
-	//首页地址
-	// DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "custom-home-page/home1",
-	DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "dashboard",
+    //首页地址
+    // DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "custom-home-page/home1",
+    DASHBOARD_URL: import.meta.env.VITE_APP_PATH + "dashboard",
 
 	//请求超时
 	//TIMEOUT: 10000,
@@ -21,8 +21,8 @@ const DEFAULT_CONFIG = {
 	//追加其他头
 	HEADERS: {},
 
-	//请求是否开启缓存
-	REQUEST_CACHE: false,
+    //请求是否开启缓存
+    REQUEST_CACHE: false,
 
 	
 
@@ -40,15 +40,30 @@ const DEFAULT_CONFIG = {
 	//是否加密localStorage, 为空不加密，可填写AES(模式ECB,移位Pkcs7)加密
 	LS_ENCRYPTION: '',
 
-	//localStorageAES加密秘钥，位数建议填写8的倍数
-	LS_ENCRYPTION_key: '2XNN4K8LC0ELVWN4',
+    //localStorageAES加密秘钥，位数建议填写8的倍数
+    LS_ENCRYPTION_key: "2XNN4K8LC0ELVWN4",
+};
+
+// 合并外部 APP_CONFIG 到 DEFAULT_CONFIG
+function applyAppConfig(externalConfig) {
+    if (!externalConfig) return;
+    if (externalConfig.APP_NAME) {
+        DEFAULT_CONFIG.APP_NAME = externalConfig.APP_NAME;
+    }
+    if (externalConfig.HOME_PAGE_URL) {
+        DEFAULT_CONFIG.DASHBOARD_URL = externalConfig.HOME_PAGE_URL;
+    }
 }
 
-// 如果生产模式，就合并动态的APP_CONFIG
-// public/config.js
-if(import.meta.env.VITE_NODE_ENV === 'production'){
-    DEFAULT_CONFIG.APP_NAME = APP_CONFIG.APP_NAME
-    DEFAULT_CONFIG.DASHBOARD_URL = APP_CONFIG.HOME_PAGE_URL
+// 仅在生产环境下，才启用外部 APP_CONFIG
+if (import.meta.env.VITE_NODE_ENV === "production" && typeof window !== "undefined") {
+    // 提供给 public/customConfig.js 调用的全局函数，解决加载顺序不确定的问题
+    window.__APPLY_APP_CONFIG__ = applyAppConfig;
+
+    // 如果此时 window.APP_CONFIG 已经存在，立即合并一次
+    if (window.APP_CONFIG) {
+        applyAppConfig(window.APP_CONFIG);
+    }
 }
 
-export default DEFAULT_CONFIG
+export default DEFAULT_CONFIG;
