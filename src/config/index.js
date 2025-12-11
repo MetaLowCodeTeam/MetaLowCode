@@ -1,4 +1,5 @@
 
+
 const DEFAULT_CONFIG = {
 	//标题
 	APP_NAME: import.meta.env.VITE_APP_TITLE,
@@ -41,14 +42,13 @@ const DEFAULT_CONFIG = {
 
 	//localStorageAES加密秘钥，位数建议填写8的倍数
 	LS_ENCRYPTION_key: '2XNN4K8LC0ELVWN4',
-
-	
 }
 
 // 如果生产模式，就合并动态的APP_CONFIG
 // public/config.js
-// if(import.meta.env.VITE_NODE_ENV === 'production'){
-// 	Object.assign(DEFAULT_CONFIG, APP_CONFIG)
-// }
+if(import.meta.env.VITE_NODE_ENV === 'production'){
+    DEFAULT_CONFIG.APP_NAME = APP_CONFIG.APP_NAME
+    DEFAULT_CONFIG.DASHBOARD_URL = APP_CONFIG.HOME_PAGE_URL
+}
 
 export default DEFAULT_CONFIG

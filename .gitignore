@@ -28,3 +28,5 @@ pnpm-debug.log*
 
 # ignore custom features directory
 /src/views/custom-page/features/
+
+/public/config.js
