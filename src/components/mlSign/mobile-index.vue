@@ -40,7 +40,7 @@
                     </el-row>
                 </el-form>
             </div>
-            <div class="esign-wrapper-content">
+            <div class="esign-wrapper-content" ref="wrapRef">
                 <vue-esign
                     v-if="showEsignCom && !signConf.resultImg"
                     ref="signRef"
@@ -122,6 +122,8 @@ const props = defineProps({
 const emit = defineEmits(["onGenerate"]);
 
 const signRef = ref(null);
+// 每个组件实例独立的容器引用，避免 querySelector 只命中第一个元素
+const wrapRef = ref(null);
 const signConf = ref({
     show: false,
     resultImg: "",
@@ -174,10 +176,9 @@ const openSign = () => {
     signConf.value.show = true;
     signConf.value.resultImg = props.modelValue;
     nextTick(() => {
-        signHeight.value = document.querySelector(
-            ".esign-wrapper-content"
-        ).offsetHeight;
-        signHeight.value -= 10;
+        // 改为使用当前实例的容器高度，避免多个签名组件时取到其它实例的节点
+        const h = wrapRef.value ? wrapRef.value.offsetHeight : 0;
+        signHeight.value = (h > 0 ? h : 400) - 10;
         showEsignCom.value = true;
     });
 };
@@ -204,25 +205,22 @@ defineExpose({
         margin-bottom: 0;
     }
     .esign-wrapper-content {
-        height: calc(100% - 160px);
+        height: calc(100% - 1.6rem);
         border: 1px solid #dcdfe6;
         box-sizing: border-box;
         width: 300px;
         margin: 0 auto;
-        margin-bottom: 10px;
+        margin-bottom: 0.1rem;
         .sign-result-img {
             width: 100%;
             height: 100%;
         }
     }
     .esign-wrapper-btn {
-        width: 300px;
-        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 0 0.2rem;
+        padding-right: 0.5rem;
         text-align: right;
-        // box-sizing: border-box;
-        // padding: 0 2px;
-        // padding-right: 5px;
-        // text-align: right;
     }
 }
 </style>
