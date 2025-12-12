@@ -53,6 +53,13 @@ const routes = [
             title: "打印"
         }
     },
+    {
+        path: appPath + "Printer2",
+        component: () => import(/* webpackChunkName: "printer" */ '@/views/customize-menu/components/Printer2.vue'),
+        meta: {
+            title: "打印"
+        }
+    },
     // 批量打印
     {
         path: appPath + "BatchPrinting",
