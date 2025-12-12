@@ -132,14 +132,25 @@ const initVformCom = async () => {
 
 </style>
 <style>
-    #app, body, html {
-        height: 98%;
-    }
     @media print {
+        #app, body, html {
+            height: 98%;
+            /* 可选：给内容容器加内边距，避免内容贴边 */
+            padding: 5mm; /* 内容内边距，可根据需求调整 */
+            box-sizing: border-box; /* 确保内边距不超出高度/宽度 */
+        }
         html {
-            transform: scale(0.5);
-            /* 缩放后居中（避免内容偏移） */
+            transform: scale(1);
             transform-origin: top center;
         }
+    }
+
+    /* 核心：给纸张设置边距 */
+    @page {
+        size: 100mm 100mm;
+        /* 统一四边边距，可自定义数值（mm/cm/in/px） */
+        margin: 5mm; 
+        /* 也可单独设置上下左右：margin: 3mm 5mm 3mm 5mm; (上 右 下 左) */
+        /* 若只需要左右/上下边距：margin: 0 5mm; (上下0，左右5mm) */
     }
 </style>
