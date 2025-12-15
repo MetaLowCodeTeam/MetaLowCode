@@ -6,7 +6,8 @@ export default {
         row: Object,
         column: Object,
         listExposed: Object,
-        renderFn: Function
+        renderFn: Function,
+        openFilesDialog: Function
     },
     render() {
         const params = {
@@ -15,8 +16,9 @@ export default {
             isMobile: false,
             listExposed: this.listExposed,
         }
-		const components = this.$root.$.appContext.components
+        const components = this.$root.$.appContext.components
 
-        return this.renderFn(h, params, components)
+        // 第 4 个参数传入 openFilesDialog，和编辑器里提示的 funcParam 对齐
+        return this.renderFn(h, params, components, this.openFilesDialog)
     }
 }

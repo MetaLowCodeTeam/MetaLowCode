@@ -5,6 +5,7 @@
             :row="row"
             :column="column"
             :renderFn="getColumnRender(column)"
+            :openFilesDialog="openFilesDialog"
             :listExposed="listExposed"
         />
     </div>
@@ -188,7 +189,8 @@ const openFilesDialog = (list) => {
 
 // 自定义渲染
 const getColumnRender = (column)=> {
-    return new Function('h', 'params', 'components', column.columnRender)
+    // 将 openFilesDialog 作为第4个参数传入自定义渲染函数
+    return new Function('h', 'params', 'components', 'openFilesDialog', column.columnRender)
 }
 
 </script>

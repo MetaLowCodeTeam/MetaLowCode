@@ -234,7 +234,7 @@ let triggerList = ref([
         code: 12,
     },
     {
-        label: "回调URL",
+        label: "回调",
         code: 14,
     },
 ]);

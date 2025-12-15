@@ -80,44 +80,49 @@
                                         class="mr-5"
                                         v-if="activity.state === 0 && !activity.stepUserName"
                                     >等待中</span>
-                                    <span class="mr-5" v-if="activity.state === 1">
-                                        由 {{ activity.stepUserName }} 审批同意
-                                        <el-tooltip
-                                            effect="dark"
-                                            :content="activity.remark || 'error'"
-                                            placement="top"
-                                            v-if="activity.remark"
-                                        >
-                                            <span class="ml-a-span">
-                                                查看批注
-                                            </span>
-                                        </el-tooltip>
-                                    </span>
-                                    <span class="mr-5" v-if="activity.state === 11">
-                                        由 {{ activity.stepUserName }} 驳回
-                                        <el-tooltip
-                                            effect="dark"
-                                            :content="activity.remark || 'error'"
-                                            placement="top"
-                                        >
-                                            <span class="ml-a-span">
-                                                查看批注
-                                            </span>
-                                        </el-tooltip>
-                                    </span>
-                                    <span class="mr-5" v-if="activity.state === 12">
-                                        由 {{ activity.stepUserName }} 撤销
-                                        <el-tooltip
-                                            effect="dark"
-                                            :content="activity.remark || 'error'"
-                                            placement="top"
-                                            v-if="activity.remark"
-                                        >
-                                            <span class="ml-a-span">
-                                                查看批注
-                                            </span>
-                                        </el-tooltip>
-                                    </span>
+                                    <template v-if="activity.systemOperation && activity.remark">
+                                        {{ activity.remark }}
+                                    </template>
+                                    <template v-else>
+                                        <span class="mr-5" v-if="activity.state === 1">
+                                            由 {{ activity.stepUserName }} 审批同意
+                                            <el-tooltip
+                                                effect="dark"
+                                                :content="activity.remark || 'error'"
+                                                placement="top"
+                                                v-if="activity.remark"
+                                            >
+                                                <span class="ml-a-span">
+                                                    查看批注
+                                                </span>
+                                            </el-tooltip>
+                                        </span>
+                                        <span class="mr-5" v-if="activity.state === 11">
+                                            由 {{ activity.stepUserName }} 驳回
+                                            <el-tooltip
+                                                effect="dark"
+                                                :content="activity.remark || 'error'"
+                                                placement="top"
+                                            >
+                                                <span class="ml-a-span">
+                                                    查看批注
+                                                </span>
+                                            </el-tooltip>
+                                        </span>
+                                        <span class="mr-5" v-if="activity.state === 12">
+                                            由 {{ activity.stepUserName }} 撤销
+                                            <el-tooltip
+                                                effect="dark"
+                                                :content="activity.remark || 'error'"
+                                                placement="top"
+                                                v-if="activity.remark"
+                                            >
+                                                <span class="ml-a-span">
+                                                    查看批注
+                                                </span>
+                                            </el-tooltip>
+                                        </span>
+                                    </template>
                                     <span
                                         class="ml-a-span"
                                         v-if="activity.signatureImage"
