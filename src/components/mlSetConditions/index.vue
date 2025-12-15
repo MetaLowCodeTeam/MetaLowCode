@@ -929,7 +929,7 @@ export default {
                 if(el.op == 'SQL'){
                     conditionList.push(el);                         
                 }
-                if(el.type == 'Cascader') {
+                if(el.type == 'Cascader' && typeof el.value == 'string') {
                     el.value = JSON.parse(el.value);
                 }
                 this.fieldList.forEach((subEl) => {
