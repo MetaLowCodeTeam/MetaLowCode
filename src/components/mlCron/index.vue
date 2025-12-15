@@ -401,21 +401,21 @@
                             </el-select>
                         </el-radio>
                     </el-row>
-                    <el-row>
+                    <!-- <el-row>
                         <el-radio v-model="state.day.cronEvery" label="6" :disabled="disabled">
                             {{
                             state.text.Day.lastDay
                             }}
                         </el-radio>
-                    </el-row>
-                    <el-row>
+                    </el-row> -->
+                    <!-- <el-row>
                         <el-radio v-model="state.day.cronEvery" label="7" :disabled="disabled">
                             {{
                             state.text.Day.lastWeekday
                             }}
                         </el-radio>
-                    </el-row>
-                    <el-row>
+                    </el-row> -->
+                    <!-- <el-row>
                         <el-radio v-model="state.day.cronEvery" label="8" :disabled="disabled">
                             {{ state.text.Day.lastWeek[0] }}
                             <el-select
@@ -433,8 +433,8 @@
                             </el-select>
                             {{ state.text.Day.lastWeek[1] || "" }}
                         </el-radio>
-                    </el-row>
-                    <el-row>
+                    </el-row> -->
+                    <!-- <el-row>
                         <el-radio v-model="state.day.cronEvery" label="9" :disabled="disabled">
                             <el-input-number
                                 size="small"
@@ -445,8 +445,8 @@
                             ></el-input-number>
                             {{ state.text.Day.beforeEndMonth[0] }}
                         </el-radio>
-                    </el-row>
-                    <el-row>
+                    </el-row> -->
+                    <!-- <el-row>
                         <el-radio v-model="state.day.cronEvery" label="10" :disabled="disabled">
                             {{ state.text.Day.nearestWeekday[0]
                             }}
@@ -459,7 +459,7 @@
                             ></el-input-number>
                             {{ state.text.Day.nearestWeekday[1] }}
                         </el-radio>
-                    </el-row>
+                    </el-row> -->
                     <el-row>
                         <el-radio v-model="state.day.cronEvery" label="11" :disabled="disabled">
                             {{ state.text.Day.someWeekday[0] }}
