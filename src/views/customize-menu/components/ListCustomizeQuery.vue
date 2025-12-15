@@ -148,6 +148,9 @@ const onSearch = (command) => {
                 el.value = idFieldName;
             }
         }
+        if(el.type == 'Cascader') {
+            el.value = JSON.stringify(el.value);
+        }
     })
 	newCompConditions.items = tempItems.filter(
 		(el) =>
