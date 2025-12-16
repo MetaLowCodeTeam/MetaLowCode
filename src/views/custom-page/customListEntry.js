@@ -44,6 +44,10 @@ export const customListEntry = [
         // 是否支持移动端   自定义模板，不支持移动端
         isMobileSupported: false,
     },
+    {
+        label: "自定义树形分组模版",
+        value: "ListViewCmp/TreeGroupList/Index"
+    },
 ];
 
 

@@ -616,8 +616,14 @@ export default {
 
         // 选择表单
         selectedFormLayout(idx) {
-            this.setDesign(this.formLayoutDialogConf.list[idx]);
-            this.formLayoutDialogConf.isShow = false;
+            try {
+                this.setDesign(this.formLayoutDialogConf.list[idx]);
+                this.formLayoutDialogConf.isShow = false;
+            } catch (error) {
+                console.log(error,'error')
+                this.$message.error("数据异常：" + this.formLayoutDialogConf.list[idx]?.layoutJson);
+            }
+            
         },
 
         // 设置表单数据
