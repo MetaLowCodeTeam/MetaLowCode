@@ -125,7 +125,7 @@
                     </div>
                 </template>
                 <!-- 列显示 -->
-                <template v-if="!isListCard && !isListCalendar">   
+                <template v-if="!isListCard && !isListCalendar && !customListType">   
                     <div class="pl-5 mt-15 div-disabled">列显示</div>
                     <!-- <div
                         class="pl-20 item"
@@ -174,9 +174,16 @@
                     <div
                         class="pl-20 item"
                         @click="treeGroupFilterIsShow = true"
-                        v-if="!isReferenceComp && !isListCard && !isListCalendar"
+                        v-if="!isReferenceComp && !isListCard && !isListCalendar && !customListType"
                     >
                         树状分组筛选
+                    </div>
+                    <div
+                        class="pl-20 item"
+                        v-if="customListType == 'treeGroupList'"
+                        @click="openTreeGroutListSettingDialog"
+                    >
+                        树形分组设置
                     </div>
                     <div
                         class="pl-20 item"
@@ -311,6 +318,14 @@
         :tabKey="tabKey"
         :modelName="modelName"
     />
+    <!-- 树形分组设置 -->
+    <TreeGroutListSetting
+        ref="treeGroutListSettingRef"
+        :modelName="modelName"
+        :entityName="queryEntityNameByCode(entityCode)"
+        :entityCode="entityCode"
+        @confirm="allocationSuccess"
+    />
 </template>
 
 <script setup>
@@ -343,6 +358,8 @@ import RowCopy from './RowCopy.vue';
 import CustomButtonSetting from './CustomButtonSetting.vue';
 // 列表页签设置
 import ListTabSetting from './ListTabSetting.vue';
+// 树形分组设置
+import TreeGroutListSetting from "./TreeGroutListSetting.vue";
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -403,6 +420,11 @@ const props = defineProps({
     tabFilterConfig: {
         type: Object,
         default: () => {},
+    },
+    // 自定义列表类型
+    customListType: {
+        type: String,
+        default: "",
     }
 });
 
@@ -688,6 +710,12 @@ const openCustomButtonDialog = () => {
 let listTabSettingRef = ref(null);
 const openListTabDialog = () => {
     listTabSettingRef.value.openDialog(props.tabFilterConfig);
+}
+
+// 打开树形分组设置弹框
+let treeGroutListSettingRef = ref(null);
+const openTreeGroutListSettingDialog = () => {
+    treeGroutListSettingRef.value?.openDialog();
 }
 
 defineExpose({

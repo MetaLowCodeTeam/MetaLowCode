@@ -169,6 +169,7 @@
                                 :modelName="formatModelName(myModelName, currentTab)"
                                 :tabKey="currentTab"
                                 :tabFilterConfig="tabFilterConfig"
+                                :customListType="customListType"
                                 @copySuccess="copySuccess"
                                 v-else-if="item.type === 'more' && toolbarConf.showMoreBtn"
                             />
@@ -212,6 +213,7 @@
                                 </span>
                             </el-button>
                             <!-- 更多按钮 -->
+                            
                             <More
                                 :listParamConf="listParamConf"
                                 ref="MoreRefs"
@@ -232,6 +234,7 @@
                                 :tabKey="currentTab"
                                 :tabFilterConfig="tabFilterConfig"
                                 @copySuccess="copySuccess"
+                                :customListType="customListType"
                                 v-else-if="item.key === 'more' && !item.hide"
                             />
                         </template>
@@ -290,6 +293,9 @@
                 </div>
                 <div class="tree-group-box" v-else-if="treeGroupConf.isOpen && treeGroupConf.groupType == 2">
                     <ListRefFieldGroupFilter :treeGroupConf="treeGroupConf" @changeOtherFilters="changeOtherFilters"/>
+                </div>
+                <div class="tree-group-box" v-else-if="customListType == 'treeGroupList'">
+                    <TreeGroupList :treeGroupListConf="treeGroupListConf" :listExposed="currentExposed"/>
                 </div>
                 <!-- 表格 -->
                 <el-table
@@ -631,6 +637,8 @@ import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vu
 import mlApprove from "@/components/mlApprove/index.vue";
 // 手动排程弹框
 import SchedulingDialog from "@/views/custom-page/Yt/SchedulingDialog.vue";
+// 树形分组列表
+import TreeGroupList from "./components/TreeGroupList.vue";
 import http from "@/utils/request";
 import { mlShortcutkeys, formatModelName, getPreviewNum } from "@/utils/util";
 // 自定义按钮
@@ -742,6 +750,11 @@ const props = defineProps({
     externalSort: {
         type: Array,
         default: () => [],
+    },
+    // 自定义列表类型
+    customListType: {
+        type: String,
+        default: "",
     }
 })
 
@@ -1464,6 +1477,8 @@ let isEnableTab = ref(false);
 // 强制重新渲染的key
 let renderKey = ref(0);
 
+let treeGroupListConf = ref({});
+
 // 获取导航配置
 const getLayoutList = async () => {
     // 获取格式化后的 modelName（包含页签）
@@ -1624,7 +1639,10 @@ const getLayoutList = async () => {
         quickQueryConf.layoutConfigId = res.data.SEARCH?.layoutConfigId;
         quickQueryConf.entityCode = entityCode.value;
         quickQueryConf.value = res.data.SEARCH?.config ? JSON.parse(res.data.SEARCH.config) : [];
-        
+        // 如果是自定义树形分组列表
+        if(res.data.CUSTOM_TEMPLATE && props.customListType == 'treeGroupList') {
+            treeGroupListConf.value = JSON.parse(res.data.CUSTOM_TEMPLATE.config);
+        }
      
         
         // 直接用默认的
@@ -2723,6 +2741,7 @@ defineExpose({
     openPriceComparisonDialog,
     getQueryParams, 
     openSchedulingDialog,
+    changeOtherFilters,
 })
 
 </script>
