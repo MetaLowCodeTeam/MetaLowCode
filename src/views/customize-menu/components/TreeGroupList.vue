@@ -91,7 +91,7 @@ const getScriptExposedParams = (extraParams = {}) => {
 		http,
 		router: Router,
 		appPath: import.meta.env.VITE_APP_PATH,
-        customDTreeRef: customDTreeRef,
+        customTreeRef: customDTreeRef,
 		elementEvent: {
 			ElMessageBox,
 			ElLoading,
