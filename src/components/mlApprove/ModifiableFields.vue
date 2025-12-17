@@ -137,7 +137,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, nextTick } from "vue";
 
 // 选择字段组件
 import mlSelectField from "@/components/mlSelectField/index.vue";
@@ -163,6 +163,9 @@ const initSubFormConfig = () => {
 
 // 获取子表配置
 const getSubFormConfig = (entityName) => {
+    // 确保 otherConfig 和 detailEntityConfig 已初始化
+    initSubFormConfig();
+    
     const config = myFormData.value.otherConfig.detailEntityConfig.find(
         item => item.entityName === entityName
     );
@@ -171,6 +174,17 @@ const getSubFormConfig = (entityName) => {
 
 // 更新子表配置
 const updateSubFormConfig = (entityName, field, value) => {
+    // 标记正在更新子表配置
+    isUpdatingSubFormConfig = true;
+    
+    // 确保 otherConfig 和 detailEntityConfig 已初始化
+    if (!myFormData.value.otherConfig) {
+        myFormData.value.otherConfig = {};
+    }
+    if (!myFormData.value.otherConfig.detailEntityConfig) {
+        myFormData.value.otherConfig.detailEntityConfig = [];
+    }
+    
     const configIndex = myFormData.value.otherConfig.detailEntityConfig.findIndex(
         item => item.entityName === entityName
     );
@@ -185,6 +199,11 @@ const updateSubFormConfig = (entityName, field, value) => {
             [field]: value
         });
     }
+    
+    // 使用 nextTick 确保响应式更新完成后再重置标记
+    nextTick(() => {
+        isUpdatingSubFormConfig = false;
+    });
 };
 
 //  打开选择字段弹框
@@ -211,13 +230,20 @@ const fieldRequiredChange = (field) => {
 	}
 };
 
+// 用于标记是否正在更新子表配置，避免触发不必要的格式化
+let isUpdatingSubFormConfig = false;
+
 watch(
-	() => myFormData.value.modifiableFields,
+	() => myFormData.value?.modifiableFields,
 	() => {
+		// 如果正在更新子表配置，不触发格式化，避免数据丢失
+		if (isUpdatingSubFormConfig) {
+			return;
+		}
 		// 格式化字段页签
 		formatFieldsTab();
 	},
-	{ deep: true }
+	{ deep: true, immediate: false }
 );
 
 onMounted(() => {
@@ -236,7 +262,15 @@ let curtTab = ref("");
 // 格式化字段页签
 const formatFieldsTab = () => {
     curtTab.value = props.entityName;
-	let { modifiableFields } = myFormData.value;
+	// 确保 myFormData.value 存在
+	if (!myFormData.value) {
+		return;
+	}
+	let modifiableFields = myFormData.value.modifiableFields;
+	// 如果 modifiableFields 不存在或不是数组，直接返回，保持原有数据
+	if (!modifiableFields || !Array.isArray(modifiableFields)) {
+		return;
+	}
 	// 实体tab
 	let tabsEntity = [];
 	// 实际tab数据

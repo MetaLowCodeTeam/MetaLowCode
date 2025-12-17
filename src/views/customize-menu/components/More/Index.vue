@@ -187,6 +187,13 @@
                     </div>
                     <div
                         class="pl-20 item"
+                        v-if="customListType == 'treeTableList'"
+                        @click="openTreeTableListSettingDialog"
+                    >
+                        树形表格设置
+                    </div>
+                    <div
+                        class="pl-20 item"
                         @click="editColumn('BATCH_UPDATE')"
                         v-if="listParamConf.showBatchUpdateSet && !isListCalendar"
                     >
@@ -326,6 +333,14 @@
         :entityCode="entityCode"
         @confirm="allocationSuccess"
     />
+    <!-- 树形表格设置 -->
+    <TreeTableListSetting
+        ref="treeTableListSettingRef"
+        :modelName="modelName"
+        :entityName="queryEntityNameByCode(entityCode)"
+        :entityCode="entityCode"
+        @confirm="allocationSuccess"
+    />
 </template>
 
 <script setup>
@@ -360,6 +375,8 @@ import CustomButtonSetting from './CustomButtonSetting.vue';
 import ListTabSetting from './ListTabSetting.vue';
 // 树形分组设置
 import TreeGroutListSetting from "./TreeGroutListSetting.vue";
+// 树形表格设置
+import TreeTableListSetting from "./TreeTableListSetting.vue";
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -716,6 +733,12 @@ const openListTabDialog = () => {
 let treeGroutListSettingRef = ref(null);
 const openTreeGroutListSettingDialog = () => {
     treeGroutListSettingRef.value?.openDialog();
+}
+
+// 打开树形表格设置弹框
+let treeTableListSettingRef = ref(null);
+const openTreeTableListSettingDialog = () => {
+    treeTableListSettingRef.value?.openDialog();
 }
 
 defineExpose({
