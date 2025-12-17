@@ -48,6 +48,10 @@ export const customListEntry = [
         label: "自定义树形分组模版",
         value: "ListViewCmp/TreeGroupList/Index"
     },
+    {
+        label: "自定义树形表格模板",
+        value: "ListViewCmp/TreeTable/Index",
+    },
 ];
 
 

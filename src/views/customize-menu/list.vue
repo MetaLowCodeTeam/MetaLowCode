@@ -316,9 +316,14 @@
                     :row-style="setRowStyle"
                     class="table-box-el-table"
                     @scroll="scrollBehavior"
+                    :row-key="idFieldName"
+					:lazy="customListType == 'treeTableList'"
+					:load="onTreeTableListLoad"
+					:tree-props="customListType == 'treeTableList' ? { hasChildren: idFieldName } : undefined"
+                    v-if="customListType != 'treeTableList' || treeTableListConf.referenceFieldParent"
                 >
                     <el-table-column
-                        :width="statisticsList.length > 0 ? 60 : 50"
+                        :width="customListType == 'treeTableList' ? 80 : statisticsList.length > 0 ? 60 : 50"
                         :align="'center'"
                         :fixed="checkedColumnFixed || rowStyleConf?.listConf?.showRowNumber && rowStyleConf?.listConf?.rowNumberPosition == 'left'"
                         v-if="listParamConf.showTableCheckbox"
@@ -516,6 +521,9 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div class="list-card-content" v-else>
+                    <el-empty :image-size="100" description="配置树形数据的父子关系字段，请从更多-树形表格设置中指定父子关系字段" />
+                </div>
             </div>
         </div>
         <mlPagination
@@ -1477,7 +1485,10 @@ let isEnableTab = ref(false);
 // 强制重新渲染的key
 let renderKey = ref(0);
 
+// 树形分组列表配置
 let treeGroupListConf = ref({});
+// 树形表格列表配置
+let treeTableListConf = ref({});
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -1643,7 +1654,10 @@ const getLayoutList = async () => {
         if(res.data.CUSTOM_TEMPLATE && props.customListType == 'treeGroupList') {
             treeGroupListConf.value = JSON.parse(res.data.CUSTOM_TEMPLATE.config);
         }
-     
+        // 如果是自定义树形表格列表
+        if(res.data.CUSTOM_TEMPLATE && props.customListType == 'treeTableList') {
+            treeTableListConf.value = JSON.parse(res.data.CUSTOM_TEMPLATE.config);
+        }
         
         // 直接用默认的
         tableColumn.value = [...ALL.FILTER];
@@ -2119,6 +2133,101 @@ const changeTab = (item) => {
     getLayoutList();
 }
 
+const onTreeTableListLoad = async (row, treeNode, resolve) => {
+
+    // 合并外部排序
+    let mergedSortFields = [...sortFields.value];
+    if (props.externalSort && props.externalSort.length > 0) {
+        // 将外部排序添加到排序数组的开头（优先级更高）
+        mergedSortFields = [...props.externalSort, ...mergedSortFields];
+    }
+
+	const res = await getDataList(
+		entityName.value,
+		allFields.value.join(),
+        {
+			equation: "OR",
+			items: [{
+				fieldName: treeTableListConf.value.referenceFieldParent,
+				op: "EQ",
+				value: row[idFieldName.value],
+			}]
+		},
+		treeTableListConf.value.maxChildCount == 0 ? 999999 : treeTableListConf.value.maxChildCount || 1000,
+		1,
+        mergedSortFields
+	)
+	let leafTableData = ref([])
+	leafTableData = res.data.dataList
+	let customDisabledFunc = rowStyleConf.value?.rowConf?.rowDisabledRender || null;
+    try {
+        leafTableData = res.data.dataList.map((el, inx) => {
+            try {
+                el.isCustomDisabled = customDisabledFunc ? new Function('row', 'index', 'target', customDisabledFunc)(el, inx, 'pc') : false;
+            } catch (error) {
+                console.error('执行 customDisabledFunc 时出错:', error);
+                el.isCustomDisabled = false;
+            }
+            try {
+                el.btnDisabled = rowStyleConf.value?.rowConf?.rowBtnDisabled ? new Function('row', 'index', 'target', rowStyleConf.value?.rowConf?.rowBtnDisabled)(el, inx, 'pc') : {
+                    view: false,
+                    edit: false,
+                };
+            } catch (error) {
+                console.error('执行 rowStyleConf.value.rowConf.rowBtnDisabled 时出错:', error);
+                el.btnDisabled = {
+                    view: false,
+                    edit: false,
+                };
+            }
+            el.isSelected = false;
+            return el;
+        });
+    } catch (error) {
+        console.error('处理表格数据时出错:', error);
+        leafTableData.value = [];
+    }
+
+        // 获取操作列自定义按钮
+    let { pcColumn } = customButtonConfig.value;
+    // 过滤出有过滤条件的自定义按钮
+    let filterPcColumn = []
+    pcColumn?.forEach(item => {
+        if(item.filterJson?.items?.length > 0){
+            filterPcColumn.push(item.filterJson);
+        }
+    });
+    // 如果有过滤条件的自定义按钮，则进行过滤条件检查
+    if(filterPcColumn.length > 0){
+        let filterParam = {
+            entityName: entityName.value,
+            recordIdList: leafTableData.map(item => item[idFieldName.value]),
+            filterList: filterPcColumn
+        };
+        let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
+        if(checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
+            let filterRes = checkCustomButtonFiltersRes.data;
+            leafTableData.forEach(el => {
+                filterRes.forEach(item => {
+                    if(item.id == el[idFieldName.value]){
+                        el.customBtnShow = {...item};
+                    }
+                })
+            })
+        }
+    }
+	// 处理按钮的权限
+	if (leafTableData && leafTableData.length) {
+      	leafTableData.forEach(el => {
+            el.editBtnCheckModifiable = checkModifiableEntity(el[idFieldName.value],el.approvalStatus?.value);
+            el.editBtnTitle = !el.editBtnCheckModifiable ? getEditBtnTitle(el) || '此状态不可编辑' : '';
+            el.hasEditRight = hasEditRight.value;
+		})
+	}
+	resolve(leafTableData);
+}
+
+
 const getTableList = async () => {
     pageLoading.value = true;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
@@ -2174,6 +2283,14 @@ const getTableList = async () => {
         mergedFilter.items = [...mergedFilter.items, ...externalFilterItems];
     }
     
+    if(props.customListType == 'treeTableList' && treeTableListConf.value.referenceFieldParent) {
+        mergedFilter.items.push({
+			fieldName: treeTableListConf.value.referenceFieldParent,
+			op: "NL",
+			value: "",
+		})
+    }
+
     // 合并外部排序
     let mergedSortFields = [...sortFields.value];
     if (props.externalSort && props.externalSort.length > 0) {
@@ -2295,7 +2412,7 @@ const getTableList = async () => {
         sliceTable.value = tableData.value.slice(0, 20);
         sliceTable.value.forEach(el => {
             el.editBtnCheckModifiable = checkModifiableEntity(el[idFieldName.value],el.approvalStatus?.value);
-            el.editBtnTitle = !el.editCheckModifiable ? getEditBtnTitle(el) || '此状态不可编辑' : '';
+            el.editBtnTitle = !el.editBtnCheckModifiable ? getEditBtnTitle(el) || '此状态不可编辑' : '';
             el.hasEditRight = hasEditRight.value;
         })
     }
@@ -2859,6 +2976,13 @@ div {
 
 .el-table {
     font-size: 13px !important;
+}
+
+.list-card-content {
+    height: calc(100% - 60px);
+    width: 100%;
+    overflow: auto;
+    overflow-x: hidden;
 }
 
 .quick-query {
