@@ -125,7 +125,7 @@
                     </div>
                 </template>
                 <!-- 列显示 -->
-                <template v-if="!isListCard && !isListCalendar && !customListType">   
+                <template v-if="!isListCard && !isListCalendar">   
                     <div class="pl-5 mt-15 div-disabled">列显示</div>
                     <!-- <div
                         class="pl-20 item"
