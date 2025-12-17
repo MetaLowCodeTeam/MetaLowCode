@@ -104,8 +104,8 @@ const loadLayoutConfigData = async () => {
         if(CUSTOM_TEMPLATE) {
             let { config } = CUSTOM_TEMPLATE;
             config = JSON.parse(config);
-            // formData.value.onLoadEvent = config.onLoadEvent;
-            // formData.value.onNodeExpandEvent = config.onNodeExpandEvent;
+            formData.value.onLoadEvent = config.onLoadEvent;
+            formData.value.onNodeExpandEvent = config.onNodeExpandEvent;
             formData.value.onNodeClickEvent = config.onNodeClickEvent;
             layoutConfigId.value = CUSTOM_TEMPLATE.layoutConfigId;
         }
