@@ -151,7 +151,7 @@
 				<i title="内部实体">内</i>
 			</span>
 		</div>
-		<div>{{ entityItem.name }}</div>
+		<div class="yichu" :title="entityItem.name">{{ entityItem.name }}</div>
 		<div class="entity-menu-icon">
 			<el-dropdown
 				v-if="entityItem.showMenuFlag"
