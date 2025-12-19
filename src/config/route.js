@@ -168,7 +168,7 @@ const routes = [
     {
         path: appPath + "system",
         name: 'SystemManager',
-        meta: { title: '开发中心', icon: 'el-icon-Help', svgIcon: 'setting', role: 'r6017' },
+        meta: { title: '开发中心', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
         redirect: appPath + "system-manager",
         children: [
             // 开发中心
