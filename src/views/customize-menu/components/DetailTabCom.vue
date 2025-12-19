@@ -81,9 +81,9 @@
                     @sort-change="sortChange"
                     @row-dblclick="openDetailDialog"
                 >
+                <template v-for="column of tableColumn" :key="column.fieldName + '_' + renderKey">
                     <el-table-column
-                        v-for="(column,columnInx) of tableColumn"
-                        :key="columnInx"
+                        v-if="!column.pcHide"
                         :prop="column.fieldName"
                         :label="column.columnAliasName ?column.columnAliasName : column.fieldLabel"
                         :width="setColumnWidth(column)"
@@ -99,6 +99,8 @@
                             />
                         </template>
                     </el-table-column>
+                </template>
+                    
                 </el-table>
                 <mlPagination
                     :no="page.no"

@@ -797,7 +797,7 @@ const saveComplexFlow = async (dealWithType) => {
                 : [],
     };
     let res = await http.post(
-        "/approval/dealWithTask",
+        "/plugins/metaWorkFlow/workflow/dealWithTask",
         param
     );
     if (res && res.code == 200) {
