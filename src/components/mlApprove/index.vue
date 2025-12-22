@@ -827,8 +827,8 @@ const openDialog = () => {
 }
 
 //  打开详情弹框
-const openDetailDialog = (recordId) => {
-    detailRef.value?.openDialog(recordId);
+const openDetailDialog = (recordId, globalDsv, formId) => {
+    detailRef.value?.openDialog(recordId, globalDsv, formId);
 }
 
 defineExpose({

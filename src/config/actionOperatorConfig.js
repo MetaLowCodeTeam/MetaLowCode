@@ -47,7 +47,7 @@ export default {
         REFNT: "不为空",
     },
     // 所有字段
-    Tag: ["LK", "NLK"],
+    Tag: ["LK", "NLK", "NL", "NT"],
     Email: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     Url: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],
     TextArea: ["LK", "NLK", "EQ", "NEQ", "NL", "NT"],

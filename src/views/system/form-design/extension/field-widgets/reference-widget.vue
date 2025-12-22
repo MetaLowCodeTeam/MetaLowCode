@@ -849,7 +849,7 @@ export default {
 
 			let refId = this.fieldModel ? this.fieldModel.id : null;
 			if (refId && this.gDsv.openDetailDialog) {
-				this.gDsv.openDetailDialog(refId);
+				this.gDsv.openDetailDialog(refId, null, 'reference-default');
 			}
 		},
         onSelectedRemote({record, selectedRow}) {
