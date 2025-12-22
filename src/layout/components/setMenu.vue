@@ -506,6 +506,31 @@ const filterUseCustomEntity = [
     "approvalApproved",
 ];
 
+// 系统内置 -- 如需设置自定义内置按下面步骤  搜索 自定义内置导航（总共3步）
+const systemEntityName = ref([
+	"Department",
+	"Role",
+	"Team",
+	"approvalHandle",
+	"approvalSubmit",
+	"capprovalCc",
+    "approvalApproved",
+    // 自定义内置导航- 1. 自定义单选项 name: CustomOption
+    "CustomOption",
+]);
+const systemEntityPath = reactive({
+	Department: "entity-user",
+	Role: "entity-role",
+	Team: "entity-team",
+	approvalHandle: "approval-handle",
+	approvalSubmit: "approval-submit",
+	capprovalCc: "approval-cc",
+    approvalApproved: "approval-approved",
+    // 自定义内置导航- 2. 自定义单选项 path: custom-option  （固定指向：src/views/custom-page/下的文件）
+    CustomOption: "custom-option",
+});
+
+
 // 实体分组
 const getGroupEntityList = (target) => {
 	let systemOptions = [
@@ -524,6 +549,12 @@ const getGroupEntityList = (target) => {
 			entityCode: 24,
 			name: "Team",
 		},
+        // 系统内置导航- 3. 自定义单选项现实菜单对象 
+        {
+            label: "自定义单选项(示例)",
+            entityCode: "CustomOption",
+            name: "CustomOption",
+        },
         {
             label: "父级菜单",
             entityCode: "parentMenu",
@@ -658,25 +689,6 @@ const formEntityCodeChange = async (entityCode, target) => {
 	formLoading.value = false;
 };
 
-// 系统内置
-const systemEntityName = ref([
-	"Department",
-	"Role",
-	"Team",
-	"approvalHandle",
-	"approvalSubmit",
-	"capprovalCc",
-    "approvalApproved",
-]);
-const systemEntityPath = reactive({
-	Department: "entity-user",
-	Role: "entity-role",
-	Team: "entity-team",
-	approvalHandle: "approval-handle",
-	approvalSubmit: "approval-submit",
-	capprovalCc: "approval-cc",
-    approvalApproved: "approval-approved"
-});
 
 // 使用 composable，同步参数（基于用户变化，移除重复函数）
 const {
