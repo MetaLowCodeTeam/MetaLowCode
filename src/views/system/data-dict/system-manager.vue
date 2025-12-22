@@ -7,9 +7,7 @@
         :saveFn="saveSystemConstants"
         :deleteFn="systemConstantCanBeDeleted"
         pageType="system"
-        :banned-entity="bannedEntity"
-        :banned-field="bannedField"
-        :banned-attribute="bannedAttribute"
+        :enabled-entity="enabledEntity"
     />
 </template>
 
@@ -17,20 +15,14 @@
 import TreeOperateList from "./components/TreeOperateList.vue";
 import { getSystemConstantTree, getSystemConstants, saveSystemConstants, systemConstantCanBeDeleted } from "@/api/system-manager";
 const props = defineProps({
-    // 需要过滤的实体名称---传key
-    bannedEntity: {
+    /**
+     * 需要启用的字段
+     * 示例：[{ '权限角色': ['customRight']}] 或 [{ '权限角色': ["*"]}]
+     * 通配符："*"表示启用所有字段
+     */
+    enabledEntity: {
         type: Array,
-        default: () => [],
-    },
-    // 需要过滤的字段---传字段value
-    bannedField: {
-        type: Array,
-        default: () => [],
-    },
-    // 需要过滤属性
-    bannedAttribute: {
-        type: Array,
-        default: () => [],
+        default: () => ([]),
     },
 });
 </script>
