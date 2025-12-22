@@ -60,55 +60,59 @@
 						v-if="mainList.length == 0"
 						description="没有数据"
 					/>
-					<div
-						class="op-item"
-						v-for="(item, inx) of mainList"
-						:key="inx"
-					>
-						<div class="op-item-text yichu" :title="item.label">
-							{{ item.label }}
-                            <span class="info-text" style="font-size: 12px;">({{ item.value }})</span>
-						</div>
-						<div class="op-icon-box">
-							<span
-								title="插入"
-								@click.stop="operateItem(inx, 'ins')"
-							>
-								<el-icon>
-									<ElIconPlus />
-								</el-icon>
-							</span>
-							<span
-								title="上移"
-								@click.stop="moveItem(inx, 'top')"
-							>
-								<el-icon>
-									<ElIconTop />
-								</el-icon>
-							</span>
-							<span
-								title="下移"
-								@click.stop="moveItem(inx, 'down')"
-							>
-								<el-icon>
-									<ElIconBottom />
-								</el-icon>
-							</span>
-							<span
-								title="编辑"
-								@click.stop="operateItem(inx, 'edit', item)"
-							>
-								<el-icon>
-									<ElIconEdit />
-								</el-icon>
-							</span>
-							<span title="删除" @click.stop="delItem(inx, item)">
-								<el-icon>
-									<ElIconDelete />
-								</el-icon>
-							</span>
-						</div>
-					</div>
+                    <template v-else>
+                        <template v-for="(item, inx) of mainList" :key="inx">
+                            <div
+                                class="op-item"
+                                v-if="!bannedAttribute.includes(item.value)"
+                            >
+                                <div class="op-item-text yichu" :title="item.label">
+                                    {{ item.label }}
+                                    <span class="info-text" style="font-size: 12px;">({{ item.value }})</span>
+                                </div>
+                                <div class="op-icon-box">
+                                    <span
+                                        title="插入"
+                                        @click.stop="operateItem(inx, 'ins')"
+                                    >
+                                        <el-icon>
+                                            <ElIconPlus />
+                                        </el-icon>
+                                    </span>
+                                    <span
+                                        title="上移"
+                                        @click.stop="moveItem(inx, 'top')"
+                                    >
+                                        <el-icon>
+                                            <ElIconTop />
+                                        </el-icon>
+                                    </span>
+                                    <span
+                                        title="下移"
+                                        @click.stop="moveItem(inx, 'down')"
+                                    >
+                                        <el-icon>
+                                            <ElIconBottom />
+                                        </el-icon>
+                                    </span>
+                                    <span
+                                        title="编辑"
+                                        @click.stop="operateItem(inx, 'edit', item)"
+                                    >
+                                        <el-icon>
+                                            <ElIconEdit />
+                                        </el-icon>
+                                    </span>
+                                    <span title="删除" @click.stop="delItem(inx, item)">
+                                        <el-icon>
+                                            <ElIconDelete />
+                                        </el-icon>
+                                    </span>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+					
 				</el-scrollbar>
 			</el-main>
             <el-main class="mian-box" v-loading="mainLoading" v-else>
@@ -153,7 +157,23 @@ const props = defineProps({
     isCodeOption: { type: Boolean, default: false },
     // 是否是级联选项
     isCascaderOption: { type: Boolean, default: false },
+    // 需要过滤的实体名称
+    bannedEntity: {
+        type: Array,
+        default: () => [],
+    },
+    // 需要过滤的字段
+    bannedField: {
+        type: Array,
+        default: () => [],
+    },
+    // 需要过滤属性
+    bannedAttribute: {
+        type: Array,
+        default: () => [],
+    },
 });
+
 const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 // 搜索相关
@@ -251,12 +271,16 @@ const formatSystemTree = (data) => {
     let formatArr = [];
     // 遍历data对象
     let num = 0;
+    let { bannedEntity, bannedField } = props;
     for(let key in data) {
+        if(bannedEntity.includes(key)) {
+            continue;
+        }
         let obj = {
             label: key,
             name: key,
             $inx: `${num + 1}`,
-            children: data[key].map((el,inx) => {
+            children: data[key].filter(el => !bannedField.includes(el.value)).map((el,inx) => {
                 return {
                     label: el.label,
                     name: el.value,
@@ -267,6 +291,7 @@ const formatSystemTree = (data) => {
         formatArr.push(obj);
         num++;
     }
+    formatArr = formatArr.filter(el => el.children.length > 0);
     return formatArr;
 }
 
@@ -274,6 +299,7 @@ const formatSystemTree = (data) => {
 // 格式化Tree数据
 const formatTree = (data) => {
 	let formatArr = [];
+    let { bannedEntity, bannedField } = props;
 	data.forEach((el, inx) => {
 		let obj = {
 			label: el.entityLabel,
@@ -289,12 +315,15 @@ const formatTree = (data) => {
                 title: getSubElTitle(subEl),
 				$inx: `${inx + 1}-${subInx + 1}`,
 			};
-			obj.children.push(subObj);
+            if(!bannedField.includes(subEl.fieldName)) {
+                obj.children.push(subObj);
+            }
 		});
-		if (obj.children.length > 0) {
+		if (obj.children.length > 0 && !bannedEntity.includes(el.entityName)) {
 			formatArr.push(obj);
 		}
 	});
+    
 	return formatArr;
 };
 
