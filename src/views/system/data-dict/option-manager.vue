@@ -5,7 +5,7 @@
 		:getTreeFn="getOptionFields"
 		:getMainFn="getOptionItems"
 		:saveFn="saveOptionItems"
-		:enabled-entity="[{ WMScangkuxinxi: ['*'] }, { User: ['*'] }]"
+		:enabled-entity="enabledEntity"
 	/>
 </template>
 
