@@ -168,12 +168,12 @@ const routes = [
     {
         path: appPath + "system",
         name: 'SystemManager',
-        meta: { title: '开发中心', icon: 'el-icon-setting', svgIcon: 'setting', role: 'r6017' },
-        redirect: appPath + "system-manager",
+        meta: { title: '开发中心', icon: 'el-icon-Help', svgIcon: 'setting', role: 'r6017' },
+        redirect: appPath + "development-center",
         children: [
             // 开发中心
             {
-                path: appPath + "system-manager",
+                path: appPath + "development-center",
                 name: 'DevelopmentCenter',
                 component: 'system/index',
                 meta: { title: '功能指引', icon: 'el-icon-Help', svgIcon: 'setting', role: 'r6017' }
