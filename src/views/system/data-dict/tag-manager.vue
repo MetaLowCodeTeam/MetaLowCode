@@ -5,9 +5,7 @@
         :getTreeFn="getTagFields"
         :getMainFn="getTagItems"
         :saveFn="saveTagItems"
-        :banned-entity="bannedEntity"
-        :banned-field="bannedField"
-        :banned-attribute="bannedAttribute"
+        :enabled-entity="enabledEntity"
     />
 </template>
 
@@ -15,20 +13,14 @@
 import TreeOperateList from "./components/TreeOperateList.vue";
 import { getTagFields, getTagItems, saveTagItems } from "@/api/system-manager";
 const props = defineProps({
-    // 需要过滤的实体名称
-    bannedEntity: {
+    /**
+     * 需要启用的字段
+     * 示例：[{ 'User': ['age', 'age']}, {'Role': ["*"]}]
+     * 通配符："*"表示启用所有字段
+     */
+    enabledEntity: {
         type: Array,
-        default: () => [],
-    },
-    // 需要过滤的字段
-    bannedField: {
-        type: Array,
-        default: () => [],
-    },
-    // 需要过滤属性
-    bannedAttribute: {
-        type: Array,
-        default: () => [],
+        default: () => ([]),
     },
 });
 </script>

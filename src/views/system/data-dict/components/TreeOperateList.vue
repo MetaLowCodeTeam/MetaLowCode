@@ -64,7 +64,6 @@
                         <template v-for="(item, inx) of mainList" :key="inx">
                             <div
                                 class="op-item"
-                                v-if="!bannedAttribute.includes(item.value)"
                             >
                                 <div class="op-item-text yichu" :title="item.label">
                                     {{ item.label }}
@@ -157,18 +156,8 @@ const props = defineProps({
     isCodeOption: { type: Boolean, default: false },
     // 是否是级联选项
     isCascaderOption: { type: Boolean, default: false },
-    // 需要过滤的实体名称
-    bannedEntity: {
-        type: Array,
-        default: () => [],
-    },
-    // 需要过滤的字段
-    bannedField: {
-        type: Array,
-        default: () => [],
-    },
-    // 需要过滤属性
-    bannedAttribute: {
+    // 需要启用的实体名称
+    enabledEntity: {
         type: Array,
         default: () => [],
     },
@@ -271,26 +260,57 @@ const formatSystemTree = (data) => {
     let formatArr = [];
     // 遍历data对象
     let num = 0;
-    let { bannedEntity, bannedField } = props;
+    let { enabledEntity } = props;
+    
+    // 处理enabledEntity，转换为便于查找的结构
+    // enabledEntity是数组，可能包含多个对象，需要合并
+    let enabledMap = {};
+    if (enabledEntity && enabledEntity.length > 0) {
+        enabledEntity.forEach(item => {
+            if (item && typeof item === 'object') {
+                Object.assign(enabledMap, item);
+            }
+        });
+    }
+    
     for(let key in data) {
-        if(bannedEntity.includes(key)) {
+        // 检查当前key是否在enabledEntity中
+        if (Object.keys(enabledMap).length > 0 && !enabledMap[key]) {
+            // 如果enabledEntity有值但当前key不在其中，跳过
             continue;
         }
-        let obj = {
-            label: key,
-            name: key,
-            $inx: `${num + 1}`,
-            children: data[key].filter(el => !bannedField.includes(el.value)).map((el,inx) => {
-                return {
-                    label: el.label,
-                    name: el.value,
-                    $inx: `${num + 1}-${inx + 1}`,
-                }
-            }),
+        
+        // 获取当前key对应的启用字段值列表
+        const enabledValues = enabledMap[key] || [];
+        
+        // 过滤children，只保留在enabledValues中的项（如果enabledValues有值）
+        let children = data[key].map((el,inx) => {
+            return {
+                label: el.label,
+                name: el.value,
+                $inx: `${num + 1}-${inx + 1}`,
+            }
+        });
+        
+        // 如果指定了启用字段，则过滤children
+        // 如果字段列表中有*，则匹配所有字段
+        if (enabledValues.length > 0 && !enabledValues.includes('*')) {
+            children = children.filter(child => enabledValues.includes(child.name));
         }
-        formatArr.push(obj);
-        num++;
+        
+        // 只添加有children的项
+        if (children.length > 0) {
+            let obj = {
+                label: key,
+                name: key,
+                $inx: `${num + 1}`,
+                children: children,
+            }
+            formatArr.push(obj);
+            num++;
+        }
     }
+    
     formatArr = formatArr.filter(el => el.children.length > 0);
     return formatArr;
 }
@@ -299,15 +319,43 @@ const formatSystemTree = (data) => {
 // 格式化Tree数据
 const formatTree = (data) => {
 	let formatArr = [];
-    let { bannedEntity, bannedField } = props;
+    let { enabledEntity } = props;
+    
+    // 处理enabledEntity，转换为便于查找的结构
+    // enabledEntity是数组，可能包含多个对象，需要合并
+    let enabledMap = {};
+    if (enabledEntity && enabledEntity.length > 0) {
+        enabledEntity.forEach(item => {
+            if (item && typeof item === 'object') {
+                Object.assign(enabledMap, item);
+            }
+        });
+    }
+    
 	data.forEach((el, inx) => {
+        // 检查当前实体是否在enabledEntity中
+        if (Object.keys(enabledMap).length > 0 && !enabledMap[el.entityName]) {
+            // 如果enabledEntity有值但当前实体不在其中，跳过
+            return;
+        }
+        
+        // 获取当前实体对应的启用字段值列表
+        const enabledValues = enabledMap[el.entityName] || [];
+        
 		let obj = {
 			label: el.entityLabel,
 			name: el.entityName,
 			$inx: `${inx + 1}`,
 			children: [],
 		};
+		
 		el.fieldList.forEach((subEl, subInx) => {
+            // 如果指定了启用字段，则过滤字段
+            // 如果字段列表中有*，则匹配所有字段
+            if (enabledValues.length > 0 && !enabledValues.includes('*') && !enabledValues.includes(subEl.fieldName)) {
+                return;
+            }
+            
 			let subObj = {
 				label: subEl.fieldLabel + (subEl.syncFlag == "1" ? "(已同步)" : ""),
 				name: subEl.fieldName,
@@ -315,11 +363,10 @@ const formatTree = (data) => {
                 title: getSubElTitle(subEl),
 				$inx: `${inx + 1}-${subInx + 1}`,
 			};
-            if(!bannedField.includes(subEl.fieldName)) {
-                obj.children.push(subObj);
-            }
+            obj.children.push(subObj);
 		});
-		if (obj.children.length > 0 && !bannedEntity.includes(el.entityName)) {
+		
+		if (obj.children.length > 0) {
 			formatArr.push(obj);
 		}
 	});
