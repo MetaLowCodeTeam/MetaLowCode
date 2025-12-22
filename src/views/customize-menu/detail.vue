@@ -821,7 +821,7 @@ let detailTabsRefs = ref();
 const initData = async () => {
 	loading.value = true;
     haveLayoutJson.value = false;
-	let res = await getFormLayout(entityName.value, formId.value ?? props.recordDetailFormId);
+	let res = await getFormLayout(entityName.value, formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId);
 	noeData.value = false;
 	if (res) {
 		if (res.data?.layoutJson) {
