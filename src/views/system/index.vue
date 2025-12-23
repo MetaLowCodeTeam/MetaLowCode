@@ -113,7 +113,7 @@ const categories = ref([
 		features: [
 			{
 				title: "数据建模",
-				desc: "搭建业务对象、设计表单和列表展示，从此入手",
+				desc: "业务对象建模、表单设计和列表展示，从此入手",
 				background: "#ECFBF4",
 				route: "entity-list",
 				icon: "el-icon-coin",
