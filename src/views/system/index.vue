@@ -8,28 +8,30 @@
 			>
 			<div class="category-title">{{ category.title }}</div>
 			<div class="features-container">
-				<el-card
-					class="feature-card"
-					shadow="hover"
-					v-for="(feature, featureIndex) in category.features"
-					:key="featureIndex"
-					:style="{ background: feature.background }"
-					@click="feature.route && (!feature.role || $TOOL.checkRole(feature.role)) && goToRoute(feature.route)"
-					:class="{ 
-						'clickable': feature.route && (!feature.role || $TOOL.checkRole(feature.role)),
-						'is-disabled': feature.role && !$TOOL.checkRole(feature.role)
-					}"
-				>
-					<div class="feature-content">
-						<div class="feature-title">
-							<el-icon v-if="feature.icon" class="feature-icon">
-								<component :is="getIconComponent(feature.icon)" />
-							</el-icon>
-							<span>{{ feature.title }}</span>
-						</div>
-						<div class="feature-desc">{{ feature.desc }}</div>
-					</div>
-				</el-card>
+                <template v-for="(feature, featureIndex) in category.features" :key="featureIndex">
+                    <el-card
+                        class="feature-card"
+                        shadow="hover"
+                        v-if="!feature.isHide"
+                        :style="{ background: feature.background }"
+                        @click="feature.route && (!feature.role || $TOOL.checkRole(feature.role)) && goToRoute(feature.route)"
+                        :class="{ 
+                            'clickable': feature.route && (!feature.role || $TOOL.checkRole(feature.role)),
+                            'is-disabled': feature.role && !$TOOL.checkRole(feature.role)
+                        }"
+                    >
+                        <div class="feature-content">
+                            <div class="feature-title">
+                                <el-icon v-if="feature.icon" class="feature-icon">
+                                    <component :is="getIconComponent(feature.icon)" />
+                                </el-icon>
+                                <span>{{ feature.title }}</span>
+                            </div>
+                            <div class="feature-desc">{{ feature.desc }}</div>
+                        </div>
+                    </el-card>
+                </template>
+				
 			</div>
 			</div>
 		</div>
