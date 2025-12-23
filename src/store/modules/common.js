@@ -20,7 +20,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.397 20251223"
+        webVer: "1.8.398 20251223"
     });
 
     // 添加登录状态管理
@@ -173,16 +173,8 @@ const useCommonStore = defineStore('commonStore', () => {
     }
     const setUserInfo = (user) => {
         let userInfo = {
-            userName: user.userName,
-            loginName: user.loginName,
-            userId: user.userId,
             dashboard: "1",
-            departmentId: user.departmentId,
-            jobTitle: user.jobTitle,
-            email: user.email,
-            mobilePhone: user.mobilePhone,
-            ownerTeam: user.ownerTeam,
-            departmentName: user.departmentName,
+            ...user,
         };
         tool.data.set("USER_INFO", userInfo);
     }
