@@ -15,7 +15,7 @@
                         v-if="!feature.isHide"
                         :style="{ background: feature.background }"
                         @click="feature.route && (!feature.role || $TOOL.checkRole(feature.role)) && goToRoute(feature.route)"
-                        :class="{ 
+                        :class="{
                             'clickable': feature.route && (!feature.role || $TOOL.checkRole(feature.role)),
                             'is-disabled': feature.role && !$TOOL.checkRole(feature.role)
                         }"
@@ -31,7 +31,7 @@
                         </div>
                     </el-card>
                 </template>
-				
+
 			</div>
 			</div>
 		</div>
@@ -113,7 +113,7 @@ const categories = ref([
 		features: [
 			{
 				title: "数据建模",
-				desc: "实体是业务数据的载体，是搭建业务系统的基础",
+				desc: "搭建业务对象、设计表单和列表展示，从此入手",
 				background: "#ECFBF4",
 				route: "entity-list",
 				icon: "el-icon-coin",
@@ -203,7 +203,7 @@ const categories = ref([
 			},
 			{
 				title: "数据转化",
-				desc: "满足业务数据在不同业务(模块)间快速流转",
+				desc: "满足业务数据在不同业务模块之间快速流转",
 				background: "#FDFBE2",
 				route: "data-transformation",
 				icon: "el-icon-Cpu",
@@ -228,7 +228,7 @@ const categories = ref([
 			},
 			{
 				title: "外部表单",
-				desc: "外部表单集成管理",
+				desc: "外部表单集成管理，常用于外部数据收集",
 				background: "#FDF2F2",
 				route: "external-list",
 				icon: "el-icon-list",
@@ -320,7 +320,7 @@ const goToRoute = (route) => {
 		.category-section {
 			margin-bottom: 40px;
 			.category-title {
-				font-size: 24px;
+				font-size: 20px;
 				font-weight: bold;
 				color: #303133;
 				margin-bottom: 20px;
@@ -350,11 +350,10 @@ const goToRoute = (route) => {
 					:deep(.el-card__body) {
 						padding: 20px;
 					}
-                    
 
 					.feature-content {
 						.feature-title {
-							font-size: 16px;
+							font-size: 18px;
 							color: #4183c4;
 							margin-bottom: 5px;
 							display: flex;
