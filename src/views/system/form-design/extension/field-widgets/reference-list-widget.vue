@@ -360,7 +360,7 @@ export default {
             }
         },
 
-		onAppendButtonClick() {
+		async onAppendButtonClick() {
             if (this.designState) {
                 return
             }
@@ -373,13 +373,20 @@ export default {
 			}
 
 			if (this.field.options.onBeforeDialogOpen) {  //引用弹窗打开前置事件
-				let customFn = new Function(
-					this.field.options.onBeforeDialogOpen
-				);
-				if (customFn.call(this) === false) {
+				let customFn = new Function(this.field.options.onBeforeDialogOpen);
+				// 检测是否为异步函数，并进行await处理
+				const result = customFn.call(this);
+				if (result instanceof Promise) {
+					// 如果是Promise，等待其resolve
+					if (await result === false) {
+						return;
+					}
+				} else if (result === false) {
+					// 非Promise直接判断
 					return;
 				}
 			}
+
             this.multipleSelectEntity = this.field.refEntities?.split(',');
             // 默认树
             this.referenceDialogType = 'table';
