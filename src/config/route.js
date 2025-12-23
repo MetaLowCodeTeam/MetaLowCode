@@ -568,6 +568,4 @@ const routes = [
     },
 ]
 
-console.log
-
 export default routes;

@@ -8,28 +8,30 @@
 			>
 			<div class="category-title">{{ category.title }}</div>
 			<div class="features-container">
-				<el-card
-					class="feature-card"
-					shadow="hover"
-					v-for="(feature, featureIndex) in category.features"
-					:key="featureIndex"
-					:style="{ background: feature.background }"
-					@click="feature.route && (!feature.role || $TOOL.checkRole(feature.role)) && goToRoute(feature.route)"
-					:class="{ 
-						'clickable': feature.route && (!feature.role || $TOOL.checkRole(feature.role)),
-						'is-disabled': feature.role && !$TOOL.checkRole(feature.role)
-					}"
-				>
-					<div class="feature-content">
-						<div class="feature-title">
-							<el-icon v-if="feature.icon" class="feature-icon">
-								<component :is="getIconComponent(feature.icon)" />
-							</el-icon>
-							<span>{{ feature.title }}</span>
-						</div>
-						<div class="feature-desc">{{ feature.desc }}</div>
-					</div>
-				</el-card>
+                <template v-for="(feature, featureIndex) in category.features" :key="featureIndex">
+                    <el-card
+                        class="feature-card"
+                        shadow="hover"
+                        v-if="!feature.isHide"
+                        :style="{ background: feature.background }"
+                        @click="feature.route && (!feature.role || $TOOL.checkRole(feature.role)) && goToRoute(feature.route)"
+                        :class="{ 
+                            'clickable': feature.route && (!feature.role || $TOOL.checkRole(feature.role)),
+                            'is-disabled': feature.role && !$TOOL.checkRole(feature.role)
+                        }"
+                    >
+                        <div class="feature-content">
+                            <div class="feature-title">
+                                <el-icon v-if="feature.icon" class="feature-icon">
+                                    <component :is="getIconComponent(feature.icon)" />
+                                </el-icon>
+                                <span>{{ feature.title }}</span>
+                            </div>
+                            <div class="feature-desc">{{ feature.desc }}</div>
+                        </div>
+                    </el-card>
+                </template>
+				
 			</div>
 			</div>
 		</div>
@@ -40,6 +42,10 @@
 import { ref, computed, inject } from "vue";
 import { useRouter } from "vue-router";
 import { ElIcon } from "element-plus";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
+let { tenantInfo, pluginIdList, openJobPosition } = publicSetting.value;
 let Router = useRouter();
 const $TOOL = inject("$TOOL");
 
@@ -210,6 +216,7 @@ const categories = ref([
 				route: "database-backups",
 				icon: "el-icon-Collection",
 				role: 'r6023',
+                isHide: tenantInfo && tenantInfo.tenantId,
 			},
 			{
 				title: "开发版本管理",
@@ -242,6 +249,7 @@ const categories = ref([
 				route: "outer-data-source",
 				icon: "el-icon-Coin",
 				role: 'r65-1',
+                isHide: !pluginIdList || !pluginIdList.includes('metaDataWarehouse'),
 			},
 			{
 				title: "数据模型",
@@ -250,6 +258,7 @@ const categories = ref([
 				route: "outer-data-model",
 				icon: "el-icon-Coin",
 				role: 'r66-1',
+                isHide: !pluginIdList || !pluginIdList.includes('metaDataWarehouse'),
 			},
 			{
 				title: "应用管理",
