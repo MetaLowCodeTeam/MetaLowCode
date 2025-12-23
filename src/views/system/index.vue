@@ -40,6 +40,10 @@
 import { ref, computed, inject } from "vue";
 import { useRouter } from "vue-router";
 import { ElIcon } from "element-plus";
+import useCommonStore from "@/store/modules/common";
+import { storeToRefs } from "pinia";
+const { publicSetting } = storeToRefs(useCommonStore());
+let { tenantInfo, pluginIdList, openJobPosition } = publicSetting.value;
 let Router = useRouter();
 const $TOOL = inject("$TOOL");
 
@@ -210,6 +214,7 @@ const categories = ref([
 				route: "database-backups",
 				icon: "el-icon-Collection",
 				role: 'r6023',
+                isHide: tenantInfo && tenantInfo.tenantId,
 			},
 			{
 				title: "开发版本管理",
@@ -242,6 +247,7 @@ const categories = ref([
 				route: "outer-data-source",
 				icon: "el-icon-Coin",
 				role: 'r65-1',
+                isHide: !pluginIdList || !pluginIdList.includes('metaDataWarehouse'),
 			},
 			{
 				title: "数据模型",
@@ -250,6 +256,7 @@ const categories = ref([
 				route: "outer-data-model",
 				icon: "el-icon-Coin",
 				role: 'r66-1',
+                isHide: !pluginIdList || !pluginIdList.includes('metaDataWarehouse'),
 			},
 			{
 				title: "应用管理",
