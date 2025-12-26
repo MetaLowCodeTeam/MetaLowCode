@@ -292,10 +292,18 @@
                     </el-scrollbar>
                 </div>
                 <div class="tree-group-box" v-else-if="treeGroupConf.isOpen && treeGroupConf.groupType == 2">
-                    <ListRefFieldGroupFilter :treeGroupConf="treeGroupConf" @changeOtherFilters="changeOtherFilters"/>
+                    <ListRefFieldGroupFilter 
+                    :treeGroupConf="treeGroupConf" 
+                    @changeOtherFilters="changeOtherFilters"
+                    @nodeClick="treeGroupFilterNodeClick"
+                    />
                 </div>
                 <div class="tree-group-box" v-else-if="customListType == 'treeGroupList'">
-                    <TreeGroupList :treeGroupListConf="treeGroupListConf" :listExposed="currentExposed"/>
+                    <TreeGroupList 
+                        :treeGroupListConf="treeGroupListConf" 
+                        :listExposed="currentExposed"
+                        @nodeClick="treeGroupFilterNodeClick"
+                    />
                 </div>
                 <!-- 表格 -->
                 <el-table
@@ -359,7 +367,7 @@
                             <template #default="scope">
                                 {{ (page.no - 1) * page.size + scope.$index + 1 }}
                             </template>
-                        </el-table-column>
+                        </el-table-column> 
                     </template>
                     <template v-for="column of tableColumn" :key="column.fieldName + '_' + renderKey">
                         <el-table-column
@@ -1688,10 +1696,18 @@ let formatterStatistics = ref({});
 
 // 其他过滤
 let otherFilters = ref([]);
-
+let treeGroupFilterNode = ref(null);
 const changeOtherFilters = (e) => {
     otherFilters.value = e;
     refreshData();
+}
+
+const treeGroupFilterNodeClick = (node) => {
+    treeGroupFilterNode.value = node;
+}
+
+const getTreeGroupFilterNode = () => {
+    return treeGroupFilterNode.value;
 }
 
 // 刷新数据
@@ -2859,6 +2875,7 @@ defineExpose({
     getQueryParams, 
     openSchedulingDialog,
     changeOtherFilters,
+    getTreeGroupFilterNode,
 })
 
 </script>

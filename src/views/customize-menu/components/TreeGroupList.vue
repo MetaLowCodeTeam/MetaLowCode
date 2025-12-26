@@ -71,7 +71,7 @@ const props = defineProps({
 		default: () => {},
 	},
 });
-const emit = defineEmits(["changeOtherFilters"]);
+const emit = defineEmits(["nodeClick"]);
 
 let loading = ref(false);
 let treeData = ref([]);
@@ -175,7 +175,7 @@ const handleNodeClick = async (node) => {
 		};
 		clickState = "select";
 	}
-
+    emit('nodeClick', cutSelectedNode.value[0] || null);
 	try {
 		let onNodeClickEvent = props.treeGroupListConf.onNodeClickEvent;
 		if (!onNodeClickEvent) return;
