@@ -22,7 +22,7 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(['changeOtherFilters'])
+const emit = defineEmits(['changeOtherFilters', 'nodeClick'])
 let treeConf = ref({});
 
 watchEffect(() => {
@@ -50,6 +50,7 @@ const nodeClick = (node) => {
         ElMessage.success('已取消数据过滤')
         emit('changeOtherFilters', [])
     }
+    emit('nodeClick', node)
 };
 
 const formatTreeData = (data) => {
