@@ -16,7 +16,7 @@
 		"@codemirror/lang-javascript": "^6.2.2",
 		"@codemirror/lang-sql": "^6.8.0",
 		"@codemirror/theme-one-dark": "^6.1.2",
-		"@element-plus/icons-vue": "2.0.10",
+		"@element-plus/icons-vue": "^2.3.2",
 		"@fullcalendar/core": "^6.1.15",
 		"@fullcalendar/daygrid": "^6.1.15",
 		"@fullcalendar/interaction": "^6.1.15",

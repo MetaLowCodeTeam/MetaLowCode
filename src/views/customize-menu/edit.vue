@@ -282,6 +282,9 @@ const onAdd = (e) => {
     if(e.formId) {
         tempV.formId = e.formId;
     }
+    if(e.localDsv) {
+        tempV.localDsv = e.localDsv;
+    }
     isShow.value = false;
     openDialog(tempV);
 }

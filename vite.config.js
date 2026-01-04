@@ -6,6 +6,7 @@ import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import legacy from "@vitejs/plugin-legacy"
 import { lazyImport, VxeResolver } from 'vite-plugin-lazy-import'
+import fixHoistStatic from "./plugins/fix-hoist-static";
 // @see https://cn.vitejs.dev/config/
 export default ({
     command,
@@ -57,7 +58,8 @@ export default ({
     };
 
     let optimizeDeps = {
-        include: [`@/../lib/visual-design/designer.umd.js`,`@/../lib/flow-designer/meta-flow-designer.umd.cjs`]
+        include: [`@/../lib/visual-design/designer.umd.js`,`@/../lib/flow-designer/meta-flow-designer.umd.cjs`],
+        exclude: ["@element-plus/icons-vue"],
     };
 
     let alias = {
@@ -142,6 +144,7 @@ export default ({
         optimizeDeps,
         plugins: [
             vuePlugin(),
+            fixHoistStatic(),
             lazyImport({
                 resolvers: [
                     VxeResolver({
