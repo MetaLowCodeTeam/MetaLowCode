@@ -5,6 +5,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { loadEnv } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { lazyImport, VxeResolver } from 'vite-plugin-lazy-import'
+import fixHoistStatic from "./plugins/fix-hoist-static";
 // import legacy from "@vitejs/plugin-legacy"
 // @see https://cn.vitejs.dev/config/
 export default ({
@@ -28,7 +29,8 @@ export default ({
     };
 
     let optimizeDeps = {
-        include: [`@/../lib/visual-design/designer.umd.js`]
+        include: [`@/../lib/visual-design/designer.umd.js`],
+        exclude: ["@element-plus/icons-vue"],
     };
 
     let alias = {
@@ -97,6 +99,7 @@ export default ({
         optimizeDeps,
         plugins: [
             vuePlugin(),
+            fixHoistStatic(),
             lazyImport({
                 resolvers: [
                     VxeResolver({
