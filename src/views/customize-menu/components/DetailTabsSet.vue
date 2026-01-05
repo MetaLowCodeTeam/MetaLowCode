@@ -185,7 +185,7 @@
 
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
-import { ref, inject, reactive, onMounted } from "vue";
+import { ref, inject, reactive, onMounted, onUnmounted } from "vue";
 /**
  * 组件
  */
@@ -229,11 +229,17 @@ let columnList = ref([]);
 let tabShowEventCode = ref("");
 
 onMounted(() => {
-    document.body.ondrop = function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    };
-})
+    document.body.addEventListener('drop', handleDropEvent);
+});
+
+onUnmounted(() => {
+    document.body.removeEventListener('drop', handleDropEvent);
+});
+
+const handleDropEvent = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+};
 
 const formatShowColumn = () => {
     if (!searchField.value) {
