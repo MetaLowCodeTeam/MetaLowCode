@@ -417,7 +417,9 @@ export default function useCustomButtonConfig() {
                 }
             }
         }
-        if (el.afterEvent) {
+        currentCustomButtonAfterEvent.value = null;
+        // 后置事件只有在按钮功能类型不是自定义时才赋值
+        if (el.afterEvent && el.action != 4) {
             currentCustomButtonAfterEvent.value = el.afterEvent;
         }
         let checkAuth = true;
