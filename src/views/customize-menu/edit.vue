@@ -285,7 +285,7 @@ const onAdd = (e) => {
     if(e.localDsv) {
         tempV.localDsv = e.localDsv;
     }
-    isShow.value = false;
+    cancel();
     openDialog(tempV);
 }
 
@@ -774,7 +774,7 @@ let SubmitApprovalDialogRefs = ref();
 // 保存（并发互斥 + finally 复位 + 可选 blur 同步等待）
 const confirm = async (target, resetFormData = {}, callback) => {
     if (!vFormRef.value) {
-        isShow.value = false;
+        cancel();
         return;
     }
     // 并发互斥：正在保存时直接返回
@@ -852,7 +852,7 @@ const confirm = async (target, resetFormData = {}, callback) => {
             emits("onConfirm", resData);
             callback && callback(resData);
             if (target != 'notCloseDialog' && target != 'submit') {
-                isShow.value = false;
+                cancel();
             } else {
                 // 如果是新建，重新初始化表单
                 if (!row.detailId) {
@@ -909,7 +909,7 @@ const confirmSaveAndSubmit = () => {
 }
 // 提交审批成功
 const submitApprovalSuccess = () => {
-    isShow.value = false;
+    cancel();
     emits("saveFinishCallBack");
     emits("onConfirm");
 }
@@ -931,6 +931,10 @@ const refresh = () => {
 }
 
 const cancel = () => {
+    const hiddenInput = document.getElementById('chrome-fix-input');
+    if (hiddenInput) {
+        hiddenInput.focus();
+    }
     isShow.value = false;
 }
 
@@ -975,6 +979,9 @@ let PriceComparisonDialogRefs = ref();
 const openPriceComparisonDialog = (recordId = '') => {
     PriceComparisonDialogRefs.value?.openDialog(recordId);
 }
+
+
+
 
 defineExpose({
     openDialog,
