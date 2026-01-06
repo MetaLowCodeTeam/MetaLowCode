@@ -6,7 +6,6 @@
         :width="isFullScreen ? '100%' : width"
         v-model="isShow"
         :show-close="false"
-        @close="close"
         :close-on-click-modal="closeOnClickModal"
         :class="{
             'not-header':notHeader,
@@ -17,6 +16,7 @@
         :top="isFullScreen ? '0' : top"
         v-if="isShow"
         :draggable="isFullScreen ? false : true"
+        :before-close="beforeClose"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
@@ -90,7 +90,16 @@ const emit = defineEmits(["update:modelValue", 'fullScreenChange']);
 watch(
     () => props.modelValue,
     () => {
-        isShow.value = props.modelValue;
+        if(props.modelValue) {
+            isShow.value = props.modelValue;
+        }else {
+            const hiddenInput = document.getElementById('chrome-fix-input');
+            if (hiddenInput) {
+                hiddenInput.focus();
+            }
+            isShow.value = false;
+        }
+        
     },
     { deep: true }
 );
@@ -116,9 +125,21 @@ onMounted(() => {
 });
 // 关闭弹框
 const close = () => {
+    const hiddenInput = document.getElementById('chrome-fix-input');
+    if (hiddenInput) {
+        hiddenInput.focus();
+    }
     isShow.value = false;
     emit("update:modelValue", isShow.value);
 };
+// 弹窗关闭前的回调函数
+const beforeClose = (done) => {
+    const hiddenInput = document.getElementById('chrome-fix-input');
+    if (hiddenInput) {
+        hiddenInput.focus();
+    }
+    done();
+}
 // 全屏切换
 const onFullScreen = () => {
     isFullScreen.value = !isFullScreen.value;
