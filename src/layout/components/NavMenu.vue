@@ -9,7 +9,12 @@
             </template>
             <NavMenu :navMenus="navMenu.children"></NavMenu>
         </el-menu-item-group>
-        <el-menu-item v-else-if="!hasChildren(navMenu)" :index="navMenu.path" :class="{'isActive': activePath == navMenu.path}" :disabled="navMenu.name === 'NewWindowCreateEntity'">
+        <el-menu-item 
+            v-else-if="!hasChildren(navMenu)" 
+            :index="navMenu.path" 
+            :class="{'isActive': activePath == navMenu.path}" 
+            :disabled="navMenu.name === 'NewWindowCreateEntity' || navMenu.name === 'userCenter'"
+        >
             <a
                 v-if="navMenu.meta&&navMenu.meta.type=='link'"
                 :href="formatOutLink(navMenu.meta)"
@@ -119,6 +124,10 @@ export default {
 // 针对 el-menu-item 内部的 A 标签，确保点击区域覆盖整个换行区域
 .el-menu-item {
     position: relative; // 为内部的绝对定位 A 标签提供定位上下文
+    &.is-disabled {
+        pointer-events: none; // 禁用点击事件
+        color: var(--el-menu-disabled-color) !important; // 应用禁用颜色
+    }
     .full-link-area {
         position: absolute;
         top: 0;

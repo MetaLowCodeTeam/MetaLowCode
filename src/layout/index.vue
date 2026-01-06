@@ -38,7 +38,7 @@
                                         :title="item.meta.title"
                                         @click="showMenu(item)"
                                         :class="pmenu.path == item.path ? 'active' : '' "
-                                        v-if="item.name != 'CustomAddNav'"
+                                        v-if="item.name != 'CustomAddNav' && item.name != 'CustomUserInfo'"
                                     >
                                         <el-icon :style="{'color':item.meta.iconColor}" class="menu-icon mr-2">
                                             <component :is="item.meta.icon || 'el-icon-menu'" />
@@ -61,7 +61,7 @@
                                 class="scrollbar-demo-item"
                                 :class="pmenu.path==item.path ? 'active' : '' "
                                 @click="showMenu(item)"
-                                v-if="item.name != 'CustomAddNav'"
+                                v-if="item.name != 'CustomAddNav' && item.name != 'CustomUserInfo'"
                             >
                                 <el-icon :style="{'color':item.meta.iconColor}" class="mr-2">
                                     <component :is="item.meta.icon || 'el-icon-menu'" />

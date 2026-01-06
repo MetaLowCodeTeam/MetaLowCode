@@ -93,17 +93,6 @@ const routes = [
                 meta: { title: '数据导入', role: 'r6011', hidden: true },
                 component: 'system/data-upload/index',
             },
-            // 账号信息
-            {
-                "name": "userCenter",
-                "path": appPath + "usercenter",
-                "meta": {
-                    "title": "帐号信息",
-                    "icon": "el-icon-user",
-                    hidden: true
-                },
-                "component": "userCenter/index"
-            },
             // 消息中心
             {
                 path: appPath + "notification",
@@ -566,6 +555,22 @@ const routes = [
             }
         ]
     },
+    // 账号信息
+    {
+        path: appPath + "customUserInfo",
+        name: 'CustomUserInfo',
+        meta: { title: '账号信息' },
+        children: [
+            {
+                "name": "userCenter",
+                "path": appPath + "usercenter",
+                "meta": {
+                    title: '左侧导航暂不可用',
+                },
+                "component": "userCenter/index"
+            },
+        ]
+    },  
 ]
 
 export default routes;
