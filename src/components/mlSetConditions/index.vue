@@ -654,6 +654,7 @@
                                         :refField="item.fieldName"
                                         :checkFilterConditions="() => true"
                                         @onAppendButtonClick="openReferenceDialog(item)"
+                                        @onSelectedRemote="onSelectedRemote($event, item)"
                                         style="position: relative;top: 2px;"
                                     />
                                     <ml-dialog
@@ -860,6 +861,7 @@ export default {
         onSelectedRemote(event, item) {
             item.value = event.record.id;
             item.refLabel = event.record.label;
+            
         },
         // 引用单选
         setReferRecord(event, item) {

@@ -455,7 +455,6 @@ const scrollToRow = (index: number) => {
 // 行点击：关闭下拉并回填
 const clickRow = (row) => {
     selectRef.value.blur(); // 这会关闭下拉框，并使el-select失焦
-
     emit("onSelectedRemote", {
         record: {
             id: row[idFieldName.value],
