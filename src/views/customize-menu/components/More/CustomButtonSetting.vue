@@ -1,5 +1,5 @@
 <template>
-	<ml-dialog v-model="isShow" title="自定义按钮设置" width="720">
+	<ml-dialog v-model="isShow" title="自定义按钮设置" width="720" append-to-body>
         <el-tabs 
             v-model="currentTab" 
             @tab-change="tabChange"

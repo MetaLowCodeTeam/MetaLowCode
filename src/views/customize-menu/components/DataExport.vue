@@ -39,6 +39,12 @@ const exportFn = async () => {
     if (selection.value == 3) {
         queryParm.pageNo = null;
         queryParm.pageSize = null;
+        queryParm.advFilter = null;
+        queryParm.builtInFilter = null;
+        queryParm.filter = null;
+        queryParm.filterEasySql = "";
+        queryParm.quickFilter = "";
+        queryParm.otherFilters = null;
     }
     if(formData.noExportColumns.length > 0) {
         let newFieldsList = [];

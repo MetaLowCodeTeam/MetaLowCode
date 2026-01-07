@@ -210,8 +210,8 @@ const copyActionRule = (inx) => {
 
 // 设置字段组件
 const setFieldWidgets = async (widgets) => {
-    // 先处理原始数据
-    let newWidgets = widgets.map((item) => {
+    // 先处理原始数据--先过滤掉虚拟字段在格式化数据
+    let newWidgets = widgets.filter((item) => !item.field?.options?.name.includes("##")).map((item) => {
         let value = item.field?.options?.name;
         let subFormName = item.field?.subFormName || getSubFormName(item.field.id);
         return {

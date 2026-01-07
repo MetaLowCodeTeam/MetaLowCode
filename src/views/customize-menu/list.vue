@@ -923,6 +923,10 @@ const formatReferenceEntity = () => {
         return;
     }
     quickQueryConf.entityCode = entityCode.value;
+    // 获取编辑权限
+    hasEditRight.value = getEditRight();
+    // 获取新建权限
+    hasCreateRight.value = getCreateRight();
     // 获取导航配置
     getLayoutList();
     // 如果是引入组件
