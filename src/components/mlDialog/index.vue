@@ -59,6 +59,7 @@
 
 <script setup>
 import { useSlots, watch, ref, reactive, onMounted } from "vue";
+import { keyboardEventToInput } from "@/utils/util.js";
 // 滚动条
 // import mlScrollbar from "@/components/mlScrollbar/index.vue";
 const props = defineProps({
@@ -93,10 +94,7 @@ watch(
         if(props.modelValue) {
             isShow.value = props.modelValue;
         }else {
-            const hiddenInput = document.getElementById('chrome-fix-input');
-            if (hiddenInput) {
-                hiddenInput.focus();
-            }
+            keyboardEventToInput();
             isShow.value = false;
         }
         
@@ -125,19 +123,13 @@ onMounted(() => {
 });
 // 关闭弹框
 const close = () => {
-    const hiddenInput = document.getElementById('chrome-fix-input');
-    if (hiddenInput) {
-        hiddenInput.focus();
-    }
+    keyboardEventToInput();
     isShow.value = false;
     emit("update:modelValue", isShow.value);
 };
 // 弹窗关闭前的回调函数
 const beforeClose = (done) => {
-    const hiddenInput = document.getElementById('chrome-fix-input');
-    if (hiddenInput) {
-        hiddenInput.focus();
-    }
+    keyboardEventToInput()
     done();
 }
 // 全屏切换
