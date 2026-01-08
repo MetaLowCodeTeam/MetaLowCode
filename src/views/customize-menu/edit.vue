@@ -143,6 +143,7 @@ import {
     getModelName,
     formatFormVirtualField,
     formatQueryByIdParam,
+    keyboardEventToInput,
 } from "@/utils/util";
 import http from "@/utils/request"
 // 自定义按钮过滤
@@ -931,10 +932,7 @@ const refresh = () => {
 }
 
 const cancel = () => {
-    const hiddenInput = document.getElementById('chrome-fix-input');
-    if (hiddenInput) {
-        hiddenInput.focus();
-    }
+    keyboardEventToInput();
     isShow.value = false;
 }
 
