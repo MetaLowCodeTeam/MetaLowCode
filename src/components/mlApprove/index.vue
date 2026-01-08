@@ -7,12 +7,14 @@
         :show-close="false"
         :append-to-body="true"
         v-if="isShow"
+        destroy-on-close
+        :before-close="beforeClose"
     >
         <template #header>
             <div class="detail-header">
                 {{ approvalName }} 审批
                 <div class="fr fr-box">
-                    <span class="fr-icon" @click="isShow = false">
+                    <span class="fr-icon" @click="canner">
                         <el-icon>
                             <ElIconCloseBold />
                         </el-icon>
@@ -240,7 +242,8 @@ import {
     globalDsvDefaultData, 
     formatFormVirtualField, 
     formatQueryByIdParam,
-    checkApprovalPreEvent
+    checkApprovalPreEvent,
+    keyboardEventToInput
  } from "@/utils/util";
 import Detail from "@/views/customize-menu/detail.vue";
 
@@ -724,6 +727,7 @@ const getApprovalTaskInfo = async () => {
 
 // 关闭弹框
 function canner() {
+    keyboardEventToInput();
     isShow.value = false;
 }
 
@@ -830,6 +834,13 @@ const openDialog = () => {
 const openDetailDialog = (recordId, globalDsv, formId) => {
     detailRef.value?.openDialog(recordId, globalDsv, formId);
 }
+
+// 关闭弹框前，清空数据
+const beforeClose = (done) => {
+    keyboardEventToInput();
+    done();
+}
+
 
 defineExpose({
     openDialog,

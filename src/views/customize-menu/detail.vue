@@ -9,6 +9,7 @@
 		:append-to-body="true"
 		:modal-append-to-body="false"
 		destroy-on-close
+		:before-close="beforeClose"
 	>
 		<template #header>
 			<div class="detail-header">
@@ -59,7 +60,7 @@
 						</span>
 						<span
 							class="fr-icon"
-							@click="detailDialog.isShow = false"
+							@click="closeDialog"
 						>
 							<el-icon>
 								<ElIconCloseBold />
@@ -343,7 +344,12 @@ import NewRelated from "./components/NewRelated.vue";
 import ApprovalRelated from "./components/ApprovalRelated.vue";
 import useCommonStore from "@/store/modules/common";
 import { ElMessage } from "element-plus";
-import { globalDsvDefaultData, formatFormVirtualField, formatQueryByIdParam } from "@/utils/util";
+import { 
+    globalDsvDefaultData, 
+    formatFormVirtualField, 
+    formatQueryByIdParam,
+    keyboardEventToInput,
+} from "@/utils/util";
 /**
  * 组件
  */
@@ -544,8 +550,14 @@ const openDialog = (id, localDsv, paramFormId) => {
         });
     })
 }
-
+// 关闭弹框前，清空数据
+const beforeClose = (done) => {
+    keyboardEventToInput();
+    done();
+}
+// 关闭弹框
 const closeDialog = () => {
+    keyboardEventToInput();
     detailDialog.isShow = false;
 }
 
@@ -970,7 +982,7 @@ const openCreateDialog = (entityName, fieldName) => {
 
 const editColumnConfirm = (v) => {
 	if (v && v.isDel) {
-		detailDialog.isShow = false;
+		closeDialog();
 		emits("onConfirm");
 	} else {
 
@@ -1107,6 +1119,9 @@ const getGlobalDsv = () => {
 const refreshTableList = () => {
     emits('onConfirm');
 }
+
+
+
 
 // 暴露方法给父组件调用
 defineExpose({
