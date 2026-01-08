@@ -800,40 +800,7 @@ export const keyboardEventToInput = () => {
     const inpEle = document.getElementById("chrome-fix-input");
     if (inpEle) {
         inpEle.focus();
-
-        inpEle.value = "";
-
-        inpEle.focus();
-
-        const keydownEvent = new KeyboardEvent("keydown", {
-            bubbles: true,
-            cancelable: true,
-            key: "a",
-            code: "KeyA",
-            keyCode: 65,
-            which: 65,
-        });
-        inpEle.dispatchEvent(keydownEvent);
-
-        inpEle.focus();
+        inpEle.value = '';
         document.execCommand("insertText", false, "a");
-
-        const inputEvent = new InputEvent("input", {
-            bubbles: true,
-            cancelable: true,
-            data: "a",
-            inputType: "insertText",
-        });
-        inpEle.dispatchEvent(inputEvent);
-
-        const keyupEvent = new KeyboardEvent("keyup", {
-            bubbles: true,
-            cancelable: true,
-            key: "a",
-            code: "KeyA",
-            keyCode: 65,
-            which: 65,
-        });
-        inpEle.dispatchEvent(keyupEvent);
     }
 };
