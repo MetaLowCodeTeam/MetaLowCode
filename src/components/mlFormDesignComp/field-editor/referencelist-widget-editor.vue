@@ -543,8 +543,8 @@ export default {
         },
 
         buildReferToAndReferenceSetting() {
-            this.fieldProps.referTo.length = 0;
-            this.fieldProps.referenceSetting.length = 0;
+            this.fieldProps.referTo = [];
+            this.fieldProps.referenceSetting = [];
 
             this.referenceList.forEach((ref) => {
                 if (!!ref.currentRefEntity && !!ref.selectedFieldItems) {
