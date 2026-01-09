@@ -1,6 +1,6 @@
 <template>
     <ml-dialog title="图标选择器" append-to-body width="37%" v-model="dialogIsShow">
-        <el-input v-model="keyWord" size="large" placeholder="搜索">
+        <el-input v-model="keyWord" size="large" placeholder="搜索" clearable>
             <template #prefix>
                 <el-icon class="el-input__seatch">
                     <ElIconSearch />
@@ -116,18 +116,22 @@ onMounted(() => {
 
 const search = (text) => {
     if (text) {
-        // 将搜索文本转换为大写
         const upperText = text.toUpperCase(); 
         const filterData = JSON.parse(JSON.stringify(config.icons));
         filterData.forEach((t) => {
             t.icons = t.icons.filter((n) => {
-                // 将图标名称也转换为大写后进行比较
                 return n.toUpperCase().includes(upperText); 
             });
+            t.label = t.name + "(" + t.icons.length + ")";
         });
         iconData.value = filterData;
     } else {
-        iconData.value = JSON.parse(JSON.stringify(config.icons));
+        iconData.value = JSON.parse(JSON.stringify(config.icons)).map(
+            el => {
+                el.label = el.name + "(" + el.icons.length + ")";
+                return el;
+            }
+        );
     }
 };
 

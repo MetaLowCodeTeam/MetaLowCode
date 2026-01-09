@@ -1,6 +1,6 @@
 <template>
-    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}" v-if="listParamConf.showMoreBtn">
-        <div class="table-setting-item-box">
+    <el-popover placement="bottom" trigger="click" :popper-style="{'padding':0}" v-if="listParamConf.showMoreBtn" @show="showDom = true">
+        <div class="table-setting-item-box" v-if="showDom">
             <template v-if="!isListCalendar">
                 <!-- 操作 -->
                 <div class="pl-5 item div-disabled">操作</div>
@@ -465,6 +465,8 @@ onMounted(() => {
 const $API = inject("$API");
 const $TOOL = inject("$TOOL");
 const $ElMessage = inject("$ElMessage");
+
+let showDom = ref(false);
 /*
  * ********************************************************  操作 beg
  */
