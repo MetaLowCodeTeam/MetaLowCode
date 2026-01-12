@@ -69,7 +69,7 @@ const initVformCom = async () => {
         nextTick(async () => {
 			globalDsv.value.formStatus = 'read'
 			globalDsv.value.formEntityId = entityId.value;
-            vFormRef.value.setFormJson(res.data.layoutJson);
+            vFormRef.value?.setFormJson(res.data.layoutJson);
             let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
             let queryByIdRes = await queryById(entityId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
             if (queryByIdRes && queryByIdRes.data) {
@@ -78,13 +78,13 @@ const initVformCom = async () => {
                 let resData = queryByIdRes.data || {};
                 printerTitle.value = resData[nameFieldName.value];
                 // resData.logo = resData.logo || [];
-                vFormRef.value.resetForm();
-                vFormRef.value.setFormData(formatFormVirtualField(resData));
+                vFormRef.value?.resetForm();
+                vFormRef.value?.setFormData(formatFormVirtualField(resData));
                 nextTick(() => {
                     if (JSON.stringify(optionData.value) == "{}") {
-                        vFormRef.value.reloadOptionData();
+                        vFormRef.value?.reloadOptionData();
                     }
-                    vFormRef.value.setReadMode();
+                    vFormRef.value?.setReadMode();
                     //
                     setTimeout(() => {
                         Print('.printer-content')

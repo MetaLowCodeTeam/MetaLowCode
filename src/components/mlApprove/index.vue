@@ -365,17 +365,17 @@ const initFormLayout = async (formLayoutId) => {
                 if(!props.isDialog) {
                     await getApprovalTaskInfo();
                 }
-                vFormRef.value.setFormJson(res.data.layoutJson);
+                vFormRef.value?.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
                 let formData = await queryById(props.entityId, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
                 
                 if (formData) {
                     globalDsv.value.recordData = formData.data;
                     nextTick(()=>{
-                        vFormRef.value.setFormData(formatFormVirtualField(formData.data));
+                        vFormRef.value?.setFormData(formatFormVirtualField(formData.data));
                         nextTick(() => {
-                            vFormRef.value.reloadOptionData();
-                            vFormRef.value.disableForm();
+                            vFormRef.value?.reloadOptionData();
+                            vFormRef.value?.disableForm();
                             nextTick(() => {
                                 let modifiableFields = approvalTask.value?.modifiableFields || [];
                                 let otherConfig = approvalTask.value?.otherConfig || {};
@@ -399,7 +399,7 @@ const initFormLayout = async (formLayoutId) => {
                                     }
                                 });
                                 subFormList.forEach(subForm => {
-                                    let subFormRef = vFormRef.value.getWidgetRef(subForm);
+                                    let subFormRef = vFormRef.value?.getWidgetRef(subForm);
                                     let subFormFieldList = modifiableFields.filter(item => item.formEntity == subForm);
                                     let subFormEnableWidgets = [];
                                     let subFormRequiredWidgets = [];
@@ -429,11 +429,11 @@ const initFormLayout = async (formLayoutId) => {
                                         subFormRef.setDeleteDisabled(false);
                                     }
                                 });
-                                // console.log(vFormRef.value.getWidgets('从表'),'vFormRef.value.getWidgets()');
-                                vFormRef.value.enableWidgets(enableWidgets);
-                                vFormRef.value.setWidgetsRequired(requiredWidgets, true);
+                                // console.log(vFormRef.value?.getWidgets('从表'),'vFormRef.value?.getWidgets()');
+                                vFormRef.value?.enableWidgets(enableWidgets);
+                                vFormRef.value?.setWidgetsRequired(requiredWidgets, true);
                                 // 显示可编辑的字段。即使设置了隐藏。
-                                vFormRef.value.showWidgets(enableWidgets);
+                                vFormRef.value?.showWidgets(enableWidgets);
                             })
                         
                         });
@@ -606,7 +606,7 @@ function confirmApprove(isBacked) {
         ElMessage.error("没有找到表单");
         return
     }
-    vFormRef.value.getFormData().then(async (formData) => {
+    vFormRef.value?.getFormData().then(async (formData) => {
         loading.value = true;
         let saveRes = await saveRecord(
             allEntityName.value[approvalTask.value.entityCode],

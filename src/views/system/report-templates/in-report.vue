@@ -147,7 +147,7 @@ const initExternalData = async () => {
                     fmJson.formConfig = fmJson.formConfig || {};
                     fmJson.formConfig.layoutType = "H5";
                 }
-                vFormRef.value.setFormJson(fmJson);
+                vFormRef.value?.setFormJson(fmJson);
                 if(entityId.value) {
                     let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
                     let recordDataRes = await queryExternalFormById(entityId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList }, externalId.value);
@@ -166,23 +166,23 @@ const initExternalData = async () => {
                 }
                 if (res.data.recordData) {
                     approvalStatus.value = res.data.recordData.approvalStatus;
-                    vFormRef.value.setFormData(res.data.recordData);
+                    vFormRef.value?.setFormData(res.data.recordData);
                     nextTick(() => {
                         if (
                             approvalStatus.value == 1 ||
                             approvalStatus.value == 3
                         ) {
-                            vFormRef.value.disableForm();
+                            vFormRef.value?.disableForm();
                         }
                         if (typeof pageStatus !== "undefined" && pageStatus?.value == 2) {
-                            vFormRef.value.disableForm();
+                            vFormRef.value?.disableForm();
                         }
                     });
                 }else {
-                    vFormRef.value.setFormData(defaultFormData.value);
+                    vFormRef.value?.setFormData(defaultFormData.value);
                 }
                 nextTick(() => {
-                    vFormRef.value.reloadOptionData();
+                    vFormRef.value?.reloadOptionData();
                     loading.value = false;
                 });
             });
@@ -208,7 +208,7 @@ const confirm = async () => {
                     saveRes &&
                     (saveRes.data?.code == 200 || saveRes.code == 200)
                 ) {
-                    vFormRef.value.disableForm();
+                    vFormRef.value?.disableForm();
                     btnDisabled.value = true;
                     ElMessage.success("保存成功");
                     showSuccessOverlay.value = true;

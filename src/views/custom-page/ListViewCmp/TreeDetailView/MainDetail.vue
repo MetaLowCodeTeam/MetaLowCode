@@ -118,9 +118,9 @@ const initFormData = async (entity) => {
                 else {
                     globalDsv.value.formStatus = "add";
                     globalDsv.value.formEntityId = '';
-                    vFormRef.value.setFormJson(res.data.layoutJson);
+                    vFormRef.value?.setFormJson(res.data.layoutJson);
                     nextTick(() => {
-                        vFormRef.value.reloadOptionData();
+                        vFormRef.value?.reloadOptionData();
                         loading.value = false;
                         emit('initFinish');
                     });
@@ -138,7 +138,7 @@ const initFormData = async (entity) => {
 
 const handleSave = () => {
 	let listSubForm = [];
-	vFormRef.value.getContainerWidgets().forEach((el) => {
+	vFormRef.value?.getContainerWidgets().forEach((el) => {
 		if (el.type == "list-sub-form") {
 			listSubForm.push(el.name);
 		}

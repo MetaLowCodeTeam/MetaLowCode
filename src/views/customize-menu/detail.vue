@@ -857,7 +857,7 @@ const initData = async () => {
                     recordApproval.value = recordApprovalRes.data;
                     globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
                 }
-                vFormRef.value.setFormJson(res.data.layoutJson);
+                vFormRef.value?.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
 				let queryByIdRes = await queryById(detailId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
 				if (queryByIdRes && queryByIdRes.data) {
