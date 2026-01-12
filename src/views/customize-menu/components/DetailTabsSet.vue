@@ -168,6 +168,7 @@
                         v-model="editColumnDialogData.layoutCode" 
                         filterable 
                         clearable 
+                        allow-create
                         placeholder="请选择布局编码"
                     >
                         <el-option
@@ -345,7 +346,6 @@ let editColumnDialogData = ref({});
 
 // 编辑显示列
 const editColumn = async (column, inx) => {
-    console.log(column,'-----')
     editColumnDialogLoading.value = true;
     editColumnDialogIsShow.value = true;
     let editObj = Object.assign({}, column);
@@ -362,7 +362,7 @@ const editColumn = async (column, inx) => {
         }, 
         editObj
     );
-    let entityName = queryEntityNameByCode(props.entityCode);
+    let entityName = queryEntityNameByCode(column.entityCode);
     let res = await getModelNameList(entityName);
     if(res?.code == 200) {
         editColumnDialogData.value.modelNameList = res?.data || [];
