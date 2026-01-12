@@ -55,7 +55,7 @@ watch(
 const loadFormData = async () => {
 	if (props.layoutJson) {
         optionData.value = props.optionData || {};
-		vFormRef.value.setFormJson(props.layoutJson);
+		vFormRef.value?.setFormJson(props.layoutJson);
 		globalDsv.value.formStatus = "read";
 		globalDsv.value.formEntityId = props.recordId;
 		emits("loading", true);
@@ -69,10 +69,10 @@ const loadFormData = async () => {
         
 		if (queryByIdRes) {
 			nextTick(() => {
-				vFormRef.value.setFormData(queryByIdRes.data);
+				vFormRef.value?.setFormData(queryByIdRes.data);
 				nextTick(() => {
-					vFormRef.value.reloadOptionData();
-					vFormRef.value.setReadMode();
+					vFormRef.value?.reloadOptionData();
+					vFormRef.value?.setReadMode();
 				});
 			});
 		}

@@ -145,7 +145,7 @@ const loadForm = async () => {
 			globalDsv.value.formStatus = "new";
 			globalDsv.value.formEntityId = "";
 			nextTick(() => {
-				vFormRef.value.setFormJson(res.data.layoutJson);
+				vFormRef.value?.setFormJson(res.data.layoutJson);
                 let newWindowCreateEntityLocalDsv = localStorage.getItem("NewWindowCreateEntityLocalDsv");
                 if(newWindowCreateEntityLocalDsv){
                     let newWindowCreateEntityLocalDsvObj = JSON.parse(newWindowCreateEntityLocalDsv);
@@ -153,7 +153,7 @@ const loadForm = async () => {
                         let { localDsv } = newWindowCreateEntityLocalDsvObj;
                         globalDsv.value = Object.assign(globalDsv.value, localDsv);
                         nextTick(() => {
-                            vFormRef.value.setFormData(localDsv.backfillFormData);
+                            vFormRef.value?.setFormData(localDsv.backfillFormData);
                         })
                     }
                 }
@@ -169,7 +169,7 @@ const loadForm = async () => {
 // 保存表单
 const saveForm = async (type) => {
 	let listSubForm = [];
-	vFormRef.value.getContainerWidgets().forEach((el) => {
+	vFormRef.value?.getContainerWidgets().forEach((el) => {
 		if (el.type == "list-sub-form") {
 			listSubForm.push(el.name);
 		}

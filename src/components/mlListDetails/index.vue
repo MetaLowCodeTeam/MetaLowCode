@@ -155,7 +155,7 @@ const refresh = async () => {
             // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 let formData = await queryById(detailDialog.id);
-                vFormRef.value.setFormJson(res.data.layoutJson);
+                vFormRef.value?.setFormJson(res.data.layoutJson);
                 if (formData) {
                     detailDialog.formData = formData.data;
                     globalDsv.value.recordData = formData.data;
@@ -163,10 +163,10 @@ const refresh = async () => {
                         detailDialog.title = formData.data[props.titleFromApi];
                     }
                     nextTick(() => {
-                        vFormRef.value.setFormData(detailDialog.formData);
+                        vFormRef.value?.setFormData(detailDialog.formData);
                         nextTick(() => {
-                            vFormRef.value.reloadOptionData();
-                            vFormRef.value.setReadMode();
+                            vFormRef.value?.reloadOptionData();
+                            vFormRef.value?.setReadMode();
                         });
                     })
                    

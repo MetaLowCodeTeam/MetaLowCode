@@ -650,18 +650,18 @@ const initFormLayout = async () => {
                             if(row.defaultFormData) {
                                 setFormData = Object.assign(setFormData, row.defaultFormData);
                             }
-							vFormRef.value.setFormData(setFormData);
+							vFormRef.value?.setFormData(setFormData);
                             nextTick(() => {
-                                vFormRef.value.reloadOptionData();
+                                vFormRef.value?.reloadOptionData();
                                 if (
                                     !checkModifiableEntity(row.detailId, row.approvalStatus.value) ||
                                     row.isRead
                                 ) {
-                                    vFormRef.value.disableForm();
+                                    vFormRef.value?.disableForm();
                                     return;
                                 }
                                 if(row.refEntityBindingField && !row.detailEntityFlag){
-                                    vFormRef.value.disableWidgets([row.refEntityBindingField]);
+                                    vFormRef.value?.disableWidgets([row.refEntityBindingField]);
                                 }
 
                                 getFieldListOfEntityApi("updatable");
@@ -679,7 +679,7 @@ const initFormLayout = async () => {
 					globalDsv.value.formStatus = 'new';
                     globalDsv.value.formEntityId = "";
                     globalDsv.value.dataRecordId = row.detailId;
-                    vFormRef.value.setFormJson(res.data.layoutJson);
+                    vFormRef.value?.setFormJson(res.data.layoutJson);
                     let param = {};
                     if (row.fieldName) {
                         param[row.fieldName] = {
@@ -706,15 +706,15 @@ const initFormLayout = async () => {
                             param = Object.assign(param, row.defaultFormData);
                         }
                         let setFormData = formatFormVirtualField(param);
-						vFormRef.value.setFormData(setFormData);
+						vFormRef.value?.setFormData(setFormData);
 						nextTick(() => {
 							if (row.fieldName && !props.unDisableWidgets.includes(row.fieldName)) {
-								vFormRef.value.disableWidgets([row.fieldName]);
+								vFormRef.value?.disableWidgets([row.fieldName]);
 							}
                             if(isReferenceComp.value && !row.detailEntityFlag){
-                                vFormRef.value.disableWidgets([row.refEntityBindingField]);
+                                vFormRef.value?.disableWidgets([row.refEntityBindingField]);
                             }
-							vFormRef.value.reloadOptionData();
+							vFormRef.value?.reloadOptionData();
 							// 获取字段是否禁用
 							getFieldListOfEntityApi("creatable");
                             loading.value = false;
@@ -760,7 +760,7 @@ const getFieldListOfEntityApi = async (tag) => {
             }
         })
     }
-    vFormRef.value.disableWidgets(disabledFields);
+    vFormRef.value?.disableWidgets(disabledFields);
 };
 
 /**
@@ -786,7 +786,7 @@ const confirm = async (target, resetFormData = {}, callback) => {
     try {
         // 收集子表字段名称，后续剔除
         let listSubForm = [];
-        vFormRef.value.getContainerWidgets().forEach(el => {
+        vFormRef.value?.getContainerWidgets().forEach(el => {
             if (el.type == 'list-sub-form') {
                 listSubForm.push(el.name);
             }
@@ -795,7 +795,7 @@ const confirm = async (target, resetFormData = {}, callback) => {
         // 确保触发当前输入控件的 blur，使 v-model / 校验值完成同步
         await flushActiveFieldBlur();
         await new Promise((resolve) => setTimeout(resolve, 500));
-        const formData = await vFormRef.value.getFormData();
+        const formData = await vFormRef.value?.getFormData();
         if (!formData) return;
 
         if (row.fieldName) {

@@ -86,9 +86,9 @@ const loadForm = async () => {
                 optionData.value = Object.assign(optionData.value, res.data.cascaderOptionData);
             }
 			nextTick(() => {
-				vFormRef.value.setFormJson(res.data.layoutJson);
+				vFormRef.value?.setFormJson(res.data.layoutJson);
 				nextTick(() => {
-					vFormRef.value.reloadOptionData();
+					vFormRef.value?.reloadOptionData();
 				});
 			});
 		} else {

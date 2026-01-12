@@ -233,14 +233,14 @@ let sourceRow = ref({});
 const editRow = () => {
 	sourceRow.value = JSON.parse(JSON.stringify(props.row));
 	props.row.isVfEdit = !props.row.isVfEdit;
-	vFormRef.value.setReadMode(false);
+	vFormRef.value?.setReadMode(false);
 };
 // 取消操作
 const cancelOperate = () => {
 	props.row.isVfEdit = !props.row.isVfEdit;
-	vFormRef.value.setFormData(sourceRow.value);
+	vFormRef.value?.setFormData(sourceRow.value);
 	nextTick(() => {
-		vFormRef.value.setReadMode(true);
+		vFormRef.value?.setReadMode(true);
 	});
 };
 // 确认操作
@@ -258,7 +258,7 @@ const confirmOperate = () => {
 				);
 				if (res) {
 					props.row.isVfEdit = false;
-					vFormRef.value.setReadMode(true);
+					vFormRef.value?.setReadMode(true);
 					ElMessage.success("保存成功");
 				} else {
 					ElMessage.error("保存失败");
