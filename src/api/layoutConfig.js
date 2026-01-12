@@ -64,3 +64,9 @@ export function checkTables(body, recordId) {
 export function checkCustomButtonFilters(body) {
     return http.post('/layout/checkFilters', body)
 }
+
+
+// 获取实体下的所有模型名称
+export function getModelNameList(entityName) {
+    return http.get('/layout/getModelNameList', { entityName })
+}

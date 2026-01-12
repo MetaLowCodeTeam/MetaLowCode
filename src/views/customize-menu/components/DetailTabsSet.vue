@@ -112,9 +112,9 @@
         title="显示项设置"
         width="510"
         top="25vh"
-        
+        :show-close="!editColumnDialogLoading"
     >
-        <div style="padding-right: 30px;">
+        <div style="padding-right: 30px;" v-loading="editColumnDialogLoading">
             <el-form label-width="120px" @submit.prevent>
                 <el-form-item label="别名">
                     <el-input v-model="editColumnDialogData.columnAliasName" />
@@ -149,6 +149,35 @@
                         </el-col>
                     </el-row>
                 </el-form-item>
+                <!-- 布局编码 -->
+                <el-form-item v-if="!editColumnDialogData.isCustomComponent">
+                    <template #label>
+                        布局编码
+                        <el-tooltip placement="top">
+                            <template #content>
+                                <div style="width: 300px;">
+                                    同一个实体在菜单中使用不同布局编码，可以设置不同的布局设置（列显示，自定义按钮，自定义设置等）。
+                                </div>
+                            </template>
+                            <el-icon class="ml-5" style="position: relative; top: 9px;">
+                                <InfoFilled />
+                            </el-icon>
+                        </el-tooltip>
+                    </template>
+                    <el-select 
+                        v-model="editColumnDialogData.layoutCode" 
+                        filterable 
+                        clearable 
+                        placeholder="请选择布局编码"
+                    >
+                        <el-option
+                            v-for="(code,inx) in editColumnDialogData.modelNameList"
+                            :key="inx"
+                            :label="code"
+                            :value="code"
+                        />
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="组件名称" v-if="editColumnDialogData.isCustomComponent" class="is-required">
                     <el-input 
                         v-model="editColumnDialogData.componentName" 
@@ -169,8 +198,19 @@
             </el-form>
         </div>
         <template #footer>
-            <el-button @click="editColumnDialogIsShow = false">取消</el-button>
-            <el-button type="primary" @click="confirmColumnEdit">确认</el-button>
+            <el-button 
+                @click="editColumnDialogIsShow = false"
+                :loading="editColumnDialogLoading"
+            >
+                取消
+            </el-button>
+            <el-button 
+                type="primary" 
+                @click="confirmColumnEdit"
+                :loading="editColumnDialogLoading"
+            >
+                确认
+            </el-button>
         </template>
     </mlDialog>
     <DetailCustomLabelDialog ref="DetailCustomLabelRef" @confirm="addShowColumn"/>
@@ -186,6 +226,7 @@
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
 import { ref, inject, reactive, onMounted, onUnmounted } from "vue";
+import useCommonStore from "@/store/modules/common";
 /**
  * 组件
  */
@@ -195,6 +236,9 @@ import DetailCustomLabelDialog from './DetailCustomLabelDialog.vue';
 import DetailCustomComponentDialog from './DetailCustomComponentDialog.vue';
 // 动态显示事件
 import mlCodeEditorDialog from '@/components/mlCodeEditor/CodeEditorDialog.vue';
+// 布局配置API
+import { getModelNameList } from '@/api/layoutConfig';
+const { queryEntityNameByCode } = useCommonStore();
 const $API = inject("$API");
 const props = defineProps({
     modelValue: null,
@@ -294,11 +338,15 @@ const addShowColumn = (column) => {
 
 // 列弹框
 let editColumnDialogIsShow = ref(false);
+// 编辑列数据加载状态
+let editColumnDialogLoading = ref(false);
 // 编辑列数据
 let editColumnDialogData = ref({});
 
 // 编辑显示列
-const editColumn = (column, inx) => {
+const editColumn = async (column, inx) => {
+    console.log(column,'-----')
+    editColumnDialogLoading.value = true;
     editColumnDialogIsShow.value = true;
     let editObj = Object.assign({}, column);
     editObj.columnAliasName = column.columnAliasName || "";
@@ -314,6 +362,13 @@ const editColumn = (column, inx) => {
         }, 
         editObj
     );
+    let entityName = queryEntityNameByCode(props.entityCode);
+    let res = await getModelNameList(entityName);
+    if(res?.code == 200) {
+        editColumnDialogData.value.modelNameList = res?.data || [];
+    }
+    console.log(editColumnDialogData.value,'editColumnDialogData.value')
+    editColumnDialogLoading.value = false;
 };
 
 // 是否显示列标记 * 号
