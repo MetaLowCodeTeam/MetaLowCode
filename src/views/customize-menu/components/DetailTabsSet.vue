@@ -367,7 +367,6 @@ const editColumn = async (column, inx) => {
     if(res?.code == 200) {
         editColumnDialogData.value.modelNameList = res?.data || [];
     }
-    console.log(editColumnDialogData.value,'editColumnDialogData.value')
     editColumnDialogLoading.value = false;
 };
 
