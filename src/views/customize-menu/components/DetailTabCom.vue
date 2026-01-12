@@ -171,7 +171,7 @@ const props = defineProps({
 });
 const emits = defineEmits(['closeDialog','addRow'])
 const $API = inject("$API");
-
+const renderKey = ref(0);
 watch(
     () => props.cutTab,
     () => {
@@ -298,7 +298,7 @@ const initData = async () => {
         }
     }
     loading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(entityName.value, 'noModelName');
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, curtTab.value.layoutCode);
     if (res) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
