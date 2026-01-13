@@ -16,7 +16,8 @@
         :top="isFullScreen ? '0' : top"
         v-if="isShow"
         :draggable="isFullScreen ? false : true"
-        :before-close="beforeClose"
+        :before-close="beforeClose" 
+        :close-on-press-escape="false"
     >
         <template #header>
             <span class="my-title">{{ title }}</span>
@@ -131,6 +132,12 @@ const close = () => {
 const beforeClose = (done) => {
     keyboardEventToInput()
     done();
+}
+// 弹窗关闭后的回调函数
+const onClose = () => {
+    console.log('onClose');
+    // keyboardEventToInput()
+    emit("update:modelValue", isShow.value);
 }
 // 全屏切换
 const onFullScreen = () => {
