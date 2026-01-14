@@ -108,15 +108,11 @@
         >
             <el-container>
                 <el-header>
-                    <el-input placeholder="请选择引用实体" v-model="refEntityFullName">
-                        <template #append>
-                            <el-button
-                                icon="el-icon-search"
-                                title="选择"
-                                @click="showEntityListDialog"
-                            ></el-button>
-                        </template>
-                    </el-input>
+                    <ml-select-entity
+                        v-model="refEntityName"
+                        placeholder="请选择引用实体"
+                        @change="handleEntityChange"
+                    />
                 </el-header>
                 <el-main>
                     <div>
@@ -153,29 +149,6 @@
                 </div>
             </template>
         </el-dialog>
-
-        <el-dialog
-            ref="entityListDlg"
-            title="选择引用实体"
-            v-model="showEntityListDialogFlag"
-            :append-to-body="true"
-            class="entity-list-dialog"
-            width="560px"
-        >
-            <SimpleTable
-                :show-pagination="false"
-                :show-check-box="false"
-                :table-size="'small'"
-                :columns="columns"
-                :data="tableData"
-                :show-operation-column="true"
-                :max-height="420"
-            >
-                <template #table_operation="{scope}">
-                    <el-button class icon="el-icon-check" @click="selectEntity(scope.row)">选择</el-button>
-                </template>
-            </SimpleTable>
-        </el-dialog>
     </el-container>
 </template>
 
@@ -187,9 +160,13 @@ import {
 } from "@/api/system-manager";
 import { getSimplePinYin } from "@/utils/util";
 import { fieldEditorMixin } from "./field-editor-mixin";
-
+import mlSelectEntity from "@/components/mlSelectEntity/index.vue";
+import useCommonStore from "@/store/modules/common";
 export default {
     name: "AnyReferenceWidgetEditor",
+    components: {
+        mlSelectEntity
+    },
     props: ["entity", "showingInDialog"],
     mixins: [fieldEditorMixin],
     data() {
@@ -223,30 +200,11 @@ export default {
 
             refEntityName: "",
             refEntityLabel: "",
-            refEntityFullName: "",
 
             showRefEntityDialogFlag: false,
-            showEntityListDialogFlag: false,
 
             fieldItems: [],
             selectedFieldItems: [],
-
-            columns: [
-                {
-                    prop: "name",
-                    label: "实体名称",
-                    width: "150",
-                    align: "center",
-                },
-                {
-                    prop: "label",
-                    label: "显示名称",
-                    width: "200",
-                    align: "center",
-                    formatter: this.formatter,
-                },
-            ],
-            tableData: [],
         };
     },
     mounted() {
@@ -305,11 +263,38 @@ export default {
 
             this.refEntityName = "";
             this.refEntityLabel = "";
-            this.refEntityFullName = "";
             this.fieldItems.length = 0;
             this.selectedFieldItems.length = 0;
         },
 
+        async handleEntityChange(entityName) {
+            if (!entityName) {
+                this.refEntityLabel = "";
+                this.fieldItems.length = 0;
+                this.selectedFieldItems.length = 0;
+                return;
+            }
+            
+            const { queryEntityInfoByName } = useCommonStore();
+            const entity = await queryEntityInfoByName(entityName);
+            if (entity) {
+                this.refEntityLabel = entity.label;
+                this.refEntityFullName = this.refEntityLabel + "(" + this.refEntityName + ")";
+                
+                this.fieldItems.length = 0;
+                let res = await getFieldSet(this.refEntityName);
+                if (res && res.code == 200) {
+                    let resultList = res.data;
+                    if (!!resultList) {
+                        resultList.filter((item) => {
+                            if (item.type !== "PrimaryKey") {
+                                this.fieldItems.push(item);
+                            }
+                        });
+                    }
+                }
+            }
+        },
         setRefEntity() {
             this.showRefEntityDialogFlag = false;
             let tempStr = this.refEntityLabel + "[";
@@ -325,46 +310,6 @@ export default {
             this.referenceList[this.refEntityIndex].selectedFieldItems =
                 JSON.parse(JSON.stringify(this.selectedFieldItems));
             this.buildReferToAndReferenceSetting();
-        },
-
-        async showEntityListDialog() {
-            this.tableData.length = 0;
-            let res = await getEntitySet();
-            if (res && res.code == 200) {
-                let entityItems = res.data;
-                if (!!entityItems) {
-                    entityItems.filter((entity) => {
-                        if (entity.detailEntityFlag === false) {
-                            this.tableData.push({
-                                name: entity.name,
-                                label: entity.label,
-                            });
-                        }
-                    });
-                }
-                this.showEntityListDialogFlag = true;
-            }
-        },
-
-        async selectEntity(row) {
-            this.refEntityName = row.name;
-            this.refEntityLabel = row.label;
-            this.refEntityFullName =
-                this.refEntityLabel + "(" + this.refEntityName + ")";
-            this.showEntityListDialogFlag = false;
-
-            this.fieldItems.length = 0;
-            let res = await getFieldSet(this.refEntityName);
-            if (res && res.code == 200) {
-                let resultList = res.data;
-                if (!!resultList) {
-                    resultList.filter((item) => {
-                        if (item.type !== "PrimaryKey") {
-                            this.fieldItems.push(item);
-                        }
-                    });
-                }
-            }
         },
 
         setRefEntityListField(fieldItem, value) {

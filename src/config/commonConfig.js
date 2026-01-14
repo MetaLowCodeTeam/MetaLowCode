@@ -32,6 +32,13 @@ export default [
                 isError: false,
             },
             {
+                label: "内网地址",
+                key: "intranetAddress",
+                type: "input",
+                validation: "url",
+                isError: false,
+            },
+            {
                 label: "主色调",
                 key: "themeColor",
                 type: "picker",
@@ -76,7 +83,7 @@ export default [
                 label: "外置文件预览服务",
                 key: "fileOnlinePreviewPath",
                 type: "input",
-                subLabel: "系统内置的文件预览仅支持.docx、.xlsx、.pdf、.pptx格式，如果需要预览其他格式文件，需要配置第三方文件预览服务地址。例： http://域名/onlinePreview"
+                subLabel: "系统内置的文件预览仅支持.docx、.xlsx、.pdf、.pptx格式，如果需要预览其他格式文件，需要配置第三方文件预览服务地址。例： http://域名/onlinePreview。（配置第三方预览服务请先配置上方的内网地址，并且文件预览服务需要和低代码在同一个局域网内）"
             },
             {
                 label: "页面水印",

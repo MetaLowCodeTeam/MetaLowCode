@@ -97,25 +97,12 @@
                     ></el-switch>
                 </el-form-item>
                 <el-form-item label="所属主实体">
-                    <el-input
-                        readonly
-                        :disabled="!myEntityProps.detailEntityFlag"
+                    <ml-select-entity
                         v-model="mainEntityName"
-                    >
-                        <template
-                            #append
-                            v-if="!!myEntityProps.detailEntityFlag && !!mainEntityName"
-                        >
-                            <el-button icon="el-icon-close" title="清除" @click="clearMainEntity"></el-button>
-                        </template>
-                        <template #append v-else-if="!!myEntityProps.detailEntityFlag">
-                            <el-button
-                                icon="el-icon-search"
-                                title="选择主实体"
-                                @click="showEntityListDialog"
-                            ></el-button>
-                        </template>
-                    </el-input>
+                        :disabled="!myEntityProps.detailEntityFlag"
+                        @change="selectMainEntity"
+                        isSelectMainEntity
+                    />
                 </el-form-item>
                 <el-form-item label="标签">
                     <div class="w-100 clearfix">
@@ -188,10 +175,6 @@
             </el-form>
         </el-main>
     </el-container>
-    <EntitySelected 
-        ref="entitySelectedRef" 
-        @selectEntity="selectMainEntity"
-    />
 </template>
 
 <script setup>
@@ -200,11 +183,11 @@ import { ElMessage } from "element-plus";
 import { watch, ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import EntitySelected from "../entity-selected.vue";
+import mlSelectEntity from "@/components/mlSelectEntity/index.vue";
 const router = useRouter();
 const props = defineProps({
     entityProps: { type: Object, default: () => {} },
     showTitle: { type: Boolean, default: false },
-    filterEntityMethod: { type: Function },
 });
 let myEntityProps = ref({});
 let loading = ref(false);
@@ -232,6 +215,7 @@ let copyTypes = ref([
 let copyEntiytSelectedType = ref([0]);
 
 let appAbbr = ref("");
+
 
 onMounted(() => {
     myEntityProps.value = props.entityProps;
@@ -263,8 +247,9 @@ let rules = ref({
 
 let mainEntityName = ref("");
 
-
-let tableData = ref([]);
+const selectMainEntity = (value) => {
+    myEntityProps.value.mainEntity = value;
+};
 
 const onToggleDetailEntityFlag = (val) => {
     if (!!val) {
@@ -274,30 +259,6 @@ const onToggleDetailEntityFlag = (val) => {
     }
 };
 
-const entitySelectedRef = ref();
-const showEntityListDialog = () => {
-    if (!myEntityProps.value.detailEntityFlag) {
-        return;
-    }
-    if (!!props.filterEntityMethod) {
-        props.filterEntityMethod(tableData.value, () => {
-            entitySelectedRef.value.openDialog('List',tableData.value);
-        });
-    }
-};
-
-
-const selectMainEntity = (row) => {
-    if (!!row) {
-        myEntityProps.value.mainEntity = row.name;
-        mainEntityName.value = row.label + "(" + row.name + ")";
-    }
-};
-
-const clearMainEntity = () => {
-    mainEntityName.value = "";
-    myEntityProps.value.mainEntity = "";
-};
 
 const changeAuthorization = (value) => {
     if (!value) {
