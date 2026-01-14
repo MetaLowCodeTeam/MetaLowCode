@@ -195,8 +195,7 @@
 							</el-dropdown-item>
 							<el-dropdown-item
 								v-if="
-									$TOOL.checkRole('r6015') &&
-									!entityItem.systemEntityFlag
+									$TOOL.checkRole('r6015')
 								"
 								command="c50"
 							>
@@ -245,6 +244,14 @@
 							>
 								<el-icon><Postcard /></el-icon>表单设计
 							</el-dropdown-item>
+                            <el-dropdown-item
+								v-if="
+									$TOOL.checkRole('r6015')
+								"
+								command="c50"
+							>
+								<el-icon><Link /></el-icon>触发器设计
+							</el-dropdown-item>
 							<el-dropdown-item
 								v-if="!entityItem.systemEntityFlag"
 								command="c70"
@@ -280,8 +287,7 @@
 							</el-dropdown-item>
 							<el-dropdown-item
 								v-if="
-									$TOOL.checkRole('r6015') &&
-									!entityItem.systemEntityFlag
+									$TOOL.checkRole('r6015')
 								"
 								command="c50"
 							>

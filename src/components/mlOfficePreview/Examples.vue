@@ -41,12 +41,15 @@ const errorHandler = () => {
 };
 
 const formatSrc = (url) => {
+    let prefix = publicSetting.value?.intranetAddress || publicSetting.value?.homeURL;
 	// 如果url不是http开头，则加上 VITE_APP_BASE_API
 	if (url.indexOf("http") !== 0) {
-		return publicSetting.value?.homeURL + import.meta.env.VITE_APP_BASE_API + url;
+		return prefix + import.meta.env.VITE_APP_BASE_API + url;
 	}
 	return url;
 };
+
+
 
 const encodeToBase64 = (string) => {
 	const blob = new Blob([string]);

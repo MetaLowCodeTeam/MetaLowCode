@@ -120,16 +120,12 @@
         >
             <el-container v-loading="fieldLoading" element-loading-text="加载中...">
                 <el-header>
-                    <el-input placeholder="请选择引用实体" v-model="refEntityFullName" :disabled="fieldState !== 1">
-                        <template #append>
-                            <el-button
-                                icon="el-icon-search"
-                                title="选择"
-                                @click="showEntityListDialog"
-                                :disabled="fieldState !== 1"
-                            ></el-button>
-                        </template>
-                    </el-input>
+                    <ml-select-entity
+                        v-model="refEntityName"
+                        placeholder="请选择引用实体"
+                        :disabled="fieldState !== 1"
+                        @change="handleEntityChange"
+                    />
                 </el-header>
                 <el-main>
                     <div>
@@ -167,7 +163,6 @@
                 </div>
             </template>
         </el-dialog>
-        <SelectEntityDialog ref="selectEntityDialogRef" @selectEntity="selectEntity" />
     </el-container>
 </template>
 
@@ -184,6 +179,8 @@ import FieldState from "@/views/system/field-state-variables";
 import { copyObj, getSimplePinYin } from "@/utils/util";
 import { fieldEditorMixin } from "./field-editor-mixin";
 import SelectEntityDialog from "./components/SelectEntityDialog.vue";
+import mlSelectEntity from "@/components/mlSelectEntity/index.vue";
+import useCommonStore from "@/store/modules/common";
 export default {
     name: "ReferenceListWidgetEditor",
     mixins: [fieldEditorMixin],
@@ -199,6 +196,7 @@ export default {
     emits: ['fieldSaved', 'cancelSave'],
     components: {
         SelectEntityDialog,
+        mlSelectEntity
     },
     data() {
         return {
@@ -234,31 +232,12 @@ export default {
 
             refEntityName: "",
             refEntityLabel: "",
-            refEntityFullName: "",
 
             showRefEntityDialogFlag: false,
-            showEntityListDialogFlag: false,
 
             fieldItems: [],
             fieldLoading: false,
-            selectedFieldItems: [],
-
-            columns: [
-                {
-                    prop: "name",
-                    label: "实体名称",
-                    width: "150",
-                    align: "center",
-                },
-                {
-                    prop: "label",
-                    label: "显示名称",
-                    width: "200",
-                    align: "center",
-                    formatter: this.formatter,
-                },
-            ],
-            tableData: [],
+            selectedFieldItems: []
         };
     },
     mounted() {
@@ -382,7 +361,6 @@ export default {
             if (currentRef && currentRef.currentRefEntity) {
                 this.refEntityName = currentRef.currentRefEntity;
                 this.refEntityLabel = currentRef.currentRefEntity; // 临时设置，后面会通过API获取正确的标签
-                this.refEntityFullName = currentRef.currentRefEntity + "(" + currentRef.currentRefEntity + ")"; // 临时设置
                 // 先恢复已选择的字段，避免清空后丢失
                 if (currentRef.selectedFieldItems && currentRef.selectedFieldItems.length > 0) {
                     this.selectedFieldItems = JSON.parse(JSON.stringify(currentRef.selectedFieldItems));
@@ -395,9 +373,24 @@ export default {
                 // 只有在没有现有数据时才清空
                 this.refEntityName = "";
                 this.refEntityLabel = "";
-                this.refEntityFullName = "";
                 this.fieldItems.length = 0;
                 this.selectedFieldItems.length = 0;
+            }
+        },
+
+        async handleEntityChange(entityName) {
+            if (!entityName) {
+                this.refEntityLabel = "";
+                this.fieldItems.length = 0;
+                this.selectedFieldItems.length = 0;
+                return;
+            }
+            
+            const { queryEntityInfoByName } = useCommonStore();
+            const entity = await queryEntityInfoByName(entityName);
+            if (entity) {
+                this.refEntityLabel = entity.label;
+                this.loadRefEntityData(entityName);
             }
         },
         
@@ -471,50 +464,6 @@ export default {
             // console.log( JSON.stringify(this.fieldProps.referenceSetting) )
 
             this.showRefEntityDialogFlag = false;
-            
-            
-            // 清空对话框相关的数据，避免影响下次使用
-            this.refEntityName = "";
-            this.refEntityLabel = "";
-            this.refEntityFullName = "";
-            this.fieldItems.length = 0;
-            this.selectedFieldItems.length = 0;
-        },
-
-        async showEntityListDialog() {
-            this.$refs.selectEntityDialogRef.openDialog(this.$route.query.appAbbr, this.refEntityName);
-        },
-
-        async selectEntity(row) {
-            // 检查是否与其他引用实体重复
-            for (let i = 0; i < this.referenceList.length; i++) {
-                if (this.referenceList[i].currentRefEntity === row.name) {
-                    this.$message.error(`不能选择重复的实体：${row.label}(${row.name})`);
-                    return;
-                }
-            }
-
-            this.refEntityName = row.name;
-            this.refEntityLabel = row.label;
-            this.refEntityFullName =
-                this.refEntityLabel + "(" + this.refEntityName + ")";
-            this.showEntityListDialogFlag = false;
-
-            // 清空之前选择的字段数据
-            this.fieldItems.length = 0;
-            this.selectedFieldItems.length = 0;
-            
-            let res = await getFieldSet(this.refEntityName);
-            if (res && res.code == 200) {
-                let resultList = res.data;
-                if (!!resultList) {
-                    resultList.filter((item) => {
-                        if (item.type !== "PrimaryKey") {
-                            this.fieldItems.push(item);
-                        }
-                    });
-                }
-            }
         },
 
         setRefEntityListField(fieldItem, value) {

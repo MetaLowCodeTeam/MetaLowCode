@@ -106,37 +106,13 @@
             <el-container>
                 <el-header style="height: 100%;padding: 10px 0">
 					<el-row style="width: 100%">
-                        <!--
 						<el-col :span="24">
-							<el-checkbox v-model="refDetailEntityFlag">引用明细实体</el-checkbox>
+							<ml-select-entity
+                                v-model="refEntityName"
+                                placeholder="请选择引用实体"
+                                @change="handleEntityChange"
+                            />
 						</el-col>
-						-->
-						<el-col :span="24">
-							<el-input placeholder="请选择引用实体" v-model="refEntityFullName" :readonly="true">
-								<template #append>
-									<el-button
-										v-if="fieldState === 1"
-										icon="el-icon-search"
-										title="选择"
-										@click="showEntityListDialog"
-									></el-button>
-								</template>
-							</el-input>
-						</el-col>
-						<!-- -->
-						<el-col :span="24" v-if="refDetailEntityFlag && refDetailEntitySelected" style="margin-top: 12px">
-							<el-form-item label="请选择指向明细实体所属主实体的引用字段">
-								<el-select placeholder="请选择" style="width: 100%">
-									<el-option-group label="当前实体">
-										<!--										<el-option label="1" value="1"></el-option>-->
-									</el-option-group>
-									<el-option-group v-if="true" label="主实体">
-										<el-option label="2" value="2"></el-option>
-									</el-option-group>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<!-- -->
 					</el-row>
                 </el-header>
                 <el-main style="padding: 0">
@@ -165,7 +141,6 @@
             </template>
         </el-dialog>
     </el-container>
-    <SelectEntityDialog ref="selectEntityDialogRef" @selectEntity="selectEntity" />
 </template>
 
 <script>
@@ -186,7 +161,7 @@ import FieldState from "@/views/system/field-state-variables";
 import ReferenceEntitySet from "@/components/mlReferenceSearch/reference-entity-set.vue";
 import useCommonStore from "@/store/modules/common";
 import { fieldEditorMixin } from "./field-editor-mixin";
-import SelectEntityDialog from "./components/SelectEntityDialog.vue";
+import mlSelectEntity from "@/components/mlSelectEntity/index.vue";
 const { queryEntityCodeByName } = useCommonStore();
 export default {
     name: "ReferenceWidgetEditor",
@@ -204,7 +179,7 @@ export default {
     emits: ['fieldSaved', 'cancelSave'],
     components: {
         ReferenceEntitySet,
-        SelectEntityDialog,
+        mlSelectEntity
     },
     data() {
         return {
@@ -231,16 +206,12 @@ export default {
             validators: [],
 
             currentRefEntity: "",
-			refDetailEntityFlag: false,
-			refDetailEntitySelected: false,
             refEntityAndFields: "",
 
             refEntityName: "",
             refEntityLabel: "",
-            refEntityFullName: "",
 
             showRefEntityDialogFlag: false,
-            showEntityListDialogFlag: false,
 
             fieldItems: [],
             selectedFieldItems: [],
@@ -301,7 +272,6 @@ export default {
                     this.currentRefEntity = res.data.currentRefEntity;
                     this.refEntityName = res.data.refEntityName;
                     this.refEntityLabel = res.data.refEntityLabel;
-                    this.refEntityFullName = res.data.refEntityFullName;
                     this.refEntityAndFields = res.data.refEntityAndFields;
                     this.fieldStyleMap = res.data.fieldStyleMap || {};
                     this.selectedFieldItems = res.data.selectedFieldItems.map(el => {
@@ -332,7 +302,7 @@ export default {
 
                 this.fieldProps.type = "Reference";
                 let saveMethod = addRefField;
-                if (this.fieldState === FieldState.EDIT) {
+                if (this.fieldState === FieldState.EDIT) {3
                     saveMethod = updateRefField;
                 }
                 let res = await saveMethod(
@@ -360,6 +330,24 @@ export default {
         showRefEntitySettingDialog() {
             this.showRefEntityDialogFlag = true;
         },
+
+        async handleEntityChange(entityName) {
+            if (!entityName) {
+                this.refEntityLabel = "";
+                this.refEntityAndFields = "";
+                this.fieldItems.length = 0;
+                this.selectedFieldItems.length = 0;
+                this.virtualFields.length = 0;
+                return;
+            }
+            const { queryEntityInfoByName } = useCommonStore();
+            const entity = await queryEntityInfoByName(entityName);
+            if (entity) {
+                this.refEntityLabel = entity.label;
+                this.loadFieldItemList();
+            }
+        },
+
         setRefEntity() {
             if (this.selectedFieldItems.length <= 0) {
                 this.$message.info("请至少选择一个实体搜索列表字段！");
@@ -387,20 +375,6 @@ export default {
                 },
             ];       
             this.showRefEntityDialogFlag = false;
-        },
-
-        showEntityListDialog() {
-            this.$refs.selectEntityDialogRef.openDialog(this.$route.query.appAbbr, this.refEntityName);
-        },
-
-        async selectEntity(row) {
-            this.refEntityName = row.name;
-            this.refEntityLabel = row.label;
-            this.refEntityFullName =
-                this.refEntityLabel + "(" + this.refEntityName + ")";
-            this.showEntityListDialogFlag = false;
-			this.refDetailEntitySelected = this.refDetailEntityFlag;
-            this.loadFieldItemList();
         },
 
         async loadFieldItemList(savedPropsName, entity) {
@@ -458,32 +432,6 @@ export default {
             this.fieldProps.name = getSimplePinYin(this.fieldProps.label);
         },
 
-        async loadEntityList() {
-            let appAbbr = this.$route.query.appAbbr;
-            let res = await filterEntitySet(this.queryText);
-            if (res && res.code == 200) {
-				this.tableData.length = 0
-                let entityItems;
-                if(appAbbr){
-                    entityItems = res.data.filter(el => el.systemEntityFlag || el.appAbbr === appAbbr);
-                }else{
-                    entityItems = res.data.filter(el => !el.appAbbr);
-                }
-                if (!!entityItems) {
-                    entityItems.filter((entity) => {
-                        if (!entity.internalEntityFlag) {
-                            this.tableData.push({
-                                name: entity.name,
-                                label: entity.label,
-                                entityType: entity.detailEntityFlag ? "从" : "主",
-                            });
-                        }
-                    });
-                }
-            }
-        },
-
-       
         handleNullableChange(){
             if(!this.fieldProps.nullable){
                 this.fieldProps.creatable = true;

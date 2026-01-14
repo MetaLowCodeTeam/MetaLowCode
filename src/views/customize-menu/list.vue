@@ -1890,7 +1890,7 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
                 parentDataRecordId: myFormEntityId.value,
                 ...localDsv,
             };
-            !!formId && (tempV.formId = formId)
+            tempV.formId = formId || listParamConf.value.recordNewFormId || rowStyleConf.value?.formConf?.pcAddFormId;
             !!dialogConf && (tempV.paramDialogConf = dialogConf)
             editRefs.value.openDialog(tempV);
         });
