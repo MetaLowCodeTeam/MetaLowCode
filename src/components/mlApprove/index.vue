@@ -6,7 +6,6 @@
         direction="rtl" 
         :show-close="false"
         :append-to-body="true"
-        v-if="isShow"
         destroy-on-close
         :before-close="beforeClose"
     >
