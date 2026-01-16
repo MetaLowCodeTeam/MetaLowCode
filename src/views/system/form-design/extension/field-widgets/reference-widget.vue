@@ -445,7 +445,6 @@ export default {
                     let fieldType = fieldWidget.field.type;
                     let fieldLabel = fieldWidget.field.options.label;
                     let fieldValue = fieldWidget?.getValue();
-                    console.log(fieldValue,'fieldValue')
                     // 如果是单选
                     if(fieldType == "radio"){
                         el.value = fieldValue || false;
