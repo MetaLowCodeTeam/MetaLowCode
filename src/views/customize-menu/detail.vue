@@ -2,7 +2,6 @@
 	<el-drawer
 		:size="isFullScreen ? '100%' : styleConf?.newDialogConfig?.detailWidth || '62.4%'"
 		class="ml-drawer"
-        v-if="detailDialog.isShow"
         v-model="detailDialog.isShow"
 		direction="rtl"
 		:show-close="false"
@@ -85,11 +84,11 @@
                             ref="detailTabsRefs"
                         />
                         <div class="detail-container">
-                        <!-- 详情 -->
+                            <!-- 详情 -->
                             <div v-if="cutTab == 'detail'">
                                 <mlApproveBar :approvalInfo="approvalStatus" />
                                 <v-form-render
-                                    v-if="haveLayoutJson && detailDialog.isShow"
+                                    v-if="haveLayoutJson"
                                     :option-data="optionData"
                                     :global-dsv="globalDsv"
                                     ref="vFormRef"
@@ -557,6 +556,7 @@ const beforeClose = (done) => {
 }
 // 关闭弹框
 const closeDialog = () => {
+    haveLayoutJson.value = false;
     keyboardEventToInput();
     detailDialog.isShow = false;
 }

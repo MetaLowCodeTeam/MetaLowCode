@@ -5,6 +5,7 @@
         v-model="detailDialog.isShow"
         direction="rtl"
         :show-close="false"
+        destroy-on-close
     >
         <template #header>
             <div class="detail-header">
