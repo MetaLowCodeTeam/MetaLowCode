@@ -441,12 +441,14 @@ export default {
                             return
                         }
                         el.value = fieldValue;
-                        if(fieldType == "select"){
-                            el.value = fieldValue.value
-                        }else if(fieldType == "cascader"){
-                            el.value = JSON.stringify(fieldValue);
-                        }else {
-                            el.value = fieldValue.id;
+                        if(typeof fieldValue == 'object'){
+                            if(fieldType == "select"){
+                                el.value = fieldValue.value
+                            }else if(fieldType == "cascader"){
+                                el.value = JSON.stringify(fieldValue);
+                            }else {
+                                el.value = fieldValue.id;
+                            }
                         }
                     }
                 }
@@ -455,6 +457,10 @@ export default {
                 this.filterConditions = filterConditions;
             } else {
                 this.filterConditions = null;
+            }
+            let filedName = this.field.options.name;
+            if(this.gDsv[filedName]){
+                this.filterConditions = Object.assign({}, this.filterConditions, this.gDsv[filedName].filterConditions);
             }
             this.showReferenceDialogFlag = true;
 		},
