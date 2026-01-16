@@ -298,7 +298,7 @@ const initData = async () => {
         }
     }
     loading.value = true;
-    let res = await $API.layoutConfig.getLayoutList(entityName.value, curtTab.value.layoutCode);
+    let res = await $API.layoutConfig.getLayoutList(entityName.value, curtTab.value.layoutCode || 'noModelName');
     if (res) {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;

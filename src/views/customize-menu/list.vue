@@ -2525,7 +2525,7 @@ watchEffect(() => {
     page.size = props.paginationConf?.size || 20;
     page.pageSizes = props.paginationConf?.pageSizes || [20, 40, 80, 100, 200, 300, 400, 500];
     myFormEntityId.value = props.formEntityId;
-    myModelName.value = props.modelName;
+    myModelName.value = props.modelName || router.currentRoute.value.query.modelName;
     if(props.isReferenceComp){
         if(props.referenceCompStatus == 'read'){
             listParamConf.value.showAddBtn = false;
