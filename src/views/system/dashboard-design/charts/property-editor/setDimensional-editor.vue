@@ -285,7 +285,8 @@ let needType = ref([
     "Status",
     "Tag",
     "Picture",
-    "File"
+    "File",
+    "CodeOption",
 ]);
 const getEntityFields = async () => {
     loading.value = true;
