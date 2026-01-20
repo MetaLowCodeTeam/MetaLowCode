@@ -2,7 +2,7 @@
     <!--  -->
     <div class="step" v-loading="loading">
         <el-form label-width="120px">
-            <el-form-item label="选择导入实体">
+            <el-form-item label="选择导入实体" v-if="queryEntityCode.value">
                 <el-select
                     v-model="fromData.mainEntity"
                     placeholder="选择导入实体"
@@ -96,32 +96,45 @@
 <script setup>
 import { onMounted, ref, inject } from "vue";
 import useCommonStore from "@/store/modules/common";
-import { storeToRefs } from "pinia";
-import { queryEntityFields } from "@/api/crud";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const $ElMessage = inject("$ElMessage");
 const $API = inject("$API");
+const $TOOL = inject("$TOOL");
 const { queryAllEntityList } = useCommonStore();
 const props = defineProps({
     modelValue: null,
 });
 const emits = defineEmits(["update:modelValue", "fileSuccess"]);
+
 let fromData = ref({});
 let loading = ref(false);
 let entityCode = ref();
 let myUnSystemEntityList = ref([]);
+let queryEntityCode = ref('');
 onMounted(() => {
     fromData.value = props.modelValue;
     myUnSystemEntityList.value = queryAllEntityList().filter((el) => {
         const isNonSystem = !el.systemEntityFlag;
         const isUserOrDeptSystem = el.systemEntityFlag && (el.name === 'User' || el.name === 'Department');
-        return !el.appAbbr && (isNonSystem || isUserOrDeptSystem);
+        return !el.appAbbr && (isNonSystem || isUserOrDeptSystem) && $TOOL.checkRole('r' + el.entityCode + '-2');
     });
-    // 初始化选中第一个实体
+    queryEntityCode.value = router.currentRoute.value.query.entityCode;
+    // 如果有查询参数
+    if(queryEntityCode.value) {
+        myUnSystemEntityList.value = myUnSystemEntityList.value.filter((el) => el.entityCode == queryEntityCode.value);
+        if(myUnSystemEntityList.value.length == 0) {
+            $ElMessage.error("没有该实体的新建权限");
+            return;
+        }
+    }
+    //  如果没有有查询参数则 初始化选中第一个实体
     if (myUnSystemEntityList.value.length > 0) {
         fromData.value.mainEntity = myUnSystemEntityList.value[0].name;
         entityCode.value = myUnSystemEntityList.value[0].entityCode;
         getEntityFields();
     }
+    
 });
 
 const changeEntity = () => {

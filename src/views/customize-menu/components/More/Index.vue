@@ -570,6 +570,9 @@ const appPath = import.meta.env.VITE_APP_PATH;
 const dataUploadFn = () => {
     router.push({
         path: appPath + "data-upload2",
+        query: {
+            entityCode: props.entityCode,
+        }
     });
 };
 
