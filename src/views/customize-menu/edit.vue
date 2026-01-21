@@ -169,6 +169,8 @@ const props = defineProps({
     disableWidgets: { type: Array, default: () => [] },
     // 不禁用字段
     unDisableWidgets: { type: Array, default: () => [] },
+    // 非必填字段
+    notRequiredFields: { type: Array, default: () => [] },
     nameFieldName: { type: String, default: "" },
     layoutConfig: { type: Object, default: () => {} },
     // 新建编辑配置
@@ -653,6 +655,10 @@ const initFormLayout = async () => {
 							vFormRef.value?.setFormData(setFormData);
                             nextTick(() => {
                                 vFormRef.value?.reloadOptionData();
+                                // 非必填字段
+                                if(props.notRequiredFields && props.notRequiredFields.length > 0){
+                                    vFormRef.value?.setWidgetsRequired(props.notRequiredFields, false);
+                                }
                                 if (
                                     !checkModifiableEntity(row.detailId, row.approvalStatus.value) ||
                                     row.isRead
@@ -663,7 +669,7 @@ const initFormLayout = async () => {
                                 if(row.refEntityBindingField && !row.detailEntityFlag){
                                     vFormRef.value?.disableWidgets([row.refEntityBindingField]);
                                 }
-
+                               
                                 getFieldListOfEntityApi("updatable");
                             })
                         });
@@ -713,6 +719,10 @@ const initFormLayout = async () => {
 							}
                             if(isReferenceComp.value && !row.detailEntityFlag){
                                 vFormRef.value?.disableWidgets([row.refEntityBindingField]);
+                            }
+                            // 非必填字段
+                            if(props.notRequiredFields && props.notRequiredFields.length > 0){11
+                                vFormRef.value?.setWidgetsRequired(props.notRequiredFields, false);
                             }
 							vFormRef.value?.reloadOptionData();
 							// 获取字段是否禁用

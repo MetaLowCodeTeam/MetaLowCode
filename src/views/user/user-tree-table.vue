@@ -148,6 +148,7 @@
             isUser
             :disableWidgets="disableWidgets"
             :unDisableWidgets="unDisableWidgets"
+            :notRequiredFields="notRequiredFields"
         />
 
         <!-- 列表详情 -->
@@ -339,6 +340,8 @@ export default {
             disableWidgets: [],
             // 不禁用字段
             unDisableWidgets: [],
+            // 非必填字段
+            notRequiredFields: [],
             // 部门树节点
             node:{},
             // 记录id集
@@ -429,6 +432,7 @@ export default {
             tempV.entityName = "User";
             tempV.detailId = row.userId;
             this.disableWidgets = ["loginName", "loginPwd"];
+            this.notRequiredFields = ["loginPwd"];
             this.$refs.editRefs.openDialog(tempV);
         },
         // 刷新数据
