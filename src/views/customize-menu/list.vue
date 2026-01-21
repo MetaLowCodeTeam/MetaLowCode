@@ -452,9 +452,9 @@
                             </el-button>
                             <slot name="afterRowViewBtn" :row="scope.row"></slot>
                         </template>
-                        <template #default="scope" v-else>
+                            <template #default="scope" v-else>
                             <template 
-                                v-for="(item,index) of customButtonConfig.pcColumn" :key="index"
+                                v-for="(item,index) of (scope.row.__pcColumnButtons || customButtonConfig.pcColumn)" :key="item.guid || item.key || index"
                             >
                                 <slot v-if="item.type === 'slot'" :name="item.name" :row="scope.row"></slot>
                                 <template v-else-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value)">
@@ -501,7 +501,7 @@
                                         link
                                         :type="item.type"
                                         v-if="getColumnCustomButtonShow(item, scope.row)"
-                                        :disabled="getCustomButtonDisabled(item, scope.row)"
+                                        :disabled="item.isDisabled"
                                     >
                                         <el-icon
                                             :color="item.iconColor"
@@ -1291,62 +1291,80 @@ let nativeButtonDisabled = ref({
     edit: multipleSelection.value.length !== 1,
 });
 // 获取自定义按钮禁用状态
-const getCustomButtonDisabled = (item, row) => {
+const getCustomButtonDisabled = (item) => {
     if(item.isNative){
-        if(row) {
-            if(item.key == 'edit') {
-                return row.btnDisabled.edit
-            }
-            if(item.key == 'view') {
-                return row.btnDisabled.view
-            }
-            return false;
-        }else {
-            return nativeButtonDisabled[item.key];
-        }
+        return nativeButtonDisabled[item.key];
     }else {
-        // 是行操作按钮
-        if(row) {
-            // 如果设置了过滤条件 且 设置了 不满足条件时隐藏按钮
-            if (item.filterJson?.items?.length > 0 && item.errorShowType == 1) {
-                let { customBtnShow } = row;
-                // 如果当前行的 customBtnShow 不存在，或者不是一个对象，则不显示
-                if (!customBtnShow || typeof customBtnShow !== 'object') {
-                    return true;
-                }
-                // 获取所有操作列按钮
-                let { pcColumn } = customButtonConfig.value;
-                // 过滤出有查询条件的按钮
-                let btns = pcColumn.filter(el => el.filterJson?.items?.length > 0);
-                // 找到当前 item 在 pcColumn 中的索引
-                let currentItemIndex = btns.findIndex(el => el.guid === item.guid);
-                // 如果找到了索引，并且 customBtnShow 中有对应的值，则返回该值
-                // customBtnShow[currentItemIndex] 会是 0 或 1
-                if (currentItemIndex !== -1 && customBtnShow.hasOwnProperty(currentItemIndex)) {
-                    return customBtnShow[currentItemIndex] === 0 || customBtnShow[currentItemIndex] === false; 
-                }
-                // 如果没有找到对应的索引，或者 customBtnShow 中没有该索引的值
-                return false;
-            }
+        let { availableType, action } = item;
+        let isDisabled = false;
+        let rowLength = multipleSelection.value.length;
+        if (action == 2 || action == 3) {
+            isDisabled =  rowLength != 1;
         }
-        // 是顶部按钮
-        else {
-            let { availableType, action } = item;
-            let isDisabled = false;
-            let rowLength = multipleSelection.value.length;
-            if (action == 2 || action == 3) {
-                isDisabled =  rowLength != 1;
-            }
-            if(action == 4 && availableType == 1 && rowLength != 1) {
-                isDisabled = true;
-            }
-            if(action == 4 && availableType == 2 && rowLength < 1) {
-                isDisabled = true;
-            }
-            return isDisabled;
+        if(action == 4 && availableType == 1 && rowLength != 1) {
+            isDisabled = true;
         }
+        if(action == 4 && availableType == 2 && rowLength < 1) {
+            isDisabled = true;
+        }
+        return isDisabled;
     }
 }
+
+
+// 为列表数据预计算行操作按钮禁用状态（只做纯计算 + 写入行对象，不引入副作用）
+const buildRowCustomBtnDisabledCache = (rows) => {
+    try {
+        const pcColumn = customButtonConfig.value?.pcColumn || [];
+        const filterBtns = pcColumn.filter(el => el?.filterJson?.items?.length > 0);
+        const guidToFilterIndex = new Map();
+        filterBtns.forEach((btn, idx) => {
+            if (btn?.guid) guidToFilterIndex.set(btn.guid, idx);
+        });
+
+        (rows || []).forEach((row) => {
+            if (!row || typeof row !== 'object') return;
+            const map = {};
+
+            pcColumn.forEach((btn) => {
+                const key = btn?.guid || btn?.key;
+                if (!key) return;
+
+                // 内置按钮：只处理 edit/view（其它保持 false）
+                if (btn?.isNative) {
+                    if (btn.key === 'edit') map[key] = row?.btnDisabled?.edit === true;
+                    else if (btn.key === 'view') map[key] = row?.btnDisabled?.view === true;
+                    else map[key] = false;
+                    return;
+                }
+
+                // 自定义行按钮：仅 errorShowType == 1 时需要根据过滤结果禁用
+                if (btn?.filterJson?.items?.length > 0 && btn?.errorShowType == 1) {
+                    const idx = btn?.guid ? guidToFilterIndex.get(btn.guid) : undefined;
+                    const showObj = row?.customBtnShow;
+                    if (idx === undefined || !showObj || typeof showObj !== 'object') {
+                        map[key] = true; // 没数据/没索引 => 视为禁用
+                        return;
+                    }
+                    // showObj[idx] 可能是 0/1 或 false/true
+                    if (Object.prototype.hasOwnProperty.call(showObj, idx)) {
+                        const v = showObj[idx];
+                        map[key] = (v === 0 || v === false);
+                        return;
+                    }
+                    map[key] = false;
+                    return;
+                }
+
+                map[key] = false;
+            });
+
+            row.__rowCustomBtnDisabledMap = map;
+        });
+    } catch (error) {
+        console.error('buildRowCustomBtnDisabledCache error:', error);
+    }
+};
 
 // 自定义按钮点击
 const customButtonClick = (item, row) => {
@@ -2236,6 +2254,10 @@ const onTreeTableListLoad = async (row, treeNode, resolve) => {
             })
         }
     }
+        // 预计算行操作按钮禁用状态（避免模板渲染期重复计算）
+        buildRowCustomBtnDisabledCache(leafTableData);
+        // 构建每行独立的操作列按钮（给 item.isDisabled 赋值，避免全局 item 互相覆盖）
+        buildRowPcColumnButtons(leafTableData);
 	// 处理按钮的权限
 	if (leafTableData && leafTableData.length) {
       	leafTableData.forEach(el => {
@@ -2429,6 +2451,10 @@ const getTableList = async () => {
                 })
             }
         }
+        // 预计算行操作按钮禁用状态（避免模板渲染期重复计算）
+        buildRowCustomBtnDisabledCache(tableData.value);
+        // 构建每行独立的操作列按钮（给 item.isDisabled 赋值，避免全局 item 互相覆盖）
+        buildRowPcColumnButtons(tableData.value);
         sliceTable.value = tableData.value.slice(0, 20);
         sliceTable.value.forEach(el => {
             el.editBtnCheckModifiable = checkModifiableEntity(el[idFieldName.value],el.approvalStatus?.value);
@@ -2832,6 +2858,34 @@ const openTreeEchart = (dialogTitle, echartData, dialogConf, echartOpts, nodeCli
 const getQueryParams = () => {
     return dataExportData;
 }
+
+// 构建每行独立的操作列按钮数组，并把禁用结果写入 item.isDisabled
+// 注意：必须克隆按钮对象，不能直接修改 customButtonConfig.pcColumn 中的全局对象，否则会所有行互相覆盖
+const buildRowPcColumnButtons = (rows) => {
+    try {
+        const pcColumn = customButtonConfig.value?.pcColumn || [];
+        const getBtnKey = (btn) => btn?.guid || btn?.key;
+        (rows || []).forEach((row) => {
+            if (!row || typeof row !== "object") return;
+            const disabledMap = row.__rowCustomBtnDisabledMap || {};
+            row.__pcColumnButtons = pcColumn.map((btn) => {
+                const cloned = { ...(btn || {}) };
+                const key = getBtnKey(cloned);
+                let isDisabled = false;
+                if (cloned?.isNative) {
+                    if (cloned.key === "edit") isDisabled = row?.btnDisabled?.edit === true;
+                    else if (cloned.key === "view") isDisabled = row?.btnDisabled?.view === true;
+                } else if (key && Object.prototype.hasOwnProperty.call(disabledMap, key)) {
+                    isDisabled = disabledMap[key] === true;
+                }
+                cloned.isDisabled = isDisabled;
+                return cloned;
+            });
+        });
+    } catch (error) {
+        console.error("buildRowPcColumnButtons error:", error);
+    }
+};
 
 // 打开价格对比弹框
 let PriceComparisonDialogRefs = ref();

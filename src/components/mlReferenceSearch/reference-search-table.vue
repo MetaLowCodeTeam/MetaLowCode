@@ -534,31 +534,20 @@ export default {
                         this.singleSelectedFormTab = queryEntityNameById(this.defaultSelected?.id);
                     }
                 }
-               
+                
                 let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
-             
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
-				if (
-					newDefaultSelected &&
-					newDefaultSelected.length > 0 &&
-					this.selectedData &&
-					this.selectedData.length < 1 &&
-					!this.isManuallyCleared
-				) {
-					this.selectedData = newDefaultSelected.map((el) => {
-						let row = {};
-                        row.formEntityName = queryEntityNameById(el.id);
-                        let entityInfo = queryEntityInfoByName(row.formEntityName);
-                        row[entityInfo.idFieldName] = el.id;
-                        row[entityInfo.nameFieldName] = el.name;
-						return row;
-					});
-				}
-				if (this.selectedData.length > 0) {
+				if (newDefaultSelected && newDefaultSelected.length > 0) {
+                    let needSelectData = newDefaultSelected.map(el => {
+                        return {
+                            [this.idField]: el.id,
+                            [this.nameField]: el.name,
+                        }
+                    });
 					this.$refs.SimpleTableRef?.toggleRowSelection(
-						this.selectedData,
+						needSelectData,
 						this.idField
 					);
 				}
