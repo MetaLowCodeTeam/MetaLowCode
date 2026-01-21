@@ -178,7 +178,9 @@ export default {
                     if (dom.length > 0) {
                         this.$refs.multipleTable.toggleRowSelection(dom[0], true);
                     }
+                    this.selects(dom, dom[0]);
                 });
+              
             })
 		},
         // 单选表格切换

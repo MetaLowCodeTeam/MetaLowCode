@@ -689,7 +689,7 @@ let mlFormulaIsShow = ref(false);
 let mlFormulaFields = ref([]);
 // 高级 计算公式 回显值
 let mlFormulaVal = ref("");
-let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
+let numType = ref(["Integer", "Decimal", "Percent", "Money", "Option"]);
 let textType = ref(["Text", "TextArea"]);
 let timeType = ref(["DateTime", "Date"]);
 let mlIsAdvanced = ref(false);
