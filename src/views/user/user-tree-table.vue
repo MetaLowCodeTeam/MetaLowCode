@@ -413,6 +413,7 @@ export default {
             tempV.entityName = "User";
             this.disableWidgets = [];
             this.unDisableWidgets = ["departmentId"];
+            this.notRequiredFields = [];
             if(this.node?.id){
                 tempV.fieldName = "departmentId";
                 tempV.fieldNameVale = this.node.id;

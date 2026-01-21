@@ -196,6 +196,20 @@ export default {
             "8014": "Outer Reference Popup Settings",
             "8015": "Name Field",
             "8015-1": "Fill back the name field of the main data table, { name }",
+
+            "9000": "Allow Fine Tuning",
+            "9001": "Fine Tuning Range",
+            "9001-1": "Meter",
+            "9002": "Set Location Area",
+            "9002-1": "Add Location Center",
+            "9003": "Location Address",
+            "9003-1": "Please select the location address",
+            "9004": "Location Range",
+            "9004-1": "Please enter the location range",
+            "9005": "Set the location radius around the center point, with a recommended range of 500-1000 meters",
+            "9005-1": "Please select the address and location range",
+           "9006": "Are you sure you want to delete the location center?",
+            "9006-1": "Warning: ",
         },
 
     }

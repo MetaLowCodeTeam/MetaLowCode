@@ -42,6 +42,9 @@ import 'vxe-pc-ui/es/style.css'
 import VxeUITable from 'vxe-table'
 import 'vxe-table/es/style.css'
 
+// 天地图
+import VueTianditu from "vue-tianditu";
+
 //初始化高德地图组件
 initAMapApiLoader({
 	key: '487d8f7268cf06102ecd3e637b0f892d',
@@ -76,7 +79,10 @@ app.use(VxeUITable);
 // app.use(Vue3MannerReport);
 app.use(i18n);
 app.use(scui);
-
+app.use(VueTianditu, {
+  v: "4.0", //目前只支持4.0版本
+  tk: "3a0c8bd4b5ff37c83b3617d51cb14803"
+});
 //挂载app
 app.mount('#app');
 window.ResizeObserver = ResizeObserver

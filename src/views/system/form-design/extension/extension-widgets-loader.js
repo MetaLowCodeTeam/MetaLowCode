@@ -7,6 +7,7 @@ import {
     referenceSchema,
     referenceListSchema,
     locationSchema,
+    tiandituLocationSchema,
     signWidgetSchema,
     // 列表子表单
     listSubFormSchema,
@@ -60,6 +61,8 @@ import outerDetailURLEditor from '@/views/system/form-design/extension/property-
 import onBeforeListQueryEditor from '@/views/system/form-design/extension/property-editor/outer-reference/onBeforeListQuery-editor.vue';
 // 外部引用后置事件
 import onAfterListQueryEditor from '@/views/system/form-design/extension/property-editor/outer-reference/onAfterListQuery-editor.vue';
+// 天地图配置
+import tdtConfigEditor from '@/views/system/form-design/extension/property-editor/tianditu/tdt-tdtConfig-editor.vue';
 /**
  * 容器组件
  */
@@ -158,6 +161,9 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'confirmSelect', 'reference-confirmSelect-editor', referenceConfirmSelectEditor)
     // 注册签名配置
     PERegister.registerCPEditor(app, 'signConfig', 'sign-signConfig-editor', signConfigEditor)
+    // 注册天地图配置
+    PERegister.registerCPEditor(app, 'tdtConfig', 'tianditu-tdtConfig-editor', tdtConfigEditor)
+
     // 注册级联选择配置
     PERegister.registerCPEditor(app, 'cascaderConfig', 'cascader-config-editor', cascaderConfigEditor)
     
@@ -184,6 +190,7 @@ export const loadExtensionWidgets = (app) => {
 	addAdvancedFieldSchema(referenceListSchema)
     addAdvancedFieldSchema(outerReferenceSchema)
 	addAdvancedFieldSchema(locationSchema)
+    addAdvancedFieldSchema(tiandituLocationSchema)
     // 级联选择
     addAdvancedFieldSchema(cascaderOptionSchema)
     // 添加到容器组件库
