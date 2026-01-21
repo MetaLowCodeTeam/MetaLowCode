@@ -294,6 +294,59 @@ export const locationSchema = {
 	}
 }
 
+export const tiandituLocationSchema = {
+	type: 'tianditu-location',  //引用字段组件
+	alias: '',  //组件别名，可以自定义
+	icon: 'location-field',
+	formItemFlag: true,
+	options: {
+		name: '',
+		keyNameEnabled: false,
+		keyName: '',  //数据键值名称
+		label: '',
+		labelAlign: '',
+		placeholder: '',
+		columnWidth: '200px',
+		size: '',
+		labelWidth: null,
+		labelHidden: false,
+		labelWrap: false,  //标签超长换行
+		disabled: false,
+		hidden: false,
+		required: false,
+		requiredHint: '',
+		validation: '',
+		validationHint: '',
+		searchDialogWidth: '50%',  //定位地图弹窗宽度
+		positionSelectable: false,  //是否允许用户手动选择位置
+        // 天地图配置
+        tdtConfig: {
+            // 允许微调
+            allowFineTuning: false,
+            // 微调范围
+            fineTuningRange: 100,
+            // 设置定位区域
+            setLocationArea: false,
+            // 定位区域
+            locationArea: [],
+        },
+		//-------------------
+		customClass: '',  //自定义css类名
+		labelIconClass: null,
+		labelIconPosition: 'rear',
+		labelTooltip: null,
+		prefixIcon: '',
+		suffixIcon: '',
+		buttonIcon: 'AddLocation',
+
+		//-------------------
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+		onValidate: '',
+	}
+}
+
 // 签名组件
 export const signWidgetSchema = {
 	type: 'sign',
