@@ -836,7 +836,11 @@ const openDetailDialog = (recordId, globalDsv, formId) => {
 
 // 关闭弹框前，清空数据
 const beforeClose = (done) => {
+    if(loading.value || otherLoading.value) {
+        return;
+    }
     keyboardEventToInput();
+    haveLayoutJson.value = false;
     done();
 }
 
