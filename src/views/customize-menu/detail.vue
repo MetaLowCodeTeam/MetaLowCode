@@ -509,17 +509,30 @@ let formId = ref("");
 
 let prevRecordId = ref(null);
 let nextRecordId = ref(null);
+// 详情加载版本号：用于丢弃过期的异步回调，避免偶现 Detached / 已卸载组件仍被写入
+let detailLoadSeq = ref(0);
+const bumpDetailLoadSeq = () => {
+    detailLoadSeq.value += 1;
+    return detailLoadSeq.value;
+};
 
 // 上一条
 const onPrev = () => {
+    if(loading.value) {
+        return;
+    }
     openDialog(prevRecordId.value, globalDsv.value, formId.value);
 }
 // 下一条
 const onNext = () => {
+    if(loading.value) {
+        return;
+    }
     openDialog(nextRecordId.value, globalDsv.value, formId.value);
 }
 
 const openDialog = (id, localDsv, paramFormId) => {
+    const seq = bumpDetailLoadSeq();
     let { recordIds } = props;
     let curInx = recordIds.indexOf(id);
     prevRecordId.value = recordIds[curInx - 1] || null;
@@ -542,23 +555,34 @@ const openDialog = (id, localDsv, paramFormId) => {
 	detailDialog.isShow = true;
 
 	// 加载数据
-	refresh();
+	refresh(seq);
     nextTick(() => {
+        // 丢弃过期回调（比如快速上一条/下一条/关闭）
+        if (detailLoadSeq.value !== seq || !detailDialog.isShow) return;
         detailTabsRefs.value?.setTabsData({
             recordId: detailId.value,
         });
-    })
+    });
 }
 // 关闭弹框前，清空数据
 const beforeClose = (done) => {
+    if(loading.value) {
+        return;
+    }
+    haveLayoutJson.value = false;
+    bumpDetailLoadSeq();
     keyboardEventToInput();
     done();
 }
 // 关闭弹框
 const closeDialog = () => {
+    if(loading.value) {
+        return;
+    }
     haveLayoutJson.value = false;
     keyboardEventToInput();
     detailDialog.isShow = false;
+    bumpDetailLoadSeq();
 }
 
 const onRevokeIng = () => {
@@ -581,10 +605,10 @@ const componentExists = (componentName) => {
 }
 
 // 刷新
-const refresh = () => {
+const refresh = (seq) => {
 	cutTab.value = "detail";
     cutTabIndex.value = 0;
-	getLayoutList();
+	getLayoutList(seq);
 };
 
 // 新建相关
@@ -601,7 +625,7 @@ const newRelatedConfirm = async () => {
 		// 新建配置项
 		formatNewRelated(res.data.ADD);
 		if (cutTab.value == "detail") {
-			initData();
+			initData(detailLoadSeq.value);
 		} else if(cutTab.value.includes('detail_custom_component_all') || cutTab.value.includes('detail_custom_component_pc')) {
             // 如果是自定义组件可添加对应的方法用于刷新
             customComponentRefs.value?.refresh();
@@ -649,9 +673,15 @@ const customButtonClick = (item) => {
 }
 
 // 加载页签
-const getLayoutList = async () => {
+const getLayoutList = async (seq) => {
+    // 如果未传 seq，则视为一次新的加载
+    const curSeq = seq ?? bumpDetailLoadSeq();
 	loading.value = true;
 	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName, false);
+    if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
+        loading.value = false;
+        return;
+    }
 	if (res) {
         sourceLayoutConfig.value = res.data;
         sourceLayoutConfig.value.entityCode = entityCode.value;
@@ -695,6 +725,10 @@ const getLayoutList = async () => {
             if(filterList && filterList.length > 0){
                 // 调用查询接口判断该页签是否显示
                 let tabRes = await checkTables(filterList, detailId.value);
+                if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
+                    loading.value = false;
+                    return;
+                }
                 if(tabRes){
                     checkTabsFilter.value = tabRes.data;
                 }
@@ -797,7 +831,7 @@ const getLayoutList = async () => {
 		formatNewRelated(res.data.ADD);
 		idFieldName.value = res.data.idFieldName;
 		nameFieldName.value = res.data.nameFieldName;
-		initData();
+		initData(detailLoadSeq.value);
 	} else {
 		loading.value = false;
 	}
@@ -830,10 +864,15 @@ let noeData = ref(false);
 let detailTabsRefs = ref();
 
 // 初始化数据
-const initData = async () => {
+const initData = async (seq) => {
+    const curSeq = seq ?? detailLoadSeq.value;
 	loading.value = true;
     haveLayoutJson.value = false;
 	let res = await getFormLayout(entityName.value, formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId);
+    if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
+        loading.value = false;
+        return;
+    }
 	noeData.value = false;
 	if (res) {
 		if (res.data?.layoutJson) {
@@ -848,11 +887,13 @@ const initData = async () => {
             }
 			// 根据数据渲染出页面填入的值，填过
 			nextTick(async () => {
+                if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
 				globalDsv.value.formStatus = 'read';
 				globalDsv.value.formEntityId = detailId.value;
                 globalDsv.value.openDetailDialog = openDialog;
                 // 获取审批信息
                 let recordApprovalRes = await getRecordApprovalState(detailId.value);
+                if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
                 if(recordApprovalRes){
                     recordApproval.value = recordApprovalRes.data;
                     globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
@@ -860,6 +901,7 @@ const initData = async () => {
                 vFormRef.value?.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
 				let queryByIdRes = await queryById(detailId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
+                if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
 				if (queryByIdRes && queryByIdRes.data) {
                     globalDsv.value.recordData = queryByIdRes.data;
 		            multipleSelection.value = [queryByIdRes.data];
@@ -882,8 +924,10 @@ const initData = async () => {
                         styleConf.value.newDialogConfig = newDialogConfig;
                     }
 					nextTick(() => {
+                        if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
 						vFormRef.value?.setFormData(formatFormVirtualField(rowResData.value));
 						nextTick(() => {
+                            if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
 							vFormRef.value?.reloadOptionData();
 							vFormRef.value?.setReadMode();
 							globalDsv.value.openCreateDialog = openCreateDialog;

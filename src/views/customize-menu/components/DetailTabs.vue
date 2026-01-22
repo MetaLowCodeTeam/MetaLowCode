@@ -3,7 +3,7 @@
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" :tab-position="publicSetting.detailTabsPosition || 'top'">
             <el-tab-pane
                 v-for="(tab,tabInx) of tabs"
-                :key="tabInx"
+                :key="(tab?.entityName || 'tab') + '-' + tabInx"
                 :label="tab.columnAliasName || tab.entityLabel"
                 :name="tab.entityName + '-' + tabInx"
             >
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref, watch, watchEffect } from "vue";
+import { inject, onBeforeUnmount, onMounted, ref, watch, watchEffect } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import http from "@/utils/request";
@@ -50,6 +50,7 @@ let detailData = ref({});
 
 let activeName = ref("");
 let myCheckTabsFilter = ref({});
+let isUnmounted = ref(false);
 
 
 // 初始化tab
@@ -137,7 +138,9 @@ const debouncedInitTabs = () => {
         clearTimeout(initTabsTimer.value);
     }
     initTabsTimer.value = setTimeout(() => {
-        initTabs();
+        if (!isUnmounted.value) {
+            initTabs();
+        }
     }, 100); // 100ms防抖
 };
 
@@ -150,6 +153,7 @@ let initTabsTimer = ref(null);
 watch(
     [() => props.tabsConf, () => props.checkTabsFilter],
     ([newTabsConf, newCheckTabsFilter]) => {
+        if (isUnmounted.value) return;
         // 检查是否真的发生了变化
         const tabsConfChanged = JSON.stringify(newTabsConf) !== JSON.stringify(lastTabsConf.value);
         const checkTabsFilterChanged = JSON.stringify(newCheckTabsFilter) !== JSON.stringify(lastCheckTabsFilter.value);
@@ -165,6 +169,14 @@ watch(
     },
     { immediate: true, deep: true }
 );
+
+onBeforeUnmount(() => {
+    isUnmounted.value = true;
+    if (initTabsTimer.value) {
+        clearTimeout(initTabsTimer.value);
+        initTabsTimer.value = null;
+    }
+});
 
 // watchEffect(() => {
 //     detailDialog.value = props.tabsConf;
