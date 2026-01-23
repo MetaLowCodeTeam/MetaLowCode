@@ -72,6 +72,7 @@
                 :isExactSearch="field.options.isExactSearch"
                 @onSelectedRemote="onSelectedRemote"
                 @onAppendButtonClick="onAppendButtonClick"
+                @clearHandle="handleClearEvent"
             />
 			<template v-if="isReadMode">
 				<span class="readonly-mode-field" @click.stop="openRefDialog"
