@@ -49,6 +49,8 @@
             :placeholder="placeholder"
             :remote-show-suffix="true"
             :fit-input-width="800"
+            clearable
+            @clear="clearHandle"
         >
             <template #empty>
                 <div
@@ -176,6 +178,7 @@ const emit = defineEmits([
     "onSelectedRemote",
     "onAppendButtonClick",
     "onFocus",
+    "clearHandle",
 ]);
 let value = ref(null);
 let loading = ref(false);
@@ -190,6 +193,11 @@ let idFieldName = ref("");
 let nameFieldName = ref("");
 
 let isDropdownVisible = ref(false);
+
+const clearHandle = () => {
+    emit("clearHandle");
+};
+
 // 清空查询结果（可选是否重置关键字）
 const clearResults = (resetKeyword = false) => {
     tableData.value = [];
