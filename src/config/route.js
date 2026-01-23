@@ -420,7 +420,7 @@ const routes = [
                         path: appPath + 'outer-data-model',
                         name: 'OuterDataModel',
                         component: 'system/data-base/OuterDataModel',
-                        meta: { title: '数据模型', icon: 'el-icon-Coin', role: 'r66-1' }
+                        meta: { title: '外部数据模型', icon: 'el-icon-Coin', role: 'r66-1' }
                     },
 
                 ]

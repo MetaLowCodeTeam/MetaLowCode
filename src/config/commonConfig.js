@@ -570,19 +570,19 @@ export default [
         code: "wxIntegration",
         config: [
             {
-                label: "启用小程序登录",
+                label: "启用公众号登录",
                 key: "wxMiniAppOpen",
                 type: "switch",
             },
             {
-                label: "AppId(小程序ID)",
+                label: "公众号AppId",
                 key: "wxMiniAppappId",
                 type: "input",
                 required: true,
                 isError: false,
             },
             {
-                label: "AppSecret(小程序密钥)",
+                label: "公众号AppSecret",
                 key: "wxMiniAppappSecret",
                 type: "passwordInput",
                 required: true,

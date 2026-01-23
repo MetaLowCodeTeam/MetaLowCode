@@ -252,8 +252,8 @@ const categories = ref([
                 isHide: !pluginIdList || !pluginIdList.includes('metaDataWarehouse'),
 			},
 			{
-				title: "数据模型",
-				desc: "数据模型配置管理",
+				title: "外部数据模型",
+				desc: "外部数据模型配置管理，用于外部数据查询",
 				background: "#FCEFFD",
 				route: "outer-data-model",
 				icon: "el-icon-Coin",
