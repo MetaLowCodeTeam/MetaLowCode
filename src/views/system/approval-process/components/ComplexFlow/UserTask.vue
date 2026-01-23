@@ -100,7 +100,7 @@
                             v-model="myFormData.fieldNames"
                             v-loading="entityFieldsLoading"
                             clearable
-                            value-key="name"
+                            value-key="fieldName"
                             placeholder="请选择字段"
                             multiple
                             filterable
@@ -111,8 +111,8 @@
                             <el-option
                                 v-for="(field,fieldInx) in entityFields"
                                 :key="fieldInx"
-                                :label="field.label"
-                                :value="field.name"
+                                :label="field.fieldLabel"
+                                :value="field.fieldName"
                             />
                         </el-select>
                     </div>
@@ -345,11 +345,11 @@
             </template>
             <!-- 抄送设置：与“由谁审批”一致 -->
             <div class="work-flow-conditions">
-                <div class="label-title mb-3">由谁抄送</div>
+                <div class="label-title mb-3">抄送给谁</div>
                 <div class="mt-10">
                     <el-select
                         v-model="myFormData.ccNodeRoleType"
-                        placeholder="选择由谁抄送"
+                        placeholder="选择抄送给谁"
                         style="width: 100%;"
                         @change="ccNodeRoleTypeChange"
                     >
@@ -423,7 +423,7 @@
                             v-loading="entityFieldsLoading"
                             clearable
                             filterable
-                            value-key="name"
+                            value-key="fieldName"
                             placeholder="请选择字段"
                             v-if="myFormData.ccNodeRoleType == 7"
                             style="width: 100%;"
@@ -431,8 +431,8 @@
                             <el-option
                                 v-for="(field,fieldInx) in entityFields"
                                 :key="fieldInx"
-                                :label="field.label"
-                                :value="field.name"
+                                :label="field.fieldLabel"
+                                :value="field.fieldName"
                             />
                         </el-select>
                     </div>
@@ -779,13 +779,9 @@ let entityFieldsLoading = ref(false);
 const getEntityFields = async () => {
     let param = { entity: entityName.value };
     entityFieldsLoading.value = true;
-    let res = await $API.common.getFieldListOfFilter(param);
+    let res = await $API.common.getFieldListOfApproval(param);
     if (res && res.code == 200) {
-        entityFields.value = res.data.filter(
-            (el) =>
-                (el.type == "Reference" || el.type == "ReferenceList") &&
-                (el.referTo == "User" || el.referTo == "Department")
-        );
+        entityFields.value = res.data;
     }
     entityFieldsLoading.value = false;
 };
