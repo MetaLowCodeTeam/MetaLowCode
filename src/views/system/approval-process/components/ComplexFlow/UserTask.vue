@@ -103,6 +103,7 @@
                             value-key="name"
                             placeholder="请选择字段"
                             multiple
+                            filterable
                             v-if="myFormData.nodeRoleType == 7"
                             @change="fieldNamesChange"
                             style="width: 100%;"
@@ -421,6 +422,7 @@
                             v-model="myFormData.ccFieldName"
                             v-loading="entityFieldsLoading"
                             clearable
+                            filterable
                             value-key="name"
                             placeholder="请选择字段"
                             v-if="myFormData.ccNodeRoleType == 7"

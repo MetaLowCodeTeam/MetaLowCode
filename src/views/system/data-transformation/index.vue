@@ -71,13 +71,14 @@
 </template>
 
 <script setup>
-import { inject, ref, shallowRef } from "vue";
+import { inject, ref, shallowRef, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import useCommonStore from "@/store/modules/common";
 const { queryEntityLabelByName } = useCommonStore();
 import { deleteRecord } from "@/api/transform";
 import { ElMessage, ElMessageBox } from "element-plus";
 import Detail from "./Detail/Index.vue";
+
 /**
  * 组件
  */
@@ -89,6 +90,13 @@ const Router = useRouter();
 
 // ID字段名
 const idFieldName = "transformId";
+
+onMounted(() => {
+    let create = Router.currentRoute.value.query.create;
+    if(create) {
+        addRow();
+    }
+})
 
 // 列表组件
 let mlSingleListRef = shallowRef();

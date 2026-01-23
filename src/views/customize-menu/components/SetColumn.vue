@@ -851,11 +851,6 @@ div {
                 left: -2px;
             }
         }
-        &:hover {
-            .action-icon {
-                display: block;
-            }
-        }
         &.is-active {
             background: #dedede;
         }
@@ -865,7 +860,6 @@ div {
     position: absolute;
     right: 10px;
     top: 10px;
-    display: none;
     .icon-span {
         cursor: pointer;
         display: inline-block;
