@@ -24,6 +24,10 @@ export default {
     getFieldListOfFilter: async (data) => {
         return await http.get("/systemManager/getFieldListOfFilter", data);
     },
+    // 查询条件专用获取字段接口--定开
+    getFieldListOfApproval: async (data) => {
+        return await http.get("/systemManager/getFieldListOfApproval", data);
+    },
     // 多引用字段设置查询参数接口
     getFieldListByRefField: async (data) => {
         return await http.get("/systemManager/getFieldListByRefField", data);
