@@ -106,7 +106,9 @@
 				curtItem.fieldType != 'Boolean' &&
 				curtItem.fieldType != 'DateTime' &&
 				curtItem.fieldType != 'Date' &&
-				curtItem.fieldType != 'CodeOption'
+				curtItem.fieldType != 'CodeOption' &&
+				curtItem.fieldType != 'Cascader' &&
+                curtItem.fieldType != 'AreaSelect'
 			"
 			v-model="curtItem.sourceField"
 			placeholder="固定值"
@@ -149,6 +151,23 @@
 				:value="tOp"
 			/>
 		</el-select>
+        <!-- 级联 -->
+        <el-cascader
+            v-if="curtItem.updateMode == 'toFixed' && curtItem.fieldType == 'Cascader'"
+            v-model="curtItem.sourceField"
+            :options="optionItems"
+            :disabled="type == 2 || !curtItem.targetField"
+            style="width: 100%"
+        />
+        <!-- 省市区 -->
+        <el-cascader
+            v-if="curtItem.updateMode == 'toFixed' && curtItem.fieldType == 'AreaSelect'"
+            v-model="curtItem.sourceField"
+            :options="AreaCodes"
+            :props="areaSelectProps"
+            :disabled="type == 2 || !curtItem.targetField"
+            style="width: 100%"
+        />
 		<el-input
 			v-if="curtItem.updateMode == 'forCompile'"
 			v-model="curtItem.sourceField"
@@ -195,10 +214,11 @@
 import { ref, watchEffect, reactive } from "vue";
 import mlFormula from "@/components/mlFormula/index.vue";
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
+import AreaCodes from "@/views/system/form-design/extension/field-widgets/areaCodes";
 /**
  * API
  */
-import { getOptionItems, getTagItems, getCodeOptionItems } from "@/api/system-manager";
+import { getOptionItems, getTagItems, getCodeOptionItems, getCascaderOptionTree } from "@/api/system-manager";
 const props = defineProps({
 	modelValue: null,
     useFields: {
@@ -229,6 +249,15 @@ let mySourcesFields = ref([]);
 let myTargetFields = ref([]);
 // 已存在的数据
 let myUseFields = ref([]);
+
+// 省市区组件：需要绑定 label（而不是编码 value）
+// ElementPlus Cascader 会基于 props.value 作为 v-model 的值来源
+const areaSelectProps = {
+    value: "label",
+    label: "label",
+    children: "children",
+    emitPath: true,
+};
 
 // 更新方式
 const updateModes = reactive([
@@ -278,13 +307,16 @@ let optionItemLoading = ref(false);
 // 更新方式切换
 const updateModeChange = async (item, target) => {
 	let { fieldType, updateMode } = item;
-	if (fieldType == "Tag" || fieldType == "Option" || fieldType == "CodeOption") {
+	if (fieldType == "Tag" || fieldType == "Option" || fieldType == "CodeOption" || fieldType == "Cascader") {
 		let res;
 		if (fieldType == "Tag") {
 			res = await getTagItems(props.targetEntity.name, item.targetField);
 		} else if (fieldType == "CodeOption") {
             res = await getCodeOptionItems(props.targetEntity.name, item.targetField);
-        }else{
+        }else if(fieldType == "Cascader"){
+            res = await getCascaderOptionTree(props.targetEntity.name, item.targetField);
+        }
+        else{
 			res = await getOptionItems(
 				props.targetEntity.name,
 				item.targetField
@@ -305,6 +337,8 @@ const updateModeChange = async (item, target) => {
 		item.sourceField = {};
 	} else if (fieldType == "Tag" || fieldType == "Option") {
 		item.sourceField = [];
+    } else if (fieldType == "AreaSelect") {
+        item.sourceField = [];
 	} else {
 		item.sourceField = null;
 	}

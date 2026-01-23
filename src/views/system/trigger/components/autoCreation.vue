@@ -240,6 +240,9 @@
                             />
                         </el-select>
                     </el-col>
+                    <el-col :span="9">
+                        <el-button type="primary" plain link @click="addTransform">创建数据转换</el-button>
+                    </el-col>
                 </el-row>
             </el-form-item>
         </template>
@@ -287,6 +290,8 @@ import { getOptionItems, getTagItems, getCodeOptionItems } from "@/api/system-ma
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 import { queryByEntity } from "@/api/transform";
 import useCommonStore from "@/store/modules/common";
+import { useRouter } from "vue-router";
+const Router = useRouter();
 const { queryEntityNameByCode } = useCommonStore();
 const $API = inject("$API");
 const $ElMessage = inject("$ElMessage");
@@ -939,6 +944,16 @@ const openPreview = (value, scriptType, index) => {
 const formulaEditValue = (index, value) => {
     trigger.value.actionContent.items[index].sourceField = value;
     mlFormulaIsShow.value = false;
+}
+
+// 创建数据转换
+const addTransform = () => {
+    Router.push({
+        name: "DataTransformation",
+        query: {
+            create: true,
+        }
+    });
 }
 
 
