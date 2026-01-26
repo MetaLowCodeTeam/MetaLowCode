@@ -50,8 +50,13 @@ router.beforeEach(async (to, from, next) => {
         });
         return false;
     }
-    //动态标题
-    document.title = to.meta.title ? `${to.meta.title} - ${publicSetting.value.APP_NAME || ''}` : `${publicSetting.value.APP_NAME || ''}`
+    // 动态标题
+    let publicSettingName = publicSetting.value.APP_NAME || ''
+    if(publicSettingName && to.meta.title) {
+        document.title = to.meta.title + ' - ' + publicSettingName
+    } else if(publicSettingName) {
+        document.title = publicSettingName
+    }
     if (to.path === appPath + "login") {
         //删除路由(替换当前layout路由)
         router.addRoute(routes[0])
