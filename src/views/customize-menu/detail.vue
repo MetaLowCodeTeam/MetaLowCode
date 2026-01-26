@@ -623,7 +623,7 @@ const newRelatedConfirm = async () => {
         myLayoutConfig.value.entityCode = entityCode.value;
         myLayoutConfig.value.entityName = entityName.value;
 		// 新建配置项
-		formatNewRelated(res.data.ADD, detailLoadSeq.value);
+		formatNewRelated(res.data.ADD);
 		if (cutTab.value == "detail") {
 			initData(detailLoadSeq.value);
 		} else if(cutTab.value.includes('detail_custom_component_all') || cutTab.value.includes('detail_custom_component_pc')) {
@@ -779,10 +779,6 @@ const getLayoutList = async (seq) => {
                 filterList
             };
             let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
-            if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
-                loading.value = false;
-                return;
-            }
             if (checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
                 let filterRes = checkCustomButtonFiltersRes.data[0];
                 filterBtns.forEach((btn, idx) => {
@@ -832,18 +828,17 @@ const getLayoutList = async (seq) => {
 
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
         // 新建配置项
-		formatNewRelated(res.data.ADD, curSeq);
+		formatNewRelated(res.data.ADD);
 		idFieldName.value = res.data.idFieldName;
 		nameFieldName.value = res.data.nameFieldName;
-		initData(curSeq);
+		initData(detailLoadSeq.value);
 	} else {
 		loading.value = false;
 	}
 };
 
 // 格式化新建相关-新加接口判断过滤条件
-const formatNewRelated = async (conf, seq) => {
-    const curSeq = seq ?? detailLoadSeq.value;
+const formatNewRelated = async (conf) => {
     addConf.value = conf || {};
     // 如果有新建相关
     if(addConf.value.config) {
@@ -854,9 +849,6 @@ const formatNewRelated = async (conf, seq) => {
         if(addConfig && addConfig.length > 0){
             // 调用查询接口判断该页签是否显示
             let newAddRes = await checkTables(filterList, detailId.value);
-            if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
-                return;
-            }
             if(newAddRes){
                 checkNewRelatedFilter.value = newAddRes.data;
             }
@@ -875,6 +867,7 @@ let detailTabsRefs = ref();
 const initData = async (seq) => {
     const curSeq = seq ?? detailLoadSeq.value;
 	loading.value = true;
+    haveLayoutJson.value = false;
 	let res = await getFormLayout(entityName.value, formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId);
     if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
         loading.value = false;
