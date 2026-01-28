@@ -308,7 +308,7 @@ export default {
 					entity,
 				});
 				if (fieldListRes) {
-					let list = fieldListRes.data ? fieldListRes.data.filter(el => el.type != 'ReferenceList') : [];
+					let list = fieldListRes.data || [];
 					this.refFieldList = list.map((el) => {
 						return {
 							fieldName: el.name,
@@ -405,7 +405,7 @@ export default {
 			let { type, referTo } = item;
 			let op = [];
 			// 如果是引用类型
-			if (type == "Reference") {
+			if (type == "Reference" || type == "ReferenceList") {
 				let referenceObj = { ...conditionsConfig[type] };
 				// 有单独设定的 条件
 				if (referenceObj.referenceFilters.includes(referTo)) {
@@ -416,6 +416,7 @@ export default {
 			} else {
 				op = conditionsConfig[type] ? [...conditionsConfig[type]] : [];
 			}
+            
 			return op;
 		},
 		clearError(item) {
