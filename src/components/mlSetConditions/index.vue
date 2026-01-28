@@ -237,7 +237,7 @@
                                         :checkFilterConditions="() => true"
                                         @onAppendButtonClick="openReferenceDialog(item)"
                                         @onSelectedRemote="onSelectedRemote($event, item)"
-                                        style="position: relative;top: 2px;"
+                                        style="position: relative;top: 0px;"
                                     />
                                     <ml-dialog
                                         title="请选择"
@@ -655,7 +655,7 @@
                                         :checkFilterConditions="() => true"
                                         @onAppendButtonClick="openReferenceDialog(item)"
                                         @onSelectedRemote="onSelectedRemote($event, item)"
-                                        style="position: relative;top: 2px;"
+                                        style="position: relative;top: 0px;"
                                     />
                                     <ml-dialog
                                         title="请选择"
