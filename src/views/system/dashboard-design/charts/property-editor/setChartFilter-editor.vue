@@ -11,6 +11,7 @@
             @cancel="dialogIsShow = false"
             @confirm="conditionConfirm"
             :entityName="cutEntityName"
+            enableSql
         >
         </mlSetConditions>
     </mlDialog>

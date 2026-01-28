@@ -534,7 +534,9 @@ defineExpose({
 
 .history-body {
     height: 400px;
-    
+    div {
+        box-sizing: border-box;
+    }
     &.complex-work-flow {
         height: 600px;
         .timeline-div  {
