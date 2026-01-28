@@ -21,6 +21,9 @@
 	background: #f5f7fa;
 	color: #909399;
 	cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 	&.small {
 		height: 24px;
 	}
@@ -51,6 +54,7 @@
             :fit-input-width="800"
             clearable
             @clear="clearHandle"
+            :size="size"
         >
             <template #empty>
                 <div

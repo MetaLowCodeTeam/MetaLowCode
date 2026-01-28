@@ -153,12 +153,21 @@
 		</el-select>
         <!-- 级联 -->
         <el-cascader
-            v-if="curtItem.updateMode == 'toFixed' && curtItem.fieldType == 'Cascader'"
+            v-if="curtItem.updateMode == 'toFixed' && curtItem.fieldType == 'Cascader' && type != 2"
             v-model="curtItem.sourceField"
             :options="optionItems"
-            :disabled="type == 2 || !curtItem.targetField"
+            :props="cascaderProps"
+            @change="handleCascaderChange"
+            :disabled="!curtItem.targetField"
             style="width: 100%"
         />
+        <el-input
+            v-if="curtItem.updateMode == 'toFixed' && curtItem.fieldType == 'Cascader' && type == 2"
+            :value="curtItem.sourceFieldLabel"
+            disabled
+            style="width: 100%"
+        />
+        
         <!-- 省市区 -->
         <el-cascader
             v-if="curtItem.updateMode == 'toFixed' && curtItem.fieldType == 'AreaSelect'"
@@ -259,6 +268,14 @@ const areaSelectProps = {
     emitPath: true,
 };
 
+// 级联选择器配置
+const cascaderProps = {
+    value: "value",
+    label: "label",
+    children: "children",
+    emitPath: true,
+};
+
 // 更新方式
 const updateModes = reactive([
 	{
@@ -284,11 +301,66 @@ watchEffect(() => {
 	myTargetFields.value = props.targetEntity.fields;
     myUseFields.value = props.useFields.map(el => el.targetField);
 	curtItem.value = props.modelValue;
+  
 });
 
 /**
  * 字段格式化 beg
  */
+
+// 获取级联选择器的值（从对象中提取 value）
+const getCascaderValue = (sourceField) => {
+    console.log('getCascaderValue - sourceField:', sourceField);
+    console.log('getCascaderValue - optionItems:', optionItems.value);
+    if (sourceField && typeof sourceField === 'object' && sourceField.value) {
+        return sourceField.value;
+    }
+    return sourceField;
+};
+
+// 级联选择器变化处理
+const handleCascaderChange = (value) => {
+    console.log(value,'value')
+    console.log(optionItems.value,'optionItems.value')
+    
+    if (!Array.isArray(value) || value.length === 0) {
+        curtItem.value.sourceField = null;
+        return;
+    }
+    
+    const findNodeByValue = (options, targetValue) => {
+        for (const option of options) {
+            if (option.value === targetValue) {
+                return option;
+            }
+            if (option.children && option.children.length > 0) {
+                const found = findNodeByValue(option.children, targetValue);
+                if (found) return found;
+            }
+        }
+        return null;
+    };
+    
+    const labels = [];
+    let currentOptions = optionItems.value;
+    
+    for (let i = 0; i < value.length; i++) {
+        console.log(`循环第 ${i} 次，查找 value: ${value[i]}`);
+        console.log(`当前 currentOptions:`, currentOptions);
+        const node = findNodeByValue(currentOptions, value[i]);
+        console.log(`找到的 node:`, node);
+        if (node) {
+            labels.push(node.label);
+            console.log(`添加 label: ${node.label}, 当前 labels:`, labels);
+            currentOptions = node.children || [];
+        } else {
+            console.log(`未找到节点，中断循环`);
+            break;
+        }
+    }
+    const label = labels.join(' / ');
+    curtItem.value.sourceFieldLabel = label;
+};
 
 // 目标字段切换
 const targetFieldChange = (item, target) => {
@@ -300,7 +372,7 @@ const targetFieldChange = (item, target) => {
 };
 
 // 单选、多选项下拉数据
-let optionItems = ref("");
+let optionItems = ref([]);
 // 下拉数据loading
 let optionItemLoading = ref(false);
 
@@ -338,6 +410,8 @@ const updateModeChange = async (item, target) => {
 	} else if (fieldType == "Tag" || fieldType == "Option") {
 		item.sourceField = [];
     } else if (fieldType == "AreaSelect") {
+        item.sourceField = [];
+    } else if (fieldType == "Cascader") {
         item.sourceField = [];
 	} else {
 		item.sourceField = null;
