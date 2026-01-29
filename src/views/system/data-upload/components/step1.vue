@@ -117,7 +117,7 @@ onMounted(() => {
     myUnSystemEntityList.value = queryAllEntityList().filter((el) => {
         const isNonSystem = !el.systemEntityFlag;
         const isUserOrDeptSystem = el.systemEntityFlag && (el.name === 'User' || el.name === 'Department');
-        return !el.appAbbr && (isNonSystem || isUserOrDeptSystem) && $TOOL.checkRole('r' + el.entityCode + '-2');
+        return !el.appAbbr && (isNonSystem || isUserOrDeptSystem) && ($TOOL.checkRole('r' + el.entityCode + '-2') || (el.detailEntityFlag && $TOOL.checkRole('r' + el.mainEntityCode + '-2')));
     });
     queryEntityCode.value = router.currentRoute.value.query.entityCode;
     // 如果有查询参数
