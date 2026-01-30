@@ -78,6 +78,7 @@ import layoutConfig from "@/api/layoutConfig";
 import { ElMessage } from "element-plus";
 import useCommonStore from "@/store/modules/common";
 import SetQueryPanelDialog from "@/components/mlSetConditions/SetQueryPanelDialog.vue";
+import { formatFilterConditions } from "@/utils/util";
 const { queryEntityInfoByName } = useCommonStore();
 
 const props = defineProps({
@@ -130,28 +131,7 @@ const onSearch = (command) => {
 		equation: command,
 		items: [],
 	};
-    let tempItems = JSON.parse(JSON.stringify(compConditions.value.items));
-    tempItems.forEach(el => {
-        if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
-            el.value = el.value.replace(/\s/g, '');
-        }
-        // 如果是多引用类型 且不是 为空不为空
-        if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
-            let idFieldName = queryEntityInfoByName(props.entityName).idFieldName;
-            // 如果是本人、本部门
-            if(el.op == "REFD" || el.op == "REFU"){
-                el.value = idFieldName;
-            }
-            // 如果是包含
-            if(el.op == "REF"){
-                el.value2 = el.value;
-                el.value = idFieldName;
-            }
-        }
-        if(el.type == 'Cascader') {
-            el.value = JSON.stringify(el.value);
-        }
-    })
+    let tempItems = formatFilterConditions(JSON.parse(JSON.stringify(compConditions.value.items)), props.entityName);
 	newCompConditions.items = tempItems.filter(
 		(el) =>
 			(el.value !== undefined && el.value !== null && el.value !== "") ||

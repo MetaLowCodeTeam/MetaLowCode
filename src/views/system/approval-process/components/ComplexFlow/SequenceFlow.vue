@@ -21,6 +21,9 @@
 <script setup>
 import { onMounted, ref, reactive, watch, watchEffect} from "vue";
 import { useRouter } from "vue-router";
+import { formatFilterConditions } from "@/utils/util";
+import useCommonStore from "@/store/modules/common";
+const { queryEntityNameByCode } = useCommonStore();
 const Router = useRouter();
 const props = defineProps({
     formData: { Type: Object, default: () => {} },
@@ -33,6 +36,8 @@ let myFormData = ref({
         equation: "",
         items: [],
     },
+    // 实体名称
+    entityName: "",
 });
 
 let conditionConf = ref({});
@@ -47,24 +52,38 @@ watch(
     { deep: true }
 );
 
-
-
-watch(
-    () => conditionConf.value,
-    () => {
-        emits("setNodeData", { filter: conditionConf.value });
-    },
-    { deep: true }
-);
-
 let entityCode = ref("");
+let entityName = ref("");
 
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;
+    entityName.value = queryEntityNameByCode(entityCode.value);
     myFormData.value = Object.assign(myFormData.value, props.formData);
     let { filter } = JSON.parse(JSON.stringify(myFormData.value));
     conditionConf.value = initFilter(filter);
 });
+
+watch(
+    () => conditionConf.value,
+    () => {
+        // console.log(conditionConf.value,'conditionConf.value')
+        // if(conditionConf.value.items) {
+        //     conditionConf.value.items = formatFilterConditions(JSON.parse(JSON.stringify(conditionConf.value.items)), entityCode.value);
+        // }
+        // console.log(props.entityName,'props.entityName')
+        let { equation, items, type } = conditionConf.value;
+        emits("setNodeData", { filter: {
+            equation,
+            items: formatFilterConditions(JSON.parse(JSON.stringify(items)), entityName.value),
+            type,
+        } });
+    },
+    { deep: true }
+);
+
+
+
+
 const initFilter = (filter) => {
     let { equation } = filter;
     if (!equation || equation === "OR") {
