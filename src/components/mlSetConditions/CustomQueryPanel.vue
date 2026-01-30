@@ -73,6 +73,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
+import { formatFilterConditions } from "@/utils/util";
 const props = defineProps({
     entityName: { type: String, default: "" },
     // 禁止用户修改字段
@@ -127,34 +128,7 @@ const onSearch = (command) => {
 		equation: command,
 		items: [],
 	};
-    let tempItems = JSON.parse(JSON.stringify(compConditions.value.items));
-    tempItems.forEach(el => {
-        if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
-            el.value = el.value.replace(/\s/g, '');
-        }
-        // 如果是多引用类型 且不是 为空不为空
-        if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
-            const { queryEntityInfoByName } = useCommonStore();
-            let idFieldName = queryEntityInfoByName(props.entityName).idFieldName;
-            // 如果是本人、本部门
-            if(el.op == "REFD" || el.op == "REFU"){
-                el.value = idFieldName;
-            }
-            // 如果是包含
-            if(el.op == "REF"){
-                el.value2 = el.value;
-                el.value = idFieldName;
-            }
-        }
-        if(el.type == "DateTime" || el.type == "Date"){
-            if(el.value == 0) {
-                el.value = null;
-            }
-            if(el.value2 == 0) {
-                el.value2 = null;
-            }
-        }
-    })
+    let tempItems = formatFilterConditions(JSON.parse(JSON.stringify(compConditions.value.items)), props.entityName);
 	newCompConditions.items = tempItems.filter(
 		(el) =>
 			(el.value !== undefined && el.value !== null && el.value !== "") ||

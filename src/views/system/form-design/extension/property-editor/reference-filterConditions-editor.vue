@@ -223,6 +223,10 @@ export default {
 				"CUM",
 				"CUQ",
 				"CUY",
+                "REFD",
+                "REFU",
+                "REFNL",
+                "REFNT",
 			],
             subFormName: "",
 		};

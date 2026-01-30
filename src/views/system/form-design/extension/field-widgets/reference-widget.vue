@@ -449,7 +449,18 @@ export default {
                     // 如果是单选
                     if(fieldType == "radio"){
                         el.value = fieldValue || false;
-                    }else {
+                    } 
+                    // 如果是多引用
+                    else if (fieldType == "reference-list") {
+                        if(!fieldValue || fieldValue.length == 0){
+                            this.$message.error("请填写：" + fieldLabel);
+                            return false;
+                        }
+                        const { queryEntityInfoByName } = useCommonStore();
+                        let idFieldName = queryEntityInfoByName(this.field.refEntities).idFieldName;
+                        el.value = idFieldName;
+                        el.value2 = fieldValue.map(item => item.id).join(',');
+                    } else {
                         if(!fieldValue){
                             this.$message.error("请填写：" + fieldLabel);
                             return false;
