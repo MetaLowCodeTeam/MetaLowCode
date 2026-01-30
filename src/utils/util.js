@@ -517,15 +517,13 @@ export const formatFilterConditions = (data, entityName) => {
                 el.value = el.value.replace(/\s/g, '');
             }
             // 如果是多引用类型 且不是 为空不为空
-            if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
+            if(el.type == 'ReferenceList'){
                 const { queryEntityInfoByName } = useCommonStore();
                 let idFieldName = queryEntityInfoByName(entityName).idFieldName;
-                // 如果是本人、本部门
-                if(el.op == "REFD" || el.op == "REFU"){
+                // 如果不是包含
+                if(el.op != 'REF'){
                     el.value = idFieldName;
-                }
-                // 如果是包含
-                if(el.op == "REF"){
+                }else {
                     el.value2 = el.value;
                     el.value = idFieldName;
                 }
