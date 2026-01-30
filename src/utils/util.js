@@ -8,6 +8,7 @@ import JSEncrypt from 'jsencrypt';
 import http from "@/utils/request";
 import { RuleFunctions } from "@/utils/ruleFunctions";
 import { ElMessage } from 'element-plus';
+import useCommonStore from "@/store/modules/common";
 
 // 注册插件
 dayjs.extend(updateLocale);
@@ -472,6 +473,10 @@ const op_no_value = [
     "CUM",
     "CUQ",
     "CUY",
+    "REFD",
+    "REFU",
+    "REFNL",
+    "REFNT",
 ];
 // 检测条件值
 export const checkConditionList = (data) => {
@@ -486,6 +491,11 @@ export const checkConditionList = (data) => {
                 flag = false;
                 el.isError = true;
             }
+            // 如果是引用 且 没有值
+            if(el.op == "REF" && (!el.value || !el.value2)){
+                flag = false;
+                el.isError = true;
+            }
             // 区间
             if (el.op === "BW" && (!el.value || !el.value2)) {
                 flag = false;
@@ -497,6 +507,44 @@ export const checkConditionList = (data) => {
         }
     }
     return flag;
+}
+
+// 格式化过滤条件
+export const formatFilterConditions = (data, entityName) => {
+    if (data.length > 0) {
+       data.forEach(el => {
+            if(el.value && typeof el.value == 'string' && el.type !== "DateTime" && el.type !== "Date") {
+                el.value = el.value.replace(/\s/g, '');
+            }
+            // 如果是多引用类型 且不是 为空不为空
+            if(el.type == 'ReferenceList' && el.op != 'NL' && el.op != 'NT'){
+                const { queryEntityInfoByName } = useCommonStore();
+                let idFieldName = queryEntityInfoByName(entityName).idFieldName;
+                // 如果是本人、本部门
+                if(el.op == "REFD" || el.op == "REFU"){
+                    el.value = idFieldName;
+                }
+                // 如果是包含
+                if(el.op == "REF"){
+                    el.value2 = el.value;
+                    el.value = idFieldName;
+                }
+            }
+            if(el.type == 'Cascader') {
+                el.value = JSON.stringify(el.value);
+            }
+            // 时间类型可以包含0，2025-11-12 注释。 比如0天后 0月后
+            // if(el.type == "DateTime" || el.type == "Date"){  
+            //     if(el.value == 0) {
+            //         el.value = null;
+            //     }
+            //     if(el.value2 == 0) {
+            //         el.value2 = null;
+            //     }
+            // }
+        })
+    }
+    return data;
 }
 
 // 是否区分顶部导航和左侧导航 默认false 不区分
