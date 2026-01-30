@@ -42,6 +42,7 @@ import QrcodeVue from 'qrcode.vue'
 // 集成ParkIcons图标
 import * as ParkIcons from '@icon-park/vue-next';
 import {Popup, Picker, PickerGroup, DatePicker, TimePicker, Cascader, Checkbox, Icon} from 'vant'
+import UserAccountGroup from '@/views/user/components/UserAccountGroup.vue'
 export default {
 	install(app) {
 		//挂载全局对象
@@ -89,6 +90,8 @@ export default {
 		app.component('scQrCode', scQrCode);
 		app.component('SimpleTable', SimpleTable)
 		app.component('SvgIcon', SvgIcon)
+        // 注册用户账号组组件
+        app.component('UserAccountGroup', UserAccountGroup)
 
 
 		//注册全局指令

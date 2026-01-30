@@ -158,6 +158,7 @@
                 <el-dropdown-menu>
                     <el-dropdown-item command="uc">帐号信息</el-dropdown-item>
                     <el-dropdown-item command="clearCache">清除缓存</el-dropdown-item>
+                    <el-dropdown-item v-if="ownerAccountGroup" command="changeUser">切换用户</el-dropdown-item>
                     <el-dropdown-item divided command="outLogin">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
@@ -183,6 +184,8 @@
     </div>
     <!-- 顶部导航设置 -->
     <setTopMenu v-model="setTopMenuDialogIsShow"/>
+    <!-- 切换用户 -->
+    <mlSelectUser ref="selectUserDialogRefs" />
 </template>
 
 <script setup>
@@ -200,6 +203,7 @@ import Detail from "@/views/customize-menu/detail.vue";
 import mlApprove from "@/components/mlApprove/index.vue";
 import setTopMenu from './setTopMenu.vue';
 import useCheckStatusStore from "@/store/modules/checkStatus";
+import mlSelectUser from "@/components/mlSelectUser/index2.vue";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { setCollectMenuList } = useLayoutConfigStore();
@@ -231,6 +235,7 @@ let tasksVisible = ref(false);
 let msg = ref(false);
 let msgList = ref([]);
 let msgLoading = ref(false);
+let ownerAccountGroup = ref("");
 
 // 顶部导航设置弹框
 let setTopMenuDialogIsShow = ref(false);
@@ -244,12 +249,17 @@ onMounted(() => {
         return;
     }
     userName.value = userInfo.userName;
+    ownerAccountGroup.value = userInfo.ownerAccountGroup || "";
     userId.value = userInfo.userId;
     userNameF.value = userName.value.substring(0, 1);
     currenFullPath.value = router.currentRoute.value.fullPath;
 });
 
-
+// 切换用户
+let selectUserDialogRefs = ref(null);
+const openSelectUserDialog = () => {
+    selectUserDialogRefs.value.openDialog();
+}
 
 //个人信息
 const handleUser = (command) => {
@@ -309,6 +319,9 @@ const handleUser = (command) => {
             .catch(() => {
                 //取消退出
             });
+    }
+    if (command == "changeUser") {
+        openSelectUserDialog();
     }
 };
 

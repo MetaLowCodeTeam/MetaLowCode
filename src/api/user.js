@@ -157,3 +157,23 @@ export function sendSMSCode(mobilePhone, imgCode) {
 export function codeLogin(body) {
     return request.post("/user/codeLogin", body)
 }
+
+// 查询用户组用户
+export function queryGroupUserList(userId) {
+    return request.get(`/userAccountGroup/queryGroupUserList?userId=${userId}`)
+}
+
+// 绑定用户组
+export function bindUserGroup(userId, bindUserId) {
+    return request.get(`/userAccountGroup/bindUserGroup?userId=${userId}&bindUserId=${bindUserId}`)
+}
+
+// 退出组用户
+export function exitUserGroup(userId) {
+    return request.get(`/userAccountGroup/exitUserGroup?userId=${userId}`)
+}
+
+// 切换用户
+export function switchUserOfAccountGroup(userId) {
+    return request.get(`/userAccountGroup/switchUserOfAccountGroup?userId=${userId}`)
+}
