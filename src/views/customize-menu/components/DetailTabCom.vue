@@ -167,7 +167,8 @@ const props = defineProps({
     entityId: { type: String, default: "" },
     idFieldName: { type: String, default: "" },
     tabs: { type: Object, default: () => {} },
-    cutTabIndex: { type: String, default: "0" }
+    cutTabIndex: { type: String, default: "0" },
+    recordData: { type: Object, default: () => {} }
 });
 const emits = defineEmits(['closeDialog','addRow'])
 const $API = inject("$API");
@@ -457,6 +458,39 @@ const refreshData = () => {
     getTableList();
 };
 
+const replacePlaceholders = (sql, recordData) => {
+    const regex = /\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}/g;
+    
+    return sql.replace(regex, (match, fieldName) => {
+        const value = recordData[fieldName];
+        
+        if (value === null || value === undefined) {
+            return 'NULL';
+        }
+        
+        let extractedValue = value;
+        
+        if (typeof value === 'object' && value !== null) {
+            if (value.id) {
+                extractedValue = value.id;
+            } else if (value.value !== undefined) {
+                extractedValue = value.value;
+            } else {
+                return 'NULL';
+            }
+        }
+        
+        if (typeof extractedValue === 'string') {
+            return `'${extractedValue}'`;
+        } else if (typeof extractedValue === 'number') {
+            return extractedValue.toString();
+        } else if (typeof extractedValue === 'boolean') {
+            return extractedValue ? '1' : '0';
+        }
+        
+        return 'NULL';
+    });
+};
 
 let layoutJson = ref(null);
 let optionData = ref({});
@@ -493,8 +527,7 @@ const getTableList = async () => {
     }
     // 是自定义标签
     if(curtTab.value.isCustomLabel) {
-        const regex = new RegExp(`{${props.idFieldName}}`, 'g');
-        filterEasySql = curtTab.value.filterEasySql.replace(regex,`'${props.entityId}'`);
+        filterEasySql = replacePlaceholders(curtTab.value.filterEasySql, props.recordData);
         filter = {};
        
     }else {

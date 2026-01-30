@@ -122,6 +122,7 @@
                                     :cutTabIndex="cutTabIndex"
                                     :entityId="detailId"
                                     :idFieldName="idFieldName"
+                                    :recordData="globalDsv.recordData"
                                     @closeDialog="closeDialog"
                                     @addRow="onAdd"
                                 />

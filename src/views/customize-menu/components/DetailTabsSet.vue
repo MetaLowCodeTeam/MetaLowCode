@@ -135,7 +135,7 @@
                     />
                 </el-form-item>
                 <!-- 是否隐藏新建 -->
-                <el-form-item label="是否隐藏新建" v-if="!editColumnDialogData.isCustomComponent">
+                <el-form-item label="是否隐藏新建" v-if="!editColumnDialogData.isCustomComponent && !editColumnDialogData.isCustomLabel">
                     <el-checkbox v-model="editColumnDialogData.isHideNew">
                     </el-checkbox>
                 </el-form-item>
@@ -186,7 +186,7 @@
                         clearable
                     />
                 </el-form-item>
-                <el-form-item v-if="editColumnDialogData.isCustomComponent">
+                <el-form-item v-if="editColumnDialogData.isCustomComponent ">
 					<el-checkbox
 						label="是否在PC端显示"
 						v-model="editColumnDialogData.pcShow"
@@ -297,7 +297,7 @@ const formatShowColumn = () => {
     if(props.applyType == 'TAB') {
         columnList.value.push(
             {
-                entityLabel: "自定义标签",
+                entityLabel: "自定义页签",
                 entityName: "customLabel",
             },
             {
@@ -362,7 +362,7 @@ const editColumn = async (column, inx) => {
         }, 
         editObj
     );
-    if(column.isCustomComponent) {
+    if(column.isCustomComponent || column.isCustomLabel) {
         editColumnDialogLoading.value = false;
         return;
     }
