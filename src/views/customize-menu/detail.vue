@@ -108,6 +108,7 @@
                                     v-if="componentExists(cutTab.split('_').pop())"
                                     :is="cutTab.split('_').pop()"
                                     :recordId="detailId"
+                                    :recordData="globalDsv.recordData"
                                     ref="customComponentRefs"
                                 />
                                 <el-empty v-else :description="'组件【'+ cutTab.split('_').pop() +'】不存在，请确认该组件是否已全局注册'" />

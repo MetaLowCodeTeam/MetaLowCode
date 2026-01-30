@@ -59,6 +59,7 @@
 				:page-size="pagination.limit"
 				:page-sizes="pagination.sizes"
 				:total="pagination.total"
+                pager-count="3"
 				layout="total, sizes, prev, pager, next, jumper"
 			>
 			</el-pagination>
