@@ -878,11 +878,13 @@ const initData = async (seq) => {
         recordApproval.value = recordApprovalRes.data;
         globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
         let taskChildNodes = recordApprovalRes.data?.taskChildNodes || [];
-        let taskConfig = taskChildNodes[0];
-        if(taskConfig.wfUseTask) {
-            taskConfig = Object.assign(taskConfig, taskConfig.wfUseTask);
+        if(taskChildNodes.length > 0) {
+            let taskConfig = taskChildNodes[0];
+            if(taskConfig.wfUseTask) {
+                taskConfig = Object.assign(taskConfig, taskConfig.wfUseTask);
+            }
+            taskQueryFormLayoutId = taskConfig?.queryFormLayoutId || "";
         }
-        taskQueryFormLayoutId = taskConfig?.queryFormLayoutId || "";
     }
 	let res = await getFormLayout(entityName.value, taskQueryFormLayoutId || (formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId));
     if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
