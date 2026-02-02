@@ -346,6 +346,7 @@
             </div>
         </template>
         <template v-else>
+            <!-- 列表的 -->
             <div class="ml-conditions-list-box">
                 <el-row class="ml-conditions-list" :gutter="20">
                     <el-col 
@@ -364,11 +365,13 @@
                                         icon="EditPen" 
                                         class="edit-alias-btn"
                                         size="small"
-                                        @click="editAlias(item)"
+                                        @click="editAlias(item, inx)"
+                                        v-if="$TOOL.checkRole('r6008')"
                                     ></el-button>
                                 </div>
                                 <div class="field-label" v-else>
                                     <el-input 
+                                        :ref="el => setAliasInputRef(el, inx)"
                                         v-model="item.aliasLabel" 
                                         size="default" 
                                         @blur="saveAlias(item)"
@@ -829,6 +832,8 @@ export default {
                 "REFU",
                 "REFNT",
             ],
+            // 别名输入框引用
+            aliasInputRefs: [],
         };
     },
     watch: {
@@ -1179,8 +1184,20 @@ export default {
             }
         },
         // 编辑别名
-        editAlias(item) {
+        editAlias(item, inx) {
             item.showEditAlias = true;
+            this.$nextTick(() => {
+                const inputEl = this.aliasInputRefs?.[inx];
+                if (inputEl) {
+                    inputEl.focus();
+                }
+            });
+        },
+        // 设置别名输入框引用
+        setAliasInputRef(el, inx) {
+            if (el) {
+                this.aliasInputRefs[inx] = el;
+            }
         },
         // 保存别名
         saveAlias(item) {
