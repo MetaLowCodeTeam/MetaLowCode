@@ -721,7 +721,7 @@ const initFormLayout = async () => {
                                 vFormRef.value?.disableWidgets([row.refEntityBindingField]);
                             }
                             // 非必填字段
-                            if(props.notRequiredFields && props.notRequiredFields.length > 0){11
+                            if(props.notRequiredFields && props.notRequiredFields.length > 0){
                                 vFormRef.value?.setWidgetsRequired(props.notRequiredFields, false);
                             }
 							vFormRef.value?.reloadOptionData();
