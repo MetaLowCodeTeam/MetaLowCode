@@ -1885,7 +1885,8 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
     isOtherEntity.value = false;
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
     if(isReferenceComp){
-        if(!detailEntityFlag && !myFormEntityId.value){
+        // 如果是列表子表单是从实体 或者是引用的实体  并切 没有主记录ID
+        if((detailEntityFlag || refEntityBindingField) && !myFormEntityId.value) {
             ElMessage.error("主表单未保存，不能新建关联引用记录。")
             return
         }
