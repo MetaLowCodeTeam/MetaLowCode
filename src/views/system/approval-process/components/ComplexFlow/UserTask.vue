@@ -445,11 +445,26 @@
                 <h3>表单设置</h3>
             </template>
             <div class="work-flow-conditions">
-                <div class="label-title mb-5">指定表单</div>
+                <div class="label-title mb-5">指定审批表单</div>
                 <div class="edit-field-list-box">
                     <el-select 
                         v-model="myFormData.formLayoutId" 
-                        placeholder="选择指定表单"
+                        placeholder="选择指定审批表单"
+                        class="w-100"
+                    >
+                        <el-option
+                            v-for="item in myFormList"
+                            :key="item.formLayoutId"
+                            :label="item.layoutName"
+                            :value="item.formLayoutId"
+                        />
+                    </el-select>
+                </div>
+                <div class="label-title mb-5 mt-10">指定查看详情表单</div>
+                <div class="edit-field-list-box">
+                    <el-select 
+                        v-model="myFormData.queryFormLayoutId" 
+                        placeholder="请选择指定查看详情表单"
                         class="w-100"
                     >
                         <el-option

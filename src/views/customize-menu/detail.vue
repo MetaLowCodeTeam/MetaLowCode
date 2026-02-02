@@ -870,7 +870,21 @@ const initData = async (seq) => {
     const curSeq = seq ?? detailLoadSeq.value;
 	loading.value = true;
     haveLayoutJson.value = false;
-	let res = await getFormLayout(entityName.value, formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId);
+    // 获取审批信息
+    let recordApprovalRes = await getRecordApprovalState(detailId.value);
+    if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
+    let taskQueryFormLayoutId = "";
+    if(recordApprovalRes){
+        recordApproval.value = recordApprovalRes.data;
+        globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
+        let taskChildNodes = recordApprovalRes.data?.taskChildNodes || [];
+        let taskConfig = taskChildNodes[0];
+        if(taskConfig.wfUseTask) {
+            taskConfig = Object.assign(taskConfig, taskConfig.wfUseTask);
+        }
+        taskQueryFormLayoutId = taskConfig?.queryFormLayoutId || "";
+    }
+	let res = await getFormLayout(entityName.value, taskQueryFormLayoutId || (formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId));
     if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
         loading.value = false;
         return;
@@ -893,13 +907,6 @@ const initData = async (seq) => {
 				globalDsv.value.formStatus = 'read';
 				globalDsv.value.formEntityId = detailId.value;
                 globalDsv.value.openDetailDialog = openDialog;
-                // 获取审批信息
-                let recordApprovalRes = await getRecordApprovalState(detailId.value);
-                if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) return;
-                if(recordApprovalRes){
-                    recordApproval.value = recordApprovalRes.data;
-                    globalDsv.value.flowVariables = recordApprovalRes.data?.flowVariables;
-                }
                 vFormRef.value?.setFormJson(res.data.layoutJson);
                 let buildFormFieldSchema = formatQueryByIdParam(vFormRef.value?.buildFormFieldSchema());
 				let queryByIdRes = await queryById(detailId.value, buildFormFieldSchema.fieldNames, { queryDetailList: buildFormFieldSchema.queryDetailList });
