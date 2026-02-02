@@ -173,6 +173,8 @@ let loading = ref(false);
 let defaultValue = ref([]);
 // 搜索值
 let keyword = ref("");
+// 是否是程序触发的勾选（避免触发自动关闭）
+let isProgrammaticCheck = ref(false);
 // 页签
 let tabConfig = ref([
     {
@@ -228,6 +230,16 @@ const collectTreeIds = (nodes, acc = new Set()) => {
     });
     return acc;
 };
+const processTreeData = (nodes) => {
+    if (!Array.isArray(nodes)) return nodes;
+    nodes.forEach((n) => {
+        if (n && n.dingDepartmentId) {
+            n.id = n.id + "department";
+        }
+        if (Array.isArray(n?.children) && n.children.length > 0) processTreeData(n.children);
+    });
+    return nodes;
+};
 let cutTabItem = reactive({});
 watch(
     () => props.modelValue,
@@ -278,7 +290,7 @@ let getData = async () => {
     };
     // 当前tab
     cutTabItem = tabList.value.filter((el) => cutTabCode.value == el.name)[0];
-    // 当前默认选中的IDs
+    // 当前默认选中的IDs - 根据当前tab的itemId字段提取
     let cutSelectedIds = defaultValue.value
         ? defaultValue.value.map((el) => el.id)
         : [];
@@ -295,6 +307,10 @@ let getData = async () => {
     if (res) {
         if (isTreeMode.value) {
             tabData.value = res.data || [];
+            if(cutTabCode.value === 'User') {
+                tabData.value = processTreeData(tabData.value);
+            }
+            isProgrammaticCheck.value = true;
             // 默认勾选/高亮
             await nextTick();
             const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
@@ -308,6 +324,8 @@ let getData = async () => {
                     currentTreeRef.setCurrentKey && currentTreeRef.setCurrentKey(toCheck[0]);
                 }
             }
+            await nextTick();
+            isProgrammaticCheck.value = false;
         } else {
             tabData.value = (res.data || []).map((el) => {
                 el.isActive = false;
@@ -375,7 +393,9 @@ let selectUser = (item, tab) => {
 let handleTreeCheckChange = (data, checked, indeterminate) => {
     const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
     if (!currentTreeRef || !currentTreeRef.getCheckedNodes) return;
-    const nodes = currentTreeRef.getCheckedNodes(true); // 包含半选
+    // 部门需要包含父节点，用户只包含子节点
+    const leafOnly = cutTabCode.value === 'Department' ? false : true;
+    const nodes = currentTreeRef.getCheckedNodes(leafOnly);
     // 合并：保留其它Tab已选；仅用当前树的选择替换同域
     const presentIdSet = collectTreeIds(tabData.value);
     const others = (defaultValue.value || []).filter((v) => !presentIdSet.has(v.id));
@@ -385,11 +405,9 @@ let handleTreeCheckChange = (data, checked, indeterminate) => {
     emit("update:modelValue", defaultValue.value);
     emit("change", defaultValue.value);
 
-    // 如果是勾选了根节点（全选），则自动失焦关闭弹层，避免首行标签未即时渲染造成的观感问题
-    if (checked && isTreeMode.value) {
+    if (checked && isTreeMode.value && !isProgrammaticCheck.value) {
         const nodeRef = currentTreeRef.getNode && currentTreeRef.getNode(data);
-        const isRoot = nodeRef && nodeRef.level === 1; // 顶层根节点
-        // 根节点下有大量子项时，等 DOM 与 tag 渲染稳定后再关闭
+        const isRoot = nodeRef && nodeRef.level === 1;
         if (isRoot) {
             requestAnimationFrame(() => {
                 setTimeout(() => {

@@ -505,6 +505,7 @@ $--dialog-footer-bg-color: #fff;
 	&.isFullScreen {
 		height: 100vh;
 		margin-bottom: 0;
+        transform: translate(0px, 0px) !important;
         .el-dialog__body {
             height: calc(100% - 60px);
             
