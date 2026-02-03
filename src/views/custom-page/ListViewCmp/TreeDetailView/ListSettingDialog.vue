@@ -83,14 +83,14 @@
 					</el-checkbox>
 				</el-form-item>
 				<el-form-item
-					label="目录父子管理字段"
+					label="数据父子关联字段"
 					class="mb-10 is-required"
 					label-position="top"
 					v-if="settingDialog.config.dataShowTree"
 				>
 					<el-select
 						v-model="settingDialog.config.dataParentField"
-						placeholder="请选择目录父子管理字段"
+						placeholder="请选择数据父子关联字段"
 						filterable
 					>
 						<el-option
