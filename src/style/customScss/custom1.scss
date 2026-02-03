@@ -168,7 +168,7 @@ $--top-nav-text-color: #4b4a61;
                 background: none;
             }
         }
-        .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+        &.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
             position: relative;
             background: none;
             &::after {
