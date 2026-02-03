@@ -293,9 +293,9 @@
                 </div>
                 <div class="tree-group-box" v-else-if="treeGroupConf.isOpen && treeGroupConf.groupType == 2">
                     <ListRefFieldGroupFilter 
-                    :treeGroupConf="treeGroupConf" 
-                    @changeOtherFilters="changeOtherFilters"
-                    @nodeClick="treeGroupFilterNodeClick"
+                        :treeGroupConf="treeGroupConf" 
+                        @changeOtherFilters="changeOtherFilters"
+                        @nodeClick="treeGroupFilterNodeClick"
                     />
                 </div>
                 <div class="tree-group-box" v-else-if="customListType == 'treeGroupList'">
