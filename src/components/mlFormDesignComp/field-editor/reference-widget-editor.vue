@@ -444,38 +444,8 @@ export default {
 <style lang="scss" scoped>
 @use "@/style/form-layout/field-editor-common.scss";
 
-/* 注意：当el-dialog设置append-to-body为true后，scoped样式无法应用到el-dialog组件！！ */
-/*
-.refer-entity-dialog,
-.entity-list-dialog {
-    :deep(.el-dialog__header) {
-        padding: 15px 15px 3px;
-    }
-
-    :deep(.el-dialog__body) {
-        padding: 6px !important;
-    }
-
-    .table-main-wrapper {
-        padding: 6px !important;
-    }
-}
-*/
 </style>
 
 <style lang="scss">
-.refer-entity-dialog,
-.entity-list-dialog {
-	.el-dialog__header {
-		padding: 15px 15px 3px;
-	}
 
-	.el-dialog__body {
-		padding: 6px !important;
-	}
-
-	.table-main-wrapper {
-		padding: 6px !important;
-	}
-}
 </style>

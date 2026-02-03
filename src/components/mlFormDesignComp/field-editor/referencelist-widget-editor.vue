@@ -535,15 +535,4 @@ export default {
 <style lang="scss" scoped>
 @use "@/style/form-layout/field-editor-common.scss";
 
-.refer-entity-dialog,
-.entity-list-dialog {
-    :deep(.el-dialog__header) {
-        padding: 15px;
-        padding-bottom: 3px;
-    }
-
-    :deep(.el-dialog__body) {
-        padding: 6px !important;
-    }
-}
 </style>
