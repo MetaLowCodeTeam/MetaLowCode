@@ -143,7 +143,11 @@
             </div>
         </div>
     </div>
-    <Detail ref="detailRefs" @onConfirm="getTableList" />
+    <Detail
+        ref="detailRefs"
+        @onConfirm="getTableList"
+        :recordDetailFormId="computedRecordDetailFormId"
+    />
 </template>
 
 <script setup>
@@ -234,6 +238,22 @@ const tableMaxHeight = computed(() => {
     // return document.querySelector('.detail-tab-container').clientHeight - 240;
     // console.log(document.querySelector('.detail-tab-container'))
     return 'calc(100vh - 230px)';
+});
+
+// 计算属性：从 layoutConfig 中提取 pcDetailFormId
+const computedRecordDetailFormId = computed(() => {
+    let styleConf = {};
+    if (layoutConfig.value.STYLE && layoutConfig.value.STYLE.config) {
+        try {
+            styleConf = typeof layoutConfig.value.STYLE.config === 'string'
+                ? JSON.parse(layoutConfig.value.STYLE.config)
+                : layoutConfig.value.STYLE.config;
+        } catch (err) {
+            console.error('解析 STYLE 配置失败:', err);
+            return '';
+        }
+    }
+    return styleConf?.formConf?.pcDetailFormId || '';
 });
 
 // 卡片视图排序
@@ -390,7 +410,25 @@ const openDetailDialog = (row) => {
     if(!idFieldName.value){
         return
     }
-    detailRefs.value.openDialog(row[idFieldName.value]);
+
+    // 从 layoutConfig.STYLE.config 中解析配置
+    let styleConf = {};
+    if (layoutConfig.value.STYLE && layoutConfig.value.STYLE.config) {
+        try {
+            styleConf = typeof layoutConfig.value.STYLE.config === 'string'
+                ? JSON.parse(layoutConfig.value.STYLE.config)
+                : layoutConfig.value.STYLE.config;
+        } catch (err) {
+            console.error('解析 STYLE 配置失败:', err);
+            styleConf = {};
+        }
+    }
+
+    // 提取 pcDetailFormId 配置
+    const formId = styleConf?.formConf?.pcDetailFormId || '';
+
+    // 传递 formId 参数给 openDialog
+    detailRefs.value.openDialog(row[idFieldName.value], null, formId);
 };
 // 列排序
 const sortChange = (column) => {
