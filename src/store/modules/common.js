@@ -20,7 +20,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "1.8.451 20260203"
+        webVer: "2.0.1 20260204"
     });
 
     // 添加登录状态管理
@@ -152,10 +152,10 @@ const useCommonStore = defineStore('commonStore', () => {
         publicSetting.value[key] = value;
     }
     // 传入实体名称拿主实体或者明细实体CODE
-    const queryEntityCodeByEntityName = (name) => {
+    const queryEntityCodeByEntityName = (name, detailEntityFlag = false) => {
         let entity = allEntityList.value.filter(el => el.name == name);
         if (entity.length > 0) {
-            return entity[0].detailEntityFlag ? entity[0].mainEntityCode : entity[0].entityCode;
+            return !detailEntityFlag && entity[0].detailEntityFlag ? entity[0].mainEntityCode : entity[0].entityCode;
         }
         return "";
     }

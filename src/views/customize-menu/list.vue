@@ -941,21 +941,26 @@ const formatReferenceEntity = () => {
 
 // 使用计算属性获取路由信息
 const routeInfo = computed(() => {
-    const { params, query, meta } = router.currentRoute.value;
-    return {
-        params: { ...params },
-        query: { ...query },
-        meta: { ...meta },
-        entityName: params?.entityname || query?.entity,
-        entityCode: queryEntityCodeByEntityName(params?.entityname || query?.entity) || meta?.entityCode
-    };
+	const { params, query, meta } = router.currentRoute.value;
+	let paramsEntityCode = null;
+	if (params?.entityname || query?.entity) {
+		paramsEntityCode = queryEntityCodeByEntityName(
+			params?.entityname || query?.entity,
+            true,
+		);
+	}
+	return {
+		params: { ...params },
+		query: { ...query },
+		meta: { ...meta },
+		entityName: params?.entityname || query?.entity,
+		entityCode: meta?.entityCode || paramsEntityCode,
+	};
 });
-
 
 
 onBeforeMount(() => {
     const info = routeInfo.value;
-    
     if (info.entityName) {
         entityCode.value = info.entityCode || '';
         entityName.value = info.entityName || '';
