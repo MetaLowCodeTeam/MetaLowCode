@@ -390,7 +390,20 @@ const openDetailDialog = (row) => {
     if(!idFieldName.value){
         return
     }
-    detailRefs.value.openDialog(row[idFieldName.value]);
+     // 解析 STYLE 配置
+	let rowStyleConf = {};
+	if(layoutConfig.value?.STYLE?.config) {
+		try {
+			rowStyleConf = typeof layoutConfig.value.STYLE.config === 'string'
+				? JSON.parse(layoutConfig.value.STYLE.config)
+				: layoutConfig.value.STYLE.config;
+		} catch(err) {
+			console.error('解析 STYLE 配置失败:', err);
+			rowStyleConf = {};
+		}
+	}
+    let formId = rowStyleConf?.formConf?.pcDetailFormId || "";
+    detailRefs.value.openDialog(row[idFieldName.value], null, formId);
 };
 // 列排序
 const sortChange = (column) => {

@@ -5,7 +5,7 @@
     <el-container v-loading="loading" element-loading-text="加载中...">
         <el-aside width="280px">
             <div class="fields-list">
-                <div class="fields-list-header">实体列表</div>
+                <div class="fields-list-header">功能模块</div>
                 <div class="fields-list-search">
                     <el-input v-model="searchValue" class="no-border" placeholder="输入关键词进行搜索..." clearable/>
                 </div>
@@ -15,11 +15,11 @@
                             class="fields-list-item text-ellipsis"
                             :class="{'is-active': defaultCode === 'all'}"
                             @click="fieldCheck({
-                            label: '全部实体',
+                            label: '全部模块',
                             entityCode: 'all',
                         })"
-                            title="全部实体"
-                        >全部实体</div>
+                            title="全部模块"
+                        >全部模块</div>
                         <div
                             class="fields-list-item text-ellipsis"
                             v-for="(field,inx) of entityList.filter(el => allEntityLabel[el.entityCode]?.indexOf(searchValue) > -1)"
