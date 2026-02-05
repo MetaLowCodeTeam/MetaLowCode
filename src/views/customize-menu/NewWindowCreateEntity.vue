@@ -96,6 +96,17 @@ onMounted(() => {
 	entity.value = router.currentRoute.value.params.entityName;
 	formId.value = router.currentRoute.value.query.formId;
     recordId.value = null;
+
+    // 保存关联字段信息到 globalDsv，用于表单初始化时自动填充
+	const fieldName = router.currentRoute.value.query.fieldName || '';
+	const fieldNameVale = router.currentRoute.value.query.fieldNameVale || '';
+	const fieldNameLabel = router.currentRoute.value.query.fieldNameLabel || '';
+	if(fieldName && fieldNameVale) {
+		globalDsv.value.relatedFieldName = fieldName;
+		globalDsv.value.relatedFieldValue = fieldNameVale;
+		globalDsv.value.relatedFieldLabel = fieldNameLabel;
+	}
+
 	// 加载表单
 	loadForm();
 });
@@ -157,6 +168,14 @@ const loadForm = async () => {
                         })
                     }
                 }
+                // 处理关联字段自动填充
+				if(globalDsv.value.relatedFieldName && globalDsv.value.relatedFieldValue) {
+					const relatedFieldData = {};
+					relatedFieldData[globalDsv.value.relatedFieldName] = globalDsv.value.relatedFieldValue;
+					nextTick(() => {
+						vFormRef.value?.setFormData(relatedFieldData);
+					});
+				}
 			});
 		}
 	}

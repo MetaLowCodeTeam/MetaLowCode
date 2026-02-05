@@ -1008,16 +1008,58 @@ const onAdd = (e, outerLayoutConfig) => {
 	tempV.fieldNameVale = detailId.value;
 	tempV.fieldNameLabel = detailName.value;
 	tempV.sourceRecord = multipleSelection.value[0];
-    if(e.formId) {
-        tempV.formId = e.formId;
-    }
-    if(e.localDsv) {
-        tempV.localDsv = e.localDsv;
-    }
-    if(outerLayoutConfig) {
-        myLayoutConfig.value = {...outerLayoutConfig};
-    }
-    editRefs.value.openDialog(tempV);
+    // 解析 STYLE 配置
+	let rowStyleConf = {};
+	if(outerLayoutConfig?.STYLE?.config) {
+		try {
+			rowStyleConf = typeof outerLayoutConfig.STYLE.config === 'string'
+				? JSON.parse(outerLayoutConfig.STYLE.config)
+				: outerLayoutConfig.STYLE.config;
+		} catch(err) {
+			console.error('解析 STYLE 配置失败:', err);
+			rowStyleConf = {};
+		}
+	}
+	// 检查是否配置了新页签打开新建
+	if(rowStyleConf.actionConf?.newTabOpenNew) {
+		// 保存 localDsv 到 localStorage
+		localStorage.setItem("NewWindowCreateEntityLocalDsv", JSON.stringify({
+			entity: e.entityName,
+			localDsv: e.localDsv || {},
+		}));
+		// 跳转到新窗口创建实体页面
+		router.push({
+			name: "NewWindowCreateEntity",
+			params: {
+				entityName: e.entityName,
+			},
+			query: {
+				entity: e.entityName,
+				type: "new",
+				// 优先级：事件参数 > STYLE.formConf.pcAddFormId
+				formId: e.formId || rowStyleConf.formConf?.pcAddFormId || '',
+				// 关联字段信息
+				fieldName: e.fieldName,
+				fieldNameVale: detailId.value,
+				fieldNameLabel: detailName.value,
+			}
+		});
+		return;
+	}
+	// 原有的弹窗打开逻辑
+	if(e.formId) {
+		tempV.formId = e.formId;
+	} else if(rowStyleConf.formConf?.pcAddFormId) {
+		// 如果没有从事件传入 formId，使用配置的表单ID
+		tempV.formId = rowStyleConf.formConf.pcAddFormId;
+	}
+	if(e.localDsv) {
+		tempV.localDsv = e.localDsv;
+	}
+	if(outerLayoutConfig) {
+		myLayoutConfig.value = {...outerLayoutConfig};
+	}
+	editRefs.value.openDialog(tempV);
 };
 
 

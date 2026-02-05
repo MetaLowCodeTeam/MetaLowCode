@@ -37,7 +37,7 @@
                 <div class="w-100 mt-5">
                     <ul class="upload-ui">
                         <li>有合并单元格的数据请处理过后再上传，否则可能出现表头识别有误</li>
-                        <li>系统默认仅识别第一个 SHEET，且会将首行识别为表头</li>
+                        <li style="font-weight: 600;">系统默认仅识别第一个 SHEET，且会将首行识别为表头，第二行起应为导入的数据内容</li>
                         <li>
                             主实体与明细实体请分别导入
                         </li>
@@ -50,7 +50,7 @@
                     <el-radio :value="2">跳过</el-radio>
                     <el-radio :value="3">仍旧导入</el-radio>
                 </el-radio-group>
-                <div class="sm-title w-100 mt-5" v-if="fromData.repeatOpt != 3">
+                <div class="sm-title w-100" v-if="fromData.repeatOpt != 3">
                     重复判断字段
                     <el-tooltip
                         class="sm-tip"

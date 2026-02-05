@@ -221,7 +221,21 @@ const openDrawer = (data) => {
     drawerTitle.value = data.text?.value;
     drawerData.value.formData = {};
     if (data.properties?.flowJson) {
-        drawerData.value.formData = getProperties(data.properties.flowJson);
+        if(data.type == 'bpmn:sequenceFlow') {
+            let flowJson = getProperties(data.properties.flowJson);
+            if(flowJson?.filter.items.length > 0) {
+                flowJson.filter.items.forEach(item => {
+                    if(item.type == 'ReferenceList') {
+                        let newValue = item.value2;
+                        item.value = newValue;
+                        item.value2 = '';
+                    }
+                })
+            }
+            drawerData.value.formData = cloneDeep(flowJson);
+        }else {
+            drawerData.value.formData = getProperties(data.properties.flowJson);
+        }
     } else {
         drawerData.value.formData = initNodeFlowJson(data);
     }
@@ -401,6 +415,7 @@ const onSave = async () => {
     for (let index = 0; index < edges.length; index++) {
         const el = edges[index];
         let properties;
+        
         if (!el.properties.flowJson) {
             setProperties(el.type, el.id, NodeDefaultData[el.type]);
             properties = { ...NodeDefaultData[el.type] };
