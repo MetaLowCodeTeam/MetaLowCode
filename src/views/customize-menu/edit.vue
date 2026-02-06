@@ -3,16 +3,16 @@
         :title="editParamConf.customDialogTitle || row.customDialogTitle || styleConf?.newDialogConfig?.editTitle || row.dialogTitle"
         v-if="isShow"
         v-model="isShow"
-        :width="styleConf?.newDialogConfig?.editWidth || '55%'"
+        :width="customDialogConfig.width || styleConf?.newDialogConfig?.editWidth || '55%'"
         draggable
         :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf?.showFullScreen"
         :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf?.autoFullScreen"
         append-to-body
         bodyNoPadding
         :showClose="!loading"
-        :scrollbarHeight="styleConf?.newDialogConfig?.editHeight || ''"
-        :scrollbarMaxHeight="styleConf?.newDialogConfig?.editMaxHeight || '500px'"
-        :scrollbarMinHeight="styleConf?.newDialogConfig?.editMinHeight"
+        :scrollbarHeight="customDialogConfig.height || styleConf?.newDialogConfig?.editHeight || ''"
+        :scrollbarMaxHeight="customDialogConfig.maxHeight || styleConf?.newDialogConfig?.editMaxHeight || '500px'"
+        :scrollbarMinHeight="customDialogConfig.minHeight || styleConf?.newDialogConfig?.editMinHeight"
     >
         <div
             class="main fullScreen-man"
@@ -473,8 +473,17 @@ let defaultShowFooterButtonConfig = ref({
     showConfirmRefreshBtn: true,
     showConfirmAndSubmitBtn: true,
 });
+let defaultCustomDialogConfig = ref({
+    width: '',
+    height: '',
+    maxHeight: '',
+    minHeight: '',
+});
 
 let showFooterButtonConfig = ref({});
+
+// 自定义弹窗宽高
+let customDialogConfig = ref({});
 
 const openDialog = async (v) => {
     // 重置row对象，避免编辑和新建之间的数据污染
@@ -499,8 +508,11 @@ const openDialog = async (v) => {
         defaultFormData: {},
         actionType: "",
     });
-
+    // 自定义底部显示
     showFooterButtonConfig.value = Object.assign(JSON.parse(JSON.stringify(defaultShowFooterButtonConfig.value)), v.showFooterButtonConfig);
+    // 自定义弹窗宽高
+    customDialogConfig.value = Object.assign(JSON.parse(JSON.stringify(defaultCustomDialogConfig.value)), v.customDialogConfig);
+
     // 重置其他相关状态变量
     optionData.value = {};
     haveLayoutJson.value = false;
@@ -509,7 +521,7 @@ const openDialog = async (v) => {
     formId.value = "";
     isShowSaveAndSubmit.value = false;
     paramDialogConf.value = null;
-
+ 
     // 重置globalDsv为默认状态
     globalDsv.value = globalDsvDefaultData();
 

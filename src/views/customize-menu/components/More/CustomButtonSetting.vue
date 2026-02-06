@@ -974,7 +974,7 @@ const getCustomRightList = async () => {
 };
 
 // 打开脚本弹窗
-const isShowScriptDialog = ref(false);
+const isShowScriptDialog = ref(false);　
 let customScript = ref("");
 let currentKey = ref("");
 
@@ -984,10 +984,36 @@ const openScriptDialog = (key) => {
 	currentKey.value = key;
 	customScript.value = currentButton.value[key];
 };
+/**
+ * 检测 JavaScript 语法错误
+ * @param {string} code - 要检测的 JavaScript 代码
+ * @returns {{ valid: boolean, error: string | null }} - 返回检测结果
+ */
+const validateJsSyntax = (code) => {
+    if (!code || !code.trim()) {
+        return { valid: true, error: null };
+    }
+    try {
+        // 使用 Function 构造器来检测语法错误
+        new Function(code);
+        return { valid: true, error: null };
+    } catch (e) {
+        // 解析错误信息，提取行号和错误描述
+        let errorMessage = e.message || '未知语法错误';
+        return { valid: false, error: errorMessage };
+    }
+};
+
 // 确认脚本
 const saveScript = () => {
-	isShowScriptDialog.value = false;
-	currentButton.value[currentKey.value] = customScript.value;
+    // 检测 JavaScript 语法
+    const { valid, error } = validateJsSyntax(customScript.value);
+    if (!valid) {
+        ElMessage.error(`脚本语法错误: ${error}`);
+        return;
+    }
+    isShowScriptDialog.value = false;
+    currentButton.value[currentKey.value] = customScript.value;
 };
 // 关闭脚本弹窗
 const closeScriptDialog = () => {
