@@ -135,7 +135,7 @@
                     />
                 </el-form-item>
                 <!-- 是否隐藏新建 -->
-                <el-form-item label="是否隐藏新建" v-if="!editColumnDialogData.isCustomComponent && !editColumnDialogData.isCustomLabel">
+                <el-form-item label="是否隐藏新建" v-if="!editColumnDialogData.isCustomComponent">
                     <el-checkbox v-model="editColumnDialogData.isHideNew">
                     </el-checkbox>
                 </el-form-item>
@@ -362,7 +362,7 @@ const editColumn = async (column, inx) => {
         }, 
         editObj
     );
-    if(column.isCustomComponent || column.isCustomLabel) {
+    if(column.isCustomComponent) {
         editColumnDialogLoading.value = false;
         return;
     }

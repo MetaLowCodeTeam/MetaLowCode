@@ -564,16 +564,32 @@ const setEntityRights = (entityCode, command, authorizable = true) => {
 	const rightTypes = [1, 2, 3, 4, 5, 6]; // 查看、新建、修改、删除、分配、共享
 
 	rightTypes.forEach((type) => {
-		const key = `r${entityCode}-${type}`;
-		if (type === 2 || !authorizable) {
-			// 新建权限 或 不可授权的实体
-			formModel.value.rightValueMap[key] = command > 0 ? 50 : 0;
-		} else if (type === 5 && !authorizable) {
-			// 分配权限且不可授权
-			formModel.value.rightValueMap[key] = 0;
-		} else {
-			formModel.value.rightValueMap[key] = command;
-		}
+        const key = `r${entityCode}-${type}`;
+        if(entityCode == 22) {
+			
+            if(type == 2) {
+                formModel.value.rightValueMap[key] = command > 0 ? 50 : 0;
+            }
+            // 分配权限且不可授权
+            else if(type == 5) {
+                formModel.value.rightValueMap[key] = 0;
+            }else {
+                formModel.value.rightValueMap[key] = command;
+            }
+        }
+        else {
+            if (type === 2 || !authorizable) {
+                // 新建权限 或 不可授权的实体
+                formModel.value.rightValueMap[key] = command > 0 ? 50 : 0;
+            } else if (type === 5 && !authorizable) {
+                // 分配权限且不可授权
+                formModel.value.rightValueMap[key] = 0;
+            } else {
+                formModel.value.rightValueMap[key] = command;
+            }
+        }
+		
+		
 	});
 };
 
@@ -592,6 +608,7 @@ const allHandleCommand = (command) => {
 
 // 单行设置权限
 const rowHandleCommand = (command, row) => {
+
 	const { entityCode, authorizable } = row;
 	setEntityRights(entityCode, command, authorizable);
 	
