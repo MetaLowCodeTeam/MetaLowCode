@@ -15,6 +15,7 @@
             }"
 		>   
 			<FormDesignEntityList
+				v-if="showComponent"
 				:referenceEntity="widget.options.name"
 				:listConf="{
 					showHeader: widget.options.showListHeader,
@@ -35,7 +36,7 @@
                 :detailEntityFlag="widget.options?.detailEntityFlag"
                 :refEntityBindingField="widget.options?.refEntityBindingField"
                 isVFormDesignMode
-                :modelName="getListSubFormConfId()"
+                :modelName="widget.options.listSubFormLayoutCode || getListSubFormConfId()"
 			/>
 		</div>
 	</container-wrapper>
@@ -58,6 +59,11 @@ export default {
 	components: {
 		FormDesignEntityList,
 	},
+	data() {
+		return {
+			showComponent: true,
+		};
+	},
 	mixins: [i18n, containerMixin, refMixinDesign],
 	inject: ["refList"],
 	computed: {
@@ -71,6 +77,18 @@ export default {
 
 		curSubFormKey() {
 			return this.subFormKey;
+		},
+	},
+	watch: {
+		'widget.options.listSubFormLayoutCode': {
+			handler() {
+				// 隐藏组件
+				this.showComponent = false;
+				// 在下一个 tick 重新显示组件，触发重新渲染
+				this.$nextTick(() => {
+					this.showComponent = true;
+				});
+			},
 		},
 	},
 	created() {

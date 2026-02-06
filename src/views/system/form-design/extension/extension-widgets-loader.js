@@ -88,6 +88,7 @@ import listSubFormShowOperateColumnEditor from "@/views/system/form-design/exten
 import listSubFormShowPaginationEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showPagination-editor.vue";
 import listSubFormPaginationSizeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/paginationSize-editor.vue";
 import listSubFormListHeightEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormHeight-editor.vue";
+import listSubFormLayoutCodeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormLayoutCode-editor.vue";
 
 import inputQrCodeOnMobileEnabledEditor from "@/views/system/form-design/extension/property-editor/input/qrCodeOnMobileEnabled-editor.vue";
 
@@ -129,6 +130,7 @@ export const loadExtensionWidgets = (app) => {
     PERegister.registerCPEditor(app, 'showOperateColumn', 'listSubForm-showOperateColumn-editor', listSubFormShowOperateColumnEditor)
     PERegister.registerCPEditor(app, 'showPagination', 'listSubForm-showPagination-editor', listSubFormShowPaginationEditor)
     PERegister.registerCPEditor(app, 'paginationSize', 'listSubForm-paginationSize-editor', listSubFormPaginationSizeEditor)
+    PERegister.registerCPEditor(app, 'listSubFormLayoutCode', 'listSubForm-listSubFormLayoutCode-editor', listSubFormLayoutCodeEditor)
     /**
      * 容器组件-列表子表单-字段组件  end
      */

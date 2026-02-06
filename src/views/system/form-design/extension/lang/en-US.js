@@ -40,6 +40,8 @@ export default {
             paginationPlaceholder:"Please select the number of entries per page",
             paginationLabel: 'Num',
             paginationPage: 'Page',
+            listSubFormLayoutCode: "LayoutCode",
+            listSubFormLayoutCodeInfo: "Using different layout codes for the same entity in the form can set different layout settings (column display, custom buttons, custom settings, etc.).",
             // reference lang
             useTreeDataSelect: "UseTreeSelect",
             treeDataOperatingBtn: "Configuration",
