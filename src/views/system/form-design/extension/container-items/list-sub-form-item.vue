@@ -28,7 +28,7 @@
                 :formEntityId="getFormEntityId()"
                 :detailEntityFlag="widget.options?.detailEntityFlag"
                 :refEntityBindingField="widget.options?.refEntityBindingField"
-                :modelName="getListSubFormConfId()"
+                :modelName="widget.options.listSubFormLayoutCode || getListSubFormConfId()"
                 ref="listSubForm"
             />
         </div>

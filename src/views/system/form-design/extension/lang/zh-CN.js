@@ -40,6 +40,8 @@ export default {
             paginationPlaceholder:"请选择每页条数",
             paginationLabel: '条',
             paginationPage: '页',
+            listSubFormLayoutCode: "布局编码",
+            listSubFormLayoutCodeInfo: "同一个实体在表单中使用不同布局编码，可以设置不同的布局设置（列显示，自定义按钮，自定义设置等）。",
             // 引用组件语言配置
             useTreeDataSelect: "树形数据选择弹窗",
             treeDataOperatingBtn: "配置",

@@ -39,6 +39,8 @@ export const listSubFormSchema = {
         paginationSize: 20,
         // 列表高度 - 默认294 空状态的高度
         listSubFormHeight: 294,
+        // 列表子表单布局编码
+        listSubFormLayoutCode: "",
     },
 };
 
