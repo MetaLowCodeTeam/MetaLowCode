@@ -143,7 +143,7 @@
             </div>
         </div>
     </div>
-    <Detail ref="detailRefs" @onConfirm="getTableList" />
+    <Detail ref="detailRefs" @onConfirm="getTableList" :modelName="curtTab.layoutCode || 'noModelName'"/>
 </template>
 
 <script setup>
