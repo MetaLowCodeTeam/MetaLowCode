@@ -1645,7 +1645,7 @@ const getLayoutList = async () => {
             let tabConf = JSON.parse(res.data.tabFilterConfig.config);
             isEnableTab.value = tabConf.isEnableTab;
             if(tabConf && tabConf.tabFilterList && tabConf.tabFilterList.length > 0){
-                listTabs.value = tabConf.tabFilterList;
+                listTabs.value = tabConf.tabFilterList || [];
                 // 只有在 currentTab 为空时才设置为第一个页签
                 if(!currentTab.value){
                     currentTab.value = listTabs.value[0].key;
@@ -1883,6 +1883,10 @@ let parentFormRef = ref(null);
 
 const setParentFormRef = (formRef) => {
     parentFormRef.value = formRef;
+}
+
+const getParentFormRef = () => {
+    return parentFormRef.value;
 }
 
 // 新建
@@ -2933,6 +2937,7 @@ defineExpose({
     setRouterParams,
     getCurrentExposed,
     setParentFormRef,
+    getParentFormRef,
     openTreeEchart,
     copyRow,
     openPriceComparisonDialog,
