@@ -506,13 +506,16 @@ export default {
             }
 			this.fillBackDialogConf.isShow = true;
 			let optionFillBackConfig = this.optionModel.fillBackConfig || [];
+            this.selectedTargetColumn = [];
 			// 加载已有数据
 			this.fillBackDialogConf.fllBackItems = optionFillBackConfig.map(
 				(el) => {
 					this.selectedTargetColumn.push(el.targetField);
 					let newItem = Object.assign({}, el);
-					el.sourceError = false;
-					el.targetError = false;
+					// 设置 _prevTargetField，以便清空时能正确移除
+					newItem._prevTargetField = el.targetField;
+					newItem.sourceError = false;
+					newItem.targetError = false;
 					return newItem;
 				}
 			);
@@ -671,8 +674,17 @@ export default {
 			item.targetField = "";
             item.targetError = false;
 		},
-		// 目标字段切换
+		// 目标字段切换（同时处理选择和清空）
 		targetFieldChange(item) {
+			// 先移除旧值
+			const prevField = item._prevTargetField;
+			if (prevField) {
+				const index = this.selectedTargetColumn.indexOf(prevField);
+				if (index > -1) {
+					this.selectedTargetColumn.splice(index, 1);
+				}
+			}
+
 			// 兼容主表与子表单：子表单存在 item.targetOps，主表使用 this.targetColumn
 			let candidates = (Array.isArray(item.targetOps) && item.targetOps.length > 0)
 				? item.targetOps
@@ -681,7 +693,14 @@ export default {
 			let col = findColumn[0] || {};
 			item.targetSubForm = col.targetSubForm || "";
 			item.targetFieldType = col.fieldType || "";
-			this.selectedTargetColumn.push(item.targetField);
+
+			// 保存当前值，以便下次切换/清空时使用
+			item._prevTargetField = item.targetField;
+
+			// 只有当新值不为空时才添加到已选列表
+			if (item.targetField) {
+				this.selectedTargetColumn.push(item.targetField);
+			}
 		},
 		// 首字母大写
 		capitalizeFirstLetter(string) {
