@@ -985,7 +985,23 @@ const onEditRow = (localDsv, formId) => {
         idFieldName: idFieldName.value
     };
     !!localDsv && (tempV.localDsv = localDsv)
-    tempV.formId = formId || props.recordEditFormId
+
+    // 解析 STYLE 配置（与 onAdd 函数中的逻辑一致）
+    let rowStyleConf = {};
+    if (sourceLayoutConfig.value?.STYLE?.config) {
+        try {
+            rowStyleConf = typeof sourceLayoutConfig.value.STYLE.config === 'string'
+                ? JSON.parse(sourceLayoutConfig.value.STYLE.config)
+                : sourceLayoutConfig.value.STYLE.config;
+        } catch (err) {
+            console.error('解析 STYLE 配置失败:', err);
+            rowStyleConf = {};
+        }
+    }
+
+    // 使用优先级：formId参数 > STYLE配置 > props配置
+    tempV.formId = formId || rowStyleConf?.formConf?.pcEditFormId || props.recordEditFormId;
+
     myLayoutConfig.value = {...sourceLayoutConfig.value};
     let cutEditEntity = queryEntityNameById(detailId.value);
     // 如果是修改部门
