@@ -129,6 +129,7 @@
 import { ref, watch, onMounted, inject, nextTick, reactive, computed } from "vue";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
+import tool from "@/utils/tool";
 const { publicSetting } = storeToRefs(useCommonStore());
 const api = inject("$API");
 const cloneDeep = inject("$CloneDeep");
@@ -209,6 +210,8 @@ let tabData = ref([]);
 let cutTabCode = ref("User");
 // 是否树形模式（用户、部门）
 const isTreeMode = computed(() => cutTabCode.value === 'User' || cutTabCode.value === 'Department');
+// 判断当前用户是否是管理员
+const isCurrentUserAdmin = ref(false);
 // 树 props/keys（用户/部门树均为 label/id）
 const treeLabelKey = computed(() => 'label');
 const treeIdKey = computed(() => 'id');
@@ -258,6 +261,17 @@ onMounted(() => {
             itemName: "jobTitle",
         });
     }
+    // 检查当前用户是否是管理员
+    const userInfo = tool.data.get("USER_INFO");
+    if (userInfo && userInfo.roles && Array.isArray(userInfo.roles)) {
+        // 遍历 roles 数组，检查是否包含管理员角色
+        isCurrentUserAdmin.value = userInfo.roles.some(r => {
+            const roleId = r.id || '';
+            const roleName = r.name || '';
+            return roleId.includes('00000000000000000000000000000001') ||
+                   roleName.includes('管理员角色');
+        });
+    }
     initData();
 });
 
@@ -302,7 +316,15 @@ let getData = async () => {
         const apiName = cutTabCode.value === 'User' ? 'getUserTreeData' : 'getDepartmentTreeData';
         res = await api.common[apiName](query);
     } else {
-        res = await api.common["get" + cutTabCode.value](param, props.filter[cutTabCode.value]);
+        // 如果是角色标签，且当前用户不是管理员，自动过滤掉管理员角色
+        let filterObj = Object.assign({}, props.filter[cutTabCode.value] || {});
+        if (cutTabCode.value === 'Role' && !isCurrentUserAdmin.value) {
+            // 合并过滤条件，排除管理员角色
+            filterObj = Object.assign({}, filterObj, {
+                filterEasySql: "roleId NOT LIKE '%00000000000000000000000000000001%'"
+            });
+        }
+        res = await api.common["get" + cutTabCode.value](param, filterObj);
     }
     if (res) {
         if (isTreeMode.value) {
