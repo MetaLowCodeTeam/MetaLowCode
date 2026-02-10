@@ -1,8 +1,8 @@
 <template>
     <div class="user-bar">
-        <el-tooltip 
-            class="box-item" 
-            effect="light" 
+        <el-tooltip
+            class="box-item"
+            effect="light"
             placement="bottom"
         >
             <!-- :visible="collectMenuTooltipVisible" -->
@@ -40,7 +40,7 @@
                 </div>
             </template>
             <!-- @click="collectMenuTooltipVisible = !collectMenuTooltipVisible" -->
-            <div 
+            <div
                 class="screen panel-item hidden-sm-and-down"
             >
                 <el-icon>
@@ -50,8 +50,8 @@
         </el-tooltip>
         <!--  -->
         <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom">
-            <div 
-                class="screen panel-item hidden-sm-and-down" 
+            <div
+                class="screen panel-item hidden-sm-and-down"
                 @click="setTopMenuDialogIsShow = true"
                 v-if="$TOOL.checkRole('r6007') && !isDockLayout"
             >
@@ -203,7 +203,7 @@ import Detail from "@/views/customize-menu/detail.vue";
 import mlApprove from "@/components/mlApprove/index.vue";
 import setTopMenu from './setTopMenu.vue';
 import useCheckStatusStore from "@/store/modules/checkStatus";
-import mlSelectUser from "@/components/mlSelectUser/index2.vue";
+import mlSelectUser from "@/components/mlSelectUser/indexSecond.vue";
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { setCollectMenuList } = useLayoutConfigStore();
@@ -398,7 +398,7 @@ const msgClick = (item, inx) => {
         // entityId.value = item.relatedRecord.id;
         // approvalName.value = item.relatedRecord.name;
     } else {
-        
+
         if (currentRoute.value.name != "CenterCc") {
             router.push(appPath + "center-cc");
         }
@@ -438,7 +438,7 @@ const tasksFn = () => {
 };
 
 /**
- * 
+ *
  */
 
 // let collectMenuTooltipVisible = ref(false);
