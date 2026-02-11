@@ -1,5 +1,9 @@
 <template>
-    <div class="customize-menu-list" v-loading="pageLoading">
+    <div class="customize-menu-list" v-loading="pageLoading" :class="{ 'slot-table': slotTableConf?.topSlot?.open || slotTableConf?.bottomSlot?.open }">
+        <ListSoleTable
+            v-if="slotTableConf?.topSlot?.open"
+            :slotTableConf="slotTableConf?.topSlot"
+        />
         <div class="table-box">
             <ListTabFilter 
                 v-if="listTabs.length > 0 && isEnableTab"
@@ -534,6 +538,10 @@
                 </div>
             </div>
         </div>
+        <ListSoleTable
+            v-if="slotTableConf?.bottomSlot?.open"
+            :slotTableConf="slotTableConf?.bottomSlot"
+        />
         <mlPagination
             :no="page.no"
             :size="page.size"
@@ -542,6 +550,8 @@
             @pageChange="pageChange"
             @handleSizeChange="handleSizeChange"
             v-if="listParamConf.showPagination"
+            :bottom="!slotTableConf?.topSlot?.open && !slotTableConf?.bottomSlot?.open"
+            :class="{ 'sticky-bottom': slotTableConf?.topSlot?.open || slotTableConf?.bottomSlot?.open }"
         />
         <mlCustomDetail
             ref="detailRefs"
@@ -655,6 +665,8 @@ import mlApprove from "@/components/mlApprove/index.vue";
 import SchedulingDialog from "@/views/custom-page/Yt/SchedulingDialog.vue";
 // 树形分组列表
 import TreeGroupList from "./components/TreeGroupList.vue";
+// 列表插槽
+import ListSoleTable from "./components/ListSoleTable.vue";
 import http from "@/utils/request";
 import { mlShortcutkeys, formatModelName, getPreviewNum } from "@/utils/util";
 // 自定义按钮
@@ -1524,6 +1536,8 @@ let renderKey = ref(0);
 let treeGroupListConf = ref({});
 // 树形表格列表配置
 let treeTableListConf = ref({});
+// 插槽配置
+let slotTableConf = ref({});
 
 // 获取导航配置
 const getLayoutList = async () => {
@@ -1637,7 +1651,10 @@ const getLayoutList = async () => {
             if(rowStyleConf.value.toolbarConf){
                 toolbarConf.value = Object.assign(toolbarConf.value, rowStyleConf.value.toolbarConf);
             }
-
+            // 如果存在插槽配置
+            if(rowStyleConf.value.slotTableConf){
+                slotTableConf.value = rowStyleConf.value.slotTableConf;
+            }    
         }
         // 列表页签
         if(res.data.tabFilterConfig) {
@@ -3057,6 +3074,12 @@ div {
         //     }
         // }
     }
+    &.slot-table {
+        padding: 0;
+        .table-box {
+            padding: 20px 20px 0 20px;
+        }
+    }
 }
 
 
@@ -3104,4 +3127,9 @@ div {
     top: 2px;
 }
 
+.sticky-bottom {
+    position: sticky;
+    bottom: 0;
+    z-index: 1000;
+}
 </style>

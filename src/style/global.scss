@@ -258,6 +258,7 @@ $--table-striped-bg-color: var(--el-fill-color-lighter);
 	overflow: auto;
 	flex: 1;
 	background: #{$--table-bg-color};
+    position: relative;
 	// 实体列表顶部搜索容器
 	.table-search-box {
 		background: #{$--table-search-box-bg-color};

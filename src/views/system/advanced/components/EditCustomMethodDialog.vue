@@ -4,6 +4,8 @@
 		:title="dialogConf.title"
 		:width="dialogConf.width"
 		:show-close="!dialogConf.loading"
+        showFullScreen
+        @fullScreenChange="fullScreenChange"
 	>
 		<div v-loading="dialogConf.loading" element-loading-text="加载中...">
 			<el-form 
@@ -49,7 +51,7 @@
 								<mlCodeEditor
 									v-model="formData.javaCode"
 									mode="java"
-									height="300"
+									:height="isFullScreen ? 600 : 300"
                                     :disabled="isView"
 								/>
 							</div>
@@ -74,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { getOptionItems } from "@/api/system-manager";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
@@ -211,6 +213,12 @@ public class CustomListQueryDemo implements CommonScriptBody {
 }
 `
 
+let isFullScreen = ref(false);
+
+const fullScreenChange = (v) => {
+    isFullScreen.value = v;
+}
+
 const onMethodTypeChange = (val) => {
     if(val == 2){
         formData.value.javaCode = defaultCustomQueryJavaCode;
@@ -306,13 +314,125 @@ const closeDialog = () => {
 let formRef = ref(null);
 // 确认
 const confirm = () => {
+  
 	formRef.value.validate(async (valid) => {
 		if (valid) {
 			let paramData = formatFormData(formData.value);
+            const result = validateJavaSyntaxSimple(paramData.javaCode);
+            if(!result.isValid) {
+                ElMessage.error(result.errors.join('\n'));
+                return;
+            }
 			onSave(paramData);
 		}
 	});
 };
+
+/**
+ * 简化版Java语法校验器
+ * 只检查最基本的语法错误
+ */
+const validateJavaSyntaxSimple = (javaCode) => {
+    const errors = [];
+    const lines = javaCode.split('\n');
+    
+    // 1. 检查大括号匹配
+    let braceCount = 0;
+    lines.forEach((line, index) => {
+        const openBraces = (line.match(/{/g) || []).length;
+        const closeBraces = (line.match(/}/g) || []).length;
+        braceCount += openBraces - closeBraces;
+        
+        // if (braceCount < 0) {
+        //     errors.push(`第${index + 1}行: 多余的右大括号 "}"`);
+        // }
+    });
+    
+    if (braceCount > 0) {
+        errors.push(`代码缺少 ${braceCount} 个右大括号 "}"`);
+    } else if (braceCount < 0) {
+        errors.push(`代码缺少 ${-braceCount} 个左大括号 "{"`);
+    }
+    
+    // 2. 检查分号缺失（简单版）
+    lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+        
+        // 跳过空行、注释、类/方法声明等
+        if (trimmedLine === '' || 
+            trimmedLine.startsWith('//') || 
+            trimmedLine.startsWith('*') ||
+            trimmedLine.startsWith('/*') ||
+            trimmedLine.endsWith('{') ||
+            trimmedLine.endsWith('}') ||
+            trimmedLine.startsWith('import ') ||
+            trimmedLine.startsWith('package ') ||
+            trimmedLine.includes(' class ') ||
+            trimmedLine.includes(' if ') ||
+            trimmedLine.includes(' for ') ||
+            trimmedLine.includes(' while ') ||
+            trimmedLine.startsWith('public ') ||
+            trimmedLine.startsWith('private ') ||
+            trimmedLine.startsWith('protected ')) {
+            return;
+        }
+        
+        // 检查应该是语句但缺少分号
+        if (trimmedLine !== '' && 
+            !trimmedLine.endsWith(';') && 
+            !trimmedLine.endsWith('{') && 
+            !trimmedLine.endsWith('}')) {
+            // 简单的语句判断：包含 = 或 方法调用
+            if (trimmedLine.includes('=') || 
+                (trimmedLine.includes('(') && trimmedLine.includes(')'))) {
+                errors.push(`可能缺少分号 ";"`);
+            }
+        }
+    });
+    
+    // 3. 检查引号匹配
+    let inString = false;
+    let inChar = false;
+    
+    lines.forEach((line, index) => {
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const prevChar = i > 0 ? line[i - 1] : '';
+            
+            // 跳过转义字符
+            if (prevChar === '\\') continue;
+            
+            if (char === '"' && !inChar) {
+                inString = !inString;
+            } else if (char === "'" && !inString) {
+                inChar = !inChar;
+            }
+        }
+        
+        // 检查行尾是否还在字符串/字符中
+        if (inString) {
+            errors.push(`字符串引号未闭合`);
+        }
+        if (inChar) {
+            errors.push(`字符单引号未闭合`);
+        }
+    });
+    
+    // 4. 检查类声明
+    const hasClass = javaCode.includes('class ');
+    const hasMainBrace = javaCode.includes('{') && javaCode.includes('}');
+    
+    if (hasClass && !hasMainBrace) {
+        errors.push('类声明缺少大括号');
+    }
+    
+    return {
+        isValid: errors.length === 0,
+        errors: errors,
+        errorCount: errors.length
+    };
+}
+
 
 // 格式化FormData数据
 const formatFormData = (data) => {
@@ -340,7 +460,6 @@ const onSave = async (paramData) => {
         let checkRes = await trigger.detail.scriptValidator(paramData.methodConfig);
         if(!checkRes || !checkRes.data){
             dialogConf.value.loading = false;
-            ElMessage.error("脚本验证失败");
             return
         }
     }

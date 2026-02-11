@@ -52,6 +52,12 @@ export const customListEntry = [
         label: "自定义树形表格模板",
         value: "ListViewCmp/TreeTable/Index",
     },
+    {
+        label: "自定义插槽列表模版",
+        value: "ListViewCmp/SlotTable/Index",
+        // 是否支持移动端   自定义插槽模版，不支持移动端
+        isMobileSupported: false,
+    },
 ];
 
 

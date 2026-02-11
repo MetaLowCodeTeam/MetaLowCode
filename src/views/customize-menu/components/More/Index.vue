@@ -207,6 +207,13 @@
                     </div>
                     <div
                         class="pl-20 item"
+                        @click="openSlotListSettingDialog"
+                        v-if="customListType == 'slotTable'"
+                    >
+                        插槽列表设置
+                    </div>
+                    <div
+                        class="pl-20 item"
                         @click="cardListSettingShow = true"
                         v-if="isListCard"
                     >
@@ -341,6 +348,14 @@
         :entityCode="entityCode"
         @confirm="allocationSuccess"
     />
+    <!-- 插槽列表设置 -->
+    <SlotListSetting
+        ref="slotListSettingRef"
+        :modelName="modelName"
+        :entityName="queryEntityNameByCode(entityCode)"
+        :entityCode="entityCode"
+        @confirm="allocationSuccess"
+    />
 </template>
 
 <script setup>
@@ -377,6 +392,8 @@ import ListTabSetting from './ListTabSetting.vue';
 import TreeGroutListSetting from "./TreeGroutListSetting.vue";
 // 树形表格设置
 import TreeTableListSetting from "./TreeTableListSetting.vue";
+// 插槽列表设置
+import SlotListSetting from "./SlotListSetting.vue";
 
 import { checkRight } from "@/api/user";
 import { useRouter } from "vue-router";
@@ -744,6 +761,12 @@ const openTreeGroutListSettingDialog = () => {
 let treeTableListSettingRef = ref(null);
 const openTreeTableListSettingDialog = () => {
     treeTableListSettingRef.value?.openDialog();
+}
+
+// 插槽列表设置
+let slotListSettingRef = ref(null);
+const openSlotListSettingDialog = () => {
+    slotListSettingRef.value?.openDialog(props.layoutConfig.STYLE);
 }
 
 defineExpose({
