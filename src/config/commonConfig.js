@@ -52,6 +52,7 @@ export default [
                 options: [
                     { label: "居左", value: "header" },
                     { label: "顶部", value: "dock" },
+                    { label: "分栏", value: "split" },
                 ],
             },
             {
