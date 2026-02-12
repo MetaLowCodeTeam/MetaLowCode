@@ -298,23 +298,24 @@
                 <div v-if="!ismobileFn" class="aminui-side-split">
                     <div class="aminui-side-split-top">
                         <router-link :to="$CONFIG.DASHBOARD_URL">
-                            <img class="logo" :title=" appName" src="~@/assets/imgs/logo-r.png" />
+                            <mlLogo class="logo" />
                         </router-link>
                     </div>
                     <div class="adminui-side-split-scroll">
                         <el-scrollbar>
                             <ul>
-                                <li
-                                    v-for="item in menu"
-                                    :key="item"
-                                    :class="pmenu.path==item.path?'active':''"
-                                    @click="showMenu(item)"
-                                >
-                                    <el-icon>
-                                        <component :is="item.meta.icon || el-icon-menu" />
-                                    </el-icon>
-                                    <p>{{ item.meta.title }}</p>
-                                </li>
+                                <template v-for="item in menu" :key="item">
+                                    <li
+                                        v-if="item.name != 'CustomAddNav' && item.name != 'CustomUserInfo'"
+                                        :class="pmenu.path==item.path?'active':''"
+                                        @click="showMenu(item)"
+                                    >
+                                        <el-icon>
+                                            <component :is="item.meta.icon || el-icon-menu" />
+                                        </el-icon>
+                                        <p>{{ item.meta.title }}</p>
+                                    </li>
+                                </template>
                             </ul>
                         </el-scrollbar>
                     </div>

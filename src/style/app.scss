@@ -162,7 +162,7 @@ textarea {
 .aminui-side-split {
 	width: 65px;
 	flex-shrink: 0;
-	background: #222b45;
+	background: var(--el-color-primary);
 	display: flex;
 	flex-flow: column;
 }
@@ -208,7 +208,7 @@ textarea {
 	background: rgba(255, 255, 255, 0.1);
 }
 .aminui-side-split li.active {
-	background: #409eff;
+	background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .adminui-side-split-scroll::-webkit-scrollbar-thumb {

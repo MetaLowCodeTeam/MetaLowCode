@@ -49,7 +49,7 @@
             </div>
         </el-tooltip>
         <!--  -->
-        <el-tooltip class="box-item" effect="light" content="顶部导航设置" placement="bottom">
+        <el-tooltip class="box-item" effect="light" content="一级导航设置" placement="bottom">
             <div
                 class="screen panel-item hidden-sm-and-down"
                 @click="setTopMenuDialogIsShow = true"
@@ -182,7 +182,7 @@
             title="审批"
         />
     </div>
-    <!-- 顶部导航设置 -->
+    <!-- 一级导航设置 -->
     <setTopMenu v-model="setTopMenuDialogIsShow"/>
     <!-- 切换用户 -->
     <mlSelectUser ref="selectUserDialogRefs" />
@@ -237,7 +237,7 @@ let msgList = ref([]);
 let msgLoading = ref(false);
 let ownerAccountGroup = ref("");
 
-// 顶部导航设置弹框
+// 一级导航设置弹框
 let setTopMenuDialogIsShow = ref(false);
 const appPath = import.meta.env.VITE_APP_PATH;
 
