@@ -653,6 +653,11 @@ export default {
 }
 .scrollbar-flex-content {
     display: flex;
+    width: max-content;
+    height: 100%;
+}
+:deep(.dock-header-menu){
+    border-bottom: 0 !important;
 }
 .scrollbar-demo-item {
     flex-shrink: 0;
@@ -677,6 +682,14 @@ export default {
 
 
 :deep(.dock-header-scrollbar) {
+    height: 100%;
+    .el-scrollbar__wrap {
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+    .el-scrollbar__view {
+        height: 100%;
+    }
     .el-scrollbar__bar.is-vertical {
         display: none;
     }
