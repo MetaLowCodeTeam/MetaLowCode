@@ -344,7 +344,7 @@
                 </div>
                 <Side-m v-if="ismobileFn"></Side-m>
                 <div class="aminui-body el-container">
-                    <Topbar>
+                    <Topbar isSplit>
                         <userbar></userbar>
                     </Topbar>
                     <Tags v-if="!ismobileFn && layoutTagsFn"></Tags>
