@@ -149,8 +149,9 @@
                 <el-button @click="showReferenceDialogFlag = false">取消</el-button>
                 <el-button type="primary" @click="beforeTreeDialogConfirm">确认</el-button>
             </template>
-		</ml-dialog>
+		</ml-dialog> 
 	</div>
+    <Detail ref="detailRef" />
 </template>
 
 <script>
@@ -161,6 +162,7 @@ import ReferenceSearchTree from "@/components/mlReferenceSearch/reference-search
 import ReferenceSearchRemote from "@/components/mlReferenceSearch/reference-search-remote.vue";
 import useCommonStore from "@/store/modules/common";
 import { queryById } from "@/api/crud";
+import Detail from "@/views/customize-menu/detail.vue";
 const { FormItemWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK;
 export default {
 	name: "reference-widget",
@@ -200,7 +202,8 @@ export default {
 		ReferenceSearchTable,
         ReferenceSearchTree,
 		ReferenceSearchRemote,
-		ReferenceSearchUser
+		ReferenceSearchUser,
+        Detail
 	},
 	data() {
 		return {
@@ -865,8 +868,8 @@ export default {
 			}
 
 			let refId = this.fieldModel ? this.fieldModel.id : null;
-			if (refId && this.gDsv.openDetailDialog) {
-				this.gDsv.openDetailDialog(refId, null, 'reference-default');
+			if (refId && this.$refs.detailRef) {
+				this.$refs.detailRef.openDialog(refId);
 			}
 		},
         onSelectedRemote({record, selectedRow}) {
