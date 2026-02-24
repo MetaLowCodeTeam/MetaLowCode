@@ -174,6 +174,7 @@
             </template>
         </ml-dialog>
 	</div>
+    <Detail ref="detailRef" />
 </template>
 
 <script>
@@ -220,7 +221,8 @@ export default {
 		FormItemWrapper,
 		ReferenceSearchTable,
         ReferenceSearchTree,
-		ReferenceSearchUser
+		ReferenceSearchUser,
+        Detail
 	},
 	data() {
 		return {
@@ -355,9 +357,7 @@ export default {
 		},
         // 点击标签
         handleTagClick(tag){
-            if(this.gDsv.openDetailDialog && tag.id){
-                this.gDsv.openDetailDialog(tag.id);
-            }
+            this.$refs.detailRef.openDialog(tag.id);
         },
 
 		async onAppendButtonClick() {

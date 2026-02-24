@@ -111,6 +111,9 @@ $--top-nav-text-color: #4b4a61;
 	display: none !important;
 }
 
+.adminui-topbar.split {
+    display: flex !important;
+}
 .aminui-side {
     background: url('/img/menu-bg.png') no-repeat center center;
     background-size: 100% 100%;

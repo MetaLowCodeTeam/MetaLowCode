@@ -1,5 +1,5 @@
 <template>
-	<div class="adminui-topbar">
+	<div class="adminui-topbar" :class="{'split': isSplit}">
 		<div class="left-panel">
 			<el-breadcrumb separator-icon="el-icon-arrow-right" class="hidden-sm-and-down">
 				<transition-group name="breadcrumb">
@@ -22,6 +22,11 @@
             isAppManagement: {
                 type: Boolean,
                 default: false
+            },
+            // 是否分栏布局
+            isSplit: {
+                type: Boolean,
+                default: false,
             }
         },
 		data() {
