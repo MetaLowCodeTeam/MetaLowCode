@@ -1,5 +1,5 @@
 <template>
-	<div class="adminui-topbar" :class="{'split': isSplit}">
+	<div class="adminui-topbar" :class="{'split': isSplit || isAppManagement}">
 		<div class="left-panel">
 			<el-breadcrumb separator-icon="el-icon-arrow-right" class="hidden-sm-and-down">
 				<transition-group name="breadcrumb">
