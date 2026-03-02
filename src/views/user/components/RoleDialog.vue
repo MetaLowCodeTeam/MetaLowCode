@@ -788,12 +788,20 @@ let funcRight = shallowRef([
 				value: "r6002",
 			},
 			{
+				label: "多选项管理",
+				value: "r6006",
+			},
+            {
 				label: "单选项管理",
 				value: "r6005",
 			},
-			{
-				label: "多选项管理",
-				value: "r6006",
+            {
+				label: "编码单选项管理",
+				value: "r6026",
+			},
+            {
+				label: "级联选项管理",
+				value: "r6028",
 			},
 			{
 				label: "系统常量管理",
@@ -820,6 +828,15 @@ let funcRight = shallowRef([
 			{
 				label: "触发器日志",
 				value: "r6015",
+			},
+		],
+	},
+    {
+		label: "高级功能",
+		children: [
+			{
+				label: "自定义方法",
+				value: "r6027",
 			},
 		],
 	},
