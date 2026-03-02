@@ -593,12 +593,15 @@
 	/>
 	<ml-dialog
 		v-model="isShowScriptDialog"
+        v-if="isShowScriptDialog"
 		title="执行脚本"
 		width="700"
 		append-to-body
+        showFullScreen
+        @fullScreenChange="fullScreenChange"
 	>
-		<div class="script-box">
-			<mlCodeEditor v-model="customScript" funcParam="rows,exposed" />
+		<div class="script-box" :class="{'full-screen': isFullScreen}">
+			<mlCodeEditor v-model="customScript" funcParam="rows,exposed" :height="isFullScreen ? '100%' : '300px'"/>
 		</div>
 		<template #footer>
 			<el-button @click="closeScriptDialog">取消</el-button>
@@ -981,6 +984,7 @@ let currentKey = ref("");
 // 打开脚本弹框
 const openScriptDialog = (key) => {
 	isShowScriptDialog.value = true;
+    isFullScreen.value = false;
 	currentKey.value = key;
 	customScript.value = currentButton.value[key];
 };
@@ -1075,6 +1079,12 @@ const getPlain = (button) => {
     
     return false;
 }
+let isFullScreen = ref(false);
+// 弹框全屏切换
+const fullScreenChange = (v) => {
+    isFullScreen.value = v;
+}
+
 defineExpose({
 	openDialog,
 	closeDialog,
@@ -1183,6 +1193,12 @@ defineExpose({
     background-color: #fff;
     &:hover {
         color: var(--el-color-primary);
+    }
+}
+
+.script-box {
+    &.full-screen {
+        height: calc(100% - 100px);
     }
 }
 </style>

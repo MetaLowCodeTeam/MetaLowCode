@@ -470,7 +470,9 @@ $--dialog-footer-bg-color: #fff;
 			cursor: pointer;
 			color: #fff;
 			&:hover {
-				color: #fafafa;
+				&:hover {
+                    color: var(--el-color-primary-dark-3);
+                }
 			}
 		}
 	}
