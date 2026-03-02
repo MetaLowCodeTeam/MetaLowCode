@@ -62,6 +62,7 @@ const selectUser = async (item) => {
 		ElMessage.success("切换成功");
 		closeDialog();
         setTimeout(() => {
+            window.location.href = "/";
             window.location.reload();
         }, 200);
 	}
