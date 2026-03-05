@@ -9,6 +9,7 @@ import i18n from './locales'
 import router from './router'
 import App from './App.vue'
 import pinia from './store'
+import http from "./utils/request"
 import ResizeObserver from 'resize-observer-polyfill'
 import 'virtual:svg-icons-register'
 import VueSmartWidget from 'ml-vue-smart-widget'
@@ -56,6 +57,7 @@ const app = createApp(App);
 app.config.globalProperties.$dayjs = dayjs;
 app.config.globalProperties.$getPinYin = getSimplePinYin;
 app.config.globalProperties.$eventBus = eventBus;
+app.config.globalProperties.$http = http;
 
 
 app.use(VueResizeObserver);
