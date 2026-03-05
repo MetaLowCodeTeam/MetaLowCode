@@ -16,6 +16,7 @@ import loginManager from "@/utils/loginManager";
 // 如果是外部数据源隐藏
 const OuterDataSourceHideMenu = ['OuterDataSource', 'OuterDataModel'];
 
+
 let modules = import.meta.glob('../views/**/*.vue')
 const empty = () => () => import('../layout/other/empty.vue');
 //系统路由
@@ -200,6 +201,12 @@ function filterUserMenu(userRoutes, publicSetting) {
         // 如果是外部数据源，并且没有外部数据源插件，不显示该菜单
         if(OuterDataSourceHideMenu.includes(node.name) && (!pluginIdList || !pluginIdList.includes('metaDataWarehouse'))) {
             return false
+        }
+        // 如果是功能指引需要同时有 实体管理+系统配置权限
+        if(node.name == "DevelopmentCenter") {
+            if(!tool.checkRole('r6001') || !tool.checkRole('r6022')) {
+                return false
+            }
         }
         // 如果是数据大屏，并且没有数据大屏插件，不显示该菜单
         if(node.name == "DataScreenManagement" && (!pluginIdList || !pluginIdList.includes('metaView'))) {
