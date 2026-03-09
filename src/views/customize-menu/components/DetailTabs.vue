@@ -216,7 +216,7 @@ defineExpose({
 .detail-tabs {
     position: relative;
     :deep(.el-tabs__nav-wrap) {
-        // padding-right: 40px; 
+        padding-right: 40px; 
         .el-tabs__nav-next {
             right: 20px;
         }
