@@ -17,7 +17,7 @@
                         {{ detailParamConf.customDialogTitle || customDialogTitle || styleConf?.newDialogConfig?.detailTitle || detailName }}
                     </span>
 					<div class="fr fr-box">
-                        <span v-if="styleConf.detailConf.enablePagination || styleConf.detailConf.enablePagination == undefined" class="enable-pagination-span">
+                        <span v-if="styleConf.detailConf?.enablePagination || styleConf.detailConf?.enablePagination == undefined" class="enable-pagination-span">
                             <el-button
                                 size="small"
                                 type="primary"
@@ -46,7 +46,7 @@
 						<span
 							class="fr-icon mr-10"
 							@click="onFullScreen"
-							v-if="styleConf?.detailConf.showFullScreen"
+							v-if="styleConf?.detailConf?.showFullScreen"
 						>
 							<el-icon size="20">
 								<ElIconFullScreen />
@@ -692,7 +692,7 @@ const getLayoutList = async (seq) => {
         let { STYLE } = res.data;
         if (STYLE && STYLE.config) {
             styleConf.value = JSON.parse(STYLE.config);
-            if (styleConf.value?.detailConf.autoFullScreen) {
+            if (styleConf.value?.detailConf?.autoFullScreen) {
                 isFullScreen.value = true;
             }
             let { dialogConfig } = styleConf.value;
