@@ -539,18 +539,28 @@ export default {
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
-				if (newDefaultSelected && newDefaultSelected.length > 0) {
-                    let needSelectData = newDefaultSelected.map(el => {
-                        return {
-                            [this.idField]: el.id,
-                            [this.nameField]: el.name,
+				if (newDefaultSelected && newDefaultSelected.length > 0 && this.selectedData.length === 0 && !this.isManuallyCleared) {
+                    newDefaultSelected.forEach(el => {
+                        let exists = this.selectedData.find(item => item[this.idField] == el.id);
+                        if (!exists) {
+                            this.selectedData.push({
+                                [this.idField]: el.id,
+                                [this.nameField]: el.name,
+                                formEntityName: this.currentTab || ''
+                            });
                         }
                     });
-					this.$refs.SimpleTableRef?.toggleRowSelection(
-						needSelectData,
-						this.idField
-					);
 				}
+                if (this.showCheckBox && this.selectedData.length > 0) {
+                    this.$nextTick(() => {
+                        this.selectedData.forEach(el => {
+                            let match = this.tableData.find((item) => item[this.idField] === el[this.idField]);
+                            if (match) {
+                                this.$refs.SimpleTableRef?.$refs.multipleTable?.toggleRowSelection(match, true);
+                            }
+                        });
+                    });
+                }
 				this.page.total = res.data.pagination.total;
 			}
 			this.loading = false;
