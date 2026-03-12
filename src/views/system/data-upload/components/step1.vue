@@ -2,13 +2,14 @@
     <!--  -->
     <div class="step" v-loading="loading">
         <el-form label-width="120px">
-            <el-form-item label="选择导入实体" v-if="!queryEntityCode">
+            <el-form-item label="选择导入实体">
                 <el-select
                     v-model="fromData.mainEntity"
                     placeholder="选择导入实体"
                     style="width: 400px;"
                     filterable
                     @change="changeEntity"
+                    :disabled="queryEntityCode"
                 >
                     <el-option
                         :label="op.label"
