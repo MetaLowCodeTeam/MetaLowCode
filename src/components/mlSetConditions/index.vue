@@ -300,6 +300,7 @@
                                     <el-cascader
                                         v-model="item.value"
                                         :options="item.optionData"
+                                        :props="{ checkStrictly: true }"
                                     />
                                 </div>
                             </el-col>
@@ -719,6 +720,7 @@
                                     <el-cascader
                                         v-model="item.value"
                                         :options="item.optionData"
+                                        :props="{ checkStrictly: true }"
                                     />
                                 </div>
                             </el-col>

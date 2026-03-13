@@ -45,6 +45,8 @@ export default {
         BTD: "属于",
         REFNL: "为空",
         REFNT: "不为空",
+        CLK: "包含",
+        CNLK: "不包含",
     },
     // 所有字段
     Tag: ["LK", "NLK", "NL", "NT"],
@@ -86,7 +88,7 @@ export default {
     Picture: ["NL", "NT"],
     File: ["NL", "NT"],
     Picture: ["NL", "NT"],
-    Cascader: ["LK", "NLK", "NL", "NT"],
+    Cascader: ["CLK", "CNLK", "NL", "NT"],
     /**
      * 条件值组件
      */
@@ -135,7 +137,7 @@ export default {
         // 级联
         cascader: {
             type: ["Cascader"],
-            op: ["LK", "NLK"],
+            op: ["CLK", "CNLK"],
         },
     },
     getShowCom: function (item) {
