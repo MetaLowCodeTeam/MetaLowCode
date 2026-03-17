@@ -157,7 +157,7 @@ import Edit from "../Edit/index.vue";
 // 条件弹框
 import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 
-const { queryEntityCodeByName, queryEntityLabelByName } = useCommonStore();
+const { queryEntityCodeByName, queryEntityLabelByName, queryEntityInfoByName, queryEntityNameByCode } = useCommonStore();
 
 let recordId = ref();
 
@@ -291,12 +291,21 @@ const queryTransformById = async () => {
 			let targetRes = await queryEntityFields(
 				targetEntity.value.code,
 				false,
-				false,
+				true,
 				true,
 				true
 			);
 			if (targetRes) {
-				targetEntity.value.fields = targetRes.data;
+                let currentEntityInfo = queryEntityInfoByName(targetEntity.value.name);
+                // 明细表处理逻辑
+                if(currentEntityInfo.mainEntityName) {
+                    targetEntity.value.fields = targetRes.data.filter(el => !el.isReserved || (el.referenceName && currentEntityInfo.mainEntityName == el.referenceName));
+                }
+                // 主表
+                else {
+                    targetEntity.value.fields = targetRes.data.filter(el => !el.isReserved);
+                }
+                
 			}
 			let targetRes2 = await queryEntityFields(
 				targetEntity2.value.code,
