@@ -148,7 +148,7 @@
                                 v-else-if="item.type === 'native'"
                                 v-bind="item.props"
                                 @click="item.handler"
-                                v-show="item.show !== false"
+                                v-show="item.show !== false && parentFormRef?.globalDsv?.formStatus != 'approval'"
                             >
                                 <i v-if="item.props.icon" :class="`el-icon-${item.props.icon}`"></i>
                                 {{ item.label }}
@@ -175,7 +175,7 @@
                                 :tabFilterConfig="tabFilterConfig"
                                 :customListType="customListType"
                                 @copySuccess="copySuccess"
-                                v-else-if="item.type === 'more' && toolbarConf.showMoreBtn"
+                                v-else-if="item.type === 'more' && toolbarConf.showMoreBtn && parentFormRef?.globalDsv?.formStatus != 'approval'"
                             />
                         </template>
                     </div>
@@ -431,7 +431,7 @@
                                 </el-button>
                             </el-tooltip> -->
                             <el-button
-                                v-if="scope.row.hasEditRight"
+                                v-if="scope.row.hasEditRight && parentFormRef?.globalDsv?.formStatus != 'read' && parentFormRef?.globalDsv?.formStatus != 'approval'"
                                 size="small"
                                 icon="el-icon-edit"
                                 link
@@ -2379,7 +2379,10 @@ const getTableList = async () => {
         builtInFilter: builtInFilter.value,
         statistics: statistics.value,
         filterEasySql: filterEasySql.value,
-        defaultFilter: defaultFilter.value,
+        defaultFilter: {
+            equation: defaultFilter.value.equation,
+            items: defaultFilter.value.items,
+        },
         otherFilters: [...otherFilters.value, tabFilter],
     }; 
     dataExportData.queryParm = { ...param };

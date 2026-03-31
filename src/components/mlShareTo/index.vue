@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-checkbox v-model="checked" label=" " class="check-box" @change="formatShareTo" />共享给全部用户或
-        <span class="ml-a-span" @click="openUserDialog">
+        <span class="ml-a-span" @click="openUserDialog" :class="{'disabled':!checked}">
             指定用户
             <span v-if="userList.length > 0">({{userList.length}})</span>
         </span>
@@ -62,6 +62,9 @@ let userDialogIsShow = ref(false);
 let userDialogList = ref([]);
 // 打开指定用户弹框
 const openUserDialog = () => {
+    if(!checked.value){
+        return
+    }
     userDialogList.value = [...userList.value];
     userDialogIsShow.value = true;
 };
@@ -76,5 +79,10 @@ const confrimUse = () => {
 .check-box {
     position: relative;
     top: 2px;
+}
+.disabled{
+    cursor: not-allowed;
+    color: #909399 !important;
+    opacity: 0.5;
 }
 </style>
