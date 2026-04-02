@@ -516,6 +516,9 @@ export default {
 					newItem._prevTargetField = el.targetField;
 					newItem.sourceError = false;
 					newItem.targetError = false;
+					if (newItem.sourceFieldType === 'textarea' && !newItem.targetTypes.includes('rich-editor')) {
+						newItem.targetTypes.push('rich-editor');
+					}
 					return newItem;
 				}
 			);
@@ -671,6 +674,9 @@ export default {
 			this.selectedTargetColumn.splice(inx, 1);
 			// 字段一对一(只能回填类型跟他一样的)
 			item.targetTypes = [item.sourceFieldType];
+			if (item.sourceFieldType === 'textarea') {
+				item.targetTypes.push('rich-editor');
+			}
 			item.targetField = "";
             item.targetError = false;
 		},
@@ -908,7 +914,16 @@ export default {
                     widgets.fllBackItems[inx].targetOps = allSubFormFields.filter(el=> el.fieldType == 'reference');
                 }
                 else {
-                    widgets.fllBackItems[inx].targetOps = allSubFormFields.filter(el=> el.fieldType == targetType);
+                    widgets.fllBackItems[inx].targetOps = allSubFormFields.filter(el=> {
+                        if (el.fieldType == targetType) {
+                            return true;
+                        }
+                        // 长文本(textarea)也能匹配富文本(rich-editor)
+                        if (targetType == 'textarea' && el.fieldType == 'rich-editor') {
+                            return true;
+                        }
+                        return false;
+                    });
                 }
             }
             // 5.1 如果没有选择，直接返回全部的待回填 方便展示
