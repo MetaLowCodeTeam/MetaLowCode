@@ -20,7 +20,7 @@ const useCommonStore = defineStore('commonStore', () => {
 
     // 系统配置
     let publicSetting = ref({
-        webVer: "2.0.28 20260401"
+        webVer: "2.0.29 20260402"
     });
 
     // 添加登录状态管理

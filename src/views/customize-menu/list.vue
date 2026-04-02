@@ -461,7 +461,13 @@
                                 v-for="(item,index) of (scope.row.__pcColumnButtons || customButtonConfig.pcColumn)" :key="item.guid || item.key || index"
                             >
                                 <slot v-if="item.type === 'slot'" :name="item.name" :row="scope.row"></slot>
-                                <template v-else-if="item.key === 'edit' && !item.hide && hasEditRight && !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value)">
+                                <template v-else-if="
+                                    item.key === 'edit' && 
+                                    !item.hide && 
+                                    hasEditRight && 
+                                    !checkModifiableEntity(scope.row[idFieldName],scope.row.approvalStatus?.value) &&
+                                    (!parentFormRef || parentFormRef?.globalDsv?.formStatus == 'read' || parentFormRef?.globalDsv?.formStatus == 'approval')
+                                ">  
                                     <el-tooltip
                                         class="box-item"
                                         effect="dark"
@@ -1486,7 +1492,7 @@ const getColumnCustomButtonShow = (item, row) => {
             return false;
         }
         // 如果是编辑 且 没有权限 不显示
-        if (item.key === 'edit' && !hasEditRight.value) {
+        if (item.key === 'edit' && (!hasEditRight.value || (parentFormRef.value && (parentFormRef?.value?.globalDsv?.formStatus == 'read' || parentFormRef?.value?.globalDsv?.formStatus == 'approval')))) {
             return false;
         }
         return true;
