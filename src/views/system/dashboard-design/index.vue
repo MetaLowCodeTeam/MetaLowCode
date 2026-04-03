@@ -7,6 +7,7 @@
         :global-dsv="globalDsv"
         class="visual-design"
         v-loading="loading"
+        
     >
         <!-- 配置工具按钮 -->
         <template #customToolButtons>
@@ -67,6 +68,7 @@ let designerConfig = ref({
     toolbarMaxWidth: 300,
     chartLib: true,
     isDashboard: true, // 是仪表盘
+    hideIdleGlobalSettingForChart: true,
 });
 let bannedWidgets = ref(['section']);
 let dbDesignerRef = ref();

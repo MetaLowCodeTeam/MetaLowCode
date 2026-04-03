@@ -4,7 +4,7 @@
         <el-empty v-if="tableColumn.length == 0" :image-size="100" description="未查询到该实体相关配置列数据" />
         <div v-else class="main">
             <div class="main-header">
-                <el-input v-model="quickQueryVal" placeholder="快速查询" style="width:300px">
+                <el-input v-model="quickQueryVal" placeholder="快速查询" style="width:300px" v-if="toolbarConf?.showQuickQuery">
                     <template #append>
                         <span class="main-search-icon" @click="getTableList">
                             <el-icon>
@@ -185,6 +185,7 @@ let entityCode = ref("");
 let entityName = ref("");
 onMounted(() => {
     initData();
+    
 });
 
 let loading = ref(false);
@@ -276,6 +277,9 @@ let defaultFilter = ref(null);
 
 let customQueryUrl = ref("");
 
+let toolbarConf = ref({
+    showQuickQuery: true
+});
 
 // 初始化数据
 const initData = async () => {
@@ -304,7 +308,7 @@ const initData = async () => {
         idFieldName.value = res.data.idFieldName;
         nameFieldName.value = res.data.nameFieldName;
         layoutConfig.value = res.data ? { ...res.data } : {};
-        let { chosenListType, LIST } = layoutConfig.value;
+        let { chosenListType, LIST, STYLE } = layoutConfig.value;
         let { ALL, SELF } = LIST;
         titleWidthForAll = res.data.titleWidthForAll
             ? { ...JSON.parse(res.data.titleWidthForAll) }
@@ -331,6 +335,9 @@ const initData = async () => {
             if(config){
                 defaultFilter.value = JSON.parse(config);
             }
+        }
+        if(STYLE?.config) {
+            toolbarConf.value = Object.assign(toolbarConf.value, JSON.parse(STYLE.config)?.toolbarConf);
         }
         // 如果存在列
         if (tableColumn.value.length > 0) {
