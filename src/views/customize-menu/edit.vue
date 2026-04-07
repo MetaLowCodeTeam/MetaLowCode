@@ -138,6 +138,7 @@ import { getApprovalConfigByEntity } from "@/api/approval";
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 价格对比弹框
 import PriceComparisonDialog from "@/views/custom-page/Yt/PriceComparisonDialog.vue";
+
 import {
     globalDsvDefaultData,
     getModelName,
@@ -153,7 +154,7 @@ import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 import { useRouter } from "vue-router";
 const { router } = useRouter();
 const { getCustomAppButtons, customButtonHandler } = useCustomButtonConfig();
-
+const $TOOL = inject("$TOOL")
 const {
     queryEntityNameById,
     queryEntityLabelByName,
@@ -322,8 +323,10 @@ const loadMyLayoutConfig = async () => {
     }
     customButtonList.value = getCustomAppButtons(CUSTOM_BUTTON, 'pcEdit');
     customButtonList.value.forEach(btn => {
-        // 权限判断
+        
+        // 自定义权限判断
         let checkCustomRole = btn.customCode ? $TOOL.checkRole(btn.customCode) : true;
+        // 判断自定义权限是否取反，如果取反则说明不需要该自定义权限
         let customPermissionPass = btn.customCode
             ? (btn.reversalCustomCode ? !checkCustomRole : checkCustomRole)
             : true;
@@ -358,7 +361,7 @@ const loadMyLayoutConfig = async () => {
         }
     })
     // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
-    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && JSON.stringify(btn.filterJson) !== '{}' && btn.action !== 1);
+    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && btn.filterJson.items?.length > 0 && btn.action !== 1);
     if (filterBtns.length > 0) {
         // 如果是编辑 可以检测条件
         if(row.detailId) {
