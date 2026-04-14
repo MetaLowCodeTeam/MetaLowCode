@@ -303,7 +303,9 @@ export default {
 
 	mounted() {
 		this.handleOnMounted();
-		this.setDefaultValue();
+		setTimeout(() => {
+			this.setDefaultValue();
+		}, 300);
 
         this.globalConfig = this.getFormConfig();
 	},

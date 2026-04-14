@@ -317,7 +317,7 @@ export default {
 	},
 
 	mounted() {
-		this.setDefaultValue()
+		this.handleOnMounted();
 	},
 
 	beforeUnmount() {
@@ -325,36 +325,6 @@ export default {
 	},
 
 	methods: {
-		setDefaultValue() {
-			if (this.field.options.disabled || this.isReadMode) {
-				return
-			}
-
-			if (this.getValue()) {
-				return
-			}
-
-			let loginUser = null
-			if (localStorage.getItem('USER_INFO')) {
-				loginUser = JSON.parse(localStorage.getItem('USER_INFO')).content
-			}
-			if (loginUser && this.field.options.useCurrentUser) {
-				if (loginUser.userId) {
-					this.setValue({
-						id: loginUser.userId,
-						name: loginUser.userName
-					})
-				}
-			}
-			if (loginUser && this.field.options.useCurrentDepartment) {
-				if (loginUser.departmentId) {
-					this.setValue({
-						id: loginUser.departmentId,
-						name: loginUser.departmentName
-					})
-				}
-			}
-		},
         // 点击标签
         handleTagClick(tag){
             this.$refs.detailRef.openDialog(tag.id);
