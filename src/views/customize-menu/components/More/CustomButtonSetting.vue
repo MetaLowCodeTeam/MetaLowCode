@@ -184,7 +184,7 @@
                             </el-form-item>
                         </el-col>
                         <el-col
-                            :span="12"
+                            :span="24"
                             v-if="currentButton.key != 'more'"
                         >
                             <el-form-item label="按钮预览">
@@ -230,6 +230,13 @@
                                         {{ currentButton.name }}
                                     </span>
                                 </el-button>
+                                <span 
+                                    v-if="currentTab == 'pcTop'" 
+                                    class="ml-a-span ml-20" 
+                                    @click="copyId"
+                                >
+                                    复制Guid
+                                </span>
                             </el-form-item>
                         </el-col>
                         <el-col
@@ -613,7 +620,7 @@
 import { ref, nextTick, computed } from "vue";
 // 滚动条
 import mlScrollbar from "@/components/mlScrollbar/index.vue";
-import { deepClone, getGuid } from "@/utils/util";
+import { deepClone, getGuid, copyText } from "@/utils/util";
 import { ElMessageBox, ElMessage } from "element-plus";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import useCommonStore from "@/store/modules/common";
@@ -1083,6 +1090,14 @@ let isFullScreen = ref(false);
 // 弹框全屏切换
 const fullScreenChange = (v) => {
     isFullScreen.value = v;
+}
+
+const copyId = () => {
+    if (currentButton.value?.guid) {
+        copyText(currentButton.value.guid);
+    } else {
+        ElMessage.warning("暂无Guid可复制");
+    }
 }
 
 defineExpose({
