@@ -593,7 +593,24 @@ const onRevokeIng = () => {
 
 // 页签更换
 const tabChange = (tab) => {
-	cutTab.value = tab.props.name;
+    let config = detailDialog.tab?.config;
+    if(config){
+        config = JSON.parse(config);
+    }
+    let tabConfig = config.find(item => item.guid === tab.props.name);
+    if(tabConfig.isCustomComponent && tabConfig.pcShow){
+        let entityName = "detail_custom_component";
+        if (tabConfig.pcShow && tabConfig.mobileShow) {
+            entityName += "_all";
+        } else {
+            entityName += "_pc";
+        } 
+        entityName += "_" + tabConfig.componentName
+        tabConfig.entityName = entityName;
+        cutTab.value = tabConfig.entityName;
+    }else {
+        cutTab.value = tab.props.name;
+    }
     cutTabCom.value = tab.props.name;
     cutTabIndex.value = tab.index;
 	if (cutTab.value == "detail") {
