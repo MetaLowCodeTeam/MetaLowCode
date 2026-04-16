@@ -5,7 +5,7 @@
                 v-for="(tab,tabInx) of tabs"
                 :key="(tab?.entityName || 'tab') + '-' + tabInx"
                 :label="tab.columnAliasName || tab.entityLabel"
-                :name="tab.entityName + '-' + tabInx"
+                :name="tab.guid"
             >
             </el-tab-pane>
         </el-tabs>
@@ -95,6 +95,7 @@ const initTabs = async () => {
             {
                 entityLabel: props.defaultFirstTabLabel || "详情",
                 entityName: "detail",
+                guid: 'detail'
             },
         ];
         sourceConfigColumn.forEach((el,inx) => {
@@ -121,6 +122,7 @@ const initTabs = async () => {
             {
                 entityLabel: props.defaultFirstTabLabel || "详情",
                 entityName: "detail",
+                guid: 'detail'
             },
         ];
     }
@@ -129,7 +131,7 @@ const initTabs = async () => {
     if (takInx >= tabs.value.length) {
         takInx = 0;
     }
-    activeName.value = tabs.value[takInx].entityName + '-' + takInx;
+    activeName.value = tabs.value[takInx].guid;
 };
 
 // 防抖执行initTabs

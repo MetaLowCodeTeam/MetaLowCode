@@ -285,6 +285,7 @@ let toolbarConf = ref({
 const initData = async () => {
     tableData.value = [];
     let sourceTabs = props.tabs?.config ? JSON.parse(props.tabs.config) : [];
+    
     // 2025-06-03 新加的动态显示事件
     if(sourceTabs.showEventCode) {
         tabs.value = sourceTabs.column;
@@ -292,7 +293,7 @@ const initData = async () => {
         tabs.value = sourceTabs;
     }
     defaultShowType.value = "table";
-    let filterTabs = tabs.value[props.cutTabIndex - 1];
+    let filterTabs = tabs.value.find(el => el.guid == props.cutTab);
     if (filterTabs) {
         entityCode.value = filterTabs.entityCode;
         entityName.value = filterTabs.entityName;
