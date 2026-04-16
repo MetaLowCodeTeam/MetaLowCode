@@ -782,7 +782,7 @@ export const copyText = (text, errorMsg = "复制失败，请重试刷新页面"
     if (result) {
         ElMessage.success("复制成功");
     }else {
-        ElMessage.error(errorMsg);
+        ElMessage.error(errorMsg + "，请手动复制：【" + text + "】");
     }
     document.body.removeChild(textarea);
 }

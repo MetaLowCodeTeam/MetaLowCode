@@ -148,7 +148,7 @@
                                 v-else-if="item.type === 'native'"
                                 v-bind="item.props"
                                 @click="item.handler"
-                                v-show="item.show !== false && parentFormRef?.globalDsv?.formStatus != 'approval'"
+                                v-show="item.show !== false && parentFormRef?.globalDsv?.formStatus != 'approval' && actionTopButtonList.find(action => action.code === item.key)?.hide !== true"
                             >
                                 <i v-if="item.props.icon" :class="`el-icon-${item.props.icon}`"></i>
                                 {{ item.label }}
@@ -175,7 +175,7 @@
                                 :tabFilterConfig="tabFilterConfig"
                                 :customListType="customListType"
                                 @copySuccess="copySuccess"
-                                v-else-if="item.type === 'more' && toolbarConf.showMoreBtn && parentFormRef?.globalDsv?.formStatus != 'approval'"
+                                v-else-if="item.type === 'more' && toolbarConf.showMoreBtn && parentFormRef?.globalDsv?.formStatus != 'approval' && actionTopButtonList.find(action => action.code === item.key)?.hide !== true"
                             />
                         </template>
                     </div>
@@ -1115,8 +1115,34 @@ const getEditRight = (() => {
 	return $TOOL.checkRole('r' + entityCodeForRight + '-3')
 })
 
-
-
+// 操作顶部按钮隐藏---专供表单使用
+const actionTopButtonList = ref([
+    {
+        key: "open",
+        hide: false,
+        code: 1,
+    },
+    {
+        key: "edit",
+        hide: false,
+        code: 2
+    },
+    {
+        key: "batchEdit",
+        hide: false,
+        code: 3,
+    },
+    {
+        key: "new",
+        hide: false,
+        code: 4,
+    },
+    {
+        key: "more",
+        hide: false,
+        code: 5,
+    },
+]);
 const mergedButtonList = computed(() => {
     const nativeButtons = [
         { type: 'slot', name: 'beforeOpenBtn' },
@@ -2935,6 +2961,18 @@ const openSchedulingDialog = (rows = []) => {
     SchedulingDialogRefs.value?.openDialog(rows);
 }
 
+const hideTopButtons = (keys) => {
+    if (typeof keys === 'string') {
+        keys = [keys];
+    }
+    let topButtonList = customButtonConfig.value?.pcTop || actionTopButtonList.value;
+    topButtonList.forEach(item => {
+        if(keys.includes(item.guid) || keys.includes(item.key)) {
+            item.hide = true;
+        }
+    })
+}
+
 defineExpose({
     resetList,
     refreshList,
@@ -2971,6 +3009,7 @@ defineExpose({
     openSchedulingDialog,
     changeOtherFilters,
     getTreeGroupFilterNode,
+    hideTopButtons,
 })
 
 </script>
