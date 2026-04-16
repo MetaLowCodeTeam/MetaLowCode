@@ -593,7 +593,7 @@ const onRevokeIng = () => {
 
 // 页签更换
 const tabChange = (tab) => {
-	cutTab.value = tab.props.name.split("-")[0];
+	cutTab.value = tab.props.name;
     cutTabCom.value = tab.props.name;
     cutTabIndex.value = tab.index;
 	if (cutTab.value == "detail") {
