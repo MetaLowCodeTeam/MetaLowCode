@@ -248,15 +248,12 @@
                                     v-model="currentButton.hide"
                                     :active-value="false"
                                     :inactive-value="true"
-                                    v-if="
-                                        currentButton.key != 'batchEdit'
-                                    "
                                 />
                                 <div class="ml-info-text ml-5" v-if="currentButton.hideTip">
                                     {{ currentButton.hideTip }}
                                 </div>
                                 <div class="ml-info-text" v-if="currentButton.key == 'batchEdit'">
-                                    批量编辑按钮不支持隐藏，由列表更多菜单批量编辑控制
+                                    设置不显示则始终不可见，设置显示后还需要在列表“更多”菜单配置批量编辑。
                                 </div>
                                 <div class="ml-info-text ml-5 icon-top-2" v-if="currentButton.key == 'more' && currentTab == 'pcTop'">
                                     <el-tooltip placement="top">
