@@ -350,6 +350,7 @@ import {
     formatFormVirtualField, 
     formatQueryByIdParam,
     keyboardEventToInput,
+    getGuid,
 } from "@/utils/util";
 /**
  * 组件
@@ -598,7 +599,7 @@ const tabChange = (tab) => {
         config = JSON.parse(config);
     }
     let tabConfig = config.find(item => item.guid === tab.props.name);
-    if(tabConfig.isCustomComponent && tabConfig.pcShow){
+    if(tabConfig?.isCustomComponent && tabConfig?.pcShow){
         let entityName = "detail_custom_component";
         if (tabConfig.pcShow && tabConfig.mobileShow) {
             entityName += "_all";
@@ -846,6 +847,15 @@ const getLayoutList = async (seq) => {
 
 
         detailDialog.tab = res.data.TAB ? { ...res.data.TAB } : {};
+        if(detailDialog.tab?.config) {
+            let config = JSON.parse(detailDialog.tab.config);
+            config.forEach(el => {
+                if(!el.guid) {
+                    el.guid = getGuid();
+                }
+            })
+            detailDialog.tab.config = JSON.stringify(config);
+        }
         // 新建配置项
 		formatNewRelated(res.data.ADD);
 		idFieldName.value = res.data.idFieldName;
