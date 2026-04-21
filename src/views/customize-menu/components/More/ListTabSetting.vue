@@ -301,7 +301,7 @@ const handleSave = async () => {
 		layoutConfigId.value,
 		"TAB_FILTER",
 		param,
-		paramModelName
+		paramModelName == "undefined" ? "" : paramModelName
 	);
 	if (res) {
 		ElMessage.success("保存成功");
