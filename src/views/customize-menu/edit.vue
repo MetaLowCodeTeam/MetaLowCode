@@ -5,8 +5,8 @@
         v-model="isShow"
         :width="customDialogConfig.width || styleConf?.newDialogConfig?.editWidth || '55%'"
         draggable
-        :showFullScreen="paramDialogConf?.showFullScreen || styleConf?.actionConf?.showFullScreen"
-        :autoFullScreen="paramDialogConf?.autoFullScreen || styleConf?.actionConf?.autoFullScreen"
+        :showFullScreen="paramDialogConf?.showFullScreen ?? styleConf?.actionConf?.showFullScreen"
+        :autoFullScreen="paramDialogConf?.autoFullScreen ?? styleConf?.actionConf?.autoFullScreen"
         append-to-body
         bodyNoPadding
         :showClose="!loading"

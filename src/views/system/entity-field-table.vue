@@ -504,7 +504,8 @@ export default {
                 path:appPath + "form-design",
                 query:{
                     entity: this.entityProps.name,
-                    entityLabel: this.entityProps.label
+                    entityLabel: this.entityProps.label,
+                    customRouteTitle: "可视化表单设计 - " + this.entityProps.label,
                 }
             })
         },
