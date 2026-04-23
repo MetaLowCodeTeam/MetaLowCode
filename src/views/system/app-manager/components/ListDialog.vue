@@ -302,7 +302,7 @@ import { getSimplePinYin, upperFirstLetter } from "@/utils/util";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import { Monitor } from '@element-plus/icons-vue';
 // API
-import { saveRecord, exportApp, installApp } from "@/api/appManager";
+import { saveRecord, exportApp, installApp, getAppStartEntityCode } from "@/api/appManager";
 import { downloadBase64 } from "@/utils/util";
 
 // 语言
@@ -323,7 +323,7 @@ let fromData = ref({});
 let loading = ref(false);
 let dialogVisible = ref(false);
 
-const openDialog = (type, data) => {
+const openDialog = async (type, data) => {
 	dialogVisible.value = true;
 	if (type === "edit" || type === "export") {
 		fromData.value = JSON.parse(JSON.stringify(data));
@@ -336,14 +336,22 @@ const openDialog = (type, data) => {
                     startingCode: 100000,
                 };
             }else {
-                // 找到 数据里 startingCode 最大的那条数据
-                let maxStartingCodeItem = data.reduce((maxItem, item) => {
-                    return maxItem.startingCode > item.startingCode ? maxItem : item;
-                }, data[0]);
-                fromData.value = {
-                    entityNumber: 1000,
-                    startingCode: maxStartingCodeItem.startingCode + maxStartingCodeItem.entityNumber,
-                };
+                let res = await getAppStartEntityCode();
+                if(res?.code == 200) {
+                    fromData.value = {
+                        entityNumber: 1000,
+                        startingCode: res.data,
+                    };
+                }else {
+                    // 找到 数据里 startingCode 最大的那条数据
+                    let maxStartingCodeItem = data.reduce((maxItem, item) => {
+                        return maxItem.startingCode > item.startingCode ? maxItem : item;
+                    }, data[0]);
+                    fromData.value = {
+                        entityNumber: 1000,
+                        startingCode: maxStartingCodeItem.startingCode + maxStartingCodeItem.entityNumber,
+                    };
+                }
             }
         }
 	}
