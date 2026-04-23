@@ -38,3 +38,8 @@ export function exportApp(appAbbr, password) {
 export function installApp(file, config = {}) {
     return http.post('/app/installApp', file, config)
 }
+
+// 获取应用起始编码
+export function getAppStartEntityCode() {
+    return http.get('/app/getAppStartEntityCode')
+}
