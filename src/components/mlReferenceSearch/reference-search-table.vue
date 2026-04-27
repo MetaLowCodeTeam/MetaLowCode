@@ -483,6 +483,9 @@ export default {
                         el.value2 = el.value;
                         el.value = idFieldName;
                     }
+                    if(el.type == "Cascader"){
+                        el.value = JSON.stringify(el.value);
+                    }
                     return hasValidValue(el.value) || hasValidValue(el.value2) || this.notEmptyItems.includes(el.op);
                 });
                 this.refFieldQueryApi(
