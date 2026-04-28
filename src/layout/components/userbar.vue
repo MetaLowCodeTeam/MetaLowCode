@@ -372,6 +372,16 @@ const msgClick = (item, inx) => {
     );
     let { currentRoute } = router;
     if (item.type == 30 || item.type == 20) {
+        if(item.type == 20) {
+            ElMessageBox.confirm(
+                `${ item.message }`, 
+                `系统通知（${ item.createdOn }）`, {
+                    confirmButtonText: '关闭',
+                    showCancelButton: false,
+                    type: 'warning',
+                }).then(() => {}).catch(() => {});
+            return
+        }
         // 如果是仪表盘
         if(item.entityName == 'Chart'){
             if($TOOL.checkRole('r52-1') && $TOOL.checkRole('r6017')) {

@@ -44,7 +44,7 @@ import useCommonStore from "@/store/modules/common";
 import useCheckStatusStore from "@/store/modules/checkStatus";
 import mlApprove from "@/components/mlApprove/index.vue";
 import http from "@/utils/request";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 const { unSystemEntityList } = storeToRefs(useCommonStore());
 const { newMsgNum } = storeToRefs(useCheckStatusStore());
 const COMMON_CONFIG = inject("COMMON_CONFIG");
@@ -139,6 +139,16 @@ onMounted(() => {
 
 // 消息点击
 const activeRow = (item) => {
+    if(item.type == 20) {
+        ElMessageBox.confirm(
+        `${ item.message }`, 
+        `系统通知（${ item.createdOn }）`, {
+            confirmButtonText: '关闭',
+            showCancelButton: false,
+            type: 'warning',
+        }).then(() => {}).catch(() => {});
+        return
+    }
     // 审批
     if (item.type == 10) {
         // router.push(appPath + "center-handle");
