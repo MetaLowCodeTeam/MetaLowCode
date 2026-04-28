@@ -101,7 +101,7 @@
                                     :key="op.name"
                                     :label="op.label + '（' + op.fieldType + '）'"
                                     :value="op.name"
-                                    :disabled="op.fieldType != item.targetType"
+                                    :disabled="op.fieldType != item.targetType && !(item.targetType == 'reference-list' && op.fieldType == 'reference')"
                                 /> 
                             </el-select>
                         </el-col>
