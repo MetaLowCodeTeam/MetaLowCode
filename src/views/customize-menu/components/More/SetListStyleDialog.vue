@@ -349,7 +349,7 @@ const topHiddenConfig = ref([
         colspan: 24,
     },
 ])
-let styleConf = ref({
+let defaultStyleConf = ref({
     // 列表设置
     listConf: {
         // 是否显示序号列
@@ -459,6 +459,8 @@ let styleConf = ref({
     }
 });
 
+let styleConf = ref({});
+
 const activeName = ref("rowDisabledRender");
 const formActiveName = ref("addFormId");
 
@@ -503,6 +505,8 @@ const initStyleConf = () => {
 	if (!isShow.value) {
 		return;
 	}
+    styleConf.value = JSON.parse(JSON.stringify(defaultStyleConf.value));
+    layoutConfigId.value = null;
 	let { STYLE } = myLayoutConf.value;
 	if (STYLE && STYLE.config) {
 		styleConf.value = Object.assign(
