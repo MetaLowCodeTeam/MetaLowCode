@@ -14,6 +14,18 @@
 						</template>
 					</el-input>
 				</el-form-item>
+				<el-form-item label="默认值设置">
+					<el-input
+						:model-value="getDefaultValueFormulaLabel()"
+						readonly
+						placeholder="点击设置计算公式"
+						@click="openDefaultValueFormula"
+					>
+						<template #append>
+							<el-button @click="openDefaultValueFormula" style="color: var(--el-color-primary)">设置公式</el-button>
+						</template>
+					</el-input>
+				</el-form-item>
 				<el-form-item label="字段值是否唯一/不可重复">
 					<el-radio-group v-model="fieldProps.fieldViewModel.uniqueness" style="float: right">
 						<el-radio :value="true">是</el-radio>
@@ -56,6 +68,15 @@
 					<el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
 				</el-form-item>
 			</el-form>
+			<mlFormula
+				v-if="mlFormulaIsShow"
+				v-model="mlFormulaIsShow"
+				:defaultFormulaVal="mlFormulaVal"
+				:isAdvanced="true"
+				:allowScriptType="false"
+				:scriptType="mlFormulaScriptType"
+				@confirm="handleDefaultValueFormulaConfirm"
+			/>
 		</el-main>
 	</el-container>
 </template>

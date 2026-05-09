@@ -53,7 +53,7 @@ let globalDsv = ref(globalDsvDefaultData());
 // 加载vform表单
 const initVformCom = async () => {
     loading.value = true;
-    let res = await getFormLayout(queryEntityNameById(entityId.value), formId.value);
+    let res = await getFormLayout(queryEntityNameById(entityId.value), formId.value, undefined, entityId.value);
     haveLayoutJson.value = false;
     if (res && res.data?.layoutJson) {
         globalDsv.value.useFormId = res.data.formLayoutId;

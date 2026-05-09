@@ -913,7 +913,12 @@ const initData = async (seq) => {
             taskQueryFormLayoutId = taskConfig?.queryFormLayoutId || "";
         }
     }
-	let res = await getFormLayout(entityName.value, taskQueryFormLayoutId || (formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId));
+	let res = await getFormLayout(
+        entityName.value,
+        taskQueryFormLayoutId || (formId.value == 'reference-default' ? '' : formId.value || props.recordDetailFormId),
+        undefined,
+        detailId.value
+    );
     if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
         loading.value = false;
         return;

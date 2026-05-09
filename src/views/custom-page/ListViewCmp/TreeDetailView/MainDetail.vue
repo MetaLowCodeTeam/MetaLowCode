@@ -83,7 +83,7 @@ let myEntity = ref({});
 const initFormData = async (entity) => {
     myEntity.value = entity;
 	haveLayoutJson.value = false;
-	let res = await getFormLayout(entity.name);
+	let res = await getFormLayout(entity.name, undefined, undefined, entity.recordId);
 	if (res && res.data) {
 		if (res.data.layoutJson) {
             globalDsv.value.useFormId = res.data.formLayoutId;

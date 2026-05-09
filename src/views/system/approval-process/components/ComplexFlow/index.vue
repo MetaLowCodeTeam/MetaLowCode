@@ -138,6 +138,7 @@ import {
 } from "./nodeDefaultConfig";
 
 const $TOOL = inject("$TOOL");
+const $API = inject("$API");
 
 const Router = useRouter();
 
@@ -177,6 +178,32 @@ const loadComplexFlow = async () => {
         }
     }
     loading.value = false;
+};
+
+const getValidFilterFieldNames = async () => {
+    let entityCode = Router.currentRoute.value.query.entityCode;
+    if (!entityCode) {
+        return [];
+    }
+    let entityName = queryEntityNameByCode(entityCode);
+    if (!entityName) {
+        return [];
+    }
+    let fieldRes = await $API.common.getFieldListOfFilter({ entity: entityName });
+    return (fieldRes?.data || []).map((item) => item.name);
+};
+
+const sanitizeFilterItems = (filter, validFieldNames) => {
+    if (!filter || !Array.isArray(filter.items) || validFieldNames.length < 1) {
+        return filter;
+    }
+    filter.items = filter.items.filter((item) => {
+        if (!item || item.op === "SQL" || item.fieldName === "sql") {
+            return true;
+        }
+        return validFieldNames.includes(item.fieldName);
+    });
+    return filter;
 };
 
 // FL组件
@@ -307,6 +334,7 @@ const onSave = async () => {
     }
     let mflData = MetaFlowDesignerRef.value.getJsonData();
     let { nodes, edges } = mflData;
+    let validFilterFieldNames = await getValidFilterFieldNames();
     // 把非结束节点的数据筛选出来
     let newNodes = nodes.filter(
         (el) => !EliminateNode.includes(el.type)
@@ -421,6 +449,10 @@ const onSave = async () => {
             properties = { ...NodeDefaultData[el.type] };
         } else {
             properties = getProperties(el.properties.flowJson);
+        }
+        if (properties?.filter) {
+            sanitizeFilterItems(properties.filter, validFilterFieldNames);
+            setProperties(el.type, el.id, properties);
         }
         if (properties?.filter) {
             if (!checkConditionList(properties.filter.items)) {

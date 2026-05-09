@@ -127,7 +127,7 @@ let vFormRef = ref(null);
 // 加载表单
 const loadForm = async () => {
 	loading.value = true;
-	let res = await getFormLayout(entity.value, formId.value);
+	let res = await getFormLayout(entity.value, formId.value, undefined, recordId.value);
 	if (res) {
 		if (res.data?.layoutJson) {
 			haveLayoutJson.value = true;

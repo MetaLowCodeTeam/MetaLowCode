@@ -1,24 +1,24 @@
 <template>
     <!-- 计算公式 -->
-    <mlDialog v-model="isShow" width="850" title="计算公式" v-if="!isError">
+    <mlDialog v-model="isShow" width="850" title="计算公式" v-if="!isError" :append-to-body="true">
         <!-- 脚本类型 -->
-        <div class="script-type-box mb-10" v-if="!isPreview">
+        <div class="script-type-box mb-10" v-if="!isPreview && props.allowScriptType">
             <span>脚本类型</span>
             <el-select style="width: 240px" v-model="currentScriptType" placeholder="请选择脚本类型">
                 <el-option label="AviatorScript" value="aviator"></el-option>
                 <el-option label="Java" value="liteFlowJava" v-if="!publicSetting.tenantId"></el-option>
             </el-select>
-            <span 
+            <span
                 class="help"
                 @click="goHelp"
                 v-if="currentScriptType == 'aviator'"
             >
-                如何使用 AviatorScript 公式? 
+                如何使用 AviatorScript 公式?
             </span>
         </div>
-        <div 
-            class="input-box" 
-            v-if="showAdvanced && currentScriptType == 'aviator'" 
+        <div
+            class="input-box"
+            v-if="showAdvanced && currentScriptType == 'aviator'"
             :class="{'loading':checkLoading}"
             v-loading="checkLoading"
         >
@@ -30,14 +30,19 @@
                 @blur="formulaBlur"
                 ref="contentInputRef"
             ></el-input>
-            <span ref="buttonRef" v-click-outside="onClickOutside" class="field-span">{&nbsp;}</span>
+            <span
+                v-if="props.fields && props.fields.length > 0"
+                ref="buttonRef"
+                v-click-outside="onClickOutside"
+                class="field-span"
+            >{&nbsp;}</span>
         </div>
         <!-- <div class="foot-box mt-10" v-if="showAdvanced">
             <span class="help" @click="goHelp">如何使用高级计算公式?</span>
             <el-button type="primary" class="fr" @click="confirm">确定</el-button>
         </div> -->
-        <div 
-            class="input-box" 
+        <div
+            class="input-box"
             v-if="!showAdvanced && currentScriptType == 'aviator'"
             :class="{'loading':checkLoading}"
             v-loading="checkLoading"
@@ -114,12 +119,13 @@
             </div>
         </div>
         <div v-loading="checkLoading">
-            <LiteFlowJava 
-                v-if="currentScriptType == 'liteFlowJava'" 
-                v-model="javaScriptVal" 
+            <LiteFlowJava
+                v-if="currentScriptType == 'liteFlowJava'"
+                v-model="javaScriptVal"
             />
         </div>
         <el-popover
+            v-if="props.fields && props.fields.length > 0"
             ref="popoverRef"
             :virtual-ref="buttonRef"
             trigger="click"
@@ -136,15 +142,15 @@
             >{{ item.fieldLabel }}</div>
         </el-popover>
         <template #footer>
-            <el-button 
-                @click="isShow = false" 
+            <el-button
+                @click="isShow = false"
                 :loading="checkLoading"
             >
                 取消
             </el-button>
-            <el-button 
-                type="primary" 
-                @click="confirm" 
+            <el-button
+                type="primary"
+                @click="confirm"
                 :loading="checkLoading"
             >
                 确定
@@ -189,6 +195,8 @@ const props = defineProps({
     isAdvanced: { type: Boolean, default: false },
     // 脚本类型  aviator 或 javascript
     scriptType: { type: String, default: "aviator" },
+    // 是否允许切换脚本类型
+    allowScriptType: { type: Boolean, default: true },
 });
 const emits = defineEmits(["update:modelValue", "confirm", "editValue"]);
 let isShow = ref(false);
@@ -390,7 +398,7 @@ const confirm = async () => {
     }
     numFormulaVal.value = checkVal;
     if (checkVal) {
-        checkLoading.value = true;  
+        checkLoading.value = true;
         let res = await $API.trigger.detail.aviatorValidate(checkVal);
         if (res) {
             // 错误的

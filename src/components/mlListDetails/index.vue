@@ -139,7 +139,7 @@ let globalDsv = ref(globalDsvDefaultData());
 const refresh = async () => {
     loading.value = true;
     haveLayoutJson.value = false;
-    let res = await getFormLayout(detailDialog.entityName);
+    let res = await getFormLayout(detailDialog.entityName, undefined, undefined, detailDialog.id);
     if (res) {
         if (res.data?.layoutJson && activeTabName.value == "detail") {
             globalDsv.value.useFormId = res.data.formLayoutId;
