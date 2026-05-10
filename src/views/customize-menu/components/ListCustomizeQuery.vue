@@ -153,6 +153,15 @@ const refreshAdvancedQuery = () => {
 	emit("queryNow", newCompConditions);
 };
 
+const clearPanelConditions = () => {
+    compConditions.value.items.forEach((el) => {
+        el.refLabel = null;
+        el.value = null;
+        el.value2 = null;
+        el.value3 = null;
+    });
+};
+
 
 /**
  * 设计查询面板
@@ -249,5 +258,6 @@ watchEffect(() => {
 defineExpose({
 	openDialog,
 	changeCustomizeQueryHeight,
+    clearPanelConditions,
 });
 </script>
