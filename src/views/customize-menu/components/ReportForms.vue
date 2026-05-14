@@ -37,10 +37,10 @@
                                     <el-dropdown-item command="downPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
                                         下载PDF
                                     </el-dropdown-item>
-                                    <el-dropdown-item command="previewPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+                                    <el-dropdown-item command="previewPdf" v-if="(defaultShow == 'ALL' || defaultShow == 'PDF') && detailId">
                                         预览PDF
                                     </el-dropdown-item>
-                                    <el-dropdown-item command="printPdf" v-if="defaultShow == 'ALL' || defaultShow == 'PDF'">
+                                    <el-dropdown-item command="printPdf" v-if="(defaultShow == 'ALL' || defaultShow == 'PDF') && detailId">
                                         打印PDF
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
