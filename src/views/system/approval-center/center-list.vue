@@ -61,7 +61,7 @@
     </div>
     <Detail ref="detailRefs" />
 </template>
-  
+
 <script setup>
 import { reactive, ref, inject, onBeforeMount } from "vue";
 import { $fromNow } from "@/utils/util";

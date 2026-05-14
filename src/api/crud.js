@@ -288,3 +288,8 @@ export function queryByRecordId(recordId, pageNo, pageSize, sortBy) {
 export function revisionHistoryDetailsById(revisionHistoryId) {
     return http.get('/revisionHistory/detailsById', { revisionHistoryId })
 }
+
+// 获取共享的用户
+export function queryRecordShare(recordId) {
+    return http.get('/crud/queryRecordShare', { recordId })
+}

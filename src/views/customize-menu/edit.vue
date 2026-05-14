@@ -607,7 +607,7 @@ const initFormLayout = async () => {
     globalDsv.value.setRowRecordId = setRowRecordId;
     let useFormId = formId.value;
 
-    let res = await getFormLayout(row.entityName, useFormId);
+    let res = await getFormLayout(row.entityName, useFormId, undefined, row.detailId);
     if (res) {
         if (res.data?.layoutJson) {
             globalDsv.value.useFormId = res.data.formLayoutId;

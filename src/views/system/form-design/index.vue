@@ -123,6 +123,14 @@
                 <el-form-item label="名称" class="mb-5 is-required">
                     <el-input v-model="saveAsDialogConf.formLayout.layoutName" clearable />
                 </el-form-item>
+                <el-form-item label="使用条件" class="mb-5">
+                    <SetConditionsDialog
+                        title="使用条件"
+                        :conditionConf="saveAsDialogConf.formLayout.filterJson"
+                        :entityName="entity"
+                        @confirm="handleSaveAsConditionConfirm"
+                    />
+                </el-form-item>
                 <el-form-item class="mb-5">
                     <mlShareTo v-model="saveAsDialogConf.formLayout.shareTo" />
                 </el-form-item>
@@ -149,6 +157,7 @@ import { formFieldMapping } from "@/views/system/form-design/formFieldMapping";
 import MlShareTo from "@/components/mlShareTo/index.vue";
 import AddField from "@/components/mlFormDesignComp/AddField.vue";
 import ActionRulesSetting from "./custom/ActionRulesSetting.vue";
+import SetConditionsDialog from "@/components/mlSetConditions/Dialog.vue";
 import { globalDsvDefaultData } from "@/utils/util";
 
 export default {
@@ -157,6 +166,7 @@ export default {
         AddField,
         MlShareTo,
         ActionRulesSetting,
+        SetConditionsDialog,
     },
     prop: {
         entity: {
@@ -653,6 +663,14 @@ export default {
             this.saveAsDialogConf.formLayout = JSON.parse(
                 JSON.stringify(this.formLayoutDialogConf.list[inx])
             );
+            if (typeof this.saveAsDialogConf.formLayout.filterJson === "string" && this.saveAsDialogConf.formLayout.filterJson) {
+                this.saveAsDialogConf.formLayout.filterJson = JSON.parse(this.saveAsDialogConf.formLayout.filterJson);
+            } else if (!this.saveAsDialogConf.formLayout.filterJson) {
+                this.saveAsDialogConf.formLayout.filterJson = {
+                    equation: "OR",
+                    items: [],
+                };
+            }
             this.saveAsDialogConf.isShow = true;
         },
         // 删除表单
@@ -687,23 +705,27 @@ export default {
         saveAsDesign() {
             this.saveAsDialogConf.formLayout = {
                 shareTo: "ALL",
+                filterJson: {
+                    equation: "OR",
+                    items: [],
+                },
             };
             this.saveAsDialogConf.isShow = true;
         },
 
         // 确认另存为
         confirmSaveAs() {
-            let { formLayoutId, layoutName, shareTo } =
+            let { formLayoutId, layoutName, shareTo, filterJson } =
                 this.saveAsDialogConf.formLayout;
             if (!layoutName) {
                 this.$message.warning("请输入名称");
                 return;
             }
             if (!formLayoutId) {
-                this.createFormLayout(layoutName, shareTo);
+                this.createFormLayout(layoutName, shareTo, filterJson);
             } else {
                 this.layoutId = formLayoutId;
-                this.updateNameFormLayout(layoutName, shareTo);
+                this.updateNameFormLayout(layoutName, shareTo, filterJson);
             }
         },
 
@@ -722,7 +744,7 @@ export default {
             }
         },
         // 新建表单
-        async createFormLayout(layoutName, shareTo) {
+        async createFormLayout(layoutName, shareTo, filterJson) {
             this.loadActionLoading(layoutName, true);
             let formJson = this.$refs.vfDesigner.getFormJson()
             let res = await saveFormLayout(
@@ -731,6 +753,8 @@ export default {
                 layoutName,
                 shareTo,
                 formJson,
+                null,
+                filterJson,
             );
 
             if (res && res.code == 200) {
@@ -764,13 +788,16 @@ export default {
 
         },
         // 编辑表名
-        async updateNameFormLayout(layoutName, shareTo) {
+        async updateNameFormLayout(layoutName, shareTo, filterJson) {
             this.loadActionLoading(layoutName, true);
             let res = await saveFormLayout(
                 this.entity,
                 this.layoutId,
                 layoutName,
-                shareTo
+                shareTo,
+                null,
+                null,
+                filterJson,
             );
 
             if (res && res.code == 200) {
@@ -791,6 +818,10 @@ export default {
             } else {
                 this.pageLoading = status;
             }
+        },
+
+        handleSaveAsConditionConfirm(v) {
+            this.saveAsDialogConf.formLayout.filterJson = v;
         },
 
 

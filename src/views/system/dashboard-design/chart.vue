@@ -30,14 +30,14 @@
 			<el-table-column
 				label="操作"
 				:align="'center'"
-				width="230"
+				width="200"
 				fixed="right"
 			>
 				<template #default="scope">
 					<el-dropdown
 						trigger="click"
 						@command="
-							(command) => handleCommand(command, scope.row)
+							(command) => openDesign(command, scope.row)
 						"
 					>
 						<el-button
@@ -55,29 +55,16 @@
 						</el-button>
 						<template #dropdown>
 							<el-dropdown-menu>
-								<el-dropdown-item command="pc"
-									>PC</el-dropdown-item
-								>
-								<el-dropdown-item command="mobile"
-									>移动端</el-dropdown-item
-								>
+								<el-dropdown-item command="pc">
+									PC
+								</el-dropdown-item>
+								<el-dropdown-item command="mobile">
+									移动端
+								</el-dropdown-item>
 							</el-dropdown-menu>
 						</template>
 					</el-dropdown>
-					<el-button
-						size="small"
-						type="primary"
-						link
-						@click="allowOpenDialog(scope.row)"
-					>
-						<span class="mr-3">
-							<el-icon>
-								<ElIconShare />
-							</el-icon>
-						</span>
-						<span>分配</span>
-					</el-button>
-					<el-button
+                    <el-button
 						size="small"
 						type="primary"
 						link
@@ -90,19 +77,45 @@
 						</span>
 						<span>编辑</span>
 					</el-button>
-					<el-button
-						size="small"
-						link
-						type="primary"
-						@click="delClick(scope.row)"
+					<el-dropdown
+						trigger="click"
+						@command="
+							(command) => handleMoreCommand(command, scope.row)
+						"
 					>
-						<span class="mr-3">
-							<el-icon>
-								<ElIconDelete />
-							</el-icon>
-						</span>
-						<span>删除</span>
-					</el-button>
+						<el-button
+							size="small"
+							type="primary"
+							link
+							style="position: relative; top: 2px; left: -5px"
+						>
+							<span class="mr-3">
+								<el-icon>
+									<ElIconMoreFilled />
+								</el-icon>
+							</span>
+							<span>更多</span>
+						</el-button>
+						<template #dropdown>
+							<el-dropdown-menu>
+								<el-dropdown-item command="delete">
+									删除
+								</el-dropdown-item>
+								<el-dropdown-item command="copy">
+									复制
+								</el-dropdown-item>
+								<el-dropdown-item command="allocation">
+									分配
+								</el-dropdown-item>
+								<el-dropdown-item command="share">
+									共享
+								</el-dropdown-item>
+								<el-dropdown-item command="unShare">
+									取消共享
+								</el-dropdown-item>
+							</el-dropdown-menu>
+						</template>
+					</el-dropdown>
 				</template>
 			</el-table-column>
 		</template>
@@ -118,12 +131,12 @@
 					<el-input v-model="dialogConf.chartName" />
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="onConfirm"
-						>确定</el-button
-					>
-					<el-button @click="dialogConf.isShow = false"
-						>取消</el-button
-					>
+					<el-button type="primary" @click="onConfirm">
+						确定
+					</el-button>
+					<el-button @click="dialogConf.isShow = false">
+						取消
+					</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -139,7 +152,7 @@
 <script setup>
 import { ref, inject, reactive } from "vue";
 import { $fromNow } from "@/utils/util";
-import { saveRecord, deleteRecord } from "@/api/crud";
+import { saveRecord, deleteRecord, cloneRecord} from "@/api/crud";
 import { updateDefault } from "@/api/chart.js";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
@@ -150,145 +163,168 @@ const $TOOL = inject("$TOOL");
 
 let appAbbr = router.currentRoute.value.query.appAbbr;
 let fixedFilter = ref([
-    {
-        fieldName: "appAbbr",
-        op: appAbbr ? "EQ" : "NL",
-        value: appAbbr,
-    }
+	{
+		fieldName: "appAbbr",
+		op: appAbbr ? "EQ" : "NL",
+		value: appAbbr,
+	},
 ]);
 
 // 默认排序
 let sortFields = ref([
-    {
-        fieldName: "createdOn",
-        type: "DESC",
-    },
+	{
+		fieldName: "createdOn",
+		type: "DESC",
+	},
 ]);
 let tableColumn = ref([
-    {
-        prop: "chartName",
-        label: "名称",
-    },
+	{
+		prop: "chartName",
+		label: "名称",
+	},
 
-    {
-        prop: "modifiedOn",
-        label: "修改时间",
-        formatter: (row) => {
-            return $fromNow(row.modifiedOn);
-        },
-    },
-    {
-        prop: "modifiedBy.name",
-        label: "修改用户",
-        formatter: (row) => {
-            return row.modifiedBy?.name;
-        },
-    },
-    {
-        prop: "ownerUser.name",
-        label: "所属用户",
-        formatter: (row) => {
-            return row.ownerUser?.name;
-        },
-    },
-    {
-        prop: "ownerDepartment.name",
-        label: "所属部门",
-        formatter: (row) => {
-            return row.ownerDepartment?.name;
-        },
-    },
+	{
+		prop: "modifiedOn",
+		label: "修改时间",
+		formatter: (row) => {
+			return $fromNow(row.modifiedOn);
+		},
+	},
+	{
+		prop: "modifiedBy.name",
+		label: "修改用户",
+		formatter: (row) => {
+			return row.modifiedBy?.name;
+		},
+	},
+	{
+		prop: "ownerUser.name",
+		label: "所属用户",
+		formatter: (row) => {
+			return row.ownerUser?.name;
+		},
+	},
+	{
+		prop: "ownerDepartment.name",
+		label: "所属部门",
+		formatter: (row) => {
+			return row.ownerDepartment?.name;
+		},
+	},
 ]);
 
 // 添加触发
 let dialogConf = reactive({
-    isShow: false,
-    chartName: "",
-    chartId: "",
-    title: "",
+	isShow: false,
+	chartName: "",
+	chartId: "",
+	title: "",
 });
 
 // 新增
 const addClick = () => {
-    dialogConf.isShow = true;
-    dialogConf.chartName = "";
-    dialogConf.chartId = "";
-    dialogConf.title = "新建仪表盘";
+	dialogConf.isShow = true;
+	dialogConf.chartName = "";
+	dialogConf.chartId = "";
+	dialogConf.title = "新建仪表盘";
 };
 // 编辑
 const editClick = (row) => {
-    dialogConf.isShow = true;
-    dialogConf.chartName = row.chartName;
-    dialogConf.chartId = row.chartId;
-    dialogConf.title = "编辑仪表盘";
+	dialogConf.isShow = true;
+	dialogConf.chartName = row.chartName;
+	dialogConf.chartId = row.chartId;
+	dialogConf.title = "编辑仪表盘";
 };
 // 删除
 const delClick = (row) => {
-    ElMessageBox.confirm("是否确认删除?", "提示：", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "warning",
-    })
-        .then(async () => {
-            let res = await deleteRecord(row.chartId);
-            mlSingleListRef.value.loading = true;
-            if (res) {
-                $ElMessage.success("删除成功");
-                mlSingleListRef.value.getTableList();
-            }
-            mlSingleListRef.value.loading = false;
-        })
-        .catch(() => {});
+	ElMessageBox.confirm("是否确认删除?", "提示：", {
+		confirmButtonText: "确认",
+		cancelButtonText: "取消",
+		type: "warning",
+	})
+		.then(async () => {
+			let res = await deleteRecord(row.chartId);
+			mlSingleListRef.value.loading = true;
+			if (res) {
+				$ElMessage.success("删除成功");
+				mlSingleListRef.value.getTableList();
+			}
+			mlSingleListRef.value.loading = false;
+		})
+		.catch(() => {});
+};
+
+// 复制
+const copyClick = (row) => {
+	ElMessageBox.confirm(`是否复制（${row.chartName}）?`, "提示：", {
+		confirmButtonText: "确认",
+		cancelButtonText: "取消",
+		type: "warning",
+	})
+		.then(async () => {
+			mlSingleListRef.value.loading = true;
+			let res = await cloneRecord({
+				recordIds: [row.chartId],
+				cascades: [],
+				skipDuplicationCheck: false,
+			});
+			if (res) {
+				$ElMessage.success("复制成功");
+				mlSingleListRef.value.getTableList();
+			}
+			mlSingleListRef.value.loading = false;
+		})
+		.catch(() => {});
 };
 
 // 确认
 let mlSingleListRef = ref();
 const onConfirm = async () => {
-    mlSingleListRef.value.loading = true;
-    let param = {
-        entity: "Chart",
-        formModel: {
-            chartName: dialogConf.chartName,
-            appAbbr: router.currentRoute.value.query.appAbbr,
-        },
-        id: dialogConf.chartId,
-    };
-    // 新建
-    if (!dialogConf.chartId) {
-        param.formModel.defaultChart = false;
-    }
-    let res = await saveRecord(param.entity, param.id, param.formModel);
-    if (res) {
-        dialogConf.isShow = false;
-        mlSingleListRef.value.getTableList();
-    }
-    mlSingleListRef.value.loading = false;
+	mlSingleListRef.value.loading = true;
+	let param = {
+		entity: "Chart",
+		formModel: {
+			chartName: dialogConf.chartName,
+			appAbbr: router.currentRoute.value.query.appAbbr,
+		},
+		id: dialogConf.chartId,
+	};
+	// 新建
+	if (!dialogConf.chartId) {
+		param.formModel.defaultChart = false;
+	}
+	let res = await saveRecord(param.entity, param.id, param.formModel);
+	if (res) {
+		dialogConf.isShow = false;
+		mlSingleListRef.value.getTableList();
+	}
+	mlSingleListRef.value.loading = false;
 };
 
 // 默认视图切换
 const changeDefault = async (row) => {
-    mlSingleListRef.value.loading = true;
-    let res = await updateDefault(row.chartId, row.defaultChart);
-    if (res) {
-        dialogConf.isShow = false;
-        mlSingleListRef.value.getTableList();
-    }
-    mlSingleListRef.value.loading = false;
+	mlSingleListRef.value.loading = true;
+	let res = await updateDefault(row.chartId, row.defaultChart);
+	if (res) {
+		dialogConf.isShow = false;
+		mlSingleListRef.value.getTableList();
+	}
+	mlSingleListRef.value.loading = false;
 };
 
 const appPath = import.meta.env.VITE_APP_PATH;
-const handleCommand = (command, row) => {
-    let routerData = {
-        path: appPath + "dashboard-design",
-        query: {
-            chartId: row.chartId,
-            type: command,
-            appName: router.currentRoute.value.query.appName,
-            appAbbr: router.currentRoute.value.query.appAbbr,
-        },
-    };
-    let newUrl = router.resolve(routerData);
-    window.open(newUrl.href);
+const openDesign = (type, row) => {
+	let routerData = {
+		path: appPath + "dashboard-design",
+		query: {
+			chartId: row.chartId,
+			type,
+			appName: router.currentRoute.value.query.appName,
+			appAbbr: router.currentRoute.value.query.appAbbr,
+		},
+	};
+	let newUrl = router.resolve(routerData);
+	window.open(newUrl.href);
 };
 
 /**
@@ -296,16 +332,39 @@ const handleCommand = (command, row) => {
  */
 let allocationRefs = ref("");
 
-const allowOpenDialog = (row) => {
-    allocationRefs.value.openDialog({
-        type: "allocation",
-        pageType: "dashboardList",
-        list: [row],
-    });
+const openAllocationDialog = (row, type = "allocation") => {
+	allocationRefs.value.openDialog({
+		type,
+		pageType: "dashboardList",
+		list: [row],
+	});
+};
+
+const handleMoreCommand = (command, row) => {
+	if (command === "delete") {
+		delClick(row);
+		return;
+	}
+	if (command === "copy") {
+		copyClick(row);
+		return;
+	}
+	if (command === "allocation") {
+		openAllocationDialog(row, "allocation");
+		return;
+	}
+	if (command === "share") {
+		openAllocationDialog(row, "share");
+		return;
+	}
+	if (command === "unShare") {
+		openAllocationDialog(row, "unShare");
+		return;
+	}
 };
 
 const allocationSuccess = () => {
-    mlSingleListRef.value.getTableList();
+	mlSingleListRef.value.getTableList();
 };
 </script>
 <style lang="scss" scoped></style>

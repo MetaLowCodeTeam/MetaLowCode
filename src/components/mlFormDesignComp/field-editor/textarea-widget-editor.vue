@@ -14,6 +14,18 @@
 						</template>
 					</el-input>
 				</el-form-item>
+				<el-form-item label="默认值设置">
+					<el-input
+						:model-value="getDefaultValueFormulaLabel()"
+						readonly
+						placeholder="点击设置计算公式"
+						@click="openDefaultValueFormula"
+					>
+						<template #append>
+							<el-button @click="openDefaultValueFormula" style="color: var(--el-color-primary)">设置公式</el-button>
+						</template>
+					</el-input>
+				</el-form-item>
                 <el-collapse accordion class="mb-10">
                     <el-collapse-item name="1">
                         <template #title>
@@ -82,6 +94,15 @@
 					<el-button v-if="!!showingInDialog" @click="cancelSave">取消</el-button>
 				</el-form-item>
 			</el-form>
+			<mlFormula
+				v-if="mlFormulaIsShow"
+				v-model="mlFormulaIsShow"
+				:defaultFormulaVal="mlFormulaVal"
+				:isAdvanced="true"
+				:allowScriptType="false"
+				:scriptType="mlFormulaScriptType"
+				@confirm="handleDefaultValueFormulaConfirm"
+			/>
 		</el-main>
 	</el-container>
 </template>

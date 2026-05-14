@@ -2226,6 +2226,8 @@ let sliceTable = ref([]);
 // 切换页签
 const changeTab = (item) => {
     currentTab.value = item.key;
+    queryFilter.value = { equation: "AND", items: [] };
+    ListCustomizeQueryRef.value?.clearPanelConditions();
     renderKey.value = Date.now(); // 强制重新渲染
     getLayoutList();
 }

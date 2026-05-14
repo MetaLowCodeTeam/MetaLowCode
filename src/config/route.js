@@ -548,7 +548,7 @@ const routes = [
                 path: appPath + ":entityName/create-entity",
                 name: "NewWindowCreateEntity",
                 "meta": {
-                    title: '左侧导航暂不可用',
+                    title: '当前操作',
                     // hidden: true,
                 },
                 component: 'customize-menu/NewWindowCreateEntity',
@@ -565,7 +565,7 @@ const routes = [
                 "name": "userCenter",
                 "path": appPath + "usercenter",
                 "meta": {
-                    title: '左侧导航暂不可用',
+                    title: '当前操作',
                 },
                 "component": "userCenter/index"
             },

@@ -37,6 +37,7 @@ import mlLogo from './components/mlLogo/index.vue';
 import mlAvatar from './components/mlAvatar/index.vue';
 import mlUpload from "./components/mlUpload/index.vue";
 import mlWaterMark from './components/mlWaterMark/index.vue';
+import mlFormula from './components/mlFormula/index.vue';
 import { ElMessage } from 'element-plus'
 import QrcodeVue from 'qrcode.vue'
 // 集成ParkIcons图标
@@ -83,6 +84,7 @@ export default {
         app.component('QrcodeVue', QrcodeVue);
         app.component('mlUpload', mlUpload);
         app.component('mlWaterMark', mlWaterMark);
+        app.component('mlFormula', mlFormula);
         app.component('mlLogo', mlLogo);
         app.component('mlAvatar', mlAvatar);
 		app.component('scTable', scTable);

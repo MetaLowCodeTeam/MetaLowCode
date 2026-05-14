@@ -51,7 +51,7 @@
                 <div
                     class="pl-20 item"
                     @click="allocationFn('unShare')"
-                    :class="{'div-disabled':multipleSelection.length < 1 && type == 'list'}"
+                    :class="{'div-disabled':multipleSelection.length != 1 && type == 'list'}"
                     v-if="!isReferenceComp && !isMainDetailField && checkRoleNum('-6')"
                 >
                     <span class="icon-t1">

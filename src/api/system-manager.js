@@ -191,14 +191,15 @@ export function getRefFieldExtras(field, entity) {
  * @returns 
  */
 
-export function saveFormLayout(entityName, recordId, layoutName, shareTo, layoutJson, originalTextMap) {
+export function saveFormLayout(entityName, recordId, layoutName, shareTo, layoutJson, originalTextMap, filterJson) {
     return http.post('formLayout/save', {
         entityName,
         recordId,
         layoutName,
         shareTo,
-        layoutJson:JSON.stringify(layoutJson),
+        layoutJson: layoutJson == null ? null : JSON.stringify(layoutJson),
         originalTextMap,
+        filterJson: filterJson == null ? null : JSON.stringify(filterJson),
     })
 }
 
@@ -209,8 +210,8 @@ export function deleteFormLayout(layoutId) {
 }
 
 
-export function getFormLayout(entity, formId, forcefully) {
-    return http.get('formLayout/get', { entity, formId, forcefully })
+export function getFormLayout(entity, formId, forcefully, recordId) {
+    return http.get('formLayout/get', { entity, formId, forcefully, recordId })
 }
 
 

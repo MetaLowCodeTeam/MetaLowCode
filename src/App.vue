@@ -103,6 +103,10 @@ const initApi = async () => {
     let res = await getLoginUser(getQueryString("loginToken"));
     if (res && res.data) {
         if (res.data.data) {
+            let path = router.currentRoute.value.path;
+            if(path == appPath + "login") {
+                location.href = "/"
+            }
             isShowBody.value = false;
             setUserInfo(res.data.data);
             // // 轮循获取新消息

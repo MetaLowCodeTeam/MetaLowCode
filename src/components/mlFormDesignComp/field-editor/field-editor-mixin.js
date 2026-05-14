@@ -6,6 +6,9 @@ export const fieldEditorMixin = {
 	data() {
 		return {
             saveLoading: false,
+            mlFormulaIsShow: false,
+            mlFormulaVal: "",
+            mlFormulaScriptType: "aviator",
 			rules: {
 				name: [
 					{required: true, message: '请输入字段名称', trigger: 'blur'},
@@ -60,6 +63,31 @@ export const fieldEditorMixin = {
 		}
 	},
 	methods: {
+        ensureFieldExtraAttrs() {
+            if (!this.fieldProps.extraAttrs) {
+                this.fieldProps.extraAttrs = {};
+            }
+            if (this.fieldProps.extraAttrs.onlyUpdateByTrigger === undefined) {
+                this.fieldProps.extraAttrs.onlyUpdateByTrigger = 'false';
+            }
+        },
+
+        getDefaultValueFormulaLabel() {
+            return this.fieldProps?.extraAttrs?.defaultValueFormula || "";
+        },
+
+        openDefaultValueFormula() {
+            this.ensureFieldExtraAttrs();
+            this.mlFormulaVal = this.fieldProps.extraAttrs.defaultValueFormula || "";
+            this.mlFormulaScriptType = "aviator";
+            this.mlFormulaIsShow = true;
+        },
+
+        handleDefaultValueFormulaConfirm(formula) {
+            this.ensureFieldExtraAttrs();
+            this.fieldProps.extraAttrs.defaultValueFormula = formula?.value || "";
+        },
+
 		async createNewField() {
             this.saveLoading = true;
             let res = await addField(this.fieldProps, this.entity);
@@ -139,6 +167,7 @@ export const fieldEditorMixin = {
                         onlyUpdateByTrigger: 'false',
                     }
                 }
+                this.ensureFieldExtraAttrs();
             }
 		},
 

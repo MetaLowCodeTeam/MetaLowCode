@@ -1,6 +1,16 @@
 <template>
-    <ml-dialog :title="labelData.label" v-model="dialogShow" width="560px" append-to-body :showClose="!loading">
-        <div v-loading="loading" class="main" v-if="labelData.type != 'del'">
+    <ml-dialog
+        :title="labelData.label"
+        v-model="dialogShow"
+        :width="labelData.type == 'unShare' ? '760px' : '560px'"
+        append-to-body
+        :showClose="!loading"
+    >
+        <div
+            v-loading="loading"
+            :class="['main', { 'main-unshare': labelData.type == 'unShare' }]"
+            v-if="labelData.type != 'del'"
+        >
             <el-form label-width="140px">
                 <el-form-item
                     :label="labelData.label + '哪些记录'"
@@ -32,13 +42,31 @@
                             <el-radio :value="1">全部用户</el-radio>
                             <el-radio :value="2">指定用户</el-radio>
                         </el-radio-group>
-                        <mlSelectUser
+                        <el-table
                             v-if="formData.userType == 2"
-                            type="all"
-                            v-model="formData.allocationTo"
-                            multiple
-                            clearable
-                        />
+                            border
+                            :data="recordShares"
+                            class="mt-10"
+                            @selection-change="handleRecordShareSelectionChange"
+                            maxHeight="500"
+                        >
+                            <el-table-column type="selection" width="55" />
+                            <el-table-column label="模块" min-width="120">
+                                <template #default="{ row }">
+                                    {{ queryEntityLabelByName(queryEntityNameById(row.shareTo?.id)) }}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="共享对象" min-width="120">
+                                <template #default="{ row }">
+                                    {{ row.shareTo?.name || "" }}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="是否共享编辑" min-width="120">
+                                <template #default="{ row }">
+                                    {{ row.withUpdate ? "是" : "否" }}
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </div>
                 </el-form-item>
                 <el-form-item
@@ -92,7 +120,9 @@
         </div>
         <template #footer>
             <el-button @click="dialogShow=false" :loading="loading">取消</el-button>
-            <el-button @click="confirm" :loading="loading" type="primary">确定</el-button>
+            <el-button @click="confirm" :loading="loading" type="primary">
+                {{ labelData.type == "unShare" ? "取消共享" : "确定" }}
+            </el-button>
         </template>
     </ml-dialog>
 </template>
@@ -100,28 +130,26 @@
 <script setup>
 import { reactive, ref, inject } from "vue";
 import MlAssociatedRecords from "@/components/mlAssociatedRecords/index.vue";
-import { useRouter } from "vue-router";
+import useCommonStore from "@/store/modules/common";
 import {
     assignRecord,
     shareRecord,
     cancelShareRecord,
     deleteRecords,
     getExecutionProgress,
+    queryRecordShare,
 } from "@/api/crud";
+const { queryEntityNameById, queryEntityLabelByName } = useCommonStore();
 const emits = defineEmits("allocationSuccess");
 const props = defineProps({
     layoutConfig: { type: Object, default: () => {} },
 });
-const router = useRouter();
 const $ElMessage = inject("$ElMessage");
-const $API = inject("$API");
 let dialogShow = ref(false);
 let loading = ref(false);
 let showDelText = ref(false);
 // 轮询定时器
 let pollingTimer = null;
-// 分配实体列表
-let entityList = ref([]);
 let formData = reactive({
     // 分配哪些记录
     list: [],
@@ -148,6 +176,8 @@ let delConf = ref({
     associatedRecords: [],
 });
 
+
+
 const openDialog = (data) => {
     dialogShow.value = true;
     formData.list = [...data.list];
@@ -156,6 +186,8 @@ const openDialog = (data) => {
     formData.associatedRecords = [];
     formData.userType = 1;
     formData.withUpdate = false;
+    selectedRecordShares.value = [];
+    recordShares.value = [];
     labelData.type = data.type;
     labelData.pageType = data.pageType;
     if (data.type == "allocation") {
@@ -178,6 +210,9 @@ const openDialog = (data) => {
             }
         }
     }
+    if (data.type == "unShare") {
+        getRecordShare();
+    }
     // labelData.label =
     //     data.type == "allocation"
     //         ? "分配"
@@ -186,6 +221,27 @@ const openDialog = (data) => {
     //         : "取消共享";
 };
 
+// 共享用户
+let recordShares = ref([]);
+let selectedRecordShares = ref([]);
+const getRecordShare = async () => {
+    let recordId = null;
+    if(formData.list[0]) {
+        recordId = formData.list[0][props.layoutConfig.idFieldName]
+    }
+    if (!recordId) {
+        recordShares.value = [];
+        return;
+    }
+    let res = await queryRecordShare(recordId);
+    if(res?.code == 200) {
+        recordShares.value = res.data || [];
+    }
+}
+
+const handleRecordShareSelectionChange = (selection) => {
+    selectedRecordShares.value = selection;
+};
 
 // 确认
 const confirm = async () => {
@@ -195,6 +251,10 @@ const confirm = async () => {
         (!formData.allocationTo || formData.allocationTo.length < 1)
     ) {
         $ElMessage.warning("请选择" + labelData.label + "给谁");
+        return;
+    }
+    if (labelData.type == "unShare" && formData.userType == 2 && selectedRecordShares.value.length < 1) {
+        $ElMessage.warning("请选择取消共享记录");
         return;
     }
 
@@ -230,7 +290,9 @@ const confirm = async () => {
                 toUsersId:
                     formData.userType == 1
                         ? []
-                        : formData.allocationTo.map((el) => el.id),
+                        : selectedRecordShares.value
+                            .map((el) => el.shareTo?.id)
+                            .filter((id) => !!id),
                 recordIds: formData.list.map((el) => el[props.layoutConfig.idFieldName]),
             },
         };
@@ -292,6 +354,9 @@ defineExpose({
 .main {
     line-height: 0;
     padding-right: 60px;
+}
+.main-unshare {
+    padding-right: 0;
 }
 .del-box {
     line-height: 0;
