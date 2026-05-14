@@ -304,6 +304,12 @@ const useLayoutConfigStore = defineStore('layoutConfig', () => {
         if(item.useCustom && item.entityCode && !tool.checkRole('r' + checkCode + '-1') && item.entityCode != "parentMenu" && item.type == 3){
             isHidden = true;
         }
+        // 系统实体
+        let systemEntityList = ["Department", "Role", "Team"];
+        // 如果是系统实体，并且没有权限，不显示
+        if(systemEntityList.includes(item.entityName) && !tool.checkRole('r' + item.entityCode + '-1')) {
+            isHidden = true;
+        }
         // if(item.pcShow != undefined && !item.pcShow) {
         //     isHidden = true;
         // }

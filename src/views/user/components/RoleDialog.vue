@@ -595,14 +595,15 @@ const setEntityRights = (entityCode, command, authorizable = true) => {
 
 // 设置所有数据权限
 const allHandleCommand = (command) => {
-	rightEntityList.value.forEach((entity) => {
+	const targetEntities = filterEntityList.value;
+	targetEntities.forEach((entity) => {
 		setEntityRights(entity.entityCode, command, entity.authorizable);
 	});
 	queryEntity();
 	
 	// 显示操作结果提示
 	ElMessage.success(
-		`已将所有实体的全部权限批量设置为：${getCommandLabel(command)}（共${rightEntityList.value.length}个实体）`
+		`已将当前${targetEntities.length}个实体的全部权限批量设置为：${getCommandLabel(command)}`
 	);
 };
 
@@ -650,9 +651,10 @@ const getColumnRightLevels = (column) => {
 // 单列设置权限
 const columnCommand = (command, column) => {
 	let updatedCount = 0;
+	const targetEntities = filterEntityList.value;
 
-	// 遍历所有实体，设置指定列的权限
-	rightEntityList.value.forEach((entity) => {
+	// 遍历当前筛选出的实体，设置指定列的权限
+	targetEntities.forEach((entity) => {
 		const key = `r${entity.entityCode}-${column}`;
 
 		// 根据不同的权限类型和实体特性设置权限值
@@ -685,7 +687,7 @@ const columnCommand = (command, column) => {
 
 	const isCreateRight = column === "2";
 	ElMessage.success(
-		`已将所有实体的${columnNames[column]}批量设置为：${getCommandLabel(command, isCreateRight)}（共${rightEntityList.value.length}个实体）`
+		`已将当前${targetEntities.length}个实体的${columnNames[column]}批量设置为：${getCommandLabel(command, isCreateRight)}`
 	);
 };
 
