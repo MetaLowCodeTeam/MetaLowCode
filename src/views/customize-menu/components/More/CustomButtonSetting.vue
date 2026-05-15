@@ -585,6 +585,20 @@
                 >
                     tip：操作列宽在【更多-其他列表设计-列表设置】中修改
                 </span>
+                <span 
+                    v-if="currentTab == 'pcTop'" 
+                    class="ml-10 ml-a-span"
+                    @click="cloneJsonConfig"
+                >
+                    复制Json配置
+                </span>
+                <span 
+                    v-if="currentTab == 'pcTop'" 
+                    class="ml-10 ml-a-span"
+                    @click="pasteJsonConfig"
+                >
+                    粘贴Json配置
+                </span>
             </div>
 			<el-button @click="closeDialog">取消</el-button>
 			<el-button type="primary" @click="saveButton">保存</el-button>
@@ -690,6 +704,9 @@ const isAppDetailOrList = computed(() => {
 
 // 判断选项是否禁用
 const isOptionDisabled = (itemValue) => {
+    if (!currentButton.value) {
+        return false;
+    }
     let { action } = currentButton.value;
     // 如果是编辑，禁用非勾选一条数据
     if((action == 2 || action == 3) && itemValue !== 1) {
@@ -881,13 +898,18 @@ let currentEntity = ref({});
 let layoutConfigData = ref({});
 // 打开弹窗
 const openDialog = async (entity) => {
+    layoutConfigId.value = null;
+    layoutConfigData.value = {};
+    tabList.value.forEach(el => {
+        el.buttonList = [];
+    })
 	// 自定义按钮配置ID
 	if (entity.customButtonId) {
 		layoutConfigId.value = entity.customButtonId;
 	}
 	// 自定义按钮配置数据
 	if (entity.customButton) {
-		layoutConfigData.value = { ...entity.customButton };
+		layoutConfigData.value = deepClone(entity.customButton);
 	}
 	currentTab.value = "pcTop";
 	currentEntity.value = entity;
@@ -897,7 +919,7 @@ const openDialog = async (entity) => {
 	await loadDataTransformList();
 	await getCustomRightList();
     tabList.value.forEach(el => {
-        el.buttonList = layoutConfigData.value[el.name] || [];
+        el.buttonList = deepClone(layoutConfigData.value[el.name] || []);
     })
 	// 初始化自定义按钮配置
 	initTabButtonConfig(currentTab.value);
@@ -916,7 +938,7 @@ const TAB_DEFAULT_BUTTONS = {
 // 初始化自定义按钮配置
 const initTabButtonConfig = (tab) => {
 	const findTab = tabList.value.find((item) => item.name === tab);
-	findTab.buttonList = layoutConfigData.value[tab] || [];
+	findTab.buttonList = deepClone(findTab.buttonList || []);
 	
 	// 获取当前标签页的默认按钮列表
 	const defaultButtons = TAB_DEFAULT_BUTTONS[tab];
@@ -1096,6 +1118,80 @@ const copyId = () => {
         ElMessage.warning("暂无Guid可复制");
     }
 }
+
+const getJsonConfig = () => {
+    let paramConfig = {};
+    tabList.value.forEach(tab => {
+        paramConfig[tab.name] = tab.buttonList || [];
+    })
+    return paramConfig;
+}
+
+// 复制Json配置
+const cloneJsonConfig = () => {
+    copyText(JSON.stringify(getJsonConfig(), null, 2));
+}
+
+const isPlainObject = (value) => Object.prototype.toString.call(value) === "[object Object]";
+
+const parseButtonJsonConfig = (text) => {
+    if (!text || !text.trim()) {
+        return null;
+    }
+    try {
+        const config = JSON.parse(text);
+        const tabNames = tabList.value.map(tab => tab.name);
+        if (!isPlainObject(config)) {
+            return null;
+        }
+        for (const tabName of tabNames) {
+            if (!Array.isArray(config[tabName])) {
+                return null;
+            }
+            if (config[tabName].some(item => !isPlainObject(item))) {
+                return null;
+            }
+        }
+        return config;
+    } catch (e) {
+        return null;
+    }
+}
+
+const readClipboardText = async () => {
+    try {
+        return await navigator.clipboard.readText();
+    } catch (e) {
+        return "";
+    }
+}
+
+// 粘贴Json配置
+const pasteJsonConfig = async () => {
+    const clipboardText = await readClipboardText();
+    const config = parseButtonJsonConfig(clipboardText);
+    if (!config) {
+        ElMessage.warning("请先复制Json配置");
+        return;
+    }
+
+    ElMessageBox.confirm("粘贴Json配置会覆盖当前自定义按钮配置，是否确认粘贴？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(() => {
+            tabList.value.forEach(tab => {
+                tab.buttonList = deepClone(config[tab.name] || []);
+            })
+            initTabButtonConfig(currentTab.value);
+            currentButton.value = null;
+            clearErrorStatus();
+            ElMessage.success("粘贴成功");
+        })
+        .catch(() => {});
+}
+
 
 defineExpose({
 	openDialog,

@@ -92,11 +92,23 @@
         </div>
         <template #footer>
             <span 
-                class="ml-a-span fl ml-20" 
+                class="ml-a-span fl ml-10" 
                 v-if="editColumnDialog.chosenListType != 'BATCH_UPDATE'"
                 @click="resetColumnWidth"
             >
                 重置拖拽过的列宽
+            </span>
+            <span 
+                class="ml-a-span fl ml-10" 
+                @click="cloneJsonConfig"
+            >
+                复制Json配置
+            </span>
+            <span 
+                class="ml-a-span fl ml-10" 
+                @click="pasteJsonConfig"
+            >
+                粘贴Json配置
             </span>
             <div class="footer-div">
                 <el-button @click="isShow = false" :loading="loading">取消</el-button>
@@ -347,7 +359,7 @@ import { queryEntityListableFields } from "@/api/crud";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import useCommonStore from "@/store/modules/common";
-import { getElColorPickerPredefineColors } from "@/utils/util";
+import { copyText, deepClone, getElColorPickerPredefineColors } from "@/utils/util";
 import { storeToRefs } from "pinia";
 const { publicSetting } = storeToRefs(useCommonStore());
 const { queryEntityNameByCode } = useCommonStore();
@@ -398,6 +410,9 @@ let showColumn = ref([]);
 // 源所有列
 let sourceColumn = ref([]);
 
+// 所有可选列原始数据
+let allColumn = ref([]);
+
 // 原始列数据映射，按 fieldName 存储，删除时从原始数据还原
 let originalFieldMap = {};
 
@@ -415,7 +430,7 @@ const notShowColumn = () => {
 
 // 添加显示列
 const addShowColumn = (column) => {
-    showColumn.value.push(column);
+    showColumn.value.push(deepClone(column));
     for (let index = 0; index < sourceColumn.value.length; index++) {
         const el = sourceColumn.value[index];
         if (column.fieldName == el.fieldName) {
@@ -691,7 +706,7 @@ const confirmColumnEdit = () => {
 const delColumn = (column, inx) => {
     showColumn.value.splice(inx, 1);
     // 从原始数据中取该字段，避免把左侧已修改的对象放回右侧
-    const original = originalFieldMap[column.fieldName] || column;
+    const original = deepClone(originalFieldMap[column.fieldName] || column);
     // 如果右侧已有该字段，先移除，避免重复
     const existIdx = sourceColumn.value.findIndex((el) => el.fieldName === column.fieldName);
     if (existIdx !== -1) {
@@ -709,24 +724,25 @@ const getAllColumn = async () => {
         entityCode,
     );
     if (res) {
+        allColumn.value = deepClone(res.data || []);
         // 记录原始字段映射
         originalFieldMap = {};
         Array.isArray(res.data) && res.data.forEach((el) => {
             if (el && el.fieldName) {
-                originalFieldMap[el.fieldName] = el;
+                originalFieldMap[el.fieldName] = deepClone(el);
             }
         });
         showColumn.value = [];
         let hasFieldName = [];
         if (config) {
             JSON.parse(config).forEach((el) => {
-                showColumn.value.push(el);
+                showColumn.value.push(deepClone(el));
                 hasFieldName.push(el.fieldName);
             });
         }
         // 如果是批量编辑需要过滤掉图片、文件类型字段 且是能修改的字段
         if (chosenListType == "BATCH_UPDATE") {
-            sourceColumn.value = res.data.filter(
+            sourceColumn.value = allColumn.value.filter(
                 (el) =>
                     !hasFieldName.includes(el.fieldName) &&
                     el.fieldType != "Picture" &&
@@ -735,7 +751,7 @@ const getAllColumn = async () => {
                     !el.isUnique
             );
         } else {
-            sourceColumn.value = res.data.filter(
+            sourceColumn.value = allColumn.value.filter(
                 (el) => !hasFieldName.includes(el.fieldName)
             );
         }
@@ -794,6 +810,85 @@ const resetColumnWidth = () => {
         }
     })
     .catch(() => {});
+}
+
+const isPlainObject = (value) => Object.prototype.toString.call(value) === "[object Object]";
+
+const parseColumnJsonConfig = (text) => {
+    if (!text || !text.trim()) {
+        return null;
+    }
+    try {
+        const config = JSON.parse(text);
+        if (!Array.isArray(config)) {
+            return null;
+        }
+        const fieldNameSet = new Set();
+        for (const column of config) {
+            if (!isPlainObject(column) || !column.fieldName || !column.fieldLabel || fieldNameSet.has(column.fieldName)) {
+                return null;
+            }
+            fieldNameSet.add(column.fieldName);
+        }
+        return config;
+    } catch (e) {
+        return null;
+    }
+}
+
+const getAvailableSourceColumn = (selectedFieldNames) => {
+    const { chosenListType } = props.editColumnDialog;
+    return allColumn.value.filter((el) => {
+        if (selectedFieldNames.includes(el.fieldName)) {
+            return false;
+        }
+        if (chosenListType == "BATCH_UPDATE") {
+            return (
+                el.fieldType != "Picture" &&
+                el.fieldType != "File" &&
+                el.isUpdatable &&
+                !el.isUnique
+            );
+        }
+        return true;
+    });
+}
+
+const cloneJsonConfig = () => {
+    copyText(JSON.stringify(showColumn.value, null, 2));
+}
+
+const readClipboardText = async () => {
+    try {
+        return await navigator.clipboard.readText();
+    } catch (e) {
+        return "";
+    }
+}
+
+const pasteJsonConfig = async () => {
+    const clipboardText = await readClipboardText();
+    const config = parseColumnJsonConfig(clipboardText);
+    if (!config) {
+        ElMessage.warning("请先复制Json配置");
+        return;
+    }
+
+    ElMessageBox.confirm("粘贴Json配置会覆盖当前列显示配置，是否确认粘贴？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(() => {
+            const nextShowColumn = deepClone(config);
+            const selectedFieldNames = nextShowColumn.map((el) => el.fieldName);
+            showColumn.value = nextShowColumn;
+            sourceColumn.value = getAvailableSourceColumn(selectedFieldNames);
+            editColumnDialogIsShow.value = false;
+            editColumnDialogData.value = {};
+            ElMessage.success("粘贴成功");
+        })
+        .catch(() => {});
 }
 
 </script>
