@@ -55,11 +55,30 @@
                             v-for="(tab,inx) of tabList"
                             :key="inx"
                         >
-                            <div class="item-li-box" v-if="isTreeMode">
+                            <div class="item-li-box" v-if="tab.name === 'User' && cutTabCode === tab.name">
                                 <el-tree
                                     :ref="(el) => setTreeRef(el, tab.name)"
-                                    :data="tabData"
-                                    :props="treeProps"
+                                    :key="`${tab.name}-lazy-${keyword || ''}`"
+                                    :data="userTreeData"
+                                    :props="userTreeProps"
+                                    :node-key="treeIdKey"
+                                    :default-expand-all="isTreeDefaultExpandAll"
+                                    :lazy="isUserTreeLazy"
+                                    :load="loadUserTreeNode"
+                                    :show-checkbox="multiple"
+                                    :check-strictly="false"
+                                    :highlight-current="!multiple"
+                                    :filter-node-method="filterTreeNode"
+                                    @check-change="handleTreeCheckChange"
+                                    @node-click="handleTreeNodeClick"
+                                />
+                            </div>
+                            <div class="item-li-box" v-else-if="tab.name === 'Department' && cutTabCode === tab.name">
+                                <el-tree
+                                    :ref="(el) => setTreeRef(el, tab.name)"
+                                    :key="`${tab.name}-normal`"
+                                    :data="departmentTreeData"
+                                    :props="departmentTreeProps"
                                     :node-key="treeIdKey"
                                     :default-expand-all="true"
                                     :show-checkbox="multiple"
@@ -70,7 +89,7 @@
                                     @node-click="handleTreeNodeClick"
                                 />
                             </div>
-                            <div class="item-li-box" v-else>
+                            <div class="item-li-box" v-else-if="cutTabCode === tab.name">
                                 <div
                                     class="tab-item-li"
                                     v-for="(item,itemInx) of tabData"
@@ -90,9 +109,28 @@
                     <div class="ml-select-tab item-li-box" v-else>
                         <template v-if="isTreeMode">
                             <el-tree
+                                v-if="cutTabCode === 'User'"
                                 ref="singleTreeRef"
-                                :data="tabData"
-                                :props="treeProps"
+                                :key="`single-${cutTabCode}-lazy-${keyword || ''}`"
+                                :data="userTreeData"
+                                :props="userTreeProps"
+                                :node-key="treeIdKey"
+                                :default-expand-all="isTreeDefaultExpandAll"
+                                :lazy="isUserTreeLazy"
+                                :load="loadUserTreeNode"
+                                :show-checkbox="multiple"
+                                :check-strictly="false"
+                                :highlight-current="!multiple"
+                                :filter-node-method="filterTreeNode"
+                                @check-change="handleTreeCheckChange"
+                                @node-click="handleTreeNodeClick"
+                            />
+                            <el-tree
+                                v-else
+                                ref="singleTreeRef"
+                                :key="`single-${cutTabCode}-normal`"
+                                :data="departmentTreeData"
+                                :props="departmentTreeProps"
                                 :node-key="treeIdKey"
                                 :default-expand-all="true"
                                 :show-checkbox="multiple"
@@ -205,20 +243,32 @@ let tabConfig = ref([
 let tabList = ref([]);
 // 页签数据
 let tabData = ref([]);
+let userTreeData = ref([]);
+let departmentTreeData = ref([]);
+let userTreeLoadedIdSet = ref(new Set());
+let userTreeLoadedDepartmentIdSet = ref(new Set());
 // 当前页签
 let cutTabCode = ref("User");
 // 是否树形模式（用户、部门）
 const isTreeMode = computed(() => cutTabCode.value === 'User' || cutTabCode.value === 'Department');
+const isUserTree = computed(() => cutTabCode.value === 'User');
+const isUserTreeSearch = computed(() => isUserTree.value && !!keyword.value);
+const isUserTreeLazy = computed(() => isUserTree.value && !isUserTreeSearch.value);
+const isTreeDefaultExpandAll = computed(() => isUserTreeSearch.value);
 // 树 props/keys（用户/部门树均为 label/id）
 const treeLabelKey = computed(() => 'label');
 const treeIdKey = computed(() => 'id');
-const treeProps = computed(() => ({ children: 'children', label: treeLabelKey.value }));
+const treeProps = computed(() => ({ children: 'children', label: treeLabelKey.value, isLeaf: 'isLeaf', disabled: 'disabled' }));
+const userTreeProps = computed(() => ({ children: 'children', label: treeLabelKey.value, isLeaf: 'isLeaf', disabled: 'disabled' }));
+const departmentTreeProps = computed(() => ({ children: 'children', label: treeLabelKey.value }));
 // el-tree 引用
 let treeRefMap = reactive({});
 let singleTreeRef = ref();
 const setTreeRef = (el, key) => {
     if (el) {
         treeRefMap[key] = el;
+    } else {
+        delete treeRefMap[key];
     }
 };
 // 收集当前树的所有 id，便于与其它 Tab 选择合并不相互覆盖
@@ -230,15 +280,87 @@ const collectTreeIds = (nodes, acc = new Set()) => {
     });
     return acc;
 };
-const processTreeData = (nodes) => {
-    if (!Array.isArray(nodes)) return nodes;
-    nodes.forEach((n) => {
-        if (n && n.dingDepartmentId) {
-            n.id = n.id + "department";
+const USER_ID_PREFIX = "0000021-";
+const DEPARTMENT_ID_PREFIX = "0000022-";
+const isUserTreeUserNode = (node) => String(node?.[treeIdKey.value] || "").startsWith(USER_ID_PREFIX);
+const isUserTreeDepartmentNode = (node) => String(node?.[treeIdKey.value] || "").startsWith(DEPARTMENT_ID_PREFIX);
+const isUserTreeDepartmentLoaded = (node) => {
+    const id = node?.[treeIdKey.value];
+    return isUserTreeSearch.value
+        || userTreeLoadedDepartmentIdSet.value.has(id)
+        || (Array.isArray(node?.children) && node.children.length > 0);
+};
+const normalizeUserTreeData = (nodes) => {
+    if (!Array.isArray(nodes)) return [];
+    return nodes.map((node) => {
+        const item = { ...node };
+        if (item[treeIdKey.value] != null) {
+            userTreeLoadedIdSet.value.add(item[treeIdKey.value]);
         }
-        if (Array.isArray(n?.children) && n.children.length > 0) processTreeData(n.children);
+        item.isLeaf = isUserTreeUserNode(item);
+        item.disabled = isUserTreeDepartmentNode(item) && !isUserTreeDepartmentLoaded(item);
+        if (Array.isArray(item.children) && item.children.length > 0) {
+            item.children = normalizeUserTreeData(item.children);
+        } else if (isUserTreeDepartmentNode(item) && !isUserTreeSearch.value) {
+            delete item.children;
+        }
+        return item;
     });
-    return nodes;
+};
+const getCurrentTreeRef = () => treeRefMap[cutTabCode.value] || singleTreeRef.value;
+const getCurrentTreeData = () => {
+    if (cutTabCode.value === 'User') return userTreeData.value;
+    if (cutTabCode.value === 'Department') return departmentTreeData.value;
+    return tabData.value;
+};
+const syncTreeCheckedState = async () => {
+    isProgrammaticCheck.value = true;
+    await nextTick();
+    const currentTreeRef = getCurrentTreeRef();
+    const cutSelectedIds = defaultValue.value
+        ? defaultValue.value.map((el) => el.id)
+        : [];
+    if (currentTreeRef && currentTreeRef.store) {
+        const presentIds = cutTabCode.value === 'User'
+            ? Array.from(userTreeLoadedIdSet.value)
+            : Array.from(collectTreeIds(getCurrentTreeData()));
+        const toCheck = cutSelectedIds.filter((id) => id && presentIds.includes(id));
+        if (props.multiple) {
+            currentTreeRef.setCheckedKeys && currentTreeRef.setCheckedKeys(toCheck);
+        } else if (cutSelectedIds && cutSelectedIds.length > 0) {
+            currentTreeRef.setCurrentKey && currentTreeRef.setCurrentKey(toCheck[0]);
+        }
+    }
+    await nextTick();
+    isProgrammaticCheck.value = false;
+};
+const fetchUserTreeDataLazy = async (departmentId) => {
+    const param = {};
+    if (departmentId) param.departmentId = departmentId;
+    if (keyword.value) param.search = keyword.value;
+    const res = await api.common.getUserTreeDataLazy(param);
+    return normalizeUserTreeData(res?.data || []);
+};
+const loadUserTreeNode = async (node, resolve) => {
+    if (!isUserTreeLazy.value) {
+        resolve([]);
+        return;
+    }
+    if (node.level === 0) {
+        resolve(userTreeData.value || []);
+        return;
+    }
+    if (isUserTreeUserNode(node.data)) {
+        resolve([]);
+        return;
+    }
+    const departmentId = node.data?.[treeIdKey.value];
+    const children = await fetchUserTreeDataLazy(departmentId);
+    userTreeLoadedDepartmentIdSet.value.add(departmentId);
+    node.data.disabled = false;
+    resolve(children);
+    await nextTick();
+    await syncTreeCheckedState();
 };
 let cutTabItem = reactive({});
 watch(
@@ -297,35 +419,23 @@ let getData = async () => {
     tabData.value = [];
     // 获取当前tab接口
     let res;
-    if (isTreeMode.value) {
+    if (isUserTree.value) {
+        userTreeLoadedIdSet.value = new Set();
+        userTreeLoadedDepartmentIdSet.value = new Set();
+        userTreeData.value = await fetchUserTreeDataLazy();
+        await syncTreeCheckedState();
+        loading.value = false;
+        return;
+    } else if (cutTabCode.value === 'Department') {
         const query = Object.assign({}, props.filter[cutTabCode.value] || {});
-        const apiName = cutTabCode.value === 'User' ? 'getUserTreeData' : 'getDepartmentTreeData';
-        res = await api.common[apiName](query);
+        res = await api.common.getDepartmentTreeData(query);
     } else {
         res = await api.common["get" + cutTabCode.value](param, props.filter[cutTabCode.value]);
     }
     if (res) {
         if (isTreeMode.value) {
-            tabData.value = res.data || [];
-            if(cutTabCode.value === 'User') {
-                tabData.value = processTreeData(tabData.value);
-            }
-            isProgrammaticCheck.value = true;
-            // 默认勾选/高亮
-            await nextTick();
-            const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
-            if (currentTreeRef && currentTreeRef.store) {
-                // 仅勾选属于当前树的数据，避免误勾选并确保与其他Tab合并
-                const presentIds = Array.from(collectTreeIds(tabData.value));
-                const toCheck = cutSelectedIds.filter((id) => id && presentIds.includes(id));
-                if (props.multiple) {
-                    currentTreeRef.setCheckedKeys && currentTreeRef.setCheckedKeys(toCheck);
-                } else if (cutSelectedIds && cutSelectedIds.length > 0) {
-                    currentTreeRef.setCurrentKey && currentTreeRef.setCurrentKey(toCheck[0]);
-                }
-            }
-            await nextTick();
-            isProgrammaticCheck.value = false;
+            departmentTreeData.value = res.data || [];
+            await syncTreeCheckedState();
         } else {
             tabData.value = (res.data || []).map((el) => {
                 el.isActive = false;
@@ -337,8 +447,8 @@ let getData = async () => {
             });
         }
     }
-    // 树模式：使用本地过滤，不再调接口
-    if (isTreeMode.value) {
+    // 部门树保持原逻辑：使用本地过滤，不再调接口
+    if (cutTabCode.value === 'Department') {
         const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
         nextTick(() => {
             if (currentTreeRef && currentTreeRef.filter) {
@@ -395,9 +505,14 @@ let handleTreeCheckChange = (data, checked, indeterminate) => {
     if (!currentTreeRef || !currentTreeRef.getCheckedNodes) return;
     // 部门需要包含父节点，用户只包含子节点
     const leafOnly = cutTabCode.value === 'Department' ? false : true;
-    const nodes = currentTreeRef.getCheckedNodes(leafOnly);
+    const checkedNodes = currentTreeRef.getCheckedNodes(leafOnly);
+    const nodes = cutTabCode.value === 'User'
+        ? checkedNodes.filter((n) => isUserTreeUserNode(n))
+        : checkedNodes;
     // 合并：保留其它Tab已选；仅用当前树的选择替换同域
-    const presentIdSet = collectTreeIds(tabData.value);
+    const presentIdSet = cutTabCode.value === 'User'
+        ? userTreeLoadedIdSet.value
+        : collectTreeIds(getCurrentTreeData());
     const others = (defaultValue.value || []).filter((v) => !presentIdSet.has(v.id));
     const current = nodes.map((n) => ({ id: n[treeIdKey.value], name: n[treeLabelKey.value] }));
     defaultValue.value = [...others, ...current];
@@ -405,7 +520,7 @@ let handleTreeCheckChange = (data, checked, indeterminate) => {
     emit("update:modelValue", defaultValue.value);
     emit("change", defaultValue.value);
 
-    if (checked && isTreeMode.value && !isProgrammaticCheck.value) {
+    if (checked && cutTabCode.value === 'Department' && !isProgrammaticCheck.value) {
         const nodeRef = currentTreeRef.getNode && currentTreeRef.getNode(data);
         const isRoot = nodeRef && nodeRef.level === 1;
         if (isRoot) {
@@ -420,7 +535,14 @@ let handleTreeCheckChange = (data, checked, indeterminate) => {
     }
 };
 // 树-节点点击（单选）
-let handleTreeNodeClick = (data) => {
+let handleTreeNodeClick = (data, node) => {
+    if (isUserTree.value && isUserTreeDepartmentNode(data)) {
+        if (node && !node.expanded) {
+            node.expand();
+        }
+        return;
+    }
+    if (isUserTree.value && !isUserTreeUserNode(data)) return;
     if (props.multiple) return;
     defaultValue.value = [{ id: data[treeIdKey.value], name: data[treeLabelKey.value] }];
     autoCurrentLabel();
@@ -460,26 +582,30 @@ let removeTag = (item) => {
 };
 //清空后的回调
 let clear = () => {
-    tabData.value.forEach((el) => {
+    getCurrentTreeData().forEach((el) => {
         el.isActive = false;
     });
     emit("update:modelValue", defaultValue.value);
 };
 // 自定义搜索方法
-let filterMethod = (keyword) => {
-    if (!keyword) {
+let filterMethod = (searchValue) => {
+    if (!searchValue) {
         keyword.value = null;
         // 树模式下清除过滤
-        if (isTreeMode.value) {
+        if (isUserTree.value) {
+            getData();
+        } else if (cutTabCode.value === 'Department') {
             const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
             nextTick(() => currentTreeRef && currentTreeRef.filter(''))
         }
         return false;
     }
-    keyword.value = keyword;
-    if (isTreeMode.value) {
+    keyword.value = searchValue;
+    if (isUserTree.value) {
+        getData();
+    } else if (cutTabCode.value === 'Department') {
         const currentTreeRef = treeRefMap[cutTabCode.value] || singleTreeRef.value;
-        nextTick(() => currentTreeRef && currentTreeRef.filter(keyword))
+        nextTick(() => currentTreeRef && currentTreeRef.filter(searchValue))
     } else {
         getData();
     }

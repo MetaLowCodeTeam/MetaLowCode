@@ -40,9 +40,9 @@ export default {
     isEquation: async (data) => {
         return await http.get("/crud/testEquation", data);
     },
-    // 获取用户树形数据
-    getUserTreeData: async (data) => {
-        return await http.get("/user/treeData", data);
+    // 获取用户懒加载树形数据
+    getUserTreeDataLazy: async (data) => {
+        return await http.get("/user/treeDataLazy", data);
     },
     // 获取部门树形数据
     getDepartmentTreeData: async (data) => {
