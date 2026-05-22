@@ -13,6 +13,7 @@
 		/>
 		<el-scrollbar max-height="500px">
 			<el-tree
+				v-show="!isSearching"
 				ref="customDTreeRef"
 				class="w-100"
 				:data="treeData"
@@ -21,7 +22,6 @@
 				highlight-current
 				:default-expanded-keys="firstLevelKeys"
 				node-key="id"
-				:filter-node-method="filterNode"
 				:default-checked-keys="defaultCheckedKeys"
 				:show-checkbox="showCheckbox"
 				:accordion="accordion"
@@ -30,6 +30,23 @@
 				:check-strictly="checkStrictly"
 				lazy
 				:load="loadNode"
+			/>
+			<el-tree
+				v-show="isSearching"
+				ref="searchTreeRef"
+				class="w-100"
+				:data="filteredTreeData"
+				:props="defaultProps"
+				@node-click="handleNodeClick"
+				highlight-current
+				node-key="id"
+				:default-checked-keys="defaultCheckedKeys"
+				:show-checkbox="showCheckbox"
+				:accordion="accordion"
+				@check="handleCheckChange"
+				:expand-on-click-node="false"
+				:check-strictly="checkStrictly"
+				default-expand-all
 			/>
 		</el-scrollbar>
 	</div>
@@ -75,7 +92,10 @@ const emit = defineEmits(["nodeClick"]);
 
 let loading = ref(false);
 let treeData = ref([]);
+let filteredTreeData = ref([]);
 let customDTreeRef = ref();
+let searchTreeRef = ref();
+let isSearching = ref(false);
 
 // 树节点配置
 const defaultProps = {
@@ -111,12 +131,26 @@ let firstLevelKeys = ref([]);
 let filterText = ref("");
 // 监听搜索值
 watch(filterText, (val) => {
-	customDTreeRef.value?.filter(val);
+	let keyword = val?.trim?.() || "";
+	isSearching.value = !!keyword;
+	filteredTreeData.value = keyword ? filterTreeData(treeData.value, keyword) : [];
 });
-// 执行树过滤
-const filterNode = (value, data) => {
-	if (!value) return true;
-	return data.label.includes(value);
+
+// 使用原始树数据递归过滤，避免 lazy 树未展开节点无法进入 el-tree 内部 store 的问题
+const filterTreeData = (data, keyword) => {
+	return (data || []).reduce((result, item) => {
+		let children = item[defaultProps.children] || [];
+		let filteredChildren = filterTreeData(children, keyword);
+		let label = item[defaultProps.label] || "";
+		let isMatched = String(label).includes(keyword);
+		if (isMatched || filteredChildren.length) {
+			result.push({
+				...item,
+				[defaultProps.children]: isMatched ? children : filteredChildren,
+			});
+		}
+		return result;
+	}, []);
 };
 
 const loadTreeData = async () => {
@@ -126,6 +160,9 @@ const loadTreeData = async () => {
 		let newOnLoadEvent = new Function("exposed", onLoadEvent);
 		let res = await newOnLoadEvent.call(this, getScriptExposedParams());
 		treeData.value = res || [];
+		if (isSearching.value) {
+			filteredTreeData.value = filterTreeData(treeData.value, filterText.value?.trim?.() || "");
+		}
 		loading.value = false;
 	} catch (error) {
 		console.log(error, "error");
@@ -200,8 +237,9 @@ const handleCheckChange = () => {
 };
 
 const getSelectedNode = () => {
+	let treeRef = isSearching.value ? searchTreeRef.value : customDTreeRef.value;
 	if (props.showCheckbox) {
-		return customDTreeRef.value?.getCheckedNodes();
+		return treeRef?.getCheckedNodes();
 	} else {
 		return cutSelectedNode.value;
 	}
@@ -222,6 +260,7 @@ watch(
 
 const resetChecked = () => {
 	customDTreeRef.value?.setCheckedKeys([], false);
+	searchTreeRef.value?.setCheckedKeys([], false);
 };
 
 defineExpose({
