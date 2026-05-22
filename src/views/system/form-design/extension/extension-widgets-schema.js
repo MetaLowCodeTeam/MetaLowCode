@@ -75,6 +75,8 @@ export const checkTagSchema = {
         showBorder: false, // 是否显示边框
         showButton: false, // 是否显示为按钮
         showSelect: false, // 是否显示为选择框
+        // 只读模式显示形式，1 文本 2 tag
+        readOnlyDisplayFormat: 1,
 		optionItems: [
 			{label: 'check 1', value: 1},
 			{label: 'check 2', value: 2},

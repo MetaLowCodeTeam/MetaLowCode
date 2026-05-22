@@ -63,6 +63,9 @@ export default {
             "1002": "Enable Checkbox",
             "1003": "Dialog Setting",
             "1004": "Detail URL",
+            "1005": "Style Of Read Mode",
+            "1005-1": "Text",
+            "1005-2": "Tag",
 
             "1100": "Same Level Form Fillback",
             "1101": "Fillback Rules",

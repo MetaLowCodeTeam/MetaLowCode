@@ -67,7 +67,15 @@
             </template>
         </template>
         <template v-if="isReadMode">
-            <span class="readonly-mode-field">{{ fieldModel || "--" }}</span>
+            <template v-if="field.options?.readOnlyDisplayFormat == 2">
+                <span class="readonly-mode-field" v-if="!fieldModel">--</span>
+                <template v-else>
+                    <el-tag v-for="(tag, index) in fieldModel.split(',')" class="mr-10" :key="index">
+                        {{ tag }}
+                    </el-tag>
+                </template>
+            </template>
+            <span v-else class="readonly-mode-field">{{ fieldModel || "--" }}</span>
         </template>
 
 	</form-item-wrapper>

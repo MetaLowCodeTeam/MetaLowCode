@@ -1,6 +1,6 @@
 <template>
 	<!--  --> 
-	<el-form-item label="启用勾选框" label-width="120px">
+	<el-form-item :label="i18nt('extension.setting.1002')"  label-width="120px">
 		<el-switch v-model="optionModel.showCheckbox" @change="onCheckboxChange"/>
 	</el-form-item>
     <el-form-item 
@@ -26,6 +26,19 @@
     >
         <el-switch v-model="optionModel.showSelect" @change="onSelectChange"/>
     </el-form-item>
+    <el-form-item
+        :label="i18nt('extension.setting.1005')"
+        label-width="120px"
+    >
+        <el-select v-model="optionModel.readOnlyDisplayFormat" class="w-100">
+            <el-option
+                v-for="item in showTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+        </el-select>
+    </el-form-item>
 </template>
 
 <script>
@@ -42,8 +55,24 @@ export default {
 	},
 
 	data() {
-		return {};
+		return {
+            showTypeOptions: [
+                {
+                    label: this.i18nt('extension.setting.1005-1'),
+                    value: 1,
+                },
+                {
+                    label: this.i18nt('extension.setting.1005-2'),
+                    value: 2,
+                },
+            ],
+        };
 	},
+    created() {
+        if (!this.optionModel.readOnlyDisplayFormat) {
+            this.optionModel.readOnlyDisplayFormat = 1;
+        }
+    },
 	methods: {
         onCheckboxChange() {
             if(!this.optionModel.showCheckbox) {
