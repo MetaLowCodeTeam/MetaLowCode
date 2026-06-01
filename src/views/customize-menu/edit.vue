@@ -75,7 +75,7 @@
         </template>
         <template #footer v-else-if="editParamConf.showFooter && showFooterButtonConfig.showFooter && customButtonList.length > 0">
             <template
-                v-for="(item,index) of customButtonList" :key="index"
+                v-for="(item,index) of customButtonList" :key="item.guid || item.key || item.name || index"
             >
                 <slot v-if="item.type === 'slot'" :name="item.name" :row="row"></slot>
                 <el-button
@@ -83,7 +83,7 @@
                     :type="item.type"
                     :plain="item.key == 'saveRefresh' || item.key == 'saveSubmit'"
                     :disabled="item.disabled"
-                    v-else-if="!item.hidden && (item.key != 'saveSubmit' || (item.key == 'saveSubmit' && editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
+                    v-else-if="!item.hidden && !item.footerConfigHidden && !item.dsvHidden && (item.key != 'saveSubmit' || (item.key == 'saveSubmit' && editParamConf.showConfirmAndSubmitBtn && isShowSaveAndSubmit && row.approvalStatus.value != 1 && row.approvalStatus.value != 3))"
                 >
                     <el-icon
                         :color="item.iconColor"
@@ -243,6 +243,56 @@ onMounted(() => {
 
 // 自定义按钮
 let customButtonList = ref([]);
+
+const getFooterButtonList = () => {
+    return customButtonList.value
+        .filter(item => item.type !== 'slot')
+        .map(item => ({
+            guid: item.guid,
+            key: item.key,
+            name: item.isNative ? item.name || item.defaultName : item.name,
+            defaultName: item.defaultName,
+            isNative: !!item.isNative,
+            hidden: !!item.hidden || !!item.footerConfigHidden || !!item.dsvHidden,
+            disabled: !!item.disabled,
+            action: item.action,
+            type: item.type,
+            showType: item.showType,
+        }));
+}
+
+const getCustomFooterButtonList = () => {
+    return getFooterButtonList().filter(item => !item.isNative);
+}
+
+const setFooterButtonHidden = (buttonGuidOrKey, hidden = true) => {
+    let keys = Array.isArray(buttonGuidOrKey) ? buttonGuidOrKey : [buttonGuidOrKey];
+    let updateCount = 0;
+    keys.forEach(key => {
+        if (!key) {
+            return;
+        }
+        customButtonList.value.forEach(btn => {
+            if (btn.type === 'slot') {
+                return;
+            }
+            if (btn.guid === key || btn.key === key) {
+                btn.dsvHidden = hidden;
+                updateCount += 1;
+            }
+        })
+    })
+    return updateCount;
+}
+
+const hideFooterButton = (buttonGuidOrKey) => {
+    return setFooterButtonHidden(buttonGuidOrKey, true);
+}
+
+const showFooterButton = (buttonGuidOrKey) => {
+    return setFooterButtonHidden(buttonGuidOrKey, false);
+}
+
 // 自定义按钮点击
 const customButtonClick = (item, row) => {
     // 如果是内置按钮
@@ -336,20 +386,17 @@ const loadMyLayoutConfig = async () => {
             return;
         }
         if(btn.key == 'cancel') {
-            btn.hidden = !showFooterButtonConfig.value.showCancelBtn;
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showCancelBtn;
             return;
         }
         if(btn.key == 'save') {
-            btn.hidden = !showFooterButtonConfig.value.showConfirmBtn;
-            return;
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmBtn;
         }
         if(btn.key == 'saveRefresh') {
-            btn.hidden = !showFooterButtonConfig.value.showConfirmRefreshBtn;
-            return;
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmRefreshBtn;
         }
         if(btn.key == 'saveSubmit') {
-            btn.hidden = !showFooterButtonConfig.value.showConfirmAndSubmitBtn;
-            return;
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmAndSubmitBtn;
         }
         // 如果是编辑需要检测是否有权限
         if(row.detailId) {
@@ -361,7 +408,7 @@ const loadMyLayoutConfig = async () => {
         }
     })
     // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
-    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && btn.filterJson && btn.filterJson.items?.length > 0 && btn.action !== 1);
+    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && !btn.footerConfigHidden && !btn.dsvHidden && btn.filterJson && btn.filterJson.items?.length > 0 && btn.action !== 1);
     if (filterBtns.length > 0) {
         // 如果是编辑 可以检测条件
         if(row.detailId) {
@@ -944,7 +991,23 @@ const submitApprovalSuccess = () => {
  * 导出方法
  */
 
-
+const setFooterButtonConfig = (v) => {
+    showFooterButtonConfig.value = Object.assign(JSON.parse(JSON.stringify(defaultShowFooterButtonConfig.value)), v);
+    customButtonList.value.forEach(btn => {
+        if(btn.key == 'cancel') {
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showCancelBtn;
+        }
+        if(btn.key == 'save') {
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmBtn;
+        }
+        if(btn.key == 'saveRefresh') {
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmRefreshBtn;
+        }
+        if(btn.key == 'saveSubmit') {
+            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmAndSubmitBtn;
+        }
+    })
+}   
 
 // 列表子表单回调所需
 const setRowRecordId = (id) => {
@@ -1018,7 +1081,13 @@ defineExpose({
     editById,
     loading,
     reload,
-    openPriceComparisonDialog
+    openPriceComparisonDialog,
+    setFooterButtonConfig,
+    setFooterButtonHidden,
+    hideFooterButton,
+    showFooterButton,
+    getFooterButtonList,
+    getCustomFooterButtonList,
 });
 </script>
 <style lang='scss' scoped>
