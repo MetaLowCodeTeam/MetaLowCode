@@ -27,7 +27,7 @@
                         'fontWeight': item.fontWeight == 1 ? 'normal' : 'bold',
                     }"
                     @click.stop="navClick(item)"
-                    v-if="(designer || item.type != 3 || (item.type == 3 && item.pcShow)) && $TOOL.checkRole('r' + item.entityCode + '-1')"
+                    v-if="(!!designer || item.type != 3 || (item.type == 3 && item.pcShow)) && checkItemRole(item)"
                 >
                     <div 
                         class="item-icon" 
@@ -125,6 +125,14 @@ const initOption = () => {
 const setSelected = () => {
     props.designer?.setSelected(props.field);
 };
+
+const checkItemRole = (item) => {
+    if (item.type != 1) {
+        return true;
+    }
+    return $TOOL.checkRole("r" + item.entityCode + "-1");
+};
+
 const appPath = import.meta.env.VITE_APP_PATH;
 const navClick = async (item) => {
     // 如果存在设计表示是在设计页面，无法点击
