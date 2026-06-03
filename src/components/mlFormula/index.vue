@@ -365,6 +365,11 @@ const confirm = async () => {
             javaScriptVal.value = javaScriptVal.value.split('\n').slice(1).join('\n');
         }
         let res = await $API.trigger.detail.scriptValidator(javaScriptVal.value);
+        if(!res || !res.data){
+            checkLoading.value = false;
+            ElMessage.error("脚本验证失败");
+            return
+        }
         if(res && res.data){
             if(isPreview.value){
                 isEditValue(javaScriptVal.value);
