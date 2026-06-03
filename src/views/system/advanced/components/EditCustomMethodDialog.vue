@@ -350,6 +350,7 @@ const onSave = async (paramData) => {
         let checkRes = await trigger.detail.scriptValidator(paramData.methodConfig);
         if(!checkRes || !checkRes.data){
             dialogConf.value.loading = false;
+            ElMessage.error("脚本验证失败");
             return
         }
     }
