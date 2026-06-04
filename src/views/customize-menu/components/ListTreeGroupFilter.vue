@@ -31,6 +31,11 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    // 实体模块名称
+    modelName: {
+        type: String,
+        default: "",
+    },
 });
 
 const emits = defineEmits(["check"]);
@@ -95,6 +100,7 @@ const getGroupTree = async (node) => {
             groupField: node.name,
             filterEasySql: node.filterSql,
             filterList: [],
+            modelName: props.modelName || null,
         };
         let nodeChildren = [];
         let res = await groupTreeQuery(param);

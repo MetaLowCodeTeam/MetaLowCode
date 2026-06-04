@@ -291,6 +291,7 @@
                             ref="ListTreeGroupFilterRefs"
                             :treeGroupConf="treeGroupConf"
                             :entityName="entityName"
+                            :modelName="formatModelName(myModelName, currentTab)"
                             @check="treeGroupFilter"
                         />
                     </el-scrollbar>
