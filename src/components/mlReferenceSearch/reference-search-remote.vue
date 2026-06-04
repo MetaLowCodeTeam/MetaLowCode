@@ -197,6 +197,9 @@ let idFieldName = ref("");
 let nameFieldName = ref("");
 
 let isDropdownVisible = ref(false);
+let lastSearchKey = "";
+let lastSearchAt = 0;
+const searchDedupeInterval = 300;
 
 const clearHandle = () => {
     emit("clearHandle");
@@ -208,6 +211,16 @@ const clearResults = (resetKeyword = false) => {
     total.value = 0;
     currentPage.value = 1;
     if (resetKeyword) searchValue.value = "";
+};
+
+const closeDropdown = () => {
+    clearResults(false);
+    isDropdownVisible.value = false;
+    currentCursor.value = -1;
+    tableRef.value?.setCurrentRow(null);
+    nextTick(() => {
+        selectRef.value?.blur?.();
+    });
 };
 
 const handleCurrentChange = (v) => {
@@ -250,76 +263,99 @@ const onFilter = (val) => {
     }
 }
 
+const getSearchKey = (keyword) => {
+    return [
+        props.entity,
+        props.refField,
+        currentPage.value,
+        pageSize.value,
+        keyword || "",
+    ].join("|");
+};
+
 const handleSearch = (v) => {
     if (loading.value) return;
+    const nextSearchValue = v !== null && v !== undefined ? v : searchValue.value;
+    const searchKey = getSearchKey(nextSearchValue);
+    const now = Date.now();
+    if (lastSearchKey === searchKey && now - lastSearchAt < searchDedupeInterval) {
+        return;
+    }
+    lastSearchKey = searchKey;
+    lastSearchAt = now;
     // 如果传入的值不为 null 或 undefined，才更新 searchValue
     // 分页切换时传入 searchValue.value，保持搜索条件
     if (v !== null && v !== undefined) {
         searchValue.value = v;
     }
+    // 先加锁，避免 visible-change 与 filter-method 竞态触发导致重复校验
+    loading.value = true;
     if(!props.checkFilterConditions()){
+        loading.value = false;
+        closeDropdown();
         return
     }
-    // 先加锁，避免 visible-change 与 filter-method 竞态触发导致并发
-    loading.value = true;
     nextTick(async () => {
-        let param = {
-            entity: props.entity,
-            refField: props.refField,
-            pageNo: currentPage.value,
-            pageSize: pageSize.value,
-        };
-        let filter = null;
-        if (props.searchFields.length > 0) {
-            filter = {
-                equation: "OR",
-                items: props.searchFields.map((el) => {
-                    return {
-                        fieldName: el,
-                        value: searchValue.value,
-                        op: props.isExactSearch ? "EQ" : "LK",
-                    };
-                }),
+        try {
+            let param = {
+                entity: props.entity,
+                refField: props.refField,
+                pageNo: currentPage.value,
+                pageSize: pageSize.value,
             };
-        }
-        let res = await refFieldQuery2(
-            param.entity,
-            param.refField,
-            param.pageNo,
-            param.pageSize,
-            props.extraFilter,
-            filter,
-            props.filterConditions,
-            null,
-            null,
-            filter ? "" : searchValue.value
-        );
-        if (res) {
-            // tableColumns.value = res.data.columnList;
-            let columnList = res.data.columnList;
-            let fieldStyleMap = res.data.fieldStyleMap || {};
-            tableColumns.value = columnList.filter(cl => fieldStyleMap[cl.prop]?.isHide !== true);
-            tableColumns.value.forEach((cl) => {
-                cl.label = fieldStyleMap[cl.prop]?.aliasName || cl.label;
-                cl.width = fieldStyleMap[cl.prop]?.width || '';
-                cl.fieldName = cl.prop;
-                cl.fieldType = cl.type;
-                setColumnFormatter(cl);
-            });
-            tableData.value = res.data.dataList;
-            total.value = res.data.pagination?.total || 0;
-            idFieldName.value = res.data.idFieldName;
-            nameFieldName.value = res.data.nameFieldName;
-        }
-        loading.value = false;
-        if (isDropdownVisible.value && tableData.value.length > 0) {
-            if (currentCursor.value === -1 || currentCursor.value >= tableData.value.length) {
-                currentCursor.value = 0;
+            let filter = null;
+            if (props.searchFields.length > 0) {
+                filter = {
+                    equation: "OR",
+                    items: props.searchFields.map((el) => {
+                        return {
+                            fieldName: el,
+                            value: searchValue.value,
+                            op: props.isExactSearch ? "EQ" : "LK",
+                        };
+                    }),
+                };
             }
-            scrollToRow(currentCursor.value);
-        } else {
-            tableRef.value?.setCurrentRow(null);
-            currentCursor.value = -1;
+            let res = await refFieldQuery2(
+                param.entity,
+                param.refField,
+                param.pageNo,
+                param.pageSize,
+                props.extraFilter,
+                filter,
+                props.filterConditions,
+                null,
+                null,
+                filter ? "" : searchValue.value
+            );
+            if (res) {
+                // tableColumns.value = res.data.columnList;
+                let columnList = res.data.columnList;
+                let fieldStyleMap = res.data.fieldStyleMap || {};
+                tableColumns.value = columnList.filter(cl => fieldStyleMap[cl.prop]?.isHide !== true);
+                tableColumns.value.forEach((cl) => {
+                    cl.label = fieldStyleMap[cl.prop]?.aliasName || cl.label;
+                    cl.width = fieldStyleMap[cl.prop]?.width || '';
+                    cl.fieldName = cl.prop;
+                    cl.fieldType = cl.type;
+                    setColumnFormatter(cl);
+                });
+                tableData.value = res.data.dataList;
+                total.value = res.data.pagination?.total || 0;
+                idFieldName.value = res.data.idFieldName;
+                nameFieldName.value = res.data.nameFieldName;
+            }
+            if (isDropdownVisible.value && tableData.value.length > 0) {
+                if (currentCursor.value === -1 || currentCursor.value >= tableData.value.length) {
+                    currentCursor.value = 0;
+                }
+                scrollToRow(currentCursor.value);
+            } else {
+                tableRef.value?.setCurrentRow(null);
+                currentCursor.value = -1;
+            }
+        } finally {
+            loading.value = false;
         }
     })
 
