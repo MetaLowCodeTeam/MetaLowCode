@@ -574,7 +574,7 @@
             ref="editRefs"
             :entityName="entityName"
             :nameFieldName="isOtherEntity ? null : nameFieldName"
-            :layoutConfig="layoutConfig"
+            :modelName="formatModelName(myModelName, currentTab)"
             @saveFinishCallBack="editConfirm"
         />
         <!-- 快速搜索字段 -->

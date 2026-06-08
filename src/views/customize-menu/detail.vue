@@ -298,7 +298,7 @@
             ref="editRefs"
             @saveFinishCallBack="onConfirm"
 			:nameFieldName="nameFieldName"
-            :layoutConfig="myLayoutConfig"
+            :modelName="modelName"
             :isUser="isUser"
         />
         <!-- 新建、编辑部门 -->

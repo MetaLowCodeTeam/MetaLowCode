@@ -123,7 +123,6 @@ import {
     inject,
     nextTick,
     onMounted,
-    watch,
     watchEffect,
     getCurrentInstance,
 } from "vue";
@@ -154,7 +153,9 @@ import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 import { useRouter } from "vue-router";
 const { router } = useRouter();
 const { getCustomAppButtons, customButtonHandler } = useCustomButtonConfig();
-const $TOOL = inject("$TOOL")
+const $TOOL = inject("$TOOL");
+const $API = inject("$API");
+
 const {
     queryEntityNameById,
     queryEntityLabelByName,
@@ -173,7 +174,8 @@ const props = defineProps({
     // 非必填字段
     notRequiredFields: { type: Array, default: () => [] },
     nameFieldName: { type: String, default: "" },
-    layoutConfig: { type: Object, default: () => {} },
+    // 当前实体模块名称
+    modelName: { type: String, default: "" },
     // 新建编辑配置
     editConf: {
         type: Object,
@@ -225,17 +227,9 @@ let styleConf = ref({
     // 弹框配置
     dialogConfig: {},
 });
-watch(
-    () => props.layoutConfig,
-    () => {
-        loadMyLayoutConfig();
-    },
-    {
-        deep: true,
-    }
-);
 
 let currentExposed = ref({});
+let currentModelName = ref("");
 
 onMounted(() => {
     currentExposed.value = getCurrentInstance().exposed;
@@ -351,125 +345,134 @@ const onEditRow = (e, selectForm) => {
 
 // 加载配置信息
 const loadMyLayoutConfig = async () => {
-    myLayoutConfig.value = props.layoutConfig || {};
-    let { STYLE, CUSTOM_BUTTON } = myLayoutConfig.value;
-    if (STYLE && STYLE.config) {
-        styleConf.value = JSON.parse(STYLE.config);
-        let { dialogConfig } = styleConf.value;
-        if(dialogConfig){
-            let recordData = row.data || null;
-            let entity = {
-                name: row.entityName,
-                code: queryEntityCodeByName(row.entityName),
-                label: queryEntityLabelByName(row.entityName),
+    let res = await $API.layoutConfig.getLayoutList(row.entityName, currentModelName.value || "noModelName", false);
+    if(res?.code == 200) {
+        myLayoutConfig.value = res.data || {};
+        styleConf.value = {
+            actionConf: {
+                showFullScreen: false,
+                autoFullScreen: false,
+            },
+            dialogConfig: {},
+        };
+        let { STYLE, CUSTOM_BUTTON } = myLayoutConfig.value;
+        if (STYLE && STYLE.config) {
+            styleConf.value = JSON.parse(STYLE.config);
+            let { dialogConfig } = styleConf.value;
+            if(dialogConfig){
+                let recordData = row.data || null;
+                let entity = {
+                    name: row.entityName,
+                    code: queryEntityCodeByName(row.entityName),
+                    label: queryEntityLabelByName(row.entityName),
+                }
+                // 获取弹框配置
+                let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
+                if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
+                    newDialogConfig.editMaxHeight = '500px';
+                }
+                styleConf.value.newDialogConfig = newDialogConfig;
             }
-            // 获取弹框配置
-            let newDialogConfig = new Function('row', 'entity', dialogConfig)(recordData, entity);
-            if(!newDialogConfig.editHeight && !newDialogConfig.editMaxHeight) {
-                newDialogConfig.editMaxHeight = '500px';
-            }
-            styleConf.value.newDialogConfig = newDialogConfig;
         }
-    }
-    customButtonList.value = getCustomAppButtons(CUSTOM_BUTTON, 'pcEdit');
-    customButtonList.value.forEach(btn => {
-        
-        // 自定义权限判断
-        let checkCustomRole = btn.customCode ? $TOOL.checkRole(btn.customCode) : true;
-        // 判断自定义权限是否取反，如果取反则说明不需要该自定义权限
-        let customPermissionPass = btn.customCode
-            ? (btn.reversalCustomCode ? !checkCustomRole : checkCustomRole)
-            : true;
-        // 权限或hide不通过直接隐藏
-        if (!customPermissionPass || btn.hide) {
-            btn.hidden = true;
-            return;
-        }
-        if(btn.key == 'cancel') {
-            btn.footerConfigHidden = !showFooterButtonConfig.value.showCancelBtn;
-            return;
-        }
-        if(btn.key == 'save') {
-            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmBtn;
-        }
-        if(btn.key == 'saveRefresh') {
-            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmRefreshBtn;
-        }
-        if(btn.key == 'saveSubmit') {
-            btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmAndSubmitBtn;
-        }
-        // 如果是编辑需要检测是否有权限
-        if(row.detailId) {
-            // 需要校验审批权限的按钮
-            let needApprovalAuthKey = ['saveSubmit','saveRefresh', 'save'];
-            if(needApprovalAuthKey.includes(btn.key) && !checkModifiableEntity(row.detailId, row.approvalStatus?.value)){
+        customButtonList.value = getCustomAppButtons(CUSTOM_BUTTON, 'pcEdit');
+        customButtonList.value.forEach(btn => {
+            // 自定义权限判断
+            let checkCustomRole = btn.customCode ? $TOOL.checkRole(btn.customCode) : true;
+            // 判断自定义权限是否取反，如果取反则说明不需要该自定义权限
+            let customPermissionPass = btn.customCode
+                ? (btn.reversalCustomCode ? !checkCustomRole : checkCustomRole)
+                : true;
+            // 权限或hide不通过直接隐藏
+            if (!customPermissionPass || btn.hide) {
                 btn.hidden = true;
+                return;
             }
-        }
-    })
-    // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
-    let filterBtns = customButtonList.value.filter(btn => !btn.hidden && !btn.footerConfigHidden && !btn.dsvHidden && btn.filterJson && btn.filterJson.items?.length > 0 && btn.action !== 1);
-    if (filterBtns.length > 0) {
-        // 如果是编辑 可以检测条件
-        if(row.detailId) {
-            let filterList = filterBtns.map(item => item.filterJson);
-            let filterParam = {
-                entityName: row.entityName,
-                recordIdList: [row.detailId],
-                filterList
-            };
-            let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
-            if (checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
-                let filterRes = checkCustomButtonFiltersRes.data[0];
-                filterBtns.forEach((btn, idx) => {
-                    const pass = filterRes[idx] == 1 || filterRes[idx] === true;
-                    if (!pass) {
-                        if (btn.errorShowType == 1) {
-                            btn.disabled = true;
-                            btn.hidden = false;
-                        } else if (btn.errorShowType == 2) {
-                            btn.hidden = true;
-                            btn.disabled = false;
+            if(btn.key == 'cancel') {
+                btn.footerConfigHidden = !showFooterButtonConfig.value.showCancelBtn;
+                return;
+            }
+            if(btn.key == 'save') {
+                btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmBtn;
+            }
+            if(btn.key == 'saveRefresh') {
+                btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmRefreshBtn;
+            }
+            if(btn.key == 'saveSubmit') {
+                btn.footerConfigHidden = !showFooterButtonConfig.value.showConfirmAndSubmitBtn;
+            }
+            // 如果是编辑需要检测是否有权限
+            if(row.detailId) {
+                // 需要校验审批权限的按钮
+                let needApprovalAuthKey = ['saveSubmit','saveRefresh', 'save'];
+                if(needApprovalAuthKey.includes(btn.key) && !checkModifiableEntity(row.detailId, row.approvalStatus?.value)){
+                    btn.hidden = true;
+                }
+            }
+        })
+        // 只对"有权限且未被隐藏且有filterJson"的按钮调接口
+        let filterBtns = customButtonList.value.filter(btn => !btn.hidden && !btn.footerConfigHidden && !btn.dsvHidden && btn.filterJson && btn.filterJson.items?.length > 0 && btn.action !== 1);
+        if (filterBtns.length > 0) {
+            // 如果是编辑 可以检测条件
+            if(row.detailId) {
+                let filterList = filterBtns.map(item => item.filterJson);
+                let filterParam = {
+                    entityName: row.entityName,
+                    recordIdList: [row.detailId],
+                    filterList
+                };
+                let checkCustomButtonFiltersRes = await checkCustomButtonFilters(filterParam);
+                if (checkCustomButtonFiltersRes && checkCustomButtonFiltersRes.code == 200) {
+                    let filterRes = checkCustomButtonFiltersRes.data[0];
+                    filterBtns.forEach((btn, idx) => {
+                        const pass = filterRes[idx] == 1 || filterRes[idx] === true;
+                        if (!pass) {
+                            if (btn.errorShowType == 1) {
+                                btn.disabled = true;
+                                btn.hidden = false;
+                            } else if (btn.errorShowType == 2) {
+                                btn.hidden = true;
+                                btn.disabled = false;
+                            } else {
+                                btn.hidden = false;
+                                btn.disabled = false;
+                            }
                         } else {
                             btn.hidden = false;
                             btn.disabled = false;
                         }
-                    } else {
-                        btn.hidden = false;
-                        btn.disabled = false;
-                    }
-                });
+                    });
+                }
+            }
+            // 新建 无法检测条件 直接隐藏
+            else {
+                filterBtns.forEach(btn => {
+                    btn.hidden = true;
+                })
             }
         }
-        // 新建 无法检测条件 直接隐藏
-        else {
-            filterBtns.forEach(btn => {
-                btn.hidden = true;
-            })
+        // 辅助函数：查找 key 的索引
+        const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
+        // 在 key='cancel' 前插入
+        let cancelIndex = findIndexByKey('cancel');
+        if (cancelIndex !== -1) {
+            customButtonList.value.splice(cancelIndex, 0, { type: 'slot', name: 'beforeCancelBtn' });
         }
-    }
-    // 辅助函数：查找 key 的索引
-    const findIndexByKey = (key) => customButtonList.value.findIndex(item => item.key === key && item.isNative);
-    // 在 key='cancel' 前插入
-    let cancelIndex = findIndexByKey('cancel');
-    if (cancelIndex !== -1) {
-        customButtonList.value.splice(cancelIndex, 0, { type: 'slot', name: 'beforeCancelBtn' });
-    }
-    // 在 key='save' 前插入
-    let saveIndex = findIndexByKey('save');
-    if (saveIndex !== -1) {
-        customButtonList.value.splice(saveIndex, 0, { type: 'slot', name: 'beforeConfirmBtn' });
-    }
-    // 在 key='saveRefresh' 前插入
-    let saveRefreshIndex = findIndexByKey('saveRefresh');
-    if (saveRefreshIndex !== -1) {
-        customButtonList.value.splice(saveRefreshIndex, 0, { type: 'slot', name: 'beforeConfirmRefreshBtn' });
-    }
-    // 在 key='saveSubmit' 前插入,并在后面插入
-    let saveSubmitIndex = findIndexByKey('saveSubmit');
-    if (saveSubmitIndex !== -1) {
-        customButtonList.value.splice(saveSubmitIndex, 0, { type: 'slot', name: 'afterConfirmRefreshBtn' });
-        customButtonList.value.splice(saveSubmitIndex + 2, 0, { type: 'slot', name: 'afterConfirmAndSubmitBtn' });
+        // 在 key='save' 前插入
+        let saveIndex = findIndexByKey('save');
+        if (saveIndex !== -1) {
+            customButtonList.value.splice(saveIndex, 0, { type: 'slot', name: 'beforeConfirmBtn' });
+        }
+        // 在 key='saveRefresh' 前插入
+        let saveRefreshIndex = findIndexByKey('saveRefresh');
+        if (saveRefreshIndex !== -1) {
+            customButtonList.value.splice(saveRefreshIndex, 0, { type: 'slot', name: 'beforeConfirmRefreshBtn' });
+        }
+        // 在 key='saveSubmit' 前插入,并在后面插入
+        let saveSubmitIndex = findIndexByKey('saveSubmit');
+        if (saveSubmitIndex !== -1) {
+            customButtonList.value.splice(saveSubmitIndex, 0, { type: 'slot', name: 'afterConfirmRefreshBtn' });
+            customButtonList.value.splice(saveSubmitIndex + 2, 0, { type: 'slot', name: 'afterConfirmAndSubmitBtn' });
+        }
     }
 };
 
@@ -562,7 +565,9 @@ const openDialog = async (v) => {
     showFooterButtonConfig.value = Object.assign(JSON.parse(JSON.stringify(defaultShowFooterButtonConfig.value)), v.showFooterButtonConfig);
     // 自定义弹窗宽高
     customDialogConfig.value = Object.assign(JSON.parse(JSON.stringify(defaultCustomDialogConfig.value)), v.customDialogConfig);
-
+    currentModelName.value = Object.prototype.hasOwnProperty.call(v, 'modelName')
+        ? v.modelName
+        : (props.modelName || getModelName());
     // 重置其他相关状态变量
     optionData.value = {};
     haveLayoutJson.value = false;
@@ -605,7 +610,7 @@ const openDialog = async (v) => {
     formId.value = v.formId;
     globalDsv.value = Object.assign(globalDsv.value, v.localDsv);
     globalDsv.value.parentExposed = currentExposed.value;
-    globalDsv.value.modelName = getModelName();
+    globalDsv.value.modelName = currentModelName.value;
     if(v.sourceRecord) {
         globalDsv.value.sourceRecord = v.sourceRecord;
     }
@@ -627,7 +632,7 @@ const openDialog = async (v) => {
     }
     let res = await checkRight(param.id, param.rightType, param.entityName);
     if (res.data && res.data.code == 200 && res.data.data) {
-        loadMyLayoutConfig()
+        await loadMyLayoutConfig()
         isShow.value = true;
         await initFormLayout();
     } else {
@@ -934,6 +939,7 @@ const confirm = async (target, resetFormData = {}, callback) => {
                     initFormLayout();
                 }
                 if (target == 'submit') {
+                    await loadMyLayoutConfig();
                     SubmitApprovalDialogRefs.value?.openDialog(row.detailId);
                 }
             }
