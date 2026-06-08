@@ -5,7 +5,7 @@
 		:is="comName"
 		ref="EditRef"
 		:nameFieldName="nameFieldName"
-		:layoutConfig="curLayoutConfig"
+        :modelName="modelName"
         :isTeam="isTeam"
         :isUser="isUser"
         :disableWidgets="disableWidgets"
@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watchEffect, nextTick } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import { getEditCmpByEntityName } from "@/views/custom-page/customEditEntry.js";
 import useCommonStore from "@/store/modules/common";
 const { queryEntityNameById } = useCommonStore();
@@ -27,21 +27,15 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
-	layoutConfig: {
-		type: Object,
-		default: () => {},
-	},
+    modelName: {
+        type: String,
+        default: "",
+    },
     isTeam: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
     disableWidgets: { type: Array, default: () => [] },
 });
 const emits = defineEmits(["onConfirm"]);
-
-let curLayoutConfig = ref("");
-
-watchEffect(() => {
-	curLayoutConfig.value = props.layoutConfig;
-});
 
 let comName = ref("");
 
