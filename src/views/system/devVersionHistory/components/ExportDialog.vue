@@ -78,6 +78,10 @@ const defaultExportModules = ref([
 		label: "团队",
 		value: "Team",
 	},
+    {
+		label: "权限角色",
+		value: "Role",
+	},
 	{
 		label: "系统常量",
 		value: "SystemConstant",
@@ -93,10 +97,6 @@ const defaultExportModules = ref([
 	{
 		label: "表单布局",
 		value: "FormLayout",
-	},
-	{
-		label: "权限角色",
-		value: "Role",
 	},
 	{
 		label: "导航菜单",
@@ -152,13 +152,14 @@ const defaultExportModules = ref([
 	},
 
 ]);
+const uncheckedByDefaultExportTypes = ["User", "Department", "Team", "Role"];
 
 const openDialog = async (data) => {
 	formData.value.endVersion = data.version;
 	formData.value.versionName = data.versionName;
-	formData.value.exportTypeList = defaultExportModules.value.map(
-		(item) => item.value
-	);
+	formData.value.exportTypeList = defaultExportModules.value
+		.filter((item) => !uncheckedByDefaultExportTypes.includes(item.value))
+		.map((item) => item.value);
 	isShow.value = true;
 	title.value = "版本导出";
 	loading.value = true;
