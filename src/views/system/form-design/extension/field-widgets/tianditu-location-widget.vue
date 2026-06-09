@@ -576,6 +576,9 @@ export default {
 
 .small-padding-dialog .el-dialog__body {
 	padding: 10px !important;
+    .ml-dialog-body {
+        padding: 0px 5px;
+    }
 }
 
 .readonly-mode-field {
