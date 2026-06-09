@@ -90,15 +90,28 @@
 							<el-button type="primary" plain @click="onReset" size="default">
 								重置
 							</el-button>
-							<el-button
+							<el-dropdown
+	                                split-button
 								type="primary"
-								plain
-								@click="onSave"
+								:button-props="{ plain: true }"
+								@click="onSave('CONDITION_ONLY')"
 								v-if="$TOOL.checkRole('r6008') && enableSavePlanQuery"
                                 size="default"
+                                class="save-query-dropdown"
+                                @command="onSave"
 							>
-								保存查询面板
-							</el-button>
+								保存
+								<template #dropdown>
+									<el-dropdown-menu>
+										<el-dropdown-item command="CONDITION_ONLY">
+											仅保存查询条件
+										</el-dropdown-item>
+										<el-dropdown-item command="CONDITION_WITH_VALUE">
+											保存查询条件和查询值
+										</el-dropdown-item>
+									</el-dropdown-menu>
+								</template>
+							</el-dropdown>
                             <el-button
 								type="success"
 								plain
@@ -358,14 +371,19 @@ export default {
 			this.loadTableTable("isReset");
 		},
 		// 保存
-		async onSave() {
+		async onSave(saveType = "CONDITION_ONLY") {
 			let saveConditionConf = JSON.parse(
 				JSON.stringify(this.$refs.mlSetConditionsRef.conditionConf)
 			);
-			saveConditionConf.items.forEach((el) => {
-				el.value = null;
-				el.value2 = null;
-			});
+            if (saveType === "CONDITION_ONLY") {
+                saveConditionConf.items.forEach((el) => {
+                    el.value = null;
+                    el.value2 = null;
+                    el.value3 = null;
+                    el.referTo = null;
+                    el.refLabel = null;
+                });
+            }
 			this.loading = true;
             this.$emit('onLoading', true);
 			let res = await saveRefFilterPanel(
@@ -427,11 +445,6 @@ export default {
                 if (res.data.filter) {
 					this.conditionConf = res.data.filter;
 				}
-                this.conditionConf.items.forEach(el => {
-                    if(el.refLabel) {
-                        el.refLabel = '';
-                    }
-                })
 				this.referenceEntityName = res.data.entityName;
                 // 当只有一个实体时，初始化当前页签为该实体，供“已选”区域过滤使用
                 if(!this.activeTab && !this.currentTab){
@@ -922,6 +935,16 @@ export default {
 .reference-search-table .work-flow-conditions {
 	padding-bottom: 4px !important;
 	border-bottom: 1px solid #eee;
+}
+
+.reference-search-table .save-query-dropdown {
+	margin-left: 12px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.reference-search-table .save-query-dropdown .el-dropdown__caret-button::before {
+	background: var(--el-button-border-color) !important;
 }
 
 </style>
