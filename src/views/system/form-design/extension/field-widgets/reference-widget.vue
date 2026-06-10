@@ -404,7 +404,7 @@ export default {
 			if(useUserDepartmentTree){
 				this.referenceDialogType = 'user';
 			} else
-            if(useTreeDataSelect && treeCascadeFieldName) // 如果启用了树形数据选择弹框，且选择了父子级联字段
+            if(useTreeDataSelect && treeCascadeFieldName && !this.searchFilter) // 如果启用了树形数据选择弹框，且选择了父子级联字段
 			{
                 this.referenceDialogType = 'tree';
                 this.showReferenceDialogFlag = true;
