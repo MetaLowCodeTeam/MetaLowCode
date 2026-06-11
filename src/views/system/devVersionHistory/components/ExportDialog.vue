@@ -94,6 +94,14 @@ const defaultExportModules = ref([
 		label: "多选项",
 		value: "TagItem",
 	},
+    {
+		label: "编码单选项",
+		value: "CodeOptionItem",
+	},
+    {
+		label: "级联单选项",
+		value: "CascaderOptionItem",
+	},
 	{
 		label: "表单布局",
 		value: "FormLayout",
