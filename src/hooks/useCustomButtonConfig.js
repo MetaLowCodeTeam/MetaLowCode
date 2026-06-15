@@ -483,6 +483,10 @@ export default function useCustomButtonConfig() {
             http,
             router:currentRouter.value,
             appPath: import.meta.env.VITE_APP_PATH,
+            appConfig: {
+                appPath: import.meta.env.VITE_APP_PATH,
+                serverApi: import.meta.env.VITE_APP_BASE_API
+            },
         };
         let event = new Function('rows', 'exposed', eventStr)(customParam.rows, customParam);
         return event;
