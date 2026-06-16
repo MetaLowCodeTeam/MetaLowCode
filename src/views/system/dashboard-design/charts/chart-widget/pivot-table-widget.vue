@@ -88,6 +88,21 @@ const props = defineProps({
 });
 // 透视表
 const s2 = shallowRef();
+const calcTotalValue = (query, data) => {
+    let calc = 0;
+    data.forEach((el) => {
+        const valueField = query?.$$extra$$;
+        const rawValue = valueField ? el?.raw[valueField] : null;
+        if (rawValue === null || rawValue === undefined || rawValue === "") {
+            return;
+        }
+        const normalizedValue = Number(String(rawValue).replace(/,/g, ""));
+        if (!Number.isNaN(normalizedValue)) {
+            calc += normalizedValue;
+        }
+    });
+    return Number.isInteger(calc) ? calc : Number(calc.toFixed(2));
+};
 // 透视表参数
 let s2DataConfig = {
     fields: {
@@ -116,17 +131,8 @@ let tableOptions = ref({
             reverseSubLayout: false,
             subTotalsDimensions: ["number"],
             label: "汇总",
-            calcTotals: {
-                calcFunc: (query, data, spreadsheet) => {
-                    let calc = 0;
-                    data.forEach(el => {
-                        let val = el[query.$$extra$$];
-                        if(val) {
-                            calc += parseFloat(val.replace(/,/g, ''));
-                        }
-                    })
-                    return Number.isInteger(calc) ? calc : Number(calc.toFixed(2));
-                },
+            calcGrandTotals: {
+                calcFunc: calcTotalValue,
             },
         },
         col: {
@@ -136,17 +142,8 @@ let tableOptions = ref({
             reverseSubLayout: false,
             subTotalsDimensions: ["number"],
             label: "汇总",
-            calcTotals: {
-                calcFunc: (query, data, spreadsheet) => {
-                    let calc = 0;
-                    data.forEach(el => {
-                        let val = el[query.$$extra$$];
-                        if(val) {
-                            calc += parseFloat(val.replace(/,/g, ''));
-                        }
-                    })
-                    return Number.isInteger(calc) ? calc : Number(calc.toFixed(2));
-                },
+            calcGrandTotals: {
+                calcFunc: calcTotalValue,
             },
         },
     },
