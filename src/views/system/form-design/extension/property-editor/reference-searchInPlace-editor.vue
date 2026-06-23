@@ -72,8 +72,24 @@
 			v-model="optionModel.keepManualSelectionOnMobile"
 		/>
 	</el-form-item>
-    
-    
+	    <el-form-item
+			label="移动端固定展开"
+			label-width="120px"
+			v-if="!optionModel.useTreeDataSelect && !isDashboard"
+		>
+			<el-switch
+				v-model="optionModel.fixedExpandOnMobile"
+			/>
+		</el-form-item>
+	    <el-form-item
+			label="移动端左右布局"
+			label-width="120px"
+			v-if="!optionModel.useTreeDataSelect && !isDashboard"
+		>
+			<el-switch
+				v-model="optionModel.leftRightLayoutOnMobile"
+			/>
+		</el-form-item>
 	<ml-dialog title="选择搜索字段" v-model="isShow" width="700" append-to-body>
 		<div
 			v-loading="loading"
