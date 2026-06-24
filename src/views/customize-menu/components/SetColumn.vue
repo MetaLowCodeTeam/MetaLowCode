@@ -813,6 +813,7 @@ const resetColumnWidth = () => {
 }
 
 const isPlainObject = (value) => Object.prototype.toString.call(value) === "[object Object]";
+const COLUMN_JSON_CONFIG_CACHE_KEY = "SET_COLUMN_JSON_CONFIG_CACHE";
 
 const parseColumnJsonConfig = (text) => {
     if (!text || !text.trim()) {
@@ -854,12 +855,31 @@ const getAvailableSourceColumn = (selectedFieldNames) => {
     });
 }
 
+const cacheColumnJsonConfig = (text) => {
+    try {
+        localStorage.setItem(COLUMN_JSON_CONFIG_CACHE_KEY, text);
+    } catch (e) {}
+};
+
+const getCachedColumnJsonConfig = () => {
+    try {
+        return localStorage.getItem(COLUMN_JSON_CONFIG_CACHE_KEY) || "";
+    } catch (e) {
+        return "";
+    }
+};
+
 const cloneJsonConfig = () => {
-    copyText(JSON.stringify(showColumn.value, null, 2));
+    const text = JSON.stringify(showColumn.value, null, 2);
+    cacheColumnJsonConfig(text);
+    copyText(text);
 }
 
 const readClipboardText = async () => {
     try {
+        if (!navigator.clipboard?.readText) {
+            return "";
+        }
         return await navigator.clipboard.readText();
     } catch (e) {
         return "";
@@ -868,7 +888,8 @@ const readClipboardText = async () => {
 
 const pasteJsonConfig = async () => {
     const clipboardText = await readClipboardText();
-    const config = parseColumnJsonConfig(clipboardText);
+    const localCacheText = getCachedColumnJsonConfig();
+    const config = parseColumnJsonConfig(clipboardText) || parseColumnJsonConfig(localCacheText);
     if (!config) {
         ElMessage.warning("请先复制Json配置");
         return;
