@@ -2,11 +2,11 @@
 import VisualDesign from "@/../lib/visual-design/designer.umd.js";
 const { Utils } = VisualDesign.VFormSDK;
 import { ElMessage } from "element-plus";
-
+import {globalDsvDefaultData} from "@/utils/util";
 // const getFormConfig = inject('getFormConfig');
 
 export default function useChartSourceData() {
-    const getDataSourceData = async (options, fromConfig) => {
+    const getDataSourceData = async (options, fromConfig, dsv) => {
         let { dsName } = options;
         let dataSource = Utils.getDSByName(
             fromConfig,
@@ -14,7 +14,7 @@ export default function useChartSourceData() {
         );
         return await Utils.runDataSourceRequest(
             dataSource,
-            { SERVER_API: import.meta.env.VITE_APP_BASE_API },
+            Object.assign({}, globalDsvDefaultData(), dsv),
             null,
             false,
             ElMessage
