@@ -5,6 +5,7 @@
 			<v-form-render
 				v-if="showFormRender"
 				ref="dashboardWidget"
+                :global-dsv="globalDsv"
 			></v-form-render>
 			<el-popover
 				placement="bottom"
@@ -48,6 +49,8 @@ import { getDataList, queryById } from "@/api/crud";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import {globalDsvDefaultData} from "@/utils/util";
+let globalDsv = ref(globalDsvDefaultData());
 const router = useRouter();
 const { publicSetting } = storeToRefs(useCommonStore());
 // import { ElMessage } from "element-plus";

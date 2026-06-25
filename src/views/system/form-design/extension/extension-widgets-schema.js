@@ -153,6 +153,10 @@ export const referenceSchema = {
         openScanFillBack: false,
         // 移动端保留手动选择
         keepManualSelectionOnMobile: false,
+        // 移动端固定展开
+        fixedExpandOnMobile: false,
+        // 移动端左右布局
+        leftRightLayoutOnMobile: false,
         // 是否精确搜索
         isExactSearch: false,
         // 是否二次确认选择
@@ -493,4 +497,3 @@ export const cascaderOptionSchema = {
 		onValidate: '',
 	}
 }
-

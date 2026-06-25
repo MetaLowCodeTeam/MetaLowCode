@@ -11,7 +11,7 @@
 			class="mt-10 mb-10"
 			clearable
 		/>
-		<el-scrollbar max-height="500px">
+		<el-scrollbar max-height="calc(100% - 50px)">
 			<el-tree
 				v-show="!isSearching"
 				ref="customDTreeRef"
@@ -270,6 +270,7 @@ defineExpose({
 <style lang="scss" scoped>
 .reference-search-main {
 	padding: 0 10px;
+    height: 100%;
 }
 :deep(.el-tree-node__content) {
 	height: 32px;

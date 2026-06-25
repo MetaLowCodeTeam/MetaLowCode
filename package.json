@@ -44,7 +44,7 @@
 		"dayjs": "^1.11.11",
 		"echarts": "5.4.1",
 		"echarts-liquidfill": "^3.1.0",
-		"element-plus": "^2.11.9",
+		"element-plus": "^2.14.2",
 		"jsencrypt": "^3.3.2",
 		"mitt": "^3.0.0",
 		"ml-vue-smart-widget": "^1.0.2",

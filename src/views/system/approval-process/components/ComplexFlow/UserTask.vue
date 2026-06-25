@@ -419,14 +419,16 @@
                         </template>
                         <!-- 7 实体字段：单选，字段名存 ccFieldName -->
                         <el-select
-                            v-model="myFormData.ccFieldName"
+                            v-model="myFormData.ccFieldNames"
                             v-loading="entityFieldsLoading"
                             clearable
                             filterable
+                            multiple
                             value-key="fieldName"
                             placeholder="请选择字段"
                             v-if="myFormData.ccNodeRoleType == 7"
                             style="width: 100%;"
+                            @change="ccFieldNamesChange"
                         >
                             <el-option
                                 v-for="(field,fieldInx) in entityFields"
@@ -590,6 +592,7 @@ let myFormData = ref({
     isBlocked: false,
     triggerConfigIdList:[],
     fieldNames: [],
+    ccFieldNames: [],
 });
 let entityCode = ref("");
 let entityName = ref("");
@@ -648,11 +651,18 @@ const initApi = () => {
     if(myFormData.value.fieldName) {
         myFormData.value.fieldNames = myFormData.value.fieldName.split(',');
     }
+    if(myFormData.value.ccFieldName) {
+        myFormData.value.ccFieldNames = myFormData.value.ccFieldName.split(',');
+    }
 }
 
 // 字段选择
 const fieldNamesChange = (val) => {
     myFormData.value.fieldName = val.join(',');
+}
+// 抄送字段
+const ccFieldNamesChange = (val) => {
+    myFormData.value.ccFieldName = val.join(',');
 }
 
 // 抄送类型切换，清理不相关字段
