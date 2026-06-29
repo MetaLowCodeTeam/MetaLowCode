@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, watch, watchEffect} from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { formatFilterConditions } from "@/utils/util";
 import useCommonStore from "@/store/modules/common";
@@ -42,12 +42,32 @@ let myFormData = ref({
 
 let conditionConf = ref({});
 
+const cloneDeep = (data) => JSON.parse(JSON.stringify(data));
+
+const normalizeFilter = (filter = {}) => {
+    const formatFilter = cloneDeep(filter);
+    formatFilter.items = (formatFilter.items || []).map((item) => {
+        if (item.type === "Cascader" && typeof item.value === "string") {
+            try {
+                item.value = JSON.parse(item.value);
+            } catch (error) {
+                item.value = [];
+            }
+        }
+        return item;
+    });
+    return formatFilter;
+};
+
+const syncFormData = () => {
+    myFormData.value = Object.assign(myFormData.value, props.formData);
+    conditionConf.value = initFilter(normalizeFilter(myFormData.value.filter));
+};
+
 watch(
     () => props.formData,
     () => {
-        myFormData.value = Object.assign(myFormData.value, props.formData);
-        let { filter } = JSON.parse(JSON.stringify(myFormData.value));
-        conditionConf.value = initFilter(filter);
+        syncFormData();
     },
     { deep: true }
 );
@@ -58,9 +78,7 @@ let entityName = ref("");
 onMounted(() => {
     entityCode.value = Router.currentRoute.value.query.entityCode;
     entityName.value = queryEntityNameByCode(entityCode.value);
-    myFormData.value = Object.assign(myFormData.value, props.formData);
-    let { filter } = JSON.parse(JSON.stringify(myFormData.value));
-    conditionConf.value = initFilter(filter);
+    syncFormData();
 });
 
 watch(
@@ -72,11 +90,13 @@ watch(
         // }
         // console.log(props.entityName,'props.entityName')
         let { equation, items, type } = conditionConf.value;
-        emits("setNodeData", { filter: {
+        const filter = {
             equation,
-            items: formatFilterConditions(JSON.parse(JSON.stringify(items)), entityName.value),
+            items: formatFilterConditions(cloneDeep(items || []), entityName.value),
             type,
-        } });
+        };
+        myFormData.value.filter = filter;
+        emits("setNodeData", { filter });
     },
     { deep: true }
 );
