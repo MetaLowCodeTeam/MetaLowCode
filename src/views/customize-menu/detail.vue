@@ -1012,6 +1012,11 @@ let EditDepartmentRef = ref();
 let isUser = ref(false);
 const onEditRow = (localDsv, formId) => {
     isUser.value = false;
+    const editBtnTitle = getEditBtnTitle();
+    if (editBtnTitle) {
+        ElMessage.warning(editBtnTitle);
+        return;
+    }
     let tempV = {
         detailId: detailId.value,
         idFieldName: idFieldName.value
@@ -1148,16 +1153,21 @@ const onConfirm = () => {
 	emits("onConfirm");
 };
 
+const getDetailRecordData = () => {
+    return globalDsv.value?.recordData || rowResData.value || null;
+};
+
 const getEditBtnTitle = () => {
-	let str = "";
-	if (approvalStatus.value && approvalStatus.value.value == 3) {
-		str = "记录已完成审批，禁止编辑";
-		return;
-	}
-	if (approvalStatus.value && approvalStatus.value.value == 1) {
-		str = "记录正在审批中，禁止编辑";
-	}
-	return str;
+    const recordData = getDetailRecordData();
+    const currentStatus = recordData?.approvalStatus?.value ?? approvalStatus.value?.value;
+    const currentId = recordData?.[idFieldName.value] || detailId.value;
+    if (currentStatus == 1) {
+        return "记录正在审批中，禁止编辑";
+    }
+    if (currentId && !checkModifiableEntity(currentId, currentStatus)) {
+        return "记录已完成审批，禁止编辑";
+    }
+    return "";
 };
 
 let isFullScreen = ref(false);
