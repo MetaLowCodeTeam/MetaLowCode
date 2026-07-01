@@ -2010,14 +2010,16 @@ const onAdd = (localDsv, formId, targetEntity, dialogConf) => {
 };
 
 const getEditBtnTitle = (row) => {
-    let str = "";
-    if (row.approvalStatus && row.approvalStatus.value == 3) {
-        str = "记录已完成审批，禁止编辑";
+    if (!row) {
+        return "";
     }
     if (row.approvalStatus && row.approvalStatus.value == 1) {
-        str = "记录正在审批中，禁止编辑";
+        return "记录正在审批中，禁止编辑";
     }
-    return str;
+    if (row[idFieldName.value] && !checkModifiableEntity(row[idFieldName.value], row.approvalStatus?.value)) {
+        return "记录已完成审批，禁止编辑";
+    }
+    return "";
 };
 
 let isOtherEntity = ref(false);
@@ -2026,6 +2028,11 @@ const onEditRow = (row, localDsv, formId, customDialogTitle, actionType) => {
     isOtherEntity.value = false;
     if (!row) {
         $ElMessage.warning("请先选择数据");
+        return;
+    }
+    const editBtnTitle = getEditBtnTitle(row);
+    if (editBtnTitle) {
+        $ElMessage.warning(editBtnTitle);
         return;
     }
     let { isReferenceComp, detailEntityFlag, refEntityBindingField } = props;
@@ -2788,8 +2795,9 @@ const toEdit = (localDsv, formId) => {
         return
     }
     let row = multipleSelection.value[0];
-    if(row.approvalStatus && (row.approvalStatus.value == 3 || row.approvalStatus.value == 1)){
-        ElMessage.warning("当前数据这个在审批中或者已审批结束，不可编辑。")
+    const editBtnTitle = getEditBtnTitle(row);
+    if(editBtnTitle){
+        ElMessage.warning(editBtnTitle)
         return
     }
     onEditRow(row, localDsv, formId);
