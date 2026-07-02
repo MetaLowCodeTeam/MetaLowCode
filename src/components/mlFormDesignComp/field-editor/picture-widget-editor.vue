@@ -217,10 +217,13 @@ export default {
 			validators: [],
 
 			fileTypes: [
+				{value: 'jpg', label: 'JPG'},
 				{value: 'jpeg', label: 'JPG'},
 				{value: 'png', label: 'PNG'},
 				{value: 'gif', label: 'GIF'},
-				//{value: 'bmp', label: 'BMP'},
+				{value: 'webp', label: 'WEBP'},
+				{value: 'bmp', label: 'BMP'},
+				{value: 'tiff', label: 'TIFF'},
 			],
 		}
 	},
