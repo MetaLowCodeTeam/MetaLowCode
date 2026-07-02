@@ -150,6 +150,7 @@ export const formFieldMapping = {
 		options: {
 			uploadURL: "DSV['uploadServer'] + '/picture/upload'",
 			withCredentials: true,
+            fileTypes: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'],
 		}
 	},
 
@@ -159,6 +160,7 @@ export const formFieldMapping = {
 		options: {
 			uploadURL: "DSV['uploadServer'] + '/file/upload'",
 			withCredentials: true,
+            fileTypes: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'md', 'txt'],
 		}
 	},
 
