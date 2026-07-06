@@ -327,6 +327,25 @@ export default {
 	},
 
 	methods: {
+        // 统一补齐已选项的通用字段和所属实体，兼容多实体回显
+        normalizeSelectedItem(item, entityName) {
+            const { queryEntityInfoByName, queryEntityNameById } = useCommonStore();
+            const currentEntityName = entityName || item?.formEntityName || queryEntityNameById(item?.id);
+            const entityInfo = currentEntityName ? queryEntityInfoByName(currentEntityName) : {};
+            const idFieldName = entityInfo?.idFieldName || this.idField || 'id';
+            const nameFieldName = entityInfo?.nameFieldName || this.nameField || 'name';
+            const selectedId = item?.id ?? item?.[idFieldName] ?? item?.[this.idField];
+            const selectedName = item?.name ?? item?.[nameFieldName] ?? item?.[this.nameField];
+
+            return {
+                ...item,
+                id: selectedId,
+                name: selectedName,
+                [idFieldName]: selectedId,
+                [nameFieldName]: selectedName,
+                formEntityName: currentEntityName || '',
+            };
+        },
         // 初始化页签
         initTab(){
             const { queryEntityLabelByName } = useCommonStore();
@@ -551,19 +570,16 @@ export default {
                     }
                 }
                 
-                let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
+				let newDefaultSelected = JSON.parse(JSON.stringify(this.defaultSelected));
                 if(this.showCheckBox && newDefaultSelected && !Array.isArray(newDefaultSelected)){
                     newDefaultSelected = [newDefaultSelected];
                 }
 				if (newDefaultSelected && newDefaultSelected.length > 0 && this.selectedData.length === 0 && !this.isManuallyCleared) {
                     newDefaultSelected.forEach(el => {
-                        let exists = this.selectedData.find(item => item[this.idField] == el.id);
+                        let normalizedItem = this.normalizeSelectedItem(el);
+                        let exists = this.selectedData.find(item => item.id == normalizedItem.id);
                         if (!exists) {
-                            this.selectedData.push({
-                                [this.idField]: el.id,
-                                [this.nameField]: el.name,
-                                formEntityName: this.currentTab || ''
-                            });
+                            this.selectedData.push(normalizedItem);
                         }
                     });
 				}
@@ -663,7 +679,7 @@ export default {
         },
         // 关闭已选数据
         handleClose(item) {
-            this.selectedData = this.selectedData.filter(el => el[this.idField] !== item[this.idField]);
+            this.selectedData = this.selectedData.filter(el => el.id !== item.id);
             this.$refs.SimpleTableRef?.toggleSingleRowSelection(item, false, this.idField);
             // 如果删除后已选项为空，标记为手动清空
             if (this.selectedData.length === 0) {
@@ -773,10 +789,7 @@ export default {
 		// 多选触发
 		selects(selection, row) {
 			if (this.selectedData.length === 0) {
-				this.selectedData = selection.map( el=> {
-                    el.formEntityName = this.currentTab || '';
-                    return el;
-                });
+				this.selectedData = selection.map(el => this.normalizeSelectedItem(el, this.currentTab || this.referenceEntityName));
                 // 用户重新选择项时，重置手动清空标志
 				if (this.selectedData.length > 0) {
 					this.isManuallyCleared = false;
@@ -795,10 +808,7 @@ export default {
 								);
 							});
 							if (!find) {
-								this.selectedData.push({
-                                    ...item,
-                                    formEntityName: this.currentTab || '',
-                                });
+								this.selectedData.push(this.normalizeSelectedItem(item, this.currentTab || this.referenceEntityName));
 							}
 						});
 					} else {
@@ -827,10 +837,7 @@ export default {
 						);
 					} else {
 						// 如果点击的行不存在于 selectedData 中，则将其添加到 selectedData 中
-						this.selectedData.push({
-                            ...row,
-                            formEntityName: this.currentTab || '',
-                        });
+						this.selectedData.push(this.normalizeSelectedItem(row, this.currentTab || this.referenceEntityName));
 					}
 				}
 			}
