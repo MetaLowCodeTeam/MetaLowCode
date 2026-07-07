@@ -401,13 +401,13 @@
                         </el-table-column>
                     </template>
 
-                    <slot name="actionColumn" v-if="showActionColumnSlot && listParamConf.showOperateColumn"></slot>
+                    <slot name="actionColumn" v-if="showActionColumnSlot && showActionColumn"></slot>
                     <el-table-column
-                        v-if="!showActionColumnSlot && listParamConf.showOperateColumn"
+                        v-if="!showActionColumnSlot && showActionColumn"
                         label="操作"
                         fixed="right"
                         :align="'center'"
-                        :width="rowStyleConf?.listConf?.actionColumnWidth || 120"
+                        :width="actionColumnWidth"
                     >
                         <template 
                             #default="scope" 
@@ -870,6 +870,12 @@ let page = reactive({
 let contentSlots = reactive({});
 // 是否显示操作列插槽
 let showActionColumnSlot = ref(false);
+// 操作列宽度配置：null/undefined 时使用默认宽度，0 时隐藏操作列
+const actionColumnRawWidth = computed(() => rowStyleConf.value?.listConf?.actionColumnWidth);
+const showActionColumn = computed(() => {
+    return listParamConf.value.showOperateColumn && actionColumnRawWidth.value !== 0;
+});
+const actionColumnWidth = computed(() => actionColumnRawWidth.value ?? 120);
 
 // 是否显示列配置
 let showColumnSet = ref(false);
