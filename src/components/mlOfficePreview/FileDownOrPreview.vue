@@ -26,7 +26,7 @@
 						type="primary"
 						link
 						icon="View"
-						v-if="isPreview(scope.row.url)"
+						v-if="isPreview(scope.row.url, scope.row.name)"
 						@click="previewField(scope.row.url, scope.row.name)"
 					>
 						预览
@@ -68,16 +68,34 @@ const downField = (url, fileName) => {
 // 可预览文件类型
 const previewType = ["docx", "xlsx", "pdf", "pptx"];
 
-// 判断是否是预览
-const isPreview = (url) => {
-	return previewType.includes(url.split(".").pop());
+const getFileExtension = (url, fileName) => {
+	const getExtension = (value) => {
+		if (!value) {
+			return "";
+		}
+		const cleanValue = value.split("?")[0].split("#")[0];
+		const lastDotIndex = cleanValue.lastIndexOf(".");
+		if (lastDotIndex === -1 || lastDotIndex === cleanValue.length - 1) {
+			return "";
+		}
+		return cleanValue.slice(lastDotIndex + 1).toLowerCase();
+	};
+
+	return getExtension(url) || getExtension(fileName);
 };
 
-const previewField = (src) => {
+// 判断是否是预览
+const isPreview = (url, fileName) => {
+	return previewType.includes(getFileExtension(url, fileName));
+};
+
+const previewField = (src, fileName) => {
+	const type = getFileExtension(src, fileName);
 	let url = router.resolve({
 		name: "FilePreview",
 		query: {
 			url: src,
+			type,
 		},
 	});
 	window.open(url.href);
