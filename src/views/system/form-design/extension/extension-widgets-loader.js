@@ -4,6 +4,7 @@ import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {registerFieldWidgets} from "@/views/system/form-design/extension/field-widgets";
 import {
     checkTagSchema,
+    reportFieldSchema,
     referenceSchema,
     referenceListSchema,
     locationSchema,
@@ -75,6 +76,11 @@ import { registerContainerItems } from '@/views/system/form-design/extension/con
 // 容器组件-列表子表单
 import listSubFormWidget from "@/views/system/form-design/extension/container-widgets/list-sub-form-widget.vue";
 import listSubFormItem from "@/views/system/form-design/extension/container-items/list-sub-form-item.vue";
+import reportFieldWidget from "@/views/system/form-design/extension/field-widgets/report-field-widget.vue";
+import reportFieldTextAlignEditor from "@/views/system/form-design/extension/property-editor/report-field/textAlign-editor.vue";
+import reportFieldFontSizeEditor from "@/views/system/form-design/extension/property-editor/report-field/fontSize-editor.vue";
+import reportFieldFontStyleEditor from "@/views/system/form-design/extension/property-editor/report-field/fontStyle-editor.vue";
+import reportFieldFontWeightEditor from "@/views/system/form-design/extension/property-editor/report-field/fontWeight-editor.vue";
 // 列表子表单-是否启用高级查询
 import listSubFormShowAdvancedQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAdvancedQuery-editor.vue";
 import listSubFormShowHeaderEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showListHeader-editor.vue";
@@ -110,6 +116,7 @@ export const loadExtensionWidgets = (app) => {
 
 	//注册属性编辑器
     app.component('list-sub-form-name-editor', listSubFormNameEditor)
+
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
 	app.component('check-tag-optionValueType-editor', checkTagOptionValueTypeEditor)
 
@@ -179,6 +186,11 @@ export const loadExtensionWidgets = (app) => {
 
 	//注册扩展字段组件
 	registerFieldWidgets(app)
+	app.component('report-field-widget', reportFieldWidget)
+	app.component('report-field-textAlign-editor', reportFieldTextAlignEditor)
+	app.component('report-field-fontSize-editor', reportFieldFontSizeEditor)
+	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
+	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
 
 	//注册容器组件（暂无）
     registerContainerWidgets(app)
@@ -186,6 +198,7 @@ export const loadExtensionWidgets = (app) => {
 
 	//添加到设计器组件库
 	addBasicFieldSchema(checkTagSchema)
+	addBasicFieldSchema(reportFieldSchema)
     addBasicFieldSchema(signWidgetSchema)
 
 	addAdvancedFieldSchema(referenceSchema)

@@ -486,6 +486,14 @@ const routes = [
                 props: true,
                 meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
             },
+            // 关联报表
+            {
+                path: appPath + 'data-model-report',
+                name: 'DataModelReport',
+                component: 'system/data-base/components/DataModelReport',
+                props: true,
+                meta: { title: '关联报表', icon: '', activeRoute: '/system/data-base/outer-data-model', hidden: true }
+            },
             // 审批流程详情
             {
                 path: appPath + "process-detail",

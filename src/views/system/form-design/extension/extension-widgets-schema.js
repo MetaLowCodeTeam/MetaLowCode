@@ -47,6 +47,27 @@ export const listSubFormSchema = {
 /**
  * 字段组件
  */
+export const reportFieldSchema = {
+	type: 'report-field',
+	icon: 'text-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '',
+		modelName: '',
+		outerDataModelId: '',
+		hidden: false,
+		customClass: [],
+		textAlign: 'left',
+		fontSize: '',
+		fontStyle: 'normal',
+		fontWeight: 'normal',
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+	},
+};
+
 export const checkTagSchema = {
 	type: 'check-tag',
 	icon: 'check-tag-field',

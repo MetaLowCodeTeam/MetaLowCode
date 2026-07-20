@@ -18,10 +18,18 @@
 			<el-table-column
 				label="操作"
 				:align="'center'"
-				width="160"
+				width="230"
 				fixed="right"
 			>
 				<template #default="scope">
+					<el-button
+						type="primary"
+						size="small"
+						link
+						@click="modelAssociationListRef?.openDialog(scope.row.outerDataModelId, scope.row.modelName)"
+					>
+						关联模型
+					</el-button>
 					<el-button
 						type="primary"
 						size="small"
@@ -52,12 +60,14 @@
 		</template>
 	</ml-single-list>
 	<OuterDataModelEdit ref="outerDataModelEditRef" @updateData="updateTable" />
+	<ModelAssociationList ref="modelAssociationListRef" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
+import ModelAssociationList from "./components/ModelAssociationList.vue";
 import { deleteRecords } from "@/api/crud";
 import { useRouter } from "vue-router";
 import { saveRecord } from "@/api/crud";
@@ -102,6 +112,7 @@ let tableColumn = ref([
 
 // 查看编辑
 const outerDataModelEditRef = ref();
+const modelAssociationListRef = ref();
 const openDialog = (row, type) => {
 	let titlePrefix =
 		type === "view"
