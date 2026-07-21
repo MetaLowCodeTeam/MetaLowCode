@@ -8,6 +8,9 @@
     <el-form-item label="隐藏新建按钮">
         <el-switch v-model="optionModel.hideAddButton" />
     </el-form-item>
+    <el-form-item label="超出一行显示...">
+        <el-switch v-model="optionModel.showEllipsis" />
+    </el-form-item>
 </template>
 
 <script>

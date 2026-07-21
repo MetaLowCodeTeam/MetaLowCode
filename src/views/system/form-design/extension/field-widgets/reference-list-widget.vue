@@ -57,9 +57,30 @@
 			</el-input>
 			<template v-if="isReadMode">
 				<span
+                    v-if="!field.options.showEllipsis"
                     class="readonly-mode-field"
 				>
                     {{ contentForReadMode }}
+                    <template v-if="!field.options.detailLinkDisabled">
+                        <el-button
+                            v-if="fieldModel && fieldModel.length > 0"
+                            type="primary"
+                            circle
+                            size="small"
+                            class="small-circle-button"
+                            title="打开详情弹窗"
+                            @click="handleViewEvent"
+                        >
+                            <el-icon>
+                                <TopRight />
+                            </el-icon>
+                        </el-button>
+                    </template>
+				</span>
+				<span v-else class="readonly-mode-field reference-list-readonly-value">
+                    <span class="reference-list-ellipsis">
+                        {{ contentForReadMode }}
+                    </span>
                     <template v-if="!field.options.detailLinkDisabled">
                         <el-button
                             v-if="fieldModel && fieldModel.length > 0"
@@ -640,6 +661,20 @@ export default {
 		height: 16px !important;
 		width: 16px !important;
 	}
+}
+.reference-list-readonly-value {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    vertical-align: middle;
+}
+.reference-list-ellipsis {
+    display: inline-block;
+    max-width: calc(100% - 24px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 .el-input__icon {
     cursor: pointer;
