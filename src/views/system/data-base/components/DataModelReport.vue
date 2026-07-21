@@ -8,7 +8,7 @@
             @field-widget-used="handleFWU"
             @field-widget-removed="handleFWR"
             @form-json-updated="handleFJU"
-            :banned-widgets="['reference','reference-list','outer-reference','cascader-option']"
+            :banned-widgets="[ 'reference','reference-list','outer-reference','cascader-option', 'input','textarea','number','radio','checkbox','select','time','time-range','date','date-range','switch','rate','color','slider','step-bar','static-text','html-text','button','divider','code-img','picture-upload','file-upload','rich-editor','cascader','slot','custom-render', 'check-tag','sign','location','tianditu-location','alert' ]"
             class="visual-design"
         >
             <!-- 配置工具按钮 -->
@@ -50,12 +50,17 @@ export default {
                 generateSFCButton: false,
                 toolbarMaxWidth: 300,
                 layoutTypeButton: false,
+                metadataContainer: false,
+                advancedFields: false,
+                customFields: false,
+                keepContainers: ['column-1-grid','column-2-grid','column-3-grid','column-4-grid','table','loop-container'],
             },
             globalDsv: {
                 ...globalDsvDefaultData(),
             },
             fieldListData: {},
             metaFieldsResult: null,
+            usedFieldNames: {},
             pageLoading: false,
         };
     },
@@ -69,23 +74,52 @@ export default {
         this.loadDesign();
     },
     methods: {
-        handleFWU(fwName, subFormName) {
-            setTimeout(() => {
-                this.$refs.vfDesigner.setMetaFields(this.metaFieldsResult);
-            }, 800);
-        },
-
-        handleFWR(fwName, subFormName) {
-            setTimeout(() => {
-                this.$refs.vfDesigner.setMetaFields(this.metaFieldsResult);
-            }, 800);
-        },
-
         handleFJU() {
+			this.syncUsedFields();
+        },
+
+        syncUsedFields() {
+			let used = {};
+			const allWidgets = this.$refs.vfDesigner?.getFieldWidgets?.() || [];
+			allWidgets.forEach((fw) => {
+				used[fw.name] = 1;
+			});
+			this.usedFieldNames = used;
             setTimeout(() => {
-                this.$refs.vfDesigner.setMetaFields(this.metaFieldsResult);
+                this.$refs.vfDesigner.setMetaFields(this.buildFilteredMetaFields());
             }, 300);
         },
+
+        buildFilteredMetaFields() {
+			if (!this.metaFieldsResult) return null;
+			let result = {
+				main: {
+					entityName: this.metaFieldsResult.main.entityName,
+					entityLabel: this.metaFieldsResult.main.entityLabel,
+					fieldList: [],
+				},
+				detail: [],
+			};
+			this.metaFieldsResult.main.fieldList.forEach((fld) => {
+				if (!this.usedFieldNames[fld.name]) {
+					result.main.fieldList.push(fld);
+				}
+			});
+			this.metaFieldsResult.detail.forEach((de) => {
+				let detailItem = {
+					entityName: de.entityName,
+					entityLabel: de.entityLabel,
+					fieldList: [],
+				};
+				de.fieldList.forEach((fld) => {
+					if (!this.usedFieldNames[fld.name]) {
+						detailItem.fieldList.push(fld);
+					}
+				});
+				result.detail.push(detailItem);
+			});
+			return result;
+		},
 
         async loadDesign() {
             this.pageLoading = true;
@@ -122,6 +156,7 @@ export default {
                             label: fld.fieldLabel,
                             modelName: mainEntity.modelName,
                             outerDataModelId: mainEntity.outerDataModelId,
+                            isArray: mainEntity.isArray,
                             textAlign: 'left',
                             fontSize: '',
                             fontStyle: 'normal',
@@ -150,6 +185,7 @@ export default {
                                 label: fld.fieldLabel,
                                 modelName: el.modelName,
                                 outerDataModelId: el.outerDataModelId,
+                                isArray: el.isArray,
                                 textAlign: 'left',
                                 fontSize: '',
                                 fontStyle: 'normal',
@@ -191,7 +227,6 @@ export default {
 :deep(#pane-3) {
     display: none !important;
 }
-
 
 
 </style>

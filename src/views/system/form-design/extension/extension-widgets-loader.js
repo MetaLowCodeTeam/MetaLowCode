@@ -76,6 +76,7 @@ import { registerContainerItems } from '@/views/system/form-design/extension/con
 // 容器组件-列表子表单
 import listSubFormWidget from "@/views/system/form-design/extension/container-widgets/list-sub-form-widget.vue";
 import listSubFormItem from "@/views/system/form-design/extension/container-items/list-sub-form-item.vue";
+
 import reportFieldWidget from "@/views/system/form-design/extension/field-widgets/report-field-widget.vue";
 import reportFieldTextAlignEditor from "@/views/system/form-design/extension/property-editor/report-field/textAlign-editor.vue";
 import reportFieldFontSizeEditor from "@/views/system/form-design/extension/property-editor/report-field/fontSize-editor.vue";
@@ -192,13 +193,12 @@ export const loadExtensionWidgets = (app) => {
 	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
 	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
 
-	//注册容器组件（暂无）
+	//注册容器组件
     registerContainerWidgets(app)
     registerContainerItems(app)
 
 	//添加到设计器组件库
 	addBasicFieldSchema(checkTagSchema)
-	addBasicFieldSchema(reportFieldSchema)
     addBasicFieldSchema(signWidgetSchema)
 
 	addAdvancedFieldSchema(referenceSchema)

@@ -8,6 +8,7 @@ export default {
             'outer-reference': '外部引用',
             'location': '定位',
             'sign': '签名',
+            'loop-container': '循环容器',
         },
 
         setting: {
