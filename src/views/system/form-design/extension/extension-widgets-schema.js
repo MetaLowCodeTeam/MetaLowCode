@@ -239,6 +239,8 @@ export const referenceListSchema = {
         hideSavePlanQueryButton: false,
         // 隐藏新建按钮
         hideAddButton: false,
+        // 查看状态超出一行显示省略号
+        showEllipsis: false,
 		//-------------------
 		customClass: '',  //自定义css类名
 		labelIconClass: null,
