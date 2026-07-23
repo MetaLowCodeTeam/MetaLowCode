@@ -197,11 +197,111 @@ export default {
 
         getExportHtml() {
             const contentEl = this.$refs.reportContentRef || this.$el.querySelector(".report-content");
-            const contentHtml = contentEl?.outerHTML || "";
+            const exportContentEl = contentEl?.cloneNode(true);
+            this.prepareExportContentWidth(exportContentEl);
+            this.transformGridToExportTables(exportContentEl);
+            const contentHtml = exportContentEl?.outerHTML || "";
             const styles = Array.from(document.querySelectorAll("style, link[rel='stylesheet']"))
                 .map((styleEl) => styleEl.outerHTML)
                 .join("");
-            return `<!DOCTYPE html><html><head><meta charset="utf-8">${styles}</head><body>${contentHtml}</body></html>`;
+            const exportStyles = this.getWordExportStyle();
+            return `<!DOCTYPE html><html><head><meta charset="utf-8">${styles}${exportStyles}</head><body>${contentHtml}</body></html>`;
+        },
+
+        prepareExportContentWidth(rootEl) {
+            if (!rootEl) return;
+            rootEl.style.width = "960px";
+            rootEl.style.maxWidth = "960px";
+            rootEl.style.margin = "0 auto";
+            rootEl.style.boxSizing = "border-box";
+        },
+
+        getWordExportStyle() {
+            return `<style data-front-word-export="true">
+                .report-content { width: 960px !important; max-width: 960px !important; }
+                table.word-export-layout-table,
+                table.word-export-layout-table > tbody > tr,
+                table.word-export-layout-table > tbody > tr > td {
+                    border: 0 none transparent !important;
+                    outline: 0 none transparent !important;
+                    background: transparent !important;
+                }
+                table.word-export-layout-table {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border-collapse: collapse !important;
+                    border-spacing: 0 !important;
+                    table-layout: fixed !important;
+                }
+                table.word-export-layout-table > tbody > tr > td {
+                    padding: 0 !important;
+                    vertical-align: top !important;
+                    box-sizing: border-box !important;
+                }
+                table.word-export-layout-table table,
+                table.word-export-layout-table img,
+                table.word-export-layout-table canvas,
+                table.word-export-layout-table svg { max-width: 100% !important; }
+            </style>`;
+        },
+
+        transformGridToExportTables(rootEl) {
+            if (!rootEl) return;
+            const gridList = Array.from(rootEl.querySelectorAll(".grid-container"));
+            gridList.forEach((gridEl) => {
+                const colList = Array.from(gridEl.children).filter((child) => child.classList?.contains("grid-cell"));
+                if (!colList.length) return;
+
+                const tableEl = document.createElement("table");
+                tableEl.className = "word-export-layout-table";
+                tableEl.setAttribute("data-word-layout-table", "true");
+                tableEl.setAttribute("border", "0");
+                tableEl.setAttribute("cellpadding", "0");
+                tableEl.setAttribute("cellspacing", "0");
+                tableEl.style.width = "100%";
+                tableEl.style.maxWidth = "100%";
+                tableEl.style.border = "0 none transparent";
+                tableEl.style.borderCollapse = "collapse";
+                tableEl.style.borderSpacing = "0";
+                tableEl.style.tableLayout = "fixed";
+
+                const tbodyEl = document.createElement("tbody");
+                const rowEl = document.createElement("tr");
+
+                colList.forEach((colEl) => {
+                    const cellEl = document.createElement("td");
+                    const span = this.getGridColSpan(colEl);
+                    const rawWidthPercent = span ? (span / 24) * 100 : 100 / colList.length;
+                    const widthPercent = colList.length > 1 ? Math.max(rawWidthPercent - 1, 1) : rawWidthPercent;
+                    cellEl.style.width = `${widthPercent}%`;
+                    cellEl.style.verticalAlign = "top";
+                    cellEl.style.padding = "0";
+                    cellEl.style.border = "0 none transparent";
+                    cellEl.style.boxSizing = "border-box";
+                    while (colEl.firstChild) {
+                        cellEl.appendChild(colEl.firstChild);
+                    }
+                    rowEl.appendChild(cellEl);
+                });
+
+                tbodyEl.appendChild(rowEl);
+                tableEl.appendChild(tbodyEl);
+                gridEl.replaceWith(tableEl);
+            });
+        },
+
+        getGridColSpan(colEl) {
+            const className = colEl?.className || "";
+            const spanClass = String(className).match(/\bel-col-(\d+)\b/);
+            if (spanClass) {
+                return Number(spanClass[1]);
+            }
+            const maxWidth = colEl?.style?.maxWidth || colEl?.style?.width || "";
+            const widthMatch = maxWidth.match(/^([\d.]+)%$/);
+            if (widthMatch) {
+                return Math.round((Number(widthMatch[1]) / 100) * 24);
+            }
+            return 0;
         },
 
         buildReportFormData(widgetList, reportData) {
