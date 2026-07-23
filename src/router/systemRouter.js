@@ -219,6 +219,14 @@ const routes = [
         ]
     },
     
+    // 数据报表查看
+    {
+        path: appPath + "data-model-report-view",
+        component: () => import(/* webpackChunkName: "data-model-report-view" */ '@/views/system/data-base/components/DataModelReportView.vue'),
+        meta: {
+            title: "数据报表"
+        }
+    },
     // 文件预览
     {
         path: appPath + "filePreview",

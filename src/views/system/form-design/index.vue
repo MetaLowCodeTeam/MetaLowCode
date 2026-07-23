@@ -303,6 +303,8 @@ export default {
                 return;
             }
             const metaFields = this.buildMetaFields(this.metaFieldsResult);
+            const rawMetaFields = this.buildMetaFields(this.metaFieldsResult, false);
+            this.$refs.vfDesigner.designer.rawMetaFields = rawMetaFields;
             this.$refs.vfDesigner.setMetaFields(metaFields);
         },
         getUsedFieldKey(name, subFormName) {
@@ -424,9 +426,9 @@ export default {
 							this.fieldListData.referenceFormList = res.data.referenceFormList;
 						}
                         this.metaFieldsResult = res;
-                        const metaFields = this.buildMetaFields(
-                            this.metaFieldsResult
-                        );
+                        const metaFields = this.buildMetaFields(this.metaFieldsResult);
+                        const rawMetaFields = this.buildMetaFields(this.metaFieldsResult, false);
+                        this.$refs.vfDesigner.designer.rawMetaFields = rawMetaFields;
                         this.$refs.vfDesigner.setFieldListData(
                             this.fieldListData
                         );
@@ -446,7 +448,7 @@ export default {
                 });
         },
 
-        buildMetaFields(mdResult) {
+        buildMetaFields(mdResult, filterUsed = true) {
             const result = {
         main: {
             entityName: this.entity,
@@ -471,7 +473,7 @@ export default {
                             return;
                         }
 
-                        if (this.isMetaFieldUsed(fld)) {
+                        if (filterUsed && this.isMetaFieldUsed(fld)) {
                             return; //跳过本次循环
                         }
                         const fieldNewProps = deepClone(
@@ -488,6 +490,9 @@ export default {
                         );
 
                         fieldSchema.displayName = fld.label;
+                        fieldSchema.fieldName = fld.name;
+                        fieldSchema.fieldLabel = fld.label;
+                        fieldSchema.fieldType = fld.type;
                         fieldSchema.nameReadonly = true;
                         fieldSchema.options.name = fld.name;
                         fieldSchema.options.label = fld.label;
@@ -524,7 +529,7 @@ export default {
                                 return;
                             }
 
-                            if (this.isMetaFieldUsed(fld, fld.detailEntity)) {
+                            if (filterUsed && this.isMetaFieldUsed(fld, fld.detailEntity)) {
                                 return; //跳过本次循环
                             }
 
@@ -542,6 +547,9 @@ export default {
                             );
 
                             fieldSchema.displayName = fld.label;
+                            fieldSchema.fieldName = fld.name;
+                            fieldSchema.fieldLabel = fld.label;
+                            fieldSchema.fieldType = fld.type;
                             fieldSchema.nameReadonly = true;
                             fieldSchema.options.name = fld.name;
                             fieldSchema.options.label = fld.label;

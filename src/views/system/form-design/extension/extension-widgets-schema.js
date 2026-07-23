@@ -47,6 +47,83 @@ export const listSubFormSchema = {
 /**
  * 字段组件
  */
+export const textFieldSchema = {
+	type: 'ml-text',
+	alias: 'ml-text',
+	icon: 'text-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '文本',
+		hidden: false,
+		textAlign: 'left',
+		fontSize: '',
+		fontStyle: 'normal',
+		fontWeight: 'normal',
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+	},
+};
+
+export const barChartSchema = {
+	type: 'ml-bar-chart',
+	alias: 'ml-bar-chart',
+	icon: 'barChart',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '柱状图',
+		hidden: false,
+    barChartConfig: {
+      title: '柱状图',
+      hideTitle: false,
+      width: '100%',
+      height: 260,
+			showLegend: false,
+			showLabel: true,
+			setDimensional: {
+				dimension: [],
+				metrics: [],
+			},
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+	},
+};
+
+export const pivotTableSchema = {
+	type: 'ml-pivot-table',
+	alias: 'ml-pivot-table',
+	icon: 'pivotTable',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '透视图',
+		hidden: false,
+    pivotTableConfig: {
+      title: '透视图',
+      hideTitle: false,
+      width: '100%',
+			showSummary: true,
+			showSumcol: true,
+			showBorder: true,
+			textAlign: 'center',
+			setDimensional: {
+				dimensionRow: [],
+				dimensionCol: [],
+				metrics: [],
+			},
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+	},
+};
+
 export const reportFieldSchema = {
 	type: 'report-field',
 	icon: 'text-field',

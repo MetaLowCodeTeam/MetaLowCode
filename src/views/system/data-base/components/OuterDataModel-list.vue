@@ -153,6 +153,22 @@
 						:prop="column.prop"
 						:label="column.label"
 					/>
+                    <el-table-column
+                        label="操作"
+                        align="center"
+                        fixed="right"
+                        width="160"
+                    >
+                        <template #default="scope">
+                            <el-button
+                                type="text"
+                                icon="Edit"
+                                @click="viewRow(scope.row)"
+                            >
+                                测试按钮
+                            </el-button>
+                        </template>
+                    </el-table-column>
 				</el-table>
 			</div>
 		</el-main>
@@ -173,10 +189,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { queryModelById, getOuterDataByDataModel } from "@/api/plugins";
 import { ElMessage } from "element-plus";
+import http from "@/utils/request";
 const route = useRoute();
+const router = useRouter();
 
 let loading = ref(false);
 
@@ -265,6 +283,25 @@ const loadModelData = async () => {
 	}
 	loading.value = false;
 };
+
+// 查询
+const viewRow = async (row) => {
+    let dataModelReportId = "0000094-fbbcd829dbd2491aba70bfe5a703111b";
+    loading.value = true;
+    try {
+        let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/cacheMainModelData", row);
+        if (res?.code == 200 && res.data) {
+            const appPath = import.meta.env.VITE_APP_PATH;
+            let newUrl = router.resolve(appPath + "data-model-report-view?dataModelReportId=" + dataModelReportId + "&mainModelDataId=" + res.data);
+            window.open(newUrl.href);
+        } else {
+            ElMessage.error("缓存数据失败");
+        }
+    } catch (e) {
+        ElMessage.error("请求失败");
+    }
+    loading.value = false;
+}
 
 // 查询
 let queryParamsRef = ref();

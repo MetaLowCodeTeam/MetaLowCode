@@ -48,6 +48,9 @@ const appPath = import.meta.env.VITE_APP_PATH;
 // HTTP response 拦截器
 axios.interceptors.response.use(
     (response) => {
+        if (response.config?.url?.includes("/htmlToWord/export") && response.data?.base64) {
+            return response
+        }
         if (response.data?.code == 200) {
             const checkStatusStore = useCheckStatusStore(pinia);
             const headerCount = response?.headers?.['notification-count'];

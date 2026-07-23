@@ -2,6 +2,9 @@ export default {
     extension: {
         widgetLabel: {
             'list-sub-form': 'ListSubForm',
+            'ml-text': 'Text',
+            'ml-bar-chart': 'Bar Chart',
+            'ml-pivot-table': 'Pivot Table',
             'check-tag': 'CheckTag',
             'reference': 'Reference',
             'reference-list': 'Reference List',

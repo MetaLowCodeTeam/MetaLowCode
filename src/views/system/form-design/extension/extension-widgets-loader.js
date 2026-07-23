@@ -4,6 +4,9 @@ import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {registerFieldWidgets} from "@/views/system/form-design/extension/field-widgets";
 import {
     checkTagSchema,
+    textFieldSchema,
+    barChartSchema,
+    pivotTableSchema,
     reportFieldSchema,
     referenceSchema,
     referenceListSchema,
@@ -82,6 +85,8 @@ import reportFieldTextAlignEditor from "@/views/system/form-design/extension/pro
 import reportFieldFontSizeEditor from "@/views/system/form-design/extension/property-editor/report-field/fontSize-editor.vue";
 import reportFieldFontStyleEditor from "@/views/system/form-design/extension/property-editor/report-field/fontStyle-editor.vue";
 import reportFieldFontWeightEditor from "@/views/system/form-design/extension/property-editor/report-field/fontWeight-editor.vue";
+import barChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/barChartConfig-editor.vue";
+import pivotTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/pivotTableConfig-editor.vue";
 // 列表子表单-是否启用高级查询
 import listSubFormShowAdvancedQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAdvancedQuery-editor.vue";
 import listSubFormShowHeaderEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showListHeader-editor.vue";
@@ -98,6 +103,7 @@ import listSubFormListHeightEditor from "@/views/system/form-design/extension/pr
 import listSubFormLayoutCodeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormLayoutCode-editor.vue";
 
 import inputQrCodeOnMobileEnabledEditor from "@/views/system/form-design/extension/property-editor/input/qrCodeOnMobileEnabled-editor.vue";
+import mlTextTextAlignEditor from "@/views/system/form-design/extension/property-editor/ml-text/textAlign-editor.vue";
 
 const {
     addContainerWidgetSchema,
@@ -187,17 +193,23 @@ export const loadExtensionWidgets = (app) => {
 
 	//注册扩展字段组件
 	registerFieldWidgets(app)
+	app.component('ml-text-textAlign-editor', mlTextTextAlignEditor)
 	app.component('report-field-widget', reportFieldWidget)
 	app.component('report-field-textAlign-editor', reportFieldTextAlignEditor)
 	app.component('report-field-fontSize-editor', reportFieldFontSizeEditor)
 	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
 	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
+	PERegister.registerCPEditor(app, 'barChartConfig', 'barChartConfig-editor', barChartConfigEditor)
+	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)
 
 	//注册容器组件
     registerContainerWidgets(app)
     registerContainerItems(app)
 
 	//添加到设计器组件库
+	addBasicFieldSchema(textFieldSchema)
+	addBasicFieldSchema(barChartSchema)
+	addBasicFieldSchema(pivotTableSchema)
 	addBasicFieldSchema(checkTagSchema)
     addBasicFieldSchema(signWidgetSchema)
 

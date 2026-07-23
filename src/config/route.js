@@ -578,7 +578,7 @@ const routes = [
                 "component": "userCenter/index"
             },
         ]
-    },  
+    },
 ]
 
 export default routes;
