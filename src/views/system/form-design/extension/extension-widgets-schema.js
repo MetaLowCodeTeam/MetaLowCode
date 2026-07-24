@@ -94,6 +94,34 @@ export const barChartSchema = {
 	},
 };
 
+export const lineChartSchema = {
+	type: 'ml-line-chart',
+	alias: 'ml-line-chart',
+	icon: 'lineChart',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '折线图',
+		hidden: false,
+		lineChartConfig: {
+			title: '折线图',
+			hideTitle: false,
+			width: '100%',
+			height: 260,
+			showLegend: false,
+			showLabel: true,
+			setDimensional: {
+				dimension: [],
+				metrics: [],
+			},
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onChange: '',
+	},
+};
+
 export const pivotTableSchema = {
 	type: 'ml-pivot-table',
 	alias: 'ml-pivot-table',

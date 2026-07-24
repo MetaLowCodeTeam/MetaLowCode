@@ -4,6 +4,7 @@ export default {
             'list-sub-form': '列表子表单',
             'ml-text': '文本',
             'ml-bar-chart': '柱状图',
+            'ml-line-chart': '折线图',
             'ml-pivot-table': '透视图',
             'check-tag': '标签选择',
             'reference': '引用',

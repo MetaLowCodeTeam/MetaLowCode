@@ -5,8 +5,9 @@ import {registerFieldWidgets} from "@/views/system/form-design/extension/field-w
 import {
     checkTagSchema,
     textFieldSchema,
-    barChartSchema,
     pivotTableSchema,
+    barChartSchema,
+    lineChartSchema,
     reportFieldSchema,
     referenceSchema,
     referenceListSchema,
@@ -86,6 +87,7 @@ import reportFieldFontSizeEditor from "@/views/system/form-design/extension/prop
 import reportFieldFontStyleEditor from "@/views/system/form-design/extension/property-editor/report-field/fontStyle-editor.vue";
 import reportFieldFontWeightEditor from "@/views/system/form-design/extension/property-editor/report-field/fontWeight-editor.vue";
 import barChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/barChartConfig-editor.vue";
+import lineChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/lineChartConfig-editor.vue";
 import pivotTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/pivotTableConfig-editor.vue";
 // 列表子表单-是否启用高级查询
 import listSubFormShowAdvancedQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAdvancedQuery-editor.vue";
@@ -200,6 +202,7 @@ export const loadExtensionWidgets = (app) => {
 	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
 	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
 	PERegister.registerCPEditor(app, 'barChartConfig', 'barChartConfig-editor', barChartConfigEditor)
+	PERegister.registerCPEditor(app, 'lineChartConfig', 'lineChartConfig-editor', lineChartConfigEditor)
 	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)
 
 	//注册容器组件
@@ -208,8 +211,9 @@ export const loadExtensionWidgets = (app) => {
 
 	//添加到设计器组件库
 	addBasicFieldSchema(textFieldSchema)
-	addBasicFieldSchema(barChartSchema)
 	addBasicFieldSchema(pivotTableSchema)
+	addBasicFieldSchema(barChartSchema)
+	addBasicFieldSchema(lineChartSchema)
 	addBasicFieldSchema(checkTagSchema)
     addBasicFieldSchema(signWidgetSchema)
 
