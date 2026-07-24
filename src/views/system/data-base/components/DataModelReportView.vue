@@ -201,6 +201,11 @@ export default {
             this.prepareExportContentWidth(exportContentEl);
             this.transformGridToExportTables(exportContentEl);
             const contentHtml = exportContentEl?.outerHTML || "";
+            console.info("[DataModelReportView] export html prepared", {
+                layoutTableCount: exportContentEl?.querySelectorAll?.("table.word-export-layout-table").length || 0,
+                markerCount: (contentHtml.match(/__META_WORD_LAYOUT_TABLE__/g) || []).length,
+                htmlLength: contentHtml.length,
+            });
             const styles = Array.from(document.querySelectorAll("style, link[rel='stylesheet']"))
                 .map((styleEl) => styleEl.outerHTML)
                 .join("");
@@ -278,6 +283,14 @@ export default {
                     cellEl.style.padding = "0";
                     cellEl.style.border = "0 none transparent";
                     cellEl.style.boxSizing = "border-box";
+                    if (!rowEl.children.length) {
+                        const markerEl = document.createElement("span");
+                        markerEl.textContent = "__META_WORD_LAYOUT_TABLE__";
+                        markerEl.style.fontSize = "1px";
+                        markerEl.style.color = "transparent";
+                        markerEl.style.lineHeight = "1px";
+                        cellEl.appendChild(markerEl);
+                    }
                     while (colEl.firstChild) {
                         cellEl.appendChild(colEl.firstChild);
                     }
