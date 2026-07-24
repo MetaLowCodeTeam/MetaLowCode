@@ -89,7 +89,29 @@ export default {
     mounted() {
         this.loadDesign();
     },
+    watch: {
+        '$route.query.dataModelReportId'(newId, oldId) {
+            if (!newId || newId === oldId) {
+                return;
+            }
+            this.dataModelReportId = newId;
+            this.loadDesign();
+        },
+    },
     methods: {
+        resetDesignState() {
+            this.modelConfigList = [];
+            this.usedFieldNames = {};
+            this.fieldListData = { fieldList: [] };
+            this.metaFieldsResult = {
+                main: { entityName: "", entityLabel: "", isArray: false, fieldList: [] },
+                detail: [],
+            };
+            this.$refs.vfDesigner?.clearDesigner?.();
+            this.$refs.vfDesigner?.setFieldListData?.(this.fieldListData);
+            this.$refs.vfDesigner?.setMetaFields?.(this.metaFieldsResult);
+        },
+
         handleFWU() {
             this.$nextTick(() => this.syncUsedFields());
         },
@@ -186,6 +208,7 @@ export default {
 
         async loadDesign() {
             this.pageLoading = true;
+            this.resetDesignState();
 			let res2 = await queryById(this.dataModelReportId, "reportConfig,modelConfig");
 			if (res2?.code == 200) {
                 this.modelConfigList = this.parseModelConfig(res2.data?.modelConfig);
@@ -201,7 +224,6 @@ export default {
 					console.error("reportConfig parse error", e);
 				}
 			}
-
             this.pageLoading = false;
         },
 
