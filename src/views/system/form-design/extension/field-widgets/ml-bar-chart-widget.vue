@@ -60,6 +60,7 @@ export default {
 			chartImage: '',
 			reportFormDataCache: null,
 			eventFunctionMapping: {},
+			customChartOption: null,
 		}
 	},
 	computed: {
@@ -101,8 +102,8 @@ export default {
 		this.handleOnCreated()
 	},
 	mounted() {
-		this.handleOnMounted()
 		this.renderChart()
+		this.handleOnMounted()
 		window.addEventListener('resize', this.resizeChart)
 	},
 	beforeUnmount() {
@@ -135,6 +136,14 @@ export default {
 		},
 		getData() {
 			return this.buildOption()
+		},
+		setChartData(option) {
+			this.customChartOption = option || null
+			this.renderChart()
+		},
+		clearChartData() {
+			this.customChartOption = null
+			this.renderChart()
 		},
 		buildDashboardChartData() {
 			if (this.isDashboardChartData(this.field.options.chartData)) {
@@ -358,6 +367,17 @@ export default {
 			return formatMap[dateFormat] || value
 		},
 		buildOption() {
+			if (this.customChartOption) {
+				let opt = JSON.parse(JSON.stringify(this.customChartOption))
+				if (!opt.animation) opt.animation = false
+				if (!opt.grid) opt.grid = { top: 28, right: 20, bottom: 36, left: 48, containLabel: true }
+				if (opt.legend === undefined) opt.legend = { show: !!this.config.showLegend }
+				if (!opt.yAxis) opt.yAxis = { type: 'value' }
+				if (!opt.xAxis && opt.series && opt.series.length) {
+					opt.xAxis = { type: 'category', data: [] }
+				}
+				return opt
+			}
 			const chartData = this.buildDashboardChartData()
 			return {
 				animation: false,
@@ -385,25 +405,33 @@ export default {
 			}
 		},
 		renderChart() {
+			if (this._rendering) return
+			this._rendering = true
 			this.$nextTick(() => {
 				if (!this.$refs.chartRef) {
+					this._rendering = false
 					return
-				}
-				if (this.exportAsImage) {
-					this.chartImage = ''
 				}
 				if (!this.chart) {
 					this.chart = echarts.init(this.$refs.chartRef, null, { renderer: 'canvas' })
 				}
 				if (this.exportAsImage) {
+					this.chartImage = ''
 					this.chart.off('finished')
 					this.chart.on('finished', this.updateChartImage)
 				}
-				this.chart.setOption(this.buildOption(), true)
-				this.chart.resize()
-				if (!this.exportAsImage) {
-					this.chartImage = ''
-				}
+				requestAnimationFrame(() => {
+					try {
+						this.chart.setOption(this.buildOption(), true)
+						this.chart.resize()
+					} catch (e) {
+						console.warn('chart error:', e)
+					}
+					if (!this.exportAsImage) {
+						this.chartImage = ''
+					}
+					this._rendering = false
+				})
 			})
 		},
 		updateChartImage() {
@@ -421,7 +449,6 @@ export default {
 		resizeChart() {
 			if (this.chart) {
 				this.chart.resize()
-				this.renderChart()
 			}
 		},
 		disposeChart() {

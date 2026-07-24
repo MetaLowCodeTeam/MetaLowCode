@@ -102,7 +102,7 @@ export default {
                 if (ref?.field?.type === "report-field" && typeof ref.reloadReportFieldValue === "function") {
                     ref.reloadReportFieldValue(formData);
                 }
-                if ((ref?.field?.type === "ml-bar-chart" || ref?.field?.type === "ml-line-chart") && typeof ref.reloadReportChartData === "function") {
+                if ((ref?.field?.type === "ml-bar-chart" || ref?.field?.type === "ml-line-chart") && typeof ref.reloadReportChartData === "function　") {
                     ref.reloadReportChartData(formData);
                 }
             });
