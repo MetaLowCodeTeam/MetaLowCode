@@ -118,7 +118,7 @@ export default {
                 await this.$nextTick();
                 const html = this.getExportHtml();
                 const fileName = "测试.docx";
-                const res = await http.post("/htmlToWord/export", {
+                const res = await http.post("/plugins/metaDataWarehouse/htmlToWord/export", {
                     fileName,
                     html,
                 });
@@ -146,7 +146,7 @@ export default {
                 await this.$nextTick();
                 const html = this.getExportHtml();
                 const fileName = "测试.pdf";
-                const res = await http.post("/htmlToWord/exportPdf", {
+                const res = await http.post("/plugins/metaDataWarehouse/htmlToWord/exportPdf", {
                     fileName,
                     html,
                 });
