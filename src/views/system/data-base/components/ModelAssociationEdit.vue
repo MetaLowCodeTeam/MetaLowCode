@@ -10,8 +10,8 @@
 						<el-option v-for="item in mainModelOptions" :key="item.value" :label="item.label" :value="item.value" />
 					</el-select>
 				</el-form-item>
-				<el-form-item label="数据关联名称" prop="modelAssociationLabel">
-					<el-input v-model="formData.modelAssociationLabel" placeholder="请输入数据关联名称" clearable />
+				<el-form-item label="数据别名" prop="modelAssociationLabel">
+					<el-input v-model="formData.modelAssociationLabel" placeholder="请输入数据别名" clearable />
 				</el-form-item>
 				<el-form-item label="设置数据类型" prop="isArray">
 					<el-radio-group v-model="formData.isArray" :disabled="isEditMode">
@@ -53,7 +53,7 @@ const formRef = ref();
 
 const rules = ref({
 	mainModel: [{ required: true, message: "请选择数据模型", trigger: "change" }],
-	modelAssociationLabel: [{ required: true, message: "请输入数据关联名称", trigger: "blur" }],
+	modelAssociationLabel: [{ required: true, message: "请输入数据别名", trigger: "blur" }],
 	isArray: [{ required: true, message: "请设置数据类型", trigger: "change" }],
 });
 
