@@ -18,6 +18,11 @@
 		<el-form-item label="显示数值">
 			<el-switch v-model="optionModel.barChartConfig.showLabel" />
 		</el-form-item>
+		<el-form-item label="绑定数据模型">
+			<el-select v-model="optionModel.barChartConfig.bindModelCode" placeholder="请选择数据模型" filterable clearable>
+				<el-option v-for="m in modelOptions" :key="m.value" :label="m.label" :value="m.value" />
+			</el-select>
+		</el-form-item>
 		<el-form-item label="维度指标设置">
 			<el-button @click="openDimensionDialog">点击设置</el-button>
 		</el-form-item>
@@ -149,9 +154,18 @@ export default {
 		}
 	},
 	computed: {
+		modelOptions() {
+			const models = this.getMetaModels(this.getMetaFields())
+			return models.filter((m) => m.dataCode).map((m) => ({
+				label: m.entityLabel || m.dataCode,
+				value: m.dataCode,
+			}))
+		},
 		availableFields() {
-			const loopModel = this.getCurrentLoopModel()
-			return (loopModel?.fieldList || []).map((field) => {
+			const bindCode = this.optionModel.barChartConfig?.bindModelCode
+			const models = this.getMetaModels(this.getMetaFields())
+			const targetModel = models.find((m) => m.dataCode === bindCode) || this.getCurrentLoopModel()
+			return (targetModel?.fieldList || []).map((field) => {
 				const fieldLabel = field.options?.label || field.fieldLabel || field.label || field.displayName || field.options?.name || field.name
 				const fieldName = field.options?.name || field.fieldName || field.name
 				return {
@@ -253,6 +267,10 @@ export default {
 			this.draggableMetrics = cloneDeep(this.metrics)
 		},
 		openDimensionDialog() {
+			if (!this.optionModel.barChartConfig?.bindModelCode) {
+				this.$message?.warning?.('请先绑定数据模型')
+				return
+			}
 			this.dimensionDialogVisible = true
 			this.$nextTick(() => {
 				this.setItemBoxHeight()

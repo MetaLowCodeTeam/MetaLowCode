@@ -338,6 +338,15 @@ export default {
                             item.options.barChartConfig.chartData = chartData;
                         }
                     }
+                    if (item.type === "ml-line-chart") {
+                        const chartData = this.buildLineChartData(item, formData);
+                        if (chartData) {
+                            item.options = item.options || {};
+                            item.options.chartData = chartData;
+                            item.options.lineChartConfig = item.options.lineChartConfig || {};
+                            item.options.lineChartConfig.chartData = chartData;
+                        }
+                    }
                     if (item.widgetList) visit(item.widgetList);
                     if (item.cols) item.cols.forEach((col) => visit(col.widgetList));
                     if (item.rows) item.rows.forEach((row) => (row.cols || []).forEach((col) => visit(col.widgetList)));
@@ -358,6 +367,7 @@ export default {
             const modelCode = this.getChartFieldModelCode(dimensions[0], formData)
                 || this.getChartFieldModelCode(metrics[0], formData)
                 || chartWidget.options?.modelAssociationId
+                || chartConfig.bindModelCode
                 || "";
             const sourceData = modelCode ? formData?.[modelCode] : formData;
             const rows = Array.isArray(sourceData) ? sourceData : (sourceData && typeof sourceData === "object" ? [sourceData] : []);
@@ -433,6 +443,52 @@ export default {
                 return target.numberCount ? target.value / target.numberCount : 0;
             }
             return target.value;
+        },
+
+        buildLineChartData(chartWidget, formData) {
+            const chartConfig = chartWidget.options?.lineChartConfig || {};
+            const setDimensional = chartConfig.setDimensional || chartWidget.options?.setDimensional || {};
+            const dimensions = setDimensional.dimension || [];
+            const metrics = setDimensional.metrics || [];
+            if (!dimensions.length || !metrics.length) {
+                return null;
+            }
+            const modelCode = this.getChartFieldModelCode(dimensions[0], formData)
+                || this.getChartFieldModelCode(metrics[0], formData)
+                || chartWidget.options?.modelAssociationId
+                || chartConfig.bindModelCode
+                || "";
+            const sourceData = modelCode ? formData?.[modelCode] : formData;
+            const rows = Array.isArray(sourceData) ? sourceData : (sourceData && typeof sourceData === "object" ? [sourceData] : []);
+            if (!rows.length) {
+                return { xAxis: [], yAxis: metrics.map((metric) => this.getChartFieldAlias(metric)), series: [] };
+            }
+
+            const groupMap = new Map();
+            rows.forEach((row) => {
+                const groupName = dimensions.map((dimension) => {
+                    const value = row?.[this.getChartFieldName(dimension, modelCode)];
+                    return value === undefined || value === null || value === "" ? "空" : String(value);
+                }).join(" / ") || "空";
+                if (!groupMap.has(groupName)) {
+                    groupMap.set(groupName, metrics.map(() => this.createChartMetricAggregator()));
+                }
+                const metricAggregators = groupMap.get(groupName);
+                metrics.forEach((metric, metricIndex) => {
+                    const value = row?.[this.getChartFieldName(metric, modelCode)];
+                    this.collectChartMetricValue(metricAggregators[metricIndex], value, metric.calcMode || "count");
+                });
+            });
+
+            const xAxis = Array.from(groupMap.keys());
+            return {
+                xAxis,
+                yAxis: metrics.map((metric) => this.getChartFieldAlias(metric)),
+                series: metrics.map((metric, metricIndex) => ({
+                    name: this.getChartFieldAlias(metric),
+                    data: xAxis.map((name) => this.getChartMetricResult(groupMap.get(name)[metricIndex], metric.calcMode || "count")),
+                })),
+            };
         },
 
         getChartFieldModelCode(field, formData) {

@@ -78,6 +78,7 @@ export const barChartSchema = {
     barChartConfig: {
       title: '柱状图',
       hideTitle: false,
+      bindModelCode: '',
       width: '100%',
       height: 260,
 			showLegend: false,
@@ -103,9 +104,10 @@ export const lineChartSchema = {
 		name: '',
 		label: '折线图',
 		hidden: false,
-		lineChartConfig: {
-			title: '折线图',
-			hideTitle: false,
+    lineChartConfig: {
+      title: '折线图',
+      hideTitle: false,
+      bindModelCode: '',
 			width: '100%',
 			height: 260,
 			showLegend: false,
@@ -134,6 +136,7 @@ export const pivotTableSchema = {
     pivotTableConfig: {
       title: '透视图',
       hideTitle: false,
+      bindModelCode: '',
       width: '100%',
 			showSummary: true,
 			showSumcol: true,
