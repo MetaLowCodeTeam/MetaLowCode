@@ -58,6 +58,8 @@ export default {
                 formTemplates: false,
                 eventCollapse: false,
                 metadataLib: true,
+                metadataModelManage: true,
+                reportWidgets: true,
                 logoHeader: false,
                 exportCodeButton: false,
                 generateSFCButton: false,
@@ -163,9 +165,7 @@ export default {
 				detail: [],
 			};
 			this.metaFieldsResult.main.fieldList.forEach((fld) => {
-				if (!this.isMetaFieldUsed(fld)) {
-					result.main.fieldList.push(fld);
-				}
+				result.main.fieldList.push(fld);
 			});
 			this.metaFieldsResult.detail.forEach((de) => {
 				let detailItem = {
@@ -177,9 +177,7 @@ export default {
 					fieldList: [],
 				};
 				de.fieldList.forEach((fld) => {
-					if (!this.isMetaFieldUsed(fld)) {
-						detailItem.fieldList.push(fld);
-					}
+					detailItem.fieldList.push(fld);
 				});
 				result.detail.push(detailItem);
 			});
