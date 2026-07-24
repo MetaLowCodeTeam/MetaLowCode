@@ -63,8 +63,16 @@ export default {
 			return this.getGlobalDsv?.()?.__reportFormData || this.formModel;
 		},
 		fieldKeyName() {
+			const optionKeyName = this.field.options.keyName;
+			if (this.field.options.keyNameEnabled && optionKeyName) {
+				return optionKeyName.includes(".") ? optionKeyName.slice(optionKeyName.lastIndexOf(".") + 1) : optionKeyName;
+			}
+			const bindingPath = this.field.options.bindingPath || this.field.name || "";
+			if (bindingPath.includes(".")) {
+				return bindingPath.slice(bindingPath.lastIndexOf(".") + 1);
+			}
 			const fieldKeyName = this.field.options.name;
-			return this.field.options.keyNameEnabled ? (this.field.options.keyName || fieldKeyName) : fieldKeyName;
+			return this.field.options.keyNameEnabled ? (optionKeyName || fieldKeyName) : fieldKeyName;
 		},
 		displayValue() {
 			const value = this.fieldModel;
@@ -144,6 +152,10 @@ export default {
 			return formModel?.[this.fieldKeyName] ?? null;
 		},
 		getReportDataFieldName(modelAssociationId) {
+			const bindingPath = this.field.options?.bindingPath || "";
+			if (bindingPath.startsWith(modelAssociationId + ".")) {
+				return bindingPath.slice(modelAssociationId.length + 1);
+			}
 			const rawName = this.field.name || "";
 			if (rawName.startsWith(modelAssociationId + ".")) {
 				return rawName.slice(modelAssociationId.length + 1);

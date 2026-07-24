@@ -161,6 +161,9 @@ export const reportFieldSchema = {
 	formItemFlag: false,
 	options: {
 		name: '',
+		keyNameEnabled: false,
+		keyName: '',
+		bindingPath: '',
 		label: '',
 		modelName: '',
 		outerDataModelId: '',

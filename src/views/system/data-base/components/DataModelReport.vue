@@ -78,6 +78,7 @@ export default {
             modelConfigList: [],
             usedFieldNames: {},
             pageLoading: false,
+            normalizingReportFields: false,
         };
     },
     created() {
@@ -113,15 +114,25 @@ export default {
         },
 
         handleFWU() {
-            this.$nextTick(() => this.syncUsedFields());
+            this.$nextTick(() => this.handleDesignerWidgetsChanged());
         },
 
         handleFWR() {
-            this.$nextTick(() => this.syncUsedFields());
+            this.$nextTick(() => this.handleDesignerWidgetsChanged());
         },
 
         handleFJU() {
-			this.$nextTick(() => this.syncUsedFields());
+			this.$nextTick(() => this.handleDesignerWidgetsChanged());
+        },
+
+        handleDesignerWidgetsChanged() {
+            if (this.normalizingReportFields) {
+                return;
+            }
+            const changed = this.normalizeReportFieldWidgets();
+            if (!changed) {
+                this.syncUsedFields();
+            }
         },
 
         syncUsedFields(delay = 0) {
@@ -145,6 +156,7 @@ export default {
                 widget?.options?.name,
                 widget?.metaFieldName,
                 widget?.options?.keyName,
+                widget?.options?.bindingPath,
                 widget?.displayName,
                 widget?.label,
                 widget?.options?.label,
@@ -158,6 +170,14 @@ export default {
         },
 
         getFieldNameFromWidget(widget) {
+            const keyName = widget?.options?.keyName || "";
+            if (keyName) {
+                return keyName.includes(".") ? keyName.slice(keyName.lastIndexOf(".") + 1) : keyName;
+            }
+            const bindingPath = widget?.options?.bindingPath || "";
+            if (bindingPath.includes(".")) {
+                return bindingPath.slice(bindingPath.lastIndexOf(".") + 1);
+            }
             if (widget?.name && widget.name.includes(".")) {
                 return widget.name.slice(widget.name.lastIndexOf(".") + 1);
             }
@@ -167,6 +187,95 @@ export default {
                 return optionName.slice(dataCode.length + 1);
             }
             return widget?.fieldName || widget?.name || "";
+        },
+
+        getReportFieldBindingPath(widget) {
+            if (!widget || widget.type !== "report-field") {
+                return "";
+            }
+            const options = widget.options || {};
+            const dataCode = widget.dataCode || widget.metaModelName || options.modelAssociationId || "";
+            const keyName = options.keyName || "";
+            if (options.bindingPath) {
+                return options.bindingPath;
+            }
+            if (widget.name && widget.name.includes(".")) {
+                return widget.name;
+            }
+            if (dataCode && keyName) {
+                return dataCode + "." + (keyName.includes(".") ? keyName.slice(keyName.lastIndexOf(".") + 1) : keyName);
+            }
+            if (dataCode && options.name && options.name.startsWith(dataCode + ".")) {
+                return options.name;
+            }
+            return "";
+        },
+
+        normalizeSingleReportField(widget) {
+            if (!widget || widget.type !== "report-field") {
+                return false;
+            }
+            const options = widget.options || (widget.options = {});
+            const bindingPath = this.getReportFieldBindingPath(widget);
+            const fieldName = bindingPath ? bindingPath.slice(bindingPath.lastIndexOf(".") + 1) : this.getFieldNameFromWidget(widget);
+            const uniqueName = widget.id || options.name;
+            let changed = false;
+
+            if (bindingPath && widget.name !== bindingPath) {
+                widget.name = bindingPath;
+                changed = true;
+            }
+            if (bindingPath && options.bindingPath !== bindingPath) {
+                options.bindingPath = bindingPath;
+                changed = true;
+            }
+            if (fieldName && options.keyName !== fieldName) {
+                options.keyName = fieldName;
+                changed = true;
+            }
+            if (options.keyNameEnabled !== true) {
+                options.keyNameEnabled = true;
+                changed = true;
+            }
+            if (uniqueName && options.name !== uniqueName) {
+                options.name = uniqueName;
+                changed = true;
+            }
+
+            return changed;
+        },
+
+        normalizeReportFieldWidgets(reloadDesigner = true) {
+            const formJson = this.$refs.vfDesigner?.getFormJson?.();
+            if (!formJson?.widgetList) {
+                return false;
+            }
+            let changed = false;
+            const visit = (widgetList = []) => {
+                widgetList.forEach((widget) => {
+                    if (!widget) return;
+                    if (this.normalizeSingleReportField(widget)) {
+                        changed = true;
+                    }
+                    if (Array.isArray(widget.widgetList)) visit(widget.widgetList);
+                    if (Array.isArray(widget.cols)) widget.cols.forEach((col) => visit(col.widgetList || []));
+                    if (Array.isArray(widget.rows)) widget.rows.forEach((row) => (row.cols || []).forEach((cell) => visit(cell.widgetList || [])));
+                    if (Array.isArray(widget.tabs)) widget.tabs.forEach((tab) => visit(tab.widgetList || []));
+                });
+            };
+            visit(formJson.widgetList);
+
+            if (changed && reloadDesigner) {
+                this.normalizingReportFields = true;
+                this.$refs.vfDesigner?.setFormJson?.(formJson);
+                this.syncAllLoopContainerDisplayNames(false);
+                this.$nextTick(() => {
+                    this.normalizingReportFields = false;
+                    this.syncUsedFields();
+                });
+            }
+
+            return changed;
         },
 
         isMetaFieldUsed(fld) {
@@ -217,8 +326,11 @@ export default {
 					let config = typeof res2.data?.reportConfig === "string" ? JSON.parse(res2.data.reportConfig) : res2.data?.reportConfig;
 					if (config) {
                         this.$refs.vfDesigner.setFormJson(config);
+                        const normalized = this.normalizeReportFieldWidgets();
                         this.syncAllLoopContainerDisplayNames();
-                        this.syncUsedFields();
+                        if (!normalized) {
+                            this.syncUsedFields();
+                        }
 					}
 				} catch (e) {
 					console.error("reportConfig parse error", e);
@@ -476,6 +588,9 @@ export default {
                 metaModelName: config.dataCode,
                 options: {
                     name: isArray ? "reportfield" + safeCode + fieldName : name,
+                    keyNameEnabled: true,
+                    keyName: fieldName,
+                    bindingPath: name,
                     label: fieldLabel,
                     modelName,
                     outerDataModelId: config.mainModel,
