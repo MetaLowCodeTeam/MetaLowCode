@@ -27,13 +27,6 @@
                     <el-button type="primary" size="small" @click="openModelAssociationEdit">添加数据模型</el-button>
                 </div>
             </template>
-            <template #widgetSetting="{designer, formConfig, selectedWidget, optionModel}">
-                <el-collapse-item name="reportField" title="关联模型" v-if="selectedWidget?.type === 'report-field'">
-                    <el-form-item label="父字段">
-                        <el-input :model-value="optionModel.modelName" disabled />
-                    </el-form-item>
-                </el-collapse-item>
-            </template>
         </v-form-designer>
         <model-association-edit ref="modelAssociationEditRef" @save="handleModelConfigSave" />
     </div>
@@ -216,6 +209,7 @@ export default {
                 return false;
             }
             const options = widget.options || (widget.options = {});
+            const modelConfig = this.modelConfigList.find((item) => item.dataCode === (widget.dataCode || widget.metaModelName || options.modelAssociationId));
             const bindingPath = this.getReportFieldBindingPath(widget);
             const fieldName = bindingPath ? bindingPath.slice(bindingPath.lastIndexOf(".") + 1) : this.getFieldNameFromWidget(widget);
             const uniqueName = widget.id || options.name;
@@ -239,6 +233,10 @@ export default {
             }
             if (uniqueName && options.name !== uniqueName) {
                 options.name = uniqueName;
+                changed = true;
+            }
+            if (modelConfig?.modelAssociationLabel && options.modelLabel !== modelConfig.modelAssociationLabel) {
+                options.modelLabel = modelConfig.modelAssociationLabel;
                 changed = true;
             }
 
@@ -591,6 +589,7 @@ export default {
                     keyNameEnabled: true,
                     keyName: fieldName,
                     bindingPath: name,
+                    modelLabel: config.modelAssociationLabel,
                     label: fieldLabel,
                     modelName,
                     outerDataModelId: config.mainModel,

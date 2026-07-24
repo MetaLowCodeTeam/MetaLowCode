@@ -82,10 +82,13 @@ import listSubFormWidget from "@/views/system/form-design/extension/container-wi
 import listSubFormItem from "@/views/system/form-design/extension/container-items/list-sub-form-item.vue";
 
 import reportFieldWidget from "@/views/system/form-design/extension/field-widgets/report-field-widget.vue";
+import reportFieldNameEditor from "@/views/system/form-design/extension/property-editor/report-field/name-editor.vue";
+import reportFieldLabelEditor from "@/views/system/form-design/extension/property-editor/report-field/label-editor.vue";
 import reportFieldTextAlignEditor from "@/views/system/form-design/extension/property-editor/report-field/textAlign-editor.vue";
 import reportFieldFontSizeEditor from "@/views/system/form-design/extension/property-editor/report-field/fontSize-editor.vue";
 import reportFieldFontStyleEditor from "@/views/system/form-design/extension/property-editor/report-field/fontStyle-editor.vue";
 import reportFieldFontWeightEditor from "@/views/system/form-design/extension/property-editor/report-field/fontWeight-editor.vue";
+import reportFieldModelNameEditor from "@/views/system/form-design/extension/property-editor/report-field/modelName-editor.vue";
 import barChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/barChartConfig-editor.vue";
 import lineChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/lineChartConfig-editor.vue";
 import pivotTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/pivotTableConfig-editor.vue";
@@ -197,10 +200,14 @@ export const loadExtensionWidgets = (app) => {
 	registerFieldWidgets(app)
 	app.component('ml-text-textAlign-editor', mlTextTextAlignEditor)
 	app.component('report-field-widget', reportFieldWidget)
+	app.component('report-field-name-editor', reportFieldNameEditor)
+	app.component('report-field-label-editor', reportFieldLabelEditor)
+	app.component('report-field-modelName-editor', reportFieldModelNameEditor)
 	app.component('report-field-textAlign-editor', reportFieldTextAlignEditor)
 	app.component('report-field-fontSize-editor', reportFieldFontSizeEditor)
 	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
 	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
+	PERegister.registerCommonProperty('modelName', null)
 	PERegister.registerCPEditor(app, 'barChartConfig', 'barChartConfig-editor', barChartConfigEditor)
 	PERegister.registerCPEditor(app, 'lineChartConfig', 'lineChartConfig-editor', lineChartConfigEditor)
 	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)

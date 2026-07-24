@@ -52,6 +52,7 @@ export default {
 		return {
 			fieldModel: null,
 			eventFunctionMapping: {},
+			oldFieldValue: null,
 		};
 	},
 	inject: ["refList", "globalModel", "getGlobalDsv"],
@@ -100,9 +101,14 @@ export default {
 			}
 			this.fieldModel = this.resolveReportFieldValue(this.reportFormData);
 		},
-		setValue(newValue) {
+		setValue(newValue, disableChangeEvent = false) {
 			const nextValue = this.normalizeReportFieldValue(newValue);
+			const oldValue = this.fieldModel;
 			this.fieldModel = nextValue;
+			if (!disableChangeEvent && this.shouldTriggerChange(nextValue, oldValue)) {
+				this.handleOnChange(nextValue, oldValue);
+			}
+			this.oldFieldValue = this.cloneValue(nextValue);
 		},
 		getValue() {
 			return this.fieldModel;
@@ -120,6 +126,68 @@ export default {
 				this.setValue(this.resolveReportFieldValue(newFormData), disableChangeEvent);
 			};
 			this.on$("setFormData", this.eventFunctionMapping["setFormData"]);
+		},
+		cloneValue(value) {
+			if (value === undefined) {
+				return undefined;
+			}
+			if (value === null || typeof value !== "object") {
+				return value;
+			}
+			try {
+				return JSON.parse(JSON.stringify(value));
+			} catch (e) {
+				return value;
+			}
+		},
+		isSameValue(value1, value2) {
+			if (value1 === value2) {
+				return true;
+			}
+			if ((value1 === null || value1 === undefined) && (value2 === null || value2 === undefined)) {
+				return true;
+			}
+			if (typeof value1 !== "object" || typeof value2 !== "object" || !value1 || !value2) {
+				return false;
+			}
+			try {
+				return JSON.stringify(value1) === JSON.stringify(value2);
+			} catch (e) {
+				return false;
+			}
+		},
+		shouldTriggerChange(newValue, oldValue) {
+			if (this.designer || this.designState) {
+				return false;
+			}
+			return !this.isSameValue(newValue, oldValue);
+		},
+		handleOnCreated() {
+			if (this.designState || this.designer) {
+				return;
+			}
+			if (this.field.options?.onCreated) {
+				const customFunc = new Function(this.field.options.onCreated);
+				customFunc.call(this);
+			}
+		},
+		handleOnMounted() {
+			if (this.designState || this.designer) {
+				return;
+			}
+			if (this.field.options?.onMounted) {
+				const mountFunc = new Function(this.field.options.onMounted);
+				mountFunc.call(this);
+			}
+		},
+		handleOnChange(val, oldVal) {
+			if (this.designState || this.designer) {
+				return;
+			}
+			if (this.field.options?.onChange) {
+				const changeFunc = new Function("value", "oldValue", this.field.options.onChange);
+				changeFunc.call(this, val, oldVal);
+			}
 		},
 		normalizeReportFieldValue(value) {
 			if (value !== null && value !== undefined && value !== "") {
@@ -166,9 +234,13 @@ export default {
 			}
 			return rawName.includes(".") ? rawName.slice(rawName.lastIndexOf(".") + 1) : optionName;
 		},
-		registerToRefList() {
+		registerToRefList(oldRefName) {
 			if (!this.refList || !this.field?.options?.name) {
 				return;
+			}
+			if (oldRefName) {
+				const oldKey = this.subFormRowId ? oldRefName + "@row" + this.subFormRowId : oldRefName;
+				delete this.refList[oldKey];
 			}
 			const refName = this.subFormRowId ? this.field.options.name + "@row" + this.subFormRowId : this.field.options.name;
 			this.refList[refName] = this;
@@ -185,10 +257,13 @@ export default {
 		this.registerToRefList();
 		this.initReportFieldModel();
 		this.initEventHandler();
+		this.oldFieldValue = this.cloneValue(this.fieldModel);
+		this.handleOnCreated();
 	},
 	mounted() {
 		this.$nextTick(() => {
 			this.reloadReportFieldValue();
+			this.handleOnMounted();
 		});
 	},
 	beforeUnmount() {
