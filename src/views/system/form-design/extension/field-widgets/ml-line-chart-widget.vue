@@ -142,6 +142,7 @@ export default {
 			this.renderChart()
 		},
 		getData() { return this.buildOption() },
+		getValue() { return this.buildOption() },
 		setChartData(option) {
 			this.customChartOption = option || null
 			this.renderChart()

@@ -19,7 +19,7 @@
 				'font-weight': field.options.fontWeight || 'normal',
 			}"
 		>
-			{{ field.options.label }}
+			{{ displayText }}
 		</div>
 	</static-content-wrapper>
 </template>
@@ -59,6 +59,21 @@ export default {
 			default: '',
 		},
 	},
+	data() {
+		return {
+			displayText: this.field?.options?.label || '',
+		}
+	},
+	watch: {
+		'field.options.label': {
+			immediate: false,
+			handler(val) {
+				if (val && !this._textOverridden) {
+					this.displayText = val
+				}
+			},
+		},
+	},
 	created() {
 		this.registerToRefList()
 		this.initEventHandler()
@@ -69,6 +84,19 @@ export default {
 	},
 	beforeUnmount() {
 		this.unregisterFromRefList()
+	},
+	methods: {
+		setFieldValue(value) {
+			this._textOverridden = true
+			this.displayText = value != null ? String(value) : ''
+		},
+		getValue() {
+			return this.displayText
+		},
+		resetToLabel() {
+			this._textOverridden = false
+			this.displayText = this.field?.options?.label || ''
+		},
 	},
 }
 </script>
