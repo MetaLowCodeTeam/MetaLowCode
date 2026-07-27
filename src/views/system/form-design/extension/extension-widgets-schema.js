@@ -62,7 +62,6 @@ export const textFieldSchema = {
 		fontWeight: 'normal',
 		onCreated: '',
 		onMounted: '',
-		onChange: '',
 	},
 };
 
@@ -91,7 +90,6 @@ export const barChartSchema = {
 		customClass: [],
 		onCreated: '',
 		onMounted: '',
-		onChange: '',
 	},
 };
 
@@ -120,7 +118,6 @@ export const lineChartSchema = {
 		customClass: [],
 		onCreated: '',
 		onMounted: '',
-		onChange: '',
 	},
 };
 
@@ -151,7 +148,6 @@ export const pivotTableSchema = {
 		customClass: [],
 		onCreated: '',
 		onMounted: '',
-		onChange: '',
 	},
 };
 
@@ -175,7 +171,6 @@ export const reportFieldSchema = {
 		fontWeight: 'normal',
 		onCreated: '',
 		onMounted: '',
-		onChange: '',
 		onFormDataReady: '',
 	},
 };

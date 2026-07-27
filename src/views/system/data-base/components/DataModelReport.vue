@@ -672,7 +672,6 @@ export default {
                     fontWeight: 'normal',
                     onCreated: '',
                     onMounted: '',
-                    onChange: '',
                     onFormDataReady: '',
                 },
             };
