@@ -604,6 +604,9 @@ const initData = async () => {
         if(!confData.layoutConfig) {
             confData.layoutConfig = 'header';
         }
+        if(confData.topNavAutoActivateFirstMenu == null) {
+            confData.topNavAutoActivateFirstMenu = false;
+        }
     }
     loading.value = false;
 };
