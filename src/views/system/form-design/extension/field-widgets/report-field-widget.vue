@@ -199,8 +199,9 @@ export default {
 			}
 			this._formDataReadyFired = true;
 			if (this.field.options?.onFormDataReady) {
+				const scopeData = this.loopRowData || (this.fieldKeyName ? { [this.fieldKeyName]: this.fieldModel } : formData);
 				const fn = new Function("formData", "key", "value", this.field.options.onFormDataReady);
-				fn.call(this, formData, this.fieldKeyName, this.fieldModel);
+				fn.call(this, scopeData, this.fieldKeyName, this.fieldModel);
 			}
 		},
 		tryFireFormDataReady() {

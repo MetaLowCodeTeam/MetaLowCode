@@ -133,6 +133,7 @@ export default {
 					this.reportFormDataCache = data
 				}
 				this.renderChart()
+				this.handleOnFormDataReady(this.reportFormData)
 			}
 			this.on$('setFormData', this.eventFunctionMapping.setFormData)
 		},
@@ -144,6 +145,19 @@ export default {
 		setChartData(option) {
 			this.customChartOption = option || null
 			this.renderChart()
+		},
+		clearChartData() {
+			this.customChartOption = null
+			this.renderChart()
+		},
+		handleOnFormDataReady(formData) {
+			if (this.designState || this.designer) return
+			if (this.field.options?.onFormDataReady) {
+				const bindCode = this.config.bindModelCode || this.getFieldModelCode(this.config.setDimensional?.dimension?.[0]) || ''
+				const scopeData = bindCode && formData ? formData[bindCode] : formData
+				const fn = new Function("formData", "key", "value", this.field.options.onFormDataReady)
+				fn.call(this, scopeData, bindCode, scopeData)
+			}
 		},
 		clearChartData() {
 			this.customChartOption = null
@@ -281,6 +295,9 @@ export default {
 				if (!opt.xAxis && opt.series && opt.series.length) {
 					opt.xAxis = { type: 'category', data: [] }
 				}
+				if (Array.isArray(opt.series)) {
+					opt.series = opt.series.map((s) => ({ type: 'line', ...s }))
+				}
 				return opt
 			}
 			const chartData = this.buildDashboardChartData()
@@ -315,7 +332,7 @@ export default {
 					try {
 						this.chart.setOption(this.buildOption(), true)
 						this.chart.resize()
-					} catch (e) { console.warn('chart error:', e) }
+					} catch (e) { /**/ }
 					if (!this.exportAsImage) this.chartImage = ''
 					this._rendering = false
 					if (this._pendingRender) {

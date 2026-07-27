@@ -90,9 +90,9 @@ export const barChartSchema = {
 		customClass: [],
 		onCreated: '',
 		onMounted: '',
+		onFormDataReady: '',
 	},
 };
-
 export const lineChartSchema = {
 	type: 'ml-line-chart',
 	alias: 'ml-line-chart',
@@ -118,6 +118,7 @@ export const lineChartSchema = {
 		customClass: [],
 		onCreated: '',
 		onMounted: '',
+		onFormDataReady: '',
 	},
 };
 
@@ -148,6 +149,7 @@ export const pivotTableSchema = {
 		customClass: [],
 		onCreated: '',
 		onMounted: '',
+		onFormDataReady: '',
 	},
 };
 
