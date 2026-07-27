@@ -60,12 +60,30 @@ export default {
 		subFormColIndex: { type: Number, default: -1 },
 		subFormRowId: { type: String, default: '' },
 	},
+	inject: {
+		refList: { default: null },
+		globalModel: { default: null },
+		getGlobalDsv: { default: null },
+	},
+	data() {
+		return {
+			reportFormDataCache: null,
+			eventFunctionMapping: {},
+		}
+	},
 	computed: {
 		config() {
 			return this.field.options.pivotTableConfig || {}
 		},
 		tableTitle() {
 			return this.config.title || this.field.options.label
+		},
+		reportFormData() {
+			const cache = this.reportFormDataCache
+			if (cache && typeof cache === 'object' && Object.keys(cache).length > 0) {
+				return cache
+			}
+			return this.getGlobalDsv?.()?.__reportFormData || this.globalModel?.formModel || {}
 		},
 		tableStyle() {
 			return {
@@ -86,6 +104,14 @@ export default {
 		},
 		sourceRows() {
 			try {
+				const bindCode = this.config.bindModelCode || ''
+				if (Array.isArray(this.reportFormDataCache)) {
+					return this.reportFormDataCache
+				}
+				if (bindCode && this.reportFormData?.[bindCode]) {
+					const data = this.reportFormData[bindCode]
+					if (Array.isArray(data)) return data
+				}
 				const rows = JSON.parse(this.config.dataJson || '[]')
 				return Array.isArray(rows) ? rows : []
 			} catch (e) {
@@ -192,14 +218,77 @@ export default {
 		this.registerToRefList()
 		this.initEventHandler()
 		this.handleOnCreated()
+		this.initPivotEventHandler()
 	},
 	mounted() {
 		this.handleOnMounted()
 	},
 	beforeUnmount() {
 		this.unregisterFromRefList()
+		if (this.eventFunctionMapping.setFormData) {
+			this.off$('setFormData', this.eventFunctionMapping.setFormData)
+		}
 	},
 	methods: {
+		initPivotEventHandler() {
+			if (this.designState) return
+			this.eventFunctionMapping.setFormData = (params) => {
+				const data = params?.[0]
+				if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+					this.reportFormDataCache = data
+				}
+				this.handleOnFormDataReady(this.reportFormData)
+			}
+			this.on$('setFormData', this.eventFunctionMapping.setFormData)
+		},
+		reloadPivotData(formData) {
+			if (formData) {
+				this.reportFormDataCache = formData
+			}
+		},
+		setValue(data) {
+			if (Array.isArray(data)) {
+				this.reportFormDataCache = data
+				return
+			}
+			if (data && typeof data === 'object') {
+				if (Array.isArray(data.data)) {
+					this.reportFormDataCache = data.data
+				}
+				const cfg = this.field.options.pivotTableConfig || {}
+				if (data.dimensionRow) {
+					cfg.setDimensional = cfg.setDimensional || {}
+					cfg.setDimensional.dimensionRow = Array.isArray(data.dimensionRow) ? data.dimensionRow : [data.dimensionRow]
+				}
+				if (data.dimensionCol) {
+					cfg.setDimensional = cfg.setDimensional || {}
+					cfg.setDimensional.dimensionCol = Array.isArray(data.dimensionCol) ? data.dimensionCol : [data.dimensionCol]
+				}
+				if (data.metrics) {
+					cfg.setDimensional = cfg.setDimensional || {}
+					cfg.setDimensional.metrics = Array.isArray(data.metrics) ? data.metrics : [data.metrics]
+				}
+			}
+		},
+		getValue() {
+			return this.sourceRows
+		},
+		handleOnFormDataReady(formData) {
+			if (this.designState || this.designer) return
+			if (this.field.options?.onFormDataReady) {
+				const bindCode = this.config.bindModelCode || ''
+				let scopeData
+				if (Array.isArray(formData)) {
+					scopeData = formData
+				} else if (bindCode && formData?.[bindCode]) {
+					scopeData = formData[bindCode]
+				} else {
+					scopeData = formData
+				}
+				const fn = new Function("formData", "key", "value", this.field.options.onFormDataReady)
+				fn.call(this, scopeData, bindCode, scopeData)
+			}
+		},
 		getFieldAlias(field) {
 			return field?.alias || field?.fieldLabel || field?.label || field?.displayName || field?.fieldName || field?.name || ''
 		},
