@@ -56,6 +56,12 @@ export default [
                 ],
             },
             {
+                label: "顶部导航菜单联动",
+                key: "topNavAutoActivateFirstMenu",
+                type: "switch",
+                subLabel: "点击顶部导航后自动激活该导航的第一个一级菜单",
+            },
+            {
                 label: "详情页签位置",
                 key: "detailTabsPosition",
                 type: "select",
