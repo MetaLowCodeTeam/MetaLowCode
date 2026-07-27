@@ -396,6 +396,7 @@ import useGlobalStore from "@/store/modules/global";
 import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import useLayoutConfigStore from "@/store/modules/layoutConfig";
+import { formatOutLink } from "@/utils/util";
 // 滚动条
 import mlScrollbar from "@/components/mlScrollbar/index.vue";
 const { publicSetting } = storeToRefs(useCommonStore());
@@ -597,6 +598,44 @@ export default {
                 this.active = this.$route.meta.active || this.$route.fullPath;
             });
         },
+        shouldAutoActivateFirstMenu() {
+            return this.layoutFn === "header" && !!publicSetting.value.topNavAutoActivateFirstMenu;
+        },
+        findFirstAvailableMenu(menuList = []) {
+            for (const item of menuList) {
+                if (item.children && item.children.length > 0) {
+                    const childMenu = this.findFirstAvailableMenu(item.children);
+                    if (childMenu) {
+                        return childMenu;
+                    }
+                } else if (item.meta?.type === "link" || item.component || item.meta?.query) {
+                    return item;
+                }
+            }
+            return null;
+        },
+        openMenuRoute(menu) {
+            if (!menu) {
+                return;
+            }
+            if (menu.meta?.type === "link") {
+                window.open(
+                    formatOutLink(menu.meta),
+                    menu.meta.outLink?.indexOf("/") !== 0 ? "_blank" : ""
+                );
+                return;
+            }
+            if (menu.meta?.query) {
+                this.$router.push({
+                    path: menu.path,
+                    query: menu.meta.query,
+                });
+                return;
+            }
+            if (menu.path) {
+                this.$router.push({ path: menu.path });
+            }
+        },
         //点击显示
         showMenu(route) {
             if(route.type == 2){
@@ -610,7 +649,12 @@ export default {
                 (!route.children || route.children.length == 0) &&
                 route.component
             ) {
-                this.$router.push({ path: route.path });
+                this.openMenuRoute(route);
+                return;
+            }
+            if (this.shouldAutoActivateFirstMenu()) {
+                const firstMenu = this.findFirstAvailableMenu(this.nextMenu);
+                this.openMenuRoute(firstMenu);
             }
         },
         //转换外部链接的路由
@@ -739,5 +783,3 @@ export default {
     // }
 }
 </style>
-
-
