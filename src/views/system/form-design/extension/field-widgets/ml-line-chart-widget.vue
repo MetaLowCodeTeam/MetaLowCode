@@ -61,6 +61,7 @@ export default {
 			reportFormDataCache: null,
 			eventFunctionMapping: {},
 			customChartOption: null,
+			_pendingRender: false,
 		}
 	},
 	computed: {
@@ -84,7 +85,11 @@ export default {
 			return this.globalModel?.formModel || {}
 		},
 		reportFormData() {
-			return this.reportFormDataCache || this.getGlobalDsv?.()?.__reportFormData || this.formModel || {}
+			const cache = this.reportFormDataCache
+			if (cache && typeof cache === 'object' && Object.keys(cache).length > 0) {
+				return cache
+			}
+			return this.getGlobalDsv?.()?.__reportFormData || this.formModel || {}
 		},
 	},
 	watch: {
@@ -123,7 +128,10 @@ export default {
 		initReportChartEventHandler() {
 			if (this.designState) return
 			this.eventFunctionMapping.setFormData = (params) => {
-				this.reportFormDataCache = params?.[0] || {}
+				const data = params?.[0]
+				if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+					this.reportFormDataCache = data
+				}
 				this.renderChart()
 			}
 			this.on$('setFormData', this.eventFunctionMapping.setFormData)
@@ -293,8 +301,12 @@ export default {
 			}
 		},
 		renderChart() {
-			if (this._rendering) return
+			if (this._rendering) {
+				this._pendingRender = true
+				return
+			}
 			this._rendering = true
+			this._pendingRender = false
 			this.$nextTick(() => {
 				if (!this.$refs.chartRef) { this._rendering = false; return }
 				if (!this.chart) this.chart = echarts.init(this.$refs.chartRef, null, { renderer: 'canvas' })
@@ -306,6 +318,9 @@ export default {
 					} catch (e) { console.warn('chart error:', e) }
 					if (!this.exportAsImage) this.chartImage = ''
 					this._rendering = false
+					if (this._pendingRender) {
+						this.renderChart()
+					}
 				})
 			})
 		},
