@@ -10,7 +10,7 @@
 		<div v-loading="loading">
 			<el-form ref="formRef" :model="formData" :rules="rules">
 				<el-row :gutter="20">
-					<el-col :span="12">
+					<el-col :span="isCustomModel ? 24 : 12">
 						<el-form-item label="模型名称" prop="modelName">
 							<el-input
 								v-model="formData.modelName"
@@ -19,7 +19,7 @@
 							/>
 						</el-form-item>
 					</el-col>
-					<el-col :span="12">
+					<el-col v-if="!isCustomModel" :span="12">
 						<el-form-item label="数据源" prop="dataSourceLabel">
 							<el-input
 								v-model="formData.dataSourceLabel"
@@ -48,7 +48,7 @@
 							</el-radio-group>
 						</el-form-item>
 					</el-col>
-					<el-col :span="24">
+					<el-col v-if="!isCustomModel" :span="24">
 						<el-form-item label="SQL文本" prop="sqlText">
 							<div class="w-100">
 								<mlCodeEditor
@@ -71,7 +71,11 @@
 					</el-col>
 					<el-col :span="24">
 						<el-collapse v-model="activeNames">
-							<el-collapse-item title="SQL参数" name="sqlParams">
+							<el-collapse-item
+								v-if="!isCustomModel"
+								title="SQL参数"
+								name="sqlParams"
+							>
 								<el-table
 									:data="formData.sqlParams"
 									:border="true"
@@ -175,6 +179,18 @@
 								title="查询字段"
 								name="queryFields"
 							>
+								<div
+									v-if="isCustomModel && !isView"
+									class="query-fields-toolbar"
+								>
+									<el-button
+										type="primary"
+										icon="Plus"
+										@click="addQueryField"
+									>
+										新增
+									</el-button>
+								</div>
 								<el-table
 									:data="formData.queryFields"
 									:border="true"
@@ -183,7 +199,19 @@
 									<el-table-column
 										prop="fieldName"
 										label="字段名"
-									/>
+									>
+										<template #default="scope">
+											<el-input
+												v-if="isCustomModel && !isView"
+												v-model="scope.row.fieldName"
+												placeholder="请输入字段名"
+												clearable
+											/>
+											<span v-else>
+												{{ scope.row.fieldName }}
+											</span>
+										</template>
+									</el-table-column>
 									<el-table-column
 										prop="fieldLabel"
 										label="显示名称"
@@ -194,6 +222,22 @@
 												clearable
 												:disabled="isView"
 											/>
+										</template>
+									</el-table-column>
+									<el-table-column
+										v-if="isCustomModel && !isView"
+										label="操作"
+										width="80"
+										align="center"
+									>
+										<template #default="scope">
+											<el-button
+												type="danger"
+												link
+												@click="deleteQueryField(scope.$index)"
+											>
+												删除
+											</el-button>
 										</template>
 									</el-table-column>
 								</el-table>
@@ -234,7 +278,7 @@
 	</ml-dialog>
 </template>
 <script setup>
-import { ref, watch, reactive } from "vue";
+import { computed, ref, watch, reactive } from "vue";
 // 引用组件
 import ReferenceSearchTable from "@/components/mlReferenceSearch/reference-search-table.vue";
 // 代码编辑器
@@ -254,6 +298,8 @@ let title = ref("");
 let detailId = ref("");
 let entityName = ref("");
 let isView = ref(false);
+let modelType = ref("1");
+const isCustomModel = computed(() => modelType.value === "2");
 
 const defaultData = reactive({
 	modelName: "",
@@ -285,7 +331,11 @@ const openDialog = (data) => {
 	title.value = data.title;
 	detailId.value = data.detailId;
 	entityName.value = data.entityName;
-	formData.value = Object.assign({}, defaultData);
+	modelType.value = String(data.modelType || "1");
+	formData.value = Object.assign({}, defaultData, {
+		queryFields: [],
+		sqlParams: [],
+	});
 	isView.value = data.type == "view";
 	loadOptionItems();
 };
@@ -294,21 +344,24 @@ const optionItems = ref([]);
 // 加载参数选项
 const loadOptionItems = async () => {
 	loading.value = true;
-	let res = await getOptionItems("ModelParam", "paramType");
-	if (res && res.data) {
-		optionItems.value = res.data;
+	if (!isCustomModel.value) {
+		let res = await getOptionItems("ModelParam", "paramType");
+		if (res && res.data) {
+			optionItems.value = res.data;
+		}
 	}
 	if (detailId.value) {
 		let res = await queryById(detailId.value);
 		if (res && res.code == 200) {
 			formData.value = Object.assign({}, defaultData, {
 				modelName: res.data.modelName,
-				dataSource: res.data.dataSource.id,
-				dataSourceLabel: res.data.dataSource.name,
+				dataSource:
+					res.data.dataSource?.id || res.data.dataSource || "",
+				dataSourceLabel: res.data.dataSource?.name || "",
 				isDisabled: res.data.isDisabled,
 				sqlText: res.data.sqlText,
-				queryFields: [...res.data.ModelField],
-				sqlParams: res.data.ModelParam.map((el) => {
+				queryFields: [...(res.data.ModelField || [])],
+				sqlParams: (res.data.ModelParam || []).map((el) => {
 					el.paramLabelError = false;
 					el.paramTypeError = false;
 					return el;
@@ -329,13 +382,22 @@ const confirm = () => {
 	formRef.value.validate(async (valid) => {
 		if (valid) {
 			// 检查SQL解析状态
-			if (!formData.value.sqlTestStatus) {
+			if (!isCustomModel.value && !formData.value.sqlTestStatus) {
 				ElMessage.error("请先解析SQL");
+				return;
+			}
+			if (
+				isCustomModel.value &&
+				formData.value.queryFields.some(
+					(field) => !String(field.fieldName || "").trim()
+				)
+			) {
+				ElMessage.error("请填写查询字段的字段名");
 				return;
 			}
 			// 检查SQL参数是否全部填写
 			let allParamsFilled = true;
-			formData.value.sqlParams.forEach((param) => {
+			(isCustomModel.value ? [] : formData.value.sqlParams).forEach((param) => {
 				if (!param.paramType || !param.paramLabel) {
 					allParamsFilled = false;
 					if (!param.paramType) {
@@ -356,8 +418,9 @@ const confirm = () => {
 				modelName: formData.value.modelName,
 				dataSource: formData.value.dataSource,
 				isDisabled: formData.value.isDisabled,
+				modelType: modelType.value,
 				sqlText: formData.value.sqlText,
-				ModelParam: formData.value.sqlParams,
+				ModelParam: isCustomModel.value ? [] : formData.value.sqlParams,
 				ModelField: formData.value.queryFields,
 			};
 			loading.value = true;
@@ -374,6 +437,17 @@ const confirm = () => {
 			}
 		}
 	});
+};
+
+const addQueryField = () => {
+	formData.value.queryFields.push({
+		fieldName: "",
+		fieldLabel: "",
+	});
+};
+
+const deleteQueryField = (index) => {
+	formData.value.queryFields.splice(index, 1);
 };
 
 // 测试SQL
@@ -483,5 +557,9 @@ defineExpose({
 }
 .is-required {
 	color: #f56c6c;
+}
+.query-fields-toolbar {
+	margin-bottom: 10px;
+	text-align: right;
 }
 </style>
