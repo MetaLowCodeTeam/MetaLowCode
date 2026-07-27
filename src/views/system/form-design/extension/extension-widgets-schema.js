@@ -133,11 +133,11 @@ export const pivotTableSchema = {
 		name: '',
 		label: '透视图',
 		hidden: false,
-    pivotTableConfig: {
-      title: '透视图',
-      hideTitle: false,
-      bindModelCode: '',
-      width: '100%',
+        pivotTableConfig: {
+            title: '透视图',
+            hideTitle: false,
+            bindModelCode: '',
+            width: '100%',
 			showSummary: true,
 			showSumcol: true,
 			showBorder: true,
@@ -176,6 +176,7 @@ export const reportFieldSchema = {
 		onCreated: '',
 		onMounted: '',
 		onChange: '',
+		onFormDataReady: '',
 	},
 };
 

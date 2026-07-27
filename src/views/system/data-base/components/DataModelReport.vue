@@ -39,6 +39,9 @@ import { queryById, saveRecord } from "@/api/crud";
 import http from "@/utils/request";
 import ModelAssociationEdit from "./ModelAssociationEdit.vue";
 
+const REPORT_FIELD_DELIMITER = "##";
+const LEGACY_REPORT_FIELD_DELIMITER = ".";
+
 export default {
     name: "DataModelReport",
     components: {
@@ -93,6 +96,48 @@ export default {
         },
     },
     methods: {
+        composeReportFieldPath(modelCode, fieldName) {
+            if (!modelCode || !fieldName) {
+                return "";
+            }
+            return modelCode + REPORT_FIELD_DELIMITER + fieldName;
+        },
+
+        parseReportFieldPath(path = "", modelCode = "") {
+            if (!path) {
+                return { modelCode: "", fieldName: "" };
+            }
+            if (path.includes(REPORT_FIELD_DELIMITER)) {
+                const [parsedModelCode, ...rest] = path.split(REPORT_FIELD_DELIMITER);
+                return {
+                    modelCode: parsedModelCode || modelCode || "",
+                    fieldName: rest.join(REPORT_FIELD_DELIMITER),
+                };
+            }
+            if (modelCode && path.startsWith(modelCode + LEGACY_REPORT_FIELD_DELIMITER)) {
+                return {
+                    modelCode,
+                    fieldName: path.slice(modelCode.length + LEGACY_REPORT_FIELD_DELIMITER.length),
+                };
+            }
+            if (path.includes(LEGACY_REPORT_FIELD_DELIMITER)) {
+                const splitIndex = path.lastIndexOf(LEGACY_REPORT_FIELD_DELIMITER);
+                return {
+                    modelCode: path.slice(0, splitIndex),
+                    fieldName: path.slice(splitIndex + LEGACY_REPORT_FIELD_DELIMITER.length),
+                };
+            }
+            return {
+                modelCode: modelCode || "",
+                fieldName: path,
+            };
+        },
+
+        normalizeReportFieldPath(path = "", modelCode = "") {
+            const parsed = this.parseReportFieldPath(path, modelCode);
+            return this.composeReportFieldPath(parsed.modelCode || modelCode, parsed.fieldName);
+        },
+
         resetDesignState() {
             this.modelConfigList = [];
             this.usedFieldNames = {};
@@ -157,27 +202,31 @@ export default {
             const dataCode = widget?.dataCode || widget?.metaModelName || widget?.options?.modelAssociationId;
             const fieldName = this.getFieldNameFromWidget(widget);
             if (dataCode && fieldName) {
-                keys.add(dataCode + "." + fieldName);
+                keys.add(this.composeReportFieldPath(dataCode, fieldName));
+                keys.add(dataCode + LEGACY_REPORT_FIELD_DELIMITER + fieldName);
             }
             return Array.from(keys);
         },
 
         getFieldNameFromWidget(widget) {
+            const dataCode = widget?.dataCode || widget?.metaModelName || widget?.options?.modelAssociationId || "";
             const keyName = widget?.options?.keyName || "";
             if (keyName) {
-                return keyName.includes(".") ? keyName.slice(keyName.lastIndexOf(".") + 1) : keyName;
+                return this.parseReportFieldPath(keyName, dataCode).fieldName;
             }
             const bindingPath = widget?.options?.bindingPath || "";
-            if (bindingPath.includes(".")) {
-                return bindingPath.slice(bindingPath.lastIndexOf(".") + 1);
+            if (bindingPath) {
+                return this.parseReportFieldPath(bindingPath, dataCode).fieldName;
             }
-            if (widget?.name && widget.name.includes(".")) {
-                return widget.name.slice(widget.name.lastIndexOf(".") + 1);
+            if (widget?.name) {
+                return this.parseReportFieldPath(widget.name, dataCode).fieldName;
             }
             const optionName = widget?.options?.name || "";
-            const dataCode = widget?.dataCode || widget?.metaModelName || widget?.options?.modelAssociationId;
-            if (dataCode && optionName.startsWith(dataCode + ".")) {
-                return optionName.slice(dataCode.length + 1);
+            if (optionName) {
+                const parsed = this.parseReportFieldPath(optionName, dataCode).fieldName;
+                if (parsed) {
+                    return parsed;
+                }
             }
             return widget?.fieldName || widget?.name || "";
         },
@@ -190,16 +239,23 @@ export default {
             const dataCode = widget.dataCode || widget.metaModelName || options.modelAssociationId || "";
             const keyName = options.keyName || "";
             if (options.bindingPath) {
-                return options.bindingPath;
+                return this.normalizeReportFieldPath(options.bindingPath, dataCode);
             }
-            if (widget.name && widget.name.includes(".")) {
-                return widget.name;
+            if (widget.name) {
+                const widgetPath = this.normalizeReportFieldPath(widget.name, dataCode);
+                if (widgetPath) {
+                    return widgetPath;
+                }
             }
             if (dataCode && keyName) {
-                return dataCode + "." + (keyName.includes(".") ? keyName.slice(keyName.lastIndexOf(".") + 1) : keyName);
+                const parsedKeyName = this.parseReportFieldPath(keyName, dataCode).fieldName;
+                return this.composeReportFieldPath(dataCode, parsedKeyName);
             }
-            if (dataCode && options.name && options.name.startsWith(dataCode + ".")) {
-                return options.name;
+            if (dataCode && options.name) {
+                const optionPath = this.normalizeReportFieldPath(options.name, dataCode);
+                if (optionPath) {
+                    return optionPath;
+                }
             }
             return "";
         },
@@ -211,7 +267,9 @@ export default {
             const options = widget.options || (widget.options = {});
             const modelConfig = this.modelConfigList.find((item) => item.dataCode === (widget.dataCode || widget.metaModelName || options.modelAssociationId));
             const bindingPath = this.getReportFieldBindingPath(widget);
-            const fieldName = bindingPath ? bindingPath.slice(bindingPath.lastIndexOf(".") + 1) : this.getFieldNameFromWidget(widget);
+            const fieldName = bindingPath
+                ? this.parseReportFieldPath(bindingPath, widget.dataCode || widget.metaModelName || options.modelAssociationId).fieldName
+                : this.getFieldNameFromWidget(widget);
             const uniqueName = widget.id || options.name;
             let changed = false;
 
@@ -223,8 +281,8 @@ export default {
                 options.bindingPath = bindingPath;
                 changed = true;
             }
-            if (fieldName && options.keyName !== fieldName) {
-                options.keyName = fieldName;
+            if (bindingPath && options.keyName !== bindingPath) {
+                options.keyName = bindingPath;
                 changed = true;
             }
             if (options.keyNameEnabled !== true) {
@@ -397,7 +455,7 @@ export default {
                         used = true;
                         return;
                     }
-                    if (widget.type === "loop-container" && (widget.options?.name === dataCode || widget.options?.modelAssociationId === dataCode)) {
+                    if (widget.type === "loop-container" && widget.options?.modelAssociationId === dataCode) {
                         used = true;
                         return;
                     }
@@ -438,12 +496,25 @@ export default {
                     if (widget.type === "loop-container") {
                         const options = widget.options || (widget.options = {});
                         const childBound = this.getLoopContainerChildModelCode(widget);
-                        const matchedByCode = options.name === config.dataCode || childBound === config.dataCode;
-                        const matchedByOldLabel = oldConfig && options.name === oldConfig.modelAssociationLabel;
-                        if (matchedByCode || matchedByOldLabel) {
-                            options.name = config.dataCode;
+                        const matchedByCode = options.modelAssociationId === config.dataCode
+                            || childBound === config.dataCode
+                            || options.name === config.dataCode;
+                        const matchedByLabel = options.name === config.modelAssociationLabel
+                            || options.displayName === config.modelAssociationLabel
+                            || (oldConfig && (
+                                options.name === oldConfig.modelAssociationLabel
+                                || options.displayName === oldConfig.modelAssociationLabel
+                            ));
+                        if (matchedByCode || matchedByLabel) {
                             options.displayName = config.modelAssociationLabel;
                             options.modelAssociationId = config.dataCode;
+                            if (
+                                options.name === config.modelAssociationLabel
+                                || options.name === oldConfig?.modelAssociationLabel
+                                || options.name === config.dataCode
+                            ) {
+                                options.name = config.dataCode;
+                            }
                         }
                     }
                     if (Array.isArray(widget.widgetList)) visit(widget.widgetList);
@@ -572,7 +643,7 @@ export default {
             const fieldName = fld.fieldName || fld.name;
             const fieldLabel = fld.fieldLabel || fld.label || fieldName;
             const isArray = !!config.isArray;
-            const name = config.dataCode + "." + fieldName;
+            const name = this.composeReportFieldPath(config.dataCode, fieldName);
             const safeCode = config.dataCode.replace(/[^a-zA-Z0-9]/g, "");
             return {
                 name,
@@ -587,7 +658,7 @@ export default {
                 options: {
                     name: isArray ? "reportfield" + safeCode + fieldName : name,
                     keyNameEnabled: true,
-                    keyName: fieldName,
+                    keyName: name,
                     bindingPath: name,
                     modelLabel: config.modelAssociationLabel,
                     label: fieldLabel,
@@ -599,6 +670,10 @@ export default {
                     fontSize: '',
                     fontStyle: 'normal',
                     fontWeight: 'normal',
+                    onCreated: '',
+                    onMounted: '',
+                    onChange: '',
+                    onFormDataReady: '',
                 },
             };
         },

@@ -53,6 +53,8 @@ export default {
 			fieldModel: null,
 			eventFunctionMapping: {},
 			oldFieldValue: null,
+			_sourceFormData: null,
+			_formDataReadyFired: false,
 		};
 	},
 	inject: ["refList", "globalModel", "getGlobalDsv"],
@@ -122,8 +124,10 @@ export default {
 			}
 			this.eventFunctionMapping["setFormData"] = (params) => {
 				const newFormData = params[0] || {};
+				this._sourceFormData = newFormData;
 				const disableChangeEvent = params[1];
 				this.setValue(this.resolveReportFieldValue(newFormData), disableChangeEvent);
+				this.handleOnFormDataReady(newFormData);
 			};
 			this.on$("setFormData", this.eventFunctionMapping["setFormData"]);
 		},
@@ -189,6 +193,22 @@ export default {
 				changeFunc.call(this, val, oldVal);
 			}
 		},
+		handleOnFormDataReady(formData) {
+			if (this.designState || this.designer || this._formDataReadyFired) {
+				return;
+			}
+			this._formDataReadyFired = true;
+			if (this.field.options?.onFormDataReady) {
+				const fn = new Function("formData", "key", "value", this.field.options.onFormDataReady);
+				fn.call(this, formData, this.fieldKeyName, this.fieldModel);
+			}
+		},
+		tryFireFormDataReady() {
+			const data = this.loopRowData || this._sourceFormData || this.reportFormData;
+			if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+				this.handleOnFormDataReady(data);
+			}
+		},
 		normalizeReportFieldValue(value) {
 			if (value !== null && value !== undefined && value !== "") {
 				return value;
@@ -252,6 +272,25 @@ export default {
 			const refName = this.subFormRowId ? this.field.options.name + "@row" + this.subFormRowId : this.field.options.name;
 			delete this.refList[refName];
 		},
+		/**
+		 * 获取当前报告字段绑定的原始源数据（即 setFormData 传入的完整数据对象）
+		 */
+		getReportFormData() {
+			return this._sourceFormData || this.reportFormData;
+		},
+		/**
+		 * 直接覆盖当前字段的显示值，不做归一化回退。
+		 * @param {*} value 要设置的值
+		 * @param {boolean} disableChangeEvent 是否禁止触发 onChange 事件
+		 */
+		setFieldValue(value, disableChangeEvent = false) {
+			const oldValue = this.fieldModel;
+			this.fieldModel = value;
+			if (!disableChangeEvent && this.shouldTriggerChange(value, oldValue)) {
+				this.handleOnChange(value, oldValue);
+			}
+			this.oldFieldValue = this.cloneValue(value);
+		},
 	},
 	created() {
 		this.registerToRefList();
@@ -264,6 +303,9 @@ export default {
 		this.$nextTick(() => {
 			this.reloadReportFieldValue();
 			this.handleOnMounted();
+			if (this.loopRowData) {
+				this.tryFireFormDataReady();
+			}
 		});
 	},
 	beforeUnmount() {
