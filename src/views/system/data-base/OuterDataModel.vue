@@ -1,77 +1,103 @@
 <template>
-	<!--  -->
-	<ml-single-list
-		title="数据模型"
-		mainEntity="OuterDataModel"
-		fieldsList="modelName,dataSource,isDisabled,outerDataModelId"
-		:sortFields="sortFields"
-		fieldName="dataSourceName"
-		:tableColumn="tableColumn"
-		ref="mlSingleListRef"
-        @highlightClick="viewDataList"
-        @changeSwitch="changeSwitch"
-	>
-		<template #addButton>
-			<el-button type="primary" @click="openDialog()">新建</el-button>
-		</template>
-		<template #activeRow>
-			<el-table-column
-				label="操作"
-				:align="'center'"
-				width="230"
-				fixed="right"
-			>
-				<template #default="scope">
-					<el-button
-						type="primary"
-						size="small"
-						link
-						@click="modelAssociationListRef?.openDialog(scope.row.outerDataModelId, scope.row.modelName)"
-					>
-						关联模型
-					</el-button>
-					<el-button
-						type="primary"
-						size="small"
-						link
-						@click="openDialog(scope.row)"
-						icon="Edit"
-					>
-						编辑
-					</el-button>
-					<el-button
-						type="primary"
-						size="small"
-						link
-						@click="openDialog(scope.row, 'view')"
-					>
-						查看
-					</el-button>
-					<el-button
-						type="primary"
-						size="small"
-						link
-						@click="deleteData(scope.row.outerDataModelId)"
-					>
-						删除
-					</el-button>
-				</template>
-			</el-table-column>
-		</template>
-	</ml-single-list>
-	<OuterDataModelEdit ref="outerDataModelEditRef" @updateData="updateTable" />
-	<ModelAssociationList ref="modelAssociationListRef" />
+	<div class="outer-data-model-page">
+		<ml-single-list
+			:key="activeModelTab"
+			mainEntity="OuterDataModel"
+			fieldsList="modelName,dataSource,isDisabled,outerDataModelId"
+			:sortFields="sortFields"
+			fieldName="dataSourceName"
+			equation="OR"
+			:tableColumn="tableColumn"
+			:fixedFilter="modelTypeFilters[activeModelTab]"
+			ref="mlSingleListRef"
+			@highlightClick="viewDataList"
+			@changeSwitch="changeSwitch"
+		>
+			<template #title>
+				<el-tabs v-model="activeModelTab" class="model-type-tabs">
+					<el-tab-pane label="常规模型" name="regular" />
+					<el-tab-pane label="自定义模型" name="custom" />
+				</el-tabs>
+			</template>
+			<template #addButton>
+				<el-button type="primary" @click="openDialog()">新建</el-button>
+			</template>
+			<template #activeRow>
+				<el-table-column
+					label="操作"
+					:align="'center'"
+					width="180"
+					fixed="right"
+				>
+					<template #default="scope">
+						<el-button
+							type="primary"
+							size="small"
+							link
+							@click="openDialog(scope.row)"
+							icon="Edit"
+						>
+							编辑
+						</el-button>
+						<el-button
+							type="primary"
+							size="small"
+							link
+							@click="openDialog(scope.row, 'view')"
+						>
+							查看
+						</el-button>
+						<el-button
+							type="primary"
+							size="small"
+							link
+							@click="deleteData(scope.row.outerDataModelId)"
+						>
+							删除
+						</el-button>
+					</template>
+				</el-table-column>
+			</template>
+		</ml-single-list>
+		<OuterDataModelEdit ref="outerDataModelEditRef" @updateData="updateTable" />
+	</div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
-import ModelAssociationList from "./components/ModelAssociationList.vue";
 import { deleteRecords } from "@/api/crud";
 import { useRouter } from "vue-router";
 import { saveRecord } from "@/api/crud";
 const router = useRouter();
+
+const activeModelTab = ref("regular");
+const modelTypeFilters = {
+	regular: [
+		{
+			fieldName: "modelType",
+			op: "EQ",
+			value: "1",
+			value2: "",
+		},
+		{
+			fieldName: "modelType",
+			op: "NL",
+			value: "",
+			value2: "",
+		},
+	],
+	custom: [
+		{
+			fieldName: "modelType",
+			op: "EQ",
+			value: "2",
+			value2: "",
+		},
+	],
+};
+
 // 默认排序
 let sortFields = ref([
 	{
@@ -112,7 +138,6 @@ let tableColumn = ref([
 
 // 查看编辑
 const outerDataModelEditRef = ref();
-const modelAssociationListRef = ref();
 const openDialog = (row, type) => {
 	let titlePrefix =
 		type === "view"
@@ -124,6 +149,7 @@ const openDialog = (row, type) => {
 		title: titlePrefix + (row ? row.modelName : "数据模型"),
 		detailId: row && row.outerDataModelId ? row.outerDataModelId : null,
 		entityName: "OuterDataModel",
+		modelType: activeModelTab.value === "custom" ? "2" : "1",
 		type: type,
 	};
 	outerDataModelEditRef.value?.openDialog(data);
@@ -187,4 +213,35 @@ const changeSwitch = async (row) => {
     }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.outer-data-model-page {
+	height: 100%;
+	background: #fff;
+}
+
+.model-type-tabs {
+	flex: 1;
+	min-width: 0;
+	margin-right: 32px;
+
+	:deep(.el-tabs__header) {
+		margin: 0;
+	}
+
+	:deep(.el-tabs__content) {
+		display: none;
+	}
+}
+
+:deep(.props-action-section) {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.section-fr {
+		display: flex;
+		float: none;
+		align-items: center;
+	}
+}
+</style>
