@@ -65,7 +65,7 @@ export default {
                 metadataContainer: false,
                 advancedFields: false,
                 customFields: false,
-                keepContainers: ['column-1-grid','column-2-grid','column-3-grid','column-4-grid','table','loop-container'],
+                keepContainers: ['column-1-grid','column-2-grid','column-3-grid','column-4-grid','table','loop-container','page-header-container'],
             },
             globalDsv: {
                 ...globalDsvDefaultData(),
