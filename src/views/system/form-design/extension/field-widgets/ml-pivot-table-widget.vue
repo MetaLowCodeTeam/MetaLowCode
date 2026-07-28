@@ -406,11 +406,15 @@ export default {
 				count: 0,
 				numberCount: 0,
 				values: [],
+				firstValue: undefined,
 			}
 		},
 		collectMetricValue(target, rawValue, calcMode) {
 			const hasValue = rawValue !== undefined && rawValue !== null && rawValue !== ''
 			if (hasValue) {
+				if (target.firstValue === undefined) {
+					target.firstValue = rawValue
+				}
 				target.count += 1
 				target.values.push(rawValue)
 			}
@@ -429,6 +433,15 @@ export default {
 			}
 		},
 		getMetricResult(target, calcMode) {
+			if (calcMode === 'first') {
+				return target.firstValue === undefined ? '' : target.firstValue
+			}
+			if (calcMode === 'textJoin') {
+				return target.values.join('，')
+			}
+			if (calcMode === 'textDistinctJoin') {
+				return Array.from(new Set(target.values.map((value) => String(value)))).join('，')
+			}
 			if (calcMode === 'count') {
 				return target.count
 			}
@@ -436,7 +449,10 @@ export default {
 				return new Set(target.values.map((value) => String(value))).size
 			}
 			if (calcMode === 'average') {
-				return target.numberCount ? target.value / target.numberCount : 0
+				return target.numberCount ? target.value / target.numberCount : ''
+			}
+			if (calcMode === 'sum' || calcMode === 'max' || calcMode === 'min') {
+				return target.numberCount ? target.value : ''
 			}
 			return target.value
 		},
@@ -469,6 +485,12 @@ export default {
 			return formatMap[dateFormat] || value
 		},
 		formatValue(value) {
+			if (value === null || value === undefined || value === '') {
+				return ''
+			}
+			if (typeof value === 'string') {
+				return value
+			}
 			const numberValue = Number(value) || 0
 			return Number.isInteger(numberValue) ? numberValue : numberValue.toFixed(2)
 		},

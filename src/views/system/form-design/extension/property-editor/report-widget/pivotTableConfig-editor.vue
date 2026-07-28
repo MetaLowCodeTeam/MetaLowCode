@@ -136,6 +136,7 @@
 <script>
 import { VueDraggableNext } from 'vue-draggable-next'
 import DimensionCom from '@/views/system/dashboard-design/charts/property-editor/components/DimensionCom.vue'
+import { ElMessage } from 'element-plus'
 
 const cloneDeep = (data) => JSON.parse(JSON.stringify(data || []))
 
@@ -243,6 +244,11 @@ export default {
 			if (!field) {
 				return
 			}
+			if (target === 'metrics' && this.hasDuplicateMetric(field)) {
+				ElMessage.warning('添加失败，同一字段不能重复添加指标')
+				this.initDraggableModel()
+				return
+			}
 			if (target === 'dimensionRow') {
 				this.dimensionRow.push(field)
 			} else if (target === 'dimensionCol') {
@@ -291,6 +297,25 @@ export default {
 				this.metrics = value || []
 			}
 			this.commitDimensional()
+		},
+		hasDuplicateMetric(field) {
+			const targetNames = [
+				field?.fieldName,
+				field?.name,
+				field?.options?.bindingPath,
+				field?.options?.keyName,
+				field?.options?.name,
+			].filter(Boolean)
+			return this.metrics.some((item) => {
+				const currentNames = [
+					item?.fieldName,
+					item?.name,
+					item?.options?.bindingPath,
+					item?.options?.keyName,
+					item?.options?.name,
+				].filter(Boolean)
+				return currentNames.some((name) => targetNames.includes(name))
+			})
 		},
 		onSort(event) {
 			this.dimensionRow.forEach((item) => { item.sort = '' })
