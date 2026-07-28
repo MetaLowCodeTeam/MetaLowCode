@@ -19,7 +19,19 @@
 				'font-weight': field.options.fontWeight || 'normal',
 			}"
 		>
-			{{ designer ? field.options.label : displayValue }}
+			<template v-if="designer">
+				{{ field.options.label }}
+			</template>
+			<template v-else-if="isImageDisplay">
+				<img
+					:src="imageSrc"
+					:style="imageStyle"
+					alt=""
+				>
+			</template>
+			<template v-else>
+				{{ displayValue }}
+			</template>
 		</div>
 	</static-content-wrapper>
 </template>
@@ -94,6 +106,28 @@ export default {
 				return value.name ?? value.label ?? value.value ?? "";
 			}
 			return String(value);
+		},
+		isImageDisplay() {
+			return !!this.field?.options?.imageDisplayEnabled && !!this.imageSrc;
+		},
+		imageSrc() {
+			const value = this.fieldModel;
+			if (value === null || value === undefined || value === "") {
+				return "";
+			}
+			if (typeof value === "string") {
+				return value;
+			}
+			return String(value);
+		},
+		imageStyle() {
+			return {
+				width: this.field?.options?.imageWidth || "80px",
+				height: this.field?.options?.imageHeight || "100px",
+				display: "inline-block",
+				verticalAlign: "top",
+				objectFit: "contain",
+			};
 		},
 	},
 	methods: {

@@ -298,6 +298,18 @@ export default {
                 options.modelLabel = modelConfig.modelAssociationLabel;
                 changed = true;
             }
+            if (options.imageDisplayEnabled === undefined) {
+                options.imageDisplayEnabled = false;
+                changed = true;
+            }
+            if (!options.imageWidth) {
+                options.imageWidth = "80px";
+                changed = true;
+            }
+            if (!options.imageHeight) {
+                options.imageHeight = "100px";
+                changed = true;
+            }
 
             return changed;
         },
@@ -671,6 +683,9 @@ export default {
                     fontSize: '',
                     fontStyle: 'normal',
                     fontWeight: 'normal',
+                    imageDisplayEnabled: false,
+                    imageWidth: '80px',
+                    imageHeight: '100px',
                     onCreated: '',
                     onMounted: '',
                     onFormDataReady: '',

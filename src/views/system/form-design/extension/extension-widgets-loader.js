@@ -90,6 +90,7 @@ import reportFieldFontStyleEditor from "@/views/system/form-design/extension/pro
 import reportFieldFontWeightEditor from "@/views/system/form-design/extension/property-editor/report-field/fontWeight-editor.vue";
 import reportFieldModelNameEditor from "@/views/system/form-design/extension/property-editor/report-field/modelName-editor.vue";
 import reportFieldOnFormDataReadyEditor from "@/views/system/form-design/extension/property-editor/report-field/onFormDataReady-editor.vue";
+import reportFieldImageDisplayEditor from "@/views/system/form-design/extension/property-editor/report-field/imageDisplay-editor.vue";
 import barChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/barChartConfig-editor.vue";
 import lineChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/lineChartConfig-editor.vue";
 import pivotTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/pivotTableConfig-editor.vue";
@@ -209,8 +210,10 @@ export const loadExtensionWidgets = (app) => {
 	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
 	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
 	app.component('report-field-onFormDataReady-editor', reportFieldOnFormDataReadyEditor)
+	app.component('report-field-imageDisplay-editor', reportFieldImageDisplayEditor)
 	PERegister.registerEventProperty('onFormDataReady', 'report-field-onFormDataReady-editor')
 	PERegister.registerCommonProperty('modelName', null)
+	PERegister.registerCPEditor(app, 'imageDisplayEnabled', 'report-field-imageDisplay-editor', reportFieldImageDisplayEditor)
 	PERegister.registerCPEditor(app, 'barChartConfig', 'barChartConfig-editor', barChartConfigEditor)
 	PERegister.registerCPEditor(app, 'lineChartConfig', 'lineChartConfig-editor', lineChartConfigEditor)
 	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)
