@@ -104,17 +104,9 @@ export default {
 		},
 		sourceRows() {
 			try {
-				const bindCode = this.config.bindModelCode || this.getFieldModelCode(this.dimensionRows[0]) || this.getFieldModelCode(this.dimensionCols[0]) || this.getFieldModelCode(this.metrics[0]) || ''
-				if (Array.isArray(this.reportFormDataCache)) {
-					return this.reportFormDataCache
-				}
-				if (bindCode && this.reportFormData?.[bindCode]) {
-					const data = this.reportFormData[bindCode]
-					if (Array.isArray(data)) return data
-					if (data && typeof data === 'object') return [data]
-				}
-				if (Array.isArray(this.reportFormData)) {
-					return this.reportFormData
+				const directRows = this.resolveRowsFromReportData()
+				if (directRows.length > 0) {
+					return directRows
 				}
 				const rows = JSON.parse(this.config.dataJson || '[]')
 				return Array.isArray(rows) ? rows : []
@@ -298,6 +290,63 @@ export default {
 		},
 		getFieldAlias(field) {
 			return field?.alias || field?.fieldLabel || field?.label || field?.displayName || field?.fieldName || field?.name || ''
+		},
+		resolveRowsFromReportData() {
+			const bindCode = this.config.bindModelCode || this.getFieldModelCode(this.dimensionRows[0]) || this.getFieldModelCode(this.dimensionCols[0]) || this.getFieldModelCode(this.metrics[0]) || ''
+			if (Array.isArray(this.reportFormDataCache)) {
+				return this.reportFormDataCache
+			}
+			if (bindCode && this.reportFormData?.[bindCode]) {
+				const data = this.reportFormData[bindCode]
+				if (Array.isArray(data)) {
+					return data
+				}
+				if (data && typeof data === 'object') {
+					return [data]
+				}
+			}
+			if (Array.isArray(this.reportFormData)) {
+				return this.reportFormData
+			}
+			const fieldKeys = this.getCandidateFieldKeys()
+			if (!fieldKeys.length || !this.reportFormData || typeof this.reportFormData !== 'object') {
+				return []
+			}
+			for (const value of Object.values(this.reportFormData)) {
+				if (!Array.isArray(value) || value.length === 0) {
+					continue
+				}
+				const firstRow = value[0]
+				if (!firstRow || typeof firstRow !== 'object') {
+					continue
+				}
+				const hasMatchedField = fieldKeys.some((key) => firstRow[key] !== undefined)
+				if (hasMatchedField) {
+					return value
+				}
+			}
+			return []
+		},
+		getCandidateFieldKeys() {
+			const fields = [...this.dimensionRows, ...this.dimensionCols, ...this.metrics].filter(Boolean)
+			const keys = new Set()
+			fields.forEach((field) => {
+				const rawName = this.getFieldRawName(field)
+				if (rawName) {
+					keys.add(rawName)
+					if (rawName.includes('##')) {
+						keys.add(rawName.split('##').slice(1).join('##'))
+					}
+				}
+				;[
+					field?.fieldName,
+					field?.name,
+					field?.options?.bindingPath,
+					field?.options?.keyName,
+					field?.options?.name,
+				].filter(Boolean).forEach((key) => keys.add(key))
+			})
+			return Array.from(keys)
 		},
 		getFieldModelCode(field) {
 			const names = [
