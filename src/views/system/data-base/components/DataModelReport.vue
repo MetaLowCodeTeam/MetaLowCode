@@ -10,6 +10,7 @@
             @form-json-updated="handleFJU"
             @metadata-model-edit="handleMetadataModelEdit"
             @metadata-model-delete="handleMetadataModelDelete"
+            @metadata-model-view="handleMetadataModelView"
             :banned-widgets="[ 'reference','reference-list','outer-reference','cascader-option', 'input','textarea','number','radio','checkbox','select','time','time-range','date','date-range','switch','rate','color','slider','step-bar','static-text','html-text','button','divider','code-img','picture-upload','file-upload','rich-editor','cascader','slot','custom-render', 'check-tag','sign','location','tianditu-location','alert' ]"
             class="visual-design"
         >
@@ -29,6 +30,21 @@
             </template>
         </v-form-designer>
         <model-association-edit ref="modelAssociationEditRef" @save="handleModelConfigSave" />
+        <el-dialog
+            v-model="fieldMappingDialogVisible"
+            :title="fieldMappingDialogTitle"
+            width="720px"
+            append-to-body
+            destroy-on-close
+            class="field-mapping-dialog"
+        >
+            <div class="field-mapping-dialog__toolbar">
+                <el-button link type="primary" @click="copyFieldMappingCode">
+                    <el-icon><CopyDocument /></el-icon>复制
+                </el-button>
+            </div>
+            <pre class="field-mapping-dialog__code"><code>{{ fieldMappingCode }}</code></pre>
+        </el-dialog>
     </div>
 </template>
 
@@ -37,7 +53,9 @@ import { ElMessage } from "element-plus";
 import { globalDsvDefaultData } from "@/utils/util";
 import { queryById, saveRecord } from "@/api/crud";
 import http from "@/utils/request";
+import { copyText } from "@/utils/util";
 import ModelAssociationEdit from "./ModelAssociationEdit.vue";
+import { CopyDocument } from "@element-plus/icons-vue";
 
 const REPORT_FIELD_DELIMITER = "##";
 const LEGACY_REPORT_FIELD_DELIMITER = ".";
@@ -46,6 +64,7 @@ export default {
     name: "DataModelReport",
     components: {
         ModelAssociationEdit,
+        CopyDocument,
     },
     data() {
         return {
@@ -76,6 +95,9 @@ export default {
             usedFieldNames: {},
             pageLoading: false,
             normalizingReportFields: false,
+            fieldMappingDialogVisible: false,
+            fieldMappingDialogTitle: "字段映射",
+            fieldMappingCode: "",
         };
     },
     created() {
@@ -347,6 +369,39 @@ export default {
             return changed;
         },
 
+        normalizeLoopContainerWidgets(reloadDesigner = true) {
+            const formJson = this.$refs.vfDesigner?.getFormJson?.();
+            if (!formJson?.widgetList) {
+                return false;
+            }
+            let changed = false;
+            const visit = (widgetList = []) => {
+                widgetList.forEach((widget) => {
+                    if (!widget) return;
+                    if (widget.type === "loop-container") {
+                        const options = widget.options || (widget.options = {});
+                        if (options.modelAssociationId === undefined) {
+                            options.modelAssociationId = "";
+                            changed = true;
+                        }
+                        if (options.displayName === undefined) {
+                            options.displayName = "";
+                            changed = true;
+                        }
+                    }
+                    if (Array.isArray(widget.widgetList)) visit(widget.widgetList);
+                    if (Array.isArray(widget.cols)) widget.cols.forEach((col) => visit(col.widgetList || []));
+                    if (Array.isArray(widget.rows)) widget.rows.forEach((row) => (row.cols || []).forEach((cell) => visit(cell.widgetList || [])));
+                    if (Array.isArray(widget.tabs)) widget.tabs.forEach((tab) => visit(tab.widgetList || []));
+                });
+            };
+            visit(formJson.widgetList);
+            if (changed && reloadDesigner) {
+                this.$refs.vfDesigner?.setFormJson?.(formJson);
+            }
+            return changed;
+        },
+
         isMetaFieldUsed(fld) {
             return this.getWidgetUsedFieldKeys(fld).some((key) => this.usedFieldNames[key]);
         },
@@ -395,6 +450,7 @@ export default {
 					let config = typeof res2.data?.reportConfig === "string" ? JSON.parse(res2.data.reportConfig) : res2.data?.reportConfig;
 					if (config) {
                         this.$refs.vfDesigner.setFormJson(config);
+                        this.normalizeLoopContainerWidgets();
                         const normalized = this.normalizeReportFieldWidgets();
                         this.syncAllLoopContainerDisplayNames();
                         if (!normalized) {
@@ -454,6 +510,42 @@ export default {
                 this.modelConfigList = this.modelConfigList.filter((item) => item.dataCode !== config.dataCode);
                 await this.refreshMetaFields();
             }).catch(() => {});
+        },
+
+        handleMetadataModelView(group) {
+            const code = this.buildModelFieldMappingCode(group);
+            if (!code) {
+                ElMessage.warning("当前数据模型暂无可查看字段");
+                return;
+            }
+            this.fieldMappingDialogTitle = `${group?.entityLabel || group?.dataCode || "数据模型"} 字段映射`;
+            this.fieldMappingCode = code;
+            this.fieldMappingDialogVisible = true;
+        },
+
+        buildModelFieldMappingCode(group) {
+            const fieldList = Array.isArray(group?.fieldList) ? group.fieldList : [];
+            if (!fieldList.length) {
+                return "";
+            }
+            const lines = fieldList.map((field) => {
+                const name = String(field?.name || "");
+                const comment = this.escapeFieldMappingComment(field?.label || field?.name || "");
+                return `  //${comment}\n  "${name}": ""`;
+            });
+            return `{\n${lines.join(",\n")}\n}`;
+        },
+
+        escapeFieldMappingComment(label) {
+            return String(label).replace(/\r?\n/g, " ");
+        },
+
+        copyFieldMappingCode() {
+            if (!this.fieldMappingCode) {
+                ElMessage.warning("暂无可复制内容");
+                return;
+            }
+            copyText(this.fieldMappingCode, "复制失败");
         },
 
         hasCanvasModelUsed(dataCode) {
@@ -853,6 +945,28 @@ export default {
     color: #303133;
     font-size: 16px;
     font-weight: 600;
+}
+
+.field-mapping-dialog__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+.field-mapping-dialog__code {
+    margin: 0;
+    padding: 14px 16px;
+    max-height: 420px;
+    overflow: auto;
+    border: 1px solid #e4e7ed;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #1f2937;
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-all;
+    box-sizing: border-box;
 }
 
 </style>
