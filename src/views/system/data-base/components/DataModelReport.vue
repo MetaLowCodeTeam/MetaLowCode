@@ -51,7 +51,6 @@
 <script>
 import { ElMessage } from "element-plus";
 import { globalDsvDefaultData } from "@/utils/util";
-import { queryById, saveRecord } from "@/api/crud";
 import http from "@/utils/request";
 import { copyText } from "@/utils/util";
 import ModelAssociationEdit from "./ModelAssociationEdit.vue";
@@ -437,12 +436,17 @@ export default {
 				result.detail.push(detailItem);
 			});
 			return result;
-		},
+        },
 
         async loadDesign() {
             this.pageLoading = true;
             this.resetDesignState();
-			let res2 = await queryById(this.dataModelReportId, "reportConfig,modelConfig");
+			let res2 = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/queryById", null, {
+                params: {
+                    entityId: this.dataModelReportId,
+                    fieldNames: "reportConfig,modelConfig",
+                },
+            });
 			if (res2?.code == 200) {
                 this.modelConfigList = this.parseModelConfig(res2.data?.modelConfig);
                 await this.refreshMetaFields();
@@ -468,9 +472,14 @@ export default {
 			let formJson = this.$refs.vfDesigner.getFormJson();
 			if (!formJson) return;
 			this.pageLoading = true;
-			let res = await saveRecord("DataModelReport", this.dataModelReportId, {
+			let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/saveRecord", {
 				reportConfig: JSON.stringify(formJson),
 				modelConfig: JSON.stringify(this.getCleanModelConfig()),
+			}, {
+                params: {
+                    entity: "DataModelReport",
+                    id: this.dataModelReportId,
+                },
 			});
 			if (res?.code == 200) {
 				ElMessage.success("保存成功");

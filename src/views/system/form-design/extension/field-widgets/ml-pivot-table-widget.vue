@@ -104,13 +104,17 @@ export default {
 		},
 		sourceRows() {
 			try {
-				const bindCode = this.config.bindModelCode || ''
+				const bindCode = this.config.bindModelCode || this.getFieldModelCode(this.dimensionRows[0]) || this.getFieldModelCode(this.dimensionCols[0]) || this.getFieldModelCode(this.metrics[0]) || ''
 				if (Array.isArray(this.reportFormDataCache)) {
 					return this.reportFormDataCache
 				}
 				if (bindCode && this.reportFormData?.[bindCode]) {
 					const data = this.reportFormData[bindCode]
 					if (Array.isArray(data)) return data
+					if (data && typeof data === 'object') return [data]
+				}
+				if (Array.isArray(this.reportFormData)) {
+					return this.reportFormData
 				}
 				const rows = JSON.parse(this.config.dataJson || '[]')
 				return Array.isArray(rows) ? rows : []
@@ -130,61 +134,64 @@ export default {
 		metrics() {
 			return this.setDimensional.metrics || []
 		},
-		rowField() {
-			return this.dimensionRows[0]?.fieldName || this.config.rowField || ''
-		},
-		columnField() {
-			return this.dimensionCols[0]?.fieldName || this.config.columnField || ''
-		},
-		valueField() {
-			return this.metrics[0]?.fieldName || this.config.valueField || ''
-		},
 		rowHeaderLabel() {
 			return this.dimensionRows.map(this.getFieldAlias).filter(Boolean).join(' / ') || this.config.rowField || '维度行'
 		},
 		pivotColumns() {
-			if (this.sourceRows.length > 0 && this.columnField) {
-				return [...new Set(this.sourceRows.map(row => row[this.columnField]).filter(value => value !== undefined && value !== null))]
+			if (this.sourceRows.length > 0) {
+				if (this.dimensionCols.length > 0) {
+					return [...new Set(this.sourceRows.map((row) => this.getCompositeDimensionValue(row, this.dimensionCols)).filter(Boolean))]
+				}
+				if (this.metrics.length > 1) {
+					return this.metrics.map(this.getFieldAlias).filter(Boolean)
+				}
 			}
 			const columns = this.dimensionCols.map(this.getFieldAlias).filter(Boolean)
-			if (columns.length > 0) {
-				return columns
-			}
-			return this.metrics.map(this.getFieldAlias).filter(Boolean)
+			return columns.length > 0 ? columns : this.metrics.map(this.getFieldAlias).filter(Boolean)
 		},
 		pivotRows() {
-			if (this.sourceRows.length === 0 || !this.rowField || !this.valueField) {
+			if (this.sourceRows.length === 0 || this.dimensionRows.length === 0 || this.metrics.length === 0) {
 				return this.previewRows
 			}
 			const rowMap = new Map()
 			this.sourceRows.forEach(row => {
-				const rowKey = row[this.rowField] || ''
-				const colKey = this.columnField ? row[this.columnField] : this.getFieldAlias(this.metrics[0])
-				const value = Number(row[this.valueField]) || 0
+				const rowKey = this.getCompositeDimensionValue(row, this.dimensionRows)
+				if (!rowKey) {
+					return
+				}
 				if (!rowMap.has(rowKey)) {
-					rowMap.set(rowKey, { key: rowKey, values: {}, counts: {}, total: 0, count: 0 })
+					rowMap.set(rowKey, { key: rowKey, values: {}, metricMap: {}, total: 0 })
 				}
 				const target = rowMap.get(rowKey)
-				target.values[colKey] = (target.values[colKey] || 0) + value
-				target.counts[colKey] = (target.counts[colKey] || 0) + 1
-				target.total += value
-				target.count += 1
+				this.metrics.forEach((metric) => {
+					const metricKey = this.getFieldAlias(metric) || '指标'
+					const colKey = this.dimensionCols.length > 0
+						? this.buildMetricColumnKey(this.getCompositeDimensionValue(row, this.dimensionCols), this.metrics.length > 1 ? metricKey : '')
+						: metricKey
+					if (!target.metricMap[colKey]) {
+						target.metricMap[colKey] = this.createMetricAggregator()
+					}
+					this.collectMetricValue(target.metricMap[colKey], this.getRowFieldValue(row, metric), metric?.calcMode || 'count')
+				})
 			})
 			const rows = Array.from(rowMap.values())
-			if (this.config.aggregateType === 'avg') {
-				rows.forEach(row => {
-					Object.keys(row.values).forEach(col => {
-						row.values[col] = row.counts[col] ? row.values[col] / row.counts[col] : 0
-					})
-					row.total = row.count ? row.total / row.count : 0
+			rows.forEach((row) => {
+				const values = {}
+				let total = 0
+				this.pivotColumns.forEach((col) => {
+					const metricTarget = row.metricMap[col] || this.createMetricAggregator()
+					const colValue = this.getMetricResult(metricTarget, this.resolveColumnCalcMode(col))
+					values[col] = colValue
+					total += Number(colValue) || 0
 				})
-			}
-			if (this.config.aggregateType === 'count') {
-				rows.forEach(row => {
-					Object.keys(row.values).forEach(col => {
-						row.values[col] = row.counts[col] || 0
-					})
-					row.total = row.count || 0
+				row.values = values
+				row.total = total
+			})
+			const dimensionSort = this.dimensionRows.find((item) => item.sort)?.sort
+			if (dimensionSort === 'ASC' || dimensionSort === 'DESC') {
+				rows.sort((a, b) => {
+					const result = String(a.key).localeCompare(String(b.key), 'zh-Hans-CN')
+					return dimensionSort === 'DESC' ? -result : result
 				})
 			}
 			return rows
@@ -291,6 +298,175 @@ export default {
 		},
 		getFieldAlias(field) {
 			return field?.alias || field?.fieldLabel || field?.label || field?.displayName || field?.fieldName || field?.name || ''
+		},
+		getFieldModelCode(field) {
+			const names = [
+				field?.options?.modelAssociationId,
+				field?.modelAssociationId,
+				field?.dataCode,
+				field?.metaModelName,
+				field?.name,
+				field?.options?.bindingPath,
+				field?.fieldName,
+				field?.options?.keyName,
+				field?.options?.name,
+			].filter(Boolean)
+			for (const name of names) {
+				if (name && this.reportFormData?.[name] !== undefined) {
+					return name
+				}
+				if (name && name.includes('##')) {
+					const modelCode = name.split('##')[0]
+					if (this.reportFormData?.[modelCode] !== undefined) {
+						return modelCode
+					}
+				}
+				if (name && name.includes('.')) {
+					const modelCode = name.slice(0, name.indexOf('.'))
+					if (this.reportFormData?.[modelCode] !== undefined) {
+						return modelCode
+					}
+				}
+			}
+			return ''
+		},
+		getFieldRawName(field) {
+			const modelCode = this.getFieldModelCode(field)
+			const candidates = [
+				field?.options?.bindingPath,
+				field?.options?.keyName,
+				field?.name,
+				field?.fieldName,
+				field?.options?.name,
+			].filter(Boolean)
+			for (const candidate of candidates) {
+				if (modelCode && candidate.includes(modelCode + '##')) {
+					return candidate
+				}
+				if (modelCode && candidate.startsWith(modelCode + '.')) {
+					return candidate.slice(modelCode.length + 1)
+				}
+			}
+			const hashName = candidates.find((candidate) => candidate.includes('##'))
+			if (hashName) {
+				return hashName
+			}
+			const dottedName = candidates.find((candidate) => candidate.includes('.'))
+			if (dottedName) {
+				return dottedName.slice(dottedName.lastIndexOf('.') + 1)
+			}
+			return candidates[0] || ''
+		},
+		getRowFieldValue(row, field) {
+			if (!row || !field) {
+				return null
+			}
+			const rawName = this.getFieldRawName(field)
+			const shortName = rawName.includes('##') ? rawName.split('##').slice(1).join('##') : rawName
+			const candidates = [
+				rawName,
+				shortName,
+				field?.fieldName,
+				field?.options?.bindingPath,
+				field?.options?.keyName,
+				field?.name,
+				field?.options?.name,
+			].filter(Boolean)
+			for (const candidate of candidates) {
+				if (row[candidate] !== undefined) {
+					return row[candidate]
+				}
+			}
+			return null
+		},
+		getCompositeDimensionValue(row, fields = []) {
+			const values = fields.map((field) => this.formatDimensionValue(this.getRowFieldValue(row, field), field)).filter((value) => value !== '')
+			return values.join(' / ')
+		},
+		buildMetricColumnKey(columnKey, metricKey) {
+			if (!columnKey) {
+				return metricKey || '指标'
+			}
+			return metricKey ? `${columnKey} / ${metricKey}` : columnKey
+		},
+		resolveColumnCalcMode(columnKey) {
+			if (this.dimensionCols.length === 0) {
+				const metric = this.metrics.find((item) => (this.getFieldAlias(item) || '指标') === columnKey)
+				return metric?.calcMode || this.metrics[0]?.calcMode || 'count'
+			}
+			if (this.metrics.length <= 1) {
+				return this.metrics[0]?.calcMode || 'count'
+			}
+			const metric = this.metrics.find((item) => columnKey.endsWith(` / ${this.getFieldAlias(item) || '指标'}`))
+			return metric?.calcMode || this.metrics[0]?.calcMode || 'count'
+		},
+		createMetricAggregator() {
+			return {
+				value: 0,
+				count: 0,
+				numberCount: 0,
+				values: [],
+			}
+		},
+		collectMetricValue(target, rawValue, calcMode) {
+			const hasValue = rawValue !== undefined && rawValue !== null && rawValue !== ''
+			if (hasValue) {
+				target.count += 1
+				target.values.push(rawValue)
+			}
+			if (calcMode === 'sum' || calcMode === 'average' || calcMode === 'max' || calcMode === 'min') {
+				const numberValue = Number(rawValue)
+				if (!Number.isNaN(numberValue)) {
+					target.numberCount += 1
+					if (calcMode === 'max') {
+						target.value = target.numberCount === 1 ? numberValue : Math.max(target.value, numberValue)
+					} else if (calcMode === 'min') {
+						target.value = target.numberCount === 1 ? numberValue : Math.min(target.value, numberValue)
+					} else {
+						target.value += numberValue
+					}
+				}
+			}
+		},
+		getMetricResult(target, calcMode) {
+			if (calcMode === 'count') {
+				return target.count
+			}
+			if (calcMode === 'countSet') {
+				return new Set(target.values.map((value) => String(value))).size
+			}
+			if (calcMode === 'average') {
+				return target.numberCount ? target.value / target.numberCount : 0
+			}
+			return target.value
+		},
+		formatDimensionValue(value, field) {
+			if (value === null || value === undefined || value === '') {
+				return '空'
+			}
+			if ((field?.type === 'Date' || field?.type === 'DateTime') && typeof value === 'string') {
+				return this.formatDateValue(value, field.dateFormat)
+			}
+			return String(value)
+		},
+		formatDateValue(value, dateFormat) {
+			const date = new Date(value)
+			if (Number.isNaN(date.getTime())) {
+				return value
+			}
+			const year = date.getFullYear()
+			const month = String(date.getMonth() + 1).padStart(2, '0')
+			const day = String(date.getDate()).padStart(2, '0')
+			const quarter = Math.floor(date.getMonth() / 3) + 1
+			const formatMap = {
+				1: `${year}-${month}-${day}`,
+				2: `${year}年第${quarter}季度`,
+				3: `${year}-${month}`,
+				4: `${year}`,
+				5: `${month}`,
+				6: `${day}`,
+			}
+			return formatMap[dateFormat] || value
 		},
 		formatValue(value) {
 			const numberValue = Number(value) || 0

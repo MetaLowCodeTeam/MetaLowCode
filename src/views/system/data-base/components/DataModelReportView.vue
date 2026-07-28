@@ -16,7 +16,6 @@
 
 <script>
 import { ElMessage } from "element-plus";
-import { queryById } from "@/api/crud";
 import http from "@/utils/request";
 import { downloadBase64, globalDsvDefaultData } from "@/utils/util";
 
@@ -51,7 +50,12 @@ export default {
                     return;
                 }
                 this.globalDsv.mainModelDataId = mainModelDataId || "";
-                let res = await queryById(dataModelReportId, "reportConfig");
+                let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/queryById", null, {
+                    params: {
+                        entityId: dataModelReportId,
+                        fieldNames: "reportConfig",
+                    },
+                });
                 if (res?.code == 200 && res.data) {
                     let reportConfig = res.data.reportConfig;
                     if (reportConfig) {
