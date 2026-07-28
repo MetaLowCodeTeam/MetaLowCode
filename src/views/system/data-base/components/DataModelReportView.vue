@@ -43,40 +43,62 @@ export default {
     methods: {
         async loadData() {
             this.loading = true;
-            let dataModelReportId = this.$route.query.dataModelReportId;
-            let mainModelDataId = this.$route.query.mainModelDataId;
-            if (!dataModelReportId) {
-                ElMessage.error("参数缺失");
-                this.loading = false;
-                return;
-            }
-            this.globalDsv.mainModelDataId = mainModelDataId || "";
-            let res = await queryById(dataModelReportId, "reportConfig");
-            if (res?.code == 200 && res.data) {
-                let reportConfig = res.data.reportConfig;
-                if (reportConfig) {
-                    let config = typeof reportConfig === "string" ? JSON.parse(reportConfig) : reportConfig;
-                    this.showForm = true;
-                    await this.$nextTick();
-                    this.$refs.vFormRef?.setFormJson(config);
-                    await this.loadModelData(mainModelDataId);
-                } else {
-                    ElMessage.warning("该记录暂无报表配置");
+            try {
+                let dataModelReportId = this.$route.query.dataModelReportId;
+                let mainModelDataId = this.$route.query.mainModelDataId;
+                if (!dataModelReportId) {
+                    ElMessage.error("参数缺失");
+                    return;
                 }
+                this.globalDsv.mainModelDataId = mainModelDataId || "";
+                let res = await queryById(dataModelReportId, "reportConfig");
+                if (res?.code == 200 && res.data) {
+                    let reportConfig = res.data.reportConfig;
+                    if (reportConfig) {
+                        let config = typeof reportConfig === "string" ? JSON.parse(reportConfig) : reportConfig;
+                        this.showForm = true;
+                        await this.$nextTick();
+                        this.$refs.vFormRef?.setFormJson(config);
+                        await this.loadModelData(mainModelDataId, config);
+                    } else {
+                        ElMessage.warning("该记录暂无报表配置");
+                    }
+                }
+            } catch (error) {
+                console.error("报表加载失败", error);
+                ElMessage.error(error?.message || "报表加载失败");
+            } finally {
+                this.loading = false;
             }
-            this.loading = false;
         },
-        async loadModelData(mainModelDataId) {
+        async loadModelData(mainModelDataId, reportConfig) {
             let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/queryModelDataFromReportById", null, {
                 params: {
                     queryModelDataBodyListId: mainModelDataId,
                 }
             });
             if (res?.code == 200 && res.data) {
-                this.globalDsv.__reportFormData = res.data;
+                const reportData = await this.handleReportDataLoaded(res.data, reportConfig);
+                this.globalDsv.__reportFormData = reportData;
                 const formRef = this.$refs.vFormRef;
-                formRef?.setFormData(res.data, true);
+                formRef?.setFormData(reportData, true);
             }
+        },
+
+        async handleReportDataLoaded(reportData, reportConfig) {
+            const eventCode = reportConfig?.formConfig?.onReportDataLoaded;
+            if (!eventCode) {
+                return reportData;
+            }
+            const eventHandler = new Function("reportData", eventCode);
+            const result = await eventHandler.call(this.$refs.vFormRef, reportData);
+            if (result === undefined) {
+                return reportData;
+            }
+            if (!result || typeof result !== "object") {
+                throw new Error("数据加载完成事件必须返回对象或 Promise<Object>");
+            }
+            return result;
         },
 
         async downloadWord() {

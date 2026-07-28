@@ -53,6 +53,7 @@ export default {
                 componentLib: false,
                 formTemplates: false,
                 eventCollapse: false,
+                reportEventOnly: true,
                 metadataLib: true,
                 metadataModelManage: true,
                 reportWidgets: true,
@@ -690,9 +691,7 @@ export default {
     padding: 0 10px !important;
 }
 
-:deep(#tab-2),
 :deep(#tab-3),
-:deep(#pane-2),
 :deep(#pane-3) {
     display: none !important;
 }

@@ -222,23 +222,122 @@ export default {
 			if (rowDirectValue !== undefined && rowDirectValue !== null && rowDirectValue !== "") {
 				return rowDirectValue;
 			}
-			const modelData = modelAssociationId ? formModel?.[modelAssociationId] : null;
+			const scopedModelData = modelAssociationId
+				? this.findModelData(this.loopRowData, modelAssociationId)
+				: null;
+			const modelData = scopedModelData ?? (modelAssociationId ? formModel?.[modelAssociationId] : null);
+			if (scopedModelData && typeof scopedModelData === "object") {
+				const scopedValue = this.resolveValueFromModelData(scopedModelData, modelAssociationId);
+				if (scopedValue !== undefined && scopedValue !== null && scopedValue !== "") {
+					return scopedValue;
+				}
+			}
 			if (modelAssociationId && Array.isArray(modelData)) {
-				const rowIndex = this.subFormRowIndex > -1 ? this.subFormRowIndex : 0;
-				const rowData = modelData[rowIndex];
-				const rowValue = rowData?.[this.fieldKeyName];
-				if (rowValue !== undefined && rowValue !== null && rowValue !== "") {
-					return rowValue;
+				const arrayValue = this.resolveValueFromModelData(modelData, modelAssociationId);
+				if (arrayValue !== undefined && arrayValue !== null && arrayValue !== "") {
+					return arrayValue;
 				}
 			}
 			if (modelAssociationId && modelData && typeof modelData === "object") {
-				const fieldName = this.getReportDataFieldName(modelAssociationId);
-				const objectValue = modelData?.[fieldName];
+				const objectValue = this.resolveValueFromModelData(modelData, modelAssociationId);
 				if (objectValue !== undefined && objectValue !== null && objectValue !== "") {
 					return objectValue;
 				}
 			}
+			const nestedRowValue = this.findFieldValue(this.loopRowData, this.fieldKeyName);
+			if (nestedRowValue !== undefined && nestedRowValue !== null && nestedRowValue !== "") {
+				return nestedRowValue;
+			}
 			return formModel?.[this.fieldKeyName] ?? null;
+		},
+		resolveValueFromModelData(modelData, modelAssociationId) {
+			if (Array.isArray(modelData)) {
+				if (modelData.length <= 0) {
+					return undefined;
+				}
+				const rowIndex =
+					this.subFormRowIndex > -1 && this.subFormRowIndex < modelData.length
+						? this.subFormRowIndex
+						: 0;
+				return this.resolveValueFromModelData(modelData[rowIndex], modelAssociationId);
+			}
+			if (!modelData || typeof modelData !== "object") {
+				return undefined;
+			}
+			const fieldName = this.getReportDataFieldName(modelAssociationId);
+			const directValue = modelData?.[fieldName];
+			if (directValue !== undefined && directValue !== null && directValue !== "") {
+				return directValue;
+			}
+			return this.findFieldValue(modelData, fieldName);
+		},
+		findModelData(source, modelAssociationId, visited = new WeakSet()) {
+			if (!source || !modelAssociationId) {
+				return null;
+			}
+			if (Array.isArray(source)) {
+				for (const item of source) {
+					const found = this.findModelData(item, modelAssociationId, visited);
+					if (found !== null && found !== undefined) {
+						return found;
+					}
+				}
+				return null;
+			}
+			if (typeof source !== "object") {
+				return null;
+			}
+			if (visited.has(source)) {
+				return null;
+			}
+			visited.add(source);
+			if (source[modelAssociationId] !== undefined) {
+				return source[modelAssociationId];
+			}
+			for (const value of Object.values(source)) {
+				if (!value || typeof value !== "object") {
+					continue;
+				}
+				const found = this.findModelData(value, modelAssociationId, visited);
+				if (found !== null && found !== undefined) {
+					return found;
+				}
+			}
+			return null;
+		},
+		findFieldValue(source, fieldName, visited = new WeakSet()) {
+			if (!source || !fieldName) {
+				return undefined;
+			}
+			if (Array.isArray(source)) {
+				for (const item of source) {
+					const found = this.findFieldValue(item, fieldName, visited);
+					if (found !== undefined && found !== null && found !== "") {
+						return found;
+					}
+				}
+				return undefined;
+			}
+			if (typeof source !== "object") {
+				return undefined;
+			}
+			if (visited.has(source)) {
+				return undefined;
+			}
+			visited.add(source);
+			if (source[fieldName] !== undefined && source[fieldName] !== null && source[fieldName] !== "") {
+				return source[fieldName];
+			}
+			for (const value of Object.values(source)) {
+				if (!value || typeof value !== "object") {
+					continue;
+				}
+				const found = this.findFieldValue(value, fieldName, visited);
+				if (found !== undefined && found !== null && found !== "") {
+					return found;
+				}
+			}
+			return undefined;
 		},
 		getReportDataFieldName(modelAssociationId) {
 			const bindingPath = this.field.options?.bindingPath || "";
