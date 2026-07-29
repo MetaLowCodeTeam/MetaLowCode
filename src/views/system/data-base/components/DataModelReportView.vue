@@ -63,6 +63,7 @@ export default {
                         this.showForm = true;
                         await this.$nextTick();
                         this.$refs.vFormRef?.setFormJson(config);
+                        await this.$nextTick();
                         await this.loadModelData(mainModelDataId, config);
                     } else {
                         ElMessage.warning("该记录暂无报表配置");

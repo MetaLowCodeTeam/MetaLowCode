@@ -25,6 +25,9 @@
 		<el-form-item label="汇总列显示">
 			<el-switch v-model="optionModel.pivotTableConfig.showSumcol" />
 		</el-form-item>
+		<el-form-item label="数据为空展示--">
+			<el-switch v-model="optionModel.pivotTableConfig.showEmptyAsDash" />
+		</el-form-item>
 		<el-form-item label="绑定数据模型">
 			<el-select v-model="optionModel.pivotTableConfig.bindModelCode" placeholder="请选择数据模型" filterable clearable>
 				<el-option v-for="m in modelOptions" :key="m.value" :label="m.label" :value="m.value" />
@@ -231,6 +234,9 @@ export default {
 			}
 			if (this.optionModel.pivotTableConfig.showSumcol === undefined) {
 				this.optionModel.pivotTableConfig.showSumcol = true
+			}
+			if (this.optionModel.pivotTableConfig.showEmptyAsDash === undefined) {
+				this.optionModel.pivotTableConfig.showEmptyAsDash = true
 			}
 			this.dimensionRow = this.optionModel.pivotTableConfig.setDimensional.dimensionRow || []
 			this.dimensionCol = this.optionModel.pivotTableConfig.setDimensional.dimensionCol || []

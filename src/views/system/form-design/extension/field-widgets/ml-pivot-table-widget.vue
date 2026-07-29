@@ -14,20 +14,47 @@
 			<div v-if="tableTitle && !config.hideTitle" class="ml-pivot-table__title">{{ tableTitle }}</div>
 			<table class="ml-pivot-table__table" :class="{ 'is-border': config.showBorder }" :style="tableStyle">
 				<thead>
-					<tr>
-						<th :style="headerStyle">{{ rowHeaderLabel }}</th>
-						<th v-for="col in pivotColumns" :key="col" :style="headerStyle">{{ col }}</th>
-						<th v-if="config.showSumcol" :style="headerStyle">合计</th>
+					<tr v-for="(headerRow, headerRowIndex) in columnHeaderRows" :key="headerRowIndex">
+						<template v-if="headerRowIndex === 0">
+							<th
+								v-for="(header, index) in rowDimensionHeaders"
+								:key="`${header}-${index}`"
+								:rowspan="columnHeaderRows.length"
+								:style="headerStyle"
+							>
+								{{ header }}
+							</th>
+						</template>
+						<th
+							v-for="headerCell in headerRow"
+							:key="headerCell.key"
+							:colspan="headerCell.colspan"
+							:rowspan="headerCell.rowspan"
+							:style="headerStyle"
+						>
+							{{ headerCell.label }}
+						</th>
+						<th
+							v-if="config.showSumcol && headerRowIndex === 0"
+							:rowspan="columnHeaderRows.length"
+							:style="headerStyle"
+						>
+							合计
+						</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="row in pivotRows" :key="row.key">
-						<th :style="headerStyle">{{ row.key }}</th>
+					<tr v-for="row in pivotDisplayRows" :key="row.key">
+						<template v-for="(dimensionCell, index) in row.dimensionCells" :key="index">
+							<th v-if="dimensionCell.rowspan > 0" :rowspan="dimensionCell.rowspan" :style="headerStyle">
+								{{ dimensionCell.value }}
+							</th>
+						</template>
 						<td v-for="col in pivotColumns" :key="col" :style="cellStyle">{{ formatValue(row.values[col]) }}</td>
 						<td v-if="config.showSumcol" :style="cellStyle">{{ formatValue(row.total) }}</td>
 					</tr>
-					<tr v-if="config.showSummary">
-						<th :style="headerStyle">合计</th>
+					<tr v-if="config.showSummary && pivotRows.length > 0">
+						<th :colspan="rowDimensionHeaders.length" :style="headerStyle">合计</th>
 						<td v-for="col in pivotColumns" :key="col" :style="cellStyle">{{ formatValue(columnTotals[col]) }}</td>
 						<td v-if="config.showSumcol" :style="cellStyle">{{ formatValue(grandTotal) }}</td>
 					</tr>
@@ -129,17 +156,76 @@ export default {
 		rowHeaderLabel() {
 			return this.dimensionRows.map(this.getFieldAlias).filter(Boolean).join(' / ') || this.config.rowField || '维度行'
 		},
-		pivotColumns() {
-			if (this.sourceRows.length > 0) {
-				if (this.dimensionCols.length > 0) {
-					return [...new Set(this.sourceRows.map((row) => this.getCompositeDimensionValue(row, this.dimensionCols)).filter(Boolean))]
-				}
-				if (this.metrics.length > 1) {
-					return this.metrics.map(this.getFieldAlias).filter(Boolean)
-				}
+		rowDimensionHeaders() {
+			const headers = this.dimensionRows.map(this.getFieldAlias)
+			return headers.length > 0 ? headers.map((header) => header || '维度行') : [this.rowHeaderLabel]
+		},
+		pivotColumnDefinitions() {
+			if (this.dimensionCols.length === 0) {
+				return this.metrics.map((metric, metricIndex) => ({
+					key: this.buildPivotColumnKey([], metricIndex),
+					label: this.getFieldAlias(metric) || '指标',
+					dimensionValues: [],
+					metricIndex,
+				}))
 			}
-			const columns = this.dimensionCols.map(this.getFieldAlias).filter(Boolean)
-			return columns.length > 0 ? columns : this.metrics.map(this.getFieldAlias).filter(Boolean)
+			if (this.sourceRows.length === 0) {
+				return []
+			}
+			const dimensionMap = new Map()
+			this.sourceRows.forEach((row) => {
+				const dimensionValues = this.getDimensionValues(row, this.dimensionCols)
+				const dimensionKey = JSON.stringify(dimensionValues)
+				if (!dimensionMap.has(dimensionKey)) {
+					dimensionMap.set(dimensionKey, dimensionValues)
+				}
+			})
+			const dimensionGroups = Array.from(dimensionMap.values())
+			dimensionGroups.sort((left, right) => this.compareDimensionValues(left, right, this.dimensionCols))
+			return dimensionGroups.flatMap((dimensionValues) => {
+				if (this.metrics.length > 1) {
+					return this.metrics.map((metric, metricIndex) => ({
+						key: this.buildPivotColumnKey(dimensionValues, metricIndex),
+						label: this.getFieldAlias(metric) || '指标',
+						dimensionValues,
+						metricIndex,
+					}))
+				}
+				return [{
+					key: this.buildPivotColumnKey(dimensionValues, 0),
+					label: dimensionValues[dimensionValues.length - 1] || '空',
+					dimensionValues,
+					metricIndex: 0,
+				}]
+			})
+		},
+		pivotColumns() {
+			return this.pivotColumnDefinitions.map((column) => column.key)
+		},
+		columnHeaderRows() {
+			if (this.dimensionCols.length === 0) {
+				return [this.pivotColumnDefinitions.map((column) => ({
+					key: `metric-${column.key}`,
+					label: column.label,
+					colspan: 1,
+					rowspan: 1,
+				}))]
+			}
+			if (this.pivotColumnDefinitions.length === 0) {
+				return [[]]
+			}
+			const headerRows = this.dimensionCols.map((dimension, dimensionIndex) => (
+				this.buildColumnDimensionHeaderRow(dimensionIndex)
+			))
+			if (this.metrics.length > 1) {
+				headerRows.push(this.pivotColumnDefinitions.map((column) => ({
+					key: `metric-${column.key}`,
+					label: column.label,
+					colspan: 1,
+					rowspan: 1,
+				})))
+			}
+			return headerRows
 		},
 		pivotRows() {
 			if (this.sourceRows.length === 0 || this.dimensionRows.length === 0 || this.metrics.length === 0) {
@@ -147,19 +233,17 @@ export default {
 			}
 			const rowMap = new Map()
 			this.sourceRows.forEach(row => {
-				const rowKey = this.getCompositeDimensionValue(row, this.dimensionRows)
-				if (!rowKey) {
-					return
-				}
+				const dimensionValues = this.getDimensionValues(row, this.dimensionRows)
+				const rowKey = JSON.stringify(dimensionValues)
 				if (!rowMap.has(rowKey)) {
-					rowMap.set(rowKey, { key: rowKey, values: {}, metricMap: {}, total: 0 })
+					rowMap.set(rowKey, { key: rowKey, dimensionValues, values: {}, metricMap: {}, total: 0 })
 				}
 				const target = rowMap.get(rowKey)
-				this.metrics.forEach((metric) => {
-					const metricKey = this.getFieldAlias(metric) || '指标'
-					const colKey = this.dimensionCols.length > 0
-						? this.buildMetricColumnKey(this.getCompositeDimensionValue(row, this.dimensionCols), this.metrics.length > 1 ? metricKey : '')
-						: metricKey
+				this.metrics.forEach((metric, metricIndex) => {
+					const dimensionValues = this.dimensionCols.length > 0
+						? this.getDimensionValues(row, this.dimensionCols)
+						: []
+					const colKey = this.buildPivotColumnKey(dimensionValues, metricIndex)
 					if (!target.metricMap[colKey]) {
 						target.metricMap[colKey] = this.createMetricAggregator()
 					}
@@ -179,29 +263,38 @@ export default {
 				row.values = values
 				row.total = total
 			})
-			const dimensionSort = this.dimensionRows.find((item) => item.sort)?.sort
-			if (dimensionSort === 'ASC' || dimensionSort === 'DESC') {
-				rows.sort((a, b) => {
-					const result = String(a.key).localeCompare(String(b.key), 'zh-Hans-CN')
-					return dimensionSort === 'DESC' ? -result : result
-				})
+			rows.sort((a, b) => {
+				return this.compareDimensionValues(a.dimensionValues, b.dimensionValues, this.dimensionRows)
+			})
+			return rows
+		},
+		pivotDisplayRows() {
+			const rows = this.pivotRows.map((row) => ({
+				...row,
+				dimensionCells: (row.dimensionValues || [row.key]).map((value) => ({ value, rowspan: 1 })),
+			}))
+			const dimensionCount = this.rowDimensionHeaders.length
+			for (let dimensionIndex = 0; dimensionIndex < dimensionCount; dimensionIndex += 1) {
+				let startIndex = 0
+				while (startIndex < rows.length) {
+					let endIndex = startIndex + 1
+					while (
+						endIndex < rows.length &&
+						this.hasSameDimensionPrefix(rows[startIndex], rows[endIndex], dimensionIndex)
+					) {
+						endIndex += 1
+					}
+					rows[startIndex].dimensionCells[dimensionIndex].rowspan = endIndex - startIndex
+					for (let rowIndex = startIndex + 1; rowIndex < endIndex; rowIndex += 1) {
+						rows[rowIndex].dimensionCells[dimensionIndex].rowspan = 0
+					}
+					startIndex = endIndex
+				}
 			}
 			return rows
 		},
 		previewRows() {
-			const rowLabels = this.dimensionRows.map(this.getFieldAlias).filter(Boolean)
-			if (rowLabels.length === 0) {
-				return []
-			}
-			const columns = this.pivotColumns.length > 0 ? this.pivotColumns : ['指标']
-			return rowLabels.map((label, index) => {
-				const values = columns.reduce((result, col, colIndex) => {
-					result[col] = (index + 1) * (colIndex + 1)
-					return result
-				}, {})
-				const total = Object.values(values).reduce((sum, value) => sum + (Number(value) || 0), 0)
-				return { key: label, values, total }
-			})
+			return []
 		},
 		columnTotals() {
 			return this.pivotColumns.reduce((result, col) => {
@@ -220,6 +313,10 @@ export default {
 		this.initPivotEventHandler()
 	},
 	mounted() {
+		this.syncReportFormDataFromGlobal()
+		this.$nextTick(() => {
+			this.syncReportFormDataFromGlobal()
+		})
 		this.handleOnMounted()
 	},
 	beforeUnmount() {
@@ -232,13 +329,30 @@ export default {
 		initPivotEventHandler() {
 			if (this.designState) return
 			this.eventFunctionMapping.setFormData = (params) => {
-				const data = params?.[0]
-				if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+				const broadcastData = params?.[0]
+				const globalReportData = this.getGlobalReportData()
+				const data = this.hasReportData(globalReportData) ? globalReportData : broadcastData
+				if (this.hasReportData(data)) {
 					this.reportFormDataCache = data
 				}
 				this.handleOnFormDataReady(this.reportFormData)
 			}
 			this.on$('setFormData', this.eventFunctionMapping.setFormData)
+		},
+		getGlobalReportData() {
+			return this.getGlobalDsv?.()?.__reportFormData
+		},
+		hasReportData(data) {
+			if (Array.isArray(data)) {
+				return data.length > 0
+			}
+			return !!data && typeof data === 'object' && Object.keys(data).length > 0
+		},
+		syncReportFormDataFromGlobal() {
+			const globalReportData = this.getGlobalReportData()
+			if (this.hasReportData(globalReportData)) {
+				this.reportFormDataCache = globalReportData
+			}
 		},
 		reloadPivotData(formData) {
 			if (formData) {
@@ -293,39 +407,94 @@ export default {
 		},
 		resolveRowsFromReportData() {
 			const bindCode = this.config.bindModelCode || this.getFieldModelCode(this.dimensionRows[0]) || this.getFieldModelCode(this.dimensionCols[0]) || this.getFieldModelCode(this.metrics[0]) || ''
-			if (Array.isArray(this.reportFormDataCache)) {
-				return this.reportFormDataCache
-			}
-			if (bindCode && this.reportFormData?.[bindCode]) {
-				const data = this.reportFormData[bindCode]
-				if (Array.isArray(data)) {
-					return data
-				}
-				if (data && typeof data === 'object') {
-					return [data]
-				}
-			}
-			if (Array.isArray(this.reportFormData)) {
-				return this.reportFormData
-			}
+			const reportData = this.reportFormData
 			const fieldKeys = this.getCandidateFieldKeys()
-			if (!fieldKeys.length || !this.reportFormData || typeof this.reportFormData !== 'object') {
+			if (Array.isArray(reportData)) {
+				return reportData
+			}
+			if (!reportData || typeof reportData !== 'object') {
 				return []
 			}
-			for (const value of Object.values(this.reportFormData)) {
-				if (!Array.isArray(value) || value.length === 0) {
+			if (bindCode) {
+				const modelData = this.findModelData(reportData, bindCode)
+				if (modelData !== undefined) {
+					if (Array.isArray(modelData)) {
+						return this.normalizeModelRows(modelData)
+					}
+					if (this.rowMatchesFields(modelData, fieldKeys)) {
+						return [modelData]
+					}
+					const nestedRows = this.findRowsByFields(modelData, fieldKeys)
+					return nestedRows.length > 0 ? nestedRows : this.normalizeModelRows(modelData)
+				}
+			}
+			if (!fieldKeys.length) {
+				return []
+			}
+			if (this.rowMatchesFields(reportData, fieldKeys)) {
+				return [reportData]
+			}
+			return this.findRowsByFields(reportData, fieldKeys)
+		},
+		findModelData(source, modelCode, visited = new WeakSet()) {
+			if (!source || !modelCode || typeof source !== 'object') {
+				return undefined
+			}
+			if (visited.has(source)) {
+				return undefined
+			}
+			visited.add(source)
+			if (!Array.isArray(source) && Object.prototype.hasOwnProperty.call(source, modelCode)) {
+				return source[modelCode]
+			}
+			for (const value of Object.values(source)) {
+				if (!value || typeof value !== 'object') {
 					continue
 				}
-				const firstRow = value[0]
-				if (!firstRow || typeof firstRow !== 'object') {
-					continue
+				const found = this.findModelData(value, modelCode, visited)
+				if (found !== undefined) {
+					return found
 				}
-				const hasMatchedField = fieldKeys.some((key) => firstRow[key] !== undefined)
-				if (hasMatchedField) {
-					return value
+			}
+			return undefined
+		},
+		normalizeModelRows(modelData) {
+			if (Array.isArray(modelData)) {
+				return modelData.filter((row) => row && typeof row === 'object')
+			}
+			if (modelData && typeof modelData === 'object') {
+				return [modelData]
+			}
+			return []
+		},
+		findRowsByFields(source, fieldKeys, visited = new WeakSet()) {
+			if (!source || typeof source !== 'object' || visited.has(source)) {
+				return []
+			}
+			visited.add(source)
+			if (Array.isArray(source)) {
+				if (source.some((row) => this.rowMatchesFields(row, fieldKeys))) {
+					return source.filter((row) => row && typeof row === 'object')
+				}
+				for (const item of source) {
+					const rows = this.findRowsByFields(item, fieldKeys, visited)
+					if (rows.length > 0) {
+						return rows
+					}
+				}
+				return []
+			}
+			for (const value of Object.values(source)) {
+				const rows = this.findRowsByFields(value, fieldKeys, visited)
+				if (rows.length > 0) {
+					return rows
 				}
 			}
 			return []
+		},
+		rowMatchesFields(row, fieldKeys) {
+			return !!row && typeof row === 'object' && !Array.isArray(row) &&
+				fieldKeys.some((key) => row[key] !== undefined)
 		},
 		getCandidateFieldKeys() {
 			const fields = [...this.dimensionRows, ...this.dimensionCols, ...this.metrics].filter(Boolean)
@@ -428,25 +597,67 @@ export default {
 			}
 			return null
 		},
-		getCompositeDimensionValue(row, fields = []) {
-			const values = fields.map((field) => this.formatDimensionValue(this.getRowFieldValue(row, field), field)).filter((value) => value !== '')
-			return values.join(' / ')
+		getDimensionValues(row, fields = []) {
+			return fields.map((field) => this.formatDimensionValue(this.getRowFieldValue(row, field), field))
 		},
-		buildMetricColumnKey(columnKey, metricKey) {
-			if (!columnKey) {
-				return metricKey || '指标'
+		compareDimensionValues(leftValues = [], rightValues = [], fields = []) {
+			let result = 0
+			for (let index = 0; index < fields.length; index += 1) {
+				result = String(leftValues[index]).localeCompare(String(rightValues[index]), 'zh-Hans-CN')
+				if (result !== 0) {
+					break
+				}
 			}
-			return metricKey ? `${columnKey} / ${metricKey}` : columnKey
+			const direction = fields.find((item) => item.sort)?.sort
+			return direction === 'DESC' ? -result : result
+		},
+		hasSameDimensionPrefix(leftRow, rightRow, dimensionIndex) {
+			const leftValues = leftRow.dimensionValues || []
+			const rightValues = rightRow.dimensionValues || []
+			for (let index = 0; index <= dimensionIndex; index += 1) {
+				if (leftValues[index] !== rightValues[index]) {
+					return false
+				}
+			}
+			return true
+		},
+		buildPivotColumnKey(dimensionValues, metricIndex) {
+			return JSON.stringify([dimensionValues, metricIndex])
+		},
+		buildColumnDimensionHeaderRow(dimensionIndex) {
+			const headerCells = []
+			let startIndex = 0
+			while (startIndex < this.pivotColumnDefinitions.length) {
+				let endIndex = startIndex + 1
+				while (endIndex < this.pivotColumnDefinitions.length) {
+					const leftValues = this.pivotColumnDefinitions[startIndex].dimensionValues
+					const rightValues = this.pivotColumnDefinitions[endIndex].dimensionValues
+					let hasSamePrefix = true
+					for (let index = 0; index <= dimensionIndex; index += 1) {
+						if (leftValues[index] !== rightValues[index]) {
+							hasSamePrefix = false
+							break
+						}
+					}
+					if (!hasSamePrefix) {
+						break
+					}
+					endIndex += 1
+				}
+				const dimensionValues = this.pivotColumnDefinitions[startIndex].dimensionValues
+				headerCells.push({
+					key: `dimension-${dimensionIndex}-${startIndex}`,
+					label: dimensionValues[dimensionIndex],
+					colspan: endIndex - startIndex,
+					rowspan: 1,
+				})
+				startIndex = endIndex
+			}
+			return headerCells
 		},
 		resolveColumnCalcMode(columnKey) {
-			if (this.dimensionCols.length === 0) {
-				const metric = this.metrics.find((item) => (this.getFieldAlias(item) || '指标') === columnKey)
-				return metric?.calcMode || this.metrics[0]?.calcMode || 'count'
-			}
-			if (this.metrics.length <= 1) {
-				return this.metrics[0]?.calcMode || 'count'
-			}
-			const metric = this.metrics.find((item) => columnKey.endsWith(` / ${this.getFieldAlias(item) || '指标'}`))
+			const column = this.pivotColumnDefinitions.find((item) => item.key === columnKey)
+			const metric = this.metrics[column?.metricIndex ?? 0]
 			return metric?.calcMode || this.metrics[0]?.calcMode || 'count'
 		},
 		createMetricAggregator() {
@@ -535,7 +746,7 @@ export default {
 		},
 		formatValue(value) {
 			if (value === null || value === undefined || value === '') {
-				return ''
+				return this.config.showEmptyAsDash !== false ? '--' : ''
 			}
 			if (typeof value === 'string') {
 				return value

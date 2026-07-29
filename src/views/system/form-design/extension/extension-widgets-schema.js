@@ -138,6 +138,7 @@ export const pivotTableSchema = {
             width: '100%',
 			showSummary: true,
 			showSumcol: true,
+			showEmptyAsDash: true,
 			showBorder: true,
 			textAlign: 'center',
 			setDimensional: {
