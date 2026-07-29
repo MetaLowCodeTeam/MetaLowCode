@@ -79,10 +79,11 @@
                             >
                                 <template #default="scope">
                                     <FormatRow
-                                        :row="scope.row"
-                                        :column="column"
-                                        :nameFieldName="nameFieldName"
-                                    />
+                                    :row="scope.row"
+                                    :column="column"
+                                    :nameFieldName="nameFieldName"
+                                    :nameFieldClick="clickRow"
+                                />
                                 </template>
                             </el-table-column>
                         </el-table>
