@@ -5,7 +5,7 @@
 		class="outer-data-model-list"
 	>
 		<el-main class="list-main">
-			<div class="table-search-box" v-if="queryParams.length > 0">
+			<div class="table-search-box">
 				<el-form
 					ref="queryParamsRef"
 					label-width="100px"
@@ -15,7 +15,7 @@
 					@submit.prevent
 				>
 					<!-- 参数少于等于 4 个时的布局 -->
-					<el-row :gutter="10" v-if="isSingleRow">
+					<el-row :gutter="10" v-if="queryParams.length > 0 && isSingleRow">
 						<el-col
 							:span="5"
 							v-for="item in queryParams"
@@ -23,6 +23,7 @@
 						>
 							<el-form-item
 								:label="item.label"
+								class="query-field-item--single"
 								style="margin-bottom: 10px"
 								:prop="item.name"
 							>
@@ -31,6 +32,8 @@
 									v-model="queryFrom[item.name]"
 									:placeholder="`请输入${item.label}`"
 									clearable
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 									v-if="item.type == 1 || item.type == 5"
 								/>
 								<!-- 日期时间2 -->
@@ -39,6 +42,8 @@
 									type="datetime"
 									placeholder="选择日期时间"
 									clearable
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 									v-if="item.type == 2"
 									class="w-100"
 								/>
@@ -48,6 +53,8 @@
 									type="date"
 									placeholder="选择日期"
 									clearable
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 									v-if="item.type == 3"
 									class="w-100"
 								/>
@@ -57,6 +64,8 @@
 									placeholder="请输入数字"
 									v-if="item.type == 4"
 									:controls="false"
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 									style="text-align: left"
 									class="w-100 ml-number-input"
 								/>
@@ -67,11 +76,12 @@
 								查询
 							</el-button>
 							<el-button @click="resetQuery">重置</el-button>
+							<el-button plain type="primary">自定义按钮设置</el-button>
 						</el-col>
 					</el-row>
 
 					<!-- 参数多于 4 个时的布局 -->
-					<template v-else>
+					<template v-else-if="queryParams.length > 0">
 						<el-row :gutter="10">
 							<el-col
 								:span="6"
@@ -86,16 +96,20 @@
 									<!-- 文本类型1 和 文本(模糊)5 -->
 									<el-input
 										v-model="queryFrom[item.name]"
-										:placeholder="`请输入${item.label}`"
-										clearable
+									:placeholder="`请输入${item.label}`"
+									clearable
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 										v-if="item.type == 1 || item.type == 5"
 									/>
 									<!-- 日期时间2 -->
 									<el-date-picker
 										v-model="queryFrom[item.name]"
 										type="datetime"
-										placeholder="选择日期时间"
-										clearable
+									placeholder="选择日期时间"
+									clearable
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 										v-if="item.type == 2"
 										class="w-100"
 										format="YYYY-MM-DD HH:mm:ss"
@@ -105,8 +119,10 @@
 									<el-date-picker
 										v-model="queryFrom[item.name]"
 										type="date"
-										placeholder="选择日期"
-										clearable
+									placeholder="选择日期"
+									clearable
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 										v-if="item.type == 3"
 										class="w-100"
 										format="YYYY-MM-DD"
@@ -117,7 +133,9 @@
 										v-model="queryFrom[item.name]"
 										placeholder="请输入数字"
 										v-if="item.type == 4"
-										:controls="false"
+									:controls="false"
+									:validate-event="false"
+									@focus="clearQueryValidate(item.name)"
 										style="text-align: left"
 										class="w-100 ml-number-input"
 									/>
@@ -130,9 +148,15 @@
 									查询
 								</el-button>
 								<el-button @click="resetQuery">重置</el-button>
+								<el-button plain type="primary">自定义按钮设置</el-button>
 							</el-col>
 						</el-row>
 					</template>
+					<el-row v-else>
+						<el-col :span="24" class="query-actions query-actions--empty">
+							<el-button plain type="primary">自定义按钮设置</el-button>
+						</el-col>
+					</el-row>
 				</el-form>
 			</div>
 			<div class="table-div">
@@ -266,6 +290,10 @@ const loadModelData = async () => {
 
 // 查询
 let queryParamsRef = ref();
+const clearQueryValidate = (fieldName) => {
+	queryParamsRef.value?.clearValidate(fieldName);
+};
+
 const handleQuery = () => {
 	queryParamsRef.value.validate((valid) => {
 		if (valid) {
@@ -350,12 +378,20 @@ const loadListData = async () => {
 .table-search-box {
 	flex: none;
 	border-top: 3px solid var(--el-color-primary);
-	min-height: 60px;
-	padding: 14px 10px 14px 10px;
+	min-height: 54px;
+	padding: 10px;
 	box-sizing: border-box;
 
 	:deep(.el-form-item) {
-		margin-bottom: 0 !important;
+		margin-bottom: 8px !important;
+	}
+
+	:deep(.el-form-item.is-error .el-input__wrapper.is-focus) {
+		box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;
+	}
+
+	:deep(.ml-number-input .el-input__inner) {
+		text-align: left;
 	}
 }
 
@@ -368,6 +404,15 @@ const loadListData = async () => {
 	:deep(.el-button + .el-button) {
 		margin-left: 0;
 	}
+}
+
+.query-actions--empty {
+	min-height: 32px;
+}
+
+.query-field-item--single {
+	position: relative;
+	top: 4px;
 }
 
 .table-div {
