@@ -1,7 +1,11 @@
 <template>
-	<el-container v-loading="loading" element-loading-text="加载中...">
-		<el-main>
-			<div class="query-params" v-if="queryParams.length > 0">
+	<el-container
+		v-loading="loading"
+		element-loading-text="加载中..."
+		class="outer-data-model-list"
+	>
+		<el-main class="list-main">
+			<div class="table-search-box" v-if="queryParams.length > 0">
 				<el-form
 					ref="queryParamsRef"
 					label-width="100px"
@@ -13,7 +17,7 @@
 					<!-- 参数少于等于 4 个时的布局 -->
 					<el-row :gutter="10" v-if="isSingleRow">
 						<el-col
-							:span="6"
+							:span="5"
 							v-for="item in queryParams"
 							:key="item.name"
 						>
@@ -58,11 +62,7 @@
 								/>
 							</el-form-item>
 						</el-col>
-						<el-col
-							:span="6"
-							:offset="(3 - queryParams.length) * 6"
-							style="text-align: right"
-						>
+						<el-col :span="4" :offset="(4 - queryParams.length) * 5" class="query-actions">
 							<el-button type="primary" @click="handleQuery">
 								查询
 							</el-button>
@@ -125,7 +125,7 @@
 							</el-col>
 						</el-row>
 						<el-row>
-							<el-col :span="24" style="text-align: right">
+							<el-col :span="24" class="query-actions">
 								<el-button type="primary" @click="handleQuery">
 									查询
 								</el-button>
@@ -135,18 +135,14 @@
 					</template>
 				</el-form>
 			</div>
-			<div
-				class="table-container"
-				:style="{
-					height: queryParams.length > 0 ? '500px' : '100%',
-				}"
-			>
+			<div class="table-div">
 				<el-table
 					:data="tableData"
 					style="width: 100%"
 					:border="true"
 					height="100%"
 				>
+					<el-table-column type="selection" width="50" align="center" />
 					<el-table-column
 						v-for="column in tableHeader"
 						:key="column.prop"
@@ -163,7 +159,7 @@
 				v-model:pageSize="pageConfig.pageSize"
 				:page-sizes="pageConfig.pageSizes"
 				:total="pageConfig.total"
-				layout="total, sizes, prev, pager, next, jumper"
+				layout="total, prev, pager, next, jumper, sizes"
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
 			/>
@@ -333,29 +329,64 @@ const loadListData = async () => {
 </script>
 
 <style scoped lang="scss">
-.main-container {
+.outer-data-model-list {
 	height: 100%;
 	box-sizing: border-box;
 	padding: 20px;
-	.main-div {
-		background: #fff;
+	background: #f1f5ff;
+	flex-direction: column;
+	position: relative;
+
+	.list-main {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+		padding: 0 0 52px;
+		overflow: hidden;
 	}
 }
-.query-params {
-	background: #fff;
-	border-radius: 8px;
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+.table-search-box {
+	flex: none;
+	border-top: 3px solid var(--el-color-primary);
+	min-height: 60px;
+	padding: 14px 10px 14px 10px;
 	box-sizing: border-box;
-	padding: 20px;
-	margin-bottom: 20px;
+
+	:deep(.el-form-item) {
+		margin-bottom: 0 !important;
+	}
 }
-.main-body {
-	background: #fff;
+
+.query-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+
+	:deep(.el-button + .el-button) {
+		margin-left: 0;
+	}
 }
+
+.table-div {
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+}
+
 .main-footer {
 	display: flex;
+	flex: none;
 	justify-content: center;
 	align-items: center;
 	height: 52px;
+	padding: 0;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
 }
 </style>
