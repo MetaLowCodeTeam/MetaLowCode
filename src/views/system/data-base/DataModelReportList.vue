@@ -10,8 +10,11 @@
 			:sortFields="sortFields"
 			queryUrl="/plugins/metaDataWarehouse/outerData/modelReport/listQuery"
 		>
+			<template #addButton>
+				<el-button type="primary" :icon="Plus" @click="openReportEdit()">新建</el-button>
+			</template>
 			<template #activeRow>
-				<el-table-column label="操作" align="center" width="300" fixed="right">
+				<el-table-column label="操作" align="center" width="360" fixed="right">
 					<template #default="scope">
 						<div class="report-actions">
 							<el-button
@@ -32,6 +35,9 @@
 								@click="showExampleCode(scope.row)"
 							>
 								调用代码示例
+							</el-button>
+							<el-button link type="primary" :icon="Edit" @click="openReportEdit(scope.row)">
+								编辑
 							</el-button>
 							<el-button
 								link
@@ -77,6 +83,7 @@
 				<el-button :icon="Close" @click="exampleDialogVisible = false">关闭</el-button>
 			</template>
 		</el-dialog>
+		<ml-custom-edit ref="reportEditRef" name-field-name="reportName" @on-confirm="refreshTable" />
 	</div>
 </template>
 
@@ -84,8 +91,10 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Close, CopyDocument, Delete, DocumentCopy, EditPen } from "@element-plus/icons-vue";
+import { Close, CopyDocument, Delete, DocumentCopy, Edit, EditPen, Plus } from "@element-plus/icons-vue";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
+import mlCustomEdit from "@/components/mlCustomEdit/index.vue";
+import { deleteRecord } from "@/api/crud";
 import http from "@/utils/request";
 import { copyText } from "@/utils/util";
 
@@ -97,6 +106,7 @@ const exampleDialogTitle = ref("调用代码示例");
 const exampleCode = ref("");
 const exampleCodeLoading = ref(false);
 const exampleLoadingId = ref("");
+const reportEditRef = ref();
 
 const sortFields = ref([
 	{
@@ -121,6 +131,23 @@ const goDesign = (row) => {
 			customRouteTitle: `可视化表单设计 - ${row.reportName || ""}`,
 		},
 	});
+};
+
+const openReportEdit = (row) => {
+	reportEditRef.value?.openDialog({
+		entityName: "DataModelReport",
+		detailId: row?.dataModelReportId,
+		customDialogConfig: {
+			width: "500px",
+		},
+		showFooterButtonConfig: {
+			showConfirmRefreshBtn: false,
+		},
+	});
+};
+
+const refreshTable = () => {
+	mlSingleListRef.value?.getTableList?.();
 };
 
 const parseModelConfig = (modelConfig) => {
@@ -286,12 +313,8 @@ const deleteRow = (row) => {
 		cancelButtonText: "取消",
 		type: "warning",
 	}).then(async () => {
-		const res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/deleteRecord", null, {
-			params: {
-				dataModelReportId: row.dataModelReportId,
-			},
-		});
-		if (res?.code === 200) {
+		const res = await deleteRecord(row.dataModelReportId);
+		if (res) {
 			ElMessage.success("删除成功");
 			mlSingleListRef.value?.getTableList?.();
 		}
