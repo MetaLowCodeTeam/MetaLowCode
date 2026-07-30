@@ -80,6 +80,7 @@ export default {
                 formTemplates: false,
                 eventCollapse: false,
                 reportEventOnly: true,
+				reportWatermarkSetting: true,
                 ensureUniqueFieldName: true,
                 metadataLib: true,
                 metadataModelManage: true,
