@@ -55,6 +55,14 @@ import http from "@/utils/request";
 import { copyText } from "@/utils/util";
 import ModelAssociationEdit from "./ModelAssociationEdit.vue";
 import { CopyDocument } from "@element-plus/icons-vue";
+import {
+    applyAllNativeReportTableStyles,
+    COMPACT_REPORT_TABLE_CONFIG,
+    ensureNativeReportTableConfig,
+    LEGACY_REPORT_TABLE_CONFIG,
+    normalizeReportWidgetCustomClasses,
+    syncNativeTableEmptyText,
+} from "@/views/system/form-design/extension/report-table-style";
 
 const REPORT_FIELD_DELIMITER = "##";
 const LEGACY_REPORT_FIELD_DELIMITER = ".";
@@ -94,6 +102,7 @@ export default {
             usedFieldNames: {},
             pageLoading: false,
             normalizingReportFields: false,
+            nativeTableCompactDefaultsReady: false,
             fieldMappingDialogVisible: false,
             fieldMappingDialogTitle: "字段映射",
             fieldMappingCode: "",
@@ -106,7 +115,12 @@ export default {
         this.designerConfig.eventCollapse = !!window.advancedDevMode;
     },
     mounted() {
+        this.observeNativeTableChanges();
         this.loadDesign();
+    },
+    beforeUnmount() {
+        this.nativeTableObserver?.disconnect();
+        this.nativeTableObserver = null;
     },
     watch: {
         '$route.query.dataModelReportId'(newId, oldId) {
@@ -123,6 +137,23 @@ export default {
                 return "";
             }
             return modelCode + REPORT_FIELD_DELIMITER + fieldName;
+        },
+
+        observeNativeTableChanges() {
+            if (typeof MutationObserver === "undefined") return;
+            this.nativeTableObserver = new MutationObserver((mutationList) => {
+                const tableAdded = mutationList.some((mutation) => Array.from(mutation.addedNodes || []).some((node) => {
+                    if (node?.nodeType !== 1) return false;
+                    return node.matches?.(".table-container") || !!node.querySelector?.(".table-container");
+                }));
+                if (tableAdded) {
+                    this.$nextTick(() => this.handleDesignerWidgetsChanged());
+                }
+            });
+            this.nativeTableObserver.observe(this.$el, {
+                childList: true,
+                subtree: true,
+            });
         },
 
         parseReportFieldPath(path = "", modelCode = "") {
@@ -161,6 +192,7 @@ export default {
         },
 
         resetDesignState() {
+            this.nativeTableCompactDefaultsReady = false;
             this.modelConfigList = [];
             this.usedFieldNames = {};
             this.fieldListData = { fieldList: [] };
@@ -173,7 +205,11 @@ export default {
             this.$refs.vfDesigner?.setMetaFields?.(this.metaFieldsResult);
         },
 
-        handleFWU() {
+        handleFWU(widget) {
+            if (widget?.type === "table") {
+                ensureNativeReportTableConfig(widget, COMPACT_REPORT_TABLE_CONFIG);
+                syncNativeTableEmptyText(widget);
+            }
             this.$nextTick(() => this.handleDesignerWidgetsChanged());
         },
 
@@ -193,6 +229,11 @@ export default {
             if (!changed) {
                 this.syncUsedFields();
             }
+            this.$nextTick(() => this.applyNativeTableStyles());
+        },
+
+        applyNativeTableStyles(formJson = this.$refs.vfDesigner?.getFormJson?.()) {
+            applyAllNativeReportTableStyles(formJson?.widgetList || [], this.$el);
         },
 
         syncUsedFields(delay = 0) {
@@ -323,6 +364,10 @@ export default {
                 options.imageDisplayEnabled = false;
                 changed = true;
             }
+            if (options.htmlDisplayEnabled === undefined) {
+                options.htmlDisplayEnabled = false;
+                changed = true;
+            }
             if (!options.imageWidth) {
                 options.imageWidth = "80px";
                 changed = true;
@@ -344,6 +389,15 @@ export default {
             const visit = (widgetList = []) => {
                 widgetList.forEach((widget) => {
                     if (!widget) return;
+                    if (widget.type === "table") {
+                        const tableDefaults = this.nativeTableCompactDefaultsReady
+                            ? COMPACT_REPORT_TABLE_CONFIG
+                            : LEGACY_REPORT_TABLE_CONFIG;
+                        if (ensureNativeReportTableConfig(widget, tableDefaults)) {
+                            changed = true;
+                        }
+                        syncNativeTableEmptyText(widget);
+                    }
                     if (this.normalizeSingleReportField(widget)) {
                         changed = true;
                     }
@@ -362,7 +416,10 @@ export default {
                 this.$nextTick(() => {
                     this.normalizingReportFields = false;
                     this.syncUsedFields();
+                    this.applyNativeTableStyles(formJson);
                 });
+            } else {
+                this.$nextTick(() => this.applyNativeTableStyles(formJson));
             }
 
             return changed;
@@ -453,6 +510,7 @@ export default {
 				try {
 					let config = typeof res2.data?.reportConfig === "string" ? JSON.parse(res2.data.reportConfig) : res2.data?.reportConfig;
 					if (config) {
+                        normalizeReportWidgetCustomClasses(config.widgetList || []);
                         this.$refs.vfDesigner.setFormJson(config);
                         this.normalizeLoopContainerWidgets();
                         const normalized = this.normalizeReportFieldWidgets();
@@ -465,6 +523,7 @@ export default {
 					console.error("reportConfig parse error", e);
 				}
 			}
+            this.nativeTableCompactDefaultsReady = true;
             this.pageLoading = false;
         },
 
@@ -491,6 +550,7 @@ export default {
             this.$refs.modelAssociationEditRef?.openDialog({
                 subModelId: "",
                 subModelName: "",
+                existingDataCodes: this.modelConfigList.map((item) => item.dataCode),
             });
         },
 
@@ -501,6 +561,7 @@ export default {
                 ...config,
                 editId: config.dataCode,
                 editLabel: config.modelAssociationLabel,
+                existingDataCodes: this.modelConfigList.map((item) => item.dataCode),
             });
         },
 
@@ -784,6 +845,7 @@ export default {
                     fontSize: '',
                     fontStyle: 'normal',
                     fontWeight: 'normal',
+                    htmlDisplayEnabled: false,
                     imageDisplayEnabled: false,
                     imageWidth: '80px',
                     imageHeight: '100px',

@@ -1,31 +1,90 @@
 <template>
     <div class="report-view" v-loading="loading">
-        <div class="report-actions">
-            <el-button type="primary" :loading="exportLoading" @click="downloadWord">下载 Word</el-button>
-            <el-button type="primary" :loading="exportLoading" @click="downloadPdf" style="margin-left: 10px">导出 PDF</el-button>
-        </div>
-        <div class="report-content" ref="reportContentRef" v-if="showForm">
-            <v-form-render
-                ref="vFormRef"
-                :global-dsv="globalDsv"
-                :responsive-layout-disabled="true"
-            />
-        </div>
+        <header class="report-toolbar" data-export-ignore>
+            <div class="report-toolbar__title">
+                <el-icon class="report-toolbar__icon"><Document /></el-icon>
+                <div>
+                    <div class="report-toolbar__name">{{ reportFileName }}</div>
+                    <div class="report-toolbar__meta">A4 {{ landscape ? "横版" : "竖版" }}预览</div>
+                </div>
+            </div>
+            <div class="report-toolbar__actions">
+<!--                <span class="report-toolbar__label">页面方向</span>-->
+<!--                <el-radio-group-->
+<!--                    v-model="landscape"-->
+<!--                    size="small"-->
+<!--                    :disabled="exportLoading"-->
+<!--                    @change="handleLandscapeChange"-->
+<!--                >-->
+<!--                    <el-radio-button :label="false">竖版</el-radio-button>-->
+<!--                    <el-radio-button :label="true">横版</el-radio-button>-->
+<!--                </el-radio-group>-->
+                <el-button
+                    type="primary"
+                    :icon="Download"
+                    :loading="exportLoading"
+                    @click="downloadWord"
+                >
+                    下载 Word
+                </el-button>
+                <el-button
+                    type="primary"
+                    plain
+                    :icon="Tickets"
+                    :loading="exportLoading"
+                    @click="downloadPdf"
+                >
+                    导出 PDF
+                </el-button>
+            </div>
+        </header>
+        <main class="report-stage" v-if="showForm">
+            <section
+                class="report-page"
+                :class="landscape ? 'report-page--landscape' : 'report-page--portrait'"
+            >
+                <div class="report-content" ref="reportContentRef">
+                    <v-form-render
+                        ref="vFormRef"
+                        :global-dsv="globalDsv"
+                        :responsive-layout-disabled="true"
+                    />
+                </div>
+            </section>
+        </main>
     </div>
 </template>
 
 <script>
 import { ElMessage } from "element-plus";
+import { Document, Download, Tickets } from "@element-plus/icons-vue";
 import http from "@/utils/request";
 import { downloadBase64, globalDsvDefaultData } from "@/utils/util";
+import {
+    applyAllNativeReportTableStyles,
+    normalizeReportWidgetCustomClasses,
+} from "@/views/system/form-design/extension/report-table-style";
 
 export default {
     name: "DataModelReportView",
+    components: {
+        Document,
+        Download,
+        Tickets,
+    },
+    setup() {
+        return {
+            Download,
+            Tickets,
+        };
+    },
     data() {
         return {
             loading: false,
             exportLoading: false,
             showForm: false,
+            landscape: false,
+            reportFileName: "数据模型报表",
             globalDsv: {
                 ...globalDsvDefaultData(),
                 formStatus: 'read',
@@ -33,6 +92,7 @@ export default {
         };
     },
     mounted() {
+        this.initializeViewOptions();
         document.body.classList.add("data-model-report-view-page");
         this.loadData();
     },
@@ -40,6 +100,33 @@ export default {
         document.body.classList.remove("data-model-report-view-page");
     },
     methods: {
+        initializeViewOptions() {
+            const routeFileName = Array.isArray(this.$route.query.fileName)
+                ? this.$route.query.fileName[0]
+                : this.$route.query.fileName;
+            this.reportFileName = String(routeFileName || "数据模型报表")
+                .trim()
+                .replace(/\.(?:docx?|pdf)$/i, "") || "数据模型报表";
+
+            const routeLandscape = Array.isArray(this.$route.query.landscape)
+                ? this.$route.query.landscape[0]
+                : this.$route.query.landscape;
+            this.landscape = routeLandscape === true
+                || String(routeLandscape).toLowerCase() === "true"
+                || String(routeLandscape) === "1";
+        },
+
+        handleLandscapeChange(value) {
+            this.landscape = value === true || String(value).toLowerCase() === "true";
+            this.$router.replace({
+                path: this.$route.path,
+                query: {
+                    ...this.$route.query,
+                    landscape: this.landscape,
+                },
+            }).catch(() => {});
+        },
+
         async loadData() {
             this.loading = true;
             try {
@@ -60,10 +147,12 @@ export default {
                     let reportConfig = res.data.reportConfig;
                     if (reportConfig) {
                         let config = typeof reportConfig === "string" ? JSON.parse(reportConfig) : reportConfig;
+                        normalizeReportWidgetCustomClasses(config.widgetList || []);
                         this.showForm = true;
                         await this.$nextTick();
                         this.$refs.vFormRef?.setFormJson(config);
                         await this.$nextTick();
+                        this.applyNativeTableStyles(config);
                         await this.loadModelData(mainModelDataId, config);
                     } else {
                         ElMessage.warning("该记录暂无报表配置");
@@ -87,7 +176,16 @@ export default {
                 this.globalDsv.__reportFormData = reportData;
                 const formRef = this.$refs.vFormRef;
                 formRef?.setFormData(reportData, true);
+                await this.$nextTick();
+                this.applyNativeTableStyles(reportConfig);
             }
+        },
+
+        applyNativeTableStyles(reportConfig) {
+            applyAllNativeReportTableStyles(
+                reportConfig?.widgetList || [],
+                this.$refs.reportContentRef || this.$el
+            );
         },
 
         async handleReportDataLoaded(reportData, reportConfig) {
@@ -115,10 +213,11 @@ export default {
             try {
                 await this.$nextTick();
                 const html = this.getExportHtml();
-                const fileName = "测试.docx";
+                const fileName = this.getExportFileName("docx");
                 const res = await http.post("/plugins/metaDataWarehouse/htmlToWord/export", {
                     fileName,
                     html,
+                    landscape: this.landscape,
                 });
                 const fileData = this.resolveExportFileData(res);
                 const base64 = fileData.base64;
@@ -143,10 +242,11 @@ export default {
             try {
                 await this.$nextTick();
                 const html = this.getExportHtml();
-                const fileName = "测试.pdf";
+                const fileName = this.getExportFileName("pdf");
                 const res = await http.post("/plugins/metaDataWarehouse/htmlToWord/exportPdf", {
                     fileName,
                     html,
+                    landscape: this.landscape,
                 });
                 const fileData = this.resolveExportFileData(res);
                 const base64 = fileData.base64;
@@ -160,6 +260,10 @@ export default {
             } finally {
                 this.exportLoading = false;
             }
+        },
+
+        getExportFileName(extension) {
+            return `${this.reportFileName}.${extension}`;
         },
 
         resolveExportFileData(res) {
@@ -194,6 +298,8 @@ export default {
         },
 
         getExportHtml() {
+            const reportConfig = this.$refs.vFormRef?.getFormJson?.();
+            this.applyNativeTableStyles(reportConfig);
             const contentEl = this.$refs.reportContentRef || this.$el.querySelector(".report-content");
             const exportContentEl = contentEl?.cloneNode(true);
             this.prepareExportContentWidth(exportContentEl);
@@ -213,15 +319,17 @@ export default {
 
         prepareExportContentWidth(rootEl) {
             if (!rootEl) return;
-            rootEl.style.width = "960px";
-            rootEl.style.maxWidth = "960px";
+            const contentWidth = this.landscape ? "1040px" : "720px";
+            rootEl.style.width = contentWidth;
+            rootEl.style.maxWidth = contentWidth;
             rootEl.style.margin = "0 auto";
             rootEl.style.boxSizing = "border-box";
         },
 
         getWordExportStyle() {
+            const contentWidth = this.landscape ? "1040px" : "720px";
             return `<style data-front-word-export="true">
-                .report-content { width: 960px !important; max-width: 960px !important; }
+                .report-content { width: ${contentWidth} !important; max-width: ${contentWidth} !important; }
                 table.word-export-layout-table,
                 table.word-export-layout-table > tbody > tr,
                 table.word-export-layout-table > tbody > tr > td {
@@ -320,23 +428,114 @@ export default {
 
 <style scoped lang="scss">
 .report-view {
+    --toolbar-height: 72px;
     position: relative;
-    padding: 20px;
-    background: #fff;
+    background: #eef1f5;
     min-height: 100%;
     height: auto;
-    overflow: visible;
     box-sizing: border-box;
 
-    .report-actions {
-        position: fixed;
-        top: 16px;
-        right: 20px;
+    .report-toolbar {
+        position: sticky;
+        top: 0;
         z-index: 1000;
+        min-height: var(--toolbar-height);
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid var(--el-border-color-light);
+        box-shadow: 0 2px 10px rgba(31, 45, 61, 0.06);
+        backdrop-filter: blur(8px);
+    }
+
+    .report-toolbar__title,
+    .report-toolbar__actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .report-toolbar__title {
+        min-width: 0;
+        gap: 12px;
+    }
+
+    .report-toolbar__icon {
+        flex: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        color: var(--el-color-primary);
+        background: var(--el-color-primary-light-9);
+        font-size: 20px;
+    }
+
+    .report-toolbar__name {
+        max-width: 360px;
+        overflow: hidden;
+        color: var(--el-text-color-primary);
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 22px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .report-toolbar__meta {
+        color: var(--el-text-color-secondary);
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .report-toolbar__actions {
+        flex: none;
+        gap: 12px;
+
+        :deep(.el-button + .el-button) {
+            margin-left: 0;
+        }
+    }
+
+    .report-toolbar__label {
+        color: var(--el-text-color-regular);
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .report-stage {
+        min-height: calc(100vh - var(--toolbar-height));
+        padding: 32px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: auto;
+        box-sizing: border-box;
+    }
+
+    .report-page {
+        flex: none;
+        padding: 36px;
+        box-sizing: border-box;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(31, 45, 61, 0.14);
+        transition: width 200ms ease, min-height 200ms ease;
+    }
+
+    .report-page--portrait {
+        width: min(794px, calc(100vw - 64px));
+        min-height: 1123px;
+    }
+
+    .report-page--landscape {
+        width: min(1123px, calc(100vw - 64px));
+        min-height: 794px;
     }
 
     .report-content {
-        max-width: 1000px;
+        width: 100%;
         margin: 0 auto;
         background: #fff;
     }
@@ -354,6 +553,31 @@ export default {
         min-height: 1px;
     }
 }
+
+@media (max-width: 900px) {
+    .report-view {
+        .report-toolbar {
+            align-items: flex-start;
+            padding: 12px 16px;
+            flex-direction: column;
+        }
+
+        .report-toolbar__actions {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .report-stage {
+            padding: 16px;
+        }
+
+        .report-page--portrait,
+        .report-page--landscape {
+            width: calc(100vw - 32px);
+            padding: 20px;
+        }
+    }
+}
 </style>
 
 <style lang="scss">
@@ -362,6 +586,6 @@ body.data-model-report-view-page #app,
 body.data-model-report-view-page .aminui {
     min-height: 100%;
     height: auto;
-    background: #fff !important;
+    background: #eef1f5 !important;
 }
 </style>

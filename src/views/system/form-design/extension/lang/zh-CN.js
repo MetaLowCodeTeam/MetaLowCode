@@ -5,6 +5,7 @@ export default {
             'ml-text': '文本',
             'ml-bar-chart': '柱状图',
             'ml-line-chart': '折线图',
+            'ml-echarts': 'ECharts',
             'ml-pivot-table': '透视图',
             'check-tag': '标签选择',
             'reference': '引用',

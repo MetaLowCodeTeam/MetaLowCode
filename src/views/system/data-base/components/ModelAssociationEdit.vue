@@ -10,8 +10,11 @@
 						<el-option v-for="item in mainModelOptions" :key="item.value" :label="item.label" :value="item.value" />
 					</el-select>
 				</el-form-item>
+				<el-form-item label="数据编码" prop="dataCode">
+					<el-input v-model="formData.dataCode" placeholder="请输入数据编码" clearable :disabled="isEditMode" />
+				</el-form-item>
 				<el-form-item label="数据别名" prop="modelAssociationLabel">
-					<el-input v-model="formData.modelAssociationLabel" placeholder="请输入数据别名" clearable />
+					<el-input v-model="formData.modelAssociationLabel" placeholder="未填写时使用数据模型名称" clearable />
 				</el-form-item>
 				<el-form-item label="设置数据类型" prop="isArray">
 					<el-radio-group v-model="formData.isArray" :disabled="isEditMode">
@@ -41,6 +44,7 @@ const dialogTitle = ref("");
 const editId = ref("");
 const subModelId = ref("");
 const subModelName = ref("");
+const existingDataCodes = ref([]);
 
 const formData = ref({
 	dataCode: "",
@@ -51,9 +55,22 @@ const formData = ref({
 
 const formRef = ref();
 
+const validateDataCode = (rule, value, callback) => {
+	const dataCode = String(value || "").trim();
+	if (!dataCode) {
+		callback(new Error("请输入数据编码"));
+		return;
+	}
+	if (!isEditMode.value && existingDataCodes.value.includes(dataCode)) {
+		callback(new Error("数据编码不能重复"));
+		return;
+	}
+	callback();
+};
+
 const rules = ref({
 	mainModel: [{ required: true, message: "请选择数据模型", trigger: "change" }],
-	modelAssociationLabel: [{ required: true, message: "请输入数据别名", trigger: "blur" }],
+	dataCode: [{ validator: validateDataCode, trigger: "blur" }],
 	isArray: [{ required: true, message: "请设置数据类型", trigger: "change" }],
 });
 
@@ -87,6 +104,7 @@ const openDialog = async (data) => {
 	subModelId.value = data.subModelId || "";
 	subModelName.value = data.subModelName;
 	editId.value = data.editId || "";
+	existingDataCodes.value = Array.isArray(data.existingDataCodes) ? data.existingDataCodes : [];
 
 	dialogTitle.value = data.editId ? `编辑 ${data.editLabel || ""}` : "添加数据模型";
 
@@ -112,10 +130,14 @@ const closeDialog = () => {
 const confirm = () => {
 	formRef.value.validate((valid) => {
 		if (!valid) return;
+		const dataCode = formData.value.dataCode.trim();
+		const modelAssociationLabel = formData.value.modelAssociationLabel.trim()
+			|| mainModelLabelMap.value[formData.value.mainModel]
+			|| "";
 		emit("save", {
-			dataCode: formData.value.dataCode,
+			dataCode,
 			mainModel: formData.value.mainModel,
-			modelAssociationLabel: formData.value.modelAssociationLabel,
+			modelAssociationLabel,
 			isArray: formData.value.isArray,
 		});
 		dialogVisible.value = false;

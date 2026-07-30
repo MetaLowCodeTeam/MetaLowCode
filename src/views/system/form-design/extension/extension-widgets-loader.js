@@ -8,6 +8,7 @@ import {
     pivotTableSchema,
     barChartSchema,
     lineChartSchema,
+    echartsSchema,
     reportFieldSchema,
     referenceSchema,
     referenceListSchema,
@@ -91,9 +92,12 @@ import reportFieldFontWeightEditor from "@/views/system/form-design/extension/pr
 import reportFieldModelNameEditor from "@/views/system/form-design/extension/property-editor/report-field/modelName-editor.vue";
 import reportFieldOnFormDataReadyEditor from "@/views/system/form-design/extension/property-editor/report-field/onFormDataReady-editor.vue";
 import reportFieldImageDisplayEditor from "@/views/system/form-design/extension/property-editor/report-field/imageDisplay-editor.vue";
+import reportFieldHtmlDisplayEditor from "@/views/system/form-design/extension/property-editor/report-field/htmlDisplay-editor.vue";
 import barChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/barChartConfig-editor.vue";
 import lineChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/lineChartConfig-editor.vue";
+import echartsConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/echartsConfig-editor.vue";
 import pivotTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/pivotTableConfig-editor.vue";
+import reportTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/reportTableConfig-editor.vue";
 // 列表子表单-是否启用高级查询
 import listSubFormShowAdvancedQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAdvancedQuery-editor.vue";
 import listSubFormShowHeaderEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showListHeader-editor.vue";
@@ -211,12 +215,16 @@ export const loadExtensionWidgets = (app) => {
 	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
 	app.component('report-field-onFormDataReady-editor', reportFieldOnFormDataReadyEditor)
 	app.component('report-field-imageDisplay-editor', reportFieldImageDisplayEditor)
+	app.component('report-field-htmlDisplay-editor', reportFieldHtmlDisplayEditor)
 	PERegister.registerEventProperty('onFormDataReady', 'report-field-onFormDataReady-editor')
 	PERegister.registerCommonProperty('modelName', null)
+	PERegister.registerCPEditor(app, 'htmlDisplayEnabled', 'report-field-htmlDisplay-editor', reportFieldHtmlDisplayEditor)
 	PERegister.registerCPEditor(app, 'imageDisplayEnabled', 'report-field-imageDisplay-editor', reportFieldImageDisplayEditor)
 	PERegister.registerCPEditor(app, 'barChartConfig', 'barChartConfig-editor', barChartConfigEditor)
 	PERegister.registerCPEditor(app, 'lineChartConfig', 'lineChartConfig-editor', lineChartConfigEditor)
+	PERegister.registerCPEditor(app, 'echartsConfig', 'echartsConfig-editor', echartsConfigEditor)
 	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)
+	PERegister.registerCPEditor(app, 'reportTableConfig', 'reportTableConfig-editor', reportTableConfigEditor)
 
 	//注册容器组件
     registerContainerWidgets(app)
@@ -227,6 +235,7 @@ export const loadExtensionWidgets = (app) => {
 	addBasicFieldSchema(pivotTableSchema)
 	addBasicFieldSchema(barChartSchema)
 	addBasicFieldSchema(lineChartSchema)
+	addBasicFieldSchema(echartsSchema)
 	addBasicFieldSchema(checkTagSchema)
     addBasicFieldSchema(signWidgetSchema)
 

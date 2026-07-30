@@ -12,19 +12,23 @@
 	>
 		<div v-show="!field.options.hidden" class="ml-pivot-table" :class="field.options.customClass">
 			<div v-if="tableTitle && !config.hideTitle" class="ml-pivot-table__title">{{ tableTitle }}</div>
-			<table class="ml-pivot-table__table" :class="{ 'is-border': config.showBorder }" :style="tableStyle">
+			<table
+				class="ml-pivot-table__table"
+				:class="{ 'is-border': config.showBorder }"
+				:style="tableStyle"
+				v-bind="reportTableDataAttributes"
+			>
 				<thead>
 					<tr v-for="(headerRow, headerRowIndex) in columnHeaderRows" :key="headerRowIndex">
-						<template v-if="headerRowIndex === 0">
-							<th
-								v-for="(header, index) in rowDimensionHeaders"
-								:key="`${header}-${index}`"
-								:rowspan="columnHeaderRows.length"
-								:style="headerStyle"
-							>
-								{{ header }}
-							</th>
-						</template>
+						<th
+							v-for="cornerCell in cornerHeaderRows[headerRowIndex]"
+							:key="cornerCell.key"
+							:colspan="cornerCell.colspan"
+							:rowspan="cornerCell.rowspan"
+							:style="headerStyle"
+						>
+							{{ cornerCell.label }}
+						</th>
 						<th
 							v-for="headerCell in headerRow"
 							:key="headerCell.key"
@@ -86,6 +90,7 @@ export default {
 		subFormRowIndex: { type: Number, default: -1 },
 		subFormColIndex: { type: Number, default: -1 },
 		subFormRowId: { type: String, default: '' },
+		loopRowData: { type: Object, default: null },
 	},
 	inject: {
 		refList: { default: null },
@@ -96,6 +101,7 @@ export default {
 		return {
 			reportFormDataCache: null,
 			eventFunctionMapping: {},
+			_formDataReadyFired: false,
 		}
 	},
 	computed: {
@@ -116,17 +122,27 @@ export default {
 			return {
 				width: this.config.width || '100%',
 				textAlign: this.config.textAlign || 'center',
+				fontSize: `${this.toStyleNumber(this.config.fontSize, 14, 1)}px`,
+				tableLayout: this.config.tableLayout === 'auto' ? 'auto' : 'fixed',
 			}
 		},
 		headerStyle() {
-			return {
-				backgroundColor: '#f5f7fa',
-				textAlign: this.config.textAlign || 'center',
-			}
+			return this.getTableCellStyle()
 		},
 		cellStyle() {
+			return this.getTableCellStyle()
+		},
+		reportTableDataAttributes() {
 			return {
-				textAlign: this.config.textAlign || 'center',
+				'data-report-table-style': 'true',
+				'data-report-font-size': String(this.toStyleNumber(this.config.fontSize, 14, 1)),
+				'data-report-cell-padding': this.config.cellPadding || '8px 10px',
+				'data-report-border-width': String(this.config.showBorder === false
+					? 0
+					: this.toStyleNumber(this.config.borderWidth, 1)),
+				'data-report-border-color': this.config.borderColor || '#dcdfe6',
+				'data-report-row-height': String(this.toStyleNumber(this.config.rowHeight, 0)),
+				'data-report-table-layout': this.config.tableLayout === 'auto' ? 'auto' : 'fixed',
 			}
 		},
 		sourceRows() {
@@ -159,6 +175,44 @@ export default {
 		rowDimensionHeaders() {
 			const headers = this.dimensionRows.map(this.getFieldAlias)
 			return headers.length > 0 ? headers.map((header) => header || '维度行') : [this.rowHeaderLabel]
+		},
+		cornerHeaderRows() {
+			const headerRowCount = this.columnHeaderRows.length
+			const cornerRows = Array.from({ length: headerRowCount }, () => [])
+			const rowTitles = this.rowDimensionHeaders
+			const columnTitles = this.dimensionCols.map(this.getFieldAlias).map((title) => title || '维度列')
+			if (columnTitles.length === 0) {
+				cornerRows[0] = rowTitles.map((title, index) => ({
+					key: `row-dimension-${index}`,
+					label: title,
+					colspan: 1,
+					rowspan: headerRowCount,
+				}))
+				return cornerRows
+			}
+			rowTitles.slice(0, -1).forEach((title, index) => {
+				cornerRows[0].push({
+					key: `row-dimension-${index}`,
+					label: title,
+					colspan: 1,
+					rowspan: headerRowCount,
+				})
+			})
+			columnTitles.forEach((title, index) => {
+				if (index >= headerRowCount) {
+					return
+				}
+				const isLastColumnDimension = index === columnTitles.length - 1
+				cornerRows[index].push({
+					key: `column-dimension-${index}`,
+					label: isLastColumnDimension
+						? `${rowTitles[rowTitles.length - 1]} / ${title}`
+						: title,
+					colspan: 1,
+					rowspan: isLastColumnDimension ? headerRowCount - index : 1,
+				})
+			})
+			return cornerRows
 		},
 		pivotColumnDefinitions() {
 			if (this.dimensionCols.length === 0) {
@@ -212,7 +266,8 @@ export default {
 				}))]
 			}
 			if (this.pivotColumnDefinitions.length === 0) {
-				return [[]]
+				const headerRowCount = this.dimensionCols.length + (this.metrics.length > 1 ? 1 : 0)
+				return Array.from({ length: Math.max(headerRowCount, 1) }, () => [])
 			}
 			const headerRows = this.dimensionCols.map((dimension, dimensionIndex) => (
 				this.buildColumnDimensionHeaderRow(dimensionIndex)
@@ -316,6 +371,7 @@ export default {
 		this.syncReportFormDataFromGlobal()
 		this.$nextTick(() => {
 			this.syncReportFormDataFromGlobal()
+			this.tryFireLoopFormDataReady()
 		})
 		this.handleOnMounted()
 	},
@@ -326,6 +382,25 @@ export default {
 		}
 	},
 	methods: {
+		toStyleNumber(value, fallback, min = 0) {
+			const numberValue = Number(value)
+			return Number.isFinite(numberValue) ? Math.max(numberValue, min) : fallback
+		},
+		getTableCellStyle(extraStyle = {}) {
+			const rowHeight = this.toStyleNumber(this.config.rowHeight, 0)
+			const borderWidth = this.toStyleNumber(this.config.borderWidth, 1)
+			return {
+				textAlign: this.config.textAlign || 'center',
+				padding: this.config.cellPadding || '8px 10px',
+				height: rowHeight > 0 ? `${rowHeight}px` : undefined,
+				minHeight: rowHeight > 0 ? `${rowHeight}px` : undefined,
+				boxSizing: 'border-box',
+				border: this.config.showBorder && borderWidth > 0
+					? `${borderWidth}px solid ${this.config.borderColor || '#dcdfe6'}`
+					: '0 none transparent',
+				...extraStyle,
+			}
+		},
 		initPivotEventHandler() {
 			if (this.designState) return
 			this.eventFunctionMapping.setFormData = (params) => {
@@ -387,11 +462,16 @@ export default {
 			return this.sourceRows
 		},
 		handleOnFormDataReady(formData) {
-			if (this.designState || this.designer) return
+			if (this.designState || this.designer || (this.loopRowData && this._formDataReadyFired)) return
 			if (this.field.options?.onFormDataReady) {
+				if (this.loopRowData) {
+					this._formDataReadyFired = true
+				}
 				const bindCode = this.config.bindModelCode || ''
 				let scopeData
-				if (Array.isArray(formData)) {
+				if (this.loopRowData) {
+					scopeData = this.loopRowData
+				} else if (Array.isArray(formData)) {
 					scopeData = formData
 				} else if (bindCode && formData?.[bindCode]) {
 					scopeData = formData[bindCode]
@@ -400,6 +480,11 @@ export default {
 				}
 				const fn = new Function("formData", "key", "value", this.field.options.onFormDataReady)
 				fn.call(this, scopeData, bindCode, scopeData)
+			}
+		},
+		tryFireLoopFormDataReady() {
+			if (this.loopRowData && typeof this.loopRowData === 'object') {
+				this.handleOnFormDataReady(this.loopRowData)
 			}
 		},
 		getFieldAlias(field) {
@@ -746,6 +831,9 @@ export default {
 		},
 		formatValue(value) {
 			if (value === null || value === undefined || value === '') {
+				if (Object.prototype.hasOwnProperty.call(this.config, 'emptyText')) {
+					return String(this.config.emptyText ?? '')
+				}
 				return this.config.showEmptyAsDash !== false ? '--' : ''
 			}
 			if (typeof value === 'string') {

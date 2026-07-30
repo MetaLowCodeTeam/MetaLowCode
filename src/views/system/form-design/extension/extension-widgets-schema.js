@@ -122,6 +122,26 @@ export const lineChartSchema = {
 	},
 };
 
+export const echartsSchema = {
+	type: 'ml-echarts',
+	alias: 'ml-echarts',
+	icon: 'lineChart',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: 'ECharts',
+		hidden: false,
+		echartsConfig: {
+			width: '100%',
+			height: 260,
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+
 export const pivotTableSchema = {
 	type: 'ml-pivot-table',
 	alias: 'ml-pivot-table',
@@ -141,6 +161,13 @@ export const pivotTableSchema = {
 			showEmptyAsDash: true,
 			showBorder: true,
 			textAlign: 'center',
+			fontSize: 11,
+			cellPadding: '2px 4px',
+			borderWidth: 1,
+			borderColor: '#000000',
+			rowHeight: 20,
+			emptyText: '—',
+			tableLayout: 'fixed',
 			setDimensional: {
 				dimensionRow: [],
 				dimensionCol: [],
@@ -172,6 +199,7 @@ export const reportFieldSchema = {
 		fontSize: '',
 		fontStyle: 'normal',
 		fontWeight: 'normal',
+		htmlDisplayEnabled: false,
 		imageDisplayEnabled: false,
 		imageWidth: '80px',
 		imageHeight: '100px',

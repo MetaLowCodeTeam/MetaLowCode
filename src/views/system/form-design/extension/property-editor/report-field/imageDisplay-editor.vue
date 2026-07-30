@@ -1,6 +1,6 @@
 <template>
 	<el-form-item label="是否图片展示">
-		<el-switch v-model="optionModel.imageDisplayEnabled" />
+		<el-switch v-model="optionModel.imageDisplayEnabled" @change="handleChange" />
 	</el-form-item>
 	<template v-if="optionModel.imageDisplayEnabled">
 		<el-form-item label="图片宽度">
@@ -19,6 +19,13 @@ export default {
 		designer: Object,
 		selectedWidget: Object,
 		optionModel: Object,
+	},
+	methods: {
+		handleChange(enabled) {
+			if (enabled) {
+				this.optionModel.htmlDisplayEnabled = false;
+			}
+		},
 	},
 };
 </script>

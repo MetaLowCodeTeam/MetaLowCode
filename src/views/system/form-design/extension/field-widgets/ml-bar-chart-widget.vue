@@ -53,6 +53,7 @@ export default {
 		subFormRowIndex: { type: Number, default: -1 },
 		subFormColIndex: { type: Number, default: -1 },
 		subFormRowId: { type: String, default: '' },
+		loopRowData: { type: Object, default: null },
 	},
 	data() {
 		return {
@@ -62,6 +63,7 @@ export default {
 			eventFunctionMapping: {},
 			customChartOption: null,
 			_pendingRender: false,
+			_formDataReadyFired: false,
 		}
 	},
 	computed: {
@@ -109,6 +111,9 @@ export default {
 	mounted() {
 		this.renderChart()
 		this.handleOnMounted()
+		this.$nextTick(() => {
+			this.tryFireLoopFormDataReady()
+		})
 		window.addEventListener('resize', this.resizeChart)
 	},
 	beforeUnmount() {
@@ -149,21 +154,33 @@ export default {
 		getValue() {
 			return this.buildOption()
 		},
-		setChartData(option) {
-			this.customChartOption = option || null
+		setValue(option) {
+			if (!option || typeof option !== 'object' || Array.isArray(option)) return
+			this.customChartOption = option
 			this.renderChart()
+		},
+		setChartData(option) {
+			this.setValue(option)
 		},
 		clearChartData() {
 			this.customChartOption = null
 			this.renderChart()
 		},
 		handleOnFormDataReady(formData) {
-			if (this.designState || this.designer) return
+			if (this.designState || this.designer || (this.loopRowData && this._formDataReadyFired)) return
 			if (this.field.options?.onFormDataReady) {
+				if (this.loopRowData) {
+					this._formDataReadyFired = true
+				}
 				const bindCode = this.config.bindModelCode || this.getFieldModelCode(this.config.setDimensional?.dimension?.[0]) || ''
-				const scopeData = bindCode && formData ? formData[bindCode] : formData
+				const scopeData = this.loopRowData || (bindCode && formData ? formData[bindCode] : formData)
 				const fn = new Function("formData", "key", "value", this.field.options.onFormDataReady)
 				fn.call(this, scopeData, bindCode, scopeData)
+			}
+		},
+		tryFireLoopFormDataReady() {
+			if (this.loopRowData && typeof this.loopRowData === 'object') {
+				this.handleOnFormDataReady(this.loopRowData)
 			}
 		},
 		buildDashboardChartData() {

@@ -12,6 +12,33 @@
 		<el-form-item label="显示边框">
 			<el-switch v-model="optionModel.pivotTableConfig.showBorder" />
 		</el-form-item>
+		<el-form-item label="字体大小">
+			<el-input-number v-model="optionModel.pivotTableConfig.fontSize" :min="1" :max="100" />
+			<span class="style-unit">px</span>
+		</el-form-item>
+		<el-form-item label="单元格内边距">
+			<el-input v-model="optionModel.pivotTableConfig.cellPadding" placeholder="2px 4px" />
+		</el-form-item>
+		<el-form-item label="边框宽度">
+			<el-input-number v-model="optionModel.pivotTableConfig.borderWidth" :min="0" :max="20" />
+			<span class="style-unit">px</span>
+		</el-form-item>
+		<el-form-item label="边框颜色">
+			<el-color-picker v-model="optionModel.pivotTableConfig.borderColor" />
+		</el-form-item>
+		<el-form-item label="行高">
+			<el-input-number v-model="optionModel.pivotTableConfig.rowHeight" :min="0" :max="200" />
+			<span class="style-unit">px</span>
+		</el-form-item>
+		<el-form-item label="空值展示">
+			<el-input v-model="optionModel.pivotTableConfig.emptyText" placeholder="留空则不展示" />
+		</el-form-item>
+		<el-form-item label="表格布局">
+			<el-radio-group v-model="optionModel.pivotTableConfig.tableLayout">
+				<el-radio-button value="fixed">固定</el-radio-button>
+				<el-radio-button value="auto">自动</el-radio-button>
+			</el-radio-group>
+		</el-form-item>
 		<el-form-item label="文字对齐">
 			<el-radio-group v-model="optionModel.pivotTableConfig.textAlign">
 				<el-radio-button value="left">居左</el-radio-button>
@@ -24,9 +51,6 @@
 		</el-form-item>
 		<el-form-item label="汇总列显示">
 			<el-switch v-model="optionModel.pivotTableConfig.showSumcol" />
-		</el-form-item>
-		<el-form-item label="数据为空展示--">
-			<el-switch v-model="optionModel.pivotTableConfig.showEmptyAsDash" />
 		</el-form-item>
 		<el-form-item label="绑定数据模型">
 			<el-select v-model="optionModel.pivotTableConfig.bindModelCode" placeholder="请选择数据模型" filterable clearable>
@@ -238,6 +262,20 @@ export default {
 			if (this.optionModel.pivotTableConfig.showEmptyAsDash === undefined) {
 				this.optionModel.pivotTableConfig.showEmptyAsDash = true
 			}
+			const legacyStyleDefaults = {
+				fontSize: 14,
+				cellPadding: '8px 10px',
+				borderWidth: 1,
+				borderColor: '#dcdfe6',
+				rowHeight: 0,
+				emptyText: this.optionModel.pivotTableConfig.showEmptyAsDash === false ? '' : '--',
+				tableLayout: 'fixed',
+			}
+			Object.entries(legacyStyleDefaults).forEach(([key, value]) => {
+				if (this.optionModel.pivotTableConfig[key] === undefined) {
+					this.optionModel.pivotTableConfig[key] = value
+				}
+			})
 			this.dimensionRow = this.optionModel.pivotTableConfig.setDimensional.dimensionRow || []
 			this.dimensionCol = this.optionModel.pivotTableConfig.setDimensional.dimensionCol || []
 			this.metrics = this.optionModel.pivotTableConfig.setDimensional.metrics || []
@@ -542,5 +580,10 @@ export default {
 
 .item-list:hover {
 	background: #f5f7fa;
+}
+
+.style-unit {
+	margin-left: 6px;
+	color: #909399;
 }
 </style>

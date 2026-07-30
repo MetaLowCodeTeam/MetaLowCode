@@ -4,6 +4,7 @@ export default {
             'list-sub-form': 'ListSubForm',
             'ml-text': 'Text',
             'ml-bar-chart': 'Bar Chart',
+            'ml-echarts': 'ECharts',
             'ml-pivot-table': 'Pivot Table',
             'check-tag': 'CheckTag',
             'reference': 'Reference',
