@@ -43,7 +43,17 @@
                 class="report-page"
                 :class="landscape ? 'report-page--landscape' : 'report-page--portrait'"
             >
-                <div class="report-content" ref="reportContentRef">
+                <div
+                    v-if="activeWatermarkConfig"
+                    class="report-watermark"
+                    :style="watermarkPreviewStyle"
+                    aria-hidden="true"
+                />
+                <div
+                    class="report-content"
+                    ref="reportContentRef"
+                    :style="reportContentStyle"
+                >
                     <v-form-render
                         ref="vFormRef"
                         :global-dsv="globalDsv"
@@ -78,6 +88,79 @@ export default {
             Tickets,
         };
     },
+    computed: {
+        reportHorizontalMargin() {
+            const value = Number(this.reportGeneralConfig?.horizontalMargin);
+            if (!Number.isFinite(value)) {
+                return 0;
+            }
+            return Math.max(0, Math.min(200, Math.round(value)));
+        },
+
+        reportContentStyle() {
+            const horizontalMargin = `${this.reportHorizontalMargin}px`;
+            return {
+                paddingLeft: horizontalMargin,
+                paddingRight: horizontalMargin,
+            };
+        },
+
+        activeWatermarkConfig() {
+            const watermark = this.watermarkConfig;
+            const value = String(watermark?.value || "").trim();
+            if (!watermark || watermark.enabled === false || !value) {
+                return null;
+            }
+            const clamp = (valueToClamp, min, max, fallback) => {
+                const valueNumber = Number(valueToClamp);
+                const normalized = Number.isFinite(valueNumber) ? valueNumber : fallback;
+                return Math.max(min, Math.min(max, normalized));
+            };
+            return {
+                ...watermark,
+                enabled: true,
+                value,
+                fontColor: watermark.fontColor || "rgb(128,128,128)",
+                opacity: clamp(watermark.opacity, 1, 100, 18),
+                fontSize: clamp(watermark.fontSize, 12, 48, 16),
+                rotationAngle: clamp(watermark.rotationAngle, -90, 90, -30),
+                gapX: clamp(watermark.gapX, 40, 320, 120),
+                gapY: clamp(watermark.gapY, 40, 260, 96),
+            };
+        },
+
+        watermarkPreviewStyle() {
+            const watermark = this.activeWatermarkConfig;
+            if (!watermark) {
+                return {};
+            }
+            const estimatedTextWidth = watermark.value.length * watermark.fontSize;
+            const tileWidth = Math.max(watermark.gapX, estimatedTextWidth + watermark.fontSize * 2);
+            const tileHeight = Math.max(watermark.gapY, watermark.fontSize * 4);
+            const centerX = tileWidth / 2;
+            const centerY = tileHeight / 2;
+            const escapeXml = (value) => String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&apos;");
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${tileWidth}" height="${tileHeight}">
+                <text x="${centerX}" y="${centerY}"
+                    dominant-baseline="middle" text-anchor="middle"
+                    fill="${escapeXml(watermark.fontColor)}"
+                    fill-opacity="${watermark.opacity / 100}"
+                    font-size="${watermark.fontSize}"
+                    font-family="Arial, Microsoft YaHei, sans-serif"
+                    transform="rotate(${watermark.rotationAngle} ${centerX} ${centerY})">${escapeXml(watermark.value)}</text>
+            </svg>`;
+            return {
+                backgroundImage: `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}")`,
+                backgroundRepeat: "repeat",
+                backgroundSize: `${tileWidth}px ${tileHeight}px`,
+            };
+        },
+    },
     data() {
         return {
             loading: false,
@@ -85,6 +168,10 @@ export default {
             showForm: false,
             landscape: false,
             reportFileName: "数据模型报表",
+            reportGeneralConfig: {
+                horizontalMargin: 0,
+            },
+            watermarkConfig: null,
             globalDsv: {
                 ...globalDsvDefaultData(),
                 formStatus: 'read',
@@ -129,6 +216,10 @@ export default {
 
         async loadData() {
             this.loading = true;
+            this.reportGeneralConfig = {
+                horizontalMargin: 0,
+            };
+            this.watermarkConfig = null;
             try {
                 let dataModelReportId = this.$route.query.dataModelReportId;
                 let mainModelDataId = this.$route.query.mainModelDataId;
@@ -147,6 +238,12 @@ export default {
                     let reportConfig = res.data.reportConfig;
                     if (reportConfig) {
                         let config = typeof reportConfig === "string" ? JSON.parse(reportConfig) : reportConfig;
+                        this.reportGeneralConfig = {
+                            horizontalMargin: config?.formConfig?.reportGeneral?.horizontalMargin ?? 0,
+                        };
+                        this.watermarkConfig = config?.formConfig?.watermark
+                            ? { ...config.formConfig.watermark }
+                            : null;
                         normalizeReportWidgetCustomClasses(config.widgetList || []);
                         this.showForm = true;
                         await this.$nextTick();
@@ -194,7 +291,8 @@ export default {
                 return reportData;
             }
             const eventHandler = new Function("reportData", eventCode);
-            const result = await eventHandler.call(this.$refs.vFormRef, reportData);
+            const eventContext = this.createReportEventContext(this.$refs.vFormRef);
+            const result = await eventHandler.call(eventContext, reportData);
             if (result === undefined) {
                 return reportData;
             }
@@ -202,6 +300,71 @@ export default {
                 throw new Error("数据加载完成事件必须返回对象或 Promise<Object>");
             }
             return result;
+        },
+
+        setReportWatermark(watermark) {
+            const currentWatermark = this.watermarkConfig || {
+                enabled: false,
+                value: "",
+                fontColor: "rgb(128,128,128)",
+                opacity: 18,
+                fontSize: 16,
+                rotationAngle: -30,
+                gapX: 120,
+                gapY: 96,
+            };
+            let nextWatermark = typeof watermark === "string"
+                ? {
+                    value: watermark.trim(),
+                    enabled: !!watermark.trim(),
+                }
+                : watermark;
+            if (!nextWatermark || typeof nextWatermark !== "object" || Array.isArray(nextWatermark)) {
+                throw new Error("水印配置必须是字符串或对象");
+            }
+            nextWatermark = { ...nextWatermark };
+            if (
+                nextWatermark.enabled === undefined
+                && Object.prototype.hasOwnProperty.call(nextWatermark, "value")
+            ) {
+                nextWatermark.enabled = !!String(nextWatermark.value || "").trim();
+            }
+            this.watermarkConfig = {
+                ...currentWatermark,
+                ...nextWatermark,
+            };
+            return this.getReportWatermark();
+        },
+
+        getReportWatermark() {
+            return this.watermarkConfig ? { ...this.watermarkConfig } : null;
+        },
+
+        clearReportWatermark() {
+            return this.setReportWatermark({
+                enabled: false,
+                value: "",
+            });
+        },
+
+        createReportEventContext(formRef) {
+            const watermarkApi = {
+                setReportWatermark: this.setReportWatermark.bind(this),
+                getReportWatermark: this.getReportWatermark.bind(this),
+                clearReportWatermark: this.clearReportWatermark.bind(this),
+            };
+            return new Proxy(formRef || {}, {
+                get(target, property) {
+                    if (Object.prototype.hasOwnProperty.call(watermarkApi, property)) {
+                        return watermarkApi[property];
+                    }
+                    return Reflect.get(target, property, target);
+                },
+                has(target, property) {
+                    return Object.prototype.hasOwnProperty.call(watermarkApi, property)
+                        || Reflect.has(target, property);
+                },
+            });
         },
 
         async downloadWord() {
@@ -218,6 +381,8 @@ export default {
                     fileName,
                     html,
                     landscape: this.landscape,
+                    horizontalMargin: this.reportHorizontalMargin,
+                    watermark: this.activeWatermarkConfig,
                 });
                 const fileData = this.resolveExportFileData(res);
                 const base64 = fileData.base64;
@@ -247,6 +412,8 @@ export default {
                     fileName,
                     html,
                     landscape: this.landscape,
+                    horizontalMargin: this.reportHorizontalMargin,
+                    watermark: this.activeWatermarkConfig,
                 });
                 const fileData = this.resolveExportFileData(res);
                 const base64 = fileData.base64;
@@ -324,6 +491,8 @@ export default {
             rootEl.style.maxWidth = contentWidth;
             rootEl.style.margin = "0 auto";
             rootEl.style.boxSizing = "border-box";
+            rootEl.style.paddingLeft = "0";
+            rootEl.style.paddingRight = "0";
         },
 
         getWordExportStyle() {
@@ -516,6 +685,7 @@ export default {
     }
 
     .report-page {
+        position: relative;
         flex: none;
         padding: 36px;
         box-sizing: border-box;
@@ -535,9 +705,21 @@ export default {
     }
 
     .report-content {
+        position: relative;
+        z-index: 1;
         width: 100%;
         margin: 0 auto;
-        background: #fff;
+        box-sizing: border-box;
+        background: transparent;
+    }
+
+    .report-watermark {
+        position: absolute;
+        z-index: 2;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        user-select: none;
     }
 
     :deep(.el-form),

@@ -80,6 +80,7 @@ export default {
                 formTemplates: false,
                 eventCollapse: false,
                 reportEventOnly: true,
+                reportGeneralSetting: true,
 				reportWatermarkSetting: true,
                 ensureUniqueFieldName: true,
                 metadataLib: true,
@@ -513,6 +514,11 @@ export default {
 				try {
 					let config = typeof res2.data?.reportConfig === "string" ? JSON.parse(res2.data.reportConfig) : res2.data?.reportConfig;
 					if (config) {
+                        config.formConfig = config.formConfig || {};
+                        config.formConfig.reportGeneral = {
+                            horizontalMargin: 0,
+                            ...(config.formConfig.reportGeneral || {}),
+                        };
                         normalizeReportWidgetCustomClasses(config.widgetList || []);
                         this.$refs.vfDesigner.setFormJson(config);
                         this.normalizeLoopContainerWidgets();
