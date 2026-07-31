@@ -76,7 +76,7 @@
 								查询
 							</el-button>
 							<el-button @click="resetQuery">重置</el-button>
-							<el-button plain type="primary">自定义按钮设置</el-button>
+							<el-button plain type="primary" @click="openCustomButtonSetting">自定义按钮设置</el-button>
 						</el-col>
 					</el-row>
 
@@ -148,13 +148,13 @@
 									查询
 								</el-button>
 								<el-button @click="resetQuery">重置</el-button>
-								<el-button plain type="primary">自定义按钮设置</el-button>
+								<el-button plain type="primary" @click="openCustomButtonSetting">自定义按钮设置</el-button>
 							</el-col>
 						</el-row>
 					</template>
 					<el-row v-else>
 						<el-col :span="24" class="query-actions query-actions--empty">
-							<el-button plain type="primary">自定义按钮设置</el-button>
+							<el-button plain type="primary" @click="openCustomButtonSetting">自定义按钮设置</el-button>
 						</el-col>
 					</el-row>
 				</el-form>
@@ -188,6 +188,7 @@
 				@current-change="handleCurrentChange"
 			/>
 		</el-footer>
+		<DataModelQueryCustomButtonSetting ref="customButtonSettingRef" />
 	</el-container>
 </template>
 
@@ -197,10 +198,16 @@ import { useRoute, useRouter } from "vue-router";
 import { queryModelById, getOuterDataByDataModel } from "@/api/plugins";
 import { ElMessage } from "element-plus";
 import http from "@/utils/request";
+import DataModelQueryCustomButtonSetting from "./DataModelQueryCustomButtonSetting.vue";
 const route = useRoute();
 const router = useRouter();
 
 let loading = ref(false);
+const customButtonSettingRef = ref();
+
+const openCustomButtonSetting = () => {
+	customButtonSettingRef.value?.openDialog();
+};
 
 let outerDataModelId = ref("");
 onMounted(() => {
