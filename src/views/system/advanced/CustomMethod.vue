@@ -24,7 +24,7 @@
 				label="操作"
 				fixed="right"
 				:align="'center'"
-				width="140"
+				width="160"
 			>
 				<template #default="scope">
                     <el-button

@@ -434,6 +434,7 @@
                             <el-button
                                 v-if="scope.row.hasEditRight && parentFormRef?.globalDsv?.formStatus != 'read' && parentFormRef?.globalDsv?.formStatus != 'approval'"
                                 size="small"
+                                style="font-size: 13px;"
                                 icon="el-icon-edit"
                                 link
                                 type="primary"
@@ -447,6 +448,7 @@
                             <slot name="beforeRowViewBtn" :row="scope.row"></slot>
                             <el-button
                                 size="small"
+                                style="font-size: 13px;"
                                 link
                                 type="primary"
                                 @click.stop="openDetailDialog(scope.row)"
