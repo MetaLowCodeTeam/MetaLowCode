@@ -188,7 +188,10 @@
 				@current-change="handleCurrentChange"
 			/>
 		</el-footer>
-		<DataModelQueryCustomButtonSetting ref="customButtonSettingRef" />
+		<DataModelQueryCustomButtonSetting
+			ref="customButtonSettingRef"
+			:model-name="outerDataModelId"
+		/>
 	</el-container>
 </template>
 

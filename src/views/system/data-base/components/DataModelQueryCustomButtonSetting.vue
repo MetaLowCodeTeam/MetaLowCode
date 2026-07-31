@@ -5,7 +5,7 @@
 			<el-tab-pane label="操作列" name="pcColumn" />
 		</el-tabs>
 
-		<el-row :gutter="20" class="button-setting-content">
+		<el-row v-loading="loading" :gutter="20" class="button-setting-content" element-loading-text="加载中...">
 			<el-col :span="8">
 				<div class="button-list-box">
 					<el-scrollbar>
@@ -128,10 +128,9 @@
 				</el-form>
 			</el-col>
 		</el-row>
-
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
-			<el-button type="primary" @click="visible = false">保存</el-button>
+			<el-button type="primary" :loading="loading" @click="saveButton">保存</el-button>
 		</template>
 	</ml-dialog>
 	<ml-select-icon v-model="iconPickerVisible" :use-icon="selectedIcon" @confirmIcon="selectIcon" />
@@ -160,13 +159,26 @@
 
 <script setup>
 import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import { Close, Plus, Rank } from "@element-plus/icons-vue";
 import { getGuid } from "@/utils/util";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { VueDraggableNext } from "vue-draggable-next";
+import { ElMessage } from "element-plus";
+import layoutConfig from "@/api/layoutConfig";
+
+const props = defineProps({
+	modelName: {
+		type: String,
+		default: "",
+	},
+});
+const route = useRoute();
 
 const visible = ref(false);
+const loading = ref(false);
+const layoutConfigId = ref("");
 const activeTab = ref("pcTop");
 const topButtons = ref([]);
 const columnButtons = ref([]);
@@ -177,6 +189,7 @@ const scriptDialogVisible = ref(false);
 const scriptFullscreen = ref(false);
 const scriptDraft = ref("");
 
+const modelName = computed(() => route.query.outerDataModelId || props.modelName || "");
 const activeButtonList = computed(() => activeTab.value === "pcTop" ? topButtons.value : columnButtons.value);
 const currentShowType = computed(() => Number(currentButton.value?.showType ?? 1));
 
@@ -184,9 +197,65 @@ watch(activeTab, () => {
 	currentButton.value = activeButtonList.value[0] || null;
 });
 
-const openDialog = () => {
+const openDialog = async () => {
 	visible.value = true;
-	currentButton.value = activeButtonList.value[0] || null;
+	loading.value = true;
+	layoutConfigId.value = "";
+	topButtons.value = [];
+	columnButtons.value = [];
+	currentButton.value = null;
+	try {
+		const res = await layoutConfig.getLayoutList("DataModelReport", modelName.value);
+		const customButton = res?.data?.CUSTOM_BUTTON;
+		layoutConfigId.value = customButton?.layoutConfigId || "";
+		if (customButton?.config) {
+			const config = JSON.parse(customButton.config);
+			topButtons.value = Array.isArray(config.pcTop) ? config.pcTop : [];
+			columnButtons.value = Array.isArray(config.pcColumn) ? config.pcColumn : [];
+		}
+		currentButton.value = activeButtonList.value[0] || null;
+	} catch (error) {
+		console.error("load custom button config error", error);
+		ElMessage.error("自定义按钮配置获取失败");
+	} finally {
+		loading.value = false;
+	}
+};
+
+const saveJson = () => {
+	const config = {
+		pcTop: topButtons.value,
+		pcColumn: columnButtons.value,
+	};
+	console.info("[DataModelQueryCustomButtonSetting] save config", config);
+	return config;
+};
+
+const saveButton = async () => {
+	const config = saveJson();
+	const param = {
+		config: JSON.stringify(config),
+		entityCode: 94,
+		shareTo: "ALL",
+	};
+	loading.value = true;
+	try {
+		const res = await layoutConfig.saveConfig(
+			layoutConfigId.value,
+			"CUSTOM_BUTTON",
+			param,
+			modelName.value,
+		);
+		if (res) {
+			layoutConfigId.value = res.data?.formData?.layoutConfigId || res.data?.layoutConfigId || layoutConfigId.value;
+			ElMessage.success("保存成功");
+		}
+	} catch (error) {
+		console.error("save custom button config error", error);
+		ElMessage.error("自定义按钮配置保存失败");
+	} finally {
+		loading.value = false;
+	}
 };
 
 const addButton = () => {
@@ -252,7 +321,7 @@ defineExpose({ openDialog });
 
 .button-list-box {
 	box-sizing: border-box;
-	height: 486px;
+	height: 386px;
 	padding: 3px;
 	border: 1px solid #e6e6e6;
 	border-radius: 4px;
@@ -308,7 +377,7 @@ defineExpose({ openDialog });
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 486px;
+	height: 386px;
 	color: var(--el-text-color-secondary);
 	border: 1px dashed var(--el-border-color);
 }
@@ -335,4 +404,5 @@ defineExpose({ openDialog });
 .script-box.full-screen {
 	height: calc(100% - 100px);
 }
+
 </style>
