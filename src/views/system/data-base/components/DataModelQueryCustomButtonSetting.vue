@@ -1,5 +1,5 @@
 <template>
-	<ml-dialog v-model="visible" title="自定义按钮设置" width="720px" append-to-body>
+	<ml-dialog v-model="visible" title="自定义按钮设置" width="760px" append-to-body>
 		<el-tabs v-model="activeTab">
 			<el-tab-pane label="顶部按钮" name="pcTop" />
 			<el-tab-pane label="操作列" name="pcColumn" />
@@ -28,14 +28,15 @@
 								<div
 									class="button-list-item-name"
 									:class="{ active: currentButton?.guid === button.guid }"
-									:title="button.name"
+									:title="getButtonName(button)"
 								>
 									<el-icon v-if="button.icon" :size="16" :color="button.iconColor" class="icon-top-2">
 										<component :is="button.icon" />
 									</el-icon>
-									{{ button.name }}
+									{{ getButtonName(button) }}
+									<span v-if="button.isNative">(内置)</span>
 								</div>
-								<div class="button-list-item-icon">
+								<div v-if="!button.isNative" class="button-list-item-icon">
 									<el-icon :size="16" @click.stop="deleteButton(button)"><Close /></el-icon>
 								</div>
 							</div>
@@ -48,11 +49,11 @@
 
 			<el-col :span="16">
 				<div v-if="!currentButton" class="empty-editor">点击左侧按钮进行编辑，或添加一个按钮</div>
-				<el-form v-else label-width="82px" class="button-editor">
+				<el-form v-else class="button-editor">
 					<el-row :gutter="16">
 						<el-col :span="12">
-							<el-form-item label="按钮名称" required>
-								<el-input v-model="currentButton.name" maxlength="30" show-word-limit />
+								<el-form-item label="按钮名称" class="has-required">
+								<el-input v-model="currentButton.name" placeholder="请输入按钮名称" clearable />
 							</el-form-item>
 						</el-col>
 						<el-col :span="12">
@@ -100,19 +101,45 @@
 										<component :is="currentButton.icon" />
 									</el-icon>
 									<span v-if="currentShowType !== 2" :class="{ 'ml-5': currentButton.icon && currentShowType === 1 }">
-										{{ currentButton.name || "未命名按钮" }}
+										{{ getButtonName(currentButton) }}
 									</span>
 								</el-button>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24">
+						<el-divider v-if="!currentButton.isNative" />
+						<el-col v-if="!currentButton.isNative" :span="24">
+							<el-form-item label="叠加自定义权限" class="custom-right-form-item">
+								<div class="custom-right-box">
+									<el-select
+										v-model="currentButton.customCode"
+										placeholder="请选择权限"
+										clearable
+										filterable
+										allow-create
+										class="custom-right-select"
+									>
+										<el-option
+											v-for="item in customRightList"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value"
+										/>
+									</el-select>
+									<el-tooltip content="取反后，用户不包含选定条件菜单才会显示。" placement="top">
+										<el-checkbox v-model="currentButton.reversalCustomCode" label="取反" />
+									</el-tooltip>
+								</div>
+							</el-form-item>
+						</el-col>
+						<el-divider v-if="!currentButton.isNative" />
+						<el-col v-if="!currentButton.isNative" :span="24">
 							<el-form-item label="执行动作">
 								<el-select v-model="currentButton.action">
-									<el-option label="自定义" value="custom" />
+									<el-option label="自定义" :value="4" />
 								</el-select>
 							</el-form-item>
 						</el-col>
-						<el-col :span="24">
+						<el-col v-if="!currentButton.isNative" :span="24">
 							<el-form-item label="执行脚本">
 								<el-input
 									:model-value="currentButton.customScript"
@@ -165,8 +192,9 @@ import { getGuid } from "@/utils/util";
 import mlSelectIcon from "@/components/mlSelectIcon/index.vue";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { VueDraggableNext } from "vue-draggable-next";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import layoutConfig from "@/api/layoutConfig";
+import { getSystemConstants } from "@/api/system-manager";
 
 const props = defineProps({
 	modelName: {
@@ -174,6 +202,7 @@ const props = defineProps({
 		default: "",
 	},
 });
+const emit = defineEmits(["confirm"]);
 const route = useRoute();
 
 const visible = ref(false);
@@ -188,10 +217,85 @@ const selectedIcon = ref({});
 const scriptDialogVisible = ref(false);
 const scriptFullscreen = ref(false);
 const scriptDraft = ref("");
+const customRightList = ref([]);
 
 const modelName = computed(() => route.query.outerDataModelId || props.modelName || "");
 const activeButtonList = computed(() => activeTab.value === "pcTop" ? topButtons.value : columnButtons.value);
 const currentShowType = computed(() => Number(currentButton.value?.showType ?? 1));
+const isCustomActionButton = (button) => !button?.isNative && (Number(button?.action) === 4 || button?.action === "custom");
+const nativeTopButtonDefaults = [
+	{
+		defaultName: "查询",
+		name: "",
+		key: "query",
+		isNative: true,
+		guid: "data-model-query-native-query",
+		icon: "Search",
+		iconColor: "",
+		showType: 1,
+		type: "primary",
+	},
+	{
+		defaultName: "重置",
+		name: "",
+		key: "reset",
+		isNative: true,
+		guid: "data-model-query-native-reset",
+		icon: "Refresh",
+		iconColor: "",
+		showType: 1,
+		type: "default",
+	},
+	{
+		defaultName: "自定义按钮设置",
+		name: "",
+		key: "customButtonSetting",
+		isNative: true,
+		guid: "data-model-query-native-custom-button-setting",
+		icon: "Setting",
+		iconColor: "",
+		showType: 1,
+		type: "primary",
+		plain: true,
+	},
+];
+
+const getButtonName = (button) => button?.name || button?.defaultName || "未命名按钮";
+
+const normalizeButton = (button) => {
+	if (button?.isNative) {
+		const nativeDefault = nativeTopButtonDefaults.find((item) => item.key === button.key);
+		return nativeDefault ? { ...nativeDefault, ...button, isNative: true } : button;
+	}
+	return {
+		customCode: "",
+		reversalCustomCode: false,
+		...button,
+		action: button?.action === "custom" ? 4 : button?.action,
+	};
+};
+
+const loadCustomRightList = async () => {
+	try {
+		const res = await getSystemConstants("customRight");
+		customRightList.value = res?.data || [];
+	} catch (error) {
+		console.error("load custom right list error", error);
+		customRightList.value = [];
+	}
+};
+
+const mergeNativeTopButtons = (buttons) => {
+	const normalized = Array.isArray(buttons) ? buttons.map(normalizeButton) : [];
+	const ordered = normalized.filter((button) =>
+		(button?.isNative && nativeTopButtonDefaults.some((item) => item.key === button.key)) || isCustomActionButton(button),
+	);
+	if (!ordered.length) return nativeTopButtonDefaults.map((button) => ({ ...button }));
+	const missing = nativeTopButtonDefaults
+		.filter((defaultButton) => !ordered.some((button) => button.key === defaultButton.key))
+		.map((button) => ({ ...button }));
+	return [...ordered, ...missing];
+};
 
 watch(activeTab, () => {
 	currentButton.value = activeButtonList.value[0] || null;
@@ -205,18 +309,24 @@ const openDialog = async () => {
 	columnButtons.value = [];
 	currentButton.value = null;
 	try {
+		await loadCustomRightList();
 		const res = await layoutConfig.getLayoutList("DataModelReport", modelName.value);
 		const customButton = res?.data?.CUSTOM_BUTTON;
 		layoutConfigId.value = customButton?.layoutConfigId || "";
 		if (customButton?.config) {
 			const config = JSON.parse(customButton.config);
-			topButtons.value = Array.isArray(config.pcTop) ? config.pcTop : [];
-			columnButtons.value = Array.isArray(config.pcColumn) ? config.pcColumn : [];
+			topButtons.value = mergeNativeTopButtons(config.pcTop);
+			columnButtons.value = Array.isArray(config.pcColumn)
+				? config.pcColumn.map(normalizeButton).filter(isCustomActionButton)
+				: [];
+		} else {
+			topButtons.value = nativeTopButtonDefaults.map((button) => ({ ...button }));
 		}
 		currentButton.value = activeButtonList.value[0] || null;
 	} catch (error) {
 		console.error("load custom button config error", error);
 		ElMessage.error("自定义按钮配置获取失败");
+		topButtons.value = nativeTopButtonDefaults.map((button) => ({ ...button }));
 	} finally {
 		loading.value = false;
 	}
@@ -249,6 +359,8 @@ const saveButton = async () => {
 		if (res) {
 			layoutConfigId.value = res.data?.formData?.layoutConfigId || res.data?.layoutConfigId || layoutConfigId.value;
 			ElMessage.success("保存成功");
+			emit("confirm", config);
+			visible.value = false;
 		}
 	} catch (error) {
 		console.error("save custom button config error", error);
@@ -266,8 +378,10 @@ const addButton = () => {
 		iconColor: "",
 		type: "default",
 		showType: 1,
-		action: "custom",
+		action: 4,
 		customScript: "",
+		customCode: "",
+		reversalCustomCode: false,
 	};
 	activeButtonList.value.push(button);
 	currentButton.value = button;
@@ -277,9 +391,18 @@ const selectButton = (button) => {
 	currentButton.value = button;
 };
 
-const deleteButton = (button) => {
+const deleteButton = async (button) => {
 	const index = activeButtonList.value.findIndex((item) => item.guid === button.guid);
 	if (index === -1) return;
+	try {
+		await ElMessageBox.confirm(`确定要删除【${getButtonName(button)}】吗？`, "提示", {
+			confirmButtonText: "确定",
+			cancelButtonText: "取消",
+			type: "warning",
+		});
+	} catch (error) {
+		return;
+	}
 	activeButtonList.value.splice(index, 1);
 	currentButton.value = activeButtonList.value[index] || activeButtonList.value[index - 1] || null;
 };
@@ -384,6 +507,31 @@ defineExpose({ openDialog });
 
 .button-editor {
 	padding: 8px 4px;
+
+	:deep(.el-form-item) {
+		margin-bottom: 10px;
+	}
+
+	:deep(.has-required) {
+		.el-form-item__label {
+			position: relative;
+
+			&::before {
+				content: "*";
+				position: absolute;
+				left: -10px;
+				color: var(--el-color-danger);
+			}
+		}
+	}
+
+	:deep(.custom-right-form-item) {
+		margin-bottom: 0;
+	}
+
+	:deep(.el-divider) {
+		margin: 10px 0;
+	}
 }
 
 .icon-box {
@@ -398,6 +546,16 @@ defineExpose({ openDialog });
 
 	&:hover {
 		border-color: var(--el-border-color-hover);
+	}
+}
+
+.custom-right-box {
+	display: flex;
+	width: 100%;
+
+	.custom-right-select {
+		flex: 1;
+		margin-right: 10px;
 	}
 }
 

@@ -72,11 +72,19 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="4" :offset="(4 - queryParams.length) * 5" class="query-actions">
-							<el-button type="primary" @click="handleQuery">
-								查询
+							<el-button
+								v-for="button in visibleTopButtons"
+								:key="button.guid"
+								:type="button.type || 'default'"
+								:plain="button.plain === true"
+								:text="isTextOnlyButton(button)"
+								@click="handleTopButton(button)"
+							>
+								<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
+									<component :is="button.icon" />
+								</el-icon>
+								<span v-if="!isIconOnlyButton(button)">{{ getButtonName(button) }}</span>
 							</el-button>
-							<el-button @click="resetQuery">重置</el-button>
-							<el-button plain type="primary" @click="openCustomButtonSetting">自定义按钮设置</el-button>
 						</el-col>
 					</el-row>
 
@@ -144,17 +152,37 @@
 						</el-row>
 						<el-row>
 							<el-col :span="24" class="query-actions">
-								<el-button type="primary" @click="handleQuery">
-									查询
-								</el-button>
-								<el-button @click="resetQuery">重置</el-button>
-								<el-button plain type="primary" @click="openCustomButtonSetting">自定义按钮设置</el-button>
+							<el-button
+								v-for="button in visibleTopButtons"
+								:key="button.guid"
+								:type="button.type || 'default'"
+								:plain="button.plain === true"
+								:text="isTextOnlyButton(button)"
+								@click="handleTopButton(button)"
+							>
+								<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
+									<component :is="button.icon" />
+								</el-icon>
+								<span v-if="!isIconOnlyButton(button)">{{ getButtonName(button) }}</span>
+							</el-button>
 							</el-col>
 						</el-row>
 					</template>
 					<el-row v-else>
 						<el-col :span="24" class="query-actions query-actions--empty">
-							<el-button plain type="primary" @click="openCustomButtonSetting">自定义按钮设置</el-button>
+							<el-button
+								v-for="button in visibleTopButtons"
+								:key="button.guid"
+								:type="button.type || 'default'"
+								:plain="button.plain === true"
+								:text="isTextOnlyButton(button)"
+								@click="handleTopButton(button)"
+							>
+								<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
+									<component :is="button.icon" />
+								</el-icon>
+								<span v-if="!isIconOnlyButton(button)">{{ getButtonName(button) }}</span>
+							</el-button>
 						</el-col>
 					</el-row>
 				</el-form>
@@ -165,6 +193,7 @@
 					style="width: 100%"
 					:border="true"
 					height="100%"
+					@selection-change="multipleSelection = $event"
 				>
 					<el-table-column type="selection" width="50" align="center" />
 					<el-table-column
@@ -173,6 +202,32 @@
 						:prop="column.prop"
 						:label="column.label"
 					/>
+					<el-table-column
+						v-if="columnCustomButtons.length"
+						label="操作"
+						fixed="right"
+						:min-width="operationColumnWidth"
+						:width="operationColumnWidth"
+						align="center"
+						class-name="operation-column"
+					>
+						<template #default="scope">
+							<el-button
+								v-for="button in columnCustomButtons"
+								:key="button.guid"
+								v-show="isCustomButtonVisible(button)"
+								link
+								:type="button.type || 'default'"
+								:text="isTextOnlyButton(button)"
+								@click.stop="executeCustomButton(button, scope.row)"
+							>
+								<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
+									<component :is="button.icon" />
+								</el-icon>
+								<span v-if="!isIconOnlyButton(button)">{{ button.name }}</span>
+							</el-button>
+						</template>
+					</el-table-column>
 				</el-table>
 			</div>
 		</el-main>
@@ -191,6 +246,7 @@
 		<DataModelQueryCustomButtonSetting
 			ref="customButtonSettingRef"
 			:model-name="outerDataModelId"
+			@confirm="handleCustomButtonConfirm"
 		/>
 	</el-container>
 </template>
@@ -201,12 +257,22 @@ import { useRoute, useRouter } from "vue-router";
 import { queryModelById, getOuterDataByDataModel } from "@/api/plugins";
 import { ElMessage } from "element-plus";
 import http from "@/utils/request";
+import tool from "@/utils/tool";
+import layoutConfig from "@/api/layoutConfig";
+import useCustomButtonConfig from "@/hooks/useCustomButtonConfig";
 import DataModelQueryCustomButtonSetting from "./DataModelQueryCustomButtonSetting.vue";
 const route = useRoute();
 const router = useRouter();
 
 let loading = ref(false);
 const customButtonSettingRef = ref();
+const customButtonLoading = ref(false);
+const multipleSelection = ref([]);
+const customButtonConfig = ref({ pcTop: [], pcColumn: [] });
+const { customButtonHandler } = useCustomButtonConfig();
+
+const topButtons = computed(() => customButtonConfig.value.pcTop || []);
+const columnCustomButtons = computed(() => customButtonConfig.value.pcColumn || []);
 
 const openCustomButtonSetting = () => {
 	customButtonSettingRef.value?.openDialog();
@@ -220,6 +286,7 @@ onMounted(() => {
 		return;
 	}
 	loadModelData();
+	loadCustomButtonConfig();
 });
 
 // 表头
@@ -237,6 +304,159 @@ let pageConfig = ref({
 let queryParams = ref([]);
 let queryFrom = ref({});
 let queryParamsRules = ref({});
+
+const normalizeCustomButton = (button) => ({
+	...button,
+	action: button?.action === "custom" ? 4 : button?.action,
+});
+
+const isCustomActionButton = (button) => !button?.isNative && Number(button?.action) === 4;
+
+const nativeTopButtonDefaults = [
+	{
+		defaultName: "查询",
+		name: "",
+		key: "query",
+		isNative: true,
+		guid: "data-model-query-native-query",
+		icon: "Search",
+		showType: 1,
+		type: "primary",
+	},
+	{
+		defaultName: "重置",
+		name: "",
+		key: "reset",
+		isNative: true,
+		guid: "data-model-query-native-reset",
+		icon: "Refresh",
+		showType: 1,
+		type: "default",
+	},
+	{
+		defaultName: "自定义按钮设置",
+		name: "",
+		key: "customButtonSetting",
+		isNative: true,
+		guid: "data-model-query-native-custom-button-setting",
+		icon: "Setting",
+		showType: 1,
+		type: "primary",
+		plain: true,
+	},
+];
+
+const getButtonName = (button) => button?.name || button?.defaultName || "未命名按钮";
+
+const getButtonTextWidth = (text) => Array.from(text || "").reduce(
+	(width, character) => width + (character.charCodeAt(0) > 255 ? 13 : 7),
+	0,
+);
+
+const operationColumnWidth = computed(() => {
+	const visibleButtons = columnCustomButtons.value.filter(isCustomButtonVisible);
+	const buttonWidth = visibleButtons.reduce((total, button, index) => {
+		const textWidth = isIconOnlyButton(button) ? 0 : getButtonTextWidth(getButtonName(button));
+		const iconWidth = button.icon && !isTextOnlyButton(button) ? 18 : 0;
+		const iconGap = iconWidth && textWidth ? 6 : 0;
+		const buttonGap = index ? 12 : 0;
+		// Link buttons have internal padding and a small inline rendering buffer.
+		const buttonPadding = 14;
+		return total + Math.max(24, textWidth + iconWidth + iconGap + buttonPadding) + buttonGap;
+	}, 8);
+	return Math.max(100, Math.ceil(buttonWidth));
+});
+
+const normalizeButton = (button) => {
+	if (button?.isNative) {
+		const nativeDefault = nativeTopButtonDefaults.find((item) => item.key === button.key);
+		return nativeDefault ? { ...nativeDefault, ...button, isNative: true } : button;
+	}
+	return normalizeCustomButton(button);
+};
+
+const mergeNativeTopButtons = (buttons) => {
+	const normalized = Array.isArray(buttons) ? buttons.map(normalizeButton) : [];
+	const ordered = normalized.filter((button) =>
+		(button?.isNative && nativeTopButtonDefaults.some((item) => item.key === button.key)) || isCustomActionButton(button),
+	);
+	const missing = nativeTopButtonDefaults
+		.filter((defaultButton) => !ordered.some((button) => button.key === defaultButton.key))
+		.map((button) => ({ ...button }));
+	return [...ordered, ...missing];
+};
+
+const applyCustomButtonConfig = (config) => {
+	customButtonConfig.value = {
+		pcTop: mergeNativeTopButtons(config?.pcTop),
+		pcColumn: Array.isArray(config?.pcColumn) ? config.pcColumn.map(normalizeButton).filter(isCustomActionButton) : [],
+	};
+};
+
+const loadCustomButtonConfig = async () => {
+	try {
+		const res = await layoutConfig.getLayoutList("DataModelReport", outerDataModelId.value);
+		const configText = res?.data?.CUSTOM_BUTTON?.config;
+		const config = configText ? (typeof configText === "string" ? JSON.parse(configText) : configText) : {};
+		applyCustomButtonConfig(config);
+	} catch (error) {
+		console.error("load data model query custom buttons error", error);
+		applyCustomButtonConfig({});
+	}
+};
+
+const handleCustomButtonConfirm = async (config) => {
+	applyCustomButtonConfig(config);
+	await loadListData();
+};
+
+const isTextOnlyButton = (button) => Number(button?.showType) === 3;
+const isIconOnlyButton = (button) => Number(button?.showType) === 2;
+const isCustomButtonVisible = (button) => {
+	if (!button || button.hide === true) return false;
+	if (button.isNative && button.key === "customButtonSetting" && !tool.checkRole("r6008")) return false;
+	if (!button.customCode) return true;
+	const hasPermission = tool.checkRole(button.customCode);
+	return button.reversalCustomCode ? !hasPermission : hasPermission;
+};
+const visibleTopButtons = computed(() => topButtons.value.filter((button) => {
+	if (!isCustomButtonVisible(button)) return false;
+	if (!queryParams.value.length && ["query", "reset"].includes(button.key)) return false;
+	return true;
+}));
+
+const handleTopButton = (button) => {
+	if (button.key === "query") return handleQuery();
+	if (button.key === "reset") return resetQuery();
+	if (button.key === "customButtonSetting") {
+		if (tool.checkRole("r6008")) openCustomButtonSetting();
+		return;
+	}
+	return executeCustomButton(button);
+};
+
+const buttonExposed = {
+	getSelectedRows: () => multipleSelection.value,
+	getTableDataList: () => tableData.value,
+	refreshList: () => loadListData(),
+};
+
+const executeCustomButton = async (button, row) => {
+	if (!button || Number(button.action) !== 4) return;
+	const rows = row ? [row] : multipleSelection.value;
+	const recordId = row?.id || row?.dataModelReportId || rows[0]?.id || rows[0]?.dataModelReportId;
+	await customButtonHandler(
+		button,
+		rows,
+		buttonExposed,
+		recordId,
+		customButtonLoading,
+		() => {},
+		() => {},
+		() => {},
+		router,
+	);
+};
 
 // 动态计算是否需要换行
 const isSingleRow = computed(() => {
@@ -372,8 +592,21 @@ const loadListData = async () => {
 	box-sizing: border-box;
 	padding: 20px;
 	background: #f1f5ff;
+	font-size: 13px;
 	flex-direction: column;
 	position: relative;
+
+	:deep(.el-button),
+	:deep(.el-form),
+	:deep(.el-form-item__label),
+	:deep(.el-input),
+	:deep(.el-input__inner),
+	:deep(.el-select),
+	:deep(.el-date-editor),
+	:deep(.el-table),
+	:deep(.el-pagination) {
+		font-size: 13px;
+	}
 
 	.list-main {
 		display: flex;
@@ -429,6 +662,16 @@ const loadListData = async () => {
 	flex: 1;
 	min-height: 0;
 	width: 100%;
+
+	:deep(.operation-column .cell) {
+		padding-left: 4px;
+		padding-right: 4px;
+		white-space: nowrap;
+
+		.el-button {
+			white-space: nowrap;
+		}
+	}
 }
 
 .main-footer {
