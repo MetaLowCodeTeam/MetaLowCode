@@ -402,30 +402,42 @@ const confirm = async () => {
         formulaNumList.value = [];
     }
     numFormulaVal.value = checkVal;
-    if (checkVal) {
-        checkLoading.value = true;
-        let res = await $API.trigger.detail.aviatorValidate(checkVal);
-        if (res) {
-            // 错误的
-            if (res.data) {
-                isError.value = true;
-                errorContent.value = res.data;
-            }
-            // 正确的
-            else {
-                if(isPreview.value){
-                    isEditValue(numFormulaVal.value);
-                    return
-                }
-                isConfirm({
-                    label: formulaVal.value,
-                    value: numFormulaVal.value,
-                    scriptType: currentScriptType.value,
-                });
-            }
+    // 清空公式也属于有效的确认操作，需要关闭弹窗并把空值回传给调用方。
+    if (!checkVal) {
+        if (isPreview.value) {
+            isEditValue(numFormulaVal.value);
+            return;
         }
-        checkLoading.value = false;
+        isConfirm({
+            label: "",
+            value: "",
+            scriptType: currentScriptType.value,
+        });
+        return;
     }
+
+    checkLoading.value = true;
+    let res = await $API.trigger.detail.aviatorValidate(checkVal);
+    if (res) {
+        // 错误的
+        if (res.data) {
+            isError.value = true;
+            errorContent.value = res.data;
+        }
+        // 正确的
+        else {
+            if(isPreview.value){
+                isEditValue(numFormulaVal.value);
+                return
+            }
+            isConfirm({
+                label: formulaVal.value,
+                value: numFormulaVal.value,
+                scriptType: currentScriptType.value,
+            });
+        }
+    }
+    checkLoading.value = false;
 };
 const isConfirm = (target) => {
     isShow.value = false;
