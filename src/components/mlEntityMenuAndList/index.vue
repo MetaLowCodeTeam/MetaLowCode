@@ -559,7 +559,7 @@ defineExpose({
 }
 
 .fields-list {
-    height: 100%;
+	height: 100%;
     .fields-list-header {
         font-size: 14px;
         height: 54px;
@@ -573,11 +573,11 @@ defineExpose({
         box-sizing: border-box;
         border-bottom: 1px solid #eeeeee;
     }
-    .fields-list-box {
-        height: calc(100% - 97px);
-        overflow-y: auto;
-        // padding: 10px 20px;
-        font-size: 14px;
+	.fields-list-box {
+		height: calc(100% - 97px);
+		overflow-y: auto;
+		// padding: 10px 20px;
+		font-size: 13px;
         .fields-list-item {
             height: 36px;
             line-height: 36px;
@@ -593,6 +593,14 @@ defineExpose({
             }
         }
     }
+}
+
+.ml-el-table {
+	font-size: 13px !important;
+
+	:deep(.el-button--small) {
+		font-size: 13px !important;
+	}
 }
 
 .props-action-section {
