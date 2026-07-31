@@ -169,18 +169,20 @@
 							<template v-if="!scope.row['reserved']">
 								<el-button
                                     type="primary"
-                                    link
-                                    size="small"
-                                    icon="el-icon-edit"
+									link
+									size="small"
+									style="font-size: 13px;"
+									icon="el-icon-edit"
 									@click="editTableData(scope.row)"
                                 >
                                     修改
 								</el-button>
 								<el-button
                                     type="primary"
-                                    link
-                                    size="small"
-                                    icon="el-icon-delete"
+									link
+									size="small"
+									style="font-size: 13px;"
+									icon="el-icon-delete"
 									@click="deleteTableData(scope.row)"
                                 >
                                     删除

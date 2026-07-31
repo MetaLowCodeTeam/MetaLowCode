@@ -386,4 +386,12 @@ defineExpose({
 	// height: calc(100% - 300px);
 	// background: red;
 }
+
+.ml-el-table {
+	font-size: 13px !important;
+
+	:deep(.el-button--small) {
+		font-size: 13px !important;
+	}
+}
 </style>
