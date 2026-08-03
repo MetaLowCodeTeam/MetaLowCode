@@ -60,6 +60,7 @@ export const textFieldSchema = {
 		fontSize: '',
 		fontStyle: 'normal',
 		fontWeight: 'normal',
+		htmlDisplayEnabled: false,
 		onCreated: '',
 		onMounted: '',
 	},
@@ -151,6 +152,7 @@ export const pivotTableSchema = {
 		name: '',
 		label: '透视图',
 		hidden: false,
+		htmlDisplayEnabled: false,
         pivotTableConfig: {
             title: '透视图',
             hideTitle: false,

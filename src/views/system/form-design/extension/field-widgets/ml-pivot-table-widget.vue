@@ -11,7 +11,10 @@
 		:sub-form-row-id="subFormRowId"
 	>
 		<div v-show="!field.options.hidden" class="ml-pivot-table" :class="field.options.customClass">
-			<div v-if="tableTitle && !config.hideTitle" class="ml-pivot-table__title">{{ tableTitle }}</div>
+			<div v-if="tableTitle && !config.hideTitle" class="ml-pivot-table__title">
+				<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(tableTitle)"></div>
+				<template v-else>{{ tableTitle }}</template>
+			</div>
 			<table
 				class="ml-pivot-table__table"
 				:class="{ 'is-border': config.showBorder }"
@@ -27,7 +30,8 @@
 							:rowspan="cornerCell.rowspan"
 							:style="headerStyle"
 						>
-							{{ cornerCell.label }}
+							<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(cornerCell.label)"></div>
+							<template v-else>{{ cornerCell.label }}</template>
 						</th>
 						<th
 							v-for="headerCell in headerRow"
@@ -36,7 +40,8 @@
 							:rowspan="headerCell.rowspan"
 							:style="headerStyle"
 						>
-							{{ headerCell.label }}
+							<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(headerCell.label)"></div>
+							<template v-else>{{ headerCell.label }}</template>
 						</th>
 						<th
 							v-if="config.showSumcol && headerRowIndex === 0"
@@ -51,16 +56,29 @@
 					<tr v-for="row in pivotDisplayRows" :key="row.key">
 						<template v-for="(dimensionCell, index) in row.dimensionCells" :key="index">
 							<th v-if="dimensionCell.rowspan > 0" :rowspan="dimensionCell.rowspan" :style="headerStyle">
-								{{ dimensionCell.value }}
+								<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(dimensionCell.value)"></div>
+								<template v-else>{{ dimensionCell.value }}</template>
 							</th>
 						</template>
-						<td v-for="col in pivotColumns" :key="col" :style="cellStyle">{{ formatValue(row.values[col]) }}</td>
-						<td v-if="config.showSumcol" :style="cellStyle">{{ formatValue(row.total) }}</td>
+						<td v-for="col in pivotColumns" :key="col" :style="cellStyle">
+							<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(row.values[col], true)"></div>
+							<template v-else>{{ formatValue(row.values[col]) }}</template>
+						</td>
+						<td v-if="config.showSumcol" :style="cellStyle">
+							<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(row.total, true)"></div>
+							<template v-else>{{ formatValue(row.total) }}</template>
+						</td>
 					</tr>
 					<tr v-if="config.showSummary && pivotRows.length > 0">
 						<th :colspan="rowDimensionHeaders.length" :style="headerStyle">合计</th>
-						<td v-for="col in pivotColumns" :key="col" :style="cellStyle">{{ formatValue(columnTotals[col]) }}</td>
-						<td v-if="config.showSumcol" :style="cellStyle">{{ formatValue(grandTotal) }}</td>
+						<td v-for="col in pivotColumns" :key="col" :style="cellStyle">
+							<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(columnTotals[col], true)"></div>
+							<template v-else>{{ formatValue(columnTotals[col]) }}</template>
+						</td>
+						<td v-if="config.showSumcol" :style="cellStyle">
+							<div v-if="htmlDisplayEnabled" v-html="sanitizeDisplayHtml(grandTotal, true)"></div>
+							<template v-else>{{ formatValue(grandTotal) }}</template>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -70,6 +88,7 @@
 
 <script>
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+import { sanitizeReportHtml } from '@/views/system/form-design/extension/report-html-sanitizer'
 
 const { StaticContentWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK
 
@@ -105,6 +124,9 @@ export default {
 		}
 	},
 	computed: {
+		htmlDisplayEnabled() {
+			return !!this.field?.options?.htmlDisplayEnabled
+		},
 		config() {
 			return this.field.options.pivotTableConfig || {}
 		},
@@ -382,6 +404,9 @@ export default {
 		}
 	},
 	methods: {
+		sanitizeDisplayHtml(value, formatted = false) {
+			return sanitizeReportHtml(formatted ? this.formatValue(value) : value)
+		},
 		toStyleNumber(value, fallback, min = 0) {
 			const numberValue = Number(value)
 			return Number.isFinite(numberValue) ? Math.max(numberValue, min) : fallback

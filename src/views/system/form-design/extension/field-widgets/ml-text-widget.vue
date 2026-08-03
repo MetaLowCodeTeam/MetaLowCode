@@ -19,13 +19,19 @@
 				'font-weight': field.options.fontWeight || 'normal',
 			}"
 		>
-			{{ displayText }}
+			<div
+				v-if="htmlDisplayEnabled"
+				class="ml-text-field__html"
+				v-html="sanitizedDisplayText"
+			></div>
+			<template v-else>{{ displayText }}</template>
 		</div>
 	</static-content-wrapper>
 </template>
 
 <script>
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
+import { sanitizeReportHtml } from '@/views/system/form-design/extension/report-html-sanitizer'
 
 const { StaticContentWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK
 
@@ -63,6 +69,14 @@ export default {
 		return {
 			displayText: this.field?.options?.label || '',
 		}
+	},
+	computed: {
+		htmlDisplayEnabled() {
+			return !!this.field?.options?.htmlDisplayEnabled
+		},
+		sanitizedDisplayText() {
+			return sanitizeReportHtml(this.displayText)
+		},
 	},
 	watch: {
 		'field.options.label': {
@@ -105,5 +119,10 @@ export default {
 .ml-text-field {
 	padding: 5px 0;
 	color: #333;
+}
+
+.ml-text-field__html :deep(table) {
+	max-width: 100%;
+	border-collapse: collapse;
 }
 </style>

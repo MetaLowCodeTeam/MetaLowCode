@@ -384,6 +384,18 @@ export default {
             return changed;
         },
 
+        normalizeHtmlDisplayWidget(widget) {
+            if (!widget || !["ml-text", "ml-pivot-table"].includes(widget.type)) {
+                return false;
+            }
+            const options = widget.options || (widget.options = {});
+            if (options.htmlDisplayEnabled !== undefined) {
+                return false;
+            }
+            options.htmlDisplayEnabled = false;
+            return true;
+        },
+
         normalizeReportFieldWidgets(reloadDesigner = true) {
             const formJson = this.$refs.vfDesigner?.getFormJson?.();
             if (!formJson?.widgetList) {
@@ -403,6 +415,9 @@ export default {
                         syncNativeTableEmptyText(widget);
                     }
                     if (this.normalizeSingleReportField(widget)) {
+                        changed = true;
+                    }
+                    if (this.normalizeHtmlDisplayWidget(widget)) {
                         changed = true;
                     }
                     if (Array.isArray(widget.widgetList)) visit(widget.widgetList);

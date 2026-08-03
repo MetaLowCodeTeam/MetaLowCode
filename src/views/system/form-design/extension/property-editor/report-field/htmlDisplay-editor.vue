@@ -14,7 +14,7 @@ export default {
 	},
 	methods: {
 		handleChange(enabled) {
-			if (enabled) {
+			if (enabled && Object.prototype.hasOwnProperty.call(this.optionModel, "imageDisplayEnabled")) {
 				this.optionModel.imageDisplayEnabled = false;
 			}
 		},
