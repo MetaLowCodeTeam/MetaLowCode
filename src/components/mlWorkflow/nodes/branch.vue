@@ -102,11 +102,14 @@ import addNode from "./addNode.vue";
 import mlSetConditions from '@/components/mlSetConditions/index.vue';
 import { onMounted, reactive, ref, watch, nextTick, inject } from "vue";
 import usePpprovalProcessStore from "@/store/modules/approvalProcess";
+import useCommonStore from "@/store/modules/common";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import { formatFilterConditions } from "@/utils/util";
 const router = useRouter();
 let message = inject("$ElMessage");
 const { style } = storeToRefs(usePpprovalProcessStore());
+const { queryEntityNameByCode } = useCommonStore();
 const props = defineProps({
     modelValue: { type: Object, default: () => {} },
     isHideAddNode: { type: Boolean, default: false },
@@ -176,6 +179,12 @@ const saveTitle = () => {
     isEditTitle.value = false;
 };
 const save = () => {
+    const entityName = queryEntityNameByCode(entityCode.value);
+    conditionConf.items = formatFilterConditions(
+        JSON.parse(JSON.stringify(conditionConf.items || [])),
+        entityName
+    );
+    form.value.filter = conditionConf;
     if (!mlSetConditionsRef.value.checkConditionList()) {
         return;
     }
