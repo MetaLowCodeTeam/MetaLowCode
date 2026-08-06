@@ -389,11 +389,16 @@ export default {
                 return false;
             }
             const options = widget.options || (widget.options = {});
-            if (options.htmlDisplayEnabled !== undefined) {
-                return false;
+            let changed = false;
+            if (options.htmlDisplayEnabled === undefined) {
+                options.htmlDisplayEnabled = false;
+                changed = true;
             }
-            options.htmlDisplayEnabled = false;
-            return true;
+            if (widget.type === "ml-text" && options.onFormDataReady === undefined) {
+                options.onFormDataReady = "";
+                changed = true;
+            }
+            return changed;
         },
 
         normalizeReportFieldWidgets(reloadDesigner = true) {

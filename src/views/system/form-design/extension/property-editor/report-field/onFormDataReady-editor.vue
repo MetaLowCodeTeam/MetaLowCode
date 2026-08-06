@@ -23,10 +23,12 @@ export default {
 			default: false,
 		},
 	},
-	data() {
-		return {
-			eventParams: ['formData', 'key', 'value'],
-		};
+	computed: {
+		eventParams() {
+			return this.selectedWidget?.type === 'ml-text'
+				? ['rowData']
+				: ['formData', 'key', 'value'];
+		},
 	},
 };
 </script>

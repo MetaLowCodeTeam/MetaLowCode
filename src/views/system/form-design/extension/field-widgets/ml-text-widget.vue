@@ -64,10 +64,15 @@ export default {
 			type: String,
 			default: '',
 		},
+		loopRowData: {
+			type: Object,
+			default: null,
+		},
 	},
 	data() {
 		return {
 			displayText: this.field?.options?.label || '',
+			_formDataReadyFired: false,
 		}
 	},
 	computed: {
@@ -95,11 +100,20 @@ export default {
 	},
 	mounted() {
 		this.handleOnMounted()
+		this.$nextTick(() => this.handleOnFormDataReady())
 	},
 	beforeUnmount() {
 		this.unregisterFromRefList()
 	},
 	methods: {
+		handleOnFormDataReady() {
+			if (this.designState || this.designer || this._formDataReadyFired || !this.loopRowData) return
+			this._formDataReadyFired = true
+			if (this.field.options?.onFormDataReady) {
+				const fn = new Function('rowData', this.field.options.onFormDataReady)
+				fn.call(this, this.loopRowData)
+			}
+		},
 		setFieldValue(value) {
 			this._textOverridden = true
 			this.displayText = value != null ? String(value) : ''

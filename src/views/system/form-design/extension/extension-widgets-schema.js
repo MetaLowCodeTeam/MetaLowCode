@@ -63,6 +63,7 @@ export const textFieldSchema = {
 		htmlDisplayEnabled: false,
 		onCreated: '',
 		onMounted: '',
+		onFormDataReady: '',
 	},
 };
 

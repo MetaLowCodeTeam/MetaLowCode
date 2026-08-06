@@ -14,7 +14,7 @@ import loginManager from "@/utils/loginManager";
 
 
 // 如果是外部数据源隐藏
-const OuterDataSourceHideMenu = ['OuterDataSource', 'OuterDataModel'];
+const OuterDataSourceHideMenu = ['OuterDataSource', 'OuterDataModel', 'DataModelReportList'];
 
 
 let modules = import.meta.glob('../views/**/*.vue')
