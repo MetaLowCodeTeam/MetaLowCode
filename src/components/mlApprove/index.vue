@@ -360,6 +360,9 @@ const initFormLayout = async (formLayoutId) => {
             if(res.data.codeOptionData) {
                 optionData.value = Object.assign(optionData.value, res.data.codeOptionData);
             }
+            if(res.data.cascaderOptionData) {
+                optionData.value = Object.assign(optionData.value, res.data.cascaderOptionData);
+            }
             // // 根据数据渲染出页面填入的值，填过
             nextTick(async () => {
                 if(!props.isDialog) {
