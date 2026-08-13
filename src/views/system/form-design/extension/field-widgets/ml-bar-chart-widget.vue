@@ -256,11 +256,15 @@ export default {
 				count: 0,
 				numberCount: 0,
 				values: [],
+				firstValue: undefined,
 			}
 		},
 		collectMetricValue(target, rawValue, calcMode) {
 			const hasValue = rawValue !== undefined && rawValue !== null && rawValue !== ''
 			if (hasValue) {
+				if (target.firstValue === undefined) {
+					target.firstValue = rawValue
+				}
 				target.count += 1
 				target.values.push(rawValue)
 			}
@@ -279,6 +283,15 @@ export default {
 			}
 		},
 		getMetricResult(target, calcMode) {
+			if (calcMode === 'first') {
+				return target.firstValue === undefined ? '' : target.firstValue
+			}
+			if (calcMode === 'textJoin') {
+				return target.values.join('，')
+			}
+			if (calcMode === 'textDistinctJoin') {
+				return Array.from(new Set(target.values.map((value) => String(value)))).join('，')
+			}
 			if (calcMode === 'count') {
 				return target.count
 			}

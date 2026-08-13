@@ -62,7 +62,7 @@
                                 :key="summaryInx"
                                 class="popover-item"
                                 :class="{'is-active':tag.calcMode == summary.code}"
-                                v-if="chartType == 'pivotTable' || summary.type == 'N|T' || numType.includes(tag.type)"
+                                v-if="['pivotTable', 'barChart', 'barXChart', 'lineChart'].includes(chartType) || summary.type == 'N|T' || numType.includes(tag.type)"
                                 @click="onCalcModeChange(tag,summary.code,inx)"
                             >{{ summary.label }}</div>
                         </template>
@@ -291,6 +291,21 @@ watch(
 );
 
 let calcMode = ref([
+    {
+        label: "首个数据",
+        type: "N|T",
+        code: "first",
+    },
+    {
+        label: "文本拼接",
+        type: "N|T",
+        code: "textJoin",
+    },
+    {
+        label: "文本去重拼接",
+        type: "N|T",
+        code: "textDistinctJoin",
+    },
     {
         label: "求和",
         type: "N",

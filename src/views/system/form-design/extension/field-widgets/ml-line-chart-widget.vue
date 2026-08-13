@@ -32,9 +32,11 @@
 
 <script>
 import * as echarts from 'echarts'
+import { markRaw } from 'vue'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 
 const { StaticContentWrapper, emitter, i18n, fieldMixin } = VisualDesign.VFormSDK
+
 
 export default {
 	name: 'ml-line-chart-widget',
@@ -81,7 +83,9 @@ export default {
 			}
 		},
 		exportAsImage() {
-			return true
+			// The designer needs the live ECharts canvas. Rendering it as a captured
+			// image can keep an outdated chart geometry after option changes.
+			return !this.designState && !this.designer
 		},
 		formModel() {
 			return this.globalModel?.formModel || {}
@@ -226,10 +230,10 @@ export default {
 				})),
 			}
 		},
-		createMetricAggregator() { return { value: 0, count: 0, numberCount: 0, values: [] } },
+		createMetricAggregator() { return { value: 0, count: 0, numberCount: 0, values: [], firstValue: undefined } },
 		collectMetricValue(target, rawValue, calcMode) {
 			const hasValue = rawValue !== undefined && rawValue !== null && rawValue !== ''
-			if (hasValue) { target.count += 1; target.values.push(rawValue) }
+			if (hasValue) { if (target.firstValue === undefined) { target.firstValue = rawValue }; target.count += 1; target.values.push(rawValue) }
 			if (calcMode === 'sum' || calcMode === 'average' || calcMode === 'max' || calcMode === 'min') {
 				const numberValue = Number(rawValue)
 				if (!Number.isNaN(numberValue)) {
@@ -241,6 +245,9 @@ export default {
 			}
 		},
 		getMetricResult(target, calcMode) {
+			if (calcMode === 'first') return target.firstValue === undefined ? '' : target.firstValue
+			if (calcMode === 'textJoin') return target.values.join('，')
+			if (calcMode === 'textDistinctJoin') return Array.from(new Set(target.values.map((v) => String(v)))).join('，')
 			if (calcMode === 'count') return target.count
 			if (calcMode === 'countSet') return new Set(target.values.map((v) => String(v))).size
 			if (calcMode === 'average') return target.numberCount ? target.value / target.numberCount : 0
@@ -304,17 +311,40 @@ export default {
 			return map[dateFormat] || value
 		},
 		buildOption() {
-			if (this.customChartOption) {
+			if (this.designState) {
+				return {
+					animation: false,
+					grid: { top: 28, right: 20, bottom: 36, left: 48, containLabel: true },
+					xAxis: { type: 'category', data: ['示例一', '示例二', '示例三'] },
+					yAxis: { type: 'value' },
+					series: [{ type: 'line', data: [120, 200, 150], smooth: true, label: { show: true, position: 'top' } }],
+				}
+			}
+			// The designer can temporarily provide an incomplete option while a
+			// widget is being edited. Keep its preview on the canonical chart shape;
+			// runtime/report rendering still honors custom chart options below.
+			if (this.customChartOption && !this.designState) {
 				let opt = JSON.parse(JSON.stringify(this.customChartOption))
 				if (!opt.animation) opt.animation = false
 				if (!opt.grid) opt.grid = { top: 28, right: 20, bottom: 36, left: 48, containLabel: true }
 				if (opt.legend === undefined) opt.legend = { show: !!this.config.showLegend }
-				if (!opt.yAxis) opt.yAxis = { type: 'value' }
+				const rawYAxis = Array.isArray(opt.yAxis) ? opt.yAxis.find((axis) => axis && typeof axis === 'object') : opt.yAxis
+				opt.yAxis = { ...(rawYAxis && typeof rawYAxis === 'object' ? rawYAxis : {}), type: 'value' }
 				if (!opt.xAxis && opt.series && opt.series.length) {
 					opt.xAxis = { type: 'category', data: [] }
 				}
+				const rawXAxis = Array.isArray(opt.xAxis) ? opt.xAxis.find((axis) => axis && typeof axis === 'object') : opt.xAxis
+				const xAxisData = Array.isArray(rawXAxis?.data) ? rawXAxis.data : []
+				opt.xAxis = {
+					...(rawXAxis && typeof rawXAxis === 'object' ? rawXAxis : {}),
+					type: 'category',
+					data: xAxisData,
+					boundaryGap: true,
+					axisTick: { ...(rawXAxis?.axisTick || {}), alignWithLabel: true },
+					axisLabel: { ...(rawXAxis?.axisLabel || {}), interval: 0, align: 'center' },
+				}
 				if (Array.isArray(opt.series)) {
-					opt.series = opt.series.map((s) => ({ type: 'line', ...s }))
+					opt.series = opt.series.filter((s) => s && typeof s === 'object').map((s) => ({ type: 'line', ...s }))
 				}
 				return opt
 			}
@@ -324,7 +354,14 @@ export default {
 				color: ['#409eff'],
 				grid: { top: 28, right: 20, bottom: 36, left: 48, containLabel: true },
 				legend: { show: !!this.config.showLegend },
-				xAxis: { type: 'category', data: [...(chartData.xAxis || [])], axisTick: { alignWithLabel: true } },
+				xAxis: {
+					type: 'category',
+					data: [...(chartData.xAxis || [])],
+					// Category labels and line points both use category centers.
+					boundaryGap: true,
+					axisTick: { alignWithLabel: true },
+					axisLabel: { interval: 0, align: 'center' },
+				},
 				yAxis: { type: 'value' },
 				series: (chartData.series || []).map((seriesItem) => ({
 					...seriesItem,
@@ -344,7 +381,7 @@ export default {
 			this._pendingRender = false
 			this.$nextTick(() => {
 				if (!this.$refs.chartRef) { this._rendering = false; return }
-				if (!this.chart) this.chart = echarts.init(this.$refs.chartRef, null, { renderer: 'canvas' })
+				if (!this.chart) this.chart = markRaw(echarts.init(this.$refs.chartRef, null, { renderer: 'canvas' }))
 				if (this.exportAsImage) { this.chartImage = ''; this.chart.off('finished'); this.chart.on('finished', this.updateChartImage) }
 				requestAnimationFrame(() => {
 					try {

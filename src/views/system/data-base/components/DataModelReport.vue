@@ -236,7 +236,13 @@ export default {
             this.$nextTick(() => this.applyNativeTableStyles());
         },
 
-        applyNativeTableStyles(formJson = this.$refs.vfDesigner?.getFormJson?.()) {
+        applyNativeTableStyles(formJson) {
+            if (formJson === undefined) {
+                const designer = this.$refs.vfDesigner;
+                formJson = designer && typeof designer.getFormJson === 'function'
+                    ? designer.getFormJson()
+                    : undefined;
+            }
             applyAllNativeReportTableStyles(formJson?.widgetList || [], this.$el);
         },
 
