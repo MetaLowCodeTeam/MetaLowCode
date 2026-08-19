@@ -126,12 +126,19 @@ const initTabs = async () => {
             },
         ];
     }
-    let takInx = tabs.value[props.cutTabIndex] ? props.cutTabIndex : 0;
-    // 确保takInx在有效范围内
-    if (takInx >= tabs.value.length) {
-        takInx = 0;
+    setActiveTabByIndex();
+};
+
+// 父组件刷新详情时会把当前页签索引重置为详情页签。
+// 不能只依赖配置变化触发初始化，否则配置未变化时 el-tabs 会保留旧光标。
+const setActiveTabByIndex = () => {
+    if (!tabs.value?.length) return;
+
+    let tabIndex = Number(props.cutTabIndex);
+    if (!Number.isInteger(tabIndex) || tabIndex < 0 || tabIndex >= tabs.value.length) {
+        tabIndex = 0;
     }
-    activeName.value = tabs.value[takInx].guid;
+    activeName.value = tabs.value[tabIndex].guid;
 };
 
 // 防抖执行initTabs
@@ -170,6 +177,14 @@ watch(
         }
     },
     { immediate: true, deep: true }
+);
+
+watch(
+    () => props.cutTabIndex,
+    () => {
+        setActiveTabByIndex();
+    },
+    { immediate: true }
 );
 
 onBeforeUnmount(() => {
