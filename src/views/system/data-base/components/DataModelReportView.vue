@@ -470,6 +470,7 @@ export default {
             const contentEl = this.$refs.reportContentRef || this.$el.querySelector(".report-content");
             const exportContentEl = contentEl?.cloneNode(true);
             this.prepareExportContentWidth(exportContentEl);
+            this.normalizeReportTableBordersForExport(exportContentEl);
             this.transformGridToExportTables(exportContentEl);
             const contentHtml = exportContentEl?.outerHTML || "";
             console.info("[DataModelReportView] export html prepared", {
@@ -493,6 +494,36 @@ export default {
             rootEl.style.boxSizing = "border-box";
             rootEl.style.paddingLeft = "0";
             rootEl.style.paddingRight = "0";
+        },
+
+        normalizeReportTableBordersForExport(rootEl) {
+            if (!rootEl?.querySelectorAll) return;
+            rootEl.querySelectorAll("table[data-report-table-style='true']").forEach((tableEl) => {
+                const borderWidth = Number(tableEl.getAttribute("data-report-border-width"));
+                const normalizedWidth = Number.isFinite(borderWidth) ? Math.max(borderWidth, 0) : 0;
+                const borderColor = tableEl.getAttribute("data-report-border-color") || "#000000";
+                const border = normalizedWidth > 0
+                    ? `${normalizedWidth}px solid ${borderColor}`
+                    : "0 none transparent";
+
+                // Word 不会像浏览器一样可靠地折叠相邻单元格的完整四边框。
+                // 每条共享边仅交给右侧/下侧单元格绘制，外侧右边和下边由 table 绘制。
+                tableEl.style.setProperty("border", "0 none transparent", "important");
+                tableEl.style.setProperty("border-right", border, "important");
+                tableEl.style.setProperty("border-bottom", border, "important");
+                tableEl.style.setProperty("border-collapse", "collapse", "important");
+                tableEl.style.setProperty("border-spacing", "0", "important");
+                tableEl.setAttribute("cellspacing", "0");
+
+                const cellList = Array.from(tableEl.rows || [])
+                    .flatMap((rowEl) => Array.from(rowEl.cells || []))
+                    .filter((cellEl) => cellEl.closest("table") === tableEl);
+                cellList.forEach((cellEl) => {
+                    cellEl.style.setProperty("border", "0 none transparent", "important");
+                    cellEl.style.setProperty("border-top", border, "important");
+                    cellEl.style.setProperty("border-left", border, "important");
+                });
+            });
         },
 
         getWordExportStyle() {

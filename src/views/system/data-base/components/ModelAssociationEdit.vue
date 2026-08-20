@@ -5,6 +5,26 @@
 		</template>
 		<div class="ml-dialog-body" style="max-height: 500px">
 			<el-form ref="formRef" :model="formData" :rules="rules" label-position="top" v-loading="loading">
+				<el-form-item v-if="!isEditMode" label="标签筛选">
+					<el-select
+						v-model="selectedTags"
+						placeholder="请选择标签"
+						multiple
+						filterable
+						clearable
+						collapse-tags
+						collapse-tags-tooltip
+						style="width: 100%"
+						@change="handleTagFilterChange"
+					>
+						<el-option
+							v-for="item in tagOptions"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						/>
+					</el-select>
+				</el-form-item>
 				<el-form-item label="选择数据模型" prop="mainModel">
 					<el-select v-model="formData.mainModel" placeholder="请选择数据模型" filterable :disabled="isEditMode" style="width: 100%">
 						<el-option v-for="item in mainModelOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -34,6 +54,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { crudListQuery } from "@/api/crud";
+import { getTagItems } from "@/api/system-manager";
 import { getGuid } from "@/utils/util";
 
 const emit = defineEmits(["save"]);
@@ -45,6 +66,8 @@ const editId = ref("");
 const subModelId = ref("");
 const subModelName = ref("");
 const existingDataCodes = ref([]);
+const selectedTags = ref([]);
+const tagOptions = ref([]);
 
 const formData = ref({
 	dataCode: "",
@@ -79,11 +102,30 @@ const mainModelLabelMap = ref({});
 
 const isEditMode = computed(() => !!editId.value);
 
+const loadTagOptions = async () => {
+	try {
+		const res = await getTagItems("OuterDataModel", "tags");
+		if (res?.code == 200) {
+			tagOptions.value = res.data || [];
+		}
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 const loadMainModelOptions = async () => {
 	try {
 		let res = await crudListQuery({
 			mainEntity: "OuterDataModel",
 			fieldsList: "modelName,outerDataModelId",
+			filter: {
+				equation: "OR",
+				items: selectedTags.value.map((tag) => ({
+					fieldName: "tags",
+					op: "LK",
+					value: tag,
+				})),
+			},
 			pageNo: 1,
 			pageSize: 500,
 		});
@@ -100,11 +142,18 @@ const loadMainModelOptions = async () => {
 	}
 };
 
+const handleTagFilterChange = async () => {
+	formData.value.mainModel = "";
+	await loadMainModelOptions();
+};
+
 const openDialog = async (data) => {
 	subModelId.value = data.subModelId || "";
 	subModelName.value = data.subModelName;
 	editId.value = data.editId || "";
 	existingDataCodes.value = Array.isArray(data.existingDataCodes) ? data.existingDataCodes : [];
+	selectedTags.value = [];
+	tagOptions.value = [];
 
 	dialogTitle.value = data.editId ? `编辑 ${data.editLabel || ""}` : "添加数据模型";
 
@@ -118,7 +167,10 @@ const openDialog = async (data) => {
 	dialogVisible.value = true;
 	loading.value = true;
 
-	await loadMainModelOptions();
+	await Promise.all([
+		loadMainModelOptions(),
+		...(isEditMode.value ? [] : [loadTagOptions()]),
+	]);
 
 	loading.value = false;
 };

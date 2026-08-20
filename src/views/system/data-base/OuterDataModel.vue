@@ -3,7 +3,7 @@
 		<ml-single-list
 			:key="activeModelTab"
 			mainEntity="OuterDataModel"
-			fieldsList="modelName,dataSource,isDisabled,outerDataModelId"
+			fieldsList="modelName,dataSource,tags,ownerUser,ownerDepartment,isDisabled,outerDataModelId"
 			:sortFields="sortFields"
 			fieldName="dataSourceName"
 			equation="OR"
@@ -26,40 +26,56 @@
 				<el-table-column
 					label="操作"
 					:align="'center'"
-					width="180"
+					width="190"
 					fixed="right"
 				>
 					<template #default="scope">
-						<el-button
-							type="primary"
-							size="small"
-							link
-							@click="openDialog(scope.row)"
-							icon="Edit"
-						>
-							编辑
-						</el-button>
-						<el-button
-							type="primary"
-							size="small"
-							link
-							@click="openDialog(scope.row, 'view')"
-						>
-							查看
-						</el-button>
-						<el-button
-							type="primary"
-							size="small"
-							link
-							@click="deleteData(scope.row.outerDataModelId)"
-						>
-							删除
-						</el-button>
+						<div class="table-row-actions">
+							<el-button
+								type="primary"
+								size="small"
+								link
+								@click="openDialog(scope.row)"
+								icon="Edit"
+							>
+								编辑
+							</el-button>
+							<el-button
+								type="primary"
+								size="small"
+								link
+								@click="openDialog(scope.row, 'view')"
+							>
+								查看
+							</el-button>
+							<el-dropdown
+								trigger="click"
+								@command="(command) => handleMoreCommand(command, scope.row)"
+							>
+								<el-button type="primary" size="small" link>
+									<el-icon class="mr-3"><ElIconMoreFilled /></el-icon>
+									更多
+								</el-button>
+								<template #dropdown>
+									<el-dropdown-menu>
+										<el-dropdown-item command="delete">删除</el-dropdown-item>
+										<el-dropdown-item command="allocation">分配</el-dropdown-item>
+										<el-dropdown-item command="share">共享</el-dropdown-item>
+										<el-dropdown-item command="unShare">取消共享</el-dropdown-item>
+									</el-dropdown-menu>
+								</template>
+							</el-dropdown>
+						</div>
 					</template>
 				</el-table-column>
 			</template>
 		</ml-single-list>
 		<OuterDataModelEdit ref="outerDataModelEditRef" @updateData="updateTable" />
+		<Allocation
+			ref="allocationRef"
+			:layoutConfig="{ idFieldName: 'outerDataModelId' }"
+			@allocationSuccess="updateTable"
+		/>
 	</div>
 </template>
 
@@ -67,6 +83,7 @@
 import { ref } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
+import Allocation from "@/views/customize-menu/components/Allocation.vue";
 import { deleteRecords } from "@/api/crud";
 import { useRouter } from "vue-router";
 import { saveRecord } from "@/api/crud";
@@ -116,6 +133,26 @@ let tableColumn = ref([
 		formatter: (row) => {
 			return row.dataSource?.name;
 		},
+	},
+	{
+		prop: "tags",
+		label: "标签",
+		formatter: (row) => {
+			const tags = Array.isArray(row.tags)
+				? row.tags
+				: String(row.tags || "").split(",");
+			return tags.filter(Boolean).join("、") || "-";
+		},
+	},
+	{
+		prop: "ownerUser.name",
+		label: "所属用户",
+		formatter: (row) => row.ownerUser?.name || "-",
+	},
+	{
+		prop: "ownerDepartment.name",
+		label: "所属部门",
+		formatter: (row) => row.ownerDepartment?.name || "-",
 	},
 	{
 		prop: "isDisabled",
@@ -200,6 +237,23 @@ const updateTable = () => {
 	mlSingleListRef.value?.getTableList();
 };
 
+const allocationRef = ref();
+const openAllocationDialog = (row, type) => {
+	allocationRef.value?.openDialog({
+		type,
+		pageType: "dashboardList",
+		list: [row],
+	});
+};
+
+const handleMoreCommand = (command, row) => {
+	if (command === "delete") {
+		deleteData(row.outerDataModelId);
+		return;
+	}
+	openAllocationDialog(row, command);
+};
+
 const changeSwitch = async (row) => {
     mlSingleListRef.value.loading = true;
     let res = await saveRecord("OuterDataModel", row.outerDataModelId, {
@@ -241,6 +295,22 @@ const changeSwitch = async (row) => {
 	.section-fr {
 		display: flex;
 		float: none;
+		align-items: center;
+	}
+}
+
+.table-row-actions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+
+	:deep(.el-button) {
+		margin-left: 0;
+	}
+
+	:deep(.el-dropdown) {
+		display: inline-flex;
 		align-items: center;
 	}
 }

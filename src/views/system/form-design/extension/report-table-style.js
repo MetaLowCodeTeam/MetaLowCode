@@ -116,6 +116,9 @@ export const syncNativeTableEmptyText = (widget) => {
 const applyConfigToTableElement = (tableEl, config) => {
 	if (!tableEl) return;
 	const normalized = normalizeReportTableConfig(config);
+	const border = normalized.borderWidth > 0
+		? `${normalized.borderWidth}px solid ${normalized.borderColor}`
+		: "0 none transparent";
 	tableEl.setAttribute("data-report-table-style", "true");
 	tableEl.setAttribute("data-report-font-size", String(normalized.fontSize));
 	tableEl.setAttribute("data-report-cell-padding", normalized.cellPadding);
@@ -126,26 +129,41 @@ const applyConfigToTableElement = (tableEl, config) => {
 	tableEl.style.fontSize = `${normalized.fontSize}px`;
 	tableEl.style.tableLayout = normalized.tableLayout;
 	tableEl.style.borderCollapse = "collapse";
+	tableEl.style.borderSpacing = "0";
+	tableEl.style.border = border;
 	tableEl.style.width = tableEl.style.width || "100%";
+	tableEl.setAttribute("cellspacing", "0");
 	const cellList = Array.from(tableEl.rows || []).flatMap((rowEl) => Array.from(rowEl.cells || []));
 	cellList.forEach((cellEl) => {
 		cellEl.style.padding = normalized.cellPadding;
 		cellEl.style.height = normalized.rowHeight > 0 ? `${normalized.rowHeight}px` : "";
 		cellEl.style.minHeight = normalized.rowHeight > 0 ? `${normalized.rowHeight}px` : "";
-		cellEl.style.border = normalized.borderWidth > 0
-			? `${normalized.borderWidth}px solid ${normalized.borderColor}`
-			: "0 none transparent";
+		cellEl.style.border = border;
 		cellEl.style.boxSizing = "border-box";
 	});
+};
+
+const findNativeTableElements = (root, styleClass) => {
+	const tableElements = new Set();
+	root.querySelectorAll(`.table-container.${styleClass}, table.${styleClass}`).forEach((matchedEl) => {
+		if (matchedEl.tagName === "TABLE") {
+			tableElements.add(matchedEl);
+			return;
+		}
+		const directTable = Array.from(matchedEl.children || [])
+			.find((child) => child.tagName === "TABLE");
+		if (directTable) {
+			tableElements.add(directTable);
+		}
+	});
+	return Array.from(tableElements);
 };
 
 export const applyNativeReportTableStyle = (widget, root = document) => {
 	if (!widget || widget.type !== "table" || !root?.querySelectorAll) return;
 	const styleClass = getWidgetStyleClass(widget);
 	if (!styleClass) return;
-	root.querySelectorAll(`.table-container.${styleClass}`).forEach((containerEl) => {
-		const tableEl = Array.from(containerEl.children).find((child) => child.tagName === "TABLE")
-			|| containerEl.querySelector("table");
+	findNativeTableElements(root, styleClass).forEach((tableEl) => {
 		applyConfigToTableElement(tableEl, widget.options?.reportTableConfig);
 	});
 };

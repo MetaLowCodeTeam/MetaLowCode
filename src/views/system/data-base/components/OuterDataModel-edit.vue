@@ -38,6 +38,28 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
+						<el-form-item label="标签" prop="tags" label-width="78px">
+							<el-select
+								v-model="formData.tags"
+								multiple
+								filterable
+								clearable
+								collapse-tags
+								collapse-tags-tooltip
+								placeholder="请选择标签"
+								:disabled="isView"
+								class="w-100"
+							>
+								<el-option
+									v-for="item in tagOptions"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value"
+								/>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="24">
 						<el-form-item label="是否禁用" prop="isDisabled">
 							<el-radio-group
 								v-model="formData.isDisabled"
@@ -287,7 +309,7 @@ import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import { ElMessage } from "element-plus";
 // 接口
 import { queryModelField } from "@/api/plugins";
-import { getOptionItems } from "@/api/system-manager";
+import { getOptionItems, getTagItems } from "@/api/system-manager";
 import { queryById, saveRecord } from "@/api/crud";
 
 const emit = defineEmits(["updateData"]);
@@ -305,6 +327,7 @@ const defaultData = reactive({
 	modelName: "",
 	dataSource: "",
 	dataSourceLabel: "",
+	tags: [],
 	isDisabled: false,
 	sqlText: "",
 	queryFields: [],
@@ -333,6 +356,7 @@ const openDialog = (data) => {
 	entityName.value = data.entityName;
 	modelType.value = String(data.modelType || "1");
 	formData.value = Object.assign({}, defaultData, {
+		tags: [],
 		queryFields: [],
 		sqlParams: [],
 	});
@@ -341,9 +365,29 @@ const openDialog = (data) => {
 };
 
 const optionItems = ref([]);
+const tagOptions = ref([]);
+
+const normalizeTags = (tags) => {
+	if (Array.isArray(tags)) {
+		return tags
+			.map((tag) =>
+				typeof tag === "object" ? tag.value || tag.label : tag
+			)
+			.filter(Boolean);
+	}
+	return String(tags || "")
+		.split(",")
+		.map((tag) => tag.trim())
+		.filter(Boolean);
+};
+
 // 加载参数选项
 const loadOptionItems = async () => {
 	loading.value = true;
+	let tagRes = await getTagItems("OuterDataModel", "tags");
+	if (tagRes && tagRes.data) {
+		tagOptions.value = tagRes.data;
+	}
 	if (!isCustomModel.value) {
 		let res = await getOptionItems("ModelParam", "paramType");
 		if (res && res.data) {
@@ -358,6 +402,7 @@ const loadOptionItems = async () => {
 				dataSource:
 					res.data.dataSource?.id || res.data.dataSource || "",
 				dataSourceLabel: res.data.dataSource?.name || "",
+				tags: normalizeTags(res.data.tags),
 				isDisabled: res.data.isDisabled,
 				sqlText: res.data.sqlText,
 				queryFields: [...(res.data.ModelField || [])],
@@ -417,6 +462,7 @@ const confirm = () => {
 			let params = {
 				modelName: formData.value.modelName,
 				dataSource: formData.value.dataSource,
+				tags: formData.value.tags.join(","),
 				isDisabled: formData.value.isDisabled,
 				modelType: modelType.value,
 				sqlText: formData.value.sqlText,
