@@ -21,6 +21,8 @@ import {
     outerReferenceSchema,
     // 级联选择
     cascaderOptionSchema,
+	pageFooterContainerSchema,
+	pageNumberSchema,
 } from "@/views/system/form-design/extension/extension-widgets-schema";
 import newTestEditor from './property-editor/newTest-editor.vue'
 import CheckTagOptionItemsEditor
@@ -115,6 +117,7 @@ import listSubFormLayoutCodeEditor from "@/views/system/form-design/extension/pr
 
 import inputQrCodeOnMobileEnabledEditor from "@/views/system/form-design/extension/property-editor/input/qrCodeOnMobileEnabled-editor.vue";
 import mlTextTextAlignEditor from "@/views/system/form-design/extension/property-editor/ml-text/textAlign-editor.vue";
+import pageNumberTemplateEditor from "@/views/system/form-design/extension/property-editor/page-number/pageNumberTemplate-editor.vue";
 
 const {
     addContainerWidgetSchema,
@@ -206,6 +209,7 @@ export const loadExtensionWidgets = (app) => {
 	registerFieldWidgets(app)
 	app.component('ml-text-textAlign-editor', mlTextTextAlignEditor)
 	app.component('report-field-widget', reportFieldWidget)
+	app.component('page-number-pageNumberTemplate-editor', pageNumberTemplateEditor)
 	app.component('report-field-name-editor', reportFieldNameEditor)
 	app.component('report-field-label-editor', reportFieldLabelEditor)
 	app.component('report-field-modelName-editor', reportFieldModelNameEditor)
@@ -225,6 +229,30 @@ export const loadExtensionWidgets = (app) => {
 	PERegister.registerCPEditor(app, 'echartsConfig', 'echartsConfig-editor', echartsConfigEditor)
 	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)
 	PERegister.registerCPEditor(app, 'reportTableConfig', 'reportTableConfig-editor', reportTableConfigEditor)
+	PERegister.registerCPEditor(
+		app,
+		'pageNumberTemplate',
+		'page-number-pageNumberTemplate-editor',
+		pageNumberTemplateEditor
+	)
+	PERegister.registerCPEditor(
+		app,
+		'pageNumberStart',
+		'page-footer-container-pageNumberStart-editor',
+		PEFactory.createInputNumberEditor('pageNumberStart', 'extension.setting.pageNumberStart')
+	)
+	PERegister.registerCPEditor(
+		app,
+		'footerDistance',
+		'page-footer-container-footerDistance-editor',
+		PEFactory.createInputNumberEditor('footerDistance', 'extension.setting.footerDistance')
+	)
+	PERegister.registerCPEditor(
+		app,
+		'showTopBorder',
+		'page-footer-container-showTopBorder-editor',
+		PEFactory.createBooleanEditor('showTopBorder', 'extension.setting.showTopBorder')
+	)
 
 	//注册容器组件
     registerContainerWidgets(app)
@@ -232,6 +260,7 @@ export const loadExtensionWidgets = (app) => {
 
 	//添加到设计器组件库
 	addBasicFieldSchema(textFieldSchema)
+	addBasicFieldSchema(pageNumberSchema)
 	addBasicFieldSchema(pivotTableSchema)
 	addBasicFieldSchema(barChartSchema)
 	addBasicFieldSchema(lineChartSchema)
@@ -248,5 +277,6 @@ export const loadExtensionWidgets = (app) => {
     addAdvancedFieldSchema(cascaderOptionSchema)
     // 添加到容器组件库
     addContainerWidgetSchema(listSubFormSchema)
+	addContainerWidgetSchema(pageFooterContainerSchema)
 
 }

@@ -78,6 +78,7 @@
 											:model-value="dimensionRow"
 											chartType="pivotTable"
 											isDimension
+											enable-width-ratio
 											@onSort="onSort"
 											@update:modelValue="(value) => updateDimensionList(value, 'dimensionRow')"
 										/>
@@ -119,6 +120,7 @@
 										<DimensionCom
 											:model-value="metrics"
 											chartType="pivotTable"
+											enable-width-ratio
 											@onSort="onSort"
 											@update:modelValue="(value) => updateDimensionList(value, 'metrics')"
 										/>
@@ -586,4 +588,5 @@ export default {
 	margin-left: 6px;
 	color: #909399;
 }
+
 </style>

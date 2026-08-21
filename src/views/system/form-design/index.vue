@@ -8,7 +8,7 @@
             @field-widget-used="handleFWU"
             @field-widget-removed="handleFWR"
             @form-json-updated="handleFJU"
-            :banned-widgets="['reference','reference-list','outer-reference','cascader-option']"
+            :banned-widgets="['reference','reference-list','outer-reference','cascader-option','page-footer-container','page-number']"
             class="visual-design"
         >
             <!-- 配置工具按钮 -->

@@ -95,7 +95,7 @@ export default {
                 metadataContainer: false,
                 advancedFields: false,
                 customFields: false,
-                keepContainers: ['column-1-grid','column-2-grid','column-3-grid','column-4-grid','table','loop-container','page-header-container'],
+                keepContainers: ['column-1-grid','column-2-grid','column-3-grid','column-4-grid','table','loop-container','page-header-container','page-footer-container'],
             },
             globalDsv: {
                 ...globalDsvDefaultData(),
@@ -565,6 +565,11 @@ export default {
         async saveDesign() {
 			let formJson = this.$refs.vfDesigner.getFormJson();
 			if (!formJson) return;
+			const footerValidationMessage = this.validatePageFooterContainers(formJson.widgetList || []);
+			if (footerValidationMessage) {
+				ElMessage.warning(footerValidationMessage);
+				return;
+			}
 			this.pageLoading = true;
 			let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/saveRecord", {
 				reportConfig: JSON.stringify(formJson),
@@ -578,8 +583,53 @@ export default {
 			if (res?.code == 200) {
 				ElMessage.success("保存成功");
 			}
-			this.pageLoading = false;
+            this.pageLoading = false;
         },
+
+		validatePageFooterContainers(widgetList = []) {
+			const allowedChildTypes = new Set([
+				'grid', 'table', 'page-number', 'ml-text', 'report-field',
+				'static-text', 'html-text', 'divider',
+			]);
+			const visitFooterChildren = (children = []) => {
+				for (const child of children) {
+					if (!allowedChildTypes.has(child?.type)) {
+						return `页脚容器不支持「${child?.displayName || child?.options?.label || child?.type || '未知组件'}」`;
+					}
+					const nestedLists = [
+						child?.widgetList,
+						...(child?.cols || []).map((col) => col?.widgetList),
+						...(child?.rows || []).flatMap((row) => (row?.cols || []).map((col) => col?.widgetList)),
+					];
+					for (const nestedList of nestedLists) {
+						const message = visitFooterChildren(nestedList || []);
+						if (message) return message;
+					}
+				}
+				return '';
+			};
+			const visit = (children = [], insideContainer = false) => {
+				for (const child of children) {
+					if (child?.type === 'page-footer-container') {
+						if (insideContainer) return '页脚容器只能放在报表画布最外层';
+						const message = visitFooterChildren(child.widgetList || []);
+						if (message) return message;
+					}
+					const nestedLists = [
+						child?.widgetList,
+						...(child?.cols || []).map((col) => col?.widgetList),
+						...(child?.rows || []).flatMap((row) => (row?.cols || []).map((col) => col?.widgetList)),
+						...(child?.tabs || []).map((tab) => tab?.widgetList),
+					];
+					for (const nestedList of nestedLists) {
+						const message = visit(nestedList || [], true);
+						if (message) return message;
+					}
+				}
+				return '';
+			};
+			return visit(widgetList, false);
+		},
 
         openModelAssociationEdit() {
             this.$refs.modelAssociationEditRef?.openDialog({

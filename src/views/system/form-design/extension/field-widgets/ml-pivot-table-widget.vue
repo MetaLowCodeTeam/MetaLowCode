@@ -21,6 +21,13 @@
 				:style="tableStyle"
 				v-bind="reportTableDataAttributes"
 			>
+				<colgroup>
+					<col
+						v-for="column in pivotPhysicalColumnWidths"
+						:key="column.key"
+						:style="{ width: column.width }"
+					/>
+				</colgroup>
 				<thead>
 					<tr v-for="(headerRow, headerRowIndex) in columnHeaderRows" :key="headerRowIndex">
 						<th
@@ -277,6 +284,41 @@ export default {
 		},
 		pivotColumns() {
 			return this.pivotColumnDefinitions.map((column) => column.key)
+		},
+		pivotPhysicalColumnWidths() {
+			const rowColumnCount = Math.max(this.rowDimensionHeaders.length, 1)
+			const valueColumnCount = this.pivotColumnDefinitions.length
+			const summaryColumnCount = this.config.showSumcol ? 1 : 0
+			const totalColumnCount = Math.max(
+				rowColumnCount + valueColumnCount + summaryColumnCount,
+				1
+			)
+			const defaultRatio = 100 / totalColumnCount
+			const columns = []
+
+			for (let index = 0; index < rowColumnCount; index += 1) {
+				columns.push({
+					key: `row-${index}`,
+					ratio: this.normalizeColumnWidthRatio(this.dimensionRows[index]?.widthRatio) || defaultRatio,
+				})
+			}
+			this.pivotColumnDefinitions.forEach((column) => {
+				columns.push({
+					key: `value-${column.key}`,
+					ratio: this.normalizeColumnWidthRatio(
+						this.metrics[column.metricIndex]?.widthRatio
+					) || defaultRatio,
+				})
+			})
+			if (summaryColumnCount) {
+				columns.push({ key: 'summary', ratio: defaultRatio })
+			}
+
+			const totalRatio = columns.reduce((sum, column) => sum + column.ratio, 0) || 1
+			return columns.map((column) => ({
+				key: column.key,
+				width: `${this.roundColumnWidth(column.ratio / totalRatio * 100)}%`,
+			}))
 		},
 		columnHeaderRows() {
 			if (this.dimensionCols.length === 0) {
@@ -733,6 +775,13 @@ export default {
 		},
 		buildPivotColumnKey(dimensionValues, metricIndex) {
 			return JSON.stringify([dimensionValues, metricIndex])
+		},
+		normalizeColumnWidthRatio(value) {
+			const ratio = Number(value)
+			return Number.isFinite(ratio) && ratio > 0 ? Math.min(ratio, 100) : null
+		},
+		roundColumnWidth(value) {
+			return Math.round(value * 10000) / 10000
 		},
 		buildColumnDimensionHeaderRow(dimensionIndex) {
 			const headerCells = []

@@ -45,6 +45,30 @@ export const listSubFormSchema = {
 };
 
 /**
+ * 报表页脚容器。
+ *
+ * 容器在导出时作为 Word 分节标记使用：容器前的正文沿用上一节，容器后的正文
+ * 使用当前容器生成的页脚，并从 pageNumberStart 重新计算页码。
+ */
+export const pageFooterContainerSchema = {
+	type: 'page-footer-container',
+	alias: 'page-footer-container',
+	icon: 'column-1-grid',
+	category: 'container',
+	commonFlag: true,
+	widgetList: [],
+	options: {
+		name: '',
+		label: '页脚容器',
+		hidden: false,
+		pageNumberStart: 1,
+		footerDistance: 3,
+		showTopBorder: false,
+		customClass: '',
+	},
+};
+
+/**
  * 字段组件
  */
 export const textFieldSchema = {
@@ -64,6 +88,25 @@ export const textFieldSchema = {
 		onCreated: '',
 		onMounted: '',
 		onFormDataReady: '',
+	},
+};
+
+/** Word/PDF 导出使用的动态页码字段。 */
+export const pageNumberSchema = {
+	type: 'page-number',
+	alias: 'page-number',
+	icon: 'text-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '页码',
+		hidden: false,
+		pageNumberTemplate: '第 {page} 页',
+		textAlign: 'center',
+		fontSize: '12px',
+		fontStyle: 'normal',
+		fontWeight: 'normal',
+		customClass: '',
 	},
 };
 

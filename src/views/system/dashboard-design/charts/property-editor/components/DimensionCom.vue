@@ -114,6 +114,35 @@
                         </div>
                     </template>
                 </el-popover>
+                <el-popover
+                    v-if="enableWidthRatio"
+                    placement="right"
+                    :width="190"
+                    trigger="click"
+                >
+                    <div class="width-ratio-editor">
+                        <div class="width-ratio-editor__label">列宽比例</div>
+                        <el-input-number
+                            v-model="tag.widthRatio"
+                            size="small"
+                            :min="1"
+                            :max="100"
+                            :step="1"
+                            controls-position="right"
+                            @change="onWidthRatioChange"
+                        />
+                    </div>
+                    <template #reference>
+                        <div class="popover-item">
+                            宽度比例{{ tag.widthRatio ? `（${tag.widthRatio}）` : '' }}
+                            <span style="position: relative;top:2px;float: right;">
+                                <el-icon>
+                                    <ElIconArrowRight />
+                                </el-icon>
+                            </span>
+                        </div>
+                    </template>
+                </el-popover>
                 <!-- 数据格式 -->
                 <div class="popover-item" v-if="!isDimension" @click="showDataFormat(tag,inx)">数据格式</div>
             </div>
@@ -227,6 +256,7 @@ const props = defineProps({
     modelValue: null,
     isDimension: { type: Boolean, default: false },
     chartType: { type: String, default: "" },
+    enableWidthRatio: { type: Boolean, default: false },
 });
 const CalcMode = {
     first: "首个数据",
@@ -488,6 +518,10 @@ const onSort = (tag, target, inx) => {
     emits("onSort", { tag, target });
 };
 
+const onWidthRatioChange = () => {
+    emits("update:modelValue", list.value);
+};
+
 // 部分表格禁用千分符、数值量级
 let needDisabledType = () => {
     let chartTypes = ["barChart", "barXChart", "lineChart"];
@@ -608,5 +642,10 @@ const confirmDataFormat = () => {
         font-size: 14px;
         margin-left: 5px;
     }
+}
+.width-ratio-editor__label {
+    margin-bottom: 8px;
+    color: #606266;
+    font-size: 12px;
 }
 </style>

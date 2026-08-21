@@ -12,6 +12,8 @@ export default {
             'outer-reference': 'Outer Reference',
             'location': 'Location',
             'sign': 'Sign',
+			'page-footer-container': 'Page Footer',
+			'page-number': 'Page Number',
         },
 
         setting: {
@@ -57,6 +59,9 @@ export default {
             useUserDepartmentTree: "Use User Department Tree",
 			// location lang
 			positionSelectable: 'Position selectable',
+			pageNumberStart: 'Starting page number',
+			footerDistance: 'Distance from bottom (mm)',
+			showTopBorder: 'Show top border',
             showBorder: "Show as border",
             borderInfo: "Check box enabled, border can be effective",
             showButton: "Show as button",
