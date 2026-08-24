@@ -46,6 +46,9 @@
 				<el-radio-button value="right">居右</el-radio-button>
 			</el-radio-group>
 		</el-form-item>
+		<el-form-item label="支持 HTML">
+			<el-switch v-model="optionModel.htmlDisplayEnabled" />
+		</el-form-item>
 		<el-form-item label="汇总行显示">
 			<el-switch v-model="optionModel.pivotTableConfig.showSummary" />
 		</el-form-item>
