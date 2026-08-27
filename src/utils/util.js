@@ -5,6 +5,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { pinyin } from 'pinyin-pro'
 import JSEncrypt from 'jsencrypt';
+import CryptoJS from 'crypto-js';
 import http from "@/utils/request";
 import { RuleFunctions } from "@/utils/ruleFunctions";
 import { ElMessage } from 'element-plus';
@@ -687,6 +688,42 @@ export const encrypt = async (password) => {
         encrypt.setPublicKey(res.data.publicKey)
         return encrypt.encrypt(JSON.stringify(param))
     };
+}
+
+// 获取记住密码的AES密钥（不存在则生成，存放在localStorage）
+const getRememberKey = () => {
+    const keyName = 'rememberPasswordKey';
+    let key = localStorage.getItem(keyName);
+    if (!key) {
+        key = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex);
+        localStorage.setItem(keyName, key);
+    }
+    return key;
+}
+
+// 记住密码：密码 AES 加密
+export const encryptRememberPassword = (password) => {
+    try {
+        const key = getRememberKey();
+        return CryptoJS.AES.encrypt(password, key).toString();
+    } catch (e) {
+        return '';
+    }
+}
+
+// 记住密码：密码 AES 解密（兼容解密失败时按老版本明文处理）
+export const decryptRememberPassword = (text) => {
+    if (!text) return '';
+    try {
+        const key = getRememberKey();
+        const decrypted = CryptoJS.AES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+        if (decrypted) {
+            return decrypted;
+        }
+        return text;
+    } catch (e) {
+        return text;
+    }
 }
 
 // 提取公共方法用于格式化带有点号的字段
