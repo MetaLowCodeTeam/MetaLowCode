@@ -76,7 +76,7 @@ const { getEntityList, setUserInfo, setPublicSetting } = useCommonStore();
 // const { setNewMsgNum } = useCheckStatusStore();
 import { getPublicSetting } from "@/api/setting";
 import http from "@/utils/request";
-import { encrypt } from "@/utils/util";
+import { encrypt, encryptRememberPassword, decryptRememberPassword } from "@/utils/util";
 export default {
     data() {
         return {
@@ -133,7 +133,7 @@ export default {
         if (userInfo) {
             userInfo = JSON.parse(userInfo);
             this.form.user = userInfo.loginName;
-            this.form.password = userInfo.password;
+            this.form.password = decryptRememberPassword(userInfo.password);
             this.form.autologin = userInfo.autologin;
             this.form.tenantCode = userInfo.tenantCode;
         }
@@ -194,7 +194,7 @@ export default {
                 // 勾选了记住密码
                 if (this.form.autologin) {
                     let userInfo = this.$TOOL.data.get('USER_INFO');
-                    userInfo.password = this.form.password;
+                    userInfo.password = encryptRememberPassword(this.form.password);
                     userInfo.autologin = this.form.autologin;
                     userInfo.tenantCode = this.form.tenantCode;
                     this.$TOOL.cookie.set(
