@@ -130,7 +130,8 @@ let tableOptions = ref({
             reverseLayout: false,
             reverseSubLayout: false,
             subTotalsDimensions: ["number"],
-            label: "汇总",
+            grandTotalsLabel: "汇总",
+            subTotalsLabel: "汇总",
             calcGrandTotals: {
                 calcFunc: calcTotalValue,
             },
@@ -141,7 +142,8 @@ let tableOptions = ref({
             reverseLayout: false,
             reverseSubLayout: false,
             subTotalsDimensions: ["number"],
-            label: "汇总",
+            grandTotalsLabel: "汇总",
+            subTotalsLabel: "汇总",
             calcGrandTotals: {
                 calcFunc: calcTotalValue,
             },
