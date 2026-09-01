@@ -797,8 +797,34 @@ export default {
 body.data-model-report-view-page,
 body.data-model-report-view-page #app,
 body.data-model-report-view-page .aminui {
-    min-height: 100%;
-    height: auto;
+    height: 100%;
+    min-height: 0;
     background: #eef1f5 !important;
+}
+
+body.data-model-report-view-page {
+    overflow: hidden;
+}
+
+body.data-model-report-view-page .aminui-wrapper,
+body.data-model-report-view-page .aminui-body,
+body.data-model-report-view-page .adminui-main {
+    min-height: 0;
+    overflow: hidden;
+}
+
+body.data-model-report-view-page .report-view,
+body.data-model-report-view-page .report-stage {
+    min-height: 0;
+}
+
+body.data-model-report-view-page .report-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+body.data-model-report-view-page .report-stage {
+    flex: 1;
 }
 </style>
