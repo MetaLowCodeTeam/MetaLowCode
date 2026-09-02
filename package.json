@@ -11,6 +11,7 @@
 		"fast-build": "vite build --config fastvite.config.js && node scripts/build-custom-css.js"
 	},
 	"dependencies": {
+		"@antv/s2": "2.4.3",
 		"@antv/s2-vue": "1.7.1",
 		"@codemirror/lang-java": "^6.0.1",
 		"@codemirror/lang-javascript": "^6.2.2",
