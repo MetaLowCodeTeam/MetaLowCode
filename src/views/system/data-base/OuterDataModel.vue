@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import OuterDataModelEdit from "./components/OuterDataModel-edit.vue";
 import Allocation from "@/views/customize-menu/components/Allocation.vue";
@@ -122,56 +122,61 @@ let sortFields = ref([
 		type: "DESC",
 	},
 ]);
-let tableColumn = ref([
-	{
-		prop: "modelName",
-		label: "模型名称",
-	},
-	{
-		prop: "dataSource",
-		label: "数据源",
-		formatter: (row) => {
-			return row.dataSource?.name;
+let tableColumn = computed(() => {
+	const columns = [
+		{
+			prop: "modelName",
+			label: "模型名称",
 		},
-	},
-	{
-		prop: "tags",
-		label: "标签",
-		formatter: (row) => {
-			const tags = Array.isArray(row.tags)
-				? row.tags
-				: String(row.tags || "").split(",");
-			return tags.filter(Boolean).join("、") || "-";
+		{
+			prop: "dataSource",
+			label: "数据源",
+			formatter: (row) => {
+				return row.dataSource?.name;
+			},
 		},
-	},
-	{
-		prop: "ownerUser.name",
-		label: "所属用户",
-		formatter: (row) => row.ownerUser?.name || "-",
-	},
-	{
-		prop: "ownerDepartment.name",
-		label: "所属部门",
-		formatter: (row) => row.ownerDepartment?.name || "-",
-	},
-	{
-		prop: "isDisabled",
-		label: "启用",
-        align: "center",
-        customSlot: "switch",
-        isNegation: true,
-	},
-    {
-        prop: "outerDataModelId",
-        label: "数据列表",
-        width: 120,
-        align: "center",
-        highlight: true,
-        formatter: (row) => {
-            return "查看数据";
-        },
-    },
-]);
+		{
+			prop: "tags",
+			label: "标签",
+			formatter: (row) => {
+				const tags = Array.isArray(row.tags)
+					? row.tags
+					: String(row.tags || "").split(",");
+				return tags.filter(Boolean).join("、") || "-";
+			},
+		},
+		{
+			prop: "ownerUser.name",
+			label: "所属用户",
+			formatter: (row) => row.ownerUser?.name || "-",
+		},
+		{
+			prop: "ownerDepartment.name",
+			label: "所属部门",
+			formatter: (row) => row.ownerDepartment?.name || "-",
+		},
+		{
+			prop: "isDisabled",
+			label: "启用",
+			align: "center",
+			customSlot: "switch",
+			isNegation: true,
+		},
+	];
+	if (activeModelTab.value === "regular") {
+		columns.push({
+			prop: "outerDataModelId",
+			label: "数据列表",
+			width: 120,
+			align: "center",
+			highlight: true,
+			formatter: (row) => {
+				return "查看数据";
+			},
+		});
+	}
+	return columns;
+});
 
 // 查看编辑
 const outerDataModelEditRef = ref();
