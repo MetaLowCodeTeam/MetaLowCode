@@ -73,6 +73,7 @@ import { downloadBase64, globalDsvDefaultData } from "@/utils/util";
 import {
     applyAllNativeReportTableStyles,
     normalizeReportWidgetCustomClasses,
+    REPORT_TABLE_SPACING_AFTER_PX,
 } from "@/views/system/form-design/extension/report-table-style";
 
 export default {
@@ -471,6 +472,7 @@ export default {
             const exportContentEl = contentEl?.cloneNode(true);
             this.prepareExportContentWidth(exportContentEl);
             this.normalizeReportTableBordersForExport(exportContentEl);
+            this.normalizeReportTableSpacingForExport(exportContentEl);
             this.transformGridToExportTables(exportContentEl);
             const contentHtml = exportContentEl?.outerHTML || "";
             console.info("[DataModelReportView] export html prepared", {
@@ -526,6 +528,37 @@ export default {
             });
         },
 
+        normalizeReportTableSpacingForExport(rootEl) {
+            if (!rootEl?.querySelectorAll) return;
+            rootEl.querySelectorAll("table[data-report-table-spacing-after]").forEach((tableEl) => {
+                const configuredSpacing = Number(tableEl.getAttribute("data-report-table-spacing-after"));
+                const spacing = Number.isFinite(configuredSpacing)
+                    ? Math.max(0, configuredSpacing)
+                    : REPORT_TABLE_SPACING_AFTER_PX;
+
+                // 页面间距来自组件外层 margin；导出时改成明确的段落高度，避免 Word
+                // 与 PDF 对 div margin 的折叠规则不同而出现间距丢失或叠加。
+                const wrapperEl = tableEl.closest(".container-wrapper");
+                wrapperEl?.style.setProperty("margin-bottom", "0", "important");
+                tableEl.style.setProperty("margin-bottom", "0", "important");
+
+                const spacerEl = document.createElement("p");
+                spacerEl.className = "report-table-export-spacer";
+                spacerEl.setAttribute("data-report-table-export-spacer", "true");
+                // XHTMLImporter 对空段落及 CSS height 的保留不稳定。后端通过该标记
+                // 将段落转换为固定行高，Word 与 PDF 共用同一份文档模型。
+                spacerEl.textContent = "__META_REPORT_TABLE_SPACER__";
+                spacerEl.style.setProperty("margin", "0", "important");
+                spacerEl.style.setProperty("padding", "0", "important");
+                spacerEl.style.setProperty("height", `${spacing}px`, "important");
+                spacerEl.style.setProperty("min-height", `${spacing}px`, "important");
+                spacerEl.style.setProperty("line-height", `${spacing}px`, "important");
+                spacerEl.style.setProperty("font-size", "1px", "important");
+                spacerEl.style.setProperty("color", "transparent", "important");
+                tableEl.insertAdjacentElement("afterend", spacerEl);
+            });
+        },
+
         getWordExportStyle() {
             const contentWidth = this.landscape ? "1040px" : "720px";
             return `<style data-front-word-export="true">
@@ -553,6 +586,19 @@ export default {
                 table.word-export-layout-table img,
                 table.word-export-layout-table canvas,
                 table.word-export-layout-table svg { max-width: 100% !important; }
+                .report-content table th,
+                .report-content table td {
+                    min-width: 0 !important;
+                    max-width: 100% !important;
+                    white-space: normal !important;
+                    overflow-wrap: anywhere !important;
+                    word-break: break-all !important;
+                }
+                .report-table-export-spacer {
+                    display: block !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
             </style>`;
         },
 
@@ -765,6 +811,7 @@ export default {
         display: flow-root;
         min-height: 1px;
     }
+
 }
 
 @media (max-width: 900px) {

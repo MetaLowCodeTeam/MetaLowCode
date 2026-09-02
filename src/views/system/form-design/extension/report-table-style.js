@@ -18,6 +18,9 @@ export const LEGACY_REPORT_TABLE_CONFIG = Object.freeze({
 	tableLayout: "auto",
 });
 
+/** 原生报表表格与后续内容之间的标准间距，页面、Word 与 PDF 共用。 */
+export const REPORT_TABLE_SPACING_AFTER_PX = 8;
+
 const toFiniteNumber = (value, fallback, min = 0) => {
 	const numberValue = Number(value);
 	return Number.isFinite(numberValue) ? Math.max(numberValue, min) : fallback;
@@ -126,12 +129,14 @@ const applyConfigToTableElement = (tableEl, config) => {
 	tableEl.setAttribute("data-report-border-color", normalized.borderColor);
 	tableEl.setAttribute("data-report-row-height", String(normalized.rowHeight));
 	tableEl.setAttribute("data-report-table-layout", normalized.tableLayout);
+	tableEl.setAttribute("data-report-table-spacing-after", String(REPORT_TABLE_SPACING_AFTER_PX));
 	tableEl.style.fontSize = `${normalized.fontSize}px`;
 	tableEl.style.tableLayout = normalized.tableLayout;
 	tableEl.style.borderCollapse = "collapse";
 	tableEl.style.borderSpacing = "0";
 	tableEl.style.border = border;
 	tableEl.style.width = tableEl.style.width || "100%";
+	tableEl.style.marginBottom = `${REPORT_TABLE_SPACING_AFTER_PX}px`;
 	tableEl.setAttribute("cellspacing", "0");
 	const cellList = Array.from(tableEl.rows || []).flatMap((rowEl) => Array.from(rowEl.cells || []));
 	cellList.forEach((cellEl) => {
