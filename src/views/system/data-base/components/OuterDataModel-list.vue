@@ -14,160 +14,82 @@
 					:show-message="false"
 					@submit.prevent
 				>
-					<!-- 参数少于等于 4 个时的布局 -->
-					<el-row :gutter="10" v-if="queryParams.length > 0 && isSingleRow">
-						<el-col
-							:span="5"
-							v-for="item in queryParams"
-							:key="item.name"
+				<!-- 查询条件 + 按钮块：flex 自动换行，按钮块放得下就跟在条件右侧，放不下就独占一行 -->
+				<div class="query-fields" v-if="queryParams.length > 0">
+					<div
+						class="query-field"
+						v-for="item in queryParams"
+						:key="item.name"
+					>
+						<el-form-item
+							:label="item.label"
+							style="margin-bottom: 10px"
+							:prop="item.name"
 						>
-							<el-form-item
-								:label="item.label"
-								class="query-field-item--single"
-								style="margin-bottom: 10px"
-								:prop="item.name"
-							>
-								<!-- 文本类型1 和 文本(模糊)5 -->
-								<el-input
-									v-model="queryFrom[item.name]"
-									:placeholder="`请输入${item.label}`"
-									clearable
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-									v-if="item.type == 1 || item.type == 5"
-								/>
-								<!-- 日期时间2 -->
-								<el-date-picker
-									v-model="queryFrom[item.name]"
-									type="datetime"
-									placeholder="选择日期时间"
-									clearable
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-									v-if="item.type == 2"
-									class="w-100"
-								/>
-								<!-- 日期3 -->
-								<el-date-picker
-									v-model="queryFrom[item.name]"
-									type="date"
-									placeholder="选择日期"
-									clearable
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-									v-if="item.type == 3"
-									class="w-100"
-								/>
-								<!-- 数字4 -->
-								<el-input-number
-									v-model="queryFrom[item.name]"
-									placeholder="请输入数字"
-									v-if="item.type == 4"
-									:controls="false"
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-									style="text-align: left"
-									class="w-100 ml-number-input"
-								/>
-							</el-form-item>
-						</el-col>
-						<el-col :span="4" :offset="(4 - queryParams.length) * 5" class="query-actions">
-							<el-button
-								v-for="button in visibleTopButtons"
-								:key="button.guid"
-								:type="button.type || 'default'"
-								:plain="button.plain === true"
-								:text="isTextOnlyButton(button)"
-								@click="handleTopButton(button)"
-							>
-								<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
-									<component :is="button.icon" />
-								</el-icon>
-								<span v-if="!isIconOnlyButton(button)">{{ getButtonName(button) }}</span>
-							</el-button>
-						</el-col>
-					</el-row>
-
-					<!-- 参数多于 4 个时的布局 -->
-					<template v-else-if="queryParams.length > 0">
-						<el-row :gutter="10">
-							<el-col
-								:span="6"
-								v-for="item in queryParams"
-								:key="item.name"
-							>
-								<el-form-item
-									:label="item.label"
-									style="margin-bottom: 10px"
-									:prop="item.name"
-								>
-									<!-- 文本类型1 和 文本(模糊)5 -->
-									<el-input
-										v-model="queryFrom[item.name]"
-									:placeholder="`请输入${item.label}`"
-									clearable
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-										v-if="item.type == 1 || item.type == 5"
-									/>
-									<!-- 日期时间2 -->
-									<el-date-picker
-										v-model="queryFrom[item.name]"
-										type="datetime"
-									placeholder="选择日期时间"
-									clearable
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-										v-if="item.type == 2"
-										class="w-100"
-										format="YYYY-MM-DD HH:mm:ss"
-										value-format="YYYY-MM-DD HH:mm:ss"
-									/>
-									<!-- 日期3 -->
-									<el-date-picker
-										v-model="queryFrom[item.name]"
-										type="date"
-									placeholder="选择日期"
-									clearable
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-										v-if="item.type == 3"
-										class="w-100"
-										format="YYYY-MM-DD"
-										value-format="YYYY-MM-DD"
-									/>
-									<!-- 数字4 -->
-									<el-input-number
-										v-model="queryFrom[item.name]"
-										placeholder="请输入数字"
-										v-if="item.type == 4"
-									:controls="false"
-									:validate-event="false"
-									@focus="clearQueryValidate(item.name)"
-										style="text-align: left"
-										class="w-100 ml-number-input"
-									/>
-								</el-form-item>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24" class="query-actions">
-							<el-button
-								v-for="button in visibleTopButtons"
-								:key="button.guid"
-								:type="button.type || 'default'"
-								:plain="button.plain === true"
-								:text="isTextOnlyButton(button)"
-								@click="handleTopButton(button)"
-							>
-								<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
-									<component :is="button.icon" />
-								</el-icon>
-								<span v-if="!isIconOnlyButton(button)">{{ getButtonName(button) }}</span>
-							</el-button>
-							</el-col>
-						</el-row>
-					</template>
+							<!-- 文本类型1 和 文本(模糊)5 -->
+							<el-input
+								v-model="queryFrom[item.name]"
+								:placeholder="`请输入${item.label}`"
+								clearable
+								:validate-event="false"
+								@focus="clearQueryValidate(item.name)"
+								v-if="item.type == 1 || item.type == 5"
+							/>
+							<!-- 日期时间2 -->
+							<el-date-picker
+								v-model="queryFrom[item.name]"
+								type="datetime"
+								placeholder="选择日期时间"
+								clearable
+								:validate-event="false"
+								@focus="clearQueryValidate(item.name)"
+								v-if="item.type == 2"
+								class="w-100"
+								format="YYYY-MM-DD HH:mm:ss"
+								value-format="YYYY-MM-DD HH:mm:ss"
+							/>
+							<!-- 日期3 -->
+							<el-date-picker
+								v-model="queryFrom[item.name]"
+								type="date"
+								placeholder="选择日期"
+								clearable
+								:validate-event="false"
+								@focus="clearQueryValidate(item.name)"
+								v-if="item.type == 3"
+								class="w-100"
+								format="YYYY-MM-DD"
+								value-format="YYYY-MM-DD"
+							/>
+							<!-- 数字4 -->
+							<el-input-number
+								v-model="queryFrom[item.name]"
+								placeholder="请输入数字"
+								v-if="item.type == 4"
+								:controls="false"
+								:validate-event="false"
+								@focus="clearQueryValidate(item.name)"
+								style="text-align: left"
+								class="w-100 ml-number-input"
+							/>
+						</el-form-item>
+					</div>
+					<div class="query-actions">
+						<el-button
+							v-for="button in visibleTopButtons"
+							:key="button.guid"
+							:type="button.type || 'default'"
+							:plain="button.plain === true"
+							:text="isTextOnlyButton(button)"
+							@click="handleTopButton(button)"
+						>
+							<el-icon v-if="button.icon && !isTextOnlyButton(button)" :color="button.iconColor">
+								<component :is="button.icon" />
+							</el-icon>
+							<span v-if="!isIconOnlyButton(button)">{{ getButtonName(button) }}</span>
+						</el-button>
+					</div>
+				</div>
 					<el-row v-else>
 						<el-col :span="24" class="query-actions query-actions--empty">
 							<el-button
@@ -458,11 +380,6 @@ const executeCustomButton = async (button, row) => {
 	);
 };
 
-// 动态计算是否需要换行
-const isSingleRow = computed(() => {
-	return queryParams.value.length <= 4;
-});
-
 // 新增方法：检查查询参数是否合法
 const checkQueryParams = () => {
 	for (const item of queryParams.value) {
@@ -638,11 +555,27 @@ const loadListData = async () => {
 	}
 }
 
+.query-fields {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	column-gap: 10px;
+
+	.query-field {
+		box-sizing: border-box;
+		width: calc((100% - 30px) / 4);
+		min-width: 220px;
+	}
+}
+
 .query-actions {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
 	gap: 12px;
+	margin-left: auto;
+	min-height: 32px;
 
 	:deep(.el-button + .el-button) {
 		margin-left: 0;
@@ -651,11 +584,6 @@ const loadListData = async () => {
 
 .query-actions--empty {
 	min-height: 32px;
-}
-
-.query-field-item--single {
-	position: relative;
-	top: 4px;
 }
 
 .table-div {
