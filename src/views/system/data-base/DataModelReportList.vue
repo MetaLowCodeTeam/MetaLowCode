@@ -4,11 +4,10 @@
 			ref="mlSingleListRef"
 			title="数据模型报表"
 			mainEntity="DataModelReport"
-			fieldsList="dataModelReportId,reportName,reportName,modelConfig"
+			fieldsList="dataModelReportId,reportName,modelConfig,ownerUser,ownerDepartment"
 			fieldName="reportName"
 			:tableColumn="tableColumn"
 			:sortFields="sortFields"
-			queryUrl="/plugins/metaDataWarehouse/outerData/modelReport/listQuery"
 		>
 			<template #addButton>
 				<el-button type="primary" :icon="Plus" @click="openReportEdit()">新建</el-button>
@@ -39,14 +38,23 @@
 							<el-button link type="primary" :icon="Edit" @click="openReportEdit(scope.row)">
 								编辑
 							</el-button>
-							<el-button
-								link
-								type="primary"
-								:icon="Delete"
-								@click="deleteRow(scope.row)"
+							<el-dropdown
+								trigger="click"
+								@command="(command) => handleMoreCommand(command, scope.row)"
 							>
-								删除
-							</el-button>
+								<el-button link type="primary">
+									<el-icon class="mr-3"><ElIconMoreFilled /></el-icon>
+									更多
+								</el-button>
+								<template #dropdown>
+									<el-dropdown-menu>
+										<el-dropdown-item command="delete">删除</el-dropdown-item>
+										<el-dropdown-item command="allocation">分配</el-dropdown-item>
+										<el-dropdown-item command="share">共享</el-dropdown-item>
+										<el-dropdown-item command="unShare">取消共享</el-dropdown-item>
+									</el-dropdown-menu>
+								</template>
+							</el-dropdown>
 						</div>
 					</template>
 				</el-table-column>
@@ -84,6 +92,11 @@
 			</template>
 		</el-dialog>
 		<ml-custom-edit ref="reportEditRef" name-field-name="reportName" @on-confirm="refreshTable" />
+		<Allocation
+			ref="allocationRef"
+			:layoutConfig="{ idFieldName: 'dataModelReportId' }"
+			@allocationSuccess="refreshTable"
+		/>
 	</div>
 </template>
 
@@ -91,9 +104,10 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Close, CopyDocument, Delete, DocumentCopy, Edit, EditPen, Plus } from "@element-plus/icons-vue";
+import { Close, CopyDocument, DocumentCopy, Edit, EditPen, Plus } from "@element-plus/icons-vue";
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
 import mlCustomEdit from "@/components/mlCustomEdit/index.vue";
+import Allocation from "@/views/customize-menu/components/Allocation.vue";
 import { deleteRecord } from "@/api/crud";
 import http from "@/utils/request";
 import { copyText } from "@/utils/util";
@@ -107,6 +121,7 @@ const exampleCode = ref("");
 const exampleCodeLoading = ref(false);
 const exampleLoadingId = ref("");
 const reportEditRef = ref();
+const allocationRef = ref();
 
 const sortFields = ref([
 	{
@@ -120,6 +135,16 @@ const tableColumn = ref([
 		prop: "reportName",
 		label: "报表名称",
 		formatter: (row) => row.reportName || "",
+	},
+	{
+		prop: "ownerUser.name",
+		label: "所属用户",
+		formatter: (row) => row.ownerUser?.name || "-",
+	},
+	{
+		prop: "ownerDepartment.name",
+		label: "所属部门",
+		formatter: (row) => row.ownerDepartment?.name || "-",
 	},
 ]);
 
@@ -148,6 +173,22 @@ const openReportEdit = (row) => {
 
 const refreshTable = () => {
 	mlSingleListRef.value?.getTableList?.();
+};
+
+const openAllocationDialog = (row, type) => {
+	allocationRef.value?.openDialog({
+		type,
+		pageType: "dashboardList",
+		list: [row],
+	});
+};
+
+const handleMoreCommand = (command, row) => {
+	if (command === "delete") {
+		deleteRow(row);
+		return;
+	}
+	openAllocationDialog(row, command);
 };
 
 const parseModelConfig = (modelConfig) => {

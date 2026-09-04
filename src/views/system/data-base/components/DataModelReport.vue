@@ -52,6 +52,7 @@
 import { ElMessage } from "element-plus";
 import { globalDsvDefaultData } from "@/utils/util";
 import http from "@/utils/request";
+import { queryById, saveRecord } from "@/api/crud";
 import { copyText } from "@/utils/util";
 import ModelAssociationEdit from "./ModelAssociationEdit.vue";
 import { CopyDocument } from "@element-plus/icons-vue";
@@ -528,12 +529,7 @@ export default {
         async loadDesign() {
             this.pageLoading = true;
             this.resetDesignState();
-			let res2 = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/queryById", null, {
-                params: {
-                    entityId: this.dataModelReportId,
-                    fieldNames: "reportConfig,modelConfig",
-                },
-            });
+			let res2 = await queryById(this.dataModelReportId, "reportConfig,modelConfig");
 			if (res2?.code == 200) {
                 this.modelConfigList = this.parseModelConfig(res2.data?.modelConfig);
                 await this.refreshMetaFields();
@@ -571,14 +567,9 @@ export default {
 				return;
 			}
 			this.pageLoading = true;
-			let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/saveRecord", {
+			let res = await saveRecord("DataModelReport", this.dataModelReportId, {
 				reportConfig: JSON.stringify(formJson),
 				modelConfig: JSON.stringify(this.getCleanModelConfig()),
-			}, {
-                params: {
-                    entity: "DataModelReport",
-                    id: this.dataModelReportId,
-                },
 			});
 			if (res?.code == 200) {
 				ElMessage.success("保存成功");

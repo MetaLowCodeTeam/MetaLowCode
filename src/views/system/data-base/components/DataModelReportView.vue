@@ -69,6 +69,7 @@
 import { ElMessage } from "element-plus";
 import { Document, Download, Tickets } from "@element-plus/icons-vue";
 import http from "@/utils/request";
+import { queryById } from "@/api/crud";
 import { downloadBase64, globalDsvDefaultData } from "@/utils/util";
 import {
     applyAllNativeReportTableStyles,
@@ -229,12 +230,7 @@ export default {
                     return;
                 }
                 this.globalDsv.mainModelDataId = mainModelDataId || "";
-                let res = await http.post("/plugins/metaDataWarehouse/outerData/modelReport/queryById", null, {
-                    params: {
-                        entityId: dataModelReportId,
-                        fieldNames: "reportConfig",
-                    },
-                });
+                let res = await queryById(dataModelReportId, "reportConfig");
                 if (res?.code == 200 && res.data) {
                     let reportConfig = res.data.reportConfig;
                     if (reportConfig) {

@@ -426,7 +426,7 @@ const routes = [
                         path: appPath + 'data-model-report-list',
                         name: 'DataModelReportList',
                         component: 'system/data-base/DataModelReportList',
-                        meta: { title: '数据模型报表', icon: 'el-icon-Document', role: 'r6032' }
+                        meta: { title: '数据模型报表', icon: 'el-icon-Document', role: 'r94-1' }
                     },
 
                 ]
