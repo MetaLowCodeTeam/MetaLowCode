@@ -91,6 +91,27 @@ export const textFieldSchema = {
 	},
 };
 
+/** 静态图片组件。图片地址随表单设计 JSON 一起保存。 */
+export const imageFieldSchema = {
+	type: 'ml-image',
+	alias: 'ml-image',
+	icon: 'picture-upload-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '图片',
+		hidden: false,
+		imageUrl: '',
+		imageName: '',
+		imageWidth: '120px',
+		imageHeight: 'auto',
+		objectFit: 'contain',
+		textAlign: 'left',
+		alt: '',
+		customClass: '',
+	},
+};
+
 /** Word/PDF 导出使用的动态页码字段。 */
 export const pageNumberSchema = {
 	type: 'page-number',

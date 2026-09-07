@@ -3,6 +3,7 @@ export default {
         widgetLabel: {
             'list-sub-form': '列表子表单',
             'ml-text': '文本',
+			'ml-image': '图片',
             'ml-bar-chart': '柱状图',
             'ml-line-chart': '折线图',
             'ml-echarts': 'ECharts',

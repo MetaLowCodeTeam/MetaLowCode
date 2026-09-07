@@ -372,7 +372,7 @@ export default {
             this.exportLoading = true;
             try {
                 await this.$nextTick();
-                const html = this.getExportHtml();
+                const html = await this.getExportHtml();
                 const fileName = this.getExportFileName("docx");
                 const res = await http.post("/plugins/metaDataWarehouse/htmlToWord/export", {
                     fileName,
@@ -403,7 +403,7 @@ export default {
             this.exportLoading = true;
             try {
                 await this.$nextTick();
-                const html = this.getExportHtml();
+                const html = await this.getExportHtml();
                 const fileName = this.getExportFileName("pdf");
                 const res = await http.post("/plugins/metaDataWarehouse/htmlToWord/exportPdf", {
                     fileName,
@@ -461,7 +461,7 @@ export default {
             return {};
         },
 
-        getExportHtml() {
+        async getExportHtml() {
             const reportConfig = this.$refs.vFormRef?.getFormJson?.();
             this.applyNativeTableStyles(reportConfig);
             const contentEl = this.$refs.reportContentRef || this.$el.querySelector(".report-content");
@@ -471,6 +471,7 @@ export default {
             this.normalizeReportTableBordersForExport(exportContentEl);
             this.normalizeReportTableSpacingForExport(exportContentEl);
             this.transformGridToExportTables(exportContentEl);
+            await this.inlineStaticImagesForExport(exportContentEl);
             const contentHtml = exportContentEl?.outerHTML || "";
             console.info("[DataModelReportView] export html prepared", {
                 layoutTableCount: exportContentEl?.querySelectorAll?.("table.word-export-layout-table").length || 0,
@@ -482,6 +483,42 @@ export default {
                 .join("");
             const exportStyles = this.getWordExportStyle();
             return `<!DOCTYPE html><html><head><meta charset="utf-8">${styles}${exportStyles}</head><body>${contentHtml}</body></html>`;
+        },
+
+        async inlineStaticImagesForExport(rootEl) {
+            if (!rootEl?.querySelectorAll) return;
+            const imageList = Array.from(rootEl.querySelectorAll("img.ml-image-field__image"));
+            await Promise.all(imageList.map(async (imageEl) => {
+                const source = imageEl.getAttribute("src") || "";
+                if (!source || source.startsWith("data:")) return;
+
+                let absoluteUrl = source;
+                try {
+                    absoluteUrl = new URL(source, window.location.href).href;
+                    if (new URL(absoluteUrl).origin !== window.location.origin) {
+                        imageEl.setAttribute("src", absoluteUrl);
+                        return;
+                    }
+                    const response = await fetch(absoluteUrl, { credentials: "same-origin" });
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    imageEl.setAttribute("src", await this.readBlobAsDataUrl(await response.blob()));
+                } catch (error) {
+                    // 转换失败时保留绝对地址，给后端 XHTMLImporter 最后一次加载机会。
+                    imageEl.setAttribute("src", absoluteUrl);
+                    console.warn("[DataModelReportView] image inline failed", absoluteUrl, error);
+                }
+            }));
+        },
+
+        readBlobAsDataUrl(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error || new Error("图片读取失败"));
+                reader.readAsDataURL(blob);
+            });
         },
 
         prepareExportContentWidth(rootEl) {

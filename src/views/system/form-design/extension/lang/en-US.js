@@ -3,6 +3,7 @@ export default {
         widgetLabel: {
             'list-sub-form': 'ListSubForm',
             'ml-text': 'Text',
+			'ml-image': 'Image',
             'ml-bar-chart': 'Bar Chart',
             'ml-echarts': 'ECharts',
             'ml-pivot-table': 'Pivot Table',

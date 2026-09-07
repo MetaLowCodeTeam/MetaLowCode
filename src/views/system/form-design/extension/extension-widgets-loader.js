@@ -5,6 +5,7 @@ import {registerFieldWidgets} from "@/views/system/form-design/extension/field-w
 import {
     checkTagSchema,
     textFieldSchema,
+	imageFieldSchema,
     pivotTableSchema,
     barChartSchema,
     lineChartSchema,
@@ -117,6 +118,7 @@ import listSubFormLayoutCodeEditor from "@/views/system/form-design/extension/pr
 
 import inputQrCodeOnMobileEnabledEditor from "@/views/system/form-design/extension/property-editor/input/qrCodeOnMobileEnabled-editor.vue";
 import mlTextTextAlignEditor from "@/views/system/form-design/extension/property-editor/ml-text/textAlign-editor.vue";
+import mlImageImageUrlEditor from "@/views/system/form-design/extension/property-editor/ml-image/imageUrl-editor.vue";
 import pageNumberTemplateEditor from "@/views/system/form-design/extension/property-editor/page-number/pageNumberTemplate-editor.vue";
 
 const {
@@ -208,6 +210,9 @@ export const loadExtensionWidgets = (app) => {
 	//注册扩展字段组件
 	registerFieldWidgets(app)
 	app.component('ml-text-textAlign-editor', mlTextTextAlignEditor)
+	app.component('ml-image-imageUrl-editor', mlImageImageUrlEditor)
+	app.component('ml-image-textAlign-editor', mlTextTextAlignEditor)
+	PERegister.registerCPEditor(app, 'imageUrl', 'ml-image-imageUrl-editor', mlImageImageUrlEditor)
 	app.component('report-field-widget', reportFieldWidget)
 	app.component('page-number-pageNumberTemplate-editor', pageNumberTemplateEditor)
 	app.component('report-field-name-editor', reportFieldNameEditor)
@@ -260,6 +265,7 @@ export const loadExtensionWidgets = (app) => {
 
 	//添加到设计器组件库
 	addBasicFieldSchema(textFieldSchema)
+	addBasicFieldSchema(imageFieldSchema)
 	addBasicFieldSchema(pageNumberSchema)
 	addBasicFieldSchema(pivotTableSchema)
 	addBasicFieldSchema(barChartSchema)
