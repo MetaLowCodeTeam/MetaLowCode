@@ -467,6 +467,7 @@ export default {
             const contentEl = this.$refs.reportContentRef || this.$el.querySelector(".report-content");
             const exportContentEl = contentEl?.cloneNode(true);
             this.prepareExportContentWidth(exportContentEl);
+            this.normalizeReportChartTitlesForExport(exportContentEl);
             this.normalizeReportTableBordersForExport(exportContentEl);
             this.normalizeReportTableSpacingForExport(exportContentEl);
             this.transformGridToExportTables(exportContentEl);
@@ -492,6 +493,23 @@ export default {
             rootEl.style.boxSizing = "border-box";
             rootEl.style.paddingLeft = "0";
             rootEl.style.paddingRight = "0";
+        },
+
+        normalizeReportChartTitlesForExport(rootEl) {
+            if (!rootEl?.querySelectorAll) return;
+            const titleSelector = [
+                ".ml-line-chart__title",
+                ".ml-bar-chart__title",
+                ".ml-pivot-table__title",
+            ].join(",");
+            rootEl.querySelectorAll(titleSelector).forEach((titleEl) => {
+                // 生产构建会把 scoped CSS 拆成外部文件，后端 XHTMLImporter
+                // 无法可靠加载相对路径样式，因此将导出所需标题样式明确内联。
+                titleEl.style.setProperty("margin-bottom", "8px");
+                titleEl.style.setProperty("font-size", "16px");
+                titleEl.style.setProperty("font-weight", "600");
+                titleEl.style.setProperty("line-height", "1.4");
+            });
         },
 
         normalizeReportTableBordersForExport(rootEl) {
