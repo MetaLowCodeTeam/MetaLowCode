@@ -39,6 +39,29 @@ const appPath = import.meta.env.VITE_APP_PATH;
 //判断是否已加载过动态/静态路由
 var isGetRouter = false;
 
+// 根据当前路由匹配导航菜单（路径+query），用于同路径不同 query 的自定义页面导航
+const findNavMenuByRoute = (menus, route) => {
+    if (!Array.isArray(menus)) return null;
+    for (const menu of menus) {
+        if (menu.meta) {
+            const menuQuery = menu.meta.query || {};
+            const queryMatched = Object.keys(menuQuery).length === 0
+                ? true
+                : Object.keys(menuQuery).every(
+                    (key) => String(route.query?.[key] ?? "") === String(menuQuery[key] ?? "")
+                );
+            if (menu.path === route.path && queryMatched) {
+                return menu;
+            }
+        }
+        if (menu.children && menu.children.length > 0) {
+            const child = findNavMenuByRoute(menu.children, route);
+            if (child) return child;
+        }
+    }
+    return null;
+};
+
 router.beforeEach(async (to, from, next) => {
     // const store = useStore();
     const { publicSetting } = storeToRefs(useCommonStore());
@@ -50,6 +73,16 @@ router.beforeEach(async (to, from, next) => {
             path: appPath + "404"
         });
         return false;
+    }
+    // 同路径不同参数的自定义页面导航：按路径+query匹配导航名称，修正页签/标题
+    const layoutConfigStore = useLayoutConfigStore();
+    const menuList = [
+        ...layoutConfigStore.getUseMenuList(),
+        ...layoutConfigStore.getTopNavMenuList(),
+    ];
+    const matchedMenu = findNavMenuByRoute(menuList, to);
+    if (matchedMenu && matchedMenu.meta?.title) {
+        to.meta.title = matchedMenu.meta.title;
     }
     // 动态标题
     let publicSettingName = publicSetting.value.APP_NAME || ''

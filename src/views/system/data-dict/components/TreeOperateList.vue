@@ -28,6 +28,7 @@
 							highlight-current
 							empty-text="没有字段数据"
 							check-strictly
+							default-expand-all
 							node-key="$inx"
 							@node-click="handleTreeNodeClick"
                             
@@ -238,12 +239,17 @@ const handleSearch = () => {
 			// 检查当前节点是否匹配
 			const nodeMatch = node.label.toLowerCase().includes(searchKeyword.value.toLowerCase());
 			
-			// 如果有子节点，递归过滤
+			// 如果有子节点
 			if (node.children && node.children.length > 0) {
+				// 如果当前节点匹配，则保留该节点及其所有子节点
+				if (nodeMatch) {
+					return true;
+				}
+				// 否则递归过滤子节点
 				const filteredChildren = filterTree(node.children);
 				node.children = filteredChildren;
-				// 如果当前节点匹配或有匹配的子节点，则保留
-				return nodeMatch || filteredChildren.length > 0;
+				// 有匹配的子节点则保留
+				return filteredChildren.length > 0;
 			}
 			
 			// 叶子节点，只检查当前节点是否匹配

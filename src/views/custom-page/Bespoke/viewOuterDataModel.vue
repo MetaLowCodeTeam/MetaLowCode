@@ -1,5 +1,5 @@
 <template>
-	<OuterDataModelList v-if="outerDataModelId" />
+	<OuterDataModelList v-if="outerDataModelId" :key="outerDataModelId" />
 	<el-empty v-else description="未获取到 outerDataModelId 参数" />
 </template>
 
