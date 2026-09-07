@@ -555,6 +555,9 @@ const openDialog = (id, localDsv, paramFormId) => {
     }
 	detailDialog.entityCode = entityCode.value;
 	detailDialog.entityName = entityName.value;
+    // 先重置页签配置与过滤结果，避免 DetailTabs 挂载时读到上一次（上一个列表页签）残留的配置
+    detailDialog.tab = {};
+    checkTabsFilter.value = {};
 	detailDialog.isShow = true;
 
 	// 加载数据
@@ -697,7 +700,7 @@ const getLayoutList = async (seq) => {
     // 如果未传 seq，则视为一次新的加载
     const curSeq = seq ?? bumpDetailLoadSeq();
 	loading.value = true;
-	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName, false);
+	let res = await $API.layoutConfig.getLayoutList(entityName.value, props.modelName, true);
     if (detailLoadSeq.value !== curSeq || !detailDialog.isShow) {
         loading.value = false;
         return;
@@ -752,7 +755,13 @@ const getLayoutList = async (seq) => {
                 if(tabRes){
                     checkTabsFilter.value = tabRes.data;
                 }
+            }else{
+                // 页签无过滤条件时默认全部显示
+                checkTabsFilter.value = sourceConfigColumn.map(() => true);
             }
+        }else{
+            // 未配置页签时清空上一次残留的页签过滤数据，避免误渲染上一个实体的页签
+            checkTabsFilter.value = {};
         }
         // 自定义按钮
         customButtonList.value = getCustomAppButtons(res.data.CUSTOM_BUTTON, 'pcDetail');
