@@ -78,7 +78,6 @@ import tdtConfigEditor from '@/views/system/form-design/extension/property-edito
 import { registerContainerWidgets } from '@/views/system/form-design/extension/container-widgets'
 // 引入待注册的容器组件
 import { registerContainerItems } from '@/views/system/form-design/extension/container-items'
-import { patchNumberWidgetReadMode } from '@/views/system/form-design/extension/number-widget-read-mode'
 
 
 // 容器组件-列表子表单
@@ -127,14 +126,11 @@ const {
     addCustomWidgetSchema,
     addZHExtensionLang,
 	addENExtensionLang,
-	PERegister,
-	PEFactory,
-	FieldComponents
+    PERegister,
+	PEFactory
 } = VisualDesign.VFormSDK
 
 export const loadExtensionWidgets = (app) => {
-	patchNumberWidgetReadMode(FieldComponents)
-
 	//加载语言文件
 	addZHExtensionLang(zhLang)
 	addENExtensionLang(enLang)
