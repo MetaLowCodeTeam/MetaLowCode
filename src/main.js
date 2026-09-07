@@ -16,6 +16,7 @@ import VueSmartWidget from 'ml-vue-smart-widget'
 import '@/../lib/vue-smart-widiget.css'
 import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import '@/../lib/visual-design/designer.style.css'
+import { configureVFormUploadProgress } from '@/utils/vFormUpload'
 import * as MetaFlowDesigner from "@/../lib/flow-designer/meta-flow-designer.umd.cjs";
 // console.log(MetaFlowDesigner,'MetaFlowDesigner')
 import {loadExtensionWidgets} from "@/views/system/form-design/extension/extension-widgets-loader";
@@ -53,6 +54,8 @@ initAMapApiLoader({
 })
 
 const app = createApp(App);
+
+configureVFormUploadProgress(VisualDesign);
 
 app.config.globalProperties.$dayjs = dayjs;
 app.config.globalProperties.$getPinYin = getSimplePinYin;

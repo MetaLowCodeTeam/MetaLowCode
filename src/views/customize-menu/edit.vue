@@ -146,6 +146,7 @@ import {
     keyboardEventToInput,
 } from "@/utils/util";
 import http from "@/utils/request"
+import { hasVFormUploadingFile } from "@/utils/vFormUpload";
 // 自定义按钮过滤
 import { checkCustomButtonFilters } from "@/api/layoutConfig";
 // 自定义按钮
@@ -853,6 +854,10 @@ let SubmitApprovalDialogRefs = ref();
 const confirm = async (target, resetFormData = {}, callback) => {
     if (!vFormRef.value) {
         cancel();
+        return;
+    }
+    if (hasVFormUploadingFile(vFormRef.value)) {
+        ElMessage.warning("文件正在上传，请等待上传完成后再保存。");
         return;
     }
     // 并发互斥：正在保存时直接返回

@@ -211,6 +211,8 @@ const conditionsConfirm = async (event) => {
         paramFilter.items.forEach(el => {
             el.value = null;
             el.value2 = null;
+            el.value3 = null;
+            el.refLabel = null;
         })
     }
 	let param = {
@@ -235,7 +237,7 @@ const conditionsConfirm = async (event) => {
 		emit("uploadItems", {
 			forbidUserModifyField: forbidUserModifyField.value,
 			hideQueryMatchType: hideQueryMatchType.value,
-			filter: event.filter,
+			filter: paramFilter,
 			isSaveQueryValue: isSaveQueryValue.value,
             labelPosition: labelPosition.value,
 		});
@@ -253,6 +255,15 @@ watchEffect(() => {
 	hideQueryMatchType.value = props.topSearchConfig.hideQueryMatchType;
 	isSaveQueryValue.value = props.topSearchConfig.isSaveQueryValue;
     labelPosition.value = props.topSearchConfig.labelPosition;
+    // 未勾选保存查询值，加载时清掉历史配置残留的查询值
+    if(props.topSearchConfig.isSaveQueryValue === false && compConditions.value.items){
+        compConditions.value.items.forEach(el => {
+            el.value = null;
+            el.value2 = null;
+            el.value3 = null;
+            el.refLabel = null;
+        })
+    }
 });
 
 defineExpose({

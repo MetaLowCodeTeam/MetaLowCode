@@ -69,6 +69,7 @@
 import { onMounted, ref, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import { globalDsvDefaultData, formatQueryByIdParam, formatFormVirtualField } from "@/utils/util";
+import { hasVFormUploadingFile } from "@/utils/vFormUpload";
 // 引入 控制Tabs方法
 import useTabs from "@/utils/useTabs";
 import { useRouter } from "vue-router";
@@ -187,6 +188,10 @@ const loadForm = async () => {
 
 // 保存表单
 const saveForm = async (type) => {
+	if (hasVFormUploadingFile(vFormRef.value)) {
+		ElMessage.warning("文件正在上传，请等待上传完成后再保存。");
+		return;
+	}
 	let listSubForm = [];
 	vFormRef.value?.getContainerWidgets().forEach((el) => {
 		if (el.type == "list-sub-form") {
