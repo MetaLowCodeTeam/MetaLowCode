@@ -756,7 +756,7 @@ let funcRight = shallowRef([
 		label: "组织架构",
 		children: [
 			{
-				label: "角色设置用户",
+				label: "角色绑定用户",
 				value: "r6024",
 				tip: "开发中心-组织架构-权限角色页面，查看用户弹框中的添加、删除用户功能。",
 			},
