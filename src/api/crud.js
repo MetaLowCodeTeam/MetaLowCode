@@ -94,11 +94,12 @@ export function deleteRecords(body) {
 * @param {*} statistics ""
 * @param {*} filterEasySql ""  自定义SQL查询
 * @param {*} defaultFilter ""  默认查询
-* @param {*} modelName ""  模型名称
-* @param {*} otherFilters [] 其他过滤
+ * @param {*} modelName ""  模型名称
+ * @param {*} otherFilters [] 其他过滤
+ * @param {*} queryApprovalState false  是否返回每行审批状态 _recordApprovalState
 
 */
-export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName, otherFilters) {
+export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields, advFilter, quickFilter, builtInFilter, statistics, filterEasySql, defaultFilter, modelName, otherFilters, queryApprovalState = false) {
     return http.post('crud/listQuery', {
         'mainEntity': entity,
         'fieldsList': fields,
@@ -113,7 +114,8 @@ export function getDataList(entity, fields, filter, pageSize, pageNo, sortFields
         filterEasySql: filterEasySql ? unicodeToBase64(filterEasySql) : null, 
         defaultFilter: formatFilterToBase64(defaultFilter), 
         modelName: modelName || getModelName(),
-        otherFilters: otherFilters ? otherFilters.map(item => formatFilterToBase64(item)) : null
+        otherFilters: otherFilters ? otherFilters.map(item => formatFilterToBase64(item)) : null,
+        queryApprovalState: queryApprovalState || false
     })
 }
 

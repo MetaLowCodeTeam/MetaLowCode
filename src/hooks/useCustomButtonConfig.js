@@ -175,6 +175,58 @@ export default function useCustomButtonConfig() {
             showType: 1,
             type: "primary",
         },
+        {
+            defaultName: "提交",
+            name: "",
+            key: "submitApproval",
+            hide: true,
+            hideTip: "开启后，仅满足提交审批条件的记录会显示",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "ElIconPromotion",
+            showType: 1,
+            type: "success",
+        },
+        {
+            defaultName: "审批",
+            name: "",
+            key: "approval",
+            hide: true,
+            hideTip: "开启后，仅当前用户有待审批任务的记录会显示",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "ElIconStamp",
+            showType: 1,
+            type: "success",
+        },
+        {
+            defaultName: "撤回",
+            name: "",
+            key: "withdrawApproval",
+            hide: true,
+            hideTip: "开启后，仅满足撤回条件的记录会显示",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "ElIconRefreshLeft",
+            showType: 1,
+            type: "warning",
+        },
+        {
+            defaultName: "审批历史",
+            name: "",
+            key: "approvalHistory",
+            hide: true,
+            hideTip: "开启后，仅已产生审批记录的记录会显示",
+            // 是否内置按钮
+            isNative: true,
+            guid: getGuid(),
+            icon: "ElIconClock",
+            showType: 1,
+            type: "primary",
+        },
     ];
 
     // 默认编辑按钮PC

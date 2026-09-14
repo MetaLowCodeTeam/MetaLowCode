@@ -600,8 +600,17 @@
             ref="MlApproveRefs" 
             isDialog
             :entityId="approverRecordId"
+            :approvalName="approverApprovalName"
             @confirm="ApprovalSuccess"
         />
+        <!-- 审批历史弹框 -->
+        <div v-if="approvalHistoryDialogIsShow">
+            <mlApproveHistory
+                v-model="approvalHistoryDialogIsShow"
+                :entityId="approvalHistoryRecordId"
+                title="审批历史"
+            />
+        </div>
         <!-- 树状图 -->
         <mlTreeEchart ref="mlTreeEchartRefs" />
         <!-- 价格对比弹框 -->
@@ -648,7 +657,7 @@ import mlSelectField from "@/components/mlSelectField/index.vue";
 import routerParamsStore from "@/store/modules/routerParams";
 import { storeToRefs } from "pinia";
 import useCommonStore from "@/store/modules/common";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 /**
  * 组件
  */
@@ -670,6 +679,8 @@ import ListTabFilter from './components/ListTabFilter.vue';
 import SubmitApprovalDialog from "@/components/mlApprove/SubmitApprovalDialog.vue";
 // 执行审批弹框
 import mlApprove from "@/components/mlApprove/index.vue";
+// 审批历史弹框
+import mlApproveHistory from "@/components/mlApproveHistory/index.vue";
 // 手动排程弹框
 import SchedulingDialog from "@/views/custom-page/Yt/SchedulingDialog.vue";
 // 树形分组列表
@@ -1341,6 +1352,14 @@ const changeTopQueryPanelExpand = () => {
 
 // 自定义按钮
 let customButtonConfig = ref({});
+// 审批相关内置按钮key（列表只有撤回，没有撤销）
+const APPROVAL_NATIVE_BUTTON_KEYS = ["submitApproval", "approval", "withdrawApproval", "approvalHistory"];
+// 是否开启了审批相关内置按钮，开启任意一个 listQuery 需返回每行的审批状态 _recordApprovalState
+const hasApprovalNativeButton = computed(() => {
+    return (customButtonConfig.value?.pcColumn || []).some(
+        (item) => item?.isNative && APPROVAL_NATIVE_BUTTON_KEYS.includes(item.key) && item.hide !== true
+    );
+});
 // 内置按钮禁用方法
 let nativeButtonDisabled = ref({
     open: multipleSelection.value.length !== 1,
@@ -1441,6 +1460,22 @@ const customButtonClick = (item, row) => {
             case "edit":
                 onEditRow(row || multipleSelection.value[0])
                 break;
+            // 提交审批
+            case "submitApproval":
+                openSubmitApprovalDialog((row || multipleSelection.value[0])?.[idFieldName.value])
+                break;
+            // 审批
+            case "approval":
+                openApprovalDialog((row || multipleSelection.value[0])?.[idFieldName.value], row || multipleSelection.value[0])
+                break;
+            // 撤回审批
+            case "withdrawApproval":
+                onWithdrawApproval(row || multipleSelection.value[0])
+                break;
+            // 审批历史
+            case "approvalHistory":
+                openApprovalHistoryDialog((row || multipleSelection.value[0])?.[idFieldName.value])
+                break;
         }
     }else {
         customButtonHandler(
@@ -1530,6 +1565,10 @@ const getColumnCustomButtonShow = (item, row) => {
         if (item.key === 'edit' && (!hasEditRight.value || (parentFormRef.value && (parentFormRef?.value?.globalDsv?.formStatus == 'read' || parentFormRef?.value?.globalDsv?.formStatus == 'approval')))) {
             return false;
         }
+        // 审批相关按钮：根据行审批状态决定是否显示（显示逻辑参考 ApprovalRelated.vue）
+        if (APPROVAL_NATIVE_BUTTON_KEYS.includes(item.key)) {
+            return getApprovalButtonShow(item.key, row);
+        }
         return true;
     } 
     // 处理非内置按钮
@@ -1560,6 +1599,30 @@ const getColumnCustomButtonShow = (item, row) => {
         return true;
     }
 }
+
+// 审批相关按钮是否显示（显示逻辑参考 ApprovalRelated.vue，列表只有撤回，没有撤销）
+const getApprovalButtonShow = (key, row) => {
+    let approvalState = row?._recordApprovalState;
+    if (!approvalState) {
+        return false;
+    }
+    switch (key) {
+        // 提交
+        case "submitApproval":
+            return !!approvalState.startApproval;
+        // 审批
+        case "approval":
+            return !!approvalState.imApproval;
+        // 撤回
+        case "withdrawApproval":
+            return !!approvalState.withdrawApproval;
+        // 审批历史
+        case "approvalHistory":
+            return !!approvalState.queryHistory;
+        default:
+            return false;
+    }
+};
 
 
 
@@ -2270,7 +2333,9 @@ const onTreeTableListLoad = async (row, treeNode, resolve) => {
 		},
 		treeTableListConf.value.maxChildCount == 0 ? 999999 : treeTableListConf.value.maxChildCount || 1000,
 		1,
-        mergedSortFields
+        mergedSortFields,
+        null, null, null, null, null, null, null, null,
+        hasApprovalNativeButton.value
 	)
 	let leafTableData = ref([])
 	leafTableData = res.data.dataList
@@ -2434,6 +2499,8 @@ const getTableList = async () => {
             items: defaultFilter.value.items,
         },
         otherFilters: [...otherFilters.value, tabFilter],
+        // 开启了审批相关内置按钮时，listQuery 需要返回每行的审批状态 _recordApprovalState
+        queryApprovalState: hasApprovalNativeButton.value,
     }; 
     dataExportData.queryParm = { ...param };
     let listApi = rowStyleConf.value.listConf?.customListApi || null;
@@ -2455,7 +2522,8 @@ const getTableList = async () => {
             param.filterEasySql,
             param.defaultFilter,
             formatModelName(myModelName.value, currentTab.value),
-            param.otherFilters
+            param.otherFilters,
+            param.queryApprovalState
         );
     }
     
@@ -2737,8 +2805,11 @@ const submitApprovalSuccess = () => {
 // 执行审批弹框
 let MlApproveRefs = ref();
 let approverRecordId = ref(null);
-const openApprovalDialog = (recordId) => {
+// 审批弹框左上角显示的记录名称字段值
+let approverApprovalName = ref("");
+const openApprovalDialog = (recordId, row) => {
     approverRecordId.value = recordId;
+    approverApprovalName.value = (row && nameFieldName.value ? row[nameFieldName.value] : "") || "";
     MlApproveRefs.value?.openDialog(recordId)
 }
 // 审批成功后回调
@@ -2747,6 +2818,56 @@ const ApprovalSuccess = () => {
     if(listParamConf.value.approvalSuccess){
         listParamConf.value.approvalSuccess();
     }
+}
+
+// 撤回审批（列表只有撤回，没有撤销）
+const onWithdrawApproval = (row) => {
+    if (!row) {
+        ElMessage.warning("请先选择数据");
+        return;
+    }
+    let approvalState = row._recordApprovalState || {};
+    ElMessageBox.confirm("是否确认撤回审批?", "提示：", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(async () => {
+            pageLoading.value = true;
+            try {
+                // 是否复杂工作流
+                let isFlowVariables = approvalState.flowType == 2;
+                let res;
+                if (isFlowVariables) {
+                    // 复杂工作流
+                    res = await http.post(
+                        "/plugins/metaWorkFlow/workflow/process/withdraw",
+                        [approvalState.flowVariables?.processInstanceId]
+                    );
+                } else {
+                    // 简单工作流
+                    res = await http.get("/approval/withdraw", {
+                        approvalTaskId: approvalState.approvalTaskId,
+                    });
+                }
+                if (res) {
+                    ElMessage.success("撤回成功");
+                    getTableList();
+                }
+            } finally {
+                pageLoading.value = false;
+            }
+        })
+        .catch(() => {});
+}
+
+// 审批历史弹框
+let approvalHistoryDialogIsShow = ref(false);
+let approvalHistoryRecordId = ref("");
+// 打开审批历史弹框
+const openApprovalHistoryDialog = (recordId) => {
+    approvalHistoryRecordId.value = recordId;
+    approvalHistoryDialogIsShow.value = true;
 }
 
 // 重置表格数据
