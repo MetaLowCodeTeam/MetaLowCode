@@ -235,6 +235,14 @@ $--top-nav-text-color: #4b4a61;
     }
 }
 
+// 审批弹框（mlApprove）头部：组件内白色文字优先级较高，这里提高优先级覆盖为主题深色
+.ml-drawer .el-drawer__header .detail-header {
+    color: #303030;
+    .fr-box {
+        color: #303030;
+    }
+}
+
 // 1-5 弹出层
 .el-dialog {
     .el-dialog__header {
