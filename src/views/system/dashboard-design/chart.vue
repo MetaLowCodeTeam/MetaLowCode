@@ -34,88 +34,74 @@
 				fixed="right"
 			>
 				<template #default="scope">
-					<el-dropdown
-						trigger="click"
-						@command="
-							(command) => openDesign(command, scope.row)
-						"
-					>
+					<div class="table-row-actions">
+						<el-dropdown
+							trigger="click"
+							@command="
+								(command) => openDesign(command, scope.row)
+							"
+						>
+							<el-button
+								size="small"
+								type="primary"
+								link
+							>
+								<span class="mr-3">
+									<el-icon>
+										<ElIconFilm />
+									</el-icon>
+								</span>
+								<span>设计</span>
+							</el-button>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item command="pc">
+										PC
+									</el-dropdown-item>
+									<el-dropdown-item command="mobile">
+										移动端
+									</el-dropdown-item>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
 						<el-button
 							size="small"
 							type="primary"
 							link
-							style="position: relative; top: 2px; left: -5px"
+							@click="editClick(scope.row)"
 						>
 							<span class="mr-3">
 								<el-icon>
-									<ElIconFilm />
+									<ElIconEdit />
 								</el-icon>
 							</span>
-							<span>设计</span>
+							<span>编辑</span>
 						</el-button>
-						<template #dropdown>
-							<el-dropdown-menu>
-								<el-dropdown-item command="pc">
-									PC
-								</el-dropdown-item>
-								<el-dropdown-item command="mobile">
-									移动端
-								</el-dropdown-item>
-							</el-dropdown-menu>
-						</template>
-					</el-dropdown>
-                    <el-button
-						size="small"
-						type="primary"
-						link
-						@click="editClick(scope.row)"
-					>
-						<span class="mr-3">
-							<el-icon>
-								<ElIconEdit />
-							</el-icon>
-						</span>
-						<span>编辑</span>
-					</el-button>
-					<el-dropdown
-						trigger="click"
-						@command="
-							(command) => handleMoreCommand(command, scope.row)
-						"
-					>
-						<el-button
-							size="small"
-							type="primary"
-							link
-							style="position: relative; top: 2px; left: -5px"
+						<el-dropdown
+							trigger="click"
+							@command="
+								(command) => handleMoreCommand(command, scope.row)
+							"
 						>
-							<span class="mr-3">
-								<el-icon>
-									<ElIconMoreFilled />
-								</el-icon>
-							</span>
-							<span>更多</span>
-						</el-button>
-						<template #dropdown>
-							<el-dropdown-menu>
-								<el-dropdown-item command="delete">
-									删除
-								</el-dropdown-item>
-								<el-dropdown-item command="copy">
-									复制
-								</el-dropdown-item>
-								<el-dropdown-item command="allocation">
-									分配
-								</el-dropdown-item>
-								<el-dropdown-item command="share">
-									共享
-								</el-dropdown-item>
-								<el-dropdown-item command="unShare">
-									取消共享
-								</el-dropdown-item>
-							</el-dropdown-menu>
-						</template>
-					</el-dropdown>
+							<el-button size="small" type="primary" link>
+								<span class="mr-3">
+									<el-icon>
+										<ElIconMoreFilled />
+									</el-icon>
+								</span>
+								<span>更多</span>
+							</el-button>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item command="delete">删除</el-dropdown-item>
+									<el-dropdown-item command="copy">复制</el-dropdown-item>
+									<el-dropdown-item command="allocation">分配</el-dropdown-item>
+									<el-dropdown-item command="share">共享</el-dropdown-item>
+									<el-dropdown-item command="unShare">取消共享</el-dropdown-item>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
+					</div>
 				</template>
 			</el-table-column>
 		</template>
@@ -367,4 +353,20 @@ const allocationSuccess = () => {
 	mlSingleListRef.value.getTableList();
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.table-row-actions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+
+	:deep(.el-button) {
+		margin-left: 0;
+	}
+
+	:deep(.el-dropdown) {
+		display: inline-flex;
+		align-items: center;
+	}
+}
+</style>

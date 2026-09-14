@@ -8,7 +8,7 @@
             @field-widget-used="handleFWU"
             @field-widget-removed="handleFWR"
             @form-json-updated="handleFJU"
-            :banned-widgets="['reference','reference-list','outer-reference','cascader-option']"
+            :banned-widgets="['reference','reference-list','outer-reference','cascader-option','page-footer-container','page-number']"
             class="visual-design"
         >
             <!-- 配置工具按钮 -->
@@ -222,6 +222,8 @@ export default {
             },
             // 快捷键
             mlShortcutCleanup: null,
+            designerEventCleanup: [],
+            metaFieldsRefreshTimer: null,
         };
     },
     created() {
@@ -233,6 +235,7 @@ export default {
         this.saveAsBtnShow = !!window.advancedDevMode;
     },
     mounted() {
+        this.bindDesignerFieldUsageEvents();
         this.loadDesign();
         this.mlShortcutCleanup = mlShortcutkeys(() => {
             window.advancedDevMode = !window.advancedDevMode;
@@ -242,12 +245,156 @@ export default {
         });
     },
     beforeDestroy() {
-        if(this.mlShortcutCleanup){
-            this.mlShortcutCleanup();
-        }
+        this.cleanupBeforeLeave();
+    },
+    beforeUnmount() {
+        this.cleanupBeforeLeave();
     },
     emits: ['initComplete'],
     methods: {
+        cleanupBeforeLeave() {
+            if(this.mlShortcutCleanup){
+                this.mlShortcutCleanup();
+                this.mlShortcutCleanup = null;
+            }
+            if (this.metaFieldsRefreshTimer) {
+                clearTimeout(this.metaFieldsRefreshTimer);
+                this.metaFieldsRefreshTimer = null;
+            }
+            if (Array.isArray(this.designerEventCleanup)) {
+                this.designerEventCleanup.forEach((off) => {
+                    try {
+                        typeof off === 'function' && off();
+                    } catch (e) {}
+                });
+                this.designerEventCleanup = [];
+            }
+        },
+        bindDesignerFieldUsageEvents() {
+            const designer = this.$refs.vfDesigner?.designer;
+            if (!designer || !designer.handleEvent || this.designerEventCleanup.length) {
+                return;
+            }
+
+            const refreshByCanvas = () => this.scheduleMetaFieldsRefresh(300);
+            [
+                'canvas-add-field',
+                'canvas-select-field',
+                'canvas-remove-field',
+                'canvas-remove-container',
+                'canvas-undo',
+                'canvas-redo',
+                'form-json-imported',
+                'drag-drop-end',
+            ].forEach((eventName) => {
+                const off = designer.handleEvent(eventName, refreshByCanvas);
+                this.designerEventCleanup.push(off);
+            });
+
+            const unwatchWidgetList = this.$watch(
+                () => this.$refs.vfDesigner?.designer?.widgetList,
+                refreshByCanvas,
+                { deep: true }
+            );
+            this.designerEventCleanup.push(unwatchWidgetList);
+        },
+        refreshMetaFields() {
+            if (!this.metaFieldsResult || !this.$refs.vfDesigner) {
+                return;
+            }
+            const metaFields = this.buildMetaFields(this.metaFieldsResult);
+            const rawMetaFields = this.buildMetaFields(this.metaFieldsResult, false);
+            this.$refs.vfDesigner.designer.rawMetaFields = rawMetaFields;
+            this.$refs.vfDesigner.setMetaFields(metaFields);
+        },
+        getUsedFieldKey(name, subFormName) {
+            return subFormName ? `${subFormName}.${name}` : name;
+        },
+        isMetaFieldUsed(fld, subFormName = '') {
+            const names = [
+                fld?.name,
+                fld?.label,
+            ].filter(Boolean);
+
+            return names.some((name) => {
+                return this.usedFieldNames.hasOwnProperty(this.getUsedFieldKey(name, subFormName));
+            });
+        },
+        isSubFormContainer(widget) {
+            return [
+                'sub-form',
+                'grid-sub-form',
+                'table-sub-form',
+                'nested-sub-form',
+                'list-sub-form',
+            ].includes(widget?.type);
+        },
+        markUsedField(field, parentSubFormName) {
+            if (!field || field.category === 'container') {
+                return;
+            }
+
+            const optionName = field.options?.name;
+            if (!optionName) {
+                return;
+            }
+
+            const subFormName = field.subFormName || parentSubFormName;
+            this.usedFieldNames[this.getUsedFieldKey(optionName, subFormName)] = 1;
+
+            if (field.options?.keyNameEnabled && field.options?.keyName) {
+                this.usedFieldNames[this.getUsedFieldKey(field.options.keyName, subFormName)] = 1;
+            }
+
+            if (field.options?.label) {
+                this.usedFieldNames[this.getUsedFieldKey(field.options.label, subFormName)] = 1;
+            }
+        },
+        collectUsedFields(widgetList, parentSubFormName = '') {
+            if (!Array.isArray(widgetList)) {
+                return;
+            }
+
+            widgetList.forEach((widget) => {
+                if (!widget) {
+                    return;
+                }
+
+                if (widget.category !== 'container') {
+                    this.markUsedField(widget, parentSubFormName);
+                    return;
+                }
+
+                const nextSubFormName = this.isSubFormContainer(widget)
+                    ? (widget.options?.name || parentSubFormName)
+                    : parentSubFormName;
+
+                if (Array.isArray(widget.widgetList)) {
+                    this.collectUsedFields(widget.widgetList, nextSubFormName);
+                }
+                if (Array.isArray(widget.cols)) {
+                    widget.cols.forEach((col) => this.collectUsedFields(col.widgetList, nextSubFormName));
+                }
+                if (Array.isArray(widget.rows)) {
+                    widget.rows.forEach((row) => {
+                        row.cols?.forEach((cell) => this.collectUsedFields(cell.widgetList, nextSubFormName));
+                    });
+                }
+                if (Array.isArray(widget.tabs)) {
+                    widget.tabs.forEach((tab) => this.collectUsedFields(tab.widgetList, nextSubFormName));
+                }
+            });
+        },
+        scheduleMetaFieldsRefresh(delay = 300) {
+            if (this.metaFieldsRefreshTimer) {
+                clearTimeout(this.metaFieldsRefreshTimer);
+            }
+            this.metaFieldsRefreshTimer = setTimeout(() => {
+                this.handleUsedFields();
+                this.refreshMetaFields();
+                this.metaFieldsRefreshTimer = null;
+            }, delay);
+        },
         getSubFormName(widgetList, fieldId) {
             return Utils.getSubFormNameByFieldId(widgetList, fieldId);
         },
@@ -279,9 +426,9 @@ export default {
 							this.fieldListData.referenceFormList = res.data.referenceFormList;
 						}
                         this.metaFieldsResult = res;
-                        const metaFields = this.buildMetaFields(
-                            this.metaFieldsResult
-                        );
+                        const metaFields = this.buildMetaFields(this.metaFieldsResult);
+                        const rawMetaFields = this.buildMetaFields(this.metaFieldsResult, false);
+                        this.$refs.vfDesigner.designer.rawMetaFields = rawMetaFields;
                         this.$refs.vfDesigner.setFieldListData(
                             this.fieldListData
                         );
@@ -301,13 +448,14 @@ export default {
                 });
         },
 
-        buildMetaFields(mdResult) {
+        buildMetaFields(mdResult, filterUsed = true) {
             const result = {
-                main: {
-                    entityName: this.entity,
-                    entityLabel: this.entityLabel,
-                    fieldList: [],
-                },
+        main: {
+            entityName: this.entity,
+            entityLabel: this.entityLabel,
+            isArr: this.getMetaArrayFlag(mdResult?.data),
+            fieldList: [],
+        },
                 detail: [],
             };
 
@@ -325,7 +473,7 @@ export default {
                             return;
                         }
 
-                        if (this.usedFieldNames.hasOwnProperty(fld.name)) {
+                        if (filterUsed && this.isMetaFieldUsed(fld)) {
                             return; //跳过本次循环
                         }
                         const fieldNewProps = deepClone(
@@ -342,9 +490,15 @@ export default {
                         );
 
                         fieldSchema.displayName = fld.label;
+                        fieldSchema.fieldName = fld.name;
+                        fieldSchema.fieldLabel = fld.label;
+                        fieldSchema.fieldType = fld.type;
                         fieldSchema.nameReadonly = true;
                         fieldSchema.options.name = fld.name;
                         fieldSchema.options.label = fld.label;
+                        fieldSchema.metaModelName = result.main.entityName;
+                        fieldSchema.metaModelIsArr =
+                            result.main.isArr || this.getMetaArrayFlag(fld);
                         this.adjustFieldSchema(fieldSchema, fld, mdResult);
                         result.main.fieldList.push(fieldSchema);
                     }
@@ -358,6 +512,7 @@ export default {
                     const detailDataItem = {
                         entityName: deName,
                         entityLabel: deLabel,
+                        isArr: this.getMetaArrayFlag(sf),
                         fieldList: [],
                     };
 
@@ -374,7 +529,7 @@ export default {
                                 return;
                             }
 
-                            if (this.usedFieldNames.hasOwnProperty(fld.detailEntity + '.' + fld.name)) {
+                            if (filterUsed && this.isMetaFieldUsed(fld, fld.detailEntity)) {
                                 return; //跳过本次循环
                             }
 
@@ -392,10 +547,16 @@ export default {
                             );
 
                             fieldSchema.displayName = fld.label;
+                            fieldSchema.fieldName = fld.name;
+                            fieldSchema.fieldLabel = fld.label;
+                            fieldSchema.fieldType = fld.type;
                             fieldSchema.nameReadonly = true;
                             fieldSchema.options.name = fld.name;
                             fieldSchema.options.label = fld.label;
                             fieldSchema.subFormName = fld.detailEntity;
+                            fieldSchema.metaModelName = detailDataItem.entityName;
+                            fieldSchema.metaModelIsArr =
+                                detailDataItem.isArr || this.getMetaArrayFlag(fld);
                             this.adjustFieldSchema(fieldSchema, fld, mdResult);
                             detailDataItem.fieldList.push(fieldSchema);
                         }
@@ -406,6 +567,14 @@ export default {
             }
 
             return result;
+        },
+
+        getMetaArrayFlag(meta) {
+            const value = meta?.isArr ??
+                meta?.isArray ??
+                meta?.el?.isArr ??
+                meta?.el?.isArray;
+            return value === true || value === 1 || value === "1" || value === "true";
         },
 
         adjustFieldSchema(fieldSchema, fldObj, mdResult) {
@@ -553,40 +722,18 @@ export default {
 			//
         },
 
-        handleFWU(fwName, subFormName) {
-			if (!subFormName) {
-				this.usedFieldNames[fwName] = 1;
-			} else {
-				this.usedFieldNames[subFormName + '.' + fwName] = 1;
-			}
-
+        handleFWU() {
             /* 必须延时处理，否则draggable会报错 */
-            setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.metaFieldsResult);
-                this.$refs.vfDesigner.setMetaFields(metaFields);
-            }, 800);
+            this.scheduleMetaFieldsRefresh(300);
         },
 
-        handleFWR(fwName, subFormName) {
-			if (!subFormName) {
-				delete this.usedFieldNames[fwName];
-			} else {
-				delete this.usedFieldNames[subFormName + '.' + fwName];
-			}
-
+        handleFWR() {
             /* 必须延时处理，否则draggable会报错 */
-            setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.metaFieldsResult);
-                this.$refs.vfDesigner.setMetaFields(metaFields);
-            }, 800);
+            this.scheduleMetaFieldsRefresh(300);
         },
 
         handleFJU() {
-            this.handleUsedFields();
-            setTimeout(() => {
-                const metaFields = this.buildMetaFields(this.metaFieldsResult);
-                this.$refs.vfDesigner.setMetaFields(metaFields);
-            }, 300);
+            this.scheduleMetaFieldsRefresh(300);
         },
 
         /**
@@ -594,14 +741,7 @@ export default {
          */
         handleUsedFields() {
             this.usedFieldNames = {};
-            const allFieldWidgets = this.$refs.vfDesigner.getFieldWidgets();
-            allFieldWidgets.forEach((fwItem) => {
-				if (!fwItem.field.subFormName) {
-					this.usedFieldNames[fwItem.name] = 1;
-				} else {
-					this.usedFieldNames[fwItem.field.subFormName + '.' + fwItem.name] = 1;
-				}
-            });
+            this.collectUsedFields(this.$refs.vfDesigner?.designer?.widgetList);
         },
 
         async loadDesign() {

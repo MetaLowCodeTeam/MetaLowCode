@@ -4,6 +4,13 @@ import VisualDesign from '@/../lib/visual-design/designer.umd.js'
 import {registerFieldWidgets} from "@/views/system/form-design/extension/field-widgets";
 import {
     checkTagSchema,
+    textFieldSchema,
+	imageFieldSchema,
+    pivotTableSchema,
+    barChartSchema,
+    lineChartSchema,
+    echartsSchema,
+    reportFieldSchema,
     referenceSchema,
     referenceListSchema,
     locationSchema,
@@ -15,6 +22,8 @@ import {
     outerReferenceSchema,
     // 级联选择
     cascaderOptionSchema,
+	pageFooterContainerSchema,
+	pageNumberSchema,
 } from "@/views/system/form-design/extension/extension-widgets-schema";
 import newTestEditor from './property-editor/newTest-editor.vue'
 import CheckTagOptionItemsEditor
@@ -75,6 +84,23 @@ import { registerContainerItems } from '@/views/system/form-design/extension/con
 // 容器组件-列表子表单
 import listSubFormWidget from "@/views/system/form-design/extension/container-widgets/list-sub-form-widget.vue";
 import listSubFormItem from "@/views/system/form-design/extension/container-items/list-sub-form-item.vue";
+
+import reportFieldWidget from "@/views/system/form-design/extension/field-widgets/report-field-widget.vue";
+import reportFieldNameEditor from "@/views/system/form-design/extension/property-editor/report-field/name-editor.vue";
+import reportFieldLabelEditor from "@/views/system/form-design/extension/property-editor/report-field/label-editor.vue";
+import reportFieldTextAlignEditor from "@/views/system/form-design/extension/property-editor/report-field/textAlign-editor.vue";
+import reportFieldFontSizeEditor from "@/views/system/form-design/extension/property-editor/report-field/fontSize-editor.vue";
+import reportFieldFontStyleEditor from "@/views/system/form-design/extension/property-editor/report-field/fontStyle-editor.vue";
+import reportFieldFontWeightEditor from "@/views/system/form-design/extension/property-editor/report-field/fontWeight-editor.vue";
+import reportFieldModelNameEditor from "@/views/system/form-design/extension/property-editor/report-field/modelName-editor.vue";
+import reportFieldOnFormDataReadyEditor from "@/views/system/form-design/extension/property-editor/report-field/onFormDataReady-editor.vue";
+import reportFieldImageDisplayEditor from "@/views/system/form-design/extension/property-editor/report-field/imageDisplay-editor.vue";
+import reportFieldHtmlDisplayEditor from "@/views/system/form-design/extension/property-editor/report-field/htmlDisplay-editor.vue";
+import barChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/barChartConfig-editor.vue";
+import lineChartConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/lineChartConfig-editor.vue";
+import echartsConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/echartsConfig-editor.vue";
+import pivotTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/pivotTableConfig-editor.vue";
+import reportTableConfigEditor from "@/views/system/form-design/extension/property-editor/report-widget/reportTableConfig-editor.vue";
 // 列表子表单-是否启用高级查询
 import listSubFormShowAdvancedQueryEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showAdvancedQuery-editor.vue";
 import listSubFormShowHeaderEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/showListHeader-editor.vue";
@@ -91,6 +117,9 @@ import listSubFormListHeightEditor from "@/views/system/form-design/extension/pr
 import listSubFormLayoutCodeEditor from "@/views/system/form-design/extension/property-editor/container-list-sub-form/listSubFormLayoutCode-editor.vue";
 
 import inputQrCodeOnMobileEnabledEditor from "@/views/system/form-design/extension/property-editor/input/qrCodeOnMobileEnabled-editor.vue";
+import mlTextTextAlignEditor from "@/views/system/form-design/extension/property-editor/ml-text/textAlign-editor.vue";
+import mlImageImageUrlEditor from "@/views/system/form-design/extension/property-editor/ml-image/imageUrl-editor.vue";
+import pageNumberTemplateEditor from "@/views/system/form-design/extension/property-editor/page-number/pageNumberTemplate-editor.vue";
 
 const {
     addContainerWidgetSchema,
@@ -110,6 +139,7 @@ export const loadExtensionWidgets = (app) => {
 
 	//注册属性编辑器
     app.component('list-sub-form-name-editor', listSubFormNameEditor)
+
 	app.component('check-tag-optionItems-editor', CheckTagOptionItemsEditor)
 	app.component('check-tag-optionValueType-editor', checkTagOptionValueTypeEditor)
 
@@ -179,12 +209,68 @@ export const loadExtensionWidgets = (app) => {
 
 	//注册扩展字段组件
 	registerFieldWidgets(app)
+	app.component('ml-text-textAlign-editor', mlTextTextAlignEditor)
+	app.component('ml-image-imageUrl-editor', mlImageImageUrlEditor)
+	app.component('ml-image-textAlign-editor', mlTextTextAlignEditor)
+	PERegister.registerCPEditor(app, 'imageUrl', 'ml-image-imageUrl-editor', mlImageImageUrlEditor)
+	app.component('report-field-widget', reportFieldWidget)
+	app.component('page-number-pageNumberTemplate-editor', pageNumberTemplateEditor)
+	app.component('report-field-name-editor', reportFieldNameEditor)
+	app.component('report-field-label-editor', reportFieldLabelEditor)
+	app.component('report-field-modelName-editor', reportFieldModelNameEditor)
+	app.component('report-field-textAlign-editor', reportFieldTextAlignEditor)
+	app.component('report-field-fontSize-editor', reportFieldFontSizeEditor)
+	app.component('report-field-fontStyle-editor', reportFieldFontStyleEditor)
+	app.component('report-field-fontWeight-editor', reportFieldFontWeightEditor)
+	app.component('report-field-onFormDataReady-editor', reportFieldOnFormDataReadyEditor)
+	app.component('report-field-imageDisplay-editor', reportFieldImageDisplayEditor)
+	app.component('report-field-htmlDisplay-editor', reportFieldHtmlDisplayEditor)
+	PERegister.registerEventProperty('onFormDataReady', 'report-field-onFormDataReady-editor')
+	PERegister.registerCommonProperty('modelName', null)
+	PERegister.registerCPEditor(app, 'htmlDisplayEnabled', 'report-field-htmlDisplay-editor', reportFieldHtmlDisplayEditor)
+	PERegister.registerCPEditor(app, 'imageDisplayEnabled', 'report-field-imageDisplay-editor', reportFieldImageDisplayEditor)
+	PERegister.registerCPEditor(app, 'barChartConfig', 'barChartConfig-editor', barChartConfigEditor)
+	PERegister.registerCPEditor(app, 'lineChartConfig', 'lineChartConfig-editor', lineChartConfigEditor)
+	PERegister.registerCPEditor(app, 'echartsConfig', 'echartsConfig-editor', echartsConfigEditor)
+	PERegister.registerCPEditor(app, 'pivotTableConfig', 'pivotTableConfig-editor', pivotTableConfigEditor)
+	PERegister.registerCPEditor(app, 'reportTableConfig', 'reportTableConfig-editor', reportTableConfigEditor)
+	PERegister.registerCPEditor(
+		app,
+		'pageNumberTemplate',
+		'page-number-pageNumberTemplate-editor',
+		pageNumberTemplateEditor
+	)
+	PERegister.registerCPEditor(
+		app,
+		'pageNumberStart',
+		'page-footer-container-pageNumberStart-editor',
+		PEFactory.createInputNumberEditor('pageNumberStart', 'extension.setting.pageNumberStart')
+	)
+	PERegister.registerCPEditor(
+		app,
+		'footerDistance',
+		'page-footer-container-footerDistance-editor',
+		PEFactory.createInputNumberEditor('footerDistance', 'extension.setting.footerDistance')
+	)
+	PERegister.registerCPEditor(
+		app,
+		'showTopBorder',
+		'page-footer-container-showTopBorder-editor',
+		PEFactory.createBooleanEditor('showTopBorder', 'extension.setting.showTopBorder')
+	)
 
-	//注册容器组件（暂无）
+	//注册容器组件
     registerContainerWidgets(app)
     registerContainerItems(app)
 
 	//添加到设计器组件库
+	addBasicFieldSchema(textFieldSchema)
+	addBasicFieldSchema(imageFieldSchema)
+	addBasicFieldSchema(pageNumberSchema)
+	addBasicFieldSchema(pivotTableSchema)
+	addBasicFieldSchema(barChartSchema)
+	addBasicFieldSchema(lineChartSchema)
+	addBasicFieldSchema(echartsSchema)
 	addBasicFieldSchema(checkTagSchema)
     addBasicFieldSchema(signWidgetSchema)
 
@@ -197,5 +283,6 @@ export const loadExtensionWidgets = (app) => {
     addAdvancedFieldSchema(cascaderOptionSchema)
     // 添加到容器组件库
     addContainerWidgetSchema(listSubFormSchema)
+	addContainerWidgetSchema(pageFooterContainerSchema)
 
 }

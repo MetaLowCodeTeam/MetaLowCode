@@ -5,7 +5,9 @@
 		class="one-list"
 	>
 		<el-header class="props-action-section">
-			<span class="section-title">{{ title }}</span>
+			<slot name="title">
+				<span class="section-title">{{ title }}</span>
+			</slot>
 			<div class="section-fr fr">
                 <slot name="beforeSearch"></slot>
 				<mlSearchInput

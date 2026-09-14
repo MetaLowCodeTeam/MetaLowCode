@@ -422,6 +422,12 @@ const routes = [
                         component: 'system/data-base/OuterDataModel',
                         meta: { title: '外部数据模型', icon: 'el-icon-Coin', role: 'r66-1' }
                     },
+                    {
+                        path: appPath + 'data-model-report-list',
+                        name: 'DataModelReportList',
+                        component: 'system/data-base/DataModelReportList',
+                        meta: { title: '数据模型报表', icon: 'el-icon-Document', role: 'r94-1' }
+                    },
 
                 ]
             },
@@ -485,6 +491,14 @@ const routes = [
                 component: 'system/form-design/index',
                 props: true,
                 meta: { title: '可视化表单设计', icon: '', /*, keepAlive: false */ activeRoute: '/system/metadata/entity-list', hidden: true }
+            },
+            // 关联报表
+            {
+                path: appPath + 'data-model-report',
+                name: 'DataModelReport',
+                component: 'system/data-base/components/DataModelReport',
+                props: true,
+                meta: { title: '关联报表', icon: '', activeRoute: '/system/data-model-report-list', hidden: true }
             },
             // 审批流程详情
             {
@@ -570,7 +584,7 @@ const routes = [
                 "component": "userCenter/index"
             },
         ]
-    },  
+    },
 ]
 
 export default routes;

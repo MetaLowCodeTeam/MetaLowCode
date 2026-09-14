@@ -45,8 +45,237 @@ export const listSubFormSchema = {
 };
 
 /**
+ * 报表页脚容器。
+ *
+ * 容器在导出时作为 Word 分节标记使用：容器前的正文沿用上一节，容器后的正文
+ * 使用当前容器生成的页脚，并从 pageNumberStart 重新计算页码。
+ */
+export const pageFooterContainerSchema = {
+	type: 'page-footer-container',
+	alias: 'page-footer-container',
+	icon: 'column-1-grid',
+	category: 'container',
+	commonFlag: true,
+	widgetList: [],
+	options: {
+		name: '',
+		label: '页脚容器',
+		hidden: false,
+		pageNumberStart: 1,
+		footerDistance: 3,
+		showTopBorder: false,
+		customClass: '',
+	},
+};
+
+/**
  * 字段组件
  */
+export const textFieldSchema = {
+	type: 'ml-text',
+	alias: 'ml-text',
+	icon: 'text-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '文本',
+		hidden: false,
+		textAlign: 'left',
+		fontSize: '',
+		fontStyle: 'normal',
+		fontWeight: 'normal',
+		htmlDisplayEnabled: false,
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+
+/** 静态图片组件。图片地址随表单设计 JSON 一起保存。 */
+export const imageFieldSchema = {
+	type: 'ml-image',
+	alias: 'ml-image',
+	icon: 'picture-upload-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '图片',
+		hidden: false,
+		imageUrl: '',
+		imageName: '',
+		imageWidth: '120px',
+		imageHeight: 'auto',
+		objectFit: 'contain',
+		textAlign: 'left',
+		alt: '',
+		customClass: '',
+	},
+};
+
+/** Word/PDF 导出使用的动态页码字段。 */
+export const pageNumberSchema = {
+	type: 'page-number',
+	alias: 'page-number',
+	icon: 'text-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '页码',
+		hidden: false,
+		pageNumberTemplate: '第 {page} 页',
+		textAlign: 'center',
+		fontSize: '12px',
+		fontStyle: 'normal',
+		fontWeight: 'normal',
+		customClass: '',
+	},
+};
+
+export const barChartSchema = {
+	type: 'ml-bar-chart',
+	alias: 'ml-bar-chart',
+	icon: 'barChart',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '柱状图',
+		hidden: false,
+    barChartConfig: {
+      title: '柱状图',
+      hideTitle: false,
+      bindModelCode: '',
+      width: '100%',
+      height: 260,
+			showLegend: false,
+			showLabel: true,
+			setDimensional: {
+				dimension: [],
+				metrics: [],
+			},
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+export const lineChartSchema = {
+	type: 'ml-line-chart',
+	alias: 'ml-line-chart',
+	icon: 'lineChart',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '折线图',
+		hidden: false,
+    lineChartConfig: {
+      title: '折线图',
+      hideTitle: false,
+      bindModelCode: '',
+			width: '100%',
+			height: 260,
+			showLegend: false,
+			showLabel: true,
+			setDimensional: {
+				dimension: [],
+				metrics: [],
+			},
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+
+export const echartsSchema = {
+	type: 'ml-echarts',
+	alias: 'ml-echarts',
+	icon: 'lineChart',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: 'ECharts',
+		hidden: false,
+		echartsConfig: {
+			width: '100%',
+			height: 260,
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+
+export const pivotTableSchema = {
+	type: 'ml-pivot-table',
+	alias: 'ml-pivot-table',
+	icon: 'pivotTable',
+	formItemFlag: false,
+	options: {
+		name: '',
+		label: '透视图',
+		hidden: false,
+		htmlDisplayEnabled: false,
+        pivotTableConfig: {
+            title: '透视图',
+            hideTitle: false,
+            bindModelCode: '',
+            width: '100%',
+			showSummary: true,
+			showSumcol: true,
+			showEmptyAsDash: true,
+			showBorder: true,
+			textAlign: 'center',
+			fontSize: 11,
+			cellPadding: '2px 4px',
+			borderWidth: 1,
+			borderColor: '#000000',
+			rowHeight: 20,
+			emptyText: '—',
+			tableLayout: 'fixed',
+			setDimensional: {
+				dimensionRow: [],
+				dimensionCol: [],
+				metrics: [],
+			},
+		},
+		customClass: [],
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+
+export const reportFieldSchema = {
+	type: 'report-field',
+	icon: 'text-field',
+	formItemFlag: false,
+	options: {
+		name: '',
+		keyNameEnabled: false,
+		keyName: '',
+		bindingPath: '',
+		label: '',
+		modelName: '',
+		outerDataModelId: '',
+		hidden: false,
+		customClass: [],
+		textAlign: 'left',
+		fontSize: '',
+		fontStyle: 'normal',
+		fontWeight: 'normal',
+		htmlDisplayEnabled: false,
+		imageDisplayEnabled: false,
+		imageWidth: '80px',
+		imageHeight: '100px',
+		onCreated: '',
+		onMounted: '',
+		onFormDataReady: '',
+	},
+};
+
 export const checkTagSchema = {
 	type: 'check-tag',
 	icon: 'check-tag-field',

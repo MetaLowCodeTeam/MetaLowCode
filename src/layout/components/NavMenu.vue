@@ -11,8 +11,8 @@
         </el-menu-item-group>
         <el-menu-item 
             v-else-if="!hasChildren(navMenu)" 
-            :index="navMenu.path" 
-            :class="{'isActive': activePath == navMenu.path}" 
+            :index="menuIndex(navMenu)"
+            :class="{'isActive': isMenuActive(navMenu)}"
             :disabled="navMenu.name === 'NewWindowCreateEntity' || navMenu.name === 'userCenter'"
         >
             <a
@@ -61,16 +61,16 @@ export default {
     props: ["navMenus"],
     data() {
         return {
-            activePath: "",
+            activeRoute: null,
         };
     },
     watch: {
         $route: function (newRouter, oldRouter) {
-            this.activePath = newRouter.path; //侧边栏选中
+            this.activeRoute = newRouter; //侧边栏选中
         },
     },
     mounted(){
-        this.activePath = this.$route.path;
+        this.activeRoute = this.$route;
     },
     methods: {
         hasChildren(item) {
@@ -78,6 +78,21 @@ export default {
                 item.children &&
                 !item.children.every((item) => item.meta.hidden)
             );
+        },
+        isMenuActive(menu) {
+            if (!this.activeRoute || this.activeRoute.path !== menu.path) {
+                return false;
+            }
+
+            const menuQuery = menu.meta?.query || {};
+            return Object.keys(menuQuery).every(
+                (key) => String(this.activeRoute.query?.[key] ?? "") === String(menuQuery[key] ?? "")
+            );
+        },
+        menuIndex(menu) {
+            const query = menu.meta?.query || {};
+            const queryString = new URLSearchParams(query).toString();
+            return queryString ? `${menu.path}?${queryString}` : menu.path;
         },
         // 自定义页面点击
         customPageClick(navMenu) {

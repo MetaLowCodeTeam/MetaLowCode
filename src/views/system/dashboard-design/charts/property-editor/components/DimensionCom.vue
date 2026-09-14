@@ -57,12 +57,12 @@
                     v-if="!isDimension"
                 >
                     <div class="popover-div">
-                        <template v-for="(summary,summaryInx) of calcMode">
+                        <template v-for="(summary,summaryInx) of currentCalcMode">
                             <div
                                 :key="summaryInx"
                                 class="popover-item"
                                 :class="{'is-active':tag.calcMode == summary.code}"
-                                v-if="summary.type == 'N|T' || numType.includes(tag.type)"
+                                v-if="['pivotTable', 'barChart', 'barXChart', 'lineChart'].includes(chartType) || summary.type == 'N|T' || numType.includes(tag.type)"
                                 @click="onCalcModeChange(tag,summary.code,inx)"
                             >{{ summary.label }}</div>
                         </template>
@@ -106,6 +106,35 @@
                     <template #reference>
                         <div class="popover-item">
                             排序
+                            <span style="position: relative;top:2px;float: right;">
+                                <el-icon>
+                                    <ElIconArrowRight />
+                                </el-icon>
+                            </span>
+                        </div>
+                    </template>
+                </el-popover>
+                <el-popover
+                    v-if="enableWidthRatio"
+                    placement="right"
+                    :width="190"
+                    trigger="click"
+                >
+                    <div class="width-ratio-editor">
+                        <div class="width-ratio-editor__label">列宽比例</div>
+                        <el-input-number
+                            v-model="tag.widthRatio"
+                            size="small"
+                            :min="1"
+                            :max="100"
+                            :step="1"
+                            controls-position="right"
+                            @change="onWidthRatioChange"
+                        />
+                    </div>
+                    <template #reference>
+                        <div class="popover-item">
+                            宽度比例{{ tag.widthRatio ? `（${tag.widthRatio}）` : '' }}
                             <span style="position: relative;top:2px;float: right;">
                                 <el-icon>
                                     <ElIconArrowRight />
@@ -222,17 +251,21 @@
 </template>
 
 <script setup>
-import { onMounted, watch, ref, reactive } from "vue";
+import { onMounted, watch, ref, reactive, computed } from "vue";
 const props = defineProps({
     modelValue: null,
     isDimension: { type: Boolean, default: false },
     chartType: { type: String, default: "" },
+    enableWidthRatio: { type: Boolean, default: false },
 });
 const CalcMode = {
+    first: "首个数据",
+    textJoin: "文本拼接",
+    textDistinctJoin: "文本去重拼接",
     sum: "求和",
     count: "计数",
     countSet: "去重计数",
-    average: "平均值",
+    average: "平均数",
     max: "最大值",
     min: "最小值",
 };
@@ -289,6 +322,21 @@ watch(
 
 let calcMode = ref([
     {
+        label: "首个数据",
+        type: "N|T",
+        code: "first",
+    },
+    {
+        label: "文本拼接",
+        type: "N|T",
+        code: "textJoin",
+    },
+    {
+        label: "文本去重拼接",
+        type: "N|T",
+        code: "textDistinctJoin",
+    },
+    {
         label: "求和",
         type: "N",
         code: "sum",
@@ -304,7 +352,7 @@ let calcMode = ref([
         code: "countSet",
     },
     {
-        label: "平均值",
+        label: "平均数",
         type: "N",
         code: "average",
     },
@@ -319,6 +367,49 @@ let calcMode = ref([
         code: "min",
     },
 ]);
+
+let pivotCalcMode = ref([
+    {
+        label: "首个数据",
+        code: "first",
+    },
+    {
+        label: "文本拼接",
+        code: "textJoin",
+    },
+    {
+        label: "文本去重拼接",
+        code: "textDistinctJoin",
+    },
+    {
+        label: "计数",
+        code: "count",
+    },
+    {
+        label: "去重计数",
+        code: "countSet",
+    },
+    {
+        label: "求和",
+        code: "sum",
+    },
+    {
+        label: "平均数",
+        code: "average",
+    },
+    {
+        label: "最大值",
+        code: "max",
+    },
+    {
+        label: "最小值",
+        code: "min",
+    },
+]);
+
+const currentCalcMode = computed(() => {
+    return props.chartType === "pivotTable" ? pivotCalcMode.value : calcMode.value;
+});
 
 let numType = ref(["Integer", "Decimal", "Percent", "Money"]);
 
@@ -425,6 +516,10 @@ const onSort = (tag, target, inx) => {
     sortPopoverRefs.value[inx]?.hide();
     emits("update:modelValue", list.value);
     emits("onSort", { tag, target });
+};
+
+const onWidthRatioChange = () => {
+    emits("update:modelValue", list.value);
 };
 
 // 部分表格禁用千分符、数值量级
@@ -547,5 +642,10 @@ const confirmDataFormat = () => {
         font-size: 14px;
         margin-left: 5px;
     }
+}
+.width-ratio-editor__label {
+    margin-bottom: 8px;
+    color: #606266;
+    font-size: 12px;
 }
 </style>

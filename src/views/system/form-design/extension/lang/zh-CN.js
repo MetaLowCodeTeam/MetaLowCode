@@ -2,12 +2,21 @@ export default {
     extension: {
         widgetLabel: {
             'list-sub-form': '列表子表单',
+            'ml-text': '文本',
+			'ml-image': '图片',
+            'ml-bar-chart': '柱状图',
+            'ml-line-chart': '折线图',
+            'ml-echarts': 'ECharts',
+            'ml-pivot-table': '透视图',
             'check-tag': '标签选择',
             'reference': '引用',
             'reference-list': '多对多引用',
             'outer-reference': '外部引用',
             'location': '定位',
             'sign': '签名',
+            'loop-container': '循环容器',
+			'page-footer-container': '页脚容器',
+			'page-number': '页码',
         },
 
         setting: {
@@ -53,6 +62,9 @@ export default {
             useUserDepartmentTree: "开启用户部门树",
 			// 地图定位组件
 			positionSelectable: '允许用户自选位置',
+			pageNumberStart: '起始页码',
+			footerDistance: '距页面底部 (mm)',
+			showTopBorder: '显示顶部分隔线',
             showBorder: "显示为边框",
             borderInfo: "勾选框启用后，边框才可生效",
             showButton: "显示为按钮",

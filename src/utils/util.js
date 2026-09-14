@@ -621,8 +621,8 @@ export const formatOutLink = (meta) => {
 
 
 
-export const downloadBase64 = async (base64, fileName) => {
-	let blob = base64ToBlob(base64);
+export const downloadBase64 = async (base64, fileName, contentType = "") => {
+	let blob = base64ToBlob(base64, fileName, contentType);
 	let downloadElement = document.createElement("a");
 	let href = window.URL.createObjectURL(blob);
 	downloadElement.href = href;
@@ -631,11 +631,32 @@ export const downloadBase64 = async (base64, fileName) => {
 	downloadElement.click();
     // 清理创建的 URL 对象
 	URL.revokeObjectURL(href);
+    document.body.removeChild(downloadElement);
 };
 
-const base64ToBlob = (base64) => {
-	let baseContent = base64;
-	let mime = baseContent.match(/:(.*?);/); //获取分割后的base64前缀中的类型
+const getMimeByFileName = (fileName = "") => {
+    const ext = fileName.split(".").pop()?.toLowerCase();
+    const mimeMap = {
+        doc: "application/msword",
+        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        zip: "application/zip",
+        png: "image/png",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        pdf: "application/pdf",
+    };
+    return mimeMap[ext] || "application/octet-stream";
+};
+
+const base64ToBlob = (base64, fileName = "", contentType = "") => {
+	let baseContent = typeof base64 === "string" ? base64 : "";
+    let mime = contentType || getMimeByFileName(fileName);
+    const dataUrlMatch = baseContent.match(/^data:(.*?);base64,/);
+    if (dataUrlMatch) {
+        mime = dataUrlMatch[1] || mime;
+        baseContent = baseContent.slice(baseContent.indexOf(",") + 1);
+    }
+    baseContent = baseContent.replace(/\s/g, "");
 	let bstr = window.atob(baseContent);
 	let n = bstr.length;
 	let u8arr = new Uint8Array(n);
