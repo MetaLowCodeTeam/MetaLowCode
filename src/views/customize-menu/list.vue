@@ -1019,6 +1019,8 @@ onBeforeMount(() => {
     }
     quickQueryConf.entityCode = entityCode.value;
     loadRouterParams();
+    // 读取 URL 标识对应的 localStorage 过滤条件
+    loadLocFilter();
     // 获取导航配置
     getLayoutList();
 });
@@ -2258,9 +2260,42 @@ let dataExportData = reactive({
 let builtInFilter = ref({});
 let isDataFilter = ref(false);
 
+// 本地缓存过滤条件约定：URL 标识 ?locFilter=xxx -> localStorage["LOC_FILTER_xxx"]
+const LOC_FILTER_QUERY_KEY = "locFilter";
+const LOC_FILTER_STORAGE_PREFIX = "LOC_FILTER_";
+// 根据 URL 标识从 localStorage 读取过滤条件，塞入内置过滤
+const loadLocFilter = () => {
+    let locFilterId = router.currentRoute.value.query[LOC_FILTER_QUERY_KEY];
+    if (!locFilterId) {
+        return;
+    }
+    try {
+        let storageKey = LOC_FILTER_STORAGE_PREFIX + locFilterId;
+        let locFilterStr = localStorage.getItem(storageKey);
+        if (!locFilterStr) {
+            console.warn(`[list] 未找到本地过滤条件：${storageKey}`);
+            return;
+        }
+        let locFilter = JSON.parse(locFilterStr);
+        if (locFilter?.equation && Array.isArray(locFilter?.items)) {
+            builtInFilter.value = locFilter;
+            isDataFilter.value = true;
+        } else {
+            console.warn("[list] 本地过滤条件格式不正确：", locFilter);
+        }
+    } catch (error) {
+        console.error("[list] 读取本地过滤条件出错:", error);
+    }
+};
+
 const clearDataFilter = () => {
     isDataFilter.value = false;
     builtInFilter.value = {};
+    // 清除 URL 标识对应的本地缓存过滤条件，避免刷新后重新生效
+    let locFilterId = router.currentRoute.value.query[LOC_FILTER_QUERY_KEY];
+    if (locFilterId) {
+        localStorage.removeItem(LOC_FILTER_STORAGE_PREFIX + locFilterId);
+    }
     (quickQuery.value = ""), setRouterParams({});
     getTableList();
 };
