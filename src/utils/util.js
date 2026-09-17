@@ -846,6 +846,32 @@ export const copyText = (text, errorMsg = "复制失败，请重试刷新页面"
 }
 
 
+// 过滤条件项字段白名单（后台 FilterItem 只接收这些字段，多余字段不传）
+const FILTER_ITEM_KEYS = ["fieldName", "op", "value", "value2", "refLabel"];
+
+// 清洗过滤条件项，只保留后台需要的字段
+const cleanFilterItems = (items) => {
+    if (!Array.isArray(items)) {
+        return items;
+    }
+    return items.map(item => {
+        if (!item || typeof item !== 'object') {
+            return item;
+        }
+        let newItem = {};
+        FILTER_ITEM_KEYS.forEach(key => {
+            if (item[key] !== undefined) {
+                newItem[key] = item[key];
+            }
+        });
+        // 兼容嵌套条件组
+        if (Array.isArray(item.items)) {
+            newItem.items = cleanFilterItems(item.items);
+        }
+        return newItem;
+    });
+}
+
 // 格式化过滤条件转base64
 export const formatFilterToBase64 = (filter) => {
     if(!filter) {
@@ -853,6 +879,7 @@ export const formatFilterToBase64 = (filter) => {
     }
     let newFilter = JSON.parse(JSON.stringify(filter));
     if(newFilter && newFilter.items && newFilter.items.length > 0) {
+        newFilter.items = cleanFilterItems(newFilter.items);
         newFilter.items.forEach(item => {
             if(item.op == 'SQL') {
                 item.value = unicodeToBase64(item.value);
