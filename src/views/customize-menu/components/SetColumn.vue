@@ -65,26 +65,31 @@
                         </template>
                     </el-input>
                     <div
+                        ref="sourceColumnBox"
                         class="source-column-box"
-                        :class="{'need-auto':notShowColumn().length > 8}"
+                        @scroll="sourceScrollTop = $event.target.scrollTop"
                     >
-                        <div
-                            class="column-li"
-                            v-for="(column,inx) of notShowColumn()"
-                            :key="inx"
-                            @click="addShowColumn(column)"
-                        >
-                            <div 
-                                class="fl column-item text-ellipsis"
-                                :title="column.fieldLabel"
-                            >
-                                {{ column.fieldLabel }}
+                        <div class="source-column-spacer" :style="{ height: filteredSourceColumns.length * sourceRowHeight + 'px' }">
+                            <div class="source-column-visible" :style="{ top: sourceStartIndex * sourceRowHeight + 'px' }">
+                                <div
+                                    class="column-li"
+                                    v-for="column of visibleSourceColumns"
+                                    :key="column.fieldName"
+                                    @click="addShowColumn(column)"
+                                >
+                                    <div
+                                        class="fl column-item text-ellipsis"
+                                        :title="column.fieldLabel"
+                                    >
+                                        {{ column.fieldLabel }}
+                                    </div>
+                                    <span class="fr icon-span">
+                                        <el-icon size="16">
+                                            <ElIconPlus />
+                                        </el-icon>
+                                    </span>
+                                </div>
                             </div>
-                            <span class="fr icon-span">
-                                <el-icon size="16">
-                                    <ElIconPlus />
-                                </el-icon>
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -353,7 +358,7 @@
 
 <script setup>
 import { VueDraggableNext } from "vue-draggable-next";
-import { watch, ref, onMounted, inject, reactive } from "vue";
+import { watch, ref, computed, onMounted, inject, reactive } from "vue";
 import { queryEntityListableFields } from "@/api/crud";
 // 代码编辑器
 import mlCodeEditor from "@/components/mlCodeEditor/index.vue";
@@ -418,15 +423,26 @@ let originalFieldMap = {};
 
 // 筛选字段
 let searchField = ref("");
-const notShowColumn = () => {
-    if (!searchField) {
-        return sourceColumn.value;
-    } else {
-        return sourceColumn.value.filter(
-            (el) => el.fieldLabel.indexOf(searchField.value) != -1
-        );
-    }
-};
+const sourceRowHeight = 38;
+const sourceVisibleCount = Math.ceil(345 / sourceRowHeight);
+const sourceBufferCount = 4;
+const sourceColumnBox = ref(null);
+const sourceScrollTop = ref(0);
+const filteredSourceColumns = computed(() => sourceColumn.value.filter(
+    (el) => el.fieldLabel.includes(searchField.value)
+));
+const sourceStartIndex = computed(() => Math.max(0, Math.min(
+    Math.floor(sourceScrollTop.value / sourceRowHeight) - sourceBufferCount,
+    filteredSourceColumns.value.length - sourceVisibleCount - sourceBufferCount * 2
+)));
+const visibleSourceColumns = computed(() => filteredSourceColumns.value.slice(
+    sourceStartIndex.value,
+    sourceStartIndex.value + sourceVisibleCount + sourceBufferCount * 2
+));
+watch(searchField, () => {
+    sourceScrollTop.value = 0;
+    if (sourceColumnBox.value) sourceColumnBox.value.scrollTop = 0;
+});
 
 // 添加显示列
 const addShowColumn = (column) => {
@@ -1021,11 +1037,20 @@ div {
 .source-column-box {
     height: calc(388px - 43px);
     margin-bottom: 12px;
-    overflow-x: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
     margin-top: 5px;
     padding: 0 3px;
-    &::-webkit-scrollbar {
-        display: none;
+
+    .source-column-spacer {
+        position: relative;
+    }
+
+    .source-column-visible {
+        position: absolute;
+        left: 0;
+        right: 0;
     }
 
     .column-li {
@@ -1047,16 +1072,6 @@ div {
         }
         .icon-span {
             margin-top: 2px;
-        }
-    }
-    &:hover {
-        &::-webkit-scrollbar {
-            display: block;
-        }
-        &.need-auto {
-            .column-li {
-                width: calc(100% - 0px);
-            }
         }
     }
 }
