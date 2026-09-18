@@ -16,8 +16,9 @@
                         :force-fallback="false"
                         handle=".ml-draggable-mover"
                         :list="showColumn"
+                        item-key="fieldName"
                     >
-                        <div class="parent-li" v-for="(parent,inx) of showColumn" :key="inx">
+                        <div class="parent-li" v-for="(parent,inx) of showColumn" :key="parent.fieldName">
                             <div class="paren-div">
                                 <div class="ml-draggable-mover fl">
                                     <el-icon size="20" class="icon">
@@ -26,7 +27,7 @@
                                 </div>
                                 <div
                                     class="fl item text-ellipsis ml-draggable-item"
-                                    :class="{'tag':isShowItemTag(parent)}"
+                                    :class="{'tag':configuredFieldNames.has(parent.fieldName)}"
                                     :title="parent.fieldLabel"
                                 >
                                     {{ parent.fieldLabel }}
@@ -598,8 +599,8 @@ const applyColumns = () => {
     .catch(() => {});
 }
 
-// 是否显示列标记 * 号
-const isShowItemTag = (column) => {
+// 判断列是否含有非默认配置，用于显示配置标记。
+const isColumnConfigured = (column) => {
     let { 
         columnAliasName, 
         columnSort, 
@@ -620,84 +621,59 @@ const isShowItemTag = (column) => {
         mobileHide
     } = column;
     if(columnAliasName) {
-        console.log('edit-type-1')
         return true;
     }
     if(columnSort) {
-        console.log('edit-type-2')
         return true;
     }
     if(columnWidth > 0) {
-        console.log('edit-type-3')
         return true;
     }
     if(dataStatistics) {
-        console.log('edit-type-4')
         return true;
     }
     if(renderType === 'customizeRender' && !!columnRender) {
-        console.log('edit-type-5')
         return true;
     }
     if(align && align !== 'left') {
-        console.log('edit-type-6')
         return true;
     }
     if(mobileAlign && mobileAlign !== 'left') {
-        console.log('edit-type-7')
         return true;
     }
     if(headerAlign && headerAlign !== 'left') {
-        console.log('edit-type-8')
         return true;
     }
     if(mobileHeaderAlign && mobileHeaderAlign !== 'left') {
-        console.log('edit-type-9')
         return true;
     }
     if(fixed) {
-        console.log('edit-type-10')
         return true;
     }
     if(mobileShow !== undefined && !mobileShow) {
-        console.log('edit-type-11')
         return true;
     }
     if(sortable !== undefined && !sortable) {
-        console.log('edit-type-12')
         return true;
     }
     if(exportable !== undefined && !exportable) {
-        console.log('edit-type-16')
         return true;
     }
     if(fontColor){
-        console.log('edit-type-13')
         return true;
     }
     if(pcHide){
-        console.log('edit-type-14')
         return true;
     }
     if(mobileHide){
-        console.log('edit-type-15')
         return true;
     }
-    // // 合并条件判断
-    // if (columnAliasName || columnSort || columnWidth > 0 || dataStatistics || 
-    //     (renderType === 'customizeRender' && !!columnRender) || 
-    //     (align && align !== 'left') || 
-    //     (mobileAlign && mobileAlign !== 'left') || 
-    //     (headerAlign && headerAlign !== 'left') || 
-    //     (mobileHeaderAlign && mobileHeaderAlign !== 'left') || 
-    //     fixed || 
-    //     (mobileShow !== undefined && !mobileShow) ||
-    //     sortable
-    // ) {
-    //     return true; 
-    // }
     return false;
 };
+
+const configuredFieldNames = computed(() => new Set(
+    showColumn.value.filter(isColumnConfigured).map((column) => column.fieldName)
+));
 
 // 确认列修改
 const confirmColumnEdit = () => {
